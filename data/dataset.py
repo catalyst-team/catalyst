@@ -1,14 +1,33 @@
 import random
+from typing import List, Dict, Callable
 from torch.utils.data import Dataset
 from common.utils.misc import merge_dicts
 
 
 class ListDataset(Dataset):
+    """
+    General purpose dataset class.
+    """
     def __init__(
-            self, list_data, open_fn,
-            dict_transform=None,
-            cache_prob=-1, cache_transforms=False):
+            self,
+            list_data: List[Dict],
+            open_fn: Callable,
+            dict_transform: Callable = None,
+            cache_prob: float = -1,
+            cache_transforms: bool = False):
+        """
 
+        :param list_data: list of dicts, that stores you data annotations,
+            for example path to images, labels, bboxes, etc.
+        :param open_fn: function, that can open your annotations dict and
+            transfer it to data, needed by your network
+            for example open image by path, or read string and tokenize it.
+        :param dict_transform: transforms to use on dict.
+            for example normalize image by ImageNet, add blur, crop/resize/etc
+        :param cache_prob: probability of saving opened dict to RAM for speedup
+        :param cache_transforms: boolean flag if you need
+            to cache sample after transformations to RAM
+        """
         self.data = list_data
         self.open_fn = open_fn
         self.dict_transform = dict_transform

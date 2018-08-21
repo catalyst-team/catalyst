@@ -1,8 +1,10 @@
 import os
 import time
-import collections
+from collections import OrderedDict
+from typing import Tuple, List, Dict
 import torch
 from torchnet import meter
+from tensorboardX import SummaryWriter
 
 from common.utils.metrics import precision
 from common.utils.fp16 import Fp16Wrap, copy_params, copy_grads
@@ -17,7 +19,7 @@ class Callback:
 
     usage example:
 
-    mode start (train or infer)
+    mode start (train/infer/debug)
         epoch start (one epoch - one run of every loader)
             loader start
                 batch start
@@ -70,21 +72,33 @@ class Callback:
 
 
 class BasicLoggerCallback(Callback):
+    """
+    Logger callback, translates state.metrics to tensorboard and console output.
+    """
     def __init__(
-            self, loggers, default_bs,
-            reset_step=False, main_metric="loss"):
+            self,
+            loggers: Dict[str, SummaryWriter],
+            default_bs: int,
+            reset_step: bool = False):
+        """
+        :param loggers: loggers used during train/infer/debug.
+        :param default_bs: default batch size
+            for approximate epoch length calucation
+        :param reset_step: boolean flag;
+            if False - logs will be combine during train/valid
+            if True  - logs will be separated
+        """
         self.loggers = loggers
         self.default_bs = default_bs
         self.reset_step = reset_step
-        self.main_metric = main_metric
-        self.epoch_metrics = collections.OrderedDict()
+        self.epoch_metrics = OrderedDict()
         self.time = time.time()
 
     def on_epoch_start(
             self, *, state,
             model=None, criterion=None, optimizer=None, scheduler=None):
-        state.epoch_metrics = collections.OrderedDict()
-        self.epoch_metrics = collections.OrderedDict()
+        state.epoch_metrics = OrderedDict()
+        self.epoch_metrics = OrderedDict()
 
     def on_loader_start(
             self, *, state,
@@ -147,9 +161,6 @@ class BasicLoggerCallback(Callback):
             **self.epoch_metrics[lm]
         }
 
-        state.epoch_metrics[lm]["_metric"] = \
-            state.epoch_metrics[lm][self.main_metric]
-
         state.epoch_metrics[lm] = {
             key: get_val_from_metric(value)
             for key, value in state.epoch_metrics[lm].items()}
@@ -169,24 +180,44 @@ class BasicLoggerCallback(Callback):
 
 
 class PrecisionCallback(Callback):
-    def __init__(self, loggers, output_key, target_key, precision_args=None):
+    """
+    Precision metric callback.
+    """
+    def __init__(
+            self,
+            loggers: Dict[str, SummaryWriter],
+            input_key: str,
+            output_key: str,
+            precision_args: List[int] = None):
+        """
+        @TODO: make it loggers agnostic - all logs through LoggerCallback
+        :param loggers: loggers used during train/infer/debug.
+        :param input_key: input key to use for precision calculation;
+            specifies our `y_true`.
+        :param output_key: output key to use for precision calculation;
+            specifies our `y_pred`.
+        :param precision_args: specifies which precision@K to log.
+            [1] - accuracy
+            [1, 3] - accuracy and precision@3
+            [1, 3, 5] - precision at 1, 3 and 5
+        """
         super().__init__()
         self.loggers = loggers
+        self.input_key = input_key
         self.output_key = output_key
-        self.target_key = target_key
         self.precision_args = precision_args or [1, 3, 5]
-        self.epoch_metrics = collections.OrderedDict()
+        self.epoch_metrics = OrderedDict()
 
     def on_epoch_start(
             self, *, state,
             model=None, criterion=None, optimizer=None, scheduler=None):
-        self.epoch_metrics = collections.OrderedDict()
+        self.epoch_metrics = OrderedDict()
 
     def on_loader_start(
             self, *, state,
             model=None, criterion=None, optimizer=None, scheduler=None):
         lm = state.loader_mode
-        self.epoch_metrics[lm] = collections.OrderedDict()
+        self.epoch_metrics[lm] = OrderedDict()
         for p in self.precision_args:
             self.epoch_metrics[lm]["precision{:02}".format(p)] = \
                 meter.AverageValueMeter()
@@ -198,7 +229,7 @@ class PrecisionCallback(Callback):
 
         prec = precision(
             state.output[self.output_key],
-            state.input[self.target_key],
+            state.input[self.input_key],
             topk=self.precision_args)
 
         for p, metric in zip(self.precision_args, prec):
@@ -218,10 +249,27 @@ class PrecisionCallback(Callback):
 
 
 class CheckpointCallback(Callback):
-    def __init__(self, logdir=None, save_n_best=5, resume=None, minimize=True):
+    """
+    Checkpoint callback to save/restore your mode/criterion/optimizer/metrics.
+    """
+    def __init__(
+            self,
+            logdir: str = None,
+            save_n_best: int = 5,
+            resume: str = None,
+            main_metric: str = "loss",
+            minimize: bool = True):
+        """
+        :param logdir: log directory to use for checkpoint saving
+        :param save_n_best: number of best checkpoiont to keep
+        :param resume: path to checkpoint to load and initialize runner state
+        :param main_metric: which metric to use for checkpoint comparison
+        :param minimize: boolean flag if we need to minimize or maximize metric
+        """
         self.logdir = logdir
         self.save_n_best = save_n_best
         self.resume = resume
+        self.main_metric = main_metric
         self.minimize = minimize
         self.top_best_metrics = []
 
@@ -235,7 +283,6 @@ class CheckpointCallback(Callback):
 
             state.epoch = checkpoint["epoch"]
             state.best_metrics = checkpoint["best_metrics"]
-            state.best_metric = checkpoint["best_metrics"]["_metric"]
 
             if model is not None:
                 if isinstance(model, torch.nn.DataParallel):
@@ -267,7 +314,7 @@ class CheckpointCallback(Callback):
             is_best=is_best,
             suffix=str(checkpoint.get("epoch", "")))
         self.top_best_metrics.append((
-            filepath, checkpoint["valid_metrics"]["_metric"]))
+            filepath, checkpoint["valid_metrics"][self.main_metric]))
         self.top_best_metrics = sorted(
             self.top_best_metrics, key=lambda x: x[1],
             reverse=not self.minimize)
@@ -280,14 +327,17 @@ class CheckpointCallback(Callback):
         return prepare_checkpoint(**kwargs)
 
     @staticmethod
-    def process_epoch_metrics(epoch_metrics, best_metrics, minimize=True):
+    def process_epoch_metrics(
+            epoch_metrics, best_metrics,
+            main_metric="loss", minimize=True):
         valid_metrics = None
         for key, value in epoch_metrics.items():
             if key.startswith("valid"):
                 valid_metrics = value
-        is_best = (
-            best_metrics is None
-            or minimize != (valid_metrics["_metric"] > best_metrics["_metric"]))
+        is_best = True \
+            if best_metrics is None \
+            else (minimize != (
+                valid_metrics[main_metric] > best_metrics[main_metric]))
         best_metrics = valid_metrics if is_best else best_metrics
         return best_metrics, valid_metrics, is_best
 
@@ -320,7 +370,8 @@ class CheckpointCallback(Callback):
             return
 
         best_metrics, valid_metrics, is_best = self.process_epoch_metrics(
-            state.epoch_metrics, state.best_metrics, minimize=self.minimize)
+            state.epoch_metrics, state.best_metrics,
+            main_metric=self.main_metric, minimize=self.minimize)
         valid_metrics = {
             key: value
             for key, value in valid_metrics.items()
@@ -331,7 +382,7 @@ class CheckpointCallback(Callback):
             for key, value in best_metrics.items()
             if isinstance(value, float)
         }
-        state.best_metric = state.best_metrics["_metric"]
+
         checkpoint = self.prepare_checkpoint(
             model=model,
             criterion=criterion,
@@ -358,7 +409,18 @@ class CheckpointCallback(Callback):
 
 
 class BasicOptimizerCallback(Callback):
-    def __init__(self, grad_clip=None, fp16_grad_scale=128.0):
+    """
+    Optimizer callback, abstraction over optimizer step.
+    """
+    def __init__(
+            self,
+            grad_clip: float = None,
+            fp16_grad_scale : float = 128.0):
+        """
+        :param grad_clip: grap clipping specification kwargs
+            @TODO: better support of different grad clip funcs
+        :param fp16_grad_scale: grad scale for fp16 mode training
+        """
         self.optimizer_wds = {}
         self.grad_clip = grad_clip
         self.fp16 = False
@@ -437,7 +499,16 @@ class BasicOptimizerCallback(Callback):
 
 class LRUpdater(Callback):
     """Basic class that all Lr updaters inherit from"""
-    def __init__(self, init_lr, optimizer_key="main"):
+    def __init__(
+            self,
+            init_lr: float,
+            optimizer_key: str = "main"):
+        """
+        :param init_lr: initial learning rate to use
+            @TODO: pick it automatically from optimizer
+        :param optimizer_key: which optimizer key to use
+            for learning rate scheduling
+        """
         self.init_lr = init_lr
         self.optimizer_key = optimizer_key
 
@@ -491,12 +562,17 @@ class LRUpdater(Callback):
 class OneCycleLR(LRUpdater):
     """
     An learning rate updater
-        that implements the CirularLearningRate (CLR) scheme.
+        that implements the Circular Learning Rate (CLR) scheme.
     Learning rate is increased then decreased linearly.
     """
     def __init__(
-            self, init_lr, cycle_len, div, cut_div, momentum_range,
-            optimizer_key="main"):
+            self,
+            init_lr: float,
+            cycle_len: int,
+            div: int,
+            cut_div: int,
+            momentum_range: Tuple[float, float],
+            optimizer_key: str = "main"):
         """
 
         :param init_lr: init learning rate for torch optimizer
@@ -505,6 +581,8 @@ class OneCycleLR(LRUpdater):
         :param cut_div: (int) which part of cycle lr will grow
             (Ex: cut_div=4 -> 1/4 lr grow, 3/4 lr decrease
         :param momentum_range: (tuple(int, int)) max and min momentum values
+        :param optimizer_key: which optimizer key to use
+            for learning rate scheduling
         """
         super().__init__(init_lr=init_lr, optimizer_key=optimizer_key)
         self.total_iter = None
@@ -564,7 +642,21 @@ class LRFinder(LRUpdater):
 
     https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html
     """
-    def __init__(self, init_lr, final_lr, n_steps=None, optimizer_key="main"):
+    def __init__(
+            self,
+            init_lr,
+            final_lr,
+            n_steps=None,
+            optimizer_key="main"):
+        """
+
+        :param init_lr: initial learning rate to use
+        :param final_lr: final learning rate to try with
+        :param n_steps:  number of batches to try;
+            if None - whole loader would be used.
+        :param optimizer_key: which optimizer key to use
+            for learning rate scheduling
+        """
         super().__init__(init_lr, optimizer_key=optimizer_key)
 
         self.final_lr = final_lr

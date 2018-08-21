@@ -1,8 +1,19 @@
+from typing import Dict, Callable
 
 class Augmentor(object):
+    """
+    Augmentation abstraction to use with data dictionaries.
+    """
     def __init__(
-            self, dict_key, augment_fn,
-            default_kwargs=None):
+            self,
+            dict_key: str,
+            augment_fn: Callable,
+            default_kwargs: Dict = None):
+        """
+        :param dict_key: key to transform
+        :param augment_fn: augmentation function to use
+        :param default_kwargs: default kwargs for augmentations function
+        """
         self.dict_key = dict_key
         self.augment_fn = augment_fn
         self.default_kwargs = default_kwargs or {}
@@ -14,8 +25,13 @@ class Augmentor(object):
 
 
 class AugmentorKeys(object):
+    """
+    @TODO: ?
+    """
     def __init__(
-            self, dict2fn_keys, augment_fn,
+            self,
+            dict2fn_keys,
+            augment_fn,
             fn_keys=None,
             default_kwargs=None):
         self.dict2fn_keys = dict2fn_keys
