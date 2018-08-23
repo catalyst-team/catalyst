@@ -1,5 +1,7 @@
+import os
 import shutil
 import argparse
+from datetime import datetime
 from pprint import pprint
 
 from common.utils.defaults import parse_args_uargs, create_loggers
@@ -7,7 +9,7 @@ from common.utils.misc import \
     create_if_need, set_global_seeds, boolean_flag, import_module
 
 
-def prepare_modules(args):
+def prepare_modules(args, dump_src=False):
     args.model_dir = (
         args.model_dir[:-1]
         if args.model_dir.endswith("/")
@@ -15,15 +17,21 @@ def prepare_modules(args):
     model_dir = args.model_dir.rsplit("/", 1)[-1]
 
     new_model_dir = None
-    if hasattr(args, "logdir"):
-        new_model_dir = "/last-train/" + model_dir
+    if dump_src and hasattr(args, "logdir"):
+        current_date = datetime.now().strftime('%y-%m-%d-%H-%M-%S-%M-%f')
+        new_model_dir = f"/src-{current_date}/" + model_dir
         new_model_dir = args.logdir + new_model_dir
         create_if_need(new_model_dir)
 
+        # @TODO: hardcoded
+        old_common_dir = os.path.dirname(os.path.abspath(__file__)) + "/../../"
+        new_common_dir = args.logdir + f"/src-{current_date}/common/"
+        shutil.copytree(old_common_dir, new_common_dir)
+
     modules = {}
     for name in ["data", "model"]:
-        module_name, module_src = (
-            f"{model_dir}.{name}", args.model_dir + "/" + f"{name}.py")
+        module_name = f"{model_dir}.{name}"
+        module_src = args.model_dir + "/" + f"{name}.py"
 
         module = import_module(module_name, module_src)
         modules[name] = module
@@ -61,9 +69,9 @@ def parse_args():
 def main(args, unknown_args):
     set_global_seeds(args.seed)
     create_if_need(args.logdir)
-    modules = prepare_modules(args)
+    modules = prepare_modules(args, dump_src=True)
 
-    args, config = parse_args_uargs(args, unknown_args)
+    args, config = parse_args_uargs(args, unknown_args, dump_config=True)
 
     pprint(args)
     pprint(config)

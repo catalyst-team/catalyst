@@ -77,7 +77,7 @@ def load_ordered_yaml(
     return yaml.load(stream, OrderedLoader)
 
 
-def parse_args_uargs(args, unknown_args):
+def parse_args_uargs(args, unknown_args, dump_config=False):
     args_ = copy.deepcopy(args)
 
     # load params
@@ -94,7 +94,7 @@ def parse_args_uargs(args, unknown_args):
 
     args_, config = parse_args_config(args_, unknown_args, config)
 
-    if getattr(args_, "logdir", None) is not None:
+    if dump_config and getattr(args_, "logdir", None) is not None:
         with open("{}/config.json".format(args_.logdir), "w") as fout:
             json.dump(config, fout, indent=2)
 
