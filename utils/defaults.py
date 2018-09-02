@@ -94,19 +94,19 @@ def parse_args_uargs(args, unknown_args, dump_config=False):
 
     args_, config = parse_args_config(args_, unknown_args, config)
 
-    if dump_config and getattr(args_, "logdir", None) is not None:
-        create_if_need(args_.logdir)
-        with open("{}/config.json".format(args_.logdir), "w") as fout:
-            json.dump(config, fout, indent=2)
-
     # hack with argparse in config
-    training_args = config.pop("args", None)
+    training_args = config.get("args", None)
     if training_args is not None:
         for key, value in training_args.items():
             arg_value = getattr(args_, key, None)
             if arg_value is None:
                 arg_value = value
             setattr(args_, key, arg_value)
+
+    if dump_config and getattr(args_, "logdir", None) is not None:
+        create_if_need(args_.logdir)
+        with open("{}/config.json".format(args_.logdir), "w") as fout:
+            json.dump(config, fout, indent=2)
 
     return args_, config
 
@@ -128,7 +128,6 @@ def create_loggers(logdir, loaders):
 
 
 def create_model_stuff(config, available_networks):
-    # create model
     model_params = config["model_params"]
     model_name = model_params.pop("model", None)
     fp16 = model_params.pop("fp16", False) and torch.cuda.is_available()

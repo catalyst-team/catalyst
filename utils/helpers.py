@@ -77,7 +77,7 @@ def get_val_from_metric(metric_value):
     return metric_value
 
 
-def save_checkpoint(logdir, checkpoint, is_best, suffix=""):
+def save_checkpoint(logdir, checkpoint, is_best=False, suffix=""):
     filename = "{logdir}/checkpoint.{suffix}.pth.tar".format(
         logdir=logdir, suffix=suffix)
     torch.save(checkpoint, filename)
