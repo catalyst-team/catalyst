@@ -59,7 +59,7 @@ def images_to_sprite(data):
 
 
 def main(args):
-    df = pd.read_csv(args.in_csv, nrows=args.n_rows)
+    df = pd.read_csv(args.in_csv)
     meta_file = (
         "{}_meta.tsv".format(args.out_prefix)
         if args.out_prefix is not None
@@ -77,8 +77,9 @@ def main(args):
 
     features = np.load(args.in_npy, mmap_mode="r")
     if args.n_rows is not None:
-        features = features[:args.n_rows, :]
-        df = df[:args.n_rows]
+        rows_ids = np.random.choice(np.arange(0, len(features)), size=args.n_rows)
+        features = features[rows_ids, :]
+        df = df.iloc[rows_ids]
 
     if args.img_col is not None:
         img_data = np.concatenate(
@@ -105,7 +106,7 @@ def main(args):
     sess = tf.InteractiveSession()
     name = args.out_prefix or "tensors"
     tf.Variable(features, trainable=False, name=name)
-    tf.global_variables_initializer().run_event()
+    sess.run(tf.global_variables_initializer())
     saver = tf.train.Saver()
     writer = tf.summary.FileWriter(args.out_dir, sess.graph)
 
