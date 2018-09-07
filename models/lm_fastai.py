@@ -231,7 +231,8 @@ class WeightDrop(torch.nn.Module):
             self.module.flatten_parameters = noop
         for name_w in self.weights:
             w = getattr(self.module, name_w)
-            del self.module._parameters[name_w]
+            w.required_grad = False  # bugfix
+            # del self.module._parameters[name_w]  # bugfix
             self.module.register_parameter(
                 name_w + "_raw", nn.Parameter(w.data))
 
@@ -251,6 +252,7 @@ class WeightDrop(torch.nn.Module):
             if hasattr(self.module, name_w):
                 delattr(self.module, name_w)
             setattr(self.module, name_w, w)
+            self.module._parameters[name_w] = w  # bugfix
 
     def forward(self, *args):
         """
