@@ -1,4 +1,4 @@
-from typing import Dict, Callable
+from typing import Dict, Callable, List
 
 class Augmentor(object):
     """
@@ -24,30 +24,37 @@ class Augmentor(object):
         return dict_
 
 
-class AugmentorKeys(object):
-    """
-    @TODO: ?
-    """
+class AugmentorKeys:
+    """ Augmentation abstraction to match input and augmentations keys"""
     def __init__(
             self,
-            dict2fn_keys,
-            augment_fn,
-            fn_keys=None,
-            default_kwargs=None):
-        self.dict2fn_keys = dict2fn_keys
-        self.fn_keys = fn_keys
+            dict2fn_dict: Dict[str, str],
+            augment_fn: Callable):
+        """
+        :param dict2fn_dict: keys matching dict {input_key: augment_fn_key}
+               ex: {"image": "image", "mask": "mask"}
+        :param augment_fn: augmentation function
+        """
+
+        self.dict2fn_dict = dict2fn_dict
         self.augment_fn = augment_fn
-        self.default_kwargs = default_kwargs or {}
 
     def __call__(self, dict_):
-        fn_kwargs = {
-            value: dict_[key]
-            for key, value in self.dict2fn_keys.items()}
-        fn_results = self.augment_fn(
-            **fn_kwargs, **self.default_kwargs)
-        if self.fn_keys is not None:
-            fn_results = {
-                key: value
-                for key, value in zip(self.fn_keys, fn_results)}
-        dict_ = {**dict_, **fn_results}
-        return dict_
+        """
+        :param dict_: dict - item form dataset
+        :return dict_: dict - with augmented data
+        """
+        # link keys from dict_ with augment_fn keys
+        data = {
+            fn_key: dict_[dict_key]
+            for dict_key, fn_key in self.dict2fn_dict.items()
+        }
+
+        augmented = self.augment_fn(**data)
+        # link keys from augment_fn back to dict_ keys
+        results = {
+            dict_key: augmented[fn_key]
+            for dict_key, fn_key in self.dict2fn_dict.items()
+        }
+
+        return {**dict_, **results}
