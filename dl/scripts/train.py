@@ -1,6 +1,7 @@
 import os
 import shutil
 import argparse
+import pathlib2
 from datetime import datetime
 from pprint import pprint
 
@@ -9,29 +10,35 @@ from common.utils.misc import \
     create_if_need, set_global_seeds, boolean_flag, import_module
 
 
-def prepare_modules(args, dump_src=False):
-    args.model_dir = (
-        args.model_dir[:-1]
-        if args.model_dir.endswith("/")
-        else args.model_dir)
-    model_dir = args.model_dir.rsplit("/", 1)[-1]
+def prepare_modules(model_dir, dump_dir=None):
+    model_dir = (
+        model_dir[:-1]
+        if model_dir.endswith("/")
+        else model_dir)
+    model_dir_name = model_dir.rsplit("/", 1)[-1]
 
     new_model_dir = None
-    if dump_src and hasattr(args, "logdir"):
+    if dump_dir is not None:
         current_date = datetime.now().strftime('%y-%m-%d-%H-%M-%S-%M-%f')
-        new_model_dir = f"/src-{current_date}/" + model_dir
-        new_model_dir = args.logdir + new_model_dir
+        new_src_dir = f"/src-{current_date}/"
+
+        new_model_dir = f"{new_src_dir}" + model_dir
+        new_model_dir = dump_dir + new_model_dir
         create_if_need(new_model_dir)
 
         # @TODO: hardcoded
         old_common_dir = os.path.dirname(os.path.abspath(__file__)) + "/../../"
-        new_common_dir = args.logdir + f"/src-{current_date}/common/"
+        new_common_dir = dump_dir + f"/{new_src_dir}/common/"
         shutil.copytree(old_common_dir, new_common_dir)
 
+    pyfiles = list(map(
+        lambda x: x.name[:-3],
+        pathlib2.Path(model_dir).glob("*.py")))
+
     modules = {}
-    for name in ["data", "model"]:
-        module_name = f"{model_dir}.{name}"
-        module_src = args.model_dir + "/" + f"{name}.py"
+    for name in pyfiles:
+        module_name = f"{model_dir_name}.{name}"
+        module_src = model_dir + "/" + f"{name}.py"
 
         module = import_module(module_name, module_src)
         modules[name] = module
@@ -67,14 +74,13 @@ def parse_args():
 
 
 def main(args, unknown_args):
-    set_global_seeds(args.seed)
-    create_if_need(args.logdir)
-    modules = prepare_modules(args, dump_src=True)
-
     args, config = parse_args_uargs(args, unknown_args, dump_config=True)
-
     pprint(args)
     pprint(config)
+    set_global_seeds(args.seed)
+
+    create_if_need(args.logdir)
+    modules = prepare_modules(model_dir=args.model_dir, dump_dir=args.logdir)
 
     loaders = modules["data"].prepare_data(args, config["data_params"])
     loggers = create_loggers(args.logdir, loaders)

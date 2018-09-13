@@ -1,4 +1,5 @@
 import argparse
+from pprint import pprint
 from common.utils.defaults import parse_args_uargs
 from common.utils.misc import set_global_seeds
 from common.dl.scripts.train import prepare_modules
@@ -27,12 +28,14 @@ def parse_args():
 
 
 def main(args, unknown_args):
-    set_global_seeds(args.seed)
-    modules = prepare_modules(args)
-
     args, config = parse_args_uargs(args, unknown_args)
-    loaders = modules["data"].prepare_data(args, config["data_params"])
+    pprint(args)
+    pprint(config)
+    set_global_seeds(args.seed)
 
+    modules = prepare_modules(model_dir=args.model_dir)
+
+    loaders = modules["data"].prepare_data(args, config["data_params"])
     model, _, _, _ = modules["model"].prepare_model(
         args, config)
     callbacks = modules["model"].prepare_callbacks(
