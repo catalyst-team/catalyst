@@ -1,23 +1,22 @@
 # PyTorch common
 Common utils for PyTorch DL/RL research. In development. py36.
 
-## Why?
 
-~~just because I can~~
+## Features
 
-Main reasons:
- - PyTorch is great, but "new model -> new train loop" too much code, as for me.
- - It"s possible to use one common pipeline to train 99.99% neural net models.
- - And do it in reproducible, flexible and structured way.
- - Okay, I just think so.
- - But when it comes to usual PyTorch repos...complicated feelings.
- 
-
-Solutions:
- - Key-values storages, key-values storages everywhere!
- - Data and model usage standardization. (okay, v0.5 standardization)
- - Configuration files and loggers (even source code will be saved to logs).
- - Lots of reusable code for different purposes.
+- Universal train/inference loop.
+- Key-values storage, key-values storage everywhere!
+- Data and model usage standardization. 
+- Configuration files - yaml for model/data hyperparameters.
+- Loggers and Tensorboard support.
+- Reproducibility - whole source code will be saved to logs.
+- OneCycle lr scheduler.
+- FP16 support for any model.
+- Corrected weight decay (AdamW).
+- N-best-checkpoints saving (SWA).
+- Callbacks - reusable train/infer pipeline parts (and you can write your own if needed).
+- Well structed, so you can just grab a part to your project.
+- Lots of reusable code for different purposes (losses, optimizers, models, knns, embeddings projector).
 
 
 ## How it works?
