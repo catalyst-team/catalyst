@@ -1,7 +1,7 @@
 import argparse
 from pprint import pprint
-from common.utils.defaults import parse_args_uargs
-from common.utils.misc import set_global_seeds
+from common.utils.args import parse_args_uargs
+from common.utils.misc import set_global_seeds, boolean_flag
 from common.dl.scripts.train import prepare_modules
 
 
@@ -20,6 +20,7 @@ def parse_args():
     parser.add_argument(
         "-b", "--batch-size", default=None, type=int,
         metavar="N", help="mini-batch size ")
+    boolean_flag(parser, "verbose", default=False)
     
     parser.add_argument("--out-prefix", type=str, default=None)
 
@@ -35,14 +36,14 @@ def main(args, unknown_args):
 
     modules = prepare_modules(model_dir=args.model_dir)
 
-    loaders = modules["data"].prepare_data(args, config["data_params"])
-    model, _, _, _ = modules["model"].prepare_model(
-        args, config)
-    callbacks = modules["model"].prepare_callbacks(
-        args, config, mode="infer", loggers=None)
+    datasource = modules["data"].DataSource()
+    loaders = datasource.prepare_loaders(args, config["data_params"])
+    model = modules["model"].prepare_model(args, config)
 
     runner = modules["model"].ModelRunner(model=model)
-    runner.infer(loaders=loaders, callbacks=callbacks)
+    callbacks = runner.prepare_callbacks(
+        loggers=None, args=args, config=config, mode="infer")
+    runner.infer(loaders=loaders, callbacks=callbacks, verbose=args.verbose)
 
 
 if __name__ == "__main__":

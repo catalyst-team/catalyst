@@ -8,8 +8,7 @@ from tensorboardX import SummaryWriter
 
 from common.utils.metrics import precision
 from common.utils.fp16 import Fp16Wrap, copy_params, copy_grads
-from common.utils.helpers import get_val_from_metric, prepare_checkpoint, \
-    save_checkpoint, load_checkpoint
+from common.utils.factory import UtilsFactory
 
 
 class Callback:
@@ -30,45 +29,29 @@ class Callback:
     mode end
     """
 
-    def on_train_start(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None): pass
+    def on_stage_start(self, state): pass
 
-    def on_train_end(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None): pass
+    def on_train_start(self, state): pass
 
-    def on_infer_start(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None): pass
+    def on_train_end(self, state): pass
 
-    def on_infer_end(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None): pass
+    def on_stage_end(self, state): pass
 
-    def on_epoch_start(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None): pass
+    def on_infer_start(self, state): pass
 
-    def on_epoch_end(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None): pass
+    def on_infer_end(self, state): pass
 
-    def on_loader_start(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None): pass
+    def on_epoch_start(self, state): pass
 
-    def on_loader_end(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None): pass
+    def on_epoch_end(self, state): pass
 
-    def on_batch_start(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None): pass
+    def on_loader_start(self, state): pass
 
-    def on_batch_end(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None): pass
+    def on_loader_end(self, state): pass
+
+    def on_batch_start(self, state): pass
+
+    def on_batch_end(self, state): pass
 
 
 class BasicLoggerCallback(Callback):
@@ -94,15 +77,11 @@ class BasicLoggerCallback(Callback):
         self.epoch_metrics = OrderedDict()
         self.time = time.time()
 
-    def on_epoch_start(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+    def on_epoch_start(self, state):
         state.epoch_metrics = OrderedDict()
         self.epoch_metrics = OrderedDict()
 
-    def on_loader_start(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+    def on_loader_start(self, state):
         lm = state.loader_mode
         self.time = time.time()
         state.step = (
@@ -114,20 +93,16 @@ class BasicLoggerCallback(Callback):
         self.epoch_metrics[lm]["batch time"] = meter.AverageValueMeter()
         self.epoch_metrics[lm]["sample per second"] = meter.AverageValueMeter()
         self.epoch_metrics[lm]["loss"] = meter.AverageValueMeter()
-        for key in optimizer:
+        for key in state._optimizer:
             self.epoch_metrics[lm][f"lr_{key}"] = meter.AverageValueMeter()
             self.epoch_metrics[lm][f"momentum_{key}"] = \
                 meter.AverageValueMeter()
 
-    def on_batch_start(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+    def on_batch_start(self, state):
         self.loggers[state.loader_mode].add_scalar(
             "data time", time.time() - self.time, state.step)
 
-    def on_batch_end(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+    def on_batch_end(self, state):
         lm = state.loader_mode
         state.bs = state.bs or state.target.shape[0]
         elapsed_time = time.time() - self.time
@@ -151,9 +126,7 @@ class BasicLoggerCallback(Callback):
         self.time = time.time()
         state.step += state.bs
 
-    def on_loader_end(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+    def on_loader_end(self, state):
         lm = state.loader_mode
 
         state.epoch_metrics[lm] = {
@@ -162,7 +135,7 @@ class BasicLoggerCallback(Callback):
         }
 
         state.epoch_metrics[lm] = {
-            key: get_val_from_metric(value)
+            key: UtilsFactory.get_val_from_metric(value)
             for key, value in state.epoch_metrics[lm].items()}
 
         for key, value in state.epoch_metrics[lm].items():
@@ -208,23 +181,17 @@ class PrecisionCallback(Callback):
         self.precision_args = precision_args or [1, 3, 5]
         self.epoch_metrics = OrderedDict()
 
-    def on_epoch_start(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+    def on_epoch_start(self, state):
         self.epoch_metrics = OrderedDict()
 
-    def on_loader_start(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+    def on_loader_start(self, state):
         lm = state.loader_mode
         self.epoch_metrics[lm] = OrderedDict()
         for p in self.precision_args:
             self.epoch_metrics[lm]["precision{:02}".format(p)] = \
                 meter.AverageValueMeter()
 
-    def on_batch_end(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+    def on_batch_end(self, state):
         lm = state.loader_mode
 
         prec = precision(
@@ -238,9 +205,7 @@ class PrecisionCallback(Callback):
             self.epoch_metrics[lm][key].add(metric_)
             self.loggers[lm].add_scalar(key, metric_, state.step)
 
-    def on_loader_end(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+    def on_loader_end(self, state):
         lm = state.loader_mode
         state.epoch_metrics[lm] = {
             **state.epoch_metrics[lm],
@@ -274,34 +239,18 @@ class CheckpointCallback(Callback):
         self.top_best_metrics = []
 
     @staticmethod
-    def load_checkpoint(
-            *, filename, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+    def load_checkpoint(*, filename, state):
         if os.path.isfile(filename):
             print("=> loading checkpoint \"{}\"".format(filename))
-            checkpoint = load_checkpoint(filename)
+            checkpoint = UtilsFactory.load_checkpoint(filename)
 
             state.epoch = checkpoint["epoch"]
             state.best_metrics = checkpoint["best_metrics"]
 
-            if model is not None:
-                if isinstance(model, torch.nn.DataParallel):
-                    model = model.module
-                if isinstance(model, Fp16Wrap):
-                    model.network.load_state_dict(
-                        checkpoint["model_state_dict"])
-                else:
-                    model.load_state_dict(
-                        checkpoint["model_state_dict"])
-
-            if optimizer is not None:
-                for key in optimizer:
-                    optimizer[key].load_state_dict(
-                        checkpoint["optimizer_" + str(key) + "_state_dict"])
-
-            if scheduler is not None:
-                for key in scheduler:
-                    scheduler[key] = checkpoint["scheduler_" + str(key)]
+            UtilsFactory.unpack_checkpoint(
+                checkpoint,
+                model=state.model, criterion=state._criterion,
+                optimizer=state._optimizer, scheduler=state._scheduler)
 
             print("loaded checkpoint \"{}\" (epoch {})"
                   .format(filename, checkpoint["epoch"]))
@@ -309,10 +258,11 @@ class CheckpointCallback(Callback):
             raise Exception("no checkpoint found at \"{}\"".format(filename))
 
     def save_checkpoint(self, logdir, checkpoint, is_best, save_n_best=5):
-        filepath = save_checkpoint(
+        suffix = f"{checkpoint['stage']}.{checkpoint['epoch']}"
+        filepath = UtilsFactory.save_checkpoint(
             logdir=logdir, checkpoint=checkpoint,
             is_best=is_best,
-            suffix=str(checkpoint.get("epoch", "")))
+            suffix=suffix)
         self.top_best_metrics.append((
             filepath, checkpoint["valid_metrics"][self.main_metric]))
         self.top_best_metrics = sorted(
@@ -323,8 +273,8 @@ class CheckpointCallback(Callback):
             last_filepath = last_item[0]
             os.remove(last_filepath)
 
-    def prepare_checkpoint(self, **kwargs):
-        return prepare_checkpoint(**kwargs)
+    def pack_checkpoint(self, **kwargs):
+        return UtilsFactory.pack_checkpoint(**kwargs)
 
     @staticmethod
     def process_epoch_metrics(
@@ -341,31 +291,17 @@ class CheckpointCallback(Callback):
         best_metrics = valid_metrics if is_best else best_metrics
         return best_metrics, valid_metrics, is_best
 
-    def on_mode_start(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+    def on_mode_start(self, state):
         if self.resume is not None:
-            self.load_checkpoint(
-                filename=self.resume, state=state, model=model,
-                criterion=criterion, optimizer=optimizer, scheduler=scheduler)
+            self.load_checkpoint(filename=self.resume, state=state)
 
-    def on_train_start(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
-        return self.on_mode_start(
-            state=state, model=model,
-            criterion=criterion, optimizer=optimizer, scheduler=scheduler)
+    def on_train_start(self, state):
+        return self.on_mode_start(state=state)
 
-    def on_infer_start(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
-        return self.on_mode_start(
-            state=state, model=model,
-            criterion=criterion, optimizer=optimizer, scheduler=scheduler)
+    def on_infer_start(self, state):
+        return self.on_mode_start(state=state)
 
-    def on_epoch_end(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+    def on_epoch_end(self, state):
         if not state.loader_mode.startswith("valid"):
             return
 
@@ -383,14 +319,15 @@ class CheckpointCallback(Callback):
             if isinstance(value, float)
         }
 
-        checkpoint = self.prepare_checkpoint(
-            model=model,
-            criterion=criterion,
-            optimizer=optimizer,
-            scheduler=scheduler,
+        checkpoint = self.pack_checkpoint(
+            model=state.model,
+            criterion=state._criterion,
+            optimizer=state._optimizer,
+            scheduler=state._scheduler,
             valid_metrics=valid_metrics,
             epoch_metrics=state.epoch_metrics,
             best_metrics=state.best_metrics,
+            stage=state.stage,
             epoch=state.epoch)
         self.save_checkpoint(
             logdir=self.logdir,
@@ -398,9 +335,7 @@ class CheckpointCallback(Callback):
             is_best=is_best,
             save_n_best=self.save_n_best)
 
-    def on_train_end(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+    def on_train_end(self, state):
         print("Top best models:")
         top_best_metrics_str = "\n".join([
             "{filepath}\t{metric:.4f}".format(filepath=filepath, metric=metric)
@@ -426,16 +361,12 @@ class BasicOptimizerCallback(Callback):
         self.fp16 = False
         self.fp16_grad_scale = fp16_grad_scale
 
-    def on_train_start(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
-        self.fp16 = isinstance(model, Fp16Wrap)
+    def on_train_start(self, state):
+        self.fp16 = isinstance(state.model, Fp16Wrap)
 
-    def on_epoch_start(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+    def on_epoch_start(self, state):
         self.optimizer_wds = {}
-        for key, optimizer_ in optimizer.items():
+        for key, optimizer_ in state._optimizer.items():
             wd = optimizer_.param_groups[0].get("weight_decay", 0.0)
             if wd > 0:
                 self.optimizer_wds[key] = wd
@@ -454,47 +385,43 @@ class BasicOptimizerCallback(Callback):
                             group["params"], self.grad_clip)
             value.step()
 
-    def on_batch_end(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+    def on_batch_end(self, state):
         if not state.is_train:
             return
 
         if not self.fp16:
-            for _, value in optimizer.items():
+            for _, value in state._optimizer.items():
                 value.zero_grad()
 
-            if len(optimizer) > 0:
+            if len(state._optimizer) > 0:
                 state.loss.backward()
-                self.grad_step(optimizer)
+                self.grad_step(state._optimizer)
         else:
-            model.zero_grad()
-            if len(optimizer) > 0:
-                assert len(optimizer) == 1, \
+            state.model.zero_grad()
+            if len(state._optimizer) > 0:
+                assert len(state._optimizer) == 1, \
                     "fp16 mode works only with one optimizer for now"
                 scaled_loss = self.fp16_grad_scale * state.loss.float()
                 scaled_loss.backward()
 
                 master_params = list(
-                    optimizer["main"].param_groups[0]["params"])
+                    state._optimizer["main"].param_groups[0]["params"])
                 model_params = list(filter(
-                    lambda p: p.requires_grad, model.parameters()))
+                    lambda p: p.requires_grad, state.model.parameters()))
 
                 copy_grads(source=model_params, target=master_params)
 
                 for param in master_params:
                     param.grad.data.mul_(1. / self.fp16_grad_scale)
 
-                self.grad_step(optimizer)
+                self.grad_step(state._optimizer)
 
                 copy_params(source=master_params, target=model_params)
                 torch.cuda.synchronize()
 
-    def on_epoch_end(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+    def on_epoch_end(self, state):
         for key, value in self.optimizer_wds.items():
-            optimizer[key].param_groups[0]["weight_decay"] = value
+            state._optimizer[key].param_groups[0]["weight_decay"] = value
 
 
 class LRUpdater(Callback):
@@ -548,15 +475,11 @@ class LRUpdater(Callback):
             state.lr[self.optimizer_key] = 0
             state.momentum[self.optimizer_key] = 0
 
-    def on_loader_start(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
-        self.update_optimizer(state=state, optimizer=optimizer)
+    def on_loader_start(self, state):
+        self.update_optimizer(state=state, optimizer=state._optimizer)
 
-    def on_batch_end(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
-        self.update_optimizer(state=state, optimizer=optimizer)
+    def on_batch_end(self, state):
+        self.update_optimizer(state=state, optimizer=state._optimizer)
 
 
 class OneCycleLR(LRUpdater):
@@ -622,16 +545,12 @@ class OneCycleLR(LRUpdater):
               + percent * (self.momentum_range[0] - self.momentum_range[1])
         return res
 
-    def on_loader_start(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+    def on_loader_start(self, state):
         if state.is_train:
             self.total_iter = len(state.loader) * self.cycle_len
             self.cut_point = self.total_iter // self.cut_div
 
-        super().on_loader_start(
-            state=state, model=model, criterion=criterion,
-            optimizer=optimizer, scheduler=scheduler)
+        super().on_loader_start(state=state)
 
 
 class LRFinder(LRUpdater):
@@ -670,23 +589,15 @@ class LRFinder(LRUpdater):
         self.find_iter += 1
         return res
 
-    def on_batch_end(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
-        super().on_batch_end(
-            state=state, model=model, criterion=criterion,
-            optimizer=optimizer, scheduler=scheduler)
+    def on_batch_end(self, state):
+        super().on_batch_end(state=state)
         if self.find_iter > self.n_steps:
             raise NotImplementedError("End of LRFinder")
 
-    def on_loader_start(
-            self, *, state,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+    def on_loader_start(self, state):
         if state.is_train:
             lr_ = self.final_lr / self.init_lr
             self.n_steps = self.n_steps or len(state.loader)
             self.multiplier = lr_ ** (1 / self.n_steps)
 
-        super().on_loader_start(
-            state=state, model=model, criterion=criterion,
-            optimizer=optimizer, scheduler=scheduler)
+        super().on_loader_start(state=state)

@@ -5,7 +5,8 @@ import pathlib2
 from datetime import datetime
 from pprint import pprint
 
-from common.utils.defaults import parse_args_uargs, create_loggers
+from common.utils.factory import UtilsFactory
+from common.utils.args import parse_args_uargs
 from common.utils.misc import \
     create_if_need, set_global_seeds, boolean_flag, import_module
 
@@ -19,7 +20,7 @@ def prepare_modules(model_dir, dump_dir=None):
 
     new_model_dir = None
     if dump_dir is not None:
-        current_date = datetime.now().strftime('%y-%m-%d-%H-%M-%S-%M-%f')
+        current_date = datetime.now().strftime("%y-%m-%d-%H-%M-%S-%M-%f")
         new_src_dir = f"/src-{current_date}/"
 
         new_model_dir = f"{new_src_dir}" + model_dir
@@ -66,6 +67,7 @@ def parse_args():
     parser.add_argument(
         "-b", "--batch-size", default=None, type=int,
         metavar="N", help="mini-batch size ")
+    boolean_flag(parser, "verbose", default=False)
     boolean_flag(parser, "debug", default=False)
 
     args, unknown_args = parser.parse_known_args()
@@ -82,18 +84,17 @@ def main(args, unknown_args):
     create_if_need(args.logdir)
     modules = prepare_modules(model_dir=args.model_dir, dump_dir=args.logdir)
 
-    loaders = modules["data"].prepare_data(args, config["data_params"])
-    loggers = create_loggers(args.logdir, loaders)
-    model, criterion, optimizer, scheduler = modules["model"].prepare_model(
-        args, config)
-    mode = "debug" if args.debug else "train"
-    callbacks = modules["model"].prepare_callbacks(
-        args, config, mode=mode, loggers=loggers)
+    datasource = modules["data"].DataSource()
+    loaders = datasource.prepare_loaders(args, config["data_params"])
 
-    runner = modules["model"].ModelRunner(
-        model=model, criterion=criterion,
-        optimizer=optimizer, scheduler=scheduler)
-    runner.train(loaders=loaders, callbacks=callbacks, epochs=args.epochs)
+    model = modules["model"].prepare_model(config)
+
+    runner = modules["model"].ModelRunner(model=model)
+    runner.train(
+        loaders=loaders,
+        args=args,
+        stages_config=config["stages"],
+        verbose=args.verbose)
 
 
 if __name__ == "__main__":

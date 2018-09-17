@@ -1,5 +1,5 @@
 import os
-os.environ['OMP_NUM_THREADS'] = '1'
+os.environ["OMP_NUM_THREADS"] = "1"
 import cv2
 cv2.setNumThreads(0)
 cv2.ocl.setUseOpenCL(False)
@@ -62,6 +62,6 @@ def main(args):
     print(f"Lines deleted: {n_lines} ({percent}%)")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = parse_args()
     main(args)

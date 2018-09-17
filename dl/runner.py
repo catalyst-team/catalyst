@@ -1,13 +1,14 @@
 import tqdm
 from pprint import pprint
 from collections import OrderedDict, defaultdict
+from argparse import Namespace
 from typing import Dict
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data as data
 
-from common.utils.helpers import prepare_model
+from common.utils.factory import UtilsFactory
 from common.utils.misc import FrozenClass
 from common.dl.callbacks import Callback
 
@@ -19,6 +20,7 @@ class RunnerState(FrozenClass):
 
     def __init__(self, **kwargs):
         # data
+        self.device = None
         self.input = None
         self.output = None
         self.loader = None
@@ -79,6 +81,7 @@ class AbstractModelRunner:
             pprint(optimizer)
             pprint(scheduler)
 
+        self.stage = None
         self.state = None
         self._init()
 
@@ -88,14 +91,19 @@ class AbstractModelRunner:
         As baseline, checks device support and puts model on it.
         :return:
         """
-        self.model, self.device = prepare_model(self.model)
+        self.model, self.device = UtilsFactory.prepare_model(self.model)
 
-    def _init_state(self):
+    def _init_state(self, *, mode, **kwargs):
         """
         Inner method for children's classes for state specific initialization.
         :return:
         """
-        return RunnerState(device=self.device)
+        return RunnerState(
+            device=self.device, model=self.model, stage=self.stage,
+            _criterion=self.criterion,
+            _optimizer=self.optimizer,
+            _scheduler=self.scheduler,
+            **kwargs)
 
     def run_event(
             self, *,
@@ -108,10 +116,7 @@ class AbstractModelRunner:
         :param event:
         """
         for callback in callbacks.values():
-            getattr(callback, event)(
-                state=self.state,
-                model=self.model, criterion=self.criterion,
-                optimizer=self.optimizer, scheduler=self.scheduler)
+            getattr(callback, event)(state=self.state)
 
     def run(
             self, *,
@@ -131,7 +136,7 @@ class AbstractModelRunner:
         assert isinstance(loaders, OrderedDict)
         assert isinstance(callbacks, OrderedDict)
 
-        self.state = self._init_state()
+        self.state = self._init_state(mode=mode)
 
         self.run_event(callbacks=callbacks, event=f"on_{mode}_start")
 
@@ -171,34 +176,71 @@ class AbstractModelRunner:
     def train(
             self, *,
             loaders: Dict[str, data.DataLoader],
-            callbacks: Dict[str, Callback],
-            epochs: int = 1):
+            args,
+            stages_config: Dict[str, Dict] = None,
+            verbose: bool = False):
         """
         Main method for training DL models.
 
         :param loaders: OrderedDict or torch DataLoaders to run on
         :param callbacks: OrderedDict of callback to use
-        :param epochs: number of epochs to run
+        :param stages_config: config
+        :param verbose: verbose flag
+        :param args: quick args for callbacks
         """
-        return self.run(
-            loaders=loaders, callbacks=callbacks,
-            epochs=epochs, mode="train", verbose=False)
+
+        loggers = UtilsFactory.create_loggers(args.logdir, loaders)
+
+        for key, value in stages_config.items():
+            self.stage = key
+            stage_stuff = UtilsFactory.prepare_stage(
+                model=self.model, stage_config=value)
+            pprint(stage_stuff)
+            epochs = stage_stuff["epochs"]
+            self.criterion, self.optimizer, self.scheduler = (
+                stage_stuff["criterion"],
+                stage_stuff["optimizer"],
+                stage_stuff["scheduler"]
+            )
+            args.epochs = epochs
+            callbacks = self.prepare_callbacks(
+                loggers=loggers, callbacks_params=value["callbacks_params"],
+                args=args, mode="train", stage=key)
+            self.run_event(callbacks=callbacks, event="on_stage_start")
+            self.run(
+                loaders=loaders, callbacks=callbacks,
+                epochs=epochs, mode="train", verbose=verbose)
+            self.run_event(callbacks=callbacks, event="on_stage_end")
 
     def infer(self, *,
               loaders: Dict[str, data.DataLoader],
               callbacks: Dict[str, Callback],
-              epochs: int = 1):
+              epochs: int = 1, verbose: bool = False):
         """
         Main method for predicting with DL models.
 
         :param loaders: OrderedDict or torch DataLoaders to run on
         :param callbacks: OrderedDict of callback to use
         :param epochs: number of epochs to run
+        :param verbose: verbose flag
         """
         return self.run(
             loaders=loaders, callbacks=callbacks,
-            epochs=epochs, mode="infer", verbose=True)
+            epochs=epochs, mode="infer", verbose=verbose)
+
+    def batch_handler(self, *, dct, model, state):
+        dct = {
+            key: value.to(state.device)
+            for key, value in dct.items()}
+        state.input = dct
+        state.bs = len(dct[list(dct.keys())[0]])  # @TODO: fixme
+        output = self._batch_handler(dct=dct, model=model)
+        return output
 
     @staticmethod
-    def batch_handler(*, dct, model, state):
+    def prepare_callbacks(*, loggers, callbacks_params, args, mode, stage=None):
+        raise NotImplementedError
+
+    @staticmethod
+    def _batch_handler(*, dct, model):
         raise NotImplementedError
