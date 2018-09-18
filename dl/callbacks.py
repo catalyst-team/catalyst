@@ -29,11 +29,7 @@ class Callback:
     mode end
     """
 
-    def on_stage_init(self, state): pass
-
-    def on_stage_start(self, state): pass
-
-    def on_stage_end(self, state): pass
+    def on_stage_init(self, model, stage): pass
 
     def on_train_start(self, state): pass
 

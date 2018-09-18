@@ -10,8 +10,9 @@ import torch.optim as optim
 import torch.utils.data as data
 
 from common.utils.factory import UtilsFactory
-from common.utils.misc import FrozenClass
+from common.utils.misc import FrozenClass, merge_dicts
 from common.dl.callbacks import Callback
+from common.dl.datasource import AbstractDataSource
 
 
 class RunnerState(FrozenClass):
@@ -114,6 +115,10 @@ class AbstractModelRunner:
             **kwargs,
             **additional_kwargs)
 
+    def run_stage_init(self, callbacks: Dict[str, Callback]):
+        for callback in callbacks.values():
+            callback.on_stage_init(model=self.model, stage=self.stage)
+
     def run_event(
             self, *,
             callbacks: Dict[str, Callback],
@@ -201,40 +206,62 @@ class AbstractModelRunner:
 
     def train(
             self, *,
-            loaders: Dict[str, data.DataLoader],
-            args,
+            datasource: AbstractDataSource,
+            args: Namespace,
             stages_config: Dict[str, Dict] = None,
             verbose: bool = False):
         """
         Main method for training DL models.
 
-        :param loaders: OrderedDict or torch DataLoaders to run on
+        :param datasource: AbstractDataSource instance
         :param args: console args
         :param stages_config: config
         :param verbose: verbose flag
         """
-        loggers = UtilsFactory.create_loggers(args.logdir, loaders)
 
-        for key, value in stages_config.items():
-            self.stage = key
-            UtilsFactory.prepare_stage_args(args=args, stage_config=value)
+        stages_data_params = stages_config.pop("data_params", {})
+        stages_callbacks_params = stages_config.pop("callbacks_params", {})
+        stages_criterion_params = stages_config.pop("criterion_params", {})
+        stages_optimizer_params = stages_config.pop("optimizer_params", {})
+        loaders = None
+
+        for stage, config in stages_config.items():
+            self.stage = stage
+
+            UtilsFactory.prepare_stage_args(args=args, stage_config=config)
             pprint(args)
 
+            data_params = merge_dicts(
+                stages_data_params, config.get("data_params", {}))
+            callbacks_params = merge_dicts(
+                stages_callbacks_params, config.get("callbacks_params", {}))
+            config["criterion_params"] = merge_dicts(
+                stages_criterion_params, config.get("criterion_params", {}))
+            config["optimizer_params"] = merge_dicts(
+                stages_optimizer_params, config.get("optimizer_params", {}))
+
+            reload_loaders = data_params.get("reload_loaders", True)
+
+            if loaders is None or reload_loaders:
+                loaders = datasource.prepare_loaders(
+                    args, data_params, stage=stage)
+                loggers = UtilsFactory.create_loggers(
+                    args.logdir, loaders)
             callbacks = self.prepare_callbacks(
-                loggers=loggers, callbacks_params=value["callbacks_params"],
-                args=args, mode="train", stage=key)
+                loggers=loggers, callbacks_params=callbacks_params,
+                args=args, mode="train", stage=stage)
+            pprint(loaders)
+            pprint(loggers)
             pprint(callbacks)
 
-            self.run_event(callbacks=callbacks, event="on_stage_init")
+            self.run_stage_init(callbacks=callbacks)
             self.criterion, self.optimizer, self.scheduler = \
                 UtilsFactory.prepare_stage_stuff(
-                    model=self.model, stage_config=value)
+                    model=self.model, stage_config=config)
 
-            self.run_event(callbacks=callbacks, event="on_stage_start")
             self.train_stage(
                 loaders=loaders, callbacks=callbacks,
                 epochs=args.epochs, verbose=verbose)
-            self.run_event(callbacks=callbacks, event="on_stage_end")
 
     def infer(
             self, *,

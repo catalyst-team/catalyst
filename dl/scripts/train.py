@@ -57,6 +57,7 @@ def parse_args():
     parser.add_argument("--model-dir", type=str, default=None)
     parser.add_argument("--config", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
+    parser.add_argument("--baselogdir", type=str, default=None)
     parser.add_argument(
         "--resume", default=None, type=str, metavar="PATH",
         help="path to latest checkpoint")
@@ -81,17 +82,22 @@ def main(args, unknown_args):
     pprint(config)
     set_global_seeds(args.seed)
 
+    assert args.baselogdir is not None or args.logdir is not None
+
+    if args.logdir is None:
+        modules_ = prepare_modules(model_dir=args.model_dir)
+        logdir = modules_["model"].prepare_logdir(config=config)
+        args.logdir = str(pathlib2.Path(args.baselogdir).joinpath(logdir))
+
     create_if_need(args.logdir)
     modules = prepare_modules(model_dir=args.model_dir, dump_dir=args.logdir)
 
     datasource = modules["data"].DataSource()
-    loaders = datasource.prepare_loaders(args, config["data_params"])
-
     model = modules["model"].prepare_model(config)
 
     runner = modules["model"].ModelRunner(model=model)
     runner.train(
-        loaders=loaders,
+        datasource=datasource,
         args=args,
         stages_config=config["stages"],
         verbose=args.verbose)
