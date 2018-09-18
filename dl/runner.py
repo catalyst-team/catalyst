@@ -3,6 +3,7 @@ from pprint import pprint
 from collections import OrderedDict, defaultdict
 from argparse import Namespace
 from typing import Dict
+from tensorboardX import SummaryWriter
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -37,7 +38,6 @@ class RunnerState(FrozenClass):
         self.loss = None
         self.epoch_metrics = None
         self.best_metrics = None
-        self.best_metric = None
 
         # other
         self.is_train = False
@@ -93,17 +93,26 @@ class AbstractModelRunner:
         """
         self.model, self.device = UtilsFactory.prepare_model(self.model)
 
-    def _init_state(self, *, mode, **kwargs):
+    def _init_state(self, *, mode, **kwargs) -> RunnerState:
         """
         Inner method for children's classes for state specific initialization.
-        :return:
+        :return: RunnerState with all necessary parameters.
         """
+        additional_kwargs = {}
+        # transfer previous counters from old state
+        if self.state is not None:
+            additional_kwargs = {
+                "step": self.state.step,
+                "epoch": self.state.epoch,
+                "best_metrics": self.state.best_metrics
+            }
         return RunnerState(
             device=self.device, model=self.model, stage=self.stage,
             _criterion=self.criterion,
             _optimizer=self.optimizer,
             _scheduler=self.scheduler,
-            **kwargs)
+            **kwargs,
+            **additional_kwargs)
 
     def run_event(
             self, *,
@@ -173,6 +182,23 @@ class AbstractModelRunner:
 
         self.run_event(callbacks=callbacks, event=f"on_{mode}_end")
 
+    def train_stage(
+            self, *,
+            loaders: Dict[str, data.DataLoader],
+            callbacks: Dict[str, Callback],
+            epochs: int = 1, verbose: bool = False):
+        """
+        One stage training method.
+
+        :param loaders: OrderedDict or torch DataLoaders to run on
+        :param callbacks: OrderedDict of callback to use
+        :param epochs: number of epochs to run
+        :param verbose: verbose flag
+        """
+        self.run(
+            loaders=loaders, callbacks=callbacks,
+            epochs=epochs, mode="train", verbose=verbose)
+
     def train(
             self, *,
             loaders: Dict[str, data.DataLoader],
@@ -183,39 +209,38 @@ class AbstractModelRunner:
         Main method for training DL models.
 
         :param loaders: OrderedDict or torch DataLoaders to run on
-        :param callbacks: OrderedDict of callback to use
+        :param args: console args
         :param stages_config: config
         :param verbose: verbose flag
-        :param args: quick args for callbacks
         """
-
         loggers = UtilsFactory.create_loggers(args.logdir, loaders)
 
         for key, value in stages_config.items():
             self.stage = key
-            stage_stuff = UtilsFactory.prepare_stage(
-                model=self.model, stage_config=value)
-            pprint(stage_stuff)
-            epochs = stage_stuff["epochs"]
-            self.criterion, self.optimizer, self.scheduler = (
-                stage_stuff["criterion"],
-                stage_stuff["optimizer"],
-                stage_stuff["scheduler"]
-            )
-            args.epochs = epochs
+            UtilsFactory.prepare_stage_args(args=args, stage_config=value)
+            pprint(args)
+
             callbacks = self.prepare_callbacks(
                 loggers=loggers, callbacks_params=value["callbacks_params"],
                 args=args, mode="train", stage=key)
+            pprint(callbacks)
+
+            self.run_event(callbacks=callbacks, event="on_stage_init")
+            self.criterion, self.optimizer, self.scheduler = \
+                UtilsFactory.prepare_stage_stuff(
+                    model=self.model, stage_config=value)
+
             self.run_event(callbacks=callbacks, event="on_stage_start")
-            self.run(
+            self.train_stage(
                 loaders=loaders, callbacks=callbacks,
-                epochs=epochs, mode="train", verbose=verbose)
+                epochs=args.epochs, verbose=verbose)
             self.run_event(callbacks=callbacks, event="on_stage_end")
 
-    def infer(self, *,
-              loaders: Dict[str, data.DataLoader],
-              callbacks: Dict[str, Callback],
-              epochs: int = 1, verbose: bool = False):
+    def infer(
+            self, *,
+            loaders: Dict[str, data.DataLoader],
+            callbacks: Dict[str, Callback],
+            epochs: int = 1, verbose: bool = False):
         """
         Main method for predicting with DL models.
 
@@ -228,7 +253,15 @@ class AbstractModelRunner:
             loaders=loaders, callbacks=callbacks,
             epochs=epochs, mode="infer", verbose=verbose)
 
-    def batch_handler(self, *, dct, model, state):
+    def batch_handler(self, *, dct, model, state) -> Dict:
+        """
+        Batch handler wrapper with main statistics and device management.
+
+        :param dct: key-value storage with input tensors
+        :param model: model to predict with
+        :param state: runner state
+        :return: key-value storage with model predictions
+        """
         dct = {
             key: value.to(state.device)
             for key, value in dct.items()}
@@ -238,9 +271,32 @@ class AbstractModelRunner:
         return output
 
     @staticmethod
-    def prepare_callbacks(*, loggers, callbacks_params, args, mode, stage=None):
+    def _batch_handler(*, dct, model) -> Dict:
+        """
+        Batch handler with model forward.
+
+        :param dct: key-value storage with input tensors
+        :param model: model to predict with
+        :return: key-value storage with model predictions
+        """
         raise NotImplementedError
 
     @staticmethod
-    def _batch_handler(*, dct, model):
+    def prepare_callbacks(
+            *,
+            loggers : Dict[str, SummaryWriter],
+            callbacks_params : Dict[str, Dict],
+            args : Namespace,
+            mode : str,
+            stage : str = None) -> Dict[str, Callback]:
+        """
+        Runner callbacks method to handle different runs logic.
+
+        :param loggers: SummaryWriter logger for LoggerCallback
+        :param callbacks_params: parameters for callbacks creation
+        :param args: console args
+        :param mode: train/infer
+        :param stage: training stage name
+        :return: OrderedDict with callbacks
+        """
         raise NotImplementedError

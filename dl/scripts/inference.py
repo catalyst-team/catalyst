@@ -38,11 +38,14 @@ def main(args, unknown_args):
 
     datasource = modules["data"].DataSource()
     loaders = datasource.prepare_loaders(args, config["data_params"])
-    model = modules["model"].prepare_model(args, config)
+    model = modules["model"].prepare_model(config)
 
     runner = modules["model"].ModelRunner(model=model)
     callbacks = runner.prepare_callbacks(
-        loggers=None, args=args, config=config, mode="infer")
+        loggers=None,
+        callbacks_params=config["callbacks_params"],
+        args=args,
+        mode="infer")
     runner.infer(loaders=loaders, callbacks=callbacks, verbose=args.verbose)
 
 

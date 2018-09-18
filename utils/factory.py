@@ -142,17 +142,15 @@ class UtilsFactory:
         return model, device
 
     @staticmethod
-    def prepare_stage(model, stage_config):
-        epochs = stage_config["epochs"]
-        criterion, optimizer, scheduler = UtilsFactory.create_model_stuff(
+    def prepare_stage_args(args, stage_config):
+        for key, value in stage_config.items():
+            if not isinstance(value, dict):
+                setattr(args, key, value)
+
+    @staticmethod
+    def prepare_stage_stuff(model, stage_config):
+        return UtilsFactory.create_model_stuff(
             model=model, config=stage_config)
-        stage_stuff = {
-            "epochs": epochs,
-            "criterion": criterion,
-            "optimizer": optimizer,
-            "scheduler": scheduler
-        }
-        return stage_stuff
 
     @staticmethod
     def get_val_from_metric(metric_value):
