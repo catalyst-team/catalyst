@@ -1,6 +1,6 @@
 import os
 import time
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from typing import Tuple, List, Dict
 import torch
 from torchnet import meter
@@ -9,6 +9,7 @@ from tensorboardX import SummaryWriter
 from common.utils.metrics import precision
 from common.utils.fp16 import Fp16Wrap, copy_params, copy_grads
 from common.utils.factory import UtilsFactory
+from common.utils.misc import FakeSummaryWriter
 
 
 class Callback:
@@ -52,25 +53,21 @@ class Callback:
     def on_batch_end(self, state): pass
 
 
-class BasicLoggerCallback(Callback):
+class LoggerCallback(Callback):
     """
     Logger callback, translates state.metrics to tensorboard and console output.
     """
     def __init__(
             self,
-            loggers: Dict[str, SummaryWriter],
-            default_bs: int,
+            loggers: Dict[str, SummaryWriter] = None,
             reset_step: bool = False):
         """
         :param loggers: loggers used during train/infer/debug.
-        :param default_bs: default batch size
-            for approximate epoch length calucation
         :param reset_step: boolean flag;
-            if False - logs will be combine during train/valid
+            if False - logs will be combined for train/valid
             if True  - logs will be separated
         """
-        self.loggers = loggers
-        self.default_bs = default_bs
+        self.loggers = loggers or defaultdict(lambda: FakeSummaryWriter())
         self.reset_step = reset_step
         self.epoch_metrics = OrderedDict()
         self.time = time.time()
@@ -84,7 +81,7 @@ class BasicLoggerCallback(Callback):
         self.time = time.time()
         state.step = (
                 state.step
-                or state.epoch * len(state.loader) * self.default_bs)
+                or state.epoch * len(state.loader) * state.loader.batch_size)
         state.epoch_metrics[lm] = {}
         self.epoch_metrics[lm] = {}
 
@@ -110,9 +107,11 @@ class BasicLoggerCallback(Callback):
         self.epoch_metrics[lm]["sample per second"].add(state.bs / elapsed_time)
         self.loggers[lm].add_scalar(
             "sample per second", state.bs / elapsed_time, state.step)
+
         for key, value in state.lr.items():
             self.epoch_metrics[lm][f"lr_{key}"].add(value)
             self.loggers[lm].add_scalar(f"lr_{key}", value, state.step)
+
         for key, value in state.momentum.items():
             self.epoch_metrics[lm][f"momentum_{key}"].add(value)
             self.loggers[lm].add_scalar(f"momentum_{key}", value, state.step)
@@ -156,9 +155,9 @@ class PrecisionCallback(Callback):
     """
     def __init__(
             self,
-            loggers: Dict[str, SummaryWriter],
-            input_key: str,
-            output_key: str,
+            loggers: Dict[str, SummaryWriter] = None,
+            input_key: str = "target",
+            output_key: str = "logits",
             precision_args: List[int] = None):
         """
         @TODO: make it loggers agnostic - all logs through LoggerCallback
@@ -173,7 +172,7 @@ class PrecisionCallback(Callback):
             [1, 3, 5] - precision at 1, 3 and 5
         """
         super().__init__()
-        self.loggers = loggers
+        self.loggers = loggers or defaultdict(lambda: FakeSummaryWriter())
         self.input_key = input_key
         self.output_key = output_key
         self.precision_args = precision_args or [1, 3, 5]
@@ -294,6 +293,8 @@ class CheckpointCallback(Callback):
             self.load_checkpoint(filename=self.resume, state=state)
 
     def on_train_start(self, state):
+        assert self.logdir is not None, \
+            "Please, specify logdir for callback usage"
         return self.on_mode_start(state=state)
 
     def on_infer_start(self, state):
@@ -341,7 +342,7 @@ class CheckpointCallback(Callback):
         print(top_best_metrics_str)
 
 
-class BasicOptimizerCallback(Callback):
+class OptimizerCallback(Callback):
     """
     Optimizer callback, abstraction over optimizer step.
     """
@@ -426,15 +427,12 @@ class LRUpdater(Callback):
     """Basic class that all Lr updaters inherit from"""
     def __init__(
             self,
-            init_lr: float,
             optimizer_key: str = "main"):
         """
-        :param init_lr: initial learning rate to use
-            @TODO: pick it automatically from optimizer
         :param optimizer_key: which optimizer key to use
             for learning rate scheduling
         """
-        self.init_lr = init_lr
+        self.init_lr = 0
         self.optimizer_key = optimizer_key
 
     def calc_lr(self):
@@ -473,6 +471,9 @@ class LRUpdater(Callback):
             state.lr[self.optimizer_key] = 0
             state.momentum[self.optimizer_key] = 0
 
+    def on_train_start(self, state):
+        self.init_lr = state._optimizer[self.optimizer_key].defaults["lr"]
+
     def on_loader_start(self, state):
         self.update_optimizer(state=state, optimizer=state._optimizer)
 
@@ -488,7 +489,6 @@ class OneCycleLR(LRUpdater):
     """
     def __init__(
             self,
-            init_lr: float,
             cycle_len: int,
             div: int,
             cut_div: int,
@@ -505,7 +505,7 @@ class OneCycleLR(LRUpdater):
         :param optimizer_key: which optimizer key to use
             for learning rate scheduling
         """
-        super().__init__(init_lr=init_lr, optimizer_key=optimizer_key)
+        super().__init__(optimizer_key=optimizer_key)
         self.total_iter = None
         self.div = div
         self.cut_div = cut_div
@@ -599,3 +599,10 @@ class LRFinder(LRUpdater):
             self.multiplier = lr_ ** (1 / self.n_steps)
 
         super().on_loader_start(state=state)
+
+
+class ClassificationLossCallback(Callback):
+    def on_batch_end(self, state):
+        state.loss = state._criterion["main"](
+            state.output["logits"],
+            state.input["target"])

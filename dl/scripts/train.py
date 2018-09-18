@@ -5,8 +5,7 @@ import pathlib2
 from datetime import datetime
 from pprint import pprint
 
-from common.utils.factory import UtilsFactory
-from common.utils.args import parse_args_uargs
+from common.utils.args import parse_args_uargs, save_config
 from common.utils.misc import \
     create_if_need, set_global_seeds, boolean_flag, import_module
 
@@ -90,6 +89,7 @@ def main(args, unknown_args):
         args.logdir = str(pathlib2.Path(args.baselogdir).joinpath(logdir))
 
     create_if_need(args.logdir)
+    save_config(config=config, logdir=args.logdir)
     modules = prepare_modules(model_dir=args.model_dir, dump_dir=args.logdir)
 
     datasource = modules["data"].DataSource()

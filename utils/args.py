@@ -96,8 +96,12 @@ def parse_args_uargs(args, unknown_args, dump_config=False):
             setattr(args_, key, arg_value)
 
     if dump_config and getattr(args_, "logdir", None) is not None:
-        create_if_need(args_.logdir)
-        with open("{}/config.json".format(args_.logdir), "w") as fout:
-            json.dump(config, fout, indent=2)
+        save_config(config=config, logdir=args_.logdir)
 
     return args_, config
+
+
+def save_config(config, logdir):
+    create_if_need(logdir)
+    with open("{}/config.json".format(logdir), "w") as fout:
+        json.dump(config, fout, indent=2)

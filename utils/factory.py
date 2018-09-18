@@ -40,7 +40,7 @@ class UtilsFactory:
     @staticmethod
     def create_loggers(logdir, loaders):
         create_if_need(logdir)
-        logfile = open("{logdir}/log.txt".format(logdir=logdir), "w+")
+        logfile = open("{logdir}/log.txt".format(logdir=logdir), "a")
         sys.stdout = stream_tee(sys.stdout, logfile)
 
         loggers = []

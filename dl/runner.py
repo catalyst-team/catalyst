@@ -68,13 +68,16 @@ class AbstractModelRunner:
         :param scheduler: OrderedDict with torch schedulers for optimizers lrs
         :param debug: boolean flag for all info printing
         """
-        assert criterion is None or isinstance(criterion, OrderedDict)
-        assert optimizer is None or isinstance(optimizer, OrderedDict)
-        assert scheduler is None or isinstance(scheduler, OrderedDict)
         self.model = model
         self.criterion = criterion or {}
         self.optimizer = optimizer or {}
         self.scheduler = scheduler or {}
+
+        stuff_handler = lambda x: {"main": x} if not isinstance(x, dict) else x
+
+        self.criterion = stuff_handler(self.criterion)
+        self.optimizer = stuff_handler(self.optimizer)
+        self.scheduler = stuff_handler(self.scheduler)
 
         if debug:
             pprint(model)
@@ -82,8 +85,8 @@ class AbstractModelRunner:
             pprint(optimizer)
             pprint(scheduler)
 
-        self.stage = None
         self.state = None
+        self.stage = None
         self._init()
 
     def _init(self):
@@ -94,7 +97,7 @@ class AbstractModelRunner:
         """
         self.model, self.device = UtilsFactory.prepare_model(self.model)
 
-    def _init_state(self, *, mode, **kwargs) -> RunnerState:
+    def _init_state(self, *, mode: str, **kwargs) -> RunnerState:
         """
         Inner method for children's classes for state specific initialization.
         :return: RunnerState with all necessary parameters.
@@ -191,7 +194,8 @@ class AbstractModelRunner:
             self, *,
             loaders: Dict[str, data.DataLoader],
             callbacks: Dict[str, Callback],
-            epochs: int = 1, verbose: bool = False):
+            epochs: int = 1, verbose: bool = False,
+            logdir: str = None):
         """
         One stage training method.
 
@@ -199,7 +203,16 @@ class AbstractModelRunner:
         :param callbacks: OrderedDict of callback to use
         :param epochs: number of epochs to run
         :param verbose: verbose flag
+        :param logdir: logdir for tensorboard logs
         """
+        # @TODO: better solution
+        if logdir is not None:
+            loggers = UtilsFactory.create_loggers(logdir, loaders)
+            for key, value in callbacks.items():
+                if hasattr(value, "loggers"):
+                    value.loggers = loggers
+                if hasattr(value, "logdir"):
+                    value.logdir = logdir
         self.run(
             loaders=loaders, callbacks=callbacks,
             epochs=epochs, mode="train", verbose=verbose)
@@ -245,13 +258,10 @@ class AbstractModelRunner:
             if loaders is None or reload_loaders:
                 loaders = datasource.prepare_loaders(
                     args, data_params, stage=stage)
-                loggers = UtilsFactory.create_loggers(
-                    args.logdir, loaders)
             callbacks = self.prepare_callbacks(
-                loggers=loggers, callbacks_params=callbacks_params,
+                callbacks_params=callbacks_params,
                 args=args, mode="train", stage=stage)
             pprint(loaders)
-            pprint(loggers)
             pprint(callbacks)
 
             self.run_stage_init(callbacks=callbacks)
@@ -261,7 +271,8 @@ class AbstractModelRunner:
 
             self.train_stage(
                 loaders=loaders, callbacks=callbacks,
-                epochs=args.epochs, verbose=verbose)
+                epochs=args.epochs, verbose=verbose,
+                logdir=args.logdir)
 
     def infer(
             self, *,
@@ -280,7 +291,11 @@ class AbstractModelRunner:
             loaders=loaders, callbacks=callbacks,
             epochs=epochs, mode="infer", verbose=verbose)
 
-    def batch_handler(self, *, dct, model, state) -> Dict:
+    def batch_handler(
+            self, *,
+            dct: Dict,
+            model: nn.Module,
+            state: RunnerState = None) -> Dict:
         """
         Batch handler wrapper with main statistics and device management.
 
@@ -298,7 +313,10 @@ class AbstractModelRunner:
         return output
 
     @staticmethod
-    def _batch_handler(*, dct, model) -> Dict:
+    def _batch_handler(
+            *,
+            dct: Dict,
+            model: nn.Module) -> Dict:
         """
         Batch handler with model forward.
 
@@ -311,7 +329,6 @@ class AbstractModelRunner:
     @staticmethod
     def prepare_callbacks(
             *,
-            loggers : Dict[str, SummaryWriter],
             callbacks_params : Dict[str, Dict],
             args : Namespace,
             mode : str,
@@ -319,7 +336,6 @@ class AbstractModelRunner:
         """
         Runner callbacks method to handle different runs logic.
 
-        :param loggers: SummaryWriter logger for LoggerCallback
         :param callbacks_params: parameters for callbacks creation
         :param args: console args
         :param mode: train/infer
@@ -327,3 +343,31 @@ class AbstractModelRunner:
         :return: OrderedDict with callbacks
         """
         raise NotImplementedError
+
+
+class ClassificationRunner(AbstractModelRunner):
+    def batch_handler(
+            self, *,
+            dct: Dict,
+            model: nn.Module,
+            state: RunnerState = None) -> Dict:
+        """
+        Batch handler wrapper with main statistics and device management.
+
+        :param dct: key-value storage with input tensors
+        :param model: model to predict with
+        :param state: runner state
+        :return: key-value storage with model predictions
+        """
+        if isinstance(dct, (tuple, list)):
+            assert len(dct) == 2
+            dct = {"features": dct[0], "target": dct[1]}
+        dct = {
+            key: value.to(state.device)
+            for key, value in dct.items()}
+        if state is not None:
+            state.input = dct
+            state.bs = len(dct["features"])
+        logits = model(dct["features"])
+        output = {"logits": logits}
+        return output
