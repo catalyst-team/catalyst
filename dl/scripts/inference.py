@@ -42,7 +42,6 @@ def main(args, unknown_args):
 
     runner = modules["model"].ModelRunner(model=model)
     callbacks = runner.prepare_callbacks(
-        loggers=None,
         callbacks_params=config["callbacks_params"],
         args=args,
         mode="infer")
