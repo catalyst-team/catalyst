@@ -143,9 +143,9 @@ class UtilsFactory:
 
     @staticmethod
     def prepare_stage_args(args, stage_config):
-        for key, value in stage_config.items():
-            if not isinstance(value, dict):
-                setattr(args, key, value)
+        for key, value in stage_config.get("args", {}).items():
+            setattr(args, key, value)
+        return args
 
     @staticmethod
     def prepare_stage_stuff(model, stage_config):

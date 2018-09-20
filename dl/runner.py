@@ -64,7 +64,11 @@ class AbstractModelRunner:
         """
         self.model, self.device = UtilsFactory.prepare_model(self.model)
 
-    def _init_state(self, *, mode: str, **kwargs) -> RunnerState:
+    def _init_state(
+            self, *,
+            mode: str,
+            stage: str = None,
+            **kwargs) -> RunnerState:
         """
         Inner method for children's classes for state specific initialization.
         :return: RunnerState with all necessary parameters.
@@ -106,7 +110,7 @@ class AbstractModelRunner:
             self, *,
             loaders: Dict[str, data.DataLoader],
             callbacks: Dict[str, Callback],
-            epochs: int = 1,
+            epochs: int = 1, start_epoch: int = 0,
             mode: str = "train", verbose: bool = False):
         """
         Main method for running train/valid/infer/debug pipeline over model.
@@ -114,17 +118,18 @@ class AbstractModelRunner:
         :param loaders: OrderedDict or torch DataLoaders to run on
         :param callbacks: OrderedDict of callback to use
         :param epochs: number of epochs to run
+        :param start_epoch:
         :param mode: mode - train/infer/debug
         :param verbose: boolean flag for tqdm progress bar
         """
         assert isinstance(loaders, OrderedDict)
         assert isinstance(callbacks, OrderedDict)
 
-        self.state = self._init_state(mode=mode)
+        self.state = self._init_state(mode=mode, stage=self.stage)
 
         self.run_event(callbacks=callbacks, event=f"on_{mode}_start")
 
-        for epoch in range(epochs):
+        for epoch in range(start_epoch, start_epoch + epochs):
             self.state.epoch = epoch
 
             self.run_event(callbacks=callbacks, event="on_epoch_start")
@@ -161,7 +166,8 @@ class AbstractModelRunner:
             self, *,
             loaders: Dict[str, data.DataLoader],
             callbacks: Dict[str, Callback],
-            epochs: int = 1, verbose: bool = False,
+            epochs: int = 1, start_epoch: int = 0,
+            verbose: bool = False,
             logdir: str = None):
         """
         One stage training method.
@@ -169,6 +175,7 @@ class AbstractModelRunner:
         :param loaders: OrderedDict or torch DataLoaders to run on
         :param callbacks: OrderedDict of callback to use
         :param epochs: number of epochs to run
+        :param start_epoch:
         :param verbose: verbose flag
         :param logdir: logdir for tensorboard logs
         """
@@ -182,7 +189,8 @@ class AbstractModelRunner:
                     value.logdir = logdir
         self.run(
             loaders=loaders, callbacks=callbacks,
-            epochs=epochs, mode="train", verbose=verbose)
+            epochs=epochs, start_epoch=start_epoch,
+            mode="train", verbose=verbose)
 
     def train(
             self, *,
@@ -208,11 +216,18 @@ class AbstractModelRunner:
         for stage, config in stages_config.items():
             self.stage = stage
 
-            UtilsFactory.prepare_stage_args(args=args, stage_config=config)
+            args = UtilsFactory.prepare_stage_args(
+                args=args, stage_config=config)
             pprint(args)
 
             data_params = merge_dicts(
                 stages_data_params, config.get("data_params", {}))
+            reload_loaders = data_params.get("reload_loaders", True)
+
+            if loaders is None or reload_loaders:
+                loaders = datasource.prepare_loaders(
+                    args, data_params, stage=stage)
+
             callbacks_params = merge_dicts(
                 stages_callbacks_params, config.get("callbacks_params", {}))
             config["criterion_params"] = merge_dicts(
@@ -220,11 +235,6 @@ class AbstractModelRunner:
             config["optimizer_params"] = merge_dicts(
                 stages_optimizer_params, config.get("optimizer_params", {}))
 
-            reload_loaders = data_params.get("reload_loaders", True)
-
-            if loaders is None or reload_loaders:
-                loaders = datasource.prepare_loaders(
-                    args, data_params, stage=stage)
             callbacks = self.prepare_callbacks(
                 callbacks_params=callbacks_params,
                 args=args, mode="train", stage=stage)
@@ -238,8 +248,9 @@ class AbstractModelRunner:
 
             self.train_stage(
                 loaders=loaders, callbacks=callbacks,
-                epochs=args.epochs, verbose=verbose,
-                logdir=args.logdir)
+                epochs=args.epochs,
+                start_epoch=0 if self.state is None else self.state.epoch,
+                verbose=verbose, logdir=args.logdir)
 
     def infer(
             self, *,
