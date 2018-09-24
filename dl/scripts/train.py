@@ -5,8 +5,8 @@ import pathlib2
 from datetime import datetime
 from pprint import pprint
 
-from common.utils.args import parse_args_uargs, save_config
-from common.utils.misc import \
+from prometheus.utils.args import parse_args_uargs, save_config
+from prometheus.utils.misc import \
     create_if_need, set_global_seeds, boolean_flag, import_module
 
 
@@ -27,9 +27,9 @@ def prepare_modules(model_dir, dump_dir=None):
         create_if_need(new_model_dir)
 
         # @TODO: hardcoded
-        old_common_dir = os.path.dirname(os.path.abspath(__file__)) + "/../../"
-        new_common_dir = dump_dir + f"/{new_src_dir}/common/"
-        shutil.copytree(old_common_dir, new_common_dir)
+        old_prometheus_dir = os.path.dirname(os.path.abspath(__file__)) + "/../../"
+        new_prometheus_dir = dump_dir + f"/{new_src_dir}/prometheus/"
+        shutil.copytree(old_prometheus_dir, new_prometheus_dir)
 
     pyfiles = list(map(
         lambda x: x.name[:-3],

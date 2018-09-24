@@ -1,6 +1,6 @@
 import pandas as pd
 import json
-from common.utils.data import default_fold_split, stratified_fold_split, \
+from prometheus.utils.data import default_fold_split, stratified_fold_split, \
     split_dataframe
 
 

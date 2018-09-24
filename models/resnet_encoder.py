@@ -19,7 +19,7 @@ class ResnetEncoder(nn.Module):
             **kwargs):
         super().__init__()
         # hack to prevent cycle imports
-        from common.modules.modules import name2nn
+        from prometheus.modules.modules import name2nn
 
         resnet = torchvision.models.__dict__[arch](pretrained=pretrained)
         modules = list(resnet.children())[:-cut_layers]  # delete last layers

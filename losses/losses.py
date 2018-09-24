@@ -1,8 +1,8 @@
 import torch
-import common.losses.unet as unet_loss
-import common.losses.center_loss as center_loss
-import common.losses.contrastive as contrastive_loss
-import common.losses.huber as huber_loss
+import prometheus.losses.unet as unet_loss
+import prometheus.losses.center_loss as center_loss
+import prometheus.losses.contrastive as contrastive_loss
+import prometheus.losses.huber as huber_loss
 
 
 LOSSES = {

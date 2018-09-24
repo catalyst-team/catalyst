@@ -8,11 +8,11 @@ import torch.nn as nn
 import torch.backends.cudnn as cudnn
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
-from common.optimizers.optimizers import OPTIMIZERS
-from common.losses.losses import LOSSES
-from common.data.dataset import ListDataset
-from common.utils.fp16 import Fp16Wrap, network_to_half
-from common.utils.misc import create_if_need, stream_tee
+from prometheus.optimizers.optimizers import OPTIMIZERS
+from prometheus.losses.losses import LOSSES
+from prometheus.data.dataset import ListDataset
+from prometheus.utils.fp16 import Fp16Wrap, network_to_half
+from prometheus.utils.misc import create_if_need, stream_tee
 
 
 class UtilsFactory:

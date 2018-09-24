@@ -8,11 +8,11 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data as data
 
-from common.utils.factory import UtilsFactory
-from common.utils.misc import merge_dicts
-from common.dl.callbacks import Callback
-from common.dl.datasource import AbstractDataSource
-from common.dl.state import RunnerState
+from prometheus.utils.factory import UtilsFactory
+from prometheus.utils.misc import merge_dicts
+from prometheus.dl.callbacks import Callback
+from prometheus.dl.datasource import AbstractDataSource
+from prometheus.dl.state import RunnerState
 
 
 class AbstractModelRunner:

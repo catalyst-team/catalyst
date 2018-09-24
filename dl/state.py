@@ -1,5 +1,5 @@
 from collections import defaultdict
-from common.utils.misc import FrozenClass
+from prometheus.utils.misc import FrozenClass
 
 
 class RunnerState(FrozenClass):

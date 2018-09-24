@@ -2,7 +2,7 @@ import argparse
 import json
 import pandas as pd
 
-from common.utils.data import create_dataset, create_dataframe, \
+from prometheus.utils.data import create_dataset, create_dataframe, \
     prepare_dataset_labeling, separate_tags
 
 

@@ -1,8 +1,8 @@
 import argparse
 from pprint import pprint
-from common.utils.args import parse_args_uargs
-from common.utils.misc import set_global_seeds, boolean_flag
-from common.dl.scripts.train import prepare_modules
+from prometheus.utils.args import parse_args_uargs
+from prometheus.utils.misc import set_global_seeds, boolean_flag
+from prometheus.dl.scripts.train import prepare_modules
 
 
 def parse_args():

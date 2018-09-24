@@ -8,10 +8,10 @@ cv2.ocl.setUseOpenCL(False)
 import torch
 from torchvision import transforms
 
-from common.utils.helpers import prepare_model
-from common.data.reader import ImageReader
-from common.utils.defaults import create_loader
-from common.models.resnet_encoder import ResnetEncoder
+from prometheus.utils.helpers import prepare_model
+from prometheus.data.reader import ImageReader
+from prometheus.utils.defaults import create_loader
+from prometheus.models.resnet_encoder import ResnetEncoder
 
 IMG_SIZE = (224, 224)
 IMAGENET_NORM = transforms.Normalize(

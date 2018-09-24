@@ -6,10 +6,10 @@ import torch
 from torchnet import meter
 from tensorboardX import SummaryWriter
 
-from common.utils.metrics import precision
-from common.utils.fp16 import Fp16Wrap, copy_params, copy_grads
-from common.utils.factory import UtilsFactory
-from common.utils.misc import FakeSummaryWriter
+from prometheus.utils.metrics import precision
+from prometheus.utils.fp16 import Fp16Wrap, copy_params, copy_grads
+from prometheus.utils.factory import UtilsFactory
+from prometheus.utils.misc import FakeSummaryWriter
 
 
 class Callback:
