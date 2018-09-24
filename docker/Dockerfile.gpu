@@ -29,7 +29,7 @@ RUN apt-get update -y && apt-get install -y \
     libboost-dev \
     libboost-system-dev \
     libboost-filesystem-dev \
-    software-properties-prometheus
+    software-properties-common
 
 # Install python
 RUN add-apt-repository -y ppa:jonathonf/python-3.6 \
@@ -69,7 +69,8 @@ RUN pip install --upgrade --no-cache-dir pip && pip install --no-cache-dir \
     Shapely==1.6.4.post1 \
     six==1.11.0 \
     tqdm==4.23.4 \
-    pyyaml==3.13
+    pyyaml==3.13 \
+    pathlib2==2.3.2
 
 RUN pip install --no-cache-dir \
     torch==0.4.1 \

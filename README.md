@@ -12,7 +12,7 @@ Best coding practices included.
 - Configuration files - yaml for model/data hyperparameters.
 - Loggers and Tensorboard support.
 - Reproducibility - even source code will be saved to logs.
-- OneCycle lr scheduler.
+- OneCycle lr scheduler and LRFinder support.
 - FP16 support for any model.
 - Corrected weight decay (AdamW).
 - N-best-checkpoints saving (SWA).
@@ -129,4 +129,3 @@ tl;dr:
 - prometheus pic
 - distributed training (with fp16 support)
 - Horovod support
-g

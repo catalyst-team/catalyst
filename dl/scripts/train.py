@@ -27,9 +27,9 @@ def prepare_modules(model_dir, dump_dir=None):
         create_if_need(new_model_dir)
 
         # @TODO: hardcoded
-        old_prometheus_dir = os.path.dirname(os.path.abspath(__file__)) + "/../../"
-        new_prometheus_dir = dump_dir + f"/{new_src_dir}/prometheus/"
-        shutil.copytree(old_prometheus_dir, new_prometheus_dir)
+        old_pro_dir = os.path.dirname(os.path.abspath(__file__)) + "/../../"
+        new_pro_dir = dump_dir + f"/{new_src_dir}/prometheus/"
+        shutil.copytree(old_pro_dir, new_pro_dir)
 
     pyfiles = list(map(
         lambda x: x.name[:-3],

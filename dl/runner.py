@@ -78,7 +78,7 @@ class AbstractModelRunner:
         if self.state is not None:
             additional_kwargs = {
                 "step": self.state.step,
-                "epoch": self.state.epoch,
+                "epoch": self.state.epoch + 1,
                 "best_metrics": self.state.best_metrics
             }
         return RunnerState(

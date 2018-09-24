@@ -28,6 +28,6 @@ export LOGDIR=...
 docker run -it --rm \
    -v $(pwd):/src -v $LOGDIR:/logdir/ \
    -e CUDA_VISIBLE_DEVICES= -e PYTHONPATH=. \
-   pro-gpu python commom/dl/scripts/train.py \
+   pro-gpu python prometheus/dl/scripts/train.py \
    --config=./configs/train.yml --logdir=/logdir
 ```

@@ -54,7 +54,8 @@ RUN pip install --upgrade --no-cache-dir pip && pip install --no-cache-dir \
     Shapely==1.6.4.post1 \
     six==1.11.0 \
     tqdm==4.23.4 \
-    pyyaml==3.13
+    pyyaml==3.13 \
+    pathlib2==2.3.2
 
 RUN pip install --no-cache-dir \
     http://download.pytorch.org/whl/cpu/torch-0.4.1-cp36-cp36m-linux_x86_64.whl \
