@@ -1,46 +1,52 @@
-# PyTorch common
-Common utils for PyTorch DL/RL research. In development. py36.
-
+# Prometheus
+High-level utils for PyTorch DL/RL research.
+It was developed with a focus on reproducibility, fast experimentation and code/ideas/models reusing.
+Being able to research/develop something new, rather then write another regular train loop.
+Best coding practices included.
 
 ## Features
 
 - Universal train/inference loop.
-- Key-values storage, key-values storage everywhere!
-- Data and model usage standardization. 
+- Key-values storages.
+- Data and model usage standardization.
 - Configuration files - yaml for model/data hyperparameters.
 - Loggers and Tensorboard support.
-- Reproducibility - whole source code will be saved to logs.
+- Reproducibility - even source code will be saved to logs.
 - OneCycle lr scheduler.
 - FP16 support for any model.
 - Corrected weight decay (AdamW).
 - N-best-checkpoints saving (SWA).
-- Callbacks - reusable train/infer pipeline parts (and you can write your own if needed).
+- Training stages support - run whole experiment by one command.
+- Logdir autonaming based on hyperparameters - make hyperopt search easy again.
+- Callbacks - reusable train/inference pipeline parts (and you can write your own if needed).
 - Well structed, so you can just grab a part to your project.
-- Lots of reusable code for different purposes (losses, optimizers, models, knns, embeddings projector).
+- Lots of reusable code for different purposes: losses, optimizers, models, knns, embeddings projector.
 
+Prometheus is compatible with: Python 3.6+. In development.
 
-## How it works?
+## How it works
 
 ### Deep learning
 
 #### Train
 ```bash
-CUDA_VISIBLE_DEVICES="{gpus}" PYTHONPATH=. python commom/dl/scripts/train.py \
-    --model-dir=/path/to/model \
-    --config=/path/to/config-file \
-    --logdir=/path/to/logging-directory
+CUDA_VISIBLE_DEVICES="{gpus}" PYTHONPATH=. \
+    python prometheus/dl/scripts/train.py \
+    --config=/path/to/config-file
 ```
 
 #### Inference
 ```bash
-CUDA_VISIBLE_DEVICES="{gpus}" PYTHONPATH=. python commom/dl/scripts/inference.py \
-    --model-dir=/path/to/model \
+CUDA_VISIBLE_DEVICES="{gpus}" PYTHONPATH=. \
+    python prometheus/dl/scripts/inference.py \
     --config=/path/to/config-file,/path/to/inference-config-file \
     --resume=/path/to/checkpoint
 ```
 
 
-### Reinforcement learning (in development)
+### Reinforcement learning [WIP]
+
+Waiting for NIPS end. Release date - December 2018.
 
 #### Redis server
 
@@ -52,37 +58,38 @@ redis-server --port 12000
 
 ```bash
 CUDA_VISIBLE_DEVICES="{gpus}" PYTHONPATH=. \
-    python common/rl/offpolicy/scripts/run_trainer.py \
-    --algorithm=/path/to/algo-file \
-    --config=/path/to/config-file \
-    --logdir=/path/to/logging-directory
+    python prometheus/rl/offpolicy/scripts/run_trainer.py \
+    --config=/path/to/config-file
 ```
 
 #### Samplers
 
 ```bash
 CUDA_VISIBLE_DEVICES="" PYTHONPATH=. \
-    python common/rl/offpolicy/scripts/run_samplers.py \
-    --environment=/path/to/env-file \
-    --config=/path/to/config-file \
-    --logdir=/path/to/logging-directory
-    --infer=1 --train=16
+    python prometheus/rl/offpolicy/scripts/run_samplers.py \
+    --config=/path/to/config-file
 ```
 
 ## Dependencies
 ```bash
-pip install git+https://github.com/pytorch/tnt.git@master
-pip install tensorboardX jpeg4py
+pip install git+https://github.com/pytorch/tnt.git@master \
+    tensorboardX jpeg4py albumentations
 ```
+
+
+## Docker
+
+See `./docker` for more information and examples.
+
 
 ## Usage
 ```bash
-git submodule add https://github.com/Scitator/pytorch-common.git common
+git submodule add https://github.com/Scitator/prometheus.git prometheus
 ```
 
 ## Examples
 
-https://github.com/Scitator/pytorch-common-examples
+https://github.com/Scitator/prometheus-examples
 
 ## Better to use with
 
@@ -90,7 +97,7 @@ CV augmentations – https://github.com/albu/albumentations
 
 ## Contribution guide
 
-tltr;
+tl;dr:
 - right margin - 80
 - double quotes
 - full names: 
@@ -117,13 +124,9 @@ tltr;
 - \* in funcs for force key-value args
 
 
-## Todo
+## Future features
 
-- docs
-- tests
-- docker
-- examples
-- auto codestyle check
+- prometheus pic
 - distributed training (with fp16 support)
-- Horovod
-- stable version
+- Horovod support
+g

@@ -1,6 +1,7 @@
-from typing import Dict, Callable, List
+from typing import Dict, Callable
 
-class Augmentor(object):
+
+class Augmentor:
     """
     Augmentation abstraction to use with data dictionaries.
     """

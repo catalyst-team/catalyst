@@ -187,3 +187,8 @@ class FrozenClass(object):
 
     def _freeze(self):
         self.__isfrozen = True
+
+
+class FakeSummaryWriter:
+    def add_scalar(self, *args, **kwargs):
+        pass

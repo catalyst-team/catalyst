@@ -3,11 +3,11 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from common.data.reader import TextReader
-from common.utils.text import \
+from prometheus.data.reader import TextReader
+from prometheus.utils.text import \
     create_fasttext_encode_fn, create_gensim_encode_fn
-from common.utils.defaults import create_loader
-from common.utils.misc import boolean_flag
+from prometheus.utils.defaults import create_loader
+from prometheus.utils.misc import boolean_flag
 
 
 def parse_args():

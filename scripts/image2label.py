@@ -9,9 +9,9 @@ cv2.ocl.setUseOpenCL(False)
 import torch
 from torchvision import models, transforms
 
-from common.utils.helpers import prepare_model
-from common.data.reader import ImageReader
-from common.utils.defaults import create_loader
+from prometheus.utils.helpers import prepare_model
+from prometheus.data.reader import ImageReader
+from prometheus.utils.defaults import create_loader
 
 
 IMG_SIZE = (224, 224)
