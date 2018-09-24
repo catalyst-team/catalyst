@@ -129,3 +129,4 @@ tl;dr:
 - prometheus pic
 - distributed training (with fp16 support)
 - Horovod support
+g
