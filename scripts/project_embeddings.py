@@ -77,7 +77,9 @@ def main(args):
 
     features = np.load(args.in_npy, mmap_mode="r")
     if args.n_rows is not None:
-        rows_ids = np.random.choice(np.arange(0, len(features)), size=args.n_rows)
+        rows_ids = np.random.choice(
+            np.arange(0, len(features)),
+            size=args.n_rows)
         features = features[rows_ids, :]
         df = df.iloc[rows_ids]
 

@@ -42,14 +42,16 @@ class DecoderBlock(nn.Module):
 
 
 class DecoderBlockV2(nn.Module):
-    def __init__(self, in_channels, middle_channels, out_channels, is_deconv=True):
+    def __init__(
+            self, in_channels, middle_channels, out_channels,
+            is_deconv=True):
         super(DecoderBlockV2, self).__init__()
         self.in_channels = in_channels
 
         if is_deconv:
             """
-                Paramaters for Deconvolution were chosen to avoid artifacts, following
-                link https://distill.pub/2016/deconv-checkerboard/
+                Paramaters for Deconvolution were chosen to avoid artifacts,
+                following link https://distill.pub/2016/deconv-checkerboard/
             """
 
             self.block = nn.Sequential(
@@ -142,7 +144,12 @@ class UNetVgg11(nn.Module):
 
 
 class UNetVgg16(nn.Module):
-    def __init__(self, num_classes=1, num_filters=32, pretrained=False, is_deconv=False):
+    def __init__(
+            self,
+            num_classes=1,
+            num_filters=32,
+            pretrained=False,
+            is_deconv=False):
         """
         :param num_classes:
         :param num_filters:
@@ -253,13 +260,19 @@ class UNetVgg16(nn.Module):
 
 class UNetRes34(nn.Module):
     """
-    UNet (https://arxiv.org/abs/1505.04597) with Resnet34(https://arxiv.org/abs/1512.03385) encoder
+    UNet (https://arxiv.org/abs/1505.04597)
+        with Resnet34(https://arxiv.org/abs/1512.03385) encoder
 
     Proposed by Alexander Buslaev: https://www.linkedin.com/in/al-buslaev/
 
     """
 
-    def __init__(self, num_classes=1, num_filters=32, pretrained=False, is_deconv=False):
+    def __init__(
+            self,
+            num_classes=1,
+            num_filters=32,
+            pretrained=False,
+            is_deconv=False):
         """
         :param num_classes:
         :param num_filters:

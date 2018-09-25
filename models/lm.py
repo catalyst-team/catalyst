@@ -22,7 +22,9 @@ class RNNModel(nn.Module):
                     """An invalid option for `--model` was supplied,
                     options are ["LSTM", "GRU", "RNN_TANH" or "RNN_RELU"]""")
             self.rnn = nn.RNN(
-                ninp, nhid, nlayers, nonlinearity=nonlinearity, dropout=dropout)
+                ninp, nhid, nlayers,
+                nonlinearity=nonlinearity,
+                dropout=dropout)
         self.decoder = nn.Linear(nhid, ntoken)
 
         # Optionally tie weights as in:

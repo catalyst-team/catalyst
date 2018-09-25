@@ -9,4 +9,3 @@ class AbstractDataSource:
     @staticmethod
     def prepare_loaders(args, data_params, stage=None):
         raise NotImplementedError
-

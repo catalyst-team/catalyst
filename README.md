@@ -22,7 +22,7 @@ Best coding practices included.
 - Well structed, so you can just grab a part to your project.
 - Lots of reusable code for different purposes: losses, optimizers, models, knns, embeddings projector.
 
-Prometheus is compatible with: Python 3.6+. In development.
+Prometheus is compatible with: Python 3.6. In development.
 
 ## How it works
 

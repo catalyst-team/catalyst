@@ -49,11 +49,12 @@ class RnnEncoder(nn.Module):
         self.encoder_with_dropout = EmbeddingDropout(self.encoder)
         self.rnns = [
             nn.LSTM(
-                emb_sz if l == 0 else nhid,
-                (nhid if l != nlayers - 1 else emb_sz) // self.ndir,
+                emb_sz if layer == 0 else nhid,
+                (nhid if layer != nlayers - 1 else emb_sz) // self.ndir,
                 1, bidirectional=bidir)
-            for l in range(nlayers)]
-        if wdrop: self.rnns = [WeightDrop(rnn, wdrop) for rnn in self.rnns]
+            for layer in range(nlayers)]
+        if wdrop:
+            self.rnns = [WeightDrop(rnn, wdrop) for rnn in self.rnns]
         self.rnns = torch.nn.ModuleList(self.rnns)
         self.encoder.weight.data.uniform_(-self.initrange, self.initrange)
 
@@ -81,13 +82,14 @@ class RnnEncoder(nn.Module):
             emb = self.dropouti(emb)
             raw_output = emb
             new_hidden, raw_outputs, outputs = [], [], []
-            for l, (rnn, drop) in enumerate(zip(self.rnns, self.dropouths)):
+            for layer, (rnn, drop) in \
+                    enumerate(zip(self.rnns, self.dropouths)):
                 with warnings.catch_warnings():
                     warnings.simplefilter("ignore")
-                    raw_output, new_h = rnn(raw_output, hidden[l])
+                    raw_output, new_h = rnn(raw_output, hidden[layer])
                 new_hidden.append(new_h)
                 raw_outputs.append(raw_output)
-                if l != self.nlayers - 1:
+                if layer != self.nlayers - 1:
                     raw_output = drop(raw_output)
                 outputs.append(raw_output)
 
@@ -95,9 +97,11 @@ class RnnEncoder(nn.Module):
             hidden = new_hidden
         return (raw_outputs, outputs), hidden
 
-    def one_hidden(self, l, bs):
+    def one_hidden(self, layer, bs):
         weights = next(self.parameters()).data
-        nh = (self.nhid if l != self.nlayers - 1 else self.emb_sz) // self.ndir
+        nh = (self.nhid
+              if layer != self.nlayers - 1
+              else self.emb_sz) // self.ndir
         return Variable(weights.new(self.ndir, bs, nh).zero_())
 
     def init_hidden(self, bs):
@@ -261,7 +265,7 @@ class WeightDrop(torch.nn.Module):
         Args:
             *args: supplied arguments
         Returns:
-            tensor obtained by running the forward method on the wrapped module.
+            tensor obtained by running the forward method on the wrapped module
         """
         self._setweights()
         return self.module.forward(*args)
@@ -273,7 +277,8 @@ class LockedDropout(nn.Module):
         self.p = p
 
     def forward(self, x):
-        if not self.training or not self.p: return x
+        if not self.training or not self.p:
+            return x
         m = dropout_mask(x.data, (1, x.size(1), x.size(2)), self.p)
         return Variable(m, requires_grad=False) * x
 
@@ -304,8 +309,8 @@ class LmModel(nn.Module):
                 nhid (int): number of hidden activation per LSTM layer
                 nlayers (int): number of LSTM layers to use in the architecture
                 pad_token (int): the int value used for padding text.
-                dropouth (float): dropout to apply to the activations going from
-                    one LSTM layer to another
+                dropouth (float): dropout to apply to the activations
+                    going from one LSTM layer to another
                 dropouti (float): dropout to apply to the input layer.
                 dropoute (float): dropout to apply to the embedding layer.
                 wdrop (float): dropout used for a LSTM"s

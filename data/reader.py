@@ -40,7 +40,7 @@ class ImageReader(object):
         try:
             if image_name.endswith(("jpg", "JPG", "jpeg", "JPEG")):
                 img = jpeg.JPEG(image_name).decode()
-        except:
+        except Exception:
             pass
 
         if img is None:

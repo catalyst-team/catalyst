@@ -307,10 +307,10 @@ class AbstractModelRunner:
     @staticmethod
     def prepare_callbacks(
             *,
-            callbacks_params : Dict[str, Dict],
-            args : Namespace,
-            mode : str,
-            stage : str = None) -> Dict[str, Callback]:
+            callbacks_params: Dict[str, Dict],
+            args: Namespace,
+            mode: str,
+            stage: str = None) -> Dict[str, Callback]:
         """
         Runner callbacks method to handle different runs logic.
 

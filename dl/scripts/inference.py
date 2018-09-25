@@ -21,7 +21,7 @@ def parse_args():
         "-b", "--batch-size", default=None, type=int,
         metavar="N", help="mini-batch size ")
     boolean_flag(parser, "verbose", default=False)
-    
+
     parser.add_argument("--out-prefix", type=str, default=None)
 
     args, unknown_args = parser.parse_known_args()

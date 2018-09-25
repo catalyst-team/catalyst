@@ -75,7 +75,8 @@ class UtilsFactory:
         return criterion
 
     @staticmethod
-    def create_optimizer(model, fp16=False, optimizer=None, **optimizer_params):
+    def create_optimizer(
+            model, fp16=False, optimizer=None, **optimizer_params):
         optimizer = optimizer
         if optimizer is None:
             return None
@@ -115,7 +116,8 @@ class UtilsFactory:
             model, **optimizer_params, fp16=fp16)
 
         scheduler_params = config.get("scheduler_params", None) or {}
-        scheduler = UtilsFactory.create_scheduler(optimizer, **scheduler_params)
+        scheduler = UtilsFactory.create_scheduler(
+            optimizer, **scheduler_params)
 
         criterion = {"main": criterion} if criterion is not None else {}
         optimizer = {"main": optimizer} if optimizer is not None else {}

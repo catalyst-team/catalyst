@@ -143,7 +143,8 @@ def read_in_txt(filepath):
 
 def parse_in_txt(data_params):
     data = read_in_txt(data_params["in_txt"])
-    data_train, data_valid = split_dataframe(data, test_size=0.2, random_state=42)
+    data_train, data_valid = split_dataframe(
+        data, test_size=0.2, random_state=42)
     return data, data_train, data_valid, []
 
 

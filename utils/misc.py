@@ -78,7 +78,7 @@ def memorized_method(*lru_args, **lru_kwargs):
 def str2params(string, delimeter="-"):
     try:
         result = list(map(int, string.split(delimeter)))
-    except:
+    except Exception:
         result = None
     return result
 

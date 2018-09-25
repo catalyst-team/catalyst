@@ -41,7 +41,9 @@ class ResnetEncoder(nn.Module):
                 else resnet.fc.in_features * 2
             additional_modules = [
                 nn.Linear(resnet_out_features, embedding_size),
-                nn.BatchNorm1d(num_features=embedding_size, momentum=bn_momentum)
+                nn.BatchNorm1d(
+                    num_features=embedding_size,
+                    momentum=bn_momentum)
             ]
             embeddings_weights_init(additional_modules)
             modules += additional_modules

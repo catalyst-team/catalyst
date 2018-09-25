@@ -34,7 +34,7 @@ class ListDataset(Dataset):
         self.cache_prob = cache_prob
         self.cache_transforms = cache_transforms
         self.cache = dict()
-    
+
     def prepare_new_item(self, index):
         row = self.data[index]
         dict_ = self.open_fn(row)

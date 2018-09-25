@@ -55,8 +55,9 @@ class Callback:
 
 class LoggerCallback(Callback):
     """
-    Logger callback, translates state.metrics to tensorboard and console output.
+    Logger callback, translates state.metrics to tensorboard and console output
     """
+
     def __init__(
             self,
             loggers: Dict[str, SummaryWriter] = None,
@@ -104,7 +105,8 @@ class LoggerCallback(Callback):
 
         self.epoch_metrics[lm]["batch time"].add(elapsed_time)
         self.loggers[lm].add_scalar("batch time", elapsed_time, state.step)
-        self.epoch_metrics[lm]["sample per second"].add(state.bs / elapsed_time)
+        self.epoch_metrics[lm]["sample per second"].add(
+            state.bs / elapsed_time)
         self.loggers[lm].add_scalar(
             "sample per second", state.bs / elapsed_time, state.step)
 
@@ -153,6 +155,7 @@ class PrecisionCallback(Callback):
     """
     Precision metric callback.
     """
+
     def __init__(
             self,
             loggers: Dict[str, SummaryWriter] = None,
@@ -214,6 +217,7 @@ class CheckpointCallback(Callback):
     """
     Checkpoint callback to save/restore your mode/criterion/optimizer/metrics.
     """
+
     def __init__(
             self,
             logdir: str = None,
@@ -346,10 +350,11 @@ class OptimizerCallback(Callback):
     """
     Optimizer callback, abstraction over optimizer step.
     """
+
     def __init__(
             self,
             grad_clip: float = None,
-            fp16_grad_scale : float = 128.0):
+            fp16_grad_scale: float = 128.0):
         """
         :param grad_clip: grap clipping specification kwargs
             @TODO: better support of different grad clip funcs
@@ -425,6 +430,7 @@ class OptimizerCallback(Callback):
 
 class LRUpdater(Callback):
     """Basic class that all Lr updaters inherit from"""
+
     def __init__(
             self,
             optimizer_key: str = "main"):
@@ -487,6 +493,7 @@ class OneCycleLR(LRUpdater):
         that implements the Circular Learning Rate (CLR) scheme.
     Learning rate is increased then decreased linearly.
     """
+
     def __init__(
             self,
             cycle_len: int,
@@ -539,8 +546,9 @@ class OneCycleLR(LRUpdater):
             percent = now_ / all_
         else:
             percent = 1 - self.cycle_iter / self.cut_point
-        res = self.momentum_range[1] \
-              + percent * (self.momentum_range[0] - self.momentum_range[1])
+        res = (
+                self.momentum_range[1]
+                + percent * (self.momentum_range[0] - self.momentum_range[1]))
         return res
 
     def on_loader_start(self, state):
@@ -559,6 +567,7 @@ class LRFinder(LRUpdater):
 
     https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html
     """
+
     def __init__(
             self,
             init_lr,

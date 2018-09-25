@@ -17,7 +17,8 @@ class CenterLoss(nn.Module):
         # To check the dim of centers and features
         if feature.size(1) != self.feature_dim:
             raise ValueError(
-                "Center\"s dim: {0} should be equal to input feature\"s dim: {1}".format(
+                "Center\"s dim: {0} "
+                "should be equal to input feature\"s dim: {1}".format(
                     self.feature_dim, feature.size(1)))
         return self.loss_fn(feature, label, self.centers)
 
@@ -40,7 +41,8 @@ class CenterLossFunc(Function):
         grad_centers = centers.new(centers.size()).fill_(0)
         counts = counts.scatter_add_(0, label.long(), ones)
         # print counts, grad_centers
-        grad_centers.scatter_add_(0, label.unsqueeze(1).expand(feature.size()).long(), diff)
+        grad_centers.scatter_add_(
+            0, label.unsqueeze(1).expand(feature.size()).long(), diff)
 
         grad_centers = grad_centers / counts.view(-1, 1)
 

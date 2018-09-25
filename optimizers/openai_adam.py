@@ -47,8 +47,8 @@ class OpenAIAdam(Optimizer):
             raise ValueError("Invalid epsilon value: {}".format(e))
         defaults = dict(
             lr=lr, schedule=schedule, warmup=warmup, t_total=t_total,
-                        b1=b1, b2=b2, e=e, l2=l2, vector_l2=vector_l2,
-                        max_grad_norm=max_grad_norm)
+            b1=b1, b2=b2, e=e, l2=l2, vector_l2=vector_l2,
+            max_grad_norm=max_grad_norm)
         super(OpenAIAdam, self).__init__(params, defaults)
 
     def step(self, closure=None):
@@ -101,8 +101,10 @@ class OpenAIAdam(Optimizer):
 
                 schedule_fct = SCHEDULES[group["schedule"]]
                 lr_scheduled = (
-                        group["lr"] * schedule_fct(
-                            state["step"] / group["t_total"], group["warmup"]))
+                    group["lr"] *
+                    schedule_fct(
+                        state["step"] / group["t_total"],
+                        group["warmup"]))
                 step_size = (
                         lr_scheduled * math.sqrt(bias_correction2) /
                         bias_correction1)

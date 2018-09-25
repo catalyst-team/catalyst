@@ -17,7 +17,10 @@ class TemporalBlock(nn.Module):
         https://arxiv.org/abs/1803.01271 - source code
         https://arxiv.org/abs/1611.05267 - idea
     """
-    def __init__(self, n_inputs, n_outputs, kernel_size, stride, dilation, padding, dropout=0.2):
+    def __init__(
+            self, n_inputs, n_outputs,
+            kernel_size, stride, dilation, padding,
+            dropout=0.2):
         super(TemporalBlock, self).__init__()
         self.conv1 = weight_norm(nn.Conv1d(
             n_inputs, n_outputs, kernel_size,
@@ -36,7 +39,9 @@ class TemporalBlock(nn.Module):
         self.net = nn.Sequential(
             self.conv1, self.chomp1, self.relu1, self.dropout1,
             self.conv2, self.chomp2, self.relu2, self.dropout2)
-        self.downsample = nn.Conv1d(n_inputs, n_outputs, 1) if n_inputs != n_outputs else None
+        self.downsample = nn.Conv1d(n_inputs, n_outputs, 1) \
+            if n_inputs != n_outputs \
+            else None
         self.relu = nn.ReLU()
         self.init_weights()
 
@@ -63,9 +68,11 @@ class TemporalConvNet(nn.Module):
             out_channels = num_channels[i]
             layers += [
                 TemporalBlock(
-                    in_channels, out_channels, kernel_size, stride=1,
+                    in_channels, out_channels, kernel_size,
+                    stride=1,
                     dilation=dilation_size,
-                    padding=(kernel_size - 1) * dilation_size, dropout=dropout)]
+                    padding=(kernel_size - 1) * dilation_size,
+                    dropout=dropout)]
 
         self.network = nn.Sequential(*layers)
 

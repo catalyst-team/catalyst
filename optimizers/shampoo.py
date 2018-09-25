@@ -16,13 +16,14 @@ class Shampoo(Optimizer):
             epsilon=1e-4, update_freq=1):
         """
 
-        :param params (iterable): iterable of parameters to optimize or dicts defining
-            parameter groups
+        :param params (iterable): iterable of parameters to optimize
+            or dicts defining parameter groups
         :param lr (float, optional): learning rate (default: 1e-1)
         :param momentum: (float, optional): momentum factor (default: 0)
         :param weight_decay: (float, optional): weigt decay factor (default: 0)
         :param epsilon: (float, optional): momentum factor (default: 1e-4)
-        :param update_freq: (int, optional): update frequency to compute inverse (default: 1)
+        :param update_freq: (int, optional):
+            update frequency to compute inverse (default: 1)
 
         Source: https://github.com/moskomule/shampoo.pytorch
         """

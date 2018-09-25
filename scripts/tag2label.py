@@ -10,17 +10,17 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "--in-csv", 
+        "--in-csv",
         type=str, default=None)
     parser.add_argument(
-        "--in-dirs", 
+        "--in-dirs",
         type=str, default=None)
-    
+
     parser.add_argument(
-        "--out-dataset", 
+        "--out-dataset",
         type=str, default=None)
     parser.add_argument(
-        "--out-labeling", 
+        "--out-labeling",
         type=str, default=None, required=True)
 
     parser.add_argument(
@@ -47,13 +47,13 @@ def main(args):
         df = prepare_df_from_dirs(args.in_dirs, args.class_column)
     else:
         raise Exception
-    
+
     if args.tag_delim is not None:
         df = separate_tags(
-            df, 
+            df,
             tag_column=args.tag_column,
             tag_delim=args.tag_delim)
-    
+
     tag2lbl = prepare_dataset_labeling(df, args.tag_column)
     print("Num classes: ", len(tag2lbl))
 

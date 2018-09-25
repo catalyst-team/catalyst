@@ -35,7 +35,8 @@ class BalanceClassSampler(Sampler):
             indices += np.random.choice(
                 self.lbl2idx[key],
                 self.samples_per_class,
-                replace=self.samples_per_class > len(self.lbl2idx[key])).tolist()
+                replace=self.samples_per_class > len(self.lbl2idx[key]))
+            indices = indices.tolist()
         assert (len(indices) == self.length)
         np.random.shuffle(indices)
 

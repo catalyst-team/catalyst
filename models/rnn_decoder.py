@@ -17,7 +17,9 @@ class DecoderRNN(nn.Module):
         """
         super(DecoderRNN, self).__init__()
         self.embed = nn.Embedding(vocabulary_size, embedding_size)
-        self.lstm = nn.LSTM(embedding_size, hidden_size, num_layers, batch_first=True)
+        self.lstm = nn.LSTM(
+            embedding_size, hidden_size, num_layers,
+            batch_first=True)
         self.linear = nn.Linear(hidden_size, vocabulary_size)
         self.init_weights()
 
@@ -36,7 +38,9 @@ class DecoderRNN(nn.Module):
         elif input_usage == "hidden_state":
             self.input_process = (
                 nn.ModuleList([
-                    nn.Sequential(nn.Linear(input_size, hidden_size), nn.Tanh())
+                    nn.Sequential(
+                        nn.Linear(input_size, hidden_size),
+                        nn.Tanh())
                     for _ in range(num_layers)])
                 if input_size is not None
                 else None)
@@ -79,7 +83,8 @@ class DecoderRNN(nn.Module):
         """Decode image feature vectors and generates captions."""
         return self.forward_fn(features, captions, lengths)
 
-    def sample_with_first_token(self, features, states=None, suffix=None, max_len=50):
+    def sample_with_first_token(
+            self, features, states=None, suffix=None, max_len=50):
         """
         suffix unused
         """
@@ -88,8 +93,8 @@ class DecoderRNN(nn.Module):
             features = self.input_process(features)
         inputs = features.unsqueeze(1)
         for i in range(max_len):
-            hiddens, states = self.lstm(inputs, states)  # (batch_size, 1, hidden_size),
-            outputs = self.linear(hiddens.squeeze(1))  # (batch_size, vocab_size)
+            hiddens, states = self.lstm(inputs, states)  # (bs, 1, hidden_size)
+            outputs = self.linear(hiddens.squeeze(1))    # (bs, vocab_size)
             predicted = outputs.max(1)[1]  # argmax
             sampled_ids.append(predicted.unsqueeze(1))
             inputs = self.embed(predicted)
@@ -97,7 +102,8 @@ class DecoderRNN(nn.Module):
         sampled_ids = torch.cat(sampled_ids, 1)  # (batch_size, max_len)
         return sampled_ids
 
-    def sample_with_hidden_state(self, features, states=None, suffix=None, max_len=50):
+    def sample_with_hidden_state(
+            self, features, states=None, suffix=None, max_len=50):
         """
         states unused
         """
@@ -111,13 +117,13 @@ class DecoderRNN(nn.Module):
         cx = hx.new_zeros(hx.shape)
         states = (hx, cx)
         for i in range(max_len):
-            hiddens, states = self.lstm(inputs, states)  # (batch_size, 1, hidden_size),
-            outputs = self.linear(hiddens.squeeze(1))  # (batch_size, vocab_size)
-            predicted = outputs.max(1)[1]  # argmax
+            hiddens, states = self.lstm(inputs, states)  # (bs, 1, hidden_size)
+            outputs = self.linear(hiddens.squeeze(1))    # (bs, vocab_size)
+            predicted = outputs.max(1)[1]                # argmax
             sampled_ids.append(predicted.unsqueeze(1))
             inputs = self.embed(predicted)
-            inputs = inputs.unsqueeze(1)  # (batch_size, 1, embed_size)
-        sampled_ids = torch.cat(sampled_ids, 1)  # (batch_size, max_len)
+            inputs = inputs.unsqueeze(1)                 # (bs, 1, embed_size)
+        sampled_ids = torch.cat(sampled_ids, 1)          # (bs, max_len)
         return sampled_ids
 
     def sample(self, features, states=None, suffix=None, max_len=50):

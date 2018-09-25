@@ -1,13 +1,13 @@
 import os
-os.environ["OMP_NUM_THREADS"] = "1"
 import cv2
-cv2.setNumThreads(0)
-cv2.ocl.setUseOpenCL(False)
-
 import argparse
 import pandas as pd
 import multiprocessing as mp
 from tqdm import tqdm
+
+os.environ["OMP_NUM_THREADS"] = "1"
+cv2.setNumThreads(0)
+cv2.ocl.setUseOpenCL(False)
 
 DATAPATH = ""
 IMG_COL = ""
@@ -21,7 +21,7 @@ def open_image_okay(row):
         img = cv2.imread(image_path)
         flag = img is not None
         return flag
-    except:
+    except Exception:
         return False
 
 

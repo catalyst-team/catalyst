@@ -46,5 +46,5 @@ def text_collate_fn(data, txt_key="txt", len_key="len"):
         **other_data,
         **text_data
     }
-    
+
     return data

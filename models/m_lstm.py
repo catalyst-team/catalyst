@@ -37,7 +37,9 @@ class mLSTM(nn.Module):
 
 
 class StackedLSTM(nn.Module):
-    def __init__(self, cell, num_layers, input_size, hidden_size, output_size, dropout):
+    def __init__(
+            self, cell, num_layers,
+            input_size, hidden_size, output_size, dropout):
         super(StackedLSTM, self).__init__()
         self.dropout = nn.Dropout(dropout)
         self.num_layers = num_layers

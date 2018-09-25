@@ -4,14 +4,14 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 import cv2
-cv2.setNumThreads(0)
-cv2.ocl.setUseOpenCL(False)
 import torch
 from torchvision import models, transforms
 
-from prometheus.utils.helpers import prepare_model
+from prometheus.utils.factory import UtilsFactory
 from prometheus.data.reader import ImageReader
-from prometheus.utils.defaults import create_loader
+
+cv2.setNumThreads(0)
+cv2.ocl.setUseOpenCL(False)
 
 
 IMG_SIZE = (224, 224)
@@ -102,7 +102,7 @@ def parse_args():
 def main(args):
     model = models.__dict__[args.arch](pretrained=True)
     model = model.eval()
-    model, device = prepare_model(model)
+    model, device = UtilsFactory.prepare_model(model)
 
     labels = json.loads(open(args.labels).read())
 
@@ -116,7 +116,7 @@ def main(args):
         row_key=args.img_col, dict_key="image",
         datapath=args.datapath)
 
-    dataloader = create_loader(
+    dataloader = UtilsFactory.create_loader(
         images_df, open_fn,
         batch_size=args.batch_size,
         workers=args.n_workers,

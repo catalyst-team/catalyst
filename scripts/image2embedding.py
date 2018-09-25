@@ -3,20 +3,21 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 import cv2
-cv2.setNumThreads(0)
-cv2.ocl.setUseOpenCL(False)
 import torch
 from torchvision import transforms
 
-from prometheus.utils.helpers import prepare_model
+from prometheus.utils.factory import UtilsFactory
 from prometheus.data.reader import ImageReader
-from prometheus.utils.defaults import create_loader
 from prometheus.models.resnet_encoder import ResnetEncoder
+
+cv2.setNumThreads(0)
+cv2.ocl.setUseOpenCL(False)
 
 IMG_SIZE = (224, 224)
 IMAGENET_NORM = transforms.Normalize(
     (0.485, 0.456, 0.406),
     (0.229, 0.224, 0.225))
+
 
 def dict_transformer(sample):
     image = sample["image"]
@@ -73,7 +74,7 @@ def main(args):
 
     model = ResnetEncoder(arch=args.arch, pooling=args.pooling)
     model = model.eval()
-    model, device = prepare_model(model)
+    model, device = UtilsFactory.prepare_model(model)
 
     images_df = pd.read_csv(args.in_csv)
     images_df = images_df.reset_index().drop("index", axis=1)
@@ -83,7 +84,7 @@ def main(args):
         row_key=args.img_col, dict_key="image",
         datapath=args.datapath)
 
-    dataloader = create_loader(
+    dataloader = UtilsFactory.create_loader(
         images_df, open_fn,
         batch_size=args.batch_size,
         workers=args.n_workers,
