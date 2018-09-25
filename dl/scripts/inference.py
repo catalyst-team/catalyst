@@ -10,16 +10,27 @@ def parse_args():
 
     parser.add_argument("--model-dir", type=str, default=None)
     parser.add_argument("--config", type=str, default=None)
-    parser.add_argument(
-        "--resume", default=None, type=str, metavar="PATH",
-        help="path to latest checkpoint")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument(
-        "-j", "--workers", default=None, type=int, metavar="N",
+        "--resume",
+        default=None,
+        type=str,
+        metavar="PATH",
+        help="path to latest checkpoint")
+    parser.add_argument(
+        "-j",
+        "--workers",
+        default=None,
+        type=int,
+        metavar="N",
         help="number of data loading workers")
     parser.add_argument(
-        "-b", "--batch-size", default=None, type=int,
-        metavar="N", help="mini-batch size ")
+        "-b",
+        "--batch-size",
+        default=None,
+        type=int,
+        metavar="N",
+        help="mini-batch size ")
     boolean_flag(parser, "verbose", default=False)
 
     parser.add_argument("--out-prefix", type=str, default=None)
@@ -42,9 +53,7 @@ def main(args, unknown_args):
 
     runner = modules["model"].ModelRunner(model=model)
     callbacks = runner.prepare_callbacks(
-        callbacks_params=config["callbacks_params"],
-        args=args,
-        mode="infer")
+        callbacks_params=config["callbacks_params"], args=args, mode="infer")
     runner.infer(loaders=loaders, callbacks=callbacks, verbose=args.verbose)
 
 

@@ -97,6 +97,21 @@ CV augmentations – https://github.com/albu/albumentations
 
 ## Contribution guide
 
+##### Autoformatting code
+
+We use [yapf](https://github.com/google/yapf) for linting,
+and the config file is located at `.style.yapf`.
+We recommend running `yapf.sh` prior to pushing to format changed files.
+
+
+##### Linter
+
+To run the Python linter on a specific file,
+run something like `flake8 dl/scripts/train.py`.
+You may need to first run `pip install flake8`.
+
+##### Codestyle
+
 tl;dr:
 - right margin - 80
 - double quotes

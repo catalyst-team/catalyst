@@ -11,10 +11,7 @@ from prometheus.utils.misc import \
 
 
 def prepare_modules(model_dir, dump_dir=None):
-    model_dir = (
-        model_dir[:-1]
-        if model_dir.endswith("/")
-        else model_dir)
+    model_dir = model_dir[:-1] if model_dir.endswith("/") else model_dir
     model_dir_name = model_dir.rsplit("/", 1)[-1]
 
     new_model_dir = None
@@ -31,9 +28,9 @@ def prepare_modules(model_dir, dump_dir=None):
         new_pro_dir = dump_dir + f"/{new_src_dir}/prometheus/"
         shutil.copytree(old_pro_dir, new_pro_dir)
 
-    pyfiles = list(map(
-        lambda x: x.name[:-3],
-        pathlib2.Path(model_dir).glob("*.py")))
+    pyfiles = list(
+        map(lambda x: x.name[:-3],
+            pathlib2.Path(model_dir).glob("*.py")))
 
     modules = {}
     for name in pyfiles:
@@ -55,18 +52,29 @@ def parse_args():
 
     parser.add_argument("--model-dir", type=str, default=None)
     parser.add_argument("--config", type=str, default=None)
+    parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--baselogdir", type=str, default=None)
     parser.add_argument(
-        "--resume", default=None, type=str, metavar="PATH",
+        "--resume",
+        default=None,
+        type=str,
+        metavar="PATH",
         help="path to latest checkpoint")
-    parser.add_argument("--seed", type=int, default=42)
     parser.add_argument(
-        "-j", "--workers", default=None, type=int, metavar="N",
+        "-j",
+        "--workers",
+        default=None,
+        type=int,
+        metavar="N",
         help="number of data loading workers")
     parser.add_argument(
-        "-b", "--batch-size", default=None, type=int,
-        metavar="N", help="mini-batch size ")
+        "-b",
+        "--batch-size",
+        default=None,
+        type=int,
+        metavar="N",
+        help="mini-batch size ")
     boolean_flag(parser, "verbose", default=False)
     boolean_flag(parser, "debug", default=False)
 
