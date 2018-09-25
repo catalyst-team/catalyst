@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
-#!/usr/bin/env bash
-
 # Cause the script to exit if a single command fails
 set -eo pipefail
+
+is_submodule() {
+    (cd "$(git rev-parse --show-toplevel)/.." && git rev-parse --is-inside-work-tree) | grep -q true
+}
 
 # this stops git rev-parse from failing if we run this from the .git directory
 builtin cd "$(dirname "${BASH_SOURCE:-$0}")"
@@ -11,10 +13,18 @@ builtin cd "$(dirname "${BASH_SOURCE:-$0}")"
 ROOT="$(git rev-parse --show-toplevel)"
 builtin cd "$ROOT" || exit 1
 
-# Add the upstream branch if it doesn't exist
-if ! [[ -e "$ROOT/.git/refs/remotes/upstream" ]]; then
-    git remote add 'upstream' 'https://github.com/Scitator/prometheus'
+if is_submodule; then
+    # Add the upstream branch if it doesn't exist
+    if ! [[ -e "$ROOT/../.git/modules/prometheus/refs/remotes/upstream" ]]; then
+        git remote add 'upstream' 'https://github.com/Scitator/prometheus'
+    fi
+else
+    # Add the upstream branch if it doesn't exist
+    if ! [[ -e "$ROOT/.git/refs/remotes/upstream" ]]; then
+        git remote add 'upstream' 'https://github.com/Scitator/prometheus'
+    fi
 fi
+
 
 # Only fetch master since that's the branch we're diffing against.
 git fetch upstream master
