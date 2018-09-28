@@ -1,4 +1,4 @@
-FROM python:3.6-jessie
+FROM ubuntu:16.04
 
 RUN apt-get update && apt-get install -y \
 	git \
@@ -25,8 +25,22 @@ RUN apt-get update && apt-get install -y \
 	libjasper-dev \
 	libavformat-dev \
 	libpq-dev \
+	libturbojpeg \
+	software-properties-common \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Install python
+RUN add-apt-repository -y ppa:jonathonf/python-3.6 \
+    && apt-get update -y \
+    && apt-get install -y python3.6 python3.6-dev \
+    && ln -sfn /usr/bin/python3.6 /usr/local/bin/python \
+    && ln -sfn /usr/bin/python3.6 /usr/bin/python3 \
+    && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
+    && python get-pip.py \
+    && rm get-pip.py \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install prometheus ds packages
 RUN pip install --upgrade --no-cache-dir pip && pip install --no-cache-dir \
@@ -58,12 +72,14 @@ RUN pip install --upgrade --no-cache-dir pip && pip install --no-cache-dir \
     pathlib2==2.3.2
 
 RUN pip install --no-cache-dir \
-    http://download.pytorch.org/whl/cpu/torch-0.4.1-cp36-cp36m-linux_x86_64.whl \
+    torch==0.4.1 \
     torchvision==0.2.1 \
+    tensorflow==1.8.0 \
     tensorboardX==1.4 \
     git+https://github.com/pytorch/tnt.git@master \
     albumentations==0.1.1 \
-    jpeg4py==0.1.4
+    jpeg4py==0.1.4 \
+    nmslib==1.7.3.2
 
 CMD mkdir src
 WORKDIR src

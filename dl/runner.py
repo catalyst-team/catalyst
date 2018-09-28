@@ -52,6 +52,7 @@ class AbstractModelRunner:
             pprint(optimizer)
             pprint(scheduler)
 
+        self.device = None
         self.state = None
         self.stage = None
         self._init()
@@ -74,6 +75,7 @@ class AbstractModelRunner:
         :return: RunnerState with all necessary parameters.
         """
         additional_kwargs = {}
+
         # transfer previous counters from old state
         if self.state is not None:
             additional_kwargs = {
@@ -249,7 +251,7 @@ class AbstractModelRunner:
             self.train_stage(
                 loaders=loaders, callbacks=callbacks,
                 epochs=args.epochs,
-                start_epoch=0 if self.state is None else self.state.epoch,
+                start_epoch=0 if self.state is None else self.state.epoch + 1,
                 verbose=verbose, logdir=args.logdir)
 
     def infer(
@@ -283,10 +285,11 @@ class AbstractModelRunner:
         :return: key-value storage with model predictions
         """
         dct = {
-            key: value.to(state.device)
+            key: value.to(self.device)
             for key, value in dct.items()}
-        state.input = dct
-        state.bs = len(dct[list(dct.keys())[0]])  # @TODO: fixme
+        if state is not None:
+            state.input = dct
+            state.bs = len(dct[list(dct.keys())[0]])  # @TODO: fixme
         output = self._batch_handler(dct=dct, model=model)
         return output
 
@@ -298,7 +301,7 @@ class AbstractModelRunner:
         """
         Batch handler with model forward.
 
-        :param dct: key-value storage with input tensors
+        :param dct: key-value storage with model inputs
         :param model: model to predict with
         :return: key-value storage with model predictions
         """

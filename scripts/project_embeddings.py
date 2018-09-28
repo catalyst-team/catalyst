@@ -73,7 +73,12 @@ def main(args):
         df
         if args.meta_cols is None
         else df[args.meta_cols])
-    df_meta.to_csv(out_meta_file, sep="\t", index=False)
+
+    df_meta.to_csv(
+        out_meta_file,
+        sep="\t",
+        index=False,
+        header=len(df_meta.columns) > 1)
 
     features = np.load(args.in_npy, mmap_mode="r")
     if args.n_rows is not None:

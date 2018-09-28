@@ -32,11 +32,11 @@ class BalanceClassSampler(Sampler):
     def __iter__(self):
         indices = []
         for key in sorted(self.lbl2idx):
+            replace_ = self.samples_per_class > len(self.lbl2idx[key])
             indices += np.random.choice(
                 self.lbl2idx[key],
                 self.samples_per_class,
-                replace=self.samples_per_class > len(self.lbl2idx[key]))
-            indices = indices.tolist()
+                replace=replace_).tolist()
         assert (len(indices) == self.length)
         np.random.shuffle(indices)
 

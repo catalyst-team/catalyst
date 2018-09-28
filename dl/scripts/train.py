@@ -74,9 +74,8 @@ def parse_args():
         default=None,
         type=int,
         metavar="N",
-        help="mini-batch size ")
+        help="mini-batch size")
     boolean_flag(parser, "verbose", default=False)
-    boolean_flag(parser, "debug", default=False)
 
     args, unknown_args = parser.parse_known_args()
 

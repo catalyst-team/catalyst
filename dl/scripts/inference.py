@@ -30,7 +30,7 @@ def parse_args():
         default=None,
         type=int,
         metavar="N",
-        help="mini-batch size ")
+        help="mini-batch size")
     boolean_flag(parser, "verbose", default=False)
 
     parser.add_argument("--out-prefix", type=str, default=None)

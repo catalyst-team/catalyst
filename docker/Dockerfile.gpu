@@ -29,7 +29,10 @@ RUN apt-get update -y && apt-get install -y \
     libboost-dev \
     libboost-system-dev \
     libboost-filesystem-dev \
-    software-properties-common
+    software-properties-common \
+    libturbojpeg \
+    && apt-get clean \
+	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install python
 RUN add-apt-repository -y ppa:jonathonf/python-3.6 \
@@ -75,10 +78,12 @@ RUN pip install --upgrade --no-cache-dir pip && pip install --no-cache-dir \
 RUN pip install --no-cache-dir \
     torch==0.4.1 \
     torchvision==0.2.1 \
+    tensorflow-gpu==1.8.0 \
     tensorboardX==1.4 \
     git+https://github.com/pytorch/tnt.git@master \
     albumentations==0.1.1 \
-    jpeg4py==0.1.4
+    jpeg4py==0.1.4 \
+    nmslib==1.7.3.2
 
 CMD mkdir src
 WORKDIR src

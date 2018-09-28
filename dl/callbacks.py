@@ -570,7 +570,6 @@ class LRFinder(LRUpdater):
 
     def __init__(
             self,
-            init_lr,
             final_lr,
             n_steps=None,
             optimizer_key="main"):
@@ -583,10 +582,9 @@ class LRFinder(LRUpdater):
         :param optimizer_key: which optimizer key to use
             for learning rate scheduling
         """
-        super().__init__(init_lr, optimizer_key=optimizer_key)
+        super().__init__(optimizer_key=optimizer_key)
 
         self.final_lr = final_lr
-        self.init_lr = init_lr
         self.n_steps = n_steps
         self.multiplier = 0
         self.find_iter = 0

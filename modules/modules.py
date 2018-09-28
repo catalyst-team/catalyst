@@ -1,5 +1,5 @@
 import torch.nn as nn
-import prometheus.modules.prometheus as commom
+import prometheus.modules.common as commom
 import prometheus.modules.pooling as pooling
 import prometheus.modules.noisy as noisy
 import prometheus.models.sequential as sequential
