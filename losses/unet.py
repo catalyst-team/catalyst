@@ -5,7 +5,7 @@ import numpy as np
 
 
 def cuda(x):
-    return x.cuda(async=True) if torch.cuda.is_available() else x
+    return x.cuda(non_blocking=True) if torch.cuda.is_available() else x
 
 
 class LossBinary:
