@@ -1,14 +1,9 @@
 import torch
 from torch import nn
 from torch.nn import functional as F
-import numpy as np
 
 
-def cuda(x):
-    return x.cuda(async=True) if torch.cuda.is_available() else x
-
-
-class LossBinary:
+class LossBinary(nn.Module):
     """
     Loss defined as BCE - log(soft_jaccard)
 
@@ -19,6 +14,7 @@ class LossBinary:
     """
 
     def __init__(self, jaccard_weight=0):
+        super().__init__()
         self.nll_loss = nn.BCEWithLogitsLoss()
         self.jaccard_weight = jaccard_weight
 
@@ -38,14 +34,10 @@ class LossBinary:
         return loss
 
 
-class LossMulti:
+class LossMulti(nn.Module):
     def __init__(self, jaccard_weight=0, num_classes=1, class_weights=None):
-        if class_weights is not None:
-            nll_weight = cuda(
-                torch.from_numpy(class_weights.astype(np.float32)))
-        else:
-            nll_weight = None
-        self.nll_loss = nn.NLLLoss2d(weight=nll_weight)
+        super().__init__()
+        self.nll_loss = nn.NLLLoss(weight=class_weights)
         self.jaccard_weight = jaccard_weight
         self.num_classes = num_classes
 

@@ -6,7 +6,7 @@ from torch.autograd.function import Function
 
 class CenterLoss(nn.Module):
     def __init__(self, num_classes, feature_dim):
-        super(CenterLoss, self).__init__()
+        super().__init__()
         self.centers = nn.Parameter(torch.randn(num_classes, feature_dim))
         self.loss_fn = CenterLossFunc.apply
         self.feature_dim = feature_dim

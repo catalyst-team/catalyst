@@ -24,7 +24,14 @@ Best coding practices included.
 
 Prometheus is compatible with: Python 3.6. In development.
 
-## How it works
+## Usage
+```bash
+git submodule add https://github.com/Scitator/prometheus.git prometheus
+```
+
+## Examples
+
+https://github.com/Scitator/prometheus-examples
 
 ### Deep learning
 
@@ -43,32 +50,9 @@ CUDA_VISIBLE_DEVICES="{gpus}" PYTHONPATH=. \
     --resume=/path/to/checkpoint
 ```
 
-
 ### Reinforcement learning [WIP]
 
 Waiting for NIPS end. Release date - December 2018.
-
-#### Redis server
-
-```bash
-redis-server --port 12000
-```
-
-#### Trainer
-
-```bash
-CUDA_VISIBLE_DEVICES="{gpus}" PYTHONPATH=. \
-    python prometheus/rl/offpolicy/scripts/run_trainer.py \
-    --config=/path/to/config-file
-```
-
-#### Samplers
-
-```bash
-CUDA_VISIBLE_DEVICES="" PYTHONPATH=. \
-    python prometheus/rl/offpolicy/scripts/run_samplers.py \
-    --config=/path/to/config-file
-```
 
 ## Dependencies
 ```bash
@@ -76,24 +60,10 @@ pip install git+https://github.com/pytorch/tnt.git@master \
     tensorboardX jpeg4py albumentations
 ```
 
-
 ## Docker
 
 See `./docker` for more information and examples.
 
-
-## Usage
-```bash
-git submodule add https://github.com/Scitator/prometheus.git prometheus
-```
-
-## Examples
-
-https://github.com/Scitator/prometheus-examples
-
-## Better to use with
-
-CV augmentations – https://github.com/albu/albumentations
 
 ## Contribution guide
 
@@ -110,33 +80,7 @@ To run the Python linter on a specific file,
 run something like `flake8 dl/scripts/train.py`.
 You may need to first run `pip install flake8`.
 
-##### Codestyle
-
-tl;dr:
-- right margin - 80
-- double quotes
-- full names: 
-    - `model`, `criterion`, `optimizer`, `scheduler` - okay 
-    - `mdl`,`crt`, `opt`, `scd` - not okay
-- long names solution
-    - okay:
-    ```bash
-    def my_pure_long_name(
-            self,
-            model, criterion=None, optimizer=None, scheduler=None,
-            debug=True):
-        """code"""
-    ```
-    - not okay:
-    ```bash
-    def my_pure_long_name(self,
-                          model, criterion=None, optimizer=None, scheduler=None,
-                          debug=True):
-        """code"""
-    ```
-    - why? name refactoring. with first one solution, 
-            there are no problems with pep8 codestyle check.
-- \* in funcs for force key-value args
+See `codestyle.md` for more information.
 
 
 ## Future features

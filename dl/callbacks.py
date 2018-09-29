@@ -1,5 +1,6 @@
 import os
 import time
+import numpy as np
 from collections import OrderedDict, defaultdict
 from typing import Tuple, List, Dict
 import torch
@@ -613,3 +614,31 @@ class ClassificationLossCallback(Callback):
         state.loss = state._criterion["main"](
             state.output["logits"],
             state.input["target"])
+
+
+class InferCallback(Callback):
+    def __init__(self, out_prefix=None):
+        self.out_prefix = out_prefix
+        self.predictions = defaultdict(lambda: [])
+
+    def on_loader_start(self, state):
+        self.predictions = defaultdict(lambda: [])
+
+    def on_batch_end(self, state):
+        dct = state.output
+        dct = {
+            key: value.detach().cpu().numpy()
+            for key, value in dct.items()}
+        for key, value in dct.items():
+            self.predictions[key].append(value)
+
+    def on_loader_end(self, state):
+        self.predictions = {
+            key: np.concatenate(value, axis=0)
+            for key, value in self.predictions.items()}
+        if self.out_prefix is not None:
+            for key, value in self.predictions.items():
+                np.save(
+                    self.out_prefix.format(
+                        suffix=".".join([state.loader_mode, key])),
+                    value)
