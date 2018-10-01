@@ -1,5 +1,10 @@
+"""
+Made by @nizhib
+"""
+
 import torch
 from torch import nn
+from torch.autograd import Variable
 
 
 def conv3x3(in_channels, out_channels, dilation=1):
@@ -93,7 +98,7 @@ class Decoder(nn.Module):
 class UNet(nn.Module):
     def __init__(
             self,
-            num_classes,
+            num_classes=1,
             in_channels=3,
             num_filters=64,
             num_blocks=4):
@@ -107,5 +112,17 @@ class UNet(nn.Module):
         acts = self.encoder(x)
         x = self.decoder(acts)
         x = self.final(x)
-        x = x.squeeze(1)
         return x
+
+
+if __name__ == '__main__':
+    model = UNet(num_classes=1)
+    if torch.cuda.is_available():
+        model.cuda()
+
+    images = Variable(torch.randn(4, 3, 256, 256))
+    if torch.cuda.is_available():
+        images = images.cuda()
+
+    out = model.forward(images)
+    print(out.size())
