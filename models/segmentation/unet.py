@@ -4,7 +4,6 @@ Made by @nizhib
 
 import torch
 from torch import nn
-from torch.autograd import Variable
 
 
 def conv3x3(in_channels, out_channels, dilation=1):
@@ -120,7 +119,7 @@ if __name__ == '__main__':
     if torch.cuda.is_available():
         model.cuda()
 
-    images = Variable(torch.randn(4, 3, 256, 256))
+    images = torch.randn(4, 3, 256, 256)
     if torch.cuda.is_available():
         images = images.cuda()
 

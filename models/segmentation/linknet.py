@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-from torch.autograd import Variable
 from torchvision import models
 
 
@@ -134,7 +133,7 @@ if __name__ == '__main__':
     if torch.cuda.is_available():
         model = model.cuda()
 
-    images = Variable(torch.randn(4, 3, 256, 256))
+    images = torch.randn(4, 3, 256, 256)
     if torch.cuda.is_available():
         images = images.cuda()
 
