@@ -16,8 +16,7 @@ before_script:
   # exit-zero treats all errors as warnings.
   - flake8 . --count --exit-zero --max-complexity=10 --statistics
   # test to make sure the code is yapf compliant
-  # TODO: Why is this not working as expected
-  # - yapf --diff --recursive .
+  - yapf.sh --all
 script:
   - true  # add other tests here
 notifications:
