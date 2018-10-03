@@ -30,12 +30,12 @@ def create_line_encode_fn(
     token2id[sep] = token2id[PAD_TOKEN]
 
     if len(sep) > 0:
-        split_fn = lambda x: (
+        split_fn = lambda x: (  # noqa: E731
                 ([BOS_TOKEN] if bos_token else [])
                 + (x.strip().split(sep) if strip else x.split(sep))
                 + ([EOS_TOKEN] if eos_token else []))
     else:
-        split_fn = lambda x: (
+        split_fn = lambda x: (  # noqa: E731
                 ([BOS_TOKEN] if bos_token else [])
                 + (list(x.strip()) if strip else list(x))
                 + ([EOS_TOKEN] if eos_token else []))
