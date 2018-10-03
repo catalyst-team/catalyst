@@ -192,7 +192,9 @@ class UtilsFactory:
                 [criterion, optimizer, scheduler],
                 ["criterion", "optimizer", "scheduler"]):
             for key, value in dict2save.items():
-                if value is not None:
+                serializable = not isinstance(
+                    value, torch.optim.lr_scheduler.ReduceLROnPlateau)
+                if value is not None and serializable:
                     name2save_ = name2save + "_" + str(key)
                     checkpoint[name2save_] = value
                     name2save_ = name2save_ + "_state_dict"
@@ -243,4 +245,7 @@ class UtilsFactory:
 
         if scheduler is not None:
             for key in scheduler:
-                scheduler[key] = checkpoint["scheduler_" + str(key)]
+                serializable = not isinstance(
+                    scheduler[key], torch.optim.lr_scheduler.ReduceLROnPlateau)
+                if serializable:
+                    scheduler[key] = checkpoint["scheduler_" + str(key)]

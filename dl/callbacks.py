@@ -429,6 +429,32 @@ class OptimizerCallback(Callback):
             state._optimizer[key].param_groups[0]["weight_decay"] = value
 
 
+class SchedulerCallback(Callback):
+    def __init__(
+            self,
+            scheduler_key: str = "main",
+            mode: str = "epoch",
+            reduce_metric: str = None):
+        self.scheduler_key = scheduler_key
+        self.mode = mode
+        self.reduce_metric = reduce_metric
+
+    def step(self, state):
+        scheduler = state._scheduler[self.scheduler_key]
+        if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+            scheduler.step(state.epoch_metrics[self.reduce_metric])
+        else:
+            scheduler.step()
+
+    def on_batch_end(self, state):
+        if self.mode == "batch":
+            self.step(state=state)
+
+    def on_epoch_end(self, state):
+        if self.mode == "epoch":
+            self.step(state=state)
+
+
 class LRUpdater(Callback):
     """Basic class that all Lr updaters inherit from"""
 
