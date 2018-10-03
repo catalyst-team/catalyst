@@ -40,7 +40,7 @@ class AbstractModelRunner:
         self.optimizer = optimizer or {}
         self.scheduler = scheduler or {}
 
-        stuff_handler = lambda x: {"main": x} if not isinstance(x, dict) else x  # noqa: E731
+        stuff_handler = lambda x: {"main": x} if not isinstance(x, dict) else x
 
         self.criterion = stuff_handler(self.criterion)
         self.optimizer = stuff_handler(self.optimizer)
