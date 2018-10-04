@@ -185,7 +185,6 @@ class LoggerCallback(Callback):
 
         self.time = time.time()
         state.step += bs
-        #
 
     def on_loader_end(self, state):
         lm = state.loader_mode
@@ -198,12 +197,12 @@ class LoggerCallback(Callback):
         for key, value in state.epoch_metrics[lm].items():
             self.loggers[lm].add_scalar(f"epoch {key}", value, state.epoch)
 
-        epoch_metrics_str = "\t".join([
-            "{key} {value:.4f}".format(key=key, value=value)
-            for key, value in sorted(state.epoch_metrics[lm].items())
-        ])
-
         if self.verbose:
+            epoch_metrics_str = "\t".join([
+                "{key} {value:.4f}".format(key=key, value=value)
+                for key, value in sorted(state.epoch_metrics[lm].items())
+            ])
+
             print("{epoch} * Epoch ({mode}): {metrics}".format(
                 epoch=state.epoch, mode=lm, metrics=epoch_metrics_str))
 
@@ -212,22 +211,26 @@ class LoggerCallback(Callback):
 
 
 class Logger(Callback):
-    def __init__(self, log_dir):
+    def __init__(
+            self,
+            logdir: str = None,
+    ):
+        """
+        :param logdir: log directory to use for checkpoint saving
+        """
         super().__init__()
-        os.makedirs(log_dir, exist_ok=True)
-        log_filepath = os.path.join(log_dir, 'n01_logs.txt')
+        os.makedirs(logdir, exist_ok=True)
+        log_filepath = os.path.join(logdir, 'txt_logs.txt')
         self.logger = self._get_logger(log_filepath)
 
     def on_epoch_begin(self, state):
         self.logger.info('Epoch {} | optimizer "{}" | lr {}'.format(
-            state.epoch, state.optimizer.__class__.__name__,
-            self._get_current_lr(state)))
+            state.epoch, state.optimizer.__class__.__name__, state.lr))
 
     def on_epoch_end(self, state):
-        self.logger.info("Train metrics: " + self._get_metrics_string(
-            state.epoch_metrics['train']))
-        self.logger.info("Valid metrics: " + self._get_metrics_string(
-            state.epoch_metrics['valid']) + "\n")
+        for postifx, (k, v) in zip(["", "\n"], state.epoch_metrics.items()):
+            self.logger.info(f"{k} metrics: " + self._get_metrics_string(v) +
+                             postifx)
 
     def on_train_begin(self, state):
         self.logger.info(
@@ -256,10 +259,6 @@ class Logger(Callback):
         logger.addHandler(fh)
         logger.addHandler(ch)
         return logger
-
-    def _get_current_lr(self, state):
-        lr_cur = state.optimizer['main'].param_groups[0]['lr']
-        return lr_cur
 
     def _get_metrics_string(self, metrics):
         return " | ".join(
