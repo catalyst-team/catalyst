@@ -106,13 +106,10 @@ class UNet(nn.Module):
 
 
 if __name__ == '__main__':
-    model = UNet(num_classes=1)
-    if torch.cuda.is_available():
-        model.cuda()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    images = torch.randn(4, 3, 256, 256)
-    if torch.cuda.is_available():
-        images = images.cuda()
+    model = UNet(num_classes=1).to(device)
+    images = torch.randn(4, 3, 256, 256).to(device)
 
     out = model.forward(images)
     print(out.size())

@@ -341,7 +341,7 @@ class ClassificationRunner(AbstractModelRunner):
         """
         if isinstance(dct, (tuple, list)):
             assert len(dct) == 2
-            dct = {"features": dct[0], "target": dct[1]}
+            dct = {"features": dct[0], "targets": dct[1]}
         dct = {
             key: value.to(state.device)
             for key, value in dct.items()}

@@ -1,7 +1,7 @@
 import os
 import time
 import numpy as np
-from collections import OrderedDict, defaultdict
+from collections import defaultdict
 from typing import Tuple, List, Dict
 import torch
 from torchnet import meter
@@ -204,7 +204,7 @@ class PrecisionCallback(Callback):
 
     def __init__(
             self,
-            input_key: str = "target",
+            input_key: str = "targets",
             output_key: str = "logits",
             precision_args: List[int] = None):
         """
@@ -223,8 +223,6 @@ class PrecisionCallback(Callback):
         self.precision_args = precision_args or [1, 3, 5]
 
     def on_batch_end(self, state):
-        lm = state.loader_mode
-
         prec = precision(
             state.output[self.output_key],
             state.input[self.input_key],
@@ -671,7 +669,7 @@ class ClassificationLossCallback(Callback):
     def on_batch_end(self, state):
         state.loss["main"] = state._criterion["main"](
             state.output["logits"],
-            state.input["target"])
+            state.input["targets"])
 
 
 class InferCallback(Callback):
