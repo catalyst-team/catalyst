@@ -289,7 +289,6 @@ class AbstractModelRunner:
             for key, value in dct.items()}
         if state is not None:
             state.input = dct
-            state.bs = len(dct[list(dct.keys())[0]])  # @TODO: fixme
         output = self._batch_handler(dct=dct, model=model)
         return output
 
@@ -348,7 +347,6 @@ class ClassificationRunner(AbstractModelRunner):
             for key, value in dct.items()}
         if state is not None:
             state.input = dct
-            state.bs = len(dct["features"])
         logits = model(dct["features"])
         output = {"logits": logits}
         return output

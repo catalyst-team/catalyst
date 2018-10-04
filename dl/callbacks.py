@@ -54,29 +54,83 @@ class Callback:
     def on_batch_end(self, state): pass
 
 
+class CallbackCompose:
+
+    def __init__(self, callbacks: Dict[str, Callback]):
+        self.callbacks = callbacks
+
+    def on_stage_init(self, model, stage):
+        for key, value in self.callbacks.items():
+            value.on_stage_init(model=model, stage=stage)
+
+    def on_train_start(self, state):
+        for key, value in self.callbacks.items():
+            value.on_train_start(state=state)
+
+    def on_train_end(self, state):
+        for key, value in self.callbacks.items():
+            value.on_train_end(state=state)
+
+    def on_infer_start(self, state):
+        for key, value in self.callbacks.items():
+            value.on_infer_start(state=state)
+
+    def on_infer_end(self, state):
+        for key, value in self.callbacks.items():
+            value.on_infer_end(state=state)
+
+    def on_epoch_start(self, state):
+        for key, value in self.callbacks.items():
+            value.on_epoch_start(state=state)
+
+    def on_epoch_end(self, state):
+        for key, value in self.callbacks.items():
+            value.on_epoch_end(state=state)
+
+    def on_loader_start(self, state):
+        for key, value in self.callbacks.items():
+            value.on_loader_start(state=state)
+
+    def on_loader_end(self, state):
+        for key, value in self.callbacks.items():
+            value.on_loader_end(state=state)
+
+    def on_batch_start(self, state):
+        for key, value in self.callbacks.items():
+            value.on_batch_start(state=state)
+
+    def on_batch_end(self, state):
+        for key, value in self.callbacks.items():
+            value.on_batch_end(state=state)
+
+
 class LoggerCallback(Callback):
     """
-    Logger callback, translates state.metrics to tensorboard and console output
+    Logger callback, translates state.*_metrics to console and tensorboard
     """
 
     def __init__(
             self,
-            loggers: Dict[str, SummaryWriter] = None,
+            tensorboard_loggers: Dict[str, SummaryWriter] = None,
             reset_step: bool = False):
         """
-        :param loggers: loggers used during train/infer/debug.
+
+        :param tensorboard_loggers: TF Summary loggers used
+            during train/infer/debug.
+            If none, only console logging will be used.
         :param reset_step: boolean flag;
             if False - logs will be combined for train/valid
             if True  - logs will be separated
         """
-        self.loggers = loggers or defaultdict(lambda: FakeSummaryWriter())
+        # @TODO: make loggers autocreation based on loader name
+        self.loggers = (
+                tensorboard_loggers
+                or defaultdict(lambda: FakeSummaryWriter()))
         self.reset_step = reset_step
-        self.epoch_metrics = OrderedDict()
-        self.time = time.time()
 
     def on_epoch_start(self, state):
-        state.epoch_metrics = OrderedDict()
-        self.epoch_metrics = OrderedDict()
+        state.epoch_metrics = defaultdict(
+            lambda: defaultdict(lambda: meter.AverageValueMeter()))
 
     def on_loader_start(self, state):
         lm = state.loader_mode
@@ -84,62 +138,53 @@ class LoggerCallback(Callback):
         state.step = (
                 state.step
                 or state.epoch * len(state.loader) * state.loader.batch_size)
-        state.epoch_metrics[lm] = {}
-        self.epoch_metrics[lm] = {}
-
-        self.epoch_metrics[lm]["batch time"] = meter.AverageValueMeter()
-        self.epoch_metrics[lm]["sample per second"] = meter.AverageValueMeter()
-        self.epoch_metrics[lm]["loss"] = meter.AverageValueMeter()
-        for key in state._optimizer:
-            self.epoch_metrics[lm][f"lr_{key}"] = meter.AverageValueMeter()
-            self.epoch_metrics[lm][f"momentum_{key}"] = \
-                meter.AverageValueMeter()
+        state.epoch_metrics[lm] = defaultdict(
+            lambda: meter.AverageValueMeter())
 
     def on_batch_start(self, state):
-        self.loggers[state.loader_mode].add_scalar(
-            "data time", time.time() - self.time, state.step)
+        state.batch_metrics["data time"] = time.time() - self.time
 
     def on_batch_end(self, state):
         lm = state.loader_mode
-        state.bs = state.bs or state.target.shape[0]
+        bs = state.loader.batch_size
         elapsed_time = time.time() - self.time
 
-        self.epoch_metrics[lm]["batch time"].add(elapsed_time)
-        self.loggers[lm].add_scalar("batch time", elapsed_time, state.step)
-        self.epoch_metrics[lm]["sample per second"].add(
-            state.bs / elapsed_time)
-        self.loggers[lm].add_scalar(
-            "sample per second", state.bs / elapsed_time, state.step)
+        state.batch_metrics["batch time"] = elapsed_time
+        state.batch_metrics["sample per second"] = bs / elapsed_time
 
         for key, value in state.lr.items():
-            self.epoch_metrics[lm][f"lr_{key}"].add(value)
-            self.loggers[lm].add_scalar(f"lr_{key}", value, state.step)
+            state.batch_metrics[f"lr_{key}"] = value
 
         for key, value in state.momentum.items():
-            self.epoch_metrics[lm][f"momentum_{key}"].add(value)
-            self.loggers[lm].add_scalar(f"momentum_{key}", value, state.step)
+            state.batch_metrics[f"momentum_{key}"] = value
 
-        loss_ = state.loss.item()
-        self.epoch_metrics[lm]["loss"].add(loss_)
-        self.loggers[lm].add_scalar("loss", loss_, state.step)
+        for key, value in state.loss.items():
+            state.batch_metrics[f"loss_{key}"] = value.item()
+
+        for key, value in state.batch_metrics.items():
+            # @TODO: batch metrics print?
+            if isinstance(value, (tuple, list)):
+                for i, value_ in enumerate(value):
+                    key_ = f"key_{i}"
+                    state.epoch_metrics[lm][key_].add(value_)
+                    self.loggers[lm].add_scalar(key_, value_, state.step)
+            else:
+                state.epoch_metrics[lm][key].add(value)
+                self.loggers[lm].add_scalar(key, value, state.step)
 
         self.time = time.time()
-        state.step += state.bs
+        state.step += bs
+        state.batch_metrics = defaultdict(lambda: 0)
 
     def on_loader_end(self, state):
         lm = state.loader_mode
-
-        state.epoch_metrics[lm] = {
-            **state.epoch_metrics[lm],
-            **self.epoch_metrics[lm]
-        }
 
         state.epoch_metrics[lm] = {
             key: UtilsFactory.get_val_from_metric(value)
             for key, value in state.epoch_metrics[lm].items()}
 
         for key, value in state.epoch_metrics[lm].items():
-            self.loggers[lm].add_scalar("epoch " + key, value, state.epoch)
+            self.loggers[lm].add_scalar(f"epoch {key}", value, state.epoch)
 
         epoch_metrics_str = "\t".join([
             "{key} {value:.4f}".format(key=key, value=value)
@@ -159,13 +204,10 @@ class PrecisionCallback(Callback):
 
     def __init__(
             self,
-            loggers: Dict[str, SummaryWriter] = None,
             input_key: str = "target",
             output_key: str = "logits",
             precision_args: List[int] = None):
         """
-        @TODO: make it loggers agnostic - all logs through LoggerCallback
-        :param loggers: loggers used during train/infer/debug.
         :param input_key: input key to use for precision calculation;
             specifies our `y_true`.
         :param output_key: output key to use for precision calculation;
@@ -176,21 +218,9 @@ class PrecisionCallback(Callback):
             [1, 3, 5] - precision at 1, 3 and 5
         """
         super().__init__()
-        self.loggers = loggers or defaultdict(lambda: FakeSummaryWriter())
         self.input_key = input_key
         self.output_key = output_key
         self.precision_args = precision_args or [1, 3, 5]
-        self.epoch_metrics = OrderedDict()
-
-    def on_epoch_start(self, state):
-        self.epoch_metrics = OrderedDict()
-
-    def on_loader_start(self, state):
-        lm = state.loader_mode
-        self.epoch_metrics[lm] = OrderedDict()
-        for p in self.precision_args:
-            self.epoch_metrics[lm]["precision{:02}".format(p)] = \
-                meter.AverageValueMeter()
 
     def on_batch_end(self, state):
         lm = state.loader_mode
@@ -203,15 +233,7 @@ class PrecisionCallback(Callback):
         for p, metric in zip(self.precision_args, prec):
             key = "precision{:02}".format(p)
             metric_ = metric.item()
-            self.epoch_metrics[lm][key].add(metric_)
-            self.loggers[lm].add_scalar(key, metric_, state.step)
-
-    def on_loader_end(self, state):
-        lm = state.loader_mode
-        state.epoch_metrics[lm] = {
-            **state.epoch_metrics[lm],
-            **self.epoch_metrics[lm]
-        }
+            state.batch_metrics[key] = metric_
 
 
 class CheckpointCallback(Callback):
@@ -224,8 +246,9 @@ class CheckpointCallback(Callback):
             logdir: str = None,
             save_n_best: int = 5,
             resume: str = None,
-            main_metric: str = "loss",
-            minimize: bool = True):
+            main_metric: str = "loss_main",
+            minimize: bool = True,
+            valid_loader: str = "valid"):
         """
         :param logdir: log directory to use for checkpoint saving
         :param save_n_best: number of best checkpoiont to keep
@@ -238,6 +261,7 @@ class CheckpointCallback(Callback):
         self.resume = resume
         self.main_metric = main_metric
         self.minimize = minimize
+        self.valid_loader = valid_loader
         self.top_best_metrics = []
 
     @staticmethod
@@ -281,11 +305,9 @@ class CheckpointCallback(Callback):
     @staticmethod
     def process_epoch_metrics(
             epoch_metrics, best_metrics,
+            valid_loader="valid",
             main_metric="loss", minimize=True):
-        valid_metrics = None
-        for key, value in epoch_metrics.items():
-            if key.startswith("valid"):
-                valid_metrics = value
+        valid_metrics = epoch_metrics[valid_loader]
         is_best = True \
             if best_metrics is None \
             else (minimize != (
@@ -306,11 +328,12 @@ class CheckpointCallback(Callback):
         return self.on_mode_start(state=state)
 
     def on_epoch_end(self, state):
-        if not state.loader_mode.startswith("valid"):
+        if state.loader_mode != self.valid_loader:
             return
 
         best_metrics, valid_metrics, is_best = self.process_epoch_metrics(
             state.epoch_metrics, state.best_metrics,
+            valid_loader=self.valid_loader,
             main_metric=self.main_metric, minimize=self.minimize)
         valid_metrics = {
             key: value
@@ -322,15 +345,16 @@ class CheckpointCallback(Callback):
             for key, value in best_metrics.items()
             if isinstance(value, float)
         }
+        state.valid_metrics = valid_metrics
 
         checkpoint = self.pack_checkpoint(
             model=state.model,
             criterion=state._criterion,
             optimizer=state._optimizer,
             scheduler=state._scheduler,
-            valid_metrics=valid_metrics,
-            epoch_metrics=state.epoch_metrics,
-            best_metrics=state.best_metrics,
+            valid_metrics=dict(valid_metrics),  # @TODO: save defaultdict
+            epoch_metrics=dict(state.epoch_metrics),  # @TODO: save defaultdict
+            best_metrics=dict(state.best_metrics),  # @TODO: save defaultdict
             stage=state.stage,
             epoch=state.epoch)
         self.save_checkpoint(
@@ -399,15 +423,18 @@ class OptimizerCallback(Callback):
                 value.zero_grad()
 
             if len(state._optimizer) > 0:
-                state.loss.backward()
+                for key, value in state.loss.items():
+                    value.backward()
                 self.grad_step(state._optimizer)
         else:
             state.model.zero_grad()
             if len(state._optimizer) > 0:
                 assert len(state._optimizer) == 1, \
                     "fp16 mode works only with one optimizer for now"
-                scaled_loss = self.fp16_grad_scale * state.loss.float()
-                scaled_loss.backward()
+
+                for key, value in state.loss.items():
+                    scaled_loss = self.fp16_grad_scale * value.float()
+                    scaled_loss.backward()
 
                 master_params = list(
                     state._optimizer["main"].param_groups[0]["params"])
@@ -442,9 +469,14 @@ class SchedulerCallback(Callback):
     def step(self, state):
         scheduler = state._scheduler[self.scheduler_key]
         if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
-            scheduler.step(state.epoch_metrics[self.reduce_metric])
+            scheduler.step(state.valid_metrics[self.reduce_metric])
+            state.lr[self.scheduler_key] = \
+                list(scheduler.optimizer.param_groups)[0]["lr"]
         else:
             scheduler.step()
+            state.lr[self.scheduler_key] = scheduler.get_lr()[0]
+        state.momentum[self.scheduler_key] = \
+            list(scheduler.optimizer.param_groups)[0]["betas"][0]
 
     def on_batch_end(self, state):
         if self.mode == "batch":
@@ -637,7 +669,7 @@ class LRFinder(LRUpdater):
 
 class ClassificationLossCallback(Callback):
     def on_batch_end(self, state):
-        state.loss = state._criterion["main"](
+        state.loss["main"] = state._criterion["main"](
             state.output["logits"],
             state.input["target"])
 
