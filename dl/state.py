@@ -14,6 +14,7 @@ class RunnerState(FrozenClass):
         self.logdir = None
         self.loader = None
         self.loader_mode = None
+        self.batch_size = 8
 
         # data pipeline
         self.input = None
