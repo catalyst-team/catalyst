@@ -7,14 +7,17 @@ from torch.autograd import Variable
 
 
 class RnnEncoder(nn.Module):
-    """A custom RNN encoder network that uses
-        - an embedding matrix to encode input,
-        - a stack of LSTM layers to drive the network, and
-        - variational dropouts in the embedding and LSTM layers
+    """
+    A custom RNN encoder network that uses
+    - an embedding matrix to encode input,
+    - a stack of LSTM layers to drive the network, and
+    - variational dropouts in the embedding and LSTM layers
 
-        The architecture for this network was inspired by the work done in
-        "Regularizing and Optimizing LSTM Language Models".
-        (https://arxiv.org/pdf/1708.02182.pdf)
+    The architecture for this network was inspired by the work done in
+    "Regularizing and Optimizing LSTM Language Models".
+    (https://arxiv.org/pdf/1708.02182.pdf)
+
+    source: fast.ai, https://arxiv.org/abs/1801.06146
     """
 
     initrange = 0.1

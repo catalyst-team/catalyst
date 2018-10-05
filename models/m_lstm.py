@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 class mLSTM(nn.Module):
     """
-    Source: https://github.com/guillitte/pytorch-sentiment-neuron
+    source: https://github.com/guillitte/pytorch-sentiment-neuron
     """
 
     def __init__(self, data_size, hidden_size):
