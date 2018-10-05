@@ -1,5 +1,4 @@
 import os
-import sys
 import shutil
 from collections import OrderedDict
 from tensorboardX import SummaryWriter

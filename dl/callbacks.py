@@ -23,7 +23,6 @@ class BaseMetrics(Callback):
         state.batch_metrics["data time"] = time.time() - self.time
 
     def on_batch_end(self, state):
-        lm = state.loader_mode
         bs = state.batch_size
         elapsed_time = time.time() - self.time
 
