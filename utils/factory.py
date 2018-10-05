@@ -16,15 +16,20 @@ from prometheus.utils.misc import create_if_need, stream_tee
 
 
 class UtilsFactory:
-
     @staticmethod
     def create_loader(
-            data_source, open_fn,
-            dict_transform=None, dataset_cache_prob=-1,
-            batch_size=32, workers=4,
-            shuffle=False, sampler=None, collate_fn=default_collate_fn):
+            data_source,
+            open_fn,
+            dict_transform=None,
+            dataset_cache_prob=-1,
+            batch_size=32,
+            workers=4,
+            shuffle=False,
+            sampler=None,
+            collate_fn=default_collate_fn):
         dataset = ListDataset(
-            data_source, open_fn=open_fn,
+            data_source,
+            open_fn=open_fn,
             dict_transform=dict_transform,
             cache_prob=dataset_cache_prob)
         loader = torch.utils.data.DataLoader(
@@ -38,15 +43,20 @@ class UtilsFactory:
         return loader
 
     @staticmethod
+    def create_tflogger(logdir, name):
+        log_dir = os.path.join(logdir, f"{name}_log")
+        logger = SummaryWriter(log_dir)
+        return logger
+
+    @staticmethod
     def create_loggers(logdir, loaders):
         create_if_need(logdir)
-        logfile = open("{logdir}/log.txt".format(logdir=logdir), "a")
-        sys.stdout = stream_tee(sys.stdout, logfile)
+        # logfile = open("{logdir}/stdout.txt".format(logdir=logdir), "a")
+        # sys.stdout = stream_tee(sys.stdout, logfile)
 
         loggers = []
         for key in loaders:
-            log_dir = os.path.join(logdir, f"{key}_log")
-            logger = SummaryWriter(log_dir)
+            logger = UtilsFactory.create_tflogger(logdir=logdir, name=key)
             loggers.append((key, logger))
 
         loggers = OrderedDict(loggers)
@@ -76,7 +86,8 @@ class UtilsFactory:
 
     @staticmethod
     def create_optimizer(
-            model, fp16=False, optimizer=None, **optimizer_params):
+            model, fp16=False, optimizer=None,
+            **optimizer_params):
         optimizer = optimizer
         if optimizer is None:
             return None
@@ -87,13 +98,12 @@ class UtilsFactory:
             assert torch.backends.cudnn.enabled, \
                 "fp16 mode requires cudnn backend to be enabled."
             master_params = [
-                param.detach().clone().float()
-                for param in master_params]
+                param.detach().clone().float() for param in master_params
+            ]
             for param in master_params:
                 param.requires_grad = True
 
-        optimizer = OPTIMIZERS[optimizer](
-            master_params, **optimizer_params)
+        optimizer = OPTIMIZERS[optimizer](master_params, **optimizer_params)
         return optimizer
 
     @staticmethod
@@ -171,7 +181,9 @@ class UtilsFactory:
     @staticmethod
     def pack_checkpoint(
             model=None,
-            criterion=None, optimizer=None, scheduler=None,
+            criterion=None,
+            optimizer=None,
+            scheduler=None,
             **kwargs):
         checkpoint = kwargs
 
@@ -206,30 +218,30 @@ class UtilsFactory:
             logdir=logdir, suffix=suffix)
         torch.save(checkpoint, filename)
         if is_best:
-            shutil.copyfile(
-                filename, "{}/checkpoint.best.pth.tar".format(logdir))
+            shutil.copyfile(filename,
+                            "{}/checkpoint.best.pth.tar".format(logdir))
         return filename
 
     @staticmethod
     def load_checkpoint(filepath):
         checkpoint = torch.load(
-            filepath,
-            map_location=lambda storage, loc: storage)
+            filepath, map_location=lambda storage, loc: storage)
         return checkpoint
 
     @staticmethod
     def unpack_checkpoint(
             checkpoint,
-            model=None, criterion=None, optimizer=None, scheduler=None):
+            model=None,
+            criterion=None,
+            optimizer=None,
+            scheduler=None):
         if model is not None:
             if isinstance(model, torch.nn.DataParallel):
                 model = model.module
             if isinstance(model, Fp16Wrap):
-                model.network.load_state_dict(
-                    checkpoint["model_state_dict"])
+                model.network.load_state_dict(checkpoint["model_state_dict"])
             else:
-                model.load_state_dict(
-                    checkpoint["model_state_dict"])
+                model.load_state_dict(checkpoint["model_state_dict"])
 
         if criterion is not None:
             for key in criterion:

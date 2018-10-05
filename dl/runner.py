@@ -20,13 +20,14 @@ class AbstractModelRunner:
     Abstract model run handler.
     Based on model, it's criterion, optimizer and scheduler stuff.
     """
+
     def __init__(
             self,
             model: nn.Module,
             criterion: Dict[str, nn.Module] = None,
             optimizer: Dict[str, optim.Optimizer] = None,
             scheduler: Dict[str, optim.lr_scheduler._LRScheduler] = None,
-            debug: bool=True):
+            debug: bool = True):
         """
 
         :param model: nn.Module instance, your model
@@ -84,7 +85,9 @@ class AbstractModelRunner:
                 "best_metrics": self.state.best_metrics
             }
         return RunnerState(
-            device=self.device, model=self.model, stage=self.stage,
+            device=self.device,
+            model=self.model,
+            stage=self.stage,
             _criterion=self.criterion,
             _optimizer=self.optimizer,
             _scheduler=self.scheduler,
@@ -95,25 +98,26 @@ class AbstractModelRunner:
         for callback in callbacks.values():
             callback.on_stage_init(model=self.model, stage=self.stage)
 
-    def run_event(
-            self, *,
-            callbacks: Dict[str, Callback],
-            event: str):
+    def run_event(self, *, callbacks: Dict[str, Callback], event: str):
         """
         Innert method to run special event for all available callbacks.
 
         :param callbacks:
         :param event:
         """
+        getattr(self.state, f"{event}_pre")(state=self.state)
         for callback in callbacks.values():
             getattr(callback, event)(state=self.state)
+        getattr(self.state, f"{event}_post")(state=self.state)
 
     def run(
             self, *,
             loaders: Dict[str, data.DataLoader],
             callbacks: Dict[str, Callback],
-            epochs: int = 1, start_epoch: int = 0,
-            mode: str = "train", verbose: bool = False):
+            epochs: int = 1,
+            start_epoch: int = 0,
+            mode: str = "train",
+            verbose: bool = False):
         """
         Main method for running train/valid/infer/debug pipeline over model.
 
@@ -127,36 +131,49 @@ class AbstractModelRunner:
         assert isinstance(loaders, OrderedDict)
         assert isinstance(callbacks, OrderedDict)
 
-        self.state = self._init_state(mode=mode, stage=self.stage)
+        state = self._init_state(mode=mode, stage=self.stage)
+        self.state = state
 
         self.run_event(callbacks=callbacks, event=f"on_{mode}_start")
 
         for epoch in range(start_epoch, start_epoch + epochs):
-            self.state.epoch = epoch
+            state.epoch = epoch
 
             self.run_event(callbacks=callbacks, event="on_epoch_start")
 
             for loader_mode, loader in loaders.items():
-                self.state.loader_mode = loader_mode
-                self.state.loader = loader
+                state.loader_mode = loader_mode
+                state.is_train = loader_mode.startswith("train")
+                state.batch_size = loader.batch_size
+                state.loader_len = len(loader)
+                state.step = (
+                        state.step
+                        or state.epoch * len(loader) * state.batch_size)
+                self.model.train(state.is_train)
 
-                self.state.is_train = loader_mode.startswith("train")
-                self.model.train(self.state.is_train)
+                self.run_event(callbacks=callbacks, event="on_loader_start")
 
-                self.run_event(
-                    callbacks=callbacks, event="on_loader_start")
+                loader = tqdm.tqdm(
+                    loader,
+                    total=len(loader),
+                    desc=f"{epoch} * Epoch ({loader_mode})",
+                    ncols=0) if verbose else loader
 
-                loader = tqdm.tqdm(loader) if verbose else loader
                 for i, dct in enumerate(loader):
-                    self.state.input = dct
+                    state.input = dct
 
-                    self.run_event(
-                        callbacks=callbacks, event="on_batch_start")
-                    with torch.set_grad_enabled(self.state.is_train):
-                        self.state.output = self.batch_handler(
-                            dct=dct, model=self.model, state=self.state)
-                    self.run_event(
-                        callbacks=callbacks, event="on_batch_end")
+                    self.run_event(callbacks=callbacks, event="on_batch_start")
+                    with torch.set_grad_enabled(state.is_train):
+                        state.output = self.batch_handler(
+                            dct=dct, model=self.model, state=state)
+                    self.run_event(callbacks=callbacks, event="on_batch_end")
+
+                    if verbose:
+                        loader.set_postfix(
+                            **{
+                                k: "{:.5f}".format(v)
+                                for k, v in sorted(state.batch_metrics.items())
+                            })
 
                 self.run_event(callbacks=callbacks, event="on_loader_end")
 
@@ -168,7 +185,8 @@ class AbstractModelRunner:
             self, *,
             loaders: Dict[str, data.DataLoader],
             callbacks: Dict[str, Callback],
-            epochs: int = 1, start_epoch: int = 0,
+            epochs: int = 1,
+            start_epoch: int = 0,
             verbose: bool = False,
             logdir: str = None):
         """
@@ -181,18 +199,18 @@ class AbstractModelRunner:
         :param verbose: verbose flag
         :param logdir: logdir for tensorboard logs
         """
-        # @TODO: better solution
+        # @TODO: remove hack
         if logdir is not None:
-            loggers = UtilsFactory.create_loggers(logdir, loaders)
             for key, value in callbacks.items():
-                if hasattr(value, "loggers"):
-                    value.loggers = loggers
                 if hasattr(value, "logdir"):
                     value.logdir = logdir
         self.run(
-            loaders=loaders, callbacks=callbacks,
-            epochs=epochs, start_epoch=start_epoch,
-            mode="train", verbose=verbose)
+            loaders=loaders,
+            callbacks=callbacks,
+            epochs=epochs,
+            start_epoch=start_epoch,
+            mode="train",
+            verbose=verbose)
 
     def train(
             self, *,
@@ -239,7 +257,9 @@ class AbstractModelRunner:
 
             callbacks = self.prepare_callbacks(
                 callbacks_params=callbacks_params,
-                args=args, mode="train", stage=stage)
+                args=args,
+                mode="train",
+                stage=stage)
             pprint(loaders)
             pprint(callbacks)
 
@@ -248,17 +268,21 @@ class AbstractModelRunner:
                 UtilsFactory.prepare_stage_stuff(
                     model=self.model, stage_config=config)
 
+            start_epoch = 0 if self.state is None else self.state.epoch + 1
             self.train_stage(
-                loaders=loaders, callbacks=callbacks,
+                loaders=loaders,
+                callbacks=callbacks,
                 epochs=args.epochs,
-                start_epoch=0 if self.state is None else self.state.epoch + 1,
-                verbose=verbose, logdir=args.logdir)
+                start_epoch=start_epoch,
+                verbose=verbose,
+                logdir=args.logdir)
 
     def infer(
             self, *,
             loaders: Dict[str, data.DataLoader],
             callbacks: Dict[str, Callback],
-            epochs: int = 1, verbose: bool = False):
+            epochs: int = 1,
+            verbose: bool = False):
         """
         Main method for predicting with DL models.
 
@@ -268,8 +292,11 @@ class AbstractModelRunner:
         :param verbose: verbose flag
         """
         return self.run(
-            loaders=loaders, callbacks=callbacks,
-            epochs=epochs, mode="infer", verbose=verbose)
+            loaders=loaders,
+            callbacks=callbacks,
+            epochs=epochs,
+            mode="infer",
+            verbose=verbose)
 
     def batch_handler(
             self, *,
@@ -284,19 +311,14 @@ class AbstractModelRunner:
         :param state: runner state
         :return: key-value storage with model predictions
         """
-        dct = {
-            key: value.to(self.device)
-            for key, value in dct.items()}
+        dct = {key: value.to(self.device) for key, value in dct.items()}
         if state is not None:
             state.input = dct
         output = self._batch_handler(dct=dct, model=model)
         return output
 
     @staticmethod
-    def _batch_handler(
-            *,
-            dct: Dict,
-            model: nn.Module) -> Dict:
+    def _batch_handler(*, dct: Dict, model: nn.Module) -> Dict:
         """
         Batch handler with model forward.
 
@@ -342,9 +364,7 @@ class ClassificationRunner(AbstractModelRunner):
         if isinstance(dct, (tuple, list)):
             assert len(dct) == 2
             dct = {"features": dct[0], "targets": dct[1]}
-        dct = {
-            key: value.to(state.device)
-            for key, value in dct.items()}
+        dct = {key: value.to(state.device) for key, value in dct.items()}
         if state is not None:
             state.input = dct
         logits = model(dct["features"])
