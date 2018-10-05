@@ -1,4 +1,4 @@
-# Prometheus
+# Catalyst
 High-level utils for PyTorch DL/RL research.
 It was developed with a focus on reproducibility, fast experimentation and code/ideas/models reusing.
 Being able to research/develop something new, rather then write another regular train loop.
@@ -22,30 +22,30 @@ Best coding practices included.
 - Well structed, so you can just grab a part to your project.
 - Lots of reusable code for different purposes: losses, optimizers, models, knns, embeddings projector.
 
-Prometheus is compatible with: Python 3.6+. PyTorch 0.4.1+. In development.
+catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+. In development.
 
 ## Usage
 ```bash
-git submodule add https://github.com/Scitator/prometheus.git prometheus
+git submodule add https://github.com/Scitator/catalyst.git catalyst
 ```
 
 ## Examples
 
-https://github.com/Scitator/prometheus-examples
+https://github.com/Scitator/catalyst-examples
 
 ### Deep learning
 
 #### Train
 ```bash
 CUDA_VISIBLE_DEVICES="{gpus}" PYTHONPATH=. \
-    python prometheus/dl/scripts/train.py \
+    python catalyst/dl/scripts/train.py \
     --config=/path/to/config-file
 ```
 
 #### Inference
 ```bash
 CUDA_VISIBLE_DEVICES="{gpus}" PYTHONPATH=. \
-    python prometheus/dl/scripts/inference.py \
+    python catalyst/dl/scripts/inference.py \
     --config=/path/to/config-file,/path/to/inference-config-file \
     --resume=/path/to/checkpoint
 ```
@@ -85,6 +85,6 @@ See `codestyle.md` for more information.
 
 ## Future features
 
-- prometheus pic
+- catalyst pic
 - distributed training (with fp16 support)
 - Horovod support

@@ -5,8 +5,8 @@ import pathlib2
 from datetime import datetime
 from pprint import pprint
 
-from prometheus.utils.args import parse_args_uargs, save_config
-from prometheus.utils.misc import \
+from catalyst.utils.args import parse_args_uargs, save_config
+from catalyst.utils.misc import \
     create_if_need, set_global_seeds, boolean_flag, import_module
 
 
@@ -25,7 +25,7 @@ def prepare_modules(model_dir, dump_dir=None):
 
         # @TODO: hardcoded
         old_pro_dir = os.path.dirname(os.path.abspath(__file__)) + "/../../"
-        new_pro_dir = dump_dir + f"/{new_src_dir}/prometheus/"
+        new_pro_dir = dump_dir + f"/{new_src_dir}/catalyst/"
         shutil.copytree(old_pro_dir, new_pro_dir)
 
     pyfiles = list(

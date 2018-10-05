@@ -1,7 +1,7 @@
 from collections import defaultdict
 from torchnet import meter
-from prometheus.utils.factory import UtilsFactory
-from prometheus.utils.misc import FrozenClass
+from catalyst.utils.factory import UtilsFactory
+from catalyst.utils.misc import FrozenClass
 
 
 class RunnerState(FrozenClass):

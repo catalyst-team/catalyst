@@ -19,7 +19,7 @@ class SequentialNet(nn.Module):
             dropout=None):
         super().__init__()
         # hack to prevent cycle imports
-        from prometheus.modules.modules import name2nn
+        from catalyst.modules.modules import name2nn
 
         layer_fn = name2nn(layer_fn)
         activation_fn = name2nn(activation_fn)

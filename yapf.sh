@@ -15,13 +15,13 @@ builtin cd "$ROOT" || exit 1
 
 if is_submodule; then
     # Add the upstream branch if it doesn't exist
-    if ! [[ -e "$ROOT/../.git/modules/prometheus/refs/remotes/upstream" ]]; then
-        git remote add 'upstream' 'https://github.com/Scitator/prometheus'
+    if ! [[ -e "$ROOT/../.git/modules/catalyst/refs/remotes/upstream" ]]; then
+        git remote add 'upstream' 'https://github.com/Scitator/catalyst'
     fi
 else
     # Add the upstream branch if it doesn't exist
     if ! [[ -e "$ROOT/.git/refs/remotes/upstream" ]]; then
-        git remote add 'upstream' 'https://github.com/Scitator/prometheus'
+        git remote add 'upstream' 'https://github.com/Scitator/catalyst'
     fi
 fi
 

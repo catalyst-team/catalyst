@@ -6,10 +6,10 @@ from collections import defaultdict
 from typing import Tuple, List
 import torch
 
-from prometheus.dl.callback import Callback
-from prometheus.utils.metrics import precision
-from prometheus.utils.fp16 import Fp16Wrap, copy_params, copy_grads
-from prometheus.utils.factory import UtilsFactory
+from catalyst.dl.callback import Callback
+from catalyst.utils.metrics import precision
+from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
+from catalyst.utils.factory import UtilsFactory
 
 
 class BaseMetrics(Callback):

@@ -1,8 +1,8 @@
 import torch.nn as nn
-import prometheus.modules.common as commom
-import prometheus.modules.pooling as pooling
-import prometheus.modules.noisy as noisy
-import prometheus.models.sequential as sequential
+import catalyst.modules.common as commom
+import catalyst.modules.pooling as pooling
+import catalyst.modules.noisy as noisy
+import catalyst.models.sequential as sequential
 
 
 MODULES = {

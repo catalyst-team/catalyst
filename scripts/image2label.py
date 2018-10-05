@@ -7,8 +7,8 @@ import cv2
 import torch
 from torchvision import models, transforms
 
-from prometheus.utils.factory import UtilsFactory
-from prometheus.data.reader import ImageReader
+from catalyst.utils.factory import UtilsFactory
+from catalyst.data.reader import ImageReader
 
 cv2.setNumThreads(0)
 cv2.ocl.setUseOpenCL(False)

@@ -3,7 +3,7 @@ import yaml
 import copy
 from collections import OrderedDict
 
-from prometheus.utils.misc import create_if_need, merge_dicts
+from catalyst.utils.misc import create_if_need, merge_dicts
 
 # @TODO: for future needs; for now hyperdash is too...raw output
 # try:

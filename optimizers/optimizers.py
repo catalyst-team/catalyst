@@ -1,6 +1,6 @@
 import torch
-import prometheus.optimizers.shampoo as shampoo
-import prometheus.optimizers.openai_adam as openai_adam
+import catalyst.optimizers.shampoo as shampoo
+import catalyst.optimizers.openai_adam as openai_adam
 
 
 OPTIMIZERS = {
