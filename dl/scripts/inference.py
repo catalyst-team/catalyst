@@ -52,7 +52,6 @@ def main(args, unknown_args):
     model = modules["model"].prepare_model(config)
 
     runner = modules["model"].ModelRunner(model=model)
-    config = runner.prepare_config(config=config)
     callbacks = runner.prepare_callbacks(
         callbacks_params=config["callbacks_params"], args=args, mode="infer")
     runner.infer(loaders=loaders, callbacks=callbacks, verbose=args.verbose)

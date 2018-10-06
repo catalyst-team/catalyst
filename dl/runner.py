@@ -346,10 +346,6 @@ class AbstractModelRunner:
         """
         raise NotImplementedError
 
-    @staticmethod
-    def prepare_config(*, config: Dict):
-        return config
-
 
 class ClassificationRunner(AbstractModelRunner):
     def batch_handler(

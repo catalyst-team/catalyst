@@ -103,7 +103,6 @@ def main(args, unknown_args):
     model = modules["model"].prepare_model(config)
 
     runner = modules["model"].ModelRunner(model=model)
-    config = runner.prepare_config(config=config)
     runner.train(
         datasource=datasource,
         args=args,
