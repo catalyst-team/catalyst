@@ -11,7 +11,7 @@ from catalyst.optimizers.optimizers import OPTIMIZERS
 from catalyst.losses.losses import LOSSES
 from catalyst.data.dataset import ListDataset
 from catalyst.utils.fp16 import Fp16Wrap, network_to_half
-from catalyst.utils.misc import create_if_need, stream_tee
+from catalyst.utils.misc import create_if_need
 
 
 class UtilsFactory:
