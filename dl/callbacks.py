@@ -86,6 +86,7 @@ class Logger(Callback):
         :param logdir: log directory to use for text logging
         """
         super().__init__()
+        self.logger = None
         self._logdir = logdir
 
     @property
@@ -100,13 +101,17 @@ class Logger(Callback):
         self.logger = self._get_logger(log_filepath)
 
     def on_train_begin(self, state):
-        self.logger.info(
-            'Starting training with params:\n{}\n\n'.format(state))
+        if self.logger is not None:
+            self.logger.info(
+                'Starting training with params:\n{}\n\n'.format(state))
 
     def on_epoch_end(self, state):
-        for postifx, (k, v) in zip(["", "\n"], state.epoch_metrics.items()):
-            self.logger.info(f"{state.epoch} * Epoch ({k}) metrics: " +
-                             self._get_metrics_string(v) + postifx)
+        if self.logger is not None:
+            for k, v in state.epoch_metrics.items():
+                self.logger.info(
+                    f"{state.epoch} * Epoch ({k}) metrics: " +
+                    self._get_metrics_string(v))
+            self.logger.info("\n")
 
     @staticmethod
     def _get_logger(log_filepath):
@@ -167,23 +172,15 @@ class CheckpointCallback(Callback):
             self,
             logdir: str = None,
             save_n_best: int = 5,
-            resume: str = None,
-            main_metric: str = "loss_main",
-            minimize: bool = True,
-            valid_loader: str = "valid"):
+            resume: str = None):
         """
         :param logdir: log directory to use for checkpoint saving
         :param save_n_best: number of best checkpoiont to keep
         :param resume: path to checkpoint to load and initialize runner state
-        :param main_metric: which metric to use for checkpoint comparison
-        :param minimize: boolean flag if we need to minimize or maximize metric
         """
         self.logdir = logdir
         self.save_n_best = save_n_best
         self.resume = resume
-        self.main_metric = main_metric
-        self.minimize = minimize
-        self.valid_loader = valid_loader
         self.top_best_metrics = []
 
     @staticmethod
@@ -207,7 +204,9 @@ class CheckpointCallback(Callback):
         else:
             raise Exception("no checkpoint found at \"{}\"".format(filename))
 
-    def save_checkpoint(self, logdir, checkpoint, is_best, save_n_best=5):
+    def save_checkpoint(
+            self, logdir, checkpoint, is_best,
+            save_n_best=5, main_metric="loss_main", minimize_metric=True):
         suffix = f"{checkpoint['stage']}.{checkpoint['epoch']}"
         filepath = UtilsFactory.save_checkpoint(
             logdir=logdir,
@@ -215,11 +214,11 @@ class CheckpointCallback(Callback):
             is_best=is_best,
             suffix=suffix)
         self.top_best_metrics.append(
-            (filepath, checkpoint["valid_metrics"][self.main_metric]))
+            (filepath, checkpoint["valid_metrics"][main_metric]))
         self.top_best_metrics = sorted(
             self.top_best_metrics,
             key=lambda x: x[1],
-            reverse=not self.minimize)
+            reverse=not minimize_metric)
         if len(self.top_best_metrics) > save_n_best:
             last_item = self.top_best_metrics.pop(-1)
             last_filepath = last_item[0]
@@ -227,21 +226,6 @@ class CheckpointCallback(Callback):
 
     def pack_checkpoint(self, **kwargs):
         return UtilsFactory.pack_checkpoint(**kwargs)
-
-    @staticmethod
-    def process_epoch_metrics(
-            epoch_metrics,
-            best_metrics,
-            valid_loader="valid",
-            main_metric="loss_main",
-            minimize=True):
-        valid_metrics = epoch_metrics[valid_loader]
-        is_best = True \
-            if best_metrics is None \
-            else (minimize != (
-                valid_metrics[main_metric] > best_metrics[main_metric]))
-        best_metrics = valid_metrics if is_best else best_metrics
-        return best_metrics, valid_metrics, is_best
 
     def on_mode_start(self, state):
         if self.resume is not None:
@@ -256,32 +240,15 @@ class CheckpointCallback(Callback):
         return self.on_mode_start(state=state)
 
     def on_epoch_end(self, state):
-        if state.loader_mode != self.valid_loader:
+        if state.mode == "infer":
             return
-
-        best_metrics, valid_metrics, is_best = self.process_epoch_metrics(
-            state.epoch_metrics,
-            state.best_metrics,
-            valid_loader=self.valid_loader,
-            main_metric=self.main_metric,
-            minimize=self.minimize)
-        valid_metrics = {
-            key: value
-            for key, value in valid_metrics.items()
-            if isinstance(value, float)
-        }
-        state.best_metrics = {
-            key: value
-            for key, value in best_metrics.items() if isinstance(value, float)
-        }
-        state.valid_metrics = valid_metrics
 
         checkpoint = self.pack_checkpoint(
             model=state.model,
             criterion=state._criterion,
             optimizer=state._optimizer,
             scheduler=state._scheduler,
-            valid_metrics=dict(valid_metrics),  # @TODO: save defaultdict
+            valid_metrics=dict(state.valid_metrics),  # @TODO: save defaultdict
             epoch_metrics=dict(state.epoch_metrics),  # @TODO: save defaultdict
             best_metrics=dict(state.best_metrics),  # @TODO: save defaultdict
             stage=state.stage,
@@ -289,7 +256,7 @@ class CheckpointCallback(Callback):
         self.save_checkpoint(
             logdir=self.logdir,
             checkpoint=checkpoint,
-            is_best=is_best,
+            is_best=state.is_best_epoch,
             save_n_best=self.save_n_best)
 
     def on_train_end(self, state):
@@ -307,8 +274,10 @@ class OptimizerCallback(Callback):
     Optimizer callback, abstraction over optimizer step.
     """
 
-    def __init__(self, grad_clip: float = None,
-                 fp16_grad_scale: float = 128.0):
+    def __init__(
+            self,
+            grad_clip: float = None,
+            fp16_grad_scale: float = 128.0):
         """
         :param grad_clip: grap clipping specification kwargs
             @TODO: better support of different grad clip funcs
@@ -336,11 +305,13 @@ class OptimizerCallback(Callback):
                 wd = self.optimizer_wds[key]
                 for group in value.param_groups:
                     for param in group["params"]:
-                        param.data = param.data.add(-wd * group["lr"],
-                                                    param.data)
+                        param.data = param.data.add(
+                            -wd * group["lr"],
+                            param.data)
                     if self.grad_clip is not None:
-                        torch.nn.utils.clip_grad_norm_(group["params"],
-                                                       self.grad_clip)
+                        torch.nn.utils.clip_grad_norm_(
+                            group["params"],
+                            self.grad_clip)
             value.step()
 
     def on_batch_end(self, state):
@@ -367,9 +338,9 @@ class OptimizerCallback(Callback):
 
                 master_params = list(
                     state._optimizer["main"].param_groups[0]["params"])
-                model_params = list(
-                    filter(lambda p: p.requires_grad,
-                           state.model.parameters()))
+                model_params = list(filter(
+                    lambda p: p.requires_grad,
+                    state.model.parameters()))
 
                 copy_grads(source=model_params, target=master_params)
 
@@ -387,10 +358,11 @@ class OptimizerCallback(Callback):
 
 
 class SchedulerCallback(Callback):
-    def __init__(self,
-                 scheduler_key: str = "main",
-                 mode: str = "epoch",
-                 reduce_metric: str = None):
+    def __init__(
+            self,
+            scheduler_key: str = "main",
+            mode: str = "epoch",
+            reduce_metric: str = None):
         self.scheduler_key = scheduler_key
         self.mode = mode
         self.reduce_metric = reduce_metric
@@ -455,8 +427,9 @@ class LRUpdater(Callback):
                 state.lr[self.optimizer_key] = new_lr
             new_momentum = self.calc_momentum()
             if new_momentum is not None:
-                self.update_momentum(optimizer[self.optimizer_key],
-                                     new_momentum)
+                self.update_momentum(
+                    optimizer[self.optimizer_key],
+                    new_momentum)
                 state.momentum[self.optimizer_key] = new_momentum
         else:
             state.lr[self.optimizer_key] = 0
@@ -479,12 +452,13 @@ class OneCycleLR(LRUpdater):
     Learning rate is increased then decreased linearly.
     """
 
-    def __init__(self,
-                 cycle_len: int,
-                 div: int,
-                 cut_div: int,
-                 momentum_range: Tuple[float, float],
-                 optimizer_key: str = "main"):
+    def __init__(
+            self,
+            cycle_len: int,
+            div: int,
+            cut_div: int,
+            momentum_range: Tuple[float, float],
+            optimizer_key: str = "main"):
         """
 
         :param init_lr: init learning rate for torch optimizer
@@ -588,8 +562,9 @@ class LRFinder(LRUpdater):
 
 class ClassificationLossCallback(Callback):
     def on_batch_end(self, state):
-        state.loss["main"] = state._criterion["main"](state.output["logits"],
-                                                      state.input["targets"])
+        state.loss["main"] = state._criterion["main"](
+            state.output["logits"],
+            state.input["targets"])
 
 
 class InferCallback(Callback):

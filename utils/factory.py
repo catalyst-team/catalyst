@@ -159,9 +159,19 @@ class UtilsFactory:
         return args
 
     @staticmethod
-    def prepare_stage_stuff(model, stage_config):
-        return UtilsFactory.create_model_stuff(
-            model=model, config=stage_config)
+    def process_epoch_metrics(
+            epoch_metrics,
+            best_metrics,
+            valid_loader="valid",
+            main_metric="loss_main",
+            minimize=True):
+        valid_metrics = epoch_metrics[valid_loader]
+        is_best = True \
+            if best_metrics is None \
+            else (minimize != (
+                valid_metrics[main_metric] > best_metrics[main_metric]))
+        best_metrics = valid_metrics if is_best else best_metrics
+        return best_metrics, valid_metrics, is_best
 
     @staticmethod
     def get_val_from_metric(metric_value):

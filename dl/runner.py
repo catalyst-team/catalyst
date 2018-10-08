@@ -132,6 +132,7 @@ class AbstractModelRunner:
         assert isinstance(callbacks, OrderedDict)
 
         state = self._init_state(mode=mode, stage=self.stage)
+        state.mode = mode
         self.state = state
 
         self.run_event(callbacks=callbacks, event=f"on_{mode}_start")
@@ -265,8 +266,8 @@ class AbstractModelRunner:
 
             self.run_stage_init(callbacks=callbacks)
             self.criterion, self.optimizer, self.scheduler = \
-                UtilsFactory.prepare_stage_stuff(
-                    model=self.model, stage_config=config)
+                UtilsFactory.create_model_stuff(
+                    model=self.model, config=config)
 
             start_epoch = 0 if self.state is None else self.state.epoch + 1
             self.train_stage(

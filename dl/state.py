@@ -11,9 +11,14 @@ class RunnerState(FrozenClass):
 
     def __init__(self, **kwargs):
         # special info
+        self.mode = "infer"
         self.device = None
         self.loader_mode = None
         self.reset_step = kwargs.get("reset_step", False)
+
+        self.main_metric = kwargs.get("main_metric", "loss_main")
+        self.minimize_metric = kwargs.get("minimize_metric", True)
+        self.valid_loader = kwargs.get("valid_loader", "valid")
 
         # data pipeline
         self.input = None
@@ -24,6 +29,7 @@ class RunnerState(FrozenClass):
         self.batch_size = 0
         self.step = 0
         self.epoch = 0
+        self.is_best_epoch = False
 
         # metrics
         self.lr = defaultdict(lambda: 0)
@@ -93,7 +99,27 @@ class RunnerState(FrozenClass):
 
     @staticmethod
     def on_epoch_end_pre(state):
-        pass
+        if state.mode == "infer":
+            return
+
+        best_metrics, valid_metrics, is_best = \
+            UtilsFactory.process_epoch_metrics(
+                state.epoch_metrics,
+                state.best_metrics,
+                valid_loader=state.valid_loader,
+                main_metric=state.main_metric,
+                minimize=state.minimize_metric)
+        valid_metrics = {
+            key: value
+            for key, value in valid_metrics.items()
+            if isinstance(value, float)
+        }
+        state.best_metrics = {
+            key: value
+            for key, value in best_metrics.items() if isinstance(value, float)
+        }
+        state.valid_metrics = valid_metrics
+        state.is_best_epoch = is_best
 
     @staticmethod
     def on_epoch_end_post(state):
