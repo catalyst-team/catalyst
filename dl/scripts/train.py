@@ -1,7 +1,7 @@
 import os
 import shutil
 import argparse
-import pathlib2
+import pathlib
 from datetime import datetime
 from pprint import pprint
 
@@ -30,7 +30,7 @@ def prepare_modules(model_dir, dump_dir=None):
 
     pyfiles = list(
         map(lambda x: x.name[:-3],
-            pathlib2.Path(model_dir).glob("*.py")))
+            pathlib.Path(model_dir).glob("*.py")))
 
     modules = {}
     for name in pyfiles:
@@ -93,7 +93,7 @@ def main(args, unknown_args):
     if args.logdir is None:
         modules_ = prepare_modules(model_dir=args.model_dir)
         logdir = modules_["model"].prepare_logdir(config=config)
-        args.logdir = str(pathlib2.Path(args.baselogdir).joinpath(logdir))
+        args.logdir = str(pathlib.Path(args.baselogdir).joinpath(logdir))
 
     create_if_need(args.logdir)
     save_config(config=config, logdir=args.logdir)
