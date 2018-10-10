@@ -91,6 +91,23 @@ def mapk(predicted, actual, topk=(1,)):
     return res
 
 
+def dice_accuracy(prob, truth, threshold=0.5,  is_average=True):
+    batch_size = prob.size(0)
+    p = prob.detach().view(batch_size,-1)
+    t = truth.detach().view(batch_size,-1)
+
+    p = p>threshold
+    t = t>0.5
+    correct = ( p == t).float()
+    accuracy = correct.sum(1)/p.size(1)
+
+    if is_average:
+        accuracy = accuracy.sum()/batch_size
+        return accuracy
+    else:
+        return accuracy
+
+
 if __name__ == '__main__':
     import torch
     actual = torch.from_numpy(np.array([0, 0]))

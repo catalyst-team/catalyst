@@ -7,7 +7,7 @@ from typing import Tuple, List
 import torch
 
 from catalyst.dl.callback import Callback
-from catalyst.utils.metrics import precision, mapk
+from catalyst.utils.metrics import precision, mapk, dice_accuracy
 from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.utils.factory import UtilsFactory
 
@@ -71,7 +71,7 @@ class PrecisionCallback(Callback):
             state.input[self.input_key],
             topk=self.precision_args)
         for p, metric in zip(self.precision_args, prec):
-            key = "map{:02}".format(p)
+            key = "precision{:02}".format(p)
             metric_ = metric.item()
             state.batch_metrics[key] = metric_
 
@@ -109,6 +109,37 @@ class MapKCallback(Callback):
             key = "map{:02}".format(p)
             metric_ = metric.item()
             state.batch_metrics[key] = metric_
+
+
+class DiceCallback(Callback):
+    """
+    Dice metric callback.
+    """
+
+    def __init__(self,
+                 input_key: str = "targets",
+                 output_key: str = "logits",
+                 threshold: float = None):
+        """
+        :param input_key: input key to use for precision calculation;
+            specifies our `y_true`.
+        :param output_key: output key to use for precision calculation;
+            specifies our `y_pred`.
+        :param threshold: threshold.
+        """
+        super().__init__()
+        self.input_key = input_key
+        self.output_key = output_key
+        self.threshold = threshold
+
+    def on_batch_end(self, state):
+        dice = dice_accuracy(
+            state.output[self.output_key],
+            state.input[self.input_key],
+            threshold=self.threshold
+        )
+        key = "dice"
+        state.batch_metrics[key] = dice
 
 
 class Logger(Callback):
