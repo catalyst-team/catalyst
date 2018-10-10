@@ -257,7 +257,9 @@ class CheckpointCallback(Callback):
             logdir=self.logdir,
             checkpoint=checkpoint,
             is_best=state.is_best_epoch,
-            save_n_best=self.save_n_best)
+            save_n_best=self.save_n_best,
+            main_metric=state.main_metric,
+            minimize_metric=state.minimize_metric)
 
     def on_train_end(self, state):
         print("Top best models:")
