@@ -114,6 +114,7 @@ class AbstractModelRunner:
             self, *,
             loaders: Dict[str, data.DataLoader],
             callbacks: Dict[str, Callback],
+            state_params: Dict = None,
             epochs: int = 1,
             start_epoch: int = 0,
             mode: str = "train",
@@ -123,6 +124,7 @@ class AbstractModelRunner:
 
         :param loaders: OrderedDict or torch DataLoaders to run on
         :param callbacks: OrderedDict of callback to use
+        :param state_params: params for state initialization
         :param epochs: number of epochs to run
         :param start_epoch:
         :param mode: mode - train/infer/debug
@@ -131,7 +133,8 @@ class AbstractModelRunner:
         assert isinstance(loaders, OrderedDict)
         assert isinstance(callbacks, OrderedDict)
 
-        state = self._init_state(mode=mode, stage=self.stage)
+        state_params = state_params or {}
+        state = self._init_state(mode=mode, stage=self.stage, **state_params)
         state.mode = mode
         self.state = state
 
@@ -186,6 +189,7 @@ class AbstractModelRunner:
             self, *,
             loaders: Dict[str, data.DataLoader],
             callbacks: Dict[str, Callback],
+            state_params: Dict = None,
             epochs: int = 1,
             start_epoch: int = 0,
             verbose: bool = False,
@@ -195,6 +199,7 @@ class AbstractModelRunner:
 
         :param loaders: OrderedDict or torch DataLoaders to run on
         :param callbacks: OrderedDict of callback to use
+        :param state_params: params for state initialization
         :param epochs: number of epochs to run
         :param start_epoch:
         :param verbose: verbose flag
@@ -208,6 +213,7 @@ class AbstractModelRunner:
         self.run(
             loaders=loaders,
             callbacks=callbacks,
+            state_params=state_params,
             epochs=epochs,
             start_epoch=start_epoch,
             mode="train",
@@ -228,10 +234,12 @@ class AbstractModelRunner:
         :param verbose: verbose flag
         """
 
+        stages_state_params = stages_config.pop("state_params", {})
         stages_data_params = stages_config.pop("data_params", {})
         stages_callbacks_params = stages_config.pop("callbacks_params", {})
         stages_criterion_params = stages_config.pop("criterion_params", {})
         stages_optimizer_params = stages_config.pop("optimizer_params", {})
+        stages_scheduler_params = stages_config.pop("scheduler_params", {})
         loaders = None
 
         for stage, config in stages_config.items():
@@ -247,14 +255,18 @@ class AbstractModelRunner:
 
             if loaders is None or reload_loaders:
                 loaders = datasource.prepare_loaders(
-                    args, data_params, stage=stage)
+                    args=args, stage=stage, **data_params)
 
+            state_params = merge_dicts(
+                stages_state_params, config.get("state_params", {}))
             callbacks_params = merge_dicts(
                 stages_callbacks_params, config.get("callbacks_params", {}))
             config["criterion_params"] = merge_dicts(
                 stages_criterion_params, config.get("criterion_params", {}))
             config["optimizer_params"] = merge_dicts(
                 stages_optimizer_params, config.get("optimizer_params", {}))
+            config["scheduler_params"] = merge_dicts(
+                stages_scheduler_params, config.get("scheduler_params", {}))
 
             callbacks = self.prepare_callbacks(
                 callbacks_params=callbacks_params,
@@ -273,6 +285,7 @@ class AbstractModelRunner:
             self.train_stage(
                 loaders=loaders,
                 callbacks=callbacks,
+                state_params=state_params,
                 epochs=args.epochs,
                 start_epoch=start_epoch,
                 verbose=verbose,
@@ -370,4 +383,5 @@ class ClassificationRunner(AbstractModelRunner):
             state.input = dct
         logits = model(dct["features"])
         output = {"logits": logits}
+
         return output
