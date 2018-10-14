@@ -7,7 +7,7 @@ from typing import Tuple, List
 import torch
 
 from catalyst.dl.callback import Callback
-from catalyst.utils.metrics import precision, get_iou_vector, compute_iou, iou_numpy
+from catalyst.utils.metrics import precision, get_iou_vector, mapk, dice_accuracy
 from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.utils.factory import UtilsFactory
 
@@ -74,6 +74,72 @@ class PrecisionCallback(Callback):
             key = "precision{:02}".format(p)
             metric_ = metric.item()
             state.batch_metrics[key] = metric_
+
+
+class MapKCallback(Callback):
+    """
+    mAP@k metric callback.
+    """
+
+    def __init__(self,
+                 input_key: str = "targets",
+                 output_key: str = "logits",
+                 map_args: List[int] = None):
+        """
+        :param input_key: input key to use for precision calculation;
+            specifies our `y_true`.
+        :param output_key: output key to use for precision calculation;
+            specifies our `y_pred`.
+        :param map_args: specifies which map@K to log.
+            [1] - map@1
+            [1, 3] - map@1 and map@3
+            [1, 3, 5] - map@1, map@3 and map@5
+        """
+        super().__init__()
+        self.input_key = input_key
+        self.output_key = output_key
+        self.map_args = map_args or [1, 3, 5]
+
+    def on_batch_end(self, state):
+        mapatk = mapk(
+            state.output[self.output_key],
+            state.input[self.input_key],
+            topk=self.map_args)
+        for p, metric in zip(self.map_args, mapatk):
+            key = "map{:02}".format(p)
+            metric_ = metric.item()
+            state.batch_metrics[key] = metric_
+
+
+class DiceCallback(Callback):
+    """
+    Dice metric callback.
+    """
+
+    def __init__(self,
+                 input_key: str = "targets",
+                 output_key: str = "logits",
+                 threshold: float = None):
+        """
+        :param input_key: input key to use for precision calculation;
+            specifies our `y_true`.
+        :param output_key: output key to use for precision calculation;
+            specifies our `y_pred`.
+        :param threshold: threshold.
+        """
+        super().__init__()
+        self.input_key = input_key
+        self.output_key = output_key
+        self.threshold = threshold
+
+    def on_batch_end(self, state):
+        dice = dice_accuracy(
+            state.output[self.output_key],
+            state.input[self.input_key],
+            threshold=self.threshold
+        )
+        key = "dice"
+        state.batch_metrics[key] = dice
 
 
 class IOUCallback(Callback):
