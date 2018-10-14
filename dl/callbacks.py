@@ -7,7 +7,7 @@ from typing import Tuple, List
 import torch
 
 from catalyst.dl.callback import Callback
-from catalyst.utils.metrics import precision, get_iou_vector
+from catalyst.utils.metrics import precision, get_iou_vector, compute_iou, iou_numpy
 from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.utils.factory import UtilsFactory
 
@@ -99,8 +99,11 @@ class IOUCallback(Callback):
         msk_vpreds = state.output[self.output_key]
         valid_msks = state.input[self.input_key]
 
-        iou = get_iou_vector(valid_msks.detach().cpu().numpy(),
-                       msk_vpreds.sigmoid().detach().cpu().numpy())
+        # msk_vpreds = msk_vpreds.sigmoid()
+        msk_vpreds = msk_vpreds.detach().cpu().numpy()
+        valid_msks = valid_msks.detach().cpu().numpy()
+
+        iou = get_iou_vector(valid_msks, msk_vpreds)
         key = "iou"
         state.batch_metrics[key] = iou
 
