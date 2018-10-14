@@ -286,7 +286,9 @@ class CheckpointCallback(Callback):
             logdir=self.logdir,
             checkpoint=checkpoint,
             is_best=state.is_best_epoch,
-            save_n_best=self.save_n_best)
+            save_n_best=self.save_n_best,
+            main_metric=state.main_metric,
+            minimize_metric=state.minimize_metric)
 
     def on_train_end(self, state):
         print("Top best models:")
@@ -396,6 +398,16 @@ class SchedulerCallback(Callback):
         self.mode = mode
         self.reduce_metric = reduce_metric
 
+    @staticmethod
+    def get_momentum(optimizer):
+        # @TODO: need better solutions
+        if isinstance(optimizer, torch.optim.Adam):
+            return list(optimizer.param_groups)[0]["betas"][0]
+        elif isinstance(optimizer, torch.optim.SGD):
+            return list(optimizer.param_groups)[0]["momentum"]
+        else:
+            return None
+
     def step(self, state):
         scheduler = state._scheduler[self.scheduler_key]
         if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
@@ -405,8 +417,10 @@ class SchedulerCallback(Callback):
         else:
             scheduler.step()
             state.lr[self.scheduler_key] = scheduler.get_lr()[0]
-        state.momentum[self.scheduler_key] = \
-            list(scheduler.optimizer.param_groups)[0]["betas"][0]
+
+        momentum = self.get_momentum(scheduler.optimizer)
+        if isinstance(momentum, float):
+            state.momentum[self.scheduler_key] = momentum
 
     def on_batch_end(self, state):
         if self.mode == "batch":
