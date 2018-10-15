@@ -7,7 +7,7 @@ from typing import Tuple, List
 import torch
 
 from catalyst.dl.callback import Callback
-from catalyst.utils.metrics import precision, get_iou_vector, mapk, dice_accuracy
+from catalyst.utils.metrics import precision, get_iou_vector, mapk, dice_accuracy, F_score
 from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.utils.factory import UtilsFactory
 
@@ -172,6 +172,30 @@ class IOUCallback(Callback):
         iou = get_iou_vector(valid_msks, msk_vpreds)
         key = "iou"
         state.batch_metrics[key] = iou
+
+
+class F2Callback(Callback):
+    """
+    F2 metric callback.
+    """
+
+    def __init__(self,
+                 input_key: str = "targets",
+                 output_key: str = "logits"):
+        """
+        :param input_key: input key to use for precision calculation;
+            specifies our `y_true`.
+        :param output_key: output key to use for precision calculation;
+            specifies our `y_pred`.
+        """
+        super().__init__()
+        self.input_key = input_key
+        self.output_key = output_key
+
+    def on_batch_end(self, state):
+        fscore = F_score(state.output[self.output_key], state.input[self.input_key])
+        key = "f2_score"
+        state.batch_metrics[key] = fscore.detach().cpu().numpy()[0]
 
 
 class Logger(Callback):

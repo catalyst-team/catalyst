@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 
+
 def precision(output, target, topk=(1,)):
     """
     Computes the precision@k for the specified values of k
@@ -17,8 +18,8 @@ def precision(output, target, topk=(1,)):
         correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
         res.append(correct_k.mul_(100.0 / batch_size))
     return res
-	
-	
+
+
 def get_iou_vector(A, B):
     batch_size = A.shape[0]
     B = np.where(B > 0.5, 1, 0)
@@ -134,6 +135,22 @@ def dice_accuracy(prob, truth, threshold=0.5,  is_average=True):
         return accuracy
     else:
         return accuracy
+
+
+def F_score(logit, label, threshold=0.5, beta=2):
+    prob = torch.sigmoid(logit)
+    prob = prob > threshold
+    label = label > threshold
+
+    TP = (prob & label).sum(1).float()
+    TN = ((~prob) & (~label)).sum(1).float()
+    FP = (prob & (~label)).sum(1).float()
+    FN = ((~prob) & label).sum(1).float()
+
+    precision = TP / (TP + FP + 1e-12)
+    recall = TP / (TP + FN + 1e-12)
+    F2 = (1 + beta**2) * precision * recall / (beta**2 * precision + recall + 1e-12)
+    return F2.mean(0)
 
 
 if __name__ == '__main__':
