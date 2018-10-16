@@ -60,7 +60,6 @@ class PrecisionCallback(Callback):
             [1, 3] - accuracy and precision@3
             [1, 3, 5] - precision at 1, 3 and 5
         """
-        super().__init__()
         self.input_key = input_key
         self.output_key = output_key
         self.precision_args = precision_args or [1, 3, 5]
@@ -85,7 +84,6 @@ class Logger(Callback):
         """
         :param logdir: log directory to use for text logging
         """
-        super().__init__()
         self.logger = None
         self._logdir = logdir
 
@@ -143,7 +141,6 @@ class TensorboardLogger(Callback):
         """
         :param logdir: log directory to use for tf logging
         """
-        super().__init__()
         self.logdir = logdir
         self.loggers = dict()
 
