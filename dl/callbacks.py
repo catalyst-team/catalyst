@@ -192,10 +192,28 @@ class F2Callback(Callback):
         self.input_key = input_key
         self.output_key = output_key
 
+    def on_loader_start(self, state):
+        self.outputs = torch.Tensor([])
+        self.labels = torch.Tensor([])
+
     def on_batch_end(self, state):
-        fscore = F_score(state.output[self.output_key], state.input[self.input_key])
+        label = state.input[self.input_key].detach().cpu()
+        output = state.output[self.output_key].detach().cpu()
+        self.outputs = torch.cat([self.outputs, output], 0)
+        self.labels = torch.cat([self.labels, label], 0)
+
+    def on_loader_end(self, state):
+        fscore = F_score(self.labels, self.outputs)
         key = "f2_score"
-        state.batch_metrics[key] = fscore.detach().cpu().numpy()[0]
+        state.epoch_metrics[state.loader_mode][key] = fscore
+        print(f"{state.loader_mode} ", fscore)
+
+
+# def on_epoch_end(self, state):
+    #     fscore = F_score(self.labels, self.outputs)
+    #     key = "f2_score"
+    #     state.epoch_metrics[state.valid_loader][key] = fscore
+    #     print("end epoch ", fscore)
 
 
 class Logger(Callback):
