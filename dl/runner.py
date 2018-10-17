@@ -251,7 +251,7 @@ class AbstractModelRunner:
 
             data_params = merge_dicts(
                 stages_data_params, config.get("data_params", {}))
-            reload_loaders = data_params.get("reload_loaders", True)
+            reload_loaders = data_params.pop("reload_loaders", True)
 
             if loaders is None or reload_loaders:
                 loaders = datasource.prepare_loaders(

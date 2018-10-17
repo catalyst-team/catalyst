@@ -13,40 +13,41 @@ def parse_csv2list(df):
     return df
 
 
-def parse_in_csv(data_params):
-    df = pd.read_csv(data_params["in_csv"])
+def parse_in_csv(
+        in_csv, train_folds, valid_folds=None,
+        tag2class=None, class_column=None, tag_column=None,
+        folds_seed=42, n_folds=5):
+    df = pd.read_csv(in_csv)
 
-    if "tag2class" in data_params:
-        with open(data_params["tag2class"]) as fin:
+    if tag2class is not None:
+        with open(tag2class) as fin:
             cls2id = json.load(fin)
-        class_column = data_params["class_column"]
-        tag_column = data_params["tag_column"]
         df[class_column] = df[tag_column].apply(
             lambda x: cls2id[str(x)])
 
-    if data_params.get("class_column", None) is not None:
+    if class_column is not None:
         df = stratified_fold_split(
             df,
-            class_column=data_params["class_column"],
-            random_state=data_params.get("folds_seed", 42),
-            n_folds=data_params["n_folds"])
+            class_column=class_column,
+            random_state=folds_seed,
+            n_folds=n_folds)
     else:
         df = default_fold_split(
             df,
-            random_state=data_params.get("folds_seed", 42),
-            n_folds=data_params["n_folds"])
+            random_state=folds_seed,
+            n_folds=n_folds)
 
     train_folds = (
-        data_params["train_folds"]
-        if isinstance(data_params["train_folds"], list)
-        else list(map(int, data_params["train_folds"].split(","))))
+        train_folds
+        if isinstance(train_folds, list)
+        else list(map(int, train_folds.split(","))))
     df_train = df[df["fold"].isin(train_folds)]
 
-    if "valid_folds" in data_params:
+    if valid_folds is not None:
         valid_folds = (
-            data_params["valid_folds"]
-            if isinstance(data_params["valid_folds"], list)
-            else list(map(int, data_params["valid_folds"].split(","))))
+            valid_folds
+            if isinstance(valid_folds, list)
+            else list(map(int, valid_folds.split(","))))
         df_valid = df[df["fold"].isin(valid_folds)]
     else:
         df_valid = df[~df["fold"].isin(train_folds)]
@@ -56,11 +57,11 @@ def parse_in_csv(data_params):
     return df, df_train, df_valid, df_infer
 
 
-def prepare_fold_csv(data_params, fold_name):
+def prepare_fold_csv(fold_name, **kwargs):
     spec_name = f"in_csv_{fold_name}"
     df = []
-    if data_params.get(spec_name, None) is not None:
-        for csv in data_params[spec_name].split(","):
+    if kwargs.get(spec_name, None) is not None:
+        for csv in kwargs[spec_name].split(","):
             df_ = pd.read_csv(csv)
             df_["fold"] = fold_name
             df.append(df_)
@@ -71,21 +72,33 @@ def prepare_fold_csv(data_params, fold_name):
     return df
 
 
-def parse_spec_csv(data_params):
-    df_train = prepare_fold_csv(data_params, "train")
-    df_valid = prepare_fold_csv(data_params, "valid")
-    df_infer = prepare_fold_csv(data_params, "infer")
+def parse_spec_csv(
+        in_csv_train=None, in_csv_valid=None, in_csv_infer=None,
+        tag2class=None, class_column=None, tag_column=None):
+    df_train = prepare_fold_csv(
+        fold_name="train",
+        in_csv_train=in_csv_train,
+        in_csv_valid=in_csv_valid,
+        in_csv_infer=in_csv_infer)
+    df_valid = prepare_fold_csv(
+        fold_name="valid",
+        in_csv_train=in_csv_train,
+        in_csv_valid=in_csv_valid,
+        in_csv_infer=in_csv_infer)
+    df_infer = prepare_fold_csv(
+        fold_name="infer",
+        in_csv_train=in_csv_train,
+        in_csv_valid=in_csv_valid,
+        in_csv_infer=in_csv_infer)
 
     if len(df_train) > 0 and len(df_valid) > 0:
         df = pd.concat([df_train, df_valid], axis=0)
     else:
         df = []
 
-    if data_params.get("tag2class", None) is not None:
-        with open(data_params["tag2class"]) as fin:
+    if tag2class is not None:
+        with open(tag2class) as fin:
             cls2id = json.load(fin)
-        class_column = data_params["class_column"]
-        tag_column = data_params["tag_column"]
         if len(df) > 0:
             df[class_column] = df[tag_column].apply(
                 lambda x: cls2id[str(x)])
@@ -102,18 +115,29 @@ def parse_spec_csv(data_params):
     return df, df_train, df_valid, df_infer
 
 
-def parse_in_csvs(data_params):
-    in_csv_flag = data_params.get("in_csv", None) is not None
+def parse_in_csvs(
+        in_csv=None, in_csv_train=None, in_csv_valid=None, in_csv_infer=None,
+        train_folds=None, valid_folds=None,
+        tag2class=None, class_column=None, tag_column=None,
+        folds_seed=42, n_folds=5):
+    in_csv_flag = in_csv is not None
     in_csv_spec_flag = (
-            (data_params.get("in_csv_train", None) is not None
-             and data_params.get("in_csv_valid", None) is not None)
-            or data_params.get("in_csv_infer", None) is not None)
+            (in_csv_train is not None and in_csv_valid is not None)
+            or in_csv_infer is not None)
     assert in_csv_flag != in_csv_spec_flag
 
     if in_csv_flag:
-        df, df_train, df_valid, df_infer = parse_in_csv(data_params)
+        df, df_train, df_valid, df_infer = parse_in_csv(
+            in_csv=in_csv, train_folds=train_folds, valid_folds=valid_folds,
+            tag2class=tag2class,
+            class_column=class_column, tag_column=tag_column,
+            folds_seed=folds_seed, n_folds=n_folds)
     elif in_csv_spec_flag:
-        df, df_train, df_valid, df_infer = parse_spec_csv(data_params)
+        df, df_train, df_valid, df_infer = parse_spec_csv(
+            in_csv_train=in_csv_train, in_csv_valid=in_csv_valid,
+            in_csv_infer=in_csv_infer,
+            tag2class=tag2class,
+            class_column=class_column, tag_column=tag_column)
     else:
         raise Exception("something go wrong")
 
