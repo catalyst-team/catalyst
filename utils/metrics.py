@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, mean_absolute_error
 
 
 def precision(output, target, topk=(1,)):
@@ -141,6 +141,10 @@ def dice_accuracy(prob, truth, threshold=0.5,  is_average=True):
 def F_score(label, output, start=0.2, end=0.5, step=0.01):
     return max([f1_score(label, (output > th), average='macro')
                 for th in np.arange(start, end, step)])
+
+
+def mae(label, output):
+    return mean_absolute_error(label, output)
 
 
 if __name__ == '__main__':

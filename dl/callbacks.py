@@ -7,7 +7,7 @@ from typing import Tuple, List
 import torch
 
 from catalyst.dl.callback import Callback
-from catalyst.utils.metrics import precision, get_iou_vector, mapk, dice_accuracy, F_score
+from catalyst.utils.metrics import precision, get_iou_vector, mapk, dice_accuracy, F_score, mae
 from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.utils.factory import UtilsFactory
 
@@ -209,11 +209,44 @@ class F2Callback(Callback):
         print(f"{state.loader_mode} ", fscore)
 
 
-# def on_epoch_end(self, state):
-    #     fscore = F_score(self.labels, self.outputs)
-    #     key = "f2_score"
-    #     state.epoch_metrics[state.valid_loader][key] = fscore
-    #     print("end epoch ", fscore)
+class MAECallback(Callback):
+    """
+    MAE metric callback.
+    """
+
+    def __init__(self,
+                 input_key: str = "targets",
+                 output_key: str = "logits",
+                 max_value : float = 90):
+        """
+        :param input_key: input key to use for precision calculation;
+            specifies our `y_true`.
+        :param output_key: output key to use for precision calculation;
+            specifies our `y_pred`.
+        """
+        super().__init__()
+        self.input_key = input_key
+        self.output_key = output_key
+        self.max_value = max_value
+
+    def on_loader_start(self, state):
+        self.outputs = torch.Tensor([])
+        self.labels = torch.Tensor([])
+
+    def on_batch_end(self, state):
+        label = state.input[self.input_key].float().detach().cpu()
+        output = state.output[self.output_key].float().detach().cpu()
+        self.outputs = torch.cat([self.outputs, output], 0)
+        self.labels = torch.cat([self.labels, label], 0)
+
+    def on_loader_end(self, state):
+        import pdb
+        mae_score = mae(self.labels, self.outputs)
+        # pdb.set_trace()
+        mae_score =  mae_score * self.max_value
+        key = "mae"
+        state.epoch_metrics[state.loader_mode][key] = mae_score
+        print(f"{state.loader_mode} ", mae_score)
 
 
 class Logger(Callback):
