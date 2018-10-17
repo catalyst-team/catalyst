@@ -147,12 +147,14 @@ class TensorboardLogger(Callback):
         self.logdir = logdir
         self.loggers = dict()
 
-    def on_batch_end(self, state):
+    def on_loader_start(self, state):
         lm = state.loader_mode
         if lm not in self.loggers:
             self.loggers[lm] = UtilsFactory.create_tflogger(
                 logdir=self.logdir, name=lm)
 
+    def on_batch_end(self, state):
+        lm = state.loader_mode
         for key, value in state.batch_metrics.items():
             self.loggers[lm].add_scalar(key, value, state.step)
 
