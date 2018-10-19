@@ -13,10 +13,9 @@ class ResnetEncoder(nn.Module):
     def __init__(
             self,
             arch="resnet50", pretrained=True, frozen=True,
-            pooling="GlobalConcatPool2d",
+            pooling=None,
             embedding_size=None, bn_momentum=0.01,
-            cut_layers=1,
-            **kwargs):
+            cut_layers=1):
         super().__init__()
         # hack to prevent cycle imports
         from catalyst.modules.modules import name2nn
@@ -28,17 +27,19 @@ class ResnetEncoder(nn.Module):
             for param in modules:
                 param.requires_grad = False
 
-        pooling = name2nn(pooling)
+        if pooling is not None:
+            pooling_layer = name2nn(pooling)
+            modules += [pooling_layer()]
+
         flatten = name2nn("Flatten")
-        modules += [
-            pooling(),
-            flatten(),
-        ]
+        modules += [flatten()]
+
+        resnet_out_features = resnet.fc.in_features * 2 \
+            if pooling is not None and "concat" in pooling.lower() \
+            else resnet.fc.in_features
 
         if embedding_size is not None:
-            resnet_out_features = resnet.fc.in_features \
-                if "concat" not in pooling.lower() \
-                else resnet.fc.in_features * 2
+            self.out_features = embedding_size
             additional_modules = [
                 nn.Linear(resnet_out_features, embedding_size),
                 nn.BatchNorm1d(
@@ -47,6 +48,8 @@ class ResnetEncoder(nn.Module):
             ]
             embeddings_weights_init(additional_modules)
             modules += additional_modules
+        else:
+            self.out_features = resnet_out_features
 
         self.feature_net = nn.Sequential(*modules)
 
