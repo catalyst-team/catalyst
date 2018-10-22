@@ -219,6 +219,15 @@ class AbstractModelRunner:
             mode="train",
             verbose=verbose)
 
+    @staticmethod
+    def prepare_stage_args(*, args, stage_config):
+        return UtilsFactory.prepare_stage_args(
+            args=args, stage_config=stage_config)
+
+    @staticmethod
+    def create_model_stuff(*, model, config):
+        return UtilsFactory.create_model_stuff(model=model, config=config)
+
     def train(
             self, *,
             datasource: AbstractDataSource,
@@ -245,8 +254,7 @@ class AbstractModelRunner:
         for stage, config in stages_config.items():
             self.stage = stage
 
-            args = UtilsFactory.prepare_stage_args(
-                args=args, stage_config=config)
+            args = self.prepare_stage_args(args=args, stage_config=config)
             pprint(args)
 
             data_params = merge_dicts(
@@ -278,8 +286,7 @@ class AbstractModelRunner:
 
             self.run_stage_init(callbacks=callbacks)
             self.criterion, self.optimizer, self.scheduler = \
-                UtilsFactory.create_model_stuff(
-                    model=self.model, config=config)
+                self.create_model_stuff(model=self.model, config=config)
 
             start_epoch = 0 if self.state is None else self.state.epoch + 1
             self.train_stage(
