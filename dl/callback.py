@@ -19,8 +19,6 @@ class Callback:
     mode end
     """
 
-    def on_stage_init(self, model, stage): pass
-
     def on_train_start(self, state): pass
 
     def on_train_end(self, state): pass
@@ -46,10 +44,6 @@ class CallbackCompose:
 
     def __init__(self, callbacks: Dict[str, Callback]):
         self.callbacks = callbacks
-
-    def on_stage_init(self, model, stage):
-        for key, value in self.callbacks.items():
-            value.on_stage_init(model=model, stage=stage)
 
     def on_train_start(self, state):
         for key, value in self.callbacks.items():

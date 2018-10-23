@@ -1,7 +1,5 @@
-import os
-import cv2
-import jpeg4py as jpeg
 import numpy as np
+from catalyst.data.funcrional import read_image
 
 
 class ImageReader(object):
@@ -29,31 +27,10 @@ class ImageReader(object):
 
     def __call__(self, row):
         image_name = str(row[self.row_key])
-
-        if self.datapath is not None:
-            image_name = (
-                image_name
-                if image_name.startswith(self.datapath)
-                else os.path.join(self.datapath, image_name))
-
-        img = None
-        try:
-            if image_name.endswith(("jpg", "JPG", "jpeg", "JPEG")):
-                img = jpeg.JPEG(image_name).decode()
-        except Exception:
-            pass
-
-        if img is None:
-            img = cv2.imread(image_name)
-
-            if len(img.shape) == 3:  # BGR -> RGB
-                img = img[:, :, ::-1]
-
-        if len(img.shape) < 3:  # grayscale
-            img = np.expand_dims(img, -1)
-
-        if img.shape[-1] != 3 and not self.grayscale:
-            img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+        img = read_image(
+            image_name,
+            datapath=self.datapath,
+            grayscale=self.grayscale)
 
         result = {self.dict_key: img}
         return result
