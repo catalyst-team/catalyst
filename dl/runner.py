@@ -94,10 +94,6 @@ class AbstractModelRunner:
             **kwargs,
             **additional_kwargs)
 
-    def run_stage_init(self, callbacks: Dict[str, Callback]):
-        for callback in callbacks.values():
-            callback.on_stage_init(model=self.model, stage=self.stage)
-
     def run_event(self, *, callbacks: Dict[str, Callback], event: str):
         """
         Innert method to run special event for all available callbacks.
