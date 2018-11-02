@@ -9,20 +9,23 @@ Best coding practices included.
 - Universal train/inference loop.
 - Key-values storages.
 - Data and model usage standardization.
-- Configuration files - yaml for model/data hyperparameters.
+- Configuration files for model/data hyperparameters.
 - Loggers and Tensorboard support.
-- Reproducibility - even source code will be saved to logs.
-- OneCycle lr scheduler and LRFinder support.
-- FP16 support for any model.
+- Reproducibility – even source code will be saved.
+- 1Cycle and LRFinder support.
+- FP16 support.
 - Corrected weight decay (AdamW).
 - N-best-checkpoints saving (SWA).
-- Training stages support - run whole experiment by one command.
-- Logdir autonaming based on hyperparameters - make hyperopt search easy again.
-- Callbacks - reusable train/inference pipeline parts (and you can write your own if needed).
-- Well structed, so you can just grab a part to your project.
+- Training stages support.
+- Logdir autonaming based on hyperparameters.
+- Callbacks – reusable train/inference pipeline parts.
+- Well structured and production friendly.
 - Lots of reusable code for different purposes: losses, optimizers, models, knns, embeddings projector.
 
-catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+. In development.
+
+Catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+.
+
+Stable branch - `master`. Development branch - `dev`.
 
 ## Usage
 ```bash
@@ -33,26 +36,6 @@ git submodule add https://github.com/Scitator/catalyst.git catalyst
 
 https://github.com/Scitator/catalyst-examples
 
-### Deep learning
-
-#### Train
-```bash
-CUDA_VISIBLE_DEVICES="{gpus}" PYTHONPATH=. \
-    python catalyst/dl/scripts/train.py \
-    --config=/path/to/config-file
-```
-
-#### Inference
-```bash
-CUDA_VISIBLE_DEVICES="{gpus}" PYTHONPATH=. \
-    python catalyst/dl/scripts/inference.py \
-    --config=/path/to/config-file,/path/to/inference-config-file \
-    --resume=/path/to/checkpoint
-```
-
-### Reinforcement learning [WIP]
-
-Waiting for NIPS end. Release date - December 2018.
 
 ## Dependencies
 ```bash
@@ -81,10 +64,3 @@ run something like `flake8 dl/scripts/train.py`.
 You may need to first run `pip install flake8`.
 
 See `codestyle.md` for more information.
-
-
-## Future features
-
-- catalyst pic
-- distributed training (with fp16 support)
-- Horovod support
