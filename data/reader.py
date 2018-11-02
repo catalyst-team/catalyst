@@ -1,5 +1,5 @@
 import numpy as np
-from catalyst.data.funcrional import read_image
+from catalyst.data.functional import read_image
 
 
 class ImageReader(object):

@@ -1,5 +1,5 @@
 from typing import Dict, Callable
-from catalyst.data.funcrional import compute_mixup_lambda, mixup
+from catalyst.data.functional import compute_mixup_lambda, mixup
 
 
 class Augmentor:

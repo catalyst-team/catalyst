@@ -389,6 +389,17 @@ class AbstractModelRunner:
 
 
 class ClassificationRunner(AbstractModelRunner):
+
+    def batch2device(
+            self, *,
+            dct: Dict,
+            state: RunnerState = None):
+        if isinstance(dct, (tuple, list)):
+            assert len(dct) == 2
+            dct = {"features": dct[0], "targets": dct[1]}
+        dct = super().batch2device(dct=dct, state=state)
+        return dct
+
     def batch_handler(
             self, *,
             dct: Dict,
@@ -402,10 +413,7 @@ class ClassificationRunner(AbstractModelRunner):
         :param state: runner state
         :return: key-value storage with model predictions
         """
-        if isinstance(dct, (tuple, list)):
-            assert len(dct) == 2
-            dct = {"features": dct[0], "targets": dct[1]}
-        dct = {key: value.to(state.device) for key, value in dct.items()}
+        dct = self.batch2device(dct=dct, state=state)
         logits = model(dct["features"])
         output = {"logits": logits}
 
