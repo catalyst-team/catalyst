@@ -45,7 +45,8 @@ class ScalarReader(object):
             row_key: str,
             dict_key: str,
             dtype: type = np.float32,
-            default_value: float = None):
+            default_value: float = None,
+            one_hot_classes: int = None):
         """
         :param row_key: input key to use from annotation dict
         :param dict_key: output key to use to store the result
@@ -57,9 +58,15 @@ class ScalarReader(object):
         self.dict_key = dict_key
         self.dtype = dtype
         self.default_value = default_value
+        self.one_hot_classes = one_hot_classes
 
     def __call__(self, row):
         scalar = self.dtype(row.get(self.row_key, self.default_value))
+        if self.one_hot_classes is not None \
+                and scalar is not None and scalar >= 0:
+            one_hot = np.zeros(self.one_hot_classes, dtype=np.float32)
+            one_hot[scalar] = 1.0
+            scalar = one_hot
         result = {self.dict_key: scalar}
         return result
 

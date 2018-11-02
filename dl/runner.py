@@ -94,10 +94,6 @@ class AbstractModelRunner:
             **kwargs,
             **additional_kwargs)
 
-    def run_stage_init(self, callbacks: Dict[str, Callback]):
-        for callback in callbacks.values():
-            callback.on_stage_init(model=self.model, stage=self.stage)
-
     def run_event(self, *, callbacks: Dict[str, Callback], event: str):
         """
         Innert method to run special event for all available callbacks.
@@ -164,12 +160,13 @@ class AbstractModelRunner:
                     ncols=0) if verbose else loader
 
                 for i, dct in enumerate(loader):
+                    dct = self.batch2device(dct=dct, state=state)
                     state.input = dct
 
                     self.run_event(callbacks=callbacks, event="on_batch_start")
                     with torch.set_grad_enabled(state.is_train):
                         state.output = self.batch_handler(
-                            dct=dct, model=self.model, state=state)
+                            dct=state.input, model=self.model, state=state)
                     self.run_event(callbacks=callbacks, event="on_batch_end")
 
                     if verbose:
@@ -341,11 +338,24 @@ class AbstractModelRunner:
         :param state: runner state
         :return: key-value storage with model predictions
         """
-        dct = {key: value.to(self.device) for key, value in dct.items()}
-        if state is not None:
-            state.input = dct
+        dct = self.batch2device(dct=dct, state=state)
         output = self._batch_handler(dct=dct, model=model)
         return output
+
+    def batch2device(
+            self, *,
+            dct: Dict,
+            state: RunnerState = None):
+        if state is not None:
+            dct = {
+                key: value.to(self.device) \
+                    if state.key2device[key] \
+                    else value
+                for key, value in dct.items()}
+        else:
+            dct = {key: value.to(self.device) for key, value in dct.items()}
+        return dct
+
 
     @staticmethod
     def _batch_handler(*, dct: Dict, model: nn.Module) -> Dict:
@@ -396,8 +406,6 @@ class ClassificationRunner(AbstractModelRunner):
             assert len(dct) == 2
             dct = {"features": dct[0], "targets": dct[1]}
         dct = {key: value.to(state.device) for key, value in dct.items()}
-        if state is not None:
-            state.input = dct
         logits = model(dct["features"])
         output = {"logits": logits}
 

@@ -6,6 +6,7 @@ from collections import defaultdict
 from typing import Tuple, List
 import torch
 
+from catalyst.data.functional import compute_mixup_lambda, mixup_torch
 from catalyst.dl.callback import Callback
 from catalyst.utils.metrics import precision
 from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
@@ -46,10 +47,12 @@ class PrecisionCallback(Callback):
     Precision metric callback.
     """
 
-    def __init__(self,
-                 input_key: str = "targets",
-                 output_key: str = "logits",
-                 precision_args: List[int] = None):
+    def __init__(
+            self,
+            input_key: str = "targets",
+            output_key: str = "logits",
+            precision_args: List[int] = None,
+            prefix="precision"):
         """
         :param input_key: input key to use for precision calculation;
             specifies our `y_true`.
@@ -63,6 +66,7 @@ class PrecisionCallback(Callback):
         self.input_key = input_key
         self.output_key = output_key
         self.precision_args = precision_args or [1, 3, 5]
+        self.prefix = prefix
 
     def on_batch_end(self, state):
         prec = precision(
@@ -70,7 +74,7 @@ class PrecisionCallback(Callback):
             state.input[self.input_key],
             topk=self.precision_args)
         for p, metric in zip(self.precision_args, prec):
-            key = "precision{:02}".format(p)
+            key = f"{self.prefix}{p:02}"
             metric_ = metric.item()
             state.batch_metrics[key] = metric_
 
@@ -95,13 +99,13 @@ class Logger(Callback):
     def logdir(self, value):
         self._logdir = value
         os.makedirs(value, exist_ok=True)
-        log_filepath = os.path.join(value, 'logs.txt')
+        log_filepath = os.path.join(value, "logs.txt")
         self.logger = self._get_logger(log_filepath)
 
     def on_train_begin(self, state):
         if self.logger is not None:
             self.logger.info(
-                'Starting training with params:\n{}\n\n'.format(state))
+                "Starting training with params:\n{}\n\n".format(state))
 
     def on_epoch_end(self, state):
         if self.logger is not None:
@@ -119,7 +123,7 @@ class Logger(Callback):
         fh.setLevel(logging.INFO)
         ch = logging.StreamHandler()
         ch.setLevel(logging.INFO)
-        formatter = logging.Formatter('[%(asctime)s] %(message)s')
+        formatter = logging.Formatter("[%(asctime)s] %(message)s")
         fh.setFormatter(formatter)
         ch.setFormatter(formatter)
         # add the handlers to the logger
@@ -212,8 +216,9 @@ class CheckpointCallback(Callback):
             checkpoint=checkpoint,
             is_best=is_best,
             suffix=suffix)
-        self.top_best_metrics.append(
-            (filepath, checkpoint["valid_metrics"][main_metric]))
+        checkpoint_metric = checkpoint["valid_metrics"].get(main_metric, None)
+        checkpoint_metric = checkpoint_metric or checkpoint.get("epoch", -1)
+        self.top_best_metrics.append((filepath, checkpoint_metric))
         self.top_best_metrics = sorted(
             self.top_best_metrics,
             key=lambda x: x[1],
@@ -270,6 +275,7 @@ class CheckpointCallback(Callback):
         print(top_best_metrics_str)
 
 
+# @TODO: rewrite for optmizer_key
 class OptimizerCallback(Callback):
     """
     Optimizer callback, abstraction over optimizer step.
@@ -278,7 +284,8 @@ class OptimizerCallback(Callback):
     def __init__(
             self,
             grad_clip: float = None,
-            fp16_grad_scale: float = 128.0):
+            fp16_grad_scale: float = 128.0,
+            accumulation_steps=1):
         """
         :param grad_clip: grap clipping specification kwargs
             @TODO: better support of different grad clip funcs
@@ -288,6 +295,8 @@ class OptimizerCallback(Callback):
         self.grad_clip = grad_clip
         self.fp16 = False
         self.fp16_grad_scale = fp16_grad_scale
+        self.accumulation_steps = accumulation_steps
+        self.accumulation_counter = 0
 
     def on_train_start(self, state):
         self.fp16 = isinstance(state.model, Fp16Wrap)
@@ -316,17 +325,26 @@ class OptimizerCallback(Callback):
             value.step()
 
     def on_batch_end(self, state):
+        # @TODO: check this one
         if not state.is_train:
             return
 
-        if not self.fp16:
-            for _, value in state._optimizer.items():
-                value.zero_grad()
+        self.accumulation_counter += 1
 
+        if not self.fp16:
+            # for _, value in state._optimizer.items():
+            #     value.zero_grad()
+
+            # @TODO: check this one
             if len(state._optimizer) > 0:
                 for key, value in state.loss.items():
                     value.backward()
-                self.grad_step(state._optimizer)
+
+                if (self.accumulation_counter + 1) \
+                        % self.accumulation_steps == 0:
+                    self.grad_step(state._optimizer)
+                    state.model.zero_grad()
+                    self.accumulation_counter = 0
         else:
             state.model.zero_grad()
             if len(state._optimizer) > 0:
@@ -574,10 +592,17 @@ class LRFinder(LRUpdater):
 
 
 class ClassificationLossCallback(Callback):
+    def __init__(
+            self,
+            input_key: str = "targets",
+            output_key: str = "logits"):
+        self.input_key = input_key
+        self.output_key = output_key
+
     def on_batch_end(self, state):
         state.loss["main"] = state._criterion["main"](
-            state.output["logits"],
-            state.input["targets"])
+            state.output[self.output_key],
+            state.input[self.input_key])
 
 
 class InferCallback(Callback):
@@ -604,3 +629,20 @@ class InferCallback(Callback):
                 np.save(
                     self.out_prefix.format(
                         suffix=".".join([state.loader_mode, key])), value)
+
+
+class MixupCallback(Callback):
+    def __init__(
+            self,
+            mixup_keys: List[str],
+            alpha: float,
+            share_lambda: bool = True):
+        self.mixup_keys = mixup_keys
+        self.alpha = alpha
+        self.share_lambda = share_lambda
+
+    def on_batch_start(self, state):
+        lambda_ = compute_mixup_lambda(
+            state.batch_size, self.alpha, self.share_lambda)
+        for key in self.mixup_keys:
+            state.input[key] = mixup_torch(state.input[key], lambda_=lambda_)
