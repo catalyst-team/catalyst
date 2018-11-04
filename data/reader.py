@@ -1,7 +1,5 @@
-import os
-import cv2
-import jpeg4py as jpeg
 import numpy as np
+from catalyst.data.functional import read_image
 
 
 class ImageReader(object):
@@ -29,31 +27,10 @@ class ImageReader(object):
 
     def __call__(self, row):
         image_name = str(row[self.row_key])
-
-        if self.datapath is not None:
-            image_name = (
-                image_name
-                if image_name.startswith(self.datapath)
-                else os.path.join(self.datapath, image_name))
-
-        img = None
-        try:
-            if image_name.endswith(("jpg", "JPG", "jpeg", "JPEG")):
-                img = jpeg.JPEG(image_name).decode()
-        except Exception:
-            pass
-
-        if img is None:
-            img = cv2.imread(image_name)
-
-            if len(img.shape) == 3:  # BGR -> RGB
-                img = img[:, :, ::-1]
-
-        if len(img.shape) < 3:  # grayscale
-            img = np.expand_dims(img, -1)
-
-        if img.shape[-1] != 3 and not self.grayscale:
-            img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+        img = read_image(
+            image_name,
+            datapath=self.datapath,
+            grayscale=self.grayscale)
 
         result = {self.dict_key: img}
         return result
@@ -68,7 +45,8 @@ class ScalarReader(object):
             row_key: str,
             dict_key: str,
             dtype: type = np.float32,
-            default_value: float = None):
+            default_value: float = None,
+            one_hot_classes: int = None):
         """
         :param row_key: input key to use from annotation dict
         :param dict_key: output key to use to store the result
@@ -80,9 +58,15 @@ class ScalarReader(object):
         self.dict_key = dict_key
         self.dtype = dtype
         self.default_value = default_value
+        self.one_hot_classes = one_hot_classes
 
     def __call__(self, row):
         scalar = self.dtype(row.get(self.row_key, self.default_value))
+        if self.one_hot_classes is not None \
+                and scalar is not None and scalar >= 0:
+            one_hot = np.zeros(self.one_hot_classes, dtype=np.float32)
+            one_hot[scalar] = 1.0
+            scalar = one_hot
         result = {self.dict_key: scalar}
         return result
 

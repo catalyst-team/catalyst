@@ -94,10 +94,6 @@ class AbstractModelRunner:
             **kwargs,
             **additional_kwargs)
 
-    def run_stage_init(self, callbacks: Dict[str, Callback]):
-        for callback in callbacks.values():
-            callback.on_stage_init(model=self.model, stage=self.stage)
-
     def run_event(self, *, callbacks: Dict[str, Callback], event: str):
         """
         Innert method to run special event for all available callbacks.
@@ -164,12 +160,13 @@ class AbstractModelRunner:
                     ncols=0) if verbose else loader
 
                 for i, dct in enumerate(loader):
+                    dct = self.batch2device(dct=dct, state=state)
                     state.input = dct
 
                     self.run_event(callbacks=callbacks, event="on_batch_start")
                     with torch.set_grad_enabled(state.is_train):
                         state.output = self.batch_handler(
-                            dct=dct, model=self.model, state=state)
+                            dct=state.input, model=self.model, state=state)
                     self.run_event(callbacks=callbacks, event="on_batch_end")
 
                     if verbose:
@@ -219,6 +216,20 @@ class AbstractModelRunner:
             mode="train",
             verbose=verbose)
 
+    @staticmethod
+    def prepare_stage_args(*, args, stage_config):
+        return UtilsFactory.prepare_stage_args(
+            args=args, stage_config=stage_config)
+
+    @staticmethod
+    def prepare_stage_model(*, model, stage, **kwargs):
+        assert len(kwargs) == 0
+        pass
+
+    @staticmethod
+    def create_model_stuff(*, model, config):
+        return UtilsFactory.create_model_stuff(model=model, config=config)
+
     def train(
             self, *,
             datasource: AbstractDataSource,
@@ -234,6 +245,7 @@ class AbstractModelRunner:
         :param verbose: verbose flag
         """
 
+        stages_stage_params = stages_config.pop("stage_params", {})
         stages_state_params = stages_config.pop("state_params", {})
         stages_data_params = stages_config.pop("data_params", {})
         stages_callbacks_params = stages_config.pop("callbacks_params", {})
@@ -245,18 +257,19 @@ class AbstractModelRunner:
         for stage, config in stages_config.items():
             self.stage = stage
 
-            args = UtilsFactory.prepare_stage_args(
-                args=args, stage_config=config)
+            args = self.prepare_stage_args(args=args, stage_config=config)
             pprint(args)
 
             data_params = merge_dicts(
                 stages_data_params, config.get("data_params", {}))
-            reload_loaders = data_params.get("reload_loaders", True)
+            reload_loaders = data_params.pop("reload_loaders", True)
 
             if loaders is None or reload_loaders:
                 loaders = datasource.prepare_loaders(
                     args=args, stage=stage, **data_params)
 
+            stage_params = merge_dicts(
+                stages_stage_params, config.get("stage_params", {}))
             state_params = merge_dicts(
                 stages_state_params, config.get("state_params", {}))
             callbacks_params = merge_dicts(
@@ -269,17 +282,17 @@ class AbstractModelRunner:
                 stages_scheduler_params, config.get("scheduler_params", {}))
 
             callbacks = self.prepare_callbacks(
-                callbacks_params=callbacks_params,
                 args=args,
                 mode="train",
-                stage=stage)
+                stage=stage,
+                **callbacks_params)
             pprint(loaders)
             pprint(callbacks)
 
-            self.run_stage_init(callbacks=callbacks)
+            self.prepare_stage_model(
+                model=self.model, stage=stage, **stage_params)
             self.criterion, self.optimizer, self.scheduler = \
-                UtilsFactory.create_model_stuff(
-                    model=self.model, config=config)
+                self.create_model_stuff(model=self.model, config=config)
 
             start_epoch = 0 if self.state is None else self.state.epoch + 1
             self.train_stage(
@@ -325,11 +338,24 @@ class AbstractModelRunner:
         :param state: runner state
         :return: key-value storage with model predictions
         """
-        dct = {key: value.to(self.device) for key, value in dct.items()}
-        if state is not None:
-            state.input = dct
+        dct = self.batch2device(dct=dct, state=state)
         output = self._batch_handler(dct=dct, model=model)
         return output
+
+    def batch2device(
+            self, *,
+            dct: Dict,
+            state: RunnerState = None):
+        if state is not None:
+            dct = {
+                key: value.to(self.device) \
+                    if state.key2device[key] \
+                    else value
+                for key, value in dct.items()}
+        else:
+            dct = {key: value.to(self.device) for key, value in dct.items()}
+        return dct
+
 
     @staticmethod
     def _batch_handler(*, dct: Dict, model: nn.Module) -> Dict:
@@ -345,23 +371,35 @@ class AbstractModelRunner:
     @staticmethod
     def prepare_callbacks(
             *,
-            callbacks_params: Dict[str, Dict],
             args: Namespace,
             mode: str,
-            stage: str = None) -> Dict[str, Callback]:
+            stage: str = None,
+            **kwargs) -> Dict[str, Callback]:
         """
         Runner callbacks method to handle different runs logic.
 
-        :param callbacks_params: parameters for callbacks creation
         :param args: console args
         :param mode: train/infer
         :param stage: training stage name
+        :param **kwargs: callbacks params
         :return: OrderedDict with callbacks
         """
+        assert len(kwargs) == 0
         raise NotImplementedError
 
 
 class ClassificationRunner(AbstractModelRunner):
+
+    def batch2device(
+            self, *,
+            dct: Dict,
+            state: RunnerState = None):
+        if isinstance(dct, (tuple, list)):
+            assert len(dct) == 2
+            dct = {"features": dct[0], "targets": dct[1]}
+        dct = super().batch2device(dct=dct, state=state)
+        return dct
+
     def batch_handler(
             self, *,
             dct: Dict,
@@ -375,12 +413,7 @@ class ClassificationRunner(AbstractModelRunner):
         :param state: runner state
         :return: key-value storage with model predictions
         """
-        if isinstance(dct, (tuple, list)):
-            assert len(dct) == 2
-            dct = {"features": dct[0], "targets": dct[1]}
-        dct = {key: value.to(state.device) for key, value in dct.items()}
-        if state is not None:
-            state.input = dct
+        dct = self.batch2device(dct=dct, state=state)
         logits = model(dct["features"])
         output = {"logits": logits}
 

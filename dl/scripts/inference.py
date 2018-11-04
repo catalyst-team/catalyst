@@ -48,12 +48,13 @@ def main(args, unknown_args):
     modules = prepare_modules(model_dir=args.model_dir)
 
     datasource = modules["data"].DataSource()
-    loaders = datasource.prepare_loaders(args=args, stage=None, **config["data_params"])
+    loaders = datasource.prepare_loaders(args, **config["data_params"])
     model = modules["model"].prepare_model(config)
 
     runner = modules["model"].ModelRunner(model=model)
+    callbacks_params = config["callbacks_params"] or {}
     callbacks = runner.prepare_callbacks(
-        callbacks_params=config["callbacks_params"], args=args, mode="infer")
+        args=args, mode="infer", **callbacks_params)
     runner.infer(loaders=loaders, callbacks=callbacks, verbose=args.verbose)
 
 

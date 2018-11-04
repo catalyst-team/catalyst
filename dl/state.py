@@ -43,6 +43,7 @@ class RunnerState(FrozenClass):
         self.best_metrics = None
 
         # other
+        self.key2device = defaultdict(lambda: True)
         self.is_train = False
         for k, v in kwargs.items():
             setattr(self, k, v)
