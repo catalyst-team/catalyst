@@ -43,3 +43,40 @@ class GlobalConcatPool2d(nn.Module):
 
     def forward(self, x):
         return torch.cat([self.avg(x), self.max(x)], 1)
+
+
+class GlobalAvgPool1d(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x):
+        # xx = x.unsqueeze_(-1)
+        return nn.functional.avg_pool1d(
+            input=x,
+            kernel_size=x.shape[1],
+            padding=x.shape[1]//2
+        )
+
+
+class GlobalMaxPool1d(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, x):
+        # xx = x.unsqueeze_(-1)
+        return nn.functional.max_pool1d(
+            input=x,
+            kernel_size=x.shape[1],
+            padding=x.shape[1]//2
+        )
+
+
+class GlobalConcatPool1d(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.avg = GlobalAvgPool1d()
+        self.max = GlobalMaxPool1d()
+
+    def forward(self, x):
+        x = x.unsqueeze_(-1)
+        return torch.cat([self.avg(x), self.max(x)], 1)
