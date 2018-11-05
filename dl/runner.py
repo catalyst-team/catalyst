@@ -132,6 +132,7 @@ class AbstractModelRunner:
         state_params = state_params or {}
         state = self._init_state(mode=mode, stage=self.stage, **state_params)
         state.mode = mode
+        state.loaders = loaders
         self.state = state
 
         self.run_event(callbacks=callbacks, event=f"on_{mode}_start")
