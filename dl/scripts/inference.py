@@ -48,7 +48,7 @@ def main(args, unknown_args):
     modules = prepare_modules(model_dir=args.model_dir)
 
     datasource = modules["data"].DataSource()
-    loaders = datasource.prepare_loaders(args, is_test=True, **config["data_params"])
+    loaders = datasource.prepare_loaders(args, **config["data_params"])
     model = modules["model"].prepare_model(config)
 
     runner = modules["model"].ModelRunner(model=model)
