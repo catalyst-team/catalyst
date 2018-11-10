@@ -24,9 +24,6 @@ class RunnerState(FrozenClass):
         self.input = None
         self.output = None
 
-        # data loaders
-        self.loaders = None
-
         # counters
         self.loader_len = 0
         self.batch_size = 0
