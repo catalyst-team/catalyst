@@ -349,13 +349,13 @@ class AbstractModelRunner:
         if state is not None:
             dct = {
                 key: value.to(self.device) \
-                    if state.key2device[key] \
+                    if state.key2device[key] and torch.is_tensor(value)
                     else value
-                for key, value in dct.items()}
+                for key, value in dct.items()
+            }
         else:
             dct = {key: value.to(self.device) for key, value in dct.items()}
         return dct
-
 
     @staticmethod
     def _batch_handler(*, dct: Dict, model: nn.Module) -> Dict:
