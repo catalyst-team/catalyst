@@ -1,13 +1,16 @@
 import os
 import time
 import logging
-import numpy as np
+from typing import Tuple, List, Dict
 from collections import defaultdict
-from typing import Tuple, List
+
+import numpy as np
 import torch
+from tensorboardX import SummaryWriter
 
 from catalyst.data.functional import compute_mixup_lambda, mixup_torch
 from catalyst.dl.callback import Callback
+from catalyst.dl.state import RunnerState
 from catalyst.utils.metrics import precision
 from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.utils.factory import UtilsFactory
@@ -164,6 +167,70 @@ class TensorboardLogger(Callback):
 
         for key, value in state.epoch_metrics[lm].items():
             self.loggers[lm].add_scalar(f"epoch {key}", value, state.epoch)
+
+    @staticmethod
+    def create_tflogger(logdir, name):
+        log_dir = os.path.join(logdir, f"{name}_log")
+        logger = SummaryWriter(log_dir)
+        return logger
+
+
+class GroupTensorboardLogger(Callback):
+    """
+    Another tensorboard logger. Uses tags to group same metrics, but for
+    train and validation. Can log per-batch or per-epoch values.
+    You can maintain two independent metric sets by creating two instances
+    """
+
+    def __init__(
+        self,
+        logdir,
+        metric_names: List[str] = None,
+        log_on_batch_end=True,
+        log_on_epoch_end=True
+    ):
+        """
+        :param logdir: directory where logs will be created
+        :param metric_names: List of metric names to log.
+            If none - logs everything.
+        :param log_on_batch_end: Logs per-batch value of metrics,
+            prepends 'batch_' prefix to their names.
+        :param log_on_epoch_end: Logs per-epoch metrics if set True.
+        """
+
+        self.metrics_to_log = metric_names
+        self.log_on_batch_end = log_on_batch_end
+        self.log_on_epoch_end = log_on_epoch_end
+
+        # You definitely should log something)
+        assert self.log_on_batch_end or self.log_on_epoch_end
+
+        self.writer = SummaryWriter(logdir)
+
+    def _log_metrics(
+        self,
+        metrics: Dict[str, float],
+        mode: str,
+        step: int,
+        prefix=''
+    ):
+        if self.metrics_to_log is None:
+            self.metrics_to_log = list(metrics.keys())
+
+        for name in self.metrics_to_log:
+            if name in metrics:
+                self.writer.add_scalar(f"{prefix}{name}/{mode}",
+                                       metrics[name], step)
+
+    def on_loader_end(self, state: RunnerState):
+        if self.log_on_epoch_end:
+            mode = state.loader_mode
+            self._log_metrics(state.epoch_metrics[mode], mode, state.epoch)
+
+    def on_batch_end(self, state: RunnerState):
+        if self.log_on_batch_end:
+            mode = state.loader_mode
+            self._log_metrics(state.batch_metrics, mode, state.step, 'batch_')
 
 
 class CheckpointCallback(Callback):
