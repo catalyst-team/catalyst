@@ -78,6 +78,46 @@ class PrecisionCallback(Callback):
             metric_ = metric.item()
             state.batch_metrics[key] = metric_
 
+class MAPCallback(Callback):
+    """
+    Mean Average Precision metric callback.
+    """
+
+    def __init__(
+            self,
+            input_key: str = "targets",
+            output_key: str = "logits",
+            k: int = "k",
+            prefix="map"):
+        """
+             :param input_key: input key to use for precision calculation;
+                 specifies our `y_true`.
+             :param output_key: output key to use for precision calculation;
+                 specifies our `y_pred`.
+             :param k: Mean Average Precision cutoff
+        """
+        self.input_key = input_key
+        self.output_key = output_key
+        self.k = k
+        self.prefix = prefix
+        self.weights = np.array([1/i for i in range(1, k+1)])
+
+    def on_batch_end(self, state):
+        row_count = state.input[self.input_key].shape[0]
+        prec = precision(
+            state.output[self.output_key],
+            state.input[self.input_key],
+            topk=tuple(range(1, self.k+1)),
+            return_exact=True
+        )
+
+        key = f"{self.prefix}{self.k}"
+        res = 0.0
+        for i in range(self.k):
+            res += ((prec[i]==1).float()*self.weights[i]).sum()
+
+        state.batch_metrics[key] = res.float()/(self.weights.sum()*row_count)
+        return res
 
 class Logger(Callback):
     """

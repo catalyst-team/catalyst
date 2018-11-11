@@ -1,6 +1,6 @@
 
 
-def precision(output, target, topk=(1,)):
+def precision(output, target, topk=(1,), return_exact=False):
     """
     Computes the precision@k for the specified values of k
     """
@@ -13,6 +13,9 @@ def precision(output, target, topk=(1,)):
 
     res = []
     for k in topk:
-        correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
-        res.append(correct_k.mul_(100.0 / batch_size))
+        if return_exact:
+            res.append(correct[:k].float().sum(0, keepdim=True)[0])
+        else:
+            correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
+            res.append(correct_k.mul_(100.0 / batch_size))
     return res
