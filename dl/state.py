@@ -9,16 +9,24 @@ class RunnerState(FrozenClass):
     An object that is used to pass internal state during train/valid/infer.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(
+            self,
+            *,
+            main_metric="loss_main",
+            minimize_metric=True,
+            valid_loader="valid",
+            reset_step=False,
+            **kwargs
+    ):
         # special info
         self.mode = "infer"
         self.device = None
         self.loader_mode = None
-        self.reset_step = kwargs.get("reset_step", False)
+        self.reset_step = reset_step
 
-        self.main_metric = kwargs.get("main_metric", "loss_main")
-        self.minimize_metric = kwargs.get("minimize_metric", True)
-        self.valid_loader = kwargs.get("valid_loader", "valid")
+        self.main_metric = main_metric
+        self.minimize_metric = minimize_metric
+        self.valid_loader = valid_loader
 
         # data pipeline
         self.input = None
@@ -114,11 +122,11 @@ class RunnerState(FrozenClass):
             key: value
             for key, value in valid_metrics.items()
             if isinstance(value, float)
-        }
+            }
         state.best_metrics = {
             key: value
             for key, value in best_metrics.items() if isinstance(value, float)
-        }
+            }
         state.valid_metrics = valid_metrics
         state.is_best_epoch = is_best
 
@@ -141,7 +149,7 @@ class RunnerState(FrozenClass):
         state.epoch_metrics[lm] = {
             key: UtilsFactory.get_val_from_metric(value)
             for key, value in state.epoch_metrics[lm].items()
-        }
+            }
 
     @staticmethod
     def on_loader_end_post(state):

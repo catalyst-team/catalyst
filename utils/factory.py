@@ -1,7 +1,5 @@
-import os
 import shutil
 from collections import OrderedDict
-from tensorboardX import SummaryWriter
 import torch
 import torch.nn as nn
 import torch.backends.cudnn as cudnn
@@ -40,12 +38,6 @@ class UtilsFactory:
             sampler=sampler,
             collate_fn=collate_fn)
         return loader
-
-    @staticmethod
-    def create_tflogger(logdir, name):
-        log_dir = os.path.join(logdir, f"{name}_log")
-        logger = SummaryWriter(log_dir)
-        return logger
 
     @staticmethod
     def create_loggers(logdir, loaders):
@@ -228,7 +220,7 @@ class UtilsFactory:
         torch.save(checkpoint, filename)
         if is_best:
             shutil.copyfile(filename,
-                            "{}/checkpoint.best.pth.tar".format(logdir))
+                "{}/checkpoint.best.pth.tar".format(logdir))
         return filename
 
     @staticmethod
