@@ -38,6 +38,12 @@ class UtilsFactory:
             sampler=sampler,
             collate_fn=collate_fn)
         return loader
+    
+    @staticmethod
+    def create_tflogger(logdir, name):
+        log_dir = os.path.join(logdir, f"{name}_log")
+        logger = SummaryWriter(log_dir)
+        return logger
 
     @staticmethod
     def create_loggers(logdir, loaders):
