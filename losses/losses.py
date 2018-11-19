@@ -6,6 +6,7 @@ import catalyst.losses.huber as huber_loss
 import catalyst.losses.lovasz_losses as lovasz_losses
 import catalyst.losses.focal_loss as focal_loss
 import catalyst.losses.ce as ce
+import catalyst.losses.dice as dice
 
 LOSSES = {
     **torch.nn.__dict__,
@@ -15,5 +16,6 @@ LOSSES = {
     **huber_loss.__dict__,
     **lovasz_losses.__dict__,
     **focal_loss.__dict__,
-	**ce.__dict__,
+    **ce.__dict__,
+    **dice.__dict__
 }

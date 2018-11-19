@@ -8,7 +8,7 @@ import torch
 
 from catalyst.data.functional import compute_mixup_lambda, mixup_torch
 from catalyst.dl.callback import Callback
-from catalyst.utils.metrics import precision, get_iou_vector, mapk, dice_accuracy, F_score, mae
+from catalyst.utils.metrics import precision, dice, jaccard, mapk, F1, mae
 from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.utils.factory import UtilsFactory
 
@@ -136,18 +136,17 @@ class DiceCallback(Callback):
         self.threshold = threshold
 
     def on_batch_end(self, state):
-        dice = dice_accuracy(
+        dice_value = dice(
             state.output[self.output_key],
             state.input[self.input_key],
-            threshold=self.threshold
         )
         key = "dice"
-        state.batch_metrics[key] = dice
+        state.batch_metrics[key] = dice_value
 
 
-class IOUCallback(Callback):
+class JaccardCallback(Callback):
     """
-    IOU metric callback.
+    Jaccard metric callback.
     """
 
     def __init__(self,
@@ -157,29 +156,24 @@ class IOUCallback(Callback):
         :param input_key: input key to use for precision calculation;
             specifies our `y_true`.
         :param output_key: output key to use for precision calculation;
-            specifies our `y_pred`.
-        :param precision_args: specifies which precision@K to log.
+            specifies our `y_pred`
         """
         super().__init__()
         self.input_key = input_key
         self.output_key = output_key
 
     def on_batch_end(self, state):
-        msk_vpreds = state.output[self.output_key]
-        valid_msks = state.input[self.input_key]
+        outputs = state.output[self.output_key]
+        targets = state.input[self.input_key]
 
-        # msk_vpreds = msk_vpreds.sigmoid()
-        msk_vpreds = msk_vpreds.detach().cpu().numpy()
-        valid_msks = valid_msks.detach().cpu().numpy()
-
-        iou = get_iou_vector(valid_msks, msk_vpreds)
-        key = "iou"
-        state.batch_metrics[key] = iou
+        jac = jaccard(targets, (outputs > 0).float())
+        key = "jaccard"
+        state.batch_metrics[key] = jac
 
 
-class F2Callback(Callback):
+class F1Callback(Callback):
     """
-    F2 metric callback.
+    F1 metric callback.
     """
 
     def __init__(self,
@@ -206,10 +200,9 @@ class F2Callback(Callback):
         self.labels = torch.cat([self.labels, label], 0)
 
     def on_loader_end(self, state):
-        fscore = F_score(self.labels, self.outputs)
+        fscore = F1(self.labels, self.outputs)
         key = "f2_score"
         state.epoch_metrics[state.loader_mode][key] = fscore
-        print(f"{state.loader_mode} ", fscore)
 
 
 class MAECallback(Callback):
@@ -243,13 +236,10 @@ class MAECallback(Callback):
         self.labels = torch.cat([self.labels, label], 0)
 
     def on_loader_end(self, state):
-        import pdb
         mae_score = mae(self.labels, self.outputs)
-        # pdb.set_trace()
-        mae_score =  mae_score * self.max_value
+        mae_score = mae_score * self.max_value
         key = "mae"
         state.epoch_metrics[state.loader_mode][key] = mae_score
-        print(f"{state.loader_mode} ", mae_score)
 
 
 class Logger(Callback):

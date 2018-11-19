@@ -21,34 +21,6 @@ def precision(output, target, topk=(1,)):
     return res
 
 
-def get_iou_vector(A, B):
-    batch_size = A.shape[0]
-    B = np.where(B > 0.5, 1, 0)
-    metric = []
-    for batch in range(batch_size):
-        t, p = A[batch], B[batch]
-        if np.count_nonzero(t) == 0 and np.count_nonzero(p) > 0:
-            metric.append(0)
-            continue
-        if np.count_nonzero(t) >= 1 and np.count_nonzero(p) == 0:
-            metric.append(0)
-            continue
-        if np.count_nonzero(t) == 0 and np.count_nonzero(p) == 0:
-            metric.append(1)
-            continue
-
-        intersection = np.logical_and(t, p)
-        union = np.logical_or(t, p)
-        iou = np.sum(intersection > 0) / np.sum(union > 0)
-        thresholds = np.arange(0.5, 1, 0.05)
-        s = []
-        for thresh in thresholds:
-            s.append(iou > thresh)
-        metric.append(np.mean(s))
-
-    return np.mean(metric)
-
-
 def apk(actual, predicted, k=10):
     """
     Computes the average precision at k.
@@ -121,24 +93,19 @@ def mapk(predicted, actual, topk=(1,)):
     return res
 
 
-def dice_accuracy(prob, truth, threshold=0.5,  is_average=True):
-    batch_size = prob.size(0)
-    p = prob.detach().view(batch_size,-1)
-    t = truth.detach().view(batch_size,-1)
-
-    p = p>threshold
-    t = t>0.5
-    correct = ( p == t).float()
-    accuracy = correct.sum(1)/p.size(1)
-
-    if is_average:
-        accuracy = accuracy.sum()/batch_size
-        return accuracy
-    else:
-        return accuracy
+def jaccard(y_true, y_pred):
+    y_true = y_true.detach().cpu().numpy()
+    y_pred = y_pred.detach().cpu().numpy()
+    intersection = (y_true * y_pred).sum()
+    union = y_true.sum() + y_pred.sum() - intersection
+    return (intersection + 1e-15) / (union + 1e-15)
 
 
-def F_score(label, output, start=0.2, end=0.5, step=0.01):
+def dice(y_true, y_pred):
+    return (2 * (y_true * y_pred).sum() + 1e-15) / (y_true.sum() + y_pred.sum() + 1e-15)
+
+
+def F1(label, output, start=0.2, end=0.5, step=0.01):
     return max([f1_score(label, (output > th), average='macro')
                 for th in np.arange(start, end, step)])
 
