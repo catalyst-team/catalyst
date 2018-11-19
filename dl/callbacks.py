@@ -6,7 +6,6 @@ from collections import defaultdict
 
 import numpy as np
 import torch
-from tensorboardX import SummaryWriter
 
 from catalyst.data.functional import compute_mixup_lambda, mixup_torch
 from catalyst.dl.callback import Callback
@@ -168,12 +167,6 @@ class TensorboardLogger(Callback):
         for key, value in state.epoch_metrics[lm].items():
             self.loggers[lm].add_scalar(f"epoch {key}", value, state.epoch)
 
-    @staticmethod
-    def create_tflogger(logdir, name):
-        log_dir = os.path.join(logdir, f"{name}_log")
-        logger = SummaryWriter(log_dir)
-        return logger
-
 
 class GroupTensorboardLogger(Callback):
     """
@@ -184,7 +177,7 @@ class GroupTensorboardLogger(Callback):
 
     def __init__(
         self,
-        logdir,
+        logdir: str = None,
         metric_names: List[str] = None,
         log_on_batch_end=True,
         log_on_epoch_end=True
@@ -198,6 +191,7 @@ class GroupTensorboardLogger(Callback):
         :param log_on_epoch_end: Logs per-epoch metrics if set True.
         """
 
+        self.logdir = logdir
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
@@ -205,7 +199,12 @@ class GroupTensorboardLogger(Callback):
         # You definitely should log something)
         assert self.log_on_batch_end or self.log_on_epoch_end
 
-        self.writer = SummaryWriter(logdir)
+        self.writer = None
+
+    def on_loader_start(self, state):
+        if self.writer is None:
+            self.writer = UtilsFactory.create_tflogger(
+                logdir=self.logdir, name="group")
 
     def _log_metrics(
         self,
