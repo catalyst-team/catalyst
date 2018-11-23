@@ -6,14 +6,13 @@ Maxim Berman 2018 ESAT-PSI KU Leuven (MIT License)
 from __future__ import print_function, division
 
 import torch
-import torch.nn as nn
 from torch.autograd import Variable
 import torch.nn.functional as F
 import numpy as np
 try:
     from itertools import  ifilterfalse
 except ImportError: # py3k
-    from itertools import  filterfalse
+    from itertools import  filterfalse as ifilterfalse
 
 
 def lovasz_grad(gt_sorted):
@@ -84,7 +83,6 @@ def lovasz_hinge(logits, labels, per_image=True, ignore=None):
       per_image: compute the loss per image instead of per batch
       ignore: void class id
     """
-    #labels = labels.long()
     if per_image:
         loss = mean(lovasz_hinge_flat(*flatten_binary_scores(log.unsqueeze(0), lab.unsqueeze(0), ignore))
                           for log, lab in zip(logits, labels))
@@ -109,7 +107,7 @@ def lovasz_hinge_flat(logits, labels):
     perm = perm.data
     gt_sorted = labels[perm]
     grad = lovasz_grad(gt_sorted)
-    loss = torch.dot(F.elu(errors_sorted) + 1., Variable(grad))
+    loss = torch.dot(F.relu(errors_sorted), Variable(grad))
     return loss
 
 
@@ -176,6 +174,11 @@ def lovasz_softmax_flat(probas, labels, only_present=False):
       labels: [P] Tensor, ground truth labels (between 0 and C - 1)
       only_present: average only on classes present in ground truth
     """
+    if probas.numel() == 0:
+        # only void pixels, the gradients should be 0
+        return probas * 0.
+    C = probas.size(1)
+
     C = probas.size(1)
     losses = []
     for c in range(C):
@@ -212,14 +215,17 @@ def xloss(logits, labels, ignore=None):
 
 
 # --------------------------- HELPER FUNCTIONS ---------------------------
+def isnan(x):
+    return x != x
 
-def mean(l, ignore_nan=False, empty=0):
+
+def mean(l, ignore_nan=True, empty=0):
     """
     nanmean compatible with generators.
     """
     l = iter(l)
     if ignore_nan:
-        l = ifilterfalse(np.isnan, l)
+        l = ifilterfalse(isnan, l)
     try:
         n = 1
         acc = next(l)
