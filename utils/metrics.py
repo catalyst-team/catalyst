@@ -106,8 +106,12 @@ def dice(y_true, y_pred):
 
 
 def F1(label, output, start=0.2, end=0.5, step=0.01):
-    return max([f1_score(label, (output > th), average='macro')
-                for th in np.arange(start, end, step)])
+    # return max([f1_score(label, (output > th), average='macro')
+    #             for th in np.arange(start, end, step)])
+    range_th = np.arange(start, end, step)
+    f1_scores = [f1_score(label, (output > th), average='macro') for th in range_th]
+    idx = np.asarray(f1_scores).argmax()
+    return range_th[idx], f1_scores[idx]
 
 
 def mae(label, output):
