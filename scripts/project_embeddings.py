@@ -45,9 +45,9 @@ def parse_args():
         default=None,
         help="column in the table that contains image paths")
     parser.add_argument(
-        "--datapath",
+        "--img-datapath",
         type=str,
-        dest="datapath",
+        dest="img_datapath",
         help="path to photos directory")
     parser.add_argument(
         "--img-size",
@@ -133,7 +133,7 @@ def main(args):
             list(map(
                 lambda x: np.expand_dims(
                     cv2.resize(
-                        cv2.imread(path.join(args.datapath, x)),
+                        cv2.imread(path.join(args.img_datapath, x)),
                         (args.img_size, args.img_size),
                         interpolation=cv2.INTER_NEAREST),
                     0),
