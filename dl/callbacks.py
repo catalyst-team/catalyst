@@ -189,13 +189,20 @@ class F1Callback(Callback):
         self.input_key = input_key
         self.output_key = output_key
 
-    def on_batch_end(self, state):
-        outputs = state.output[self.output_key]
-        targets = state.input[self.input_key]
+    def on_loader_start(self, state):
+        self.outputs = torch.Tensor([])
+        self.labels = torch.Tensor([])
 
-        score = fbeta(outputs, targets, beta=1)
-        key = "fbeta"
-        state.batch_metrics[key] = score
+    def on_batch_end(self, state):
+        label = state.input[self.input_key].detach().cpu()
+        output = state.output[self.output_key].detach().cpu()
+        self.outputs = torch.cat([self.outputs, output], 0)
+        self.labels = torch.cat([self.labels, label], 0)
+
+    def on_loader_end(self, state):
+        fscore = F1(self.labels, self.outputs)
+        key = "f1"
+        state.epoch_metrics[state.loader_mode][key] = fscore
 
 
 class MAECallback(Callback):
