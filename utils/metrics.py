@@ -109,9 +109,23 @@ def F1(label, output, start=0.2, end=0.5, step=0.01):
     # return max([f1_score(label, (output > th), average='macro')
     #             for th in np.arange(start, end, step)])
     range_th = np.arange(start, end, step)
+    # range_th = [start]
     f1_scores = [f1_score(label, (output > th), average='macro') for th in range_th]
     idx = np.asarray(f1_scores).argmax()
     return range_th[idx], f1_scores[idx]
+
+
+def fbeta(y_pred, y_true, thresh:float=0.2, beta:float=2, eps:float=1e-9, sigmoid:bool=True):
+    "Computes the f_beta between `y_pred` and `y_true` in a multi-classification task."
+    beta2 = beta**2
+    if sigmoid: y_pred = y_pred.sigmoid()
+    y_pred = (y_pred>thresh).float()
+    y_true = y_true.float()
+    TP = (y_pred*y_true).sum(dim=1)
+    prec = TP/(y_pred.sum(dim=1)+eps)
+    rec = TP/(y_true.sum(dim=1)+eps)
+    res = (prec*rec)/(prec*beta2+rec+eps)*(1+beta2)
+    return res.mean()
 
 
 def mae(label, output):
