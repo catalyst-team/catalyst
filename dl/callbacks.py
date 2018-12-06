@@ -200,9 +200,13 @@ class F1Callback(Callback):
         self.labels = torch.cat([self.labels, label], 0)
 
     def on_loader_end(self, state):
-        fscore = F1(self.labels, self.outputs)
+        # import pdb
+        # pdb.set_trace()
+        th, fscore = F1(self.labels, self.outputs)
         key = "f1"
         state.epoch_metrics[state.loader_mode][key] = fscore
+        key = "th"
+        state.epoch_metrics[state.loader_mode][key] = th
 
 
 class MAECallback(Callback):
