@@ -153,7 +153,8 @@ class Sampler:
             min_episode_steps=None,
             min_episode_reward=None):
 
-        set_global_seeds(42 + id)
+        self._seed = 42 + id
+        set_global_seeds(self._seed)
 
         self._sampler_id = id
         self._device = torch.device(
@@ -262,6 +263,8 @@ class Sampler:
             self.env.observation_space.shape,
             self.env.action_space.shape)
 
+        seed = self._seed + random.randrange(SEED_RANGE)
+        set_global_seeds(seed)
         seed = random.randrange(SEED_RANGE) \
             if self.seeds is None \
             else random.choice(self.seeds)
@@ -397,6 +400,8 @@ class Sampler:
                 state_shape=self.env.observation_space.shape,
                 action_shape=self.env.action_space.shape)
 
+            seed = self._seed + random.randrange(SEED_RANGE)
+            set_global_seeds(seed)
             if self.seeds is None:
                 hard_seed_prob = random.random()
                 if len(self.hard_seeds) > 0 and hard_seed_prob < 0.5:

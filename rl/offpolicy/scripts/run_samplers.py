@@ -144,6 +144,7 @@ def run_sampler(
         param_noise_d=param_noise,
         seeds=seeds,
         min_episode_steps=min_episode_steps,
+        min_episode_reward=min_episode_reward,
         resume=resume)
 
     pprint(sampler)
