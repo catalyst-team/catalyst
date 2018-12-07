@@ -5,6 +5,7 @@ import numpy as np
 from collections import defaultdict
 from typing import Tuple, List
 import torch
+import torch.nn.functional as F
 
 from catalyst.data.functional import compute_mixup_lambda, mixup_torch
 from catalyst.dl.callback import Callback
@@ -194,8 +195,10 @@ class F1Callback(Callback):
         self.labels = torch.Tensor([])
 
     def on_batch_end(self, state):
+        output = F.sigmoid(state.output[self.output_key])
+
         label = state.input[self.input_key].detach().cpu()
-        output = state.output[self.output_key].detach().cpu()
+        output = output.detach().cpu()
         self.outputs = torch.cat([self.outputs, output], 0)
         self.labels = torch.cat([self.labels, label], 0)
 
