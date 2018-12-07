@@ -105,14 +105,8 @@ def dice(y_true, y_pred):
     return (2 * (y_true * y_pred).sum() + 1e-15) / (y_true.sum() + y_pred.sum() + 1e-15)
 
 
-def F1(label, output, start=0.2, end=0.5, step=0.01):
-    # return max([f1_score(label, (output > th), average='macro')
-    #             for th in np.arange(start, end, step)])
-    range_th = np.arange(start, end, step)
-    # range_th = [start]
-    f1_scores = [f1_score(label, (output > th), average='macro') for th in range_th]
-    idx = np.asarray(f1_scores).argmax()
-    return range_th[idx], f1_scores[idx]
+def F1(label, output, th=0.2, start=0.2, end=0.5, step=0.01):
+    return th, f1_score(label, output > th, average='macro')
 
 
 def fbeta(y_pred, y_true, thresh:float=0.2, beta:float=2, eps:float=1e-9, sigmoid:bool=True):
