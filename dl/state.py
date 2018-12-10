@@ -12,15 +12,27 @@ class RunnerState(FrozenClass):
     def __init__(
             self,
             *,
-            main_metric="loss_main",
+            device=None,
+            model=None,
+            criterion=None,
+            optimizer=None,
+            scheduler=None,
+            stage=None,
+            main_metric="loss",
             minimize_metric=True,
             valid_loader="valid",
             reset_step=False,
             **kwargs
     ):
+        self.model = model
+        self.criterion = criterion
+        self.optimizer = optimizer
+        self.scheduler = scheduler
+
         # special info
+        self.stage = stage
         self.mode = "infer"
-        self.device = None
+        self.device = device
         self.loader_mode = None
         self.reset_step = reset_step
 
@@ -40,9 +52,9 @@ class RunnerState(FrozenClass):
         self.is_best_epoch = False
 
         # metrics
-        self.lr = defaultdict(lambda: 0)
-        self.momentum = defaultdict(lambda: 0)
-        self.loss = defaultdict(lambda: 0)
+        self.lr = None  # defaultdict(lambda: 0)
+        self.momentum = None  # defaultdict(lambda: 0)
+        self.loss = None  # defaultdict(lambda: 0)
 
         self.batch_metrics = defaultdict(lambda: 0)
         self.epoch_metrics = defaultdict(
@@ -57,6 +69,18 @@ class RunnerState(FrozenClass):
             setattr(self, k, v)
 
         self._freeze()
+
+    def get_key(self, key, inner_key=None):
+        if inner_key is None:
+            return getattr(self, key)
+        else:
+            return getattr(self, key)[inner_key]
+
+    def set_key(self, value, key, inner_key=None):
+        if inner_key is None:
+            setattr(self, key, value)
+        else:
+            getattr(self, key)[inner_key] = value
 
     @staticmethod
     def on_stage_init_pre(model, stage):

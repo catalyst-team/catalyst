@@ -15,6 +15,39 @@ from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.utils.factory import UtilsFactory
 
 
+def get_optimizer_momentum(optimizer):
+    if isinstance(optimizer, torch.optim.Adam):
+        return list(optimizer.param_groups)[0]["betas"][0]
+    elif isinstance(optimizer, torch.optim.SGD):
+        return list(optimizer.param_groups)[0]["momentum"]
+    else:
+        return None
+
+
+def scheduler_step(scheduler, valid_metric=None):
+    if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+        scheduler.step(valid_metric)
+        lr = list(scheduler.optimizer.param_groups)[0]["lr"]
+    else:
+        scheduler.step()
+        lr = scheduler.get_lr()[0]
+
+    momentum = get_optimizer_momentum(scheduler.optimizer)
+
+    return lr, momentum
+
+
+def to_batch_metrics(*, state, metric_key):
+    metric = state.get_key(metric_key)
+    if isinstance(metric, dict):
+        for key, value in metric.items():
+            state.batch_metrics[f"{metric_key}_{key}"] = \
+                UtilsFactory.get_val_from_metric(value)
+    else:
+        state.batch_metrics[f"{metric_key}"] = \
+            UtilsFactory.get_val_from_metric(metric)
+
+
 class BaseMetrics(Callback):
     def __init__(self):
         self.time = time.time()
@@ -23,23 +56,18 @@ class BaseMetrics(Callback):
         self.time = time.time()
 
     def on_batch_start(self, state):
-        state.batch_metrics["data time"] = time.time() - self.time
+        state.batch_metrics["base/data_time"] = time.time() - self.time
 
     def on_batch_end(self, state):
         bs = state.batch_size
         elapsed_time = time.time() - self.time
 
-        state.batch_metrics["batch time"] = elapsed_time
-        state.batch_metrics["sample per second"] = bs / elapsed_time
+        state.batch_metrics["base/batch_time"] = elapsed_time
+        state.batch_metrics["base/sample_per_second"] = bs / elapsed_time
 
-        for key, value in state.lr.items():
-            state.batch_metrics[f"lr_{key}"] = value
-
-        for key, value in state.momentum.items():
-            state.batch_metrics[f"momentum_{key}"] = value
-
-        for key, value in state.loss.items():
-            state.batch_metrics[f"loss_{key}"] = value.item()
+        to_batch_metrics(state=state, metric_key="lr")
+        to_batch_metrics(state=state, metric_key="momentum")
+        to_batch_metrics(state=state, metric_key="loss")
 
         self.time = time.time()
 
@@ -104,19 +132,6 @@ class Logger(Callback):
         log_filepath = os.path.join(value, "logs.txt")
         self.logger = self._get_logger(log_filepath)
 
-    def on_train_begin(self, state):
-        if self.logger is not None:
-            self.logger.info(
-                "Starting training with params:\n{}\n\n".format(state))
-
-    def on_epoch_end(self, state):
-        if self.logger is not None:
-            for k, v in state.epoch_metrics.items():
-                self.logger.info(
-                    f"{state.epoch} * Epoch ({k}) metrics: " +
-                    self._get_metrics_string(v))
-            self.logger.info("\n")
-
     @staticmethod
     def _get_logger(log_filepath):
         logger = logging.getLogger(log_filepath)
@@ -133,9 +148,23 @@ class Logger(Callback):
         logger.addHandler(ch)
         return logger
 
-    def _get_metrics_string(self, metrics):
+    @staticmethod
+    def _get_metrics_string(metrics):
         return " | ".join(
             "{}: {:.5f}".format(k, v) for k, v in metrics.items())
+
+    def on_train_begin(self, state):
+        if self.logger is not None:
+            self.logger.info(
+                "Starting training with params:\n{}\n\n".format(state))
+
+    def on_epoch_end(self, state):
+        if self.logger is not None:
+            for k, v in state.epoch_metrics.items():
+                self.logger.info(
+                    f"{state.epoch} * Epoch ({k}) metrics: " +
+                    self._get_metrics_string(v))
+            self.logger.info("\n")
 
 
 class TensorboardLogger(Callback):
@@ -143,44 +172,12 @@ class TensorboardLogger(Callback):
     Logger callback, translates state.*_metrics to tensorboard
     """
 
-    def __init__(self, logdir: str = None):
-        """
-        :param logdir: log directory to use for tf logging
-        """
-        self.logdir = logdir
-        self.loggers = dict()
-
-    def on_loader_start(self, state):
-        lm = state.loader_mode
-        if lm not in self.loggers:
-            self.loggers[lm] = UtilsFactory.create_tflogger(
-                logdir=self.logdir, name=lm)
-
-    def on_batch_end(self, state):
-        lm = state.loader_mode
-        for key, value in state.batch_metrics.items():
-            self.loggers[lm].add_scalar(key, value, state.step)
-
-    def on_loader_end(self, state):
-        lm = state.loader_mode
-
-        for key, value in state.epoch_metrics[lm].items():
-            self.loggers[lm].add_scalar(f"epoch {key}", value, state.epoch)
-
-
-class GroupTensorboardLogger(Callback):
-    """
-    Another tensorboard logger. Uses tags to group same metrics, but for
-    train and validation. Can log per-batch or per-epoch values.
-    You can maintain two independent metric sets by creating two instances
-    """
-
     def __init__(
-        self,
-        logdir: str = None,
-        metric_names: List[str] = None,
-        log_on_batch_end=True,
-        log_on_epoch_end=True
+            self,
+            logdir: str = None,
+            metric_names: List[str] = None,
+            log_on_batch_end=True,
+            log_on_epoch_end=True
     ):
         """
         :param logdir: directory where logs will be created
@@ -190,7 +187,6 @@ class GroupTensorboardLogger(Callback):
             prepends 'batch_' prefix to their names.
         :param log_on_epoch_end: Logs per-epoch metrics if set True.
         """
-
         self.logdir = logdir
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
@@ -198,38 +194,42 @@ class GroupTensorboardLogger(Callback):
 
         # You definitely should log something)
         assert self.log_on_batch_end or self.log_on_epoch_end
-
-        self.writer = None
+        self.loggers = dict()
 
     def on_loader_start(self, state):
-        if self.writer is None:
-            self.writer = UtilsFactory.create_tflogger(
-                logdir=self.logdir, name="group")
+        lm = state.loader_mode
+        if lm not in self.loggers:
+            self.loggers[lm] = UtilsFactory.create_tflogger(
+                logdir=self.logdir, name=lm)
 
     def _log_metrics(
         self,
         metrics: Dict[str, float],
-        mode: str,
         step: int,
-        prefix=''
+        mode: str,
+        suffix=''
     ):
         if self.metrics_to_log is None:
             self.metrics_to_log = list(metrics.keys())
 
         for name in self.metrics_to_log:
             if name in metrics:
-                self.writer.add_scalar(f"{prefix}{name}/{mode}",
-                                       metrics[name], step)
-
-    def on_loader_end(self, state: RunnerState):
-        if self.log_on_epoch_end:
-            mode = state.loader_mode
-            self._log_metrics(state.epoch_metrics[mode], mode, state.epoch)
+                self.loggers[mode].add_scalar(
+                    f"{name}{suffix}", metrics[name], step)
 
     def on_batch_end(self, state: RunnerState):
         if self.log_on_batch_end:
             mode = state.loader_mode
-            self._log_metrics(state.batch_metrics, mode, state.step, 'batch_')
+            self._log_metrics(
+                metrics=state.batch_metrics, step=state.step,
+                mode=mode, suffix="/batch")
+
+    def on_loader_end(self, state: RunnerState):
+        if self.log_on_epoch_end:
+            mode = state.loader_mode
+            self._log_metrics(
+                metrics=state.epoch_metrics[mode], step=state.epoch,
+                mode=mode,  suffix="/epoch")
 
 
 class CheckpointCallback(Callback):
@@ -264,9 +264,9 @@ class CheckpointCallback(Callback):
             UtilsFactory.unpack_checkpoint(
                 checkpoint,
                 model=state.model,
-                criterion=state._criterion,
-                optimizer=state._optimizer,
-                scheduler=state._scheduler)
+                criterion=state.criterion,
+                optimizer=state.optimizer,
+                scheduler=state.scheduler)
 
             print("loaded checkpoint \"{}\" (epoch {})".format(
                 filename, checkpoint["epoch"]))
@@ -275,7 +275,7 @@ class CheckpointCallback(Callback):
 
     def save_checkpoint(
             self, logdir, checkpoint, is_best,
-            save_n_best=5, main_metric="loss_main", minimize_metric=True):
+            save_n_best=5, main_metric="loss", minimize_metric=True):
         suffix = f"{checkpoint['stage']}.{checkpoint['epoch']}"
         filepath = UtilsFactory.save_checkpoint(
             logdir=logdir,
@@ -315,12 +315,12 @@ class CheckpointCallback(Callback):
 
         checkpoint = self.pack_checkpoint(
             model=state.model,
-            criterion=state._criterion,
-            optimizer=state._optimizer,
-            scheduler=state._scheduler,
+            criterion=state.criterion,
+            optimizer=state.optimizer,
+            scheduler=state.scheduler,
             valid_metrics=dict(state.valid_metrics),  # @TODO: save defaultdict
             epoch_metrics=dict(state.epoch_metrics),  # @TODO: save defaultdict
-            best_metrics=dict(state.best_metrics),  # @TODO: save defaultdict
+            best_metrics=dict(state.best_metrics),    # @TODO: save defaultdict
             stage=state.stage,
             epoch=state.epoch)
         self.save_checkpoint(
@@ -341,7 +341,6 @@ class CheckpointCallback(Callback):
         print(top_best_metrics_str)
 
 
-# @TODO: rewrite for optmizer_key
 class OptimizerCallback(Callback):
     """
     Optimizer callback, abstraction over optimizer step.
@@ -349,132 +348,120 @@ class OptimizerCallback(Callback):
 
     def __init__(
             self,
-            grad_clip: float = None,
+            grad_clip_params: Dict = None,
             fp16_grad_scale: float = 128.0,
-            accumulation_steps=1):
+            accumulation_steps: int = 1,
+            optimizer_key: str = None,
+            loss_key: str = None):
         """
-        :param grad_clip: grap clipping specification kwargs
-            @TODO: better support of different grad clip funcs
-        :param fp16_grad_scale: grad scale for fp16 mode training
+        @TODO: docs
         """
-        self.optimizer_wds = {}
-        self.grad_clip = grad_clip
+        grad_clip_params = grad_clip_params or {}
+        self.grad_clip_fn = UtilsFactory.create_grad_clip_fn(**grad_clip_params)
         self.fp16 = False
         self.fp16_grad_scale = fp16_grad_scale
         self.accumulation_steps = accumulation_steps
+        self.optimizer_key = optimizer_key
+        self.loss_key = loss_key
+        self.optimizer_wd = 0
         self.accumulation_counter = 0
 
     def on_train_start(self, state):
         self.fp16 = isinstance(state.model, Fp16Wrap)
+        optimizer = state.get_key(key="optimizer", inner_key=self.optimizer_key)
+        lr = optimizer.defaults["lr"]
+        momentum = get_optimizer_momentum(optimizer)
+        state.set_key(lr, "lr", inner_key=self.optimizer_key)
+        state.set_key(momentum, "momentum", inner_key=self.optimizer_key)
 
     def on_epoch_start(self, state):
-        self.optimizer_wds = {}
-        for key, optimizer_ in state._optimizer.items():
-            wd = optimizer_.param_groups[0].get("weight_decay", 0.0)
-            if wd > 0:
-                self.optimizer_wds[key] = wd
-                optimizer_.param_groups[0]["weight_decay"] = 0.0
+        optimizer = state.get_key(key="optimizer", inner_key=self.optimizer_key)
+        self.optimizer_wd = optimizer.param_groups[0].get("weight_decay", 0.0)
+        optimizer.param_groups[0]["weight_decay"] = 0.0
 
-    def grad_step(self, optimizer):
-        for key, value in optimizer.items():
-            if key in self.optimizer_wds:
-                wd = self.optimizer_wds[key]
-                for group in value.param_groups:
-                    for param in group["params"]:
-                        param.data = param.data.add(
-                            -wd * group["lr"],
-                            param.data)
-                    if self.grad_clip is not None:
-                        torch.nn.utils.clip_grad_norm_(
-                            group["params"],
-                            self.grad_clip)
-            value.step()
+    @staticmethod
+    def grad_step(*, optimizer, optimizer_wd=0, grad_clip_fn=None):
+        for group in optimizer.param_groups:
+            if optimizer_wd > 0:
+                for param in group["params"]:
+                    param.data = param.data.add(
+                        -optimizer_wd * group["lr"],
+                        param.data)
+            if grad_clip_fn is not None:
+                grad_clip_fn(group["params"])
+        optimizer.step()
 
     def on_batch_end(self, state):
-        # @TODO: check this one
         if not state.is_train:
             return
 
         self.accumulation_counter += 1
-
         if not self.fp16:
-            # for _, value in state._optimizer.items():
-            #     value.zero_grad()
+            model = state.model
+            optimizer = state.get_key(
+                key="optimizer",
+                inner_key=self.optimizer_key)
+            loss = state.get_key(
+                key="loss",
+                inner_key=self.loss_key)
+            loss.backward()
 
-            # @TODO: check this one
-            if len(state._optimizer) > 0:
-                for key, value in state.loss.items():
-                    value.backward()
-
-                if (self.accumulation_counter + 1) \
-                        % self.accumulation_steps == 0:
-                    self.grad_step(state._optimizer)
-                    state.model.zero_grad()
-                    self.accumulation_counter = 0
+            if (self.accumulation_counter + 1) % self.accumulation_steps == 0:
+                self.grad_step(
+                    optimizer=optimizer,
+                    optimizer_wd=self.optimizer_wd,
+                    grad_clip_fn=self.grad_clip_fn)
+                model.zero_grad()
+                self.accumulation_counter = 0
         else:
-            state.model.zero_grad()
-            if len(state._optimizer) > 0:
-                assert len(state._optimizer) == 1, \
-                    "fp16 mode works only with one optimizer for now"
+            model = state.model
+            model.zero_grad()
+            optimizer = state.get_key(
+                key="optimizer",
+                inner_key=self.optimizer_key)
+            loss = state.get_key(
+                key="loss",
+                inner_key=self.optimizer_key)
+            scaled_loss = self.fp16_grad_scale * loss.float()
+            scaled_loss.backward()
 
-                for key, value in state.loss.items():
-                    scaled_loss = self.fp16_grad_scale * value.float()
-                    scaled_loss.backward()
-
-                master_params = list(
-                    state._optimizer["main"].param_groups[0]["params"])
-                model_params = list(filter(
-                    lambda p: p.requires_grad,
-                    state.model.parameters()))
-
-                copy_grads(source=model_params, target=master_params)
-
-                for param in master_params:
-                    param.grad.data.mul_(1. / self.fp16_grad_scale)
-
-                self.grad_step(state._optimizer)
-
-                copy_params(source=master_params, target=model_params)
-                torch.cuda.synchronize()
+            master_params = list(optimizer.param_groups[0]["params"])
+            model_params = list(filter(
+                lambda p: p.requires_grad, model.parameters()))
+            copy_grads(source=model_params, target=master_params)
+            for param in master_params:
+                param.grad.data.mul_(1. / self.fp16_grad_scale)
+            self.grad_step(
+                optimizer=optimizer,
+                optimizer_wd=self.optimizer_wd,
+                grad_clip_fn=self.grad_clip_fn)
+            copy_params(source=master_params, target=model_params)
+            torch.cuda.synchronize()
 
     def on_epoch_end(self, state):
-        for key, value in self.optimizer_wds.items():
-            state._optimizer[key].param_groups[0]["weight_decay"] = value
+        optimizer = state.get_key(key="optimizer", inner_key=self.optimizer_key)
+        optimizer.param_groups[0]["weight_decay"] = self.optimizer_wd
 
 
 class SchedulerCallback(Callback):
     def __init__(
             self,
-            scheduler_key: str = "main",
+            scheduler_key: str = None,
             mode: str = "epoch",
             reduce_metric: str = None):
         self.scheduler_key = scheduler_key
         self.mode = mode
         self.reduce_metric = reduce_metric
 
-    @staticmethod
-    def get_momentum(optimizer):
-        # @TODO: need better solutions
-        if isinstance(optimizer, torch.optim.Adam):
-            return list(optimizer.param_groups)[0]["betas"][0]
-        elif isinstance(optimizer, torch.optim.SGD):
-            return list(optimizer.param_groups)[0]["momentum"]
-        else:
-            return None
-
     def step(self, state):
-        scheduler = state._scheduler[self.scheduler_key]
-        if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
-            scheduler.step(state.valid_metrics[self.reduce_metric])
-            state.lr[self.scheduler_key] = \
-                list(scheduler.optimizer.param_groups)[0]["lr"]
-        else:
-            scheduler.step()
-            state.lr[self.scheduler_key] = scheduler.get_lr()[0]
+        scheduler = state.get_key(key="scheduler", inner_key=self.scheduler_key)
 
-        momentum = self.get_momentum(scheduler.optimizer)
-        if isinstance(momentum, float):
-            state.momentum[self.scheduler_key] = momentum
+        lr, momentum = scheduler_step(
+            scheduler=scheduler,
+            valid_metric=state.valid_metrics[self.reduce_metric])
+
+        state.set_key(lr, key="lr", inner_key=self.scheduler_key)
+        state.set_key(momentum, key="momentum", inner_key=self.scheduler_key)
 
     def on_batch_end(self, state):
         if self.mode == "batch":
@@ -488,7 +475,7 @@ class SchedulerCallback(Callback):
 class LRUpdater(Callback):
     """Basic class that all Lr updaters inherit from"""
 
-    def __init__(self, optimizer_key: str = "main"):
+    def __init__(self, optimizer_key: str = None):
         """
         :param optimizer_key: which optimizer key to use
             for learning rate scheduling
@@ -503,12 +490,12 @@ class LRUpdater(Callback):
         return None
 
     @staticmethod
-    def update_lr(optimizer, new_lr):
+    def _update_lr(optimizer, new_lr):
         for pg in optimizer.param_groups:
             pg["lr"] = new_lr
 
     @staticmethod
-    def update_momentum(optimizer, new_momentum):
+    def _update_momentum(optimizer, new_momentum):
         if "betas" in optimizer.param_groups[0]:
             for pg in optimizer.param_groups:
                 pg["betas"] = (new_momentum, pg["betas"][1])
@@ -516,30 +503,37 @@ class LRUpdater(Callback):
             for pg in optimizer.param_groups:
                 pg["momentum"] = new_momentum
 
-    def update_optimizer(self, state, optimizer):
-        if state.is_train:
-            new_lr = self.calc_lr()
-            if new_lr is not None:
-                self.update_lr(optimizer[self.optimizer_key], new_lr)
-                state.lr[self.optimizer_key] = new_lr
-            new_momentum = self.calc_momentum()
-            if new_momentum is not None:
-                self.update_momentum(
-                    optimizer[self.optimizer_key],
-                    new_momentum)
-                state.momentum[self.optimizer_key] = new_momentum
+    def _update_optimizer(self, optimizer):
+        new_lr = self.calc_lr()
+        if new_lr is not None:
+            self._update_lr(optimizer, new_lr)
+
+        new_momentum = self.calc_momentum()
+        if new_momentum is not None:
+            self._update_momentum(optimizer, new_momentum)
         else:
-            state.lr[self.optimizer_key] = 0
-            state.momentum[self.optimizer_key] = 0
+            new_momentum = get_optimizer_momentum(optimizer)
+
+        return new_lr, new_momentum
 
     def on_train_start(self, state):
-        self.init_lr = state._optimizer[self.optimizer_key].defaults["lr"]
+        optimizer = state.get_key(key="optimizer", inner_key=self.optimizer_key)
+        self.init_lr = optimizer.defaults["lr"]
+
+    def update_optimizer(self, state):
+        if not state.is_train:
+            return
+
+        optimizer = state.get_key(key="optimizer", inner_key=self.optimizer_key)
+        lr, momentum = self._update_optimizer(optimizer=optimizer)
+        state.set_key(lr, key="lr", inner_key=self.optimizer_key)
+        state.set_key(momentum, key="momentum", inner_key=self.optimizer_key)
 
     def on_loader_start(self, state):
-        self.update_optimizer(state=state, optimizer=state._optimizer)
+        self.update_optimizer(state=state)
 
     def on_batch_end(self, state):
-        self.update_optimizer(state=state, optimizer=state._optimizer)
+        self.update_optimizer(state=state)
 
 
 class OneCycleLR(LRUpdater):
@@ -555,7 +549,7 @@ class OneCycleLR(LRUpdater):
             div: int,
             cut_div: int,
             momentum_range: Tuple[float, float],
-            optimizer_key: str = "main"):
+            optimizer_key: str = None):
         """
 
         :param init_lr: init learning rate for torch optimizer
@@ -621,7 +615,7 @@ class LRFinder(LRUpdater):
     https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html
     """
 
-    def __init__(self, final_lr, n_steps=None, optimizer_key="main"):
+    def __init__(self, final_lr, n_steps=None, optimizer_key=None):
         """
 
         :param init_lr: initial learning rate to use
@@ -666,7 +660,7 @@ class ClassificationLossCallback(Callback):
         self.output_key = output_key
 
     def on_batch_end(self, state):
-        state.loss["main"] = state._criterion["main"](
+        state.loss = state.criterion(
             state.output[self.output_key],
             state.input[self.input_key])
 
