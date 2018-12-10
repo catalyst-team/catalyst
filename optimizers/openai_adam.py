@@ -101,8 +101,8 @@ class OpenAIAdam(Optimizer):
 
                 schedule_fct = SCHEDULES[group["schedule"]]
                 lr_scheduled = (
-                    group["lr"] *
-                    schedule_fct(
+                    group["lr"]
+                    * schedule_fct(
                         state["step"] / group["t_total"],
                         group["warmup"]))
                 step_size_ = lr_scheduled * math.sqrt(bias_correction2)
