@@ -1,6 +1,8 @@
 import torch
 import numpy as np
-from sklearn.metrics import f1_score, mean_absolute_error
+from sklearn.metrics import f1_score, mean_absolute_error, precision_score, recall_score
+from sklearn.metrics import average_precision_score, precision_recall_curve
+from sklearn.metrics.classification import precision_recall_fscore_support
 
 
 def precision(output, target, topk=(1,)):
@@ -106,7 +108,8 @@ def dice(y_true, y_pred):
 
 
 def F1(label, output, th=0.2, start=0.2, end=0.5, step=0.01):
-    return th, f1_score(label, output > th, average='macro')
+    precision, recall, f_score, true_sum = precision_recall_fscore_support(label, output > th, beta=1, average="macro")
+    return precision, recall, f_score, th
 
 
 def fbeta(y_pred, y_true, thresh:float=0.2, beta:float=2, eps:float=1e-9, sigmoid:bool=True):

@@ -205,9 +205,13 @@ class F1Callback(Callback):
     def on_loader_end(self, state):
         # import pdb
         # pdb.set_trace()
-        th, fscore = F1(self.labels, self.outputs)
+        precision, recall, f_score, th = F1(self.labels, self.outputs)
+        key = "p"
+        state.epoch_metrics[state.loader_mode][key] = precision
+        key = "r"
+        state.epoch_metrics[state.loader_mode][key] = recall
         key = "f1"
-        state.epoch_metrics[state.loader_mode][key] = fscore
+        state.epoch_metrics[state.loader_mode][key] = f_score
         key = "th"
         state.epoch_metrics[state.loader_mode][key] = th
 
