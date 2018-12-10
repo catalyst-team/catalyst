@@ -14,8 +14,14 @@ from catalyst.utils.serialization import serialize, deserialize
 
 class BufferDataset(Dataset):
     def __init__(
-            self, state_shape, action_shape,
-            max_size=int(1e6), history_len=1, n_step=1, gamma=0.99):
+        self,
+        state_shape,
+        action_shape,
+        max_size=int(1e6),
+        history_len=1,
+        n_step=1,
+        gamma=0.99
+    ):
         self.state_shape = state_shape
         self.action_shape = action_shape
         self.history_len = history_len
@@ -27,11 +33,13 @@ class BufferDataset(Dataset):
 
         self._store_lock = mp.RLock()
         self.states = np.empty(
-            (self.max_size,) + self.state_shape, dtype=np.float32)
+            (self.max_size, ) + self.state_shape, dtype=np.float32
+        )
         self.actions = np.empty(
-            (self.max_size,) + self.action_shape, dtype=np.float32)
-        self.rewards = np.empty((self.max_size,), dtype=np.float32)
-        self.dones = np.empty((self.max_size,), dtype=np.bool)
+            (self.max_size, ) + self.action_shape, dtype=np.float32
+        )
+        self.rewards = np.empty((self.max_size, ), dtype=np.float32)
+        self.dones = np.empty((self.max_size, ), dtype=np.bool)
 
     def push_episode(self, episode):
         with self._store_lock:
@@ -40,7 +48,8 @@ class BufferDataset(Dataset):
             self.len = min(self.len + episode_len, self.max_size)
 
             indices = np.arange(
-                self.pointer, self.pointer + episode_len) % self.max_size
+                self.pointer, self.pointer + episode_len
+            ) % self.max_size
             self.states[indices] = np.array(states)
             self.actions[indices] = np.array(actions)
             self.rewards[indices] = np.array(rewards)
@@ -55,8 +64,8 @@ class BufferDataset(Dataset):
 
         if start_idx < 0 or np.any(self.dones[start_idx:idx + 1]):
             state = np.zeros(
-                (history_len,) + self.state_shape,
-                dtype=np.float32)
+                (history_len, ) + self.state_shape, dtype=np.float32
+            )
             indices = [idx]
             for i in range(history_len - 1):
                 next_idx = (idx - i - 1) % self.max_size
@@ -73,11 +82,12 @@ class BufferDataset(Dataset):
     def get_transition_n_step(self, idx, history_len=1, n_step=1, gamma=0.99):
         state = self.get_state(idx, history_len)
         next_state = self.get_state(
-            (idx + n_step) % self.max_size, history_len)
+            (idx + n_step) % self.max_size, history_len
+        )
         cum_reward = 0
         indices = np.arange(idx, idx + n_step) % self.max_size
         for num, i in enumerate(indices):
-            cum_reward += self.rewards[i] * (gamma ** num)
+            cum_reward += self.rewards[i] * (gamma**num)
             done = self.dones[i]
             if done:
                 break
@@ -107,11 +117,7 @@ class BufferDataset(Dataset):
 
 
 class BufferSampler(Sampler):
-    def __init__(
-            self,
-            buffer,
-            epoch_len,
-            batch_size):
+    def __init__(self, buffer, epoch_len, batch_size):
         super().__init__(None)
         self.buffer = buffer
         self.buffer_history_len = buffer.history_len
@@ -143,26 +149,27 @@ def redis2queue_loop(redis, queue, max_size):
 
 class Trainer:
     def __init__(
-            self,
-            algorithm,
-            state_shape,
-            action_shape,
-            logdir,
-            redis_server=None,
-            redis_prefix=None,
-            n_workers=2,
-            replay_buffer_size=int(1e6),
-            batch_size=64,
-            start_learning=int(1e3),
-            gamma=0.99,
-            n_step=1,
-            history_len=1,
-            epoch_len=int(1e2),
-            save_period=10,
-            target_update_period=1,
-            online_update_period=1,
-            weights_sync_period=1,
-            max_redis_trials=1000):
+        self,
+        algorithm,
+        state_shape,
+        action_shape,
+        logdir,
+        redis_server=None,
+        redis_prefix=None,
+        n_workers=2,
+        replay_buffer_size=int(1e6),
+        batch_size=64,
+        start_learning=int(1e3),
+        gamma=0.99,
+        n_step=1,
+        history_len=1,
+        epoch_len=int(1e2),
+        save_period=10,
+        target_update_period=1,
+        online_update_period=1,
+        weights_sync_period=1,
+        max_redis_trials=1000
+    ):
 
         self.algorithm = algorithm
         history_len = history_len
@@ -181,7 +188,8 @@ class Trainer:
             max_size=replay_buffer_size,
             history_len=history_len,
             n_step=n_step,
-            gamma=gamma)
+            gamma=gamma
+        )
 
         self.gamma = gamma
         self.n_step = n_step
@@ -191,9 +199,8 @@ class Trainer:
         self.n_workers = n_workers
 
         self.sampler = BufferSampler(
-            buffer=self.buffer,
-            epoch_len=epoch_len,
-            batch_size=batch_size)
+            buffer=self.buffer, epoch_len=epoch_len, batch_size=batch_size
+        )
 
         self.loader = DataLoader(
             dataset=self.buffer,
@@ -201,7 +208,8 @@ class Trainer:
             shuffle=False,
             num_workers=self.n_workers,
             pin_memory=torch.cuda.is_available(),
-            sampler=self.sampler)
+            sampler=self.sampler
+        )
 
         self.redis_server = redis_server
         self.redis_prefix = redis_prefix
@@ -213,17 +221,17 @@ class Trainer:
 
         # (actor_period, critic_period)
         target_update_period = (
-            target_update_period
-            if isinstance(target_update_period, list)
-            else (target_update_period, target_update_period))
+            target_update_period if isinstance(target_update_period, list) else
+            (target_update_period, target_update_period)
+        )
         self.actor_update_period, self.critic_update_period = \
             target_update_period
 
         # (actor_period, critic_period)
         online_update_period = (
-            online_update_period
-            if isinstance(online_update_period, list)
-            else (online_update_period, online_update_period))
+            online_update_period if isinstance(online_update_period, list) else
+            (online_update_period, online_update_period)
+        )
         self.actor_grad_period, self.critic_grad_period = \
             online_update_period
 
@@ -234,9 +242,12 @@ class Trainer:
         self.critic_updates = 0
 
     def __repr__(self):
-        str_val = " ".join([
-            f"{key}: {str(getattr(self, key, ''))}"
-            for key in ["algorithm", "n_step", "gamma", "history_len"]])
+        str_val = " ".join(
+            [
+                f"{key}: {str(getattr(self, key, ''))}"
+                for key in ["algorithm", "n_step", "gamma", "history_len"]
+            ]
+        )
         return f"Trainer. {str_val}"
 
     def run(self):
@@ -251,7 +262,8 @@ class Trainer:
                 "redis": self.redis_server,
                 "queue": self.episodes_queue,
                 "max_size": int(self.max_redis_trials * 2)
-            })
+            }
+        )
         self._redis_loop_process.start()
 
     def fetch_episodes(self):
@@ -288,7 +300,8 @@ class Trainer:
                 metrics = self.algorithm.train(
                     batch,
                     actor_update=(step_index % self.actor_grad_period == 0),
-                    critic_update=(step_index % self.critic_grad_period == 0))
+                    critic_update=(step_index % self.critic_grad_period == 0)
+                )
 
                 for key, value in metrics.items():
                     if isinstance(value, float):
@@ -297,22 +310,15 @@ class Trainer:
                 self.update_target_weights(step_index)
 
             elapsed_time = time.time() - start_time
+            self.logger.add_scalar("batch size", self.batch_size, self.epoch)
+            self.logger.add_scalar("buffer size", len(self.buffer), self.epoch)
             self.logger.add_scalar(
-                "batch size",
-                self.batch_size,
-                self.epoch)
+                "batches per second", i / elapsed_time, self.epoch
+            )
             self.logger.add_scalar(
-                "buffer size",
-                len(self.buffer),
-                self.epoch)
-            self.logger.add_scalar(
-                "batches per second",
-                i / elapsed_time,
-                self.epoch)
-            self.logger.add_scalar(
-                "updates per second",
-                i * self.batch_size / elapsed_time,
-                self.epoch)
+                "updates per second", i * self.batch_size / elapsed_time,
+                self.epoch
+            )
 
             self.save()
             self.update_samplers_weights()
@@ -325,18 +331,16 @@ class Trainer:
             self.actor_updates += 1
 
             self.logger.add_scalar(
-                "actor updates",
-                self.actor_updates,
-                step_index)
+                "actor updates", self.actor_updates, step_index
+            )
 
         if step_index % self.critic_update_period == 0:
             self.algorithm.target_critic_update()
             self.critic_updates += 1
 
             self.logger.add_scalar(
-                "critic updates",
-                self.critic_updates,
-                step_index)
+                "critic updates", self.critic_updates, step_index
+            )
 
     def save(self):
         if self.epoch % self.save_period == 0:
@@ -345,14 +349,18 @@ class Trainer:
             filename = UtilsFactory.save_checkpoint(
                 logdir=self.logdir,
                 checkpoint=checkpoint,
-                suffix=str(self.epoch))
+                suffix=str(self.epoch)
+            )
             print("Checkpoint saved to: %s" % filename)
 
     def update_samplers_weights(self):
         if self.epoch % self.weights_sync_period == 0:
             actor_state_dict = self.algorithm.actor.state_dict()
             actor_state_dict = {
-                k: v.tolist() for k, v in actor_state_dict.items()}
+                k: v.tolist()
+                for k, v in actor_state_dict.items()
+            }
             self.redis_server.set(
                 f"{self.redis_prefix}_actor_weights",
-                serialize(actor_state_dict))
+                serialize(actor_state_dict)
+            )

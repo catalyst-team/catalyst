@@ -15,10 +15,18 @@ LOG_SIG_MIN = -10
 class Actor(nn.Module):
     """ Actor which learns deterministic policy.
     """
+
     def __init__(
-            self, state_shape, action_size, hiddens, layer_fn,
-            activation_fn=nn.ReLU, norm_fn=None, bias=True,
-            out_activation=nn.Tanh):
+        self,
+        state_shape,
+        action_size,
+        hiddens,
+        layer_fn,
+        activation_fn=nn.ReLU,
+        norm_fn=None,
+        bias=True,
+        out_activation=nn.Tanh
+    ):
         super().__init__()
         # hack to prevent cycle imports
         from catalyst.modules.modules import name2nn
@@ -35,12 +43,15 @@ class Actor(nn.Module):
             layer_fn=layer_fn,
             activation_fn=activation_fn,
             norm_fn=norm_fn,
-            bias=bias)
+            bias=bias
+        )
         self.policy_net = SequentialNet(
             hiddens=[hiddens[-1], action_size],
             layer_fn=nn.Linear,
             activation_fn=out_activation,
-            norm_fn=None, bias=True)
+            norm_fn=None,
+            bias=True
+        )
 
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
         self.feature_net.apply(inner_init)
@@ -55,9 +66,16 @@ class Actor(nn.Module):
 
 class LamaActor(nn.Module):
     def __init__(
-            self, state_shape, action_size, hiddens, layer_fn,
-            activation_fn=nn.ReLU, norm_fn=None, bias=True,
-            out_activation=nn.Tanh):
+        self,
+        state_shape,
+        action_size,
+        hiddens,
+        layer_fn,
+        activation_fn=nn.ReLU,
+        norm_fn=None,
+        bias=True,
+        out_activation=nn.Tanh
+    ):
         super().__init__()
         # hack to prevent cycle imports
         from catalyst.modules.modules import name2nn
@@ -74,25 +92,30 @@ class LamaActor(nn.Module):
             layer_fn=layer_fn,
             activation_fn=activation_fn,
             norm_fn=norm_fn,
-            bias=bias)
+            bias=bias
+        )
         self.attn = nn.Sequential(
             nn.Conv1d(
                 in_channels=hiddens[-1],
                 out_channels=1,
                 kernel_size=1,
-                bias=True),
-            nn.Softmax(dim=1))
+                bias=True
+            ), nn.Softmax(dim=1)
+        )
         self.feature_net2 = SequentialNet(
             hiddens=[hiddens[-1] * 4, hiddens[-1]],
             layer_fn=layer_fn,
             activation_fn=activation_fn,
             norm_fn=norm_fn,
-            bias=bias)
+            bias=bias
+        )
         self.policy_net = SequentialNet(
             hiddens=[hiddens[-1], action_size],
             layer_fn=nn.Linear,
             activation_fn=out_activation,
-            norm_fn=None, bias=True)
+            norm_fn=None,
+            bias=True
+        )
 
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
         self.feature_net.apply(inner_init)
@@ -128,10 +151,18 @@ class GaussActor(nn.Module):
     stochastic policy. Actions obtained from the policy are squashed
     with (out_activation).
     """
+
     def __init__(
-            self, state_shape, action_size, hiddens, layer_fn,
-            activation_fn=nn.ReLU, norm_fn=None, bias=True,
-            out_activation=nn.Sigmoid):
+        self,
+        state_shape,
+        action_size,
+        hiddens,
+        layer_fn,
+        activation_fn=nn.ReLU,
+        norm_fn=None,
+        bias=True,
+        out_activation=nn.Sigmoid
+    ):
         super().__init__()
         # hack to prevent cycle imports
         from catalyst.modules.modules import name2nn
@@ -150,12 +181,15 @@ class GaussActor(nn.Module):
             layer_fn=layer_fn,
             activation_fn=activation_fn,
             norm_fn=norm_fn,
-            bias=bias)
+            bias=bias
+        )
         self.policy_net = SequentialNet(
             hiddens=[hiddens[-1], action_size * 2],
             layer_fn=nn.Linear,
             activation_fn=None,
-            norm_fn=None, bias=bias)
+            norm_fn=None,
+            bias=bias
+        )
         self.squasher = SquashingLayer(out_activation)
 
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
@@ -185,10 +219,18 @@ class RealNVPActor(nn.Module):
     Such policy transforms samples from N(z|0,I) into actions and
     then squashes them with (out activation).
     """
+
     def __init__(
-            self, state_shape, action_size, hiddens, layer_fn,
-            activation_fn=nn.ReLU, norm_fn=None, bias=True,
-            out_activation=nn.Sigmoid):
+        self,
+        state_shape,
+        action_size,
+        hiddens,
+        layer_fn,
+        activation_fn=nn.ReLU,
+        norm_fn=None,
+        bias=True,
+        out_activation=nn.Sigmoid
+    ):
         super().__init__()
         # hack to prevent cycle imports
         from catalyst.modules.modules import name2nn
@@ -207,26 +249,32 @@ class RealNVPActor(nn.Module):
             layer_fn=layer_fn,
             activation_fn=activation_fn,
             norm_fn=norm_fn,
-            bias=bias)
+            bias=bias
+        )
         self.embedding_net = SequentialNet(
             hiddens=[hiddens[-1], action_size * 2],
             layer_fn=layer_fn,
             activation_fn=None,
             norm_fn=norm_fn,
-            bias=bias)
+            bias=bias
+        )
 
         self.coupling1 = CouplingLayer(
             action_size=action_size,
             layer_fn=layer_fn,
             activation_fn=activation_fn,
             norm_fn=None,
-            bias=bias, parity="odd")
+            bias=bias,
+            parity="odd"
+        )
         self.coupling2 = CouplingLayer(
             action_size=action_size,
             layer_fn=layer_fn,
             activation_fn=activation_fn,
             norm_fn=None,
-            bias=bias, parity="even")
+            bias=bias,
+            parity="even"
+        )
 
         self.squasher = SquashingLayer(out_activation)
 
@@ -256,11 +304,20 @@ class RealNVPActor(nn.Module):
 class Critic(nn.Module):
     """ Critic which learns state-action value function Q(s,a).
     """
+
     def __init__(
-            self, state_shape, action_size, hiddens, layer_fn,
-            concat_at=1, n_atoms=1,
-            activation_fn=nn.ReLU, norm_fn=None, bias=True,
-            out_activation=None):
+        self,
+        state_shape,
+        action_size,
+        hiddens,
+        layer_fn,
+        concat_at=1,
+        n_atoms=1,
+        activation_fn=nn.ReLU,
+        norm_fn=None,
+        bias=True,
+        out_activation=None
+    ):
         super().__init__()
         # hack to prevent cycle imports
         from catalyst.modules.modules import name2nn
@@ -280,7 +337,8 @@ class Critic(nn.Module):
                 layer_fn=layer_fn,
                 activation_fn=activation_fn,
                 norm_fn=norm_fn,
-                bias=bias)
+                bias=bias
+            )
             hiddens_ = \
                 [hiddens[concat_at - 1] + action_size] + hiddens[concat_at:]
             self.feature_net = SequentialNet(
@@ -288,7 +346,8 @@ class Critic(nn.Module):
                 layer_fn=layer_fn,
                 activation_fn=activation_fn,
                 norm_fn=norm_fn,
-                bias=bias)
+                bias=bias
+            )
         else:
             self.observation_net = None
             hiddens_ = [state_size + action_size] + hiddens
@@ -297,13 +356,16 @@ class Critic(nn.Module):
                 layer_fn=layer_fn,
                 activation_fn=activation_fn,
                 norm_fn=norm_fn,
-                bias=bias)
+                bias=bias
+            )
 
         self.value_net = SequentialNet(
             hiddens=[hiddens[-1], n_atoms],
             layer_fn=nn.Linear,
             activation_fn=out_activation,
-            norm_fn=None, bias=True)
+            norm_fn=None,
+            bias=True
+        )
 
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
         if self.observation_net is not None:
@@ -323,10 +385,18 @@ class Critic(nn.Module):
 
 class LamaCritic(nn.Module):
     def __init__(
-            self, state_shape, action_size, hiddens, layer_fn,
-            concat_at=1, n_atoms=1,
-            activation_fn=nn.ReLU, norm_fn=None, bias=True,
-            out_activation=None):
+        self,
+        state_shape,
+        action_size,
+        hiddens,
+        layer_fn,
+        concat_at=1,
+        n_atoms=1,
+        activation_fn=nn.ReLU,
+        norm_fn=None,
+        bias=True,
+        out_activation=None
+    ):
         super().__init__()
         # hack to prevent cycle imports
         from catalyst.modules.modules import name2nn
@@ -346,7 +416,8 @@ class LamaCritic(nn.Module):
                 layer_fn=layer_fn,
                 activation_fn=activation_fn,
                 norm_fn=norm_fn,
-                bias=bias)
+                bias=bias
+            )
             hiddens_ = \
                 [hiddens[concat_at - 1] + action_size] + hiddens[concat_at:]
             self.feature_net = SequentialNet(
@@ -354,7 +425,8 @@ class LamaCritic(nn.Module):
                 layer_fn=layer_fn,
                 activation_fn=activation_fn,
                 norm_fn=norm_fn,
-                bias=bias)
+                bias=bias
+            )
         else:
             self.observation_net = None
             hiddens_ = [state_size + action_size] + hiddens
@@ -363,7 +435,8 @@ class LamaCritic(nn.Module):
                 layer_fn=layer_fn,
                 activation_fn=activation_fn,
                 norm_fn=norm_fn,
-                bias=bias)
+                bias=bias
+            )
 
         attn_features = hiddens[-1]
         self.attn = nn.Sequential(
@@ -371,19 +444,23 @@ class LamaCritic(nn.Module):
                 in_channels=attn_features,
                 out_channels=1,
                 kernel_size=1,
-                bias=True),
-            nn.Softmax(dim=1))
+                bias=True
+            ), nn.Softmax(dim=1)
+        )
         self.feature_net2 = SequentialNet(
             hiddens=[hiddens[-1] * 4, hiddens[-1]],
             layer_fn=layer_fn,
             activation_fn=activation_fn,
             norm_fn=norm_fn,
-            bias=bias)
+            bias=bias
+        )
         self.value_net = SequentialNet(
             hiddens=[hiddens[-1], n_atoms],
             layer_fn=nn.Linear,
             activation_fn=out_activation,
-            norm_fn=None, bias=True)
+            norm_fn=None,
+            bias=True
+        )
 
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
         if self.observation_net is not None:
@@ -424,11 +501,18 @@ class LamaCritic(nn.Module):
 class ValueCritic(nn.Module):
     """ Critic which learns value function V(s).
     """
+
     def __init__(
-            self, state_shape, hiddens, layer_fn,
-            n_atoms=1,
-            activation_fn=nn.ReLU, norm_fn=None, bias=True,
-            out_activation=None):
+        self,
+        state_shape,
+        hiddens,
+        layer_fn,
+        n_atoms=1,
+        activation_fn=nn.ReLU,
+        norm_fn=None,
+        bias=True,
+        out_activation=None
+    ):
         super().__init__()
         # hack to prevent cycle imports
         from catalyst.modules.modules import name2nn
@@ -447,13 +531,16 @@ class ValueCritic(nn.Module):
             layer_fn=layer_fn,
             activation_fn=activation_fn,
             norm_fn=norm_fn,
-            bias=bias)
+            bias=bias
+        )
 
         self.value_net = SequentialNet(
             hiddens=[hiddens[-1], n_atoms],
             layer_fn=nn.Linear,
             activation_fn=out_activation,
-            norm_fn=None, bias=True)
+            norm_fn=None,
+            bias=True
+        )
 
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
         self.feature_net.apply(inner_init)
@@ -468,10 +555,16 @@ class ValueCritic(nn.Module):
 
 class LamaValueCritic(nn.Module):
     def __init__(
-            self, state_shape, hiddens, layer_fn,
-            n_atoms=1,
-            activation_fn=nn.ReLU, norm_fn=None, bias=True,
-            out_activation=None):
+        self,
+        state_shape,
+        hiddens,
+        layer_fn,
+        n_atoms=1,
+        activation_fn=nn.ReLU,
+        norm_fn=None,
+        bias=True,
+        out_activation=None
+    ):
         super().__init__()
         # hack to prevent cycle imports
         from catalyst.modules.modules import name2nn
@@ -488,25 +581,30 @@ class LamaValueCritic(nn.Module):
             layer_fn=layer_fn,
             activation_fn=activation_fn,
             norm_fn=norm_fn,
-            bias=bias)
+            bias=bias
+        )
         self.attn = nn.Sequential(
             nn.Conv1d(
                 in_channels=hiddens[-1],
                 out_channels=1,
                 kernel_size=1,
-                bias=True),
-            nn.Softmax(dim=1))
+                bias=True
+            ), nn.Softmax(dim=1)
+        )
         self.feature_net2 = SequentialNet(
             hiddens=[hiddens[-1] * 4, hiddens[-1]],
             layer_fn=layer_fn,
             activation_fn=activation_fn,
             norm_fn=norm_fn,
-            bias=bias)
+            bias=bias
+        )
         self.value_net = SequentialNet(
             hiddens=[hiddens[-1], n_atoms],
             layer_fn=nn.Linear,
             activation_fn=out_activation,
-            norm_fn=None, bias=True)
+            norm_fn=None,
+            bias=True
+        )
 
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
         self.feature_net.apply(inner_init)

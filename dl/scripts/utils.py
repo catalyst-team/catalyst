@@ -26,7 +26,8 @@ def prepare_modules(model_dir, dump_dir=None):
 
     pyfiles = list(
         map(lambda x: x.name[:-3],
-            pathlib.Path(model_dir).glob("*.py")))
+            pathlib.Path(model_dir).glob("*.py"))
+    )
 
     modules = {}
     for name in pyfiles:

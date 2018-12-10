@@ -36,8 +36,14 @@ class SquashingLayer(nn.Module):
 
 class CouplingLayer(nn.Module):
     def __init__(
-            self, action_size, layer_fn,
-            activation_fn=nn.ReLU, norm_fn=None, bias=True, parity="odd"):
+        self,
+        action_size,
+        layer_fn,
+        activation_fn=nn.ReLU,
+        norm_fn=None,
+        bias=True,
+        parity="odd"
+    ):
         """ Conditional affine coupling layer used in Real NVP Bijector.
 
         Original paper: https://arxiv.org/abs/1605.08803
@@ -70,26 +76,30 @@ class CouplingLayer(nn.Module):
             layer_fn=layer_fn,
             activation_fn=activation_fn,
             norm_fn=None,
-            bias=bias)
+            bias=bias
+        )
         self.scale_net = SequentialNet(
             hiddens=[action_size, action_size - self.copy_size],
             layer_fn=layer_fn,
             activation_fn=None,
             norm_fn=None,
-            bias=True)
+            bias=True
+        )
 
         self.translation_prenet = SequentialNet(
             hiddens=[action_size * 2 + self.copy_size, action_size],
             layer_fn=layer_fn,
             activation_fn=activation_fn,
             norm_fn=None,
-            bias=bias)
+            bias=bias
+        )
         self.translation_net = SequentialNet(
             hiddens=[action_size, action_size - self.copy_size],
             layer_fn=layer_fn,
             activation_fn=None,
             norm_fn=None,
-            bias=True)
+            bias=True
+        )
 
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
         self.scale_prenet.apply(inner_init)

@@ -20,8 +20,7 @@ class DDPG(BaseAlgorithm):
         done_t = self.to_tensor(done_t).unsqueeze(1)
 
         # actor loss
-        policy_loss = -torch.mean(
-            self.critic(states_t, self.actor(states_t)))
+        policy_loss = -torch.mean(self.critic(states_t, self.actor(states_t)))
 
         # critic loss
         q_values_tp1 = self.target_critic(
@@ -29,7 +28,7 @@ class DDPG(BaseAlgorithm):
             self.target_actor(states_tp1).detach(),
         )
 
-        gamma = self.gamma ** self.n_step
+        gamma = self.gamma**self.n_step
         q_target_t = (rewards_t + (1 - done_t) * gamma * q_values_tp1).detach()
         q_values_t = self.critic(states_t, actions_t)
         value_loss = self.critic_criterion(q_values_t, q_target_t).mean()
@@ -38,13 +37,14 @@ class DDPG(BaseAlgorithm):
             policy_loss=policy_loss,
             value_loss=value_loss,
             actor_update=actor_update,
-            critic_update=critic_update)
+            critic_update=critic_update
+        )
 
         return metrics
 
     def update_step(
-            self, policy_loss, value_loss,
-            actor_update=True, critic_update=True):
+        self, policy_loss, value_loss, actor_update=True, critic_update=True
+    ):
         # actor update
         actor_update_metrics = {}
         if actor_update:

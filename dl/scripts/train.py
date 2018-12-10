@@ -19,19 +19,18 @@ def parse_args():
         default=None,
         type=str,
         metavar="PATH",
-        help="path to latest checkpoint")
+        help="path to latest checkpoint"
+    )
     parser.add_argument(
         "-j",
         "--workers",
         default=None,
         type=int,
-        help="number of data loading workers")
+        help="number of data loading workers"
+    )
     parser.add_argument(
-        "-b",
-        "--batch-size",
-        default=None,
-        type=int,
-        help="mini-batch size")
+        "-b", "--batch-size", default=None, type=int, help="mini-batch size"
+    )
     boolean_flag(parser, "verbose", default=False)
 
     args, unknown_args = parser.parse_known_args()
@@ -61,7 +60,8 @@ def main(args, unknown_args):
         datasource=datasource,
         args=args,
         stages_config=config["stages"],
-        verbose=args.verbose)
+        verbose=args.verbose
+    )
 
 
 if __name__ == "__main__":

@@ -6,13 +6,15 @@ from catalyst.rl.algorithms.base import BaseAlgorithm, soft_update
 
 class SAC(BaseAlgorithm):
     def _init(
-            self,
-            critic_q1, critic_q2,
-            reward_scale=1.0,
-            use_regularization=False,
-            mu_and_sigma_reg=1e-3,
-            policy_grad_estimator="reparametrization_trick",
-            **kwargs):
+        self,
+        critic_q1,
+        critic_q2,
+        reward_scale=1.0,
+        use_regularization=False,
+        mu_and_sigma_reg=1e-3,
+        policy_grad_estimator="reparametrization_trick",
+        **kwargs
+    ):
         """
         Parameters
         ----------
@@ -35,14 +37,18 @@ class SAC(BaseAlgorithm):
         self.critic_q2 = critic_q2.to(self._device)
 
         self.critic_q1_optimizer = UtilsFactory.create_optimizer(
-            self.critic_q1, **self.critic_optimizer_params)
+            self.critic_q1, **self.critic_optimizer_params
+        )
         self.critic_q2_optimizer = UtilsFactory.create_optimizer(
-            self.critic_q2, **self.critic_optimizer_params)
+            self.critic_q2, **self.critic_optimizer_params
+        )
 
         self.critic_q1_scheduler = UtilsFactory.create_scheduler(
-            self.critic_q1_optimizer, **self.critic_scheduler_params)
+            self.critic_q1_optimizer, **self.critic_scheduler_params
+        )
         self.critic_q2_scheduler = UtilsFactory.create_scheduler(
-            self.critic_q2_optimizer, **self.critic_scheduler_params)
+            self.critic_q2_optimizer, **self.critic_scheduler_params
+        )
 
         self.reward_scale = reward_scale
         self.use_regularization = use_regularization
@@ -78,13 +84,14 @@ class SAC(BaseAlgorithm):
         elif self.policy_grad_estimator == "reinforce":
             policy_target = (log_pi - q1_values_tp0 + values_t).detach()
             policy_loss = torch.mean(
-                self.reward_scale * log_pi * policy_target)
+                self.reward_scale * log_pi * policy_target
+            )
         else:
             raise NotImplementedError
 
         if self.use_regularization:
             mu, log_sigma = actor_output[2:]
-            reg_loss = (mu ** 2).mean() + (log_sigma ** 2).mean()
+            reg_loss = (mu**2).mean() + (log_sigma**2).mean()
             policy_loss = policy_loss + self.mu_sigma_reg * reg_loss
 
         # critics q loss
@@ -92,7 +99,7 @@ class SAC(BaseAlgorithm):
         q2_values_t = self.critic_q2(states_t, actions_t)
         values_tp1 = self.target_critic(states_tp1)
 
-        gamma = self.gamma ** self.n_step
+        gamma = self.gamma**self.n_step
         q_target_t = (rewards_t + (1 - done_t) * gamma * values_tp1).detach()
 
         q1_value_loss = self.critic_criterion(q1_values_t, q_target_t).mean()
@@ -128,9 +135,7 @@ class SAC(BaseAlgorithm):
         pass
 
     def target_critic_update(self):
-        soft_update(
-            self.target_critic, self.critic,
-            self.critic_tau)
+        soft_update(self.target_critic, self.critic, self.critic_tau)
 
     def critic_v_update(self, loss):
         self.critic.zero_grad()
@@ -202,42 +207,48 @@ def prepare_for_trainer(config, algo=SAC):
 
     actor_state_shape = (
         config_["shared"]["history_len"],
-        config_["shared"]["state_size"],)
+        config_["shared"]["state_size"],
+    )
     actor_action_size = config_["shared"]["action_size"]
     n_step = config_["shared"]["n_step"]
     gamma = config_["shared"]["gamma"]
     history_len = config_["shared"]["history_len"]
-    trainer_state_shape = (config_["shared"]["state_size"],)
-    trainer_action_shape = (config_["shared"]["action_size"],)
+    trainer_state_shape = (config_["shared"]["state_size"], )
+    trainer_action_shape = (config_["shared"]["action_size"], )
 
     actor_fn = config_["actor"].pop("actor", None)
     actor_fn = getattr(agents, actor_fn)
     actor = actor_fn(
         state_shape=actor_state_shape,
         action_size=actor_action_size,
-        **config_["actor"])
+        **config_["actor"]
+    )
 
     critic_fn = config_["critic"].pop("critic", None)
     critic_fn = getattr(agents, critic_fn)
     critic_q1 = critic_fn(
         state_shape=actor_state_shape,
         action_size=actor_action_size,
-        **config_["critic"])
+        **config_["critic"]
+    )
     critic_q2 = critic_fn(
         state_shape=actor_state_shape,
         action_size=actor_action_size,
-        **config_["critic"])
+        **config_["critic"]
+    )
 
     critic_v_fn = getattr(agents, "ValueCritic")
-    critic_v = critic_v_fn(
-        state_shape=actor_state_shape,
-        **config_["critic"])
+    critic_v = critic_v_fn(state_shape=actor_state_shape, **config_["critic"])
 
     algorithm = algo(
         **config_["algorithm"],
-        actor=actor, critic=critic_v,
-        critic_q1=critic_q1, critic_q2=critic_q2,
-        n_step=n_step, gamma=gamma)
+        actor=actor,
+        critic=critic_v,
+        critic_q1=critic_q1,
+        critic_q2=critic_q2,
+        n_step=n_step,
+        gamma=gamma
+    )
 
     kwargs = {
         "algorithm": algorithm,
@@ -256,7 +267,8 @@ def prepare_for_sampler(config):
 
     actor_state_shape = (
         config_["shared"]["history_len"],
-        config_["shared"]["state_size"],)
+        config_["shared"]["state_size"],
+    )
     actor_action_size = config_["shared"]["action_size"]
 
     actor_fn = config_["actor"].pop("actor", None)
@@ -264,13 +276,11 @@ def prepare_for_sampler(config):
     actor = actor_fn(
         state_shape=actor_state_shape,
         action_size=actor_action_size,
-        **config_["actor"])
+        **config_["actor"]
+    )
 
     history_len = config_["shared"]["history_len"]
 
-    kwargs = {
-        "actor": actor,
-        "history_len": history_len
-    }
+    kwargs = {"actor": actor, "history_len": history_len}
 
     return kwargs

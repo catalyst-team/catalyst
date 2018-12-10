@@ -26,15 +26,16 @@ class QuantileTD3(TD3):
         done_t = self.to_tensor(done_t).unsqueeze(1)
 
         # actor loss
-        policy_loss = -torch.mean(
-            self.critic(states_t, self.actor(states_t)))
+        policy_loss = -torch.mean(self.critic(states_t, self.actor(states_t)))
 
         # critic loss
         actions_tp1 = self.target_actor(states_tp1).detach()
         action_noise = torch.normal(
-            mean=torch.zeros_like(actions_tp1), std=self.action_noise_std)
+            mean=torch.zeros_like(actions_tp1), std=self.action_noise_std
+        )
         noise_clip = torch.clamp(
-            action_noise, -self.action_noise_clip, self.action_noise_clip)
+            action_noise, -self.action_noise_clip, self.action_noise_clip
+        )
         actions_tp1 = actions_tp1 + noise_clip
         actions_tp1 = actions_tp1.clamp(self.min_action, self.max_action)
 
@@ -47,27 +48,34 @@ class QuantileTD3(TD3):
         mask = q_diff.lt(0).to(torch.float32).detach()[:, None]
         atoms_tp1 = atoms_tp1_1 * mask + atoms_tp1_2 * (1 - mask)
 
-        gamma = self.gamma ** self.n_step
-        atoms_target_t = (
-                rewards_t + (1 - done_t) * gamma * atoms_tp1).detach()
+        gamma = self.gamma**self.n_step
+        atoms_target_t = (rewards_t +
+                          (1 - done_t) * gamma * atoms_tp1).detach()
 
         atoms_t_1 = self.critic(states_t, actions_t)
         atoms_t_2 = self.critic2(states_t, actions_t)
 
         value_loss = quantile_loss(
-            atoms_t_1, atoms_target_t,
-            tau=self.tau, n_atoms=self.num_atoms,
-            criterion=self.critic_criterion).mean()
+            atoms_t_1,
+            atoms_target_t,
+            tau=self.tau,
+            n_atoms=self.num_atoms,
+            criterion=self.critic_criterion
+        ).mean()
         value_loss2 = quantile_loss(
-            atoms_t_2, atoms_target_t,
-            tau=self.tau, n_atoms=self.num_atoms,
-            criterion=self.critic_criterion).mean()
+            atoms_t_2,
+            atoms_target_t,
+            tau=self.tau,
+            n_atoms=self.num_atoms,
+            criterion=self.critic_criterion
+        ).mean()
 
         metrics = self.update_step(
             policy_loss=policy_loss,
             value_loss=(value_loss, value_loss2),
             actor_update=actor_update,
-            critic_update=critic_update)
+            critic_update=critic_update
+        )
 
         return metrics
 
