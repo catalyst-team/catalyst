@@ -100,8 +100,8 @@ def images_to_sprite(data):
     # Tile the individual thumbnails into an image.
     data = data.reshape((n, n) + data.shape[1:]).transpose(
         (0, 2, 1, 3) + tuple(range(4, data.ndim + 1)))
-    data = data.reshape((n * data.shape[1], n * data.shape[3]) +
-                        data.shape[4:])
+    data = data.reshape(
+        (n * data.shape[1], n * data.shape[3]) + data.shape[4:])
     data = (data * 255).astype(np.uint8)
     return data
 

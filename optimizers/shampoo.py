@@ -55,8 +55,8 @@ class Shampoo(Optimizer):
                     for dim_id, dim in enumerate(grad.size()):
                         # precondition matrices
                         state[f"precond_{dim_id}"] = (
-                                group["epsilon"] *
-                                torch.eye(dim, out=grad.new(dim, dim)))
+                                group["epsilon"]
+                                * torch.eye(dim, out=grad.new(dim, dim)))
                         state[f"inv_precond_{dim_id}"] = \
                             grad.new(dim, dim).zero_()
 

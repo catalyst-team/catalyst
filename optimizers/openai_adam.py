@@ -105,9 +105,8 @@ class OpenAIAdam(Optimizer):
                     schedule_fct(
                         state["step"] / group["t_total"],
                         group["warmup"]))
-                step_size = (
-                        lr_scheduled * math.sqrt(bias_correction2) /
-                        bias_correction1)
+                step_size_ = lr_scheduled * math.sqrt(bias_correction2)
+                step_size = (step_size_ / bias_correction1)
 
                 p.data.addcdiv_(-step_size, exp_avg, denom)
 

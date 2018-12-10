@@ -162,8 +162,8 @@ class Logger(Callback):
         if self.logger is not None:
             for k, v in state.epoch_metrics.items():
                 self.logger.info(
-                    f"{state.epoch} * Epoch ({k}) metrics: " +
-                    self._get_metrics_string(v))
+                    f"{state.epoch} * Epoch ({k}) metrics: "
+                    f"{self._get_metrics_string(v)}")
             self.logger.info("\n")
 
 
@@ -582,8 +582,9 @@ class OneCycleLR(LRUpdater):
     def calc_lr(self):
         # calculate percent for learning rate change
         if self.cycle_iter > self.cut_point:
-            percent = (1 - (self.cycle_iter - self.cut_point) /
-                       (self.total_iter - self.cut_point))
+            percent_curr = (self.cycle_iter - self.cut_point)
+            percent_all = (self.total_iter - self.cut_point)
+            percent = (1 - percent_curr / percent_all)
         else:
             percent = self.cycle_iter / self.cut_point
         res = self.init_lr * (1 + percent * (self.div - 1)) / self.div
@@ -601,8 +602,8 @@ class OneCycleLR(LRUpdater):
             percent = now_ / all_
         else:
             percent = 1 - self.cycle_iter / self.cut_point
-        res = (self.momentum_range[1] +
-               percent * (self.momentum_range[0] - self.momentum_range[1]))
+        res = (self.momentum_range[1]
+               + percent * (self.momentum_range[0] - self.momentum_range[1]))
         return res
 
     def on_loader_start(self, state):
