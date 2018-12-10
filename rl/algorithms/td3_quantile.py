@@ -48,7 +48,8 @@ class QuantileTD3(TD3):
         atoms_tp1 = atoms_tp1_1 * mask + atoms_tp1_2 * (1 - mask)
 
         gamma = self.gamma ** self.n_step
-        atoms_target_t = (rewards_t + (1 - done_t) * gamma * atoms_tp1).detach()
+        atoms_target_t = (
+                rewards_t + (1 - done_t) * gamma * atoms_tp1).detach()
 
         atoms_t_1 = self.critic(states_t, actions_t)
         atoms_t_2 = self.critic2(states_t, actions_t)

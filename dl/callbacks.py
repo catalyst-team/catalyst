@@ -229,7 +229,7 @@ class TensorboardLogger(Callback):
             mode = state.loader_mode
             self._log_metrics(
                 metrics=state.epoch_metrics[mode], step=state.epoch,
-                mode=mode,  suffix="/epoch")
+                mode=mode, suffix="/epoch")
 
 
 class CheckpointCallback(Callback):
@@ -357,7 +357,8 @@ class OptimizerCallback(Callback):
         @TODO: docs
         """
         grad_clip_params = grad_clip_params or {}
-        self.grad_clip_fn = UtilsFactory.create_grad_clip_fn(**grad_clip_params)
+        self.grad_clip_fn = UtilsFactory.create_grad_clip_fn(
+            **grad_clip_params)
         self.fp16 = False
         self.fp16_grad_scale = fp16_grad_scale
         self.accumulation_steps = accumulation_steps
@@ -368,14 +369,16 @@ class OptimizerCallback(Callback):
 
     def on_train_start(self, state):
         self.fp16 = isinstance(state.model, Fp16Wrap)
-        optimizer = state.get_key(key="optimizer", inner_key=self.optimizer_key)
+        optimizer = state.get_key(
+            key="optimizer", inner_key=self.optimizer_key)
         lr = optimizer.defaults["lr"]
         momentum = get_optimizer_momentum(optimizer)
         state.set_key(lr, "lr", inner_key=self.optimizer_key)
         state.set_key(momentum, "momentum", inner_key=self.optimizer_key)
 
     def on_epoch_start(self, state):
-        optimizer = state.get_key(key="optimizer", inner_key=self.optimizer_key)
+        optimizer = state.get_key(
+            key="optimizer", inner_key=self.optimizer_key)
         self.optimizer_wd = optimizer.param_groups[0].get("weight_decay", 0.0)
         optimizer.param_groups[0]["weight_decay"] = 0.0
 
@@ -439,7 +442,8 @@ class OptimizerCallback(Callback):
             torch.cuda.synchronize()
 
     def on_epoch_end(self, state):
-        optimizer = state.get_key(key="optimizer", inner_key=self.optimizer_key)
+        optimizer = state.get_key(
+            key="optimizer", inner_key=self.optimizer_key)
         optimizer.param_groups[0]["weight_decay"] = self.optimizer_wd
 
 
@@ -454,7 +458,8 @@ class SchedulerCallback(Callback):
         self.reduce_metric = reduce_metric
 
     def step(self, state):
-        scheduler = state.get_key(key="scheduler", inner_key=self.scheduler_key)
+        scheduler = state.get_key(
+            key="scheduler", inner_key=self.scheduler_key)
 
         lr, momentum = scheduler_step(
             scheduler=scheduler,
@@ -517,14 +522,16 @@ class LRUpdater(Callback):
         return new_lr, new_momentum
 
     def on_train_start(self, state):
-        optimizer = state.get_key(key="optimizer", inner_key=self.optimizer_key)
+        optimizer = state.get_key(
+            key="optimizer", inner_key=self.optimizer_key)
         self.init_lr = optimizer.defaults["lr"]
 
     def update_optimizer(self, state):
         if not state.is_train:
             return
 
-        optimizer = state.get_key(key="optimizer", inner_key=self.optimizer_key)
+        optimizer = state.get_key(
+            key="optimizer", inner_key=self.optimizer_key)
         lr, momentum = self._update_optimizer(optimizer=optimizer)
         state.set_key(lr, key="lr", inner_key=self.optimizer_key)
         state.set_key(momentum, key="momentum", inner_key=self.optimizer_key)

@@ -72,7 +72,8 @@ class BufferDataset(Dataset):
 
     def get_transition_n_step(self, idx, history_len=1, n_step=1, gamma=0.99):
         state = self.get_state(idx, history_len)
-        next_state = self.get_state((idx + n_step) % self.max_size, history_len)
+        next_state = self.get_state(
+            (idx + n_step) % self.max_size, history_len)
         cum_reward = 0
         indices = np.arange(idx, idx + n_step) % self.max_size
         for num, i in enumerate(indices):

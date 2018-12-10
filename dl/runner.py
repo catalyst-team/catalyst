@@ -1,5 +1,4 @@
 import tqdm
-from pprint import pprint
 from collections import OrderedDict
 from argparse import Namespace
 from typing import Dict
@@ -29,15 +28,15 @@ class AbstractModelRunner:
     def __init__(
             self,
             model: nn.Module,
-            criterion: nn.Module= None,
-            optimizer:optim.Optimizer = None,
+            criterion: nn.Module = None,
+            optimizer: optim.Optimizer = None,
             scheduler: optim.lr_scheduler._LRScheduler = None):
         """
 
         :param model: nn.Module instance, your model
-        :param criterion: OrderedDict with torch criterions for model training
-        :param optimizer: OrderedDict with torch optimizers for model training
-        :param scheduler: OrderedDict with torch schedulers for optimizers lrs
+        :param criterion: torch criterion
+        :param optimizer:  torch optimizer
+        :param scheduler: torch scheduler
         """
         self.model = model
         self.criterion = criterion
@@ -107,7 +106,7 @@ class AbstractModelRunner:
         """
         Main method for running train/valid/infer/debug pipeline over model.
 
-        :param loaders: OrderedDict or torch DataLoaders to run on
+        :param loaders: OrderedDict of torch DataLoaders to run on
         :param callbacks: OrderedDict of callback to use
         :param state_params: params for state initialization
         :param epochs: number of epochs to run
@@ -180,7 +179,7 @@ class AbstractModelRunner:
         """
         One stage training method.
 
-        :param loaders: OrderedDict or torch DataLoaders to run on
+        :param loaders: OrderedDict of torch DataLoaders to run on
         :param callbacks: OrderedDict of callback to use
         :param state_params: params for state initialization
         :param epochs: number of epochs to run
@@ -293,7 +292,7 @@ class AbstractModelRunner:
         """
         Main method for predicting with DL models.
 
-        :param loaders: OrderedDict or torch DataLoaders to run on
+        :param loaders: OrderedDict of torch DataLoaders to run on
         :param callbacks: OrderedDict of callback to use
         :param epochs: number of epochs to run
         :param verbose: verbose flag
@@ -328,9 +327,9 @@ class AbstractModelRunner:
             state: RunnerState = None):
         if state is not None:
             dct = {
-                key: value.to(self.device) \
-                    if state.key2device[key] and torch.is_tensor(value)
-                    else value
+                key: value.to(self.device)
+                if state.key2device[key] and torch.is_tensor(value)
+                else value
                 for key, value in dct.items()
             }
         else:

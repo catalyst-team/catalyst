@@ -54,16 +54,16 @@ def parse_args():
         type=int,
         dest="img_size",
         default=16,
-        help=
-        "if --img-col is defined, then images will be resized to (img-size, img-size, 3)"
+        help="if --img-col is defined, "
+             "then images will be resized to (img-size, img-size, 3)"
     )
     parser.add_argument(
         "--n-rows",
         type=int,
         dest="n_rows",
         default=None,
-        help=
-        "count of rows to use in csv (if not defined then it will use whole data)"
+        help="count of rows to use in csv "
+             "(if not defined then it will use whole data)"
     )
     parser.add_argument(
         "--meta-cols",
@@ -146,8 +146,8 @@ def main(args):
         cv2.imwrite(path.join(args.out_dir, "sprite.png"), sprite)
 
     print(
-        f"Building Tensorboard Projector metadata for ({len(features)}) vectors: {out_meta_file}"
-    )
+        f"Building Tensorboard Projector metadata "
+        f"for ({len(features)}) vectors: {out_meta_file}")
 
     print("Running Tensorflow Session...")
     sess = tf.InteractiveSession()
@@ -176,8 +176,8 @@ def main(args):
     print("Saving Tensorboard Session...")
     saver.save(sess, path.join(args.out_dir, f"{name}.ckpt"))
     print(
-        f"Done. Run `tensorboard --logdir={args.out_dir}` to view in Tensorboard"
-    )
+        f"Done. Run `tensorboard --logdir={args.out_dir}` "
+        f"to view in Tensorboard")
 
 
 if __name__ == "__main__":

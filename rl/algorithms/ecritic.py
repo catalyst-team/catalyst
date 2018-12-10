@@ -128,7 +128,8 @@ class EnsembleCritic(BaseAlgorithm):
             self.critics_optimizer[i].step()
             if self.critics_scheduler[i] is not None:
                 self.critics_scheduler[i].step()
-                metrics[f"lr_critic{i}"] = self.critics_scheduler[i].get_lr()[0]
+                lr = self.critics_scheduler[i].get_lr()[0]
+                metrics[f"lr_critic{i}"] = lr
         return metrics
 
     def load_checkpoint(self, filepath, load_optimizer=True):
@@ -169,7 +170,8 @@ class EnsembleCritic(BaseAlgorithm):
                 key2 = f"{key}_{key2}"
                 value2 = getattr(self, key2, None)
                 if value2 is not None:
-                    checkpoint[f"{key2}{i}_state_dict"] = value2[i].state_dict()
+                    value2_i = value2[i].state_dict()
+                    checkpoint[f"{key2}{i}_state_dict"] = value2_i
 
         return checkpoint
 

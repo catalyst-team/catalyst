@@ -38,7 +38,8 @@ class QuantileDDPG(DDPG):
             self.target_actor(states_tp1)).detach()
 
         gamma = self.gamma ** self.n_step
-        atoms_target_t = (rewards_t + (1 - done_t) * gamma * atoms_tp1).detach()
+        atoms_target_t = (
+                rewards_t + (1 - done_t) * gamma * atoms_tp1).detach()
 
         value_loss = quantile_loss(
             atoms_t, atoms_target_t,

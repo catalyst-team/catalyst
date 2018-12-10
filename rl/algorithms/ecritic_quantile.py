@@ -51,7 +51,8 @@ class QuantileEnsembleCritic(EnsembleCritic):
         atoms_tp1 = atoms_tp1[range(len(atoms_tp1)), :, atoms_min_ids_tp1]
 
         gamma = self.gamma ** self.n_step
-        atoms_target_t = (rewards_t + (1 - done_t) * gamma * atoms_tp1).detach()
+        atoms_target_t = (
+                rewards_t + (1 - done_t) * gamma * atoms_tp1).detach()
 
         atoms_t = [x(states_t, actions_t) for x in self.critics]
         value_loss = [

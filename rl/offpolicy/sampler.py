@@ -169,8 +169,9 @@ class Sampler:
         self.min_episode_steps = min_episode_steps
         self.min_episode_reward = min_episode_reward
         self.hard_seeds = set()
-        assert (min_episode_steps is None and min_episode_reward is None) \
-               or seeds is None
+        min_episode_flag_ = \
+            min_episode_steps is None and min_episode_reward is None
+        assert min_episode_flag_ or seeds is None
 
         self.min_episode_steps = self.min_episode_steps or -int(1e6)
         self.min_episode_reward = self.min_episode_reward or -int(1e6)

@@ -77,7 +77,8 @@ class SAC(BaseAlgorithm):
             policy_loss = torch.mean(log_pi - q1_values_tp0)
         elif self.policy_grad_estimator == "reinforce":
             policy_target = (log_pi - q1_values_tp0 + values_t).detach()
-            policy_loss = torch.mean(self.reward_scale * log_pi * policy_target)
+            policy_loss = torch.mean(
+                self.reward_scale * log_pi * policy_target)
         else:
             raise NotImplementedError
 
@@ -208,7 +209,7 @@ def prepare_for_trainer(config, algo=SAC):
     history_len = config_["shared"]["history_len"]
     trainer_state_shape = (config_["shared"]["state_size"],)
     trainer_action_shape = (config_["shared"]["action_size"],)
-    
+
     actor_fn = config_["actor"].pop("actor", None)
     actor_fn = getattr(agents, actor_fn)
     actor = actor_fn(
