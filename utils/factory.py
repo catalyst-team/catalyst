@@ -41,7 +41,7 @@ class UtilsFactory:
             sampler=sampler,
             collate_fn=collate_fn)
         return loader
-    
+
     @staticmethod
     def create_tflogger(logdir, name):
         log_dir = os.path.join(logdir, f"{name}_log")
@@ -239,8 +239,7 @@ class UtilsFactory:
             logdir=logdir, suffix=suffix)
         torch.save(checkpoint, filename)
         if is_best:
-            shutil.copyfile(filename,
-                "{}/checkpoint.best.pth.tar".format(logdir))
+            shutil.copyfile(filename, f"{logdir}/checkpoint.best.pth.tar")
         return filename
 
     @staticmethod

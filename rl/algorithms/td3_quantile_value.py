@@ -13,9 +13,11 @@ class QuantileTD3WithValue(TD3):
 
         self.critic_v = critic_v.to(self._device)
         self.critic_v_optimizer = UtilsFactory.create_optimizer(
-            self.critic_v, **self.critic_optimizer_params)
+            self.critic_v, **self.critic_optimizer_params
+        )
         self.critic_v_scheduler = UtilsFactory.create_scheduler(
-            self.critic_v_optimizer, **self.critic_scheduler_params)
+            self.critic_v_optimizer, **self.critic_scheduler_params
+        )
         self.target_critic_v = copy.deepcopy(critic_v).to(self._device)
 
         self.num_atoms = self.critic.n_atoms
@@ -36,15 +38,16 @@ class QuantileTD3WithValue(TD3):
         done_t = self.to_tensor(done_t).unsqueeze(1)
 
         # actor loss
-        policy_loss = -torch.mean(
-            self.critic(states_t, self.actor(states_t)))
+        policy_loss = -torch.mean(self.critic(states_t, self.actor(states_t)))
 
         # critic loss
         actions_tp0 = self.actor(states_t).detach()
         action_noise = torch.normal(
-            mean=torch.zeros_like(actions_tp0), std=self.action_noise_std)
+            mean=torch.zeros_like(actions_tp0), std=self.action_noise_std
+        )
         noise_clip = torch.clamp(
-            action_noise, -self.action_noise_clip, self.action_noise_clip)
+            action_noise, -self.action_noise_clip, self.action_noise_clip
+        )
         actions_tp0 = actions_tp0 + noise_clip
         actions_tp0 = actions_tp0.clamp(self.min_action, self.max_action)
 
@@ -59,36 +62,46 @@ class QuantileTD3WithValue(TD3):
 
         v_atoms_t = self.critic_v(states_t)
         v_value_loss = quantile_loss(
-            v_atoms_t, atoms_tp0.detach(),
-            tau=self.tau, n_atoms=self.num_atoms,
-            criterion=self.critic_criterion).mean()
+            v_atoms_t,
+            atoms_tp0.detach(),
+            tau=self.tau,
+            n_atoms=self.num_atoms,
+            criterion=self.critic_criterion
+        ).mean()
 
         v_atoms_tp1 = self.target_critic_v(states_tp1)
-        gamma = self.gamma ** self.n_step
-        atoms_target_t = (
-                    rewards_t + (1 - done_t) * gamma * v_atoms_tp1).detach()
+        gamma = self.gamma**self.n_step
+        atoms_target_t = (rewards_t +
+                          (1 - done_t) * gamma * v_atoms_tp1).detach()
         atoms_t_1 = self.critic(states_t, actions_t)
         atoms_t_2 = self.critic2(states_t, actions_t)
         value_loss = quantile_loss(
-            atoms_t_1, atoms_target_t,
-            tau=self.tau, n_atoms=self.num_atoms,
-            criterion=self.critic_criterion).mean()
+            atoms_t_1,
+            atoms_target_t,
+            tau=self.tau,
+            n_atoms=self.num_atoms,
+            criterion=self.critic_criterion
+        ).mean()
         value_loss2 = quantile_loss(
-            atoms_t_2, atoms_target_t,
-            tau=self.tau, n_atoms=self.num_atoms,
-            criterion=self.critic_criterion).mean()
+            atoms_t_2,
+            atoms_target_t,
+            tau=self.tau,
+            n_atoms=self.num_atoms,
+            criterion=self.critic_criterion
+        ).mean()
 
         metrics = self.update_step(
             policy_loss=policy_loss,
             value_loss=(v_value_loss, value_loss, value_loss2),
             actor_update=actor_update,
-            critic_update=critic_update)
+            critic_update=critic_update
+        )
 
         return metrics
 
     def update_step(
-            self, policy_loss, value_loss,
-            actor_update=True, critic_update=True):
+        self, policy_loss, value_loss, actor_update=True, critic_update=True
+    ):
 
         v_value_loss, value_loss, value_loss2 = value_loss
 
@@ -120,15 +133,9 @@ class QuantileTD3WithValue(TD3):
         return metrics
 
     def target_critic_update(self):
-        soft_update(
-            self.target_critic_v, self.critic_v,
-            self.critic_tau)
-        soft_update(
-            self.target_critic, self.critic,
-            self.critic_tau)
-        soft_update(
-            self.target_critic2, self.critic2,
-            self.critic_tau)
+        soft_update(self.target_critic_v, self.critic_v, self.critic_tau)
+        soft_update(self.target_critic, self.critic, self.critic_tau)
+        soft_update(self.target_critic2, self.critic2, self.critic_tau)
 
     def critic_v_update(self, loss):
         self.critic_v.zero_grad()
@@ -176,20 +183,22 @@ def prepare_for_trainer(config, algo=QuantileTD3WithValue):
 
     actor_state_shape = (
         config_["shared"]["history_len"],
-        config_["shared"]["state_size"],)
+        config_["shared"]["state_size"],
+    )
     actor_action_size = config_["shared"]["action_size"]
     n_step = config_["shared"]["n_step"]
     gamma = config_["shared"]["gamma"]
     history_len = config_["shared"]["history_len"]
-    trainer_state_shape = (config_["shared"]["state_size"],)
-    trainer_action_shape = (config_["shared"]["action_size"],)
+    trainer_state_shape = (config_["shared"]["state_size"], )
+    trainer_action_shape = (config_["shared"]["action_size"], )
 
     actor_fn = config_["actor"].pop("actor", None)
     actor_fn = getattr(agents, actor_fn)
     actor = actor_fn(
         state_shape=actor_state_shape,
         action_size=actor_action_size,
-        **config_["actor"])
+        **config_["actor"]
+    )
 
     critic_fn = config_["critic"].pop("critic", None)
     critic_fn = getattr(agents, critic_fn)
@@ -200,21 +209,25 @@ def prepare_for_trainer(config, algo=QuantileTD3WithValue):
     critic = critic_fn(
         state_shape=actor_state_shape,
         action_size=actor_action_size,
-        **config_["critic"])
+        **config_["critic"]
+    )
     critic2 = critic_fn(
         state_shape=actor_state_shape,
         action_size=actor_action_size,
-        **config_["critic"])
+        **config_["critic"]
+    )
 
-    critic_v = critic_v_fn(
-        state_shape=actor_state_shape,
-        **config_["critic"])
+    critic_v = critic_v_fn(state_shape=actor_state_shape, **config_["critic"])
 
     algorithm = algo(
         **config_["algorithm"],
         actor=actor,
-        critic_v=critic_v, critic=critic, critic2=critic2,
-        n_step=n_step, gamma=gamma)
+        critic_v=critic_v,
+        critic=critic,
+        critic2=critic2,
+        n_step=n_step,
+        gamma=gamma
+    )
 
     kwargs = {
         "algorithm": algorithm,
@@ -233,7 +246,8 @@ def prepare_for_sampler(config):
 
     actor_state_shape = (
         config_["shared"]["history_len"],
-        config_["shared"]["state_size"],)
+        config_["shared"]["state_size"],
+    )
     actor_action_size = config_["shared"]["action_size"]
 
     actor_fn = config_["actor"].pop("actor", None)
@@ -241,13 +255,11 @@ def prepare_for_sampler(config):
     actor = actor_fn(
         **config_["actor"],
         state_shape=actor_state_shape,
-        action_size=actor_action_size)
+        action_size=actor_action_size
+    )
 
     history_len = config_["shared"]["history_len"]
 
-    kwargs = {
-        "actor": actor,
-        "history_len": history_len
-    }
+    kwargs = {"actor": actor, "history_len": history_len}
 
     return kwargs

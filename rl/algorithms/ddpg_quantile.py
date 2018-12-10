@@ -28,28 +28,32 @@ class QuantileDDPG(DDPG):
         done_t = self.to_tensor(done_t).unsqueeze(1)
 
         # actor loss
-        policy_loss = -torch.mean(
-            self.critic(states_t, self.actor(states_t)))
+        policy_loss = -torch.mean(self.critic(states_t, self.actor(states_t)))
 
         # critic loss
         atoms_t = self.critic(states_t, actions_t)
         atoms_tp1 = self.target_critic(
-            states_tp1,
-            self.target_actor(states_tp1)).detach()
+            states_tp1, self.target_actor(states_tp1)
+        ).detach()
 
-        gamma = self.gamma ** self.n_step
-        atoms_target_t = (rewards_t + (1 - done_t) * gamma * atoms_tp1).detach()
+        gamma = self.gamma**self.n_step
+        atoms_target_t = (rewards_t +
+                          (1 - done_t) * gamma * atoms_tp1).detach()
 
         value_loss = quantile_loss(
-            atoms_t, atoms_target_t,
-            tau=self.tau, n_atoms=self.num_atoms,
-            criterion=self.critic_criterion).mean()
+            atoms_t,
+            atoms_target_t,
+            tau=self.tau,
+            n_atoms=self.num_atoms,
+            criterion=self.critic_criterion
+        ).mean()
 
         metrics = self.update_step(
             policy_loss=policy_loss,
             value_loss=value_loss,
             actor_update=actor_update,
-            critic_update=critic_update)
+            critic_update=critic_update
+        )
 
         return metrics
 

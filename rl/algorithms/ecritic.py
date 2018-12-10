@@ -7,12 +7,14 @@ from catalyst.rl.algorithms.base import BaseAlgorithm, soft_update
 
 class EnsembleCritic(BaseAlgorithm):
     def _init(
-            self,
-            critics,
-            min_action, max_action,
-            action_noise_std=0.2,
-            action_noise_clip=0.5,
-            **kwargs):
+        self,
+        critics,
+        min_action,
+        max_action,
+        action_noise_std=0.2,
+        action_noise_clip=0.5,
+        **kwargs
+    ):
         super()._init(**kwargs)
 
         self.min_action = min_action
@@ -23,13 +25,13 @@ class EnsembleCritic(BaseAlgorithm):
         critics = [x.to(self._device) for x in critics]
         critics_optimizer = [
             UtilsFactory.create_optimizer(x, **self.critic_optimizer_params)
-            for x in critics]
+            for x in critics
+        ]
         critics_scheduler = [
             UtilsFactory.create_scheduler(x, **self.critic_scheduler_params)
-            for x in critics_optimizer]
-        target_critics = [
-            copy.deepcopy(x).to(self._device)
-            for x in critics]
+            for x in critics_optimizer
+        ]
+        target_critics = [copy.deepcopy(x).to(self._device) for x in critics]
 
         self.critics = [self.critic] + critics
         self.critics_optimizer = [self.critic_optimizer] + critics_optimizer
@@ -56,37 +58,38 @@ class EnsembleCritic(BaseAlgorithm):
         # critic loss
         actions_tp1 = self.target_actor(states_tp1).detach()
         action_noise = torch.normal(
-            mean=torch.zeros_like(actions_tp1), std=self.action_noise_std)
+            mean=torch.zeros_like(actions_tp1), std=self.action_noise_std
+        )
         action_noise = action_noise.clamp(
-            -self.action_noise_clip, self.action_noise_clip)
+            -self.action_noise_clip, self.action_noise_clip
+        )
         actions_tp1 = actions_tp1 + action_noise
-        actions_tp1 = actions_tp1.clamp(
-            self.min_action, self.max_action)
+        actions_tp1 = actions_tp1.clamp(self.min_action, self.max_action)
 
-        q_values_tp1 = torch.cat([
-            x(states_tp1, actions_tp1)
-            for x in self.target_critics],
-            dim=-1)
+        q_values_tp1 = torch.cat(
+            [x(states_tp1, actions_tp1) for x in self.target_critics], dim=-1
+        )
         q_values_tp1 = q_values_tp1.min(dim=1, keepdim=True)[0]
 
-        gamma = self.gamma ** self.n_step
+        gamma = self.gamma**self.n_step
         q_target_t = (rewards_t + (1 - done_t) * gamma * q_values_tp1).detach()
         q_values_t = [x(states_t, actions_t) for x in self.critics]
         value_loss = [
-            self.critic_criterion(x, q_target_t).mean()
-            for x in q_values_t]
+            self.critic_criterion(x, q_target_t).mean() for x in q_values_t
+        ]
 
         metrics = self.update_step(
             policy_loss=policy_loss,
             value_loss=value_loss,
             actor_update=actor_update,
-            critic_update=critic_update)
+            critic_update=critic_update
+        )
 
         return metrics
 
     def update_step(
-            self, policy_loss, value_loss,
-            actor_update=True, critic_update=True):
+        self, policy_loss, value_loss, actor_update=True, critic_update=True
+    ):
         # actor update
         actor_update_metrics = {}
         if actor_update:
@@ -103,12 +106,15 @@ class EnsembleCritic(BaseAlgorithm):
 
         metrics = {
             f"loss_critic{i}": x.item()
-            for i, x in enumerate(value_loss)}
+            for i, x in enumerate(value_loss)
+        }
         metrics = {
             **{
                 "loss": loss.item(),
                 "loss_actor": policy_loss.item()
-            }, **metrics}
+            },
+            **metrics
+        }
         metrics = {**metrics, **actor_update_metrics, **critic_update_metrics}
 
         return metrics
@@ -128,7 +134,8 @@ class EnsembleCritic(BaseAlgorithm):
             self.critics_optimizer[i].step()
             if self.critics_scheduler[i] is not None:
                 self.critics_scheduler[i].step()
-                metrics[f"lr_critic{i}"] = self.critics_scheduler[i].get_lr()[0]
+                lr = self.critics_scheduler[i].get_lr()[0]
+                metrics[f"lr_critic{i}"] = lr
         return metrics
 
     def load_checkpoint(self, filepath, load_optimizer=True):
@@ -169,7 +176,8 @@ class EnsembleCritic(BaseAlgorithm):
                 key2 = f"{key}_{key2}"
                 value2 = getattr(self, key2, None)
                 if value2 is not None:
-                    checkpoint[f"{key2}{i}_state_dict"] = value2[i].state_dict()
+                    value2_i = value2[i].state_dict()
+                    checkpoint[f"{key2}{i}_state_dict"] = value2_i
 
         return checkpoint
 
@@ -179,40 +187,48 @@ def prepare_for_trainer(config, algo=EnsembleCritic):
 
     actor_state_shape = (
         config_["shared"]["history_len"],
-        config_["shared"]["state_size"],)
+        config_["shared"]["state_size"],
+    )
     actor_action_size = config_["shared"]["action_size"]
     n_step = config_["shared"]["n_step"]
     gamma = config_["shared"]["gamma"]
     history_len = config_["shared"]["history_len"]
-    trainer_state_shape = (config_["shared"]["state_size"],)
-    trainer_action_shape = (config_["shared"]["action_size"],)
+    trainer_state_shape = (config_["shared"]["state_size"], )
+    trainer_action_shape = (config_["shared"]["action_size"], )
 
     actor_fn = config_["actor"].pop("actor", None)
     actor_fn = getattr(agents, actor_fn)
     actor = actor_fn(
         state_shape=actor_state_shape,
         action_size=actor_action_size,
-        **config_["actor"])
+        **config_["actor"]
+    )
 
     critic_fn = config_["critic"].pop("critic", None)
     critic_fn = getattr(agents, critic_fn)
     critic = critic_fn(
         state_shape=actor_state_shape,
         action_size=actor_action_size,
-        **config_["critic"])
+        **config_["critic"]
+    )
 
     n_critics = config_["algorithm"].pop("n_critics", 2)
     critics = [
         critic_fn(
             state_shape=actor_state_shape,
             action_size=actor_action_size,
-            **config_["critic"])
-        for _ in range(n_critics-1)]
+            **config_["critic"]
+        ) for _ in range(n_critics - 1)
+    ]
 
     algorithm = algo(
         **config_["algorithm"],
-        actor=actor, critic=critic, critics=critics,
-        n_step=n_step, gamma=gamma)
+        actor=actor,
+        critic=critic,
+        critics=critics,
+        n_step=n_step,
+        gamma=gamma
+    )
 
     kwargs = {
         "algorithm": algorithm,
@@ -231,7 +247,8 @@ def prepare_for_sampler(config):
 
     actor_state_shape = (
         config_["shared"]["history_len"],
-        config_["shared"]["state_size"],)
+        config_["shared"]["state_size"],
+    )
     actor_action_size = config_["shared"]["action_size"]
 
     actor_fn = config_["actor"].pop("actor", None)
@@ -239,13 +256,11 @@ def prepare_for_sampler(config):
     actor = actor_fn(
         **config_["actor"],
         state_shape=actor_state_shape,
-        action_size=actor_action_size)
+        action_size=actor_action_size
+    )
 
     history_len = config_["shared"]["history_len"]
 
-    kwargs = {
-        "actor": actor,
-        "history_len": history_len
-    }
+    kwargs = {"actor": actor, "history_len": history_len}
 
     return kwargs

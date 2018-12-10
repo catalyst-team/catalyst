@@ -39,7 +39,7 @@ class ResnetEncoder(nn.Module):
             # @TODO: refactor
             if "concatattn" in pooling.lower():
                 resnet_out_features = resnet.fc.in_features * 3
-            elif any([x in  pooling.lower()
+            elif any([x in pooling.lower()
                       for x in ["concat", "avgattn", "maxattn"]]):
                 resnet_out_features = resnet.fc.in_features * 2
             else:

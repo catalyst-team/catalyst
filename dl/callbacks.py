@@ -162,8 +162,8 @@ class Logger(Callback):
         if self.logger is not None:
             for k, v in state.epoch_metrics.items():
                 self.logger.info(
-                    f"{state.epoch} * Epoch ({k}) metrics: " +
-                    self._get_metrics_string(v))
+                    f"{state.epoch} * Epoch ({k}) metrics: "
+                    f"{self._get_metrics_string(v)}")
             self.logger.info("\n")
 
 
@@ -229,7 +229,7 @@ class TensorboardLogger(Callback):
             mode = state.loader_mode
             self._log_metrics(
                 metrics=state.epoch_metrics[mode], step=state.epoch,
-                mode=mode,  suffix="/epoch")
+                mode=mode, suffix="/epoch")
 
 
 class CheckpointCallback(Callback):
@@ -357,7 +357,8 @@ class OptimizerCallback(Callback):
         @TODO: docs
         """
         grad_clip_params = grad_clip_params or {}
-        self.grad_clip_fn = UtilsFactory.create_grad_clip_fn(**grad_clip_params)
+        self.grad_clip_fn = UtilsFactory.create_grad_clip_fn(
+            **grad_clip_params)
         self.fp16 = False
         self.fp16_grad_scale = fp16_grad_scale
         self.accumulation_steps = accumulation_steps
@@ -368,14 +369,16 @@ class OptimizerCallback(Callback):
 
     def on_train_start(self, state):
         self.fp16 = isinstance(state.model, Fp16Wrap)
-        optimizer = state.get_key(key="optimizer", inner_key=self.optimizer_key)
+        optimizer = state.get_key(
+            key="optimizer", inner_key=self.optimizer_key)
         lr = optimizer.defaults["lr"]
         momentum = get_optimizer_momentum(optimizer)
         state.set_key(lr, "lr", inner_key=self.optimizer_key)
         state.set_key(momentum, "momentum", inner_key=self.optimizer_key)
 
     def on_epoch_start(self, state):
-        optimizer = state.get_key(key="optimizer", inner_key=self.optimizer_key)
+        optimizer = state.get_key(
+            key="optimizer", inner_key=self.optimizer_key)
         self.optimizer_wd = optimizer.param_groups[0].get("weight_decay", 0.0)
         optimizer.param_groups[0]["weight_decay"] = 0.0
 
@@ -439,7 +442,8 @@ class OptimizerCallback(Callback):
             torch.cuda.synchronize()
 
     def on_epoch_end(self, state):
-        optimizer = state.get_key(key="optimizer", inner_key=self.optimizer_key)
+        optimizer = state.get_key(
+            key="optimizer", inner_key=self.optimizer_key)
         optimizer.param_groups[0]["weight_decay"] = self.optimizer_wd
 
 
@@ -454,7 +458,8 @@ class SchedulerCallback(Callback):
         self.reduce_metric = reduce_metric
 
     def step(self, state):
-        scheduler = state.get_key(key="scheduler", inner_key=self.scheduler_key)
+        scheduler = state.get_key(
+            key="scheduler", inner_key=self.scheduler_key)
 
         lr, momentum = scheduler_step(
             scheduler=scheduler,
@@ -517,14 +522,16 @@ class LRUpdater(Callback):
         return new_lr, new_momentum
 
     def on_train_start(self, state):
-        optimizer = state.get_key(key="optimizer", inner_key=self.optimizer_key)
+        optimizer = state.get_key(
+            key="optimizer", inner_key=self.optimizer_key)
         self.init_lr = optimizer.defaults["lr"]
 
     def update_optimizer(self, state):
         if not state.is_train:
             return
 
-        optimizer = state.get_key(key="optimizer", inner_key=self.optimizer_key)
+        optimizer = state.get_key(
+            key="optimizer", inner_key=self.optimizer_key)
         lr, momentum = self._update_optimizer(optimizer=optimizer)
         state.set_key(lr, key="lr", inner_key=self.optimizer_key)
         state.set_key(momentum, key="momentum", inner_key=self.optimizer_key)
@@ -575,8 +582,9 @@ class OneCycleLR(LRUpdater):
     def calc_lr(self):
         # calculate percent for learning rate change
         if self.cycle_iter > self.cut_point:
-            percent = (1 - (self.cycle_iter - self.cut_point) /
-                       (self.total_iter - self.cut_point))
+            percent_curr = (self.cycle_iter - self.cut_point)
+            percent_all = (self.total_iter - self.cut_point)
+            percent = (1 - percent_curr / percent_all)
         else:
             percent = self.cycle_iter / self.cut_point
         res = self.init_lr * (1 + percent * (self.div - 1)) / self.div
@@ -594,8 +602,8 @@ class OneCycleLR(LRUpdater):
             percent = now_ / all_
         else:
             percent = 1 - self.cycle_iter / self.cut_point
-        res = (self.momentum_range[1] +
-               percent * (self.momentum_range[0] - self.momentum_range[1]))
+        res = (self.momentum_range[1]
+               + percent * (self.momentum_range[0] - self.momentum_range[1]))
         return res
 
     def on_loader_start(self, state):

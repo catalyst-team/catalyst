@@ -8,31 +8,34 @@ import catalyst.rl.networks.agents as agents
 def soft_update(target, source, tau):
     for target_param, param in zip(target.parameters(), source.parameters()):
         target_param.data.copy_(
-            target_param.data * (1.0 - tau) + param.data * tau)
+            target_param.data * (1.0 - tau) + param.data * tau
+        )
 
 
 class BaseAlgorithm:
     def __init__(
-            self,
-            actor,
-            critic,
-            gamma,
-            n_step,
-            actor_optimizer_params,
-            critic_optimizer_params,
-            actor_grad_clip=None,
-            critic_grad_clip=None,
-            actor_loss_params=None,
-            critic_loss_params=None,
-            actor_scheduler_params=None,
-            critic_scheduler_params=None,
-            resume=None,
-            load_optimizer=True,
-            actor_tau=1.0,
-            critic_tau=1.0,
-            **kwargs):
+        self,
+        actor,
+        critic,
+        gamma,
+        n_step,
+        actor_optimizer_params,
+        critic_optimizer_params,
+        actor_grad_clip=None,
+        critic_grad_clip=None,
+        actor_loss_params=None,
+        critic_loss_params=None,
+        actor_scheduler_params=None,
+        critic_scheduler_params=None,
+        resume=None,
+        load_optimizer=True,
+        actor_tau=1.0,
+        critic_tau=1.0,
+        **kwargs
+    ):
         self._device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
+            "cuda" if torch.cuda.is_available() else "cpu"
+        )
 
         self.actor = actor.to(self._device)
         self.critic = critic.to(self._device)
@@ -41,17 +44,21 @@ class BaseAlgorithm:
         self.target_critic = copy.deepcopy(critic).to(self._device)
 
         self.actor_optimizer = UtilsFactory.create_optimizer(
-            self.actor, **actor_optimizer_params)
+            self.actor, **actor_optimizer_params
+        )
         self.critic_optimizer = UtilsFactory.create_optimizer(
-            self.critic, **critic_optimizer_params)
+            self.critic, **critic_optimizer_params
+        )
 
         self.actor_optimizer_params = actor_optimizer_params
         self.critic_optimizer_params = critic_optimizer_params
 
         self.actor_scheduler = UtilsFactory.create_scheduler(
-            self.actor_optimizer, **actor_scheduler_params)
+            self.actor_optimizer, **actor_scheduler_params
+        )
         self.critic_scheduler = UtilsFactory.create_scheduler(
-            self.critic_optimizer, **critic_scheduler_params)
+            self.critic_optimizer, **critic_scheduler_params
+        )
 
         self.actor_scheduler_params = actor_scheduler_params
         self.critic_scheduler_params = critic_scheduler_params
@@ -87,9 +94,11 @@ class BaseAlgorithm:
         self.critic_tau = critic_tau
 
         self.actor_criterion = UtilsFactory.create_criterion(
-            **(actor_loss_params or {}))
+            **(actor_loss_params or {})
+        )
         self.critic_criterion = UtilsFactory.create_criterion(
-            **(critic_loss_params or {}))
+            **(critic_loss_params or {})
+        )
 
         self.actor_loss_params = actor_loss_params
         self.critic_loss_params = critic_loss_params
@@ -103,11 +112,12 @@ class BaseAlgorithm:
         assert len(kwards) == 0
 
     def __repr__(self):
-        str_val = " ".join([
-            f"{key}: {str(getattr(self, key, ''))}"
-            for key in [
-                "n_step", "gamma",
-                "actor_tau", "critic_tau"]])
+        str_val = " ".join(
+            [
+                f"{key}: {str(getattr(self, key, ''))}"
+                for key in ["n_step", "gamma", "actor_tau", "critic_tau"]
+            ]
+        )
         return f"Algorithm. {str_val}"
 
     def to_tensor(self, *args, **kwargs):
@@ -143,14 +153,10 @@ class BaseAlgorithm:
             return {"lr_critic": self.critic_scheduler.get_lr()[0]}
 
     def target_actor_update(self):
-        soft_update(
-            self.target_actor, self.actor,
-            self.actor_tau)
+        soft_update(self.target_actor, self.actor, self.actor_tau)
 
     def target_critic_update(self):
-        soft_update(
-            self.target_critic, self.critic,
-            self.critic_tau)
+        soft_update(self.target_critic, self.critic, self.critic_tau)
 
     def load_checkpoint(self, filepath, load_optimizer=True):
         checkpoint = UtilsFactory.load_checkpoint(filepath)
@@ -187,32 +193,38 @@ def prepare_for_trainer(config, algo=BaseAlgorithm):
 
     actor_state_shape = (
         config_["shared"]["history_len"],
-        config_["shared"]["state_size"],)
+        config_["shared"]["state_size"],
+    )
     actor_action_size = config_["shared"]["action_size"]
     n_step = config_["shared"]["n_step"]
     gamma = config_["shared"]["gamma"]
     history_len = config_["shared"]["history_len"]
-    trainer_state_shape = (config_["shared"]["state_size"],)
-    trainer_action_shape = (config_["shared"]["action_size"],)
+    trainer_state_shape = (config_["shared"]["state_size"], )
+    trainer_action_shape = (config_["shared"]["action_size"], )
 
     actor_fn = config_["actor"].pop("actor", None)
     actor_fn = getattr(agents, actor_fn)
     actor = actor_fn(
         state_shape=actor_state_shape,
         action_size=actor_action_size,
-        **config_["actor"])
+        **config_["actor"]
+    )
 
     critic_fn = config_["critic"].pop("critic", None)
     critic_fn = getattr(agents, critic_fn)
     critic = critic_fn(
         state_shape=actor_state_shape,
         action_size=actor_action_size,
-        **config_["critic"])
+        **config_["critic"]
+    )
 
     algorithm = algo(
         **config_["algorithm"],
-        actor=actor, critic=critic,
-        n_step=n_step, gamma=gamma)
+        actor=actor,
+        critic=critic,
+        n_step=n_step,
+        gamma=gamma
+    )
 
     kwargs = {
         "algorithm": algorithm,
@@ -231,7 +243,8 @@ def prepare_for_sampler(config):
 
     actor_state_shape = (
         config_["shared"]["history_len"],
-        config_["shared"]["state_size"],)
+        config_["shared"]["state_size"],
+    )
     actor_action_size = config_["shared"]["action_size"]
 
     actor_fn = config_["actor"].pop("actor", None)
@@ -239,13 +252,11 @@ def prepare_for_sampler(config):
     actor = actor_fn(
         **config_["actor"],
         state_shape=actor_state_shape,
-        action_size=actor_action_size)
+        action_size=actor_action_size
+    )
 
     history_len = config_["shared"]["history_len"]
 
-    kwargs = {
-        "actor": actor,
-        "history_len": history_len
-    }
+    kwargs = {"actor": actor, "history_len": history_len}
 
     return kwargs

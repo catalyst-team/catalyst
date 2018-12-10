@@ -146,11 +146,11 @@ class RunnerState(FrozenClass):
             key: value
             for key, value in valid_metrics.items()
             if isinstance(value, float)
-            }
+        }
         state.best_metrics = {
             key: value
             for key, value in best_metrics.items() if isinstance(value, float)
-            }
+        }
         state.valid_metrics = valid_metrics
         state.is_best_epoch = is_best
 
@@ -173,7 +173,7 @@ class RunnerState(FrozenClass):
         state.epoch_metrics[lm] = {
             key: UtilsFactory.get_val_from_metric(value)
             for key, value in state.epoch_metrics[lm].items()
-            }
+        }
 
     @staticmethod
     def on_loader_end_post(state):

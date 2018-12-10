@@ -56,7 +56,8 @@ def text_collate_fn(data, txt_key="txt", len_key="len"):
 class FilteringCollateFn:
     """
     Callable object doing job of collate_fn like default_collate, but does not
-    cast batch items with specified key to torch.Tensor. Only adds them to list.
+    cast batch items with specified key to torch.Tensor.
+    Only adds them to list.
     Supports only key-value format batches
     """
 

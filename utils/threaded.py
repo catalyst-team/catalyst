@@ -50,7 +50,7 @@ class StoppableThread(Thread):
                     break
                 self.results.append(self.exception_impute)
                 warn("%s processing element %s" % (
-                repr(sys.exc_info()[1]), str(item)))
+                    repr(sys.exc_info()[1]), str(item)))
             if self.callback is not None:
                 if self.current_index % self.callback_each == 0:
                     self.callback()

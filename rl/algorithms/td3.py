@@ -7,12 +7,14 @@ from catalyst.rl.algorithms.base import BaseAlgorithm, soft_update
 
 class TD3(BaseAlgorithm):
     def _init(
-            self,
-            critic2,
-            min_action, max_action,
-            action_noise_std=0.2,
-            action_noise_clip=0.5,
-            **kwargs):
+        self,
+        critic2,
+        min_action,
+        max_action,
+        action_noise_std=0.2,
+        action_noise_clip=0.5,
+        **kwargs
+    ):
         super()._init(**kwargs)
 
         self.min_action = min_action
@@ -22,9 +24,11 @@ class TD3(BaseAlgorithm):
 
         self.critic2 = critic2.to(self._device)
         self.critic2_optimizer = UtilsFactory.create_optimizer(
-            self.critic2, **self.critic_optimizer_params)
+            self.critic2, **self.critic_optimizer_params
+        )
         self.critic2_scheduler = UtilsFactory.create_scheduler(
-            self.critic_optimizer, **self.critic_scheduler_params)
+            self.critic_optimizer, **self.critic_scheduler_params
+        )
         self.target_critic2 = copy.deepcopy(critic2).to(self._device)
 
     def train(self, batch, actor_update=True, critic_update=True):
@@ -39,15 +43,16 @@ class TD3(BaseAlgorithm):
         done_t = self.to_tensor(done_t).unsqueeze(1)
 
         # actor loss
-        policy_loss = -torch.mean(
-            self.critic(states_t, self.actor(states_t)))
+        policy_loss = -torch.mean(self.critic(states_t, self.actor(states_t)))
 
         # critic loss
         actions_tp1 = self.target_actor(states_tp1).detach()
         action_noise = torch.normal(
-            mean=torch.zeros_like(actions_tp1), std=self.action_noise_std)
+            mean=torch.zeros_like(actions_tp1), std=self.action_noise_std
+        )
         action_noise = action_noise.clamp(
-            -self.action_noise_clip, self.action_noise_clip)
+            -self.action_noise_clip, self.action_noise_clip
+        )
         actions_tp1 = actions_tp1 + action_noise
         actions_tp1 = actions_tp1.clamp(self.min_action, self.max_action)
 
@@ -55,7 +60,7 @@ class TD3(BaseAlgorithm):
         q_values_tp1_2 = self.target_critic2(states_tp1, actions_tp1)
         q_values_tp1 = torch.min(q_values_tp1_1, q_values_tp1_2)
 
-        gamma = self.gamma ** self.n_step
+        gamma = self.gamma**self.n_step
         q_target_t = (rewards_t + (1 - done_t) * gamma * q_values_tp1).detach()
 
         q_values_t_1 = self.critic(states_t, actions_t)
@@ -68,13 +73,14 @@ class TD3(BaseAlgorithm):
             policy_loss=policy_loss,
             value_loss=(value_loss, value_loss2),
             actor_update=actor_update,
-            critic_update=critic_update)
+            critic_update=critic_update
+        )
 
         return metrics
 
     def update_step(
-            self, policy_loss, value_loss,
-            actor_update=True, critic_update=True):
+        self, policy_loss, value_loss, actor_update=True, critic_update=True
+    ):
 
         value_loss, value_loss2 = value_loss
 
@@ -104,12 +110,8 @@ class TD3(BaseAlgorithm):
         return metrics
 
     def target_critic_update(self):
-        soft_update(
-            self.target_critic, self.critic,
-            self.critic_tau)
-        soft_update(
-            self.target_critic2, self.critic2,
-            self.critic_tau)
+        soft_update(self.target_critic, self.critic, self.critic_tau)
+        soft_update(self.target_critic2, self.critic2, self.critic_tau)
 
     def critic2_update(self, loss):
         self.critic2.zero_grad()
@@ -159,36 +161,44 @@ def prepare_for_trainer(config, algo=TD3):
 
     actor_state_shape = (
         config_["shared"]["history_len"],
-        config_["shared"]["state_size"],)
+        config_["shared"]["state_size"],
+    )
     actor_action_size = config_["shared"]["action_size"]
     n_step = config_["shared"]["n_step"]
     gamma = config_["shared"]["gamma"]
     history_len = config_["shared"]["history_len"]
-    trainer_state_shape = (config_["shared"]["state_size"],)
-    trainer_action_shape = (config_["shared"]["action_size"],)
+    trainer_state_shape = (config_["shared"]["state_size"], )
+    trainer_action_shape = (config_["shared"]["action_size"], )
 
     actor_fn = config_["actor"].pop("actor", None)
     actor_fn = getattr(agents, actor_fn)
     actor = actor_fn(
         state_shape=actor_state_shape,
         action_size=actor_action_size,
-        **config_["actor"])
+        **config_["actor"]
+    )
 
     critic_fn = config_["critic"].pop("critic", None)
     critic_fn = getattr(agents, critic_fn)
     critic = critic_fn(
         state_shape=actor_state_shape,
         action_size=actor_action_size,
-        **config_["critic"])
+        **config_["critic"]
+    )
     critic2 = critic_fn(
         state_shape=actor_state_shape,
         action_size=actor_action_size,
-        **config_["critic"])
+        **config_["critic"]
+    )
 
     algorithm = algo(
         **config_["algorithm"],
-        actor=actor, critic=critic, critic2=critic2,
-        n_step=n_step, gamma=gamma)
+        actor=actor,
+        critic=critic,
+        critic2=critic2,
+        n_step=n_step,
+        gamma=gamma
+    )
 
     kwargs = {
         "algorithm": algorithm,
@@ -207,7 +217,8 @@ def prepare_for_sampler(config):
 
     actor_state_shape = (
         config_["shared"]["history_len"],
-        config_["shared"]["state_size"],)
+        config_["shared"]["state_size"],
+    )
     actor_action_size = config_["shared"]["action_size"]
 
     actor_fn = config_["actor"].pop("actor", None)
@@ -215,13 +226,11 @@ def prepare_for_sampler(config):
     actor = actor_fn(
         **config_["actor"],
         state_shape=actor_state_shape,
-        action_size=actor_action_size)
+        action_size=actor_action_size
+    )
 
     history_len = config_["shared"]["history_len"]
 
-    kwargs = {
-        "actor": actor,
-        "history_len": history_len
-    }
+    kwargs = {"actor": actor, "history_len": history_len}
 
     return kwargs

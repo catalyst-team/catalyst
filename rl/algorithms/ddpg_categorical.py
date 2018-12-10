@@ -6,7 +6,7 @@ from catalyst.rl.algorithms.ddpg import DDPG
 
 
 def ce_with_logits(logits, target):
-    return torch.sum(- target * F.log_softmax(logits, -1), -1)
+    return torch.sum(-target * F.log_softmax(logits, -1), -1)
 
 
 class CategoricalDDPG(DDPG):
@@ -49,15 +49,13 @@ class CategoricalDDPG(DDPG):
         )
         probs_tp1 = F.softmax(q_logits_tp1, dim=-1)
 
-        gamma = self.gamma ** self.n_step
+        gamma = self.gamma**self.n_step
         target_atoms = rewards + (1 - done) * gamma * self.z
 
         tz = torch.clamp(target_atoms, self.v_min, self.v_max)
         tz_z = tz[:, None, :] - self.z[None, :, None]
-        tz_z = torch.clamp(
-            (1.0 - (torch.abs(tz_z) / self.delta_z)), 0., 1.)
-        target_probs = torch.einsum(
-            "bij,bj->bi", (tz_z, probs_tp1)).detach()
+        tz_z = torch.clamp((1.0 - (torch.abs(tz_z) / self.delta_z)), 0., 1.)
+        target_probs = torch.einsum("bij,bj->bi", (tz_z, probs_tp1)).detach()
 
         value_loss = ce_with_logits(q_logits_t, target_probs).mean()
 
@@ -65,7 +63,8 @@ class CategoricalDDPG(DDPG):
             policy_loss=policy_loss,
             value_loss=value_loss,
             actor_update=actor_update,
-            critic_update=critic_update)
+            critic_update=critic_update
+        )
 
         return metrics
 

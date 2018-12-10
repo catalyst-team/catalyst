@@ -15,19 +15,18 @@ from catalyst.rl.random_process import RandomProcess
 # speed up optimization
 os.environ["OMP_NUM_THREADS"] = "1"
 torch.set_num_threads(1)
-SEED_RANGE = 2 ** 32 - 2
+SEED_RANGE = 2**32 - 2
 
 
 def get_actor_weights(actor, exclude_norm=False):
     state_dict = actor.state_dict()
     if exclude_norm:
         state_dict = {
-            key: value for key, value in state_dict.items()
-            if all(x not in key for x in ["norm", "lstm"])}
-    state_dict = {
-        key: value.clone()
-        for key, value in state_dict.items()
-    }
+            key: value
+            for key, value in state_dict.items()
+            if all(x not in key for x in ["norm", "lstm"])
+        }
+    state_dict = {key: value.clone() for key, value in state_dict.items()}
     return state_dict
 
 
@@ -35,9 +34,7 @@ def set_actor_weights(actor, weights, strict=True):
     actor.load_state_dict(weights, strict=strict)
 
 
-def set_params_noise(
-        actor, states,
-        target_d=0.2, tol=1e-3, max_steps=1000):
+def set_params_noise(actor, states, target_d=0.2, tol=1e-3, max_steps=1000):
     exclude_norm = True
     orig_weights = get_actor_weights(actor, exclude_norm=exclude_norm)
     orig_act = actor(states)
@@ -81,11 +78,13 @@ class SamplerBuffer:
         self.action_shape = action_shape
         self.pointer = 0
         self.states = np.empty(
-            (self.size,) + tuple(self.state_shape), dtype=np.float32)
+            (self.size, ) + tuple(self.state_shape), dtype=np.float32
+        )
         self.actions = np.empty(
-            (self.size,) + tuple(self.action_shape), dtype=np.float32)
-        self.rewards = np.empty((self.size,), dtype=np.float32)
-        self.dones = np.empty((self.size,), dtype=np.bool)
+            (self.size, ) + tuple(self.action_shape), dtype=np.float32
+        )
+        self.rewards = np.empty((self.size, ), dtype=np.float32)
+        self.dones = np.empty((self.size, ), dtype=np.bool)
 
     def init_with_state(self, state):
         self.states[0] = state
@@ -93,10 +92,8 @@ class SamplerBuffer:
 
     def get_state(self, history_len=1, pointer=None):
         pointer = pointer or self.pointer
-        state = np.zeros(
-            (history_len,) + self.state_shape, dtype=np.float32)
-        indices = np.arange(
-            max(0, pointer - history_len + 1), pointer + 1)
+        state = np.zeros((history_len, ) + self.state_shape, dtype=np.float32)
+        indices = np.arange(max(0, pointer - history_len + 1), pointer + 1)
         state[-len(indices):] = self.states[indices]
         return state
 
@@ -121,56 +118,60 @@ class SamplerBuffer:
     def get_states_history(self, history_len=1):
         states = [
             self.get_state(history_len=history_len, pointer=i)
-            for i in range(self.pointer)]
+            for i in range(self.pointer)
+        ]
         states = np.array(states)
         return states
 
 
 class Sampler:
     def __init__(
-            self,
-            actor,
-            env,
-            id,
-            logdir=None,
-            redis_server=None,
-            redis_prefix=None,
-            buffer_size=int(1e4),
-            history_len=1,
-            weights_sync_period=1,
-            mode="infer",
-            resume=None,
-            action_noise_prob=0,
-            action_noise_t=1,
-            random_process=None,
-            param_noise_prob=0,
-            param_noise_d=0.2,
-            param_noise_steps=1000,
-            seeds=None,
-            action_clip=(-1, 1),
-            episode_limit=None,
-            force_store=False,
-            min_episode_steps=None,
-            min_episode_reward=None):
+        self,
+        actor,
+        env,
+        id,
+        logdir=None,
+        redis_server=None,
+        redis_prefix=None,
+        buffer_size=int(1e4),
+        history_len=1,
+        weights_sync_period=1,
+        mode="infer",
+        resume=None,
+        action_noise_prob=0,
+        action_noise_t=1,
+        random_process=None,
+        param_noise_prob=0,
+        param_noise_d=0.2,
+        param_noise_steps=1000,
+        seeds=None,
+        action_clip=(-1, 1),
+        episode_limit=None,
+        force_store=False,
+        min_episode_steps=None,
+        min_episode_reward=None
+    ):
 
         self._seed = 42 + id
         set_global_seeds(self._seed)
 
         self._sampler_id = id
         self._device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
+            "cuda" if torch.cuda.is_available() else "cpu"
+        )
         self.actor = copy.deepcopy(actor).to(self._device)
         self.env = env
         self.redis_server = redis_server
         self.redis_prefix = redis_prefix or ""
         self.resume = resume
-        self.episode_limit = episode_limit or int(2 ** 32 - 2)
+        self.episode_limit = episode_limit or int(2**32 - 2)
         self.force_store = force_store
         self.min_episode_steps = min_episode_steps
         self.min_episode_reward = min_episode_reward
         self.hard_seeds = set()
-        assert (min_episode_steps is None and min_episode_reward is None) \
-               or seeds is None
+        min_episode_flag_ = \
+            min_episode_steps is None and min_episode_reward is None
+        assert min_episode_flag_ or seeds is None
 
         self.min_episode_steps = self.min_episode_steps or -int(1e6)
         self.min_episode_reward = self.min_episode_reward or -int(1e6)
@@ -207,12 +208,16 @@ class Sampler:
         self.buffer = SamplerBuffer(
             capacity=self.buffer_size,
             state_shape=self.env.observation_space.shape,
-            action_shape=self.env.action_space.shape)
+            action_shape=self.env.action_space.shape
+        )
 
     def __repr__(self):
-        str_val = " ".join([
-            f"{key}: {str(getattr(self, key, ''))}"
-            for key in ["history_len", "action_noise_t", "action_clip"]])
+        str_val = " ".join(
+            [
+                f"{key}: {str(getattr(self, key, ''))}"
+                for key in ["history_len", "action_noise_t", "action_clip"]
+            ]
+        )
         return f"Sampler. {str_val}"
 
     def to_tensor(self, *args, **kwargs):
@@ -224,8 +229,9 @@ class Sampler:
             weights = checkpoint[f"actor_state_dict"]
             self.actor.load_state_dict(weights)
         elif self.redis_server is not None:
-            weights = deserialize(self.redis_server.get(
-                f"{self.redis_prefix}_actor_weights"))
+            weights = deserialize(
+                self.redis_server.get(f"{self.redis_prefix}_actor_weights")
+            )
             weights = {k: self.to_tensor(v) for k, v in weights.items()}
             self.actor.load_state_dict(weights)
         else:
@@ -240,13 +246,14 @@ class Sampler:
             states.tolist(),
             actions.tolist(),
             rewards.tolist(),
-            dones.tolist()]
+            dones.tolist()
+        ]
         episode = serialize(episode)
         self.redis_server.rpush("episodes", episode)
         hard_seeds = serialize(list(self.hard_seeds))
         self.redis_server.set(
-            f"{self.redis_prefix}_{self._sampler_id}_hard_seeds",
-            hard_seeds)
+            f"{self.redis_prefix}_{self._sampler_id}_hard_seeds", hard_seeds
+        )
 
     def act(self, state):
         with torch.no_grad():
@@ -259,9 +266,9 @@ class Sampler:
         self.episode_index = 1
         self.load_actor_weights()
         self.buffer = SamplerBuffer(
-            self.buffer_size,
-            self.env.observation_space.shape,
-            self.env.action_space.shape)
+            self.buffer_size, self.env.observation_space.shape,
+            self.env.action_space.shape
+        )
 
         seed = self._seed + random.randrange(SEED_RANGE)
         set_global_seeds(seed)
@@ -298,7 +305,8 @@ class Sampler:
                 action = np.clip(
                     action,
                     a_min=self.action_clip[0],
-                    a_max=self.action_clip[1])
+                    a_max=self.action_clip[1]
+                )
 
                 next_state, reward, done, info = self.env.step(action)
                 episode_reward += reward
@@ -322,49 +330,42 @@ class Sampler:
                 f"--- episode {self.episode_index:5d}:\t"
                 f"{step_index:5d}\t"
                 f"{episode_reward:10.4f} / {episode_reward_orig:10.4f}\t"
-                f"seed: {seed}")
+                f"seed: {seed}"
+            )
 
             if self.logger is not None:
+                self.logger.add_scalar("steps", step_index, self.episode_index)
                 self.logger.add_scalar(
-                    "steps",
-                    step_index,
-                    self.episode_index)
+                    "action noise sigma", self.random_process.current_sigma,
+                    self.episode_index
+                )
                 self.logger.add_scalar(
-                    "action noise sigma",
-                    self.random_process.current_sigma,
-                    self.episode_index)
+                    "param noise d", param_noise_d, self.episode_index
+                )
                 self.logger.add_scalar(
-                    "param noise d",
-                    param_noise_d,
-                    self.episode_index)
+                    "reward", episode_reward, self.episode_index
+                )
                 self.logger.add_scalar(
-                    "reward",
-                    episode_reward,
-                    self.episode_index)
+                    "reward_origin", episode_reward_orig, self.episode_index
+                )
                 self.logger.add_scalar(
-                    "reward_origin",
-                    episode_reward_orig,
-                    self.episode_index)
+                    "episode per minute", 1. / elapsed_time * 60,
+                    self.episode_index
+                )
                 self.logger.add_scalar(
-                    "episode per minute",
-                    1. / elapsed_time * 60,
-                    self.episode_index)
+                    "steps per second", step_index / elapsed_time,
+                    self.episode_index
+                )
                 self.logger.add_scalar(
-                    "steps per second",
-                    step_index / elapsed_time,
-                    self.episode_index)
+                    "episode time (sec)", elapsed_time, self.episode_index
+                )
                 self.logger.add_scalar(
-                    "episode time (sec)",
-                    elapsed_time,
-                    self.episode_index)
+                    "episode time (min)", elapsed_time / 60, self.episode_index
+                )
                 self.logger.add_scalar(
-                    "episode time (min)",
-                    elapsed_time / 60,
-                    self.episode_index)
-                self.logger.add_scalar(
-                    "step time (sec)",
-                    elapsed_time / step_index,
-                    self.episode_index)
+                    "step time (sec)", elapsed_time / step_index,
+                    self.episode_index
+                )
 
             self.episode_index += 1
 
@@ -378,14 +379,16 @@ class Sampler:
 
                 if noise_prob_ < self.param_noise_prob:
                     states = self.buffer.get_states_history(
-                        history_len=self.history_len)
+                        history_len=self.history_len
+                    )
                     states = self.to_tensor(states).detach()
                     param_noise_d = set_params_noise(
                         actor=self.actor,
                         states=states,
                         target_d=self.param_noise_d,
                         tol=1e-3,
-                        max_steps=self.param_noise_steps)
+                        max_steps=self.param_noise_steps
+                    )
                     action_noise = False
                 elif noise_prob_ < \
                         self.param_noise_prob + self.action_noise_prob:
@@ -398,7 +401,8 @@ class Sampler:
             self.buffer = SamplerBuffer(
                 capacity=self.buffer_size,
                 state_shape=self.env.observation_space.shape,
-                action_shape=self.env.action_space.shape)
+                action_shape=self.env.action_space.shape
+            )
 
             seed = self._seed + random.randrange(SEED_RANGE)
             set_global_seeds(seed)

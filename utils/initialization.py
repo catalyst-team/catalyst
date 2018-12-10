@@ -22,7 +22,7 @@ def create_optimal_inner_init(nonlinearity, **kwargs):
         weignt_init_fn = nn.init.kaiming_normal_
         init_args = {**{"nonlinearity": nonlinearity}, **kwargs}
     else:
-        raise NotImplemented
+        raise NotImplementedError
 
     def inner_init(layer):
         if isinstance(layer, (nn.Linear, nn.Conv1d, nn.Conv2d)):

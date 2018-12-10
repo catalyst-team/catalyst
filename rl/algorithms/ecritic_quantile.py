@@ -29,43 +29,53 @@ class QuantileEnsembleCritic(EnsembleCritic):
         # actor loss
         actions_tp0 = self.actor(states_t)
         atoms_tp0 = [
-            x(states_t, actions_tp0).unsqueeze_(-1)
-            for x in self.critics]
+            x(states_t, actions_tp0).unsqueeze_(-1) for x in self.critics
+        ]
         atoms_min_tp0 = torch.cat(atoms_tp0, dim=-1).mean(dim=1).min(dim=1)[0]
         policy_loss = -torch.mean(atoms_min_tp0)
 
         # critic loss
         actions_tp1 = self.target_actor(states_tp1).detach()
         action_noise = torch.normal(
-            mean=torch.zeros_like(actions_tp1), std=self.action_noise_std)
+            mean=torch.zeros_like(actions_tp1), std=self.action_noise_std
+        )
         action_noise = action_noise.clamp(
-            -self.action_noise_clip, self.action_noise_clip)
+            -self.action_noise_clip, self.action_noise_clip
+        )
         actions_tp1 = actions_tp1 + action_noise
         actions_tp1 = actions_tp1.clamp(self.min_action, self.max_action)
 
-        atoms_tp1 = torch.cat([
-            x(states_tp1, actions_tp1).unsqueeze_(-1)
-            for x in self.target_critics],
-            dim=-1)
+        atoms_tp1 = torch.cat(
+            [
+                x(states_tp1, actions_tp1).unsqueeze_(-1)
+                for x in self.target_critics
+            ],
+            dim=-1
+        )
         atoms_min_ids_tp1 = atoms_tp1.mean(dim=1).argmin(dim=1)
         atoms_tp1 = atoms_tp1[range(len(atoms_tp1)), :, atoms_min_ids_tp1]
 
-        gamma = self.gamma ** self.n_step
-        atoms_target_t = (rewards_t + (1 - done_t) * gamma * atoms_tp1).detach()
+        gamma = self.gamma**self.n_step
+        atoms_target_t = (rewards_t +
+                          (1 - done_t) * gamma * atoms_tp1).detach()
 
         atoms_t = [x(states_t, actions_t) for x in self.critics]
         value_loss = [
             quantile_loss(
-                x, atoms_target_t,
-                tau=self.tau, n_atoms=self.num_atoms,
-                criterion=self.critic_criterion).mean()
-            for x in atoms_t]
+                x,
+                atoms_target_t,
+                tau=self.tau,
+                n_atoms=self.num_atoms,
+                criterion=self.critic_criterion
+            ).mean() for x in atoms_t
+        ]
 
         metrics = self.update_step(
             policy_loss=policy_loss,
             value_loss=value_loss,
             actor_update=actor_update,
-            critic_update=critic_update)
+            critic_update=critic_update
+        )
 
         return metrics
 

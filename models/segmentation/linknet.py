@@ -9,8 +9,9 @@ class ResNetEncoder(nn.Module):
 
         backbone = arch(pretrained=pretrained)
 
-        self.encoder0 = nn.Sequential(backbone.conv1, backbone.bn1,
-                                      backbone.relu, backbone.maxpool)
+        self.encoder0 = nn.Sequential(
+            backbone.conv1, backbone.bn1, backbone.relu, backbone.maxpool
+        )
         self.encoder1 = backbone.layer1
         self.encoder2 = backbone.layer2
         self.encoder3 = backbone.layer3
@@ -48,7 +49,8 @@ class DecoderBlock(nn.Module):
 
         # B, C/4, H, W -> B, C/4, H, W
         self.conv2 = nn.ConvTranspose2d(
-            m // 4, m // 4, 3, stride=stride, padding=1)
+            m // 4, m // 4, 3, stride=stride, padding=1
+        )
         self.norm2 = nn.BatchNorm2d(m // 4)
         self.relu2 = nn.ReLU(inplace=True)
 
@@ -76,10 +78,12 @@ class FinalBlock(nn.Module):
         super().__init__()
 
         self.conv1 = nn.ConvTranspose2d(
-            num_filters, num_filters // 2, 3, stride=2, padding=1)
+            num_filters, num_filters // 2, 3, stride=2, padding=1
+        )
         self.relu1 = nn.ReLU(inplace=True)
         self.conv2 = nn.Conv2d(
-            num_filters // 2, num_filters // 2, 3, padding=1)
+            num_filters // 2, num_filters // 2, 3, padding=1
+        )
         self.relu2 = nn.ReLU(inplace=True)
         self.conv3 = nn.Conv2d(num_filters // 2, num_classes, 1)
 
@@ -99,13 +103,16 @@ class LinkNet(nn.Module):
 
         if depth == 18:
             self.encoder = ResNetEncoder(
-                models.resnet18, pretrained=pretrained)
+                models.resnet18, pretrained=pretrained
+            )
         elif depth == 34:
             self.encoder = ResNetEncoder(
-                models.resnet34, pretrained=pretrained)
+                models.resnet34, pretrained=pretrained
+            )
         elif depth == 50:
             self.encoder = ResNetEncoder(
-                models.resnet50, pretrained=pretrained)
+                models.resnet50, pretrained=pretrained
+            )
         else:
             raise ValueError(f'Unexcpected LinkNet depth: {depth}')
         filters = self.encoder.filters

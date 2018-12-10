@@ -16,21 +16,24 @@ def parse_args():
         default=None,
         type=str,
         metavar="PATH",
-        help="path to latest checkpoint")
+        help="path to latest checkpoint"
+    )
     parser.add_argument(
         "-j",
         "--workers",
         default=None,
         type=int,
         metavar="N",
-        help="number of data loading workers")
+        help="number of data loading workers"
+    )
     parser.add_argument(
         "-b",
         "--batch-size",
         default=None,
         type=int,
         metavar="N",
-        help="mini-batch size")
+        help="mini-batch size"
+    )
     boolean_flag(parser, "verbose", default=False)
 
     parser.add_argument("--out-prefix", type=str, default=None)
@@ -55,7 +58,8 @@ def main(args, unknown_args):
     runner = modules["model"].ModelRunner(model=model)
     callbacks_params = config.get("callbacks_params", {}) or {}
     callbacks = runner.prepare_callbacks(
-        args=args, mode="infer", **callbacks_params)
+        args=args, mode="infer", **callbacks_params
+    )
     runner.infer(loaders=loaders, callbacks=callbacks, verbose=args.verbose)
 
 
