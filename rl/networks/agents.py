@@ -3,8 +3,8 @@ import torch.nn as nn
 from functools import reduce
 
 from catalyst.models.sequential import SequentialNet
-from catalyst.rl.networks.utils import create_optimal_inner_init, out_init, \
-    normal_sample, normal_log_prob
+from catalyst.utils.initialization import create_optimal_inner_init, outer_init
+from catalyst.rl.networks.utils import normal_sample, normal_log_prob
 from catalyst.rl.networks.misc_layers import SquashingLayer, CouplingLayer
 
 # log_sigma of Gaussian policy are capped at (LOG_SIG_MIN, LOG_SIG_MAX)
@@ -55,7 +55,7 @@ class Actor(nn.Module):
 
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
         self.feature_net.apply(inner_init)
-        self.policy_net.apply(out_init)
+        self.policy_net.apply(outer_init)
 
     def forward(self, states):
         x = states.view(states.shape[0], -1)
@@ -119,9 +119,9 @@ class LamaActor(nn.Module):
 
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
         self.feature_net.apply(inner_init)
-        self.attn.apply(out_init)
+        self.attn.apply(outer_init)
         self.feature_net2.apply(inner_init)
-        self.policy_net.apply(out_init)
+        self.policy_net.apply(outer_init)
 
     def forward(self, states):
         if len(states.shape) < 3:
@@ -194,7 +194,7 @@ class GaussActor(nn.Module):
 
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
         self.feature_net.apply(inner_init)
-        self.policy_net.apply(out_init)
+        self.policy_net.apply(outer_init)
 
     def forward(self, observation, with_log_pi=False):
         observation = observation.view(observation.shape[0], -1)
@@ -371,7 +371,7 @@ class Critic(nn.Module):
         if self.observation_net is not None:
             self.observation_net.apply(inner_init)
         self.feature_net.apply(inner_init)
-        self.value_net.apply(out_init)
+        self.value_net.apply(outer_init)
 
     def forward(self, observation, action):
         observation = observation.view(observation.shape[0], -1)
@@ -467,8 +467,8 @@ class LamaCritic(nn.Module):
             self.observation_net.apply(inner_init)
         self.feature_net.apply(inner_init)
         self.feature_net2.apply(inner_init)
-        self.attn.apply(out_init)
-        self.value_net.apply(out_init)
+        self.attn.apply(outer_init)
+        self.value_net.apply(outer_init)
 
     def forward(self, states, action):
         if len(states.shape) < 3:
@@ -544,7 +544,7 @@ class ValueCritic(nn.Module):
 
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
         self.feature_net.apply(inner_init)
-        self.value_net.apply(out_init)
+        self.value_net.apply(outer_init)
 
     def forward(self, observation):
         x = observation.view(observation.shape[0], -1)
@@ -608,9 +608,9 @@ class LamaValueCritic(nn.Module):
 
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
         self.feature_net.apply(inner_init)
-        self.attn.apply(out_init)
+        self.attn.apply(outer_init)
         self.feature_net2.apply(inner_init)
-        self.value_net.apply(out_init)
+        self.value_net.apply(outer_init)
 
     def forward(self, states):
         if len(states.shape) < 3:
