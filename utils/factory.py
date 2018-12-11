@@ -115,10 +115,18 @@ class UtilsFactory:
         return scheduler
 
     @staticmethod
-    def create_grad_clip_fn(**grad_clip_params):
-        func = grad_clip_params.pop("func", None)
+    def create_callback(callback=None, **callback_params):
+        if callback is None:
+            return None
+
+        import catalyst.dl.callbacks as CALLBACKS
+        callback = CALLBACKS.__dict__[callback](**callback_params)
+        return callback
+
+    @staticmethod
+    def create_grad_clip_fn(func=None, **grad_clip_params):
         if func is None:
-            return lambda x: x
+            return None
 
         func = torch.nn.utils.__dict__[func]
         grad_clip_params = copy.deepcopy(grad_clip_params)

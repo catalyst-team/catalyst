@@ -9,7 +9,7 @@ import torch.utils.data as data
 
 from catalyst.utils.factory import UtilsFactory
 from catalyst.utils.misc import merge_dicts
-from catalyst.dl.callbacks import Callback
+from catalyst.dl.callbacks import Callback, CheckpointCallback, InferCallback
 from catalyst.dl.datasource import AbstractDataSource
 from catalyst.dl.state import RunnerState
 
@@ -256,12 +256,15 @@ class AbstractModelRunner:
 
             if loaders is None or reload_loaders:
                 loaders = datasource.prepare_loaders(
-                    args=args, stage=stage, **config.pop("data_params"))
+                    stage=stage,
+                    n_workers=args.workers,
+                    batch_size=args.batch_size,
+                    **config.pop("data_params"))
 
             callbacks = self.prepare_callbacks(
-                args=args,
                 mode="train",
                 stage=stage,
+                resume=args.resume,
                 **config.pop("callbacks_params"))
 
             self.prepare_stage_model(
@@ -350,9 +353,10 @@ class AbstractModelRunner:
     @staticmethod
     def prepare_callbacks(
             *,
-            args: Namespace,
             mode: str,
             stage: str = None,
+            resume: str = None,
+            out_prefix: str = None,
             **kwargs) -> Dict[str, Callback]:
         """
         Runner callbacks method to handle different runs logic.
@@ -360,11 +364,22 @@ class AbstractModelRunner:
         :param args: console args
         :param mode: train/infer
         :param stage: training stage name
+        :param resume: path to checkpoint (used for checkpoint callback)
         :param **kwargs: callbacks params
         :return: OrderedDict with callbacks
         """
-        assert len(kwargs) == 0
-        raise NotImplementedError
+        callbacks = OrderedDict()
+
+        for key, value in kwargs.items():
+            callback = UtilsFactory.create_callback(**value)
+            # @TODO: remove hack
+            if isinstance(callback, CheckpointCallback) and resume is not None:
+                callback.resume = resume
+            if isinstance(callback, InferCallback) and out_prefix is not None:
+                callback.out_prefix = out_prefix
+            callbacks[key] = callback
+
+        return callbacks
 
 
 class ClassificationRunner(AbstractModelRunner):
