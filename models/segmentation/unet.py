@@ -8,7 +8,8 @@ from torch import nn
 
 def conv3x3(in_channels, out_channels, dilation=1):
     return nn.Conv2d(
-        in_channels, out_channels, 3, padding=dilation, dilation=dilation)
+        in_channels, out_channels, 3, padding=dilation, dilation=dilation
+    )
 
 
 class EncoderBlock(nn.Module):
@@ -37,8 +38,9 @@ class Encoder(nn.Module):
         for i in range(num_blocks):
             in_channels = in_channels if not i else num_filters * 2**(i - 1)
             out_channels = num_filters * 2**i
-            self.add_module(f'block{i + 1}',
-                            EncoderBlock(in_channels, out_channels))
+            self.add_module(
+                f'block{i + 1}', EncoderBlock(in_channels, out_channels)
+            )
             if i != num_blocks - 1:
                 self.add_module(f'pool{i + 1}', nn.MaxPool2d(2, 2))
 
@@ -57,7 +59,8 @@ class DecoderBlock(nn.Module):
         super().__init__()
 
         self.uppool = nn.Upsample(
-            scale_factor=2, mode='bilinear', align_corners=True)
+            scale_factor=2, mode='bilinear', align_corners=True
+        )
         self.upconv = conv3x3(out_channels * 2, out_channels)
         self.conv1 = conv3x3(out_channels * 2, out_channels)
         self.conv2 = conv3x3(out_channels, out_channels)
@@ -76,8 +79,9 @@ class Decoder(nn.Module):
         super().__init__()
 
         for i in range(num_blocks):
-            self.add_module(f'block{num_blocks - i}',
-                            DecoderBlock(num_filters * 2**i))
+            self.add_module(
+                f'block{num_blocks - i}', DecoderBlock(num_filters * 2**i)
+            )
 
     def forward(self, acts):
         up = acts[-1]
@@ -87,11 +91,9 @@ class Decoder(nn.Module):
 
 
 class UNet(nn.Module):
-    def __init__(self,
-                 num_classes=1,
-                 in_channels=3,
-                 num_filters=64,
-                 num_blocks=4):
+    def __init__(
+        self, num_classes=1, in_channels=3, num_filters=64, num_blocks=4
+    ):
         super().__init__()
 
         self.encoder = Encoder(in_channels, num_filters, num_blocks)

@@ -1,3 +1,4 @@
+import time
 from collections import defaultdict
 from torchnet import meter
 from catalyst.utils.factory import UtilsFactory
@@ -12,15 +13,27 @@ class RunnerState(FrozenClass):
     def __init__(
             self,
             *,
-            main_metric="loss_main",
+            device=None,
+            model=None,
+            criterion=None,
+            optimizer=None,
+            scheduler=None,
+            stage=None,
+            main_metric="loss",
             minimize_metric=True,
             valid_loader="valid",
             reset_step=False,
             **kwargs
     ):
+        self.model = model
+        self.criterion = criterion
+        self.optimizer = optimizer
+        self.scheduler = scheduler
+
         # special info
+        self.stage = stage
         self.mode = "infer"
-        self.device = None
+        self.device = device
         self.loader_mode = None
         self.reset_step = reset_step
 
@@ -33,6 +46,7 @@ class RunnerState(FrozenClass):
         self.output = None
 
         # counters
+        self._datatime = time.time()
         self.loader_len = 0
         self.batch_size = 0
         self.step = 0
@@ -40,9 +54,9 @@ class RunnerState(FrozenClass):
         self.is_best_epoch = False
 
         # metrics
-        self.lr = defaultdict(lambda: 0)
-        self.momentum = defaultdict(lambda: 0)
-        self.loss = defaultdict(lambda: 0)
+        self.lr = None  # defaultdict(lambda: 0)
+        self.momentum = None  # defaultdict(lambda: 0)
+        self.loss = None  # defaultdict(lambda: 0)
 
         self.batch_metrics = defaultdict(lambda: 0)
         self.epoch_metrics = defaultdict(
@@ -57,6 +71,18 @@ class RunnerState(FrozenClass):
             setattr(self, k, v)
 
         self._freeze()
+
+    def get_key(self, key, inner_key=None):
+        if inner_key is None:
+            return getattr(self, key)
+        else:
+            return getattr(self, key)[inner_key]
+
+    def set_key(self, value, key, inner_key=None):
+        if inner_key is None:
+            setattr(self, key, value)
+        else:
+            getattr(self, key)[inner_key] = value
 
     @staticmethod
     def on_stage_init_pre(model, stage):
@@ -122,11 +148,11 @@ class RunnerState(FrozenClass):
             key: value
             for key, value in valid_metrics.items()
             if isinstance(value, float)
-            }
+        }
         state.best_metrics = {
             key: value
             for key, value in best_metrics.items() if isinstance(value, float)
-            }
+        }
         state.valid_metrics = valid_metrics
         state.is_best_epoch = is_best
 
@@ -141,7 +167,7 @@ class RunnerState(FrozenClass):
 
     @staticmethod
     def on_loader_start_post(state):
-        pass
+        state._datatime = time.time()
 
     @staticmethod
     def on_loader_end_pre(state):
@@ -149,7 +175,7 @@ class RunnerState(FrozenClass):
         state.epoch_metrics[lm] = {
             key: UtilsFactory.get_val_from_metric(value)
             for key, value in state.epoch_metrics[lm].items()
-            }
+        }
 
     @staticmethod
     def on_loader_end_post(state):
@@ -159,6 +185,7 @@ class RunnerState(FrozenClass):
     @staticmethod
     def on_batch_start_pre(state):
         state.batch_metrics = defaultdict(lambda: 0)
+        state.batch_metrics["base/data_time"] = time.time() - state._datatime
 
     @staticmethod
     def on_batch_start_post(state):
@@ -166,7 +193,11 @@ class RunnerState(FrozenClass):
 
     @staticmethod
     def on_batch_end_pre(state):
-        pass
+        elapsed_time = time.time() - state._datatime
+
+        state.batch_metrics["base/batch_time"] = elapsed_time
+        state.batch_metrics["base/sample_per_second"] = \
+            state.batch_size / elapsed_time
 
     @staticmethod
     def on_batch_end_post(state):

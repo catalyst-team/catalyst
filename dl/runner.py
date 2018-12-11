@@ -1,5 +1,4 @@
 import tqdm
-from pprint import pprint
 from collections import OrderedDict
 from argparse import Namespace
 from typing import Dict
@@ -10,9 +9,14 @@ import torch.utils.data as data
 
 from catalyst.utils.factory import UtilsFactory
 from catalyst.utils.misc import merge_dicts
-from catalyst.dl.callbacks import Callback
+from catalyst.dl.callbacks import Callback, CheckpointCallback, InferCallback
 from catalyst.dl.datasource import AbstractDataSource
 from catalyst.dl.state import RunnerState
+
+STAGE_KEYWORDS = [
+    "criterion_params", "optimizer_params", "scheduler_params",
+    "stage_params", "state_params", "data_params", "callbacks_params"
+]
 
 
 class AbstractModelRunner:
@@ -24,35 +28,20 @@ class AbstractModelRunner:
     def __init__(
             self,
             model: nn.Module,
-            criterion: Dict[str, nn.Module] = None,
-            optimizer: Dict[str, optim.Optimizer] = None,
-            scheduler: Dict[str, optim.lr_scheduler._LRScheduler] = None,
-            debug: bool = True):
+            criterion: nn.Module = None,
+            optimizer: optim.Optimizer = None,
+            scheduler: optim.lr_scheduler._LRScheduler = None):
         """
 
         :param model: nn.Module instance, your model
-        :param criterion: OrderedDict with torch criterions for model training
-        :param optimizer: OrderedDict with torch optimizers for model training
-        :param scheduler: OrderedDict with torch schedulers for optimizers lrs
-        :param debug: boolean flag for all info printing
+        :param criterion: torch criterion
+        :param optimizer:  torch optimizer
+        :param scheduler: torch scheduler
         """
         self.model = model
-        self.criterion = criterion or {}
-        self.optimizer = optimizer or {}
-        self.scheduler = scheduler or {}
-
-        stuff_handler = lambda x: {"main": x} if not isinstance(x, dict) else x
-
-        self.criterion = stuff_handler(self.criterion)
-        self.optimizer = stuff_handler(self.optimizer)
-        self.scheduler = stuff_handler(self.scheduler)
-
-        if debug:
-            pprint(model)
-            pprint(criterion)
-            pprint(optimizer)
-            pprint(scheduler)
-
+        self.criterion = criterion
+        self.optimizer = optimizer
+        self.scheduler = scheduler
         self.device = None
         self.state = None
         self.stage = None
@@ -76,7 +65,6 @@ class AbstractModelRunner:
         :return: RunnerState with all necessary parameters.
         """
         additional_kwargs = {}
-
         # transfer previous counters from old state
         if self.state is not None:
             additional_kwargs = {
@@ -88,9 +76,9 @@ class AbstractModelRunner:
             device=self.device,
             model=self.model,
             stage=self.stage,
-            _criterion=self.criterion,
-            _optimizer=self.optimizer,
-            _scheduler=self.scheduler,
+            criterion=self.criterion,
+            optimizer=self.optimizer,
+            scheduler=self.scheduler,
             **kwargs,
             **additional_kwargs)
 
@@ -118,7 +106,7 @@ class AbstractModelRunner:
         """
         Main method for running train/valid/infer/debug pipeline over model.
 
-        :param loaders: OrderedDict or torch DataLoaders to run on
+        :param loaders: OrderedDict of torch DataLoaders to run on
         :param callbacks: OrderedDict of callback to use
         :param state_params: params for state initialization
         :param epochs: number of epochs to run
@@ -135,10 +123,8 @@ class AbstractModelRunner:
         self.state = state
 
         self.run_event(callbacks=callbacks, event=f"on_{mode}_start")
-
         for epoch in range(start_epoch, start_epoch + epochs):
             state.epoch = epoch
-
             self.run_event(callbacks=callbacks, event="on_epoch_start")
 
             for loader_mode, loader in loaders.items():
@@ -152,7 +138,6 @@ class AbstractModelRunner:
                 self.model.train(state.is_train)
 
                 self.run_event(callbacks=callbacks, event="on_loader_start")
-
                 loader = tqdm.tqdm(
                     loader,
                     total=len(loader),
@@ -182,7 +167,7 @@ class AbstractModelRunner:
 
         self.run_event(callbacks=callbacks, event=f"on_{mode}_end")
 
-    def train_stage(
+    def train(
             self, *,
             loaders: Dict[str, data.DataLoader],
             callbacks: Dict[str, Callback],
@@ -194,7 +179,7 @@ class AbstractModelRunner:
         """
         One stage training method.
 
-        :param loaders: OrderedDict or torch DataLoaders to run on
+        :param loaders: OrderedDict of torch DataLoaders to run on
         :param callbacks: OrderedDict of callback to use
         :param state_params: params for state initialization
         :param epochs: number of epochs to run
@@ -227,10 +212,18 @@ class AbstractModelRunner:
         pass
 
     @staticmethod
-    def create_model_stuff(*, model, config):
-        return UtilsFactory.create_model_stuff(model=model, config=config)
+    def prepare_model_stuff(
+            *, model,
+            criterion_params=None,
+            optimizer_params=None,
+            scheduler_params=None):
+        return UtilsFactory.prepare_model_stuff(
+            model=model,
+            criterion_params=criterion_params,
+            optimizer_params=optimizer_params,
+            scheduler_params=scheduler_params)
 
-    def train(
+    def train_stages(
             self, *,
             datasource: AbstractDataSource,
             args: Namespace,
@@ -245,60 +238,49 @@ class AbstractModelRunner:
         :param verbose: verbose flag
         """
 
-        stages_stage_params = stages_config.pop("stage_params", {})
-        stages_state_params = stages_config.pop("state_params", {})
-        stages_data_params = stages_config.pop("data_params", {})
-        stages_callbacks_params = stages_config.pop("callbacks_params", {})
-        stages_criterion_params = stages_config.pop("criterion_params", {})
-        stages_optimizer_params = stages_config.pop("optimizer_params", {})
-        stages_scheduler_params = stages_config.pop("scheduler_params", {})
+        stages_params = {}
+        for key in STAGE_KEYWORDS:
+            stages_params[key] = stages_config.pop(key, {})
         loaders = None
 
         for stage, config in stages_config.items():
             self.stage = stage
 
             args = self.prepare_stage_args(args=args, stage_config=config)
-            pprint(args)
 
-            data_params = merge_dicts(
-                stages_data_params, config.get("data_params", {}))
-            reload_loaders = data_params.pop("reload_loaders", True)
+            for key in STAGE_KEYWORDS:
+                config[key] = merge_dicts(
+                    stages_params[key], config.get(key, {}))
+
+            reload_loaders = config["data_params"].pop("reload_loaders", True)
 
             if loaders is None or reload_loaders:
                 loaders = datasource.prepare_loaders(
-                    args=args, stage=stage, **data_params)
-
-            stage_params = merge_dicts(
-                stages_stage_params, config.get("stage_params", {}))
-            state_params = merge_dicts(
-                stages_state_params, config.get("state_params", {}))
-            callbacks_params = merge_dicts(
-                stages_callbacks_params, config.get("callbacks_params", {}))
-            config["criterion_params"] = merge_dicts(
-                stages_criterion_params, config.get("criterion_params", {}))
-            config["optimizer_params"] = merge_dicts(
-                stages_optimizer_params, config.get("optimizer_params", {}))
-            config["scheduler_params"] = merge_dicts(
-                stages_scheduler_params, config.get("scheduler_params", {}))
+                    stage=stage,
+                    n_workers=args.workers,
+                    batch_size=args.batch_size,
+                    **config.pop("data_params"))
 
             callbacks = self.prepare_callbacks(
-                args=args,
                 mode="train",
                 stage=stage,
-                **callbacks_params)
-            pprint(loaders)
-            pprint(callbacks)
+                resume=args.resume,
+                **config.pop("callbacks_params"))
 
             self.prepare_stage_model(
-                model=self.model, stage=stage, **stage_params)
+                model=self.model, stage=stage, **config.pop("stage_params"))
             self.criterion, self.optimizer, self.scheduler = \
-                self.create_model_stuff(model=self.model, config=config)
+                self.prepare_model_stuff(
+                    model=self.model,
+                    criterion_params=config.pop("criterion_params"),
+                    optimizer_params=config.pop("optimizer_params"),
+                    scheduler_params=config.pop("scheduler_params"))
 
             start_epoch = 0 if self.state is None else self.state.epoch + 1
-            self.train_stage(
+            self.train(
                 loaders=loaders,
                 callbacks=callbacks,
-                state_params=state_params,
+                state_params=config.pop("state_params"),
                 epochs=args.epochs,
                 start_epoch=start_epoch,
                 verbose=verbose,
@@ -313,7 +295,7 @@ class AbstractModelRunner:
         """
         Main method for predicting with DL models.
 
-        :param loaders: OrderedDict or torch DataLoaders to run on
+        :param loaders: OrderedDict of torch DataLoaders to run on
         :param callbacks: OrderedDict of callback to use
         :param epochs: number of epochs to run
         :param verbose: verbose flag
@@ -348,9 +330,9 @@ class AbstractModelRunner:
             state: RunnerState = None):
         if state is not None:
             dct = {
-                key: value.to(self.device) \
-                    if state.key2device[key] and torch.is_tensor(value)
-                    else value
+                key: value.to(self.device)
+                if state.key2device[key] and torch.is_tensor(value)
+                else value
                 for key, value in dct.items()
             }
         else:
@@ -371,9 +353,10 @@ class AbstractModelRunner:
     @staticmethod
     def prepare_callbacks(
             *,
-            args: Namespace,
             mode: str,
             stage: str = None,
+            resume: str = None,
+            out_prefix: str = None,
             **kwargs) -> Dict[str, Callback]:
         """
         Runner callbacks method to handle different runs logic.
@@ -381,11 +364,22 @@ class AbstractModelRunner:
         :param args: console args
         :param mode: train/infer
         :param stage: training stage name
+        :param resume: path to checkpoint (used for checkpoint callback)
         :param **kwargs: callbacks params
         :return: OrderedDict with callbacks
         """
-        assert len(kwargs) == 0
-        raise NotImplementedError
+        callbacks = OrderedDict()
+
+        for key, value in kwargs.items():
+            callback = UtilsFactory.create_callback(**value)
+            # @TODO: remove hack
+            if isinstance(callback, CheckpointCallback) and resume is not None:
+                callback.resume = resume
+            if isinstance(callback, InferCallback) and out_prefix is not None:
+                callback.out_prefix = out_prefix
+            callbacks[key] = callback
+
+        return callbacks
 
 
 class ClassificationRunner(AbstractModelRunner):
