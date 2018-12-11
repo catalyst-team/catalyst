@@ -53,7 +53,10 @@ def main(args, unknown_args):
     datasource = modules["data"].DataSource()
     data_params = config.get("data_params", {}) or {}
     loaders = datasource.prepare_loaders(
-        n_workers=args.workers, batch_size=args.batch_size, **data_params
+        mode="infer",
+        n_workers=args.workers,
+        batch_size=args.batch_size,
+        **data_params
     )
     model = modules["model"].prepare_model(config)
 
