@@ -5,17 +5,6 @@ from catalyst.utils.factory import UtilsFactory
 from catalyst.utils.misc import FrozenClass
 
 
-def to_batch_metrics(*, state, metric_key):
-    metric = state.get_key(metric_key)
-    if isinstance(metric, dict):
-        for key, value in metric.items():
-            state.batch_metrics[f"{metric_key}_{key}"] = \
-                UtilsFactory.get_val_from_metric(value)
-    else:
-        state.batch_metrics[f"{metric_key}"] = \
-            UtilsFactory.get_val_from_metric(metric)
-
-
 class RunnerState(FrozenClass):
     """
     An object that is used to pass internal state during train/valid/infer.
@@ -212,10 +201,6 @@ class RunnerState(FrozenClass):
 
     @staticmethod
     def on_batch_end_post(state):
-        to_batch_metrics(state=state, metric_key="lr")
-        to_batch_metrics(state=state, metric_key="momentum")
-        to_batch_metrics(state=state, metric_key="loss")
-
         lm = state.loader_mode
         for key, value in state.batch_metrics.items():
             state.epoch_metrics[lm][key].add(value)

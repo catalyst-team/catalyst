@@ -52,13 +52,18 @@ def main(args, unknown_args):
 
     datasource = modules["data"].DataSource()
     data_params = config.get("data_params", {}) or {}
-    loaders = datasource.prepare_loaders(args=args, **data_params)
+    loaders = datasource.prepare_loaders(
+        n_workers=args.workers, batch_size=args.batch_size, **data_params
+    )
     model = modules["model"].prepare_model(config)
 
     runner = modules["model"].ModelRunner(model=model)
     callbacks_params = config.get("callbacks_params", {}) or {}
     callbacks = runner.prepare_callbacks(
-        args=args, mode="infer", **callbacks_params
+        mode="infer",
+        resume=args.resume,
+        out_prefix=args.out_prefix,
+        **callbacks_params
     )
     runner.infer(loaders=loaders, callbacks=callbacks, verbose=args.verbose)
 

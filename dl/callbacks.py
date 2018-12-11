@@ -14,6 +14,17 @@ from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.utils.factory import UtilsFactory
 
 
+def to_batch_metrics(*, state, metric_key):
+    metric = state.get_key(metric_key)
+    if isinstance(metric, dict):
+        for key, value in metric.items():
+            state.batch_metrics[f"{metric_key}_{key}"] = \
+                UtilsFactory.get_val_from_metric(value)
+    else:
+        state.batch_metrics[f"{metric_key}"] = \
+            UtilsFactory.get_val_from_metric(metric)
+
+
 def get_optimizer_momentum(optimizer):
     if isinstance(optimizer, torch.optim.Adam):
         return list(optimizer.param_groups)[0]["betas"][0]
@@ -184,6 +195,11 @@ class TensorboardLogger(Callback):
     def on_batch_end(self, state: RunnerState):
         if self.log_on_batch_end:
             mode = state.loader_mode
+
+            to_batch_metrics(state=state, metric_key="lr")
+            to_batch_metrics(state=state, metric_key="momentum")
+            to_batch_metrics(state=state, metric_key="loss")
+
             self._log_metrics(
                 metrics=state.batch_metrics, step=state.step,
                 mode=mode, suffix="/batch")
