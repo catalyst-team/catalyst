@@ -5,23 +5,6 @@ from collections import OrderedDict
 
 from catalyst.utils.misc import create_if_need, merge_dicts
 
-# @TODO: for future needs; for now hyperdash is too...raw output
-# try:
-#     from hyperdash import Experiment
-#
-#     class SummaryWriter(SummaryWriter):
-#         def __init__(self, log_dir=None, comment=""):
-#             super().__init__(log_dir, comment)
-#             log_dir = log_dir[:-1] if log_dir.endswith("/") else log_dir
-#             self.exp = Experiment(log_dir.rsplit("/", 1)[-1])
-#
-#         def add_scalar(self, tag, scalar_value, global_step=None):
-#             super().add_scalar(tag, scalar_value, global_step)
-#             self.exp.metric(tag, scalar_value)
-#
-# except ImportError as ex:
-#     print("no hyperdash support")
-
 
 def parse_args_config(args, unknown_args, config):
     for arg in unknown_args:
