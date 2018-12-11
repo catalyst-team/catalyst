@@ -1,5 +1,4 @@
 import os
-import time
 import logging
 from typing import Tuple, List, Dict
 from collections import defaultdict
@@ -35,41 +34,6 @@ def scheduler_step(scheduler, valid_metric=None):
     momentum = get_optimizer_momentum(scheduler.optimizer)
 
     return lr, momentum
-
-
-def to_batch_metrics(*, state, metric_key):
-    metric = state.get_key(metric_key)
-    if isinstance(metric, dict):
-        for key, value in metric.items():
-            state.batch_metrics[f"{metric_key}_{key}"] = \
-                UtilsFactory.get_val_from_metric(value)
-    else:
-        state.batch_metrics[f"{metric_key}"] = \
-            UtilsFactory.get_val_from_metric(metric)
-
-
-class BaseMetrics(Callback):
-    def __init__(self):
-        self.time = time.time()
-
-    def on_loader_start(self, state):
-        self.time = time.time()
-
-    def on_batch_start(self, state):
-        state.batch_metrics["base/data_time"] = time.time() - self.time
-
-    def on_batch_end(self, state):
-        bs = state.batch_size
-        elapsed_time = time.time() - self.time
-
-        state.batch_metrics["base/batch_time"] = elapsed_time
-        state.batch_metrics["base/sample_per_second"] = bs / elapsed_time
-
-        to_batch_metrics(state=state, metric_key="lr")
-        to_batch_metrics(state=state, metric_key="momentum")
-        to_batch_metrics(state=state, metric_key="loss")
-
-        self.time = time.time()
 
 
 class PrecisionCallback(Callback):
