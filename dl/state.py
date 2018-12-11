@@ -1,7 +1,19 @@
+import time
 from collections import defaultdict
 from torchnet import meter
 from catalyst.utils.factory import UtilsFactory
 from catalyst.utils.misc import FrozenClass
+
+
+def to_batch_metrics(*, state, metric_key):
+    metric = state.get_key(metric_key)
+    if isinstance(metric, dict):
+        for key, value in metric.items():
+            state.batch_metrics[f"{metric_key}_{key}"] = \
+                UtilsFactory.get_val_from_metric(value)
+    else:
+        state.batch_metrics[f"{metric_key}"] = \
+            UtilsFactory.get_val_from_metric(metric)
 
 
 class RunnerState(FrozenClass):
@@ -45,6 +57,7 @@ class RunnerState(FrozenClass):
         self.output = None
 
         # counters
+        self._datatime = time.time()
         self.loader_len = 0
         self.batch_size = 0
         self.step = 0
@@ -165,7 +178,7 @@ class RunnerState(FrozenClass):
 
     @staticmethod
     def on_loader_start_post(state):
-        pass
+        state._datatime = time.time()
 
     @staticmethod
     def on_loader_end_pre(state):
@@ -183,6 +196,7 @@ class RunnerState(FrozenClass):
     @staticmethod
     def on_batch_start_pre(state):
         state.batch_metrics = defaultdict(lambda: 0)
+        state.batch_metrics["base/data_time"] = time.time() - state._datatime
 
     @staticmethod
     def on_batch_start_post(state):
@@ -190,10 +204,18 @@ class RunnerState(FrozenClass):
 
     @staticmethod
     def on_batch_end_pre(state):
-        pass
+        elapsed_time = time.time() - state._datatime
+
+        state.batch_metrics["base/batch_time"] = elapsed_time
+        state.batch_metrics["base/sample_per_second"] = \
+            state.batch_size / elapsed_time
 
     @staticmethod
     def on_batch_end_post(state):
+        to_batch_metrics(state=state, metric_key="lr")
+        to_batch_metrics(state=state, metric_key="momentum")
+        to_batch_metrics(state=state, metric_key="loss")
+
         lm = state.loader_mode
         for key, value in state.batch_metrics.items():
             state.epoch_metrics[lm][key].add(value)
