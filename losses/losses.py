@@ -8,6 +8,7 @@ import catalyst.losses.focal_loss as focal_loss
 import catalyst.losses.ce as ce
 import catalyst.losses.dice as dice
 import catalyst.losses.f1 as f1
+import catalyst.losses.combine_loss as combine_loss
 
 LOSSES = {
     **torch.nn.__dict__,
@@ -19,5 +20,6 @@ LOSSES = {
     **focal_loss.__dict__,
     **ce.__dict__,
     **dice.__dict__,
-    **f1.__dict__
+    **f1.__dict__,
+    **combine_loss.__dict__
 }
