@@ -256,6 +256,7 @@ class AbstractModelRunner:
 
             if loaders is None or reload_loaders:
                 loaders = datasource.prepare_loaders(
+                    mode="train",
                     stage=stage,
                     n_workers=args.workers,
                     batch_size=args.batch_size,
