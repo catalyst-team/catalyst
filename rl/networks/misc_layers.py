@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 
 from catalyst.models.sequential import SequentialNet
-from catalyst.rl.networks.utils import create_optimal_inner_init, out_init, \
-    log1p_exp
+from catalyst.utils.initialization import create_optimal_inner_init, outer_init
+from catalyst.rl.networks.utils import log1p_exp
 
 
 class SquashingLayer(nn.Module):
@@ -103,9 +103,9 @@ class CouplingLayer(nn.Module):
 
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
         self.scale_prenet.apply(inner_init)
-        self.scale_net.apply(out_init)
+        self.scale_net.apply(outer_init)
         self.translation_prenet.apply(inner_init)
-        self.translation_net.apply(out_init)
+        self.translation_net.apply(outer_init)
 
     def forward(self, action, state_embedding, log_pi):
         if self.parity == "odd":
