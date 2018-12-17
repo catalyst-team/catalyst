@@ -98,23 +98,24 @@ class FinalBlock(nn.Module):
 
 
 class LinkNet(nn.Module):
-    def __init__(self, num_classes=1, depth=18, pretrained=True):
+    def __init__(self, num_classes=1, backbone="resnet50", pretrained=True):
         super().__init__()
 
-        if depth == 18:
+        backbone = str(backbone)
+        if backbone == "resnet18":
             self.encoder = ResNetEncoder(
                 models.resnet18, pretrained=pretrained
             )
-        elif depth == 34:
+        elif backbone == "resnet34":
             self.encoder = ResNetEncoder(
                 models.resnet34, pretrained=pretrained
             )
-        elif depth == 50:
+        elif backbone == "resnet50":
             self.encoder = ResNetEncoder(
                 models.resnet50, pretrained=pretrained
             )
         else:
-            raise ValueError(f'Unexcpected LinkNet depth: {depth}')
+            raise ValueError(f"Unexcpected LinkNet backbone: {backbone}")
         filters = self.encoder.filters
 
         self.decoder4 = DecoderBlock(filters[3], filters[2])
