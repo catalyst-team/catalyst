@@ -205,3 +205,4 @@ class RunnerState(FrozenClass):
         for key, value in state.batch_metrics.items():
             state.epoch_metrics[lm][key].add(value)
         state.step += state.batch_size
+        state._datatime = time.time()
