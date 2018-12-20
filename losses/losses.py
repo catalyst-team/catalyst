@@ -15,6 +15,6 @@ LOSSES = {
     **contrastive_loss.__dict__,
     **huber_loss.__dict__,
     **ce.__dict__,
-	**focal_loss.__dict__,
-	**dice.__dict__,
+    **focal_loss.__dict__,
+    **dice.__dict__,
 }
