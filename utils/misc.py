@@ -75,17 +75,8 @@ def memorized_method(*lru_args, **lru_kwargs):
     return decorator
 
 
-def str2params(string, delimeter="-"):
-    try:
-        result = list(map(int, string.split(delimeter)))
-    except Exception:
-        result = None
-    return result
-
-
 def create_if_need(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
+    os.makedirs(path, exist_ok=True)
 
 
 def boolean_flag(parser, name, default=False, help=None):
@@ -187,8 +178,3 @@ class FrozenClass(object):
 
     def _freeze(self):
         self.__isfrozen = True
-
-
-class FakeSummaryWriter:
-    def add_scalar(self, *args, **kwargs):
-        pass

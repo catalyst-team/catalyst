@@ -1,8 +1,4 @@
-import torch
 import numpy as np
-from sklearn.metrics import f1_score, mean_absolute_error, precision_score, recall_score
-from sklearn.metrics import average_precision_score, precision_recall_curve
-from sklearn.metrics.classification import precision_recall_fscore_support
 
 
 def precision(output, target, topk=(1,)):
@@ -41,13 +37,13 @@ def apk(actual, predicted, k=10):
     score : double
             The average precision at k over the input lists
     """
-    if len(predicted)>k:
+    if len(predicted) > k:
         predicted = predicted[:k]
 
     score = 0.0
     num_hits = 0.0
 
-    for i,p in enumerate(predicted):
+    for i, p in enumerate(predicted):
         if p in actual and p not in predicted[:i]:
             num_hits += 1.0
             score += num_hits / (i+1.0)
@@ -90,7 +86,7 @@ def mapk(predicted, actual, topk=(1,)):
 
     res = []
     for k in topk:
-        ap = np.mean([apk(a,p,k) for a,p in zip(actual, pred)])
+        ap = np.mean([apk(a, p, k) for a, p in zip(actual, pred)])
         res.append(ap)
     return res
 
@@ -104,36 +100,5 @@ def jaccard(y_true, y_pred):
 
 
 def dice(y_true, y_pred):
-    return (2 * (y_true * y_pred).sum() + 1e-15) / (y_true.sum() + y_pred.sum() + 1e-15)
-
-
-def F1(label, output, th=0.2, start=0.2, end=0.5, step=0.01):
-    precision, recall, f_score, true_sum = precision_recall_fscore_support(label, output > th, beta=1, average="macro")
-    return precision, recall, f_score, th
-
-
-def fbeta(y_pred, y_true, thresh:float=0.2, beta:float=2, eps:float=1e-9, sigmoid:bool=True):
-    "Computes the f_beta between `y_pred` and `y_true` in a multi-classification task."
-    beta2 = beta**2
-    if sigmoid: y_pred = y_pred.sigmoid()
-    y_pred = (y_pred>thresh).float()
-    y_true = y_true.float()
-    TP = (y_pred*y_true).sum(dim=1)
-    prec = TP/(y_pred.sum(dim=1)+eps)
-    rec = TP/(y_true.sum(dim=1)+eps)
-    res = (prec*rec)/(prec*beta2+rec+eps)*(1+beta2)
-    return res.mean()
-
-
-def mae(label, output):
-    return mean_absolute_error(label, output)
-
-
-if __name__ == '__main__':
-    import torch
-    actual = torch.from_numpy(np.array([0, 0]))
-    predict = torch.from_numpy(np.array([[0.5, 0.1, 0.1, 0.1, 0.2], [0.2, 0.5, 0.1, 0.3, 0.0]]))
-    print(actual.shape)
-    print(predict.shape)
-    m = mapk(predict, actual, topk=(1, 5, ))
-    print(m)
+    return (2 * (y_true * y_pred).sum() + 1e-15) / \
+            (y_true.sum() + y_pred.sum() + 1e-15)

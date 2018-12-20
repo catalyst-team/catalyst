@@ -11,6 +11,10 @@ ACTIVATIONS = {
 
 
 def create_optimal_inner_init(nonlinearity, **kwargs):
+    """
+    Create initializer for inner layers
+    based on their activation function (nonlinearity).
+    """
     nonlinearity = ACTIVATIONS.get(nonlinearity, nonlinearity)
     assert isinstance(nonlinearity, str)
     nonlinearity = nonlinearity.lower()
@@ -22,7 +26,7 @@ def create_optimal_inner_init(nonlinearity, **kwargs):
         weignt_init_fn = nn.init.kaiming_normal_
         init_args = {**{"nonlinearity": nonlinearity}, **kwargs}
     else:
-        raise NotImplemented
+        raise NotImplementedError
 
     def inner_init(layer):
         if isinstance(layer, (nn.Linear, nn.Conv1d, nn.Conv2d)):
@@ -34,6 +38,10 @@ def create_optimal_inner_init(nonlinearity, **kwargs):
 
 
 def outer_init(layer):
+    """
+    Initialization for output layers of policy and value networks typically
+    used in deep reinforcement learning literature.
+    """
     if isinstance(layer, (nn.Linear, nn.Conv1d, nn.Conv2d)):
         v = 3e-3
         nn.init.uniform_(layer.weight.data, -v, v)

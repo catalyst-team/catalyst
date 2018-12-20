@@ -1,4 +1,5 @@
 import os
+import copy
 import shutil
 from collections import OrderedDict
 from tensorboardX import SummaryWriter
@@ -114,27 +115,42 @@ class UtilsFactory:
         return scheduler
 
     @staticmethod
-    def create_model_stuff(model, config):
+    def create_callback(callback=None, **callback_params):
+        if callback is None:
+            return None
+
+        import catalyst.dl.callbacks as CALLBACKS
+        callback = CALLBACKS.__dict__[callback](**callback_params)
+        return callback
+
+    @staticmethod
+    def create_grad_clip_fn(func=None, **grad_clip_params):
+        if func is None:
+            return None
+
+        func = torch.nn.utils.__dict__[func]
+        grad_clip_params = copy.deepcopy(grad_clip_params)
+        grad_clip_fn = lambda parameters: func(parameters, **grad_clip_params)
+        return grad_clip_fn
+
+    @staticmethod
+    def prepare_model_stuff(
+            model,
+            criterion_params=None,
+            optimizer_params=None,
+            scheduler_params=None):
         fp16 = isinstance(model, Fp16Wrap)
 
-        criterion_params = config.get("criterion_params", None) or {}
+        criterion_params = criterion_params or {}
         criterion = UtilsFactory.create_criterion(**criterion_params)
 
-        optimizer_params = config.get("optimizer_params", None) or {}
+        optimizer_params = optimizer_params or {}
         optimizer = UtilsFactory.create_optimizer(
             model, **optimizer_params, fp16=fp16)
 
-        scheduler_params = config.get("scheduler_params", None) or {}
+        scheduler_params = scheduler_params or {}
         scheduler = UtilsFactory.create_scheduler(
             optimizer, **scheduler_params)
-
-        criterion = {"main": criterion} if criterion is not None else {}
-        optimizer = {"main": optimizer} if optimizer is not None else {}
-        scheduler = {"main": scheduler} if scheduler is not None else {}
-
-        criterion = OrderedDict(criterion)
-        optimizer = OrderedDict(optimizer)
-        scheduler = OrderedDict(scheduler)
 
         return criterion, optimizer, scheduler
 
@@ -163,7 +179,7 @@ class UtilsFactory:
             epoch_metrics,
             best_metrics,
             valid_loader="valid",
-            main_metric="loss_main",
+            main_metric="loss",
             minimize=True):
         valid_metrics = epoch_metrics[valid_loader]
         is_best = True \
@@ -198,9 +214,6 @@ class UtilsFactory:
 
         if isinstance(model, OrderedDict):
             raise NotImplementedError()
-            for key, value in model.items():
-                name2save = key + "_model_state_dict"
-                checkpoint[name2save] = value.state_dict()
         else:
             model_ = model
             if isinstance(model_, nn.DataParallel):
@@ -212,12 +225,19 @@ class UtilsFactory:
         for dict2save, name2save in zip(
                 [criterion, optimizer, scheduler],
                 ["criterion", "optimizer", "scheduler"]):
-            for key, value in dict2save.items():
-                if value is not None:
-                    name2save_ = name2save + "_" + str(key)
-                    checkpoint[name2save_] = value
-                    name2save_ = name2save_ + "_state_dict"
-                    checkpoint[name2save_] = value.state_dict()
+            if dict2save is None:
+                continue
+            if isinstance(dict2save, dict):
+                for key, value in dict2save.items():
+                    if value is not None:
+                        name2save_ = name2save + "_" + str(key)
+                        checkpoint[name2save_] = value
+                        name2save_ = name2save_ + "_state_dict"
+                        checkpoint[name2save_] = value.state_dict()
+            else:
+                checkpoint[name2save] = dict2save
+                name2save = name2save + "_state_dict"
+                checkpoint[name2save] = dict2save.state_dict()
 
         return checkpoint
 
@@ -227,8 +247,7 @@ class UtilsFactory:
             logdir=logdir, suffix=suffix)
         torch.save(checkpoint, filename)
         if is_best:
-            shutil.copyfile(filename,
-                            "{}/checkpoint.best.pth.tar".format(logdir))
+            shutil.copyfile(filename, f"{logdir}/checkpoint.best.pth.tar")
         return filename
 
     @staticmethod
@@ -252,16 +271,17 @@ class UtilsFactory:
             else:
                 model.load_state_dict(checkpoint["model_state_dict"])
 
-        if criterion is not None:
-            for key in criterion:
-                criterion[key].load_state_dict(
-                    checkpoint["criterion_" + str(key) + "_state_dict"])
+        for dict2load, name2load in zip(
+                [criterion, optimizer, scheduler],
+                ["criterion", "optimizer", "scheduler"]):
+            if dict2load is None:
+                continue
 
-        if optimizer is not None:
-            for key in optimizer:
-                optimizer[key].load_state_dict(
-                    checkpoint["optimizer_" + str(key) + "_state_dict"])
-
-        if scheduler is not None:
-            for key in scheduler:
-                scheduler[key] = checkpoint["scheduler_" + str(key)]
+            if isinstance(dict2load, dict):
+                for key, value in dict2load.items():
+                    if value is not None:
+                        name2load_ = f"{name2load}_{key}_state_dict"
+                        value.load_state_dict(checkpoint[name2load_])
+            else:
+                name2load = f"{name2load}_state_dict"
+                dict2load.load_state_dict(checkpoint[name2load])

@@ -16,21 +16,24 @@ def parse_args():
         default=None,
         type=str,
         metavar="PATH",
-        help="path to latest checkpoint")
+        help="path to latest checkpoint"
+    )
     parser.add_argument(
         "-j",
         "--workers",
         default=None,
         type=int,
         metavar="N",
-        help="number of data loading workers")
+        help="number of data loading workers"
+    )
     parser.add_argument(
         "-b",
         "--batch-size",
         default=None,
         type=int,
         metavar="N",
-        help="mini-batch size")
+        help="mini-batch size"
+    )
     boolean_flag(parser, "verbose", default=False)
 
     parser.add_argument("--out-prefix", type=str, default=None)
@@ -48,13 +51,23 @@ def main(args, unknown_args):
     modules = prepare_modules(model_dir=args.model_dir)
 
     datasource = modules["data"].DataSource()
-    loaders = datasource.prepare_loaders(args=args, stage=None, **config["data_params"])
+    data_params = config.get("data_params", {}) or {}
+    loaders = datasource.prepare_loaders(
+        mode="infer",
+        n_workers=args.workers,
+        batch_size=args.batch_size,
+        **data_params
+    )
     model = modules["model"].prepare_model(config)
 
     runner = modules["model"].ModelRunner(model=model)
-    callbacks_params = config["callbacks_params"] or {}
+    callbacks_params = config.get("callbacks_params", {}) or {}
     callbacks = runner.prepare_callbacks(
-        args=args, mode="infer", **callbacks_params)
+        mode="infer",
+        resume=args.resume,
+        out_prefix=args.out_prefix,
+        **callbacks_params
+    )
     runner.infer(loaders=loaders, callbacks=callbacks, verbose=args.verbose)
 
 

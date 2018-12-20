@@ -1,50 +1,9 @@
-import os
-import shutil
 import argparse
 import pathlib
-from datetime import datetime
-from pprint import pprint
 
+from catalyst.dl.scripts.utils import prepare_modules
 from catalyst.utils.args import parse_args_uargs, save_config
-from catalyst.utils.misc import \
-    create_if_need, set_global_seeds, boolean_flag, import_module
-
-
-def prepare_modules(model_dir, dump_dir=None):
-    model_dir = model_dir[:-1] if model_dir.endswith("/") else model_dir
-    model_dir_name = model_dir.rsplit("/", 1)[-1]
-
-    new_model_dir = None
-    if dump_dir is not None:
-        current_date = datetime.now().strftime("%y-%m-%d-%H-%M-%S-%M-%f")
-        new_src_dir = f"/src-{current_date}/"
-
-        new_model_dir = f"{new_src_dir}" + model_dir
-        new_model_dir = dump_dir + new_model_dir
-        create_if_need(new_model_dir)
-
-        # @TODO: hardcoded
-        old_pro_dir = os.path.dirname(os.path.abspath(__file__)) + "/../../"
-        new_pro_dir = dump_dir + f"/{new_src_dir}/catalyst/"
-        shutil.copytree(old_pro_dir, new_pro_dir)
-
-    pyfiles = list(
-        map(lambda x: x.name[:-3],
-            pathlib.Path(model_dir).glob("*.py")))
-
-    modules = {}
-    for name in pyfiles:
-        module_name = f"{model_dir_name}.{name}"
-        module_src = model_dir + "/" + f"{name}.py"
-
-        module = import_module(module_name, module_src)
-        modules[name] = module
-
-        if new_model_dir is not None:
-            module_dst = new_model_dir + "/" + f"{name}.py"
-            shutil.copy2(module_src, module_dst)
-
-    return modules
+from catalyst.utils.misc import create_if_need, set_global_seeds, boolean_flag
 
 
 def parse_args():
@@ -60,32 +19,26 @@ def parse_args():
         default=None,
         type=str,
         metavar="PATH",
-        help="path to latest checkpoint")
+        help="path to latest checkpoint"
+    )
     parser.add_argument(
         "-j",
         "--workers",
         default=None,
         type=int,
-        metavar="N",
-        help="number of data loading workers")
+        help="number of data loading workers"
+    )
     parser.add_argument(
-        "-b",
-        "--batch-size",
-        default=None,
-        type=int,
-        metavar="N",
-        help="mini-batch size")
+        "-b", "--batch-size", default=None, type=int, help="mini-batch size"
+    )
     boolean_flag(parser, "verbose", default=False)
 
     args, unknown_args = parser.parse_known_args()
-
     return args, unknown_args
 
 
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args, dump_config=True)
-    pprint(args)
-    pprint(config)
     set_global_seeds(args.seed)
 
     assert args.baselogdir is not None or args.logdir is not None
@@ -103,11 +56,12 @@ def main(args, unknown_args):
     model = modules["model"].prepare_model(config)
 
     runner = modules["model"].ModelRunner(model=model)
-    runner.train(
+    runner.train_stages(
         datasource=datasource,
         args=args,
         stages_config=config["stages"],
-        verbose=args.verbose)
+        verbose=args.verbose
+    )
 
 
 if __name__ == "__main__":
