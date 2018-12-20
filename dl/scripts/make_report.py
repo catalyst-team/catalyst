@@ -59,7 +59,7 @@ def main(args):
     keys = args.keys.split(",")
 
     report = []
-    for folder in glob(logdir_in):
+    for folder in sorted(glob(logdir_in)):
         try:
             row = report_by_dir(folder=folder)
             report.append(row)
