@@ -7,9 +7,9 @@ import numpy as np
 import torch
 
 from catalyst.data.functional import compute_mixup_lambda, mixup_torch
-from catalyst.dl.callback import Callback
+from catalyst.dl.callback import Callback, MetricCallback
 from catalyst.dl.state import RunnerState
-from catalyst.utils.metrics import precision, mean_average_precision, dice, jaccard
+from catalyst.utils import metrics
 from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.utils.factory import UtilsFactory
 
@@ -74,7 +74,7 @@ class PrecisionCallback(Callback):
         self.prefix = prefix
 
     def on_batch_end(self, state):
-        prec = precision(
+        prec = metrics.precision(
             state.output[self.output_key],
             state.input[self.input_key],
             topk=self.precision_args)
@@ -109,7 +109,7 @@ class MapKCallback(Callback):
         self.map_args = map_args or [1, 3, 5]
 
     def on_batch_end(self, state):
-        mean_average_precision_ = mean_average_precision(
+        mean_average_precision_ = metrics.mean_average_precision(
             state.output[self.output_key],
             state.input[self.input_key],
             topk=self.map_args)
@@ -119,7 +119,7 @@ class MapKCallback(Callback):
             state.batch_metrics[key] = metric_
 
 
-class DiceCallback(Callback):
+class DiceCallback(MetricCallback):
     """
     Dice metric callback.
     """
@@ -127,26 +127,22 @@ class DiceCallback(Callback):
     def __init__(self,
                  input_key: str = "targets",
                  output_key: str = "logits",
-                 threshold: float = None):
+                 eps: float = 1e-7,
+                 activation: str = 'sigmoid'):
         """
-        :param input_key: input key to use for precision calculation;
+        :param input_key: input key to use for dice calculation;
             specifies our `y_true`.
-        :param output_key: output key to use for precision calculation;
+        :param output_key: output key to use for dice calculation;
             specifies our `y_pred`.
-        :param threshold: threshold.
         """
-        super().__init__()
-        self.input_key = input_key
-        self.output_key = output_key
-        self.threshold = threshold
-
-    def on_batch_end(self, state):
-        dice_value = dice(
-            state.output[self.output_key],
-            state.input[self.input_key],
+        super().__init__(
+            prefix='dice',
+            metric_fn=metrics.dice,
+            input_key=input_key,
+            output_key=output_key,
+            eps=eps,
+            activation=activation
         )
-        key = "dice"
-        state.batch_metrics[key] = dice_value
 
 
 class JaccardCallback(Callback):
@@ -158,22 +154,17 @@ class JaccardCallback(Callback):
                  input_key: str = "targets",
                  output_key: str = "logits"):
         """
-        :param input_key: input key to use for precision calculation;
+        :param input_key: input key to use for iou calculation;
             specifies our `y_true`.
-        :param output_key: output key to use for precision calculation;
+        :param output_key: output key to use for iou calculation;
             specifies our `y_pred`
         """
-        super().__init__()
-        self.input_key = input_key
-        self.output_key = output_key
-
-    def on_batch_end(self, state):
-        outputs = state.output[self.output_key]
-        targets = state.input[self.input_key]
-
-        jac = jaccard((outputs > 0).float(), targets)
-        key = "jaccard"
-        state.batch_metrics[key] = jac
+        super().__init__(
+            prefix='jaccard',
+            metric_fn=metrics.jaccard,
+            input_key=input_key,
+            output_key=output_key
+        )
 
 
 class Logger(Callback):
@@ -316,7 +307,7 @@ class CheckpointCallback(Callback):
             resume: str = None):
         """
         :param logdir: log directory to use for checkpoint saving
-        :param save_n_best: number of best checkpoiont to keep
+        :param save_n_best: number of best checkpoint to keep
         :param resume: path to checkpoint to load and initialize runner state
         """
         self.logdir = logdir

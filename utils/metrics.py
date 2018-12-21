@@ -149,6 +149,7 @@ def jaccard(outputs, targets, eps: float = 1e-7):
     score : double
             Jaccard score
     """
+    outputs = (outputs > 0).float()
     intersection = torch.sum(targets * outputs)
     union = torch.sum(targets) + torch.sum(outputs) - intersection + eps
     return (intersection + eps) / union
