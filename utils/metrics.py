@@ -1,16 +1,17 @@
 import numpy as np
+import torch
 
 
-def precision(output, target, topk=(1,)):
+def precision(outputs, targets, topk=(1,)):
     """
     Computes the precision@k for the specified values of k
     """
     maxk = max(topk)
-    batch_size = target.size(0)
+    batch_size = targets.size(0)
 
-    _, pred = output.topk(maxk, 1, True, True)
+    _, pred = outputs.topk(maxk, 1, True, True)
     pred = pred.t()
-    correct = pred.eq(target.view(1, -1).expand_as(pred))
+    correct = pred.eq(targets.view(1, -1).expand_as(pred))
 
     res = []
     for k in topk:
@@ -19,17 +20,17 @@ def precision(output, target, topk=(1,)):
     return res
 
 
-def apk(actual, predicted, k=10):
+def average_precision(outputs, targets, k=10):
     """
     Computes the average precision at k.
-    This function computes the average prescision at k between two lists of
+    This function computes the average precision at k between two lists of
     items.
     Parameters
     ----------
-    actual : list
-             A list of elements that are to be predicted (order doesn't matter)
-    predicted : list
+    outputs : list
                 A list of predicted elements (order does matter)
+    targets : list
+             A list of elements that are to be predicted (order doesn't matter)
     k : int, optional
         The maximum number of predicted elements
     Returns
@@ -37,37 +38,37 @@ def apk(actual, predicted, k=10):
     score : double
             The average precision at k over the input lists
     """
-    if len(predicted) > k:
-        predicted = predicted[:k]
+    if len(outputs) > k:
+        outputs = outputs[:k]
 
     score = 0.0
     num_hits = 0.0
 
-    for i, p in enumerate(predicted):
-        if p in actual and p not in predicted[:i]:
+    for i, p in enumerate(outputs):
+        if p in targets and p not in outputs[:i]:
             num_hits += 1.0
-            score += num_hits / (i+1.0)
+            score += num_hits / (i + 1.0)
 
-    if not actual:
+    if not targets:
         return 0.0
 
-    return score / min(len(actual), k)
+    return score / min(len(targets), k)
 
 
-def mapk(predicted, actual, topk=(1,)):
+def mean_average_precision(outputs, targets, topk=(1,)):
     """
     Computes the mean average precision at k.
-    This function computes the mean average prescision at k between two lists
+    This function computes the mean average precision at k between two lists
     of lists of items.
     Parameters
     ----------
-    actual : list
-             A list of lists of elements that are to be predicted
-             (order doesn't matter in the lists)
-    predicted : list
+    outputs : list
                 A list of lists of predicted elements
                 (order matters in the lists)
-    k : int, optional
+    targets : list
+             A list of lists of elements that are to be predicted
+             (order doesn't matter in the lists)
+    topk : int, optional
         The maximum number of predicted elements
     Returns
     -------
@@ -75,30 +76,79 @@ def mapk(predicted, actual, topk=(1,)):
             The mean average precision at k over the input lists
     """
     maxk = max(topk)
-    _, pred = predicted.topk(maxk, 1, True, True)
+    _, pred = outputs.topk(maxk, 1, True, True)
 
-    actual = actual.data.cpu().numpy().tolist()
+    targets = targets.data.cpu().numpy().tolist()
     actual_list = []
-    for a in actual:
+    for a in targets:
         actual_list.append([a])
-    actual = actual_list
+    targets = actual_list
     pred = pred.tolist()
 
     res = []
     for k in topk:
-        ap = np.mean([apk(a, p, k) for a, p in zip(actual, pred)])
+        ap = np.mean([average_precision(p, a, k) for a, p in zip(targets, pred)])
         res.append(ap)
     return res
 
 
-def jaccard(y_true, y_pred):
-    y_true = y_true.detach().cpu().numpy()
-    y_pred = y_pred.detach().cpu().numpy()
-    intersection = (y_true * y_pred).sum()
-    union = y_true.sum() + y_pred.sum() - intersection
-    return (intersection + 1e-15) / (union + 1e-15)
+def dice(
+        outputs,
+        targets,
+        eps: float = 1e-7,
+        activation: str = 'sigmoid'):
+    """
+    Computes the average precision at k.
+    This function computes the average precision at k between two lists of
+    items.
+    Parameters
+    ----------
+    outputs : list
+                A list of predicted elements (order does matter)
+    targets : list
+             A list of elements that are to be predicted (order doesn't matter)
+    eps : float
+        TODO
+    activation: str
+        TODO
+    Returns
+    -------
+    score : double
+            Dice score
+    """
+    if activation is None or activation == "none":
+        activation_fn = lambda x: x
+    elif activation == "sigmoid":
+        activation_fn = torch.nn.Sigmoid()
+    elif activation == "softmax":
+        activation_fn = torch.nn.Softmax2d()
+    else:
+        raise NotImplementedError("Dice is only implemented for sigmoid and softmax")
+
+    outputs = activation_fn(outputs)
+    intersection = torch.sum(targets * outputs)
+    sum_ = torch.sum(targets) + torch.sum(outputs) + eps
+
+    return (2 * intersection + eps) / sum_
 
 
-def dice(y_true, y_pred):
-    return (2 * (y_true * y_pred).sum() + 1e-15) / \
-            (y_true.sum() + y_pred.sum() + 1e-15)
+def jaccard(outputs, targets, eps: float = 1e-7):
+    """
+    Computes the average precision at k.
+    This function computes the average precision at k between two lists of
+    items.
+    Parameters
+    ----------
+    outputs : list
+                A list of predicted elements (order does matter)
+    targets : list
+             A list of elements that are to be predicted (order doesn't matter)
+    eps : float
+    Returns
+    -------
+    score : double
+            Jaccard score
+    """
+    intersection = torch.sum(targets * outputs)
+    union = torch.sum(targets) + torch.sum(outputs) - intersection + eps
+    return (intersection + eps) / union

@@ -1,4 +1,5 @@
-from typing import Dict
+from typing import Dict, Callable
+from catalyst.utils.factory import UtilsFactory
 
 
 class Callback:
@@ -84,3 +85,28 @@ class CallbackCompose:
     def on_batch_end(self, state):
         for key, value in self.callbacks.items():
             value.on_batch_end(state=state)
+
+
+class MetricCallback(Callback):
+    """
+    A callback that call single metric on `state.on_batch_end`
+    """
+    def __init__(
+            self,
+            prefix: str,
+            metric_fn: Callable,
+            input_key: str = "targets",
+            output_key: str = "logits",
+            **metric_params):
+        self.prefix = prefix
+        self.metric_fn = metric_fn
+        self.input_key = input_key
+        self.output_key = output_key
+        self.metric_params = metric_params
+
+    def on_batch_end(self, state):
+        outputs = state.output[self.output_key]
+        targets = state.input[self.input_key]
+
+        value = self.metric_fn(targets, outputs, **self.metric_params)
+        state.batch_metrics[self.prefix] = UtilsFactory.get_val_from_metric(value)

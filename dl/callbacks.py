@@ -9,7 +9,7 @@ import torch
 from catalyst.data.functional import compute_mixup_lambda, mixup_torch
 from catalyst.dl.callback import Callback
 from catalyst.dl.state import RunnerState
-from catalyst.utils.metrics import precision, mapk, dice, jaccard
+from catalyst.utils.metrics import precision, mean_average_precision, dice, jaccard
 from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.utils.factory import UtilsFactory
 
@@ -109,11 +109,11 @@ class MapKCallback(Callback):
         self.map_args = map_args or [1, 3, 5]
 
     def on_batch_end(self, state):
-        mapatk = mapk(
+        mean_average_precision_ = mean_average_precision(
             state.output[self.output_key],
             state.input[self.input_key],
             topk=self.map_args)
-        for p, metric in zip(self.map_args, mapatk):
+        for p, metric in zip(self.map_args, mean_average_precision_):
             key = "map{:02}".format(p)
             metric_ = metric.item()
             state.batch_metrics[key] = metric_
@@ -171,7 +171,7 @@ class JaccardCallback(Callback):
         outputs = state.output[self.output_key]
         targets = state.input[self.input_key]
 
-        jac = jaccard(targets, (outputs > 0).float())
+        jac = jaccard((outputs > 0).float(), targets)
         key = "jaccard"
         state.batch_metrics[key] = jac
 
