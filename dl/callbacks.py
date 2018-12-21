@@ -138,7 +138,7 @@ class DiceCallback(MetricCallback):
         )
 
 
-class JaccardCallback(Callback):
+class JaccardCallback(MetricCallback):
     """
     Jaccard metric callback.
     """
