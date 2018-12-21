@@ -10,7 +10,9 @@ class FocalLoss(nn.Module):
     # TODO refactor
     def forward(self, outputs, target):
         if target.size() != outputs.size():
-            raise ValueError(f"Targets and inputs must be same size. Got ({target.size()}) and ({outputs.size()})")
+            raise ValueError(
+                f"Targets and inputs must be same size. Got ({target.size()}) and ({outputs.size()})"
+            )
 
         max_val = (-outputs).clamp(min=0)
         loss = outputs - outputs * target + max_val + \

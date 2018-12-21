@@ -2,7 +2,7 @@ import numpy as np
 import torch
 
 
-def precision(outputs, targets, topk=(1,)):
+def precision(outputs, targets, topk=(1, )):
     """
     Computes the precision@k for the specified values of k
     """
@@ -55,7 +55,7 @@ def average_precision(outputs, targets, k=10):
     return score / min(len(targets), k)
 
 
-def mean_average_precision(outputs, targets, topk=(1,)):
+def mean_average_precision(outputs, targets, topk=(1, )):
     """
     Computes the mean average precision at k.
     This function computes the mean average precision at k between two lists
@@ -87,16 +87,14 @@ def mean_average_precision(outputs, targets, topk=(1,)):
 
     res = []
     for k in topk:
-        ap = np.mean([average_precision(p, a, k) for a, p in zip(targets, pred)])
+        ap = np.mean(
+            [average_precision(p, a, k) for a, p in zip(targets, pred)]
+        )
         res.append(ap)
     return res
 
 
-def dice(
-        outputs,
-        targets,
-        eps: float = 1e-7,
-        activation: str = 'sigmoid'):
+def dice(outputs, targets, eps: float = 1e-7, activation: str = 'sigmoid'):
     """
     Computes the average precision at k.
     This function computes the average precision at k between two lists of
@@ -123,7 +121,9 @@ def dice(
     elif activation == "softmax":
         activation_fn = torch.nn.Softmax2d()
     else:
-        raise NotImplementedError("Dice is only implemented for sigmoid and softmax")
+        raise NotImplementedError(
+            "Dice is only implemented for sigmoid and softmax"
+        )
 
     outputs = activation_fn(outputs)
     intersection = torch.sum(targets * outputs)

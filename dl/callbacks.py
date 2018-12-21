@@ -53,11 +53,12 @@ class PrecisionCallback(MultiMetricCallback):
     """
 
     def __init__(
-            self,
-            input_key: str = "targets",
-            output_key: str = "logits",
-            precision_args: List[int] = None,
-            prefix="precision"):
+        self,
+        input_key: str = "targets",
+        output_key: str = "logits",
+        precision_args: List[int] = None,
+        prefix="precision"
+    ):
         """
         :param input_key: input key to use for precision calculation;
             specifies our `y_true`.
@@ -83,11 +84,12 @@ class MapKCallback(MultiMetricCallback):
     """
 
     def __init__(
-            self,
-            input_key: str = "targets",
-            output_key: str = "logits",
-            map_args: List[int] = None,
-            prefix="map"):
+        self,
+        input_key: str = "targets",
+        output_key: str = "logits",
+        map_args: List[int] = None,
+        prefix="map"
+    ):
         """
         :param input_key: input key to use for mean average precision at k calculation;
             specifies our `y_true`.
@@ -113,12 +115,13 @@ class DiceCallback(MetricCallback):
     """
 
     def __init__(
-            self,
-            input_key: str = "targets",
-            output_key: str = "logits",
-            prefix='dice',
-            eps: float = 1e-7,
-            activation: str = 'sigmoid'):
+        self,
+        input_key: str = "targets",
+        output_key: str = "logits",
+        prefix='dice',
+        eps: float = 1e-7,
+        activation: str = 'sigmoid'
+    ):
         """
         :param input_key: input key to use for dice calculation;
             specifies our `y_true`.
@@ -141,11 +144,12 @@ class JaccardCallback(Callback):
     """
 
     def __init__(
-            self,
-            input_key: str = "targets",
-            output_key: str = "logits",
-            prefix='jaccard',
-            eps: float = 1e-7):
+        self,
+        input_key: str = "targets",
+        output_key: str = "logits",
+        prefix='jaccard',
+        eps: float = 1e-7
+    ):
         """
         :param input_key: input key to use for iou calculation;
             specifies our `y_true`.
@@ -203,19 +207,22 @@ class Logger(Callback):
     @staticmethod
     def _get_metrics_string(metrics):
         return " | ".join(
-            "{}: {:.5f}".format(k, v) for k, v in metrics.items())
+            "{}: {:.5f}".format(k, v) for k, v in metrics.items()
+        )
 
     def on_train_begin(self, state):
         if self.logger is not None:
             self.logger.info(
-                "Starting training with params:\n{}\n\n".format(state))
+                "Starting training with params:\n{}\n\n".format(state)
+            )
 
     def on_epoch_end(self, state):
         if self.logger is not None:
             for k, v in state.epoch_metrics.items():
                 self.logger.info(
                     f"{state.epoch} * Epoch ({k}) metrics: "
-                    f"{self._get_metrics_string(v)}")
+                    f"{self._get_metrics_string(v)}"
+                )
             self.logger.info("\n")
 
 
@@ -225,11 +232,11 @@ class TensorboardLogger(Callback):
     """
 
     def __init__(
-            self,
-            logdir: str = None,
-            metric_names: List[str] = None,
-            log_on_batch_end=True,
-            log_on_epoch_end=True
+        self,
+        logdir: str = None,
+        metric_names: List[str] = None,
+        log_on_batch_end=True,
+        log_on_epoch_end=True
     ):
         """
         :param logdir: directory where logs will be created
@@ -252,14 +259,11 @@ class TensorboardLogger(Callback):
         lm = state.loader_mode
         if lm not in self.loggers:
             self.loggers[lm] = UtilsFactory.create_tflogger(
-                logdir=self.logdir, name=lm)
+                logdir=self.logdir, name=lm
+            )
 
     def _log_metrics(
-        self,
-        metrics: Dict[str, float],
-        step: int,
-        mode: str,
-        suffix=''
+        self, metrics: Dict[str, float], step: int, mode: str, suffix=''
     ):
         if self.metrics_to_log is None:
             self.metrics_to_log = list(metrics.keys())
@@ -267,7 +271,8 @@ class TensorboardLogger(Callback):
         for name in self.metrics_to_log:
             if name in metrics:
                 self.loggers[mode].add_scalar(
-                    f"{name}{suffix}", metrics[name], step)
+                    f"{name}{suffix}", metrics[name], step
+                )
 
     def on_batch_end(self, state: RunnerState):
         if self.log_on_batch_end:
@@ -278,15 +283,21 @@ class TensorboardLogger(Callback):
             to_batch_metrics(state=state, metric_key="loss")
 
             self._log_metrics(
-                metrics=state.batch_metrics, step=state.step,
-                mode=mode, suffix="/batch")
+                metrics=state.batch_metrics,
+                step=state.step,
+                mode=mode,
+                suffix="/batch"
+            )
 
     def on_loader_end(self, state: RunnerState):
         if self.log_on_epoch_end:
             mode = state.loader_mode
             self._log_metrics(
-                metrics=state.epoch_metrics[mode], step=state.epoch,
-                mode=mode, suffix="/epoch")
+                metrics=state.epoch_metrics[mode],
+                step=state.epoch,
+                mode=mode,
+                suffix="/epoch"
+            )
 
 
 class CheckpointCallback(Callback):
@@ -295,10 +306,8 @@ class CheckpointCallback(Callback):
     """
 
     def __init__(
-            self,
-            logdir: str = None,
-            save_n_best: int = 5,
-            resume: str = None):
+        self, logdir: str = None, save_n_best: int = 5, resume: str = None
+    ):
         """
         :param logdir: log directory to use for checkpoint saving
         :param save_n_best: number of best checkpoint to keep
@@ -323,29 +332,41 @@ class CheckpointCallback(Callback):
                 model=state.model,
                 criterion=state.criterion,
                 optimizer=state.optimizer,
-                scheduler=state.scheduler)
+                scheduler=state.scheduler
+            )
 
-            print("loaded checkpoint \"{}\" (epoch {})".format(
-                filename, checkpoint["epoch"]))
+            print(
+                "loaded checkpoint \"{}\" (epoch {})".format(
+                    filename, checkpoint["epoch"]
+                )
+            )
         else:
             raise Exception("no checkpoint found at \"{}\"".format(filename))
 
     def save_checkpoint(
-            self, logdir, checkpoint, is_best,
-            save_n_best=5, main_metric="loss", minimize_metric=True):
+        self,
+        logdir,
+        checkpoint,
+        is_best,
+        save_n_best=5,
+        main_metric="loss",
+        minimize_metric=True
+    ):
         suffix = f"{checkpoint['stage']}.{checkpoint['epoch']}"
         filepath = UtilsFactory.save_checkpoint(
             logdir=logdir,
             checkpoint=checkpoint,
             is_best=is_best,
-            suffix=suffix)
+            suffix=suffix
+        )
         checkpoint_metric = checkpoint["valid_metrics"].get(main_metric, None)
         checkpoint_metric = checkpoint_metric or checkpoint.get("epoch", -1)
         self.top_best_metrics.append((filepath, checkpoint_metric))
         self.top_best_metrics = sorted(
             self.top_best_metrics,
             key=lambda x: x[1],
-            reverse=not minimize_metric)
+            reverse=not minimize_metric
+        )
         if len(self.top_best_metrics) > save_n_best:
             last_item = self.top_best_metrics.pop(-1)
             last_filepath = last_item[0]
@@ -377,24 +398,28 @@ class CheckpointCallback(Callback):
             scheduler=state.scheduler,
             valid_metrics=dict(state.valid_metrics),  # @TODO: save defaultdict
             epoch_metrics=dict(state.epoch_metrics),  # @TODO: save defaultdict
-            best_metrics=dict(state.best_metrics),    # @TODO: save defaultdict
+            best_metrics=dict(state.best_metrics),  # @TODO: save defaultdict
             stage=state.stage,
-            epoch=state.epoch)
+            epoch=state.epoch
+        )
         self.save_checkpoint(
             logdir=self.logdir,
             checkpoint=checkpoint,
             is_best=state.is_best_epoch,
             save_n_best=self.save_n_best,
             main_metric=state.main_metric,
-            minimize_metric=state.minimize_metric)
+            minimize_metric=state.minimize_metric
+        )
 
     def on_train_end(self, state):
         print("Top best models:")
-        top_best_metrics_str = "\n".join([
-            "{filepath}\t{metric:.4f}".format(
-                filepath=filepath, metric=metric)
-            for filepath, metric in self.top_best_metrics
-        ])
+        top_best_metrics_str = "\n".join(
+            [
+                "{filepath}\t{metric:.4f}".format(
+                    filepath=filepath, metric=metric
+                ) for filepath, metric in self.top_best_metrics
+            ]
+        )
         print(top_best_metrics_str)
 
 
@@ -404,18 +429,20 @@ class OptimizerCallback(Callback):
     """
 
     def __init__(
-            self,
-            grad_clip_params: Dict = None,
-            fp16_grad_scale: float = 128.0,
-            accumulation_steps: int = 1,
-            optimizer_key: str = None,
-            loss_key: str = None):
+        self,
+        grad_clip_params: Dict = None,
+        fp16_grad_scale: float = 128.0,
+        accumulation_steps: int = 1,
+        optimizer_key: str = None,
+        loss_key: str = None
+    ):
         """
         @TODO: docs
         """
         grad_clip_params = grad_clip_params or {}
         self.grad_clip_fn = UtilsFactory.create_grad_clip_fn(
-            **grad_clip_params)
+            **grad_clip_params
+        )
         self.fp16 = False
         self.fp16_grad_scale = fp16_grad_scale
         self.accumulation_steps = accumulation_steps
@@ -427,7 +454,8 @@ class OptimizerCallback(Callback):
     def on_train_start(self, state):
         self.fp16 = isinstance(state.model, Fp16Wrap)
         optimizer = state.get_key(
-            key="optimizer", inner_key=self.optimizer_key)
+            key="optimizer", inner_key=self.optimizer_key
+        )
         lr = optimizer.defaults["lr"]
         momentum = get_optimizer_momentum(optimizer)
         state.set_key(lr, "lr", inner_key=self.optimizer_key)
@@ -435,7 +463,8 @@ class OptimizerCallback(Callback):
 
     def on_epoch_start(self, state):
         optimizer = state.get_key(
-            key="optimizer", inner_key=self.optimizer_key)
+            key="optimizer", inner_key=self.optimizer_key
+        )
         self.optimizer_wd = optimizer.param_groups[0].get("weight_decay", 0.0)
         optimizer.param_groups[0]["weight_decay"] = 0.0
 
@@ -445,8 +474,8 @@ class OptimizerCallback(Callback):
             if optimizer_wd > 0:
                 for param in group["params"]:
                     param.data = param.data.add(
-                        -optimizer_wd * group["lr"],
-                        param.data)
+                        -optimizer_wd * group["lr"], param.data
+                    )
             if grad_clip_fn is not None:
                 grad_clip_fn(group["params"])
         optimizer.step()
@@ -459,68 +488,71 @@ class OptimizerCallback(Callback):
         if not self.fp16:
             model = state.model
             optimizer = state.get_key(
-                key="optimizer",
-                inner_key=self.optimizer_key)
-            loss = state.get_key(
-                key="loss",
-                inner_key=self.loss_key)
+                key="optimizer", inner_key=self.optimizer_key
+            )
+            loss = state.get_key(key="loss", inner_key=self.loss_key)
             loss.backward()
 
             if (self.accumulation_counter + 1) % self.accumulation_steps == 0:
                 self.grad_step(
                     optimizer=optimizer,
                     optimizer_wd=self.optimizer_wd,
-                    grad_clip_fn=self.grad_clip_fn)
+                    grad_clip_fn=self.grad_clip_fn
+                )
                 model.zero_grad()
                 self.accumulation_counter = 0
         else:
             model = state.model
             model.zero_grad()
             optimizer = state.get_key(
-                key="optimizer",
-                inner_key=self.optimizer_key)
-            loss = state.get_key(
-                key="loss",
-                inner_key=self.optimizer_key)
+                key="optimizer", inner_key=self.optimizer_key
+            )
+            loss = state.get_key(key="loss", inner_key=self.optimizer_key)
             scaled_loss = self.fp16_grad_scale * loss.float()
             scaled_loss.backward()
 
             master_params = list(optimizer.param_groups[0]["params"])
-            model_params = list(filter(
-                lambda p: p.requires_grad, model.parameters()))
+            model_params = list(
+                filter(lambda p: p.requires_grad, model.parameters())
+            )
             copy_grads(source=model_params, target=master_params)
             for param in master_params:
                 param.grad.data.mul_(1. / self.fp16_grad_scale)
             self.grad_step(
                 optimizer=optimizer,
                 optimizer_wd=self.optimizer_wd,
-                grad_clip_fn=self.grad_clip_fn)
+                grad_clip_fn=self.grad_clip_fn
+            )
             copy_params(source=master_params, target=model_params)
             torch.cuda.synchronize()
 
     def on_epoch_end(self, state):
         optimizer = state.get_key(
-            key="optimizer", inner_key=self.optimizer_key)
+            key="optimizer", inner_key=self.optimizer_key
+        )
         optimizer.param_groups[0]["weight_decay"] = self.optimizer_wd
 
 
 class SchedulerCallback(Callback):
     def __init__(
-            self,
-            scheduler_key: str = None,
-            mode: str = "epoch",
-            reduce_metric: str = None):
+        self,
+        scheduler_key: str = None,
+        mode: str = "epoch",
+        reduce_metric: str = None
+    ):
         self.scheduler_key = scheduler_key
         self.mode = mode
         self.reduce_metric = reduce_metric
 
     def step(self, state):
         scheduler = state.get_key(
-            key="scheduler", inner_key=self.scheduler_key)
+            key="scheduler", inner_key=self.scheduler_key
+        )
 
         lr, momentum = scheduler_step(
             scheduler=scheduler,
-            valid_metric=state.valid_metrics[self.reduce_metric])
+            valid_metric=state.valid_metrics[self.reduce_metric]
+        )
 
         state.set_key(lr, key="lr", inner_key=self.scheduler_key)
         state.set_key(momentum, key="momentum", inner_key=self.scheduler_key)
@@ -580,7 +612,8 @@ class LRUpdater(Callback):
 
     def on_train_start(self, state):
         optimizer = state.get_key(
-            key="optimizer", inner_key=self.optimizer_key)
+            key="optimizer", inner_key=self.optimizer_key
+        )
         self.init_lr = optimizer.defaults["lr"]
 
     def update_optimizer(self, state):
@@ -588,7 +621,8 @@ class LRUpdater(Callback):
             return
 
         optimizer = state.get_key(
-            key="optimizer", inner_key=self.optimizer_key)
+            key="optimizer", inner_key=self.optimizer_key
+        )
         lr, momentum = self._update_optimizer(optimizer=optimizer)
         state.set_key(lr, key="lr", inner_key=self.optimizer_key)
         state.set_key(momentum, key="momentum", inner_key=self.optimizer_key)
@@ -608,12 +642,13 @@ class OneCycleLR(LRUpdater):
     """
 
     def __init__(
-            self,
-            cycle_len: int,
-            div: int,
-            cut_div: int,
-            momentum_range: Tuple[float, float],
-            optimizer_key: str = None):
+        self,
+        cycle_len: int,
+        div: int,
+        cut_div: int,
+        momentum_range: Tuple[float, float],
+        optimizer_key: str = None
+    ):
         """
 
         :param init_lr: init learning rate for torch optimizer
@@ -659,8 +694,10 @@ class OneCycleLR(LRUpdater):
             percent = now_ / all_
         else:
             percent = 1 - self.cycle_iter / self.cut_point
-        res = (self.momentum_range[1]
-               + percent * (self.momentum_range[0] - self.momentum_range[1]))
+        res = (
+            self.momentum_range[1] +
+            percent * (self.momentum_range[0] - self.momentum_range[1])
+        )
         return res
 
     def on_loader_start(self, state):
@@ -698,7 +735,7 @@ class LRFinder(LRUpdater):
         self.find_iter = 0
 
     def calc_lr(self):
-        res = self.init_lr * self.multiplier ** self.find_iter
+        res = self.init_lr * self.multiplier**self.find_iter
         self.find_iter += 1
         return res
 
@@ -711,23 +748,20 @@ class LRFinder(LRUpdater):
         if state.is_train:
             lr_ = self.final_lr / self.init_lr
             self.n_steps = self.n_steps or len(state.loader)
-            self.multiplier = lr_ ** (1 / self.n_steps)
+            self.multiplier = lr_**(1 / self.n_steps)
 
         super().on_loader_start(state=state)
 
 
 class ClassificationLossCallback(Callback):
-    def __init__(
-            self,
-            input_key: str = "targets",
-            output_key: str = "logits"):
+    def __init__(self, input_key: str = "targets", output_key: str = "logits"):
         self.input_key = input_key
         self.output_key = output_key
 
     def on_batch_end(self, state):
         state.loss = state.criterion(
-            state.output[self.output_key],
-            state.input[self.input_key])
+            state.output[self.output_key], state.input[self.input_key]
+        )
 
 
 class InferCallback(Callback):
@@ -753,21 +787,22 @@ class InferCallback(Callback):
             for key, value in self.predictions.items():
                 np.save(
                     self.out_prefix.format(
-                        suffix=".".join([state.loader_mode, key])), value)
+                        suffix=".".join([state.loader_mode, key])
+                    ), value
+                )
 
 
 class MixupCallback(Callback):
     def __init__(
-            self,
-            mixup_keys: List[str],
-            alpha: float,
-            share_lambda: bool = True):
+        self, mixup_keys: List[str], alpha: float, share_lambda: bool = True
+    ):
         self.mixup_keys = mixup_keys
         self.alpha = alpha
         self.share_lambda = share_lambda
 
     def on_batch_start(self, state):
         lambda_ = compute_mixup_lambda(
-            state.batch_size, self.alpha, self.share_lambda)
+            state.batch_size, self.alpha, self.share_lambda
+        )
         for key in self.mixup_keys:
             state.input[key] = mixup_torch(state.input[key], lambda_=lambda_)

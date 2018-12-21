@@ -9,7 +9,8 @@ class BCEDiceLoss(nn.Module):
         self.dice_loss = DiceLoss(activation=activation)
 
     def forward(self, outputs, targets):
-        return self.bce_loss(outputs, targets) + self.dice_loss(outputs, targets)
+        return self.bce_loss(outputs,
+                             targets) + self.dice_loss(outputs, targets)
 
 
 class DiceLoss(nn.Module):
@@ -19,6 +20,8 @@ class DiceLoss(nn.Module):
         self.eps = eps
 
     def forward(self, outputs, targets):
-        dice = metrics.dice(outputs, targets, eps=self.eps, activation=self.activation)
+        dice = metrics.dice(
+            outputs, targets, eps=self.eps, activation=self.activation
+        )
 
         return 1 - dice
