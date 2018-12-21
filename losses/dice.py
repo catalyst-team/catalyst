@@ -1,35 +1,24 @@
-import torch
 import torch.nn as nn
+from catalyst.utils import metrics
 
 
 class BCEDiceLoss(nn.Module):
-    def __init__(self, batch=True, activation='sigmoid'):
+    def __init__(self, activation='sigmoid'):
         super(BCEDiceLoss, self).__init__()
-        self.batch = batch
         self.bce_loss = nn.BCEWithLogitsLoss()
-        self.dice_loss = DiceLoss(activation)
+        self.dice_loss = DiceLoss(activation=activation)
 
     def forward(self, outputs, targets):
-        a = self.bce_loss(outputs, targets)
-        b = self.dice_loss(outputs, targets)
-        return a + b
+        return self.bce_loss(outputs, targets) + self.dice_loss(outputs, targets)
 
 
 class DiceLoss(nn.Module):
-    def __init__(self, smooth=0, eps=1e-7, activation='sigmoid'):
+    def __init__(self, eps=1e-7, activation='sigmoid'):
         super(DiceLoss, self).__init__()
-        self.smooth = smooth
+        self.activation = activation
         self.eps = eps
-        if activation == 'softmax':
-            self.activation_nn = torch.nn.Softmax2d()
-        elif activation == 'sigmoid':
-            self.activation_nn = torch.nn.Sigmoid()
-        else:
-            raise NotImplementedError(
-                'only sigmoid and softmax are implemented'
-            )
 
     def forward(self, outputs, targets):
-        outputs = self.activation_nn(outputs)
-        return 1 - (2 * torch.sum(outputs * targets) + self.smooth) / \
-            (torch.sum(outputs) + torch.sum(targets) + self.smooth + self.eps)
+        dice = metrics.dice(outputs, targets, eps=self.eps, activation=self.activation)
+
+        return 1 - dice

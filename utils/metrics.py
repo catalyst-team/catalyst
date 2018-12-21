@@ -6,10 +6,10 @@ def precision(outputs, targets, topk=(1,)):
     """
     Computes the precision@k for the specified values of k
     """
-    maxk = max(topk)
+    max_k = max(topk)
     batch_size = targets.size(0)
 
-    _, pred = outputs.topk(maxk, 1, True, True)
+    _, pred = outputs.topk(max_k, 1, True, True)
     pred = pred.t()
     correct = pred.eq(targets.view(1, -1).expand_as(pred))
 
@@ -44,8 +44,8 @@ def average_precision(outputs, targets, k=10):
     score = 0.0
     num_hits = 0.0
 
-    for i, p in enumerate(outputs):
-        if p in targets and p not in outputs[:i]:
+    for i, predict in enumerate(outputs):
+        if predict in targets and predict not in outputs[:i]:
             num_hits += 1.0
             score += num_hits / (i + 1.0)
 
@@ -75,8 +75,8 @@ def mean_average_precision(outputs, targets, topk=(1,)):
     score : double
             The mean average precision at k over the input lists
     """
-    maxk = max(topk)
-    _, pred = outputs.topk(maxk, 1, True, True)
+    max_k = max(topk)
+    _, pred = outputs.topk(max_k, 1, True, True)
 
     targets = targets.data.cpu().numpy().tolist()
     actual_list = []
