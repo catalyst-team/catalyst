@@ -7,17 +7,16 @@ class FocalLoss(nn.Module):
         super().__init__()
         self.gamma = gamma
 
-    def forward(self, input, target):
-        if not (target.size() == input.size()):
-            raise ValueError(
-                "Target size ({}) must be the same as input size ({})".format(
-                    target.size(), input.size()))
+    # TODO refactor
+    def forward(self, outputs, target):
+        if target.size() != outputs.size():
+            raise ValueError(f"Targets and inputs must be same size. Got ({target.size()}) and ({outputs.size()})")
 
-        max_val = (-input).clamp(min=0)
-        loss = input - input * target + max_val + \
-            ((-max_val).exp() + (-input - max_val).exp()).log()
+        max_val = (-outputs).clamp(min=0)
+        loss = outputs - outputs * target + max_val + \
+               ((-max_val).exp() + (-outputs - max_val).exp()).log()
 
-        invprobs = F.logsigmoid(-input * (target * 2.0 - 1.0))
+        invprobs = F.logsigmoid(-outputs * (target * 2.0 - 1.0))
         loss = (invprobs * self.gamma).exp() * loss
 
         return loss.sum(dim=1).mean()
