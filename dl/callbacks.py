@@ -7,9 +7,9 @@ import numpy as np
 import torch
 
 from catalyst.data.functional import compute_mixup_lambda, mixup_torch
-from catalyst.dl.callback import Callback
+from catalyst.dl.callback import Callback, MetricCallback, MultiMetricCallback
 from catalyst.dl.state import RunnerState
-from catalyst.utils.metrics import precision
+from catalyst.utils import metrics
 from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.utils.factory import UtilsFactory
 
@@ -47,7 +47,7 @@ def scheduler_step(scheduler, valid_metric=None):
     return lr, momentum
 
 
-class PrecisionCallback(Callback):
+class PrecisionCallback(MultiMetricCallback):
     """
     Precision metric callback.
     """
@@ -68,20 +68,97 @@ class PrecisionCallback(Callback):
             [1, 3] - accuracy and precision@3
             [1, 3, 5] - precision at 1, 3 and 5
         """
-        self.input_key = input_key
-        self.output_key = output_key
-        self.precision_args = precision_args or [1, 3, 5]
-        self.prefix = prefix
+        super().__init__(
+            prefix=prefix,
+            metric_fn=metrics.precision,
+            list_args=precision_args or [1, 3, 5],
+            input_key=input_key,
+            output_key=output_key
+        )
 
-    def on_batch_end(self, state):
-        prec = precision(
-            state.output[self.output_key],
-            state.input[self.input_key],
-            topk=self.precision_args)
-        for p, metric in zip(self.precision_args, prec):
-            key = f"{self.prefix}{p:02}"
-            metric_ = metric.item()
-            state.batch_metrics[key] = metric_
+
+class MapKCallback(MultiMetricCallback):
+    """
+    mAP@k metric callback.
+    """
+
+    def __init__(
+            self,
+            input_key: str = "targets",
+            output_key: str = "logits",
+            map_args: List[int] = None,
+            prefix="map"):
+        """
+        :param input_key: input key to use for mean average precision at k calculation;
+            specifies our `y_true`.
+        :param output_key: output key to use for mean average precision at k calculation;
+            specifies our `y_pred`.
+        :param map_args: specifies which map@K to log.
+            [1] - map@1
+            [1, 3] - map@1 and map@3
+            [1, 3, 5] - map@1, map@3 and map@5
+        """
+        super().__init__(
+            prefix=prefix,
+            metric_fn=metrics.mean_average_precision,
+            list_args=map_args or [1, 3, 5],
+            input_key=input_key,
+            output_key=output_key
+        )
+
+
+class DiceCallback(MetricCallback):
+    """
+    Dice metric callback.
+    """
+
+    def __init__(
+            self,
+            input_key: str = "targets",
+            output_key: str = "logits",
+            prefix='dice',
+            eps: float = 1e-7,
+            activation: str = 'sigmoid'):
+        """
+        :param input_key: input key to use for dice calculation;
+            specifies our `y_true`.
+        :param output_key: output key to use for dice calculation;
+            specifies our `y_pred`.
+        """
+        super().__init__(
+            prefix=prefix,
+            metric_fn=metrics.dice,
+            input_key=input_key,
+            output_key=output_key,
+            eps=eps,
+            activation=activation
+        )
+
+
+class JaccardCallback(Callback):
+    """
+    Jaccard metric callback.
+    """
+
+    def __init__(
+            self,
+            input_key: str = "targets",
+            output_key: str = "logits",
+            prefix='jaccard',
+            eps: float = 1e-7):
+        """
+        :param input_key: input key to use for iou calculation;
+            specifies our `y_true`.
+        :param output_key: output key to use for iou calculation;
+            specifies our `y_pred`
+        """
+        super().__init__(
+            prefix=prefix,
+            metric_fn=metrics.jaccard,
+            input_key=input_key,
+            output_key=output_key,
+            eps=eps
+        )
 
 
 class Logger(Callback):
@@ -224,7 +301,7 @@ class CheckpointCallback(Callback):
             resume: str = None):
         """
         :param logdir: log directory to use for checkpoint saving
-        :param save_n_best: number of best checkpoiont to keep
+        :param save_n_best: number of best checkpoint to keep
         :param resume: path to checkpoint to load and initialize runner state
         """
         self.logdir = logdir
