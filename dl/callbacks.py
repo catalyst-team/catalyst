@@ -7,7 +7,7 @@ import numpy as np
 import torch
 
 from catalyst.data.functional import compute_mixup_lambda, mixup_torch
-from catalyst.dl.callback import Callback, MetricCallback
+from catalyst.dl.callback import Callback, MetricCallback, MultiMetricCallback
 from catalyst.dl.state import RunnerState
 from catalyst.utils import metrics
 from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
@@ -47,7 +47,7 @@ def scheduler_step(scheduler, valid_metric=None):
     return lr, momentum
 
 
-class PrecisionCallback(Callback):
+class PrecisionCallback(MultiMetricCallback):
     """
     Precision metric callback.
     """
@@ -68,55 +68,43 @@ class PrecisionCallback(Callback):
             [1, 3] - accuracy and precision@3
             [1, 3, 5] - precision at 1, 3 and 5
         """
-        self.input_key = input_key
-        self.output_key = output_key
-        self.precision_args = precision_args or [1, 3, 5]
-        self.prefix = prefix
-
-    def on_batch_end(self, state):
-        prec = metrics.precision(
-            state.output[self.output_key],
-            state.input[self.input_key],
-            topk=self.precision_args)
-        for p, metric in zip(self.precision_args, prec):
-            key = f"{self.prefix}{p:02}"
-            metric_ = metric.item()
-            state.batch_metrics[key] = metric_
+        super().__init__(
+            prefix=prefix,
+            metric_fn=metrics.precision,
+            list_args=precision_args or [1, 3, 5],
+            input_key=input_key,
+            output_key=output_key
+        )
 
 
-class MapKCallback(Callback):
+class MapKCallback(MultiMetricCallback):
     """
     mAP@k metric callback.
     """
 
-    def __init__(self,
-                 input_key: str = "targets",
-                 output_key: str = "logits",
-                 map_args: List[int] = None):
+    def __init__(
+            self,
+            input_key: str = "targets",
+            output_key: str = "logits",
+            map_args: List[int] = None,
+            prefix="map"):
         """
-        :param input_key: input key to use for precision calculation;
+        :param input_key: input key to use for mean average precision at k calculation;
             specifies our `y_true`.
-        :param output_key: output key to use for precision calculation;
+        :param output_key: output key to use for mean average precision at k calculation;
             specifies our `y_pred`.
         :param map_args: specifies which map@K to log.
             [1] - map@1
             [1, 3] - map@1 and map@3
             [1, 3, 5] - map@1, map@3 and map@5
         """
-        super().__init__()
-        self.input_key = input_key
-        self.output_key = output_key
-        self.map_args = map_args or [1, 3, 5]
-
-    def on_batch_end(self, state):
-        mean_average_precision_ = metrics.mean_average_precision(
-            state.output[self.output_key],
-            state.input[self.input_key],
-            topk=self.map_args)
-        for p, metric in zip(self.map_args, mean_average_precision_):
-            key = "map{:02}".format(p)
-            metric_ = metric.item()
-            state.batch_metrics[key] = metric_
+        super().__init__(
+            prefix=prefix,
+            metric_fn=metrics.mean_average_precision,
+            list_args=map_args or [1, 3, 5],
+            input_key=input_key,
+            output_key=output_key
+        )
 
 
 class DiceCallback(MetricCallback):
@@ -124,11 +112,13 @@ class DiceCallback(MetricCallback):
     Dice metric callback.
     """
 
-    def __init__(self,
-                 input_key: str = "targets",
-                 output_key: str = "logits",
-                 eps: float = 1e-7,
-                 activation: str = 'sigmoid'):
+    def __init__(
+            self,
+            input_key: str = "targets",
+            output_key: str = "logits",
+            prefix='dice',
+            eps: float = 1e-7,
+            activation: str = 'sigmoid'):
         """
         :param input_key: input key to use for dice calculation;
             specifies our `y_true`.
@@ -136,7 +126,7 @@ class DiceCallback(MetricCallback):
             specifies our `y_pred`.
         """
         super().__init__(
-            prefix='dice',
+            prefix=prefix,
             metric_fn=metrics.dice,
             input_key=input_key,
             output_key=output_key,
@@ -150,9 +140,12 @@ class JaccardCallback(Callback):
     Jaccard metric callback.
     """
 
-    def __init__(self,
-                 input_key: str = "targets",
-                 output_key: str = "logits"):
+    def __init__(
+            self,
+            input_key: str = "targets",
+            output_key: str = "logits",
+            prefix='jaccard',
+            eps: float = 1e-7):
         """
         :param input_key: input key to use for iou calculation;
             specifies our `y_true`.
@@ -160,10 +153,11 @@ class JaccardCallback(Callback):
             specifies our `y_pred`
         """
         super().__init__(
-            prefix='jaccard',
+            prefix=prefix,
             metric_fn=metrics.jaccard,
             input_key=input_key,
-            output_key=output_key
+            output_key=output_key,
+            eps=eps
         )
 
 
