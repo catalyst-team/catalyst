@@ -1,168 +1,112 @@
 import os
 import logging
-from typing import Tuple, List, Dict
+from typing import List, Dict
 from collections import defaultdict
 
 import numpy as np
 import torch
 
 from catalyst.data.functional import compute_mixup_lambda, mixup_torch
-from catalyst.dl.callback import Callback, MetricCallback, MultiMetricCallback
+
+from catalyst.dl.callbacks.utils import to_batch_metrics, get_optimizer_momentum, scheduler_step
 from catalyst.dl.state import RunnerState
-from catalyst.utils import metrics
+
 from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.utils.factory import UtilsFactory
 
 
-def to_batch_metrics(*, state, metric_key):
-    metric = state.get_key(metric_key)
-    if isinstance(metric, dict):
-        for key, value in metric.items():
-            state.batch_metrics[f"{metric_key}_{key}"] = \
-                UtilsFactory.get_val_from_metric(value)
-    else:
-        state.batch_metrics[f"{metric_key}"] = \
-            UtilsFactory.get_val_from_metric(metric)
-
-
-def get_optimizer_momentum(optimizer):
-    if isinstance(optimizer, torch.optim.Adam):
-        return list(optimizer.param_groups)[0]["betas"][0]
-    elif isinstance(optimizer, torch.optim.SGD):
-        return list(optimizer.param_groups)[0]["momentum"]
-    else:
-        return None
-
-
-def scheduler_step(scheduler, valid_metric=None):
-    if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
-        scheduler.step(valid_metric)
-        lr = list(scheduler.optimizer.param_groups)[0]["lr"]
-    else:
-        scheduler.step()
-        lr = scheduler.get_lr()[0]
-
-    momentum = get_optimizer_momentum(scheduler.optimizer)
-
-    return lr, momentum
-
-
-class PrecisionCallback(MultiMetricCallback):
+class Callback:
     """
-    Precision metric callback.
+    An abstract class that all callback(e.g., Logger) classes extends from.
+    Must be extended before usage.
+
+    usage example:
+
+    mode start (train/infer/debug)
+        epoch start (one epoch - one run of every loader)
+            loader start
+                batch start
+                batch handler
+                batch end
+            loader end
+        epoch end
+    mode end
     """
 
-    def __init__(
-        self,
-        input_key: str = "targets",
-        output_key: str = "logits",
-        precision_args: List[int] = None,
-        prefix="precision"
-    ):
-        """
-        :param input_key: input key to use for precision calculation;
-            specifies our `y_true`.
-        :param output_key: output key to use for precision calculation;
-            specifies our `y_pred`.
-        :param precision_args: specifies which precision@K to log.
-            [1] - accuracy
-            [1, 3] - accuracy and precision@3
-            [1, 3, 5] - precision at 1, 3 and 5
-        """
-        super().__init__(
-            prefix=prefix,
-            metric_fn=metrics.precision,
-            list_args=precision_args or [1, 3, 5],
-            input_key=input_key,
-            output_key=output_key
-        )
+    def on_train_start(self, state):
+        pass
+
+    def on_train_end(self, state):
+        pass
+
+    def on_infer_start(self, state):
+        pass
+
+    def on_infer_end(self, state):
+        pass
+
+    def on_epoch_start(self, state):
+        pass
+
+    def on_epoch_end(self, state):
+        pass
+
+    def on_loader_start(self, state):
+        pass
+
+    def on_loader_end(self, state):
+        pass
+
+    def on_batch_start(self, state):
+        pass
+
+    def on_batch_end(self, state):
+        pass
 
 
-class MapKCallback(MultiMetricCallback):
-    """
-    mAP@k metric callback.
-    """
+class CallbackCompose:
+    def __init__(self, callbacks: Dict[str, Callback]):
+        self.callbacks = callbacks
 
-    def __init__(
-        self,
-        input_key: str = "targets",
-        output_key: str = "logits",
-        map_args: List[int] = None,
-        prefix="map"
-    ):
-        """
-        :param input_key: input key to use for mean average precision at k calculation;
-            specifies our `y_true`.
-        :param output_key: output key to use for mean average precision at k calculation;
-            specifies our `y_pred`.
-        :param map_args: specifies which map@K to log.
-            [1] - map@1
-            [1, 3] - map@1 and map@3
-            [1, 3, 5] - map@1, map@3 and map@5
-        """
-        super().__init__(
-            prefix=prefix,
-            metric_fn=metrics.mean_average_precision,
-            list_args=map_args or [1, 3, 5],
-            input_key=input_key,
-            output_key=output_key
-        )
+    def on_train_start(self, state):
+        for key, value in self.callbacks.items():
+            value.on_train_start(state=state)
 
+    def on_train_end(self, state):
+        for key, value in self.callbacks.items():
+            value.on_train_end(state=state)
 
-class DiceCallback(MetricCallback):
-    """
-    Dice metric callback.
-    """
+    def on_infer_start(self, state):
+        for key, value in self.callbacks.items():
+            value.on_infer_start(state=state)
 
-    def __init__(
-        self,
-        input_key: str = "targets",
-        output_key: str = "logits",
-        prefix='dice',
-        eps: float = 1e-7,
-        activation: str = 'sigmoid'
-    ):
-        """
-        :param input_key: input key to use for dice calculation;
-            specifies our `y_true`.
-        :param output_key: output key to use for dice calculation;
-            specifies our `y_pred`.
-        """
-        super().__init__(
-            prefix=prefix,
-            metric_fn=metrics.dice,
-            input_key=input_key,
-            output_key=output_key,
-            eps=eps,
-            activation=activation
-        )
+    def on_infer_end(self, state):
+        for key, value in self.callbacks.items():
+            value.on_infer_end(state=state)
 
+    def on_epoch_start(self, state):
+        for key, value in self.callbacks.items():
+            value.on_epoch_start(state=state)
 
-class JaccardCallback(MetricCallback):
-    """
-    Jaccard metric callback.
-    """
+    def on_epoch_end(self, state):
+        for key, value in self.callbacks.items():
+            value.on_epoch_end(state=state)
 
-    def __init__(
-        self,
-        input_key: str = "targets",
-        output_key: str = "logits",
-        prefix='jaccard',
-        eps: float = 1e-7
-    ):
-        """
-        :param input_key: input key to use for iou calculation;
-            specifies our `y_true`.
-        :param output_key: output key to use for iou calculation;
-            specifies our `y_pred`
-        """
-        super().__init__(
-            prefix=prefix,
-            metric_fn=metrics.jaccard,
-            input_key=input_key,
-            output_key=output_key,
-            eps=eps
-        )
+    def on_loader_start(self, state):
+        for key, value in self.callbacks.items():
+            value.on_loader_start(state=state)
+
+    def on_loader_end(self, state):
+        for key, value in self.callbacks.items():
+            value.on_loader_end(state=state)
+
+    def on_batch_start(self, state):
+        for key, value in self.callbacks.items():
+            value.on_batch_start(state=state)
+
+    def on_batch_end(self, state):
+        for key, value in self.callbacks.items():
+            value.on_batch_end(state=state)
 
 
 class Logger(Callback):
@@ -564,193 +508,6 @@ class SchedulerCallback(Callback):
     def on_epoch_end(self, state):
         if self.mode == "epoch":
             self.step(state=state)
-
-
-class LRUpdater(Callback):
-    """Basic class that all Lr updaters inherit from"""
-
-    def __init__(self, optimizer_key: str = None):
-        """
-        :param optimizer_key: which optimizer key to use
-            for learning rate scheduling
-        """
-        self.init_lr = 0
-        self.optimizer_key = optimizer_key
-
-    def calc_lr(self):
-        return None
-
-    def calc_momentum(self):
-        return None
-
-    @staticmethod
-    def _update_lr(optimizer, new_lr):
-        for pg in optimizer.param_groups:
-            pg["lr"] = new_lr
-
-    @staticmethod
-    def _update_momentum(optimizer, new_momentum):
-        if "betas" in optimizer.param_groups[0]:
-            for pg in optimizer.param_groups:
-                pg["betas"] = (new_momentum, pg["betas"][1])
-        else:
-            for pg in optimizer.param_groups:
-                pg["momentum"] = new_momentum
-
-    def _update_optimizer(self, optimizer):
-        new_lr = self.calc_lr()
-        if new_lr is not None:
-            self._update_lr(optimizer, new_lr)
-
-        new_momentum = self.calc_momentum()
-        if new_momentum is not None:
-            self._update_momentum(optimizer, new_momentum)
-        else:
-            new_momentum = get_optimizer_momentum(optimizer)
-
-        return new_lr, new_momentum
-
-    def on_train_start(self, state):
-        optimizer = state.get_key(
-            key="optimizer", inner_key=self.optimizer_key
-        )
-        self.init_lr = optimizer.defaults["lr"]
-
-    def update_optimizer(self, state):
-        if not state.is_train:
-            return
-
-        optimizer = state.get_key(
-            key="optimizer", inner_key=self.optimizer_key
-        )
-        lr, momentum = self._update_optimizer(optimizer=optimizer)
-        state.set_key(lr, key="lr", inner_key=self.optimizer_key)
-        state.set_key(momentum, key="momentum", inner_key=self.optimizer_key)
-
-    def on_loader_start(self, state):
-        self.update_optimizer(state=state)
-
-    def on_batch_end(self, state):
-        self.update_optimizer(state=state)
-
-
-class OneCycleLR(LRUpdater):
-    """
-    An learning rate updater
-        that implements the Circular Learning Rate (CLR) scheme.
-    Learning rate is increased then decreased linearly.
-    """
-
-    def __init__(
-        self,
-        cycle_len: int,
-        div: int,
-        cut_div: int,
-        momentum_range: Tuple[float, float],
-        optimizer_key: str = None
-    ):
-        """
-
-        :param init_lr: init learning rate for torch optimizer
-        :param cycle_len: (int) num epochs to apply one cycle policy
-        :param div: (int) ratio between initial lr and maximum lr
-        :param cut_div: (int) which part of cycle lr will grow
-            (Ex: cut_div=4 -> 1/4 lr grow, 3/4 lr decrease
-        :param momentum_range: (tuple(int, int)) max and min momentum values
-        :param optimizer_key: which optimizer key to use
-            for learning rate scheduling
-        """
-        super().__init__(optimizer_key=optimizer_key)
-        self.total_iter = None
-        self.div = div
-        self.cut_div = cut_div
-        self.cycle_iter = 0
-        self.cycle_count = 0
-        self.cycle_len = cycle_len
-        # point in iterations for starting lr decreasing
-        self.cut_point = None
-        self.momentum_range = momentum_range
-
-    def calc_lr(self):
-        # calculate percent for learning rate change
-        if self.cycle_iter > self.cut_point:
-            percent_curr = (self.cycle_iter - self.cut_point)
-            percent_all = (self.total_iter - self.cut_point)
-            percent = (1 - percent_curr / percent_all)
-        else:
-            percent = self.cycle_iter / self.cut_point
-        res = self.init_lr * (1 + percent * (self.div - 1)) / self.div
-
-        self.cycle_iter += 1
-        if self.cycle_iter == self.total_iter:
-            self.cycle_iter = 0
-            self.cycle_count += 1
-        return res
-
-    def calc_momentum(self):
-        if self.cycle_iter > self.cut_point:
-            now_ = (self.cycle_iter - self.cut_point)
-            all_ = (self.total_iter - self.cut_point)
-            percent = now_ / all_
-        else:
-            percent = 1 - self.cycle_iter / self.cut_point
-        res = (
-            self.momentum_range[1] +
-            percent * (self.momentum_range[0] - self.momentum_range[1])
-        )
-        return res
-
-    def on_loader_start(self, state):
-        if state.is_train:
-            self.total_iter = state.loader_len * self.cycle_len
-            self.cut_point = self.total_iter // self.cut_div
-
-        super().on_loader_start(state=state)
-
-
-class LRFinder(LRUpdater):
-    """
-    Helps you find an optimal learning rate for a model,
-        as per suggetion of 2015 CLR paper.
-    Learning rate is increased in linear or log scale, depending on user input.
-
-    https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html
-    """
-
-    def __init__(self, final_lr, n_steps=None, optimizer_key=None):
-        """
-
-        :param init_lr: initial learning rate to use
-        :param final_lr: final learning rate to try with
-        :param n_steps:  number of batches to try;
-            if None - whole loader would be used.
-        :param optimizer_key: which optimizer key to use
-            for learning rate scheduling
-        """
-        super().__init__(optimizer_key=optimizer_key)
-
-        self.final_lr = final_lr
-        self.n_steps = n_steps
-        self.multiplier = 0
-        self.find_iter = 0
-
-    def calc_lr(self):
-        res = self.init_lr * self.multiplier**self.find_iter
-        self.find_iter += 1
-        return res
-
-    def on_batch_end(self, state):
-        super().on_batch_end(state=state)
-        if self.find_iter > self.n_steps:
-            raise NotImplementedError("End of LRFinder")
-
-    def on_loader_start(self, state):
-        if state.is_train:
-            lr_ = self.final_lr / self.init_lr
-            self.n_steps = self.n_steps or len(state.loader)
-            self.multiplier = lr_**(1 / self.n_steps)
-
-        super().on_loader_start(state=state)
 
 
 class ClassificationLossCallback(Callback):

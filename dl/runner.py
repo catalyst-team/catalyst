@@ -9,13 +9,13 @@ import torch.utils.data as data
 
 from catalyst.utils.factory import UtilsFactory
 from catalyst.utils.misc import merge_dicts
-from catalyst.dl.callbacks import Callback, CheckpointCallback, InferCallback
+from catalyst.dl.callbacks.core import Callback, CheckpointCallback, InferCallback
 from catalyst.dl.datasource import AbstractDataSource
 from catalyst.dl.state import RunnerState
 
 STAGE_KEYWORDS = [
-    "criterion_params", "optimizer_params", "scheduler_params",
-    "stage_params", "state_params", "data_params", "callbacks_params"
+    "criterion_params", "optimizer_params", "scheduler_params", "stage_params",
+    "state_params", "data_params", "callbacks_params"
 ]
 
 
@@ -133,8 +133,8 @@ class AbstractModelRunner:
                 state.batch_size = loader.batch_size
                 state.loader_len = len(loader)
                 state.step = (
-                        state.step
-                        or state.epoch * len(loader) * state.batch_size)
+                    state.step or state.epoch * len(loader) * state.batch_size
+                )
                 self.model.train(state.is_train)
 
                 self.run_event(callbacks=callbacks, event="on_loader_start")
@@ -142,7 +142,8 @@ class AbstractModelRunner:
                     loader,
                     total=len(loader),
                     desc=f"{epoch} * Epoch ({loader_mode})",
-                    ncols=0) if verbose else loader
+                    ncols=0
+                ) if verbose else loader
 
                 for i, dct in enumerate(loader):
                     dct = self.batch2device(dct=dct, state=state)
@@ -325,15 +326,11 @@ class AbstractModelRunner:
         output = self._batch_handler(dct=dct, model=model)
         return output
 
-    def batch2device(
-            self, *,
-            dct: Dict,
-            state: RunnerState = None):
+    def batch2device(self, *, dct: Dict, state: RunnerState = None):
         if state is not None:
             dct = {
                 key: value.to(self.device)
-                if state.key2device[key] and torch.is_tensor(value)
-                else value
+                if state.key2device[key] and torch.is_tensor(value) else value
                 for key, value in dct.items()
             }
         else:
