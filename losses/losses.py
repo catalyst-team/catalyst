@@ -28,9 +28,9 @@ def register_criterion(
     """Add criterion type or factory method to global
         criterion list to make it available in config
         Can be called or used as decorator
-        :param: criterion_factory - Required criterion factory (method or type)
-        :param: criterion_factories - Some optional factories
-        :returns: single criterion factory or list of them if there were more than one
+        :param: criterion_factory Required criterion factory (method or type)
+        :param: criterion_factories Some optional factories
+        :returns: single criterion factory or list of them
     """
     criterion_factories = [criterion_factory, *criterion_factories]
 

@@ -23,14 +23,14 @@ def precision(outputs, targets, topk=(1, )):
 def average_precision(outputs, targets, k=10):
     """
     Computes the average precision at k.
-    This function computes the average precision at k between two lists of
-    items.
+    This function computes the average precision at k
+        between two lists of items.
     Parameters
     ----------
     outputs : list
-                A list of predicted elements (order does matter)
+        A list of predicted elements (order does matter)
     targets : list
-             A list of elements that are to be predicted (order doesn't matter)
+        A list of elements that are to be predicted (order doesn't matter)
     k : int, optional
         The maximum number of predicted elements
     Returns
@@ -59,7 +59,7 @@ def mean_average_precision(outputs, targets, topk=(1, )):
     """
     Computes the mean average precision at k.
     This function computes the mean average precision at k between two lists
-    of lists of items.
+        of lists of items.
     Parameters
     ----------
     outputs : list
@@ -96,19 +96,18 @@ def mean_average_precision(outputs, targets, topk=(1, )):
 
 def dice(outputs, targets, eps: float = 1e-7, activation: str = "sigmoid"):
     """
-    Computes the average precision at k.
-    This function computes the average precision at k between two lists of
-    items.
+    Computes the dice metric
     Parameters
     ----------
     outputs : list
-                A list of predicted elements (order does matter)
+        A list of predicted elements (order does matter)
     targets : list
-             A list of elements that are to be predicted (order doesn't matter)
+        A list of elements that are to be predicted (order doesn't matter)
     eps : float
-        TODO
+        epsilon
     activation: str
-        An torch.nn activation applied to the outputs. Must be one of ['none', 'sigmoid', 'softmax2d']
+        An torch.nn activation applied to the outputs.
+        Must be one of ['none', 'sigmoid', 'softmax2d']
     Returns
     -------
     score : double
@@ -134,9 +133,7 @@ def dice(outputs, targets, eps: float = 1e-7, activation: str = "sigmoid"):
 
 def jaccard(outputs, targets, eps: float = 1e-7):
     """
-    Computes the average precision at k.
-    This function computes the average precision at k between two lists of
-    items.
+    Computes the jaccard metric.
     Parameters
     ----------
     outputs : list
