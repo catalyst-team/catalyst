@@ -28,9 +28,9 @@ def average_precision(outputs, targets, k=10):
     Parameters
     ----------
     outputs : list
-        A list of predicted elements (order does matter)
+        A list of predicted elements
     targets : list
-        A list of elements that are to be predicted (order doesn't matter)
+        A list of elements that are to be predicted
     k : int, optional
         The maximum number of predicted elements
     Returns
@@ -64,10 +64,8 @@ def mean_average_precision(outputs, targets, topk=(1, )):
     ----------
     outputs : list
                 A list of lists of predicted elements
-                (order matters in the lists)
     targets : list
              A list of lists of elements that are to be predicted
-             (order doesn't matter in the lists)
     topk : int, optional
         The maximum number of predicted elements
     Returns
@@ -100,9 +98,9 @@ def dice(outputs, targets, eps: float = 1e-7, activation: str = "sigmoid"):
     Parameters
     ----------
     outputs : list
-        A list of predicted elements (order does matter)
+        A list of predicted elements
     targets : list
-        A list of elements that are to be predicted (order doesn't matter)
+        A list of elements that are to be predicted
     eps : float
         epsilon
     activation: str
@@ -124,6 +122,7 @@ def dice(outputs, targets, eps: float = 1e-7, activation: str = "sigmoid"):
             "Dice is only implemented for sigmoid and softmax2d"
         )
 
+    targets = (targets == 1).float()
     outputs = activation_fn(outputs)
     intersection = torch.sum(targets * outputs)
     sum_ = torch.sum(targets) + torch.sum(outputs) + eps
@@ -137,9 +136,9 @@ def jaccard(outputs, targets, eps: float = 1e-7):
     Parameters
     ----------
     outputs : list
-                A list of predicted elements (order does matter)
+                A list of predicted elements
     targets : list
-             A list of elements that are to be predicted (order doesn't matter)
+             A list of elements that are to be predicted
     eps : float
     Returns
     -------
