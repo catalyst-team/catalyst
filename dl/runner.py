@@ -9,7 +9,7 @@ import torch.utils.data as data
 
 from catalyst.utils.factory import UtilsFactory
 from catalyst.utils.misc import merge_dicts
-from catalyst.dl.callbacks.core import Callback, CheckpointCallback, InferCallback
+from catalyst.dl.callbacks import Callback, CheckpointCallback, InferCallback
 from catalyst.dl.datasource import AbstractDataSource
 from catalyst.dl.state import RunnerState
 

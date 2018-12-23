@@ -1,7 +1,7 @@
 from typing import Callable, List
 
-from catalyst.dl.callbacks.core import Callback
-from catalyst.utils import metrics
+from catalyst.dl.callbacks import Callback
+from catalyst.dl import metrics
 from catalyst.utils.factory import UtilsFactory
 
 
@@ -29,8 +29,7 @@ class MetricCallback(Callback):
         targets = state.input[self.input_key]
 
         metric = self.metric_fn(targets, outputs, **self.metric_params)
-        state.batch_metrics[self.prefix
-                            ] = UtilsFactory.get_val_from_metric(metric)
+        state.batch_metrics[self.prefix] = UtilsFactory.get_val_from_metric(metric)
 
 
 class MultiMetricCallback(Callback):
@@ -76,9 +75,9 @@ class DiceCallback(MetricCallback):
         self,
         input_key: str = "targets",
         output_key: str = "logits",
-        prefix='dice',
+        prefix="dice",
         eps: float = 1e-7,
-        activation: str = 'sigmoid'
+        activation: str = "sigmoid"
     ):
         """
         :param input_key: input key to use for dice calculation;
@@ -105,7 +104,7 @@ class JaccardCallback(MetricCallback):
         self,
         input_key: str = "targets",
         output_key: str = "logits",
-        prefix='jaccard',
+        prefix="jaccard",
         eps: float = 1e-7
     ):
         """

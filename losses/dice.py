@@ -1,9 +1,9 @@
 import torch.nn as nn
-from catalyst.utils import metrics
+from catalyst.dl import metrics
 
 
 class BCEDiceLoss(nn.Module):
-    def __init__(self, activation='sigmoid'):
+    def __init__(self, activation="sigmoid"):
         super(BCEDiceLoss, self).__init__()
         self.bce_loss = nn.BCEWithLogitsLoss()
         self.dice_loss = DiceLoss(activation=activation)
@@ -14,7 +14,7 @@ class BCEDiceLoss(nn.Module):
 
 
 class DiceLoss(nn.Module):
-    def __init__(self, eps=1e-7, activation='sigmoid'):
+    def __init__(self, eps=1e-7, activation="sigmoid"):
         super(DiceLoss, self).__init__()
         self.activation = activation
         self.eps = eps
