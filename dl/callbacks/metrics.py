@@ -29,7 +29,8 @@ class MetricCallback(Callback):
         targets = state.input[self.input_key]
 
         metric = self.metric_fn(targets, outputs, **self.metric_params)
-        state.batch_metrics[self.prefix] = UtilsFactory.get_val_from_metric(metric)
+        state.batch_metrics[self.prefix] = \
+            UtilsFactory.get_val_from_metric(metric)
 
 
 class MultiMetricCallback(Callback):
@@ -63,7 +64,8 @@ class MultiMetricCallback(Callback):
 
         for arg, metric in zip(self.list_args, metrics_):
             key = f"{self.prefix}_{arg}"
-            state.batch_metrics[key] = UtilsFactory.get_val_from_metric(metric)
+            state.batch_metrics[key] = \
+                UtilsFactory.get_val_from_metric(metric)
 
 
 class DiceCallback(MetricCallback):
@@ -166,9 +168,11 @@ class MapKCallback(MultiMetricCallback):
         prefix="map"
     ):
         """
-        :param input_key: input key to use for mean average precision at k calculation;
+        :param input_key: input key to use for
+            calculation mean average precision at k;
             specifies our `y_true`.
-        :param output_key: output key to use for mean average precision at k calculation;
+        :param output_key: output key to use for
+            calculation mean average precision at k;
             specifies our `y_pred`.
         :param map_args: specifies which map@K to log.
             [1] - map@1

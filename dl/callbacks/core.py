@@ -8,7 +8,8 @@ import torch
 
 from catalyst.data.functional import compute_mixup_lambda, mixup_torch
 
-from catalyst.dl.callbacks.utils import to_batch_metrics, get_optimizer_momentum, scheduler_step
+from catalyst.dl.callbacks.utils import to_batch_metrics, \
+    get_optimizer_momentum, scheduler_step
 from catalyst.dl.state import RunnerState
 
 from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
