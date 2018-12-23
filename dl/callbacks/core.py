@@ -208,11 +208,8 @@ class TensorboardLogger(Callback):
             )
 
     def _log_metrics(
-            self,
-            metrics: Dict[str, float],
-            step: int,
-            mode: str,
-            suffix=""):
+        self, metrics: Dict[str, float], step: int, mode: str, suffix=""
+    ):
         if self.metrics_to_log is None:
             self.metrics_to_log = list(metrics.keys())
 
