@@ -122,7 +122,6 @@ def dice(outputs, targets, eps: float = 1e-7, activation: str = "sigmoid"):
             "Dice is only implemented for sigmoid and softmax2d"
         )
 
-    targets = (targets == 1).float()
     outputs = activation_fn(outputs)
     intersection = torch.sum(targets * outputs)
     sum_ = torch.sum(targets) + torch.sum(outputs) + eps
