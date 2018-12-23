@@ -22,8 +22,8 @@ LOSSES = {
 
 
 def register_criterion(
-        criterion_factory: Union[Type, Callable],
-        *criterion_factories: Union[Type, Callable]
+    criterion_factory: Union[Type, Callable],
+    *criterion_factories: Union[Type, Callable]
 ) -> Union[Union[Type, Callable], List[Union[Type, Callable]]]:
     """Add criterion type or factory method to global
         criterion list to make it available in config
