@@ -94,7 +94,7 @@ def mean_average_precision(outputs, targets, topk=(1, )):
     return res
 
 
-def dice(outputs, targets, eps: float = 1e-7, activation: str = 'sigmoid'):
+def dice(outputs, targets, eps: float = 1e-7, activation: str = "sigmoid"):
     """
     Computes the average precision at k.
     This function computes the average precision at k between two lists of
@@ -108,7 +108,7 @@ def dice(outputs, targets, eps: float = 1e-7, activation: str = 'sigmoid'):
     eps : float
         TODO
     activation: str
-        TODO
+        An torch.nn activation applied to the outputs. Must be one of ['none', 'sigmoid', 'softmax2d']
     Returns
     -------
     score : double
@@ -118,11 +118,11 @@ def dice(outputs, targets, eps: float = 1e-7, activation: str = 'sigmoid'):
         activation_fn = lambda x: x
     elif activation == "sigmoid":
         activation_fn = torch.nn.Sigmoid()
-    elif activation == "softmax":
+    elif activation == "softmax2d":
         activation_fn = torch.nn.Softmax2d()
     else:
         raise NotImplementedError(
-            "Dice is only implemented for sigmoid and softmax"
+            "Dice is only implemented for sigmoid and softmax2d"
         )
 
     outputs = activation_fn(outputs)
