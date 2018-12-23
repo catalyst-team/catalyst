@@ -1,1 +1,1 @@
-from .core import *
+from catalyst.dl.callbacks.core import *
