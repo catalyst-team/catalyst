@@ -1,6 +1,6 @@
 import os
 import logging
-from typing import Tuple, List, Dict
+from typing import List, Dict
 from collections import defaultdict
 
 import numpy as np
