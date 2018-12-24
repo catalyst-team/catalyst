@@ -1,14 +1,17 @@
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt  # noqa: E402
-plt.style.use("ggplot")
-import seaborn as sns  # noqa: E402
-sns.set(color_codes=True)
-
 import argparse
 from glob import glob
 import pandas as pd
 from catalyst.utils.factory import UtilsFactory
+
+import matplotlib
+
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt  # noqa: E402
+
+plt.style.use("ggplot")
+import seaborn as sns  # noqa: E402
+
+sns.set(color_codes=True)
 
 
 def plot_report(report, y_key, filename):
@@ -63,7 +66,7 @@ def main(args):
         try:
             row = report_by_dir(folder=folder)
             report.append(row)
-        except:
+        except Exception:
             continue
 
     report = pd.DataFrame(report)
