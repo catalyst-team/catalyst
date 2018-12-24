@@ -1,4 +1,3 @@
-import sys
 import copy
 import random
 import collections

@@ -37,7 +37,7 @@ class SequentialNet(nn.Module):
         block_parts = block_parts or ["layer", "norm", "drop", "activation"]
 
         if isinstance(dropout, float):
-            dropout = lambda : nn.Dropout(dropout)
+            dropout = lambda: nn.Dropout(dropout)
 
         def _layer_fn(f_in, f_out, bias):
             return layer_fn(f_in, f_out, bias=bias)
