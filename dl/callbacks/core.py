@@ -1,10 +1,12 @@
 import os
 import logging
-from typing import List, Dict
+from typing import Tuple, List, Dict
 from collections import defaultdict
 
 import numpy as np
 import torch
+import torch.nn.functional as F
+import cv2
 
 from catalyst.data.functional import compute_mixup_lambda, mixup_torch
 
@@ -14,6 +16,9 @@ from catalyst.dl.state import RunnerState
 
 from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.utils.factory import UtilsFactory
+
+cv2.setNumThreads(1)
+cv2.ocl.setUseOpenCL(False)
 
 
 class Callback:
@@ -548,6 +553,69 @@ class InferCallback(Callback):
                         suffix=".".join([state.loader_mode, key])
                     ), value
                 )
+
+
+class InferMaskCallback(Callback):
+    def __init__(
+        self,
+        out_prefix=None,
+        mean=None,
+        std=None,
+        mask_type="soft",
+        threshold=None,
+        input_key=None,
+        output_key=None
+    ):
+        self.out_prefix = out_prefix
+        self.predictions = defaultdict(lambda: [])
+        self.mean = mean or np.array([0.485, 0.456, 0.406])
+        self.std = std or np.array([0.229, 0.224, 0.225])
+        assert mask_type in ["soft", "hard"], mask_type
+        self.mask_type = mask_type
+        self.threshold = threshold
+        assert input_key is not None
+        assert output_key is not None
+        self.input_key = input_key
+        self.output_key = output_key
+        self.counter = 0
+
+    def on_loader_start(self, state):
+        lm = state.loader_mode
+        os.makedirs(f"{self.out_prefix}/{lm}/", exist_ok=True)
+
+    def on_batch_end(self, state):
+        lm = state.loader_mode
+        features = state.input[self.input_key]
+        logits = state.output[self.output_key]
+        logits = torch.unsqueeze_(logits, dim=1) \
+            if len(logits.shape) < 4 \
+            else logits
+
+        if self.mask_type == "soft":
+            probs = F.sigmoid(logits)
+        else:
+            probs = F.softmax(logits, dim=1)
+
+        features = features.detach().cpu().numpy()
+        features = np.transpose(features, (0, 2, 3, 1))
+
+        probs = probs.detach().cpu().numpy()
+        probs = np.transpose(probs, (0, 2, 3, 1))
+
+        for i in range(probs.shape[0]):
+            img = np.uint8(255 * (self.std * features[i] + self.mean))
+            for t in range(probs.shape[-1]):
+                mask = probs[i, :, :, t] > self.threshold \
+                    if self.threshold is not None \
+                    else probs[i, :, :, t]
+                mask = np.float32(np.expand_dims(mask, -1))
+
+                masked_img = img * mask
+
+                # @TODO: better naming
+                filename = f"{self.out_prefix}/{lm}/{self.counter}_{t}.jpg"
+                cv2.imwrite(filename, masked_img)
+            self.counter += 1
 
 
 class MixupCallback(Callback):
