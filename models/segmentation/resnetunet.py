@@ -49,8 +49,9 @@ class ConvRelu(nn.Module):
 
         super().__init__()
 
-        self.block = nn.Conv2d(num_in, num_out, kernel_size=3, padding=1,
-                               bias=False)
+        self.block = nn.Conv2d(
+            num_in, num_out, kernel_size=3, padding=1, bias=False
+        )
 
     def forward(self, x):
         """
@@ -107,11 +108,12 @@ class ResNetUnet(nn.Module):
     """
 
     def __init__(
-            self,
-            num_classes=1,
-            num_filters=32,
-            backbone="resnet50",
-            pretrained=True):
+        self,
+        num_classes=1,
+        num_filters=32,
+        backbone="resnet34",
+        pretrained=True
+    ):
         """Creates an `UNet` instance for semantic segmentation.
 
         Args:
@@ -133,17 +135,21 @@ class ResNetUnet(nn.Module):
         self.center = DecoderBlock(encoder_channels[0], num_filters * 8)
 
         self.dec0 = DecoderBlock(
-            encoder_channels[0] + num_filters * 8,
-            num_filters * 8)
+            num_in=encoder_channels[0] + num_filters * 8,
+            num_out=num_filters * 8
+        )
         self.dec1 = DecoderBlock(
-            encoder_channels[1] + num_filters * 8,
-            num_filters * 8)
+            num_in=encoder_channels[1] + num_filters * 8,
+            num_out=num_filters * 8
+        )
         self.dec2 = DecoderBlock(
-            encoder_channels[2] + num_filters * 8,
-            num_filters * 2)
+            num_in=encoder_channels[2] + num_filters * 8,
+            num_out=num_filters * 2
+        )
         self.dec3 = DecoderBlock(
-            encoder_channels[3] + num_filters * 2,
-            num_filters * 2 * 2)
+            num_in=encoder_channels[3] + num_filters * 2,
+            num_out=num_filters * 2 * 2
+        )
         self.dec4 = DecoderBlock(num_filters * 2 * 2, num_filters)
         self.dec5 = ConvRelu(num_filters, num_filters)
 

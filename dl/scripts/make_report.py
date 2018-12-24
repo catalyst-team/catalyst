@@ -29,7 +29,8 @@ def plot_report(report, y_key, filename):
         title=y_key,
         ylim=(ymin, ymax),
         figsize=(21, 9 + name_len),
-        fontsize=20)
+        fontsize=20
+    )
     plt.tight_layout()
     plt.savefig(filename, format='png', dpi=300)
 
@@ -48,9 +49,8 @@ def parse_args():
     parser.add_argument("--in-logdir", type=str, required=True)
     parser.add_argument("--out-logdir", type=str, required=True)
     parser.add_argument(
-        "--keys",
-        type=str,
-        default="loss,base/sample_per_second,epoch")
+        "--keys", type=str, default="loss,base/sample_per_second,epoch"
+    )
 
     args = parser.parse_args()
     return args
