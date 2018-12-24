@@ -115,7 +115,7 @@ class LinkNet(nn.Module):
                 models.resnet50, pretrained=pretrained
             )
         else:
-            raise ValueError(f"Unexcpected LinkNet backbone: {backbone}")
+            raise ValueError(f"Unexpected LinkNet backbone: {backbone}")
         filters = self.encoder.filters
 
         self.decoder4 = DecoderBlock(filters[3], filters[2])
@@ -136,7 +136,7 @@ class LinkNet(nn.Module):
         return self.final(d1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model = LinkNet(1).to(device)

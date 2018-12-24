@@ -11,19 +11,19 @@ class RunnerState(FrozenClass):
     """
 
     def __init__(
-            self,
-            *,
-            device=None,
-            model=None,
-            criterion=None,
-            optimizer=None,
-            scheduler=None,
-            stage=None,
-            main_metric="loss",
-            minimize_metric=True,
-            valid_loader="valid",
-            reset_step=False,
-            **kwargs
+        self,
+        *,
+        device=None,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
+        stage=None,
+        main_metric="loss",
+        minimize_metric=True,
+        valid_loader="valid",
+        reset_step=False,
+        **kwargs
     ):
         self.model = model
         self.criterion = criterion
@@ -60,7 +60,8 @@ class RunnerState(FrozenClass):
 
         self.batch_metrics = defaultdict(lambda: 0)
         self.epoch_metrics = defaultdict(
-            lambda: defaultdict(lambda: meter.AverageValueMeter()))
+            lambda: defaultdict(lambda: meter.AverageValueMeter())
+        )
         self.valid_metrics = None
         self.best_metrics = None
 
@@ -159,7 +160,8 @@ class RunnerState(FrozenClass):
     @staticmethod
     def on_epoch_end_post(state):
         state.epoch_metrics = defaultdict(
-            lambda: defaultdict(lambda: meter.AverageValueMeter()))
+            lambda: defaultdict(lambda: meter.AverageValueMeter())
+        )
 
     @staticmethod
     def on_loader_start_pre(state):

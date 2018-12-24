@@ -15,8 +15,8 @@ from catalyst.dl.datasource import AbstractDataSource
 from catalyst.dl.state import RunnerState
 
 STAGE_KEYWORDS = [
-    "criterion_params", "optimizer_params", "scheduler_params",
-    "stage_params", "state_params", "data_params", "callbacks_params"
+    "criterion_params", "optimizer_params", "scheduler_params", "stage_params",
+    "state_params", "data_params", "callbacks_params"
 ]
 
 
@@ -27,11 +27,12 @@ class AbstractModelRunner:
     """
 
     def __init__(
-            self,
-            model: nn.Module,
-            criterion: nn.Module = None,
-            optimizer: optim.Optimizer = None,
-            scheduler: optim.lr_scheduler._LRScheduler = None):
+        self,
+        model: nn.Module,
+        criterion: nn.Module = None,
+        optimizer: optim.Optimizer = None,
+        scheduler: optim.lr_scheduler._LRScheduler = None
+    ):
         """
 
         :param model: nn.Module instance, your model
@@ -57,10 +58,8 @@ class AbstractModelRunner:
         self.model, self.device = UtilsFactory.prepare_model(self.model)
 
     def _init_state(
-            self, *,
-            mode: str,
-            stage: str = None,
-            **kwargs) -> RunnerState:
+        self, *, mode: str, stage: str = None, **kwargs
+    ) -> RunnerState:
         """
         Inner method for children's classes for state specific initialization.
         :return: RunnerState with all necessary parameters.
@@ -81,7 +80,8 @@ class AbstractModelRunner:
             optimizer=self.optimizer,
             scheduler=self.scheduler,
             **kwargs,
-            **additional_kwargs)
+            **additional_kwargs
+        )
 
     def run_event(self, *, callbacks: Dict[str, Callback], event: str):
         """
@@ -96,14 +96,16 @@ class AbstractModelRunner:
         getattr(self.state, f"{event}_post")(state=self.state)
 
     def run(
-            self, *,
-            loaders: Dict[str, data.DataLoader],
-            callbacks: Dict[str, Callback],
-            state_params: Dict = None,
-            epochs: int = 1,
-            start_epoch: int = 0,
-            mode: str = "train",
-            verbose: bool = False):
+        self,
+        *,
+        loaders: Dict[str, data.DataLoader],
+        callbacks: Dict[str, Callback],
+        state_params: Dict = None,
+        epochs: int = 1,
+        start_epoch: int = 0,
+        mode: str = "train",
+        verbose: bool = False
+    ):
         """
         Main method for running train/valid/infer/debug pipeline over model.
 
@@ -134,8 +136,8 @@ class AbstractModelRunner:
                 state.batch_size = loader.batch_size
                 state.loader_len = len(loader)
                 state.step = (
-                        state.step
-                        or state.epoch * len(loader) * state.batch_size)
+                    state.step or state.epoch * len(loader) * state.batch_size
+                )
                 self.model.train(state.is_train)
 
                 self.run_event(callbacks=callbacks, event="on_loader_start")
@@ -143,7 +145,8 @@ class AbstractModelRunner:
                     loader,
                     total=len(loader),
                     desc=f"{epoch} * Epoch ({loader_mode})",
-                    ncols=0) if verbose else loader
+                    ncols=0
+                ) if verbose else loader
 
                 for i, dct in enumerate(loader):
                     dct = self.batch2device(dct=dct, state=state)
@@ -152,15 +155,18 @@ class AbstractModelRunner:
                     self.run_event(callbacks=callbacks, event="on_batch_start")
                     with torch.set_grad_enabled(state.is_train):
                         state.output = self.batch_handler(
-                            dct=state.input, model=self.model, state=state)
+                            dct=state.input, model=self.model, state=state
+                        )
                     self.run_event(callbacks=callbacks, event="on_batch_end")
 
                     if verbose:
                         loader.set_postfix(
                             **{
                                 k: "{:.5f}".format(v)
-                                for k, v in sorted(state.batch_metrics.items())
-                            })
+                                for k, v in
+                                sorted(state.batch_metrics.items())
+                            }
+                        )
 
                 self.run_event(callbacks=callbacks, event="on_loader_end")
 
@@ -169,14 +175,16 @@ class AbstractModelRunner:
         self.run_event(callbacks=callbacks, event=f"on_{mode}_end")
 
     def train(
-            self, *,
-            loaders: Dict[str, data.DataLoader],
-            callbacks: Dict[str, Callback],
-            state_params: Dict = None,
-            epochs: int = 1,
-            start_epoch: int = 0,
-            verbose: bool = False,
-            logdir: str = None):
+        self,
+        *,
+        loaders: Dict[str, data.DataLoader],
+        callbacks: Dict[str, Callback],
+        state_params: Dict = None,
+        epochs: int = 1,
+        start_epoch: int = 0,
+        verbose: bool = False,
+        logdir: str = None
+    ):
         """
         One stage training method.
 
@@ -200,12 +208,14 @@ class AbstractModelRunner:
             epochs=epochs,
             start_epoch=start_epoch,
             mode="train",
-            verbose=verbose)
+            verbose=verbose
+        )
 
     @staticmethod
     def prepare_stage_args(*, args, stage_config):
         return UtilsFactory.prepare_stage_args(
-            args=args, stage_config=stage_config)
+            args=args, stage_config=stage_config
+        )
 
     @staticmethod
     def prepare_stage_model(*, model, stage, **kwargs):
@@ -214,22 +224,27 @@ class AbstractModelRunner:
 
     @staticmethod
     def prepare_model_stuff(
-            *, model,
-            criterion_params=None,
-            optimizer_params=None,
-            scheduler_params=None):
+        *,
+        model,
+        criterion_params=None,
+        optimizer_params=None,
+        scheduler_params=None
+    ):
         return UtilsFactory.prepare_model_stuff(
             model=model,
             criterion_params=criterion_params,
             optimizer_params=optimizer_params,
-            scheduler_params=scheduler_params)
+            scheduler_params=scheduler_params
+        )
 
     def train_stages(
-            self, *,
-            datasource: AbstractDataSource,
-            args: Namespace,
-            stages_config: Dict[str, Dict] = None,
-            verbose: bool = False):
+        self,
+        *,
+        datasource: AbstractDataSource,
+        args: Namespace,
+        stages_config: Dict[str, Dict] = None,
+        verbose: bool = False
+    ):
         """
         Main method for training DL models.
 
@@ -251,7 +266,8 @@ class AbstractModelRunner:
 
             for key in STAGE_KEYWORDS:
                 config[key] = merge_dicts(
-                    stages_params[key], config.get(key, {}))
+                    stages_params[key], config.get(key, {})
+                )
 
             reload_loaders = config["data_params"].pop("reload_loaders", True)
 
@@ -261,16 +277,19 @@ class AbstractModelRunner:
                     stage=stage,
                     n_workers=args.workers,
                     batch_size=args.batch_size,
-                    **config.pop("data_params"))
+                    **config.pop("data_params")
+                )
 
             callbacks = self.prepare_callbacks(
                 mode="train",
                 stage=stage,
                 resume=args.resume,
-                **config.pop("callbacks_params"))
+                **config.pop("callbacks_params")
+            )
 
             self.prepare_stage_model(
-                model=self.model, stage=stage, **config.pop("stage_params"))
+                model=self.model, stage=stage, **config.pop("stage_params")
+            )
             self.criterion, self.optimizer, self.scheduler = \
                 self.prepare_model_stuff(
                     model=self.model,
@@ -286,14 +305,17 @@ class AbstractModelRunner:
                 epochs=args.epochs,
                 start_epoch=start_epoch,
                 verbose=verbose,
-                logdir=args.logdir)
+                logdir=args.logdir
+            )
 
     def infer(
-            self, *,
-            loaders: Dict[str, data.DataLoader],
-            callbacks: Dict[str, Callback],
-            epochs: int = 1,
-            verbose: bool = False):
+        self,
+        *,
+        loaders: Dict[str, data.DataLoader],
+        callbacks: Dict[str, Callback],
+        epochs: int = 1,
+        verbose: bool = False
+    ):
         """
         Main method for predicting with DL models.
 
@@ -307,13 +329,12 @@ class AbstractModelRunner:
             callbacks=callbacks,
             epochs=epochs,
             mode="infer",
-            verbose=verbose)
+            verbose=verbose
+        )
 
     def batch_handler(
-            self, *,
-            dct: Dict,
-            model: nn.Module,
-            state: RunnerState = None) -> Dict:
+        self, *, dct: Dict, model: nn.Module, state: RunnerState = None
+    ) -> Dict:
         """
         Batch handler wrapper with main statistics and device management.
 
@@ -326,15 +347,11 @@ class AbstractModelRunner:
         output = self._batch_handler(dct=dct, model=model)
         return output
 
-    def batch2device(
-            self, *,
-            dct: Dict,
-            state: RunnerState = None):
+    def batch2device(self, *, dct: Dict, state: RunnerState = None):
         if state is not None:
             dct = {
                 key: value.to(self.device)
-                if state.key2device[key] and torch.is_tensor(value)
-                else value
+                if state.key2device[key] and torch.is_tensor(value) else value
                 for key, value in dct.items()
             }
         else:
@@ -354,12 +371,13 @@ class AbstractModelRunner:
 
     @staticmethod
     def prepare_callbacks(
-            *,
-            mode: str,
-            stage: str = None,
-            resume: str = None,
-            out_prefix: str = None,
-            **kwargs) -> Dict[str, Callback]:
+        *,
+        mode: str,
+        stage: str = None,
+        resume: str = None,
+        out_prefix: str = None,
+        **kwargs
+    ) -> Dict[str, Callback]:
         """
         Runner callbacks method to handle different runs logic.
 
@@ -386,11 +404,7 @@ class AbstractModelRunner:
 
 
 class ClassificationRunner(AbstractModelRunner):
-
-    def batch2device(
-            self, *,
-            dct: Dict,
-            state: RunnerState = None):
+    def batch2device(self, *, dct: Dict, state: RunnerState = None):
         if isinstance(dct, (tuple, list)):
             assert len(dct) == 2
             dct = {"features": dct[0], "targets": dct[1]}
@@ -398,10 +412,8 @@ class ClassificationRunner(AbstractModelRunner):
         return dct
 
     def batch_handler(
-            self, *,
-            dct: Dict,
-            model: nn.Module,
-            state: RunnerState = None) -> Dict:
+        self, *, dct: Dict, model: nn.Module, state: RunnerState = None
+    ) -> Dict:
         """
         Batch handler wrapper with main statistics and device management.
 
