@@ -98,7 +98,7 @@ class FinalBlock(nn.Module):
 
 
 class LinkNet(nn.Module):
-    def __init__(self, num_classes=1, backbone="resnet50", pretrained=True):
+    def __init__(self, num_classes=1, backbone="resnet34", pretrained=True):
         super().__init__()
 
         backbone = str(backbone)
