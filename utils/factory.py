@@ -8,11 +8,10 @@ import torch.nn as nn
 import torch.backends.cudnn as cudnn
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
-from catalyst.optimizers.optimizers import OPTIMIZERS
+from catalyst.legacy.optimizers import OPTIMIZERS
 from catalyst.losses.losses import LOSSES
 from catalyst.data.dataset import ListDataset
 from catalyst.utils.fp16 import Fp16Wrap, network_to_half
-from catalyst.utils.misc import create_if_need
 
 
 class UtilsFactory:
@@ -50,9 +49,7 @@ class UtilsFactory:
 
     @staticmethod
     def create_loggers(logdir, loaders):
-        create_if_need(logdir)
-        # logfile = open("{logdir}/stdout.txt".format(logdir=logdir), "a")
-        # sys.stdout = stream_tee(sys.stdout, logfile)
+        os.makedirs(logdir, exist_ok=True)
 
         loggers = []
         for key in loaders:

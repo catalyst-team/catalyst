@@ -52,7 +52,6 @@ class ScalarReader(object):
         :param dict_key: output key to use to store the result
         :param dtype: datatype of scalar values to use
         :param default_value: default value to use if something goes wrong
-            @TODO: should be exception instead?
         """
         self.row_key = row_key
         self.dict_key = dict_key
@@ -108,7 +107,6 @@ class ReaderCompose(object):
         """
         :param readers: list of reader to compose
         :param mixins: list of mixins to use
-            @TODO: more docs about mixins
         """
         self.readers = readers
         self.mixins = mixins or []

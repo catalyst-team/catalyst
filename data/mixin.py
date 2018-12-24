@@ -1,7 +1,7 @@
 import cv2
 
 
-class ImageHistogramMixin(object):
+class ImageHistogramMixin:
     def __init__(self, dict_img_key, dict_histogram_key):
         self.dict_img_key = dict_img_key
         self.dict_histogram_key = dict_histogram_key

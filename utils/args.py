@@ -1,9 +1,10 @@
+import os
 import json
 import yaml
 import copy
 from collections import OrderedDict
 
-from catalyst.utils.misc import create_if_need, merge_dicts
+from catalyst.utils.misc import merge_dicts
 
 
 def parse_args_config(args, unknown_args, config):
@@ -38,7 +39,8 @@ def parse_args_config(args, unknown_args, config):
 
 def load_ordered_yaml(
         stream,
-        Loader=yaml.Loader, object_pairs_hook=OrderedDict):
+        Loader=yaml.Loader,
+        object_pairs_hook=OrderedDict):
 
     class OrderedLoader(Loader):
         pass
@@ -85,6 +87,6 @@ def parse_args_uargs(args, unknown_args, dump_config=False):
 
 
 def save_config(config, logdir):
-    create_if_need(logdir)
+    os.makedirs(logdir, exist_ok=True)
     with open("{}/config.json".format(logdir), "w") as fout:
         json.dump(config, fout, indent=2)

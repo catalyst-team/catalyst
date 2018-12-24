@@ -1,16 +1,6 @@
 import torch
 import torch.nn as nn
-
-
-class AdaptiveConcatPool2d(nn.Module):
-    def __init__(self, sz=None):
-        super().__init__()
-        sz = sz or (1, 1)
-        self.ap = nn.AdaptiveAvgPool2d(sz)
-        self.mp = nn.AdaptiveMaxPool2d(sz)
-
-    def forward(self, x):
-        return torch.cat([self.mp(x), self.ap(x)], 1)
+import torch.nn.functional as F
 
 
 class GlobalAvgPool2d(nn.Module):
@@ -19,9 +9,13 @@ class GlobalAvgPool2d(nn.Module):
 
     def forward(self, x):
         h, w = x.shape[2:]
-        return nn.functional.avg_pool2d(
+        return F.avg_pool2d(
             input=x,
             kernel_size=(h, w))
+
+    @staticmethod
+    def out_features(in_features):
+        return in_features
 
 
 class GlobalMaxPool2d(nn.Module):
@@ -30,9 +24,13 @@ class GlobalMaxPool2d(nn.Module):
 
     def forward(self, x):
         h, w = x.shape[2:]
-        return nn.functional.max_pool2d(
+        return F.max_pool2d(
             input=x,
             kernel_size=(h, w))
+
+    @staticmethod
+    def out_features(in_features):
+        return in_features
 
 
 class GlobalConcatPool2d(nn.Module):
@@ -44,9 +42,13 @@ class GlobalConcatPool2d(nn.Module):
     def forward(self, x):
         return torch.cat([self.avg(x), self.max(x)], 1)
 
+    @staticmethod
+    def out_features(in_features):
+        return in_features * 2
+
 
 class GlobalAttnPool2d(nn.Module):
-    def __init__(self, in_features, activation_fn="Softmax2d"):
+    def __init__(self, in_features, activation_fn="Tanh"):
         super().__init__()
         # hack to prevent cycle imports
         from catalyst.modules.modules import name2nn
@@ -62,13 +64,16 @@ class GlobalAttnPool2d(nn.Module):
         h, w = x.shape[2:]
         x_a = self.attn(x)
         x = x * x_a
-        return nn.functional.avg_pool2d(
-            input=x,
-            kernel_size=(h, w))
+        x = torch.sum(x, dim=[-2, -1])
+        return x
+
+    @staticmethod
+    def out_features(in_features):
+        return in_features
 
 
 class GlobalAvgAttnPool2d(nn.Module):
-    def __init__(self, in_features, activation_fn="Softmax2d"):
+    def __init__(self, in_features, activation_fn="Tanh"):
         super().__init__()
         self.avg = GlobalAvgPool2d()
         self.attn = GlobalAttnPool2d(in_features, activation_fn)
@@ -76,9 +81,13 @@ class GlobalAvgAttnPool2d(nn.Module):
     def forward(self, x):
         return torch.cat([self.avg(x), self.attn(x)], 1)
 
+    @staticmethod
+    def out_features(in_features):
+        return in_features * 2
+
 
 class GlobalMaxAttnPool2d(nn.Module):
-    def __init__(self, in_features, activation_fn="Softmax2d"):
+    def __init__(self, in_features, activation_fn="Tanh"):
         super().__init__()
         self.max = GlobalMaxPool2d()
         self.attn = GlobalAttnPool2d(in_features, activation_fn)
@@ -86,9 +95,13 @@ class GlobalMaxAttnPool2d(nn.Module):
     def forward(self, x):
         return torch.cat([self.max(x), self.attn(x)], 1)
 
+    @staticmethod
+    def out_features(in_features):
+        return in_features * 2
+
 
 class GlobalConcatAttnPool2d(nn.Module):
-    def __init__(self, in_features, activation_fn="Softmax2d"):
+    def __init__(self, in_features, activation_fn="Tanh"):
         super().__init__()
         self.avg = GlobalAvgPool2d()
         self.max = GlobalMaxPool2d()
@@ -96,3 +109,7 @@ class GlobalConcatAttnPool2d(nn.Module):
 
     def forward(self, x):
         return torch.cat([self.avg(x), self.max(x), self.attn(x)], 1)
+
+    @staticmethod
+    def out_features(in_features):
+        return in_features * 3

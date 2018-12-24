@@ -1,6 +1,4 @@
-import random
 import numpy as np
-
 from torch.utils.data.sampler import Sampler
 
 
@@ -13,7 +11,6 @@ class BalanceClassSampler(Sampler):
             label: (labels == label).sum()
             for label in set(labels)}
 
-        # @TODO: speedup this
         self.lbl2idx = {
             label: np.arange(len(labels))[labels == label].tolist()
             for label in set(labels)}
@@ -40,49 +37,6 @@ class BalanceClassSampler(Sampler):
         assert (len(indices) == self.length)
         np.random.shuffle(indices)
 
-        return iter(indices)
-
-    def __len__(self):
-        return self.length
-
-
-class TripletSampler(Sampler):
-    # @TODO: test
-    def __init__(self, labels, n_pos=2, n_neg=1, replace=False):
-        super().__init__(labels)
-
-        labels = np.array(labels)
-
-        self.n_pos = n_pos
-        self.n_neg = n_neg
-        self.replace = replace
-        self.labels = labels
-        # @TODO: speedup this
-        self.lbl2idx = {
-            label: np.arange(len(labels))[labels == label].tolist()
-            for label in set(labels)}
-        self.length = len(self.lbl2idx) * (self.n_pos + self.n_neg)
-
-    def __iter__(self):
-        indices = []
-        keys = sorted(self.lbl2idx)
-        random.shuffle(keys)
-        for anchor_key in keys:
-            # anchor_idx = np.random.choice(
-            #     self.lbl2idx[anchor_key],
-            #     1).tolist()[0]
-            pos_idx = np.random.choice(
-                self.lbl2idx[anchor_key],  # .copy().pop(anchor_idx),
-                self.n_pos, replace=self.replace).tolist()
-            other_keys = list(self.lbl2idx.keys())
-            other_keys.remove(anchor_key)
-            neg_key = random.choice(other_keys)
-            neg_idx = np.random.choice(
-                self.lbl2idx[neg_key],
-                self.n_neg, replace=self.replace).tolist()
-            # indices += [anchor_idx] + pos_idx + neg_idx
-            indices += pos_idx + neg_idx
-        assert (len(indices) == self.length)
         return iter(indices)
 
     def __len__(self):

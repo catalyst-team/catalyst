@@ -1,16 +1,5 @@
 import numpy as np
 import torch
-import torch.nn as nn
-
-# @TODO resolve issue with elu nonlinearity
-ACTIVATIONS = {
-    None: "sigmoid",
-    nn.Sigmoid: "sigmoid",
-    nn.Tanh: "tanh",
-    nn.ReLU: "relu",
-    nn.LeakyReLU: "leaky_relu",
-    nn.ELU: "relu",
-}
 
 
 def log1p_exp(input_tensor):
