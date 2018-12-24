@@ -115,7 +115,7 @@ class LinkNet(nn.Module):
                 models.resnet50, pretrained=pretrained
             )
         else:
-            raise ValueError(f"Unexcpected LinkNet backbone: {backbone}")
+            raise ValueError(f"Unexpected LinkNet backbone: {backbone}")
         filters = self.encoder.filters
 
         self.decoder4 = DecoderBlock(filters[3], filters[2])
