@@ -7,8 +7,6 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 import cv2
-cv2.setNumThreads(1)
-cv2.ocl.setUseOpenCL(False)
 
 from catalyst.data.functional import compute_mixup_lambda, mixup_torch
 from catalyst.dl.callback import Callback
@@ -16,6 +14,10 @@ from catalyst.dl.state import RunnerState
 from catalyst.utils.metrics import precision, mapk, dice, jaccard
 from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.utils.factory import UtilsFactory
+
+
+cv2.setNumThreads(1)
+cv2.ocl.setUseOpenCL(False)
 
 
 def to_batch_metrics(*, state, metric_key):
