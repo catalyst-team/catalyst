@@ -66,6 +66,10 @@ format_all() {
     yapf --diff "${YAPF_FLAGS[@]}" "${YAPF_EXCLUDES[@]}" ./**/**/*.py
 }
 
+format_all_in_place() {
+    yapf --in-place "${YAPF_FLAGS[@]}" "${YAPF_EXCLUDES[@]}" ./**/**/*.py
+}
+
 # This flag formats individual files. --files *must* be the first command line
 # arg to use this option.
 if [[ "$1" == '--files' ]]; then
@@ -74,6 +78,8 @@ if [[ "$1" == '--files' ]]; then
     # entire python directory is formatted.
 elif [[ "$1" == '--all' ]]; then
     format_all
+elif [[ "$1" == '--all-in-place' ]]; then
+    format_all_in_place
 else
     # Format only the files that changed in last commit.
     format_changed

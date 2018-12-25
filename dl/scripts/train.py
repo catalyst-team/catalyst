@@ -1,9 +1,10 @@
+import os
 import argparse
 import pathlib
 
 from catalyst.dl.scripts.utils import prepare_modules
-from catalyst.utils.args import parse_args_uargs, save_config
-from catalyst.utils.misc import create_if_need, set_global_seeds, boolean_flag
+from catalyst.utils.config import parse_args_uargs, save_config
+from catalyst.utils.misc import set_global_seeds, boolean_flag
 
 
 def parse_args():
@@ -48,7 +49,7 @@ def main(args, unknown_args):
         logdir = modules_["model"].prepare_logdir(config=config)
         args.logdir = str(pathlib.Path(args.baselogdir).joinpath(logdir))
 
-    create_if_need(args.logdir)
+    os.makedirs(args.logdir, exist_ok=True)
     save_config(config=config, logdir=args.logdir)
     modules = prepare_modules(model_dir=args.model_dir, dump_dir=args.logdir)
 

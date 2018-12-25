@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from catalyst.dl.callbacks import Callback
+from .core import Callback
 from catalyst.dl.callbacks.utils import get_optimizer_momentum
 
 

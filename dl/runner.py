@@ -7,10 +7,9 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data as data
 
-from catalyst.utils.factory import UtilsFactory
+from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.misc import merge_dicts
-from catalyst.dl.callbacks import Callback, CheckpointCallback, \
-    InferCallback, InferMaskCallback
+from catalyst.dl.callbacks import Callback
 from catalyst.dl.datasource import AbstractDataSource
 from catalyst.dl.state import RunnerState
 
@@ -392,13 +391,14 @@ class AbstractModelRunner:
 
         for key, value in kwargs.items():
             callback = UtilsFactory.create_callback(**value)
-            # @TODO: ATTENTION! remove hack
-            if isinstance(callback, CheckpointCallback) and resume is not None:
-                callback.resume = resume
-            if isinstance(callback, (InferCallback, InferMaskCallback)) \
-                    and out_prefix is not None:
-                callback.out_prefix = out_prefix
             callbacks[key] = callback
+
+        for key, value in callbacks.items():
+            # @TODO: remove hack
+            if resume is not None and hasattr(value, "resume"):
+                value.resume = resume
+            if out_prefix is not None and hasattr(value, "out_prefix"):
+                value.out_prefix = out_prefix
 
         return callbacks
 

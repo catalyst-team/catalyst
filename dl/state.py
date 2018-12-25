@@ -1,7 +1,8 @@
 import time
 from collections import defaultdict
 from torchnet import meter
-from catalyst.utils.factory import UtilsFactory
+from catalyst.dl.callbacks.utils import get_val_from_metric, \
+    process_epoch_metrics
 from catalyst.utils.misc import FrozenClass
 
 
@@ -139,7 +140,7 @@ class RunnerState(FrozenClass):
             return
 
         best_metrics, valid_metrics, is_best = \
-            UtilsFactory.process_epoch_metrics(
+            process_epoch_metrics(
                 state.epoch_metrics,
                 state.best_metrics,
                 valid_loader=state.valid_loader,
@@ -175,7 +176,7 @@ class RunnerState(FrozenClass):
     def on_loader_end_pre(state):
         lm = state.loader_mode
         state.epoch_metrics[lm] = {
-            key: UtilsFactory.get_val_from_metric(value)
+            key: get_val_from_metric(value)
             for key, value in state.epoch_metrics[lm].items()
         }
 
