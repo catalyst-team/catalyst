@@ -7,7 +7,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data as data
 
-from catalyst.utils.factory import UtilsFactory
+from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.misc import merge_dicts
 from catalyst.dl.callbacks import Callback, CheckpointCallback, \
     InferCallback, InferMaskCallback

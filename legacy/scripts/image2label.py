@@ -7,7 +7,7 @@ import cv2
 import torch
 from torchvision import models, transforms
 
-from catalyst.utils.factory import UtilsFactory
+from catalyst.dl.utils import UtilsFactory
 from catalyst.data.reader import ImageReader
 
 cv2.setNumThreads(0)

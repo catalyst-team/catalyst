@@ -8,7 +8,7 @@ from datetime import datetime
 from tensorboardX import SummaryWriter
 
 from catalyst.utils.misc import set_global_seeds
-from catalyst.utils.factory import UtilsFactory
+from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.serialization import serialize, deserialize
 from catalyst.rl.random_process import RandomProcess
 

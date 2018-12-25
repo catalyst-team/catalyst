@@ -6,7 +6,7 @@ from tqdm import tqdm
 from catalyst.data.reader import TextReader
 from catalyst.legacy.utils.text import \
     create_fasttext_encode_fn, create_gensim_encode_fn
-from catalyst.utils.factory import UtilsFactory
+from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.misc import boolean_flag
 
 
