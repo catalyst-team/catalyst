@@ -23,8 +23,18 @@ class RnnEncoder(nn.Module):
     initrange = 0.1
 
     def __init__(
-            self, ntoken, emb_sz, nhid, nlayers, pad_token, bidir=False,
-            dropouth=0.3, dropouti=0.65, dropoute=0.1, wdrop=0.5):
+        self,
+        ntoken,
+        emb_sz,
+        nhid,
+        nlayers,
+        pad_token,
+        bidir=False,
+        dropouth=0.3,
+        dropouti=0.65,
+        dropoute=0.1,
+        wdrop=0.5
+    ):
         """ Default constructor for the RNN_Encoder class
 
             Args:
@@ -54,18 +64,22 @@ class RnnEncoder(nn.Module):
             nn.LSTM(
                 emb_sz if layer == 0 else nhid,
                 (nhid if layer != nlayers - 1 else emb_sz) // self.ndir,
-                1, bidirectional=bidir)
-            for layer in range(nlayers)]
+                1,
+                bidirectional=bidir
+            ) for layer in range(nlayers)
+        ]
         if wdrop:
             self.rnns = [WeightDrop(rnn, wdrop) for rnn in self.rnns]
         self.rnns = torch.nn.ModuleList(self.rnns)
         self.encoder.weight.data.uniform_(-self.initrange, self.initrange)
 
         self.emb_sz, self.nhid, self.nlayers, self.dropoute = (
-            emb_sz, nhid, nlayers, dropoute)
+            emb_sz, nhid, nlayers, dropoute
+        )
         self.dropouti = LockedDropout(dropouti)
-        self.dropouths = nn.ModuleList([
-            LockedDropout(dropouth) for l in range(nlayers)])
+        self.dropouths = nn.ModuleList(
+            [LockedDropout(dropouth) for l in range(nlayers)]
+        )
 
     def forward(self, input, hidden):
         """ Invoked during the forward propagation of the RNN_Encoder module.
@@ -80,8 +94,8 @@ class RnnEncoder(nn.Module):
         """
         with torch.set_grad_enabled(self.training):
             emb = self.encoder_with_dropout(
-                input,
-                dropout=self.dropoute if self.training else 0)
+                input, dropout=self.dropoute if self.training else 0
+            )
             emb = self.dropouti(emb)
             raw_output = emb
             new_hidden, raw_outputs, outputs = [], [], []
@@ -102,15 +116,16 @@ class RnnEncoder(nn.Module):
 
     def one_hidden(self, layer, bs):
         weights = next(self.parameters()).data
-        nh = (self.nhid
-              if layer != self.nlayers - 1
-              else self.emb_sz) // self.ndir
+        nh = (
+            self.nhid if layer != self.nlayers - 1 else self.emb_sz
+        ) // self.ndir
         return Variable(weights.new(self.ndir, bs, nh).zero_())
 
     def init_hidden(self, bs):
         hidden = [
             (self.one_hidden(l, bs), self.one_hidden(l, bs))
-            for l in range(self.nlayers)]
+            for l in range(self.nlayers)
+        ]
         return hidden
 
 
@@ -129,7 +144,8 @@ class LinearDecoder(nn.Module):
         raw_outputs, outputs = input
         output = self.dropout(outputs[-1])
         decoded = self.decoder(
-            output.view(output.size(0) * output.size(1), output.size(2)))
+            output.view(output.size(0) * output.size(1), output.size(2))
+        )
         result = decoded.view(-1, decoded.size(1))
         return result, raw_outputs, outputs
 
@@ -181,8 +197,9 @@ class EmbeddingDropout(nn.Module):
     def forward(self, words, dropout=0.1, scale=None):
         if dropout:
             size = (self.embed.weight.size(0), 1)
-            mask = Variable(dropout_mask(
-                self.embed.weight.data, size, dropout))
+            mask = Variable(
+                dropout_mask(self.embed.weight.data, size, dropout)
+            )
             masked_embed_weight = mask * self.embed.weight
         else:
             masked_embed_weight = self.embed.weight
@@ -195,10 +212,10 @@ class EmbeddingDropout(nn.Module):
             padding_idx = -1
 
         X = F.embedding(
-            words,
-            masked_embed_weight, padding_idx, self.embed.max_norm,
+            words, masked_embed_weight, padding_idx, self.embed.max_norm,
             self.embed.norm_type, self.embed.scale_grad_by_freq,
-            self.embed.sparse)
+            self.embed.sparse
+        )
 
         return X
 
@@ -241,7 +258,8 @@ class WeightDrop(torch.nn.Module):
             w.required_grad = False  # bugfix
             # del self.module._parameters[name_w]  # bugfix
             self.module.register_parameter(
-                name_w + "_raw", nn.Parameter(w.data))
+                name_w + "_raw", nn.Parameter(w.data)
+            )
 
     def _setweights(self):
         """
@@ -255,7 +273,8 @@ class WeightDrop(torch.nn.Module):
         for name_w in self.weights:
             raw_w = getattr(self.module, name_w + "_raw")
             w = torch.nn.functional.dropout(
-                raw_w, p=self.dropout, training=self.training)
+                raw_w, p=self.dropout, training=self.training
+            )
             if hasattr(self.module, name_w):
                 delattr(self.module, name_w)
             setattr(self.module, name_w, w)
@@ -288,9 +307,20 @@ class LockedDropout(nn.Module):
 
 class LmModel(nn.Module):
     def __init__(
-            self, n_tok, emb_sz, nhid, nlayers, pad_token,
-            dropout=0.4, dropouth=0.3, dropouti=0.5, dropoute=0.1, wdrop=0.5,
-            tie_weights=True, bias=False):
+        self,
+        n_tok,
+        emb_sz,
+        nhid,
+        nlayers,
+        pad_token,
+        dropout=0.4,
+        dropouth=0.3,
+        dropouti=0.5,
+        dropoute=0.1,
+        wdrop=0.5,
+        tie_weights=True,
+        bias=False
+    ):
         """Returns a SequentialRNN model.
 
             A RNN_Encoder layer is instantiated using the parameters provided.
@@ -327,13 +357,20 @@ class LmModel(nn.Module):
             """
         super().__init__()
         self.rnn_enc = RnnEncoder(
-            n_tok, emb_sz, nhid=nhid, nlayers=nlayers, pad_token=pad_token,
-            dropouth=dropouth, dropouti=dropouti,
-            dropoute=dropoute, wdrop=wdrop)
+            n_tok,
+            emb_sz,
+            nhid=nhid,
+            nlayers=nlayers,
+            pad_token=pad_token,
+            dropouth=dropouth,
+            dropouti=dropouti,
+            dropoute=dropoute,
+            wdrop=wdrop
+        )
         enc = self.rnn_enc.encoder if tie_weights else None
         self.decoder = LinearDecoder(
-            n_tok, emb_sz, dropout,
-            tie_encoder=enc, bias=bias)
+            n_tok, emb_sz, dropout, tie_encoder=enc, bias=bias
+        )
 
     def forward(self, input, hidden):
         output, hidden = self.rnn_enc(input, hidden)
@@ -391,8 +428,9 @@ def repackage_var(h):
     """Wraps h in new Variables, to detach them from their history."""
     return (
         h.detach()
-        if type(h) == torch.Tensor
-        else tuple(repackage_var(v) for v in h))
+        if type(h) == torch.Tensor else tuple(repackage_var(v) for v in h)
+    )
 
 
-def noop(*args, **kwargs): return
+def noop(*args, **kwargs):
+    return

@@ -9,9 +9,7 @@ class GlobalAvgPool2d(nn.Module):
 
     def forward(self, x):
         h, w = x.shape[2:]
-        return F.avg_pool2d(
-            input=x,
-            kernel_size=(h, w))
+        return F.avg_pool2d(input=x, kernel_size=(h, w))
 
     @staticmethod
     def out_features(in_features):
@@ -24,9 +22,7 @@ class GlobalMaxPool2d(nn.Module):
 
     def forward(self, x):
         h, w = x.shape[2:]
-        return F.max_pool2d(
-            input=x,
-            kernel_size=(h, w))
+        return F.max_pool2d(input=x, kernel_size=(h, w))
 
     @staticmethod
     def out_features(in_features):
@@ -55,10 +51,9 @@ class GlobalAttnPool2d(nn.Module):
         activation_fn = name2nn(activation_fn)
         self.attn = nn.Sequential(
             nn.Conv2d(
-                in_features, 1,
-                kernel_size=1, stride=1,
-                padding=0, bias=False),
-            activation_fn())
+                in_features, 1, kernel_size=1, stride=1, padding=0, bias=False
+            ), activation_fn()
+        )
 
     def forward(self, x):
         h, w = x.shape[2:]

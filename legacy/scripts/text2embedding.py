@@ -24,15 +24,18 @@ def parse_args():
         type=int,
         dest="n_workers",
         help="count of workers for dataloader",
-        default=4)
+        default=4
+    )
     parser.add_argument(
         "--batch-size",
         type=int,
         dest="batch_size",
         help="dataloader batch size",
-        default=128)
+        default=128
+    )
     parser.add_argument(
-        "--verbose", dest="verbose", action="store_true", default=False)
+        "--verbose", dest="verbose", action="store_true", default=False
+    )
     args = parser.parse_args()
     return args
 
@@ -44,18 +47,22 @@ def main(args):
 
     if args.fasttext_model is not None:
         encode_fn = create_fasttext_encode_fn(
-            args.fasttext_model, normalize=args.normalize)
+            args.fasttext_model, normalize=args.normalize
+        )
     elif args.w2v_model is not None:
         encode_fn = create_gensim_encode_fn(
-            args.w2v_model, sep=args.txt_sep, normalize=args.normalize)
+            args.w2v_model, sep=args.txt_sep, normalize=args.normalize
+        )
     else:
         raise NotImplementedError
 
     open_fn = TextReader(
-        row_key=args.txt_col, dict_key="txt", encode_fn=encode_fn)
+        row_key=args.txt_col, dict_key="txt", encode_fn=encode_fn
+    )
 
     dataloader = UtilsFactory.create_loader(
-        images_df, open_fn, batch_size=args.batch_size, workers=args.n_workers)
+        images_df, open_fn, batch_size=args.batch_size, workers=args.n_workers
+    )
 
     features = []
     dataloader = tqdm(dataloader) if args.verbose else dataloader

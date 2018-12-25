@@ -11,6 +11,6 @@ class NaiveCrossEntropyLoss(nn.Module):
     def forward(self, input, target):
         assert input.size() == target.size()
         input = F.log_softmax(input)
-        loss = - torch.sum(input * target)
+        loss = -torch.sum(input * target)
         loss = loss / input.size()[0] if self.size_average else loss
         return loss

@@ -7,13 +7,17 @@ class DecoderRNN(nn.Module):
     """
     source: PyTorch tutorials
     """
+
     def __init__(
-            self,
-            vocabulary_size, embedding_size,
-            hidden_size, num_layers,
-            input_size=None,
-            input_usage="first_token",
-            **kwargs):
+        self,
+        vocabulary_size,
+        embedding_size,
+        hidden_size,
+        num_layers,
+        input_size=None,
+        input_usage="first_token",
+        **kwargs
+    ):
         """
 
             input_usage: "first_token" or "hidden_state"
@@ -21,8 +25,8 @@ class DecoderRNN(nn.Module):
         super(DecoderRNN, self).__init__()
         self.embed = nn.Embedding(vocabulary_size, embedding_size)
         self.lstm = nn.LSTM(
-            embedding_size, hidden_size, num_layers,
-            batch_first=True)
+            embedding_size, hidden_size, num_layers, batch_first=True
+        )
         self.linear = nn.Linear(hidden_size, vocabulary_size)
         self.init_weights()
 
@@ -32,21 +36,21 @@ class DecoderRNN(nn.Module):
             # @TODO: how to replace tanh with something better?
             self.input_process = (
                 nn.Sequential(
-                    nn.Linear(input_size, embedding_size),
-                    nn.Tanh())
-                if input_size is not None
-                else None)
+                    nn.Linear(input_size, embedding_size), nn.Tanh()
+                ) if input_size is not None else None
+            )
             self.forward_fn = self.forward_with_first_token
             self.sample_fn = self.sample_with_first_token
         elif input_usage == "hidden_state":
             self.input_process = (
-                nn.ModuleList([
-                    nn.Sequential(
-                        nn.Linear(input_size, hidden_size),
-                        nn.Tanh())
-                    for _ in range(num_layers)])
-                if input_size is not None
-                else None)
+                nn.ModuleList(
+                    [
+                        nn.Sequential(
+                            nn.Linear(input_size, hidden_size), nn.Tanh()
+                        ) for _ in range(num_layers)
+                    ]
+                ) if input_size is not None else None
+            )
             self.forward_fn = self.forward_with_hidden_state
             self.sample_fn = self.sample_with_hidden_state
         else:
@@ -87,7 +91,8 @@ class DecoderRNN(nn.Module):
         return self.forward_fn(features, captions, lengths)
 
     def sample_with_first_token(
-            self, features, states=None, suffix=None, max_len=50):
+        self, features, states=None, suffix=None, max_len=50
+    ):
         """
         suffix unused
         """
@@ -97,7 +102,7 @@ class DecoderRNN(nn.Module):
         inputs = features.unsqueeze(1)
         for i in range(max_len):
             hiddens, states = self.lstm(inputs, states)  # (bs, 1, hidden_size)
-            outputs = self.linear(hiddens.squeeze(1))    # (bs, vocab_size)
+            outputs = self.linear(hiddens.squeeze(1))  # (bs, vocab_size)
             predicted = outputs.max(1)[1]  # argmax
             sampled_ids.append(predicted.unsqueeze(1))
             inputs = self.embed(predicted)
@@ -106,7 +111,8 @@ class DecoderRNN(nn.Module):
         return sampled_ids
 
     def sample_with_hidden_state(
-            self, features, states=None, suffix=None, max_len=50):
+        self, features, states=None, suffix=None, max_len=50
+    ):
         """
         states unused
         """
@@ -121,12 +127,12 @@ class DecoderRNN(nn.Module):
         states = (hx, cx)
         for i in range(max_len):
             hiddens, states = self.lstm(inputs, states)  # (bs, 1, hidden_size)
-            outputs = self.linear(hiddens.squeeze(1))    # (bs, vocab_size)
-            predicted = outputs.max(1)[1]                # argmax
+            outputs = self.linear(hiddens.squeeze(1))  # (bs, vocab_size)
+            predicted = outputs.max(1)[1]  # argmax
             sampled_ids.append(predicted.unsqueeze(1))
             inputs = self.embed(predicted)
-            inputs = inputs.unsqueeze(1)                 # (bs, 1, embed_size)
-        sampled_ids = torch.cat(sampled_ids, 1)          # (bs, max_len)
+            inputs = inputs.unsqueeze(1)  # (bs, 1, embed_size)
+        sampled_ids = torch.cat(sampled_ids, 1)  # (bs, max_len)
         return sampled_ids
 
     def sample(self, features, states=None, suffix=None, max_len=50):

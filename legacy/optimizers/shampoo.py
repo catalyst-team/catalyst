@@ -10,10 +10,15 @@ def _matrix_power(matrix, power):
 
 
 class Shampoo(Optimizer):
-
     def __init__(
-            self, params, lr=1e-1, momentum=0, weight_decay=0,
-            epsilon=1e-4, update_freq=1):
+        self,
+        params,
+        lr=1e-1,
+        momentum=0,
+        weight_decay=0,
+        epsilon=1e-4,
+        update_freq=1
+    ):
         """
 
         :param params (iterable): iterable of parameters to optimize
@@ -28,8 +33,12 @@ class Shampoo(Optimizer):
         Source: https://github.com/moskomule/shampoo.pytorch
         """
         defaults = dict(
-            lr=lr, momentum=momentum, weight_decay=weight_decay,
-            epsilon=epsilon, update_freq=update_freq)
+            lr=lr,
+            momentum=momentum,
+            weight_decay=weight_decay,
+            epsilon=epsilon,
+            update_freq=update_freq
+        )
         super(Shampoo, self).__init__(params, defaults)
 
     def step(self, closure=None):
@@ -55,8 +64,9 @@ class Shampoo(Optimizer):
                     for dim_id, dim in enumerate(grad.size()):
                         # precondition matrices
                         state[f"precond_{dim_id}"] = (
-                                group["epsilon"]
-                                * torch.eye(dim, out=grad.new(dim, dim)))
+                            group["epsilon"] *
+                            torch.eye(dim, out=grad.new(dim, dim))
+                        )
                         state[f"inv_precond_{dim_id}"] = \
                             grad.new(dim, dim).zero_()
 
@@ -64,7 +74,8 @@ class Shampoo(Optimizer):
                     # grad = (1 - moment) * grad(t) + moment * grad(t-1)
                     # and grad(-1) = grad(0)
                     grad.mul_(1 - momentum).add_(
-                        momentum, state["momentum_buffer"])
+                        momentum, state["momentum_buffer"]
+                    )
 
                 if weight_decay > 0:
                     grad.add_(group["weight_decay"], p.data)

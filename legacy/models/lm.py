@@ -9,26 +9,40 @@ class RNNModel(nn.Module):
     """
 
     def __init__(
-            self, rnn_type, ntoken, ninp, nhid, nlayers,
-            dropout=0.5, tie_weights=False):
+        self,
+        rnn_type,
+        ntoken,
+        ninp,
+        nhid,
+        nlayers,
+        dropout=0.5,
+        tie_weights=False
+    ):
         super(RNNModel, self).__init__()
         self.drop = nn.Dropout(dropout)
         self.encoder = nn.Embedding(ntoken, ninp)
         if rnn_type in ["LSTM", "GRU"]:
-            self.rnn = getattr(
-                nn, rnn_type)(ninp, nhid, nlayers, dropout=dropout)
+            self.rnn = getattr(nn, rnn_type)(
+                ninp, nhid, nlayers, dropout=dropout
+            )
         else:
             try:
-                nonlinearity = {"RNN_TANH": "tanh", "RNN_RELU": "relu"}[
-                    rnn_type]
+                nonlinearity = {
+                    "RNN_TANH": "tanh",
+                    "RNN_RELU": "relu"
+                }[rnn_type]
             except KeyError:
                 raise ValueError(
                     """An invalid option for `--model` was supplied,
-                    options are ["LSTM", "GRU", "RNN_TANH" or "RNN_RELU"]""")
+                    options are ["LSTM", "GRU", "RNN_TANH" or "RNN_RELU"]"""
+                )
             self.rnn = nn.RNN(
-                ninp, nhid, nlayers,
+                ninp,
+                nhid,
+                nlayers,
                 nonlinearity=nonlinearity,
-                dropout=dropout)
+                dropout=dropout
+            )
         self.decoder = nn.Linear(nhid, ntoken)
 
         # Optionally tie weights as in:
@@ -42,7 +56,8 @@ class RNNModel(nn.Module):
         if tie_weights:
             if nhid != ninp:
                 raise ValueError(
-                    "When using the tied flag, nhid must be equal to emsize")
+                    "When using the tied flag, nhid must be equal to emsize"
+                )
             self.decoder.weight = self.encoder.weight
 
         self.init_weights()
@@ -62,14 +77,17 @@ class RNNModel(nn.Module):
         output, hidden = self.rnn(emb, hidden)
         output = self.drop(output)
         decoded = self.decoder(
-            output.view(output.size(0)*output.size(1), output.size(2)))
+            output.view(output.size(0) * output.size(1), output.size(2))
+        )
         decoded = decoded.view(output.size(0), output.size(1), decoded.size(1))
         return decoded, hidden
 
     def init_hidden(self, bsz):
         weight = next(self.parameters())
         if self.rnn_type == "LSTM":
-            return (weight.new_zeros(self.nlayers, bsz, self.nhid),
-                    weight.new_zeros(self.nlayers, bsz, self.nhid))
+            return (
+                weight.new_zeros(self.nlayers, bsz, self.nhid),
+                weight.new_zeros(self.nlayers, bsz, self.nhid)
+            )
         else:
             return weight.new_zeros(self.nlayers, bsz, self.nhid)

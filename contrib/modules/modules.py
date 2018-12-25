@@ -4,7 +4,6 @@ import catalyst.contrib.modules.pooling as pooling
 import catalyst.contrib.modules.noisy as noisy
 import catalyst.contrib.models.sequential as sequential
 
-
 MODULES = {
     **nn.__dict__,
     **common.__dict__,

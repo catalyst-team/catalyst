@@ -11,10 +11,10 @@ class CorpusLoader:
     By this way pytorch allocates cuda memory in order
     to prevent multiple buffers from being created as the batch width grows.
     """
+
     def __init__(
-            self, txt_data, encode_fn,
-            bs, bptt_mean, bptt_std=5,
-            verbose=False):
+        self, txt_data, encode_fn, bs, bptt_mean, bptt_std=5, verbose=False
+    ):
         txt_data = tqdm.tqdm(txt_data) if verbose else txt_data
         data = list(map(encode_fn, txt_data))
         data = [x for y in data for x in y]
@@ -45,11 +45,11 @@ class CorpusLoader:
             else:
                 bptt = (
                     self.bptt_mean
-                    if np.random.random() < 0.95
-                    else self.bptt_mean / 2.)
+                    if np.random.random() < 0.95 else self.bptt_mean / 2.
+                )
                 seq_len = max(
-                    self.bptt_std,
-                    int(np.random.normal(bptt, self.bptt_std)))
+                    self.bptt_std, int(np.random.normal(bptt, self.bptt_std))
+                )
             batch = self.get_batch(self.i, seq_len)
             self.i += seq_len
             self.iter += 1
@@ -58,10 +58,7 @@ class CorpusLoader:
     def get_batch(self, idx, seq_len):
         data = self.data[idx:idx + seq_len]
         target = self.data[idx + 1:idx + 1 + seq_len]
-        dct = {
-            "txt": data,
-            "trg": target
-        }
+        dct = {"txt": data, "trg": target}
         return dct
 
     def __len__(self):

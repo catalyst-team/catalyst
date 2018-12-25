@@ -38,8 +38,8 @@ class mLSTM(nn.Module):
 
 class StackedLSTM(nn.Module):
     def __init__(
-            self, cell, num_layers,
-            input_size, hidden_size, output_size, dropout):
+        self, cell, num_layers, input_size, hidden_size, output_size, dropout
+    ):
         super(StackedLSTM, self).__init__()
         self.dropout = nn.Dropout(dropout)
         self.num_layers = num_layers
@@ -75,5 +75,7 @@ class StackedLSTM(nn.Module):
 
     def init_hidden(self, bsz):
         weight = next(self.parameters())
-        return (weight.new_zeros(self.num_layers, bsz, self.rnn_size),
-                weight.new_zeros(self.num_layers, bsz, self.rnn_size))
+        return (
+            weight.new_zeros(self.num_layers, bsz, self.rnn_size),
+            weight.new_zeros(self.num_layers, bsz, self.rnn_size)
+        )

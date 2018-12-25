@@ -8,6 +8,7 @@ class ContrastiveEmbeddingLoss(nn.Module):
 
     paper: http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf
     """
+
     def __init__(self, margin=1.0, reduction="elementwise_mean"):
         super().__init__()
         self.margin = margin
@@ -40,6 +41,7 @@ class ContrastiveDistanceLoss(nn.Module):
     """
     Contrastive distance loss
     """
+
     def __init__(self, margin=1.0):
         super().__init__()
         self.margin = margin

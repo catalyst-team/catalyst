@@ -30,9 +30,21 @@ class OpenAIAdam(Optimizer):
     """Implements Open AI version of Adam algorithm with weight decay fix.
     """
 
-    def __init__(self, params, lr, schedule, warmup, t_total,
-                 b1=0.9, b2=0.999, e=1e-8, l2=0,
-                 vector_l2=False, max_grad_norm=-1, **kwargs):
+    def __init__(
+        self,
+        params,
+        lr,
+        schedule,
+        warmup,
+        t_total,
+        b1=0.9,
+        b2=0.999,
+        e=1e-8,
+        l2=0,
+        vector_l2=False,
+        max_grad_norm=-1,
+        **kwargs
+    ):
         if not 0.0 <= lr:
             raise ValueError("Invalid learning rate: {}".format(lr))
         if schedule not in SCHEDULES:
@@ -46,9 +58,17 @@ class OpenAIAdam(Optimizer):
         if not 0.0 <= e:
             raise ValueError("Invalid epsilon value: {}".format(e))
         defaults = dict(
-            lr=lr, schedule=schedule, warmup=warmup, t_total=t_total,
-            b1=b1, b2=b2, e=e, l2=l2, vector_l2=vector_l2,
-            max_grad_norm=max_grad_norm)
+            lr=lr,
+            schedule=schedule,
+            warmup=warmup,
+            t_total=t_total,
+            b1=b1,
+            b2=b2,
+            e=e,
+            l2=l2,
+            vector_l2=vector_l2,
+            max_grad_norm=max_grad_norm
+        )
         super(OpenAIAdam, self).__init__(params, defaults)
 
     def step(self, closure=None):
@@ -70,7 +90,8 @@ class OpenAIAdam(Optimizer):
                 if grad.is_sparse:
                     raise RuntimeError(
                         "Adam does not support sparse gradients, "
-                        "please consider SparseAdam instead")
+                        "please consider SparseAdam instead"
+                    )
 
                 state = self.state[p]
 
@@ -96,15 +117,15 @@ class OpenAIAdam(Optimizer):
                 exp_avg_sq.mul_(beta2).addcmul_(1 - beta2, grad, grad)
                 denom = exp_avg_sq.sqrt().add_(group["e"])
 
-                bias_correction1 = 1 - beta1 ** state["step"]
-                bias_correction2 = 1 - beta2 ** state["step"]
+                bias_correction1 = 1 - beta1**state["step"]
+                bias_correction2 = 1 - beta2**state["step"]
 
                 schedule_fct = SCHEDULES[group["schedule"]]
                 lr_scheduled = (
-                    group["lr"]
-                    * schedule_fct(
-                        state["step"] / group["t_total"],
-                        group["warmup"]))
+                    group["lr"] * schedule_fct(
+                        state["step"] / group["t_total"], group["warmup"]
+                    )
+                )
                 step_size_ = lr_scheduled * math.sqrt(bias_correction2)
                 step_size = (step_size_ / bias_correction1)
 

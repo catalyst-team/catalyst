@@ -8,7 +8,8 @@ UNK_TOKEN = "_UNK_"  # 3
 
 def load_vocab(filepath, default_tokens=None):
     default_tokens = (
-            default_tokens or [PAD_TOKEN, BOS_TOKEN, EOS_TOKEN, UNK_TOKEN])
+        default_tokens or [PAD_TOKEN, BOS_TOKEN, EOS_TOKEN, UNK_TOKEN]
+    )
     tokens = []
     with open(filepath) as fin:
         for line in fin:
@@ -23,10 +24,14 @@ def load_vocab(filepath, default_tokens=None):
 
 
 def create_line_encode_fn(
-        token2id, sep=" ",
-        max_len=None, lowercase=True,
-        bos_token=True, eos_token=True,
-        strip=True):
+    token2id,
+    sep=" ",
+    max_len=None,
+    lowercase=True,
+    bos_token=True,
+    eos_token=True,
+    strip=True
+):
     token2id[sep] = token2id[PAD_TOKEN]
 
     if len(sep) > 0:
@@ -43,15 +48,22 @@ def create_line_encode_fn(
     def line_encode_fn(line):
         if lowercase:
             line = line.lower()
-        enc = np.array(list(map(
-            lambda x: token2id.get(x, token2id[UNK_TOKEN]), split_fn(line))),
-            dtype=np.int64)
+        enc = np.array(
+            list(
+                map(
+                    lambda x: token2id.get(x, token2id[UNK_TOKEN]),
+                    split_fn(line)
+                )
+            ),
+            dtype=np.int64
+        )
 
         if max_len is not None:
             enc = enc[:max_len]
 
             result = np.ones(
-                shape=(max_len,), dtype=np.int64) * int(token2id[PAD_TOKEN])
+                shape=(max_len, ), dtype=np.int64
+            ) * int(token2id[PAD_TOKEN])
             result[:len(enc)] = enc
         else:
             result = enc
@@ -62,7 +74,6 @@ def create_line_encode_fn(
 
 
 def create_line_decode_fn(id2token, sep=" ", strip=True):
-
     def line_decode_fn(line):
         sampled_caption = []
         for token_id in line:
@@ -107,10 +118,12 @@ def create_gensim_encode_fn(model_bin, sep=" ", normalize=False):
     import gensim
     try:
         w2v = gensim.models.KeyedVectors.load_word2vec_format(
-            model_bin, binary=True)
+            model_bin, binary=True
+        )
     except UnicodeDecodeError:
         w2v = gensim.models.KeyedVectors.load_word2vec_format(
-            model_bin, binary=False)
+            model_bin, binary=False
+        )
     w2v_mean = np.mean(w2v.vectors, axis=0)
 
     def line_encode_fn(line):
