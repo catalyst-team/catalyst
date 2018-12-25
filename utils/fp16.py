@@ -2,18 +2,6 @@ import torch
 import torch.nn as nn
 
 
-class Fp16Wrap(nn.Module):
-    def __init__(self, network):
-        super().__init__()
-        self.network = BN_convert_float(network.half())
-
-    def forward(self, *args, **kwargs):
-        args = list(map(lambda x: x.half(), args))
-        kwargs = {key: value.half() for key, value in kwargs.items()}
-        output = self.network(*args, **kwargs)
-        return output
-
-
 def copy_params(source, target):
     for i in range(len(target)):
         target[i].data.copy_(source[i].data)
@@ -42,5 +30,13 @@ def BN_convert_float(module):
     return module
 
 
-def network_to_half(network):
-    return Fp16Wrap(network)
+class Fp16Wrap(nn.Module):
+    def __init__(self, network):
+        super().__init__()
+        self.network = BN_convert_float(network.half())
+
+    def forward(self, *args, **kwargs):
+        args = list(map(lambda x: x.half(), args))
+        kwargs = {key: value.half() for key, value in kwargs.items()}
+        output = self.network(*args, **kwargs)
+        return output

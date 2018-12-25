@@ -3,11 +3,33 @@ import json
 import yaml
 import copy
 from collections import OrderedDict
-
 from catalyst.utils.misc import merge_dicts
 
 
-def parse_args_config(args, unknown_args, config):
+def load_ordered_yaml(
+        stream,
+        Loader=yaml.Loader,
+        object_pairs_hook=OrderedDict):
+
+    class OrderedLoader(Loader):
+        pass
+
+    def construct_mapping(loader, node):
+        loader.flatten_mapping(node)
+        return object_pairs_hook(loader.construct_pairs(node))
+    OrderedLoader.add_constructor(
+        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+        construct_mapping)
+    return yaml.load(stream, OrderedLoader)
+
+
+def save_config(config, logdir):
+    os.makedirs(logdir, exist_ok=True)
+    with open("{}/config.json".format(logdir), "w") as fout:
+        json.dump(config, fout, indent=2)
+
+
+def parse_config_args(*, config, args, unknown_args):
     for arg in unknown_args:
         arg_name, value = arg.split("=")
         arg_name = arg_name[2:]
@@ -34,24 +56,7 @@ def parse_args_config(args, unknown_args, config):
             else:
                 arg_value = eval("%s(%s)" % (value_type, value_content))
             args.__setattr__(arg_name, arg_value)
-    return args, config
-
-
-def load_ordered_yaml(
-        stream,
-        Loader=yaml.Loader,
-        object_pairs_hook=OrderedDict):
-
-    class OrderedLoader(Loader):
-        pass
-
-    def construct_mapping(loader, node):
-        loader.flatten_mapping(node)
-        return object_pairs_hook(loader.construct_pairs(node))
-    OrderedLoader.add_constructor(
-        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
-        construct_mapping)
-    return yaml.load(stream, OrderedLoader)
+    return config, args
 
 
 def parse_args_uargs(args, unknown_args, dump_config=False):
@@ -69,12 +74,14 @@ def parse_args_uargs(args, unknown_args, dump_config=False):
                 raise Exception("Unknown file format")
         config = merge_dicts(config, config_)
 
-    args_, config = parse_args_config(args_, unknown_args, config)
+    config, args_ = parse_config_args(
+        config=config, args=args_, unknown_args=unknown_args
+    )
 
     # hack with argparse in config
-    training_args = config.get("args", None)
-    if training_args is not None:
-        for key, value in training_args.items():
+    config_args = config.get("args", None)
+    if config_args is not None:
+        for key, value in config_args.items():
             arg_value = getattr(args_, key, None)
             if arg_value is None:
                 arg_value = value
@@ -84,9 +91,3 @@ def parse_args_uargs(args, unknown_args, dump_config=False):
         save_config(config=config, logdir=args_.logdir)
 
     return args_, config
-
-
-def save_config(config, logdir):
-    os.makedirs(logdir, exist_ok=True)
-    with open("{}/config.json".format(logdir), "w") as fout:
-        json.dump(config, fout, indent=2)

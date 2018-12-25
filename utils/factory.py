@@ -8,10 +8,9 @@ import torch.nn as nn
 import torch.backends.cudnn as cudnn
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
-from catalyst.legacy.optimizers import OPTIMIZERS
 from catalyst.losses.losses import LOSSES
 from catalyst.data.dataset import ListDataset
-from catalyst.utils.fp16 import Fp16Wrap, network_to_half
+from catalyst.utils.fp16 import Fp16Wrap
 
 
 class UtilsFactory:
@@ -68,7 +67,7 @@ class UtilsFactory:
         model = available_networks[model_name](**model_params)
 
         if fp16:
-            model = network_to_half(model)
+            model = Fp16Wrap(model)
 
         return model
 
@@ -100,7 +99,8 @@ class UtilsFactory:
             for param in master_params:
                 param.requires_grad = True
 
-        optimizer = OPTIMIZERS[optimizer](master_params, **optimizer_params)
+        optimizer = torch.optim.__dict__[optimizer](
+            master_params, **optimizer_params)
         return optimizer
 
     @staticmethod
@@ -239,21 +239,6 @@ class UtilsFactory:
         return checkpoint
 
     @staticmethod
-    def save_checkpoint(logdir, checkpoint, is_best=False, suffix=""):
-        filename = "{logdir}/checkpoint.{suffix}.pth.tar".format(
-            logdir=logdir, suffix=suffix)
-        torch.save(checkpoint, filename)
-        if is_best:
-            shutil.copyfile(filename, f"{logdir}/checkpoint.best.pth.tar")
-        return filename
-
-    @staticmethod
-    def load_checkpoint(filepath):
-        checkpoint = torch.load(
-            filepath, map_location=lambda storage, loc: storage)
-        return checkpoint
-
-    @staticmethod
     def unpack_checkpoint(
             checkpoint,
             model=None,
@@ -282,3 +267,18 @@ class UtilsFactory:
             else:
                 name2load = f"{name2load}_state_dict"
                 dict2load.load_state_dict(checkpoint[name2load])
+
+    @staticmethod
+    def save_checkpoint(logdir, checkpoint, is_best=False, suffix=""):
+        filename = "{logdir}/checkpoint.{suffix}.pth.tar".format(
+            logdir=logdir, suffix=suffix)
+        torch.save(checkpoint, filename)
+        if is_best:
+            shutil.copyfile(filename, f"{logdir}/checkpoint.best.pth.tar")
+        return filename
+
+    @staticmethod
+    def load_checkpoint(filepath):
+        checkpoint = torch.load(
+            filepath, map_location=lambda storage, loc: storage)
+        return checkpoint
