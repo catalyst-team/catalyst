@@ -11,7 +11,8 @@ def copy_grads(source, target):
     for param, param_w_grad in zip(target, source):
         if param.grad is None:
             param.grad = torch.nn.Parameter(
-                param.data.new().resize_(*param.data.size()))
+                param.data.new().resize_(*param.data.size())
+            )
         param.grad.data.copy_(param_w_grad.grad.data)
 
 

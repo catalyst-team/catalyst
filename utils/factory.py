@@ -18,20 +18,22 @@ from catalyst.utils.fp16 import Fp16Wrap
 class UtilsFactory:
     @staticmethod
     def create_loader(
-            data_source,
-            open_fn,
-            dict_transform=None,
-            dataset_cache_prob=-1,
-            batch_size=32,
-            workers=4,
-            shuffle=False,
-            sampler=None,
-            collate_fn=default_collate_fn):
+        data_source,
+        open_fn,
+        dict_transform=None,
+        dataset_cache_prob=-1,
+        batch_size=32,
+        workers=4,
+        shuffle=False,
+        sampler=None,
+        collate_fn=default_collate_fn
+    ):
         dataset = ListDataset(
             data_source,
             open_fn=open_fn,
             dict_transform=dict_transform,
-            cache_prob=dataset_cache_prob)
+            cache_prob=dataset_cache_prob
+        )
         loader = torch.utils.data.DataLoader(
             dataset,
             batch_size=batch_size,
@@ -39,7 +41,8 @@ class UtilsFactory:
             num_workers=workers,
             pin_memory=torch.cuda.is_available(),
             sampler=sampler,
-            collate_fn=collate_fn)
+            collate_fn=collate_fn
+        )
         return loader
 
     @staticmethod
@@ -84,14 +87,15 @@ class UtilsFactory:
 
     @staticmethod
     def create_optimizer(
-            model, fp16=False, optimizer=None,
-            **optimizer_params):
+        model, fp16=False, optimizer=None, **optimizer_params
+    ):
         optimizer = optimizer
         if optimizer is None:
             return None
 
         master_params = list(
-            filter(lambda p: p.requires_grad, model.parameters()))
+            filter(lambda p: p.requires_grad, model.parameters())
+        )
         if fp16:
             assert torch.backends.cudnn.enabled, \
                 "fp16 mode requires cudnn backend to be enabled."
@@ -109,7 +113,8 @@ class UtilsFactory:
         if optimizer is None or scheduler is None:
             return None
         scheduler = torch.optim.lr_scheduler.__dict__[scheduler](
-            optimizer, **scheduler_params)
+            optimizer, **scheduler_params
+        )
         return scheduler
 
     @staticmethod
@@ -133,10 +138,11 @@ class UtilsFactory:
 
     @staticmethod
     def prepare_model_stuff(
-            model,
-            criterion_params=None,
-            optimizer_params=None,
-            scheduler_params=None):
+        model,
+        criterion_params=None,
+        optimizer_params=None,
+        scheduler_params=None
+    ):
         fp16 = isinstance(model, Fp16Wrap)
 
         criterion_params = criterion_params or {}
@@ -144,11 +150,13 @@ class UtilsFactory:
 
         optimizer_params = optimizer_params or {}
         optimizer = UtilsFactory.create_optimizer(
-            model, **optimizer_params, fp16=fp16)
+            model, **optimizer_params, fp16=fp16
+        )
 
         scheduler_params = scheduler_params or {}
         scheduler = UtilsFactory.create_scheduler(
-            optimizer, **scheduler_params)
+            optimizer, **scheduler_params
+        )
 
         return criterion, optimizer, scheduler
 
@@ -174,11 +182,12 @@ class UtilsFactory:
 
     @staticmethod
     def process_epoch_metrics(
-            epoch_metrics,
-            best_metrics,
-            valid_loader="valid",
-            main_metric="loss",
-            minimize=True):
+        epoch_metrics,
+        best_metrics,
+        valid_loader="valid",
+        main_metric="loss",
+        minimize=True
+    ):
         valid_metrics = epoch_metrics[valid_loader]
         is_best = True \
             if best_metrics is None \
@@ -203,11 +212,8 @@ class UtilsFactory:
 
     @staticmethod
     def pack_checkpoint(
-            model=None,
-            criterion=None,
-            optimizer=None,
-            scheduler=None,
-            **kwargs):
+        model=None, criterion=None, optimizer=None, scheduler=None, **kwargs
+    ):
         checkpoint = kwargs
 
         if isinstance(model, OrderedDict):
@@ -221,8 +227,9 @@ class UtilsFactory:
             checkpoint["model_state_dict"] = model_.state_dict()
 
         for dict2save, name2save in zip(
-                [criterion, optimizer, scheduler],
-                ["criterion", "optimizer", "scheduler"]):
+            [criterion, optimizer, scheduler],
+            ["criterion", "optimizer", "scheduler"]
+        ):
             if dict2save is None:
                 continue
             if isinstance(dict2save, dict):
@@ -241,11 +248,8 @@ class UtilsFactory:
 
     @staticmethod
     def unpack_checkpoint(
-            checkpoint,
-            model=None,
-            criterion=None,
-            optimizer=None,
-            scheduler=None):
+        checkpoint, model=None, criterion=None, optimizer=None, scheduler=None
+    ):
         if model is not None:
             if isinstance(model, torch.nn.DataParallel):
                 model = model.module
@@ -255,8 +259,9 @@ class UtilsFactory:
                 model.load_state_dict(checkpoint["model_state_dict"])
 
         for dict2load, name2load in zip(
-                [criterion, optimizer, scheduler],
-                ["criterion", "optimizer", "scheduler"]):
+            [criterion, optimizer, scheduler],
+            ["criterion", "optimizer", "scheduler"]
+        ):
             if dict2load is None:
                 continue
 
@@ -272,7 +277,8 @@ class UtilsFactory:
     @staticmethod
     def save_checkpoint(logdir, checkpoint, is_best=False, suffix=""):
         filename = "{logdir}/checkpoint.{suffix}.pth.tar".format(
-            logdir=logdir, suffix=suffix)
+            logdir=logdir, suffix=suffix
+        )
         torch.save(checkpoint, filename)
         if is_best:
             shutil.copyfile(filename, f"{logdir}/checkpoint.best.pth.tar")
@@ -281,5 +287,6 @@ class UtilsFactory:
     @staticmethod
     def load_checkpoint(filepath):
         checkpoint = torch.load(
-            filepath, map_location=lambda storage, loc: storage)
+            filepath, map_location=lambda storage, loc: storage
+        )
         return checkpoint

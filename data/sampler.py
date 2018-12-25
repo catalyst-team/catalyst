@@ -9,11 +9,13 @@ class BalanceClassSampler(Sampler):
         labels = np.array(labels)
         samples_per_class = {
             label: (labels == label).sum()
-            for label in set(labels)}
+            for label in set(labels)
+        }
 
         self.lbl2idx = {
             label: np.arange(len(labels))[labels == label].tolist()
-            for label in set(labels)}
+            for label in set(labels)
+        }
 
         if isinstance(mode, int) or mode == "upsampling":
             samples_per_class = mode \
@@ -31,9 +33,8 @@ class BalanceClassSampler(Sampler):
         for key in sorted(self.lbl2idx):
             replace_ = self.samples_per_class > len(self.lbl2idx[key])
             indices += np.random.choice(
-                self.lbl2idx[key],
-                self.samples_per_class,
-                replace=replace_).tolist()
+                self.lbl2idx[key], self.samples_per_class, replace=replace_
+            ).tolist()
         assert (len(indices) == self.length)
         np.random.shuffle(indices)
 

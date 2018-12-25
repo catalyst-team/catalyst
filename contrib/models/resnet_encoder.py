@@ -4,10 +4,14 @@ import torchvision
 
 class ResnetEncoder(nn.Module):
     def __init__(
-            self,
-            arch="resnet34", pretrained=True, frozen=True,
-            pooling=None, pooling_kwargs=None,
-            cut_layers=2):
+        self,
+        arch="resnet34",
+        pretrained=True,
+        frozen=True,
+        pooling=None,
+        pooling_kwargs=None,
+        cut_layers=2
+    ):
         super().__init__()
         # hack to prevent cycle imports
         from catalyst.contrib.modules import name2nn
@@ -29,7 +33,8 @@ class ResnetEncoder(nn.Module):
             modules += [pooling_fn]
 
             resnet_out_features = pooling_fn.out_features(
-                in_features=resnet.fc.in_features)
+                in_features=resnet.fc.in_features
+            )
         else:
             resnet_out_features = resnet.fc.in_features
 

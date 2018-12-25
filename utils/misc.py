@@ -25,8 +25,10 @@ def merge_dicts(*dicts):
 
     for merge_dict in dicts[1:]:
         for k, v in merge_dict.items():
-            if (k in dict_ and isinstance(dict_[k], dict)
-                    and isinstance(merge_dict[k], collections.Mapping)):
+            if (
+                k in dict_ and isinstance(dict_[k], dict)
+                and isinstance(merge_dict[k], collections.Mapping)
+            ):
                 dict_[k] = merge_dicts(dict_[k], merge_dict[k])
             else:
                 dict_[k] = merge_dict[k]
@@ -53,8 +55,7 @@ def set_global_seeds(i):
 
 
 def import_module(name, path):
-    spec = importlib.util.spec_from_file_location(
-        name, path)
+    spec = importlib.util.spec_from_file_location(name, path)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
@@ -77,8 +78,12 @@ def boolean_flag(parser, name, default=False, help=None):
     """
     dest = name.replace("-", "_")
     parser.add_argument(
-        "--" + name, action="store_true",
-        default=default, dest=dest, help=help)
+        "--" + name,
+        action="store_true",
+        default=default,
+        dest=dest,
+        help=help
+    )
     parser.add_argument("--no-" + name, action="store_false", dest=dest)
 
 

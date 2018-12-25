@@ -1,7 +1,6 @@
 import torch
 from typing import Type, List, Union, Callable
 
-
 OPTIMIZERS = {
     **torch.optim.__dict__,
 }

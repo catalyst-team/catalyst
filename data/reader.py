@@ -6,12 +6,14 @@ class ImageReader(object):
     """
     Image reader abstraction.
     """
+
     def __init__(
-            self,
-            row_key: str,
-            dict_key: str,
-            datapath: str = None,
-            grayscale: bool = False):
+        self,
+        row_key: str,
+        dict_key: str,
+        datapath: str = None,
+        grayscale: bool = False
+    ):
         """
         :param row_key: input key to use from annotation dict
         :param dict_key: output key to use to store the result
@@ -28,9 +30,8 @@ class ImageReader(object):
     def __call__(self, row):
         image_name = str(row[self.row_key])
         img = read_image(
-            image_name,
-            datapath=self.datapath,
-            grayscale=self.grayscale)
+            image_name, datapath=self.datapath, grayscale=self.grayscale
+        )
 
         result = {self.dict_key: img}
         return result
@@ -40,13 +41,15 @@ class ScalarReader(object):
     """
     Numeric data reader abstraction.
     """
+
     def __init__(
-            self,
-            row_key: str,
-            dict_key: str,
-            dtype: type = np.float32,
-            default_value: float = None,
-            one_hot_classes: int = None):
+        self,
+        row_key: str,
+        dict_key: str,
+        dtype: type = np.float32,
+        default_value: float = None,
+        one_hot_classes: int = None
+    ):
         """
         :param row_key: input key to use from annotation dict
         :param dict_key: output key to use to store the result
@@ -74,11 +77,10 @@ class TextReader(object):
     """
     Text reader abstraction.
     """
+
     def __init__(
-            self,
-            row_key: str,
-            dict_key: str,
-            encode_fn: callable = lambda x: x):
+        self, row_key: str, dict_key: str, encode_fn: callable = lambda x: x
+    ):
         """
         :param row_key: input key to use from annotation dict
         :param dict_key: output key to use to store the result
@@ -100,10 +102,8 @@ class ReaderCompose(object):
     """
     Abstraction to compose several readers into one open function.
     """
-    def __init__(
-            self,
-            readers: [],
-            mixins: [] = None):
+
+    def __init__(self, readers: [], mixins: [] = None):
         """
         :param readers: list of reader to compose
         :param mixins: list of mixins to use

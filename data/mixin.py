@@ -11,8 +11,7 @@ class ImageHistogramMixin:
 
         result = {}
         for channel in range(img.shape[2]):
-            hist_ = cv2.calcHist(
-                [img], [channel], None, [256], [0, 256])
+            hist_ = cv2.calcHist([img], [channel], None, [256], [0, 256])
             hist_key = self.dict_histogram_key + f"_{channel:{1}}"
             result[hist_key] = hist_.ravel()
 

@@ -10,16 +10,14 @@ from .metrics import MetricCallback, MultiMetricCallback, \
     DiceCallback, JaccardCallback, PrecisionCallback, MapKCallback
 from .schedulers import LRUpdater, OneCycleLR, LRFinder
 
-
 __all__ = [
     "Callback", "CallbackCompose", "Logger", "TensorboardLogger",
     "CheckpointCallback", "OptimizerCallback", "SchedulerCallback",
     "ClassificationLossCallback", "InferCallback", "MixupCallback",
     "InferMaskCallback", "MetricCallback", "MultiMetricCallback",
     "DiceCallback", "JaccardCallback", "PrecisionCallback", "MapKCallback",
-    "LRUpdater", "OneCycleLR", "LRFinder", "register_callback"
+    "LRUpdater", "OneCycleLR", "LRFinder", "register_callback", "CALLBACKS"
 ]
-
 
 CALLBACKS = {
     **core.__dict__,
