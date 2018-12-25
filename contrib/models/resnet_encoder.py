@@ -10,7 +10,7 @@ class ResnetEncoder(nn.Module):
             cut_layers=2):
         super().__init__()
         # hack to prevent cycle imports
-        from catalyst.modules.modules import name2nn
+        from catalyst.contrib.modules import name2nn
 
         resnet = torchvision.models.__dict__[arch](pretrained=pretrained)
         modules = list(resnet.children())[:-cut_layers]  # delete last layers

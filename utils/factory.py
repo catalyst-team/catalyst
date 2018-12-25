@@ -8,7 +8,9 @@ import torch.nn as nn
 import torch.backends.cudnn as cudnn
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
-from catalyst.losses.losses import LOSSES
+from catalyst.contrib.criterion import CRITERION
+from catalyst.contrib.optimizers import OPTIMIZERS
+from catalyst.dl.callbacks import CALLBACKS
 from catalyst.data.dataset import ListDataset
 from catalyst.utils.fp16 import Fp16Wrap
 
@@ -61,7 +63,7 @@ class UtilsFactory:
 
     @staticmethod
     def create_model(config, available_networks):
-        model_params = config["model_params"]
+        model_params = config.pop("model_params", {})
         model_name = model_params.pop("model", None)
         fp16 = model_params.pop("fp16", False) and torch.cuda.is_available()
         model = available_networks[model_name](**model_params)
@@ -75,7 +77,7 @@ class UtilsFactory:
     def create_criterion(criterion=None, **criterion_params):
         if criterion is None:
             return None
-        criterion = LOSSES[criterion](**criterion_params)
+        criterion = CRITERION[criterion](**criterion_params)
         if torch.cuda.is_available():
             criterion = criterion.cuda()
         return criterion
@@ -99,8 +101,7 @@ class UtilsFactory:
             for param in master_params:
                 param.requires_grad = True
 
-        optimizer = torch.optim.__dict__[optimizer](
-            master_params, **optimizer_params)
+        optimizer = OPTIMIZERS[optimizer](master_params, **optimizer_params)
         return optimizer
 
     @staticmethod
@@ -116,7 +117,7 @@ class UtilsFactory:
         if callback is None:
             return None
 
-        import catalyst.dl.callbacks as CALLBACKS
+        # import catalyst.dl.callbacks as CALLBACKS
         callback = CALLBACKS.__dict__[callback](**callback_params)
         return callback
 

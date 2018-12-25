@@ -1,16 +1,16 @@
 import torch
 from typing import Type, List, Union, Callable
 
-import catalyst.losses.unet as unet_loss
-import catalyst.losses.center_loss as center_loss
-import catalyst.losses.contrastive as contrastive_loss
-import catalyst.losses.huber as huber_loss
-import catalyst.losses.ce as ce
-import catalyst.losses.bcece as bcece
-import catalyst.losses.focal_loss as focal_loss
-import catalyst.losses.dice as dice
+from . import unet as unet_loss
+from . import center_loss
+from . import contrastive as contrastive_loss
+from . import huber as huber_loss
+from . import ce
+from . import bcece
+from . import focal_loss
+from . import dice
 
-LOSSES = {
+CRITERION = {
     **torch.nn.__dict__,
     **unet_loss.__dict__,
     **center_loss.__dict__,
@@ -24,21 +24,18 @@ LOSSES = {
 
 
 def register_criterion(
-    criterion_factory: Union[Type, Callable],
     *criterion_factories: Union[Type, Callable]
 ) -> Union[Union[Type, Callable], List[Union[Type, Callable]]]:
     """Add criterion type or factory method to global
         criterion list to make it available in config
         Can be called or used as decorator
-        :param: criterion_factory Required criterion factory (method or type)
-        :param: criterion_factories Some optional factories
+        :param: criterion_factories Required criterion factory (method or type)
         :returns: single criterion factory or list of them
     """
-    criterion_factories = [criterion_factory, *criterion_factories]
 
     for cf in criterion_factories:
-        LOSSES[cf.__name__] = cf
+        CRITERION[cf.__name__] = cf
 
     if len(criterion_factories) == 1:
-        return criterion_factory
+        return criterion_factories[0]
     return criterion_factories

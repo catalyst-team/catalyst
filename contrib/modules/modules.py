@@ -1,8 +1,8 @@
 import torch.nn as nn
-import catalyst.modules.common as common
-import catalyst.modules.pooling as pooling
-import catalyst.modules.noisy as noisy
-import catalyst.models.sequential as sequential
+import catalyst.contrib.modules.common as common
+import catalyst.contrib.modules.pooling as pooling
+import catalyst.contrib.modules.noisy as noisy
+import catalyst.contrib.models.sequential as sequential
 
 
 MODULES = {

@@ -51,7 +51,7 @@ class GlobalAttnPool2d(nn.Module):
     def __init__(self, in_features, activation_fn="Tanh"):
         super().__init__()
         # hack to prevent cycle imports
-        from catalyst.modules.modules import name2nn
+        from catalyst.contrib.modules import name2nn
         activation_fn = name2nn(activation_fn)
         self.attn = nn.Sequential(
             nn.Conv2d(
