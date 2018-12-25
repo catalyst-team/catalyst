@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from functools import reduce
 
-from catalyst.models.sequential import SequentialNet
+from catalyst.contrib.models import SequentialNet
 from catalyst.utils.initialization import create_optimal_inner_init, outer_init
 from catalyst.rl.networks.utils import normal_sample, normal_log_prob
 from catalyst.rl.networks.misc_layers import SquashingLayer, CouplingLayer
@@ -29,7 +29,7 @@ class Actor(nn.Module):
     ):
         super().__init__()
         # hack to prevent cycle imports
-        from catalyst.modules.modules import name2nn
+        from catalyst.contrib.modules import name2nn
 
         layer_fn = name2nn(layer_fn)
         activation_fn = name2nn(activation_fn)
@@ -78,7 +78,7 @@ class LamaActor(nn.Module):
     ):
         super().__init__()
         # hack to prevent cycle imports
-        from catalyst.modules.modules import name2nn
+        from catalyst.contrib.modules import name2nn
 
         layer_fn = name2nn(layer_fn)
         activation_fn = name2nn(activation_fn)
@@ -165,7 +165,7 @@ class GaussActor(nn.Module):
     ):
         super().__init__()
         # hack to prevent cycle imports
-        from catalyst.modules.modules import name2nn
+        from catalyst.contrib.modules import name2nn
 
         self.n_action = action_size
 
@@ -233,7 +233,7 @@ class RealNVPActor(nn.Module):
     ):
         super().__init__()
         # hack to prevent cycle imports
-        from catalyst.modules.modules import name2nn
+        from catalyst.contrib.modules import name2nn
 
         self.n_action = action_size
 
@@ -320,7 +320,7 @@ class Critic(nn.Module):
     ):
         super().__init__()
         # hack to prevent cycle imports
-        from catalyst.modules.modules import name2nn
+        from catalyst.contrib.modules import name2nn
         layer_fn = name2nn(layer_fn)
         activation_fn = name2nn(activation_fn)
         norm_fn = name2nn(norm_fn)
@@ -399,7 +399,7 @@ class LamaCritic(nn.Module):
     ):
         super().__init__()
         # hack to prevent cycle imports
-        from catalyst.modules.modules import name2nn
+        from catalyst.contrib.modules import name2nn
 
         layer_fn = name2nn(layer_fn)
         activation_fn = name2nn(activation_fn)
@@ -515,7 +515,7 @@ class ValueCritic(nn.Module):
     ):
         super().__init__()
         # hack to prevent cycle imports
-        from catalyst.modules.modules import name2nn
+        from catalyst.contrib.modules import name2nn
         layer_fn = name2nn(layer_fn)
         activation_fn = name2nn(activation_fn)
         norm_fn = name2nn(norm_fn)
@@ -567,7 +567,7 @@ class LamaValueCritic(nn.Module):
     ):
         super().__init__()
         # hack to prevent cycle imports
-        from catalyst.modules.modules import name2nn
+        from catalyst.contrib.modules import name2nn
 
         layer_fn = name2nn(layer_fn)
         activation_fn = name2nn(activation_fn)

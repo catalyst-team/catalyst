@@ -1,3 +1,4 @@
+import os
 import time
 import numpy as np
 from datetime import datetime
@@ -7,7 +8,6 @@ import queue
 import torch
 from torch.utils.data import Dataset, Sampler, DataLoader
 
-from catalyst.utils.misc import create_if_need
 from catalyst.utils.factory import UtilsFactory
 from catalyst.utils.serialization import serialize, deserialize
 
@@ -177,7 +177,7 @@ class Trainer:
         self.logdir = logdir
         current_date = datetime.now().strftime("%y-%m-%d-%H-%M-%S-%M-%f")
         logpath = f"{logdir}/trainer-{current_date}"
-        create_if_need(logpath)
+        os.makedirs(logpath, exist_ok=True)
         self.logger = SummaryWriter(logpath)
 
         self.episodes_queue = mp.Queue()

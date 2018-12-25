@@ -1,14 +1,14 @@
 import argparse
+import json
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 import cv2
 import torch
-from torchvision import transforms
+from torchvision import models, transforms
 
 from catalyst.utils.factory import UtilsFactory
 from catalyst.data.reader import ImageReader
-from catalyst.contrib.models import ResnetEncoder
 
 cv2.setNumThreads(0)
 cv2.ocl.setUseOpenCL(False)
@@ -30,34 +30,83 @@ def dict_transformer(sample):
     return sample
 
 
+class Images2Keywords:
+    def __init__(self, nn_model, n_keywords, labels):
+        self.nn_model = nn_model
+        self.n_keywords = n_keywords
+        self.labels = labels
+
+    def __call__(self, images_batch):
+        predict = self.nn_model(images_batch).cpu().data.numpy()
+
+        keywords = []
+
+        for i in predict:
+            indexes = np.argsort(i)
+            indexes = indexes[::-1][:self.n_keywords]
+
+            image_keywords = []
+            for index in indexes:
+                keyword = self.labels[index].split(";")[0]
+                image_keywords.append(keyword)
+
+            keywords.append(";".join(image_keywords))
+
+        return keywords
+
+
 def parse_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="This script allow you get top-n labels for photos"
+    )
     parser.add_argument(
-        "--in-csv", type=str, dest="in_csv", help="path to csv with photos"
+        "--in-csv",
+        type=str,
+        dest="in_csv",
+        help="path to csv with photos",
+        required=True
     )
     parser.add_argument(
         "--img-datapath",
         type=str,
         dest="datapath",
-        help="path to photos directory"
+        help="path to photos directory",
+        required=True
     )
     parser.add_argument(
         "--img-col",
         type=str,
         dest="img_col",
-        help="column in table that contain image path"
+        help="column in table that contain image path",
+        required=True
     )
-    parser.add_argument("--img-size", type=int, dest="img_size", default=224)
-    parser.add_argument("--out-npy", type=str, dest="out_npy", required=True)
+    parser.add_argument(
+        "--out-csv",
+        type=str,
+        dest="out_csv",
+        help="output csv with keywords for every image",
+        default="out.csv"
+    )
+    parser.add_argument(
+        "--keywords-col",
+        type=str,
+        dest="keywords_col",
+        help="column in output csv that contain n keywords for photo",
+        default="keywords"
+    )
+    parser.add_argument(
+        "--n-keywords",
+        type=int,
+        dest="n_keywords",
+        help="number of keywords",
+        default=5
+    )
     parser.add_argument(
         "--arch",
         type=str,
         dest="arch",
         help="neural network architecture",
         default="resnet101"
-    )
-    parser.add_argument(
-        "--pooling", type=str, dest="pooling", default="GlobalAvgPool2d"
     )
     parser.add_argument(
         "--n-workers",
@@ -74,6 +123,13 @@ def parse_args():
         default=128
     )
     parser.add_argument(
+        "--labels",
+        type=str,
+        dest="labels",
+        help="json file with labels",
+        required=True
+    )
+    parser.add_argument(
         "--verbose", dest="verbose", action="store_true", default=False
     )
     args = parser.parse_args()
@@ -81,13 +137,13 @@ def parse_args():
 
 
 def main(args):
-    global IMG_SIZE
-
-    IMG_SIZE = (args.img_size, args.img_size)
-
-    model = ResnetEncoder(arch=args.arch, pooling=args.pooling)
+    model = models.__dict__[args.arch](pretrained=True)
     model = model.eval()
     model, device = UtilsFactory.prepare_model(model)
+
+    labels = json.loads(open(args.labels).read())
+
+    i2k = Images2Keywords(model, args.n_keywords, labels)
 
     images_df = pd.read_csv(args.in_csv)
     images_df = images_df.reset_index().drop("index", axis=1)
@@ -105,16 +161,16 @@ def main(args):
         dict_transform=dict_transformer
     )
 
-    features = []
+    keywords = []
     dataloader = tqdm(dataloader) if args.verbose else dataloader
     with torch.no_grad():
         for batch in dataloader:
-            features_ = model(batch["image"].to(device))
-            features_ = features_.cpu().detach().numpy()
-            features.append(features_)
+            keywords_batch = i2k(batch["image"].to(device))
+            keywords += keywords_batch
 
-    features = np.concatenate(features, axis=0)
-    np.save(args.out_npy, features)
+    input_csv = pd.read_csv(args.in_csv)
+    input_csv[args.keywords_col] = keywords
+    input_csv.to_csv(args.out_csv, index=False)
 
 
 if __name__ == "__main__":
