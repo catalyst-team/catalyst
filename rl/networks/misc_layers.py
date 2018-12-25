@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
 
-from catalyst.models.sequential import SequentialNet
-from catalyst.utils.initialization import create_optimal_inner_init, outer_init
+from catalyst.contrib.models import SequentialNet
+from catalyst.dl.initialization import create_optimal_inner_init, outer_init
 from catalyst.rl.networks.utils import log1p_exp
 
 
@@ -12,7 +12,7 @@ class SquashingLayer(nn.Module):
         """
         super().__init__()
         # hack to prevent cycle imports
-        from catalyst.modules.modules import name2nn
+        from catalyst.contrib.modules import name2nn
         self.activation = name2nn(activation_fn)()
 
     def forward(self, action, log_pi):
@@ -59,7 +59,7 @@ class CouplingLayer(nn.Module):
         """
         super().__init__()
         # hack to prevent cycle imports
-        from catalyst.modules.modules import name2nn
+        from catalyst.contrib.modules import name2nn
 
         layer_fn = name2nn(layer_fn)
         activation_fn = name2nn(activation_fn)

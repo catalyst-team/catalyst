@@ -8,7 +8,7 @@ tl;dr:
     - `mdl`,`crt`, `opt`, `scd` - not okay
 - long names solution
     - okay:
-    ```bash
+    ```python
     def my_pure_long_name(
             self,
             model, criterion=None, optimizer=None, scheduler=None,
@@ -16,7 +16,7 @@ tl;dr:
         """code"""
     ```
     - not okay:
-    ```bash
+    ```python
     def my_pure_long_name(self,
                           model, criterion=None, optimizer=None, scheduler=None,
                           debug=True):
