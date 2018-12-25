@@ -8,7 +8,7 @@ import queue
 import torch
 from torch.utils.data import Dataset, Sampler, DataLoader
 
-from catalyst.utils.factory import UtilsFactory
+from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.serialization import serialize, deserialize
 
 

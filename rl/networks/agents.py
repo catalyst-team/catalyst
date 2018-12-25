@@ -3,7 +3,7 @@ import torch.nn as nn
 from functools import reduce
 
 from catalyst.contrib.models import SequentialNet
-from catalyst.utils.initialization import create_optimal_inner_init, outer_init
+from catalyst.dl.initialization import create_optimal_inner_init, outer_init
 from catalyst.rl.networks.utils import normal_sample, normal_log_prob
 from catalyst.rl.networks.misc_layers import SquashingLayer, CouplingLayer
 

@@ -1,7 +1,7 @@
 import copy
 import torch
 
-from catalyst.utils.factory import UtilsFactory
+from catalyst.dl.utils import UtilsFactory
 import catalyst.rl.networks.agents as agents
 
 

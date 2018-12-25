@@ -6,7 +6,7 @@ import cv2
 import torch
 from torchvision import transforms
 
-from catalyst.utils.factory import UtilsFactory
+from catalyst.dl.utils import UtilsFactory
 from catalyst.data.reader import ImageReader
 from catalyst.contrib.models import ResnetEncoder
 

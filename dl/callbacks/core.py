@@ -14,8 +14,8 @@ from catalyst.dl.callbacks.utils import to_batch_metrics, \
     get_optimizer_momentum, scheduler_step
 from catalyst.dl.state import RunnerState
 
-from catalyst.utils.fp16 import Fp16Wrap, copy_params, copy_grads
-from catalyst.utils.factory import UtilsFactory
+from catalyst.dl.fp16 import Fp16Wrap, copy_params, copy_grads
+from catalyst.dl.utils import UtilsFactory
 
 cv2.setNumThreads(1)
 cv2.ocl.setUseOpenCL(False)

@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 from catalyst.contrib.models import SequentialNet
-from catalyst.utils.initialization import create_optimal_inner_init, outer_init
+from catalyst.dl.initialization import create_optimal_inner_init, outer_init
 from catalyst.rl.networks.utils import log1p_exp
 
 
