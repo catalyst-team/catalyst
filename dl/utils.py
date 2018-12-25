@@ -10,7 +10,6 @@ from torch.utils.data.dataloader import default_collate as default_collate_fn
 
 from catalyst.contrib.criterion import CRITERION
 from catalyst.contrib.optimizers import OPTIMIZERS
-from catalyst.dl.callbacks import CALLBACKS
 from catalyst.data.dataset import ListDataset
 from catalyst.dl.fp16 import Fp16Wrap
 
@@ -122,8 +121,9 @@ class UtilsFactory:
         if callback is None:
             return None
 
-        # import catalyst.dl.callbacks as CALLBACKS
-        callback = CALLBACKS.__dict__[callback](**callback_params)
+        # hack to prevent cycle imports
+        from catalyst.dl.callbacks import CALLBACKS
+        callback = CALLBACKS[callback](**callback_params)
         return callback
 
     @staticmethod

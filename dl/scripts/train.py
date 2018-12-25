@@ -3,7 +3,7 @@ import argparse
 import pathlib
 
 from catalyst.dl.scripts.utils import prepare_modules
-from catalyst.utils.args import parse_args_uargs, save_config
+from catalyst.utils.config import parse_args_uargs, save_config
 from catalyst.utils.misc import set_global_seeds, boolean_flag
 
 

@@ -37,7 +37,9 @@ class SequentialNet(nn.Module):
         block_parts = block_parts or ["layer", "norm", "drop", "activation"]
 
         if isinstance(dropout, float):
-            dropout = lambda: nn.Dropout(dropout)
+            dropout_fn = lambda: nn.Dropout(dropout)
+        else:
+            dropout_fn = dropout
 
         def _layer_fn(f_in, f_out, bias):
             return layer_fn(f_in, f_out, bias=bias)
@@ -46,7 +48,7 @@ class SequentialNet(nn.Module):
             return norm_fn(f_out) if norm_fn is not None else None
 
         def _dropout_fn(f_in, f_out, bias):
-            return dropout() if dropout is not None else None
+            return dropout_fn() if dropout_fn is not None else None
 
         def _activation_fn(f_in, f_out, bias):
             return activation_fn() if activation_fn is not None else None

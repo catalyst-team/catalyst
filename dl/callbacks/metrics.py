@@ -1,6 +1,6 @@
 from typing import Callable, List
 
-from catalyst.dl.callbacks import Callback
+from .core import Callback
 from catalyst.dl import metrics
 from catalyst.dl.callbacks.utils import get_val_from_metric
 
@@ -27,8 +27,7 @@ class MetricCallback(Callback):
     def on_batch_end(self, state):
         outputs = state.output[self.output_key]
         targets = state.input[self.input_key]
-
-        metric = self.metric_fn(targets, outputs, **self.metric_params)
+        metric = self.metric_fn(outputs, targets, **self.metric_params)
         state.batch_metrics[self.prefix] = get_val_from_metric(metric)
 
 
@@ -58,11 +57,14 @@ class MultiMetricCallback(Callback):
         targets = state.input[self.input_key]
 
         metrics_ = self.metric_fn(
-            targets, outputs, self.list_args, **self.metric_params
+            outputs, targets, self.list_args, **self.metric_params
         )
 
         for arg, metric in zip(self.list_args, metrics_):
-            key = f"{self.prefix}_{arg}"
+            if isinstance(arg, int):
+                key = f"{self.prefix}{arg:02}"
+            else:
+                key = f"{self.prefix}_{arg}"
             state.batch_metrics[key] = get_val_from_metric(metric)
 
 
