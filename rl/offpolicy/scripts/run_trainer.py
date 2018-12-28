@@ -6,7 +6,7 @@ from pprint import pprint
 from redis import StrictRedis
 import torch
 
-from catalyst.utils.args import parse_args_uargs
+from catalyst.utils.config import parse_args_uargs
 from catalyst.utils.misc import set_global_seeds, import_module
 from catalyst.rl.offpolicy.trainer import Trainer
 

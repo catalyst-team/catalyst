@@ -31,6 +31,8 @@ class BaseAlgorithm:
         load_optimizer=True,
         actor_tau=1.0,
         critic_tau=1.0,
+        min_action=-1.0,
+        max_action=1.0,
         **kwargs
     ):
         self._device = torch.device(
@@ -92,6 +94,9 @@ class BaseAlgorithm:
 
         self.actor_tau = actor_tau
         self.critic_tau = critic_tau
+
+        self.min_action = min_action
+        self.max_action = max_action
 
         self.actor_criterion = UtilsFactory.create_criterion(
             **(actor_loss_params or {})
