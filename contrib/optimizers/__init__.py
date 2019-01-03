@@ -1,5 +1,7 @@
+from typing import List, Union
 import torch
-from typing import Type, List, Union, Callable
+
+from catalyst.utils import FactoryType
 
 OPTIMIZERS = {
     **torch.optim.__dict__,
@@ -7,8 +9,8 @@ OPTIMIZERS = {
 
 
 def register_optimizer(
-    *optimizer_factories: Union[Type, Callable]
-) -> Union[Union[Type, Callable], List[Union[Type, Callable]]]:
+    *optimizer_factories: FactoryType
+) -> Union[FactoryType, List[FactoryType]]:
     """Add optimizer type or factory method to global
         optimizer list to make it available in config
         Can be called or used as decorator
