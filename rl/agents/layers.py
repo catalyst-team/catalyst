@@ -24,8 +24,7 @@ class TemporalAttentionPooling(nn.Module):
                 out_channels=1,
                 kernel_size=1,
                 bias=True
-            ),
-            TemporalAttentionPooling.name2fn[pooling]
+            ), TemporalAttentionPooling.name2fn[pooling]
         )
         self.attention_pooling.apply(outer_init)
 
@@ -47,12 +46,8 @@ class TemporalAttentionPooling(nn.Module):
 
 class LamaPooling(nn.Module):
     available_poolings = [
-        "last",
-        "avg_all", "avg",
-        "max_all", "max",
-        "softmax_all", "softmax",
-        "tanh_all", "tanh",
-        "sigmoid_all", "sigmoid"
+        "last", "avg_all", "avg", "max_all", "max", "softmax_all", "softmax",
+        "tanh_all", "tanh", "sigmoid_all", "sigmoid"
     ]
 
     def __init__(self, features_in, poolings=None):
@@ -68,8 +63,8 @@ class LamaPooling(nn.Module):
         if any([x in key for x in ["softmax", "tanh", "sigmoid"]]):
             key = key.split("_", 1)[0]
             pooling = TemporalAttentionPooling(
-                features_in=self.features_in,
-                pooling=key)
+                features_in=self.features_in, pooling=key
+            )
             # @TODO: fix hack
             setattr(self, f"{key}_pooling", pooling)
 
@@ -108,7 +103,7 @@ class LamaPooling(nn.Module):
         for key in self.poolings:
             pooling = self._pooling_fn(key, features)
             features_.append(pooling)
-        x = torch.cat(features_, dim=1, )
+        x = torch.cat(features_, dim=1)
         x = x.view(batch_size, -1)
 
         return x
@@ -160,13 +155,7 @@ class StateNet(nn.Module):
 
 
 class StateActionNet(nn.Module):
-    def __init__(
-            self,
-            observation_net,
-            action_net,
-            head_net,
-            memory_net=None
-    ):
+    def __init__(self, observation_net, action_net, head_net, memory_net=None):
         super().__init__()
         self.observation_net = observation_net
         self.action_net = action_net

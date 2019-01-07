@@ -19,20 +19,21 @@ class Actor(StateNet):
 
     @classmethod
     def create_from_config(
-            cls,
-            state_shape,
-            action_size,
-            hiddens,
-            layer_fn,
-            activation_fn=nn.ReLU,
-            dropout=None,
-            norm_fn=None,
-            bias=True,
-            layer_order=None,
-            residual=False,
-            out_activation=None,
-            memory_type=None,
-            **kwargs):
+        cls,
+        state_shape,
+        action_size,
+        hiddens,
+        layer_fn,
+        activation_fn=nn.ReLU,
+        dropout=None,
+        norm_fn=None,
+        bias=True,
+        layer_order=None,
+        residual=False,
+        out_activation=None,
+        memory_type=None,
+        **kwargs
+    ):
         assert len(kwargs) == 0
         # hack to prevent cycle imports
         from catalyst.contrib.modules import name2nn
@@ -43,7 +44,7 @@ class Actor(StateNet):
         out_activation = name2nn(out_activation)
 
         if isinstance(state_shape, int):
-            state_shape = (state_shape,)
+            state_shape = (state_shape, )
 
         if len(state_shape) in [1, 2]:
             # linear case: one observation or several one
@@ -88,7 +89,8 @@ class Actor(StateNet):
         actor_net = cls(
             observation_net=observation_net,
             memory_net=memory_net,
-            head_net=head_net)
+            head_net=head_net
+        )
 
         return actor_net
 
@@ -100,15 +102,15 @@ class GaussActor(nn.Module):
     """
 
     def __init__(
-            self,
-            state_shape,
-            action_size,
-            hiddens,
-            layer_fn,
-            activation_fn=nn.ReLU,
-            norm_fn=None,
-            bias=True,
-            out_activation=nn.Sigmoid
+        self,
+        state_shape,
+        action_size,
+        hiddens,
+        layer_fn,
+        activation_fn=nn.ReLU,
+        norm_fn=None,
+        bias=True,
+        out_activation=nn.Sigmoid
     ):
         super().__init__()
         # hack to prevent cycle imports
@@ -168,15 +170,15 @@ class RealNVPActor(nn.Module):
     """
 
     def __init__(
-            self,
-            state_shape,
-            action_size,
-            hiddens,
-            layer_fn,
-            activation_fn=nn.ReLU,
-            norm_fn=None,
-            bias=True,
-            out_activation=nn.Sigmoid
+        self,
+        state_shape,
+        action_size,
+        hiddens,
+        layer_fn,
+        activation_fn=nn.ReLU,
+        norm_fn=None,
+        bias=True,
+        out_activation=nn.Sigmoid
     ):
         super().__init__()
         # hack to prevent cycle imports
