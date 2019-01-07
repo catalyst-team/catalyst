@@ -2,7 +2,7 @@ import copy
 import torch
 
 from catalyst.dl.utils import UtilsFactory
-import catalyst.rl.networks.agents as agents
+import catalyst.rl.agents.agents as agents
 
 
 def soft_update(target, source, tau):

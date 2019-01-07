@@ -2,7 +2,7 @@ import copy
 import torch
 from catalyst.rl.algorithms.utils import quantile_loss
 from catalyst.dl.utils import UtilsFactory
-import catalyst.rl.networks.agents as agents
+import catalyst.rl.agents.agents as agents
 from catalyst.rl.algorithms import TD3
 from catalyst.rl.algorithms.base import soft_update
 

@@ -1,7 +1,7 @@
 import copy
 import torch
 from catalyst.dl.utils import UtilsFactory
-import catalyst.rl.networks.agents as agents
+import catalyst.rl.agents.agents as agents
 from catalyst.rl.algorithms.base import BaseAlgorithm, soft_update
 
 
