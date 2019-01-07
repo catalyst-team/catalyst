@@ -7,8 +7,8 @@ import torch
 from datetime import datetime
 from tensorboardX import SummaryWriter
 
-from catalyst.utils.misc import create_if_need, set_global_seeds
-from catalyst.utils.factory import UtilsFactory
+from catalyst.utils.misc import set_global_seeds
+from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.serialization import serialize, deserialize
 from catalyst.rl.random_process import RandomProcess
 
@@ -200,7 +200,7 @@ class Sampler:
         if logdir is not None:
             current_date = datetime.now().strftime("%y-%m-%d-%H-%M-%S-%M-%f")
             logpath = f"{logdir}/sampler-{mode}-{id}-{current_date}"
-            create_if_need(logpath)
+            os.makedirs(logpath, exist_ok=True)
             self.logger = SummaryWriter(logpath)
         else:
             self.logger = None

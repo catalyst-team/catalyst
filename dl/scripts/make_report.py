@@ -1,7 +1,7 @@
 import argparse
 from glob import glob
 import pandas as pd
-from catalyst.utils.factory import UtilsFactory
+from catalyst.dl.utils import UtilsFactory
 
 import matplotlib
 

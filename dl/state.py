@@ -1,7 +1,8 @@
 import time
 from collections import defaultdict
 from torchnet import meter
-from catalyst.utils.factory import UtilsFactory
+from catalyst.dl.callbacks.utils import get_val_from_metric, \
+    process_epoch_metrics
 from catalyst.utils.misc import FrozenClass
 
 
@@ -11,19 +12,19 @@ class RunnerState(FrozenClass):
     """
 
     def __init__(
-            self,
-            *,
-            device=None,
-            model=None,
-            criterion=None,
-            optimizer=None,
-            scheduler=None,
-            stage=None,
-            main_metric="loss",
-            minimize_metric=True,
-            valid_loader="valid",
-            reset_step=False,
-            **kwargs
+        self,
+        *,
+        device=None,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
+        stage=None,
+        main_metric="loss",
+        minimize_metric=True,
+        valid_loader="valid",
+        reset_step=False,
+        **kwargs
     ):
         self.model = model
         self.criterion = criterion
@@ -60,7 +61,8 @@ class RunnerState(FrozenClass):
 
         self.batch_metrics = defaultdict(lambda: 0)
         self.epoch_metrics = defaultdict(
-            lambda: defaultdict(lambda: meter.AverageValueMeter()))
+            lambda: defaultdict(lambda: meter.AverageValueMeter())
+        )
         self.valid_metrics = None
         self.best_metrics = None
 
@@ -138,7 +140,7 @@ class RunnerState(FrozenClass):
             return
 
         best_metrics, valid_metrics, is_best = \
-            UtilsFactory.process_epoch_metrics(
+            process_epoch_metrics(
                 state.epoch_metrics,
                 state.best_metrics,
                 valid_loader=state.valid_loader,
@@ -159,7 +161,8 @@ class RunnerState(FrozenClass):
     @staticmethod
     def on_epoch_end_post(state):
         state.epoch_metrics = defaultdict(
-            lambda: defaultdict(lambda: meter.AverageValueMeter()))
+            lambda: defaultdict(lambda: meter.AverageValueMeter())
+        )
 
     @staticmethod
     def on_loader_start_pre(state):
@@ -173,7 +176,7 @@ class RunnerState(FrozenClass):
     def on_loader_end_pre(state):
         lm = state.loader_mode
         state.epoch_metrics[lm] = {
-            key: UtilsFactory.get_val_from_metric(value)
+            key: get_val_from_metric(value)
             for key, value in state.epoch_metrics[lm].items()
         }
 
