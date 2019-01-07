@@ -18,8 +18,8 @@ class DDPG(BaseAlgorithm):
         **kwargs
     ):
         super()._init(**kwargs)
-        self.critic_distribution = critic_distribution
         self.num_atoms = self.critic.n_atoms
+        self._calculate_losses_fn = self._base_loss
 
         if critic_distribution == "quantile":
             tau_min = 1 / (2 * self.num_atoms)
@@ -27,12 +27,14 @@ class DDPG(BaseAlgorithm):
             tau = torch.linspace(
                 start=tau_min, end=tau_max, steps=self.num_atoms)
             self.tau = self.to_tensor(tau)
+            self._calculate_losses_fn = self._quantile_loss
         elif critic_distribution == "categorical":
             self.v_min, self.v_max = values_range
             self.delta_z = (self.v_max - self.v_min) / (self.num_atoms - 1)
             z = torch.linspace(
                 start=self.v_min, end=self.v_max, steps=self.num_atoms)
             self.z = self.to_tensor(z)
+            self._calculate_losses_fn = self._categorical_loss
 
     def train(self, batch, actor_update=True, critic_update=True):
         states_t, actions_t, rewards_t, states_tp1, done_t = \
@@ -45,7 +47,7 @@ class DDPG(BaseAlgorithm):
         states_tp1 = self.to_tensor(states_tp1)
         done_t = self.to_tensor(done_t).unsqueeze(1)
 
-        policy_loss, value_loss = self.calculate_losses(
+        policy_loss, value_loss = self._calculate_losses_fn(
             states_t, actions_t, rewards_t, states_tp1, done_t
         )
 
@@ -81,60 +83,70 @@ class DDPG(BaseAlgorithm):
 
         return metrics
 
-    def calculate_losses(
+    def _base_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
         gamma = self.gamma ** self.n_step
-        if self.critic_distribution == "quantile":
 
-            # actor loss
-            policy_loss = -torch.mean(
-                self.critic(states_t, self.actor(states_t)))
+        # actor loss
+        policy_loss = -torch.mean(
+            self.critic(states_t, self.actor(states_t)))
 
-            # critic loss (quantile regression)
-            atoms_t = self.critic(states_t, actions_t)
-            atoms_tp1 = self.target_critic(
-                states_tp1, self.target_actor(states_tp1)
-            ).detach()
-            atoms_target_t = rewards_t + (1 - done_t) * gamma * atoms_tp1
+        # critic loss
+        q_values_t = self.critic(states_t, actions_t)
+        q_values_tp1 = self.target_critic(
+            states_tp1, self.target_actor(states_tp1)
+        ).detach()
+        q_target_t = rewards_t + (1 - done_t) * gamma * q_values_tp1
 
-            value_loss = quantile_loss(
-                atoms_t, atoms_target_t,
-                self.tau, self.num_atoms, self.critic_criterion)
+        value_loss = self.critic_criterion(q_values_t, q_target_t).mean()
 
-        elif self.critic_distribution == "categorical":
+        return policy_loss, value_loss
+        
+    def _quantile_loss(
+        self, states_t, actions_t, rewards_t, states_tp1, done_t
+    ):
+        gamma = self.gamma ** self.n_step
 
-            # actor loss
-            logits_tp0 = self.critic(states_t, self.actor(states_t))
-            probs_tp0 = F.softmax(logits_tp0, dim=-1)
-            q_values_tp0 = torch.sum(probs_tp0 * self.z, dim=-1)
-            policy_loss = -torch.mean(q_values_tp0)
+        # actor loss
+        policy_loss = -torch.mean(
+            self.critic(states_t, self.actor(states_t)))
 
-            # critic loss (kl-divergence between categorical distributions)
-            logits_t = self.critic(states_t, actions_t)
-            logits_tp1 = self.target_critic(
-                states_tp1, self.target_actor(states_tp1)
-            ).detach()
-            atoms_target_t = rewards_t + (1 - done_t) * gamma * self.z
+        # critic loss (quantile regression)
+        atoms_t = self.critic(states_t, actions_t)
+        atoms_tp1 = self.target_critic(
+            states_tp1, self.target_actor(states_tp1)
+        ).detach()
+        atoms_target_t = rewards_t + (1 - done_t) * gamma * atoms_tp1
 
-            value_loss = categorical_loss(
-                logits_t, logits_tp1, atoms_target_t,
-                self.z, self.delta_z, self.v_min, self.v_max)
+        value_loss = quantile_loss(
+            atoms_t, atoms_target_t,
+            self.tau, self.num_atoms, self.critic_criterion)
 
-        else:
+        return policy_loss, value_loss
+    
+    def _categorical_loss(
+        self, states_t, actions_t, rewards_t, states_tp1, done_t
+    ):
+        gamma = self.gamma ** self.n_step
 
-            # actor loss
-            policy_loss = -torch.mean(
-                self.critic(states_t, self.actor(states_t)))
+        # actor loss
+        logits_tp0 = self.critic(states_t, self.actor(states_t))
+        probs_tp0 = F.softmax(logits_tp0, dim=-1)
+        q_values_tp0 = torch.sum(probs_tp0 * self.z, dim=-1)
+        policy_loss = -torch.mean(q_values_tp0)
 
-            # critic loss
-            q_values_t = self.critic(states_t, actions_t)
-            q_values_tp1 = self.target_critic(
-                states_tp1, self.target_actor(states_tp1)
-            ).detach()
-            q_target_t = rewards_t + (1 - done_t) * gamma * q_values_tp1
+        # critic loss (kl-divergence between categorical distributions)
+        logits_t = self.critic(states_t, actions_t)
+        logits_tp1 = self.target_critic(
+            states_tp1, self.target_actor(states_tp1)
+        ).detach()
+        atoms_target_t = rewards_t + (1 - done_t) * gamma * self.z
 
-            value_loss = self.critic_criterion(q_values_t, q_target_t).mean()
+        value_loss = categorical_loss(
+            logits_t, logits_tp1, atoms_target_t,
+            self.z, self.delta_z, self.v_min, self.v_max)
+
         return policy_loss, value_loss
 
 
