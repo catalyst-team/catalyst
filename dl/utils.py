@@ -205,12 +205,12 @@ class UtilsFactory:
             if isinstance(dict2save, dict):
                 for key, value in dict2save.items():
                     if value is not None:
-                        name2save_ = name2save + "_" + str(key)
-                        checkpoint[name2save_] = value
+                        # name2save_ = name2save + "_" + str(key)
+                        # checkpoint[name2save_] = value
                         name2save_ = name2save_ + "_state_dict"
                         checkpoint[name2save_] = value.state_dict()
             else:
-                checkpoint[name2save] = dict2save
+                # checkpoint[name2save] = dict2save
                 name2save = name2save + "_state_dict"
                 checkpoint[name2save] = dict2save.state_dict()
 
