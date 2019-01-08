@@ -7,8 +7,7 @@ def ce_with_logits(logits, target):
 
 
 def categorical_loss(
-    logits_t, logits_tp1, atoms_target_t,
-    z, delta_z, v_min, v_max
+    logits_t, logits_tp1, atoms_target_t, z, delta_z, v_min, v_max
 ):
     """
     Parameters
@@ -24,16 +23,12 @@ def categorical_loss(
     tz = torch.clamp(atoms_target_t, v_min, v_max)
     tz_z = torch.abs(tz[:, None, :] - z[None, :, None])
     tz_z = torch.clamp(1.0 - (tz_z / delta_z), 0., 1.)
-    probs_target_t = torch.einsum(
-        "bij,bj->bi", (tz_z, probs_tp1)).detach()
+    probs_target_t = torch.einsum("bij,bj->bi", (tz_z, probs_tp1)).detach()
     loss = ce_with_logits(logits_t, probs_target_t).mean()
     return loss
 
 
-def quantile_loss(
-    atoms_t, atoms_target_t,
-    tau, num_atoms, criterion
-):
+def quantile_loss(atoms_t, atoms_target_t, tau, num_atoms, criterion):
     """
     Parameters
     ----------
@@ -46,7 +41,9 @@ def quantile_loss(
     atoms_diff = atoms_target_t[:, None, :] - atoms_t[:, :, None]
     delta_atoms_diff = atoms_diff.lt(0).to(torch.float32).detach()
     huber_weights = torch.abs(
-        tau[None, :, None] - delta_atoms_diff) / num_atoms
+        tau[None, :, None] - delta_atoms_diff
+    ) / num_atoms
     loss = criterion(
-        atoms_t[:, :, None], atoms_target_t[:, None, :], huber_weights).mean()
+        atoms_t[:, :, None], atoms_target_t[:, None, :], huber_weights
+    ).mean()
     return loss

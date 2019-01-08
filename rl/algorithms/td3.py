@@ -12,6 +12,7 @@ class TD3(BaseAlgorithm):
     """
     Swiss Army knife TD3 algorithm.
     """
+
     def _init(
         self,
         critics,
@@ -48,14 +49,16 @@ class TD3(BaseAlgorithm):
             tau_min = 1 / (2 * self.num_atoms)
             tau_max = 1 - tau_min
             tau = torch.linspace(
-                start=tau_min, end=tau_max, steps=self.num_atoms)
+                start=tau_min, end=tau_max, steps=self.num_atoms
+            )
             self.tau = self.to_tensor(tau)
             self._calculate_losses_fn = self._quantile_loss
         elif critic_distribution == "categorical":
             self.v_min, self.v_max = values_range
             self.delta_z = (self.v_max - self.v_min) / (self.num_atoms - 1)
             z = torch.linspace(
-                start=self.v_min, end=self.v_max, steps=self.num_atoms)
+                start=self.v_min, end=self.v_max, steps=self.num_atoms
+            )
             self.z = self.to_tensor(z)
             self._calculate_losses_fn = self._categorical_loss
 
@@ -116,10 +119,8 @@ class TD3(BaseAlgorithm):
 
         return metrics
 
-    def _base_loss(
-        self, states_t, actions_t, rewards_t, states_tp1, done_t
-    ):
-        gamma = self.gamma ** self.n_step
+    def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
+        gamma = self.gamma**self.n_step
         actions_tp1 = self.target_actor(states_tp1).detach()
         actions_tp1 = self.add_noise_to_actions(actions_tp1)
 
@@ -145,7 +146,7 @@ class TD3(BaseAlgorithm):
     def _quantile_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
-        gamma = self.gamma ** self.n_step
+        gamma = self.gamma**self.n_step
         actions_tp1 = self.target_actor(states_tp1).detach()
         actions_tp1 = self.add_noise_to_actions(actions_tp1)
 
@@ -155,7 +156,8 @@ class TD3(BaseAlgorithm):
             x(states_t, actions_tp0).unsqueeze_(-1) for x in self.critics
         ]
         q_values_tp0_min = torch.cat(
-            atoms_tp0, dim=-1).mean(dim=1).min(dim=1)[0]
+            atoms_tp0, dim=-1
+        ).mean(dim=1).min(dim=1)[0]
         policy_loss = -torch.mean(q_values_tp0_min)
 
         # critic loss (quantile regression)
@@ -168,13 +170,13 @@ class TD3(BaseAlgorithm):
             dim=-1
         )
         atoms_ids_tp1_min = atoms_tp1.mean(dim=1).argmin(dim=1)
-        atoms_tp1 = atoms_tp1[
-            range(len(atoms_tp1)), :, atoms_ids_tp1_min].detach()
+        atoms_tp1 = atoms_tp1[range(len(atoms_tp1)), :, atoms_ids_tp1_min
+                              ].detach()
         atoms_target_t = rewards_t + (1 - done_t) * gamma * atoms_tp1
         value_loss = [
             quantile_loss(
-                x, atoms_target_t,
-                self.tau, self.num_atoms, self.critic_criterion
+                x, atoms_target_t, self.tau, self.num_atoms,
+                self.critic_criterion
             ) for x in atoms_t
         ]
 
@@ -183,7 +185,7 @@ class TD3(BaseAlgorithm):
     def _categorical_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
-        gamma = self.gamma ** self.n_step
+        gamma = self.gamma**self.n_step
         actions_tp1 = self.target_actor(states_tp1).detach()
         actions_tp1 = self.add_noise_to_actions(actions_tp1)
 
@@ -192,34 +194,28 @@ class TD3(BaseAlgorithm):
         logits_tp0 = [x(states_t, actions_tp0) for x in self.critics]
         probs_tp0 = [F.softmax(x, dim=-1) for x in logits_tp0]
         q_values_tp0 = [
-            torch.sum(x * self.z, dim=-1).unsqueeze_(-1) for x in probs_tp0]
+            torch.sum(x * self.z, dim=-1).unsqueeze_(-1) for x in probs_tp0
+        ]
         q_values_tp0_min = torch.cat(q_values_tp0, dim=-1).min(dim=-1)[0]
         policy_loss = -torch.mean(q_values_tp0_min)
 
         # critic loss (kl-divergence between categorical distributions)
         logits_t = [x(states_t, actions_t) for x in self.critics]
-        logits_tp1 = [
-            x(states_tp1, actions_tp1) for x in self.target_critics
-        ]
+        logits_tp1 = [x(states_tp1, actions_tp1) for x in self.target_critics]
         probs_tp1 = [F.softmax(x, dim=-1) for x in logits_tp1]
         q_values_tp1 = [
-            torch.sum(x * self.z, dim=-1).unsqueeze_(-1) for x in probs_tp1]
+            torch.sum(x * self.z, dim=-1).unsqueeze_(-1) for x in probs_tp1
+        ]
         probs_ids_tp1_min = torch.cat(q_values_tp1, dim=-1).argmin(dim=1)
 
-        logits_tp1 = torch.cat(
-            [
-                x.unsqueeze(-1)
-                for x in logits_tp1
-            ],
-            dim=-1
-        )
-        logits_tp1 = logits_tp1[
-            range(len(logits_tp1)), :, probs_ids_tp1_min].detach()
+        logits_tp1 = torch.cat([x.unsqueeze(-1) for x in logits_tp1], dim=-1)
+        logits_tp1 = logits_tp1[range(len(logits_tp1)), :, probs_ids_tp1_min
+                                ].detach()
         atoms_target_t = rewards_t + (1 - done_t) * gamma * self.z
         value_loss = [
             categorical_loss(
-                x, logits_tp1, atoms_target_t,
-                self.z, self.delta_z, self.v_min, self.v_max
+                x, logits_tp1, atoms_target_t, self.z, self.delta_z,
+                self.v_min, self.v_max
             ) for x in logits_t
         ]
 
