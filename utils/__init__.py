@@ -4,9 +4,9 @@ from catalyst.contrib import optimizers, criterion, models
 from catalyst.dl import callbacks
 
 _REGISTERS = {
-    "optimizers": optimizers.OPTIMIZERS,
+    "optimizer": optimizers.OPTIMIZERS,
     "criterion": criterion.CRITERION,
-    "callbacks": callbacks.CALLBACKS
+    "callback": callbacks.CALLBACKS
 }
 
 Factory = Union[Type, Callable]
