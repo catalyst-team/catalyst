@@ -1,6 +1,6 @@
 from typing import List, Union
 
-from catalyst.utils import Factory
+from catalyst.utils import Factory, register
 
 from . import core
 from . import metrics
@@ -37,10 +37,4 @@ def register_callback(*callback_factories: Factory
         :param: callback_factories Required criterion factory (method or type)
         :returns: single callback factory or list of them
     """
-
-    for cf in callback_factories:
-        CALLBACKS[cf.__name__] = cf
-
-    if len(callback_factories) == 1:
-        return callback_factories[0]
-    return callback_factories
+    return register("callbacks")(*callback_factories)
