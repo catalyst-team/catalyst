@@ -2,6 +2,13 @@ import torch
 import torch.nn.functional as F
 
 
+def soft_update(target, source, tau):
+    for target_param, param in zip(target.parameters(), source.parameters()):
+        target_param.data.copy_(
+            target_param.data * (1.0 - tau) + param.data * tau
+        )
+
+
 def ce_with_logits(logits, target):
     return torch.sum(-target * F.log_softmax(logits, -1), -1)
 

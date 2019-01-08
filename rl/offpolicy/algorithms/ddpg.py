@@ -1,13 +1,11 @@
 import torch
 import torch.nn.functional as F
-from catalyst.rl.algorithms.base import BaseAlgorithm, \
-    prepare_for_trainer as base_prepare_for_trainer, \
-    prepare_for_sampler as base_prepare_for_sampler
-from catalyst.rl.algorithms.utils import categorical_loss, \
+from catalyst.rl.offpolicy.algorithms.core import Algorithm
+from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
     quantile_loss
 
 
-class DDPG(BaseAlgorithm):
+class DDPG(Algorithm):
     """
     Swiss Army knife DDPG algorithm.
     """
@@ -16,72 +14,25 @@ class DDPG(BaseAlgorithm):
         self, values_range=(-10., 10.), critic_distribution=None, **kwargs
     ):
         super()._init(**kwargs)
-        self.num_atoms = self.critic.n_atoms
+        self.n_atoms = self.critic.n_atoms
         self._calculate_losses_fn = self._base_loss
 
         if critic_distribution == "quantile":
-            tau_min = 1 / (2 * self.num_atoms)
+            tau_min = 1 / (2 * self.n_atoms)
             tau_max = 1 - tau_min
             tau = torch.linspace(
-                start=tau_min, end=tau_max, steps=self.num_atoms
+                start=tau_min, end=tau_max, steps=self.n_atoms
             )
-            self.tau = self.to_tensor(tau)
+            self.tau = self._to_tensor(tau)
             self._calculate_losses_fn = self._quantile_loss
         elif critic_distribution == "categorical":
             self.v_min, self.v_max = values_range
-            self.delta_z = (self.v_max - self.v_min) / (self.num_atoms - 1)
+            self.delta_z = (self.v_max - self.v_min) / (self.n_atoms - 1)
             z = torch.linspace(
-                start=self.v_min, end=self.v_max, steps=self.num_atoms
+                start=self.v_min, end=self.v_max, steps=self.n_atoms
             )
-            self.z = self.to_tensor(z)
+            self.z = self._to_tensor(z)
             self._calculate_losses_fn = self._categorical_loss
-
-    def train(self, batch, actor_update=True, critic_update=True):
-        states_t, actions_t, rewards_t, states_tp1, done_t = \
-            batch["state"], batch["action"], batch["reward"], \
-            batch["next_state"], batch["done"]
-
-        states_t = self.to_tensor(states_t)
-        actions_t = self.to_tensor(actions_t)
-        rewards_t = self.to_tensor(rewards_t).unsqueeze(1)
-        states_tp1 = self.to_tensor(states_tp1)
-        done_t = self.to_tensor(done_t).unsqueeze(1)
-
-        policy_loss, value_loss = self._calculate_losses_fn(
-            states_t, actions_t, rewards_t, states_tp1, done_t
-        )
-
-        metrics = self.update_step(
-            policy_loss=policy_loss,
-            value_loss=value_loss,
-            actor_update=actor_update,
-            critic_update=critic_update
-        )
-
-        return metrics
-
-    def update_step(
-        self, policy_loss, value_loss, actor_update=True, critic_update=True
-    ):
-        # actor update
-        actor_update_metrics = {}
-        if actor_update:
-            actor_update_metrics = self.actor_update(policy_loss) or {}
-
-        # critic update
-        critic_update_metrics = {}
-        if critic_update:
-            critic_update_metrics = self.critic_update(value_loss) or {}
-
-        loss = value_loss + policy_loss
-        metrics = {
-            "loss": loss.item(),
-            "loss_critic": value_loss.item(),
-            "loss_actor": policy_loss.item()
-        }
-        metrics = {**metrics, **actor_update_metrics, **critic_update_metrics}
-
-        return metrics
 
     def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
         gamma = self.gamma**self.n_step
@@ -116,7 +67,7 @@ class DDPG(BaseAlgorithm):
         atoms_target_t = rewards_t + (1 - done_t) * gamma * atoms_tp1
 
         value_loss = quantile_loss(
-            atoms_t, atoms_target_t, self.tau, self.num_atoms,
+            atoms_t, atoms_target_t, self.tau, self.n_atoms,
             self.critic_criterion
         )
 
@@ -147,10 +98,49 @@ class DDPG(BaseAlgorithm):
 
         return policy_loss, value_loss
 
+    def update_step(
+        self, policy_loss, value_loss, actor_update=True, critic_update=True
+    ):
+        # actor update
+        actor_update_metrics = {}
+        if actor_update:
+            actor_update_metrics = self.actor_update(policy_loss) or {}
 
-def prepare_for_trainer(config, algo=DDPG):
-    return base_prepare_for_trainer(config, algo=algo)
+        # critic update
+        critic_update_metrics = {}
+        if critic_update:
+            critic_update_metrics = self.critic_update(value_loss) or {}
 
+        loss = value_loss + policy_loss
+        metrics = {
+            "loss": loss.item(),
+            "loss_critic": value_loss.item(),
+            "loss_actor": policy_loss.item()
+        }
+        metrics = {**metrics, **actor_update_metrics, **critic_update_metrics}
 
-def prepare_for_sampler(config):
-    return base_prepare_for_sampler(config)
+        return metrics
+
+    def train(self, batch, actor_update=True, critic_update=True):
+        states_t, actions_t, rewards_t, states_tp1, done_t = \
+            batch["state"], batch["action"], batch["reward"], \
+            batch["next_state"], batch["done"]
+
+        states_t = self._to_tensor(states_t)
+        actions_t = self._to_tensor(actions_t)
+        rewards_t = self._to_tensor(rewards_t).unsqueeze(1)
+        states_tp1 = self._to_tensor(states_tp1)
+        done_t = self._to_tensor(done_t).unsqueeze(1)
+
+        policy_loss, value_loss = self._calculate_losses_fn(
+            states_t, actions_t, rewards_t, states_tp1, done_t
+        )
+
+        metrics = self.update_step(
+            policy_loss=policy_loss,
+            value_loss=value_loss,
+            actor_update=actor_update,
+            critic_update=critic_update
+        )
+
+        return metrics

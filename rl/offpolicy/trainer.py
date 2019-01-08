@@ -135,16 +135,16 @@ class BufferSampler(Sampler):
 
 def redis2queue_loop(redis, queue, max_size):
     pointer = 0
-    redis_len = redis.llen("episodes") - 1
+    redis_len = redis.llen("trajectories") - 1
     while True:
         if pointer < redis_len and queue.qsize() < max_size:
-            episode = deserialize(redis.lindex("episodes", pointer))
+            episode = deserialize(redis.lindex("trajectories", pointer))
             queue.put(episode, block=True, timeout=1.0)
             pointer += 1
         else:
             time.sleep(1.0)
 
-        redis_len = redis.llen("episodes") - 1
+        redis_len = redis.llen("trajectories") - 1
 
 
 class Trainer:
