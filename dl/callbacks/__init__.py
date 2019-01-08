@@ -1,4 +1,7 @@
-from typing import Type, List, Union, Callable
+from typing import List, Union
+
+from catalyst.utils import Factory
+
 from . import core
 from . import metrics
 from . import schedulers
@@ -26,9 +29,8 @@ CALLBACKS = {
 }
 
 
-def register_callback(
-    *callback_factories: Union[Type, Callable]
-) -> Union[Union[Type, Callable], List[Union[Type, Callable]]]:
+def register_callback(*callback_factories: Factory
+                      ) -> Union[Factory, List[Factory]]:
     """Add callback type or factory method to global
         callback list to make it available in config
         Can be called or used as decorator
