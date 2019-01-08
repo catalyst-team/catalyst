@@ -1,6 +1,6 @@
 from typing import Type, Union, Callable, List
 
-from catalyst.contrib import optimizers, criterion, models
+from catalyst.contrib import optimizers, criterion
 from catalyst.dl import callbacks
 
 _REGISTERS = {
@@ -16,8 +16,10 @@ def register(register_type: str):
     """Add object type or factory method to global
         object list to make it available in config
         Can be called or used as decorator.
-        :param register_type: one of ['optimizers', 'criterion', 'callbacks']
-        :returns: callable/decorator which requires object_factory (method or type)
+        :param register_type: one of
+        ['optimizers', 'criterion', 'callbacks']
+        :returns: callable/decorator
+        which requires object_factory (method or type)
     """
 
     def inner_register(*object_factories: Factory
