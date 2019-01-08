@@ -102,7 +102,7 @@ class DDPG(BaseAlgorithm):
         value_loss = self.critic_criterion(q_values_t, q_target_t).mean()
 
         return policy_loss, value_loss
-        
+
     def _quantile_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
@@ -124,7 +124,7 @@ class DDPG(BaseAlgorithm):
             self.tau, self.num_atoms, self.critic_criterion)
 
         return policy_loss, value_loss
-    
+
     def _categorical_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):

@@ -27,7 +27,7 @@ class TD3(BaseAlgorithm):
 
         self.action_noise_std = action_noise_std
         self.action_noise_clip = action_noise_clip
-        
+
         critics = [x.to(self._device) for x in critics]
         critics_optimizer = [
             UtilsFactory.create_optimizer(x, **self.critic_optimizer_params)
@@ -154,7 +154,8 @@ class TD3(BaseAlgorithm):
         atoms_tp0 = [
             x(states_t, actions_tp0).unsqueeze_(-1) for x in self.critics
         ]
-        q_values_tp0_min = torch.cat(atoms_tp0, dim=-1).mean(dim=1).min(dim=1)[0]
+        q_values_tp0_min = torch.cat(
+            atoms_tp0, dim=-1).mean(dim=1).min(dim=1)[0]
         policy_loss = -torch.mean(q_values_tp0_min)
 
         # critic loss (quantile regression)
@@ -185,7 +186,7 @@ class TD3(BaseAlgorithm):
         gamma = self.gamma ** self.n_step
         actions_tp1 = self.target_actor(states_tp1).detach()
         actions_tp1 = self.add_noise_to_actions(actions_tp1)
-        
+
         # actor loss
         actions_tp0 = self.actor(states_t)
         logits_tp0 = [x(states_t, actions_tp0) for x in self.critics]
@@ -194,7 +195,7 @@ class TD3(BaseAlgorithm):
             torch.sum(x * self.z, dim=-1).unsqueeze_(-1) for x in probs_tp0]
         q_values_tp0_min = torch.cat(q_values_tp0, dim=-1).min(dim=-1)[0]
         policy_loss = -torch.mean(q_values_tp0_min)
-        
+
         # critic loss (kl-divergence between categorical distributions)
         logits_t = [x(states_t, actions_t) for x in self.critics]
         logits_tp1 = [
@@ -204,7 +205,7 @@ class TD3(BaseAlgorithm):
         q_values_tp1 = [
             torch.sum(x * self.z, dim=-1).unsqueeze_(-1) for x in probs_tp1]
         probs_ids_tp1_min = torch.cat(q_values_tp1, dim=-1).argmin(dim=1)
-        
+
         logits_tp1 = torch.cat(
             [
                 x.unsqueeze(-1)
@@ -227,7 +228,7 @@ class TD3(BaseAlgorithm):
     def target_critic_update(self):
         for target, source in zip(self.target_critics, self.critics):
             soft_update(target, source, self.critic_tau)
-            
+
     def add_noise_to_actions(self, actions):
         action_noise = torch.normal(
             mean=torch.zeros_like(actions), std=self.action_noise_std
