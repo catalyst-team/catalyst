@@ -16,8 +16,7 @@ class Registry:
 
     @staticmethod
     def _inner_register(
-            register_type: str,
-            *object_factories: Factory
+        register_type: str, *object_factories: Factory
     ) -> Union[Factory, List[Factory]]:
 
         for factory in object_factories:
@@ -30,7 +29,7 @@ class Registry:
 
     @staticmethod
     def optimizer(
-            *optimizer_factories: Factory
+        *optimizer_factories: Factory
     ) -> Union[Factory, List[Factory]]:
         """Add optimizer type or factory method to global
             optimizer list to make it available in config
@@ -42,7 +41,7 @@ class Registry:
 
     @staticmethod
     def criterion(
-            *criterion_factories: Factory
+        *criterion_factories: Factory
     ) -> Union[Factory, List[Factory]]:
         """Add criterion type or factory method to global
             criterion list to make it available in config
@@ -54,7 +53,7 @@ class Registry:
 
     @staticmethod
     def callback(
-            *callback_factories: Factory
+        *callback_factories: Factory
     ) -> Union[Factory, List[Factory]]:
         """Add callback type or factory method to global
             callback list to make it available in config
@@ -65,9 +64,7 @@ class Registry:
         return Registry._inner_register("callback", *callback_factories)
 
     @staticmethod
-    def model(
-            *models_factories: Factory
-    ) -> Union[Factory, List[Factory]]:
+    def model(*models_factories: Factory) -> Union[Factory, List[Factory]]:
         """Add model type or factory method to global
             model list to make it available in config
             Can be called or used as decorator
@@ -75,4 +72,3 @@ class Registry:
             :returns: single model factory or list of them
         """
         return Registry._inner_register("model", *models_factories)
-
