@@ -25,9 +25,9 @@ def register(register_type: str):
     def inner_register(*object_factories: Factory
                        ) -> Union[Factory, List[Factory]]:
 
-        for cf in object_factories:
+        for factory in object_factories:
             registers = _REGISTERS[register_type]
-            registers[cf.__name__] = cf
+            registers[factory.__name__] = factory
 
         if len(object_factories) == 1:
             return object_factories[0]
