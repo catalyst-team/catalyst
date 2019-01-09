@@ -16,7 +16,7 @@ MODELS = {
 
 
 def register_model(
-        *models_factories: Factory
+    *models_factories: Factory
 ) -> Union[Factory, List[Factory]]:
     """Add model type or factory method to global
         model list to make it available in config

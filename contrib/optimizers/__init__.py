@@ -8,8 +8,9 @@ OPTIMIZERS = {
 }
 
 
-def register_optimizer(*optimizer_factories: Factory
-                       ) -> Union[Factory, List[Factory]]:
+def register_optimizer(
+    *optimizer_factories: Factory
+) -> Union[Factory, List[Factory]]:
     """Add optimizer type or factory method to global
         optimizer list to make it available in config
         Can be called or used as decorator
