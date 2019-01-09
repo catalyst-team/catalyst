@@ -8,8 +8,6 @@ import torch.nn as nn
 import torch.backends.cudnn as cudnn
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
-from catalyst.contrib.criterion import CRITERION
-from catalyst.contrib.optimizers import OPTIMIZERS
 from catalyst.data.dataset import ListDataset
 from catalyst.dl.fp16 import Fp16Wrap
 
@@ -64,10 +62,17 @@ class UtilsFactory:
         return loggers
 
     @staticmethod
-    def create_model(config, available_networks):
+    def create_model(config, available_networks=None):
+        # hack to prevent cycle imports
+        from catalyst.contrib.models import MODELS
+
         model_params = config.pop("model_params", {})
         model_name = model_params.pop("model", None)
         fp16 = model_params.pop("fp16", False) and torch.cuda.is_available()
+
+        available_networks = available_networks or {}
+        available_networks = {**available_networks, **MODELS}
+
         model = available_networks[model_name](**model_params)
 
         if fp16:
@@ -77,6 +82,9 @@ class UtilsFactory:
 
     @staticmethod
     def create_criterion(criterion=None, **criterion_params):
+        # hack to prevent cycle imports
+        from catalyst.contrib.criterion import CRITERION
+
         if criterion is None:
             return None
         criterion = CRITERION[criterion](**criterion_params)
@@ -88,6 +96,9 @@ class UtilsFactory:
     def create_optimizer(
         model, fp16=False, optimizer=None, **optimizer_params
     ):
+        # hack to prevent cycle imports
+        from catalyst.contrib.optimizers import OPTIMIZERS
+
         optimizer = optimizer
         if optimizer is None:
             return None
@@ -210,11 +221,11 @@ class UtilsFactory:
                 for key, value in dict2save.items():
                     if value is not None:
                         name2save_ = name2save + "_" + str(key)
-                        checkpoint[name2save_] = value
+                        # checkpoint[name2save_] = value
                         name2save_ = name2save_ + "_state_dict"
                         checkpoint[name2save_] = value.state_dict()
             else:
-                checkpoint[name2save] = dict2save
+                # checkpoint[name2save] = dict2save
                 name2save = name2save + "_state_dict"
                 checkpoint[name2save] = dict2save.state_dict()
 
