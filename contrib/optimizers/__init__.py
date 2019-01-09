@@ -1,7 +1,6 @@
 from typing import List, Union
 import torch
-
-from catalyst.contrib import Factory, register
+from catalyst.contrib import Factory
 
 OPTIMIZERS = {
     **torch.optim.__dict__,
@@ -17,4 +16,5 @@ def register_optimizer(
         :param: optimizer_factories Required optimizer factory (method or type)
         :returns: single optimizer factory or list of them
     """
+    from catalyst.contrib import register
     return register("optimizer")(*optimizer_factories)

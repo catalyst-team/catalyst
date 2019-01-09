@@ -1,14 +1,5 @@
-from typing import Type, Union, Callable, List
+from typing import Type, List, Union, Callable
 
-from catalyst.contrib import optimizers, criterion, models
-from catalyst.dl import callbacks
-
-_REGISTERS = {
-    "optimizer": optimizers.OPTIMIZERS,
-    "criterion": criterion.CRITERION,
-    "callback": callbacks.CALLBACKS,
-    "model": models.MODELS
-}
 
 Factory = Union[Type, Callable]
 
@@ -22,6 +13,16 @@ def register(register_type: str):
         :returns: callable/decorator
         which requires object_factory (method or type)
     """
+    # hack to prevent cycle imports
+    from catalyst.dl import callbacks
+    from catalyst.contrib import optimizers, criterion, models
+
+    _REGISTERS = {
+        "callback": callbacks.CALLBACKS,
+        "model": models.MODELS,
+        "optimizer": optimizers.OPTIMIZERS,
+        "criterion": criterion.CRITERION
+    }
 
     def inner_register(
         *object_factories: Factory

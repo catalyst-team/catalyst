@@ -8,8 +8,6 @@ import torch.nn as nn
 import torch.backends.cudnn as cudnn
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
-from catalyst.contrib.criterion import CRITERION
-from catalyst.contrib.optimizers import OPTIMIZERS
 from catalyst.data.dataset import ListDataset
 from catalyst.dl.fp16 import Fp16Wrap
 
@@ -84,6 +82,9 @@ class UtilsFactory:
 
     @staticmethod
     def create_criterion(criterion=None, **criterion_params):
+        # hack to prevent cycle imports
+        from catalyst.contrib.criterion import CRITERION
+
         if criterion is None:
             return None
         criterion = CRITERION[criterion](**criterion_params)
@@ -95,6 +96,9 @@ class UtilsFactory:
     def create_optimizer(
         model, fp16=False, optimizer=None, **optimizer_params
     ):
+        # hack to prevent cycle imports
+        from catalyst.contrib.optimizers import OPTIMIZERS
+
         optimizer = optimizer
         if optimizer is None:
             return None
