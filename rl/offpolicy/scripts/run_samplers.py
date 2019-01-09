@@ -77,16 +77,20 @@ args = parser.parse_args()
 args, config = parse_args_uargs(args, [])
 
 env_module = import_module("env_module", args.environment)
-algo_module = import_module("algo_module", args.algorithm)
+algorithm_module = import_module("algo_module", args.algorithm)
 
 
 def run_sampler(
-        *,
-        config, vis, infer,
-        action_noise_prob, param_noise_prob,
-        action_noise=None, param_noise=None,
-        noise_power=None,  # @TODO: remove
-        id=None, resume=None, debug=False):
+    *,
+    config, vis, infer,
+    action_noise_prob,
+    param_noise_prob,
+    action_noise=None,
+    param_noise=None,
+    id=None,
+    resume=None,
+    debug=False
+):
     config_ = copy.deepcopy(config)
 
     if debug:
@@ -100,14 +104,11 @@ def run_sampler(
     id = id or 0
     set_global_seeds(42 + id)
 
-    action_noise = action_noise or noise_power
-    param_noise = param_noise or noise_power
-
     if "randomized_start" in config_["env"]:
         config_["env"]["randomized_start"] = (
                 config_["env"]["randomized_start"] and not infer)
-    env = env_module.ENV(**config_["env"], visualize=vis)
-    algo_kwargs = algo_module.prepare_for_sampler(config_)
+    env = env_module.ENVIRONMENT(**config_["env"], visualize=vis)
+    algo_kwargs = algorithm_module.ALGORITHM.prepare_for_sampler(config_)
 
     rp_params = config_.get("random_process", {})
     random_process = rp.__dict__[
@@ -180,7 +181,6 @@ for i in range(args.vis):
         kwargs=dict(
             vis=True,
             infer=True,
-            noise_power=0,
             action_noise_prob=0,
             param_noise_prob=0,
             config=config,
@@ -197,7 +197,6 @@ for i in range(args.infer):
         kwargs=dict(
             vis=False,
             infer=True,
-            noise_power=0,
             action_noise_prob=0,
             param_noise_prob=0,
             config=config,
@@ -209,9 +208,6 @@ for i in range(args.infer):
     sampler_id += 1
 
 for i in range(1, args.train + 1):
-    noise_power = args.max_noise_power * i / args.train \
-        if args.max_noise_power is not None \
-        else None
     action_noise = args.max_action_noise * i / args.train \
         if args.max_action_noise is not None \
         else None
@@ -223,7 +219,6 @@ for i in range(1, args.train + 1):
         kwargs=dict(
             vis=False,
             infer=False,
-            noise_power=noise_power,
             action_noise=action_noise,
             param_noise=param_noise,
             action_noise_prob=args.action_noise_prob,

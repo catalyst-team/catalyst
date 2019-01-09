@@ -242,3 +242,6 @@ class Algorithm:
         kwargs = {"actor": actor, "history_len": history_len}
 
         return kwargs
+
+
+ALGORITHM = Algorithm

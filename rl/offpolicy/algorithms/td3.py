@@ -377,3 +377,6 @@ class TD3(Algorithm):
         kwargs = {"actor": actor, "history_len": history_len}
 
         return kwargs
+
+
+ALGORITHM = TD3
