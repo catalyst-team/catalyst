@@ -1,6 +1,3 @@
-from typing import List, Union
-from catalyst.contrib import Factory
-
 from . import core
 from . import metrics
 from . import schedulers
@@ -18,7 +15,7 @@ __all__ = [
     "ClassificationLossCallback", "InferCallback", "MixupCallback",
     "InferMaskCallback", "MetricCallback", "MultiMetricCallback",
     "DiceCallback", "JaccardCallback", "PrecisionCallback", "MapKCallback",
-    "LRUpdater", "OneCycleLR", "LRFinder", "register_callback", "CALLBACKS"
+    "LRUpdater", "OneCycleLR", "LRFinder", "CALLBACKS"
 ]
 
 CALLBACKS = {
@@ -26,16 +23,3 @@ CALLBACKS = {
     **metrics.__dict__,
     **schedulers.__dict__,
 }
-
-
-def register_callback(
-    *callback_factories: Factory
-) -> Union[Factory, List[Factory]]:
-    """Add callback type or factory method to global
-        callback list to make it available in config
-        Can be called or used as decorator
-        :param: callback_factories Required criterion factory (method or type)
-        :returns: single callback factory or list of them
-    """
-    from catalyst.contrib import register
-    return register("callback")(*callback_factories)
