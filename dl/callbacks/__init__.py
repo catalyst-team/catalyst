@@ -1,6 +1,6 @@
 from typing import List, Union
 
-from catalyst.utils import Factory, register
+from catalyst.contrib import Factory, register
 
 from . import core
 from . import metrics

@@ -1,7 +1,7 @@
 from typing import List, Union
 import torch
 
-from catalyst.utils import Factory, register
+from catalyst.contrib import Factory, register
 
 OPTIMIZERS = {
     **torch.optim.__dict__,
