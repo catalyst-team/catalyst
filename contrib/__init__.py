@@ -1,12 +1,13 @@
 from typing import Type, Union, Callable, List
 
-from catalyst.contrib import optimizers, criterion
+from catalyst.contrib import optimizers, criterion, models
 from catalyst.dl import callbacks
 
 _REGISTERS = {
     "optimizer": optimizers.OPTIMIZERS,
     "criterion": criterion.CRITERION,
-    "callback": callbacks.CALLBACKS
+    "callback": callbacks.CALLBACKS,
+    "model": models.MODELS
 }
 
 Factory = Union[Type, Callable]
@@ -22,8 +23,9 @@ def register(register_type: str):
         which requires object_factory (method or type)
     """
 
-    def inner_register(*object_factories: Factory
-                       ) -> Union[Factory, List[Factory]]:
+    def inner_register(
+        *object_factories: Factory
+    ) -> Union[Factory, List[Factory]]:
 
         for factory in object_factories:
             registers = _REGISTERS[register_type]

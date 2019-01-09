@@ -17,4 +17,4 @@ def register_optimizer(
         :param: optimizer_factories Required optimizer factory (method or type)
         :returns: single optimizer factory or list of them
     """
-    return register("optimizers")(*optimizer_factories)
+    return register("optimizer")(*optimizer_factories)

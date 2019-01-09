@@ -38,4 +38,4 @@ def register_callback(
         :param: callback_factories Required criterion factory (method or type)
         :returns: single callback factory or list of them
     """
-    return register("callbacks")(*callback_factories)
+    return register("callback")(*callback_factories)

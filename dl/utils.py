@@ -73,10 +73,7 @@ class UtilsFactory:
         fp16 = model_params.pop("fp16", False) and torch.cuda.is_available()
 
         available_networks = available_networks or {}
-        available_networks = {
-            **available_networks,
-            **MODELS
-        }
+        available_networks = {**available_networks, **MODELS}
 
         model = available_networks[model_name](**model_params)
 

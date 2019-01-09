@@ -1,5 +1,5 @@
 from typing import List, Union
-from catalyst.utils import Factory
+from catalyst.contrib import Factory, register
 from .resnet_encoder import ResnetEncoder
 from .sequential import SequentialNet
 from . import segmentation
@@ -25,9 +25,4 @@ def register_model(
         :returns: single model factory or list of them
     """
 
-    for mf in models_factories:
-        MODELS[mf.__name__] = mf
-
-    if len(models_factories) == 1:
-        return models_factories[0]
-    return models_factories
+    return register("model")(*models_factories)
