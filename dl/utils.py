@@ -73,10 +73,7 @@ class UtilsFactory:
         fp16 = model_params.pop("fp16", False) and torch.cuda.is_available()
 
         available_networks = available_networks or {}
-        available_networks = {
-            **available_networks,
-            **MODELS
-        }
+        available_networks = {**available_networks, **MODELS}
 
         model = available_networks[model_name](**model_params)
 
@@ -171,8 +168,12 @@ class UtilsFactory:
         return criterion, optimizer, scheduler
 
     @staticmethod
+    def prepare_device():
+        return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    @staticmethod
     def prepare_model(model):
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        device = UtilsFactory.prepare_device()
 
         if torch.cuda.is_available():
             cudnn.benchmark = True
