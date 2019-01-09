@@ -1,8 +1,9 @@
 import argparse
-from pprint import pprint
+
+from catalyst.dl.scripts.utils import prepare_modules
+from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.config import parse_args_uargs
 from catalyst.utils.misc import set_global_seeds, boolean_flag
-from catalyst.dl.scripts.train import prepare_modules
 
 
 def parse_args():
@@ -44,12 +45,11 @@ def parse_args():
 
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
-    pprint(args)
-    pprint(config)
     set_global_seeds(args.seed)
 
     modules = prepare_modules(model_dir=args.model_dir)
 
+    model = UtilsFactory.create_model(config)
     datasource = modules["data"].DataSource()
     data_params = config.get("data_params", {}) or {}
     loaders = datasource.prepare_loaders(
@@ -58,7 +58,6 @@ def main(args, unknown_args):
         batch_size=args.batch_size,
         **data_params
     )
-    model = modules["model"].prepare_model(config)
 
     runner = modules["model"].ModelRunner(model=model)
     callbacks_params = config.get("callbacks_params", {}) or {}

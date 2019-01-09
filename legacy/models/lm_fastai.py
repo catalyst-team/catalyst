@@ -426,10 +426,10 @@ def dropout_mask(x, sz, dropout):
 
 def repackage_var(h):
     """Wraps h in new Variables, to detach them from their history."""
-    return (
-        h.detach()
-        if type(h) == torch.Tensor else tuple(repackage_var(v) for v in h)
-    )
+    if type(h) == torch.Tensor:
+        return h.detach()
+    else:
+        tuple(repackage_var(v) for v in h)
 
 
 def noop(*args, **kwargs):

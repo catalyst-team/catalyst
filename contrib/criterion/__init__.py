@@ -1,5 +1,6 @@
 import torch
-from typing import Type, List, Union, Callable
+from typing import List, Union
+from catalyst.utils import Factory
 
 from . import unet as unet_loss
 from . import center_loss
@@ -24,8 +25,8 @@ CRITERION = {
 
 
 def register_criterion(
-    *criterion_factories: Union[Type, Callable]
-) -> Union[Union[Type, Callable], List[Union[Type, Callable]]]:
+    *criterion_factories: Factory
+) -> Union[Factory, List[Factory]]:
     """Add criterion type or factory method to global
         criterion list to make it available in config
         Can be called or used as decorator
