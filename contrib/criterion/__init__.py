@@ -1,6 +1,6 @@
 import torch
 from typing import List, Union
-from catalyst.contrib import Factory, register
+from catalyst.contrib import Factory
 
 from . import unet as unet_loss
 from . import center_loss
@@ -33,4 +33,5 @@ def register_criterion(
         :param: criterion_factories Required criterion factory (method or type)
         :returns: single criterion factory or list of them
     """
+    from catalyst.contrib import register
     return register("criterion")(*criterion_factories)
