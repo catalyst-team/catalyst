@@ -2,7 +2,7 @@ import copy
 import torch
 import torch.nn.functional as F
 from catalyst.dl.utils import UtilsFactory
-import catalyst.rl.agents.agents as agents
+from catalyst.rl.agents import AGENTS
 from catalyst.rl.offpolicy.algorithms.core import Algorithm
 from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
     quantile_loss, soft_update
@@ -310,16 +310,16 @@ class TD3(Algorithm):
         trainer_action_shape = (config_["shared"]["action_size"], )
 
         actor_fn = config_["actor"].pop("actor", None)
-        actor_fn = getattr(agents, actor_fn)
-        actor = actor_fn(
+        actor_fn = AGENTS[actor_fn]
+        actor = actor_fn.create_from_config(
             state_shape=actor_state_shape,
             action_size=actor_action_size,
             **config_["actor"]
         )
 
         critic_fn = config_["critic"].pop("critic", None)
-        critic_fn = getattr(agents, critic_fn)
-        critic = critic_fn(
+        critic_fn = AGENTS[critic_fn]
+        critic = critic_fn.create_from_config(
             state_shape=actor_state_shape,
             action_size=actor_action_size,
             **config_["critic"]
@@ -327,7 +327,7 @@ class TD3(Algorithm):
 
         n_critics = config_["algorithm"].pop("n_critics", 2)
         critics = [
-            critic_fn(
+            critic_fn.create_from_config(
                 state_shape=actor_state_shape,
                 action_size=actor_action_size,
                 **config_["critic"]
@@ -365,11 +365,11 @@ class TD3(Algorithm):
         actor_action_size = config_["shared"]["action_size"]
 
         actor_fn = config_["actor"].pop("actor", None)
-        actor_fn = getattr(agents, actor_fn)
-        actor = actor_fn(
-            **config_["actor"],
+        actor_fn = AGENTS[actor_fn]
+        actor = actor_fn.create_from_config(
             state_shape=actor_state_shape,
-            action_size=actor_action_size
+            action_size=actor_action_size,
+            **config_["actor"]
         )
 
         history_len = config_["shared"]["history_len"]

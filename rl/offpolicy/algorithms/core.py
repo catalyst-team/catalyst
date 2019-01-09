@@ -2,7 +2,7 @@ import copy
 import torch
 
 from catalyst.dl.utils import UtilsFactory
-import catalyst.rl.agents as agents
+from catalyst.rl.agents import AGENTS
 from .utils import soft_update
 
 
@@ -185,16 +185,16 @@ class Algorithm:
         trainer_action_shape = (config_["shared"]["action_size"], )
 
         actor_fn = config_["actor"].pop("actor", None)
-        actor_fn = getattr(agents, actor_fn)
-        actor = actor_fn(
+        actor_fn = AGENTS[actor_fn]
+        actor = actor_fn.create_from_config(
             state_shape=actor_state_shape,
             action_size=actor_action_size,
             **config_["actor"]
         )
 
         critic_fn = config_["critic"].pop("critic", None)
-        critic_fn = getattr(agents, critic_fn)
-        critic = critic_fn(
+        critic_fn = AGENTS[critic_fn]
+        critic = critic_fn.create_from_config(
             state_shape=actor_state_shape,
             action_size=actor_action_size,
             **config_["critic"]
@@ -230,11 +230,11 @@ class Algorithm:
         actor_action_size = config_["shared"]["action_size"]
 
         actor_fn = config_["actor"].pop("actor", None)
-        actor_fn = getattr(agents, actor_fn)
-        actor = actor_fn(
-            **config_["actor"],
+        actor_fn = AGENTS[actor_fn]
+        actor = actor_fn.create_from_config(
             state_shape=actor_state_shape,
-            action_size=actor_action_size
+            action_size=actor_action_size,
+            **config_["actor"]
         )
 
         history_len = config_["shared"]["history_len"]
