@@ -34,7 +34,8 @@ class Registry:
         """Add optimizer type or factory method to global
             optimizer list to make it available in config
             Can be called or used as decorator
-            :param: optimizer_factories Required optimizer factory (method or type)
+            :param: optimizer_factories
+                Required optimizer factory (method or type)
             :returns: single optimizer factory or list of them
         """
         return Registry._inner_register("optimizer", *optimizer_factories)
@@ -46,7 +47,8 @@ class Registry:
         """Add criterion type or factory method to global
             criterion list to make it available in config
             Can be called or used as decorator
-            :param: criterion_factories Required criterion factory (method or type)
+            :param: criterion_factories
+                Required criterion factory (method or type)
             :returns: single criterion factory or list of them
         """
         return Registry._inner_register("criterion", *criterion_factories)
@@ -58,7 +60,8 @@ class Registry:
         """Add callback type or factory method to global
             callback list to make it available in config
             Can be called or used as decorator
-            :param: callback_factories Required criterion factory (method or type)
+            :param: callback_factories
+                Required criterion factory (method or type)
             :returns: single callback factory or list of them
         """
         return Registry._inner_register("callback", *callback_factories)
@@ -68,7 +71,8 @@ class Registry:
         """Add model type or factory method to global
             model list to make it available in config
             Can be called or used as decorator
-            :param: models_factories Required model factory (method or type)
+            :param: models_factories
+                Required model factory (method or type)
             :returns: single model factory or list of them
         """
         return Registry._inner_register("model", *models_factories)
