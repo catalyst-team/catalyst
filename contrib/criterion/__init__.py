@@ -24,8 +24,9 @@ CRITERION = {
 }
 
 
-def register_criterion(*criterion_factories: Factory
-                       ) -> Union[Factory, List[Factory]]:
+def register_criterion(
+    *criterion_factories: Factory
+) -> Union[Factory, List[Factory]]:
     """Add criterion type or factory method to global
         criterion list to make it available in config
         Can be called or used as decorator

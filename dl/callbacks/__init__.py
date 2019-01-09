@@ -29,8 +29,9 @@ CALLBACKS = {
 }
 
 
-def register_callback(*callback_factories: Factory
-                      ) -> Union[Factory, List[Factory]]:
+def register_callback(
+    *callback_factories: Factory
+) -> Union[Factory, List[Factory]]:
     """Add callback type or factory method to global
         callback list to make it available in config
         Can be called or used as decorator

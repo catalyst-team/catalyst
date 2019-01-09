@@ -64,10 +64,20 @@ class UtilsFactory:
         return loggers
 
     @staticmethod
-    def create_model(config, available_networks):
+    def create_model(config, available_networks=None):
+        # hack to prevent cycle imports
+        from catalyst.contrib.models import MODELS
+
         model_params = config.pop("model_params", {})
         model_name = model_params.pop("model", None)
         fp16 = model_params.pop("fp16", False) and torch.cuda.is_available()
+
+        available_networks = available_networks or {}
+        available_networks = {
+            **available_networks,
+            **MODELS
+        }
+
         model = available_networks[model_name](**model_params)
 
         if fp16:
@@ -210,11 +220,11 @@ class UtilsFactory:
                 for key, value in dict2save.items():
                     if value is not None:
                         name2save_ = name2save + "_" + str(key)
-                        checkpoint[name2save_] = value
+                        # checkpoint[name2save_] = value
                         name2save_ = name2save_ + "_state_dict"
                         checkpoint[name2save_] = value.state_dict()
             else:
-                checkpoint[name2save] = dict2save
+                # checkpoint[name2save] = dict2save
                 name2save = name2save + "_state_dict"
                 checkpoint[name2save] = dict2save.state_dict()
 
