@@ -8,9 +8,9 @@ import torch
 def read_image(image_name, datapath=None, grayscale=False):
     if datapath is not None:
         image_name = (
-            image_name
-            if image_name.startswith(datapath)
-            else os.path.join(datapath, image_name))
+            image_name if image_name.startswith(datapath) else
+            os.path.join(datapath, image_name)
+        )
 
     img = None
     try:
@@ -38,8 +38,7 @@ def compute_mixup_lambda(bs, alpha, share_lambda=True):
     if share_lambda:
         lambda_ = np.random.beta(alpha, alpha)
     else:
-        lambda_ = np.random.beta(
-            alpha, alpha, (bs, 1)).astype(np.float32)
+        lambda_ = np.random.beta(alpha, alpha, (bs, 1)).astype(np.float32)
     return lambda_
 
 

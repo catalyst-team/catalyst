@@ -7,19 +7,18 @@ from catalyst.utils.misc import merge_dicts
 
 
 def load_ordered_yaml(
-        stream,
-        Loader=yaml.Loader,
-        object_pairs_hook=OrderedDict):
-
+    stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict
+):
     class OrderedLoader(Loader):
         pass
 
     def construct_mapping(loader, node):
         loader.flatten_mapping(node)
         return object_pairs_hook(loader.construct_pairs(node))
+
     OrderedLoader.add_constructor(
-        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
-        construct_mapping)
+        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_mapping
+    )
     return yaml.load(stream, OrderedLoader)
 
 

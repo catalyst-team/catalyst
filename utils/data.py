@@ -75,8 +75,8 @@ def split_dataset(dataset, **train_test_split_args):
     test_dataset = defaultdict(list)
     for key, value in dataset.items():
         train_ids, test_ids = train_test_split(
-            range(len(value)),
-            **train_test_split_args)
+            range(len(value)), **train_test_split_args
+        )
         train_dataset[key].extend([value[i] for i in train_ids])
         test_dataset[key].extend([value[i] for i in test_ids])
     return train_dataset, test_dataset
@@ -99,8 +99,8 @@ def create_dataframe(dataset, **dataframe_args):
     :return:
     """
     data = [
-        (key, value)
-        for key, values in dataset.items() for value in values]
+        (key, value) for key, values in dataset.items() for value in values
+    ]
     df = pd.DataFrame(data, **dataframe_args)
     return df
 
@@ -133,8 +133,7 @@ def split_dataframe(df, **train_test_split_args):
             the class labels.
     :return: train and test DataFrames
     """
-    df_train, df_test = train_test_split(
-        df, **train_test_split_args)
+    df_train, df_test = train_test_split(df, **train_test_split_args)
     return df_train, df_test
 
 
@@ -151,10 +150,12 @@ def default_fold_split(df, random_state=42, n_folds=5):
 
 def stratified_fold_split(df, class_column, random_state=42, n_folds=5):
     skf = StratifiedKFold(
-        n_splits=n_folds, shuffle=True, random_state=random_state)
+        n_splits=n_folds, shuffle=True, random_state=random_state
+    )
     fold_column = np.zeros(len(df))
     for i, (_, test_index) in enumerate(
-            skf.split(range(len(df)), df[class_column])):
+        skf.split(range(len(df)), df[class_column])
+    ):
         fold_column[test_index] = i
     df["fold"] = fold_column
     return df
@@ -172,7 +173,8 @@ def column_fold_split(df, column, random_state=42, n_folds=5):
 
 
 def balance_classes(
-        df, class_column="label", how="downsampling", random_state=42):
+    df, class_column="label", how="downsampling", random_state=42
+):
     cnt = defaultdict(lambda: 0.0)
     for label in sorted(df[class_column].unique()):
         cnt[label] = len(df[df[class_column] == label])
@@ -185,22 +187,25 @@ def balance_classes(
             df_class_column = df[df[class_column] == label]
             if samples_per_class <= len(df_class_column):
                 balanced_dfs[label] = df_class_column.sample(
-                    samples_per_class,
-                    replace=True, random_state=random_state)
+                    samples_per_class, replace=True, random_state=random_state
+                )
             else:
                 df_class_column_additional = df_class_column.sample(
                     samples_per_class - len(df_class_column),
-                    replace=True, random_state=random_state)
+                    replace=True,
+                    random_state=random_state
+                )
                 balanced_dfs[label] = pd.concat(
-                    (df_class_column, df_class_column_additional))
+                    (df_class_column, df_class_column_additional)
+                )
     elif how == "downsampling":
         samples_per_class = min(cnt.values())
 
         balanced_dfs = {}
         for label in sorted(df[class_column].unique()):
             balanced_dfs[label] = df[df[class_column] == label].sample(
-                samples_per_class,
-                replace=False, random_state=random_state)
+                samples_per_class, replace=False, random_state=random_state
+            )
     else:
         raise NotImplementedError()
 
@@ -212,7 +217,8 @@ def balance_classes(
 def prepare_dataset_labeling(df, class_column):
     cls2id = {
         str(cls_): i
-        for i, cls_ in enumerate(sorted(df[class_column].unique()))}
+        for i, cls_ in enumerate(sorted(df[class_column].unique()))
+    }
     return cls2id
 
 
