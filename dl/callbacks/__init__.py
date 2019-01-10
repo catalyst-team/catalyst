@@ -1,10 +1,8 @@
 from . import core, metrics, schedulers
 
-# yapf: disable
-from .core import *
-from .metrics import *
-from .schedulers import *
-# yapf: enable
+from .core import *  # yapf: disable
+from .metrics import *  # yapf: disable
+from .schedulers import *  # yapf: disable
 
 CALLBACKS = {
     **core.__dict__,
