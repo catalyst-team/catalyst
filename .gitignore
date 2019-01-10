@@ -112,6 +112,5 @@ logs/
 *.ipynb
 *.csv
 *.tsv
-*.txt
 
 .DS_Store
