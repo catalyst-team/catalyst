@@ -604,6 +604,9 @@ class InferMaskCallback(Callback):
 
         for i in range(probs.shape[0]):
             img = np.uint8(255 * (self.std * features[i] + self.mean))
+            filename = f"{self.out_prefix}/{lm}/{self.counter}.jpg"
+            cv2.imwrite(filename, img)
+
             for t in range(probs.shape[-1]):
                 mask = probs[i, :, :, t] > self.threshold \
                     if self.threshold is not None \
