@@ -9,26 +9,16 @@ from catalyst.utils.data import create_dataset, create_dataframe, \
 def parse_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument(
-        "--in-csv",
-        type=str, default=None)
-    parser.add_argument(
-        "--in-dir",
-        type=str, default=None)
+    parser.add_argument("--in-csv", type=str, default=None)
+    parser.add_argument("--in-dir", type=str, default=None)
 
+    parser.add_argument("--out-dataset", type=str, default=None, required=True)
     parser.add_argument(
-        "--out-dataset",
-        type=str, default=None, required=True)
-    parser.add_argument(
-        "--out-labeling",
-        type=str, default=None, required=True)
+        "--out-labeling", type=str, default=None, required=True
+    )
 
-    parser.add_argument(
-        "--tag-column",
-        type=str, default="tag")
-    parser.add_argument(
-        "--tag-delim",
-        type=str, default=None)
+    parser.add_argument("--tag-column", type=str, default="tag")
+    parser.add_argument("--tag-delim", type=str, default=None)
 
     args = parser.parse_args()
     return args
@@ -39,8 +29,8 @@ def prepare_df_from_dirs(in_dir, tag_column_name):
         in_dir = f"{in_dir}/"
 
     dataset = create_dataset(
-        f"{in_dir}/**",
-        process_fn=lambda x: x.replace(f"{in_dir}", ""))
+        f"{in_dir}/**", process_fn=lambda x: x.replace(f"{in_dir}", "")
+    )
     df = create_dataframe(dataset, columns=[tag_column_name, "filepath"])
 
     return df
@@ -56,9 +46,8 @@ def main(args):
 
     if args.tag_delim is not None:
         df = separate_tags(
-            df,
-            tag_column=args.tag_column,
-            tag_delim=args.tag_delim)
+            df, tag_column=args.tag_column, tag_delim=args.tag_delim
+        )
 
     tag2lbl = prepare_dataset_labeling(df, args.tag_column)
     print("Num classes: ", len(tag2lbl))
