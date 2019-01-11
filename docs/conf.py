@@ -14,7 +14,9 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../'))
+
+catalyst_root_path = '../../'
+sys.path.insert(0, os.path.abspath(catalyst_root_path))
 
 
 # -- Project information -----------------------------------------------------
