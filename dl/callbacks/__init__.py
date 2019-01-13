@@ -1,12 +1,16 @@
 # flake8: noqa
-from . import core, metrics, schedulers
+from catalyst.dl.callbacks import \
+    core as core_callbacks, \
+    metrics as metrics_callbacks, \
+    schedulers as schedulers_callbacks
 
-from .core import *
-from .metrics import *
-from .schedulers import *
+from catalyst.dl.callbacks.core import *
+from catalyst.dl.callbacks.metrics import *
+from catalyst.dl.callbacks.schedulers import *
+
 
 CALLBACKS = {
-    **core.__dict__,
-    **metrics.__dict__,
-    **schedulers.__dict__,
+    **core_callbacks.__dict__,
+    **metrics_callbacks.__dict__,
+    **schedulers_callbacks.__dict__,
 }
