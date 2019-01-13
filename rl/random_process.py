@@ -42,7 +42,7 @@ class GaussianWhiteNoiseProcess(AnnealedGaussianProcess):
     def __init__(
         self, mu=0., sigma=1., sigma_min=None, n_steps_annealing=1000, size=1
     ):
-        super(GaussianWhiteNoiseProcess, self).__init__(
+        super().__init__(
             mu=mu,
             sigma=sigma,
             sigma_min=sigma_min,
@@ -68,7 +68,7 @@ class OrnsteinUhlenbeckProcess(AnnealedGaussianProcess):
         sigma_min=None,
         n_steps_annealing=1000
     ):
-        super(OrnsteinUhlenbeckProcess, self).__init__(
+        super().__init__(
             mu=mu,
             sigma=sigma,
             sigma_min=sigma_min,

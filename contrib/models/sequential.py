@@ -22,7 +22,7 @@ class SequentialNet(nn.Module):
         norm_fn=None,
         activation_fn=nn.ReLU,
         dropout=None,
-        block_parts=None,
+        layer_order=None,
         residual=False
     ):
         super().__init__()
@@ -34,7 +34,7 @@ class SequentialNet(nn.Module):
         norm_fn = name2nn(norm_fn)
         dropout = name2nn(dropout)
 
-        block_parts = block_parts or ["layer", "norm", "drop", "activation"]
+        layer_order = layer_order or ["layer", "norm", "drop", "act"]
 
         if isinstance(dropout, float):
             dropout_fn = lambda: nn.Dropout(dropout)
@@ -57,14 +57,14 @@ class SequentialNet(nn.Module):
             "layer": _layer_fn,
             "norm": _normalize_fn,
             "drop": _dropout_fn,
-            "activation": _activation_fn,
+            "act": _activation_fn,
         }
 
         net = []
 
         for i, (f_in, f_out) in enumerate(pairwise(hiddens)):
             block = []
-            for key in block_parts:
+            for key in layer_order:
                 fn = name2fn[key](f_in, f_out, bias)
                 if fn is not None:
                     block.append((f"{key}", fn))

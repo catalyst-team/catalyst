@@ -156,9 +156,7 @@ class Sampler:
         set_global_seeds(self._seed)
 
         self._sampler_id = id
-        self._device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu"
-        )
+        self._device = UtilsFactory.prepare_device()
         self.actor = copy.deepcopy(actor).to(self._device)
         self.env = env
         self.redis_server = redis_server
@@ -249,7 +247,7 @@ class Sampler:
             dones.tolist()
         ]
         episode = serialize(episode)
-        self.redis_server.rpush("episodes", episode)
+        self.redis_server.rpush("trajectories", episode)
         hard_seeds = serialize(list(self.hard_seeds))
         self.redis_server.set(
             f"{self.redis_prefix}_{self._sampler_id}_hard_seeds", hard_seeds
@@ -328,8 +326,8 @@ class Sampler:
 
             print(
                 f"--- episode {self.episode_index:5d}:\t"
-                f"{step_index:5d}\t"
-                f"{episode_reward:10.4f} / {episode_reward_orig:10.4f}\t"
+                f"steps: {step_index:5d}\t"
+                f"reward: {episode_reward:10.4f}/{episode_reward_orig:10.4f}\t"
                 f"seed: {seed}"
             )
 
