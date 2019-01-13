@@ -14,8 +14,8 @@ class DDPG(Algorithm):
         self, values_range=(-10., 10.), critic_distribution=None, **kwargs
     ):
         super()._init(**kwargs)
-        self.n_atoms = self.critic.n_atoms
-        self._calculate_losses_fn = self._base_loss
+        self.n_atoms = self.critic.out_features
+        self._loss_fn = self._base_loss
 
         if critic_distribution == "quantile":
             tau_min = 1 / (2 * self.n_atoms)
@@ -24,7 +24,7 @@ class DDPG(Algorithm):
                 start=tau_min, end=tau_max, steps=self.n_atoms
             )
             self.tau = self._to_tensor(tau)
-            self._calculate_losses_fn = self._quantile_loss
+            self._loss_fn = self._quantile_loss
         elif critic_distribution == "categorical":
             self.v_min, self.v_max = values_range
             self.delta_z = (self.v_max - self.v_min) / (self.n_atoms - 1)
@@ -32,7 +32,7 @@ class DDPG(Algorithm):
                 start=self.v_min, end=self.v_max, steps=self.n_atoms
             )
             self.z = self._to_tensor(z)
-            self._calculate_losses_fn = self._categorical_loss
+            self._loss_fn = self._categorical_loss
 
     def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
         gamma = self.gamma**self.n_step
@@ -132,7 +132,7 @@ class DDPG(Algorithm):
         states_tp1 = self._to_tensor(states_tp1)
         done_t = self._to_tensor(done_t).unsqueeze(1)
 
-        policy_loss, value_loss = self._calculate_losses_fn(
+        policy_loss, value_loss = self._loss_fn(
             states_t, actions_t, rewards_t, states_tp1, done_t
         )
 

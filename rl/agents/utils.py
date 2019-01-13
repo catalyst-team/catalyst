@@ -1,5 +1,17 @@
 import numpy as np
 import torch
+import torch.nn as nn
+
+
+def get_out_features(head_net):
+    head_modules = list(head_net.net.modules())
+    last_linear = head_modules[-1]
+    for m in head_modules[::-1]:
+        if isinstance(last_linear, nn.Linear):
+            break
+        last_linear = m
+    out_features = last_linear.out_features
+    return out_features
 
 
 def log1p_exp(input_tensor):

@@ -326,8 +326,8 @@ class Sampler:
 
             print(
                 f"--- episode {self.episode_index:5d}:\t"
-                f"{step_index:5d}\t"
-                f"{episode_reward:10.4f} / {episode_reward_orig:10.4f}\t"
+                f"steps: {step_index:5d}\t"
+                f"reward: {episode_reward:10.4f}/{episode_reward_orig:10.4f}\t"
                 f"seed: {seed}"
             )
 

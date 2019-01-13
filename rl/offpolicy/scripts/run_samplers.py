@@ -92,6 +92,8 @@ def run_sampler(
     debug=False
 ):
     config_ = copy.deepcopy(config)
+    action_noise = action_noise or 0
+    param_noise = param_noise or 0
 
     if debug:
         redis_server = None
@@ -166,7 +168,6 @@ atexit.register(on_exit)
 
 # run_sampler(vis=False,
 #             infer=False,
-#             noise_power=None,
 #             action_noise=0.5,
 #             param_noise=0.5,
 #             action_noise_prob=args.action_noise_prob,

@@ -60,6 +60,9 @@ class Algorithm:
         self.n_step = n_step
         self.gamma = gamma
 
+        actor_grad_clip_params = actor_grad_clip_params or {}
+        critic_grad_clip_params = critic_grad_clip_params or {}
+
         self.actor_grad_clip_fn = UtilsFactory.create_grad_clip_fn(
             **actor_grad_clip_params)
         self.critic_grad_clip_fn = UtilsFactory.create_grad_clip_fn(

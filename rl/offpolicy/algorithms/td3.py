@@ -23,8 +23,8 @@ class TD3(Algorithm):
         **kwargs
     ):
         super()._init(**kwargs)
-        self.n_atoms = self.critic.n_atoms
-        self._calculate_losses_fn = self._base_loss
+        self.n_atoms = self.critic.out_features
+        self._loss_fn = self._base_loss
 
         self.action_noise_std = action_noise_std
         self.action_noise_clip = action_noise_clip
@@ -52,7 +52,7 @@ class TD3(Algorithm):
                 start=tau_min, end=tau_max, steps=self.n_atoms
             )
             self.tau = self._to_tensor(tau)
-            self._calculate_losses_fn = self._quantile_loss
+            self._loss_fn = self._quantile_loss
         elif critic_distribution == "categorical":
             self.v_min, self.v_max = values_range
             self.delta_z = (self.v_max - self.v_min) / (self.n_atoms - 1)
@@ -60,7 +60,7 @@ class TD3(Algorithm):
                 start=self.v_min, end=self.v_max, steps=self.n_atoms
             )
             self.z = self._to_tensor(z)
-            self._calculate_losses_fn = self._categorical_loss
+            self._loss_fn = self._categorical_loss
 
     def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
         gamma = self.gamma**self.n_step
@@ -238,7 +238,7 @@ class TD3(Algorithm):
         states_tp1 = self._to_tensor(states_tp1)
         done_t = self._to_tensor(done_t).unsqueeze(1)
 
-        policy_loss, value_loss = self._calculate_losses_fn(
+        policy_loss, value_loss = self._loss_fn(
             states_t, actions_t, rewards_t, states_tp1, done_t
         )
 

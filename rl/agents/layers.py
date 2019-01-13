@@ -3,7 +3,7 @@ import torch.nn as nn
 
 from catalyst.contrib.models import SequentialNet
 from catalyst.dl.initialization import create_optimal_inner_init, outer_init
-from catalyst.rl.agents.utils import log1p_exp
+from catalyst.rl.agents.utils import log1p_exp, get_out_features
 
 
 class TemporalAttentionPooling(nn.Module):
@@ -115,11 +115,14 @@ class StateNet(nn.Module):
         self.observation_net = observation_net
         self.memory_net = memory_net
         self.head_net = head_net
-        self._forward_fn = None
 
-        if memory_net is not None and memory_net == "lama":
+        self.out_features = get_out_features(head_net)
+
+        self._forward_fn = None
+        if isinstance(memory_net, LamaPooling):
             self._forward_fn = self._forward_lama
-        elif memory_net is not None and memory_net == "rnn":
+        elif isinstance(memory_net, nn.LSTM):
+            raise NotImplementedError
             self._forward_fn = self._forward_rnn
         else:
             self._forward_fn = self._forward_ff
@@ -161,11 +164,14 @@ class StateActionNet(nn.Module):
         self.action_net = action_net
         self.memory_net = memory_net
         self.head_net = head_net
-        self._forward_fn = None
 
-        if memory_net is not None and memory_net == "lama":
+        self.out_features = get_out_features(head_net)
+
+        self._forward_fn = None
+        if isinstance(memory_net, LamaPooling):
             self._forward_fn = self._forward_lama
-        elif memory_net is not None and memory_net == "rnn":
+        elif isinstance(memory_net, nn.LSTM):
+            raise NotImplementedError
             self._forward_fn = self._forward_rnn
         else:
             self._forward_fn = self._forward_ff
