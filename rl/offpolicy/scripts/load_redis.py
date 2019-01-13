@@ -21,4 +21,4 @@ redis = StrictRedis(port=args.port)
 episodes = pickle.load(open(args.in_pkl, "rb"))
 
 for i in tqdm(range(len(episodes))):
-    redis.rpush("episodes", episodes[i])
+    redis.rpush("trajectories", episodes[i])

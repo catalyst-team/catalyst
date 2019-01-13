@@ -27,10 +27,10 @@ args = parser.parse_args()
 
 redis = StrictRedis(port=args.port)
 
-redis_len = redis.llen("episodes") - 1
+redis_len = redis.llen("trajectories") - 1
 episodes = []
 for i in tqdm(range(args.start_from, redis_len)):
-    episode = redis.lindex("episodes", i)
+    episode = redis.lindex("trajectories", i)
     episodes.append(episode)
     if i > args.start_from and (i - args.start_from) % args.chunk_size == 0:
         with open(args.out_pkl.format(suffix=i), "wb") as fout:

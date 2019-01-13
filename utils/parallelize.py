@@ -14,14 +14,15 @@ import multiprocessing
 
 class StoppableThread(Thread):
     def __init__(
-            self,
-            func: Callable,
-            items: Iterable,
-            callback: Callable = None,
-            callback_each: int = 1,
-            continue_on_exception: bool = False,
-            exception_impute=None,
-            exception_callback: Callable = None):
+        self,
+        func: Callable,
+        items: Iterable,
+        callback: Callable = None,
+        callback_each: int = 1,
+        continue_on_exception: bool = False,
+        exception_impute=None,
+        exception_callback: Callable = None
+    ):
         super().__init__()
         self.callback = callback
         self.callback_each = callback_each
@@ -49,8 +50,10 @@ class StoppableThread(Thread):
                     self.exception_callback()
                     break
                 self.results.append(self.exception_impute)
-                warn("%s processing element %s" % (
-                    repr(sys.exc_info()[1]), str(item)))
+                warn(
+                    "%s processing element %s" %
+                    (repr(sys.exc_info()[1]), str(item))
+                )
             if self.callback is not None:
                 if self.current_index % self.callback_each == 0:
                     self.callback()
@@ -58,13 +61,14 @@ class StoppableThread(Thread):
 
 
 def parallelize(
-        items: Iterable,
-        func: Callable,
-        thread_count: int = None,
-        progressbar: bool = False,
-        progressbar_tick: int = 1,
-        continue_on_exception: bool = False,
-        exception_impute=None):
+    items: Iterable,
+    func: Callable,
+    thread_count: int = None,
+    progressbar: bool = False,
+    progressbar_tick: int = 1,
+    continue_on_exception: bool = False,
+    exception_impute=None
+):
     """
     This function iterates (in multithreaded fashion)
         over `items` and calls `fun` for each item.
@@ -89,14 +93,18 @@ def parallelize(
         def report():
             lock.acquire()
             total = int(sum([len(t.items) for t in threads]))
-            current = int(sum(
-                [t.current_index + 1.0 if len(t.items) > 0 else 0 for t in
-                 threads]))
+            current = int(
+                sum(
+                    [
+                        t.current_index + 1.0 if len(t.items) > 0 else 0
+                        for t in threads
+                    ]
+                )
+            )
             message = "[{0: <40}] {1} / {2} ({3: .2%})".format(
-                "#" * int(current / total * 40),
-                current,
-                total,
-                current / total)
+                "#" * int(current / total * 40), current, total,
+                current / total
+            )
             print(message, end="\r", file=sys.stderr, flush=True)
             lock.release()
 
@@ -113,10 +121,10 @@ def parallelize(
         callback = None
     threads = [
         StoppableThread(
-            func, x,
-            callback, progressbar_tick,
-            continue_on_exception, exception_impute, _stop_all_threads)
-        for x in items_split]
+            func, x, callback, progressbar_tick, continue_on_exception,
+            exception_impute, _stop_all_threads
+        ) for x in items_split
+    ]
     for t in threads:
         t.start()
     try:

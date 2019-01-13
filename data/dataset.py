@@ -8,13 +8,15 @@ class ListDataset(Dataset):
     """
     General purpose dataset class.
     """
+
     def __init__(
-            self,
-            list_data: List[Dict],
-            open_fn: Callable,
-            dict_transform: Callable = None,
-            cache_prob: float = -1,
-            cache_transforms: bool = False):
+        self,
+        list_data: List[Dict],
+        open_fn: Callable,
+        dict_transform: Callable = None,
+        cache_prob: float = -1,
+        cache_transforms: bool = False
+    ):
         """
 
         :param list_data: list of dicts, that stores you data annotations,

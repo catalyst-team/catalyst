@@ -1,7 +1,7 @@
 import torch
 from catalyst.dl.utils import UtilsFactory
-import catalyst.rl.networks.agents as agents
-from catalyst.rl.algorithms.base import BaseAlgorithm, soft_update
+import catalyst.rl.agents.agents as agents
+from catalyst.rl.offpolicy.algorithms.base import BaseAlgorithm, soft_update
 
 
 class SAC(BaseAlgorithm):
