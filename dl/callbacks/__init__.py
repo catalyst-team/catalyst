@@ -8,7 +8,6 @@ from catalyst.dl.callbacks.core import *
 from catalyst.dl.callbacks.metrics import *
 from catalyst.dl.callbacks.schedulers import *
 
-
 CALLBACKS = {
     **core_callbacks.__dict__,
     **metrics_callbacks.__dict__,
