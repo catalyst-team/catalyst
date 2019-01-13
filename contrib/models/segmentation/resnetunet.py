@@ -167,8 +167,8 @@ class ResNetUnet(nn.Module):
           The networks output tensor.
         """
         size = x.size()
-        assert size[-1] % 32 == 0 and size[-2] % 32 == 0, \
-            "image resolution has to be divisible by 32 for resnet"
+        assert size[-1] % 64 == 0 and size[-2] % 64 == 0, \
+            "image resolution has to be divisible by 64 for resnet"
 
         enc0 = self.resnet.conv1(x)
         enc0 = self.resnet.bn1(enc0)

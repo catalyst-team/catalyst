@@ -68,10 +68,11 @@ class OrnsteinUhlenbeckProcess(AnnealedGaussianProcess):
         self.reset_states()
 
     def sample(self):
-        x = (self.x_prev
-             + self.theta * (self.mu - self.x_prev) * self.dt
-             + self.current_sigma * np.sqrt(self.dt)
-             * np.random.normal(size=self.size))
+        x = (
+            self.x_prev + self.theta * (self.mu - self.x_prev) * self.dt +
+            self.current_sigma * np.sqrt(self.dt
+                                         ) * np.random.normal(size=self.size)
+        )
         self.x_prev = x
         self.n_steps += 1
         return x

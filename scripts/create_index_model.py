@@ -14,8 +14,11 @@ def parse_args():
 
     parser.add_argument("--n-hidden", type=int, default=None)
     parser.add_argument(
-        "--knn-metric", type=str, default="l2",
-        choices=["l2", "angulardist", "cosinesimil"])
+        "--knn-metric",
+        type=str,
+        default="l2",
+        choices=["l2", "angulardist", "cosinesimil"]
+    )
 
     parser.add_argument("--out-npy", type=str, default=None)
     parser.add_argument("--out-pipeline", type=str, default=None)
@@ -35,18 +38,24 @@ def main(args):
             features = np.concatenate((features, features_), axis=0)
 
     if args.n_hidden is not None:
-        pipeline = Pipeline([
-            ("scale", StandardScaler()),
-            ("pca", PCA(n_components=args.n_hidden, random_state=42)),
-            ("normalize", Normalizer()),
-        ])
+        pipeline = Pipeline(
+            [
+                ("scale", StandardScaler()),
+                ("pca", PCA(n_components=args.n_hidden, random_state=42)),
+                ("normalize", Normalizer()),
+            ]
+        )
 
         print("[==     Transforming features    ==]")
         features = pipeline.fit_transform(features)
         np.save(args.out_npy, features)
 
-        print("[ Explained variance ratio: {ratio:.4} ]".format(
-            ratio=pipeline.named_steps["pca"].explained_variance_ratio_.sum()))
+        print(
+            "[ Explained variance ratio: {ratio:.4} ]".format(
+                ratio=pipeline.named_steps["pca"].explained_variance_ratio_.
+                sum()
+            )
+        )
 
         print("[==        Saving pipeline       ==]")
         pickle.dump(pipeline, open(args.out_pipeline, "wb"))
@@ -54,7 +63,8 @@ def main(args):
     index = nmslib.init(
         method="hnsw",
         space=args.knn_metric,
-        data_type=nmslib.DataType.DENSE_VECTOR)
+        data_type=nmslib.DataType.DENSE_VECTOR
+    )
     print("[==  Adding features to indexer  ==]")
     index.addDataPointBatch(features)
 
