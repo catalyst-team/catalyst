@@ -1,10 +1,11 @@
 import torch
 from catalyst.dl.utils import UtilsFactory
-import catalyst.rl.agents.agents as agents
-from catalyst.rl.offpolicy.algorithms.base import BaseAlgorithm, soft_update
+from catalyst.rl.agents import AGENTS as agents
+from catalyst.rl.offpolicy.algorithms.core import Algorithm
+from catalyst.rl.offpolicy.algorithms.utils import soft_update
 
 
-class SAC(BaseAlgorithm):
+class SAC(Algorithm):
     def _init(
         self,
         critic_q1,
