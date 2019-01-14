@@ -3,7 +3,7 @@ import argparse
 import pathlib
 
 from catalyst.dl.scripts.utils import prepare_modules
-from catalyst.dl.utils import UtilsFactory
+from catalyst.contrib.registry import Registry
 from catalyst.utils.config import parse_args_uargs, save_config
 from catalyst.utils.misc import set_global_seeds, boolean_flag
 
@@ -54,7 +54,7 @@ def main(args, unknown_args):
     save_config(config=config, logdir=args.logdir)
     modules = prepare_modules(model_dir=args.model_dir, dump_dir=args.logdir)
 
-    model = UtilsFactory.create_model(config)
+    model = Registry.get_model(**config["model_params"])
     datasource = modules["data"].DataSource()
 
     runner = modules["model"].ModelRunner(model=model)

@@ -235,15 +235,15 @@ class BaseModelRunner:
         fp16 = isinstance(model, Fp16Wrap)
 
         criterion_params = criterion_params or {}
-        criterion = Registry.create_criterion(**criterion_params)
+        criterion = Registry.get_criterion(**criterion_params)
 
         optimizer_params = optimizer_params or {}
-        optimizer = Registry.create_optimizer(
+        optimizer = Registry.get_optimizer(
             model, **optimizer_params, fp16=fp16
         )
 
         scheduler_params = scheduler_params or {}
-        scheduler = Registry.create_scheduler(
+        scheduler = Registry.get_scheduler(
             optimizer, **scheduler_params
         )
 
@@ -403,7 +403,7 @@ class BaseModelRunner:
         callbacks = OrderedDict()
 
         for key, value in kwargs.items():
-            callback = Registry.create_callback(**value)
+            callback = Registry.get_callback(**value)
             callbacks[key] = callback
 
         for key, value in callbacks.items():

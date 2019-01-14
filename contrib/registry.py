@@ -103,7 +103,7 @@ class Registry:
             return name
 
     @staticmethod
-    def create_callback(callback=None, **callback_params):
+    def get_callback(callback=None, **callback_params):
         if callback is None:
             return None
 
@@ -111,7 +111,7 @@ class Registry:
         return callback
 
     @staticmethod
-    def create_criterion(criterion=None, **criterion_params):
+    def get_criterion(criterion=None, **criterion_params):
         if criterion is None:
             return None
 
@@ -121,15 +121,18 @@ class Registry:
         return criterion
 
     @staticmethod
-    def create_model(config, available_networks=None):
-        model_params = config.pop("model_params", {})
-        model_name = model_params.pop("model", None)
-        fp16 = model_params.pop("fp16", False) and torch.cuda.is_available()
+    def get_model(
+            model,
+            model_params=None,
+            fp16=False,
+            available_networks=None):
+        model_params = model_params or {}
+        fp16 = fp16 and torch.cuda.is_available()
 
         available_networks = available_networks or {}
         available_networks = {**available_networks, **_REGISTERS["model"]}
 
-        model = available_networks[model_name](**model_params)
+        model = available_networks[model](**model_params)
 
         if fp16:
             model = Fp16Wrap(model)
@@ -137,7 +140,7 @@ class Registry:
         return model
 
     @staticmethod
-    def create_optimizer(
+    def get_optimizer(
             model, fp16=False, optimizer=None, **optimizer_params
     ):
         if optimizer is None:
@@ -161,7 +164,7 @@ class Registry:
         return optimizer
 
     @staticmethod
-    def create_scheduler(optimizer, scheduler=None, **scheduler_params):
+    def get_scheduler(optimizer, scheduler=None, **scheduler_params):
         if optimizer is None or scheduler is None:
             return None
         scheduler = torch.optim.lr_scheduler.__dict__[scheduler](
