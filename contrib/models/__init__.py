@@ -1,13 +1,4 @@
-from .resnet_encoder import ResnetEncoder
-from .sequential import SequentialNet
-from . import segmentation
-
-__all__ = ["ResnetEncoder", "SequentialNet"]
-
-MODELS = {
-    **{
-        "ResnetEncoder": ResnetEncoder,
-        "SequentialNet": SequentialNet
-    },
-    **segmentation.__dict__
-}
+# flake8: noqa
+from .segmentation import *
+from .resnet_encoder import *
+from .sequential import *
