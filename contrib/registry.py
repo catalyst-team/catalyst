@@ -155,7 +155,9 @@ class Registry:
             for param in master_params:
                 param.requires_grad = True
 
-        optimizer = _REGISTERS["optimizer"][optimizer](master_params, **optimizer_params)
+        optimizer = _REGISTERS["optimizer"][optimizer](
+            master_params,
+            **optimizer_params)
         return optimizer
 
     @staticmethod
@@ -166,4 +168,3 @@ class Registry:
             optimizer, **scheduler_params
         )
         return scheduler
-
