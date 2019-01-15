@@ -38,10 +38,10 @@ class Actor(StateNet):
         # hack to prevent cycle imports
         from catalyst.contrib.registry import Registry
 
-        layer_fn= Registry.name2nn(layer_fn)
-        activation_fn= Registry.name2nn(activation_fn)
-        norm_fn= Registry.name2nn(norm_fn)
-        out_activation= Registry.name2nn(out_activation)
+        layer_fn = Registry.name2nn(layer_fn)
+        activation_fn = Registry.name2nn(activation_fn)
+        norm_fn = Registry.name2nn(norm_fn)
+        out_activation = Registry.name2nn(out_activation)
 
         if isinstance(state_shape, int):
             state_shape = (state_shape, )
@@ -118,10 +118,10 @@ class GaussActor(nn.Module):
 
         self.n_action = action_size
 
-        layer_fn= Registry.name2nn(layer_fn)
-        activation_fn= Registry.name2nn(activation_fn)
-        norm_fn= Registry.name2nn(norm_fn)
-        out_activation= Registry.name2nn(out_activation)
+        layer_fn = Registry.name2nn(layer_fn)
+        activation_fn = Registry.name2nn(activation_fn)
+        norm_fn = Registry.name2nn(norm_fn)
+        out_activation = Registry.name2nn(out_activation)
 
         state_size = reduce(lambda x, y: x * y, state_shape)
 
@@ -186,10 +186,10 @@ class RealNVPActor(nn.Module):
 
         self.n_action = action_size
 
-        layer_fn= Registry.name2nn(layer_fn)
-        activation_fn= Registry.name2nn(activation_fn)
-        norm_fn= Registry.name2nn(norm_fn)
-        out_activation= Registry.name2nn(out_activation)
+        layer_fn = Registry.name2nn(layer_fn)
+        activation_fn = Registry.name2nn(activation_fn)
+        norm_fn = Registry.name2nn(norm_fn)
+        out_activation = Registry.name2nn(out_activation)
 
         state_size = reduce(lambda x, y: x * y, state_shape)
 

@@ -29,10 +29,10 @@ class SequentialNet(nn.Module):
         # hack to prevent cycle imports
         from catalyst.contrib.registry import Registry
 
-        layer_fn= Registry.name2nn(layer_fn)
-        activation_fn= Registry.name2nn(activation_fn)
-        norm_fn= Registry.name2nn(norm_fn)
-        dropout= Registry.name2nn(dropout)
+        layer_fn = Registry.name2nn(layer_fn)
+        activation_fn = Registry.name2nn(activation_fn)
+        norm_fn = Registry.name2nn(norm_fn)
+        dropout = Registry.name2nn(dropout)
 
         layer_order = layer_order or ["layer", "norm", "drop", "act"]
 

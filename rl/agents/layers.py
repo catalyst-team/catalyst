@@ -224,7 +224,7 @@ class SquashingLayer(nn.Module):
         super().__init__()
         # hack to prevent cycle imports
         from catalyst.contrib.registry import Registry
-        self.activation= Registry.name2nn(activation_fn)()
+        self.activation = Registry.name2nn(activation_fn)()
 
     def forward(self, action, log_pi):
         # compute log det jacobian of squashing transformation
@@ -272,9 +272,9 @@ class CouplingLayer(nn.Module):
         # hack to prevent cycle imports
         from catalyst.contrib.registry import Registry
 
-        layer_fn= Registry.name2nn(layer_fn)
-        activation_fn= Registry.name2nn(activation_fn)
-        norm_fn= Registry.name2nn(norm_fn)
+        layer_fn = Registry.name2nn(layer_fn)
+        activation_fn = Registry.name2nn(activation_fn)
+        norm_fn = Registry.name2nn(norm_fn)
 
         self.parity = parity
         if self.parity == "odd":
