@@ -15,7 +15,6 @@ from catalyst.dl.datasource import AbstractDataSource
 from catalyst.dl.state import RunnerState
 from catalyst.dl.fp16 import Fp16Wrap
 
-
 STAGE_KEYWORDS = [
     "criterion_params", "optimizer_params", "scheduler_params", "stage_params",
     "state_params", "data_params", "callbacks_params"
@@ -243,9 +242,7 @@ class BaseModelRunner:
         )
 
         scheduler_params = scheduler_params or {}
-        scheduler = Registry.get_scheduler(
-            optimizer, **scheduler_params
-        )
+        scheduler = Registry.get_scheduler(optimizer, **scheduler_params)
 
         return criterion, optimizer, scheduler
 

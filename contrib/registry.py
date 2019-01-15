@@ -45,7 +45,7 @@ class Registry:
 
     @staticmethod
     def criterion(
-            *criterion_factories: Factory
+        *criterion_factories: Factory
     ) -> Union[Factory, List[Factory]]:
         """Add criterion type or factory method to global
             criterion list to make it available in config
@@ -80,7 +80,7 @@ class Registry:
 
     @staticmethod
     def optimizer(
-            *optimizer_factories: Factory
+        *optimizer_factories: Factory
     ) -> Union[Factory, List[Factory]]:
         """Add optimizer type or factory method to global
             optimizer list to make it available in config
@@ -122,10 +122,8 @@ class Registry:
 
     @staticmethod
     def get_model(
-            model,
-            model_params=None,
-            fp16=False,
-            available_networks=None):
+        model, model_params=None, fp16=False, available_networks=None
+    ):
         model_params = model_params or {}
         fp16 = fp16 and torch.cuda.is_available()
 
@@ -140,9 +138,7 @@ class Registry:
         return model
 
     @staticmethod
-    def get_optimizer(
-            model, fp16=False, optimizer=None, **optimizer_params
-    ):
+    def get_optimizer(model, fp16=False, optimizer=None, **optimizer_params):
         if optimizer is None:
             return None
 
@@ -159,8 +155,8 @@ class Registry:
                 param.requires_grad = True
 
         optimizer = _REGISTERS["optimizer"][optimizer](
-            master_params,
-            **optimizer_params)
+            master_params, **optimizer_params
+        )
         return optimizer
 
     @staticmethod
