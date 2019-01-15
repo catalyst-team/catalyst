@@ -27,12 +27,12 @@ class SequentialNet(nn.Module):
     ):
         super().__init__()
         # hack to prevent cycle imports
-        from catalyst.contrib.modules import name2nn
+        from catalyst.contrib.registry import Registry
 
-        layer_fn = name2nn(layer_fn)
-        activation_fn = name2nn(activation_fn)
-        norm_fn = name2nn(norm_fn)
-        dropout = name2nn(dropout)
+        layer_fn= Registry.name2nn(layer_fn)
+        activation_fn= Registry.name2nn(activation_fn)
+        norm_fn= Registry.name2nn(norm_fn)
+        dropout= Registry.name2nn(dropout)
 
         layer_order = layer_order or ["layer", "norm", "drop", "act"]
 

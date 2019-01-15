@@ -32,12 +32,12 @@ class Critic(StateActionNet):
     ):
         assert len(kwargs) == 0
         # hack to prevent cycle imports
-        from catalyst.contrib.modules import name2nn
+        from catalyst.contrib.registry import Registry
 
-        layer_fn = name2nn(layer_fn)
-        activation_fn = name2nn(activation_fn)
-        norm_fn = name2nn(norm_fn)
-        out_activation = name2nn(out_activation)
+        layer_fn= Registry.name2nn(layer_fn)
+        activation_fn= Registry.name2nn(activation_fn)
+        norm_fn= Registry.name2nn(norm_fn)
+        out_activation= Registry.name2nn(out_activation)
 
         if isinstance(state_shape, int):
             state_shape = (state_shape, )
@@ -127,12 +127,12 @@ class ValueCritic(StateNet):
     ):
         assert len(kwargs) == 0
         # hack to prevent cycle imports
-        from catalyst.contrib.modules import name2nn
+        from catalyst.contrib.registry import Registry
 
-        layer_fn = name2nn(layer_fn)
-        activation_fn = name2nn(activation_fn)
-        norm_fn = name2nn(norm_fn)
-        out_activation = name2nn(out_activation)
+        layer_fn= Registry.name2nn(layer_fn)
+        activation_fn= Registry.name2nn(activation_fn)
+        norm_fn= Registry.name2nn(norm_fn)
+        out_activation= Registry.name2nn(out_activation)
 
         if isinstance(state_shape, int):
             state_shape = (state_shape, )
