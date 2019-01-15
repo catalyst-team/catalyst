@@ -1,6 +1,7 @@
 import copy
 import torch
 
+from catalyst.contrib.registry import Registry
 from catalyst.dl.utils import UtilsFactory
 from catalyst.rl.agents import AGENTS
 from .utils import soft_update
@@ -37,20 +38,20 @@ class Algorithm:
         self.target_actor = copy.deepcopy(actor).to(self._device)
         self.target_critic = copy.deepcopy(critic).to(self._device)
 
-        self.actor_optimizer = UtilsFactory.create_optimizer(
+        self.actor_optimizer = Registry.get_optimizer(
             self.actor, **actor_optimizer_params
         )
-        self.critic_optimizer = UtilsFactory.create_optimizer(
+        self.critic_optimizer = Registry.get_optimizer(
             self.critic, **critic_optimizer_params
         )
 
         self.actor_optimizer_params = actor_optimizer_params
         self.critic_optimizer_params = critic_optimizer_params
 
-        self.actor_scheduler = UtilsFactory.create_scheduler(
+        self.actor_scheduler = Registry.get_scheduler(
             self.actor_optimizer, **actor_scheduler_params
         )
-        self.critic_scheduler = UtilsFactory.create_scheduler(
+        self.critic_scheduler = Registry.get_scheduler(
             self.critic_optimizer, **critic_scheduler_params
         )
 
@@ -71,10 +72,10 @@ class Algorithm:
         self.actor_grad_clip_params = actor_grad_clip_params
         self.critic_grad_clip_params = critic_grad_clip_params
 
-        self.actor_criterion = UtilsFactory.create_criterion(
+        self.actor_criterion = Registry.get_criterion(
             **(actor_loss_params or {})
         )
-        self.critic_criterion = UtilsFactory.create_criterion(
+        self.critic_criterion = Registry.get_criterion(
             **(critic_loss_params or {})
         )
 

@@ -1,4 +1,5 @@
 import torch
+from catalyst.contrib.registry import Registry
 from catalyst.dl.utils import UtilsFactory
 from catalyst.rl.agents import AGENTS as agents
 from catalyst.rl.offpolicy.algorithms.core import Algorithm
@@ -37,17 +38,17 @@ class SAC(Algorithm):
         self.critic_q1 = critic_q1.to(self._device)
         self.critic_q2 = critic_q2.to(self._device)
 
-        self.critic_q1_optimizer = UtilsFactory.create_optimizer(
+        self.critic_q1_optimizer = Registry.get_optimizer(
             self.critic_q1, **self.critic_optimizer_params
         )
-        self.critic_q2_optimizer = UtilsFactory.create_optimizer(
+        self.critic_q2_optimizer = Registry.get_optimizer(
             self.critic_q2, **self.critic_optimizer_params
         )
 
-        self.critic_q1_scheduler = UtilsFactory.create_scheduler(
+        self.critic_q1_scheduler = Registry.get_scheduler(
             self.critic_q1_optimizer, **self.critic_scheduler_params
         )
-        self.critic_q2_scheduler = UtilsFactory.create_scheduler(
+        self.critic_q2_scheduler = Registry.get_scheduler(
             self.critic_q2_optimizer, **self.critic_scheduler_params
         )
 

@@ -1,6 +1,7 @@
 import copy
 import torch
 import torch.nn.functional as F
+from catalyst.contrib.registry import Registry
 from catalyst.dl.utils import UtilsFactory
 from catalyst.rl.agents import AGENTS
 from catalyst.rl.offpolicy.algorithms.core import Algorithm
@@ -31,11 +32,11 @@ class TD3(Algorithm):
 
         critics = [x.to(self._device) for x in critics]
         critics_optimizer = [
-            UtilsFactory.create_optimizer(x, **self.critic_optimizer_params)
+            Registry.get_optimizer(x, **self.critic_optimizer_params)
             for x in critics
         ]
         critics_scheduler = [
-            UtilsFactory.create_scheduler(x, **self.critic_scheduler_params)
+            Registry.get_scheduler(x, **self.critic_scheduler_params)
             for x in critics_optimizer
         ]
         target_critics = [copy.deepcopy(x).to(self._device) for x in critics]
