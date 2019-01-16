@@ -1,8 +1,8 @@
 from typing import Callable, List
 
-from .core import Callback
 from catalyst.dl import metrics
-from catalyst.dl.callbacks.utils import get_val_from_metric
+from .core import Callback
+from .utils import get_val_from_metric
 
 
 class MetricCallback(Callback):

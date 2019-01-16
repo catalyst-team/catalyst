@@ -1,5 +1,2 @@
-import torch
-
-OPTIMIZERS = {
-    **torch.optim.__dict__,
-}
+# flake8: noqa
+from torch.optim import *

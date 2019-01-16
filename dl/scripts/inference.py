@@ -1,7 +1,7 @@
 import argparse
 
 from catalyst.dl.scripts.utils import prepare_modules
-from catalyst.dl.utils import UtilsFactory
+from catalyst.contrib.registry import Registry
 from catalyst.utils.config import parse_args_uargs
 from catalyst.utils.misc import set_global_seeds, boolean_flag
 
@@ -49,7 +49,7 @@ def main(args, unknown_args):
 
     modules = prepare_modules(model_dir=args.model_dir)
 
-    model = UtilsFactory.create_model(config)
+    model = Registry.get_model(**config["model_params"])
     datasource = modules["data"].DataSource()
     data_params = config.get("data_params", {}) or {}
     loaders = datasource.prepare_loaders(

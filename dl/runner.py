@@ -7,11 +7,13 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data as data
 
+from catalyst.contrib.registry import Registry
 from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.misc import merge_dicts
 from catalyst.dl.callbacks import Callback
 from catalyst.dl.datasource import AbstractDataSource
 from catalyst.dl.state import RunnerState
+from catalyst.dl.fp16 import Fp16Wrap
 
 STAGE_KEYWORDS = [
     "criterion_params", "optimizer_params", "scheduler_params", "stage_params",
@@ -19,7 +21,7 @@ STAGE_KEYWORDS = [
 ]
 
 
-class AbstractModelRunner:
+class BaseModelRunner:
     """
     Abstract model run handler.
     Based on model, it's criterion, optimizer and scheduler stuff.
@@ -212,9 +214,9 @@ class AbstractModelRunner:
 
     @staticmethod
     def prepare_stage_args(*, args, stage_config):
-        return UtilsFactory.prepare_stage_args(
-            args=args, stage_config=stage_config
-        )
+        for key, value in stage_config.get("args", {}).items():
+            setattr(args, key, value)
+        return args
 
     @staticmethod
     def prepare_stage_model(*, model, stage, **kwargs):
@@ -229,12 +231,20 @@ class AbstractModelRunner:
         optimizer_params=None,
         scheduler_params=None
     ):
-        return UtilsFactory.prepare_model_stuff(
-            model=model,
-            criterion_params=criterion_params,
-            optimizer_params=optimizer_params,
-            scheduler_params=scheduler_params
+        fp16 = isinstance(model, Fp16Wrap)
+
+        criterion_params = criterion_params or {}
+        criterion = Registry.get_criterion(**criterion_params)
+
+        optimizer_params = optimizer_params or {}
+        optimizer = Registry.get_optimizer(
+            model, **optimizer_params, fp16=fp16
         )
+
+        scheduler_params = scheduler_params or {}
+        scheduler = Registry.get_scheduler(optimizer, **scheduler_params)
+
+        return criterion, optimizer, scheduler
 
     def train_stages(
         self,
@@ -390,7 +400,7 @@ class AbstractModelRunner:
         callbacks = OrderedDict()
 
         for key, value in kwargs.items():
-            callback = UtilsFactory.create_callback(**value)
+            callback = Registry.get_callback(**value)
             callbacks[key] = callback
 
         for key, value in callbacks.items():
@@ -403,7 +413,7 @@ class AbstractModelRunner:
         return callbacks
 
 
-class ClassificationRunner(AbstractModelRunner):
+class ClassificationRunner(BaseModelRunner):
     def batch2device(self, *, dct: Dict, state: RunnerState = None):
         if isinstance(dct, (tuple, list)):
             assert len(dct) == 2
