@@ -25,6 +25,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--config", type=str, required=True)
+    parser.add_argument("--model-dir", type=str, default=None)
     parser.add_argument("--algorithm", type=str, default=None)
     parser.add_argument("--environment", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
@@ -173,7 +174,6 @@ def main(args, unknown_args):
         algorithm=algorithm,
         environment=environment,
         config=config,
-        id=sampler_id,
         resume=args.resume,
         redis=args.redis
     )
@@ -186,6 +186,7 @@ def main(args, unknown_args):
             param_noise=0.5,
             action_noise_prob=args.action_noise_prob,
             param_noise_prob=args.param_noise_prob,
+            id=sampler_id,
         )
         run_sampler(**params, **params_)
 

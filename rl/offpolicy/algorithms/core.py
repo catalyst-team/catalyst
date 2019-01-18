@@ -1,7 +1,6 @@
 import copy
 import torch
 
-from catalyst.contrib.registry import Registry
 from catalyst.dl.utils import UtilsFactory
 from .utils import soft_update
 
@@ -29,6 +28,9 @@ class Algorithm:
         max_action=1.0,
         **kwargs
     ):
+        # hack to prevent cycle dependencies
+        from catalyst.contrib.registry import Registry
+
         self._device = UtilsFactory.prepare_device()
 
         self.actor = actor.to(self._device)
@@ -174,6 +176,9 @@ class Algorithm:
 
     @classmethod
     def prepare_for_trainer(cls, config):
+        # hack to prevent cycle dependencies
+        from catalyst.contrib.registry import Registry
+
         config_ = config.copy()
 
         actor_state_shape = (
@@ -224,6 +229,9 @@ class Algorithm:
 
     @classmethod
     def prepare_for_sampler(cls, config):
+        # hack to prevent cycle dependencies
+        from catalyst.contrib.registry import Registry
+
         config_ = config.copy()
 
         actor_state_shape = (

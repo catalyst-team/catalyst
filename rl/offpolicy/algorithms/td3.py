@@ -1,7 +1,6 @@
 import copy
 import torch
 import torch.nn.functional as F
-from catalyst.contrib.registry import Registry
 from catalyst.dl.utils import UtilsFactory
 from catalyst.rl.offpolicy.algorithms.core import Algorithm
 from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
@@ -23,6 +22,9 @@ class TD3(Algorithm):
         **kwargs
     ):
         super()._init(**kwargs)
+        # hack to prevent cycle dependencies
+        from catalyst.contrib.registry import Registry
+
         self.n_atoms = self.critic.out_features
         self._loss_fn = self._base_loss
 
@@ -296,6 +298,9 @@ class TD3(Algorithm):
 
     @classmethod
     def prepare_for_trainer(cls, config):
+        # hack to prevent cycle dependencies
+        from catalyst.contrib.registry import Registry
+
         config_ = config.copy()
 
         actor_state_shape = (
@@ -357,6 +362,9 @@ class TD3(Algorithm):
 
     @classmethod
     def prepare_for_sampler(cls, config):
+        # hack to prevent cycle dependencies
+        from catalyst.contrib.registry import Registry
+
         config_ = config.copy()
 
         actor_state_shape = (
@@ -378,6 +386,3 @@ class TD3(Algorithm):
         kwargs = {"actor": actor, "history_len": history_len}
 
         return kwargs
-
-
-ALGORITHM = TD3
