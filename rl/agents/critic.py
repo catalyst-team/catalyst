@@ -12,7 +12,7 @@ class Critic(StateActionNet):
     """
 
     @classmethod
-    def create_from_config(
+    def create_from_params(
         cls,
         state_shape,
         action_size,
@@ -110,7 +110,7 @@ class ValueCritic(StateNet):
     """
 
     @classmethod
-    def create_from_config(
+    def create_from_params(
         cls,
         state_shape,
         hiddens,

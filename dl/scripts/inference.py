@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import argparse
 
 from catalyst.dl.scripts.utils import prepare_modules

@@ -144,6 +144,3 @@ class DDPG(Algorithm):
         )
 
         return metrics
-
-
-ALGORITHM = DDPG

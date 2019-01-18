@@ -14,39 +14,51 @@ set_global_seeds(42)
 os.environ["OMP_NUM_THREADS"] = "1"
 torch.set_num_threads(1)
 
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    "--config",
-    type=str,
-    required=True)
-parser.add_argument(
-    "--algorithm",
-    type=str,
-    default=None)
-parser.add_argument(
-    "--logdir",
-    type=str,
-    default=None)
-args, unknown_args = parser.parse_known_args()
-args, config = parse_args_uargs(args, unknown_args, dump_config=True)
 
-algorithm_module = import_module("algo_module", args.algorithm)
-algorithm_kwargs = algorithm_module.ALGORITHM.prepare_for_trainer(config)
+def parse_args():
+    parser = argparse.ArgumentParser()
 
-redis_server = StrictRedis(port=config.get("redis", {}).get("port", 12000))
-redis_prefix = config.get("redis", {}).get("prefix", "")
+    parser.add_argument(
+        "--config",
+        type=str,
+        required=True)
+    parser.add_argument(
+        "--algorithm",
+        type=str,
+        default=None)
+    parser.add_argument(
+        "--logdir",
+        type=str,
+        default=None)
 
-pprint(config["trainer"])
-pprint(algorithm_kwargs)
+    args, unknown_args = parser.parse_known_args()
+    return args, unknown_args
 
 
-trainer = Trainer(
-    **config["trainer"],
-    **algorithm_kwargs,
-    logdir=args.logdir,
-    redis_server=redis_server,
-    redis_prefix=redis_prefix)
+def main(args, unknown_args):
+    args, config = parse_args_uargs(args, unknown_args, dump_config=True)
 
-pprint(trainer)
+    algorithm_module = import_module("algo_module", args.algorithm)
+    algorithm_kwargs = algorithm_module.ALGORITHM.prepare_for_trainer(config)
 
-trainer.run()
+    redis_server = StrictRedis(port=config.get("redis", {}).get("port", 12000))
+    redis_prefix = config.get("redis", {}).get("prefix", "")
+
+    pprint(config["trainer"])
+    pprint(algorithm_kwargs)
+
+    trainer = Trainer(
+        **config["trainer"],
+        **algorithm_kwargs,
+        logdir=args.logdir,
+        redis_server=redis_server,
+        redis_prefix=redis_prefix)
+
+    pprint(trainer)
+
+    trainer.run()
+
+
+if __name__ == "__main__":
+    args, unknown_args = parse_args()
+    main(args, unknown_args)

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import argparse
 from glob import glob
 import pandas as pd

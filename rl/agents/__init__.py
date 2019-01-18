@@ -1,4 +1,3 @@
-from . import actor
-from . import critic
-
-AGENTS = {**actor.__dict__, **critic.__dict__}
+# flake8: noqa
+from .actor import *
+from .critic import *
