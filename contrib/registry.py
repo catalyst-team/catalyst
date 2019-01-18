@@ -42,7 +42,7 @@ class Registry:
             Can be called or used as decorator
             :param: agent_factories
                 Required agent factory (method or type)
-            :returns: single callback factory or list of them
+            :returns: single agent factory or list of them
         """
         return Registry._inner_register("agent", *agent_factories)
 
@@ -55,7 +55,7 @@ class Registry:
             Can be called or used as decorator
             :param: algorithm_factories
                 Required algorithm factory (method or type)
-            :returns: single callback factory or list of them
+            :returns: single algorithm factory or list of them
         """
         return Registry._inner_register("algorithm", *algorithm_factories)
 
@@ -94,7 +94,7 @@ class Registry:
             Can be called or used as decorator
             :param: environment_factories
                 Required environment factory (method or type)
-            :returns: single callback factory or list of them
+            :returns: single environment factory or list of them
         """
         return Registry._inner_register("environment", *environment_factories)
 
