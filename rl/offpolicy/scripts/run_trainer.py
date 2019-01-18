@@ -1,52 +1,65 @@
 #!/usr/bin/env python
 
-import argparse
 import os
+import argparse
 from pprint import pprint
 from redis import StrictRedis
 import torch
 
-from catalyst.utils.config import parse_args_uargs
-from catalyst.utils.misc import set_global_seeds, import_module
+from catalyst.dl.scripts.utils import prepare_modules
+from catalyst.contrib.registry import Registry
+from catalyst.utils.config import parse_args_uargs, save_config
+from catalyst.utils.misc import set_global_seeds
 from catalyst.rl.offpolicy.trainer import Trainer
 
 set_global_seeds(42)
 os.environ["OMP_NUM_THREADS"] = "1"
 torch.set_num_threads(1)
 
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    "--config",
-    type=str,
-    required=True)
-parser.add_argument(
-    "--algorithm",
-    type=str,
-    default=None)
-parser.add_argument(
-    "--logdir",
-    type=str,
-    default=None)
-args, unknown_args = parser.parse_known_args()
-args, config = parse_args_uargs(args, unknown_args, dump_config=True)
 
-algorithm_module = import_module("algo_module", args.algorithm)
-algorithm_kwargs = algorithm_module.ALGORITHM.prepare_for_trainer(config)
+def parse_args():
+    parser = argparse.ArgumentParser()
 
-redis_server = StrictRedis(port=config.get("redis", {}).get("port", 12000))
-redis_prefix = config.get("redis", {}).get("prefix", "")
+    parser.add_argument("--config", type=str, required=True)
+    parser.add_argument("--model-dir", type=str, default=None)
+    parser.add_argument("--algorithm", type=str, default=None)
+    parser.add_argument("--logdir", type=str, default=None)
 
-pprint(config["trainer"])
-pprint(algorithm_kwargs)
+    args, unknown_args = parser.parse_known_args()
+    return args, unknown_args
 
 
-trainer = Trainer(
-    **config["trainer"],
-    **algorithm_kwargs,
-    logdir=args.logdir,
-    redis_server=redis_server,
-    redis_prefix=redis_prefix)
+def main(args, unknown_args):
+    args, config = parse_args_uargs(args, unknown_args, dump_config=True)
 
-pprint(trainer)
+    os.makedirs(args.logdir, exist_ok=True)
+    save_config(config=config, logdir=args.logdir)
+    if args.model_dir is not None:
+        modules = prepare_modules(  # noqa: F841
+            model_dir=args.model_dir,
+            dump_dir=args.logdir)
 
-trainer.run()
+    algorithm = Registry.get_fn("algorithm", args.algorithm)
+    algorithm_kwargs = algorithm.prepare_for_trainer(config)
+
+    redis_server = StrictRedis(port=config.get("redis", {}).get("port", 12000))
+    redis_prefix = config.get("redis", {}).get("prefix", "")
+
+    pprint(config["trainer"])
+    pprint(algorithm_kwargs)
+
+    trainer = Trainer(
+        **config["trainer"],
+        **algorithm_kwargs,
+        logdir=args.logdir,
+        redis_server=redis_server,
+        redis_prefix=redis_prefix)
+
+    pprint(trainer)
+
+    trainer.run()
+
+
+if __name__ == "__main__":
+    args, unknown_args = parse_args()
+    main(args, unknown_args)

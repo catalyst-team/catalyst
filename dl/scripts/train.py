@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import os
 import argparse
 import pathlib
@@ -11,8 +13,8 @@ from catalyst.utils.misc import set_global_seeds, boolean_flag
 def parse_args():
     parser = argparse.ArgumentParser()
 
+    parser.add_argument("--config", type=str, required=True)
     parser.add_argument("--model-dir", type=str, default=None)
-    parser.add_argument("--config", type=str, default=None)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--baselogdir", type=str, default=None)
