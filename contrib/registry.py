@@ -148,6 +148,10 @@ class Registry:
             return name
 
     @staticmethod
+    def get_fn(register_type: str, name: str):
+        return _REGISTERS[register_type][name]
+
+    @staticmethod
     def get_agent(agent=None, **agent_params):
         if agent is None:
             return None

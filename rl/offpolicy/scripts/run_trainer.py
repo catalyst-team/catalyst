@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 
-import argparse
 import os
+import argparse
 from pprint import pprint
 from redis import StrictRedis
 import torch
 
-from catalyst.utils.config import parse_args_uargs
-from catalyst.utils.misc import set_global_seeds, import_module
+from catalyst.dl.scripts.utils import prepare_modules
+from catalyst.contrib.registry import Registry
+from catalyst.utils.config import parse_args_uargs, save_config
+from catalyst.utils.misc import set_global_seeds
 from catalyst.rl.offpolicy.trainer import Trainer
 
 set_global_seeds(42)
@@ -18,18 +20,10 @@ torch.set_num_threads(1)
 def parse_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument(
-        "--config",
-        type=str,
-        required=True)
-    parser.add_argument(
-        "--algorithm",
-        type=str,
-        default=None)
-    parser.add_argument(
-        "--logdir",
-        type=str,
-        default=None)
+    parser.add_argument("--config", type=str, required=True)
+    parser.add_argument("--model-dir", type=str, default=None)
+    parser.add_argument("--algorithm", type=str, default=None)
+    parser.add_argument("--logdir", type=str, default=None)
 
     args, unknown_args = parser.parse_known_args()
     return args, unknown_args
@@ -38,8 +32,15 @@ def parse_args():
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args, dump_config=True)
 
-    algorithm_module = import_module("algo_module", args.algorithm)
-    algorithm_kwargs = algorithm_module.ALGORITHM.prepare_for_trainer(config)
+    os.makedirs(args.logdir, exist_ok=True)
+    save_config(config=config, logdir=args.logdir)
+    if args.model_dir is not None:
+        modules = prepare_modules(
+            model_dir=args.model_dir,
+            dump_dir=args.logdir)
+
+    algorithm = Registry.get_fn("algorithm", args.algorithm)
+    algorithm_kwargs = algorithm.prepare_for_trainer(config)
 
     redis_server = StrictRedis(port=config.get("redis", {}).get("port", 12000))
     redis_prefix = config.get("redis", {}).get("prefix", "")

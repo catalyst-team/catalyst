@@ -9,8 +9,10 @@ import multiprocessing as mp
 from redis import StrictRedis
 import torch
 
-from catalyst.utils.config import parse_args_uargs
-from catalyst.utils.misc import set_global_seeds, import_module, boolean_flag
+from catalyst.dl.scripts.utils import prepare_modules
+from catalyst.contrib.registry import Registry
+from catalyst.utils.config import parse_args_uargs, save_config
+from catalyst.utils.misc import set_global_seeds, boolean_flag
 from catalyst.rl.offpolicy.sampler import Sampler
 import catalyst.rl.random_process as rp
 
@@ -22,26 +24,12 @@ torch.set_num_threads(1)
 def parse_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument(
-        "--config",
-        type=str,
-        required=True)
-    parser.add_argument(
-        "--algorithm",
-        type=str,
-        default=None)
-    parser.add_argument(
-        "--environment",
-        type=str,
-        default=None)
-    parser.add_argument(
-        "--logdir",
-        type=str,
-        default=None)
-    parser.add_argument(
-        "--resume",
-        type=str,
-        default=None)
+    parser.add_argument("--config", type=str, required=True)
+    parser.add_argument("--algorithm", type=str, default=None)
+    parser.add_argument("--environment", type=str, default=None)
+    parser.add_argument("--logdir", type=str, default=None)
+    parser.add_argument("--resume", type=str, default=None)
+
     parser.add_argument(
         "--vis",
         type=int,
@@ -74,6 +62,7 @@ def parse_args():
         "--max-param-noise",
         type=float,
         default=None)
+
     boolean_flag(parser, "debug", default=False)
     boolean_flag(parser, "redis", default=True)
 
@@ -161,11 +150,15 @@ def run_sampler(
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
 
-    env_module = import_module("env_module", args.environment)
-    algorithm_module = import_module("algo_module", args.algorithm)
+    os.makedirs(args.logdir, exist_ok=True)
+    save_config(config=config, logdir=args.logdir)
+    if args.model_dir is not None:
+        modules = prepare_modules(
+            model_dir=args.model_dir,
+            dump_dir=args.logdir)
 
-    algorithm = algorithm_module.ALGORITHM
-    environment = env_module.ENVIRONMENT
+    algorithm = Registry.get_fn("algorithm", args.algorithm)
+    environment = Registry.get_fn("environment", args.environment)
 
     processes = []
     sampler_id = 0
