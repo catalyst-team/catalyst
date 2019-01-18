@@ -18,7 +18,6 @@ _REGISTERS = {
     "model": models.__dict__,
     "module": modules.__dict__,
     "optimizer": optimizers.__dict__,
-
 }
 
 
@@ -37,9 +36,7 @@ class Registry:
         return object_factories
 
     @staticmethod
-    def agent(
-            *agent_factories: Factory
-    ) -> Union[Factory, List[Factory]]:
+    def agent(*agent_factories: Factory) -> Union[Factory, List[Factory]]:
         """Add agent type or factory method to global
             agent list to make it available in config
             Can be called or used as decorator
@@ -51,7 +48,7 @@ class Registry:
 
     @staticmethod
     def algorithm(
-            *algorithm_factories: Factory
+        *algorithm_factories: Factory
     ) -> Union[Factory, List[Factory]]:
         """Add algorithm type or factory method to global
             algorithm list to make it available in config
@@ -90,7 +87,7 @@ class Registry:
 
     @staticmethod
     def environment(
-            *environment_factories: Factory
+        *environment_factories: Factory
     ) -> Union[Factory, List[Factory]]:
         """Add environment type or factory method to global
             environment list to make it available in config
@@ -200,7 +197,8 @@ class Registry:
             environment = environment_fn(**environment_params)
         except Exception:
             environment = environment_fn.create_from_params(
-                **environment_params)
+                **environment_params
+            )
         return environment
 
     @staticmethod
