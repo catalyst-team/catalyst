@@ -154,7 +154,7 @@ def main(args, unknown_args):
     os.makedirs(args.logdir, exist_ok=True)
     save_config(config=config, logdir=args.logdir)
     if args.model_dir is not None:
-        modules = prepare_modules(
+        modules = prepare_modules(  # noqa: F841
             model_dir=args.model_dir,
             dump_dir=args.logdir)
 

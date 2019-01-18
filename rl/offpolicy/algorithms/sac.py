@@ -1,3 +1,4 @@
+# flake8: noqa
 # @TODO: refactor
 # import torch
 # from catalyst.dl.utils import UtilsFactory
