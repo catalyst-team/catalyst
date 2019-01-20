@@ -131,7 +131,7 @@ class StateNet(nn.Module):
             self._forward_fn = self._forward_rnn
         else:
             self._forward_fn = self._forward_ff
-            
+
         self._policy_fn = None
         if isinstance(policy_net, GaussPolicy):
             self._policy_fn = policy_net.forward

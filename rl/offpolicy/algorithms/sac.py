@@ -1,4 +1,3 @@
-import copy
 import torch
 from catalyst.dl.utils import UtilsFactory
 from catalyst.rl.offpolicy.algorithms.core import Algorithm
