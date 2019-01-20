@@ -312,9 +312,9 @@ class RealNVPPolicy(nn.Module):
 
     def forward(self, inputs, with_log_pi=True):
         state_embedding = inputs
-        mu = torch.zeros(
-            (state_embedding.shape[0], self.action_size)
-        ).to(state_embedding.device)
+        mu = torch.zeros((state_embedding.shape[0], self.action_size)).to(
+            state_embedding.device
+        )
         sigma = torch.ones_like(mu).to(mu.device)
         z = normal_sample(mu, sigma)
         log_pi = normal_log_prob(mu, sigma, z)
