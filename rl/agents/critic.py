@@ -106,7 +106,7 @@ class Critic(StateActionNet):
 
 class ValueCritic(StateNet):
     """
-    Critic which learns state-action value function Q(s,a).
+    Critic which learns value function V(s).
     """
 
     @classmethod
@@ -142,7 +142,7 @@ class ValueCritic(StateNet):
             state_size = reduce(lambda x, y: x * y, state_shape)
 
             observation_net = SequentialNet(
-                hiddens=[state_size] + hiddens[:-1],
+                hiddens=[state_size] + hiddens,
                 layer_fn=layer_fn,
                 dropout=dropout,
                 activation_fn=activation_fn,
@@ -163,10 +163,10 @@ class ValueCritic(StateNet):
             raise NotImplementedError
         else:
             memory_net = None
-            memory_out = hiddens[-2]
+            memory_out = hiddens[-1]
 
         head_net = SequentialNet(
-            hiddens=[memory_out, hiddens[-1]],
+            hiddens=[memory_out, 1],
             layer_fn=nn.Linear,
             activation_fn=out_activation,
             norm_fn=None,
@@ -180,7 +180,8 @@ class ValueCritic(StateNet):
         critic_net = cls(
             observation_net=observation_net,
             memory_net=memory_net,
-            head_net=head_net
+            head_net=head_net,
+            policy_net=None
         )
 
         return critic_net
