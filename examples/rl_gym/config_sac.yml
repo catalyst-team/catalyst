@@ -1,0 +1,110 @@
+shared:
+  state_size: 8
+  action_size: &action_size 2
+  history_len: 2
+
+  n_step: 1
+  gamma: 0.99
+
+args:
+  logdir: ./logs/rl_gym  #  change me
+  algorithm: SAC
+  environment: GymWrapper
+  vis: 0
+  infer: 0  #  change me
+  train: 1  #  change me
+  action_noise_prob: 0.5
+  param_noise_prob: 0.2
+  max_action_noise: 0.2
+  max_param_noise: 0.1
+
+redis:
+  port: 12000
+  prefix: gym
+
+env:
+  env_name: LunarLanderContinuous-v2
+  reward_scale: 1.0
+  frame_skip: 3
+  step_delay: 0.1
+
+actor:
+  agent: Actor
+  hiddens: [8, 8, 8]
+  layer_fn: Linear
+  bias: false
+  norm_fn: LayerNorm
+  activation_fn: ReLU
+  out_activation: Tanh
+  memory_type: null
+  policy_type: gauss
+
+critic:
+  agent: Critic
+  observation_hiddens: [8, 8]
+  action_hiddens: [4, 4]
+  head_hiddens: [4, 4]
+  layer_fn: Linear
+  bias: false
+  norm_fn: LayerNorm
+  activation_fn: ReLU
+  memory_type: null
+
+algorithm:
+  actor_tau: 0.01
+  critic_tau: 0.01
+  min_action: &min_action -1.0
+  max_action: &max_action 1.0
+  critic_distribution: quantile
+
+  actor_optimizer_params:
+    optimizer: Adam
+    lr: 0.0003
+  critic_optimizer_params:
+    optimizer: Adam
+    lr: 0.0003
+
+  actor_grad_clip_params:
+    func: clip_grad_value_
+    clip_value: 1.0
+
+  actor_scheduler_params:
+    scheduler: MultiStepLR
+    milestones: [2000000]  # batches
+    gamma: 1.0
+  critic_scheduler_params:
+    scheduler: MultiStepLR
+    milestones: [2000000]  # batches
+    gamma: 1.0
+
+  critic_loss_params:
+    criterion: HuberLoss
+    clip_delta: 1.0
+
+trainer:
+  batch_size: 16              # transitions
+
+  n_workers: 1
+  replay_buffer_size: 1000000  # transitions
+
+  start_learning: 500          # transitions
+  epoch_len: 100               # batches
+  target_update_period: 1      # batches
+  save_period: 1               # epochs
+  weights_sync_period: 1       # epochs
+
+sampler:
+  weights_sync_period: 1
+
+  buffer_size: 1100
+  param_noise_steps: 1000
+
+  action_noise_t: 1
+  action_clip: [*min_action, *max_action]
+
+random_process:
+  random_process: GaussianWhiteNoiseProcess
+  sigma: 0.2
+  size: *action_size
+
+seeds: [1, 10, 1000, 10000, 42000]
