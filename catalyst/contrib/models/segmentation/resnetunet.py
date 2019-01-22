@@ -1,24 +1,3 @@
-"""
-U-Net inspired encoder-decoder architecture
-    with a ResNet encoder as proposed by Alexander Buslaev.
-
-See:
-- https://arxiv.org/abs/1505.04597 -
-    U-Net: Convolutional Networks for Biomedical Image Segmentation
-- https://arxiv.org/abs/1411.4038  -
-    Fully Convolutional Networks for Semantic Segmentation
-- https://arxiv.org/abs/1512.03385 -
-    Deep Residual Learning for Image Recognition
-- https://arxiv.org/abs/1801.05746 -
-    TernausNet: U-Net with VGG11
-    Encoder Pre-Trained on ImageNet for Image Segmentation
-- https://arxiv.org/abs/1806.00844 -
-    TernausNetV2: Fully Convolutional Network for Instance Segmentation
-
-based on https://github.com/mapbox/robosat/blob/master/robosat/unet.py
-
-"""
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -101,12 +80,27 @@ class DecoderBlock(nn.Module):
 
 class ResNetUnet(nn.Module):
     """
-    The "U-Net" architecture for semantic segmentation,
-    adapted by changing the encoder to a ResNet feature extractor.
+    U-Net inspired encoder-decoder architecture for semantic segmentation,
+        with a ResNet encoder as proposed by Alexander Buslaev.
 
-    Also known as AlbuNet due to its inventor Alexander Buslaev.
+    Also known as AlbuNet
+
+    See:
+    - https://arxiv.org/abs/1505.04597 -
+        U-Net: Convolutional Networks for Biomedical Image Segmentation
+    - https://arxiv.org/abs/1411.4038  -
+        Fully Convolutional Networks for Semantic Segmentation
+    - https://arxiv.org/abs/1512.03385 -
+        Deep Residual Learning for Image Recognition
+    - https://arxiv.org/abs/1801.05746 -
+        TernausNet: U-Net with VGG11
+        Encoder Pre-Trained on ImageNet for Image Segmentation
+    - https://arxiv.org/abs/1806.00844 -
+        TernausNetV2: Fully Convolutional Network for Instance Segmentation
+
+    based on https://github.com/mapbox/robosat/blob/master/robosat/unet.py
+
     """
-
     def __init__(
         self,
         num_classes=1,

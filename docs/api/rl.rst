@@ -52,11 +52,13 @@ Offpolicy
     :members:
     :undoc-members:
     :show-inheritance:
+    :exclude-members: get_actor_weights, set_actor_weights, set_params_noise
 
 .. automodule:: catalyst.rl.offpolicy.trainer
     :members:
     :undoc-members:
     :show-inheritance:
+    :exclude-members: redis2queue_loop
 
 Algorithms
 ~~~~~~~~~~~
@@ -85,10 +87,3 @@ Algorithms
     :members:
     :undoc-members:
     :show-inheritance:
-
-.. automodule:: catalyst.rl.offpolicy.algorithms.utils
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-

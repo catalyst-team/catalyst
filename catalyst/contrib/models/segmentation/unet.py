@@ -1,7 +1,3 @@
-"""
-Made by @nizhib
-"""
-
 import torch
 from torch import nn
 
@@ -91,6 +87,10 @@ class Decoder(nn.Module):
 
 
 class UNet(nn.Module):
+    """
+    CNN architecture for semantic segmentation
+    Made by @nizhib
+    """
     def __init__(
         self, num_classes=1, in_channels=3, num_filters=64, num_blocks=4
     ):
