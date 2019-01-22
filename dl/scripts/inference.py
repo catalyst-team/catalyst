@@ -1,14 +1,14 @@
+#!/usr/bin/env python
+
 import argparse
 
 from catalyst.dl.scripts.utils import prepare_modules
-from catalyst.dl.utils import UtilsFactory
+from catalyst.contrib.registry import Registry
 from catalyst.utils.config import parse_args_uargs
 from catalyst.utils.misc import set_global_seeds, boolean_flag
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-
+def build_args(parser):
     parser.add_argument("--model-dir", type=str, default=None)
     parser.add_argument("--config", type=str, default=None)
     parser.add_argument("--seed", type=int, default=42)
@@ -36,20 +36,27 @@ def parse_args():
         help="mini-batch size"
     )
     boolean_flag(parser, "verbose", default=False)
-
     parser.add_argument("--out-prefix", type=str, default=None)
+
+    return parser
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+
+    build_args(parser)
 
     args, unknown_args = parser.parse_known_args()
     return args, unknown_args
 
 
-def main(args, unknown_args):
+def run_inference(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
     set_global_seeds(args.seed)
 
     modules = prepare_modules(model_dir=args.model_dir)
 
-    model = UtilsFactory.create_model(config)
+    model = Registry.get_model(**config["model_params"])
     datasource = modules["data"].DataSource()
     data_params = config.get("data_params", {}) or {}
     loaders = datasource.prepare_loaders(
@@ -72,4 +79,4 @@ def main(args, unknown_args):
 
 if __name__ == "__main__":
     args, unknown_args = parse_args()
-    main(args, unknown_args)
+    run_inference(args, unknown_args)

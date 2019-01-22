@@ -120,30 +120,3 @@ class DDPG(Algorithm):
         metrics = {**metrics, **actor_update_metrics, **critic_update_metrics}
 
         return metrics
-
-    def train(self, batch, actor_update=True, critic_update=True):
-        states_t, actions_t, rewards_t, states_tp1, done_t = \
-            batch["state"], batch["action"], batch["reward"], \
-            batch["next_state"], batch["done"]
-
-        states_t = self._to_tensor(states_t)
-        actions_t = self._to_tensor(actions_t)
-        rewards_t = self._to_tensor(rewards_t).unsqueeze(1)
-        states_tp1 = self._to_tensor(states_tp1)
-        done_t = self._to_tensor(done_t).unsqueeze(1)
-
-        policy_loss, value_loss = self._loss_fn(
-            states_t, actions_t, rewards_t, states_tp1, done_t
-        )
-
-        metrics = self.update_step(
-            policy_loss=policy_loss,
-            value_loss=value_loss,
-            actor_update=actor_update,
-            critic_update=critic_update
-        )
-
-        return metrics
-
-
-ALGORITHM = DDPG

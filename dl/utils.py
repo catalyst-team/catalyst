@@ -62,82 +62,6 @@ class UtilsFactory:
         return loggers
 
     @staticmethod
-    def create_model(config, available_networks=None):
-        # hack to prevent cycle imports
-        from catalyst.contrib.models import MODELS
-
-        model_params = config.pop("model_params", {})
-        model_name = model_params.pop("model", None)
-        fp16 = model_params.pop("fp16", False) and torch.cuda.is_available()
-
-        available_networks = available_networks or {}
-        available_networks = {**available_networks, **MODELS}
-
-        model = available_networks[model_name](**model_params)
-
-        if fp16:
-            model = Fp16Wrap(model)
-
-        return model
-
-    @staticmethod
-    def create_criterion(criterion=None, **criterion_params):
-        # hack to prevent cycle imports
-        from catalyst.contrib.criterion import CRITERION
-
-        if criterion is None:
-            return None
-        criterion = CRITERION[criterion](**criterion_params)
-        if torch.cuda.is_available():
-            criterion = criterion.cuda()
-        return criterion
-
-    @staticmethod
-    def create_optimizer(
-        model, fp16=False, optimizer=None, **optimizer_params
-    ):
-        # hack to prevent cycle imports
-        from catalyst.contrib.optimizers import OPTIMIZERS
-
-        optimizer = optimizer
-        if optimizer is None:
-            return None
-
-        master_params = list(
-            filter(lambda p: p.requires_grad, model.parameters())
-        )
-        if fp16:
-            assert torch.backends.cudnn.enabled, \
-                "fp16 mode requires cudnn backend to be enabled."
-            master_params = [
-                param.detach().clone().float() for param in master_params
-            ]
-            for param in master_params:
-                param.requires_grad = True
-
-        optimizer = OPTIMIZERS[optimizer](master_params, **optimizer_params)
-        return optimizer
-
-    @staticmethod
-    def create_scheduler(optimizer, scheduler=None, **scheduler_params):
-        if optimizer is None or scheduler is None:
-            return None
-        scheduler = torch.optim.lr_scheduler.__dict__[scheduler](
-            optimizer, **scheduler_params
-        )
-        return scheduler
-
-    @staticmethod
-    def create_callback(callback=None, **callback_params):
-        if callback is None:
-            return None
-
-        # hack to prevent cycle imports
-        from catalyst.dl.callbacks import CALLBACKS
-        callback = CALLBACKS[callback](**callback_params)
-        return callback
-
-    @staticmethod
     def create_grad_clip_fn(func=None, **grad_clip_params):
         if func is None:
             return None
@@ -146,30 +70,6 @@ class UtilsFactory:
         grad_clip_params = copy.deepcopy(grad_clip_params)
         grad_clip_fn = lambda parameters: func(parameters, **grad_clip_params)
         return grad_clip_fn
-
-    @staticmethod
-    def prepare_model_stuff(
-        model,
-        criterion_params=None,
-        optimizer_params=None,
-        scheduler_params=None
-    ):
-        fp16 = isinstance(model, Fp16Wrap)
-
-        criterion_params = criterion_params or {}
-        criterion = UtilsFactory.create_criterion(**criterion_params)
-
-        optimizer_params = optimizer_params or {}
-        optimizer = UtilsFactory.create_optimizer(
-            model, **optimizer_params, fp16=fp16
-        )
-
-        scheduler_params = scheduler_params or {}
-        scheduler = UtilsFactory.create_scheduler(
-            optimizer, **scheduler_params
-        )
-
-        return criterion, optimizer, scheduler
 
     @staticmethod
     def prepare_device():
@@ -188,12 +88,6 @@ class UtilsFactory:
             model = model.to(device)
 
         return model, device
-
-    @staticmethod
-    def prepare_stage_args(args, stage_config):
-        for key, value in stage_config.get("args", {}).items():
-            setattr(args, key, value)
-        return args
 
     @staticmethod
     def pack_checkpoint(

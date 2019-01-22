@@ -12,7 +12,7 @@ class Critic(StateActionNet):
     """
 
     @classmethod
-    def create_from_config(
+    def create_from_params(
         cls,
         state_shape,
         action_size,
@@ -32,12 +32,12 @@ class Critic(StateActionNet):
     ):
         assert len(kwargs) == 0
         # hack to prevent cycle imports
-        from catalyst.contrib.modules import name2nn
+        from catalyst.contrib.registry import Registry
 
-        layer_fn = name2nn(layer_fn)
-        activation_fn = name2nn(activation_fn)
-        norm_fn = name2nn(norm_fn)
-        out_activation = name2nn(out_activation)
+        layer_fn = Registry.name2nn(layer_fn)
+        activation_fn = Registry.name2nn(activation_fn)
+        norm_fn = Registry.name2nn(norm_fn)
+        out_activation = Registry.name2nn(out_activation)
 
         if isinstance(state_shape, int):
             state_shape = (state_shape, )
@@ -106,11 +106,11 @@ class Critic(StateActionNet):
 
 class ValueCritic(StateNet):
     """
-    Critic which learns state-action value function Q(s,a).
+    Critic which learns value function V(s).
     """
 
     @classmethod
-    def create_from_config(
+    def create_from_params(
         cls,
         state_shape,
         hiddens,
@@ -127,12 +127,12 @@ class ValueCritic(StateNet):
     ):
         assert len(kwargs) == 0
         # hack to prevent cycle imports
-        from catalyst.contrib.modules import name2nn
+        from catalyst.contrib.registry import Registry
 
-        layer_fn = name2nn(layer_fn)
-        activation_fn = name2nn(activation_fn)
-        norm_fn = name2nn(norm_fn)
-        out_activation = name2nn(out_activation)
+        layer_fn = Registry.name2nn(layer_fn)
+        activation_fn = Registry.name2nn(activation_fn)
+        norm_fn = Registry.name2nn(norm_fn)
+        out_activation = Registry.name2nn(out_activation)
 
         if isinstance(state_shape, int):
             state_shape = (state_shape, )
@@ -142,7 +142,7 @@ class ValueCritic(StateNet):
             state_size = reduce(lambda x, y: x * y, state_shape)
 
             observation_net = SequentialNet(
-                hiddens=[state_size] + hiddens[:-1],
+                hiddens=[state_size] + hiddens,
                 layer_fn=layer_fn,
                 dropout=dropout,
                 activation_fn=activation_fn,
@@ -163,10 +163,10 @@ class ValueCritic(StateNet):
             raise NotImplementedError
         else:
             memory_net = None
-            memory_out = hiddens[-2]
+            memory_out = hiddens[-1]
 
         head_net = SequentialNet(
-            hiddens=[memory_out, hiddens[-1]],
+            hiddens=[memory_out, 1],
             layer_fn=nn.Linear,
             activation_fn=out_activation,
             norm_fn=None,
@@ -180,7 +180,8 @@ class ValueCritic(StateNet):
         critic_net = cls(
             observation_net=observation_net,
             memory_net=memory_net,
-            head_net=head_net
+            head_net=head_net,
+            policy_net=None
         )
 
         return critic_net

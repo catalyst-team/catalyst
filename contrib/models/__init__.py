@@ -1,13 +1,6 @@
-from .resnet_encoder import ResnetEncoder
-from .sequential import SequentialNet
-from . import segmentation
+# flake8: noqa
+from .segmentation import *
+from .resnet_encoder import *
+from .sequential import *
 
-__all__ = ["ResnetEncoder", "SequentialNet"]
-
-MODELS = {
-    **{
-        "ResnetEncoder": ResnetEncoder,
-        "SequentialNet": SequentialNet
-    },
-    **segmentation.__dict__
-}
+__all__ = ['UNet', 'ResNetUnet', 'LinkNet']

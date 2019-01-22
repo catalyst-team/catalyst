@@ -2,7 +2,6 @@ import copy
 import torch
 
 from catalyst.dl.utils import UtilsFactory
-from catalyst.rl.agents import AGENTS
 from .utils import soft_update
 
 
@@ -29,6 +28,9 @@ class Algorithm:
         max_action=1.0,
         **kwargs
     ):
+        # hack to prevent cycle dependencies
+        from catalyst.contrib.registry import Registry
+
         self._device = UtilsFactory.prepare_device()
 
         self.actor = actor.to(self._device)
@@ -37,20 +39,20 @@ class Algorithm:
         self.target_actor = copy.deepcopy(actor).to(self._device)
         self.target_critic = copy.deepcopy(critic).to(self._device)
 
-        self.actor_optimizer = UtilsFactory.create_optimizer(
+        self.actor_optimizer = Registry.get_optimizer(
             self.actor, **actor_optimizer_params
         )
-        self.critic_optimizer = UtilsFactory.create_optimizer(
+        self.critic_optimizer = Registry.get_optimizer(
             self.critic, **critic_optimizer_params
         )
 
         self.actor_optimizer_params = actor_optimizer_params
         self.critic_optimizer_params = critic_optimizer_params
 
-        self.actor_scheduler = UtilsFactory.create_scheduler(
+        self.actor_scheduler = Registry.get_scheduler(
             self.actor_optimizer, **actor_scheduler_params
         )
-        self.critic_scheduler = UtilsFactory.create_scheduler(
+        self.critic_scheduler = Registry.get_scheduler(
             self.critic_optimizer, **critic_scheduler_params
         )
 
@@ -64,17 +66,19 @@ class Algorithm:
         critic_grad_clip_params = critic_grad_clip_params or {}
 
         self.actor_grad_clip_fn = UtilsFactory.create_grad_clip_fn(
-            **actor_grad_clip_params)
+            **actor_grad_clip_params
+        )
         self.critic_grad_clip_fn = UtilsFactory.create_grad_clip_fn(
-            **critic_grad_clip_params)
+            **critic_grad_clip_params
+        )
 
         self.actor_grad_clip_params = actor_grad_clip_params
         self.critic_grad_clip_params = critic_grad_clip_params
 
-        self.actor_criterion = UtilsFactory.create_criterion(
+        self.actor_criterion = Registry.get_criterion(
             **(actor_loss_params or {})
         )
-        self.critic_criterion = UtilsFactory.create_criterion(
+        self.critic_criterion = Registry.get_criterion(
             **(critic_loss_params or {})
         )
 
@@ -107,9 +111,35 @@ class Algorithm:
     def _to_tensor(self, *args, **kwargs):
         return torch.Tensor(*args, **kwargs).to(self._device)
 
-    def train(self, batch, actor_update=True, critic_update=True):
-        "returns loss for a batch of transitions"
+    def update_step(
+        self, policy_loss, value_loss, actor_update=True, critic_update=True
+    ):
+        "updates parameters of neural networks and returns learning metrics"
         raise NotImplementedError
+
+    def train(self, batch, actor_update=True, critic_update=True):
+        states_t, actions_t, rewards_t, states_tp1, done_t = \
+            batch["state"], batch["action"], batch["reward"], \
+            batch["next_state"], batch["done"]
+
+        states_t = self._to_tensor(states_t)
+        actions_t = self._to_tensor(actions_t)
+        rewards_t = self._to_tensor(rewards_t).unsqueeze(1)
+        states_tp1 = self._to_tensor(states_tp1)
+        done_t = self._to_tensor(done_t).unsqueeze(1)
+
+        policy_loss, value_loss = self._loss_fn(
+            states_t, actions_t, rewards_t, states_tp1, done_t
+        )
+
+        metrics = self.update_step(
+            policy_loss=policy_loss,
+            value_loss=value_loss,
+            actor_update=actor_update,
+            critic_update=critic_update
+        )
+
+        return metrics
 
     def get_td_errors(self, batch):
         # @TODO: for prioritized replay
@@ -174,6 +204,9 @@ class Algorithm:
 
     @classmethod
     def prepare_for_trainer(cls, config):
+        # hack to prevent cycle dependencies
+        from catalyst.contrib.registry import Registry
+
         config_ = config.copy()
 
         actor_state_shape = (
@@ -187,17 +220,17 @@ class Algorithm:
         trainer_state_shape = (config_["shared"]["state_size"], )
         trainer_action_shape = (config_["shared"]["action_size"], )
 
-        actor_fn = config_["actor"].pop("actor", None)
-        actor_fn = AGENTS[actor_fn]
-        actor = actor_fn.create_from_config(
+        actor_fn = config_["actor"].pop("agent", None)
+        actor = Registry.get_agent(
+            agent=actor_fn,
             state_shape=actor_state_shape,
             action_size=actor_action_size,
             **config_["actor"]
         )
 
-        critic_fn = config_["critic"].pop("critic", None)
-        critic_fn = AGENTS[critic_fn]
-        critic = critic_fn.create_from_config(
+        critic_fn = config_["critic"].pop("agent", None)
+        critic = Registry.get_agent(
+            agent=critic_fn,
             state_shape=actor_state_shape,
             action_size=actor_action_size,
             **config_["critic"]
@@ -224,6 +257,9 @@ class Algorithm:
 
     @classmethod
     def prepare_for_sampler(cls, config):
+        # hack to prevent cycle dependencies
+        from catalyst.contrib.registry import Registry
+
         config_ = config.copy()
 
         actor_state_shape = (
@@ -232,9 +268,9 @@ class Algorithm:
         )
         actor_action_size = config_["shared"]["action_size"]
 
-        actor_fn = config_["actor"].pop("actor", None)
-        actor_fn = AGENTS[actor_fn]
-        actor = actor_fn.create_from_config(
+        actor_fn = config_["actor"].pop("agent", None)
+        actor = Registry.get_agent(
+            agent=actor_fn,
             state_shape=actor_state_shape,
             action_size=actor_action_size,
             **config_["actor"]
@@ -245,6 +281,3 @@ class Algorithm:
         kwargs = {"actor": actor, "history_len": history_len}
 
         return kwargs
-
-
-ALGORITHM = Algorithm

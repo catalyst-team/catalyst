@@ -2,7 +2,6 @@ import copy
 import torch
 import torch.nn.functional as F
 from catalyst.dl.utils import UtilsFactory
-from catalyst.rl.agents import AGENTS
 from catalyst.rl.offpolicy.algorithms.core import Algorithm
 from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
     quantile_loss, soft_update
@@ -23,6 +22,9 @@ class TD3(Algorithm):
         **kwargs
     ):
         super()._init(**kwargs)
+        # hack to prevent cycle dependencies
+        from catalyst.contrib.registry import Registry
+
         self.n_atoms = self.critic.out_features
         self._loss_fn = self._base_loss
 
@@ -31,11 +33,11 @@ class TD3(Algorithm):
 
         critics = [x.to(self._device) for x in critics]
         critics_optimizer = [
-            UtilsFactory.create_optimizer(x, **self.critic_optimizer_params)
+            Registry.get_optimizer(x, **self.critic_optimizer_params)
             for x in critics
         ]
         critics_scheduler = [
-            UtilsFactory.create_scheduler(x, **self.critic_scheduler_params)
+            Registry.get_scheduler(x, **self.critic_scheduler_params)
             for x in critics_optimizer
         ]
         target_critics = [copy.deepcopy(x).to(self._device) for x in critics]
@@ -63,9 +65,6 @@ class TD3(Algorithm):
             self._loss_fn = self._categorical_loss
 
     def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
-        gamma = self.gamma**self.n_step
-        actions_tp1 = self.target_actor(states_tp1).detach()
-        actions_tp1 = self._add_noise_to_actions(actions_tp1)
 
         # actor loss
         actions_tp0 = self.actor(states_t)
@@ -74,11 +73,14 @@ class TD3(Algorithm):
         policy_loss = -torch.mean(q_values_tp0_min)
 
         # critic loss
+        actions_tp1 = self.target_actor(states_tp1).detach()
+        actions_tp1 = self._add_noise_to_actions(actions_tp1)
         q_values_t = [x(states_t, actions_t) for x in self.critics]
         q_values_tp1 = torch.cat(
             [x(states_tp1, actions_tp1) for x in self.target_critics], dim=-1
         )
         q_values_tp1 = q_values_tp1.min(dim=1, keepdim=True)[0].detach()
+        gamma = self.gamma**self.n_step
         q_target_t = rewards_t + (1 - done_t) * gamma * q_values_tp1
         value_loss = [
             self.critic_criterion(x, q_target_t).mean() for x in q_values_t
@@ -89,9 +91,6 @@ class TD3(Algorithm):
     def _categorical_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
-        gamma = self.gamma**self.n_step
-        actions_tp1 = self.target_actor(states_tp1).detach()
-        actions_tp1 = self._add_noise_to_actions(actions_tp1)
 
         # actor loss
         actions_tp0 = self.actor(states_t)
@@ -104,6 +103,8 @@ class TD3(Algorithm):
         policy_loss = -torch.mean(q_values_tp0_min)
 
         # critic loss (kl-divergence between categorical distributions)
+        actions_tp1 = self.target_actor(states_tp1).detach()
+        actions_tp1 = self._add_noise_to_actions(actions_tp1)
         logits_t = [x(states_t, actions_t) for x in self.critics]
         logits_tp1 = [x(states_tp1, actions_tp1) for x in self.target_critics]
         probs_tp1 = [F.softmax(x, dim=-1) for x in logits_tp1]
@@ -115,6 +116,7 @@ class TD3(Algorithm):
         logits_tp1 = torch.cat([x.unsqueeze(-1) for x in logits_tp1], dim=-1)
         logits_tp1 = logits_tp1[range(len(logits_tp1)), :, probs_ids_tp1_min
                                 ].detach()
+        gamma = self.gamma**self.n_step
         atoms_target_t = rewards_t + (1 - done_t) * gamma * self.z
         value_loss = [
             categorical_loss(
@@ -128,9 +130,6 @@ class TD3(Algorithm):
     def _quantile_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
-        gamma = self.gamma**self.n_step
-        actions_tp1 = self.target_actor(states_tp1).detach()
-        actions_tp1 = self._add_noise_to_actions(actions_tp1)
 
         # actor loss
         actions_tp0 = self.actor(states_t)
@@ -143,6 +142,8 @@ class TD3(Algorithm):
         policy_loss = -torch.mean(q_values_tp0_min)
 
         # critic loss (quantile regression)
+        actions_tp1 = self.target_actor(states_tp1).detach()
+        actions_tp1 = self._add_noise_to_actions(actions_tp1)
         atoms_t = [x(states_t, actions_t) for x in self.critics]
         atoms_tp1 = torch.cat(
             [
@@ -154,6 +155,7 @@ class TD3(Algorithm):
         atoms_ids_tp1_min = atoms_tp1.mean(dim=1).argmin(dim=1)
         atoms_tp1 = atoms_tp1[range(len(atoms_tp1)), :, atoms_ids_tp1_min
                               ].detach()
+        gamma = self.gamma**self.n_step
         atoms_target_t = rewards_t + (1 - done_t) * gamma * atoms_tp1
         value_loss = [
             quantile_loss(
@@ -227,30 +229,6 @@ class TD3(Algorithm):
 
         return metrics
 
-    def train(self, batch, actor_update=True, critic_update=True):
-        states_t, actions_t, rewards_t, states_tp1, done_t = \
-            batch["state"], batch["action"], batch["reward"], \
-            batch["next_state"], batch["done"]
-
-        states_t = self._to_tensor(states_t)
-        actions_t = self._to_tensor(actions_t)
-        rewards_t = self._to_tensor(rewards_t).unsqueeze(1)
-        states_tp1 = self._to_tensor(states_tp1)
-        done_t = self._to_tensor(done_t).unsqueeze(1)
-
-        policy_loss, value_loss = self._loss_fn(
-            states_t, actions_t, rewards_t, states_tp1, done_t
-        )
-
-        metrics = self.update_step(
-            policy_loss=policy_loss,
-            value_loss=value_loss,
-            actor_update=actor_update,
-            critic_update=critic_update
-        )
-
-        return metrics
-
     def prepare_checkpoint(self):
         checkpoint = {}
 
@@ -296,6 +274,9 @@ class TD3(Algorithm):
 
     @classmethod
     def prepare_for_trainer(cls, config):
+        # hack to prevent cycle dependencies
+        from catalyst.contrib.registry import Registry
+
         config_ = config.copy()
 
         actor_state_shape = (
@@ -309,17 +290,17 @@ class TD3(Algorithm):
         trainer_state_shape = (config_["shared"]["state_size"], )
         trainer_action_shape = (config_["shared"]["action_size"], )
 
-        actor_fn = config_["actor"].pop("actor", None)
-        actor_fn = AGENTS[actor_fn]
-        actor = actor_fn.create_from_config(
+        actor_fn = config_["actor"].pop("agent", None)
+        actor = Registry.get_agent(
+            agent=actor_fn,
             state_shape=actor_state_shape,
             action_size=actor_action_size,
             **config_["actor"]
         )
 
-        critic_fn = config_["critic"].pop("critic", None)
-        critic_fn = AGENTS[critic_fn]
-        critic = critic_fn.create_from_config(
+        critic_fn = config_["critic"].pop("agent", None)
+        critic = Registry.get_agent(
+            agent=critic_fn,
             state_shape=actor_state_shape,
             action_size=actor_action_size,
             **config_["critic"]
@@ -327,7 +308,8 @@ class TD3(Algorithm):
 
         n_critics = config_["algorithm"].pop("n_critics", 2)
         critics = [
-            critic_fn.create_from_config(
+            Registry.get_agent(
+                agent=critic_fn,
                 state_shape=actor_state_shape,
                 action_size=actor_action_size,
                 **config_["critic"]
@@ -356,6 +338,9 @@ class TD3(Algorithm):
 
     @classmethod
     def prepare_for_sampler(cls, config):
+        # hack to prevent cycle dependencies
+        from catalyst.contrib.registry import Registry
+
         config_ = config.copy()
 
         actor_state_shape = (
@@ -364,9 +349,9 @@ class TD3(Algorithm):
         )
         actor_action_size = config_["shared"]["action_size"]
 
-        actor_fn = config_["actor"].pop("actor", None)
-        actor_fn = AGENTS[actor_fn]
-        actor = actor_fn.create_from_config(
+        actor_fn = config_["actor"].pop("agent", None)
+        actor = Registry.get_agent(
+            agent=actor_fn,
             state_shape=actor_state_shape,
             action_size=actor_action_size,
             **config_["actor"]
@@ -377,6 +362,3 @@ class TD3(Algorithm):
         kwargs = {"actor": actor, "history_len": history_len}
 
         return kwargs
-
-
-ALGORITHM = TD3

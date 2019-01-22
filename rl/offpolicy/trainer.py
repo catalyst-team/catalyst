@@ -137,7 +137,12 @@ def redis2queue_loop(redis, queue, max_size):
     pointer = 0
     redis_len = redis.llen("trajectories") - 1
     while True:
-        if pointer < redis_len and queue.qsize() < max_size:
+        try:
+            need_more = pointer < redis_len and queue.qsize() < max_size
+        except NotImplementedError:  # MacOS qsize issue (no sem_getvalue)
+            need_more = pointer < redis_len
+
+        if need_more:
             episode = deserialize(redis.lindex("trajectories", pointer))
             queue.put(episode, block=True, timeout=1.0)
             pointer += 1
