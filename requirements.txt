@@ -1,0 +1,19 @@
+# Framework must-haves
+torch>=0.4.1
+numpy
+jpeg4py
+opencv-python
+torchvision==0.2.1
+tqdm
+PyYAML
+tensorboardX
+torchnet
+
+# Used in scripst
+pandas
+sklearn
+
+# For RL
+mock
+redis
+gym
