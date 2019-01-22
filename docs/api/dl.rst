@@ -71,12 +71,3 @@ Callbacks are the main idea for reproducible pipeline
     :members:
     :undoc-members:
     :show-inheritance:
-
-Scripts
---------
-
-Scripts help you to train, validate and run your model.
-
-TODO
-
-

@@ -1,8 +1,3 @@
-"""
-Ref:
-- code modified from https://github.com/rampeer/py-parallelize
-"""
-
 import sys
 from threading import Thread, Lock
 from typing import Callable, Iterable
@@ -10,6 +5,10 @@ from warnings import warn
 import pandas as pd
 import numpy as np
 import multiprocessing
+"""
+Ref:
+- code modified from https://github.com/rampeer/py-parallelize
+"""
 
 
 class StoppableThread(Thread):

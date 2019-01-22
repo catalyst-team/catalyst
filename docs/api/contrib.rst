@@ -1,128 +1,71 @@
 Contrib package
 ================
-.. automodule:: catalyst.contrib
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 Registry
 ----------
-.. automodule:: catalyst.contrib.registry
+.. currentmodule:: catalyst.contrib.registry
+
+.. autoclass:: Registry
     :members:
     :undoc-members:
-    :show-inheritance:
 
 Criterion
 ----------
-.. automodule:: catalyst.contrib.criterion
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. currentmodule:: catalyst.contrib.criterion
 
-.. automodule:: catalyst.contrib.criterion.bcece
+.. autoclass:: BCESoftmaxLoss
     :members:
-    :undoc-members:
-    :show-inheritance:
 
-.. automodule:: catalyst.contrib.criterion.ce
+.. autoclass:: NaiveCrossEntropyLoss
     :members:
-    :undoc-members:
-    :show-inheritance:
 
-.. automodule:: catalyst.contrib.criterion.center_loss
+.. autoclass:: CenterLoss
     :members:
-    :undoc-members:
-    :show-inheritance:
 
-.. automodule:: catalyst.contrib.criterion.contrastive
+.. autoclass:: ContrastiveDistanceLoss
     :members:
-    :undoc-members:
-    :show-inheritance:
 
-.. automodule:: catalyst.contrib.criterion.dice
+.. autoclass:: ContrastiveEmbeddingLoss
     :members:
-    :undoc-members:
-    :show-inheritance:
 
-.. automodule:: catalyst.contrib.criterion.focal_loss
+.. autoclass:: BCEDiceLoss
     :members:
-    :undoc-members:
-    :show-inheritance:
 
-.. automodule:: catalyst.contrib.criterion.huber
+.. autoclass:: DiceLoss
     :members:
-    :undoc-members:
-    :show-inheritance:
 
-.. automodule:: catalyst.contrib.criterion.unet
+.. autoclass:: FocalLoss
     :members:
-    :undoc-members:
-    :show-inheritance:
+
+.. autoclass:: HuberLoss
+    :members:
+
+.. autoclass:: LossBinary
+    :members:
+
+.. autoclass:: LossMulti
+    :members:
 
 Models
 ---------------------
 .. automodule:: catalyst.contrib.models
     :members:
-    :undoc-members:
-    :show-inheritance:
-
-Segmentation
-~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.models.segmentation
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.models.segmentation.linknet
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.models.segmentation.resnetunet
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.models.segmentation.unet
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.models.resnet_encoder
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.models.sequential
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 Modules
 ---------------------
 .. automodule:: catalyst.contrib.modules
     :members:
-    :undoc-members:
-    :show-inheritance:
 
 .. automodule:: catalyst.contrib.modules.common
     :members:
-    :undoc-members:
-    :show-inheritance:
 
 .. automodule:: catalyst.contrib.modules.noisy
     :members:
-    :undoc-members:
-    :show-inheritance:
 
 .. automodule:: catalyst.contrib.modules.pooling
     :members:
-    :undoc-members:
-    :show-inheritance:
 
 Optimizers
 ---------------------
 .. automodule:: catalyst.contrib.optimizers
     :members:
-    :undoc-members:
-    :show-inheritance:

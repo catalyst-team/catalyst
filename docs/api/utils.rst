@@ -4,31 +4,39 @@ Utils package
 .. automodule:: catalyst.utils
     :members:
     :undoc-members:
-    :show-inheritance:
+
+Config
+----------
 
 .. automodule:: catalyst.utils.config
     :members:
     :undoc-members:
-    :show-inheritance:
+
+Data
+----------
 
 .. automodule:: catalyst.utils.data
     :members:
     :undoc-members:
-    :show-inheritance:
+
+Misc
+----------
 
 .. automodule:: catalyst.utils.misc
     :members:
     :undoc-members:
-    :show-inheritance:
+    :exclude-members: pairwise
+
+Parallelize
+-------------
 
 .. automodule:: catalyst.utils.parallelize
     :members:
     :undoc-members:
-    :show-inheritance:
+
+Serialization
+-------------
 
 .. automodule:: catalyst.utils.serialization
     :members:
     :undoc-members:
-    :show-inheritance:
-
-

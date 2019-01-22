@@ -26,31 +26,38 @@ project = 'Catalyst'
 copyright = '{}, Scitator'.format(datetime.datetime.now().year)
 author = 'Catalyst team'
 
-docs_repo = "catalyst-alpha"
+docs_repo = "catalyst"
 docs_user = "catalyst-team"
 
-releases_github_path = "catalyst-team/catalyst-alpha"
+releases_github_path = "catalyst-team/catalyst"
 
 
-def get_version():
+def get_version(mode: str) -> str:
     version_file = os.path.join(catalyst_root_path, 'catalyst', '__init__.py')
     if not os.path.exists(version_file):
         version_file = os.path.join(catalyst_root_path, '__init__.py')
 
     try:
         with open(version_file) as f:
-            return re.search(
+            version_ = re.search(
                 r'^__version__ = [\'"]([^\'"]*)[\'"]',
                 f.read(),
                 re.M).group(1)
+
+            if mode == 'short':
+                version_ = re.search(
+                    r'^(\d+\.*\d?\.?\d?)',
+                    version_,
+                    re.M).group(0)
+            return version_
     except Exception:
         return "1.0"
 
 
 # The short X.Y version
-version = get_version()
+version = get_version("short")
 # The full version, including alpha/beta/rc tags
-release = version
+release = get_version("full")
 
 # -- General configuration ---------------------------------------------------
 
