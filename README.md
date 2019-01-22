@@ -1,5 +1,8 @@
 # Catalyst
-[![Build Status](https://travis-ci.com/catalyst-team/catalyst.svg?branch=master)](https://travis-ci.com/catalyst-team/catalyst)
+[![Build Status](https://travis-ci.com/catalyst-team/catalyst.svg?branch=master)](https://travis-ci.com/catalyst-team/catalyst) 
+[![License](https://img.shields.io/github/license/catalyst-team/catalyst.svg)](LICENSE)
+[![Pipi version](https://img.shields.io/pypi/v/catalyst-ti.svg)](https://pypi.org/project/catalyst-ti/)
+[![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst-ti%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html)
 
 ![Catalyst logo](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png)
 
@@ -18,9 +21,9 @@ Catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+.
 Stable branch - `master`. Development branch - `dev`.
 
 API documentation and an overview of the library can be found 
-[here]((https://catalyst-team.github.io/catalyst-alpha/index.html)).
+[here](https://catalyst-team.github.io/catalyst/index.html).
 
-In the [examples folder](https://github.com/catalyst-team/catalyst/tree/master/examples) 
+In the [examples folder](examples) 
 of the repository, you can find advanced tutorials and catalyst best practices.
 
 
