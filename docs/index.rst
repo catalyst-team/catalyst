@@ -5,7 +5,7 @@ High-level utils for PyTorch DL & RL research. It was developed with a focus on 
 
 Main page: catalyst_
 
-.. _catalyst: https://github.com/Scitator/catalyst
+.. _catalyst: https://github.com/catalyst-team/catalyst
 
 .. toctree::
    :caption: Info
@@ -25,7 +25,7 @@ Examples
 Examples and tutorials could be found here `catalyst-examples`_.
 In the examples folder of the repository, you can find advanced tutorials: finetuning, RL agent training, etc.
 
-.. _`catalyst-examples`: https://github.com/catalyst-team/catalyst-alpha/tree/master/examples
+.. _`catalyst-examples`: https://github.com/catalyst-team/catalyst/tree/master/examples
 
 
 Catalyst provides packages for DL and RL

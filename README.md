@@ -56,7 +56,7 @@ with distributed training support.
 
 ## Docker
 
-Please see the [docker folder](https://github.com/catalyst-team/catalyst/tree/master/docker) 
+Please see the [docker folder](docker) 
 for more information and examples.
 
 
@@ -68,5 +68,5 @@ please do so without any further discussion.
 If you plan to contribute new features, utility functions or extensions, 
 please first open an issue and discuss the feature with us.
 
-Please see the [contribution guide](https://github.com/catalyst-team/catalyst/tree/master/CONTRIBUTING.md) 
+Please see the [contribution guide](CONTRIBUTING.md) 
 for more information.

@@ -26,10 +26,10 @@ project = 'Catalyst'
 copyright = '{}, Scitator'.format(datetime.datetime.now().year)
 author = 'Catalyst team'
 
-docs_repo = "catalyst-alpha"
+docs_repo = "catalyst"
 docs_user = "catalyst-team"
 
-releases_github_path = "catalyst-team/catalyst-alpha"
+releases_github_path = "catalyst-team/catalyst"
 
 
 def get_version(mode: str) -> str:
