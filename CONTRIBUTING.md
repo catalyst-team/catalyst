@@ -2,7 +2,7 @@
 
 ## Issues
 
-We use [GitHub issues](https://github.com/catalyst-team/catalyst-alpha/issues) for bug reports and feature requests.
+We use [GitHub issues](https://github.com/catalyst-team/catalyst/issues) for bug reports and feature requests.
 
 #### Step-by-step guide
 
@@ -15,7 +15,7 @@ We use [GitHub issues](https://github.com/catalyst-team/catalyst-alpha/issues) f
 
 ##### Bugfix
 
-1. Goto [GitHub issues](https://github.com/catalyst-team/catalyst-alpha/issues);
+1. Goto [GitHub issues](https://github.com/catalyst-team/catalyst/issues);
 2. Pick an issue and comment on the task that you want to work on this feature;
 3. If you need more context on a specific issue, please ask, and we will discuss the details.
 

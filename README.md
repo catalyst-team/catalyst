@@ -1,5 +1,5 @@
 # Catalyst
-[![Build Status](https://travis-ci.com/catalyst-team/catalyst-alpha.svg?branch=master)](https://travis-ci.com/catalyst-team/catalyst-alpha)
+[![Build Status](https://travis-ci.com/catalyst-team/catalyst.svg?branch=master)](https://travis-ci.com/catalyst-team/catalyst)
 
 ![Catalyst logo](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png)
 
@@ -20,7 +20,7 @@ Stable branch - `master`. Development branch - `dev`.
 API documentation and an overview of the library can be found 
 [here]((https://catalyst-team.github.io/catalyst-alpha/index.html)).
 
-In the [examples folder](https://github.com/catalyst-team/catalyst-alpha/tree/master/examples) 
+In the [examples folder](https://github.com/catalyst-team/catalyst/tree/master/examples) 
 of the repository, you can find advanced tutorials and catalyst best practices.
 
 
@@ -56,7 +56,7 @@ with distributed training support.
 
 ## Docker
 
-Please see the [docker folder](https://github.com/catalyst-team/catalyst-alpha/tree/master/docker) 
+Please see the [docker folder](https://github.com/catalyst-team/catalyst/tree/master/docker) 
 for more information and examples.
 
 
@@ -68,5 +68,5 @@ please do so without any further discussion.
 If you plan to contribute new features, utility functions or extensions, 
 please first open an issue and discuss the feature with us.
 
-Please see the [contribution guide](https://github.com/catalyst-team/catalyst-alpha/tree/master/CONTRIBUTING.md) 
+Please see the [contribution guide](https://github.com/catalyst-team/catalyst/tree/master/CONTRIBUTING.md) 
 for more information.
