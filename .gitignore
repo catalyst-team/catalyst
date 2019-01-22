@@ -105,7 +105,6 @@ ENV/
 .idea
 .code
 
-# data/
 tmp/
 logs/
 
@@ -115,3 +114,6 @@ logs/
 *.txt
 
 .DS_Store
+examples/data/
+examples/logs/
+data/
