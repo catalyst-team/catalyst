@@ -1,0 +1,99 @@
+group: travis_latest
+language: python
+cache: pip
+
+# safelist
+branches:
+  only:
+  - master
+  - dev
+  - gh-pages
+
+python:
+  - 3.6
+  # - 3.7
+matrix:
+  include:
+    - python: 3.6
+#    - python: 3.7
+#      dist: xenial    # required for Python 3.7 (travis-ci/travis-ci#9069)
+#      sudo: required  # required for Python 3.7 (travis-ci/travis-ci#9069)
+
+stages:
+  - Codestyle
+  - Examples
+  - Deploy
+
+before_install: &before_install
+  sudo apt install redis-server
+
+install: &requirements
+  pip install -r requirements.txt
+
+jobs:
+  include:
+    - stage: Codestyle
+      install: pip install flake8 yapf
+      script:
+        # stop the build if there are any unexpected flake8 issues
+        - flake8 . --count --ignore=E126,E226,E704,E731,W503,W504 --max-complexity=16
+          --show-source --statistics
+        # exit-zero treats all errors as warnings.
+        - flake8 . --count --exit-zero --max-complexity=10 --statistics
+        # test to make sure the code is yapf compliant
+        - ./yapf.sh --all
+
+    - stage: Examples
+      name: "Examples DL"
+      before_install: *before_install
+      install: *requirements
+      script:
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/dl/scripts/train.py
+          --model-dir=./examples/_tests_mnist_stages
+          --config=./examples/_tests_mnist_stages/config.yml
+          --logdir=./examples/logs/_tests_mnist_stages
+
+    - stage: Examples
+      name: "Examples RL"
+      before_install: *before_install
+      install: *requirements
+      script:
+        - redis-server --port 12000 &
+        - sleep 10
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/rl/offpolicy/scripts/run_trainer.py
+          --config=./examples/_tests_rl_gym/config.yml
+          --logdir=./examples/logs/_tests_rl_gym
+          --trainer/start_learning=10:int &
+        - sleep 30
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/rl/offpolicy/scripts/run_samplers.py
+          --config=./examples/_tests_rl_gym/config.yml
+          --logdir=./examples/logs/_tests_rl_gym
+          --trainer/start_learning=10:int &
+        - sleep 90
+        - kill %3
+        - kill %2
+        - kill %1
+
+    - stage: Deploy
+      name: "Pip package"
+      install: skip # nothing to do
+      # in near future the pip-package will be created here
+      script: true
+
+    - stage: Deploy
+      name: "Docs"
+      if: branch = master
+      install:
+        - *requirements
+        - pip install -r docs/requirements.txt
+        - pip install travis-sphinx
+        # for correct changelog on github pages
+        - pip install git+https://github.com/bitprophet/releases/#egg=releases
+#        - pip install -U git+https://github.com/leokoppel/sphinxcontrib-versioning
+      script:
+        - travis-sphinx build --source docs/ --nowarn
+      after_success:
+        - travis-sphinx deploy

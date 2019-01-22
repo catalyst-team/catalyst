@@ -102,10 +102,10 @@ ENV/
 
 
 
-.DS_Store
 .idea
 .code
 
+# data/
 tmp/
 logs/
 
@@ -114,6 +114,4 @@ logs/
 *.tsv
 *.txt
 
-examples/data/
-examples/logs/
-data/
+.DS_Store
