@@ -115,7 +115,3 @@ logs/
 *.txt
 
 .DS_Store
-.idea/
-examples/data/
-examples/logs/
-data/
