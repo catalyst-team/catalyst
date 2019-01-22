@@ -5,7 +5,6 @@ from warnings import warn
 import pandas as pd
 import numpy as np
 import multiprocessing
-
 """
 Ref:
 - code modified from https://github.com/rampeer/py-parallelize
