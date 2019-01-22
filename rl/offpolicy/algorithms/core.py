@@ -66,9 +66,11 @@ class Algorithm:
         critic_grad_clip_params = critic_grad_clip_params or {}
 
         self.actor_grad_clip_fn = UtilsFactory.create_grad_clip_fn(
-            **actor_grad_clip_params)
+            **actor_grad_clip_params
+        )
         self.critic_grad_clip_fn = UtilsFactory.create_grad_clip_fn(
-            **critic_grad_clip_params)
+            **critic_grad_clip_params
+        )
 
         self.actor_grad_clip_params = actor_grad_clip_params
         self.critic_grad_clip_params = critic_grad_clip_params
@@ -109,9 +111,35 @@ class Algorithm:
     def _to_tensor(self, *args, **kwargs):
         return torch.Tensor(*args, **kwargs).to(self._device)
 
-    def train(self, batch, actor_update=True, critic_update=True):
-        "returns loss for a batch of transitions"
+    def update_step(
+        self, policy_loss, value_loss, actor_update=True, critic_update=True
+    ):
+        "updates parameters of neural networks and returns learning metrics"
         raise NotImplementedError
+
+    def train(self, batch, actor_update=True, critic_update=True):
+        states_t, actions_t, rewards_t, states_tp1, done_t = \
+            batch["state"], batch["action"], batch["reward"], \
+            batch["next_state"], batch["done"]
+
+        states_t = self._to_tensor(states_t)
+        actions_t = self._to_tensor(actions_t)
+        rewards_t = self._to_tensor(rewards_t).unsqueeze(1)
+        states_tp1 = self._to_tensor(states_tp1)
+        done_t = self._to_tensor(done_t).unsqueeze(1)
+
+        policy_loss, value_loss = self._loss_fn(
+            states_t, actions_t, rewards_t, states_tp1, done_t
+        )
+
+        metrics = self.update_step(
+            policy_loss=policy_loss,
+            value_loss=value_loss,
+            actor_update=actor_update,
+            critic_update=critic_update
+        )
+
+        return metrics
 
     def get_td_errors(self, batch):
         # @TODO: for prioritized replay
