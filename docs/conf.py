@@ -32,26 +32,29 @@ docs_user = "catalyst-team"
 releases_github_path = "catalyst-team/catalyst"
 
 
-def get_version(mode: str) -> str:
-    version_file = os.path.join(catalyst_root_path, 'catalyst', '__init__.py')
+def get_version(mode: str = 'full') -> str:
+    current_dir = os.path.abspath(os.path.dirname(__file__))
+    root = os.path.dirname(current_dir)
+    version_file = os.path.join(root, 'catalyst', '__version__.py')
     if not os.path.exists(version_file):
-        version_file = os.path.join(catalyst_root_path, '__version__.py')
+        version_file = os.path.join(root, '__version__.py')
 
+    version_ = '1.0'
     try:
         with open(version_file) as f:
             version_ = re.search(
-                r'^__version__ = [\'"]([^\'"]*)[\'"]',
-                f.read(),
-                re.M).group(1)
-
-            if mode == 'short':
-                version_ = re.search(
-                    r'^(\d+\.*\d?\.?\d?)',
-                    version_,
-                    re.M).group(0)
-            return version_
+                r'^__version__ = [\'"]([^\'"]*)[\'"]', f.read(), re.M
+            ).group(1)
     except Exception:
-        return "1.0"
+        pass
+
+    if mode == 'short':
+        try:
+            version_ = re.search(r'^(\d+\.\d+)', version_, re.M).group(1)
+        except Exception:
+            pass
+
+    return version_
 
 
 # The short X.Y version
@@ -146,7 +149,8 @@ html_short_title = "Catalyst RL/DL"
 html_context = {
     "display_github": True,
     'source_url_prefix': (
-        f"https://github.com/{docs_user}/{docs_repo}/tree/master/docs"),
+        f"https://github.com/{docs_user}/{docs_repo}/tree/master/docs"
+    ),
     "github_host": "github.com",
     "github_user": docs_user,
     "github_repo": docs_repo,
@@ -154,7 +158,6 @@ html_context = {
     "conf_py_path": "/docs/",
     "source_suffix": '.rst'
 }
-
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
@@ -185,18 +188,17 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Catalyst.tex', 'Catalyst Documentation',
-     'Scitator', 'manual'),
+    (
+        master_doc, 'Catalyst.tex', 'Catalyst Documentation', 'Scitator',
+        'manual'
+    ),
 ]
 
 # -- Options for manual page output ------------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, 'catalyst', 'Catalyst Documentation',
-     [author], 1)
-]
+man_pages = [(master_doc, 'catalyst', 'Catalyst Documentation', [author], 1)]
 
 # -- Options for Texinfo output ----------------------------------------------
 
@@ -204,9 +206,10 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Catalyst', 'Catalyst Documentation',
-     author, 'Catalyst', 'One line description of project.',
-     'Miscellaneous'),
+    (
+        master_doc, 'Catalyst', 'Catalyst Documentation', author, 'Catalyst',
+        'One line description of project.', 'Miscellaneous'
+    ),
 ]
 
 # -- Options for Epub output -------------------------------------------------
