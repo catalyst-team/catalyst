@@ -32,10 +32,12 @@ docs_user = "catalyst-team"
 releases_github_path = "catalyst-team/catalyst"
 
 
-def get_version(mode: str) -> str:
-    version_file = os.path.join(catalyst_root_path, 'catalyst', '__init__.py')
+def get_version(mode: str = 'full') -> str:
+    current_dir = os.path.abspath(os.path.dirname(__file__))
+    root = os.path.dirname(current_dir)
+    version_file = os.path.join(root, 'catalyst', '__version__.py')
     if not os.path.exists(version_file):
-        version_file = os.path.join(catalyst_root_path, '__version__.py')
+        version_file = os.path.join(root, '__version__.py')
 
     try:
         with open(version_file) as f:
@@ -49,8 +51,9 @@ def get_version(mode: str) -> str:
                     r'^(\d+\.*\d?\.?\d?)',
                     version_,
                     re.M).group(0)
+
             return version_
-    except Exception:
+    except Exception as ex:
         return "1.0"
 
 
