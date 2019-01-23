@@ -1,25 +1,37 @@
-from argparse import ArgumentParser
+from collections import OrderedDict
+from argparse import ArgumentParser, RawTextHelpFormatter
 
-from .scripts import train, inference
+from .scripts import train, inference, make_report
+from catalyst.contrib.scripts import check_images, \
+    check_index_model, create_index_model, image2embedding, \
+    project_embeddings, tag2label
 
-COMMANDS = {
-    'train': train.run_train,
-    'infer': inference.run_inference,
-}
+COMMANDS = OrderedDict([
+    ("train", train),
+    ("infer", inference),
+    ("make-report", make_report),
+    ("tag2label", tag2label),
+    ("check-images", check_images),
+    ("check-index-model", check_index_model),
+    ("create-index-model", create_index_model),
+    ("image2embedding", image2embedding),
+    ("project-embeddings", project_embeddings)
+])
 
 
 def build_parser() -> ArgumentParser:
-    parser = ArgumentParser('catalyst-dl')
+    parser = ArgumentParser("catalyst-dl", formatter_class=RawTextHelpFormatter)
+    all_commands = ', \n'.join(map(lambda x: f"    {x}", COMMANDS.keys()))
 
     subparsers = parser.add_subparsers(
-        metavar='{command}',
-        dest='command',
-        help='train or infer',
+        metavar="{command}",
+        dest="command",
+        help=f"available commands: \n{all_commands}",
     )
     subparsers.required = True
 
-    train.build_args(subparsers.add_parser('train'))
-    inference.build_args(subparsers.add_parser('infer'))
+    for key, value in COMMANDS.items():
+        value.build_args(subparsers.add_parser(key))
 
     return parser
 
@@ -29,8 +41,8 @@ def main():
 
     args, uargs = parser.parse_known_args()
 
-    COMMANDS[args.command](args, uargs)
+    COMMANDS[args.command].main(args, uargs)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

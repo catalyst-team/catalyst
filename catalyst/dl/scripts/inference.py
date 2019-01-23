@@ -43,14 +43,12 @@ def build_args(parser):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-
     build_args(parser)
-
     args, unknown_args = parser.parse_known_args()
     return args, unknown_args
 
 
-def run_inference(args, unknown_args):
+def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
     set_global_seeds(args.seed)
 
@@ -79,4 +77,4 @@ def run_inference(args, unknown_args):
 
 if __name__ == "__main__":
     args, unknown_args = parse_args()
-    run_inference(args, unknown_args)
+    main(args, unknown_args)

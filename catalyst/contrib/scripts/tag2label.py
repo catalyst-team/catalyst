@@ -6,24 +6,6 @@ from catalyst.utils.data import create_dataset, create_dataframe, \
     prepare_dataset_labeling, separate_tags
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument("--in-csv", type=str, default=None)
-    parser.add_argument("--in-dir", type=str, default=None)
-
-    parser.add_argument("--out-dataset", type=str, default=None, required=True)
-    parser.add_argument(
-        "--out-labeling", type=str, default=None, required=True
-    )
-
-    parser.add_argument("--tag-column", type=str, default="tag")
-    parser.add_argument("--tag-delim", type=str, default=None)
-
-    args = parser.parse_args()
-    return args
-
-
 def prepare_df_from_dirs(in_dir, tag_column_name):
     if not in_dir.endswith("/"):
         in_dir = f"{in_dir}/"
@@ -36,7 +18,29 @@ def prepare_df_from_dirs(in_dir, tag_column_name):
     return df
 
 
-def main(args):
+def build_args(parser):
+    parser.add_argument("--in-csv", type=str, default=None)
+    parser.add_argument("--in-dir", type=str, default=None)
+
+    parser.add_argument("--out-dataset", type=str, default=None, required=True)
+    parser.add_argument(
+        "--out-labeling", type=str, default=None, required=True
+    )
+
+    parser.add_argument("--tag-column", type=str, default="tag")
+    parser.add_argument("--tag-delim", type=str, default=None)
+
+    return parser
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    build_args(parser)
+    args = parser.parse_args()
+    return args
+
+
+def main(args, _=None):
     if args.in_csv is not None:
         df = pd.read_csv(args.in_csv)
     elif args.in_dir is not None:

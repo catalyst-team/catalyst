@@ -25,19 +25,24 @@ def open_image_okay(row):
         return False
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
+def build_args(parser):
     parser.add_argument("--in-csv", type=str, required=True)
     parser.add_argument("--img-datapath", type=str, default=None)
     parser.add_argument("--img-col", type=str, required=True)
     parser.add_argument("--out-csv", type=str, required=True)
     parser.add_argument("--n-cpu", type=int, default=None)
 
+    return parser
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    build_args(parser)
     args = parser.parse_args()
     return args
 
 
-def main(args):
+def main(args, _=None):
     global DATAPATH, IMG_COL
     DATAPATH = args.img_datapath or ""
     IMG_COL = args.img_col
