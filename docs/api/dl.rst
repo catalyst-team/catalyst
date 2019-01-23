@@ -107,7 +107,7 @@ Utils
     :undoc-members:
 
 
-Other
+Fp16
 ----------
 
 .. automodule:: catalyst.dl.fp16
@@ -115,10 +115,18 @@ Other
     :undoc-members:
     :show-inheritance:
 
+
+Initialization
+-----------------
+
 .. automodule:: catalyst.dl.initialization
     :members:
     :undoc-members:
     :show-inheritance:
+
+
+Utils
+----------
 
 .. automodule:: catalyst.dl.utils
     :members:

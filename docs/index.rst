@@ -55,7 +55,36 @@ In the examples folder of the repository, you can find advanced tutorials: finet
 .. _`catalyst-examples`: https://github.com/catalyst-team/catalyst/tree/master/examples
 
 
-Catalyst provides packages for DL and RL
+Installation
+------------
+
+.. code:: bash
+
+   pip install catalyst-ti
+
+Overview
+--------
+
+Features
+^^^^^^^^
+
+-  Universal train/inference loop;
+-  Configuration files for model/data hyperparameters;
+-  Reproducibility – even source code will be saved;
+-  Training stages support;
+-  Callbacks – reusable train/inference pipeline parts.
+
+Structure
+^^^^^^^^^
+
+-  **DL** – runner for training and inference, all of the classic
+   machine learning and computer vision metrics and a variety of
+   callbacks for training, validation and inference of neural networks.
+-  **RL** – scalable Reinforcement Learning, all of the off-policy
+   continuous actions space algorithms and their improvements with
+   distributed training support.
+-  **contrib** - additional modules contributed by Catalyst users.
+
 
 .. toctree::
    :maxdepth: 2
@@ -67,6 +96,17 @@ Catalyst provides packages for DL and RL
    api/contrib
    api/data
    api/utils
+
+
+Contribution guide
+------------------
+
+We appreciate all contributions. If you are planning to contribute back
+bug-fixes, please do so without any further discussion. If you plan to
+contribute new features, utility functions or extensions, please first
+open an issue and discuss the feature with us.
+
+Please see the :doc:`contribution guide </info/contributing>` for more information.
 
 Changelog
 ----------

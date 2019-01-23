@@ -53,17 +53,38 @@ Models
 
 Modules
 ---------------------
-.. automodule:: catalyst.contrib.modules
+.. currentmodule:: catalyst.contrib.modules
+
+.. autoclass:: Lambda
     :members:
 
-.. automodule:: catalyst.contrib.modules.common
+.. autoclass:: Flatten
     :members:
 
-.. automodule:: catalyst.contrib.modules.noisy
+.. autoclass:: NoisyLinear
     :members:
 
-.. automodule:: catalyst.contrib.modules.pooling
+.. autoclass:: GlobalAvgPool2d
     :members:
+
+.. autoclass:: GlobalMaxPool2d
+    :members:
+
+.. autoclass:: GlobalConcatPool2d
+    :members:
+
+.. autoclass:: GlobalAttnPool2d
+    :members:
+
+.. autoclass:: GlobalAvgAttnPool2d
+    :members:
+
+.. autoclass:: GlobalMaxAttnPool2d
+    :members:
+
+.. autoclass:: GlobalConcatAttnPool2d
+    :members:
+
 
 Optimizers
 ---------------------
