@@ -4,16 +4,20 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from .offpolicy.scripts import dump_redis, load_redis, \
     run_samplers, run_trainer
 
-COMMANDS = OrderedDict([
-    ("run-trainer", run_trainer),
-    ("run-samplers", run_samplers),
-    ("dump-redis", dump_redis),
-    ("load-redis", load_redis),
-])
+COMMANDS = OrderedDict(
+    [
+        ("run-trainer", run_trainer),
+        ("run-samplers", run_samplers),
+        ("dump-redis", dump_redis),
+        ("load-redis", load_redis),
+    ]
+)
 
 
 def build_parser() -> ArgumentParser:
-    parser = ArgumentParser("catalyst-dl", formatter_class=RawTextHelpFormatter)
+    parser = ArgumentParser(
+        "catalyst-rl", formatter_class=RawTextHelpFormatter
+    )
     all_commands = ', \n'.join(map(lambda x: f"    {x}", COMMANDS.keys()))
 
     subparsers = parser.add_subparsers(

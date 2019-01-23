@@ -78,6 +78,7 @@ def build_args(parser):
 
     return parser
 
+
 def parse_args():
     parser = argparse.ArgumentParser()
     build_args(parser)
