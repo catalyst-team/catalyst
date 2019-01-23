@@ -18,13 +18,11 @@ Break the cycle - use the Catalyst!
 
 Catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+.
 
-Stable branch - `master`. Development branch - `dev`.
-
 API documentation and an overview of the library can be found 
 [here](https://catalyst-team.github.io/catalyst/index.html).
 
 In the [examples folder](examples) 
-of the repository, you can find advanced tutorials and catalyst best practices.
+of the repository, you can find advanced tutorials and Catalyst best practices.
 
 
 ## Installation
