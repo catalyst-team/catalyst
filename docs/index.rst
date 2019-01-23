@@ -49,10 +49,8 @@ API documentation and an overview of the library can be found here.
 
 Examples
 --------
-Examples and tutorials could be found here `catalyst-examples`_.
+Examples and tutorials could be found :doc:`here </info/examples>`.
 In the examples folder of the repository, you can find advanced tutorials: finetuning, RL agent training, etc.
-
-.. _`catalyst-examples`: https://github.com/catalyst-team/catalyst/tree/master/examples
 
 
 Installation
