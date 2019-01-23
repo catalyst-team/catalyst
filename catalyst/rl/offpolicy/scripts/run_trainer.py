@@ -17,14 +17,18 @@ os.environ["OMP_NUM_THREADS"] = "1"
 torch.set_num_threads(1)
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-
+def build_args(parser):
     parser.add_argument("--config", type=str, required=True)
     parser.add_argument("--model-dir", type=str, default=None)
     parser.add_argument("--algorithm", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
 
+    return parser
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    build_args(parser)
     args, unknown_args = parser.parse_known_args()
     return args, unknown_args
 

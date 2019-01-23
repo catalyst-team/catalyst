@@ -91,7 +91,10 @@ setup(
     url=URL,
     packages=find_packages(exclude=("tests",)),
     entry_points={
-        "console_scripts": ["catalyst-dl=catalyst.dl.__main__:main"],
+        "console_scripts": [
+            "catalyst-dl=catalyst.dl.__main__:main",
+            "catalyst-rl=catalyst.rl.__main__:main",
+        ],
     },
     install_requires=load_requirements(),
     include_package_data=True,
