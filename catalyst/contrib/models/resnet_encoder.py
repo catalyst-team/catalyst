@@ -20,8 +20,9 @@ class ResnetEncoder(nn.Module):
         modules = list(resnet.children())[:-cut_layers]  # delete last layers
 
         if frozen:
-            for param in modules:
-                param.requires_grad = False
+            for module in modules:
+                for param in module.parameters():
+                    param.requires_grad = False
 
         if pooling is not None:
             pooling_kwargs = pooling_kwargs or {}
