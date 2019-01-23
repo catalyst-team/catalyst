@@ -23,7 +23,7 @@ torch.set_num_threads(1)
 
 def build_args(parser):
     parser.add_argument("--config", type=str, required=True)
-    parser.add_argument("--model-dir", type=str, default=None)
+    parser.add_argument("--expdir", type=str, default=None)
     parser.add_argument("--algorithm", type=str, default=None)
     parser.add_argument("--environment", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
@@ -157,9 +157,9 @@ def main(args, unknown_args):
 
     os.makedirs(args.logdir, exist_ok=True)
     save_config(config=config, logdir=args.logdir)
-    if args.model_dir is not None:
+    if args.expdir is not None:
         modules = prepare_modules(  # noqa: F841
-            model_dir=args.model_dir,
+            expdir=args.expdir,
             dump_dir=args.logdir)
 
     algorithm = Registry.get_fn("algorithm", args.algorithm)

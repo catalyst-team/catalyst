@@ -3,13 +3,13 @@ set -e
 
 echo "Training..."
 catalyst-dl train \
-    --model-dir=finetune \
+    --expdir=finetune \
     --config=finetune/train.yml \
     --logdir=${LOGDIR} --verbose
 
 echo "Inference..."
 catalyst-dl inference \
-   --model-dir=finetune \
+   --expdir=finetune \
    --resume=${LOGDIR}/checkpoint.best.pth.tar \
    --out-prefix=${LOGDIR}/dataset.predictions.{suffix}.npy \
    --config=${LOGDIR}/config.json,./finetune/inference.yml \

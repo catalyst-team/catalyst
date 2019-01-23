@@ -4,7 +4,7 @@ model_params:
 
 args:
   workers: 0
-  model_dir: "mnist_simple"
+  expdir: "mnist_simple"
   logdir: "./logs/mnist_simple"
 
 stages:

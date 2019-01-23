@@ -17,7 +17,7 @@ model_params:
 
 args:
   workers: 4
-  model_dir: "finetune"
+  expdir: "finetune"
   baselogdir: "./logs/finetune"
 
 stages:

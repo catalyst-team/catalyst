@@ -9,7 +9,7 @@ from catalyst.utils.misc import set_global_seeds, boolean_flag
 
 
 def build_args(parser):
-    parser.add_argument("--model-dir", type=str, default=None)
+    parser.add_argument("--expdir", type=str, default=None)
     parser.add_argument("--config", type=str, default=None)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument(
@@ -52,7 +52,7 @@ def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
     set_global_seeds(args.seed)
 
-    modules = prepare_modules(model_dir=args.model_dir)
+    modules = prepare_modules(expdir=args.expdir)
 
     model = Registry.get_model(**config["model_params"])
     datasource = modules["data"].DataSource()
