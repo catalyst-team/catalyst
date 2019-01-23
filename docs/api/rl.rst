@@ -1,4 +1,4 @@
-RL package
+RL
 ===========
 
 .. automodule:: catalyst.rl

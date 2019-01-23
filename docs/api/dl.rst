@@ -1,4 +1,4 @@
-DL package
+DL
 ===========
 
 .. automodule:: catalyst.dl

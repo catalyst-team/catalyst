@@ -1,4 +1,4 @@
-Data package
+Data
 ============
 
 .. automodule:: catalyst.data

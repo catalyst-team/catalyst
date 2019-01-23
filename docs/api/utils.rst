@@ -1,4 +1,4 @@
-Utils package
+Utils
 ===============
 
 .. automodule:: catalyst.utils

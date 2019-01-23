@@ -1,4 +1,4 @@
-Contrib package
+Contrib
 ================
 
 Registry
