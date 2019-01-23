@@ -35,7 +35,7 @@ releases_github_path = "catalyst-team/catalyst"
 def get_version(mode: str) -> str:
     version_file = os.path.join(catalyst_root_path, 'catalyst', '__init__.py')
     if not os.path.exists(version_file):
-        version_file = os.path.join(catalyst_root_path, '__init__.py')
+        version_file = os.path.join(catalyst_root_path, '__version__.py')
 
     try:
         with open(version_file) as f:
