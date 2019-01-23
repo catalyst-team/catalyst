@@ -1,10 +1,14 @@
-RL package
+RL
 ===========
 
 .. automodule:: catalyst.rl
     :members:
     :undoc-members:
     :show-inheritance:
+
+
+Random process
+-----------------
 
 .. automodule:: catalyst.rl.random_process
     :members:
@@ -14,25 +18,32 @@ RL package
 Agents
 -------
 
-.. automodule:: catalyst.rl.agents
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. currentmodule:: catalyst.rl.agents
 
-.. automodule:: catalyst.rl.agents.actor
+.. autoclass:: Actor
     :members:
     :undoc-members:
-    :show-inheritance:
 
-.. automodule:: catalyst.rl.agents.critic
+.. autoclass:: Critic
     :members:
     :undoc-members:
-    :show-inheritance:
+
+.. autoclass:: ValueCritic
+    :members:
+    :undoc-members:
+
+
+Layers
+~~~~~~~~~~
 
 .. automodule:: catalyst.rl.agents.layers
     :members:
     :undoc-members:
     :show-inheritance:
+
+
+Utils
+~~~~~~~~~~
 
 .. automodule:: catalyst.rl.agents.utils
     :members:
@@ -43,22 +54,27 @@ Agents
 Offpolicy
 -----------
 
-.. automodule:: catalyst.rl.offpolicy
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. currentmodule:: catalyst.rl.offpolicy
 
-.. automodule:: catalyst.rl.offpolicy.sampler
-    :members:
-    :undoc-members:
-    :show-inheritance:
-    :exclude-members: get_actor_weights, set_actor_weights, set_params_noise
+
+Trainer
+~~~~~~~~~~
 
 .. automodule:: catalyst.rl.offpolicy.trainer
     :members:
     :undoc-members:
     :show-inheritance:
     :exclude-members: redis2queue_loop
+
+
+Sampler
+~~~~~~~~~~
+
+.. automodule:: catalyst.rl.offpolicy.sampler
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :exclude-members: get_actor_weights, set_actor_weights, set_params_noise
 
 Algorithms
 ~~~~~~~~~~~
