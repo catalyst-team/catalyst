@@ -50,7 +50,7 @@ jobs:
       script:
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
           python catalyst/dl/scripts/train.py
-          --model-dir=./examples/_tests_mnist_stages
+          --expdir=./examples/_tests_mnist_stages
           --config=./examples/_tests_mnist_stages/config.yml
           --logdir=./examples/logs/_tests_mnist_stages
 
@@ -77,11 +77,12 @@ jobs:
         - kill %2
         - kill %1
 
-    - stage: Deploy
-      name: "Pip package"
-      install: skip # nothing to do
-      # in near future the pip-package will be created here
-      script: true
+# speed up for now
+#    - stage: Deploy
+#      name: "Pip package"
+#      install: skip # nothing to do
+#      # in near future the pip-package will be created here
+#      script: true
 
     - stage: Deploy
       name: "Docs"

@@ -3,35 +3,35 @@ set -e
 
 echo "Training...0"
 catalyst-dl train \
-    --model-dir=finetune \
+    --expdir=finetune \
     --config=finetune/train.yml \
     --baselogdir=${BASELOGDIR} --verbose \
     --stages/data_params/train_folds=[1,2,3,4]:list
 
 echo "Training...1"
 catalyst-dl train \
-    --model-dir=finetune \
+    --expdir=finetune \
     --config=finetune/train.yml \
     --baselogdir=${BASELOGDIR} --verbose \
     --stages/data_params/train_folds=[0,2,3,4]:list
 
 echo "Training...2"
 catalyst-dl train \
-    --model-dir=finetune \
+    --expdir=finetune \
     --config=finetune/train.yml \
     --baselogdir=${BASELOGDIR} --verbose \
     --stages/data_params/train_folds=[0,1,3,4]:list
 
 echo "Training...3"
 catalyst-dl train \
-    --model-dir=finetune \
+    --expdir=finetune \
     --config=finetune/train.yml \
     --baselogdir=${BASELOGDIR} --verbose \
     --stages/data_params/train_folds=[0,1,2,4]:list
 
 echo "Training...4"
 catalyst-dl train \
-    --model-dir=finetune \
+    --expdir=finetune \
     --config=finetune/train.yml \
     --baselogdir=${BASELOGDIR} --verbose \
     --stages/data_params/train_folds=[0,1,2,3]:list

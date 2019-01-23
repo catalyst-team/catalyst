@@ -2,7 +2,7 @@
 set -e
 
 catalyst-dl train \
-    --model-dir=finetune \
+    --expdir=finetune \
     --config=finetune/debug.yml \
     --logdir=${LOGDIR} --verbose
 

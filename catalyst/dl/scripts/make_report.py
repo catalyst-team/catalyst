@@ -46,19 +46,24 @@ def report_by_dir(folder):
     return row
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
+def build_args(parser):
     parser.add_argument("--in-logdir", type=str, required=True)
     parser.add_argument("--out-logdir", type=str, required=True)
     parser.add_argument(
         "--keys", type=str, default="loss,base/sample_per_second,epoch"
     )
 
+    return parser
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    build_args(parser)
     args = parser.parse_args()
     return args
 
 
-def main(args):
+def main(args, _):
     logdir_in = args.in_logdir
     logdir_out = args.out_logdir
     keys = args.keys.split(",")

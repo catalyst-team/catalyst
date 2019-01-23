@@ -3,13 +3,13 @@ set -e
 
 echo "Training...1"
 catalyst-dl train \
-    --model-dir=finetune \
+    --expdir=finetune \
     --config=finetune/train.yml \
     --baselogdir=${BASELOGDIR} --verbose
 
 echo "Training...2"
 catalyst-dl train \
-    --model-dir=finetune \
+    --expdir=finetune \
     --config=finetune/train.yml \
     --baselogdir=${BASELOGDIR} --verbose \
     --model_params/encoder_params/pooling=GlobalAvgPool2d:str \
@@ -17,7 +17,7 @@ catalyst-dl train \
 
 echo "Training...3"
 catalyst-dl train \
-    --model-dir=finetune \
+    --expdir=finetune \
     --config=finetune/train.yml \
     --baselogdir=${BASELOGDIR} --verbose \
     --model_params/encoder_params/pooling=GlobalMaxPool2d:str \
@@ -25,7 +25,7 @@ catalyst-dl train \
 
 echo "Training...4"
 catalyst-dl train \
-    --model-dir=finetune \
+    --expdir=finetune \
     --config=finetune/train.yml \
     --baselogdir=${BASELOGDIR} --verbose \
     --model_params/head_params/emb_size=128:int

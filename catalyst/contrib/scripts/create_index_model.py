@@ -7,9 +7,7 @@ from sklearn.pipeline import Pipeline
 import nmslib
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-
+def build_args(parser):
     parser.add_argument("--in-npy", type=str, default=None)
 
     parser.add_argument("--n-hidden", type=int, default=None)
@@ -24,10 +22,17 @@ def parse_args():
     parser.add_argument("--out-pipeline", type=str, default=None)
     parser.add_argument("--out-knn", type=str, default=None)
 
-    return parser.parse_args()
+    return parser
 
 
-def main(args):
+def parse_args():
+    parser = argparse.ArgumentParser()
+    build_args(parser)
+    args = parser.parse_args()
+    return args
+
+
+def main(args, _=None):
     print("[==       Loading features       ==]")
     features = None
     for in_npy in args.in_npy.split(","):
