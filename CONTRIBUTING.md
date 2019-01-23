@@ -31,7 +31,7 @@ If you are not familiar with creating a Pull Request, here are some guides:
 
 1. Break your work into small, single-purpose updates if possible. 
 It's much harder to merge in a large change with a lot of disjoint features.
-2. Submit the update as a GitHub pull request against the `dev` branch.
+2. Submit the update as a GitHub pull request against the `master` branch.
 3. Make sure that your code passes the unit tests.
 4. Add new unit tests for your code.
 
