@@ -39,22 +39,26 @@ def get_version(mode: str = 'full') -> str:
     if not os.path.exists(version_file):
         version_file = os.path.join(root, '__version__.py')
 
+    version_ = '1.0'
     try:
         with open(version_file) as f:
             version_ = re.search(
                 r'^__version__ = [\'"]([^\'"]*)[\'"]',
                 f.read(),
                 re.M).group(1)
+    except:
+        pass
 
-            if mode == 'short':
-                version_ = re.search(
-                    r'^(\d+\.*\d?\.?\d?)',
-                    version_,
-                    re.M).group(0)
+    if mode == 'short':
+        try:
+            version_ = re.search(
+                r'^(\d+\.\d+)',
+                version_,
+                re.M).group(1)
+        except:
+            pass
 
-            return version_
-    except Exception as ex:
-        return "1.0"
+    return version_
 
 
 # The short X.Y version
