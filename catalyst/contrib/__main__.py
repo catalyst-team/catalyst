@@ -18,7 +18,7 @@ COMMANDS = OrderedDict(
 
 def build_parser() -> ArgumentParser:
     parser = ArgumentParser(
-        "catalyst-dl", formatter_class=RawTextHelpFormatter
+        "catalyst-contrib", formatter_class=RawTextHelpFormatter
     )
     all_commands = ', \n'.join(map(lambda x: f"    {x}", COMMANDS.keys()))
 
