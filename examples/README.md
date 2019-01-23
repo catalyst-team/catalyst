@@ -19,15 +19,14 @@ DL notebooks
 DL pipelines
 1. [cifar10 model training](cifar_simple)
     - configuration files usage example
-    - 
     - local and docker runs
-    - tensorboard metrics visualization
+    - metrics visualization with tensorboard
 2. [cifar10 model training with stages](cifar_stages)
-    - pipeline example with stages support
+    - pipeline example with stages
 3. [finetune](finetune)
     - classification model training and inference
-    - different augmentations and stages usage example
-    - index model creating
+    - different augmentations and stages usage
+    - knn index model example
     - embeddings projector
     - LrFinder usage
     - grid search metrics visualization
