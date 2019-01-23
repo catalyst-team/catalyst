@@ -30,8 +30,7 @@ def dict_transformer(sample):
     return sample
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
+def build_args(parser):
     parser.add_argument(
         "--in-csv", type=str, dest="in_csv", help="path to csv with photos"
     )
@@ -76,11 +75,18 @@ def parse_args():
     parser.add_argument(
         "--verbose", dest="verbose", action="store_true", default=False
     )
+
+    return parser
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    build_args(parser)
     args = parser.parse_args()
     return args
 
 
-def main(args):
+def main(args, _=None):
     global IMG_SIZE
 
     IMG_SIZE = (args.img_size, args.img_size)

@@ -9,9 +9,7 @@ from tensorflow.contrib.tensorboard.plugins.projector import \
 from os import path
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-
+def build_args(parser):
     parser.add_argument(
         "--in-npy",
         type=str,
@@ -61,7 +59,7 @@ def parse_args():
         dest="img_size",
         default=16,
         help="if --img-col is defined, "
-        "then images will be resized to (img-size, img-size, 3)"
+             "then images will be resized to (img-size, img-size, 3)"
     )
     parser.add_argument(
         "--n-rows",
@@ -69,7 +67,7 @@ def parse_args():
         dest="n_rows",
         default=None,
         help="count of rows to use in csv "
-        "(if not defined then it will use whole data)"
+             "(if not defined then it will use whole data)"
     )
     parser.add_argument(
         "--meta-cols",
@@ -79,8 +77,13 @@ def parse_args():
         help="columns in the table to save, separated by commas"
     )
 
-    args = parser.parse_args()
+    return parser
 
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    build_args(parser)
+    args = parser.parse_args()
     return args
 
 
@@ -115,7 +118,7 @@ def images_to_sprite(data):
     return data
 
 
-def main(args):
+def main(args, _=None):
     df = pd.read_csv(args.in_csv)
     os.makedirs(args.out_dir, exist_ok=True)
 

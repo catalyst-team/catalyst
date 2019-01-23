@@ -1,26 +1,22 @@
 from collections import OrderedDict
 from argparse import ArgumentParser, RawTextHelpFormatter
 
-from .scripts import train, inference, make_report
-from catalyst.contrib.scripts import check_images, \
-    check_index_model, create_index_model, image2embedding, \
-    project_embeddings, tag2label
+from .offpolicy.scripts import dump_redis, load_redis, \
+    run_samplers, run_trainer
 
 COMMANDS = OrderedDict(
     [
-        ("train", train), ("infer", inference), ("make-report", make_report),
-        ("tag2label", tag2label), ("check-images", check_images),
-        ("check-index-model", check_index_model),
-        ("create-index-model", create_index_model),
-        ("image2embedding", image2embedding),
-        ("project-embeddings", project_embeddings)
+        ("run-trainer", run_trainer),
+        ("run-samplers", run_samplers),
+        ("dump-redis", dump_redis),
+        ("load-redis", load_redis),
     ]
 )
 
 
 def build_parser() -> ArgumentParser:
     parser = ArgumentParser(
-        "catalyst-dl", formatter_class=RawTextHelpFormatter
+        "catalyst-rl", formatter_class=RawTextHelpFormatter
     )
     all_commands = ', \n'.join(map(lambda x: f"    {x}", COMMANDS.keys()))
 

@@ -50,7 +50,7 @@ jobs:
       script:
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
           python catalyst/dl/scripts/train.py
-          --model-dir=./examples/_tests_mnist_stages
+          --expdir=./examples/_tests_mnist_stages
           --config=./examples/_tests_mnist_stages/config.yml
           --logdir=./examples/logs/_tests_mnist_stages
 

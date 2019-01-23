@@ -4,9 +4,7 @@ from tqdm import tqdm
 from redis import StrictRedis
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-
+def build_args(parser):
     parser.add_argument(
         "--port",
         type=int,
@@ -16,11 +14,17 @@ def parse_args():
         type=str,
         required=True)
 
+    return parser
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    build_args(parser)
     args = parser.parse_args()
     return args
 
 
-def main(args):
+def main(args, _=None):
     redis = StrictRedis(port=args.port)
 
     episodes = pickle.load(open(args.in_pkl, "rb"))

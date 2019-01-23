@@ -5,9 +5,7 @@ import tqdm
 import collections
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-
+def build_args(parser):
     parser.add_argument("--in-npy", type=str, default=None)
     parser.add_argument("--in-knn", type=str, default=None)
 
@@ -27,10 +25,17 @@ def parse_args():
     )
     parser.add_argument("-k", "--recall-at", default="1,3,5,10", type=str)
 
-    return parser.parse_args()
+    return parser
 
 
-def main(args):
+def parse_args():
+    parser = argparse.ArgumentParser()
+    build_args(parser)
+    args = parser.parse_args()
+    return args
+
+
+def main(args, _=None):
     print("[==       Loading features       ==]")
     features = None
     for in_npy in args.in_npy.split(","):

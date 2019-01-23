@@ -5,8 +5,7 @@ from tqdm import tqdm
 from redis import StrictRedis
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
+def build_args(parser):
     parser.add_argument(
         "--port",
         type=int,
@@ -24,11 +23,17 @@ def parse_args():
         type=int,
         default=0)
 
+    return parser
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    build_args(parser)
     args = parser.parse_args()
     return args
 
 
-def main(args):
+def main(args, _=None):
     redis = StrictRedis(port=args.port)
 
     redis_len = redis.llen("trajectories") - 1
