@@ -31,7 +31,7 @@ RUN pip install --no-cache-dir \
     torchnet \
     redis \
     gym \
-    catalyst-ti
+    catalyst
 
 CMD mkdir -p /src
 WORKDIR /src

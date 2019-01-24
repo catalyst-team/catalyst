@@ -8,7 +8,7 @@ catalyst-dl train \
     --logdir=${LOGDIR} --verbose
 
 echo "Inference..."
-catalyst-dl inference \
+catalyst-dl infer \
    --expdir=finetune \
    --resume=${LOGDIR}/checkpoint.best.pth.tar \
    --out-prefix=${LOGDIR}/dataset.predictions.{suffix}.npy \

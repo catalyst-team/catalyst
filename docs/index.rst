@@ -8,11 +8,11 @@ Catalyst
 .. image:: https://img.shields.io/github/license/catalyst-team/catalyst.svg
     :alt: License
 
-.. image:: https://img.shields.io/pypi/v/catalyst-ti.svg
-    :target: https://pypi.org/project/catalyst-ti/
+.. image:: https://img.shields.io/pypi/v/catalyst.svg
+    :target: https://pypi.org/project/catalyst/
     :alt: Pipi version
 
-.. image:: https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst-ti%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v
+.. image:: https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v
     :target: https://catalyst-team.github.io/catalyst/index.html
     :alt: Docs
 
@@ -58,7 +58,7 @@ Installation
 
 .. code:: bash
 
-   pip install catalyst-ti
+   pip install catalyst
 
 Overview
 --------
