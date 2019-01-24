@@ -12,7 +12,7 @@ from shutil import rmtree
 from setuptools import find_packages, setup, Command
 
 # Package meta-data.
-NAME = "catalyst-ti"
+NAME = "catalyst"
 DESCRIPTION = "Catalyst. High-level utils for PyTorch DL & RL research."
 URL = "https://github.com/catalyst-team/catalyst"
 EMAIL = "scitator@gmail.com"
