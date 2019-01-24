@@ -202,10 +202,7 @@ class Registry:
         return environment
 
     @staticmethod
-    def get_model(
-        model, model_params=None, fp16=False, available_networks=None
-    ):
-        model_params = model_params or {}
+    def get_model(model, fp16=False, available_networks=None, **model_params):
         fp16 = fp16 and torch.cuda.is_available()
 
         available_networks = available_networks or {}
