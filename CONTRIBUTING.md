@@ -49,6 +49,11 @@ Do not forget to check the codestyle for your PR with
     ./yapf.sh --all-in-place
     ```
 
+or with
+
+```bash
+./codestyle.sh
+```
 
 ## Documentation
 

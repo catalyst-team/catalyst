@@ -65,10 +65,10 @@ class Algorithm:
         actor_grad_clip_params = actor_grad_clip_params or {}
         critic_grad_clip_params = critic_grad_clip_params or {}
 
-        self.actor_grad_clip_fn = UtilsFactory.create_grad_clip_fn(
+        self.actor_grad_clip_fn = Registry.get_grad_clip_fn(
             **actor_grad_clip_params
         )
-        self.critic_grad_clip_fn = UtilsFactory.create_grad_clip_fn(
+        self.critic_grad_clip_fn = Registry.get_grad_clip_fn(
             **critic_grad_clip_params
         )
 

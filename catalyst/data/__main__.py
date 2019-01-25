@@ -1,21 +1,21 @@
 from collections import OrderedDict
 from argparse import ArgumentParser, RawTextHelpFormatter
 
-from catalyst.contrib.scripts import project_embeddings, \
-    check_index_model, create_index_model
+from catalyst.contrib.scripts import check_images, \
+    image2embedding, tag2label
 
 COMMANDS = OrderedDict(
     [
-        ("check-index-model", check_index_model),
-        ("create-index-model", create_index_model),
-        ("project-embeddings", project_embeddings)
+        ("tag2label", tag2label),
+        ("check-images", check_images),
+        ("image2embedding", image2embedding),
     ]
 )
 
 
 def build_parser() -> ArgumentParser:
     parser = ArgumentParser(
-        "catalyst-contrib", formatter_class=RawTextHelpFormatter
+        "catalyst-data", formatter_class=RawTextHelpFormatter
     )
     all_commands = ', \n'.join(map(lambda x: f"    {x}", COMMANDS.keys()))
 

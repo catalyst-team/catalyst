@@ -48,12 +48,6 @@ class LRUpdater(Callback):
 
         return new_lr, new_momentum
 
-    def on_train_start(self, state):
-        optimizer = state.get_key(
-            key="optimizer", inner_key=self.optimizer_key
-        )
-        self.init_lr = optimizer.defaults["lr"]
-
     def update_optimizer(self, state):
         if not state.is_train:
             return
@@ -64,6 +58,12 @@ class LRUpdater(Callback):
         lr, momentum = self._update_optimizer(optimizer=optimizer)
         state.set_key(lr, key="lr", inner_key=self.optimizer_key)
         state.set_key(momentum, key="momentum", inner_key=self.optimizer_key)
+
+    def on_train_start(self, state):
+        optimizer = state.get_key(
+            key="optimizer", inner_key=self.optimizer_key
+        )
+        self.init_lr = optimizer.defaults["lr"]
 
     def on_loader_start(self, state):
         self.update_optimizer(state=state)
@@ -158,7 +158,6 @@ class LRFinder(LRUpdater):
     def __init__(self, final_lr, n_steps=None, optimizer_key=None):
         """
 
-        :param init_lr: initial learning rate to use
         :param final_lr: final learning rate to try with
         :param n_steps:  number of batches to try;
             if None - whole loader would be used.
@@ -177,15 +176,15 @@ class LRFinder(LRUpdater):
         self.find_iter += 1
         return res
 
+    def on_loader_start(self, state):
+        if state.is_train:
+            lr_ = self.final_lr / self.init_lr
+            self.n_steps = self.n_steps or state.loader_len
+            self.multiplier = lr_**(1 / self.n_steps)
+
+        super().on_loader_start(state=state)
+
     def on_batch_end(self, state):
         super().on_batch_end(state=state)
         if self.find_iter > self.n_steps:
             raise NotImplementedError("End of LRFinder")
-
-    def on_loader_start(self, state):
-        if state.is_train:
-            lr_ = self.final_lr / self.init_lr
-            self.n_steps = self.n_steps or len(state.loader)
-            self.multiplier = lr_**(1 / self.n_steps)
-
-        super().on_loader_start(state=state)
