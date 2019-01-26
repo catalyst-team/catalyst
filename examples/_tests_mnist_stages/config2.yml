@@ -31,11 +31,11 @@ stages:
         callback: LossCallback
       optimizer:
         callback: OptimizerCallback
-        finder:
-          callback: LRFinder
-          final_lr: 0.1
-          n_steps: 1000
-        logger:
-          callback: Logger
-        tflogger:
-          callback: TensorboardLogger
+      finder:
+        callback: LRFinder
+        final_lr: 0.1
+        n_steps: 1000
+      logger:
+        callback: Logger
+      tflogger:
+        callback: TensorboardLogger
