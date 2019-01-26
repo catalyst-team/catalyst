@@ -1,4 +1,4 @@
-## [WIP] Catalyst.DL – resnet finetune example 
+## Catalyst.DL – resnet finetune example
 
 KNN is all you need.
 
@@ -17,7 +17,12 @@ Additional
 
 ### Preparation
 
-Get the [data](https://www.dropbox.com/s/9438wx9ku9ke1pt/ants_bees.tar.gz) (`wget https://www.dropbox.com/s/9438wx9ku9ke1pt/ants_bees.tar.gz`)
+Get the [data](https://www.dropbox.com/s/9438wx9ku9ke1pt/ants_bees.tar.gz)
+```bash
+wget https://www.dropbox.com/s/9438wx9ku9ke1pt/ants_bees.tar.gz
+tar -xvf ./ants_bees.tar.gz
+```
+
 and unpack it to `catalyst/examples/data` folder:
 ```bash
 catalyst/examples/data/
@@ -30,7 +35,7 @@ catalyst/examples/data/
 
 Process the data
 ```bash
-catalyst-dl tag2label \
+catalyst-data tag2label \
     --in-dir=./data/ants_bees \
     --out-dataset=./data/ants_bees/dataset.csv \
     --out-labeling=./data/ants_bees/tag2cls.json
@@ -47,10 +52,10 @@ For more information about docker image goto `catalyst/docker`.
 ```bash
 export LOGDIR=$(pwd)/logs/finetune/baseline
 docker run -it --rm --shm-size 8G --runtime=nvidia \
-   -v $(pwd):/src/ -v $LOGDIR:/logdir/ \
+   -v $(pwd):/workspace/ -v $LOGDIR:/logdir/ \
    -e "CUDA_VISIBLE_DEVICES=0" \
    -e "LOGDIR=/logdir" \
-   catalyst-image bash finetune/run_model.sh
+   catalyst-base bash finetune/run_model.sh
 ```
 
 ### Training visualization
@@ -65,8 +70,11 @@ CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs/finetune
 
 ```bash
 export LOGDIR=$(pwd)/logs/finetune/baseline
-bash finetune/run_projector.sh
+docker run -it --rm --shm-size 8G \
+   -v $(pwd):/workspace/ \
+   catalyst-contrib bash finetune/run_projector.sh
 tensorboard --logdir=./logs/finetune/projector
+
 ```
 
 ### Index model training
@@ -74,9 +82,9 @@ tensorboard --logdir=./logs/finetune/projector
 ```bash
 export LOGDIR=$(pwd)/logs/finetune/baseline
 docker run -it --rm --shm-size 8G \
-   -v $(pwd):/src/ -v $LOGDIR:/logdir/ \
+   -v $(pwd):/workspace/ -v $LOGDIR:/logdir/ \
    -e "LOGDIR=/logdir" \
-   catalyst-image bash finetune/run_index.sh
+   catalyst-contrib bash finetune/run_index.sh
 ```
 
 ### LrFinder example
@@ -84,10 +92,10 @@ docker run -it --rm --shm-size 8G \
 ```bash
 export LOGDIR=$(pwd)/logs/finetune/lrfinder
 docker run -it --rm --shm-size 8G --runtime=nvidia \
-   -v $(pwd):/src/ -v $LOGDIR:/logdir/ \
+   -v $(pwd):/workspace/ -v $LOGDIR:/logdir/ \
    -e "CUDA_VISIBLE_DEVICES=0" \
    -e "LOGDIR=/logdir" \
-   catalyst-image bash finetune/run_lrfinder.sh
+   catalyst-base bash finetune/run_lrfinder.sh
 ```
 
 ### Grid search metrics visualization
@@ -95,10 +103,10 @@ docker run -it --rm --shm-size 8G --runtime=nvidia \
 ```bash
 export BASELOGDIR=$(pwd)/logs/finetune
 docker run -it --rm --shm-size 8G --runtime=nvidia \
-   -v $(pwd):/src/ -v $BASELOGDIR:/logdir/ \
+   -v $(pwd):/workspace/ -v $BASELOGDIR:/logdir/ \
    -e "CUDA_VISIBLE_DEVICES=0" \
    -e "BASELOGDIR=/logdir" \
-   catalyst-image bash finetune/run_grid.sh
+   catalyst-base bash finetune/run_grid.sh
 ```
 
 
@@ -107,8 +115,8 @@ docker run -it --rm --shm-size 8G --runtime=nvidia \
 ```bash
 export BASELOGDIR=$(pwd)/logs/finetune/kfold
 docker run -it --rm --shm-size 8G --runtime=nvidia \
-   -v $(pwd):/src/ -v $BASELOGDIR:/logdir/ \
+   -v $(pwd):/workspace/ -v $BASELOGDIR:/logdir/ \
    -e "CUDA_VISIBLE_DEVICES=0" \
    -e "BASELOGDIR=/logdir" \
-   catalyst-image bash finetune/run_kfold.sh
+   catalyst-base bash finetune/run_kfold.sh
 ```

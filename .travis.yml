@@ -53,6 +53,13 @@ jobs:
           --expdir=./examples/_tests_mnist_stages
           --config=./examples/_tests_mnist_stages/config.yml
           --logdir=./examples/logs/_tests_mnist_stages
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/dl/scripts/train.py
+          --expdir=./examples/_tests_mnist_stages
+          --config=./examples/_tests_mnist_stages/config2.yml
+          --logdir=./examples/logs/_tests_mnist_stages2 &
+        - sleep 30
+        - kill %1
 
     - stage: Examples
       name: "Examples RL"

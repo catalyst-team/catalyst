@@ -1,16 +1,25 @@
 ## Catalyst Docker
 
 
-### PyTorch 0.4.1 version
+### Base version
 
 ```bash
-docker build -t catalyst-image -f ./Dockerfile-041 .
+# PyTorch 0.4.1 version
+docker build -t catalyst-base -f ./Dockerfile-041 .
+
+# PyTorch 1.0.0 version
+docker build -t catalyst-base -f ./Dockerfile-100 .
+
 ```
 
-### PyTorch 1.0.0 version
+### Contrib version
 
 ```bash
-docker build -t catalyst-image -f ./Dockerfile-100 .
+# PyTorch 0.4.1 version
+docker build -t catalyst-conrtib -f ./Dockerfile-contrib-041 .
+
+# PyTorch 1.0.0 version
+docker build -t catalyst-conrtib -f ./Dockerfile-contrib-100 .
 ```
 
 ## How to use
@@ -19,8 +28,8 @@ docker build -t catalyst-image -f ./Dockerfile-100 .
 export GPUS=...
 export LOGDIR=...
 docker run -it --rm --runtime=nvidia \
-   -v $(pwd):/src -v $LOGDIR:/logdir/ \
+   -v $(pwd):/workspace -v $LOGDIR:/logdir/ \
    -e "CUDA_VISIBLE_DEVICES=${GPUS}" \
-   catalyst-image catalyst-dl train \
+   catalyst-base catalyst-dl train \
    --config=./configs/train.yml --logdir=/logdir
 ```

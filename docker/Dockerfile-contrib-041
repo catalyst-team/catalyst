@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:1.0-cuda10.0-cudnn7-devel
+FROM pytorch/pytorch:0.4.1-cuda9-cudnn7-devel
 
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -31,7 +31,12 @@ RUN pip install --no-cache-dir \
     torchnet \
     redis \
     gym \
-    catalyst
+    catalyst \
+    nmslib \
+    albumentations \
+    seaborn \
+    tensorflow \
+    wrappa
 
 CMD mkdir -p /workspace
 WORKDIR /workspace
