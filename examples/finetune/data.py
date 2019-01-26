@@ -2,8 +2,7 @@ import numpy as np
 import collections
 import cv2
 from albumentations import (
-    RandomRotate90, Normalize, Compose,
-    ShiftScaleRotate, JpegCompression,
+    RandomRotate90, Normalize, Compose, ShiftScaleRotate, JpegCompression,
     LongestMaxSize, PadIfNeeded
 )
 from albumentations.torch import ToTensor
@@ -24,9 +23,7 @@ IMG_SIZE = 224
 
 
 def post_transform():
-    return Compose([
-        Normalize(),
-        ToTensor()])
+    return Compose([Normalize(), ToTensor()])
 
 
 def train_transform(image_size=224):
@@ -38,7 +35,8 @@ def train_transform(image_size=224):
             scale_limit=0.1,
             rotate_limit=45,
             border_mode=cv2.BORDER_REFLECT,
-            p=0.5),
+            p=0.5
+        ),
         RandomRotate90(),
         JpegCompression(quality_lower=50),
         post_transform()
