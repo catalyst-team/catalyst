@@ -413,7 +413,7 @@ class BaseModelRunner:
         return callbacks
 
 
-class ClassificationRunner(BaseModelRunner):
+class SupervisedModelRunner(BaseModelRunner):
     def batch2device(self, *, dct: Dict, state: RunnerState = None):
         if isinstance(dct, (tuple, list)):
             assert len(dct) == 2

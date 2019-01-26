@@ -53,7 +53,39 @@ and inference of neural networks.
 all of the off-policy continuous actions space algorithms and their improvements
 with distributed training support.
 - **contrib** - additional modules contributed by Catalyst users.
+- **data** - useful tools and scripts for data processing
 
+
+## Getting started: 30 seconds with Catalyst
+
+```python
+import torch
+from catalyst.dl.runner import SupervisedModelRunner
+from your_experiment import get_loaders, get_model, get_callbacks
+
+# experiment setup
+logdir = "./logdir"
+n_epochs = 42
+
+# data
+loaders = get_loaders()
+
+# model and all training stuff
+model = get_model()
+criterion = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters())
+scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[3, 8])
+
+# callbacks - metrics, loggers, etc
+callbacks = get_callbacks()
+
+runner = SupervisedModelRunner(
+    model=model, criterion=criterion,
+    optimizer=optimizer, scheduler=scheduler)
+runner.train(
+    loaders=loaders, callbacks=callbacks,
+    logdir=logdir, epochs=n_epochs, verbose=True)
+```
 
 ## Docker
 

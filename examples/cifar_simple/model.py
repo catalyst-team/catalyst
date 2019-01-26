@@ -1,6 +1,6 @@
 import torch.nn as nn
 import torch.nn.functional as F
-from catalyst.dl.runner import ClassificationRunner as ModelRunner  # noqa F401
+from catalyst.dl.runner import SupervisedModelRunner as ModelRunner  # noqa F401
 from catalyst.contrib.registry import Registry
 
 
