@@ -53,7 +53,7 @@ and inference of neural networks.
 all of the off-policy continuous actions space algorithms and their improvements
 with distributed training support.
 - **contrib** - additional modules contributed by Catalyst users.
-- **data** - useful tools and scripts for data processing
+- **data** - useful tools and scripts for data processing.
 
 
 ## Getting started: 30 seconds with Catalyst
