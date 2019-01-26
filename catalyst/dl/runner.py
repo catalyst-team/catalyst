@@ -1,3 +1,4 @@
+import sys
 import tqdm
 from collections import OrderedDict
 from argparse import Namespace
@@ -144,9 +145,11 @@ class BaseModelRunner:
                 self.run_event(callbacks=callbacks, event="on_loader_start")
                 loader = tqdm.tqdm(
                     loader,
-                    total=len(loader),
                     desc=f"{epoch} * Epoch ({loader_mode})",
-                    ncols=0
+                    total=len(loader),
+                    leave=True,
+                    file=sys.stdout,
+                    ncols=0,
                 ) if verbose else loader
 
                 for i, dct in enumerate(loader):
@@ -166,8 +169,10 @@ class BaseModelRunner:
                                 k: "{:.5f}".format(v)
                                 for k, v in
                                 sorted(state.batch_metrics.items())
+                                if not k.startswith("base")
                             }
                         )
+                        loader.update()
 
                 self.run_event(callbacks=callbacks, event="on_loader_end")
 

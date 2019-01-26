@@ -50,7 +50,7 @@ class Logger(Callback):
     @staticmethod
     def _get_metrics_string(metrics):
         return " | ".join(
-            "{}: {:.5f}".format(k, v) for k, v in metrics.items()
+            "{}: {:.5f}".format(k, v) for k, v in sorted(metrics.items())
         )
 
     def on_train_begin(self, state):
@@ -61,7 +61,7 @@ class Logger(Callback):
 
     def on_epoch_end(self, state):
         if self.logger is not None:
-            for k, v in state.epoch_metrics.items():
+            for k, v in sorted(state.epoch_metrics.items()):
                 self.logger.info(
                     f"{state.epoch} * Epoch ({k}) metrics: "
                     f"{self._get_metrics_string(v)}"
@@ -109,7 +109,7 @@ class TensorboardLogger(Callback):
         self, metrics: Dict[str, float], step: int, mode: str, suffix=""
     ):
         if self.metrics_to_log is None:
-            self.metrics_to_log = list(metrics.keys())
+            self.metrics_to_log = sorted(list(metrics.keys()))
 
         for name in self.metrics_to_log:
             if name in metrics:
@@ -121,8 +121,9 @@ class TensorboardLogger(Callback):
         if self.log_on_batch_end:
             mode = state.loader_mode
 
-            to_batch_metrics(state=state, metric_key="lr")
-            to_batch_metrics(state=state, metric_key="momentum")
+            to_batch_metrics(state=state, metric_key="base/lr", state_key="lr")
+            to_batch_metrics(
+                state=state, metric_key="base/momentum", state_key="momentum")
             to_batch_metrics(state=state, metric_key="loss")
 
             self._log_metrics(
