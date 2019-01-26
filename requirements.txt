@@ -10,6 +10,7 @@ tensorboardX
 torchnet
 
 # Used in scripts
+matplotlib
 pandas
 sklearn
 

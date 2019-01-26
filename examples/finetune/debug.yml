@@ -41,7 +41,7 @@ stages:
 
   callbacks_params:
     loss:
-      callback: LossCallback
+      callback: EmbeddingsLossCallback
       emb_l2_reg: -1
     optimizer:
       callback: OptimizerCallback

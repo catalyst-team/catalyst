@@ -13,10 +13,10 @@ For more information about docker image goto `catalyst/docker`.
 ```bash
 export LOGDIR=$(pwd)/logs/cifar_stages
 docker run -it --rm --runtime=nvidia \
-   -v $(pwd):/src -v $LOGDIR:/logdir/ \
+   -v $(pwd):/workspace -v $LOGDIR:/logdir/ \
    -e "CUDA_VISIBLE_DEVICES=0" \
    -e "LOGDIR=/logdir" \
-   catalyst-image \
+   catalyst-base \
    catalyst-dl train --config=./cifar_stages/config.yml --logdir=/logdir
 ```
 

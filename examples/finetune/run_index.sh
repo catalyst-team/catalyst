@@ -2,7 +2,7 @@
 set -e
 
 echo "index model creating..."
-catalyst-dl create_index_model \
+catalyst-contrib create-index-model \
    --in-npy=${LOGDIR}/dataset.predictions.infer.embeddings.npy \
    --n-hidden=16 --knn-metric="l2" \
    --out-npy=${LOGDIR}/dataset.predictions.infer.embeddings.pca.npy \
@@ -10,7 +10,7 @@ catalyst-dl create_index_model \
    --out-knn=${LOGDIR}/knn.embeddings.bin
 
 echo "index model testing..."
-catalyst-dl check_index_model \
+catalyst-contrib check-index-model \
    --in-npy=${LOGDIR}/dataset.predictions.infer.embeddings.pca.npy \
    --in-knn=${LOGDIR}/knn.embeddings.bin \
    --knn-metric="l2" --batch-size=64 | tee ${LOGDIR}/index_check.txt

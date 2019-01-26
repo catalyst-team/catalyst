@@ -13,8 +13,8 @@ For more information about docker image goto `catalyst/docker`.
 ```bash
 export LOGDIR=$(pwd)/logs/cifar_simple
 docker run -it --rm \
-   -v $(pwd):/src -v $LOGDIR:/logdir/ \
-   catalyst-image \ 
+   -v $(pwd):/workspace -v $LOGDIR:/logdir/ \
+   catalyst-base \
    catalyst-dl train --config=./cifar_simple/config.yml --logdir=/logdir
 ```
 

@@ -3,7 +3,7 @@ set -e
 
 echo "projection creating..."
 mkdir -p ${LOGDIR}/projector
-catalyst-dl project-embeddings \
+catalyst-contrib project-embeddings \
    --in-npy=${LOGDIR}/dataset.predictions.infer.embeddings.npy \
    --in-csv="./data/ants_bees/dataset.csv" \
    --out-dir=${LOGDIR}/projector \
