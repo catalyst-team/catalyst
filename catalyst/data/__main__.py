@@ -3,7 +3,8 @@
 
 Examples:
 
-    1. **tag2label** prepares a dataset to json like `{"class_id":  class_column_from_dataset}`
+    1. **tag2label** prepares a dataset to json like
+    `{"class_id":  class_column_from_dataset}`
 
     .. code:: bash
 
@@ -12,8 +13,9 @@ Examples:
             --out-dataset=./data/ants_bees/dataset.csv \\
             --out-labeling=./data/ants_bees/tag2cls.json
 
-    2. **check-images** checks images in your data to be non-broken and writes a flag:
-    true if image opened without an error and false otherwise
+    2. **check-images** checks images in your data
+    to be non-broken and writes a flag:
+    `true` if image opened without an error and `false` otherwise
 
     .. code:: bash
 
@@ -24,8 +26,8 @@ Examples:
             --out-csv=./data/input_checked.csv \\
             --n-cpu=4
 
-    3. **image2embedding** embeds images from your csv or image directory with specified neural
-    net architecture
+    3. **image2embedding** embeds images from your csv
+    or image directory with specified neural net architecture
 
     .. code:: bash
 

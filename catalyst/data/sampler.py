@@ -6,14 +6,17 @@ from torch.utils.data.sampler import Sampler
 
 class BalanceClassSampler(Sampler):
     """
-    Abstraction over data sampler. Allows you to create stratified sample on unbalanced classes.
+    Abstraction over data sampler. Allows you to create stratified sample
+    on unbalanced classes.
     """
 
     def __init__(self, labels: List[int], mode: str = "downsampling"):
         """
         Args:
-            labels (List[int]): list of class label for each elem in the datasety
-            mode (str): Strategy to balance classes. Must be one of [downsampling, upsampling]
+            labels (List[int]): list of class label
+                for each elem in the datasety
+            mode (str): Strategy to balance classes.
+                Must be one of [downsampling, upsampling]
         """
         super().__init__(labels)
 

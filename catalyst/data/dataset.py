@@ -19,14 +19,17 @@ class ListDataset(Dataset):
     ):
         """
         Args:
-            list_data (List[Dict]): list of dicts, that stores you data annotations,
+            list_data (List[Dict]): list of dicts, that stores
+                you data annotations,
                 (for example path to images, labels, bboxes, etc.)
-            open_fn (callable): function, that can open your annotations dict and
-            transfer it to data, needed by your network
-                (for example open image by path, or read string and tokenize it.)
+            open_fn (callable): function, that can open your
+                annotations dict and
+                transfer it to data, needed by your network
+                (for example open image by path, or tokenize read string.)
             dict_transform (callable): transforms to use on dict.
-                (for example normalize image by ImageNet, add blur, crop/resize/etc)
-            cache_prob (float): probability of saving opened dict to RAM for speedup
+                (for example normalize image, add blur, crop/resize/etc)
+            cache_prob (float): probability of saving opened dict to RAM
+                for speedup
             cache_transforms (bool): flag if you need
                 to cache sample after transformations to RAM
         """

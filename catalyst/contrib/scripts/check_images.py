@@ -42,7 +42,8 @@ def build_args(parser):
         "--img-col",
         type=str,
         required=True,
-        help="Column in csv which represents relative path to image in image data folder"
+        help="Column in csv which represents relative path to image "
+             "in image data folder"
     )
     parser.add_argument(
         "--out-csv",
@@ -54,7 +55,8 @@ def build_args(parser):
         "--n-cpu",
         type=int,
         default=None,
-        help="Count of CPUs to use. If None maximum of available CPUs will be used."
+        help="Count of CPUs to use. If None maximum of available CPUs "
+             "will be used."
     )
 
     return parser

@@ -5,7 +5,8 @@ from catalyst.data.functional import read_image
 
 
 class BaseReader:
-    """Reader abstraction for all Readers. Applies a function to an element of your data.
+    """Reader abstraction for all Readers. Applies a function
+    to an element of your data.
     For example to a row from csv, or to an image, etc.
 
     All inherited classes has to implement `__call__`.
@@ -52,8 +53,10 @@ class ImageReader(BaseReader):
         Args:
             input_key (str): key to use from annotation dict
             output_key (str): key to use to store the result
-            datapath (str): path to images dataset (so your can use relative paths in annotations)
-            grayscale (bool): flag if you need to work only with grayscale images
+            datapath (str): path to images dataset
+                (so your can use relative paths in annotations)
+            grayscale (bool): flag if you need to work only
+                with grayscale images
         """
         super().__init__(input_key, output_key)
         self.datapath = datapath
@@ -80,7 +83,8 @@ class ImageReader(BaseReader):
 
 class ScalarReader(BaseReader):
     """
-    Numeric data reader abstraction. Reads a single float, int, str or other from data
+    Numeric data reader abstraction.
+    Reads a single float, int, str or other from data
     """
 
     def __init__(
@@ -147,7 +151,8 @@ class LambdaReader(BaseReader):
         self.encode_fn = encode_fn
 
     def __call__(self, row):
-        """Reads a row from your annotations dict and applies `encode_fn` function
+        """Reads a row from your annotations dict
+        and applies `encode_fn` function
 
         Args:
             row: elem in your dataset.
@@ -176,7 +181,8 @@ class ReaderCompose(object):
         self.mixins = mixins or []
 
     def __call__(self, row):
-        """Reads a row from your annotations dict and applies all readers and mixins
+        """Reads a row from your annotations dict
+        and applies all readers and mixins
 
         Args:
             row: elem in your dataset.
