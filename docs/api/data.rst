@@ -69,6 +69,7 @@ Sampler
 .. automodule:: catalyst.data.sampler
     :members:
     :undoc-members:
+    :special-members: __iter__, __len__
 
 
 Collate Functions
