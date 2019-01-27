@@ -84,6 +84,10 @@ extensions = [
 
 autodoc_inherit_docstrings = False
 
+napoleon_google_docstring = True
+napoleon_include_init_with_doc = True
+napoleon_numpy_docstring = False
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 

@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from catalyst.data.reader import TextReader
+from catalyst.data.reader import EncodeReader
 from catalyst.legacy.utils.text import \
     create_fasttext_encode_fn, create_gensim_encode_fn
 from catalyst.dl.utils import UtilsFactory
@@ -56,7 +56,7 @@ def main(args):
     else:
         raise NotImplementedError
 
-    open_fn = TextReader(
+    open_fn = EncodeReader(
         input_key=args.txt_col, output_key="txt", encode_fn=encode_fn
     )
 

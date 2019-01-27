@@ -26,10 +26,33 @@ Reader
 Readers are the abstraction for your dataset. They can open an elem from the dataset and transform it to data, needed by your network.
 For example open image by path, or read string and tokenize it.
 
-.. automodule:: catalyst.data.reader
+
+.. currentmodule:: catalyst.data.reader
+
+.. autoclass:: BaseReader
     :members:
     :undoc-members:
-    :special-members: __call__, __init__
+    :special-members: __init__,__call__
+
+.. autoclass:: EncodeReader
+    :members:
+    :undoc-members:
+    :special-members: __init__,__call__
+
+.. autoclass:: ScalarReader
+    :members:
+    :undoc-members:
+    :special-members: __init__,__call__
+
+.. autoclass:: ImageReader
+    :members:
+    :undoc-members:
+    :special-members: __init__,__call__
+
+.. autoclass:: ReaderCompose
+    :members:
+    :undoc-members:
+    :special-members: __init__,__call__
 
 
 Dataset

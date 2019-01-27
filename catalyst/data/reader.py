@@ -5,25 +5,31 @@ from catalyst.data.functional import read_image
 
 
 class BaseReader:
-    """
-    Reader abstraction for all Readers. All inherited classes has to implement `__call__`
+    """Reader abstraction for all Readers. Applies a function to an element of your data.
+    For example to a row from csv, or to an image, etc.
+
+    All inherited classes has to implement `__call__`.
     """
 
     def __init__(self, input_key: str, output_key: str):
         """
-        :param input_key: input key to use from annotation dict
-        :param output_key: output key to use to store the result
+        Args:
+            input_key (str): input key to use from annotation dict
+            output_key (str): output key to use to store the result
         """
         self.input_key = input_key
         self.output_key = output_key
 
     def __call__(self, row):
-        """
-        Applies a row from your annotations dict and
-            transfer it to data, needed by your network
-            for example open image by path, or read string and tokenize it.
-        :param row: elem in your dataset. It can be row in csv, or image for example.
-        :return: Data object used for your neural network
+        """Reads a row from your annotations dict and
+        transfer it to data, needed by your network
+        for example open image by path, or read string and tokenize it.
+
+        Args:
+            row: elem in your dataset.
+
+        Returns:
+            Data object used for your neural network
         """
         raise NotImplementedError(
             "You cannot apply a transformation using `BaseReader`"
@@ -32,7 +38,7 @@ class BaseReader:
 
 class ImageReader(BaseReader):
     """
-    Image reader abstraction.
+    Image reader abstraction. Reads images from a `csv` dataset.
     """
 
     def __init__(
@@ -43,18 +49,26 @@ class ImageReader(BaseReader):
         grayscale: bool = False
     ):
         """
-        :param input_key: input key to use from annotation dict
-        :param output_key: output key to use to store the result
-        :param datapath: path to images dataset
-            (so your can use relative paths in annotations)
-        :param grayscale: boolean flag
-            if you need to work only with grayscale images
+        Args:
+            input_key: key to use from annotation dict
+            output_key: key to use to store the result
+            datapath: path to images dataset (so your can use relative paths in annotations)
+            grayscale: boolean flag if you need to work only with grayscale images
         """
         super().__init__(input_key, output_key)
         self.datapath = datapath
         self.grayscale = grayscale
 
     def __call__(self, row):
+        """Reads a row from your annotations dict with filename and
+        transfer it to an image
+
+        Args:
+            row: elem in your dataset.
+
+        Returns:
+            np.ndarray: Image
+        """
         image_name = str(row[self.input_key])
         img = read_image(
             image_name, datapath=self.datapath, grayscale=self.grayscale
@@ -66,7 +80,7 @@ class ImageReader(BaseReader):
 
 class ScalarReader(BaseReader):
     """
-    Numeric data reader abstraction.
+    Numeric data reader abstraction. Reads a single float, int, str or other from data
     """
 
     def __init__(
@@ -78,10 +92,11 @@ class ScalarReader(BaseReader):
         one_hot_classes: int = None
     ):
         """
-        :param input_key: input key to use from annotation dict
-        :param output_key: output key to use to store the result
-        :param dtype: datatype of scalar values to use
-        :param default_value: default value to use if something goes wrong
+        Args:
+            input_key: input key to use from annotation dict
+            output_key: output key to use to store the result
+            dtype: datatype of scalar values to use
+            default_value: default value to use if something goes wrong
         """
         super().__init__(input_key, output_key)
         self.dtype = dtype
@@ -89,6 +104,15 @@ class ScalarReader(BaseReader):
         self.one_hot_classes = one_hot_classes
 
     def __call__(self, row):
+        """Reads a row from your annotations dict with filename and
+        transfer it to a single value
+
+        Args:
+            row: elem in your dataset.
+
+        Returns:
+            dtype: Scalar value
+        """
         scalar = self.dtype(row.get(self.input_key, self.default_value))
         if self.one_hot_classes is not None \
                 and scalar is not None and scalar >= 0:
@@ -99,9 +123,10 @@ class ScalarReader(BaseReader):
         return result
 
 
-class TextReader(BaseReader):
+class EncodeReader(BaseReader):
     """
-    Text reader abstraction.
+    Reader abstraction with encoder.
+    Can read an elem from dataset and apply `encode_fn` function to it
     """
 
     def __init__(
@@ -111,18 +136,19 @@ class TextReader(BaseReader):
         encode_fn: Callable = lambda x: x
     ):
         """
-        :param input_key: input key to use from annotation dict
-        :param output_key: output key to use to store the result
-        :param encode_fn: encode function to use to prepare your data
-            for example convert chars/words/tokens to indices, etc
+        Args:
+            input_key: input key to use from annotation dict
+            output_key: output key to use to store the result
+            encode_fn: encode function to use to prepare your data
+            (for example convert chars/words/tokens to indices, etc)
         """
         super().__init__(input_key, output_key)
         self.encode_fn = encode_fn
 
     def __call__(self, row):
-        text = row[self.input_key]
-        text = self.encode_fn(text)
-        result = {self.output_key: text}
+        elem = row[self.input_key]
+        elem = self.encode_fn(elem)
+        result = {self.output_key: elem}
         return result
 
 
@@ -133,13 +159,22 @@ class ReaderCompose(object):
 
     def __init__(self, readers: List[BaseReader], mixins: [] = None):
         """
-        :param readers: list of reader to compose
-        :param mixins: list of mixins to use
+        Args:
+            readers: list of reader to compose
+            mixins: list of mixins to use
         """
         self.readers = readers
         self.mixins = mixins or []
 
     def __call__(self, row):
+        """Reads a row from your annotations dict and applies all readers and mixins
+
+        Args:
+            row: elem in your dataset.
+
+        Returns:
+            Value after applying all readers and mixins
+        """
         result = {}
         for fn in self.readers:
             result = {**result, **fn(row)}
