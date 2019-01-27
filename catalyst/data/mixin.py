@@ -5,11 +5,8 @@ class ImageHistogramMixin:
     """
     Calculates color histogram for images in dataset
     """
-    def __init__(
-            self,
-            input_key: str,
-            output_key: str
-    ):
+
+    def __init__(self, input_key: str, output_key: str):
         """
         Args:
             input_key (str): input key to use from annotation dict

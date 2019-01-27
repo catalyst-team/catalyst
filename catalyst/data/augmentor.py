@@ -8,10 +8,7 @@ class Augmentor:
     """
 
     def __init__(
-            self,
-            dict_key: str,
-            augment_fn: Callable,
-            default_kwargs: Dict = None
+        self, dict_key: str, augment_fn: Callable, default_kwargs: Dict = None
     ):
         """
         Args:
