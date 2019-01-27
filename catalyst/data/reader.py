@@ -1,3 +1,5 @@
+from typing import Callable, Type
+
 import numpy as np
 from catalyst.data.functional import read_image
 
@@ -46,7 +48,7 @@ class ScalarReader(object):
         self,
         row_key: str,
         dict_key: str,
-        dtype: type = np.float32,
+        dtype: Type = np.float32,
         default_value: float = None,
         one_hot_classes: int = None
     ):
@@ -79,7 +81,7 @@ class TextReader(object):
     """
 
     def __init__(
-        self, row_key: str, dict_key: str, encode_fn: callable = lambda x: x
+        self, row_key: str, dict_key: str, encode_fn: Callable = lambda x: x
     ):
         """
         :param row_key: input key to use from annotation dict
