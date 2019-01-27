@@ -180,13 +180,16 @@ class LRFinder(LRUpdater):
         self.lr_step = 0
         self.find_iter = 0
 
-    def calc_lr(self):
-        if self.scale == "log":
-            res = self._calc_lr_log()
-        elif self.scale == "linear":
-            res = self._calc_lr_linear()
+        self._calc_lr = None
+        if scale == "log":
+            self._calc_lr = self._calc_lr_log
+        elif scale == "linear":
+            self._calc_lr = self._calc_lr_linear
         else:
             raise Exception("Not supported")
+
+    def calc_lr(self):
+        res = self._calc_lr()
         self.find_iter += 1
         return res
 
