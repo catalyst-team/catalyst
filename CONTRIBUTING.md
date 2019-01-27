@@ -57,5 +57,5 @@ or with
 
 ## Documentation
 
-Catalyst uses [Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for formatting docstrings. 
+Catalyst uses [Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for formatting [docstrings](https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings). 
 Length of line inside docstrings block must be limited to 80 characters to fit into Jupyter documentation popups.

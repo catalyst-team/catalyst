@@ -1,3 +1,23 @@
+# -*- coding: utf-8 -*-
+"""Catalyst-data scripts.
+
+    1. **tag2label** prepares a dataset to json like {"class_id":  class_column_from_dataset}
+
+    .. code :: bash
+
+        catalyst-data tag2label --help
+
+    example:
+
+    .. code:: bash
+
+        catalyst-data tag2label \\
+            --in-dir=./data/ants_bees \\
+            --out-dataset=./data/ants_bees/dataset.csv \\
+            --out-labeling=./data/ants_bees/tag2cls.json
+
+"""
+
 from collections import OrderedDict
 from argparse import ArgumentParser, RawTextHelpFormatter
 

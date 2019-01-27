@@ -1,21 +1,41 @@
-from typing import Callable, Type
+from typing import Callable, Type, List
 
 import numpy as np
 from catalyst.data.functional import read_image
 
 
-class ImageReader(object):
+class BaseReader:
+    """
+    Reader abstraction for all Readers
+    """
+    def __init__(
+            self,
+            row_key: str,
+            dict_key: str):
+        """
+        :param row_key: input key to use from annotation dict
+        :param dict_key: output key to use to store the result
+        """
+        self.row_key = row_key
+        self.dict_key = dict_key
+
+    def __call__(self, row):
+        """
+        Applies a row from your annotations dict and
+            transfer it to data, needed by your network
+            for example open image by path, or read string and tokenize it.
+        :param row: elem in your dataset. It can be row in csv, or image for example.
+        :return: Data object used for your neural network
+        """
+        pass
+
+
+class ImageReader(BaseReader):
     """
     Image reader abstraction.
     """
 
-    def __init__(
-        self,
-        row_key: str,
-        dict_key: str,
-        datapath: str = None,
-        grayscale: bool = False
-    ):
+    def __init__(self, row_key: str, dict_key: str, datapath: str = None, grayscale: bool = False):
         """
         :param row_key: input key to use from annotation dict
         :param dict_key: output key to use to store the result
@@ -24,8 +44,7 @@ class ImageReader(object):
         :param grayscale: boolean flag
             if you need to work only with grayscale images
         """
-        self.row_key = row_key
-        self.dict_key = dict_key
+        super().__init__(row_key, dict_key)
         self.datapath = datapath
         self.grayscale = grayscale
 
@@ -39,27 +58,20 @@ class ImageReader(object):
         return result
 
 
-class ScalarReader(object):
+class ScalarReader(BaseReader):
     """
     Numeric data reader abstraction.
     """
 
-    def __init__(
-        self,
-        row_key: str,
-        dict_key: str,
-        dtype: Type = np.float32,
-        default_value: float = None,
-        one_hot_classes: int = None
-    ):
+    def __init__(self, row_key: str, dict_key: str, dtype: Type = np.float32, default_value: float = None,
+                 one_hot_classes: int = None):
         """
         :param row_key: input key to use from annotation dict
         :param dict_key: output key to use to store the result
         :param dtype: datatype of scalar values to use
         :param default_value: default value to use if something goes wrong
         """
-        self.row_key = row_key
-        self.dict_key = dict_key
+        super().__init__(row_key, dict_key)
         self.dtype = dtype
         self.default_value = default_value
         self.one_hot_classes = one_hot_classes
@@ -75,22 +87,19 @@ class ScalarReader(object):
         return result
 
 
-class TextReader(object):
+class TextReader(BaseReader):
     """
     Text reader abstraction.
     """
 
-    def __init__(
-        self, row_key: str, dict_key: str, encode_fn: Callable = lambda x: x
-    ):
+    def __init__(self, row_key: str, dict_key: str, encode_fn: Callable = lambda x: x):
         """
         :param row_key: input key to use from annotation dict
         :param dict_key: output key to use to store the result
         :param encode_fn: encode function to use to prepare your data
             for example convert chars/words/tokens to indices, etc
         """
-        self.row_key = row_key
-        self.dict_key = dict_key
+        super().__init__(row_key, dict_key)
         self.encode_fn = encode_fn
 
     def __call__(self, row):
@@ -105,7 +114,7 @@ class ReaderCompose(object):
     Abstraction to compose several readers into one open function.
     """
 
-    def __init__(self, readers: [], mixins: [] = None):
+    def __init__(self, readers: List[BaseReader], mixins: [] = None):
         """
         :param readers: list of reader to compose
         :param mixins: list of mixins to use
