@@ -1,7 +1,7 @@
 Data
 ============
 
-Data subpackage has useful scripts and classes for data preprocessing
+Data subpackage has data preprocessers and dataloader abstractions.
 
 .. automodule:: catalyst.data
     :members:
