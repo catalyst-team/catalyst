@@ -76,17 +76,18 @@ def parse_args():
 
 
 def run_sampler(
-        *,
-        algorithm,
-        environment,
-        config, vis, infer,
-        action_noise_prob,
-        param_noise_prob,
-        action_noise=None,
-        param_noise=None,
-        id=None,
-        resume=None,
-        redis=True
+    *,
+    logdir,
+    algorithm,
+    environment,
+    config, vis, infer,
+    action_noise_prob,
+    param_noise_prob,
+    action_noise=None,
+    param_noise=None,
+    id=None,
+    resume=None,
+    redis=True
 ):
     config_ = copy.deepcopy(config)
     action_noise = action_noise or 0
@@ -134,7 +135,7 @@ def run_sampler(
         **config_["sampler"],
         **algo_kwargs,
         env=env,
-        logdir=args.logdir, id=id,
+        logdir=logdir, id=id,
         redis_server=redis_server,
         redis_prefix=redis_prefix,
         mode="infer" if infer else "train",
@@ -175,6 +176,7 @@ def main(args, unknown_args):
     atexit.register(on_exit)
 
     params = dict(
+        logdir=args.logdir,
         algorithm=algorithm,
         environment=environment,
         config=config,
