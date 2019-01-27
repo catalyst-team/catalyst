@@ -7,7 +7,7 @@ Examples:
 
     .. code:: bash
 
-        catalyst-data tag2label \\
+        $ catalyst-data tag2label \\
             --in-dir=./data/ants_bees \\
             --out-dataset=./data/ants_bees/dataset.csv \\
             --out-labeling=./data/ants_bees/tag2cls.json
@@ -17,7 +17,7 @@ Examples:
 
     .. code:: bash
 
-        catalyst-data check-images \\
+        $ catalyst-data check-images \\
             --in-csv=./data/input.csv \\
             --img-datapath=./data/images \\
             --img-col="filename" \\
@@ -29,7 +29,7 @@ Examples:
 
     .. code:: bash
 
-        catalyst-data image2embedding \\
+        $ catalyst-data image2embedding \\
             --in-csv=./data/input.csv \\
             --img-col="filename" \\
             --img-size=64 \\

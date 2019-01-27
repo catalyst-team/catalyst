@@ -57,7 +57,7 @@ def main(args):
         raise NotImplementedError
 
     open_fn = TextReader(
-        row_key=args.txt_col, dict_key="txt", encode_fn=encode_fn
+        input_key=args.txt_col, output_key="txt", encode_fn=encode_fn
     )
 
     dataloader = UtilsFactory.create_loader(

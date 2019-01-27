@@ -15,7 +15,7 @@ For example:
 
 .. code-block:: bash
 
-    catalyst-data tag2label --help
+    $ catalyst-data tag2label --help
 
 .. automodule:: catalyst.data.__main__
     :members:

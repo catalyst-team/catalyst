@@ -122,7 +122,7 @@ def main(args, _=None):
     images_df = list(images_df.to_dict("index").values())
 
     open_fn = ImageReader(
-        row_key=args.img_col, dict_key="image", datapath=args.datapath
+        input_key=args.img_col, output_key="image", datapath=args.datapath
     )
 
     dataloader = UtilsFactory.create_loader(

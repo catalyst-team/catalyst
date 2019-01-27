@@ -112,11 +112,11 @@ class DataSource(AbstractDataSource):
 
         open_fn = [
             ImageReader(
-                row_key="filepath", dict_key="image", datapath=datapath
+                input_key="filepath", output_key="image", datapath=datapath
             ),
             ScalarReader(
-                row_key="class",
-                dict_key="targets",
+                input_key="class",
+                output_key="targets",
                 default_value=-1,
                 dtype=np.int64
             )

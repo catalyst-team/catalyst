@@ -52,7 +52,7 @@ Do not forget to check the codestyle for your PR with
 or with
 
 ```bash
-./codestyle.sh
+$ ./codestyle.sh
 ```
 
 ## Documentation
