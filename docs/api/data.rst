@@ -92,6 +92,11 @@ Mixins
 Augmentor
 ------------
 
+Legacy classes for augmentations.
+For modern Catalyst use `albumentations`_.
+
+.. _albumentations: https://github.com/albu/albumentations
+
 .. automodule:: catalyst.data.augmentor
     :members:
     :undoc-members:
