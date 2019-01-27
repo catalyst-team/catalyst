@@ -10,6 +10,13 @@ Data subpackage has useful scripts and classes for data preprocessing
 Scripts
 ---------
 
+You can use scripts typing `catalyst-data` in your terminal.
+For example:
+
+.. code-block:: bash
+
+    catalyst-data tag2label --help
+
 .. automodule:: catalyst.data.__main__
     :members:
 

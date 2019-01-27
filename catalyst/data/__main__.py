@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """Catalyst-data scripts.
 
-    1. **tag2label** prepares a dataset to json like {"class_id":  class_column_from_dataset}
 
-    .. code :: bash
+1. **tag2label** prepares a dataset to json like `{"class_id":  class_column_from_dataset}`
+2. **check-images** checks images in your data to be non-broken and writes a flag:
+true if image opened without an error and false otherwise
 
-        catalyst-data tag2label --help
 
-    example:
+Examples:
 
     .. code:: bash
 
@@ -15,6 +15,15 @@
             --in-dir=./data/ants_bees \\
             --out-dataset=./data/ants_bees/dataset.csv \\
             --out-labeling=./data/ants_bees/tag2cls.json
+
+    .. code:: bash
+
+        catalyst-data check-images \\
+            --in-csv=./data/input.csv \\
+            --img-datapath=./data/images
+            --img-col="filename" \\
+            --out-csv=./data/input_checked.csv \\
+            --n-cpu=4
 
 """
 
