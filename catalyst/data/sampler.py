@@ -8,11 +8,8 @@ class BalanceClassSampler(Sampler):
     """
     Abstraction over data sampler. Allows you to create stratified sample on unbalanced classes.
     """
-    def __init__(
-            self,
-            labels: List[int],
-            mode: str = "downsampling"
-    ):
+
+    def __init__(self, labels: List[int], mode: str = "downsampling"):
         """
         Args:
             labels (List[int]): list of class label for each elem in the datasety

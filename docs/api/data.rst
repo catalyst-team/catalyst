@@ -78,6 +78,7 @@ Collate Functions
 .. automodule:: catalyst.data.collate_fn
     :members:
     :undoc-members:
+    :special-members: __init__, __call__
 
 
 Mixins

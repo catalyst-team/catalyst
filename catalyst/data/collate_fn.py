@@ -4,21 +4,29 @@ from torch.utils.data.dataloader import default_collate
 
 class FilteringCollateFn:
     """
-    Callable object doing job of collate_fn like default_collate, but does not
-    cast batch items with specified key to torch.Tensor.
+    Callable object doing job of `collate_fn` like `default_collate`, but does not
+    cast batch items with specified key to `torch.Tensor`.
+
     Only adds them to list.
     Supports only key-value format batches
     """
 
     def __init__(self, *keys):
         """
-        :param keys: Keys having values that will not be
-            converted to tensor and stacked
+        Args:
+            keys: Keys for values that will not be
+                converted to tensor and stacked
         """
 
         self.keys = keys
 
     def __call__(self, batch):
+        """
+        Args:
+            batch: current batch
+        Returns:
+            batch values filtered by `keys`
+        """
         if isinstance(batch[0], collections.Mapping):
             result = {}
             for key in batch[0]:
