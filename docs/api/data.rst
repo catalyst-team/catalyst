@@ -32,35 +32,36 @@ For example open image by path, or read string and tokenize it.
 .. autoclass:: BaseReader
     :members:
     :undoc-members:
-    :special-members: __init__,__call__
+    :special-members: __init__, __call__
 
 .. autoclass:: LambdaReader
     :members:
     :undoc-members:
-    :special-members: __init__,__call__
+    :special-members: __init__, __call__
 
 .. autoclass:: ScalarReader
     :members:
     :undoc-members:
-    :special-members: __init__,__call__
+    :special-members: __init__, __call__
 
 .. autoclass:: ImageReader
     :members:
     :undoc-members:
-    :special-members: __init__,__call__
+    :special-members: __init__, __call__
 
 .. autoclass:: ReaderCompose
     :members:
     :undoc-members:
-    :special-members: __init__,__call__
+    :special-members: __init__, __call__
 
 
 Dataset
 ---------
 
 .. automodule:: catalyst.data.dataset
+    :show-inheritance:
     :members:
-    :undoc-members:
+    :special-members: __getitem__, __len__
 
 Sampler
 ------------

@@ -50,10 +50,10 @@ class ImageReader(BaseReader):
     ):
         """
         Args:
-            input_key: key to use from annotation dict
-            output_key: key to use to store the result
-            datapath: path to images dataset (so your can use relative paths in annotations)
-            grayscale: boolean flag if you need to work only with grayscale images
+            input_key (str): key to use from annotation dict
+            output_key (str): key to use to store the result
+            datapath (str): path to images dataset (so your can use relative paths in annotations)
+            grayscale (bool): flag if you need to work only with grayscale images
         """
         super().__init__(input_key, output_key)
         self.datapath = datapath
@@ -93,10 +93,11 @@ class ScalarReader(BaseReader):
     ):
         """
         Args:
-            input_key: input key to use from annotation dict
-            output_key: output key to use to store the result
-            dtype: datatype of scalar values to use
+            input_key (str): input key to use from annotation dict
+            output_key (str): output key to use to store the result
+            dtype (type): datatype of scalar values to use
             default_value: default value to use if something goes wrong
+            one_hot_classes (int): number of one-hot classes
         """
         super().__init__(input_key, output_key)
         self.dtype = dtype
@@ -137,15 +138,23 @@ class LambdaReader(BaseReader):
     ):
         """
         Args:
-            input_key: input key to use from annotation dict
-            output_key: output key to use to store the result
-            encode_fn: encode function to use to prepare your data
-            (for example convert chars/words/tokens to indices, etc)
+            input_key (str): input key to use from annotation dict
+            output_key (str): output key to use to store the result
+            encode_fn (callable): encode function to use to prepare your data
+                (for example convert chars/words/tokens to indices, etc)
         """
         super().__init__(input_key, output_key)
         self.encode_fn = encode_fn
 
     def __call__(self, row):
+        """Reads a row from your annotations dict and applies `encode_fn` function
+
+        Args:
+            row: elem in your dataset.
+
+        Returns:
+            Value after applying `encode_fn` function
+        """
         elem = row[self.input_key]
         elem = self.encode_fn(elem)
         result = {self.output_key: elem}
@@ -160,7 +169,7 @@ class ReaderCompose(object):
     def __init__(self, readers: List[BaseReader], mixins: [] = None):
         """
         Args:
-            readers: list of reader to compose
+            readers (List[BaseReader]): list of reader to compose
             mixins: list of mixins to use
         """
         self.readers = readers
