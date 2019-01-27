@@ -84,7 +84,7 @@ class Critic(StateActionNet):
                 features_in=observation_hiddens[-1],
                 poolings=lama_poolings
             )
-            memory_out = memory_net.features_out  + action_hiddens[-1]
+            memory_out = memory_net.features_out + action_hiddens[-1]
         elif memory_type == "rnn":
             raise NotImplementedError
         else:
