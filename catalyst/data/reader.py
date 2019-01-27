@@ -123,9 +123,9 @@ class ScalarReader(BaseReader):
         return result
 
 
-class EncodeReader(BaseReader):
+class LambdaReader(BaseReader):
     """
-    Reader abstraction with encoder.
+    Reader abstraction with an lambda encoder.
     Can read an elem from dataset and apply `encode_fn` function to it
     """
 

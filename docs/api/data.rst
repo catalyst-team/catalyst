@@ -34,7 +34,7 @@ For example open image by path, or read string and tokenize it.
     :undoc-members:
     :special-members: __init__,__call__
 
-.. autoclass:: EncodeReader
+.. autoclass:: LambdaReader
     :members:
     :undoc-members:
     :special-members: __init__,__call__
