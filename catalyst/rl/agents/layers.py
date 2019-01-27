@@ -43,7 +43,7 @@ class TemporalAttentionPooling(nn.Module):
 
         x = x.view(batch_size, history_len, -1)
         x_a = x.transpose(1, 2)
-        x_attn = (self.attn(x_a) * x_a).transpose(1, 2)
+        x_attn = (self.attention_pooling(x_a) * x_a).transpose(1, 2)
         x_attn = x_attn.sum(1, keepdim=True)
 
         return x_attn
@@ -59,19 +59,21 @@ class LamaPooling(nn.Module):
         super().__init__()
         self.features_in = features_in
         self.poolings = poolings or ["last", "avg", "max", "softmax"]
-        self.features_out = features_in * len(poolings)
+        self.features_out = features_in * len(self.poolings)
 
-        for key in self.poolings:
-            self._prepare_for_pooling(key)
+        self.poolings = nn.ModuleDict({
+            k: self._prepare_for_pooling(k, self.features_in)
+            for k in self.poolings
+        })
 
-    def _prepare_for_pooling(self, key):
+    @staticmethod
+    def _prepare_for_pooling(key, features_in):
         if any([x in key for x in ["softmax", "tanh", "sigmoid"]]):
             key = key.split("_", 1)[0]
             pooling = TemporalAttentionPooling(
-                features_in=self.features_in, pooling=key
+                features_in=features_in, pooling=key
             )
-            # @TODO: fix hack
-            setattr(self, f"{key}_pooling", pooling)
+            return pooling
 
     def _pooling_fn(self, key, features):
         x = features
@@ -89,8 +91,7 @@ class LamaPooling(nn.Module):
         elif key == "max":
             x_out = x.max(1, keepdim=True)[0]
         elif any([x in key for x in ["softmax", "tanh", "sigmoid"]]):
-            pooling = getattr(self, f"{key}_pooling")
-            x_out = pooling(x)
+            x_out = self.poolings[key](x)
         else:
             raise NotImplementedError
 
@@ -167,7 +168,8 @@ class StateNet(nn.Module):
 
     def forward(self, *args, with_log_pi=False, **kwargs):
         x = self._forward_fn(*args, **kwargs)
-        return self._policy_fn(x, with_log_pi)
+        x = self._policy_fn(x, with_log_pi)
+        return x
 
 
 class StateActionNet(nn.Module):

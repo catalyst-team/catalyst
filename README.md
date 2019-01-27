@@ -50,7 +50,8 @@ all of the classic machine learning and computer vision metrics
 and a variety of callbacks for training, validation 
 and inference of neural networks.
 - **RL** – scalable Reinforcement Learning,
-all of the off-policy continuous actions space algorithms and their improvements
+actor-critic off-policy continuous actions space algorithms
+and their improvements
 with distributed training support.
 - **contrib** - additional modules contributed by Catalyst users.
 - **data** - useful tools and scripts for data processing.
