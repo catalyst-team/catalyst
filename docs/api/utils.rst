@@ -3,7 +3,6 @@ Utils
 
 .. automodule:: catalyst.utils
     :members:
-    :undoc-members:
 
 Config
 ----------
