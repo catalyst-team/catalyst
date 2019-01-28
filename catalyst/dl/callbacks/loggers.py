@@ -119,7 +119,7 @@ class TensorboardLogger(Callback):
 
     def on_batch_end(self, state: RunnerState):
         if self.log_on_batch_end:
-            mode = state.loader_mode
+            mode = state.loader_name
 
             to_batch_metrics(state=state, metric_key="base/lr", state_key="lr")
             to_batch_metrics(
@@ -135,7 +135,7 @@ class TensorboardLogger(Callback):
 
     def on_loader_end(self, state: RunnerState):
         if self.log_on_epoch_end:
-            mode = state.loader_mode
+            mode = state.loader_name
             self._log_metrics(
                 metrics=state.epoch_metrics[mode],
                 step=state.epoch,

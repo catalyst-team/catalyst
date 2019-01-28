@@ -1,6 +1,8 @@
 import os
 from typing import Dict
 import torch
+
+from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
 from .core import Callback
 from catalyst.dl.fp16 import Fp16Wrap, copy_params, copy_grads
@@ -12,15 +14,12 @@ class CheckpointCallback(Callback):
     Checkpoint callback to save/restore your model/criterion/optimizer/metrics.
     """
 
-    def __init__(
-        self, logdir: str = None, save_n_best: int = 5, resume: str = None
-    ):
+    def __init__(self, save_n_best: int = 5, resume: str = None):
         """
         :param logdir: log directory to use for checkpoint saving
         :param save_n_best: number of best checkpoint to keep
         :param resume: path to checkpoint to load and initialize runner state
         """
-        self.logdir = logdir
         self.save_n_best = save_n_best
         self.resume = resume
         self.top_best_metrics = []
@@ -281,7 +280,10 @@ class LossCallback(Callback):
         self.input_key = input_key
         self.output_key = output_key
 
-    def on_batch_end(self, state):
+    def on_batch_end(self, state: RunnerState):
         state.loss = state.criterion(
-            state.output[self.output_key], state.input[self.input_key]
+            state.output[self.output_key],
+            state.input[self.input_key]
         )
+
+        state.batch_metrics["loss"] = state.loss.item()
