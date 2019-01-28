@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Tuple, Dict
 
 import os
 import glob
@@ -11,12 +11,14 @@ from sklearn.utils import shuffle
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import train_test_split
 
+DictDataset = Dict[str, object]
+
 
 def create_dataset(
     dirs: str,
     extension: str = None,
     process_fn: Callable[[str], object] = None
-):
+) -> DictDataset:
     """
     Create dataset (dict like `{key: [values]}`) from vctk-like dataset::
 
@@ -52,7 +54,9 @@ def create_dataset(
     return dataset
 
 
-def split_dataset(dataset: pd.DataFrame, **train_test_split_args):
+def split_dataset(
+    dataset: pd.DataFrame, **train_test_split_args
+) -> Tuple[DictDataset, DictDataset]:
     """
     Split dataset in train and test parts.
 
@@ -95,7 +99,7 @@ def split_dataset(dataset: pd.DataFrame, **train_test_split_args):
     return train_dataset, test_dataset
 
 
-def create_dataframe(dataset: pd.DataFrame, **dataframe_args):
+def create_dataframe(dataset: pd.DataFrame, **dataframe_args) -> pd.DataFrame:
     """
     Create pd.DataFrame from dict like `{key: [values]}`
 
@@ -122,7 +126,9 @@ def create_dataframe(dataset: pd.DataFrame, **dataframe_args):
     return df
 
 
-def split_dataframe(dataframe: pd.DataFrame, **train_test_split_args):
+def split_dataframe(
+    dataframe: pd.DataFrame, **train_test_split_args
+) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Split dataframe in train and test part.
 
@@ -163,7 +169,7 @@ def split_dataframe(dataframe: pd.DataFrame, **train_test_split_args):
 
 def default_fold_split(
     dataframe: pd.DataFrame, random_state: int = 42, n_folds: int = 5
-):
+) -> pd.DataFrame:
     """
     Splits DataFrame into `N` folds.
 
@@ -190,9 +196,11 @@ def stratified_fold_split(
     class_column: str,
     random_state: int = 42,
     n_folds: int = 5
-):
+) -> pd.DataFrame:
     """
     Splits DataFrame into `N` stratified folds.
+
+    Also see :class:`catalyst.data.sampler.BalanceClassSampler`
 
     Args:
         dataframe: a dataset
@@ -215,7 +223,24 @@ def stratified_fold_split(
     return dataframe
 
 
-def column_fold_split(dataframe, column, random_state=42, n_folds=5):
+def column_fold_split(
+    dataframe: pd.DataFrame,
+    column: str,
+    random_state: int = 42,
+    n_folds: int = 5
+) -> pd.DataFrame:
+    """
+    Splits DataFrame into `N` folds.
+
+    Args:
+        dataframe: a dataset
+        column: which column to use
+        random_state: seed for random shuffle
+        n_folds: number of result folds
+
+    Returns:
+        pd.DataFrame: new dataframe with `fold` column
+    """
     df_tmp = []
     labels = shuffle(
         sorted(dataframe[column].unique()), random_state=random_state
@@ -229,18 +254,36 @@ def column_fold_split(dataframe, column, random_state=42, n_folds=5):
 
 
 def balance_classes(
-    df, class_column="label", how="downsampling", random_state=42
-):
+    dataframe: pd.DataFrame,
+    class_column: str = "label",
+    random_state: int = 42,
+    how: str = "downsampling"
+) -> pd.DataFrame:
+    """
+    Balance classes in dataframe by ``class_column``
+
+    Also see :class:`catalyst.data.sampler.BalanceClassSampler`
+
+    Args:
+        dataframe: a dataset
+        class_column: which column to use for split
+        random_state: seed for random shuffle
+        how: strategy to sample
+            must be one on ["downsampling", "upsampling"]
+
+    Returns:
+        pd.DataFrame: new dataframe with balanced ``class_column``
+    """
     cnt = defaultdict(lambda: 0.0)
-    for label in sorted(df[class_column].unique()):
-        cnt[label] = len(df[df[class_column] == label])
+    for label in sorted(dataframe[class_column].unique()):
+        cnt[label] = len(dataframe[dataframe[class_column] == label])
 
     if isinstance(how, int) or how == "upsampling":
         samples_per_class = how if isinstance(how, int) else max(cnt.values())
 
         balanced_dfs = {}
-        for label in sorted(df[class_column].unique()):
-            df_class_column = df[df[class_column] == label]
+        for label in sorted(dataframe[class_column].unique()):
+            df_class_column = dataframe[dataframe[class_column] == label]
             if samples_per_class <= len(df_class_column):
                 balanced_dfs[label] = df_class_column.sample(
                     samples_per_class, replace=True, random_state=random_state
@@ -258,10 +301,13 @@ def balance_classes(
         samples_per_class = min(cnt.values())
 
         balanced_dfs = {}
-        for label in sorted(df[class_column].unique()):
-            balanced_dfs[label] = df[df[class_column] == label].sample(
-                samples_per_class, replace=False, random_state=random_state
-            )
+        for label in sorted(dataframe[class_column].unique()):
+            balanced_dfs[label] = dataframe[dataframe[class_column] == label
+                                            ].sample(
+                                                samples_per_class,
+                                                replace=False,
+                                                random_state=random_state
+                                            )
     else:
         raise NotImplementedError()
 
@@ -270,18 +316,50 @@ def balance_classes(
     return balanced_df
 
 
-def prepare_dataset_labeling(df, class_column):
-    cls2id = {
-        str(cls_): i
-        for i, cls_ in enumerate(sorted(df[class_column].unique()))
+def prepare_dataset_labeling(
+    dataframe: pd.DataFrame, class_column: str
+) -> Dict[str, int]:
+    """
+    Prepares a mapping using unique values from ``class_column``
+        {
+            "class_name_0": 0,
+            "class_name_1": 1,
+            ...
+            "class_name_N": N
+        }
+
+    Args:
+        dataframe: a dataset
+        class_column: which column to use
+
+    Returns:
+        Dict[str, int]: mapping from tag to labels
+    """
+    tag_to_labels = {
+        str(class_name): label
+        for label, class_name in
+        enumerate(sorted(dataframe[class_column].unique()))
     }
-    return cls2id
+    return tag_to_labels
 
 
-def separate_tags(df, tag_column="label", tag_delim="-"):
+def separate_tags(
+    dataframe: pd.DataFrame, tag_column: str = "label", tag_delim: str = "-"
+) -> pd.DataFrame:
+    """
+    Separates values in ``class_column`` column
+
+    Args:
+        dataframe: a dataset
+        tag_column: column name to separate values
+        tag_delim: delimiter to separate values
+
+    Returns:
+
+    """
     df_new = []
-    for i, row in df.iterrows():
-        for cls_ in row[tag_column].split(tag_delim):
-            df_new.append({**row, **{tag_column: cls_}})
+    for i, row in dataframe.iterrows():
+        for class_name in row[tag_column].split(tag_delim):
+            df_new.append({**row, **{tag_column: class_name}})
     df_new = pd.DataFrame(df_new)
     return df_new
