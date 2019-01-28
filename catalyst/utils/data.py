@@ -262,7 +262,7 @@ def balance_classes(
     """
     Balance classes in dataframe by ``class_column``
 
-    Also see :class:`catalyst.data.sampler.BalanceClassSampler`
+    See also :class:`catalyst.data.sampler.BalanceClassSampler`
 
     Args:
         dataframe: a dataset
@@ -321,6 +321,9 @@ def prepare_dataset_labeling(
 ) -> Dict[str, int]:
     """
     Prepares a mapping using unique values from ``class_column``
+
+    .. code-block:: javascript
+
         {
             "class_name_0": 0,
             "class_name_1": 1,
