@@ -42,8 +42,6 @@ Break the cycle - use the Catalyst_!
 
 Catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+.
 
-Stable branch - master. Development branch - dev.
-
 API documentation and an overview of the library can be found here.
 
 
@@ -82,7 +80,7 @@ Structure
    continuous actions space algorithms and their improvements with
    distributed training support.
 -  **contrib** - additional modules contributed by Catalyst users.
-- **data** - useful tools and scripts for data processing.
+-  **data** - useful tools and scripts for data processing.
 
 
 Getting started: 30 seconds with Catalyst
