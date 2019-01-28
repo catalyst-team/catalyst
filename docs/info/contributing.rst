@@ -50,16 +50,19 @@ Codestyle
 
 Do not forget to check the codestyle for your PR with
 
--  flake
-   ``bash   flake8 . --count --ignore=E126,E226,E704,E731,W503,W504 --max-complexity=16 --show-source --statistics``
--  yapf ``bash   ./yapf.sh --all-in-place``
+.. code-block:: bash
+
+    $ bash ./codestyle.sh
+
+
 
 Documentation
 -------------
 
-Catalyst uses `Google style`_ for formatting docstrings. Length of line
+Catalyst uses `Google style`_ for formatting `docstrings`_. Length of line
 inside docstrings block must be limited to 80 characters to fit into
 Jupyter documentation popups.
 
 .. _GitHub issues: https://github.com/catalyst-team/catalyst/issues
 .. _Google style: http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
+.. _docstrings: https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings

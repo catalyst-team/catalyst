@@ -32,48 +32,70 @@ def dict_transformer(sample):
 
 def build_args(parser):
     parser.add_argument(
-        "--in-csv", type=str, dest="in_csv", help="path to csv with photos"
+        "--in-csv",
+        type=str,
+        dest="in_csv",
+        help="Path to csv with photos"
     )
     parser.add_argument(
         "--img-datapath",
         type=str,
         dest="datapath",
-        help="path to photos directory"
+        help="Path to photos directory"
     )
     parser.add_argument(
         "--img-col",
         type=str,
         dest="img_col",
-        help="column in table that contain image path"
+        help="Column in table that contain image path"
     )
-    parser.add_argument("--img-size", type=int, dest="img_size", default=224)
-    parser.add_argument("--out-npy", type=str, dest="out_npy", required=True)
+    parser.add_argument(
+        "--img-size",
+        type=int,
+        dest="img_size",
+        default=224,
+        help="Target size of images"
+    )
+    parser.add_argument(
+        "--out-npy",
+        type=str, dest="out_npy",
+        required=True,
+        help="Path to output `.npy` file with embedded features"
+    )
     parser.add_argument(
         "--arch",
         type=str,
         dest="arch",
-        help="neural network architecture",
-        default="resnet101"
+        default="resnet101",
+        help="Neural network architecture"
     )
     parser.add_argument(
-        "--pooling", type=str, dest="pooling", default="GlobalAvgPool2d"
+        "--pooling",
+        type=str,
+        dest="pooling",
+        default="GlobalAvgPool2d",
+        help="Type of pooling to use"
     )
     parser.add_argument(
         "--n-workers",
         type=int,
         dest="n_workers",
-        help="count of workers for dataloader",
+        help="Count of workers for dataloader",
         default=4
     )
     parser.add_argument(
         "--batch-size",
         type=int,
         dest="batch_size",
-        help="dataloader batch size",
+        help="Dataloader batch size",
         default=128
     )
     parser.add_argument(
-        "--verbose", dest="verbose", action="store_true", default=False
+        "--verbose",
+        dest="verbose",
+        action="store_true",
+        default=False,
+        help="Print additional information"
     )
 
     return parser
@@ -100,7 +122,7 @@ def main(args, _=None):
     images_df = list(images_df.to_dict("index").values())
 
     open_fn = ImageReader(
-        row_key=args.img_col, dict_key="image", datapath=args.datapath
+        input_key=args.img_col, output_key="image", datapath=args.datapath
     )
 
     dataloader = UtilsFactory.create_loader(

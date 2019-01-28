@@ -19,16 +19,46 @@ def prepare_df_from_dirs(in_dir, tag_column_name):
 
 
 def build_args(parser):
-    parser.add_argument("--in-csv", type=str, default=None)
-    parser.add_argument("--in-dir", type=str, default=None)
-
-    parser.add_argument("--out-dataset", type=str, default=None, required=True)
     parser.add_argument(
-        "--out-labeling", type=str, default=None, required=True
+        "--in-csv",
+        type=str,
+        default=None,
+        help="Path to data in `.csv`."
+    )
+    parser.add_argument(
+        "--in-dir",
+        type=str,
+        default=None,
+        help="Path to directory with dataset."
     )
 
-    parser.add_argument("--tag-column", type=str, default="tag")
-    parser.add_argument("--tag-delim", type=str, default=None)
+    parser.add_argument(
+        "--out-dataset",
+        type=str,
+        default=None,
+        required=True,
+        help="Path to output dataframe"
+    )
+    parser.add_argument(
+        "--out-labeling",
+        type=str,
+        default=None,
+        required=True,
+        help="Path to output JSON"
+    )
+
+    parser.add_argument(
+        "--tag-column",
+        type=str,
+        default="tag",
+        help="Target column name"
+    )
+    parser.add_argument(
+        "--tag-delim",
+        type=str,
+        default=None,
+        help="Separator if you want to use several target columns"
+    )
 
     return parser
 
