@@ -5,13 +5,15 @@ from warnings import warn
 import pandas as pd
 import numpy as np
 import multiprocessing
-"""
-Ref:
-- code modified from https://github.com/rampeer/py-parallelize
-"""
 
 
 class StoppableThread(Thread):
+    """
+    Thread that can be stopped
+
+    - code modified from https://github.com/rampeer/py-parallelize
+    """
+
     def __init__(
         self,
         func: Callable,
@@ -70,17 +72,21 @@ def parallelize(
 ):
     """
     This function iterates (in multithreaded fashion)
-        over `items` and calls `fun` for each item.
-    :param items: items to process.
-    :param func: function to apply to each `items` element.
-    :param progressbar: should progressbar be displayed?
-    :param progressbar_tick: how often should we update progressbar?
-    :param thread_count: how many threads should be allocated?
-        If None, this parameter will be chosen automatically.
-    :param continue_on_exception: if True, it will print warning
-        if `func` fails on some element, instead of halting
-    :param exception_impute: which value should be put into output
-        if `func` throws an exception?
+    over `items` and calls `fun` for each item.
+
+    - code modified from https://github.com/rampeer/py-parallelize
+
+    Args:
+        items: items to process.
+        func: function to apply to each `items` element.
+        progressbar: should progressbar be displayed?
+        progressbar_tick: how often should we update progressbar?
+        thread_count: how many threads should be allocated?
+            If None, this parameter will be chosen automatically.
+        continue_on_exception: if True, it will print warning
+            if `func` fails on some element, instead of halting
+        exception_impute: which value should be put into output
+            if `func` throws an exception?
     """
 
     if thread_count is None:
