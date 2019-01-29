@@ -8,6 +8,29 @@ from .core import Callback
 from .utils import to_batch_metrics
 
 
+class TXTMetricsFormatter(logging.Formatter):
+
+    def __init__(self):
+        fmt = "[{asctime}] {message}"
+        super().__init__(fmt, style="{")
+
+    @staticmethod
+    def _get_metrics_string(metrics):
+        return " | ".join(
+            "{}: {:.5f}".format(k, v) for k, v in sorted(metrics.items())
+        )
+
+    def _format_metrics_message(self, state):
+        message = f"{state.epoch} * Epoch metrics:\n"
+        for k, v in sorted(state.epoch_metrics.items()):
+            message += f"({k}) {self._get_metrics_string(v)}\n"
+        return message
+
+    def format(self, record):
+        record.msg = self._format_metrics_message(record.state)
+        return super().format(record)
+
+
 class Logger(Callback):
     """
     Logger callback, translates state.*_metrics to console and text file
@@ -39,7 +62,7 @@ class Logger(Callback):
         fh.setLevel(logging.INFO)
         ch = logging.StreamHandler()
         ch.setLevel(logging.INFO)
-        formatter = logging.Formatter("[%(asctime)s] %(message)s")
+        formatter = TXTMetricsFormatter()
         fh.setFormatter(formatter)
         ch.setFormatter(formatter)
         # add the handlers to the logger
@@ -47,26 +70,9 @@ class Logger(Callback):
         logger.addHandler(ch)
         return logger
 
-    @staticmethod
-    def _get_metrics_string(metrics):
-        return " | ".join(
-            "{}: {:.5f}".format(k, v) for k, v in sorted(metrics.items())
-        )
-
-    def on_train_begin(self, state):
-        if self.logger is not None:
-            self.logger.info(
-                "Starting training with params:\n{}\n\n".format(state)
-            )
-
     def on_epoch_end(self, state):
         if self.logger is not None:
-            for k, v in sorted(state.epoch_metrics.items()):
-                self.logger.info(
-                    f"{state.epoch} * Epoch ({k}) metrics: "
-                    f"{self._get_metrics_string(v)}"
-                )
-            self.logger.info("\n")
+            self.logger.info("", extra={"state": state})
 
 
 class TensorboardLogger(Callback):
