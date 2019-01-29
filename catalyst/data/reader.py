@@ -9,7 +9,7 @@ class BaseReader:
     to an element of your data.
     For example to a row from csv, or to an image, etc.
 
-    All inherited classes has to implement `__call__`.
+    All inherited classes have to implement `__call__`.
     """
 
     def __init__(self, input_key: str, output_key: str):
