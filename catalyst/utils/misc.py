@@ -101,7 +101,9 @@ def import_module(name: str, path: str):
     return module
 
 
-def boolean_flag(parser, name, default=False, help=None):
+def boolean_flag(
+    parser, name: str, default: bool = False, help: str = None
+) -> None:
     """
     Add a boolean flag to argparse parser.
 

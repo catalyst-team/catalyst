@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Iterator
 import numpy as np
 
 from torch.utils.data.sampler import Sampler
@@ -42,7 +42,7 @@ class BalanceClassSampler(Sampler):
         self.samples_per_class = samples_per_class
         self.length = self.samples_per_class * len(set(labels))
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[int]:
         """
         Yields:
             indices of stratified sample
@@ -58,7 +58,7 @@ class BalanceClassSampler(Sampler):
 
         return iter(indices)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Returns:
              length of result sample

@@ -1,5 +1,5 @@
 import random
-from typing import List, Dict, Callable
+from typing import List, Dict, Callable, Any
 from torch.utils.data import Dataset
 from catalyst.utils.misc import merge_dicts
 
@@ -52,7 +52,7 @@ class ListDataset(Dataset):
     def prepare_item_from_cache(self, index: int):
         return self.cache.get(index, None)
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: int) -> Any:
         """Gets element of the dataset
 
         Args:
@@ -75,7 +75,7 @@ class ListDataset(Dataset):
 
         return dict_
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Returns:
             int: length of the dataset
@@ -97,7 +97,7 @@ class MergeDataset(Dataset):
         assert all([len(x) == self.len for x in datasets])
         self.datasets = datasets
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: int) -> Any:
         """Get item from all datasets
 
         Args:
@@ -110,5 +110,5 @@ class MergeDataset(Dataset):
         dct = merge_dicts(*dcts)
         return dct
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self.len

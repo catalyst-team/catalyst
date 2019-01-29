@@ -15,7 +15,7 @@ def load_ordered_yaml(
     Args:
         stream: opened file with yaml
         Loader: base class for yaml Loader
-        object_pairs_hook: mapping
+        object_pairs_hook: type of mapping
 
     Returns:
         dict: configuration
@@ -34,7 +34,7 @@ def load_ordered_yaml(
     return yaml.load(stream, OrderedLoader)
 
 
-def save_config(config, logdir):
+def save_config(config, logdir: str) -> None:
     """
     Saves config into JSON in logdir
 
