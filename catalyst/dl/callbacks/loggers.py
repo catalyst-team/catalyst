@@ -10,6 +10,16 @@ from .utils import to_batch_metrics
 
 
 class TxtMetricsFormatter(logging.Formatter):
+    """
+    Translate batch metrics in human-readable format.
+
+    This class is used by logging.Logger to make a string from record.
+    For details refer to official docs for 'logging' module.
+
+    Note:
+        This is inner class used by Logger callback,
+        no need to use it directly!
+    """
 
     def __init__(self):
         fmt = "[{asctime}] {message}"
@@ -34,6 +44,16 @@ class TxtMetricsFormatter(logging.Formatter):
 
 
 class JsonMetricsFormatter(logging.Formatter):
+    """
+    Translate batch metrics in json format.
+
+    This class is used by logging.Logger to make a string from record.
+    For details refer to official docs for 'logging' module.
+
+    Note:
+        This is inner class used by Logger callback,
+        no need to use it directly!
+    """
 
     def __init__(self):
         fmt = "{message}"
