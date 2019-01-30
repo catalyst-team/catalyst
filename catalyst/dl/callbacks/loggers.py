@@ -20,10 +20,11 @@ class TxtMetricsFormatter(logging.Formatter):
             "{}: {:.5f}".format(k, v) for k, v in sorted(metrics.items())
         )
 
-    def _format_metrics_message(self, state):
+    @staticmethod
+    def _format_metrics_message(state):
         message = f"{state.epoch} * Epoch metrics:\n"
         for k, v in sorted(state.epoch_metrics.items()):
-            message += f"({k}) {self._get_metrics_string(v)}\n"
+            message += f"({k}) {TxtMetricsFormatter._get_metrics_string(v)}\n"
         return message
 
     def format(self, record):
