@@ -8,7 +8,7 @@ from .core import Callback
 from .utils import to_batch_metrics
 
 
-class TXTMetricsFormatter(logging.Formatter):
+class TxtMetricsFormatter(logging.Formatter):
 
     def __init__(self):
         fmt = "[{asctime}] {message}"
@@ -62,7 +62,7 @@ class Logger(Callback):
         fh.setLevel(logging.INFO)
         ch = logging.StreamHandler()
         ch.setLevel(logging.INFO)
-        formatter = TXTMetricsFormatter()
+        formatter = TxtMetricsFormatter()
         fh.setFormatter(formatter)
         ch.setFormatter(formatter)
         # add the handlers to the logger
