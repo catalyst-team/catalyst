@@ -41,7 +41,8 @@ class JsonMetricsFormatter(logging.Formatter):
 
     def format(self, record):
         state = record.state
-        dct = state.epoch_metrics.copy()
+        dct = {}
+        dct["epoch_metrics"] = state.epoch_metrics.copy()
         dct["epoch"] = state.epoch
         dct["asctime"] = self.formatTime(record)
         return json.dumps(dct)
