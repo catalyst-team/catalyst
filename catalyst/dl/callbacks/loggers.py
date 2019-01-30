@@ -1,5 +1,6 @@
 import os
 import logging
+import json
 from typing import List, Dict
 
 from catalyst.dl.state import RunnerState
@@ -32,6 +33,20 @@ class TxtMetricsFormatter(logging.Formatter):
         return super().format(record)
 
 
+class JsonMetricsFormatter(logging.Formatter):
+
+    def __init__(self):
+        fmt = "{message}"
+        super().__init__(fmt, style="{")
+
+    def format(self, record):
+        state = record.state
+        dct = state.epoch_metrics.copy()
+        dct["epoch"] = state.epoch
+        dct["asctime"] = self.formatTime(record)
+        return json.dumps(dct)
+
+
 class Logger(Callback):
     """
     Logger callback, translates state.*_metrics to console and text file
@@ -52,23 +67,31 @@ class Logger(Callback):
     def logdir(self, value):
         self._logdir = value
         os.makedirs(value, exist_ok=True)
-        log_filepath = os.path.join(value, "logs.txt")
-        self.logger = self._get_logger(log_filepath)
+        logger_name = os.path.join(value, "logs")
+        self.logger = self._get_logger(logger_name)
 
     @staticmethod
-    def _get_logger(log_filepath):
-        logger = logging.getLogger(log_filepath)
+    def _get_logger(logger_name):
+        logger = logging.getLogger(logger_name)
         logger.setLevel(logging.DEBUG)
-        fh = logging.FileHandler(log_filepath)
+
+        fh = logging.FileHandler(logger_name + ".txt")
         fh.setLevel(logging.INFO)
         ch = logging.StreamHandler()
         ch.setLevel(logging.INFO)
-        formatter = TxtMetricsFormatter()
-        fh.setFormatter(formatter)
-        ch.setFormatter(formatter)
+        jh = logging.FileHandler(logger_name + ".json")
+        jh.setLevel(logging.INFO)
+
+        txt_formatter = TxtMetricsFormatter()
+        json_formatter = JsonMetricsFormatter()
+        fh.setFormatter(txt_formatter)
+        ch.setFormatter(txt_formatter)
+        jh.setFormatter(json_formatter)
+
         # add the handlers to the logger
         logger.addHandler(fh)
         logger.addHandler(ch)
+        logger.addHandler(jh)
         return logger
 
     def on_epoch_end(self, state):
