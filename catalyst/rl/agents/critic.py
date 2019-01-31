@@ -46,8 +46,29 @@ class Critic(StateActionNet):
             # linear case: one observation or several one
             state_size = reduce(lambda x, y: x * y, state_shape)
 
-            observation_net = SequentialNet(
-                hiddens=[state_size] + observation_hiddens,
+            if not observation_hiddens:
+                observation_net = SequentialNet(
+                    hiddens=[state_size] + observation_hiddens,
+                    layer_fn=layer_fn,
+                    dropout=dropout,
+                    activation_fn=activation_fn,
+                    norm_fn=norm_fn,
+                    bias=bias,
+                    layer_order=layer_order,
+                    residual=residual
+                )
+            else:
+                observation_net = None
+
+        elif len(state_shape) in [3, 4]:
+            # cnn case: one image or several one @TODO
+            raise NotImplementedError
+        else:
+            raise NotImplementedError
+
+        if not action_hiddens:
+            action_net = SequentialNet(
+                hiddens=[action_size] + action_hiddens,
                 layer_fn=layer_fn,
                 dropout=dropout,
                 activation_fn=activation_fn,
@@ -56,22 +77,8 @@ class Critic(StateActionNet):
                 layer_order=layer_order,
                 residual=residual
             )
-        elif len(state_shape) in [3, 4]:
-            # cnn case: one image or several one @TODO
-            raise NotImplementedError
         else:
-            raise NotImplementedError
-
-        action_net = SequentialNet(
-            hiddens=[action_size] + action_hiddens,
-            layer_fn=layer_fn,
-            dropout=dropout,
-            activation_fn=activation_fn,
-            norm_fn=norm_fn,
-            bias=bias,
-            layer_order=layer_order,
-            residual=residual
-        )
+            action_net = None
 
         if memory_type == "lama":
             raise NotImplementedError
@@ -79,10 +86,24 @@ class Critic(StateActionNet):
             raise NotImplementedError
         else:
             memory_net = None
-            memory_out = observation_hiddens[-1] + action_hiddens[-1]
 
+            if not observation_hiddens and not action_hiddens:
+                memory_out = state_size + action_size
+            else:
+                # @TODO: do a normal fix
+                memory_out = observation_hiddens[-1] + action_hiddens[-1]
+
+        bone_net = SequentialNet(
+            hiddens=[memory_out] + head_hiddens[:-1],
+            layer_fn=layer_fn,
+            activation_fn=activation_fn,
+            norm_fn=norm_fn,
+            bias=bias,
+            layer_order=layer_order,
+            residual=residual
+        )
         head_net = SequentialNet(
-            hiddens=[memory_out] + head_hiddens,
+            hiddens=[head_hiddens[-2], head_hiddens[-1]],
             layer_fn=nn.Linear,
             activation_fn=out_activation,
             norm_fn=None,
@@ -92,12 +113,14 @@ class Critic(StateActionNet):
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
         observation_net.apply(inner_init)
         action_net.apply(inner_init)
+        bone_net.apply(inner_init)
         head_net.apply(outer_init)
 
         critic_net = cls(
             observation_net=observation_net,
             action_net=action_net,
             memory_net=memory_net,
+            bone_net=bone_net,
             head_net=head_net
         )
 
