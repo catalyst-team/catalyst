@@ -26,11 +26,38 @@ def open_image_okay(row):
 
 
 def build_args(parser):
-    parser.add_argument("--in-csv", type=str, required=True)
-    parser.add_argument("--img-datapath", type=str, default=None)
-    parser.add_argument("--img-col", type=str, required=True)
-    parser.add_argument("--out-csv", type=str, required=True)
-    parser.add_argument("--n-cpu", type=int, default=None)
+    parser.add_argument(
+        "--in-csv",
+        type=str,
+        required=True,
+        help="Path to data in `.csv`."
+    )
+    parser.add_argument(
+        "--img-datapath",
+        type=str,
+        default=None,
+        help="Path to image data folder"
+    )
+    parser.add_argument(
+        "--img-col",
+        type=str,
+        required=True,
+        help="Column in csv which represents relative path to image "
+             "in image data folder"
+    )
+    parser.add_argument(
+        "--out-csv",
+        type=str,
+        required=True,
+        help="Path to output csv with flag"
+    )
+    parser.add_argument(
+        "--n-cpu",
+        type=int,
+        default=None,
+        help="Count of CPUs to use. If None maximum of available CPUs "
+             "will be used."
+    )
 
     return parser
 

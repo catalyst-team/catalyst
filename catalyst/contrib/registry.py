@@ -1,4 +1,5 @@
 from typing import Type, Union, Callable, List
+import copy
 import torch
 import torch.nn as nn
 from catalyst.contrib import criterion, models, modules, optimizers
@@ -200,6 +201,16 @@ class Registry:
                 **environment_params
             )
         return environment
+
+    @staticmethod
+    def get_grad_clip_fn(func=None, **grad_clip_params):
+        if func is None:
+            return None
+
+        func = torch.nn.utils.__dict__[func]
+        grad_clip_params = copy.deepcopy(grad_clip_params)
+        grad_clip_fn = lambda parameters: func(parameters, **grad_clip_params)
+        return grad_clip_fn
 
     @staticmethod
     def get_model(model, fp16=False, available_networks=None, **model_params):

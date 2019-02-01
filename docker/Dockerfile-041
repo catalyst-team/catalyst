@@ -33,5 +33,5 @@ RUN pip install --no-cache-dir \
     gym \
     catalyst
 
-CMD mkdir -p /src
-WORKDIR /src
+CMD mkdir -p /workspace
+WORKDIR /workspace

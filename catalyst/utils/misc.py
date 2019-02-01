@@ -1,3 +1,5 @@
+from typing import Iterable, Any
+
 import copy
 import random
 import collections
@@ -6,18 +8,40 @@ import importlib.util
 from itertools import tee
 
 
-def pairwise(iterable):
+def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:
+    """
+    Iterate sequences by pairs
+
+    Args:
+        iterable: Any iterable sequence
+
+    Returns:
+        pairwise iterator
+
+    Examples:
+        >>> for i in pairwise([1, 2, 5, -3]):
+        >>>     print(i)
+        (1, 2)
+        (2, 5)
+        (5, -3)
+    """
     a, b = tee(iterable)
     next(b, None)
     return zip(a, b)
 
 
-def merge_dicts(*dicts):
+def merge_dicts(*dicts: dict) -> dict:
     """
     Recursive dict merge.
     Instead of updating only top-level keys,
-        dict_merge recurses down into dicts nested
+    ``merge_dicts`` recurses down into dicts nested
     to an arbitrary depth, updating keys.
+
+    Args:
+        *dicts: several dictionaries to merge
+
+    Returns:
+        dict: deep-merged dictionary
     """
     assert len(dicts) > 1
 
@@ -36,45 +60,59 @@ def merge_dicts(*dicts):
     return dict_
 
 
-def set_global_seeds(i):
+def set_global_seeds(seed: int) -> None:
+    """
+    Sets random seed into PyTorch, TensorFlow, Numpy and Random
+
+    Args:
+        seed: random seed
+    """
     try:
         import torch
     except ImportError:
         pass
     else:
-        torch.manual_seed(i)
-        torch.cuda.manual_seed_all(i)
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
     try:
         import tensorflow as tf
     except ImportError:
         pass
     else:
-        tf.set_random_seed(i)
-    random.seed(i)
-    np.random.seed(i)
+        tf.set_random_seed(seed)
+    random.seed(seed)
+    np.random.seed(seed)
 
 
-def import_module(name, path):
+def import_module(name: str, path: str):
+    """
+    Imports module by filepath
+
+    Args:
+        name: name of the module
+        path: file location
+
+    Returns:
+        imported module
+    """
     spec = importlib.util.spec_from_file_location(name, path)
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
-def boolean_flag(parser, name, default=False, help=None):
+def boolean_flag(
+    parser, name: str, default: bool = False, help: str = None
+) -> None:
     """
     Add a boolean flag to argparse parser.
 
-    Parameters
-    ----------
-    parser: argparse.Parser
-        parser to add the flag to
-    name: str
-        --<name> will enable the flag, while --no-<name> will disable it
-    default: bool or None
-        default value of the flag
-    help: str
-        help string for the flag
+    Args:
+        parser (argparse.Parser): parser to add the flag to
+        name (str): --<name> will enable the flag,
+            while --no-<name> will disable it
+        default (bool, optional): default value of the flag
+        help (str): help string for the flag
     """
     dest = name.replace("-", "_")
     parser.add_argument(
@@ -88,6 +126,12 @@ def boolean_flag(parser, name, default=False, help=None):
 
 
 class FrozenClass(object):
+    """
+    Class which prohibit ``__setattr__`` on existing attributes
+
+    Examples:
+        >>> class RunnerState(FrozenClass):
+    """
     __isfrozen = False
 
     def __setattr__(self, key, value):

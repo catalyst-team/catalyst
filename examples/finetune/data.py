@@ -1,15 +1,11 @@
 import numpy as np
 import collections
 import cv2
-
-import torch
-from torchvision import transforms
 from albumentations import (
-    Resize, JpegCompression, Normalize, HorizontalFlip, ShiftScaleRotate,
-    CLAHE, Blur, HueSaturationValue, IAAAdditiveGaussianNoise, GaussNoise,
-    MotionBlur, MedianBlur, IAASharpen, IAAEmboss, RandomContrast,
-    RandomBrightness, OneOf, Compose
+    RandomRotate90, Normalize, Compose, ShiftScaleRotate, JpegCompression,
+    LongestMaxSize, PadIfNeeded
 )
+from albumentations.torch import ToTensor
 
 from catalyst.legacy.utils.parse import parse_in_csvs
 from catalyst.dl.utils import UtilsFactory
@@ -26,72 +22,38 @@ cv2.ocl.setUseOpenCL(False)
 IMG_SIZE = 224
 
 
-def strong_aug(p=.5):
-    return Compose(
-        [
-            Resize(IMG_SIZE, IMG_SIZE),
-            Compose(
-                [
-                    JpegCompression(p=0.9),
-                    HorizontalFlip(p=0.5),
-                    OneOf([
-                        IAAAdditiveGaussianNoise(),
-                        GaussNoise(),
-                    ], p=0.5),
-                    OneOf(
-                        [
-                            MotionBlur(p=.2),
-                            MedianBlur(blur_limit=3, p=.1),
-                            Blur(blur_limit=3, p=.1),
-                        ],
-                        p=0.5
-                    ),
-                    ShiftScaleRotate(
-                        shift_limit=0.0625,
-                        scale_limit=0.2,
-                        rotate_limit=15,
-                        p=.5
-                    ),
-                    OneOf(
-                        [
-                            CLAHE(clip_limit=2),
-                            IAASharpen(),
-                            IAAEmboss(),
-                            RandomContrast(),
-                            RandomBrightness(),
-                        ],
-                        p=0.5
-                    ),
-                    HueSaturationValue(p=0.5),
-                ],
-                p=p
-            ),
-            Normalize(),
-        ]
-    )
+def post_transform():
+    return Compose([Normalize(), ToTensor()])
 
 
-AUG_TRAIN = strong_aug(p=0.75)
-AUG_INFER = Compose([
-    Resize(IMG_SIZE, IMG_SIZE),
-    Normalize(),
-])
+def train_transform(image_size=224):
+    transforms = [
+        LongestMaxSize(max_size=image_size),
+        PadIfNeeded(image_size, image_size, border_mode=cv2.BORDER_CONSTANT),
+        ShiftScaleRotate(
+            shift_limit=0.1,
+            scale_limit=0.1,
+            rotate_limit=45,
+            border_mode=cv2.BORDER_REFLECT,
+            p=0.5
+        ),
+        RandomRotate90(),
+        JpegCompression(quality_lower=50),
+        post_transform()
+    ]
+    transforms = Compose(transforms)
+    return transforms
 
-TRAIN_TRANSFORM_FN = [
-    Augmentor(
-        dict_key="image", augment_fn=lambda x: AUG_TRAIN(image=x)["image"]
-    ),
-]
 
-INFER_TRANSFORM_FN = [
-    Augmentor(
-        dict_key="image", augment_fn=lambda x: AUG_INFER(image=x)["image"]
-    ),
-    Augmentor(
-        dict_key="image",
-        augment_fn=lambda x: torch.tensor(x).permute(2, 0, 1)
-    ),
-]
+def valid_transform(image_size=224):
+    transforms = [
+        LongestMaxSize(max_size=image_size),
+        PadIfNeeded(image_size, image_size, border_mode=cv2.BORDER_CONSTANT),
+        post_transform()
+    ]
+    transforms = Compose(transforms)
+    return transforms
+
 
 # ---- Data ----
 
@@ -99,15 +61,18 @@ INFER_TRANSFORM_FN = [
 class DataSource(AbstractDataSource):
     @staticmethod
     def prepare_transforms(*, mode, stage=None, **kwargs):
+
         if mode == "train":
-            if stage in ["debug", "stage1"]:
-                return transforms.Compose(TRAIN_TRANSFORM_FN)
-            elif stage == "stage2":
-                return transforms.Compose(INFER_TRANSFORM_FN)
-        elif mode == "valid":
-            return transforms.Compose(INFER_TRANSFORM_FN)
-        elif mode == "infer":
-            return transforms.Compose(INFER_TRANSFORM_FN)
+            transform_fn = train_transform(image_size=IMG_SIZE)
+        elif mode in ["valid", "infer"]:
+            transform_fn = valid_transform(image_size=IMG_SIZE)
+        else:
+            raise NotImplementedError
+
+        return Augmentor(
+            dict_key="image",
+            augment_fn=lambda x: transform_fn(image=x)["image"]
+        )
 
     @staticmethod
     def prepare_loaders(
@@ -147,11 +112,11 @@ class DataSource(AbstractDataSource):
 
         open_fn = [
             ImageReader(
-                row_key="filepath", dict_key="image", datapath=datapath
+                input_key="filepath", output_key="image", datapath=datapath
             ),
             ScalarReader(
-                row_key="class",
-                dict_key="targets",
+                input_key="class",
+                output_key="targets",
                 default_value=-1,
                 dtype=np.int64
             )

@@ -31,7 +31,12 @@ RUN pip install --no-cache-dir \
     torchnet \
     redis \
     gym \
-    catalyst
+    catalyst \
+    nmslib \
+    albumentations \
+    seaborn \
+    tensorflow \
+    wrappa
 
 CMD mkdir -p /workspace
 WORKDIR /workspace

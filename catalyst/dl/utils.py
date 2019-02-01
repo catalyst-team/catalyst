@@ -1,5 +1,4 @@
 import os
-import copy
 import shutil
 from collections import OrderedDict
 from tensorboardX import SummaryWriter
@@ -60,16 +59,6 @@ class UtilsFactory:
         loggers = OrderedDict(loggers)
 
         return loggers
-
-    @staticmethod
-    def create_grad_clip_fn(func=None, **grad_clip_params):
-        if func is None:
-            return None
-
-        func = torch.nn.utils.__dict__[func]
-        grad_clip_params = copy.deepcopy(grad_clip_params)
-        grad_clip_fn = lambda parameters: func(parameters, **grad_clip_params)
-        return grad_clip_fn
 
     @staticmethod
     def prepare_device():

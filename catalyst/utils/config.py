@@ -9,6 +9,18 @@ from catalyst.utils.misc import merge_dicts
 def load_ordered_yaml(
     stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict
 ):
+    """
+    Loads `yaml` config into OrderedDict
+
+    Args:
+        stream: opened file with yaml
+        Loader: base class for yaml Loader
+        object_pairs_hook: type of mapping
+
+    Returns:
+        dict: configuration
+    """
+
     class OrderedLoader(Loader):
         pass
 
@@ -22,7 +34,14 @@ def load_ordered_yaml(
     return yaml.load(stream, OrderedLoader)
 
 
-def save_config(config, logdir):
+def save_config(config, logdir: str) -> None:
+    """
+    Saves config into JSON in logdir
+
+    Args:
+        config: dictionary with config
+        logdir (str): path to directory to save JSON
+    """
     os.makedirs(logdir, exist_ok=True)
     with open("{}/config.json".format(logdir), "w") as fout:
         json.dump(config, fout, indent=2)
@@ -59,6 +78,17 @@ def parse_config_args(*, config, args, unknown_args):
 
 
 def parse_args_uargs(args, unknown_args, dump_config=False):
+    """
+    Function for parsing configuration files
+
+    Args:
+        args: recognized arguments
+        unknown_args: unrecognized arguments
+        dump_config: if True, saves config to args.logdir
+
+    Returns:
+        tuple: updated arguments, dict with config
+    """
     args_ = copy.deepcopy(args)
 
     # load params

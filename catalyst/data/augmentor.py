@@ -11,9 +11,10 @@ class Augmentor:
         self, dict_key: str, augment_fn: Callable, default_kwargs: Dict = None
     ):
         """
-        :param dict_key: key to transform
-        :param augment_fn: augmentation function to use
-        :param default_kwargs: default kwargs for augmentations function
+        Args:
+            dict_key: key to transform
+            augment_fn: augmentation function to use
+            default_kwargs: default kwargs for augmentations function
         """
         self.dict_key = dict_key
         self.augment_fn = augment_fn

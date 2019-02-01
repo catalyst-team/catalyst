@@ -1,11 +1,71 @@
 import os
 import logging
+import json
 from typing import List, Dict
 
 from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
 from .core import Callback
 from .utils import to_batch_metrics
+
+
+class TxtMetricsFormatter(logging.Formatter):
+    """
+    Translate batch metrics in human-readable format.
+
+    This class is used by logging.Logger to make a string from record.
+    For details refer to official docs for 'logging' module.
+
+    Note:
+        This is inner class used by Logger callback,
+        no need to use it directly!
+    """
+
+    def __init__(self):
+        fmt = "[{asctime}] {message}"
+        super().__init__(fmt, style="{")
+
+    @staticmethod
+    def _get_metrics_string(metrics):
+        return " | ".join(
+            "{}: {:.5f}".format(k, v) for k, v in sorted(metrics.items())
+        )
+
+    @staticmethod
+    def _format_metrics_message(state):
+        message = f"{state.epoch} * Epoch metrics:\n"
+        for k, v in sorted(state.epoch_metrics.items()):
+            message += f"({k}) {TxtMetricsFormatter._get_metrics_string(v)}\n"
+        return message
+
+    def format(self, record):
+        record.msg = self._format_metrics_message(record.state)
+        return super().format(record)
+
+
+class JsonMetricsFormatter(logging.Formatter):
+    """
+    Translate batch metrics in json format.
+
+    This class is used by logging.Logger to make a string from record.
+    For details refer to official docs for 'logging' module.
+
+    Note:
+        This is inner class used by Logger callback,
+        no need to use it directly!
+    """
+
+    def __init__(self):
+        fmt = "{message}"
+        super().__init__(fmt, style="{")
+
+    def format(self, record):
+        state = record.state
+        dct = {}
+        dct["epoch_metrics"] = state.epoch_metrics.copy()
+        dct["epoch"] = state.epoch
+        dct["asctime"] = self.formatTime(record)
+        return json.dumps(dct)
 
 
 class Logger(Callback):
@@ -28,45 +88,36 @@ class Logger(Callback):
     def logdir(self, value):
         self._logdir = value
         os.makedirs(value, exist_ok=True)
-        log_filepath = os.path.join(value, "logs.txt")
-        self.logger = self._get_logger(log_filepath)
+        logger_name = os.path.join(value, "logs")
+        self.logger = self._get_logger(logger_name)
 
     @staticmethod
-    def _get_logger(log_filepath):
-        logger = logging.getLogger(log_filepath)
+    def _get_logger(logger_name):
+        logger = logging.getLogger(logger_name)
         logger.setLevel(logging.DEBUG)
-        fh = logging.FileHandler(log_filepath)
+
+        fh = logging.FileHandler(logger_name + ".txt")
         fh.setLevel(logging.INFO)
         ch = logging.StreamHandler()
         ch.setLevel(logging.INFO)
-        formatter = logging.Formatter("[%(asctime)s] %(message)s")
-        fh.setFormatter(formatter)
-        ch.setFormatter(formatter)
+        jh = logging.FileHandler(logger_name + ".json")
+        jh.setLevel(logging.INFO)
+
+        txt_formatter = TxtMetricsFormatter()
+        json_formatter = JsonMetricsFormatter()
+        fh.setFormatter(txt_formatter)
+        ch.setFormatter(txt_formatter)
+        jh.setFormatter(json_formatter)
+
         # add the handlers to the logger
         logger.addHandler(fh)
         logger.addHandler(ch)
+        logger.addHandler(jh)
         return logger
-
-    @staticmethod
-    def _get_metrics_string(metrics):
-        return " | ".join(
-            "{}: {:.5f}".format(k, v) for k, v in metrics.items()
-        )
-
-    def on_train_begin(self, state):
-        if self.logger is not None:
-            self.logger.info(
-                "Starting training with params:\n{}\n\n".format(state)
-            )
 
     def on_epoch_end(self, state):
         if self.logger is not None:
-            for k, v in state.epoch_metrics.items():
-                self.logger.info(
-                    f"{state.epoch} * Epoch ({k}) metrics: "
-                    f"{self._get_metrics_string(v)}"
-                )
-            self.logger.info("\n")
+            self.logger.info("", extra={"state": state})
 
 
 class TensorboardLogger(Callback):
@@ -109,7 +160,7 @@ class TensorboardLogger(Callback):
         self, metrics: Dict[str, float], step: int, mode: str, suffix=""
     ):
         if self.metrics_to_log is None:
-            self.metrics_to_log = list(metrics.keys())
+            self.metrics_to_log = sorted(list(metrics.keys()))
 
         for name in self.metrics_to_log:
             if name in metrics:
@@ -121,8 +172,9 @@ class TensorboardLogger(Callback):
         if self.log_on_batch_end:
             mode = state.loader_mode
 
-            to_batch_metrics(state=state, metric_key="lr")
-            to_batch_metrics(state=state, metric_key="momentum")
+            to_batch_metrics(state=state, metric_key="base/lr", state_key="lr")
+            to_batch_metrics(
+                state=state, metric_key="base/momentum", state_key="momentum")
             to_batch_metrics(state=state, metric_key="loss")
 
             self._log_metrics(

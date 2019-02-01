@@ -1,16 +1,13 @@
 from collections import OrderedDict
 from argparse import ArgumentParser, RawTextHelpFormatter
 
-from catalyst.contrib.scripts import check_images, \
-    check_index_model, create_index_model, image2embedding, \
-    project_embeddings, tag2label
+from catalyst.contrib.scripts import project_embeddings, \
+    check_index_model, create_index_model
 
 COMMANDS = OrderedDict(
     [
-        ("tag2label", tag2label), ("check-images", check_images),
         ("check-index-model", check_index_model),
         ("create-index-model", create_index_model),
-        ("image2embedding", image2embedding),
         ("project-embeddings", project_embeddings)
     ]
 )

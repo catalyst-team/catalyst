@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from catalyst.dl.runner import ClassificationRunner
+from catalyst.dl.runner import SupervisedModelRunner
 from catalyst.contrib.registry import Registry
 
 
@@ -26,10 +26,10 @@ class SimpleNet(nn.Module):
         return x
 
 
-class ModelRunner(ClassificationRunner):
+class ModelRunner(SupervisedModelRunner):
     @staticmethod
     def prepare_stage_model(*, model, stage, **kwargs):
-        ClassificationRunner.prepare_stage_model(
+        SupervisedModelRunner.prepare_stage_model(
             model=model, stage=stage, **kwargs
         )
         model_ = model

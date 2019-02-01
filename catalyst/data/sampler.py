@@ -1,9 +1,23 @@
+from typing import List, Iterator
 import numpy as np
+
 from torch.utils.data.sampler import Sampler
 
 
 class BalanceClassSampler(Sampler):
-    def __init__(self, labels, mode="downsampling"):
+    """
+    Abstraction over data sampler. Allows you to create stratified sample
+    on unbalanced classes.
+    """
+
+    def __init__(self, labels: List[int], mode: str = "downsampling"):
+        """
+        Args:
+            labels (List[int]): list of class label
+                for each elem in the datasety
+            mode (str): Strategy to balance classes.
+                Must be one of [downsampling, upsampling]
+        """
         super().__init__(labels)
 
         labels = np.array(labels)
@@ -28,7 +42,11 @@ class BalanceClassSampler(Sampler):
         self.samples_per_class = samples_per_class
         self.length = self.samples_per_class * len(set(labels))
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[int]:
+        """
+        Yields:
+            indices of stratified sample
+        """
         indices = []
         for key in sorted(self.lbl2idx):
             replace_ = self.samples_per_class > len(self.lbl2idx[key])
@@ -40,5 +58,9 @@ class BalanceClassSampler(Sampler):
 
         return iter(indices)
 
-    def __len__(self):
+    def __len__(self) -> int:
+        """
+        Returns:
+             length of result sample
+        """
         return self.length

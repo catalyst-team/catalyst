@@ -31,8 +31,8 @@ def process_epoch_metrics(
     return best_metrics, valid_metrics, is_best
 
 
-def to_batch_metrics(*, state, metric_key):
-    metric = state.get_key(metric_key)
+def to_batch_metrics(*, state, metric_key, state_key=None):
+    metric = state.get_key(state_key or metric_key)
     if isinstance(metric, dict):
         for key, value in metric.items():
             state.batch_metrics[f"{metric_key}_{key}"] = \

@@ -3,7 +3,7 @@ from functools import reduce
 
 from catalyst.contrib.models import SequentialNet
 from catalyst.dl.initialization import create_optimal_inner_init, outer_init
-from catalyst.rl.agents.layers import StateNet, StateActionNet
+from catalyst.rl.agents.layers import StateNet, StateActionNet, LamaPooling
 
 
 class Critic(StateActionNet):
@@ -28,6 +28,7 @@ class Critic(StateActionNet):
         residual=False,
         out_activation=None,
         memory_type=None,
+        lama_poolings=None,
         **kwargs
     ):
         assert len(kwargs) == 0
@@ -44,7 +45,12 @@ class Critic(StateActionNet):
 
         if len(state_shape) in [1, 2]:
             # linear case: one observation or several one
-            state_size = reduce(lambda x, y: x * y, state_shape)
+            # state_shape like [history_len, obs_shape]
+            # @TODO: handle lama correctly
+            if not memory_type:
+                state_size = reduce(lambda x, y: x * y, state_shape)
+            else:
+                state_size = reduce(lambda x, y: x * y, state_shape[1:])
 
             if not observation_hiddens:
                 observation_net = SequentialNet(
@@ -102,6 +108,7 @@ class Critic(StateActionNet):
             layer_order=layer_order,
             residual=residual
         )
+
         head_net = SequentialNet(
             hiddens=[head_hiddens[-2], head_hiddens[-1]],
             layer_fn=nn.Linear,

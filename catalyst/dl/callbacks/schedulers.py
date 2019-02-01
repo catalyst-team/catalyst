@@ -48,12 +48,6 @@ class LRUpdater(Callback):
 
         return new_lr, new_momentum
 
-    def on_train_start(self, state):
-        optimizer = state.get_key(
-            key="optimizer", inner_key=self.optimizer_key
-        )
-        self.init_lr = optimizer.defaults["lr"]
-
     def update_optimizer(self, state):
         if not state.is_train:
             return
@@ -64,6 +58,12 @@ class LRUpdater(Callback):
         lr, momentum = self._update_optimizer(optimizer=optimizer)
         state.set_key(lr, key="lr", inner_key=self.optimizer_key)
         state.set_key(momentum, key="momentum", inner_key=self.optimizer_key)
+
+    def on_train_start(self, state):
+        optimizer = state.get_key(
+            key="optimizer", inner_key=self.optimizer_key
+        )
+        self.init_lr = optimizer.defaults["lr"]
 
     def on_loader_start(self, state):
         self.update_optimizer(state=state)
@@ -155,11 +155,17 @@ class LRFinder(LRUpdater):
     https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html
     """
 
-    def __init__(self, final_lr, n_steps=None, optimizer_key=None):
+    def __init__(
+        self,
+        final_lr,
+        scale="log",
+        n_steps=None,
+        optimizer_key=None
+    ):
         """
 
-        :param init_lr: initial learning rate to use
         :param final_lr: final learning rate to try with
+        :param scale: learning rate increasing scale ("log" or "linear")
         :param n_steps:  number of batches to try;
             if None - whole loader would be used.
         :param optimizer_key: which optimizer key to use
@@ -168,24 +174,41 @@ class LRFinder(LRUpdater):
         super().__init__(optimizer_key=optimizer_key)
 
         self.final_lr = final_lr
+        self.scale = scale
         self.n_steps = n_steps
         self.multiplier = 0
+        self.lr_step = 0
         self.find_iter = 0
 
+        self._calc_lr = None
+        if scale == "log":
+            self._calc_lr = self._calc_lr_log
+        elif scale == "linear":
+            self._calc_lr = self._calc_lr_linear
+        else:
+            raise Exception("Not supported")
+
     def calc_lr(self):
-        res = self.init_lr * self.multiplier**self.find_iter
+        res = self._calc_lr()
         self.find_iter += 1
         return res
+
+    def _calc_lr_log(self):
+        return self.init_lr * self.multiplier**self.find_iter
+
+    def _calc_lr_linear(self):
+        return self.init_lr + self.lr_step * self.find_iter
+
+    def on_loader_start(self, state):
+        if state.is_train:
+            lr_ = self.final_lr / self.init_lr
+            self.n_steps = self.n_steps or state.loader_len
+            self.multiplier = lr_**(1 / self.n_steps)
+            self.lr_step = (self.final_lr - self.init_lr) / self.n_steps
+
+        super().on_loader_start(state=state)
 
     def on_batch_end(self, state):
         super().on_batch_end(state=state)
         if self.find_iter > self.n_steps:
             raise NotImplementedError("End of LRFinder")
-
-    def on_loader_start(self, state):
-        if state.is_train:
-            lr_ = self.final_lr / self.init_lr
-            self.n_steps = self.n_steps or len(state.loader)
-            self.multiplier = lr_**(1 / self.n_steps)
-
-        super().on_loader_start(state=state)

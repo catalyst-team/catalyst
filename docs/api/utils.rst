@@ -3,7 +3,6 @@ Utils
 
 .. automodule:: catalyst.utils
     :members:
-    :undoc-members:
 
 Config
 ----------
@@ -11,6 +10,7 @@ Config
 .. automodule:: catalyst.utils.config
     :members:
     :undoc-members:
+    :exclude-members: parse_config_args
 
 Data
 ----------

@@ -3,7 +3,9 @@ from functools import reduce
 
 from catalyst.contrib.models import SequentialNet
 from catalyst.dl.initialization import create_optimal_inner_init, outer_init
-from catalyst.rl.agents.layers import StateNet, GaussPolicy, RealNVPPolicy
+from catalyst.rl.agents.layers import StateNet, \
+    GaussPolicy, RealNVPPolicy, \
+    LamaPooling
 
 
 class Actor(StateNet):
@@ -26,6 +28,7 @@ class Actor(StateNet):
         residual=False,
         out_activation=None,
         memory_type=None,
+        lama_poolings=None,
         policy_type=None,
         squashing_fn=nn.Tanh,
         **kwargs
@@ -44,7 +47,12 @@ class Actor(StateNet):
 
         if len(state_shape) in [1, 2]:
             # linear case: one observation or several one
-            state_size = reduce(lambda x, y: x * y, state_shape)
+            # state_shape like [history_len, obs_shape]
+            # @TODO: handle lama correctly
+            if not memory_type:
+                state_size = reduce(lambda x, y: x * y, state_shape)
+            else:
+                state_size = reduce(lambda x, y: x * y, state_shape[1:])
 
             observation_net = SequentialNet(
                 hiddens=[state_size] + hiddens,
@@ -63,7 +71,11 @@ class Actor(StateNet):
             raise NotImplementedError
 
         if memory_type == "lama":
-            raise NotImplementedError
+            memory_net = LamaPooling(
+                features_in=hiddens[-1],
+                poolings=lama_poolings
+            )
+            memory_out = memory_net.features_out
         elif memory_type == "rnn":
             raise NotImplementedError
         else:

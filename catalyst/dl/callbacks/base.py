@@ -146,8 +146,11 @@ class OptimizerCallback(Callback):
         """
         @TODO: docs
         """
+        # hack to prevent cycle imports
+        from catalyst.contrib.registry import Registry
+
         grad_clip_params = grad_clip_params or {}
-        self.grad_clip_fn = UtilsFactory.create_grad_clip_fn(
+        self.grad_clip_fn = Registry.get_grad_clip_fn(
             **grad_clip_params
         )
         self.fp16 = False

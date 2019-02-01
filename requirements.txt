@@ -9,7 +9,8 @@ PyYAML
 tensorboardX
 torchnet
 
-# Used in scripst
+# Used in scripts
+matplotlib
 pandas
 sklearn
 

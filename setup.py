@@ -95,6 +95,7 @@ setup(
             "catalyst-dl=catalyst.dl.__main__:main",
             "catalyst-rl=catalyst.rl.__main__:main",
             "catalyst-contrib=catalyst.contrib.__main__:main",
+            "catalyst-data=catalyst.data.__main__:main",
         ],
     },
     install_requires=load_requirements(),
