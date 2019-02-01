@@ -121,6 +121,7 @@ class StateNet(nn.Module):
         self.observation_net = observation_net
         self.memory_net = memory_net
         self.head_net = head_net
+        self.policy_net = policy_net
 
         self.out_features = get_out_features(head_net)
 
@@ -135,9 +136,9 @@ class StateNet(nn.Module):
 
         self._policy_fn = None
         if isinstance(policy_net, GaussPolicy):
-            self._policy_fn = policy_net.forward
+            self._policy_fn = self.policy_net.forward
         elif isinstance(policy_net, RealNVPPolicy):
-            self._policy_fn = policy_net.forward
+            self._policy_fn = self.policy_net.forward
         else:
             self._policy_fn = lambda *args: args[0]
 
