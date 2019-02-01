@@ -53,7 +53,7 @@ critic:
 algorithm:
   actor_tau: 0.01
   critic_tau: 0.01
-  reward_scale: 50.0
+  reward_scale: 200.0
   min_action: &min_action -1.0
   max_action: &max_action 1.0
   #critic_distribution: quantile
