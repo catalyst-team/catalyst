@@ -88,7 +88,7 @@ class Critic(StateActionNet):
 
         if memory_type == "lama":
             memory_net = LamaPooling(
-                features_in=observations_hidden[-1],
+                features_in=observation_hiddens[-1],
                 poolings=lama_poolings
             )
             memory_out = memory_net.features_out + action_hiddens[-1]
@@ -157,6 +157,7 @@ class ValueCritic(StateNet):
         residual=False,
         out_activation=None,
         memory_type=None,
+        lama_poolings=None,
         **kwargs
     ):
         assert len(kwargs) == 0
@@ -193,10 +194,10 @@ class ValueCritic(StateNet):
 
         if memory_type == "lama":
             memory_net = LamaPooling(
-                features_in=observations_hidden[-1],
+                features_in=hiddens[-1],
                 poolings=lama_poolings
             )
-            memory_out = memory_net.features_out + action_hiddens[-1]
+            memory_out = memory_net.features_out + hiddens[-1]
         elif memory_type == "rnn":
             raise NotImplementedError
         else:
