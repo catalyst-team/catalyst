@@ -126,12 +126,6 @@ class Critic(StateActionNet):
         )
         head_net.apply(outer_init)
 
-        inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
-        observation_net.apply(inner_init)
-        action_net.apply(inner_init)
-        bone_net.apply(inner_init)
-        head_net.apply(outer_init)
-
         critic_net = cls(
             observation_net=observation_net,
             action_net=action_net,
