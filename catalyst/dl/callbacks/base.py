@@ -63,8 +63,9 @@ class CheckpointCallback(Callback):
         filepath = UtilsFactory.save_checkpoint(
             logdir=logdir,
             checkpoint=checkpoint,
+            suffix=suffix,
             is_best=is_best,
-            suffix=suffix
+            is_last=True
         )
         checkpoint_metric = checkpoint["valid_metrics"].get(main_metric, None)
         checkpoint_metric = checkpoint_metric or checkpoint.get("epoch", -1)

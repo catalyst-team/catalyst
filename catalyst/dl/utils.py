@@ -143,13 +143,15 @@ class UtilsFactory:
                 dict2load.load_state_dict(checkpoint[name2load])
 
     @staticmethod
-    def save_checkpoint(logdir, checkpoint, is_best=False, suffix=""):
-        filename = "{logdir}/checkpoint.{suffix}.pth.tar".format(
-            logdir=logdir, suffix=suffix
-        )
+    def save_checkpoint(
+        logdir, checkpoint, suffix="", is_best=False, is_last=False
+    ):
+        filename = f"{logdir}/checkpoint.{suffix}.pth.tar"
         torch.save(checkpoint, filename)
         if is_best:
             shutil.copyfile(filename, f"{logdir}/checkpoint.best.pth.tar")
+        if is_last:
+            shutil.copyfile(filename, f"{logdir}/checkpoint.last.pth.tar")
         return filename
 
     @staticmethod
