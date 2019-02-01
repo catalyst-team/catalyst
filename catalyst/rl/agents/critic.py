@@ -39,6 +39,7 @@ class Critic(StateActionNet):
         activation_fn = Registry.name2nn(activation_fn)
         norm_fn = Registry.name2nn(norm_fn)
         out_activation = Registry.name2nn(out_activation)
+        inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
 
         if isinstance(state_shape, int):
             state_shape = (state_shape, )
@@ -52,7 +53,7 @@ class Critic(StateActionNet):
             else:
                 state_size = reduce(lambda x, y: x * y, state_shape[1:])
 
-            if not observation_hiddens:
+            if len(observation_hiddens) > 0:
                 observation_net = SequentialNet(
                     hiddens=[state_size] + observation_hiddens,
                     layer_fn=layer_fn,
@@ -63,6 +64,7 @@ class Critic(StateActionNet):
                     layer_order=layer_order,
                     residual=residual
                 )
+                observation_net.apply(inner_init)
             else:
                 observation_net = None
 
@@ -72,7 +74,7 @@ class Critic(StateActionNet):
         else:
             raise NotImplementedError
 
-        if not action_hiddens:
+        if len(action_hiddens) > 0:
             action_net = SequentialNet(
                 hiddens=[action_size] + action_hiddens,
                 layer_fn=layer_fn,
@@ -83,6 +85,7 @@ class Critic(StateActionNet):
                 layer_order=layer_order,
                 residual=residual
             )
+            action_net.apply(inner_init)
         else:
             action_net = None
 
@@ -97,7 +100,7 @@ class Critic(StateActionNet):
         else:
             memory_net = None
 
-            if not observation_hiddens and not action_hiddens:
+            if len(observation_hiddens) + len(action_hiddens) == 0:
                 memory_out = state_size + action_size
             else:
                 # @TODO: do a normal fix
@@ -112,6 +115,7 @@ class Critic(StateActionNet):
             layer_order=layer_order,
             residual=residual
         )
+        bone_net.apply(inner_init)
 
         head_net = SequentialNet(
             hiddens=[head_hiddens[-2], head_hiddens[-1]],
@@ -120,6 +124,7 @@ class Critic(StateActionNet):
             norm_fn=None,
             bias=True
         )
+        head_net.apply(outer_init)
 
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
         observation_net.apply(inner_init)
