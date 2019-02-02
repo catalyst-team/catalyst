@@ -5,7 +5,7 @@ from typing import List, Dict
 
 from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
-from .core import Callback
+from .base import LoggerCallback
 from .utils import to_batch_metrics
 
 
@@ -68,7 +68,7 @@ class JsonMetricsFormatter(logging.Formatter):
         return json.dumps(dct)
 
 
-class Logger(Callback):
+class Logger(LoggerCallback):
     """
     Logger callback, translates state.*_metrics to console and text file
     """
@@ -77,18 +77,12 @@ class Logger(Callback):
         """
         :param logdir: log directory to use for text logging
         """
+        super().__init__(logdir)
         self.logger = None
-        self._logdir = logdir
 
-    @property
-    def logdir(self):
-        return self._logdir
-
-    @logdir.setter
-    def logdir(self, value):
-        self._logdir = value
-        os.makedirs(value, exist_ok=True)
-        logger_name = os.path.join(value, "logs")
+    def on_train_start(self, state):
+        super().on_train_start(state)
+        logger_name = os.path.join(self.logdir, "logs")
         self.logger = self._get_logger(logger_name)
 
     @staticmethod
@@ -120,7 +114,7 @@ class Logger(Callback):
             self.logger.info("", extra={"state": state})
 
 
-class TensorboardLogger(Callback):
+class TensorboardLogger(LoggerCallback):
     """
     Logger callback, translates state.*_metrics to tensorboard
     """
@@ -140,7 +134,7 @@ class TensorboardLogger(Callback):
             prepends 'batch_' prefix to their names.
         :param log_on_epoch_end: Logs per-epoch metrics if set True.
         """
-        self.logdir = logdir
+        super().__init__(logdir)
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
