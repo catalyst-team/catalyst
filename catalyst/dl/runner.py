@@ -125,10 +125,7 @@ class BaseModelRunner:
 
         state_params = state_params or {}
         state = self._init_state(
-            mode=mode,
-            stage=self.stage,
-            logdir=logdir,
-            **state_params
+            mode=mode, stage=self.stage, logdir=logdir, **state_params
         )
         state.mode = mode
         self.state = state
