@@ -79,24 +79,24 @@ class SAC(Algorithm):
 
         # actor loss
         actions_tp0, log_pi_tp0 = self.actor(states_t, with_log_pi=True)
-        log_pi_tp0 = log_pi_tp0[:, None] / self.reward_scale
+        log_pi_tp0 = log_pi_tp0 / self.reward_scale
         q_values_tp0 = [x(states_t, actions_tp0) for x in self.critics]
         q_values_tp0_min = torch.cat(q_values_tp0, dim=-1).min(dim=-1)[0]
         policy_loss = torch.mean(log_pi_tp0 - q_values_tp0_min)
 
         # critic loss
-        actions_tp1, log_pi_tp1 = self.target_actor(
+        actions_tp1, log_pi_tp1 = self.actor(
             states_tp1, with_log_pi=True
         )
-        log_pi_tp1 = log_pi_tp1[:, None] / self.reward_scale
+        log_pi_tp1 = log_pi_tp1 / self.reward_scale
         q_values_t = [x(states_t, actions_t) for x in self.critics]
         q_values_tp1 = torch.cat(
             [x(states_tp1, actions_tp1) for x in self.target_critics], dim=-1
         )
-        q_values_tp1 = q_values_tp1.min(dim=1, keepdim=True)[0]
+        q_values_tp1 = q_values_tp1.min(dim=-1)[0]
         v_target_tp1 = (q_values_tp1 - log_pi_tp1).detach()
         gamma = self.gamma**self.n_step
-        q_target_t = rewards_t + (1 - done_t) * gamma * v_target_tp1
+        q_target_t = rewards_t + (1 - done_t) * gamma * v_target_tp1[:, None]
         value_loss = [
             self.critic_criterion(x, q_target_t).mean() for x in q_values_t
         ]
@@ -109,7 +109,7 @@ class SAC(Algorithm):
 
         # actor loss
         actions_tp0, log_pi_tp0 = self.actor(states_t, with_log_pi=True)
-        log_pi_tp0 = log_pi_tp0[:, None] / self.reward_scale
+        log_pi_tp0 = log_pi_tp0 / self.reward_scale
         logits_tp0 = [x(states_t, actions_tp0) for x in self.critics]
         probs_tp0 = [F.softmax(x, dim=-1) for x in logits_tp0]
         q_values_tp0 = [
@@ -119,10 +119,10 @@ class SAC(Algorithm):
         policy_loss = torch.mean(log_pi_tp0 - q_values_tp0_min)
 
         # critic loss (kl-divergence between categorical distributions)
-        actions_tp1, log_pi_tp1 = self.target_actor(
+        actions_tp1, log_pi_tp1 = self.actor(
             states_tp1, with_log_pi=True
         )
-        log_pi_tp1 = log_pi_tp1[:, None] / self.reward_scale
+        log_pi_tp1 = log_pi_tp1 / self.reward_scale
         logits_t = [x(states_t, actions_t) for x in self.critics]
         logits_tp1 = [x(states_tp1, actions_tp1) for x in self.target_critics]
         probs_tp1 = [F.softmax(x, dim=-1) for x in logits_tp1]
@@ -134,7 +134,7 @@ class SAC(Algorithm):
         logits_tp1 = torch.cat([x.unsqueeze(-1) for x in logits_tp1], dim=-1)
         logits_tp1 = logits_tp1[range(len(logits_tp1)), :, probs_ids_tp1_min]
         gamma = self.gamma**self.n_step
-        z_target_tp1 = (self.z - log_pi_tp1).detach()
+        z_target_tp1 = (self.z[None, :] - log_pi_tp1[:, None]).detach()
         atoms_target_t = rewards_t + (1 - done_t) * gamma * z_target_tp1
         value_loss = [
             categorical_loss(
@@ -161,7 +161,7 @@ class SAC(Algorithm):
         policy_loss = torch.mean(log_pi_tp0 - q_values_tp0_min)
 
         # critic loss (quantile regression)
-        actions_tp1, log_pi_tp1 = self.target_actor(
+        actions_tp1, log_pi_tp1 = self.actor(
             states_tp1, with_log_pi=True
         )
         log_pi_tp1 = log_pi_tp1[:, None] / self.reward_scale

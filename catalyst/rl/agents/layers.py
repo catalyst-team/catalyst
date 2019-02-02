@@ -121,6 +121,7 @@ class StateNet(nn.Module):
         self.observation_net = observation_net
         self.memory_net = memory_net
         self.head_net = head_net
+        self.policy_net = policy_net
 
         self.out_features = get_out_features(head_net)
 
@@ -135,9 +136,9 @@ class StateNet(nn.Module):
 
         self._policy_fn = None
         if isinstance(policy_net, GaussPolicy):
-            self._policy_fn = policy_net.forward
+            self._policy_fn = self.policy_net.forward
         elif isinstance(policy_net, RealNVPPolicy):
-            self._policy_fn = policy_net.forward
+            self._policy_fn = self.policy_net.forward
         else:
             self._policy_fn = lambda *args: args[0]
 
@@ -173,11 +174,14 @@ class StateNet(nn.Module):
 
 
 class StateActionNet(nn.Module):
-    def __init__(self, observation_net, action_net, head_net, memory_net=None):
+    def __init__(
+        self, observation_net, action_net, bone_net, head_net, memory_net=None
+    ):
         super().__init__()
         self.observation_net = observation_net
         self.action_net = action_net
         self.memory_net = memory_net
+        self.bone_net = bone_net
         self.head_net = head_net
 
         self.out_features = get_out_features(head_net)
@@ -192,13 +196,16 @@ class StateActionNet(nn.Module):
             self._forward_fn = self._forward_ff
 
     def _forward_ff(self, observation, action):
-        x = observation.view(observation.shape[0], -1)
-        observation_ = self.observation_net(x)
+        obs_ = observation.view(observation.shape[0], -1)
+        if self.observation_net is not None:
+            obs_ = self.observation_net(obs_)
 
-        x = action.view(action.shape[0], -1)
-        action_ = self.action_net(x)
+        act_ = action.view(action.shape[0], -1)
+        if self.action_net is not None:
+            act_ = self.action_net(act_)
 
-        x = torch.cat((observation_, action_), dim=1)
+        x = torch.cat((obs_, act_), dim=1)
+        x = self.bone_net(x)
         x = self.head_net(x)
         return x
 

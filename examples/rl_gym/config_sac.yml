@@ -1,7 +1,7 @@
 shared:
   state_size: 8
   action_size: &action_size 2
-  history_len: 2
+  history_len: 3
 
   n_step: 1
   gamma: 0.99
@@ -15,8 +15,8 @@ args:
   train: 1  #  change me
   action_noise_prob: 0.5
   param_noise_prob: 0.2
-  max_action_noise: 0.2
-  max_param_noise: 0.1
+  max_action_noise: 0.0001
+  max_param_noise: 0.0001
 
 redis:
   port: 12000
@@ -24,13 +24,13 @@ redis:
 
 env:
   env_name: LunarLanderContinuous-v2
-  reward_scale: 1.0
-  frame_skip: 3
-  step_delay: 0.1
+  reward_scale: 0.01
+  frame_skip: 2
+  step_delay: 0.01
 
 actor:
   agent: Actor
-  hiddens: [8, 8, 8]
+  hiddens: [128, 128]
   layer_fn: Linear
   bias: false
   norm_fn: LayerNorm
@@ -41,9 +41,9 @@ actor:
 
 critic:
   agent: Critic
-  observation_hiddens: [8, 8]
-  action_hiddens: [4, 4]
-  head_hiddens: [4, 4]
+  observation_hiddens: []
+  action_hiddens: []
+  head_hiddens: [128, 128, 1]
   layer_fn: Linear
   bias: false
   norm_fn: LayerNorm
@@ -53,9 +53,10 @@ critic:
 algorithm:
   actor_tau: 0.01
   critic_tau: 0.01
+  reward_scale: 200.0
   min_action: &min_action -1.0
   max_action: &max_action 1.0
-  critic_distribution: quantile
+  #critic_distribution: quantile
 
   actor_optimizer_params:
     optimizer: Adam
@@ -82,13 +83,13 @@ algorithm:
     clip_delta: 1.0
 
 trainer:
-  batch_size: 16              # transitions
+  batch_size: 256              # transitions
 
   n_workers: 1
   replay_buffer_size: 1000000  # transitions
 
   start_learning: 500          # transitions
-  epoch_len: 100               # batches
+  epoch_len: 1000               # batches
   target_update_period: 1      # batches
   save_period: 1               # epochs
   weights_sync_period: 1       # epochs
@@ -104,7 +105,7 @@ sampler:
 
 random_process:
   random_process: GaussianWhiteNoiseProcess
-  sigma: 0.2
+  sigma: 0.0001
   size: *action_size
 
 seeds: [1, 10, 1000, 10000, 42000]

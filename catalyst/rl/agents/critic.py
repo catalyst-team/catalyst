@@ -39,6 +39,7 @@ class Critic(StateActionNet):
         activation_fn = Registry.name2nn(activation_fn)
         norm_fn = Registry.name2nn(norm_fn)
         out_activation = Registry.name2nn(out_activation)
+        inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
 
         if isinstance(state_shape, int):
             state_shape = (state_shape, )
@@ -52,8 +53,30 @@ class Critic(StateActionNet):
             else:
                 state_size = reduce(lambda x, y: x * y, state_shape[1:])
 
-            observation_net = SequentialNet(
-                hiddens=[state_size] + observation_hiddens,
+            if len(observation_hiddens) > 0:
+                observation_net = SequentialNet(
+                    hiddens=[state_size] + observation_hiddens,
+                    layer_fn=layer_fn,
+                    dropout=dropout,
+                    activation_fn=activation_fn,
+                    norm_fn=norm_fn,
+                    bias=bias,
+                    layer_order=layer_order,
+                    residual=residual
+                )
+                observation_net.apply(inner_init)
+            else:
+                observation_net = None
+
+        elif len(state_shape) in [3, 4]:
+            # cnn case: one image or several one @TODO
+            raise NotImplementedError
+        else:
+            raise NotImplementedError
+
+        if len(action_hiddens) > 0:
+            action_net = SequentialNet(
+                hiddens=[action_size] + action_hiddens,
                 layer_fn=layer_fn,
                 dropout=dropout,
                 activation_fn=activation_fn,
@@ -62,22 +85,9 @@ class Critic(StateActionNet):
                 layer_order=layer_order,
                 residual=residual
             )
-        elif len(state_shape) in [3, 4]:
-            # cnn case: one image or several one @TODO
-            raise NotImplementedError
+            action_net.apply(inner_init)
         else:
-            raise NotImplementedError
-
-        action_net = SequentialNet(
-            hiddens=[action_size] + action_hiddens,
-            layer_fn=layer_fn,
-            dropout=dropout,
-            activation_fn=activation_fn,
-            norm_fn=norm_fn,
-            bias=bias,
-            layer_order=layer_order,
-            residual=residual
-        )
+            action_net = None
 
         if memory_type == "lama":
             memory_net = LamaPooling(
@@ -89,25 +99,38 @@ class Critic(StateActionNet):
             raise NotImplementedError
         else:
             memory_net = None
-            memory_out = observation_hiddens[-1] + action_hiddens[-1]
+
+            if len(observation_hiddens) + len(action_hiddens) == 0:
+                memory_out = state_size + action_size
+            else:
+                # @TODO: do a normal fix
+                memory_out = observation_hiddens[-1] + action_hiddens[-1]
+
+        bone_net = SequentialNet(
+            hiddens=[memory_out] + head_hiddens[:-1],
+            layer_fn=layer_fn,
+            activation_fn=activation_fn,
+            norm_fn=norm_fn,
+            bias=bias,
+            layer_order=layer_order,
+            residual=residual
+        )
+        bone_net.apply(inner_init)
 
         head_net = SequentialNet(
-            hiddens=[memory_out] + head_hiddens,
+            hiddens=[head_hiddens[-2], head_hiddens[-1]],
             layer_fn=nn.Linear,
             activation_fn=out_activation,
             norm_fn=None,
             bias=True
         )
-
-        inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
-        observation_net.apply(inner_init)
-        action_net.apply(inner_init)
         head_net.apply(outer_init)
 
         critic_net = cls(
             observation_net=observation_net,
             action_net=action_net,
             memory_net=memory_net,
+            bone_net=bone_net,
             head_net=head_net
         )
 
@@ -133,6 +156,7 @@ class ValueCritic(StateNet):
         residual=False,
         out_activation=None,
         memory_type=None,
+        lama_poolings=None,
         **kwargs
     ):
         assert len(kwargs) == 0
@@ -168,7 +192,11 @@ class ValueCritic(StateNet):
             raise NotImplementedError
 
         if memory_type == "lama":
-            raise NotImplementedError
+            memory_net = LamaPooling(
+                features_in=hiddens[-1],
+                poolings=lama_poolings
+            )
+            memory_out = memory_net.features_out + hiddens[-1]
         elif memory_type == "rnn":
             raise NotImplementedError
         else:
