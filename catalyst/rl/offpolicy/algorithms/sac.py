@@ -134,9 +134,8 @@ class SAC(Algorithm):
         logits_tp1 = torch.cat([x.unsqueeze(-1) for x in logits_tp1], dim=-1)
         logits_tp1 = logits_tp1[range(len(logits_tp1)), :, probs_ids_tp1_min]
         gamma = self.gamma**self.n_step
-        z_target_tp1 = (self.z - log_pi_tp1).detach()
-        atoms_target_t = rewards_t + \
-            (1 - done_t) * gamma * z_target_tp1[:, None]
+        z_target_tp1 = (self.z[None, :] - log_pi_tp1[:, None]).detach()
+        atoms_target_t = rewards_t + (1 - done_t) * gamma * z_target_tp1
         value_loss = [
             categorical_loss(
                 x, logits_tp1, atoms_target_t, self.z, self.delta_z,
@@ -178,7 +177,7 @@ class SAC(Algorithm):
         atoms_tp1 = atoms_tp1[range(len(atoms_tp1)), :, atoms_ids_tp1_min]
         gamma = self.gamma**self.n_step
         atoms_tp1 = (atoms_tp1 - log_pi_tp1).detach()
-        atoms_target_t = rewards_t + (1 - done_t) * gamma * atoms_tp1[:, None]
+        atoms_target_t = rewards_t + (1 - done_t) * gamma * atoms_tp1
         value_loss = [
             quantile_loss(
                 x, atoms_target_t, self.tau, self.n_atoms,
