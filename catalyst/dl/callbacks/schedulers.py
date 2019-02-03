@@ -59,7 +59,7 @@ class LRUpdater(Callback):
         state.set_key(lr, key="lr", inner_key=self.optimizer_key)
         state.set_key(momentum, key="momentum", inner_key=self.optimizer_key)
 
-    def on_train_start(self, state):
+    def on_stage_start(self, state):
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
         )

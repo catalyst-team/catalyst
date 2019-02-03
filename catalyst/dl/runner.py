@@ -135,9 +135,9 @@ class BaseModelRunner:
             state.epoch = epoch
             self.run_event(callbacks=callbacks, event="on_epoch_start")
 
-            for loader_mode, loader in loaders.items():
-                state.loader_mode = loader_mode
-                state.is_train = loader_mode.startswith("train")
+            for loader_name, loader in loaders.items():
+                state.loader_name = loader_name
+                state.is_train = loader_name.startswith("train")
                 state.batch_size = loader.batch_size
                 state.loader_len = len(loader)
                 state.step = (
@@ -148,7 +148,7 @@ class BaseModelRunner:
                 self.run_event(callbacks=callbacks, event="on_loader_start")
                 loader = tqdm.tqdm(
                     loader,
-                    desc=f"{epoch} * Epoch ({loader_mode})",
+                    desc=f"{epoch} * Epoch ({loader_name})",
                     total=len(loader),
                     leave=True,
                     file=sys.stdout,
@@ -364,7 +364,7 @@ class BaseModelRunner:
         if state is not None:
             dct = {
                 key: value.to(self.device)
-                if state.key2device[key] and torch.is_tensor(value) else value
+                if torch.is_tensor(value) else value
                 for key, value in dct.items()
             }
         else:

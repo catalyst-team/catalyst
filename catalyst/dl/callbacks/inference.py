@@ -32,7 +32,7 @@ class InferCallback(Callback):
             for key, value in self.predictions.items():
                 np.save(
                     self.out_prefix.format(
-                        suffix=".".join([state.loader_mode, key])
+                        suffix=".".join([state.loader_name, key])
                     ), value
                 )
 
@@ -62,11 +62,11 @@ class InferMaskCallback(Callback):
         self.counter = 0
 
     def on_loader_start(self, state):
-        lm = state.loader_mode
+        lm = state.loader_name
         os.makedirs(f"{self.out_prefix}/{lm}/", exist_ok=True)
 
     def on_batch_end(self, state):
-        lm = state.loader_mode
+        lm = state.loader_name
         features = state.input[self.input_key]
         logits = state.output[self.output_key]
         logits = torch.unsqueeze_(logits, dim=1) \

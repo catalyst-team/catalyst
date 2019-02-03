@@ -27,20 +27,7 @@ class Experiment(ABC):
 
     @property
     @abstractmethod
-    def model(self) -> _Model:
-        pass
-
-    @property
-    @abstractmethod
     def stages(self) -> Iterable[str]:
-        pass
-
-    @abstractmethod
-    def get_optimizer(self, stage: str) -> _Optimizer:
-        pass
-
-    @abstractmethod
-    def get_total_epochs(self, stage: str):
         pass
 
     @abstractmethod
@@ -48,12 +35,31 @@ class Experiment(ABC):
         pass
 
     @abstractmethod
+    def get_total_epochs(self, stage: str):
+        pass
+
+    @property
+    @abstractmethod
+    def model(self) -> _Model:
+        pass
+
+    @abstractmethod
     def get_criterion(self, stage: str) -> _Criterion:
         pass
 
     @abstractmethod
-    def get_scheduler(self, stage: str) -> _Scheduler:
+    def get_optimizer(self, stage: str, model=None) -> _Optimizer:
         pass
+
+    @abstractmethod
+    def get_scheduler(self, stage: str, optimizer=None) -> _Scheduler:
+        pass
+
+    def get_model_stuff(self, model, stage: str):
+        criterion = self.get_criterion(stage)
+        optimizer = self.get_optimizer(stage, model)
+        scheduler = self.get_scheduler(stage, optimizer)
+        return criterion, optimizer, scheduler
 
     @abstractmethod
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
@@ -93,10 +99,6 @@ class SimpleExperiment(Experiment):
         self._model = model
 
     @property
-    def model(self) -> _Model:
-        return self._model
-
-    @property
     def logdir(self):
         return self._logdir
 
@@ -104,23 +106,27 @@ class SimpleExperiment(Experiment):
     def stages(self) -> Iterable[str]:
         return ['default']
 
-    def get_optimizer(self, stage: str) -> _Optimizer:
-        return self._optimizer
-
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         return self._loaders
+
+    def get_total_epochs(self, stage: str):
+        return self._epochs
+
+    @property
+    def model(self) -> _Model:
+        return self._model
 
     def get_criterion(self, stage: str) -> _Criterion:
         return self._criterion
 
-    def get_scheduler(self, stage: str) -> _Scheduler:
+    def get_optimizer(self, stage: str, model=None) -> _Optimizer:
+        return self._optimizer
+
+    def get_scheduler(self, stage: str, optimizer=None) -> _Scheduler:
         return self._scheduler
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         return self._callbacks
-
-    def get_total_epochs(self, stage: str):
-        return self._epochs
 
 
 __all__ = ["Experiment", "SimpleExperiment"]

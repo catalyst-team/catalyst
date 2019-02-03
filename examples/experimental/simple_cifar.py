@@ -10,7 +10,8 @@ from torchvision import transforms
 from tqdm import tqdm
 
 from catalyst.dl.callbacks import \
-    LossCallback, OptimizerCallback, Callback
+    LossCallback, OptimizerCallback, Callback, \
+    SchedulerCallback, TensorboardLogger, Logger
 from catalyst.dl.experiments.experiment import SimpleExperiment
 from catalyst.dl.experiments.runner import SupervisedModelRunner
 from catalyst.dl.state import RunnerState
@@ -106,14 +107,17 @@ class VerboseCallback(Callback):
 
 model = SimpleNet()
 exp = SimpleExperiment(
-    'logs/01',
+    './logs/01',
     model=model,
     epochs=5,
     loaders=get_loaders(),
     callbacks=OrderedDict(
         tqdm=VerboseCallback(),
         loss=LossCallback(),
-        optimizer=OptimizerCallback()
+        optimizer=OptimizerCallback(),
+        # scheduler=SchedulerCallback(),
+        logger=Logger(),
+        tflogger=TensorboardLogger()
     ),
     criterion=CrossEntropyLoss(),
     optimizer=SGD(model.parameters(), lr=0.001, momentum=.9)

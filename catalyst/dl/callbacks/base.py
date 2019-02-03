@@ -7,7 +7,7 @@ from catalyst.dl.fp16 import Fp16Wrap, copy_params, copy_grads
 from .utils import get_optimizer_momentum, scheduler_step
 
 
-class LoggerCallback(Callback):
+class LogdirBaseCallback(Callback):
     """
     Base class for anything that needs logdir to be specified in 'train' mode.
     """
@@ -21,7 +21,7 @@ class LoggerCallback(Callback):
         """
         self.logdir = logdir
 
-    def on_train_start(self, state):
+    def on_stage_start(self, state):
         assert self.logdir or state.logdir, \
             "Please, specify logdir for callback usage"
         if self.logdir is None:
@@ -29,7 +29,7 @@ class LoggerCallback(Callback):
         os.makedirs(self.logdir, exist_ok=True)
 
 
-class CheckpointCallback(LoggerCallback):
+class CheckpointCallback(LogdirBaseCallback):
     """
     Checkpoint callback to save/restore your model/criterion/optimizer/metrics.
     """
@@ -105,16 +105,16 @@ class CheckpointCallback(LoggerCallback):
     def pack_checkpoint(self, **kwargs):
         return UtilsFactory.pack_checkpoint(**kwargs)
 
-    def on_mode_start(self, state):
+    def on_stage_start(self, state):
         if self.resume is not None:
             self.load_checkpoint(filename=self.resume, state=state)
 
-    def on_train_start(self, state):
-        super().on_train_start(state)
-        return self.on_mode_start(state=state)
+    def on_stage_start(self, state):
+        super().on_stage_start(state)
+        return self.on_stage_start(state=state)
 
-    def on_infer_start(self, state):
-        return self.on_mode_start(state=state)
+    def on_stage_start(self, state):
+        return self.on_stage_start(state=state)
 
     def on_epoch_end(self, state):
         if state.mode == "infer":
@@ -140,7 +140,7 @@ class CheckpointCallback(LoggerCallback):
             minimize_metric=state.minimize_metric
         )
 
-    def on_train_end(self, state):
+    def on_stage_end(self, state):
         print("Top best models:")
         top_best_metrics_str = "\n".join(
             [
@@ -183,7 +183,7 @@ class OptimizerCallback(Callback):
         self.optimizer_wd = 0
         self.accumulation_counter = 0
 
-    def on_train_start(self, state):
+    def on_stage_start(self, state):
         self.fp16 = isinstance(state.model, Fp16Wrap)
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key

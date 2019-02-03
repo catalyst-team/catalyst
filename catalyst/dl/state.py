@@ -74,7 +74,6 @@ class RunnerState(FrozenClass):
         self.best_metrics = None
 
         # other
-        self.key2device = defaultdict(lambda: True)
         self.is_train = False
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -110,7 +109,6 @@ class RunnerState(FrozenClass):
     def on_epoch_end_pre(self):
         if self.mode == "infer":
             return
-
         best_metrics, valid_metrics, is_best = \
             process_epoch_metrics(
                 self.epoch_metrics,

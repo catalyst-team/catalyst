@@ -5,7 +5,7 @@ from typing import List, Dict
 
 from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
-from .base import LoggerCallback
+from .base import LogdirBaseCallback
 from .utils import to_batch_metrics
 
 
@@ -68,7 +68,7 @@ class JsonMetricsFormatter(logging.Formatter):
         return json.dumps(dct)
 
 
-class Logger(LoggerCallback):
+class Logger(LogdirBaseCallback):
     """
     Logger callback, translates state.*_metrics to console and text file
     """
@@ -80,8 +80,8 @@ class Logger(LoggerCallback):
         super().__init__(logdir)
         self.logger = None
 
-    def on_train_start(self, state):
-        super().on_train_start(state)
+    def on_stage_start(self, state):
+        super().on_stage_start(state)
         logger_name = os.path.join(self.logdir, "logs")
         self.logger = self._get_logger(logger_name)
 
@@ -114,7 +114,7 @@ class Logger(LoggerCallback):
             self.logger.info("", extra={"state": state})
 
 
-class TensorboardLogger(LoggerCallback):
+class TensorboardLogger(LogdirBaseCallback):
     """
     Logger callback, translates state.*_metrics to tensorboard
     """
@@ -144,7 +144,7 @@ class TensorboardLogger(LoggerCallback):
         self.loggers = dict()
 
     def on_loader_start(self, state):
-        lm = state.loader_mode
+        lm = state.loader_name
         if lm not in self.loggers:
             self.loggers[lm] = UtilsFactory.create_tflogger(
                 logdir=self.logdir, name=lm
@@ -165,7 +165,6 @@ class TensorboardLogger(LoggerCallback):
     def on_batch_end(self, state: RunnerState):
         if self.log_on_batch_end:
             mode = state.loader_name
-
             to_batch_metrics(state=state, metric_key="base/lr", state_key="lr")
             to_batch_metrics(
                 state=state, metric_key="base/momentum", state_key="momentum")
