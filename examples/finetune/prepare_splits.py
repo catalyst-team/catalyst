@@ -30,13 +30,11 @@ def parse_args():
 def main(args, _=None):
     train_folds = (
         list(map(int, args.train_folds.split(",")))
-        if args.train_folds is not None
-        else None
+        if args.train_folds is not None else None
     )
     valid_folds = (
         list(map(int, args.valid_folds.split(",")))
-        if args.valid_folds is not None
-        else None
+        if args.valid_folds is not None else None
     )
 
     df, df_train, df_valid, _ = parse_in_csvs(
