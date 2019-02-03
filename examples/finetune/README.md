@@ -39,6 +39,17 @@ catalyst-data tag2label \
     --in-dir=./data/ants_bees \
     --out-dataset=./data/ants_bees/dataset.csv \
     --out-labeling=./data/ants_bees/tag2cls.json
+
+python finetune/prepare_splits.py \
+    --in-csv=./data/ants_bees/dataset.csv \
+    --tag2class=./data/ants_bees/tag2cls.json \
+    --tag-column=tag \
+    --class-column=class \
+    --n-folds=5 \
+    --train-folds=0,1,2,3 \
+    --out-csv=./data/ants_bees/dataset_folds.csv \
+    --out-csv-train=./data/ants_bees/dataset_train.csv \
+    --out-csv-valid=./data/ants_bees/dataset_valid.csv
 ```
 
 And `pip install tensorflow` for visualization.

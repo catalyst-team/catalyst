@@ -1,0 +1,85 @@
+model_params:
+  fp16: false       # general flag
+  model: baseline
+  encoder_params:
+    arch: resnet18
+    pretrained: True
+    frozen: True
+    pooling: GlobalConcatPool2d
+  head_params:
+    hiddens: [1024]
+    emb_size: 64
+    n_cls: 2
+    activation_fn: ReLU
+    norm_fn: BatchNorm1d
+    bias: false
+    dropout: 0.5
+
+args:
+  workers: 4
+  expdir: "finetune"
+  baselogdir: "./logs/finetune"
+
+stages:
+
+  state_params:
+    main_metric: &reduce_metric precision01
+    minimize_metric: False
+
+  criterion_params:
+    criterion: CrossEntropyLoss
+
+  scheduler_params:
+    scheduler: MultiStepLR
+    milestones: [8]
+    gamma: 0.3
+
+  data_params:
+    in_csv_train: "./data/ants_bees/dataset_train.csv"
+    in_csv_valid: "./data/ants_bees/dataset_valid.csv"
+    datapath: "./data/ants_bees/"
+
+  callbacks_params:
+    loss:
+      callback: EmbeddingsLossCallback
+      emb_l2_reg: -1
+    optimizer:
+      callback: OptimizerCallback
+    precision:
+      callback: PrecisionCallback
+      precision_args: [1]
+    scheduler:
+      callback: SchedulerCallback
+      reduce_metric: *reduce_metric
+    saver:
+      callback: CheckpointCallback
+    logger:
+      callback: Logger
+    tflogger:
+      callback: TensorboardLogger
+
+  # train head
+  stage1:
+
+    args:
+      epochs: 10
+      batch_size: 64
+
+    optimizer_params:
+      optimizer: Adam
+      lr: 0.001
+      weight_decay: 0.0001
+
+  # tune whole network
+  stage2:
+
+    args:
+      epochs: 5
+      batch_size: 64
+
+    optimizer_params:
+      optimizer: SGD
+      lr: 0.0001
+
+    data_params:
+      reload_loaders: true

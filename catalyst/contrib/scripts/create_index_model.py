@@ -22,6 +22,9 @@ def build_args(parser):
     parser.add_argument("--out-pipeline", type=str, default=None)
     parser.add_argument("--out-knn", type=str, default=None)
 
+    parser.add_argument("--in-npy-test", type=str, default=None)
+    parser.add_argument("--out-npy-test", type=str, default=None)
+
     return parser
 
 
@@ -78,6 +81,11 @@ def main(args, _=None):
     print("")
     print("[==         Saving index         ==]")
     index.saveIndex(args.out_knn)
+
+    if args.in_npy_test is not None:
+        test_features = np.load(args.in_npy_test, mmap_mode="r")
+        test_features = pipeline.transform(test_features)
+        np.save(args.out_npy_test, test_features)
 
 
 if __name__ == "__main__":
