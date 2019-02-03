@@ -2,6 +2,8 @@ import os
 from typing import Dict
 import torch
 from catalyst.dl.utils import UtilsFactory
+from safitty import safe_get
+
 from .core import Callback
 from catalyst.dl.fp16 import Fp16Wrap, copy_params, copy_grads
 from .utils import get_optimizer_momentum, scheduler_step
@@ -89,8 +91,9 @@ class CheckpointCallback(LoggerCallback):
             is_best=is_best,
             is_last=True
         )
-        checkpoint_metric = checkpoint["valid_metrics"].get(main_metric, None)
-        checkpoint_metric = checkpoint_metric or checkpoint.get("epoch", -1)
+        checkpoint_metric = safe_get(checkpoint, "valid_metrics", main_metric) or \
+            safe_get(checkpoint, "epoch", default=-1)
+
         self.top_best_metrics.append((filepath, checkpoint_metric))
         self.top_best_metrics = sorted(
             self.top_best_metrics,
@@ -197,7 +200,7 @@ class OptimizerCallback(Callback):
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
         )
-        self.optimizer_wd = optimizer.param_groups[0].get("weight_decay", 0.0)
+        self.optimizer_wd = safe_get(optimizer.param_groups, 0, "weight_decay", default=0.0)
         optimizer.param_groups[0]["weight_decay"] = 0.0
 
     @staticmethod
@@ -243,7 +246,7 @@ class OptimizerCallback(Callback):
             scaled_loss = self.fp16_grad_scale * loss.float()
             scaled_loss.backward()
 
-            master_params = list(optimizer.param_groups[0]["params"])
+            master_params = safe_get(optimizer.param_groups, 0, "params")
             model_params = list(
                 filter(lambda p: p.requires_grad, model.parameters())
             )

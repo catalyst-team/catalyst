@@ -1,5 +1,7 @@
 import torch
 import torch.nn as nn
+from safitty import safe_get
+
 from catalyst.dl.callbacks import Callback
 from catalyst.dl.runner import BaseModelRunner
 from catalyst.contrib.models import ResnetEncoder, SequentialNet
@@ -46,14 +48,17 @@ def baseline(encoder_params, head_params):
 
 
 def prepare_logdir(config):
-    model_params = config["model_params"]
-    data_params = config["stages"]["data_params"]
-    return f"{data_params['train_folds']}" \
-           f"-{model_params['model']}" \
-           f"-{model_params['encoder_params']['arch']}" \
-           f"-{model_params['encoder_params']['pooling']}" \
-           f"-{model_params['head_params']['hiddens']}" \
-           f"-{model_params['head_params']['emb_size']}"
+    model = safe_get(config, "model_params", "model")
+    train_folds = safe_get(config, "stages", "data_params", "train_folds")
+
+    encoder_params = safe_get(config, "model_params", "encoder_params")
+    head_params = safe_get(config, "model_params", "head_params")
+    return f"{train_folds}" \
+           f"-{model}" \
+           f"-{safe_get(encoder_params, 'arch')}" \
+           f"-{safe_get(encoder_params, 'pooling')}" \
+           f"-{safe_get(head_params, 'hiddens')}" \
+           f"-{safe_get(head_params, 'emb_size')}"
 
 
 # ---- Callbacks ----

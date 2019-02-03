@@ -1,4 +1,5 @@
 import torch
+from safitty import safe_get
 
 
 def get_val_from_metric(metric_value):
@@ -43,18 +44,15 @@ def to_batch_metrics(*, state, metric_key, state_key=None):
 
 
 def get_optimizer_momentum(optimizer):
-    if isinstance(optimizer, torch.optim.Adam):
-        return list(optimizer.param_groups)[0]["betas"][0]
-    elif isinstance(optimizer, torch.optim.SGD):
-        return list(optimizer.param_groups)[0]["momentum"]
-    else:
-        return None
+    params = safe_get(optimizer.param_groups, 0)
+
+    return safe_get(params, "betas", 0) or safe_get(params, "momentum")
 
 
 def scheduler_step(scheduler, valid_metric=None):
     if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
         scheduler.step(valid_metric)
-        lr = list(scheduler.optimizer.param_groups)[0]["lr"]
+        lr = safe_get(scheduler.optimizer.param_groups, 0, "lr")
     else:
         scheduler.step()
         lr = scheduler.get_lr()[0]
