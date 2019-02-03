@@ -363,8 +363,7 @@ class BaseModelRunner:
     def batch2device(self, *, dct: Dict, state: RunnerState = None):
         if state is not None:
             dct = {
-                key: value.to(self.device)
-                if torch.is_tensor(value) else value
+                key: value.to(self.device) if torch.is_tensor(value) else value
                 for key, value in dct.items()
             }
         else:

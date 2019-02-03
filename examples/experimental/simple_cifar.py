@@ -16,14 +16,15 @@ from catalyst.dl.experiments.experiment import SimpleExperiment
 from catalyst.dl.experiments.runner import SupervisedModelRunner
 from catalyst.dl.state import RunnerState
 
-transforms = transforms.Compose([
-    transforms.ToTensor(),
-    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-])
+transforms = transforms.Compose(
+    [
+        transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    ]
+)
 
 
 class DictDatasetAdapter(Dataset):
-
     def __init__(self, dataset):
         self.dataset = dataset
 
@@ -38,10 +39,7 @@ class DictDatasetAdapter(Dataset):
 
 def get_loaders():
     train_set = torchvision.datasets.CIFAR10(
-        root='./data',
-        train=True,
-        download=True,
-        transform=transforms
+        root='./data', train=True, download=True, transform=transforms
     )
     train_loader = DataLoader(
         DictDatasetAdapter(train_set),
@@ -51,10 +49,7 @@ def get_loaders():
     )
 
     validation_set = torchvision.datasets.CIFAR10(
-        root='./data',
-        train=False,
-        download=True,
-        transform=transforms
+        root='./data', train=False, download=True, transform=transforms
     )
 
     validation_loader = DataLoader(
@@ -64,10 +59,7 @@ def get_loaders():
         num_workers=3
     )
 
-    return OrderedDict(
-        train=train_loader,
-        valid=validation_loader
-    )
+    return OrderedDict(train=train_loader, valid=validation_loader)
 
 
 class SimpleNet(nn.Module):

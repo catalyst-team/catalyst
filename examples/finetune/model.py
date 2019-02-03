@@ -83,7 +83,9 @@ class EmbeddingsLossCallback(Callback):
 class ModelRunner(BaseExperimentRunner):
     @staticmethod
     def prepare_stage_model(*, model, stage, **kwargs):
-        BaseExperimentRunner.prepare_stage_model(model=model, stage=stage, **kwargs)
+        BaseExperimentRunner.prepare_stage_model(
+            model=model, stage=stage, **kwargs
+        )
         model_ = model
         if isinstance(model, torch.nn.DataParallel):
             model_ = model_.module
