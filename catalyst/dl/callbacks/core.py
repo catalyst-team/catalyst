@@ -19,18 +19,6 @@ class Callback:
     mode end
     """
 
-    def on_train_start(self, state):
-        pass
-
-    def on_train_end(self, state):
-        pass
-
-    def on_infer_start(self, state):
-        pass
-
-    def on_infer_end(self, state):
-        pass
-
     def on_epoch_start(self, state):
         pass
 
@@ -48,6 +36,19 @@ class Callback:
 
     def on_batch_end(self, state):
         pass
+
+    def on_stage_start(self, state):
+        pass
+
+    def on_stage_end(self, state):
+        pass
+
+    def on_mode_start(self, state):
+        pass
+
+    def on_mode_end(self, state):
+        pass
+
 
 
 class CallbackCompose:

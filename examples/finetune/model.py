@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from catalyst.dl.callbacks import Callback
-from catalyst.dl.runner import BaseModelRunner
+from catalyst.dl.runner import BaseExperimentRunner
 from catalyst.contrib.models import ResnetEncoder, SequentialNet
 from catalyst.contrib.registry import Registry
 
@@ -80,10 +80,10 @@ class EmbeddingsLossCallback(Callback):
 # ---- Runner ----
 
 
-class ModelRunner(BaseModelRunner):
+class ModelRunner(BaseExperimentRunner):
     @staticmethod
     def prepare_stage_model(*, model, stage, **kwargs):
-        BaseModelRunner.prepare_stage_model(model=model, stage=stage, **kwargs)
+        BaseExperimentRunner.prepare_stage_model(model=model, stage=stage, **kwargs)
         model_ = model
         if isinstance(model, torch.nn.DataParallel):
             model_ = model_.module

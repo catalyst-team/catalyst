@@ -6,6 +6,10 @@ from catalyst.dl.callbacks.utils import get_val_from_metric, \
 from catalyst.utils.misc import FrozenClass
 
 
+# TODO Deep refactoring
+#  - move metric management to separate class
+#  - Remove unused method and params
+#  - lr/loss/momentum bypass
 class RunnerState(FrozenClass):
     """
     An object that is used to pass internal state during train/valid/infer.
@@ -24,6 +28,8 @@ class RunnerState(FrozenClass):
         minimize_metric=True,
         valid_loader="valid",
         reset_step=False,
+        mode="infer",
+        total_epochs=1,
         **kwargs
     ):
         self.model = model
@@ -33,9 +39,9 @@ class RunnerState(FrozenClass):
 
         # special info
         self.stage = stage
-        self.mode = "infer"
+        self.mode = mode
         self.device = device
-        self.loader_mode = None
+        self.loader_name = None
         self.reset_step = reset_step
 
         self.main_metric = main_metric
@@ -53,6 +59,7 @@ class RunnerState(FrozenClass):
         self.step = 0
         self.epoch = 0
         self.is_best_epoch = False
+        self.total_epochs = total_epochs
 
         # metrics
         self.lr = None  # defaultdict(lambda: 0)
@@ -94,118 +101,74 @@ class RunnerState(FrozenClass):
     def on_stage_init_post(model, stage):
         pass
 
-    @staticmethod
-    def on_train_start_pre(state):
+    def on_epoch_start_pre(self):
         pass
 
-    @staticmethod
-    def on_train_start_post(state):
+    def on_epoch_start_post(self):
         pass
 
-    @staticmethod
-    def on_train_end_pre(state):
-        pass
-
-    @staticmethod
-    def on_train_end_post(state):
-        pass
-
-    @staticmethod
-    def on_infer_start_pre(state):
-        pass
-
-    @staticmethod
-    def on_infer_start_post(state):
-        pass
-
-    @staticmethod
-    def on_infer_end_pre(state):
-        pass
-
-    @staticmethod
-    def on_infer_end_post(state):
-        pass
-
-    @staticmethod
-    def on_epoch_start_pre(state):
-        pass
-
-    @staticmethod
-    def on_epoch_start_post(state):
-        pass
-
-    @staticmethod
-    def on_epoch_end_pre(state):
-        if state.mode == "infer":
+    def on_epoch_end_pre(self):
+        if self.mode == "infer":
             return
 
         best_metrics, valid_metrics, is_best = \
             process_epoch_metrics(
-                state.epoch_metrics,
-                state.best_metrics,
-                valid_loader=state.valid_loader,
-                main_metric=state.main_metric,
-                minimize=state.minimize_metric)
+                self.epoch_metrics,
+                self.best_metrics,
+                valid_loader=self.valid_loader,
+                main_metric=self.main_metric,
+                minimize=self.minimize_metric)
         valid_metrics = {
             key: value
             for key, value in valid_metrics.items()
             if isinstance(value, float)
         }
-        state.best_metrics = {
+        self.best_metrics = {
             key: value
             for key, value in best_metrics.items() if isinstance(value, float)
         }
-        state.valid_metrics = valid_metrics
-        state.is_best_epoch = is_best
+        self.valid_metrics = valid_metrics
+        self.is_best_epoch = is_best
 
-    @staticmethod
-    def on_epoch_end_post(state):
-        state.epoch_metrics = defaultdict(
+    def on_epoch_end_post(self):
+        self.epoch_metrics = defaultdict(
             lambda: defaultdict(lambda: meter.AverageValueMeter())
         )
 
-    @staticmethod
-    def on_loader_start_pre(state):
+    def on_loader_start_pre(self):
         pass
 
-    @staticmethod
-    def on_loader_start_post(state):
-        state._datatime = time.time()
+    def on_loader_start_post(self):
+        self._datatime = time.time()
 
-    @staticmethod
-    def on_loader_end_pre(state):
-        lm = state.loader_mode
-        state.epoch_metrics[lm] = {
+    def on_loader_end_pre(self):
+        lm = self.loader_name
+        self.epoch_metrics[lm] = {
             key: get_val_from_metric(value)
-            for key, value in state.epoch_metrics[lm].items()
+            for key, value in self.epoch_metrics[lm].items()
         }
 
-    @staticmethod
-    def on_loader_end_post(state):
-        if state.reset_step:
-            state.step = None
+    def on_loader_end_post(self):
+        if self.reset_step:
+            self.step = None
 
-    @staticmethod
-    def on_batch_start_pre(state):
-        state.batch_metrics = defaultdict(lambda: 0)
-        state.batch_metrics["base/data_time"] = time.time() - state._datatime
+    def on_batch_start_pre(self):
+        self.batch_metrics = defaultdict(lambda: 0)
+        self.batch_metrics["base/data_time"] = time.time() - self._datatime
 
-    @staticmethod
-    def on_batch_start_post(state):
+    def on_batch_start_post(self):
         pass
 
-    @staticmethod
-    def on_batch_end_pre(state):
-        elapsed_time = time.time() - state._datatime
+    def on_batch_end_pre(self):
+        elapsed_time = time.time() - self._datatime
 
-        state.batch_metrics["base/batch_time"] = elapsed_time
-        state.batch_metrics["base/sample_per_second"] = \
-            state.batch_size / elapsed_time
+        self.batch_metrics["base/batch_time"] = elapsed_time
+        self.batch_metrics["base/sample_per_second"] = \
+            self.batch_size / elapsed_time
 
-    @staticmethod
-    def on_batch_end_post(state):
-        lm = state.loader_mode
-        for key, value in state.batch_metrics.items():
-            state.epoch_metrics[lm][key].add(value)
-        state.step += state.batch_size
-        state._datatime = time.time()
+    def on_batch_end_post(self):
+        lm = self.loader_name
+        for key, value in self.batch_metrics.items():
+            self.epoch_metrics[lm][key].add(value)
+        self.step += self.batch_size
+        self._datatime = time.time()
