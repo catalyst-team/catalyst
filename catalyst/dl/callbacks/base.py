@@ -91,8 +91,10 @@ class CheckpointCallback(LoggerCallback):
             is_best=is_best,
             is_last=True
         )
-        checkpoint_metric = safe_get(checkpoint, "valid_metrics", main_metric) or \
-            safe_get(checkpoint, "epoch", default=-1)
+        checkpoint_metric = safe_get(checkpoint, "valid_metrics", main_metric)
+        checkpoint_metric = checkpoint_metric or safe_get(
+            checkpoint, "epoch", default=-1
+        )
 
         self.top_best_metrics.append((filepath, checkpoint_metric))
         self.top_best_metrics = sorted(
@@ -175,9 +177,7 @@ class OptimizerCallback(Callback):
         from catalyst.contrib.registry import Registry
 
         grad_clip_params = grad_clip_params or {}
-        self.grad_clip_fn = Registry.get_grad_clip_fn(
-            **grad_clip_params
-        )
+        self.grad_clip_fn = Registry.get_grad_clip_fn(**grad_clip_params)
         self.fp16 = False
         self.fp16_grad_scale = fp16_grad_scale
         self.accumulation_steps = accumulation_steps
@@ -200,7 +200,9 @@ class OptimizerCallback(Callback):
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
         )
-        self.optimizer_wd = safe_get(optimizer.param_groups, 0, "weight_decay", default=0.0)
+        self.optimizer_wd = safe_get(
+            optimizer.param_groups, 0, "weight_decay", default=0.0
+        )
         optimizer.param_groups[0]["weight_decay"] = 0.0
 
     @staticmethod
