@@ -1,0 +1,16 @@
+data_params:
+  in_csv: null
+  tag2class: null
+  in_csv_infer: "./data/ants_bees/dataset_train.csv"
+  in_csv_valid: "./data/ants_bees/dataset_valid.csv"
+  datapath: "./data/ants_bees/"
+
+args:
+  batch_size: 64
+
+stages: null
+callbacks_params:
+  loader:
+    callback: CheckpointCallback
+  infer:
+    callback: InferCallback
