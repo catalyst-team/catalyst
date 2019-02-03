@@ -7,7 +7,29 @@ from catalyst.dl.fp16 import Fp16Wrap, copy_params, copy_grads
 from .utils import get_optimizer_momentum, scheduler_step
 
 
-class CheckpointCallback(Callback):
+class LoggerCallback(Callback):
+    """
+    Base class for anything that needs logdir to be specified in 'train' mode.
+    """
+
+    def __init__(self, logdir: str = None):
+        """
+        Args:
+            logdir: directory where logs will be created
+                If directory doesn't exists it will be created
+                If None, RunnerState.logdir will be used
+        """
+        self.logdir = logdir
+
+    def on_train_start(self, state):
+        assert self.logdir or state.logdir, \
+            "Please, specify logdir for callback usage"
+        if self.logdir is None:
+            self.logdir = state.logdir
+        os.makedirs(self.logdir, exist_ok=True)
+
+
+class CheckpointCallback(LoggerCallback):
     """
     Checkpoint callback to save/restore your model/criterion/optimizer/metrics.
     """
@@ -20,7 +42,7 @@ class CheckpointCallback(Callback):
         :param save_n_best: number of best checkpoint to keep
         :param resume: path to checkpoint to load and initialize runner state
         """
-        self.logdir = logdir
+        super().__init__(logdir)
         self.save_n_best = save_n_best
         self.resume = resume
         self.top_best_metrics = []
@@ -88,8 +110,7 @@ class CheckpointCallback(Callback):
             self.load_checkpoint(filename=self.resume, state=state)
 
     def on_train_start(self, state):
-        assert self.logdir is not None, \
-            "Please, specify logdir for callback usage"
+        super().on_train_start(state)
         return self.on_mode_start(state=state)
 
     def on_infer_start(self, state):

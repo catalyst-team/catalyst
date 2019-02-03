@@ -106,7 +106,8 @@ class BaseModelRunner:
         epochs: int = 1,
         start_epoch: int = 0,
         mode: str = "train",
-        verbose: bool = False
+        verbose: bool = False,
+        logdir: str = None
     ):
         """
         Main method for running train/valid/infer/debug pipeline over model.
@@ -123,7 +124,9 @@ class BaseModelRunner:
         assert isinstance(callbacks, OrderedDict)
 
         state_params = state_params or {}
-        state = self._init_state(mode=mode, stage=self.stage, **state_params)
+        state = self._init_state(
+            mode=mode, stage=self.stage, logdir=logdir, **state_params
+        )
         state.mode = mode
         self.state = state
 
@@ -202,11 +205,6 @@ class BaseModelRunner:
         :param verbose: verbose flag
         :param logdir: logdir for tensorboard logs
         """
-        # @TODO: remove hack
-        if logdir is not None:
-            for key, value in callbacks.items():
-                if hasattr(value, "logdir"):
-                    value.logdir = logdir
         self.run(
             loaders=loaders,
             callbacks=callbacks,
@@ -214,7 +212,8 @@ class BaseModelRunner:
             epochs=epochs,
             start_epoch=start_epoch,
             mode="train",
-            verbose=verbose
+            verbose=verbose,
+            logdir=logdir,
         )
 
     @staticmethod
