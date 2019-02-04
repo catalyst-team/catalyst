@@ -116,54 +116,64 @@ class LamaPooling(nn.Module):
 
 
 class StateNet(nn.Module):
-    def __init__(self, observation_net, head_net, policy_net, memory_net=None):
+    def __init__(
+        self,
+        main_net,
+        head_net,
+        observation_net=None,
+        aggregation_net=None,
+        policy_net=None,
+    ):
         super().__init__()
         self.observation_net = observation_net
-        self.memory_net = memory_net
+        self.main_net = main_net
+        self.aggregation_net = aggregation_net
         self.head_net = head_net
         self.policy_net = policy_net
 
         self.out_features = get_out_features(head_net)
 
         self._forward_fn = None
-        if isinstance(memory_net, LamaPooling):
-            self._forward_fn = self._forward_lama
-        elif isinstance(memory_net, nn.LSTM):
-            raise NotImplementedError
-            self._forward_fn = self._forward_rnn
-        else:
+        if aggregation_net is None:
             self._forward_fn = self._forward_ff
+        elif isinstance(aggregation_net, LamaPooling):
+            self._forward_fn = self._forward_lama
+        else:
+            raise NotImplementedError
 
         self._policy_fn = None
-        if isinstance(policy_net, GaussPolicy):
+        if policy_net is None:
+            self._policy_fn = lambda *args: args[0]
+        elif isinstance(policy_net, GaussPolicy):
             self._policy_fn = self.policy_net.forward
         elif isinstance(policy_net, RealNVPPolicy):
             self._policy_fn = self.policy_net.forward
         else:
-            self._policy_fn = lambda *args: args[0]
+            raise NotImplementedError
 
     def _forward_ff(self, observation):
         x = observation.view(observation.shape[0], -1)
-        x = self.observation_net(x)
+        if self.observation_net is not None:
+            x = self.observation_net(x)
+
+        x = self.main_net(x)
         x = self.head_net(x)
         return x
-
-    def _forward_rnn(self, observation, hidden_state):
-        # @TODO
-        raise NotImplementedError
-        action, hidden_state = None, None
-        return action, hidden_state
 
     def _forward_lama(self, observation):
         x = observation
         if len(x.shape) < 3:
             x = x.unsqueeze(1)
-        batch_size, history_len, feature_size = x.shape
-        x = x.view(-1, feature_size)
-        x = self.observation_net(x)
 
-        x = x.view(batch_size, history_len, -1)
-        x = self.memory_net(x)
+        if self.observation_net is not None:
+            batch_size, history_len, feature_size = x.shape
+            x = x.view(-1, feature_size)
+            x = self.observation_net(x)
+            x = x.view(batch_size, history_len, -1)
+            x = self.aggregation_net(x)
+
+        x = x
+        x = self.main_net(x)
         x = self.head_net(x)
         return x
 
@@ -175,25 +185,29 @@ class StateNet(nn.Module):
 
 class StateActionNet(nn.Module):
     def __init__(
-        self, observation_net, action_net, bone_net, head_net, memory_net=None
+        self,
+        main_net,
+        head_net,
+        observation_net=None,
+        action_net=None,
+        aggregation_net=None
     ):
         super().__init__()
         self.observation_net = observation_net
         self.action_net = action_net
-        self.memory_net = memory_net
-        self.bone_net = bone_net
+        self.aggregation_net = aggregation_net
+        self.main_net = main_net
         self.head_net = head_net
 
         self.out_features = get_out_features(head_net)
 
         self._forward_fn = None
-        if isinstance(memory_net, LamaPooling):
-            self._forward_fn = self._forward_lama
-        elif isinstance(memory_net, nn.LSTM):
-            raise NotImplementedError
-            self._forward_fn = self._forward_rnn
-        else:
+        if aggregation_net is None:
             self._forward_fn = self._forward_ff
+        elif isinstance(aggregation_net, LamaPooling):
+            self._forward_fn = self._forward_lama
+        else:
+            raise NotImplementedError
 
     def _forward_ff(self, observation, action):
         obs_ = observation.view(observation.shape[0], -1)
@@ -205,32 +219,29 @@ class StateActionNet(nn.Module):
             act_ = self.action_net(act_)
 
         x = torch.cat((obs_, act_), dim=1)
-        x = self.bone_net(x)
+        x = self.main_net(x)
         x = self.head_net(x)
         return x
 
-    def _forward_rnn(self, observation, action, hidden_state):
-        # @TODO
-        raise NotImplementedError
-        action, hidden_state = None, None
-        return action, hidden_state
-
     def _forward_lama(self, observation, action):
-        x = observation
-        if len(x.shape) < 3:
-            x = x.unsqueeze(1)
-        batch_size, history_len, feature_size = x.shape
-        x = x.view(-1, feature_size)
-        x = self.observation_net(x)
+        obs_ = observation
+        if len(obs_.shape) < 3:
+            obs_ = obs_.unsqueeze(1)
 
-        x = x.view(batch_size, history_len, -1)
-        observation_ = self.memory_net(x)
+        if self.observation_net is not None:
+            batch_size, history_len, feature_size = obs_.shape
+            obs_ = obs_.view(-1, feature_size)
+            obs_ = self.observation_net(obs_)
+            obs_ = obs_.view(batch_size, history_len, -1)
+            obs_ = self.aggregation_net(obs_)
 
         # @TODO: add option to collapse observations based on action
-        x = action.view(action.shape[0], -1)
-        action_ = self.action_net(x)
+        act_ = action.view(action.shape[0], -1)
+        if self.action_net is not None:
+            act_ = self.action_net(act_)
 
-        x = torch.cat((observation_, action_), dim=1)
+        x = torch.cat((obs_, act_), dim=1)
+        x = self.main_net(x)
         x = self.head_net(x)
         return x
 

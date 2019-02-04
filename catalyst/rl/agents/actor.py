@@ -18,8 +18,9 @@ class Actor(StateNet):
         cls,
         state_shape,
         action_size,
-        hiddens,
-        layer_fn,
+        observation_hiddens=None,
+        head_hiddens=None,
+        layer_fn=nn.Linear,
         activation_fn=nn.ReLU,
         dropout=None,
         norm_fn=None,
@@ -27,7 +28,7 @@ class Actor(StateNet):
         layer_order=None,
         residual=False,
         out_activation=None,
-        memory_type=None,
+        history_aggregation_type=None,
         lama_poolings=None,
         policy_type=None,
         squashing_fn=nn.Tanh,
@@ -37,10 +38,14 @@ class Actor(StateNet):
         # hack to prevent cycle imports
         from catalyst.contrib.registry import Registry
 
+        observation_hiddens = observation_hiddens or []
+        head_hiddens = head_hiddens or []
+
         layer_fn = Registry.name2nn(layer_fn)
         activation_fn = Registry.name2nn(activation_fn)
         norm_fn = Registry.name2nn(norm_fn)
         out_activation = Registry.name2nn(out_activation)
+        inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
 
         if isinstance(state_shape, int):
             state_shape = (state_shape, )
@@ -48,39 +53,60 @@ class Actor(StateNet):
         if len(state_shape) in [1, 2]:
             # linear case: one observation or several one
             # state_shape like [history_len, obs_shape]
-            # @TODO: handle lama correctly
-            if not memory_type:
+            # @TODO: handle lama/rnn correctly
+            if not history_aggregation_type:
                 state_size = reduce(lambda x, y: x * y, state_shape)
             else:
                 state_size = reduce(lambda x, y: x * y, state_shape[1:])
 
-            observation_net = SequentialNet(
-                hiddens=[state_size] + hiddens,
-                layer_fn=layer_fn,
-                dropout=dropout,
-                activation_fn=activation_fn,
-                norm_fn=norm_fn,
-                bias=bias,
-                layer_order=layer_order,
-                residual=residual
-            )
+            if len(observation_hiddens) > 0:
+                observation_net = SequentialNet(
+                    hiddens=[state_size] + observation_hiddens,
+                    layer_fn=layer_fn,
+                    dropout=dropout,
+                    activation_fn=activation_fn,
+                    norm_fn=norm_fn,
+                    bias=bias,
+                    layer_order=layer_order,
+                    residual=residual
+                )
+                observation_net.apply(inner_init)
+                obs_out = observation_hiddens[-1]
+            else:
+                observation_net = None
+                obs_out = state_size
+
         elif len(state_shape) in [3, 4]:
             # cnn case: one image or several one @TODO
             raise NotImplementedError
         else:
             raise NotImplementedError
 
-        if memory_type == "lama":
-            memory_net = LamaPooling(
-                features_in=hiddens[-1],
+        assert obs_out
+
+        if history_aggregation_type == "lama_obs":
+            aggregation_net = LamaPooling(
+                features_in=obs_out,
                 poolings=lama_poolings
             )
-            memory_out = memory_net.features_out
-        elif memory_type == "rnn":
-            raise NotImplementedError
+            aggregation_out = aggregation_net.features_out
         else:
-            memory_net = None
-            memory_out = hiddens[-1]
+            aggregation_net = None
+            aggregation_out = obs_out
+
+        main_net = SequentialNet(
+            hiddens=[aggregation_out] + head_hiddens,
+            layer_fn=layer_fn,
+            dropout=dropout,
+            activation_fn=activation_fn,
+            norm_fn=norm_fn,
+            bias=bias,
+            layer_order=layer_order,
+            residual=residual
+        )
+        main_net.apply(inner_init)
+
+        # @TODO: place for memory network
 
         if policy_type == "gauss":
             head_size = action_size * 2
@@ -100,20 +126,18 @@ class Actor(StateNet):
             policy_net = None
 
         head_net = SequentialNet(
-            hiddens=[memory_out, head_size],
+            hiddens=[head_hiddens[-1], head_size],
             layer_fn=nn.Linear,
             activation_fn=out_activation,
             norm_fn=None,
             bias=True
         )
-
-        inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
-        observation_net.apply(inner_init)
         head_net.apply(outer_init)
 
         actor_net = cls(
             observation_net=observation_net,
-            memory_net=memory_net,
+            aggregation_net=aggregation_net,
+            main_net=main_net,
             head_net=head_net,
             policy_net=policy_net
         )
