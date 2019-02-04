@@ -94,6 +94,7 @@ class Actor(StateNet):
         main_net = SequentialNet(
             hiddens=[aggregation_out] + head_hiddens,
             layer_fn=layer_fn,
+            dropout=dropout,
             activation_fn=activation_fn,
             norm_fn=norm_fn,
             bias=bias,

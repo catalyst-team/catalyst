@@ -30,13 +30,12 @@ env:
 
 actor:
   agent: Actor
-  hiddens: [8, 8, 8]
+  head_hiddens: [8, 8, 8]
   layer_fn: Linear
   bias: false
   norm_fn: LayerNorm
   activation_fn: ReLU
   out_activation: Tanh
-  memory_type: null
 
 critic:
   agent: Critic
@@ -47,7 +46,6 @@ critic:
   bias: false
   norm_fn: LayerNorm
   activation_fn: ReLU
-  memory_type: null
 
 algorithm:
   actor_tau: 0.01

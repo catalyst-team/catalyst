@@ -108,6 +108,7 @@ class Critic(StateActionNet):
         main_net = SequentialNet(
             hiddens=[aggregation_out] + head_hiddens[:-1],
             layer_fn=layer_fn,
+            dropout=dropout,
             activation_fn=activation_fn,
             norm_fn=norm_fn,
             bias=bias,
@@ -220,6 +221,7 @@ class ValueCritic(StateNet):
         main_net = SequentialNet(
             hiddens=[aggregation_out] + head_hiddens[:-1],
             layer_fn=layer_fn,
+            dropout=dropout,
             activation_fn=activation_fn,
             norm_fn=norm_fn,
             bias=bias,
