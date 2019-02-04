@@ -18,9 +18,9 @@ class Actor(StateNet):
         cls,
         state_shape,
         action_size,
-        observation_hiddens,
-        head_hiddens,
-        layer_fn,
+        observation_hiddens=None,
+        head_hiddens=None,
+        layer_fn=nn.Linear,
         activation_fn=nn.ReLU,
         dropout=None,
         norm_fn=None,
@@ -37,6 +37,9 @@ class Actor(StateNet):
         assert len(kwargs) == 0
         # hack to prevent cycle imports
         from catalyst.contrib.registry import Registry
+
+        observation_hiddens = observation_hiddens or []
+        head_hiddens = head_hiddens or []
 
         layer_fn = Registry.name2nn(layer_fn)
         activation_fn = Registry.name2nn(activation_fn)
