@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import atexit
 import argparse
 from pprint import pprint
 from redis import StrictRedis
@@ -60,6 +61,12 @@ def main(args, unknown_args):
         redis_prefix=redis_prefix)
 
     pprint(trainer)
+
+    def on_exit():
+        for p in trainer.get_processes():
+            p.terminate()
+
+    atexit.register(on_exit)
 
     trainer.run()
 
