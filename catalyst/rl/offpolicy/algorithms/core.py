@@ -211,13 +211,13 @@ class Algorithm:
 
         actor_state_shape = (
             config_["shared"]["history_len"],
-            config_["shared"]["state_size"],
+            config_["shared"]["observation_size"],
         )
         actor_action_size = config_["shared"]["action_size"]
         n_step = config_["shared"]["n_step"]
         gamma = config_["shared"]["gamma"]
         history_len = config_["shared"]["history_len"]
-        trainer_state_shape = (config_["shared"]["state_size"], )
+        trainer_state_shape = (config_["shared"]["observation_size"], )
         trainer_action_shape = (config_["shared"]["action_size"], )
 
         actor_fn = config_["actor"].pop("agent", None)
@@ -264,7 +264,7 @@ class Algorithm:
 
         actor_state_shape = (
             config_["shared"]["history_len"],
-            config_["shared"]["state_size"],
+            config_["shared"]["observation_size"],
         )
         actor_action_size = config_["shared"]["action_size"]
 

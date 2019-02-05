@@ -28,7 +28,7 @@ class Actor(StateNet):
         layer_order=None,
         residual=False,
         out_activation=None,
-        history_aggregation_type=None,
+        observation_aggregation=None,
         lama_poolings=None,
         policy_type=None,
         squashing_fn=nn.Tanh,
@@ -54,14 +54,14 @@ class Actor(StateNet):
             # linear case: one observation or several one
             # state_shape like [history_len, obs_shape]
             # @TODO: handle lama/rnn correctly
-            if not history_aggregation_type:
-                state_size = reduce(lambda x, y: x * y, state_shape)
+            if not observation_aggregation:
+                observation_size = reduce(lambda x, y: x * y, state_shape)
             else:
-                state_size = reduce(lambda x, y: x * y, state_shape[1:])
+                observation_size = reduce(lambda x, y: x * y, state_shape[1:])
 
             if len(observation_hiddens) > 0:
                 observation_net = SequentialNet(
-                    hiddens=[state_size] + observation_hiddens,
+                    hiddens=[observation_size] + observation_hiddens,
                     layer_fn=layer_fn,
                     dropout=dropout,
                     activation_fn=activation_fn,
@@ -74,7 +74,7 @@ class Actor(StateNet):
                 obs_out = observation_hiddens[-1]
             else:
                 observation_net = None
-                obs_out = state_size
+                obs_out = observation_size
 
         elif len(state_shape) in [3, 4]:
             # cnn case: one image or several one @TODO
@@ -84,7 +84,7 @@ class Actor(StateNet):
 
         assert obs_out
 
-        if history_aggregation_type == "lama_obs":
+        if observation_aggregation == "lama_obs":
             aggregation_net = LamaPooling(
                 features_in=obs_out,
                 poolings=lama_poolings

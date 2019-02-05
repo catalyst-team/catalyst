@@ -1,5 +1,5 @@
 shared:
-  state_size: 8
+  observation_size: 8
   action_size: &action_size 2
   history_len: 3
 
