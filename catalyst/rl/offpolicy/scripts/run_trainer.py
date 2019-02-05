@@ -22,6 +22,7 @@ def build_args(parser):
     parser.add_argument("--config", type=str, required=True)
     parser.add_argument("--expdir", type=str, default=None)
     parser.add_argument("--algorithm", type=str, default=None)
+    parser.add_argument("--environment", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
 
     return parser
@@ -45,6 +46,14 @@ def main(args, unknown_args):
             dump_dir=args.logdir)
 
     algorithm = Registry.get_fn("algorithm", args.algorithm)
+    if args.environment is not None:
+        # @TODO: remove this hack
+        # come on, just refactor whole rl
+        environment_fn = Registry.get_fn("environment", args.environment)
+        env = environment_fn(**config["env"])
+        config["shared"]["observation_size"] = env.observation_shape[0]
+        config["shared"]["action_size"] = env.action_shape[0]
+        del env
     algorithm_kwargs = algorithm.prepare_for_trainer(config)
 
     redis_server = StrictRedis(port=config.get("redis", {}).get("port", 12000))
