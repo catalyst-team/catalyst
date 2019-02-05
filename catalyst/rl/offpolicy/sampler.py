@@ -92,7 +92,10 @@ class SamplerBuffer:
 
     def get_state(self, history_len=1, pointer=None):
         pointer = pointer or self.pointer
-        state = np.zeros((history_len, ) + self.observation_shape, dtype=np.float32)
+        state = np.zeros(
+            (history_len, ) + self.observation_shape,
+            dtype=np.float32
+        )
         indices = np.arange(max(0, pointer - history_len + 1), pointer + 1)
         state[-len(indices):] = self.observations[indices]
         return state
