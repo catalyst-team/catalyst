@@ -49,6 +49,9 @@ class Algorithm:
         self.actor_optimizer_params = actor_optimizer_params
         self.critic_optimizer_params = critic_optimizer_params
 
+        actor_scheduler_params = actor_scheduler_params or {}
+        critic_scheduler_params = critic_scheduler_params or {}
+
         self.actor_scheduler = Registry.get_scheduler(
             self.actor_optimizer, **actor_scheduler_params
         )

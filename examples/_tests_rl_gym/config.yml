@@ -61,15 +61,6 @@ algorithm:
     func: clip_grad_value_
     clip_value: 1.0
 
-  actor_scheduler_params:
-    scheduler: MultiStepLR
-    milestones: [2000000]  # batches
-    gamma: 1.0
-  critic_scheduler_params:
-    scheduler: MultiStepLR
-    milestones: [2000000]  # batches
-    gamma: 1.0
-
   critic_loss_params:
     criterion: HuberLoss
     clip_delta: 1.0
