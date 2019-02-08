@@ -38,7 +38,9 @@ while (( "$#" )); do
   esac
 done
 
-N_CLASS=$(find "${DATAPATH_RAW}" -type d |  wc -l | awk '{print $1}')
+N_CLASS=$(find "${DATAPATH_PROCESSED}" -type d -maxdepth 1 | wc -l | awk '{print $1}')
+N_CLASS="$(($N_CLASS-1))"
+echo "NUM OF CLASSES: $N_CLASS"
 
 catalyst-data tag2label \
     --in-dir="${DATAPATH_RAW}" \
