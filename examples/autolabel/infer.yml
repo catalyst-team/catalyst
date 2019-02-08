@@ -1,0 +1,15 @@
+data_params:
+  in_csv: null
+  tag2class: null
+  in_csv_infer: "@TODO:change_me"
+  datapath: "@TODO:change_me"
+
+args:
+  batch_size: 256
+
+stages: null
+callbacks_params:
+  loader:
+    callback: CheckpointCallback
+  infer:
+    callback: InferCallback

@@ -1,0 +1,89 @@
+model_params:
+  fp16: false       # general flag
+  model: baseline
+  encoder_params:
+    arch: resnet18
+    pretrained: True
+    frozen: True
+    pooling: GlobalConcatPool2d
+  head_params:
+    hiddens: [1024]
+    emb_size: 256
+    n_cls: 2
+    activation_fn: ReLU
+    norm_fn: BatchNorm1d
+    bias: false
+    dropout: 0.5
+
+args:
+  workers: 4
+  expdir: "finetune"
+  baselogdir: "./logs/autolabel"
+
+stages:
+
+  state_params:
+    main_metric: &reduce_metric precision01
+    minimize_metric: False
+
+  criterion_params:
+    criterion: CrossEntropyLoss
+
+  scheduler_params:
+    scheduler: MultiStepLR
+    milestones: [8, 14]
+    gamma: 0.3
+
+  data_params:
+    datapath: "@TODO:change_me"
+    in_csv: "@TODO:change_me"
+    tag2class: "@TODO:change_me"
+    tag_column: "tag"
+    class_column: "class"
+    n_folds: 5
+    train_folds: [0, 1, 2, 3]
+
+  callbacks_params:
+    loss:
+      callback: EmbeddingsLossCallback
+      emb_l2_reg: -1
+    optimizer:
+      callback: OptimizerCallback
+    precision:
+      callback: PrecisionCallback
+      precision_args: [1]
+    scheduler:
+      callback: SchedulerCallback
+      reduce_metric: *reduce_metric
+    saver:
+      callback: CheckpointCallback
+    logger:
+      callback: Logger
+    tflogger:
+      callback: TensorboardLogger
+
+  # train head
+  stage1:
+
+    args:
+      epochs: 16
+      batch_size: 256
+
+    optimizer_params:
+      optimizer: Adam
+      lr: 0.001
+      weight_decay: 0.0001
+
+  # tune whole network
+  stage2:
+
+    args:
+      epochs: 4
+      batch_size: 256
+
+    optimizer_params:
+      optimizer: SGD
+      lr: 0.0001
+
+    data_params:
+      reload_loaders: true
