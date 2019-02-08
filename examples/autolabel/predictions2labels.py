@@ -48,7 +48,7 @@ def main(args, _=None):
 
     with open(args.in_tag2cls) as fin:
         tag2lbl = json.load(fin)
-        cls2tag = {int(v):k for k, v in tag2lbl.items()}
+        cls2tag = {int(v): k for k, v in tag2lbl.items()}
 
     preds = [cls2tag[x] for x in preds]
     df_infer["tag"] = preds
