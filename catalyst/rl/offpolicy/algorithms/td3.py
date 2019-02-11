@@ -248,8 +248,10 @@ class TD3(Algorithm):
                 key2 = f"{key}_{key2}"
                 value2 = getattr(self, key2, None)
                 if value2 is not None:
-                    value2_i = value2[i].state_dict()
-                    checkpoint[f"{key2}{i}_state_dict"] = value2_i
+                    value2_i = value2[i]
+                    if value2_i is not None:
+                        value2_i = value2_i.state_dict()
+                        checkpoint[f"{key2}{i}_state_dict"] = value2_i
 
         return checkpoint
 
