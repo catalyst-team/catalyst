@@ -12,7 +12,7 @@ from tqdm import tqdm
 from catalyst.dl.callbacks import \
     LossCallback, OptimizerCallback, Callback, \
     SchedulerCallback, TensorboardLogger, Logger
-from catalyst.dl.experiments.experiment import SimpleExperiment
+from catalyst.dl.experiments.experiment import BaseExperiment
 from catalyst.dl.experiments.runner import SupervisedModelRunner
 from catalyst.dl.state import RunnerState
 
@@ -98,7 +98,7 @@ class VerboseCallback(Callback):
 
 
 model = SimpleNet()
-exp = SimpleExperiment(
+exp = BaseExperiment(
     './logs/01',
     model=model,
     epochs=5,
