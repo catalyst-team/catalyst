@@ -50,8 +50,13 @@ def save_config(config, logdir: str) -> None:
 def parse_config_args(*, config, args, unknown_args):
     for arg in unknown_args:
         arg_name, value = arg.split("=")
-        arg_name = arg_name[2:]
-        value_content, value_type = value.rsplit(":", 1)
+        arg_name = arg_name.lstrip("-").strip('/')
+
+        content = value.rsplit(":", 1)
+        if len(content) == 1:
+            value_content, value_type = content[0], "str"
+        else:
+            value_content, value_type = content
 
         if "/" in arg_name:
             arg_names = arg_name.split("/")
