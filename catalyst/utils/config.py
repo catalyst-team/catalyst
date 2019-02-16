@@ -75,6 +75,12 @@ def parse_config_args(*, config, args, unknown_args):
             else:
                 arg_value = eval("%s(%s)" % (value_type, value_content))
             args.__setattr__(arg_name, arg_value)
+
+            args_exists_ = config.get("args")
+            if args_exists_ is None:
+                config["args"] = dict()
+            config["args"][arg_name] = arg_value
+
     return config, args
 
 
