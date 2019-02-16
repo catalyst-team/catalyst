@@ -39,3 +39,4 @@ def test_parse_config_args():
     assert configuration.get("args") is not None
     assert configuration["args"]["path"] == "test.yml"
     assert configuration["args"]["C"] == "like"
+    assert configuration["args"]["command"] == "train"

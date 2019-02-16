@@ -47,6 +47,7 @@ jobs:
     - stage: Tests
       install:
         - *requirements
+        - pip install seaborn
         - pip install -U pytest
       script:
         - pytest
