@@ -21,6 +21,7 @@ matrix:
 
 stages:
   - Codestyle
+  - Tests
   - Examples
   - Deploy
 
@@ -42,6 +43,14 @@ jobs:
         - flake8 . --count --exit-zero --max-complexity=10 --statistics
         # test to make sure the code is yapf compliant
         - ./yapf.sh --all
+
+    - stage: Tests
+      install:
+        - *requirements
+        - pip install seaborn
+        - pip install -U pytest
+      script:
+        - pytest
 
     - stage: Examples
       name: "Examples DL"

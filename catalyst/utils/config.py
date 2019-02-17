@@ -50,7 +50,8 @@ def save_config(config, logdir: str) -> None:
 def parse_config_args(*, config, args, unknown_args):
     for arg in unknown_args:
         arg_name, value = arg.split("=")
-        arg_name = arg_name[2:]
+        arg_name = arg_name.lstrip("-").strip('/')
+
         value_content, value_type = value.rsplit(":", 1)
 
         if "/" in arg_name:
@@ -74,6 +75,15 @@ def parse_config_args(*, config, args, unknown_args):
             else:
                 arg_value = eval("%s(%s)" % (value_type, value_content))
             args.__setattr__(arg_name, arg_value)
+
+    args_exists_ = config.get("args")
+    if args_exists_ is None:
+        config["args"] = dict()
+
+    for key, value in args._get_kwargs():
+        if value is not None:
+            config["args"][key] = value
+
     return config, args
 
 
