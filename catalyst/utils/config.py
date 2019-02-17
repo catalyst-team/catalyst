@@ -47,14 +47,6 @@ def save_config(config, logdir: str) -> None:
         json.dump(config, fout, indent=2)
 
 
-def set_arg_to_config(config, key, value) -> None:
-    args_exists_ = config.get("args")
-    if args_exists_ is None:
-        config["args"] = dict()
-
-    config["args"][key] = value
-
-
 def parse_config_args(*, config, args, unknown_args):
     for arg in unknown_args:
         arg_name, value = arg.split("=")
@@ -84,8 +76,13 @@ def parse_config_args(*, config, args, unknown_args):
                 arg_value = eval("%s(%s)" % (value_type, value_content))
             args.__setattr__(arg_name, arg_value)
 
+    args_exists_ = config.get("args")
+    if args_exists_ is None:
+        config["args"] = dict()
+
     for key, value in args._get_kwargs():
-        set_arg_to_config(config, key, value)
+        if value is not None:
+            config["args"][key] = value
 
     return config, args
 
