@@ -56,9 +56,6 @@ def set_arg_to_config(config, key, value) -> None:
 
 
 def parse_config_args(*, config, args, unknown_args):
-    for key, value in args._get_kwargs():
-        set_arg_to_config(config, key, value)
-
     for arg in unknown_args:
         arg_name, value = arg.split("=")
         arg_name = arg_name.lstrip("-").strip('/')
@@ -86,7 +83,9 @@ def parse_config_args(*, config, args, unknown_args):
             else:
                 arg_value = eval("%s(%s)" % (value_type, value_content))
             args.__setattr__(arg_name, arg_value)
-            set_arg_to_config(config, arg_name, arg_value)
+
+    for key, value in args._get_kwargs():
+        set_arg_to_config(config, key, value)
 
     return config, args
 
