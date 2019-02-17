@@ -51,11 +51,11 @@ class Experiment(ABC):
         pass
 
     @abstractmethod
-    def get_optimizer(self, stage: str, model=None) -> _Optimizer:
+    def get_optimizer(self, stage: str, model) -> _Optimizer:
         pass
 
     @abstractmethod
-    def get_scheduler(self, stage: str, optimizer=None) -> _Scheduler:
+    def get_scheduler(self, stage: str, optimizer) -> _Scheduler:
         pass
 
     def get_model_stuff(self, model, stage: str):
@@ -158,7 +158,8 @@ class ConfigExperiment(Experiment):
 
     @property
     def logdir(self):
-        return self._config["args"]["logdir"]
+        # TODO formatting from config keys by default
+        return self._config["logdir"]
 
     @property
     def stages(self) -> Iterable[str]:
@@ -166,7 +167,7 @@ class ConfigExperiment(Experiment):
         return stages_keys
 
     def get_total_epochs(self, stage: str):
-        return self.stages_config[stage]["args"]["epochs"]
+        return self.stages_config[stage]["epochs"]
 
     def get_model(self) -> _Model:
         model = Registry.get_model(**self._config["model_params"])
@@ -177,7 +178,7 @@ class ConfigExperiment(Experiment):
         criterion = Registry.get_criterion(**criterion_params)
         return criterion
 
-    def get_optimizer(self, stage: str, model=None) -> _Optimizer:
+    def get_optimizer(self, stage: str, model) -> _Optimizer:
         fp16 = isinstance(model, Fp16Wrap)
         optimizer_params = self.stages_config[stage].get("optimizer_params", {})
         optimizer = Registry.get_optimizer(
@@ -185,7 +186,7 @@ class ConfigExperiment(Experiment):
         )
         return optimizer
 
-    def get_scheduler(self, stage: str, optimizer=None) -> _Scheduler:
+    def get_scheduler(self, stage: str, optimizer) -> _Scheduler:
         scheduler_params = self.stages_config[stage].get("scheduler_params", {})
         scheduler = Registry.get_scheduler(optimizer, **scheduler_params)
         return scheduler
@@ -200,8 +201,7 @@ class ConfigExperiment(Experiment):
 
         return callbacks
 
-    def get_transforms(self, stage: str = None, **kwargs):
-        assert len(kwargs) == 0
+    def get_transforms(self, stage: str = None):
         raise NotImplementedError
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":

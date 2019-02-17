@@ -109,12 +109,7 @@ class CheckpointCallback(LogdirBaseCallback):
         if self.resume is not None:
             self.load_checkpoint(filename=self.resume, state=state)
 
-    def on_stage_start(self, state):
-        super().on_stage_start(state)
-        return self.on_stage_start(state=state)
-
-    def on_stage_start(self, state):
-        return self.on_stage_start(state=state)
+   
 
     def on_epoch_end(self, state):
         if state.mode == "infer":
@@ -136,7 +131,7 @@ class CheckpointCallback(LogdirBaseCallback):
             checkpoint=checkpoint,
             is_best=state.is_best_epoch,
             save_n_best=self.save_n_best,
-            main_metric=state.main_metric,
+            main_metric=state.main_metric_value,
             minimize_metric=state.minimize_metric
         )
 

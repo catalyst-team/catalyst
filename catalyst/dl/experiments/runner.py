@@ -11,7 +11,7 @@ from catalyst.dl.utils import UtilsFactory
 from . import Experiment
 
 
-class ExperimentModelRunner(ABC):
+class Runner(ABC):
 
     def __init__(
             self,
@@ -134,17 +134,15 @@ class ExperimentModelRunner(ABC):
         self._handle_event("stage_end")
 
     def run(self, mode):
-        self._handle_event("mode_start")  # @TODO: does not work
         for stage in self.experiment.stages:
             self._run_stage(mode, stage)
-        self._handle_event("mode_end")   # @TODO: does not work
 
     @abstractmethod
     def batch_handler(self, batch: Mapping[str, Any]):
         pass
 
 
-class SupervisedModelRunner(ExperimentModelRunner):
+class SupervisedModelRunner(Runner):
     """
     Runner for experiments with supervised model
     """

@@ -1,13 +1,13 @@
 import time
 from collections import defaultdict
+
 from torchnet import meter
-from catalyst.dl.callbacks.utils import get_val_from_metric, \
-    process_epoch_metrics
+
 from catalyst.utils.misc import FrozenClass
+from .metric_manager import MetricManager
 
 
 # TODO Deep refactoring
-#  - move metric management to separate class
 #  - Remove unused method and params
 #  - lr/loss/momentum bypass
 class RunnerState(FrozenClass):
@@ -61,10 +61,12 @@ class RunnerState(FrozenClass):
         self.is_best_epoch = False
         self.total_epochs = total_epochs
 
+        self.metrics = MetricManager(main_metric, minimize_metric)
+
         # metrics
-        self.lr = None  # defaultdict(lambda: 0)
-        self.momentum = None  # defaultdict(lambda: 0)
-        self.loss = None  # defaultdict(lambda: 0)
+        self.lr = None
+        self.momentum = None
+        self.loss = None
 
         self.batch_metrics = defaultdict(lambda: 0)
         self.epoch_metrics = defaultdict(
@@ -107,52 +109,30 @@ class RunnerState(FrozenClass):
         pass
 
     def on_epoch_end_pre(self):
-        if self.mode == "infer":
-            return
-        best_metrics, valid_metrics, is_best = \
-            process_epoch_metrics(
-                self.epoch_metrics,
-                self.best_metrics,
-                valid_loader=self.valid_loader,
-                main_metric=self.main_metric,
-                minimize=self.minimize_metric)
-        valid_metrics = {
-            key: value
-            for key, value in valid_metrics.items()
-            if isinstance(value, float)
-        }
-        self.best_metrics = {
-            key: value
-            for key, value in best_metrics.items() if isinstance(value, float)
-        }
-        self.valid_metrics = valid_metrics
-        self.is_best_epoch = is_best
+        self.metrics.end_epoch()
 
     def on_epoch_end_post(self):
-        self.epoch_metrics = defaultdict(
-            lambda: defaultdict(lambda: meter.AverageValueMeter())
-        )
+        pass
 
     def on_loader_start_pre(self):
         pass
 
     def on_loader_start_post(self):
         self._datatime = time.time()
+        self.metrics.begin_loader(self.loader_name)
 
     def on_loader_end_pre(self):
-        lm = self.loader_name
-        self.epoch_metrics[lm] = {
-            key: get_val_from_metric(value)
-            for key, value in self.epoch_metrics[lm].items()
-        }
+        self.metrics.end_loader()
 
     def on_loader_end_post(self):
         if self.reset_step:
             self.step = None
 
     def on_batch_start_pre(self):
-        self.batch_metrics = defaultdict(lambda: 0)
-        self.batch_metrics["base/data_time"] = time.time() - self._datatime
+        self.metrics.begin_batch()
+        self.metrics.add_batch_value(
+            "base/data_time", time.time() - self._datatime
+        )
 
     def on_batch_start_post(self):
         pass
@@ -160,9 +140,10 @@ class RunnerState(FrozenClass):
     def on_batch_end_pre(self):
         elapsed_time = time.time() - self._datatime
 
-        self.batch_metrics["base/batch_time"] = elapsed_time
-        self.batch_metrics["base/sample_per_second"] = \
-            self.batch_size / elapsed_time
+        self.metrics.add_batch_value("base/batch_time", elapsed_time)
+        self.metrics.add_batch_value(
+            "base/sample_per_second", self.batch_size / elapsed_time
+        )
 
     def on_batch_end_post(self):
         lm = self.loader_name
