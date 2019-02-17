@@ -108,12 +108,17 @@ def run_sampler(
         config_["env"]["randomized_start"] = (
                 config_["env"]["randomized_start"] and not infer)
     env = environment(**config_["env"], visualize=vis)
+    # @TODO: remove this hack
+    config_["shared"]["observation_size"] = env.observation_shape[0]
+    config_["shared"]["action_size"] = env.action_shape[0]
+
     algo_kwargs = algorithm.prepare_for_sampler(config_)
 
     rp_params = config_.get("random_process", {})
     random_process = rp.__dict__[
         rp_params.pop("random_process", "RandomProcess")]
     rp_params["sigma"] = action_noise
+    rp_params["size"] = config_["shared"]["action_size"]
     random_process = random_process(**rp_params)
 
     seeds = config_.get("seeds", None) \

@@ -72,13 +72,13 @@ def set_params_noise(actor, states, target_d=0.2, tol=1e-3, max_steps=1000):
 
 
 class SamplerBuffer:
-    def __init__(self, capacity, state_shape, action_shape):
+    def __init__(self, capacity, observation_shape, action_shape):
         self.size = capacity
-        self.state_shape = state_shape
+        self.observation_shape = observation_shape
         self.action_shape = action_shape
         self.pointer = 0
-        self.states = np.empty(
-            (self.size, ) + tuple(self.state_shape), dtype=np.float32
+        self.observations = np.empty(
+            (self.size, ) + tuple(self.observation_shape), dtype=np.float32
         )
         self.actions = np.empty(
             (self.size, ) + tuple(self.action_shape), dtype=np.float32
@@ -86,22 +86,25 @@ class SamplerBuffer:
         self.rewards = np.empty((self.size, ), dtype=np.float32)
         self.dones = np.empty((self.size, ), dtype=np.bool)
 
-    def init_with_state(self, state):
-        self.states[0] = state
+    def init_with_observation(self, observation):
+        self.observations[0] = observation
         self.pointer = 0
 
     def get_state(self, history_len=1, pointer=None):
         pointer = pointer or self.pointer
-        state = np.zeros((history_len, ) + self.state_shape, dtype=np.float32)
+        state = np.zeros(
+            (history_len, ) + self.observation_shape,
+            dtype=np.float32
+        )
         indices = np.arange(max(0, pointer - history_len + 1), pointer + 1)
-        state[-len(indices):] = self.states[indices]
+        state[-len(indices):] = self.observations[indices]
         return state
 
     def push_transition(self, transition):
         """ transition = [s_tp1, a_t, r_t, d_t]
         """
         s_tp1, a_t, r_t, d_t, ts_t = transition
-        self.states[self.pointer + 1] = s_tp1
+        self.observations[self.pointer + 1] = s_tp1
         self.actions[self.pointer] = a_t
         self.rewards[self.pointer] = r_t
         self.dones[self.pointer] = d_t
@@ -109,7 +112,7 @@ class SamplerBuffer:
 
     def get_complete_episode(self):
         indices = np.arange(self.pointer)
-        states = self.states[indices]
+        states = self.observations[indices]
         actions = self.actions[indices]
         rewards = self.rewards[indices]
         dones = self.dones[indices]
@@ -205,8 +208,8 @@ class Sampler:
 
         self.buffer = SamplerBuffer(
             capacity=self.buffer_size,
-            state_shape=self.env.observation_space.shape,
-            action_shape=self.env.action_space.shape
+            observation_shape=self.env.observation_shape,
+            action_shape=self.env.action_shape
         )
 
     def __repr__(self):
@@ -264,8 +267,8 @@ class Sampler:
         self.episode_index = 1
         self.load_actor_weights()
         self.buffer = SamplerBuffer(
-            self.buffer_size, self.env.observation_space.shape,
-            self.env.action_space.shape
+            self.buffer_size, self.env.observation_shape,
+            self.env.action_shape
         )
 
         seed = self._seed + random.randrange(SEED_RANGE)
@@ -274,7 +277,7 @@ class Sampler:
             if self.seeds is None \
             else random.choice(self.seeds)
         set_global_seeds(seed)
-        self.buffer.init_with_state(self.env.reset())
+        self.buffer.init_with_observation(self.env.reset())
         self.random_process.reset_states()
 
         action_noise = False
@@ -398,8 +401,8 @@ class Sampler:
 
             self.buffer = SamplerBuffer(
                 capacity=self.buffer_size,
-                state_shape=self.env.observation_space.shape,
-                action_shape=self.env.action_space.shape
+                observation_shape=self.env.observation_shape,
+                action_shape=self.env.action_shape
             )
 
             seed = self._seed + random.randrange(SEED_RANGE)
@@ -413,7 +416,7 @@ class Sampler:
             else:
                 seed = random.choice(self.seeds)
             set_global_seeds(seed)
-            self.buffer.init_with_state(self.env.reset())
+            self.buffer.init_with_observation(self.env.reset())
             self.random_process.reset_states()
 
             noise_action = 0

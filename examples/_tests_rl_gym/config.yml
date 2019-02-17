@@ -1,8 +1,5 @@
 shared:
-  state_size: 2
-  action_size: &action_size 1
   history_len: 4
-
   n_step: 1
   gamma: 0.99
 
@@ -64,15 +61,6 @@ algorithm:
     func: clip_grad_value_
     clip_value: 1.0
 
-  actor_scheduler_params:
-    scheduler: MultiStepLR
-    milestones: [2000000]  # batches
-    gamma: 1.0
-  critic_scheduler_params:
-    scheduler: MultiStepLR
-    milestones: [2000000]  # batches
-    gamma: 1.0
-
   critic_loss_params:
     criterion: HuberLoss
     clip_delta: 1.0
@@ -100,7 +88,5 @@ sampler:
 
 random_process:
   random_process: GaussianWhiteNoiseProcess
-  sigma: 0.2
-  size: *action_size
 
 seeds: [1, 10, 1000, 10000, 42000]
