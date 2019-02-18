@@ -246,6 +246,8 @@ class Trainer:
         self.actor_updates = 0
         self.critic_updates = 0
 
+        self._redis_loop_process = None
+
     def __repr__(self):
         str_val = " ".join(
             [
@@ -254,6 +256,13 @@ class Trainer:
             ]
         )
         return f"Trainer. {str_val}"
+
+    def get_processes(self):
+        processes = []
+        if self._redis_loop_process is not None:
+            processes.append(self._redis_loop_process)
+
+        return processes
 
     def run(self):
         self.update_samplers_weights()

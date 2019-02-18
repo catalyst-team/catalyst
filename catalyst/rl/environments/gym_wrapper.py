@@ -20,8 +20,8 @@ class GymWrapper:
         self.reward_scale = reward_scale
         self.step_delay = step_delay
 
-        self.observation_space = self.env.observation_space
-        self.action_space = self.env.action_space
+        self.observation_shape = self.env.observation_space.shape
+        self.action_shape = self.env.action_space.shape
 
         self.time_step = 0
         self.total_reward = 0
