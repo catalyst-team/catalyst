@@ -116,6 +116,10 @@ class Runner(ABC):
             self._handle_event("batch_end")
 
     def _run_epoch(self, loaders):
+        assert self.state.valid_loader in loaders.keys(), \
+            f"'{self.state.valid_loader}' " \
+            f"should be in provided loaders: {list(loaders.keys())}"
+
         for loader_name in loaders:
             self.state.loader_name = loader_name
             self.state.loader_len = len(loaders[loader_name])

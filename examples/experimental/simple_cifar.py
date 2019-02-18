@@ -44,7 +44,7 @@ def get_loaders():
         DictDatasetAdapter(train_set),
         batch_size=100,
         shuffle=True,
-        num_workers=3
+        num_workers=0
     )
 
     validation_set = torchvision.datasets.CIFAR10(
@@ -54,8 +54,8 @@ def get_loaders():
     validation_loader = DataLoader(
         DictDatasetAdapter(validation_set),
         batch_size=100,
-        shuffle=True,
-        num_workers=3
+        shuffle=False,
+        num_workers=0
     )
 
     return OrderedDict(train=train_loader, valid=validation_loader)
@@ -112,7 +112,7 @@ runner.train(
         loss=LossCallback(),
         optimizer=OptimizerCallback(),
         # scheduler=SchedulerCallback(),
-        logger=Logger(),
-        tflogger=TensorboardLogger()
+        # logger=Logger(),
+        # tflogger=TensorboardLogger()
     )
 )

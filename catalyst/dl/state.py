@@ -61,6 +61,7 @@ class RunnerState(FrozenClass):
         self.is_best_epoch = False
         self.total_epochs = total_epochs
 
+        main_metric = f"{valid_loader}/{main_metric}"
         self.metrics = MetricManager(main_metric, minimize_metric)
 
         # metrics
@@ -94,19 +95,11 @@ class RunnerState(FrozenClass):
         else:
             getattr(self, key)[inner_key] = value
 
-    @staticmethod
-    def on_stage_init_pre(model, stage):
-        pass
-
-    @staticmethod
-    def on_stage_init_post(model, stage):
-        pass
-
     def on_epoch_start_pre(self):
         pass
 
     def on_epoch_start_post(self):
-        pass
+        self.metrics.begin_epoch()
 
     def on_epoch_end_pre(self):
         self.metrics.end_epoch()
@@ -147,6 +140,11 @@ class RunnerState(FrozenClass):
 
     def on_batch_end_post(self):
         lm = self.loader_name
+
+        self.metrics.add_batch_value("base/lr", self.lr)
+        self.metrics.add_batch_value("base/momentum", self.momentum)
+        self.metrics.add_batch_value("loss", self.loss)
+
         for key, value in self.batch_metrics.items():
             self.epoch_metrics[lm][key].add(value)
         self.step += self.batch_size

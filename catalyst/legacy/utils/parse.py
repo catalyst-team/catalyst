@@ -2,6 +2,7 @@ import pandas as pd
 import json
 from catalyst.utils.data import default_fold_split, stratified_fold_split
 
+
 def parse_csv2list(df):
     df = df.reset_index().drop("index", axis=1)
     df = list(df.to_dict("index").values())

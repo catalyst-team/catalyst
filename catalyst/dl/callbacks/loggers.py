@@ -165,10 +165,6 @@ class TensorboardLogger(LogdirBaseCallback):
     def on_batch_end(self, state: RunnerState):
         if self.log_on_batch_end:
             mode = state.loader_name
-            to_batch_metrics(state=state, metric_key="base/lr", state_key="lr")
-            to_batch_metrics(
-                state=state, metric_key="base/momentum", state_key="momentum")
-            to_batch_metrics(state=state, metric_key="loss")
 
             self._log_metrics(
                 metrics=state.batch_metrics,
