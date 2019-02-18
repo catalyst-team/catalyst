@@ -141,26 +141,27 @@ class Runner(ABC):
             self._handle_event("epoch_end")
         self._handle_event("stage_end")
 
-    def _run(self, mode):
+    def _run_experiment(self, mode):
         for stage in self.experiment.stages:
             self._run_stage(mode, stage)
         return self
 
+    def _prepare_experiment(self, config, **kwargs):
+        if config is not None:
+            experiment = self._config_exp_parser(config=config)
+        else:
+            experiment = self._base_exp_parser(model=self.model, **kwargs)
+        return experiment
+
+    def run(self, mode, config=None, **kwargs):
+        self.experiment = self._prepare_experiment(config=config, **kwargs)
+        return self._run_experiment(mode=mode)
+
     def train(self, config=None, **kwargs):
-        if config is not None:
-            self.experiment = self._config_exp_parser(config=config)
-        else:
-            self.experiment = self._base_exp_parser(model=self.model, **kwargs)
+        return self.run(mode="train", config=config, **kwargs)
 
-        return self._run(mode="train")
-
-    def infer(self, *args, config=None, **kwargs):
-        if config is not None:
-            self.experiment = self._config_exp_parser(config=config)
-        else:
-            self.experiment = self._base_exp_parser(*args, **kwargs)
-
-        return  self._run(mode="infer")
+    def infer(self, config=None, **kwargs):
+        return self.run(mode="infer", config=config, **kwargs)
 
 
 class SupervisedRunner(Runner):
