@@ -276,6 +276,7 @@ class Sampler:
         seed = random.randrange(SEED_RANGE) \
             if self.seeds is None \
             else random.choice(self.seeds)
+        set_global_seeds(seed)
         self.buffer.init_with_observation(self.env.reset())
         self.random_process.reset_states()
 
@@ -414,6 +415,7 @@ class Sampler:
                     seed = random.randrange(SEED_RANGE)
             else:
                 seed = random.choice(self.seeds)
+            set_global_seeds(seed)
             self.buffer.init_with_observation(self.env.reset())
             self.random_process.reset_states()
 
