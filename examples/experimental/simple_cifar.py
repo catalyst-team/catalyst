@@ -12,8 +12,7 @@ from tqdm import tqdm
 from catalyst.dl.callbacks import \
     LossCallback, OptimizerCallback, Callback, \
     SchedulerCallback, TensorboardLogger, Logger
-from catalyst.dl.experiments.experiment import BaseExperiment
-from catalyst.dl.experiments.runner import SupervisedModelRunner
+from catalyst.dl.experiments.runner import SupervisedRunner
 from catalyst.dl.state import RunnerState
 
 transforms = transforms.Compose(
@@ -98,11 +97,16 @@ class VerboseCallback(Callback):
 
 
 model = SimpleNet()
-exp = BaseExperiment(
-    './logs/01',
-    model=model,
+runner = SupervisedRunner(model=model, input_key="image")
+
+# training
+runner.train(
+    logdir="./logs/01",
     epochs=5,
     loaders=get_loaders(),
+    criterion=CrossEntropyLoss(),
+    optimizer=SGD(model.parameters(), lr=0.001, momentum=.9),
+    scheduler=None,
     callbacks=OrderedDict(
         tqdm=VerboseCallback(),
         loss=LossCallback(),
@@ -110,11 +114,5 @@ exp = BaseExperiment(
         # scheduler=SchedulerCallback(),
         logger=Logger(),
         tflogger=TensorboardLogger()
-    ),
-    criterion=CrossEntropyLoss(),
-    optimizer=SGD(model.parameters(), lr=0.001, momentum=.9)
+    )
 )
-
-runner = SupervisedModelRunner(exp, input_key="image")
-
-runner.run("train")

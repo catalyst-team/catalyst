@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from typing import Mapping, Any
+from typing import Mapping, Any, Dict
 from abc import ABC, abstractmethod
 
 import torch
@@ -8,27 +8,30 @@ from torch import nn
 from catalyst.dl.callbacks import Callback
 from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
-from . import Experiment
+from . import Experiment, BaseExperiment, ConfigExperiment
 
 
 class Runner(ABC):
+    _base_exp_parser = BaseExperiment
+    _config_exp_parser = ConfigExperiment
 
     def __init__(
-            self,
-            experiment: Experiment=None,
-            model: nn.Module=None,
-            device=None):
+        self,
+        model: nn.Module = None,
+        config: Dict = None,
+        device=None,
+    ):
         """
-
-        :param experiment: Experiment to run
-        :type experiment: Experiment
+        @TODO: write docs
         """
-        assert experiment or model
+        assert model or config
 
-        self.experiment = experiment
         self.model: nn.Module = model
         self.device = device
 
+        self.experiment: Experiment = self._config_exp_parser(config) \
+            if config is not None \
+            else None
         self.state: RunnerState = None
         self.stage: str = None
 
@@ -45,10 +48,6 @@ class Runner(ABC):
         }
         return res
 
-    @abstractmethod
-    def _run_batch(self, batch: Mapping[str, Any]):
-        pass
-
     def _prepare_model(self):
         """
         Inner method for children's classes for model specific initialization.
@@ -57,7 +56,7 @@ class Runner(ABC):
         """
 
         if self.model is None:
-            self.model = self.experiment.model
+            self.model = self.experiment.get_model()
 
         self.model, self.device = \
             UtilsFactory.prepare_model(self.model)
@@ -101,9 +100,17 @@ class Runner(ABC):
         if self.state is not None and hasattr(self.state, post_event_name):
             getattr(self.state, post_event_name)()
 
+    @abstractmethod
+    def predict_batch(self, batch: Mapping[str, Any]):
+        pass
+
+    def _run_batch(self, batch):
+        batch = self._batch2device(batch, self.device)
+        self.state.input = batch
+        self.state.output = self.predict_batch(batch)
+
     def _run_loader(self, loader):
         for i, batch in enumerate(loader):
-            batch = self._batch2device(batch, self.device)
             self._handle_event("batch_start")
             self._run_batch(batch)
             self._handle_event("batch_end")
@@ -113,8 +120,8 @@ class Runner(ABC):
             self.state.loader_name = loader_name
             self.state.loader_len = len(loaders[loader_name])
             self.state.is_train = loader_name.startswith("train")
-
             self.model.train(self.state.is_train)
+
             self._handle_event("loader_start")
             self._run_loader(loaders[loader_name])
             self._handle_event("loader_end")
@@ -128,48 +135,61 @@ class Runner(ABC):
         self._handle_event("stage_start")
         for epoch in range(self.state.total_epochs):
             self.state.epoch = epoch
+
             self._handle_event("epoch_start")
             self._run_epoch(loaders)
             self._handle_event("epoch_end")
         self._handle_event("stage_end")
 
-    def run(self, mode):
+    def _run(self, mode):
         for stage in self.experiment.stages:
             self._run_stage(mode, stage)
+        return self
 
-    @abstractmethod
-    def batch_handler(self, batch: Mapping[str, Any]):
-        pass
+    def train(self, config=None, **kwargs):
+        if config is not None:
+            self.experiment = self._config_exp_parser(config=config)
+        else:
+            self.experiment = self._base_exp_parser(model=self.model, **kwargs)
+
+        return self._run(mode="train")
+
+    def infer(self, *args, config=None, **kwargs):
+        if config is not None:
+            self.experiment = self._config_exp_parser(config=config)
+        else:
+            self.experiment = self._base_exp_parser(*args, **kwargs)
+
+        return  self._run(mode="infer")
 
 
-class SupervisedModelRunner(Runner):
+class SupervisedRunner(Runner):
     """
     Runner for experiments with supervised model
     """
 
     def __init__(
         self,
-        experiment: Experiment,
+        model: nn.Module = None,
+        config: Dict = None,
+        device=None,
         input_key: str = "features",
         output_key: str = "logits"
     ):
         """
-        :type experiment: Experiment
+        @TODO update docs
+
         :type output_key: str
         :type input_key: str
 
-        :param experiment: Experiment to run
         :param input_key: Key in batch dict mapping to model input
         :param output_key: Key in output dict model output will be stored under
         """
-        super().__init__(experiment)
+        super().__init__(model=model, config=config, device=device)
         self.input_key = input_key
         self.output_key = output_key
 
-    def _run_batch(self, batch: Mapping[str, Any]):
-        self.state.input = batch
-        output = self.batch_handler(batch)
-        self.state.output = {self.output_key: output}
-
-    def batch_handler(self, batch: Mapping[str, Any]):
-        return self.model(batch[self.input_key])
+    def predict_batch(self, batch: Mapping[str, Any]):
+        output = self.model(batch[self.input_key])
+        output = {self.output_key: output}
+        return output

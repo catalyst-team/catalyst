@@ -45,7 +45,7 @@ def main(args, unknown_args):
     e = Experiment(config)
     runner = Runner(e)
 
-    runner.run('train')
+    runner.train()
 
 
 if __name__ == "__main__":
