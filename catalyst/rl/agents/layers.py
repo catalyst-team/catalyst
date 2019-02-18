@@ -177,9 +177,9 @@ class StateNet(nn.Module):
         x = self.head_net(x)
         return x
 
-    def forward(self, *args, with_log_pi=False, **kwargs):
+    def forward(self, *args, with_log_pi=False, deterministic=False, **kwargs):
         x = self._forward_fn(*args, **kwargs)
-        x = self._policy_fn(x, with_log_pi)
+        x = self._policy_fn(x, with_log_pi, deterministic)
         return x
 
 
@@ -282,12 +282,12 @@ class GaussPolicy(nn.Module):
         super().__init__()
         self.squashing_layer = SquashingLayer(squashing_fn)
 
-    def forward(self, inputs, with_log_pi=True):
+    def forward(self, inputs, with_log_pi=True, deterministic=False):
         action_size = inputs.shape[1] // 2
         mu, log_sigma = inputs[:, :action_size], inputs[:, action_size:]
         log_sigma = torch.clamp(log_sigma, LOG_SIG_MIN, LOG_SIG_MAX)
         sigma = torch.exp(log_sigma)
-        z = normal_sample(mu, sigma)
+        z = mu if deterministic else normal_sample(mu, sigma)
         log_pi = normal_log_prob(mu, sigma, z)
         action, log_pi = self.squashing_layer.forward(z, log_pi)
 
@@ -330,13 +330,13 @@ class RealNVPPolicy(nn.Module):
         )
         self.squashing_layer = SquashingLayer(squashing_fn)
 
-    def forward(self, inputs, with_log_pi=True):
+    def forward(self, inputs, with_log_pi=True, deterministic=False):
         state_embedding = inputs
         mu = torch.zeros((state_embedding.shape[0], self.action_size)).to(
             state_embedding.device
         )
         sigma = torch.ones_like(mu).to(mu.device)
-        z = normal_sample(mu, sigma)
+        z = mu if deterministic else normal_sample(mu, sigma)
         log_pi = normal_log_prob(mu, sigma, z)
         z, log_pi = self.coupling1.forward(z, state_embedding, log_pi)
         z, log_pi = self.coupling2.forward(z, state_embedding, log_pi)
