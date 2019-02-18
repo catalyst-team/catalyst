@@ -1,10 +1,10 @@
 from collections import OrderedDict
 from argparse import ArgumentParser, RawTextHelpFormatter
 
-from .scripts import train, inference, make_report
+from .scripts import train, infer, make_report
 
 COMMANDS = OrderedDict(
-    [("train", train), ("infer", inference), ("make-report", make_report)]
+    [("train", train), ("infer", infer), ("make-report", make_report)]
 )
 
 

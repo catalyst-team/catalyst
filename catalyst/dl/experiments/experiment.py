@@ -1,6 +1,7 @@
+import torch
 from collections import OrderedDict
 from torch import nn, optim
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 from abc import abstractmethod, ABC
 from typing import Iterable, Any, Mapping, Dict
 
@@ -74,6 +75,10 @@ class Experiment(ABC):
             total_epochs=self.get_total_epochs(stage)
         )
 
+    @abstractmethod
+    def get_transforms(self, mode, stage: str = None):
+        pass
+
 
 class BaseExperiment(Experiment):
     """
@@ -134,7 +139,7 @@ class BaseExperiment(Experiment):
 
 class ConfigExperiment(Experiment):
     STAGE_KEYWORDS = [
-        "criterion_params", "optimizer_params", "scheduler_params",
+        "epochs", "criterion_params", "optimizer_params", "scheduler_params",
         "stage_params", "state_params", "data_params", "callbacks_params"
     ]
 
@@ -191,6 +196,31 @@ class ConfigExperiment(Experiment):
         scheduler = Registry.get_scheduler(optimizer, **scheduler_params)
         return scheduler
 
+    @abstractmethod
+    def get_datasets(self, **kwargs) -> "OrderedDict[str, Dataset]":
+        pass
+
+    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+        data_conf = dict(self.stages_config[stage]['data_params'])
+        batch_size = data_conf.pop('batch_size')
+        n_workers = data_conf.pop('n_workers')
+        drop_last = data_conf.pop('drop_last', True)
+
+        datasets = self.get_datasets(**data_conf)
+
+        loaders = OrderedDict()
+        for name, ds in datasets.items():
+            loaders[name] = DataLoader(
+                ds,
+                batch_size,
+                shuffle=name.startswith('train'),
+                num_workers=n_workers,
+                pin_memory=torch.cuda.is_available(),
+                drop_last=drop_last
+            )
+
+        return loaders
+
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         callbacks_params = self.stages_config[stage].get("callbacks_params", {})
 
@@ -200,12 +230,6 @@ class ConfigExperiment(Experiment):
             callbacks[key] = callback
 
         return callbacks
-
-    def get_transforms(self, stage: str = None):
-        raise NotImplementedError
-
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
-        raise NotImplementedError
 
 
 __all__ = ["Experiment", "BaseExperiment", "ConfigExperiment"]

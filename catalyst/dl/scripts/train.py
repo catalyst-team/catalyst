@@ -2,40 +2,30 @@
 
 import os
 import argparse
-import pathlib
+from importlib.util import spec_from_file_location, module_from_spec
+from pathlib import Path
+import sys
 
-from catalyst.dl.scripts.utils import prepare_modules
-from catalyst.contrib.registry import Registry
-from catalyst.utils.config import parse_args_uargs, save_config
-from catalyst.utils.misc import set_global_seeds, boolean_flag
+from catalyst.utils.config import prepare_config
+from catalyst.utils.misc import set_global_seeds
 
 
 def build_args(parser):
-    parser.add_argument("--config", type=str, required=True)
-    parser.add_argument("--expdir", type=str, default=None)
-    parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--logdir", type=str, default=None)
-    parser.add_argument("--baselogdir", type=str, default=None)
-    parser.add_argument(
-        "--resume",
-        default=None,
-        type=str,
-        metavar="PATH",
-        help="path to latest checkpoint"
-    )
-    parser.add_argument(
-        "-j",
-        "--workers",
-        default=None,
-        type=int,
-        help="number of data loading workers"
-    )
-    parser.add_argument(
-        "-b", "--batch-size", default=None, type=int, help="mini-batch size"
-    )
-    boolean_flag(parser, "verbose", default=False)
+    parser.add_argument("--config", required=True)
+    parser.add_argument("--expdir", type=Path, default=None)
 
     return parser
+
+
+def import_experiment_and_runner(exp_dir: Path):
+    s = spec_from_file_location(
+        exp_dir.name, str(exp_dir / '__init__.py'),
+        submodule_search_locations=[exp_dir.absolute()]
+    )
+    m = module_from_spec(s)
+    sys.modules[exp_dir.name] = m
+    s.loader.exec_module(m)
+    return m.Experiment, m.Runner
 
 
 def parse_args():
@@ -46,30 +36,16 @@ def parse_args():
 
 
 def main(args, unknown_args):
-    args, config = parse_args_uargs(args, unknown_args, dump_config=True)
-    set_global_seeds(args.seed)
+    config = prepare_config(args.config, unknown_args)
 
-    assert args.baselogdir is not None or args.logdir is not None
+    set_global_seeds(config.get('seed', 42))
 
-    if args.logdir is None:
-        modules_ = prepare_modules(expdir=args.expdir)
-        logdir = modules_["model"].prepare_logdir(config=config)
-        args.logdir = str(pathlib.Path(args.baselogdir).joinpath(logdir))
+    Experiment, Runner = import_experiment_and_runner(args.expdir)
 
-    os.makedirs(args.logdir, exist_ok=True)
-    save_config(config=config, logdir=args.logdir)
-    modules = prepare_modules(expdir=args.expdir, dump_dir=args.logdir)
+    e = Experiment(config)
+    runner = Runner(e)
 
-    model = Registry.get_model(**config["model_params"])
-    datasource = modules["data"].DataSource()
-
-    runner = modules["model"].ModelRunner(model=model)
-    runner.train_stages(
-        datasource=datasource,
-        args=args,
-        stages_config=config["stages"],
-        verbose=args.verbose
-    )
+    runner.run('train')
 
 
 if __name__ == "__main__":

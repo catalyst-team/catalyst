@@ -1,0 +1,10 @@
+stages:
+  stage_1:
+    epochs: 10
+    data_params:
+      batch_size: 100
+
+
+
+
+
