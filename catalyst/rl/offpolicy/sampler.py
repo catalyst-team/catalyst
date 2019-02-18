@@ -259,7 +259,7 @@ class Sampler:
     def act(self, state):
         with torch.no_grad():
             states = self.to_tensor(state).unsqueeze(0)
-            action = self.actor(states)
+            action = self.actor(states, deterministic=self.infer)
             action = action[0].detach().cpu().numpy()
             return action
 
