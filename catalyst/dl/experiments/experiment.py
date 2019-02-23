@@ -136,6 +136,9 @@ class BaseExperiment(Experiment):
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         return self._callbacks
 
+    def get_transforms(self, mode, stage: str = None):
+        raise NotImplemented()
+
 
 class ConfigExperiment(Experiment):
     STAGE_KEYWORDS = [

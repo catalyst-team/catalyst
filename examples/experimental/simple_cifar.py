@@ -109,7 +109,6 @@ exp = BaseExperiment(
         optimizer=OptimizerCallback(),
         # scheduler=SchedulerCallback(),
         logger=Logger(),
-        tflogger=TensorboardLogger()
     ),
     criterion=CrossEntropyLoss(),
     optimizer=SGD(model.parameters(), lr=0.001, momentum=.9)
