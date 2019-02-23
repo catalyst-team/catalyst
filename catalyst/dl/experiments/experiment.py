@@ -35,16 +35,11 @@ class Experiment(ABC):
         pass
 
     @abstractmethod
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
-        pass
-
-    @abstractmethod
     def get_total_epochs(self, stage: str):
         pass
 
-    @property
     @abstractmethod
-    def model(self) -> _Model:
+    def get_model(self) -> _Model:
         pass
 
     @abstractmethod
@@ -76,6 +71,10 @@ class Experiment(ABC):
         )
 
     @abstractmethod
+    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+        pass
+
+    @abstractmethod
     def get_transforms(self, mode, stage: str = None):
         pass
 
@@ -88,23 +87,27 @@ class BaseExperiment(Experiment):
 
     def __init__(
         self,
-        logdir: str,
         model: _Model,
         loaders: "OrderedDict[str, DataLoader]",
         callbacks: "OrderedDict[str, Callback]",
-        epochs: int,
+        epochs: int = 1,
+        logdir: str = None,
         criterion: _Criterion = None,
         optimizer: _Optimizer = None,
-        scheduler: _Scheduler = None
+        scheduler: _Scheduler = None,
+        transforms = None
     ):
-        self._logdir = logdir
-        self._callbacks = callbacks
-        self._epochs = epochs
+        self._model = model
         self._loaders = loaders
+        self._callbacks = callbacks
+        self._transforms = transforms
+
+        self._epochs = epochs
+        self._logdir = logdir
+
         self._scheduler = scheduler
         self._optimizer = optimizer
         self._criterion = criterion
-        self._model = model
 
     @property
     def logdir(self):
@@ -114,14 +117,10 @@ class BaseExperiment(Experiment):
     def stages(self) -> Iterable[str]:
         return ["base"]
 
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
-        return self._loaders
-
     def get_total_epochs(self, stage: str):
         return self._epochs
 
-    @property
-    def model(self) -> _Model:
+    def get_model(self) -> _Model:
         return self._model
 
     def get_criterion(self, stage: str) -> _Criterion:
@@ -136,8 +135,11 @@ class BaseExperiment(Experiment):
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         return self._callbacks
 
+    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+        return self._loaders
+
     def get_transforms(self, mode, stage: str = None):
-        raise NotImplemented()
+        return self._transforms
 
 
 class ConfigExperiment(Experiment):

@@ -1,9 +1,6 @@
 import pandas as pd
 import json
-from catalyst.utils.data import default_fold_split, stratified_fold_split, \
-    split_dataframe
-
-# ---- csv ----
+from catalyst.utils.data import default_fold_split, stratified_fold_split
 
 
 def parse_csv2list(df):
@@ -180,59 +177,5 @@ def parse_in_csvs(
 
     if len(df_infer) > 0:
         df_infer = parse_csv2list(df_infer)
-
-    return df, df_train, df_valid, df_infer
-
-
-# ---- txt ----
-
-
-def read_in_txt(filepath):
-    with open(filepath) as fin:
-        data = fin.readlines()
-    data = list(map(lambda x: x.replace("\n", ""), data))
-    return data
-
-
-def parse_in_txt(data_params):
-    data = read_in_txt(data_params["in_txt"])
-    data_train, data_valid = split_dataframe(
-        data, test_size=0.2, random_state=42
-    )
-    return data, data_train, data_valid, []
-
-
-def parse_spec_txt(data_params):
-    data_train = (
-        read_in_txt(data_params["in_txt_train"])
-        if data_params.get("in_txt_train", None) is not None else []
-    )
-    data_valid = (
-        read_in_txt(data_params["in_txt_valid"])
-        if data_params.get("in_txt_valid", None) is not None else []
-    )
-    data_infer = (
-        read_in_txt(data_params["in_txt_infer"])
-        if data_params.get("in_txt_infer", None) is not None else []
-    )
-    return [], data_train, data_valid, data_infer
-
-
-def parse_in_txts(data_params):
-    in_txt_flag = data_params.get("in_txt", None) is not None
-    in_txt_spec_flag = (
-        (
-            data_params.get("in_txt_train", None) is not None
-            and data_params.get("in_txt_valid", None) is not None
-        ) or data_params.get("in_txt_infer", None) is not None
-    )
-    assert in_txt_flag != in_txt_spec_flag
-
-    if in_txt_flag:
-        df, df_train, df_valid, df_infer = parse_in_txt(data_params)
-    elif in_txt_spec_flag:
-        df, df_train, df_valid, df_infer = parse_spec_txt(data_params)
-    else:
-        raise Exception("something go wrong")
 
     return df, df_train, df_valid, df_infer

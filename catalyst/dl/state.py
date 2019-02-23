@@ -63,6 +63,7 @@ class RunnerState(FrozenClass):
         self.epoch = 0
         self.total_epochs = total_epochs
 
+        main_metric = f"{valid_loader}/{main_metric}"
         self.metrics = MetricManager(main_metric, minimize_metric)
 
         # metrics

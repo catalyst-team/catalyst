@@ -261,8 +261,10 @@ class SAC(Algorithm):
                 key2 = f"{key}_{key2}"
                 value2 = getattr(self, key2, None)
                 if value2 is not None:
-                    value2_i = value2[i].state_dict()
-                    checkpoint[f"{key2}{i}_state_dict"] = value2_i
+                    value2_i = value2[i]
+                    if value2_i is not None:
+                        value2_i = value2_i.state_dict()
+                        checkpoint[f"{key2}{i}_state_dict"] = value2_i
 
         return checkpoint
 
@@ -294,13 +296,13 @@ class SAC(Algorithm):
 
         actor_state_shape = (
             config_["shared"]["history_len"],
-            config_["shared"]["state_size"],
+            config_["shared"]["observation_size"],
         )
         actor_action_size = config_["shared"]["action_size"]
         n_step = config_["shared"]["n_step"]
         gamma = config_["shared"]["gamma"]
         history_len = config_["shared"]["history_len"]
-        trainer_state_shape = (config_["shared"]["state_size"], )
+        trainer_state_shape = (config_["shared"]["observation_size"], )
         trainer_action_shape = (config_["shared"]["action_size"], )
 
         actor_fn = config_["actor"].pop("agent", None)
@@ -358,7 +360,7 @@ class SAC(Algorithm):
 
         actor_state_shape = (
             config_["shared"]["history_len"],
-            config_["shared"]["state_size"],
+            config_["shared"]["observation_size"],
         )
         actor_action_size = config_["shared"]["action_size"]
 

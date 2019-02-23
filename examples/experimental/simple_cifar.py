@@ -12,8 +12,7 @@ from tqdm import tqdm
 from catalyst.dl.callbacks import \
     LossCallback, OptimizerCallback, Callback, \
     SchedulerCallback, TensorboardLogger, Logger
-from catalyst.dl.experiments.experiment import BaseExperiment
-from catalyst.dl.experiments.runner import SupervisedModelRunner
+from catalyst.dl.experiments.runner import SupervisedRunner
 from catalyst.dl.state import RunnerState
 
 transforms = transforms.Compose(
@@ -45,7 +44,7 @@ def get_loaders():
         DictDatasetAdapter(train_set),
         batch_size=100,
         shuffle=True,
-        num_workers=3
+        num_workers=0
     )
 
     validation_set = torchvision.datasets.CIFAR10(
@@ -55,8 +54,8 @@ def get_loaders():
     validation_loader = DataLoader(
         DictDatasetAdapter(validation_set),
         batch_size=100,
-        shuffle=True,
-        num_workers=3
+        shuffle=False,
+        num_workers=0
     )
 
     return OrderedDict(train=train_loader, valid=validation_loader)
@@ -98,22 +97,22 @@ class VerboseCallback(Callback):
 
 
 model = SimpleNet()
-exp = BaseExperiment(
-    './logs/01',
-    model=model,
+runner = SupervisedRunner(model=model, input_key="image")
+
+# training
+runner.train(
+    logdir="./logs/01",
     epochs=5,
     loaders=get_loaders(),
+    criterion=CrossEntropyLoss(),
+    optimizer=SGD(model.parameters(), lr=0.001, momentum=.9),
+    scheduler=None,
     callbacks=OrderedDict(
         tqdm=VerboseCallback(),
         loss=LossCallback(),
         optimizer=OptimizerCallback(),
         # scheduler=SchedulerCallback(),
         logger=Logger(),
-    ),
-    criterion=CrossEntropyLoss(),
-    optimizer=SGD(model.parameters(), lr=0.001, momentum=.9)
+        # tflogger=TensorboardLogger()
+    )
 )
-
-runner = SupervisedModelRunner(exp, input_key="image")
-
-runner.run("train")

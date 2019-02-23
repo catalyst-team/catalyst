@@ -1,8 +1,5 @@
 shared:
-  state_size: 2
-  action_size: &action_size 1
   history_len: 4
-
   n_step: 1
   gamma: 0.99
 
@@ -30,13 +27,12 @@ env:
 
 actor:
   agent: Actor
-  hiddens: [8, 8, 8]
+  head_hiddens: [8, 8, 8]
   layer_fn: Linear
   bias: false
   norm_fn: LayerNorm
   activation_fn: ReLU
   out_activation: Tanh
-  memory_type: null
 
 critic:
   agent: Critic
@@ -47,7 +43,6 @@ critic:
   bias: false
   norm_fn: LayerNorm
   activation_fn: ReLU
-  memory_type: null
 
 algorithm:
   actor_tau: 0.01
@@ -65,15 +60,6 @@ algorithm:
   actor_grad_clip_params:
     func: clip_grad_value_
     clip_value: 1.0
-
-  actor_scheduler_params:
-    scheduler: MultiStepLR
-    milestones: [2000000]  # batches
-    gamma: 1.0
-  critic_scheduler_params:
-    scheduler: MultiStepLR
-    milestones: [2000000]  # batches
-    gamma: 1.0
 
   critic_loss_params:
     criterion: HuberLoss
@@ -102,7 +88,5 @@ sampler:
 
 random_process:
   random_process: GaussianWhiteNoiseProcess
-  sigma: 0.2
-  size: *action_size
 
 seeds: [1, 10, 1000, 10000, 42000]

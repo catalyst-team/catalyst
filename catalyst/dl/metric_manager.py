@@ -29,16 +29,16 @@ class MetricManager:
 
     @staticmethod
     def _to_single_value(value):
-        if hasattr(value, 'item'):
+        if hasattr(value, "item"):
             value = value.item()
 
         assert isinstance(value, Number), \
-            f'{type(value)} is not a python number'
+            f"{type(value)} is not a python number"
 
         # noinspection PyTypeChecker
         return float(value)
 
-    def __init__(self, main_metric='valid/loss', reduce=True):
+    def __init__(self, main_metric="valid/loss", reduce=True):
         self._reduce = reduce
         self._main_metric_name = main_metric
         self._meters: Dict[str, AverageValueMeter] = None
@@ -46,7 +46,7 @@ class MetricManager:
         self.epoch_values: Dict[str, float] = None
 
         self.best_main_metric_value: float = \
-            float('+inf') if self._reduce else float('-inf')
+            float("+inf") if self._reduce else float("-inf")
         self.is_best: bool = None
 
         self._current_loader_name: str = None
@@ -72,7 +72,7 @@ class MetricManager:
 
     def end_loader(self):
         for name, meter in self._meters.items():
-            epoch_key = f'{self._current_loader_name}/{name}'
+            epoch_key = f"{self._current_loader_name}/{name}"
             self.epoch_values[epoch_key] = meter.mean
 
         self._current_loader_name = None

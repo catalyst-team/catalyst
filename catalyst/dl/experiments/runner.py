@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from typing import Mapping, Any
+from typing import Mapping, Any, Dict
 from abc import ABC, abstractmethod
 
 import torch
@@ -9,27 +9,30 @@ from catalyst.dl.callbacks import Callback
 from catalyst.dl.metric_manager import TimerManager
 from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
-from . import Experiment
+from . import Experiment, BaseExperiment, ConfigExperiment
 
 
 class Runner(ABC):
+    _base_exp_parser = BaseExperiment
+    _config_exp_parser = ConfigExperiment
 
     def __init__(
-            self,
-            experiment: Experiment=None,
-            model: nn.Module=None,
-            device=None):
+        self,
+        model: nn.Module = None,
+        config: Dict = None,
+        device=None,
+    ):
         """
-
-        :param experiment: Experiment to run
-        :type experiment: Experiment
+        @TODO: write docs
         """
-        assert experiment or model
+        assert model or config
 
-        self.experiment = experiment
         self.model: nn.Module = model
         self.device = device
 
+        self.experiment: Experiment = self._config_exp_parser(config) \
+            if config is not None \
+            else None
         self.state: RunnerState = None
         self.stage: str = None
         self.timers = TimerManager()
@@ -47,10 +50,6 @@ class Runner(ABC):
         }
         return res
 
-    @abstractmethod
-    def _run_batch(self, batch: Mapping[str, Any]):
-        pass
-
     def _prepare_model(self):
         """
         Inner method for children's classes for model specific initialization.
@@ -59,7 +58,7 @@ class Runner(ABC):
         """
 
         if self.model is None:
-            self.model = self.experiment.model
+            self.model = self.experiment.get_model()
 
         self.model, self.device = \
             UtilsFactory.prepare_model(self.model)
@@ -109,6 +108,15 @@ class Runner(ABC):
 
         self.state.metrics.add_batch_value(metrics_dict=values)
 
+    @abstractmethod
+    def predict_batch(self, batch: Mapping[str, Any]):
+        pass
+
+    def _run_batch(self, batch):
+        batch = self._batch2device(batch, self.device)
+        self.state.input = batch
+        self.state.output = self.predict_batch(batch)
+
     def _run_loader(self, loader):
         self.timers.reset()
 
@@ -125,10 +133,7 @@ class Runner(ABC):
             self._call_callbacks("batch_start")
             self._run_batch(batch)
             self.timers.stop("base/model_time")
-
             self.timers.stop("base/batch_time")
-            
-
             self._call_callbacks("batch_end")
 
             self._handle_runner_metrics()
@@ -140,11 +145,14 @@ class Runner(ABC):
             self.timers.start("base/data_time")
 
     def _run_epoch(self, loaders):
+        assert self.state.valid_loader in loaders.keys(), \
+            f"'{self.state.valid_loader}' " \
+            f"should be in provided loaders: {list(loaders.keys())}"
+
         for loader_name in loaders:
             self.state.loader_name = loader_name
             self.state.loader_len = len(loaders[loader_name])
             self.state.is_train = loader_name.startswith("train")
-
             self.model.train(self.state.is_train)
             
             self.state.metrics.begin_loader(self.state.loader_name)
@@ -171,44 +179,56 @@ class Runner(ABC):
             self._call_callbacks("epoch_end")
         self._call_callbacks("stage_end")
 
-    def run(self, mode):
+    def _run_experiment(self, mode):
         for stage in self.experiment.stages:
             self._run_stage(mode, stage)
+        return self
 
-    @abstractmethod
-    def batch_handler(self, batch: Mapping[str, Any]):
-        pass
+    def _prepare_experiment(self, config, **kwargs):
+        if config is not None:
+            experiment = self._config_exp_parser(config=config)
+        else:
+            experiment = self._base_exp_parser(model=self.model, **kwargs)
+        return experiment
+
+    def run(self, mode, config=None, **kwargs):
+        self.experiment = self._prepare_experiment(config=config, **kwargs)
+        return self._run_experiment(mode=mode)
+
+    def train(self, config=None, **kwargs):
+        return self.run(mode="train", config=config, **kwargs)
+
+    def infer(self, config=None, **kwargs):
+        return self.run(mode="infer", config=config, **kwargs)
 
 
-
-class SupervisedModelRunner(Runner):
+class SupervisedRunner(Runner):
     """
     Runner for experiments with supervised model
     """
 
     def __init__(
         self,
-        experiment: Experiment,
+        model: nn.Module = None,
+        config: Dict = None,
+        device=None,
         input_key: str = "features",
         output_key: str = "logits"
     ):
         """
-        :type experiment: Experiment
+        @TODO update docs
+
         :type output_key: str
         :type input_key: str
 
-        :param experiment: Experiment to run
         :param input_key: Key in batch dict mapping to model input
         :param output_key: Key in output dict model output will be stored under
         """
-        super().__init__(experiment)
+        super().__init__(model=model, config=config, device=device)
         self.input_key = input_key
         self.output_key = output_key
 
-    def _run_batch(self, batch: Mapping[str, Any]):
-        self.state.input = batch
-        output = self.batch_handler(batch)
-        self.state.output = {self.output_key: output}
-
-    def batch_handler(self, batch: Mapping[str, Any]):
-        return self.model(batch[self.input_key])
+    def predict_batch(self, batch: Mapping[str, Any]):
+        output = self.model(batch[self.input_key])
+        output = {self.output_key: output}
+        return output
