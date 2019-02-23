@@ -6,6 +6,7 @@ import torch
 from torch import nn
 
 from catalyst.dl.callbacks import Callback
+from catalyst.dl.metric_manager import TimerManager
 from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
 from . import Experiment, BaseExperiment, ConfigExperiment
@@ -34,6 +35,7 @@ class Runner(ABC):
             else None
         self.state: RunnerState = None
         self.stage: str = None
+        self.timers = TimerManager()
 
         self.callbacks: OrderedDict[str, Callback] = None
 
@@ -86,19 +88,25 @@ class Runner(ABC):
             **migrating_params
         )
 
-    def _handle_event(self, event: str):
-        pre_event_name = f"on_{event}_pre"
-        post_event_name = f"on_{event}_post"
-
-        if self.state is not None and hasattr(self.state, pre_event_name):
-            getattr(self.state, pre_event_name)()
+    def _call_callbacks(self, event: str):
 
         if self.callbacks is not None:
             for callback in self.callbacks.values():
                 getattr(callback, f"on_{event}")(self.state)
 
-        if self.state is not None and hasattr(self.state, post_event_name):
-            getattr(self.state, post_event_name)()
+    def _handle_runner_metrics(self):
+        values = {
+            "base/lr": self.state.lr,
+            "base/momentum": self.state.momentum,
+            "loss": self.state.loss
+        }
+
+        values.update(self.timers.elapsed)
+
+        values["base/samples_per_sec"] = \
+            self.state.batch_size / self.timers.elapsed["base/batch_time"]
+
+        self.state.metrics.add_batch_value(metrics_dict=values)
 
     @abstractmethod
     def predict_batch(self, batch: Mapping[str, Any]):
@@ -110,10 +118,31 @@ class Runner(ABC):
         self.state.output = self.predict_batch(batch)
 
     def _run_loader(self, loader):
+        self.timers.reset()
+
+        self.timers.start("base/data_time")
+        self.timers.start("base/batch_time")
+        
         for i, batch in enumerate(loader):
-            self._handle_event("batch_start")
+            batch = self._batch2device(batch, self.device)
+            self.timers.stop("base/data_time")
+            self.timers.start("base/model_time")
+
+            self.state.metrics.begin_batch()
+            
+            self._call_callbacks("batch_start")
             self._run_batch(batch)
-            self._handle_event("batch_end")
+            self.timers.stop("base/model_time")
+            self.timers.stop("base/batch_time")
+            self._call_callbacks("batch_end")
+
+            self._handle_runner_metrics()
+            self.state.metrics.end_batch()
+
+            self.timers.reset()
+            
+            self.timers.start("base/batch_time")
+            self.timers.start("base/data_time")
 
     def _run_epoch(self, loaders):
         assert self.state.valid_loader in loaders.keys(), \
@@ -125,10 +154,14 @@ class Runner(ABC):
             self.state.loader_len = len(loaders[loader_name])
             self.state.is_train = loader_name.startswith("train")
             self.model.train(self.state.is_train)
+            
+            self.state.metrics.begin_loader(self.state.loader_name)
+            self._call_callbacks("loader_start")
 
-            self._handle_event("loader_start")
             self._run_loader(loaders[loader_name])
-            self._handle_event("loader_end")
+            
+            self.state.metrics.end_loader()
+            self._call_callbacks("loader_end")
 
     def _run_stage(self, mode: str, stage: str):
         loaders = self.experiment.get_loaders(stage)
@@ -136,14 +169,15 @@ class Runner(ABC):
 
         self._prepare_state(mode, stage)
 
-        self._handle_event("stage_start")
+        self._call_callbacks("stage_start")
         for epoch in range(self.state.total_epochs):
             self.state.epoch = epoch
-
-            self._handle_event("epoch_start")
+            self.state.metrics.begin_epoch()
+            self._call_callbacks("epoch_start")
             self._run_epoch(loaders)
-            self._handle_event("epoch_end")
-        self._handle_event("stage_end")
+            self.state.metrics.end_epoch()
+            self._call_callbacks("epoch_end")
+        self._call_callbacks("stage_end")
 
     def _run_experiment(self, mode):
         for stage in self.experiment.stages:

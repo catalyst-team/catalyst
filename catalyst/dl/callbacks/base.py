@@ -1,48 +1,27 @@
 import os
 from typing import Dict
 import torch
+
+from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
 from .core import Callback
 from catalyst.dl.fp16 import Fp16Wrap, copy_params, copy_grads
 from .utils import get_optimizer_momentum, scheduler_step
 
 
-class LogdirBaseCallback(Callback):
-    """
-    Base class for anything that needs logdir to be specified in 'train' mode.
-    """
-
-    def __init__(self, logdir: str = None):
-        """
-        Args:
-            logdir: directory where logs will be created
-                If directory doesn't exists it will be created
-                If None, RunnerState.logdir will be used
-        """
-        self.logdir = logdir
-
-    def on_stage_start(self, state):
-        assert self.logdir or state.logdir, \
-            "Please, specify logdir for callback usage"
-        if self.logdir is None:
-            self.logdir = state.logdir
-        os.makedirs(self.logdir, exist_ok=True)
-
-
-class CheckpointCallback(LogdirBaseCallback):
+class CheckpointCallback():
     """
     Checkpoint callback to save/restore your model/criterion/optimizer/metrics.
     """
 
     def __init__(
-        self, logdir: str = None, save_n_best: int = 5, resume: str = None
+        self, save_n_best: int = 5, resume: str = None
     ):
         """
         :param logdir: log directory to use for checkpoint saving
         :param save_n_best: number of best checkpoint to keep
         :param resume: path to checkpoint to load and initialize runner state
         """
-        super().__init__(logdir)
         self.save_n_best = save_n_best
         self.resume = resume
         self.top_best_metrics = []
@@ -109,9 +88,7 @@ class CheckpointCallback(LogdirBaseCallback):
         if self.resume is not None:
             self.load_checkpoint(filename=self.resume, state=state)
 
-   
-
-    def on_epoch_end(self, state):
+    def on_epoch_end(self, state: RunnerState):
         if state.mode == "infer":
             return
 
@@ -120,18 +97,18 @@ class CheckpointCallback(LogdirBaseCallback):
             criterion=state.criterion,
             optimizer=state.optimizer,
             scheduler=state.scheduler,
-            valid_metrics=dict(state.valid_metrics),  # @TODO: save defaultdict
-            epoch_metrics=dict(state.epoch_metrics),  # @TODO: save defaultdict
-            best_metrics=dict(state.best_metrics),  # @TODO: save defaultdict
+            epoch_metrics=dict(state.metrics.epoch_values),
+            best_metrics={state.metrics._main_metric_name:
+                              state.metrics.best_main_metric_value},
             stage=state.stage,
             epoch=state.epoch
         )
         self.save_checkpoint(
-            logdir=self.logdir,
+            logdir=state.logdir,
             checkpoint=checkpoint,
-            is_best=state.is_best_epoch,
+            is_best=state.metrics.is_best_epoch,
             save_n_best=self.save_n_best,
-            main_metric=state.main_metric_value,
+            main_metric=state.metrics.main_metric_value,
             minimize_metric=state.minimize_metric
         )
 
@@ -178,7 +155,7 @@ class OptimizerCallback(Callback):
         self.optimizer_wd = 0
         self.accumulation_counter = 0
 
-    def on_stage_start(self, state):
+    def on_stage_start(self, state: RunnerState):
         self.fp16 = isinstance(state.model, Fp16Wrap)
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key

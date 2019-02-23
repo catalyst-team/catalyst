@@ -112,7 +112,7 @@ runner.train(
         loss=LossCallback(),
         optimizer=OptimizerCallback(),
         # scheduler=SchedulerCallback(),
-        # logger=Logger(),
+        logger=Logger(),
         # tflogger=TensorboardLogger()
     )
 )

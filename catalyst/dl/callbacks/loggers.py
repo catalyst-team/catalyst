@@ -1,15 +1,37 @@
 import os
 import logging
 import json
-from typing import List, Dict
+from abc import ABC, abstractmethod
+from datetime import time, datetime
+from typing import List, Dict, Mapping
 
+from catalyst.dl.callbacks import Callback
 from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
-from .base import LogdirBaseCallback
 from .utils import to_batch_metrics
 
 
-class TxtMetricsFormatter(logging.Formatter):
+class MetricsFormatter(ABC, logging.Formatter):
+    def __init__(self, message_prefix):
+        """
+        :param message_prefix: logging fomat string that will be prepended to message
+        """
+        super().__init__(f"{message_prefix}{{message}}", style="{")
+
+    @abstractmethod
+    def _format_message(self, state: RunnerState):
+        pass
+
+    def format(self, record: logging.LogRecord):
+        # noinspection PyUnresolvedReferences
+        state = record.state
+
+        record.msg = self._format_message(state)
+
+        return super().format(record)
+
+
+class TxtMetricsFormatter(MetricsFormatter):
     """
     Translate batch metrics in human-readable format.
 
@@ -22,28 +44,23 @@ class TxtMetricsFormatter(logging.Formatter):
     """
 
     def __init__(self):
-        fmt = "[{asctime}] {message}"
-        super().__init__(fmt, style="{")
+        super().__init__("[{asctime}] ")
 
-    @staticmethod
-    def _get_metrics_string(metrics):
-        return " | ".join(
-            "{}: {:.5f}".format(k, v) for k, v in sorted(metrics.items())
-        )
+    def _format_metrics(self, metrics: Mapping[str, float]):
+        metrics_formatted = \
+            [f"{name}={value:.5}" for name, value in sorted(metrics.items())]
 
-    @staticmethod
-    def _format_metrics_message(state):
-        message = f"{state.epoch} * Epoch metrics:\n"
-        for k, v in sorted(state.epoch_metrics.items()):
-            message += f"({k}) {TxtMetricsFormatter._get_metrics_string(v)}\n"
+        metrics_formatted = ', '.join(metrics_formatted)
+
+        return metrics_formatted
+
+    def _format_message(self, state: RunnerState):
+        metrics = self._format_metrics(state.metrics.epoch_values)
+        message = f"Epoch {state.epoch}: {metrics}"
         return message
 
-    def format(self, record):
-        record.msg = self._format_metrics_message(record.state)
-        return super().format(record)
 
-
-class JsonMetricsFormatter(logging.Formatter):
+class JsonMetricsFormatter(MetricsFormatter):
     """
     Translate batch metrics in json format.
 
@@ -56,45 +73,42 @@ class JsonMetricsFormatter(logging.Formatter):
     """
 
     def __init__(self):
-        fmt = "{message}"
-        super().__init__(fmt, style="{")
+        super().__init__("")
 
-    def format(self, record):
-        state = record.state
-        dct = {}
-        dct["epoch_metrics"] = state.epoch_metrics.copy()
-        dct["epoch"] = state.epoch
-        dct["asctime"] = self.formatTime(record)
-        return json.dumps(dct)
+    def _format_message(self, state: RunnerState):
+        res = dict(
+            metirics=state.metrics.epoch_values.copy(),
+            epoch=state.epoch,
+            time=datetime.now().isoformat()
+        )
+        return json.dumps(res, indent=True, ensure_ascii=False)
 
 
-class Logger(LogdirBaseCallback):
+class Logger(Callback):
     """
     Logger callback, translates state.*_metrics to console and text file
     """
 
-    def __init__(self, logdir: str = None):
+    def __init__(self):
         """
         :param logdir: log directory to use for text logging
         """
-        super().__init__(logdir)
         self.logger = None
 
-    def on_stage_start(self, state):
-        super().on_stage_start(state)
-        logger_name = os.path.join(self.logdir, "logs")
-        self.logger = self._get_logger(logger_name)
+    def on_stage_start(self, state: RunnerState):
+        state.logdir.mkdir(parents=True, exist_ok=True)
+        self.logger = self._get_logger(state.logdir)
 
     @staticmethod
-    def _get_logger(logger_name):
-        logger = logging.getLogger(logger_name)
+    def _get_logger(logdir):
+        logger = logging.getLogger("metrics")
         logger.setLevel(logging.DEBUG)
 
-        fh = logging.FileHandler(logger_name + ".txt")
+        fh = logging.FileHandler(f"{logdir}/metrics.txt")
         fh.setLevel(logging.INFO)
         ch = logging.StreamHandler()
         ch.setLevel(logging.INFO)
-        jh = logging.FileHandler(logger_name + ".json")
+        jh = logging.FileHandler(f"{logdir}/metrics.json")
         jh.setLevel(logging.INFO)
 
         txt_formatter = TxtMetricsFormatter()
@@ -110,18 +124,18 @@ class Logger(LogdirBaseCallback):
         return logger
 
     def on_epoch_end(self, state):
-        if self.logger is not None:
-            self.logger.info("", extra={"state": state})
+        self.logger.info("", extra={"state": state})
 
 
-class TensorboardLogger(LogdirBaseCallback):
+class TensorboardLogger(Callback):
     """
     Logger callback, translates state.*_metrics to tensorboard
     """
 
+    # TODO:hexfaker update to support MetricManager
+
     def __init__(
         self,
-        logdir: str = None,
         metric_names: List[str] = None,
         log_on_batch_end=True,
         log_on_epoch_end=True
@@ -134,20 +148,20 @@ class TensorboardLogger(LogdirBaseCallback):
             prepends 'batch_' prefix to their names.
         :param log_on_epoch_end: Logs per-epoch metrics if set True.
         """
-        super().__init__(logdir)
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
 
-        # You definitely should log something)
-        assert self.log_on_batch_end or self.log_on_epoch_end
+        assert self.log_on_batch_end or self.log_on_epoch_end, \
+            "You have to log something!"
+
         self.loggers = dict()
 
     def on_loader_start(self, state):
         lm = state.loader_name
         if lm not in self.loggers:
             self.loggers[lm] = UtilsFactory.create_tflogger(
-                logdir=self.logdir, name=lm
+                logdir=state.logdir, name=lm
             )
 
     def _log_metrics(
@@ -167,7 +181,7 @@ class TensorboardLogger(LogdirBaseCallback):
             mode = state.loader_name
 
             self._log_metrics(
-                metrics=state.batch_metrics,
+                metrics=state.metrics.batch_values,
                 step=state.step,
                 mode=mode,
                 suffix="/batch"
@@ -177,7 +191,7 @@ class TensorboardLogger(LogdirBaseCallback):
         if self.log_on_epoch_end:
             mode = state.loader_name
             self._log_metrics(
-                metrics=state.epoch_metrics[mode],
+                metrics=state.metrics.epoch_values,
                 step=state.epoch,
                 mode=mode,
                 suffix="/epoch"

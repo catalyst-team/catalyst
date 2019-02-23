@@ -1,8 +1,28 @@
 from collections import defaultdict
+from time import time
 from numbers import Number
 from typing import Any, Dict
 
 from torchnet.meter import AverageValueMeter
+
+
+class TimerManager:
+    def __init__(self):
+        self._starts = {}
+        self.elapsed = {}
+
+    def start(self, name):
+        self._starts[name] = time()
+
+    def stop(self, name):
+        assert name in self._starts, "Timer wasn't started"
+        
+        self.elapsed[name] = time() - self._starts[name]
+        del self._starts[name]
+
+    def reset(self):
+        self.elapsed = {}
+        self._starts = {}
 
 
 class MetricManager:
@@ -68,11 +88,23 @@ class MetricManager:
         for name, value in self._batch_values.items():
             self._meters[name].add(value)
 
-    def add_batch_value(self, name: str, value: Any):
-        self._batch_values[name] = self._to_single_value(value)
+    def add_batch_value(
+        self,
+        name: str = None,
+        value=None,
+        metrics_dict: Dict[str, Any] = None
+    ):
+        metrics_dict = metrics_dict or {}
+
+        if name:
+            metrics_dict[name] = value
+
+        for name, value in metrics_dict.items():
+            self._batch_values[name] = self._to_single_value(value)
 
     @property
     def batch_values(self):
+        self.add_batch_value()
         return self._batch_values
 
     @property
