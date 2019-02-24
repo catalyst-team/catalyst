@@ -66,7 +66,7 @@ docker run -it --rm --shm-size 8G --runtime=nvidia \
    -v $(pwd):/workspace/ -v $LOGDIR:/logdir/ \
    -e "CUDA_VISIBLE_DEVICES=0" \
    -e "LOGDIR=/logdir" \
-   catalyst-base bash finetune/run_model.sh
+   catalyst-base bash finetune/bin/run_model.sh
 ```
 
 ### Training visualization
@@ -83,7 +83,7 @@ CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs/finetune
 export LOGDIR=$(pwd)/logs/finetune/baseline
 docker run -it --rm --shm-size 8G \
    -v $(pwd):/workspace/ \
-   catalyst-contrib bash finetune/run_projector.sh
+   catalyst-contrib bash finetune/bin/run_projector.sh
 tensorboard --logdir=./logs/finetune/projector
 
 ```
@@ -95,7 +95,7 @@ export LOGDIR=$(pwd)/logs/finetune/baseline
 docker run -it --rm --shm-size 8G \
    -v $(pwd):/workspace/ -v $LOGDIR:/logdir/ \
    -e "LOGDIR=/logdir" \
-   catalyst-contrib bash finetune/run_index.sh
+   catalyst-contrib bash finetune/bin/run_index.sh
 ```
 
 ### LrFinder example
@@ -106,7 +106,7 @@ docker run -it --rm --shm-size 8G --runtime=nvidia \
    -v $(pwd):/workspace/ -v $LOGDIR:/logdir/ \
    -e "CUDA_VISIBLE_DEVICES=0" \
    -e "LOGDIR=/logdir" \
-   catalyst-base bash finetune/run_lrfinder.sh
+   catalyst-base bash finetune/bin/run_lrfinder.sh
 ```
 
 ### Grid search metrics visualization
@@ -117,7 +117,7 @@ docker run -it --rm --shm-size 8G --runtime=nvidia \
    -v $(pwd):/workspace/ -v $BASELOGDIR:/logdir/ \
    -e "CUDA_VISIBLE_DEVICES=0" \
    -e "BASELOGDIR=/logdir" \
-   catalyst-base bash finetune/run_grid.sh
+   catalyst-base bash finetune/bin/run_grid.sh
 ```
 
 
@@ -129,5 +129,5 @@ docker run -it --rm --shm-size 8G --runtime=nvidia \
    -v $(pwd):/workspace/ -v $BASELOGDIR:/logdir/ \
    -e "CUDA_VISIBLE_DEVICES=0" \
    -e "BASELOGDIR=/logdir" \
-   catalyst-base bash finetune/run_kfold.sh
+   catalyst-base bash finetune/bin/run_kfold.sh
 ```
