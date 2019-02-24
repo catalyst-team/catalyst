@@ -366,38 +366,3 @@ def separate_tags(
             df_new.append({**row, **{tag_column: class_name}})
     df_new = pd.DataFrame(df_new)
     return df_new
-
-
-def dataframe_to_list(dataframe: pd.DataFrame) -> List[dict]:
-    """
-    Converts dataframe to a list of rows (without indexes)
-    Args:
-        dataframe (DataFrame): input dataframe
-    Returns:
-        (List[dict]): list of rows
-    """
-    result = list(dataframe.to_dict(orient="index").values())
-    return result
-
-
-def folds_to_list(folds: Union[list, str, pd.Series]) -> List[int]:
-    """
-    This function formats string or either list of numbers into a list of unique int
-    Args:
-        folds (Union[list, str, pd.Series]): Either list of numbers or
-            one string with numbers separated by commas or
-            pandas series
-    Returns:
-        List[int]: list of unique ints
-    Examples:
-        >>> folds_to_list("1,2,1,3,4,2,4,6")
-        [1, 2, 3, 4, 6]
-        >>> folds_to_list([1, 2, 3.0, 5])
-        [1, 2, 3, 5]
-    """
-    if isinstance(folds, str):
-        folds = folds.split(",")
-    elif isinstance(folds, pd.Series):
-        folds = list(sorted(folds.unique()))
-
-    return list({int(x) for x in folds})

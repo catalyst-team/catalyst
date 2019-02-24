@@ -1,18 +1,19 @@
 import numpy as np
 import collections
 import cv2
+import safitty
 from albumentations import (
     RandomRotate90, Normalize, Compose, ShiftScaleRotate, JpegCompression,
     LongestMaxSize, PadIfNeeded
 )
 from albumentations.torch import ToTensor
 
-from catalyst.legacy.utils.parse import parse_in_csvs
 from catalyst.dl.utils import UtilsFactory
 from catalyst.data.reader import ImageReader, ScalarReader, ReaderCompose
 from catalyst.data.augmentor import Augmentor
 from catalyst.data.sampler import BalanceClassSampler
 from catalyst.dl.datasource import AbstractDataSource
+from catalyst.utils.parse import read_csv_data
 
 cv2.setNumThreads(0)
 cv2.ocl.setUseOpenCL(False)
@@ -81,22 +82,23 @@ class DataSource(AbstractDataSource):
         stage: str = None,
         n_workers: int = None,
         batch_size: int = None,
-        datapath=None,
-        in_csv=None,
-        in_csv_train=None,
-        in_csv_valid=None,
-        in_csv_infer=None,
-        train_folds=None,
-        valid_folds=None,
-        tag2class=None,
-        class_column=None,
-        tag_column=None,
-        folds_seed=42,
-        n_folds=5
+        datapath: str = None,
+        in_csv: str = None,
+        in_csv_train: str = None,
+        in_csv_valid: str = None,
+        in_csv_infer: str = None,
+        train_folds: str = None,
+        valid_folds: str = None,
+        tag2class: str = None,
+        class_column: str = None,
+        tag_column: str = None,
+        folds_seed: int = 42,
+        n_folds: int = 5
     ):
         loaders = collections.OrderedDict()
+        tag2class = safitty.load_config(tag2class, ordered=True)
 
-        df, df_train, df_valid, df_infer = parse_in_csvs(
+        df, df_train, df_valid, df_infer = read_csv_data(
             in_csv=in_csv,
             in_csv_train=in_csv_train,
             in_csv_valid=in_csv_valid,
@@ -106,7 +108,7 @@ class DataSource(AbstractDataSource):
             tag2class=tag2class,
             class_column=class_column,
             tag_column=tag_column,
-            folds_seed=folds_seed,
+            seed=folds_seed,
             n_folds=n_folds
         )
 

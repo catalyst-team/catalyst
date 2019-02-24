@@ -84,15 +84,15 @@ def build_args(parser):
 def parse_args():
     parser = argparse.ArgumentParser()
     build_args(parser)
-    args = parser.parse_args()
-    return args
+    args, uargs = parser.parse_known_args()
+    return args, uargs
 
 
-def main(args):
+def main(args, uargs=None):
     dataframe = pd.read_csv(args.in_csv)
 
     if args.tag2class is not None:
-        tag2class = safitty.load_config(args.tag2class)
+        tag2class = safitty.load_config(args.tag2class, ordered=True)
     else:
         tag2class = None
 
@@ -118,5 +118,5 @@ def main(args):
 
 
 if __name__ == "__main__":
-    args = parse_args()
-    main(args)
+    args, uargs = parse_args()
+    main(args, uargs)
