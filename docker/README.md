@@ -16,10 +16,10 @@ docker build -t catalyst-base -f ./Dockerfile-100 .
 
 ```bash
 # PyTorch 0.4.1 version
-docker build -t catalyst-conrtib -f ./Dockerfile-contrib-041 .
+docker build -t catalyst-contrib -f ./Dockerfile-contrib-041 .
 
 # PyTorch 1.0.0 version
-docker build -t catalyst-conrtib -f ./Dockerfile-contrib-100 .
+docker build -t catalyst-contrib -f ./Dockerfile-contrib-100 .
 ```
 
 ## How to use
