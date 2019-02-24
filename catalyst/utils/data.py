@@ -1,15 +1,15 @@
-from typing import Callable, Tuple, Dict
-
-import os
 import glob
 import itertools
+import os
+from collections import defaultdict
+from typing import Callable, Tuple, Union
+from typing import List, Dict
+
 import numpy as np
 import pandas as pd
-from collections import defaultdict
-
-from sklearn.utils import shuffle
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import train_test_split
+from sklearn.utils import shuffle
 
 DictDataset = Dict[str, object]
 
@@ -366,3 +366,34 @@ def separate_tags(
             df_new.append({**row, **{tag_column: class_name}})
     df_new = pd.DataFrame(df_new)
     return df_new
+
+
+def dataframe_to_list(dataframe: pd.DataFrame) -> List[dict]:
+    """
+    Converts dataframe to a list of rows (without indexes)
+    Args:
+        dataframe (DataFrame): input dataframe
+    Returns:
+        (List[dict]): list of rows
+    """
+    result = list(dataframe.to_dict(orient="index").values())
+    return result
+
+
+def folds_to_list(folds: Union[list, str]) -> List[int]:
+    """
+    This function formats string or either list of numbers into a list of unique int
+    Args:
+        folds (Union[list, str]): Either list of numbers or one string with numbers separated by commas
+    Returns:
+        List[int]: list of unique ints
+    Examples:
+        >>> folds_to_list("1,2,1,3,4,2,4,6")
+        [1, 2, 3, 4, 6]
+        >>> folds_to_list([1, 2, 3.0, 5])
+        [1, 2, 3, 5]
+    """
+    if isinstance(folds, str):
+        folds = folds.split(",")
+
+    return list({int(x) for x in folds})

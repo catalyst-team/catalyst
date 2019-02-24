@@ -1,65 +1,14 @@
+from typing import Union, List
+
 import pandas as pd
 import json
-from catalyst.utils.data import default_fold_split, stratified_fold_split
-
-
-def parse_csv2list(df):
-    df = df.reset_index().drop("index", axis=1)
-    df = list(df.to_dict("index").values())
-    return df
-
-
-def parse_in_csv(
-    in_csv,
-    train_folds,
-    valid_folds=None,
-    tag2class=None,
-    class_column=None,
-    tag_column=None,
-    folds_seed=42,
-    n_folds=5
-):
-    df = pd.read_csv(in_csv)
-
-    if tag2class is not None:
-        with open(tag2class) as fin:
-            cls2id = json.load(fin)
-        df[class_column] = df[tag_column].apply(lambda x: cls2id[str(x)])
-
-    if class_column is not None:
-        df = stratified_fold_split(
-            df,
-            class_column=class_column,
-            random_state=folds_seed,
-            n_folds=n_folds
-        )
-    else:
-        df = default_fold_split(df, random_state=folds_seed, n_folds=n_folds)
-
-    train_folds = (
-        train_folds if isinstance(train_folds, list) else
-        list(map(int, train_folds.split(",")))
-    )
-    df_train = df[df["fold"].isin(train_folds)]
-
-    if valid_folds is not None:
-        valid_folds = (
-            valid_folds if isinstance(valid_folds, list) else
-            list(map(int, valid_folds.split(",")))
-        )
-        df_valid = df[df["fold"].isin(valid_folds)]
-    else:
-        df_valid = df[~df["fold"].isin(train_folds)]
-
-    df_infer = []
-
-    return df, df_train, df_valid, df_infer
+from catalyst.utils.data import default_fold_split, stratified_fold_split, dataframe_to_list, folds_to_list
 
 
 def prepare_fold_csv(fold_name, **kwargs):
     spec_name = f"in_csv_{fold_name}"
     df = []
-    if kwargs.get(spec_name, None) is not None:
+    if kwargs.get(spec_name) is not None:
         for csv in kwargs[spec_name].split(","):
             df_ = pd.read_csv(csv)
             df_["fold"] = fold_name
@@ -152,7 +101,7 @@ def parse_in_csvs(
             tag2class=tag2class,
             class_column=class_column,
             tag_column=tag_column,
-            folds_seed=folds_seed,
+            seed=folds_seed,
             n_folds=n_folds
         )
     elif in_csv_spec_flag:
@@ -169,13 +118,13 @@ def parse_in_csvs(
 
     if len(df_train) > 0:
         del df_train["fold"]
-        df_train = parse_csv2list(df_train)
+        df_train = dataframe_to_list(df_train)
 
     if len(df_valid):
         del df_valid["fold"]
-        df_valid = parse_csv2list(df_valid)
+        df_valid = dataframe_to_list(df_valid)
 
     if len(df_infer) > 0:
-        df_infer = parse_csv2list(df_infer)
+        df_infer = dataframe_to_list(df_infer)
 
     return df, df_train, df_valid, df_infer

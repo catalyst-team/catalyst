@@ -11,6 +11,7 @@ torchnet
 
 # Used in scripts
 matplotlib
+safitty
 pandas
 sklearn
 
