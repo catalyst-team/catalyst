@@ -144,6 +144,13 @@ class FrozenClass(object):
 
 
 def args_are_not_none(*args: Optional[Any]) -> bool:
+    """
+    Check that all arguments are not None
+    Args:
+        *args (Any): values
+    Returns:
+         bool: True if all value were not None, False otherwise
+    """
     result = args is not None
     if not result:
         return result

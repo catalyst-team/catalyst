@@ -380,11 +380,13 @@ def dataframe_to_list(dataframe: pd.DataFrame) -> List[dict]:
     return result
 
 
-def folds_to_list(folds: Union[list, str]) -> List[int]:
+def folds_to_list(folds: Union[list, str, pd.Series]) -> List[int]:
     """
     This function formats string or either list of numbers into a list of unique int
     Args:
-        folds (Union[list, str]): Either list of numbers or one string with numbers separated by commas
+        folds (Union[list, str, pd.Series]): Either list of numbers or
+            one string with numbers separated by commas or
+            pandas series
     Returns:
         List[int]: list of unique ints
     Examples:
@@ -395,5 +397,7 @@ def folds_to_list(folds: Union[list, str]) -> List[int]:
     """
     if isinstance(folds, str):
         folds = folds.split(",")
+    elif isinstance(folds, pd.Series):
+        folds = list(sorted(folds.unique()))
 
     return list({int(x) for x in folds})

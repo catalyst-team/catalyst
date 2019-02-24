@@ -25,6 +25,22 @@ def build_args(parser):
     )
 
     parser.add_argument(
+        "-v", "--valid-folds",
+        type=str,
+        dest="valid_folds",
+        default=None,
+        help="Integers separated by commas. This is represents valid folds"
+    )
+
+    parser.add_argument(
+        "-i", "--infer-folds",
+        type=str,
+        dest="infer_folds",
+        default=None,
+        help="Integers separated by commas. This is represents infer folds"
+    )
+
+    parser.add_argument(
         "--out-csv",
         type=str,
         dest="out_csv",
@@ -33,25 +49,21 @@ def build_args(parser):
     )
 
     parser.add_argument(
-        "-m",
-        "--label-mapping",
+        "--tag2class",
         type=str,
         default=None,
-        dest="label_mapping",
         help="Path to YAML or JSON of label mappings"
     )
 
     parser.add_argument(
-        "-l",
-        "--label-column",
+        "--tag-column",
         type=str,
         default=None,
-        dest="label_column",
-        help="Column of labels (works in pair with `--label-mapping` flag)"
+        dest="tag_column",
+        help="Column of labels (works in pair with `--tag2class` flag)"
     )
 
     parser.add_argument(
-        "-c",
         "--class-column",
         type=str,
         default=None,
@@ -79,24 +91,19 @@ def parse_args():
 
 def main(args):
     dataframe = pd.read_csv(args.in_csv)
-    train_folds = folds_to_list(args.train_folds)
 
-    if args.valid_folds is not None:
-        valid_folds = folds_to_list(args.valid_folds)
+    if args.tag2class is not None:
+        tag2class = safitty.load_config(args.tag2class)
     else:
-        valid_folds = None
-
-    if args.label_mapping is not None:
-        label_mapping = safitty.load_config(args.label_mapping)
-    else:
-        label_mapping = None
+        tag2class = None
 
     result: SplitDataFrame = split_dataframe(
         dataframe,
-        train_folds=train_folds,
-        valid_folds=valid_folds,
-        label_mapping=label_mapping,
-        label_column=args.label_column,
+        train_folds=args.train_folds,
+        valid_folds=args.valid_folds,
+        infer_folds=args.infer_folds,
+        tag2class=tag2class,
+        tag_column=args.tag_column,
         class_column=args.class_column,
         seed=args.seed,
         n_folds=args.n_folds
