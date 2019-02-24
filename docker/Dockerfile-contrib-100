@@ -36,7 +36,8 @@ RUN pip install --no-cache-dir \
     albumentations \
     seaborn \
     tensorflow \
-    wrappa
+    wrappa \
+    safitty
 
 CMD mkdir -p /workspace
 WORKDIR /workspace
