@@ -3,8 +3,7 @@ import argparse
 import pandas as pd
 import safitty
 
-from catalyst.utils.data import folds_to_list
-from catalyst.utils.parse import SplitDataFrame, split_dataframe
+from catalyst.utils.parse import split_dataframe
 
 
 def build_args(parser):
@@ -97,7 +96,7 @@ def main(args):
     else:
         tag2class = None
 
-    result: SplitDataFrame = split_dataframe(
+    _, train, valid, infer = split_dataframe(
         dataframe,
         train_folds=args.train_folds,
         valid_folds=args.valid_folds,
@@ -113,8 +112,9 @@ def main(args):
     if out_csv.endswith(".csv"):
         out_csv = out_csv[:-4]
 
-    result.train.to_csv(f"{out_csv}_train.csv", index=False)
-    result.valid.to_csv(f"{out_csv}_valid.csv", index=False)
+    train.to_csv(f"{out_csv}_train.csv", index=False)
+    valid.to_csv(f"{out_csv}_valid.csv", index=False)
+    infer.to_csv(f"{out_csv}_infer.csv", index=False)
 
 
 if __name__ == "__main__":

@@ -3,75 +3,7 @@ from typing import Union, List
 import pandas as pd
 import json
 from catalyst.utils.data import default_fold_split, stratified_fold_split, dataframe_to_list, folds_to_list
-
-
-def prepare_fold_csv(fold_name, **kwargs):
-    spec_name = f"in_csv_{fold_name}"
-    df = []
-    if kwargs.get(spec_name) is not None:
-        for csv in kwargs[spec_name].split(","):
-            df_ = pd.read_csv(csv)
-            df_["fold"] = fold_name
-            df.append(df_)
-
-    if len(df) > 0:
-        df = pd.concat(df, axis=0)
-
-    return df
-
-
-def parse_spec_csv(
-    in_csv_train=None,
-    in_csv_valid=None,
-    in_csv_infer=None,
-    tag2class=None,
-    class_column=None,
-    tag_column=None
-):
-    df_train = prepare_fold_csv(
-        fold_name="train",
-        in_csv_train=in_csv_train,
-        in_csv_valid=in_csv_valid,
-        in_csv_infer=in_csv_infer
-    )
-    df_valid = prepare_fold_csv(
-        fold_name="valid",
-        in_csv_train=in_csv_train,
-        in_csv_valid=in_csv_valid,
-        in_csv_infer=in_csv_infer
-    )
-    df_infer = prepare_fold_csv(
-        fold_name="infer",
-        in_csv_train=in_csv_train,
-        in_csv_valid=in_csv_valid,
-        in_csv_infer=in_csv_infer
-    )
-
-    if len(df_train) > 0 and len(df_valid) > 0:
-        df = pd.concat([df_train, df_valid], axis=0)
-    else:
-        df = []
-
-    if tag2class is not None:
-        with open(tag2class) as fin:
-            cls2id = json.load(fin)
-        if len(df) > 0:
-            df[class_column] = df[tag_column].apply(lambda x: cls2id[str(x)])
-        if len(df_train) > 0:
-            df_train[class_column] = df_train[tag_column].apply(
-                lambda x: cls2id[str(x)]
-            )
-        if len(df_valid) > 0:
-            df_valid[class_column] = df_valid[tag_column].apply(
-                lambda x: cls2id[str(x)]
-            )
-        if len(df_infer) > 0:
-            df_infer[class_column] = df_infer[tag_column].apply(
-                lambda x: cls2id[str(x)]
-            )
-
-    return df, df_train, df_valid, df_infer
-
+from catalyst.utils.parse import merge_multiple_fold_csv
 
 def parse_in_csvs(
     in_csv=None,
