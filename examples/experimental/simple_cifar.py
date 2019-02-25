@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import torchvision
 from torch import nn
 from torch.nn import CrossEntropyLoss
-from torch.optim import SGD
+from torch.optim import Adam
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 from tqdm import tqdm
@@ -105,7 +105,7 @@ runner.train(
     epochs=5,
     loaders=get_loaders(),
     criterion=CrossEntropyLoss(),
-    optimizer=SGD(model.parameters(), lr=0.001, momentum=.9),
+    optimizer=Adam(model.parameters(), lr=0.001),
     scheduler=None,
     callbacks=OrderedDict(
         tqdm=VerboseCallback(),

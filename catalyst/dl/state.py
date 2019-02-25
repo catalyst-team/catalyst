@@ -25,7 +25,7 @@ class RunnerState(FrozenClass):
         optimizer: Optimizer = None,
         scheduler=None,
         stage=None,
-        main_metric="valid/loss",
+        main_metric="loss",
         minimize_metric=True,
         valid_loader="valid",
         reset_step=False,

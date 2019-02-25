@@ -73,8 +73,8 @@ class Runner(ABC):
             })
 
         self._prepare_model()
-        criterion, optimizer, scheduler = self.experiment.get_model_stuff(
-            self.model, stage)
+        criterion, optimizer, scheduler = \
+            self.experiment.get_model_stuff(self.model, stage)
 
         self.state = RunnerState(
             mode=mode,
@@ -118,23 +118,24 @@ class Runner(ABC):
         self.state.output = self.predict_batch(batch)
 
     def _run_loader(self, loader):
+        self.state.batch_size = loader.batch_size
         self.timers.reset()
 
-        self.timers.start("base/data_time")
         self.timers.start("base/batch_time")
-        
+        self.timers.start("base/data_time")
+
         for i, batch in enumerate(loader):
             batch = self._batch2device(batch, self.device)
             self.timers.stop("base/data_time")
-            self.timers.start("base/model_time")
 
             self.state.metrics.begin_batch()
-            
+
             self._call_callbacks("batch_start")
+            self.timers.start("base/model_time")
             self._run_batch(batch)
             self.timers.stop("base/model_time")
-            self.timers.stop("base/batch_time")
             self._call_callbacks("batch_end")
+            self.timers.stop("base/batch_time")
 
             self._handle_runner_metrics()
             self.state.metrics.end_batch()

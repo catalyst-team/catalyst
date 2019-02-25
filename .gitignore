@@ -112,6 +112,7 @@ logs/
 
 *.csv
 *.tsv
+*.ipynb
 
 examples/data/
 examples/logs/

@@ -47,16 +47,28 @@ class TxtMetricsFormatter(MetricsFormatter):
         super().__init__("[{asctime}] ")
 
     def _format_metrics(self, metrics: Mapping[str, float]):
-        metrics_formatted = \
-            [f"{name}={value:.5}" for name, value in sorted(metrics.items())]
+        main_names = list(sorted(set(
+            x.split("/", 1)[0] for x in metrics.keys()
+        )))
 
-        metrics_formatted = ', '.join(metrics_formatted)
+        metrics_formatted = {}
+        for key in main_names:
+            metrics_formatted_ = [
+                f"{name.replace(f'{key}/', '')}={value:.5f}"
+                for name, value in sorted(metrics.items())
+                if name.startswith(key)
+            ]
+            metrics_formatted_ = ' | '.join(metrics_formatted_)
+            metrics_formatted[key] = metrics_formatted_
 
         return metrics_formatted
 
     def _format_message(self, state: RunnerState):
+        message = [""]
         metrics = self._format_metrics(state.metrics.epoch_values)
-        message = f"Epoch {state.epoch}: {metrics}"
+        for key, value in metrics.items():
+            message.append(f"{state.epoch:4d} * Epoch ({key}): {value}")
+        message = "\n".join(message)
         return message
 
 
