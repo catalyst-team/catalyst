@@ -19,7 +19,7 @@ def build_args(parser):
         "-t", "--train-folds",
         type=str,
         dest="train_folds",
-        help="Integers separated by commas. This is represents train folds",
+        help="Numbers separated by commas. They represent train folds",
         required=True
     )
 
@@ -28,7 +28,7 @@ def build_args(parser):
         type=str,
         dest="valid_folds",
         default=None,
-        help="Integers separated by commas. This is represents valid folds"
+        help="Numbers separated by commas. They represent valid folds"
     )
 
     parser.add_argument(
@@ -36,7 +36,7 @@ def build_args(parser):
         type=str,
         dest="infer_folds",
         default=None,
-        help="Integers separated by commas. This is represents infer folds"
+        help="Numbers separated by commas. They represent infer folds"
     )
 
     parser.add_argument(
