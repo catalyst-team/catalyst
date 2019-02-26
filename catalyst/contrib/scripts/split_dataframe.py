@@ -1,7 +1,6 @@
 import argparse
-
+import json
 import pandas as pd
-import safitty
 
 from catalyst.utils.parse import split_dataframe
 
@@ -92,7 +91,7 @@ def main(args, uargs=None):
     dataframe = pd.read_csv(args.in_csv)
 
     if args.tag2class is not None:
-        tag2class = safitty.load_config(args.tag2class, ordered=True)
+        tag2class = json.load(open(args.tag2class))
     else:
         tag2class = None
 

@@ -23,7 +23,8 @@ def dataframe_to_list(dataframe: pd.DataFrame) -> List[dict]:
 
 def folds_to_list(folds: Union[list, str, pd.Series]) -> List[int]:
     """
-    This function formats string or either list of numbers into a list of unique int
+    This function formats string or either list of numbers
+        into a list of unique int
     Args:
         folds (Union[list, str, pd.Series]): Either list of numbers or
             one string with numbers separated by commas or
@@ -35,6 +36,9 @@ def folds_to_list(folds: Union[list, str, pd.Series]) -> List[int]:
         [1, 2, 3, 4, 6]
         >>> folds_to_list([1, 2, 3.0, 5])
         [1, 2, 3, 5]
+    Raises:
+        ValueError: if value in string or array cannot be casted to int
+
     """
     if isinstance(folds, str):
         folds = folds.split(",")

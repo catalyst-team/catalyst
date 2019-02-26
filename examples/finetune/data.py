@@ -1,7 +1,7 @@
 import numpy as np
 import collections
 import cv2
-import safitty
+import json
 from albumentations import (
     RandomRotate90, Normalize, Compose, ShiftScaleRotate, JpegCompression,
     LongestMaxSize, PadIfNeeded
@@ -96,7 +96,7 @@ class DataSource(AbstractDataSource):
         n_folds: int = 5
     ):
         loaders = collections.OrderedDict()
-        tag2class = safitty.load_config(tag2class, ordered=True)
+        tag2class = json.load(open(tag2class))
 
         df, df_train, df_valid, df_infer = read_csv_data(
             in_csv=in_csv,
