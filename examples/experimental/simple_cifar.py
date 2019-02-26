@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from catalyst.dl.callbacks import \
     LossCallback, OptimizerCallback, Callback, \
-    SchedulerCallback, TensorboardLogger, Logger
+    SchedulerCallback, CheckpointCallback
 from catalyst.dl.experiments.runner import SupervisedRunner
 from catalyst.dl.state import RunnerState
 
@@ -120,7 +120,6 @@ runner.train(
         loss=LossCallback(),
         optimizer=OptimizerCallback(),
         scheduler=SchedulerCallback(),
-        # logger=Logger(),
-        # tflogger=TensorboardLogger()
+        saver=CheckpointCallback()
     )
 )

@@ -1,8 +1,7 @@
-import os
 import logging
 import json
 from abc import ABC, abstractmethod
-from datetime import time, datetime
+from datetime import datetime
 from typing import List, Dict, Mapping
 
 from catalyst.dl.callbacks import Callback

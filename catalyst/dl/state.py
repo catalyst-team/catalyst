@@ -128,10 +128,12 @@ class RunnerState(FrozenClass):
             logger.on_epoch_end(self)
 
     def on_loader_start_pre(self):
+        self.metrics.begin_loader(self.loader_name)
         for logger in self.loggers:
             logger.on_loader_start(self)
 
     def on_loader_end_post(self):
+        self.metrics.end_loader()
         for logger in self.loggers:
             logger.on_loader_end(self)
 
@@ -139,7 +141,6 @@ class RunnerState(FrozenClass):
         self.metrics.begin_batch()
 
     def on_batch_end_post(self):
-        self.step += self.batch_size
         self._handle_runner_metrics()
         self.metrics.end_batch()
         for logger in self.loggers:

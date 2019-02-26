@@ -9,7 +9,7 @@ from catalyst.dl.fp16 import Fp16Wrap, copy_params, copy_grads
 from .utils import get_optimizer_momentum, scheduler_step
 
 
-class CheckpointCallback():
+class CheckpointCallback(Callback):
     """
     Checkpoint callback to save/restore your model/criterion/optimizer/metrics.
     """
@@ -57,7 +57,7 @@ class CheckpointCallback():
         checkpoint,
         is_best,
         save_n_best=5,
-        main_metric="loss",
+        main_metric="valid/loss",
         minimize_metric=True
     ):
         suffix = f"{checkpoint['stage']}.{checkpoint['epoch']}"
@@ -68,7 +68,8 @@ class CheckpointCallback():
             is_best=is_best,
             is_last=True
         )
-        checkpoint_metric = checkpoint["valid_metrics"].get(main_metric, None)
+
+        checkpoint_metric = checkpoint["epoch_metrics"].get(main_metric, None)
         checkpoint_metric = checkpoint_metric or checkpoint.get("epoch", -1)
         self.top_best_metrics.append((filepath, checkpoint_metric))
         self.top_best_metrics = sorted(
@@ -98,17 +99,18 @@ class CheckpointCallback():
             optimizer=state.optimizer,
             scheduler=state.scheduler,
             epoch_metrics=dict(state.metrics.epoch_values),
-            best_metrics={state.metrics._main_metric_name:
-                              state.metrics.best_main_metric_value},
+            best_metrics={
+                state.metrics._main_metric_name:
+                state.metrics.best_main_metric_value},
             stage=state.stage,
             epoch=state.epoch
         )
         self.save_checkpoint(
             logdir=state.logdir,
             checkpoint=checkpoint,
-            is_best=state.metrics.is_best_epoch,
+            is_best=state.metrics.is_best,
             save_n_best=self.save_n_best,
-            main_metric=state.metrics.main_metric_value,
+            main_metric=state.metrics._main_metric_name,
             minimize_metric=state.minimize_metric
         )
 
@@ -116,7 +118,7 @@ class CheckpointCallback():
         print("Top best models:")
         top_best_metrics_str = "\n".join(
             [
-                "{filepath}\t{metric:.4f}".format(
+                "{filepath}\t{metric:3.5f}".format(
                     filepath=filepath, metric=metric
                 ) for filepath, metric in self.top_best_metrics
             ]

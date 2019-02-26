@@ -103,6 +103,7 @@ class Runner(ABC):
         pass
 
     def _run_batch(self, batch):
+        self.state.step += self.state.batch_size
         batch = self._batch2device(batch, self.device)
         self.state.input = batch
         self.state.output = self.predict_batch(batch)
@@ -113,6 +114,7 @@ class Runner(ABC):
             self.state.step
             or self.state.epoch * len(loader) * self.state.batch_size
         )
+        # @TODO: remove time usage, use it under the hood
         self.state.timer.reset()
 
         self.state.timer.start("base/batch_time")
@@ -146,13 +148,9 @@ class Runner(ABC):
             self.state.loader_len = len(loaders[loader_name])
             self.state.is_train = loader_name.startswith("train")
             self.model.train(self.state.is_train)
-            
-            self.state.metrics.begin_loader(self.state.loader_name)
-            self._call_callbacks("loader_start")
 
+            self._call_callbacks("loader_start")
             self._run_loader(loaders[loader_name])
-            
-            self.state.metrics.end_loader()
             self._call_callbacks("loader_end")
 
     def _run_stage(self, mode: str, stage: str):
@@ -160,6 +158,7 @@ class Runner(ABC):
         self.callbacks = self.experiment.get_callbacks(stage)
 
         self._prepare_state(mode, stage)
+        self.state.stage = stage
 
         self._call_callbacks("stage_start")
         for epoch in range(self.state.total_epochs):
