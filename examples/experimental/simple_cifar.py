@@ -1,10 +1,9 @@
 from collections import OrderedDict
 
+import torch
+from torch import nn
 import torch.nn.functional as F
 import torchvision
-from torch import nn
-from torch.nn import CrossEntropyLoss
-from torch.optim import Adam
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 from tqdm import tqdm
@@ -84,19 +83,28 @@ class SimpleNet(nn.Module):
 class VerboseCallback(Callback):
     def __init__(self):
         self.tqdm: tqdm = None
+        self.step = 0
 
     def on_loader_start(self, state: RunnerState):
+        self.step = 0
         self.tqdm = tqdm(total=state.loader_len)
 
     def on_batch_end(self, state: RunnerState):
-        self.tqdm.update(state.step + 1)
+        self.tqdm.update(self.step + 1)
 
     def on_loader_end(self, state: RunnerState):
         self.tqdm.close()
         self.tqdm = None
+        self.step = 0
 
 
 model = SimpleNet()
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
+scheduler = torch.optim.lr_scheduler.MultiStepLR(
+    optimizer,
+    milestones=[2, 3],
+    gamma=0.2)
 runner = SupervisedRunner(model=model, input_key="image")
 
 # training
@@ -104,15 +112,15 @@ runner.train(
     logdir="./logs/01",
     epochs=5,
     loaders=get_loaders(),
-    criterion=CrossEntropyLoss(),
-    optimizer=Adam(model.parameters(), lr=0.001),
-    scheduler=None,
+    criterion=criterion,
+    optimizer=optimizer,
+    scheduler=scheduler,
     callbacks=OrderedDict(
         tqdm=VerboseCallback(),
         loss=LossCallback(),
         optimizer=OptimizerCallback(),
-        # scheduler=SchedulerCallback(),
-        logger=Logger(),
+        scheduler=SchedulerCallback(),
+        # logger=Logger(),
         # tflogger=TensorboardLogger()
     )
 )

@@ -255,7 +255,8 @@ class SchedulerCallback(Callback):
 
         lr, momentum = scheduler_step(
             scheduler=scheduler,
-            valid_metric=state.valid_metrics[self.reduce_metric]
+            valid_metric=state.metrics.epoch_values.get(
+                self.reduce_metric, None)
         )
 
         state.set_key(lr, key="lr", inner_key=self.scheduler_key)

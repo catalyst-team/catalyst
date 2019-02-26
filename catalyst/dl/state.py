@@ -1,12 +1,10 @@
 import time
-from collections import defaultdict
 
 from pathlib import Path
-from torchnet import meter
 from torch.optim.optimizer import Optimizer
 
 from catalyst.utils.misc import FrozenClass
-from .metric_manager import MetricManager
+from .metric_manager import MetricManager, TimerManager
 
 
 # TODO Deep refactoring
@@ -34,6 +32,10 @@ class RunnerState(FrozenClass):
         logdir='logs',
         **kwargs
     ):
+        # @TODO: refactor
+        # hack to prevent cycle imports
+        from .callbacks.loggers import Logger, TensorboardLogger
+
         self.logdir = Path(logdir)
         self.model = model
         self.criterion = criterion
@@ -65,6 +67,8 @@ class RunnerState(FrozenClass):
 
         main_metric = f"{valid_loader}/{main_metric}"
         self.metrics = MetricManager(main_metric, minimize_metric)
+        self.loggers = [Logger(), TensorboardLogger()]
+        self.timer = TimerManager()
 
         # metrics
         self.lr = None
@@ -92,3 +96,51 @@ class RunnerState(FrozenClass):
             setattr(self, key, value)
         else:
             getattr(self, key)[inner_key] = value
+
+    def _handle_runner_metrics(self):
+        values = {
+            "base/lr": self.lr,
+            "base/momentum": self.momentum,
+            "loss": self.loss
+        }
+
+        values.update(self.timer.elapsed)
+
+        values["base/samples_per_sec"] = \
+            self.batch_size / self.timer.elapsed["base/batch_time"]
+
+        self.metrics.add_batch_value(metrics_dict=values)
+
+    def on_stage_start_pre(self):
+        for logger in self.loggers:
+            logger.on_stage_start(self)
+
+    def on_stage_end_post(self):
+        for logger in self.loggers:
+            logger.on_stage_end(self)
+
+    def on_epoch_start_pre(self):
+        for logger in self.loggers:
+            logger.on_epoch_start(self)
+
+    def on_epoch_end_post(self):
+        for logger in self.loggers:
+            logger.on_epoch_end(self)
+
+    def on_loader_start_pre(self):
+        for logger in self.loggers:
+            logger.on_loader_start(self)
+
+    def on_loader_end_post(self):
+        for logger in self.loggers:
+            logger.on_loader_end(self)
+
+    def on_batch_start_pre(self):
+        self.metrics.begin_batch()
+
+    def on_batch_end_post(self):
+        self.step += self.batch_size
+        self._handle_runner_metrics()
+        self.metrics.end_batch()
+        for logger in self.loggers:
+            logger.on_batch_end(self)

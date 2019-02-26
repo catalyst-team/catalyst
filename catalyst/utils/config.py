@@ -44,7 +44,7 @@ def save_config(config, logdir: str) -> None:
     """
     os.makedirs(logdir, exist_ok=True)
     with open("{}/config.json".format(logdir), "w") as fout:
-        json.dump(config, fout, indent=2)
+        json.dump(config, fout, indent=2, ensure_ascii=False)
 
 
 def parse_config_args(*, config, args, unknown_args):

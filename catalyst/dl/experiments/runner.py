@@ -6,7 +6,6 @@ import torch
 from torch import nn
 
 from catalyst.dl.callbacks import Callback
-from catalyst.dl.metric_manager import TimerManager
 from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
 from . import Experiment, BaseExperiment, ConfigExperiment
@@ -35,7 +34,6 @@ class Runner(ABC):
             else None
         self.state: RunnerState = None
         self.stage: str = None
-        self.timers = TimerManager()
 
         self.callbacks: OrderedDict[str, Callback] = None
 
@@ -90,23 +88,15 @@ class Runner(ABC):
 
     def _call_callbacks(self, event: str):
 
+        if self.state is not None and hasattr(self.state, f"on_{event}_pre"):
+            getattr(self.state, f"on_{event}_pre")()
+
         if self.callbacks is not None:
             for callback in self.callbacks.values():
                 getattr(callback, f"on_{event}")(self.state)
 
-    def _handle_runner_metrics(self):
-        values = {
-            "base/lr": self.state.lr,
-            "base/momentum": self.state.momentum,
-            "loss": self.state.loss
-        }
-
-        values.update(self.timers.elapsed)
-
-        values["base/samples_per_sec"] = \
-            self.state.batch_size / self.timers.elapsed["base/batch_time"]
-
-        self.state.metrics.add_batch_value(metrics_dict=values)
+        if self.state is not None and hasattr(self.state, f"on_{event}_post"):
+            getattr(self.state, f"on_{event}_post")()
 
     @abstractmethod
     def predict_batch(self, batch: Mapping[str, Any]):
@@ -119,31 +109,32 @@ class Runner(ABC):
 
     def _run_loader(self, loader):
         self.state.batch_size = loader.batch_size
-        self.timers.reset()
+        self.state.step = (
+            self.state.step
+            or self.state.epoch * len(loader) * self.state.batch_size
+        )
+        self.state.timer.reset()
 
-        self.timers.start("base/batch_time")
-        self.timers.start("base/data_time")
+        self.state.timer.start("base/batch_time")
+        self.state.timer.start("base/data_time")
 
         for i, batch in enumerate(loader):
             batch = self._batch2device(batch, self.device)
-            self.timers.stop("base/data_time")
-
-            self.state.metrics.begin_batch()
+            self.state.timer.stop("base/data_time")
 
             self._call_callbacks("batch_start")
-            self.timers.start("base/model_time")
+
+            self.state.timer.start("base/model_time")
             self._run_batch(batch)
-            self.timers.stop("base/model_time")
+            self.state.timer.stop("base/model_time")
+
+            self.state.timer.stop("base/batch_time")
             self._call_callbacks("batch_end")
-            self.timers.stop("base/batch_time")
 
-            self._handle_runner_metrics()
-            self.state.metrics.end_batch()
+            self.state.timer.reset()
 
-            self.timers.reset()
-            
-            self.timers.start("base/batch_time")
-            self.timers.start("base/data_time")
+            self.state.timer.start("base/batch_time")
+            self.state.timer.start("base/data_time")
 
     def _run_epoch(self, loaders):
         assert self.state.valid_loader in loaders.keys(), \

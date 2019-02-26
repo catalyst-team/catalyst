@@ -8,13 +8,13 @@ from typing import List, Dict, Mapping
 from catalyst.dl.callbacks import Callback
 from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
-from .utils import to_batch_metrics
 
 
 class MetricsFormatter(ABC, logging.Formatter):
     def __init__(self, message_prefix):
         """
-        :param message_prefix: logging fomat string that will be prepended to message
+        :param message_prefix:
+            logging format string that will be prepended to message
         """
         super().__init__(f"{message_prefix}{{message}}", style="{")
 
@@ -98,7 +98,7 @@ class JsonMetricsFormatter(MetricsFormatter):
 
 class Logger(Callback):
     """
-    Logger callback, translates state.*_metrics to console and text file
+    Logger callback, translates state.metrics to console and text file
     """
 
     def __init__(self):
@@ -141,10 +141,8 @@ class Logger(Callback):
 
 class TensorboardLogger(Callback):
     """
-    Logger callback, translates state.*_metrics to tensorboard
+    Logger callback, translates state.metrics to tensorboard
     """
-
-    # TODO:hexfaker update to support MetricManager
 
     def __init__(
         self,
@@ -193,7 +191,7 @@ class TensorboardLogger(Callback):
             mode = state.loader_name
 
             self._log_metrics(
-                metrics=state.metrics.batch_values,
+                metrics=state.metrics.batch_values.copy(),
                 step=state.step,
                 mode=mode,
                 suffix="/batch"
@@ -202,8 +200,13 @@ class TensorboardLogger(Callback):
     def on_loader_end(self, state: RunnerState):
         if self.log_on_epoch_end:
             mode = state.loader_name
+            metrics_ = {
+                k.replace(f"{mode}/", ""):v
+                for k, v in state.metrics.epoch_values.copy().items()
+                if k.startswith(mode)
+            }
             self._log_metrics(
-                metrics=state.metrics.epoch_values,
+                metrics=metrics_,
                 step=state.epoch,
                 mode=mode,
                 suffix="/epoch"
