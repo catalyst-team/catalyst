@@ -6,15 +6,33 @@ from catalyst.utils.data import create_dataset, create_dataframe, \
     prepare_dataset_labeling, separate_tags
 
 
-def prepare_df_from_dirs(in_dir, tag_column_name):
-    if not in_dir.endswith("/"):
-        in_dir = f"{in_dir}/"
+def prepare_df_from_dirs(in_dirs, tag_column_name):
+    dfs = []
+    splitted_dirs = in_dirs.strip(',').split(',')
 
-    dataset = create_dataset(
-        f"{in_dir}/**", process_fn=lambda x: x.replace(f"{in_dir}", "")
-    )
-    df = create_dataframe(dataset, columns=[tag_column_name, "filepath"])
+    def process_fn(x):
+        if len(splitted_dirs) == 1:
+            # remove all in_dir part from path
+            return x.replace(f"{in_dir}", "")
+        else:
+            # leaves last part of in_dir path,
+            #  which identifies separate in_dir
+            return x.replace(f"{in_dir}",
+                             f"{in_dir.split('/')[-2]}/")
 
+    for in_dir in splitted_dirs:
+        if not in_dir.endswith("/"):
+            in_dir = f"{in_dir}/"
+
+        dataset = create_dataset(f"{in_dir}/**",
+                                 process_fn=process_fn)
+
+        dfs.append(create_dataframe(dataset,
+                                    columns=[tag_column_name,
+                                             "filepath"])
+                   )
+
+    df = pd.concat(dfs).reset_index(drop=True)
     return df
 
 
@@ -29,7 +47,8 @@ def build_args(parser):
         "--in-dir",
         type=str,
         default=None,
-        help="Path to directory with dataset."
+        help="Path to directory with dataset"
+             "or paths separated by commas for several datasets"
     )
 
     parser.add_argument(
