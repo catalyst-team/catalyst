@@ -17,20 +17,22 @@ def prepare_df_from_dirs(in_dirs, tag_column_name):
         else:
             # leaves last part of in_dir path,
             #  which identifies separate in_dir
-            return x.replace(f"{in_dir}",
-                             f"{in_dir.split('/')[-2]}/")
+            return x.replace(
+                f"{in_dir}",
+                f"{in_dir.split('/')[-2]}/")
 
     for in_dir in splitted_dirs:
         if not in_dir.endswith("/"):
             in_dir = f"{in_dir}/"
 
-        dataset = create_dataset(f"{in_dir}/**",
-                                 process_fn=process_fn)
+        dataset = create_dataset(
+            f"{in_dir}/**",
+            process_fn=process_fn)
 
-        dfs.append(create_dataframe(dataset,
-                                    columns=[tag_column_name,
-                                             "filepath"])
-                   )
+        dfs.append(
+            create_dataframe(
+                dataset,
+                columns=[tag_column_name, "filepath"]))
 
     df = pd.concat(dfs).reset_index(drop=True)
     return df
