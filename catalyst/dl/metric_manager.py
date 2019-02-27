@@ -38,27 +38,39 @@ class MetricManager:
         # noinspection PyTypeChecker
         return float(value)
 
-    def __init__(self, main_metric="valid/loss", reduce=True):
-        self._reduce = reduce
-        self._main_metric_name = main_metric
+    def __init__(
+        self,
+        valid_loader="valid",
+        main_metric="loss",
+        minimize=True
+    ):
+        self._valid_loader = valid_loader
+        self._main_metric = main_metric
+        self._minimize = minimize
+
         self._meters: Dict[str, AverageValueMeter] = None
         self._batch_values: Dict[str, float] = None
-        self.epoch_values: Dict[str, float] = None
+        self.epoch_values: Dict[str, Dict[str: float]] = None
+        self.valid_values: Dict[str, float] = None
 
         self.best_main_metric_value: float = \
-            float("+inf") if self._reduce else float("-inf")
+            float("+inf") if self._minimize else float("-inf")
         self.is_best: bool = None
 
         self._current_loader_name: str = None
 
     def begin_epoch(self):
-        self.epoch_values = {}
+        self.epoch_values = defaultdict(lambda: {})
 
     def end_epoch(self):
-        assert self._main_metric_name in self.epoch_values, \
-            f"{self._main_metric_name} value is not available by the epoch end"
+        assert self._valid_loader in self.epoch_values, \
+            f"{self._valid_loader} is not available by the epoch end"
+        assert self._main_metric in self.epoch_values[self._valid_loader], \
+            f"{self._main_metric} value is not available by the epoch end"
 
-        if self._reduce:
+        self.valid_values = self.epoch_values[self._valid_loader]
+
+        if self._minimize:
             self.is_best = self.main_metric_value < self.best_main_metric_value
         else:
             self.is_best = self.main_metric_value > self.best_main_metric_value
@@ -72,8 +84,7 @@ class MetricManager:
 
     def end_loader(self):
         for name, meter in self._meters.items():
-            epoch_key = f"{self._current_loader_name}/{name}"
-            self.epoch_values[epoch_key] = meter.mean
+            self.epoch_values[self._current_loader_name][name] = meter.mean
 
         self._current_loader_name = None
 
@@ -109,7 +120,9 @@ class MetricManager:
 
     @property
     def main_metric_value(self) -> float:
-        assert self._main_metric_name in self.epoch_values, \
-            f"{self._main_metric_name} is not available yet"
+        assert self._valid_loader in self.epoch_values, \
+            f"{self._valid_loader} is not available yet"
+        assert self._main_metric in self.epoch_values[self._valid_loader], \
+            f"{self._main_metric} is not available yet"
 
-        return self.epoch_values[self._main_metric_name]
+        return self.epoch_values[self._valid_loader][self._main_metric]

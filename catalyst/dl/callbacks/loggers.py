@@ -2,7 +2,7 @@ import logging
 import json
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import List, Dict, Mapping
+from typing import List, Dict
 
 from catalyst.dl.callbacks import Callback
 from catalyst.dl.state import RunnerState
@@ -45,17 +45,13 @@ class TxtMetricsFormatter(MetricsFormatter):
     def __init__(self):
         super().__init__("[{asctime}] ")
 
-    def _format_metrics(self, metrics: Mapping[str, float]):
-        main_names = list(sorted(set(
-            x.split("/", 1)[0] for x in metrics.keys()
-        )))
-
+    def _format_metrics(self, metrics):
+        # metrics : dict[str: dict[str: float]]
         metrics_formatted = {}
-        for key in main_names:
+        for key, value in metrics.items():
             metrics_formatted_ = [
-                f"{name.replace(f'{key}/', '')}={value:.5f}"
-                for name, value in sorted(metrics.items())
-                if name.startswith(key)
+                f"{m_name}={m_value:.5f}"
+                for m_name, m_value in sorted(value.items())
             ]
             metrics_formatted_ = ' | '.join(metrics_formatted_)
             metrics_formatted[key] = metrics_formatted_
@@ -101,12 +97,10 @@ class Logger(Callback):
     """
 
     def __init__(self):
-        """
-        :param logdir: log directory to use for text logging
-        """
         self.logger = None
 
     def on_stage_start(self, state: RunnerState):
+        assert state.logdir is not None
         state.logdir.mkdir(parents=True, exist_ok=True)
         self.logger = self._get_logger(state.logdir)
 
@@ -188,9 +182,9 @@ class TensorboardLogger(Callback):
     def on_batch_end(self, state: RunnerState):
         if self.log_on_batch_end:
             mode = state.loader_name
-
+            metrics_ = state.metrics.batch_values
             self._log_metrics(
-                metrics=state.metrics.batch_values.copy(),
+                metrics=metrics_,
                 step=state.step,
                 mode=mode,
                 suffix="/batch"
@@ -199,11 +193,7 @@ class TensorboardLogger(Callback):
     def on_loader_end(self, state: RunnerState):
         if self.log_on_epoch_end:
             mode = state.loader_name
-            metrics_ = {
-                k.replace(f"{mode}/", ""):v
-                for k, v in state.metrics.epoch_values.copy().items()
-                if k.startswith(mode)
-            }
+            metrics_ = state.metrics.epoch_values[mode]
             self._log_metrics(
                 metrics=metrics_,
                 step=state.epoch,

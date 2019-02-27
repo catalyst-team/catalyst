@@ -18,13 +18,14 @@ class CheckpointCallback(Callback):
         self, save_n_best: int = 5, resume: str = None
     ):
         """
-        :param logdir: log directory to use for checkpoint saving
         :param save_n_best: number of best checkpoint to keep
         :param resume: path to checkpoint to load and initialize runner state
         """
         self.save_n_best = save_n_best
         self.resume = resume
         self.top_best_metrics = []
+
+        self._keys_from_state = ["resume"]
 
     @staticmethod
     def load_checkpoint(*, filename, state):
@@ -57,7 +58,7 @@ class CheckpointCallback(Callback):
         checkpoint,
         is_best,
         save_n_best=5,
-        main_metric="valid/loss",
+        main_metric="loss",
         minimize_metric=True
     ):
         suffix = f"{checkpoint['stage']}.{checkpoint['epoch']}"
@@ -69,7 +70,7 @@ class CheckpointCallback(Callback):
             is_last=True
         )
 
-        checkpoint_metric = checkpoint["epoch_metrics"].get(main_metric, None)
+        checkpoint_metric = checkpoint["valid_metrics"].get(main_metric, None)
         checkpoint_metric = checkpoint_metric or checkpoint.get("epoch", -1)
         self.top_best_metrics.append((filepath, checkpoint_metric))
         self.top_best_metrics = sorted(
@@ -86,6 +87,11 @@ class CheckpointCallback(Callback):
         return UtilsFactory.pack_checkpoint(**kwargs)
 
     def on_stage_start(self, state):
+        for key in self._keys_from_state:
+            value = getattr(state, key, None)
+            if value is not None:
+                setattr(self, key, value)
+
         if self.resume is not None:
             self.load_checkpoint(filename=self.resume, state=state)
 
@@ -99,9 +105,7 @@ class CheckpointCallback(Callback):
             optimizer=state.optimizer,
             scheduler=state.scheduler,
             epoch_metrics=dict(state.metrics.epoch_values),
-            best_metrics={
-                state.metrics._main_metric_name:
-                state.metrics.best_main_metric_value},
+            valid_metrics=dict(state.metrics.valid_values),
             stage=state.stage,
             epoch=state.epoch
         )
@@ -110,7 +114,7 @@ class CheckpointCallback(Callback):
             checkpoint=checkpoint,
             is_best=state.metrics.is_best,
             save_n_best=self.save_n_best,
-            main_metric=state.metrics._main_metric_name,
+            main_metric=state.main_metric,
             minimize_metric=state.minimize_metric
         )
 

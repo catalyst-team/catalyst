@@ -1,18 +1,29 @@
 import os
 from collections import defaultdict
+import random
 import numpy as np
+from skimage.morphology import erosion, disk
+import cv2
+
 import torch
 import torch.nn.functional as F
+
 from .core import Callback
-import cv2
-cv2.setNumThreads(1)
-cv2.ocl.setUseOpenCL(False)
 
 
+# @TODO: refactor
 class InferCallback(Callback):
     def __init__(self, out_prefix=None):
         self.out_prefix = out_prefix
         self.predictions = defaultdict(lambda: [])
+        self._keys_from_state = ["out_prefix"]
+
+    def on_stage_start(self, state):
+        for key in self._keys_from_state:
+            value = getattr(state, key, None)
+            if value is not None:
+                setattr(self, key, value)
+        assert self.out_prefix is not None
 
     def on_loader_start(self, state):
         self.predictions = defaultdict(lambda: [])
@@ -41,32 +52,59 @@ class InferMaskCallback(Callback):
     def __init__(
         self,
         out_prefix=None,
+        input_key=None,
+        output_key=None,
         mean=None,
         std=None,
         mask_type="soft",
         threshold=None,
-        input_key=None,
-        output_key=None
+        name_key=None,
+        dump_mask=False,
     ):
         self.out_prefix = out_prefix
-        self.predictions = defaultdict(lambda: [])
         self.mean = mean or np.array([0.485, 0.456, 0.406])
         self.std = std or np.array([0.229, 0.224, 0.225])
         assert mask_type in ["soft", "hard"], mask_type
-        self.mask_type = mask_type
-        self.threshold = threshold
         assert input_key is not None
         assert output_key is not None
+        self.mask_type = mask_type
+        self.threshold = threshold
         self.input_key = input_key
         self.output_key = output_key
+        self.name_key = name_key
+        self.dump_mask = dump_mask
         self.counter = 0
+        self._keys_from_state = ["out_prefix"]
+
+    def on_stage_start(self, state):
+        for key in self._keys_from_state:
+            value = getattr(state, key, None)
+            if value is not None:
+                setattr(self, key, value)
+        assert self.out_prefix is not None
+
+    @staticmethod
+    def _get_spaced_colors2(n_colors, seed=42):
+        random.seed(seed)
+        r, g, b = [int(random.random() * 256) for _ in range(3)]
+
+        step = 256 / n_colors
+        ret = []
+        for i in range(n_colors):
+            r += step
+            g += step
+            b += step
+            ret.append((int(r) % 256, int(g) % 256, int(b) % 256))
+        return ret
 
     def on_loader_start(self, state):
-        lm = state.loader_name
+        lm = state.loader_mode
         os.makedirs(f"{self.out_prefix}/{lm}/", exist_ok=True)
 
     def on_batch_end(self, state):
-        lm = state.loader_name
+        lm = state.loader_mode
+        names = state.input.get(self.name_key, {})
+
         features = state.input[self.input_key]
         logits = state.output[self.output_key]
         logits = torch.unsqueeze_(logits, dim=1) \
@@ -84,20 +122,28 @@ class InferMaskCallback(Callback):
         probs = probs.detach().cpu().numpy()
         probs = np.transpose(probs, (0, 2, 3, 1))
 
+        colors = self._get_spaced_colors2(n_colors=probs.shape[3])
         for i in range(probs.shape[0]):
             img = np.uint8(255 * (self.std * features[i] + self.mean))
-            filename = f"{self.out_prefix}/{lm}/{self.counter}.jpg"
-            cv2.imwrite(filename, img)
+            suffix = names.get(i, f"{self.counter}:6d")
+            self.counter += 1
 
-            for t in range(probs.shape[-1]):
+            shw = img.copy()
+            for t in range(probs.shape[3]):
                 mask = probs[i, :, :, t] > self.threshold \
                     if self.threshold is not None \
                     else probs[i, :, :, t]
-                mask = np.float32(np.expand_dims(mask, -1))
+                mask = mask.astype(np.float32)
 
-                masked_img = img * mask
+                if self.dump_mask:
+                    mask_ = np.concatenate(
+                        [np.expand_dims(mask, -1)] * 3,
+                        axis=-1).astype(np.float32) * 255
+                    filename_ = f"{self.out_prefix}/{lm}/{suffix}_{t}.jpg"
+                    cv2.imwrite(filename_, mask_)
 
-                # @TODO: better naming
-                filename = f"{self.out_prefix}/{lm}/{self.counter}_{t}.jpg"
-                cv2.imwrite(filename, masked_img)
-            self.counter += 1
+                mask = mask - erosion(mask, disk(4))
+                shw[mask > 0.5] = colors[t]
+
+            filename = f"{self.out_prefix}/{lm}/{suffix}.jpg"
+            cv2.imwrite(filename, shw[:, :, ::-1])

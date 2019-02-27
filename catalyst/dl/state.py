@@ -1,5 +1,3 @@
-import time
-
 from pathlib import Path
 from torch.optim.optimizer import Optimizer
 
@@ -22,14 +20,13 @@ class RunnerState(FrozenClass):
         criterion=None,
         optimizer: Optimizer = None,
         scheduler=None,
+        mode="infer",
         stage=None,
         main_metric="loss",
         minimize_metric=True,
         valid_loader="valid",
-        reset_step=False,
-        mode="infer",
         total_epochs=1,
-        logdir='logs',
+        logdir="logs",
         **kwargs
     ):
         # @TODO: refactor
@@ -47,36 +44,34 @@ class RunnerState(FrozenClass):
         self.mode = mode
         self.device = device
         self.loader_name = None
-        self.reset_step = reset_step
-
-        self.main_metric = main_metric
-        self.minimize_metric = minimize_metric
-        self.valid_loader = valid_loader
 
         # data pipeline
         self.input = None
         self.output = None
 
         # counters
-        self._datatime = time.time()
         self.loader_len = 0
         self.batch_size = 0
         self.step = 0
         self.epoch = 0
         self.total_epochs = total_epochs
 
-        main_metric = f"{valid_loader}/{main_metric}"
-        self.metrics = MetricManager(main_metric, minimize_metric)
+        # metrics & logging
+        self.main_metric = main_metric
+        self.minimize_metric = minimize_metric
+        self.valid_loader = valid_loader
+        self.metrics = MetricManager(
+            valid_loader=valid_loader,
+            main_metric=main_metric,
+            minimize=minimize_metric
+        )
         self.loggers = [Logger(), TensorboardLogger()]
         self.timer = TimerManager()
 
-        # metrics
+        # base metrics
         self.lr = None
         self.momentum = None
         self.loss = None
-
-        self.valid_metrics = None
-        self.best_metrics = None
 
         # other
         self.is_train = False
