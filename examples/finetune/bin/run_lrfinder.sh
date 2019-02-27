@@ -3,7 +3,7 @@ set -e
 
 catalyst-dl train \
     --expdir=finetune \
-    --config=finetune/debug.yml \
+    --config=finetune/configs/debug.yml \
     --logdir=${LOGDIR} --verbose
 
 # docker trick

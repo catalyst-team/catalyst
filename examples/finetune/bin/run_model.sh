@@ -4,7 +4,7 @@ set -e
 echo "Training..."
 catalyst-dl train \
     --expdir=finetune \
-    --config=finetune/train_splits.yml \
+    --config=finetune/configs/train_splits.yml \
     --logdir=${LOGDIR} --verbose
 
 echo "Inference..."
@@ -12,7 +12,7 @@ catalyst-dl infer \
    --expdir=finetune \
    --resume=${LOGDIR}/checkpoint.best.pth.tar \
    --out-prefix=${LOGDIR}/dataset.predictions.{suffix}.npy \
-   --config=${LOGDIR}/config.json,./finetune/infer_splits.yml \
+   --config=${LOGDIR}/config.json,./finetune/configs/infer_splits.yml \
    --verbose
 
 # docker trick

@@ -19,6 +19,14 @@ Data
     :members:
     :undoc-members:
 
+Parse
+----------
+
+.. automodule:: catalyst.utils.parse
+    :members:
+    :undoc-members:
+
+
 Misc
 ----------
 
