@@ -63,7 +63,7 @@ class CheckpointCallback(Callback):
     ):
         suffix = f"{checkpoint['stage']}.{checkpoint['epoch']}"
         filepath = UtilsFactory.save_checkpoint(
-            logdir=logdir,
+            logdir=f"{logdir}/checkpoints/",
             checkpoint=checkpoint,
             suffix=suffix,
             is_best=is_best,

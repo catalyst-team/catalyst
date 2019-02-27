@@ -8,9 +8,7 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 from tqdm import tqdm
 
-from catalyst.dl.callbacks import \
-    LossCallback, OptimizerCallback, Callback, \
-    SchedulerCallback, CheckpointCallback, PrecisionCallback
+from catalyst.dl.callbacks import Callback, PrecisionCallback
 from catalyst.dl.experiments.runner import SupervisedRunner
 from catalyst.dl.state import RunnerState
 
@@ -97,7 +95,7 @@ class VerboseCallback(Callback):
         self.tqdm = None
         self.step = 0
 
-
+loaders = get_loaders()
 model = SimpleNet()
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
@@ -109,21 +107,17 @@ runner = SupervisedRunner(model=model, input_key="image")
 
 # training
 runner.train(
-    check_flag=False,
+    check_run=False,
     logdir="./logs/01",
     epochs=5,
     main_metric="precision03",
     minimize_metric=False,
-    loaders=get_loaders(),
+    loaders=loaders,
     criterion=criterion,
     optimizer=optimizer,
     scheduler=scheduler,
     callbacks=OrderedDict(
         accuracy=PrecisionCallback(),
         tqdm=VerboseCallback(),
-        loss=LossCallback(),
-        optimizer=OptimizerCallback(),
-        scheduler=SchedulerCallback(),
-        saver=CheckpointCallback()
     )
 )

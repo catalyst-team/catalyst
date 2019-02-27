@@ -1,1 +1,1 @@
-from .experiment import Experiment, BaseExperiment, ConfigExperiment
+from .experiment import Experiment, SimpleExperiment, ConfigExperiment

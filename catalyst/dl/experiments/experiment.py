@@ -94,7 +94,7 @@ class Experiment(ABC):
         pass
 
 
-class BaseExperiment(Experiment):
+class SimpleExperiment(Experiment):
     """
     Super-simple one-staged experiment you can use to declare experiment
     in code 
@@ -276,4 +276,4 @@ class ConfigExperiment(Experiment):
         return callbacks
 
 
-__all__ = ["Experiment", "BaseExperiment", "ConfigExperiment"]
+__all__ = ["Experiment", "SimpleExperiment", "ConfigExperiment"]

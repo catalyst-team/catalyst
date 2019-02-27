@@ -5,14 +5,15 @@ from abc import ABC, abstractmethod
 import torch
 from torch import nn
 
-from catalyst.dl.callbacks import Callback
+from catalyst.dl.callbacks import Callback, \
+    LossCallback, OptimizerCallback, SchedulerCallback, CheckpointCallback
 from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
-from . import Experiment, BaseExperiment, ConfigExperiment
+from . import Experiment, SimpleExperiment, ConfigExperiment
 
 
 class Runner(ABC):
-    _base_exp_parser = BaseExperiment
+    _simple_exp_parser = SimpleExperiment
     _config_exp_parser = ConfigExperiment
 
     def __init__(
@@ -32,7 +33,7 @@ class Runner(ABC):
         self.experiment: Experiment = self._config_exp_parser(config) \
             if config is not None \
             else None
-        self._check = False
+        self._check_run = False
         self.state: RunnerState = None
         self.stage: str = None
 
@@ -135,7 +136,7 @@ class Runner(ABC):
 
             self.state.timer.reset()
 
-            if self._check and i >= 3:
+            if self._check_run and i >= 3:
                 break
 
             self.state.timer.start("base/batch_time")
@@ -171,31 +172,36 @@ class Runner(ABC):
             self._run_epoch(loaders)
             self.state.metrics.end_epoch()
             self._call_callbacks("epoch_end")
-            if self._check and epoch >= 3:
+            if self._check_run and epoch >= 3:
                 break
         self._call_callbacks("stage_end")
 
-    def run_experiment(self, mode, experiment, check_flag=False):
+    def run_experiment(self, mode, experiment, check_run=False):
         self.experiment = experiment
-        self._check = check_flag
+        self._check_run = check_run
         for stage in self.experiment.stages:
             self._run_stage(mode, stage)
         return self
 
+    def _prepare_config_experiment(self, config):
+        return self._config_exp_parser(config=config)
+
+    def _prepare_simple_experiment(self, **kwargs):
+        return self._simple_exp_parser(model=self.model, **kwargs)
+
     def _prepare_experiment(self, *, config, **kwargs):
-        if config is not None:
-            experiment = self._config_exp_parser(config=config)
-        else:
-            experiment = self._base_exp_parser(model=self.model, **kwargs)
+        experiment = self._prepare_config_experiment(config) \
+            if config is not None \
+            else self._prepare_simple_experiment(**kwargs)
         return experiment
 
     def run(self, *, mode, config=None, **kwargs):
-        check_flag = kwargs.pop("check_flag", False)
+        check_run = kwargs.pop("check_run", False)
         experiment = self._prepare_experiment(config=config, **kwargs)
         return self.run_experiment(
             mode=mode,
             experiment=experiment,
-            check_flag=check_flag)
+            check_run=check_run)
 
     def train(self, *, config=None, **kwargs):
         return self.run(mode="train", config=config, **kwargs)
@@ -234,3 +240,23 @@ class SupervisedRunner(Runner):
         output = self.model(batch[self.input_key])
         output = {self.output_key: output}
         return output
+
+    def _prepare_simple_experiment(self, **kwargs):
+        callbacks: OrderedDict = kwargs.pop("callbacks")
+        c_values = callbacks.values()
+        default_callbacks = [
+            ("criterion", LossCallback),
+            ("optimizer", OptimizerCallback),
+            ("scheduler", SchedulerCallback),
+            ("_default_saver", CheckpointCallback),
+        ]
+
+        for key, value in default_callbacks:
+            if (key in kwargs or key.startswith("_default")) \
+                    and not any(isinstance(x, value) for x in c_values):
+                callbacks[f"_{key}"] = value()
+
+        return self._simple_exp_parser(
+            model=self.model,
+            callbacks=callbacks,
+            **kwargs)

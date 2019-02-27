@@ -146,6 +146,7 @@ class UtilsFactory:
     def save_checkpoint(
         logdir, checkpoint, suffix="", is_best=False, is_last=False
     ):
+        os.makedirs(logdir, exist_ok=True)
         filename = f"{logdir}/checkpoint.{suffix}.pth.tar"
         torch.save(checkpoint, filename)
         if is_best:
