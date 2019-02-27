@@ -109,10 +109,11 @@ runner = SupervisedRunner(model=model, input_key="image")
 
 # training
 runner.train(
+    check_flag=False,
     logdir="./logs/01",
+    epochs=5,
     main_metric="precision03",
     minimize_metric=False,
-    epochs=5,
     loaders=get_loaders(),
     criterion=criterion,
     optimizer=optimizer,

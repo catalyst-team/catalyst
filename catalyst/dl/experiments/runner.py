@@ -32,6 +32,7 @@ class Runner(ABC):
         self.experiment: Experiment = self._config_exp_parser(config) \
             if config is not None \
             else None
+        self._check = False
         self.state: RunnerState = None
         self.stage: str = None
 
@@ -134,6 +135,9 @@ class Runner(ABC):
 
             self.state.timer.reset()
 
+            if self._check and i >= 3:
+                break
+
             self.state.timer.start("base/batch_time")
             self.state.timer.start("base/data_time")
 
@@ -167,9 +171,13 @@ class Runner(ABC):
             self._run_epoch(loaders)
             self.state.metrics.end_epoch()
             self._call_callbacks("epoch_end")
+            if self._check and epoch >= 3:
+                break
         self._call_callbacks("stage_end")
 
-    def _run_experiment(self, mode):
+    def run_experiment(self, mode, experiment, check_flag=False):
+        self.experiment = experiment
+        self._check = check_flag
         for stage in self.experiment.stages:
             self._run_stage(mode, stage)
         return self
@@ -182,8 +190,12 @@ class Runner(ABC):
         return experiment
 
     def run(self, *, mode, config=None, **kwargs):
-        self.experiment = self._prepare_experiment(config=config, **kwargs)
-        return self._run_experiment(mode=mode)
+        check_flag = kwargs.pop("check_flag", False)
+        experiment = self._prepare_experiment(config=config, **kwargs)
+        return self.run_experiment(
+            mode=mode,
+            experiment=experiment,
+            check_flag=check_flag)
 
     def train(self, *, config=None, **kwargs):
         return self.run(mode="train", config=config, **kwargs)
