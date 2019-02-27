@@ -1,12 +1,45 @@
+from abc import ABC, abstractmethod
+from typing import List, Dict
 import logging
 import json
-from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import List, Dict
+from tqdm import tqdm
 
 from catalyst.dl.callbacks import Callback
 from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
+
+
+class VerboseCallback(Callback):
+    def __init__(self):
+        self.tqdm: tqdm = None
+        self.step = 0
+
+    def on_loader_start(self, state: RunnerState):
+        self.step = 0
+        self.tqdm = tqdm(
+            total=state.loader_len,
+            desc=f"{state.epoch}/{state.total_epochs}"
+            f" * Epoch ({state.loader_name})",
+            leave=True,
+            ncols=0,
+        )
+
+    def on_batch_end(self, state: RunnerState):
+        self.tqdm.set_postfix(
+            **{
+                k: "{:3.3f}".format(v)
+                for k, v in
+                sorted(state.metrics.batch_values.items())
+                if not k.startswith("base")
+            }
+        )
+        self.tqdm.update()
+
+    def on_loader_end(self, state: RunnerState):
+        self.tqdm.close()
+        self.tqdm = None
+        self.step = 0
 
 
 class MetricsFormatter(ABC, logging.Formatter):
@@ -62,7 +95,8 @@ class TxtMetricsFormatter(MetricsFormatter):
         message = [""]
         metrics = self._format_metrics(state.metrics.epoch_values)
         for key, value in metrics.items():
-            message.append(f"{state.epoch:4d} * Epoch ({key}): {value}")
+            message.append(
+                f"{state.epoch}/{state.total_epochs} * Epoch ({key}): {value}")
         message = "\n".join(message)
         return message
 

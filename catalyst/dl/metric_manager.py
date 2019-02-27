@@ -114,7 +114,7 @@ class MetricManager:
             self._batch_values[name] = self._to_single_value(value)
 
     @property
-    def batch_values(self):
+    def batch_values(self) -> Dict[str, float]:
         self.add_batch_value()
         return self._batch_values
 

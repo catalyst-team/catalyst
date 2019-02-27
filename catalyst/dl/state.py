@@ -31,7 +31,8 @@ class RunnerState(FrozenClass):
     ):
         # @TODO: refactor
         # hack to prevent cycle imports
-        from .callbacks.loggers import Logger, TensorboardLogger
+        from .callbacks.loggers import (
+            VerboseCallback, Logger, TensorboardLogger)
 
         self.logdir = Path(logdir)
         self.model = model
@@ -65,7 +66,7 @@ class RunnerState(FrozenClass):
             main_metric=main_metric,
             minimize=minimize_metric
         )
-        self.loggers = [Logger(), TensorboardLogger()]
+        self.loggers = [VerboseCallback(), Logger(), TensorboardLogger()]
         self.timer = TimerManager()
 
         # base metrics
@@ -101,7 +102,7 @@ class RunnerState(FrozenClass):
 
         values.update(self.timer.elapsed)
 
-        values["base/samples_per_sec"] = \
+        values["_fps"] = \
             self.batch_size / self.timer.elapsed["base/batch_time"]
 
         self.metrics.add_batch_value(metrics_dict=values)

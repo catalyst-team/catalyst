@@ -6,11 +6,9 @@ import torch.nn.functional as F
 import torchvision
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
-from tqdm import tqdm
 
-from catalyst.dl.callbacks import Callback, PrecisionCallback
+from catalyst.dl.callbacks import PrecisionCallback
 from catalyst.dl.experiments.runner import SupervisedRunner
-from catalyst.dl.state import RunnerState
 
 transforms = transforms.Compose(
     [
@@ -78,23 +76,6 @@ class SimpleNet(nn.Module):
         return x
 
 
-class VerboseCallback(Callback):
-    def __init__(self):
-        self.tqdm: tqdm = None
-        self.step = 0
-
-    def on_loader_start(self, state: RunnerState):
-        self.step = 0
-        self.tqdm = tqdm(total=state.loader_len)
-
-    def on_batch_end(self, state: RunnerState):
-        self.tqdm.update(self.step + 1)
-
-    def on_loader_end(self, state: RunnerState):
-        self.tqdm.close()
-        self.tqdm = None
-        self.step = 0
-
 loaders = get_loaders()
 model = SimpleNet()
 criterion = nn.CrossEntropyLoss()
@@ -118,6 +99,5 @@ runner.train(
     scheduler=scheduler,
     callbacks=OrderedDict(
         accuracy=PrecisionCallback(),
-        tqdm=VerboseCallback(),
     )
 )
