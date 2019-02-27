@@ -3,7 +3,7 @@ from collections import OrderedDict
 from torch import nn, optim
 from torch.utils.data import DataLoader, Dataset
 from abc import abstractmethod, ABC
-from typing import Iterable, Any, Mapping, Dict
+from typing import Iterable, Any, Mapping, Dict, List
 
 from catalyst.contrib.registry import Registry
 from catalyst.dl.callbacks import Callback
@@ -104,7 +104,7 @@ class SimpleExperiment(Experiment):
         self,
         model: _Model,
         loaders: "OrderedDict[str, DataLoader]",
-        callbacks: "OrderedDict[str, Callback]",
+        callbacks: "List[Callback]",
         epochs: int = 1,
         logdir: str = None,
         valid_loader: str = "valid",
@@ -113,7 +113,7 @@ class SimpleExperiment(Experiment):
         criterion: _Criterion = None,
         optimizer: _Optimizer = None,
         scheduler: _Scheduler = None,
-        transforms = None
+        transforms=None
     ):
         self._model = model
         self._loaders = loaders
@@ -162,7 +162,7 @@ class SimpleExperiment(Experiment):
     def get_scheduler(self, stage: str, optimizer=None) -> _Scheduler:
         return self._scheduler
 
-    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
+    def get_callbacks(self, stage: str) -> "List[Callback]":
         return self._callbacks
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":

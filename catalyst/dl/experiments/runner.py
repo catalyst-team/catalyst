@@ -1,5 +1,4 @@
-from collections import OrderedDict
-from typing import Mapping, Any, Dict
+from typing import Mapping, Any, Dict, List
 from abc import ABC, abstractmethod
 
 import torch
@@ -38,7 +37,7 @@ class Runner(ABC):
         self.state: RunnerState = None
         self.stage: str = None
 
-        self.callbacks: OrderedDict[str, Callback] = None
+        self.callbacks: List[Callback] = None
 
         if device is None:
             self._prepare_model()
@@ -89,13 +88,13 @@ class Runner(ABC):
             **migrating_params
         )
 
-    def _call_callbacks(self, event: str):
+    def _run_event(self, event: str):
 
         if self.state is not None and hasattr(self.state, f"on_{event}_pre"):
             getattr(self.state, f"on_{event}_pre")()
 
         if self.callbacks is not None:
-            for callback in self.callbacks.values():
+            for callback in self.callbacks:
                 getattr(callback, f"on_{event}")(self.state)
 
         if self.state is not None and hasattr(self.state, f"on_{event}_post"):
@@ -127,14 +126,14 @@ class Runner(ABC):
             batch = self._batch2device(batch, self.device)
             self.state.timer.stop("base/data_time")
 
-            self._call_callbacks("batch_start")
+            self._run_event("batch_start")
 
             self.state.timer.start("base/model_time")
             self._run_batch(batch)
             self.state.timer.stop("base/model_time")
 
             self.state.timer.stop("base/batch_time")
-            self._call_callbacks("batch_end")
+            self._run_event("batch_end")
 
             self.state.timer.reset()
 
@@ -155,9 +154,9 @@ class Runner(ABC):
             self.state.is_train = loader_name.startswith("train")
             self.model.train(self.state.is_train)
 
-            self._call_callbacks("loader_start")
+            self._run_event("loader_start")
             self._run_loader(loaders[loader_name])
-            self._call_callbacks("loader_end")
+            self._run_event("loader_end")
 
     def _run_stage(self, mode: str, stage: str):
         loaders = self.experiment.get_loaders(stage)
@@ -166,23 +165,22 @@ class Runner(ABC):
         self._prepare_state(mode, stage)
         self.state.stage = stage
 
-        self._call_callbacks("stage_start")
+        self._run_event("stage_start")
         for epoch in range(self.state.total_epochs):
             self.state.epoch = epoch
             self.state.metrics.begin_epoch()
-            self._call_callbacks("epoch_start")
+            self._run_event("epoch_start")
             self._run_epoch(loaders)
             self.state.metrics.end_epoch()
-            self._call_callbacks("epoch_end")
+            self._run_event("epoch_end")
             if self._check_run and epoch >= 3:
                 break
             if self.state._early_stop:
                 break
-        self._call_callbacks("stage_end")
+        self._run_event("stage_end")
 
-    def run_experiment(self, mode, experiment, check_run=False):
+    def run_experiment(self, mode, experiment):
         self.experiment = experiment
-        self._check_run = check_run
         for stage in self.experiment.stages:
             self._run_stage(mode, stage)
         return self
@@ -201,12 +199,11 @@ class Runner(ABC):
 
     def run(self, *, mode, config=None, **kwargs):
         self._verbose = kwargs.pop("verbose", False)
-        check_run = kwargs.pop("check_run", False)
+        self._check_run = kwargs.pop("check_run", False)
         experiment = self._prepare_experiment(config=config, **kwargs)
         return self.run_experiment(
             mode=mode,
-            experiment=experiment,
-            check_run=check_run)
+            experiment=experiment)
 
     def train(self, *, config=None, **kwargs):
         return self.run(mode="train", config=config, **kwargs)
@@ -247,8 +244,7 @@ class SupervisedRunner(Runner):
         return output
 
     def _prepare_simple_experiment(self, **kwargs):
-        callbacks: OrderedDict = kwargs.pop("callbacks")
-        c_values = callbacks.values()
+        callbacks: List = kwargs.pop("callbacks", None) or []
         default_callbacks = [
             ("criterion", LossCallback),
             ("optimizer", OptimizerCallback),
@@ -258,8 +254,8 @@ class SupervisedRunner(Runner):
 
         for key, value in default_callbacks:
             if (kwargs.get(key, None) or key.startswith("_default")) \
-                    and not any(isinstance(x, value) for x in c_values):
-                callbacks[f"_{key}"] = value()
+                    and not any(isinstance(x, value) for x in callbacks):
+                callbacks.append(value())
 
         return self._simple_exp_parser(
             model=self.model,

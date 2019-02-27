@@ -89,7 +89,6 @@ runner = SupervisedRunner(model=model, input_key="image")
 # training
 runner.train(
     verbose=True,
-    check_run=False,
     logdir="./logs/01",
     epochs=500,
     main_metric="precision03",
@@ -98,8 +97,8 @@ runner.train(
     criterion=criterion,
     optimizer=optimizer,
     scheduler=scheduler,
-    callbacks=OrderedDict(
-        accuracy=PrecisionCallback(),
-        stopper=EarlyStoppingCallback(patience=2, min_delta=0.5)
-    )
+    callbacks=[
+        PrecisionCallback(),
+        EarlyStoppingCallback(patience=2, min_delta=0.5)
+    ]
 )

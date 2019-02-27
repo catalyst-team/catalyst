@@ -122,7 +122,7 @@ class CheckpointCallback(Callback):
         print("Top best models:")
         top_best_metrics_str = "\n".join(
             [
-                "{filepath}\t{metric:3.5f}".format(
+                "{filepath}\t{metric:3.4f}".format(
                     filepath=filepath, metric=metric
                 ) for filepath, metric in self.top_best_metrics
             ]
