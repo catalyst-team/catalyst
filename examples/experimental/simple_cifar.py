@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from catalyst.dl.callbacks import \
     LossCallback, OptimizerCallback, Callback, \
-    SchedulerCallback, CheckpointCallback
+    SchedulerCallback, CheckpointCallback, PrecisionCallback
 from catalyst.dl.experiments.runner import SupervisedRunner
 from catalyst.dl.state import RunnerState
 
@@ -116,6 +116,7 @@ runner.train(
     optimizer=optimizer,
     scheduler=scheduler,
     callbacks=OrderedDict(
+        accuracy=PrecisionCallback(),
         tqdm=VerboseCallback(),
         loss=LossCallback(),
         optimizer=OptimizerCallback(),
