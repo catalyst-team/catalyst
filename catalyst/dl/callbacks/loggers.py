@@ -10,7 +10,7 @@ from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
 
 
-class VerboseCallback(Callback):
+class VerboseLogger(Callback):
     def __init__(self):
         self.tqdm: tqdm = None
         self.step = 0
@@ -125,7 +125,7 @@ class JsonMetricsFormatter(MetricsFormatter):
         return json.dumps(res, indent=True, ensure_ascii=False)
 
 
-class Logger(Callback):
+class ConsoleLogger(Callback):
     """
     Logger callback, translates state.metrics to console and text file
     """

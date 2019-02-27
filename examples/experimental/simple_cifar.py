@@ -88,6 +88,7 @@ runner = SupervisedRunner(model=model, input_key="image")
 
 # training
 runner.train(
+    verbose=True,
     check_run=False,
     logdir="./logs/01",
     epochs=5,

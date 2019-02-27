@@ -27,12 +27,13 @@ class RunnerState(FrozenClass):
         valid_loader="valid",
         total_epochs=1,
         logdir="logs",
+        verbose=False,
         **kwargs
     ):
         # @TODO: refactor
         # hack to prevent cycle imports
         from .callbacks.loggers import (
-            VerboseCallback, Logger, TensorboardLogger)
+            VerboseLogger, ConsoleLogger, TensorboardLogger)
 
         self.logdir = Path(logdir)
         self.model = model
@@ -66,7 +67,9 @@ class RunnerState(FrozenClass):
             main_metric=main_metric,
             minimize=minimize_metric
         )
-        self.loggers = [VerboseCallback(), Logger(), TensorboardLogger()]
+        self.loggers = [ConsoleLogger(), TensorboardLogger()]
+        if verbose:
+            self.loggers.insert(0, VerboseLogger())
         self.timer = TimerManager()
 
         # base metrics

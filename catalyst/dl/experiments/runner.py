@@ -34,6 +34,7 @@ class Runner(ABC):
             if config is not None \
             else None
         self._check_run = False
+        self._verbose = False
         self.state: RunnerState = None
         self.stage: str = None
 
@@ -83,6 +84,7 @@ class Runner(ABC):
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
+            verbose=self._verbose,
             **self.experiment.get_state_params(stage),
             **migrating_params
         )
@@ -196,6 +198,7 @@ class Runner(ABC):
         return experiment
 
     def run(self, *, mode, config=None, **kwargs):
+        self._verbose = kwargs.pop("verbose", False)
         check_run = kwargs.pop("check_run", False)
         experiment = self._prepare_experiment(config=config, **kwargs)
         return self.run_experiment(
