@@ -60,8 +60,9 @@ def test_prepare_df_from_dirs_multi():
                f.startswith('root2/act2')
 
     prepare_dataset()
-    df = prepare_df_from_dirs('datasets/root1,datasets/root2',
-                              'label')
+    df = prepare_df_from_dirs(
+        'datasets/root1,datasets/root2',
+        'label')
     assert df.shape[0] == 6
     assert df.filepath.apply(check_filepath).sum().all()
     assert df.label.isin(['act1', 'act2']).all()
