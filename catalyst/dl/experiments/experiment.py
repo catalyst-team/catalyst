@@ -39,6 +39,18 @@ class Experiment(ABC):
         pass
 
     @abstractmethod
+    def get_valid_loader(self, stage: str):
+        pass
+
+    @abstractmethod
+    def get_main_metric(self, stage: str):
+        pass
+
+    @abstractmethod
+    def get_minimize_metric(self, stage: str):
+        pass
+
+    @abstractmethod
     def get_model(self) -> _Model:
         pass
 
@@ -67,7 +79,10 @@ class Experiment(ABC):
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
         return dict(
             logdir=self.logdir,
-            total_epochs=self.get_total_epochs(stage)
+            total_epochs=self.get_total_epochs(stage),
+            valid_loader=self.get_valid_loader(stage),
+            main_metric=self.get_main_metric(stage),
+            minimize_metric=self.get_minimize_metric(stage)
         )
 
     @abstractmethod
@@ -92,6 +107,9 @@ class BaseExperiment(Experiment):
         callbacks: "OrderedDict[str, Callback]",
         epochs: int = 1,
         logdir: str = None,
+        valid_loader: str = "valid",
+        main_metric: str = "loss",
+        minimize_metric: bool = True,
         criterion: _Criterion = None,
         optimizer: _Optimizer = None,
         scheduler: _Scheduler = None,
@@ -104,6 +122,9 @@ class BaseExperiment(Experiment):
 
         self._epochs = epochs
         self._logdir = logdir
+        self._valid_loader = valid_loader
+        self._main_metric = main_metric
+        self._minimize_metric = minimize_metric
 
         self._scheduler = scheduler
         self._optimizer = optimizer
@@ -119,6 +140,15 @@ class BaseExperiment(Experiment):
 
     def get_total_epochs(self, stage: str):
         return self._epochs
+
+    def get_valid_loader(self, stage: str):
+        return self._valid_loader
+
+    def get_main_metric(self, stage: str):
+        return self._main_metric
+
+    def get_minimize_metric(self, stage: str):
+        return self._minimize_metric
 
     def get_model(self) -> _Model:
         return self._model
@@ -178,6 +208,15 @@ class ConfigExperiment(Experiment):
 
     def get_total_epochs(self, stage: str):
         return self.stages_config[stage]["epochs"]
+
+    def get_valid_loader(self, stage: str):
+        return self.stages_config[stage].get("valid_loader", "valid")
+
+    def get_main_metric(self, stage: str):
+        return self.stages_config[stage].get("main_metric", "loss")
+
+    def get_minimize_metric(self, stage: str):
+        return self.stages_config[stage].get("minimize_metric", True)
 
     def get_model(self) -> _Model:
         model = Registry.get_model(**self._config["model_params"])

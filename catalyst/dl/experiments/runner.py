@@ -66,8 +66,7 @@ class Runner(ABC):
         if self.state is not None:
             migrating_params.update({
                 "step": self.state.step,
-                "epoch": self.state.epoch + 1,
-                "best_metrics": self.state.best_metrics
+                "epoch": self.state.epoch + 1
             })
 
         self._prepare_model()
@@ -175,21 +174,21 @@ class Runner(ABC):
             self._run_stage(mode, stage)
         return self
 
-    def _prepare_experiment(self, config, **kwargs):
+    def _prepare_experiment(self, *, config, **kwargs):
         if config is not None:
             experiment = self._config_exp_parser(config=config)
         else:
             experiment = self._base_exp_parser(model=self.model, **kwargs)
         return experiment
 
-    def run(self, mode, config=None, **kwargs):
+    def run(self, *, mode, config=None, **kwargs):
         self.experiment = self._prepare_experiment(config=config, **kwargs)
         return self._run_experiment(mode=mode)
 
-    def train(self, config=None, **kwargs):
+    def train(self, *, config=None, **kwargs):
         return self.run(mode="train", config=config, **kwargs)
 
-    def infer(self, config=None, **kwargs):
+    def infer(self, *, config=None, **kwargs):
         return self.run(mode="infer", config=config, **kwargs)
 
 
