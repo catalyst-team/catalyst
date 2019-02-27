@@ -7,7 +7,7 @@ import torchvision
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 
-from catalyst.dl.callbacks import PrecisionCallback
+from catalyst.dl.callbacks import PrecisionCallback, EarlyStoppingCallback
 from catalyst.dl.experiments.runner import SupervisedRunner
 
 transforms = transforms.Compose(
@@ -91,7 +91,7 @@ runner.train(
     verbose=True,
     check_run=False,
     logdir="./logs/01",
-    epochs=5,
+    epochs=500,
     main_metric="precision03",
     minimize_metric=False,
     loaders=loaders,
@@ -100,5 +100,6 @@ runner.train(
     scheduler=scheduler,
     callbacks=OrderedDict(
         accuracy=PrecisionCallback(),
+        stopper=EarlyStoppingCallback(patience=2, min_delta=0.5)
     )
 )

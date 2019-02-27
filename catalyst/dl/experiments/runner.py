@@ -176,6 +176,8 @@ class Runner(ABC):
             self._call_callbacks("epoch_end")
             if self._check_run and epoch >= 3:
                 break
+            if self.state._early_stop:
+                break
         self._call_callbacks("stage_end")
 
     def run_experiment(self, mode, experiment, check_run=False):
@@ -255,7 +257,7 @@ class SupervisedRunner(Runner):
         ]
 
         for key, value in default_callbacks:
-            if (key in kwargs or key.startswith("_default")) \
+            if (kwargs.get(key, None) or key.startswith("_default")) \
                     and not any(isinstance(x, value) for x in c_values):
                 callbacks[f"_{key}"] = value()
 

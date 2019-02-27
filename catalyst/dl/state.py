@@ -79,6 +79,7 @@ class RunnerState(FrozenClass):
 
         # other
         self.is_train = False
+        self._early_stop = False
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -97,11 +98,12 @@ class RunnerState(FrozenClass):
             getattr(self, key)[inner_key] = value
 
     def _handle_runner_metrics(self):
-        values = {
-            "base/lr": self.lr,
-            "base/momentum": self.momentum,
-            "loss": self.loss
-        }
+        values = {}
+        for key, value in zip(
+                ["base/lr", "base/momentum", "loss"],
+                [self.lr, self.momentum, self.loss]):
+            if value is not None:
+                values[key] = value
 
         values.update(self.timer.elapsed)
 
