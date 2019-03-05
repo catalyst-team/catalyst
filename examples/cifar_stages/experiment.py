@@ -8,7 +8,7 @@ from catalyst.dl.experiments import ConfigExperiment
 
 class CifarExperiment(ConfigExperiment):
 
-    def _prepare_model_for_stage(self, stage: str, model: nn.Module):
+    def _postprocess_model_for_stage(self, stage: str, model: nn.Module):
         model_ = model
         if isinstance(model, torch.nn.DataParallel):
             model_ = model_.module

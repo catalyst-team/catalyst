@@ -6,7 +6,8 @@ from abc import abstractmethod, ABC
 from typing import Iterable, Any, Mapping, Dict, List
 
 from catalyst.contrib.registry import Registry
-from catalyst.dl.callbacks import Callback
+from catalyst.dl.callbacks import Callback, \
+    LossCallback, OptimizerCallback, SchedulerCallback, CheckpointCallback
 from catalyst.dl.utils import UtilsFactory
 from catalyst.dl.fp16 import Fp16Wrap
 from catalyst.utils.misc import merge_dicts
@@ -36,19 +37,7 @@ class Experiment(ABC):
         pass
 
     @abstractmethod
-    def get_total_epochs(self, stage: str):
-        pass
-
-    @abstractmethod
-    def get_valid_loader(self, stage: str):
-        pass
-
-    @abstractmethod
-    def get_main_metric(self, stage: str):
-        pass
-
-    @abstractmethod
-    def get_minimize_metric(self, stage: str):
+    def get_state_params(self, stage: str) -> Mapping[str, Any]:
         pass
 
     @abstractmethod
@@ -77,14 +66,8 @@ class Experiment(ABC):
     def get_callbacks(self, stage: str) -> "List[Callback]":
         pass
 
-    def get_state_params(self, stage: str) -> Mapping[str, Any]:
-        return dict(
-            logdir=self.logdir,
-            total_epochs=self.get_total_epochs(stage),
-            valid_loader=self.get_valid_loader(stage),
-            main_metric=self.get_main_metric(stage),
-            minimize_metric=self.get_minimize_metric(stage)
-        )
+    def get_datasets(self, stage: str, **kwargs) -> "OrderedDict[str, Dataset]":
+        pass
 
     @abstractmethod
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
@@ -95,7 +78,7 @@ class Experiment(ABC):
         pass
 
 
-class SimpleExperiment(Experiment):
+class BaseExperiment(Experiment):
     """
     Super-simple one-staged experiment you can use to declare experiment
     in code 
@@ -106,30 +89,36 @@ class SimpleExperiment(Experiment):
         model: _Model,
         loaders: "OrderedDict[str, DataLoader]",
         callbacks: "List[Callback]",
-        epochs: int = 1,
         logdir: str = None,
-        valid_loader: str = "valid",
-        main_metric: str = "loss",
-        minimize_metric: bool = True,
+        stage: str = "train",
         criterion: _Criterion = None,
         optimizer: _Optimizer = None,
         scheduler: _Scheduler = None,
-        transforms=None
+        transforms=None,
+        n_epochs: int = 1,
+        valid_loader: str = "valid",
+        main_metric: str = "loss",
+        minimize_metric: bool = True,
+        verbose: bool = False,
+        **state_kwargs
     ):
         self._model = model
         self._loaders = loaders
         self._callbacks = callbacks
         self._transforms = transforms
 
-        self._epochs = epochs
+        self._criterion = criterion
+        self._optimizer = optimizer
+        self._scheduler = scheduler
+
         self._logdir = logdir
+        self._stage = stage
+        self._epochs = n_epochs
         self._valid_loader = valid_loader
         self._main_metric = main_metric
         self._minimize_metric = minimize_metric
-
-        self._scheduler = scheduler
-        self._optimizer = optimizer
-        self._criterion = criterion
+        self._verbose = verbose
+        self._additional_state_kwargs = state_kwargs
 
     @property
     def logdir(self):
@@ -137,19 +126,22 @@ class SimpleExperiment(Experiment):
 
     @property
     def stages(self) -> Iterable[str]:
-        return ["train"]
+        return [self._stage]
 
-    def get_total_epochs(self, stage: str):
-        return self._epochs
-
-    def get_valid_loader(self, stage: str):
-        return self._valid_loader
-
-    def get_main_metric(self, stage: str):
-        return self._main_metric
-
-    def get_minimize_metric(self, stage: str):
-        return self._minimize_metric
+    def get_state_params(self, stage: str) -> Mapping[str, Any]:
+        default_params = dict(
+            logdir=self.logdir,
+            n_epochs=self._epochs,
+            valid_loader=self._valid_loader,
+            main_metric=self._main_metric,
+            verbose=self._verbose,
+            minimize_metric=self._minimize_metric
+        )
+        state_params = {
+            **self._additional_state_kwargs,
+            **default_params
+        }
+        return state_params
 
     def get_model(self, stage: str) -> _Model:
         return self._model
@@ -173,16 +165,40 @@ class SimpleExperiment(Experiment):
         return self._transforms
 
 
+class SupervisedExperiment(BaseExperiment):
+
+    def get_callbacks(self, stage: str) -> "List[Callback]":
+        default_callbacks = [
+            (self._criterion, LossCallback),
+            (self._optimizer, OptimizerCallback),
+            (self._scheduler, SchedulerCallback),
+            ("_default_saver", CheckpointCallback),
+        ]
+
+        for key, value in default_callbacks:
+            if key is not None \
+                    and not any(isinstance(x, value) for x in self._callbacks):
+                self._callbacks.append(value())
+        return self._callbacks
+
+
 class ConfigExperiment(Experiment):
     STAGE_KEYWORDS = [
         "criterion_params", "optimizer_params", "scheduler_params",
-        "data_params", "state_params", "callbacks_params"
+        "data_params", "state_params", "callbacks_params",
     ]
 
     def __init__(self, config: Dict):
-        self._config = config
-
+        self._config = config.copy()
+        # @TODO: good enough solution?
+        self._config["stages"]["state_params"] = merge_dicts(
+            self._config["stages"].get("state_params", {}),
+            self._config.get("args", {})
+        )
         self.stages_config = self._prepare_stages_config(config["stages"])
+        self._logdir = \
+            self._config.get("args", {}).get("logdir", None) \
+            or self._prepare_logdir(config)
 
     def _prepare_stages_config(self, stages_config):
         stages_defaults = {}
@@ -198,42 +214,35 @@ class ConfigExperiment(Experiment):
 
     @property
     def logdir(self):
-        # TODO formatting from config keys by default
-        return self._config["args"]["logdir"]
+        return self._logdir
+
+    def _prepare_logdir(self, config: Dict):
+        raise NotImplementedError
 
     @property
     def stages(self) -> List[str]:
         stages_keys = list(self.stages_config.keys())
         return stages_keys
 
-    def get_total_epochs(self, stage: str):
-        return self.stages_config[stage]["state_params"]["total_epochs"]
+    def get_state_params(self, stage: str) -> Mapping[str, Any]:
+        return self.stages_config[stage]["state_params"]
 
-    def get_valid_loader(self, stage: str):
-        return self.stages_config[stage]["state_params"]\
-            .get("valid_loader", "valid")
-
-    def get_main_metric(self, stage: str):
-        return self.stages_config[stage]["state_params"]\
-            .get("main_metric", "loss")
-
-    def get_minimize_metric(self, stage: str):
-        return self.stages_config[stage]["state_params"]\
-            .get("minimize_metric", True)
-
-    @abstractmethod
-    def _prepare_model_for_stage(self, stage: str, model: _Model):
-        pass
-
-    def get_model(self, stage: str) -> _Model:
-        model = Registry.get_model(**self._config["model_params"])
+    def _preprocess_model_for_stage(self, stage: str, model: _Model):
         stage_index = self.stages.index(stage)
         if stage_index > 0:
             checkpoint_path = \
                 f"{self.logdir}/checkpoints/checkpoint.best.pth.tar"
             checkpoint = UtilsFactory.load_checkpoint(checkpoint_path)
             UtilsFactory.unpack_checkpoint(checkpoint, model=model)
-        model = self._prepare_model_for_stage(stage, model)
+        return model
+
+    def _postprocess_model_for_stage(self, stage: str, model: _Model):
+        return model
+
+    def get_model(self, stage: str) -> _Model:
+        model = Registry.get_model(**self._config["model_params"])
+        model = self._preprocess_model_for_stage(stage, model)
+        model = self._postprocess_model_for_stage(stage, model)
         return model
 
     def get_criterion(self, stage: str) -> _Criterion:
@@ -253,10 +262,6 @@ class ConfigExperiment(Experiment):
         scheduler_params = self.stages_config[stage].get("scheduler_params", {})
         scheduler = Registry.get_scheduler(optimizer, **scheduler_params)
         return scheduler
-
-    @abstractmethod
-    def get_datasets(self, stage: str, **kwargs) -> "OrderedDict[str, Dataset]":
-        pass
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         data_conf = dict(self.stages_config[stage]["data_params"])
@@ -290,4 +295,9 @@ class ConfigExperiment(Experiment):
         return callbacks
 
 
-__all__ = ["Experiment", "SimpleExperiment", "ConfigExperiment"]
+__all__ = [
+    "Experiment",
+    "BaseExperiment",
+    "SupervisedExperiment",
+    "ConfigExperiment"
+]

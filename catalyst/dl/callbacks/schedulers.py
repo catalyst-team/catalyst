@@ -49,7 +49,7 @@ class LRUpdater(Callback):
         return new_lr, new_momentum
 
     def update_optimizer(self, state):
-        if not state.is_train:
+        if not state.need_backward:
             return
 
         optimizer = state.get_key(
@@ -139,7 +139,7 @@ class OneCycleLR(LRUpdater):
         return res
 
     def on_loader_start(self, state):
-        if state.is_train:
+        if state.need_backward:
             self.total_iter = state.loader_len * self.cycle_len
             self.cut_point = self.total_iter // self.cut_div
 
@@ -200,7 +200,7 @@ class LRFinder(LRUpdater):
         return self.init_lr + self.lr_step * self.find_iter
 
     def on_loader_start(self, state):
-        if state.is_train:
+        if state.need_backward:
             lr_ = self.final_lr / self.init_lr
             self.n_steps = self.n_steps or state.loader_len
             self.multiplier = lr_**(1 / self.n_steps)

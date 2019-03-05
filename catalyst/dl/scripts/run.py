@@ -15,7 +15,7 @@ def build_args(parser):
     parser.add_argument("--expdir", type=Path, default=None)
     parser.add_argument(
         "-j",
-        "--workers",
+        "--n-workers",
         default=None,
         type=int,
         help="number of data loading workers"
@@ -23,8 +23,23 @@ def build_args(parser):
     parser.add_argument(
         "-b", "--batch-size", default=None, type=int, help="mini-batch size"
     )
+    parser.add_argument(
+        "-e",
+        "--n-epochs",
+        default=None,
+        type=int,
+        help="number of epochs"
+    )
+    parser.add_argument(
+        "--resume",
+        default=None,
+        type=str,
+        metavar="PATH",
+        help="path to latest checkpoint"
+    )
     parser.add_argument("--seed", type=int, default=42)
     boolean_flag(parser, "verbose", default=False)
+    boolean_flag(parser, "check", default=False)
 
     return parser
 
@@ -51,16 +66,6 @@ def import_experiment_and_runner(exp_dir: Path):
     Experiment, Runner = m.Experiment, m.Runner
     return Experiment, Runner
 
-# def import_experiment_and_runner(exp_dir: Path):
-#     s = spec_from_file_location(
-#         exp_dir.name, str(exp_dir / '__init__.py'),
-#         submodule_search_locations=[exp_dir.absolute()]
-#     )
-#     m = module_from_spec(s)
-#     sys.modules[exp_dir.name] = m
-#     s.loader.exec_module(m)
-#     return m.Experiment, m.Runner
-
 
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args, dump_config=True)
@@ -71,9 +76,10 @@ def main(args, unknown_args):
     experiment = Experiment(config)
     runner = Runner()
 
-    runner.run_experiment(
-        mode="train",
-        experiment=experiment)
+    runner.run(
+        experiment,
+        check=args.check
+    )
 
 
 if __name__ == "__main__":

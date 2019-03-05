@@ -24,7 +24,7 @@ class RunnerState(FrozenClass):
         main_metric="loss",
         minimize_metric=True,
         valid_loader="valid",
-        total_epochs=1,
+        n_epochs=1,
         logdir="logs",
         verbose=False,
         **kwargs
@@ -54,7 +54,7 @@ class RunnerState(FrozenClass):
         self.batch_size = 0
         self.step = 0
         self.epoch = 0
-        self.total_epochs = total_epochs
+        self.n_epochs = n_epochs
 
         # metrics & logging
         self.main_metric = main_metric
@@ -76,8 +76,8 @@ class RunnerState(FrozenClass):
         self.loss = None
 
         # other
-        self.is_train = False
-        self._early_stop = False
+        self.need_backward = False
+        self.early_stop = False
         for k, v in kwargs.items():
             setattr(self, k, v)
 

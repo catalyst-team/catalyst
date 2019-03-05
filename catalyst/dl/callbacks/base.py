@@ -15,7 +15,7 @@ class CheckpointCallback(Callback):
     """
 
     def __init__(
-        self, save_n_best: int = 5, resume: str = None
+        self, save_n_best: int = 3, resume: str = None
     ):
         """
         :param save_n_best: number of best checkpoint to keep
@@ -192,7 +192,7 @@ class OptimizerCallback(Callback):
         optimizer.step()
 
     def on_batch_end(self, state):
-        if not state.is_train:
+        if not state.need_backward:
             return
 
         self._accumulation_counter += 1
@@ -332,4 +332,4 @@ class EarlyStoppingCallback(Callback):
 
         if self.num_bad_epochs >= self.patience:
             print(f"Early stop at {state.epoch} epoch")
-            state._early_stop = True
+            state.early_stop = True

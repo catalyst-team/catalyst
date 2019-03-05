@@ -9,6 +9,7 @@ from torchvision import transforms
 
 from catalyst.dl.callbacks import PrecisionCallback, EarlyStoppingCallback
 from catalyst.dl.experiments.runner import SupervisedRunner
+from catalyst.dl.experiments.experiment import SupervisedExperiment
 
 transforms = transforms.Compose(
     [
@@ -84,21 +85,23 @@ scheduler = torch.optim.lr_scheduler.MultiStepLR(
     optimizer,
     milestones=[2, 3],
     gamma=0.2)
-runner = SupervisedRunner(model=model, input_key="image")
-
-# training
-runner.train(
-    verbose=True,
-    logdir="./logs/01",
-    epochs=500,
-    main_metric="precision03",
-    minimize_metric=False,
-    loaders=loaders,
+runner = SupervisedRunner(input_key="image")
+experiment = SupervisedExperiment(
+    model=model,
     criterion=criterion,
     optimizer=optimizer,
     scheduler=scheduler,
+    loaders=loaders,
     callbacks=[
         PrecisionCallback(),
         EarlyStoppingCallback(patience=2, min_delta=0.5)
-    ]
+    ],
+    verbose=True,
+    logdir="./logs/01",
+    n_epochs=500,
+    main_metric="precision03",
+    minimize_metric=False,
 )
+
+# training
+runner.run(experiment)

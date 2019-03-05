@@ -1,41 +1,34 @@
-from typing import Mapping, Any, Dict, List
+from typing import Mapping, Any, List
 from abc import ABC, abstractmethod
 
 import torch
 from torch import nn
 
-from catalyst.dl.callbacks import Callback, \
-    LossCallback, OptimizerCallback, SchedulerCallback, CheckpointCallback
+from catalyst.dl.callbacks import Callback
 from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
-from . import Experiment, SimpleExperiment, ConfigExperiment
+from . import Experiment
 
 
 class Runner(ABC):
-    _simple_exp_parser = SimpleExperiment
-    _config_exp_parser = ConfigExperiment
 
     def __init__(
         self,
         model: nn.Module = None,
-        config: Dict = None,
         device=None,
     ):
         """
         @TODO: write docs
         """
+        # main
         self.model: nn.Module = model
         self.device = device
-
-        self.experiment: Experiment = self._config_exp_parser(config) \
-            if config is not None \
-            else None
-        self._check_run = False
-        self._verbose = False
+        self.experiment: Experiment = None
         self.state: RunnerState = None
-        self.stage: str = None
-
         self.callbacks: List[Callback] = None
+
+        # additional
+        self._check_run = False
 
         if model is not None and device is None:
             self._prepare_model()
@@ -60,7 +53,7 @@ class Runner(ABC):
         self.model, self.device = \
             UtilsFactory.prepare_model(self.model)
 
-    def _prepare_state(self, mode: str, stage: str):
+    def _prepare_state(self, stage: str):
         migrating_params = {}
         if self.state is not None:
             migrating_params.update({
@@ -73,14 +66,12 @@ class Runner(ABC):
             self.experiment.get_model_stuff(self.model, stage)
 
         self.state = RunnerState(
-            mode=mode,
-            stage=self.stage,
+            stage=stage,
             model=self.model,
             device=self.device,
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
-            verbose=self._verbose,
             **self.experiment.get_state_params(stage),
             **migrating_params
         )
@@ -141,29 +132,34 @@ class Runner(ABC):
             self.state.timer.start("base/data_time")
 
     def _run_epoch(self, loaders):
-        assert self.state.valid_loader in loaders.keys(), \
-            f"'{self.state.valid_loader}' " \
-            f"should be in provided loaders: {list(loaders.keys())}"
+        # @TODO: better solution with train/inference handling ?
+        if not self.state.stage.startswith("infer"):
+            assert self.state.valid_loader in loaders.keys(), \
+                f"'{self.state.valid_loader}' " \
+                f"should be in provided loaders: {list(loaders.keys())}"
+        else:
+            assert not any(x.startswith("train") for x in loaders.keys()), \
+                "for inference no train loader should be passed"
 
         for loader_name in loaders:
             self.state.loader_name = loader_name
             self.state.loader_len = len(loaders[loader_name])
-            self.state.is_train = loader_name.startswith("train")
-            self.model.train(self.state.is_train)
+            self.state.need_backward = loader_name.startswith("train")
+            self.model.train(self.state.need_backward)
 
             self._run_event("loader_start")
             self._run_loader(loaders[loader_name])
             self._run_event("loader_end")
 
-    def _run_stage(self, mode: str, stage: str):
+    def _run_stage(self, stage: str):
         loaders = self.experiment.get_loaders(stage)
         self.callbacks = self.experiment.get_callbacks(stage)
 
-        self._prepare_state(mode, stage)
+        self._prepare_state(stage)
         self.state.stage = stage
 
         self._run_event("stage_start")
-        for epoch in range(self.state.total_epochs):
+        for epoch in range(self.state.n_epochs):
             self.state.epoch = epoch
             self.state.metrics.begin_epoch()
             self._run_event("epoch_start")
@@ -172,45 +168,22 @@ class Runner(ABC):
             self._run_event("epoch_end")
             if self._check_run and epoch >= 3:
                 break
-            if self.state._early_stop:
+            if self.state.early_stop:
+                self.state.early_stop = False
                 break
         self._run_event("stage_end")
 
-    def run_experiment(self, mode, experiment):
+    def run(
+        self,
+        experiment: Experiment,
+        check: bool = False
+    ):
+        self._check_run = check
+
         self.experiment = experiment
         for stage in self.experiment.stages:
-            self._run_stage(mode, stage)
+            self._run_stage(stage)
         return self
-
-    def _prepare_config_experiment(self, config):
-        return self._config_exp_parser(config=config)
-
-    def _prepare_simple_experiment(self, **kwargs):
-        return self._simple_exp_parser(model=self.model, **kwargs)
-
-    def _prepare_experiment(self, *, config, parser=None, **kwargs):
-        if config is not None:
-            experiment = parser(config) \
-                if parser is not None \
-                else self._prepare_config_experiment(config)
-        else:
-            experiment = self._prepare_simple_experiment(**kwargs)
-        return experiment
-
-    def run(self, *, mode, config=None, parser=None, **kwargs):
-        self._verbose = kwargs.pop("verbose", False)
-        self._check_run = kwargs.pop("check_run", False)
-        experiment = self._prepare_experiment(
-            config=config, parser=parser, **kwargs)
-        return self.run_experiment(
-            mode=mode,
-            experiment=experiment)
-
-    def train(self, *, config=None, parser=None, **kwargs):
-        return self.run(mode="train", config=config, parser=parser, **kwargs)
-
-    def infer(self, *, config=None, parser=None,  **kwargs):
-        return self.run(mode="infer", config=config, parser=parser, **kwargs)
 
 
 class SupervisedRunner(Runner):
@@ -221,7 +194,6 @@ class SupervisedRunner(Runner):
     def __init__(
         self,
         model: nn.Module = None,
-        config: Dict = None,
         device=None,
         input_key: str = "features",
         output_key: str = "logits",
@@ -236,7 +208,7 @@ class SupervisedRunner(Runner):
         :param input_key: Key in batch dict mapping to model input
         :param output_key: Key in output dict model output will be stored under
         """
-        super().__init__(model=model, config=config, device=device)
+        super().__init__(model=model, device=device)
         self.input_key = input_key
         self.output_key = output_key
         self.target_key = input_target_key
@@ -252,22 +224,3 @@ class SupervisedRunner(Runner):
         output = self.model(batch[self.input_key])
         output = {self.output_key: output}
         return output
-
-    def _prepare_simple_experiment(self, **kwargs):
-        callbacks: List = kwargs.pop("callbacks", None) or []
-        default_callbacks = [
-            ("criterion", LossCallback),
-            ("optimizer", OptimizerCallback),
-            ("scheduler", SchedulerCallback),
-            ("_default_saver", CheckpointCallback),
-        ]
-
-        for key, value in default_callbacks:
-            if (kwargs.get(key, None) or key.startswith("_default")) \
-                    and not any(isinstance(x, value) for x in callbacks):
-                callbacks.append(value())
-
-        return self._simple_exp_parser(
-            model=self.model,
-            callbacks=callbacks,
-            **kwargs)

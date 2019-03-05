@@ -14,7 +14,7 @@ stages:
     n_workers: 1
 
   state_params:
-    total_epochs: 2
+    n_epochs: 2
     main_metric: &reduce_metric precision01
     minimize_metric: False
 
@@ -51,7 +51,7 @@ stages:
   stage2:
 
     state_params:
-      total_epochs: 3
+      n_epochs: 3
 
     optimizer_params:
       optimizer: SGD

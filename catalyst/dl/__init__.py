@@ -1,4 +1,4 @@
-from .experiments.experiment import ConfigExperiment, SimpleExperiment, Experiment
+from .experiments.experiment import ConfigExperiment, BaseExperiment, Experiment
 from .experiments.runner import Runner
 
 
