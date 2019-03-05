@@ -8,17 +8,15 @@ class Callback:
 
     usage example:
 
-    mode start (train/infer/debug)
-        stage start
-            epoch start (one epoch - one run of every loader)
-                loader start
-                    batch start
-                    batch handler
-                    batch end
-                loader end
-            epoch end
-        stage end
-    mode end
+    stage start
+        epoch start (one epoch - one run of every loader)
+            loader start
+                batch start
+                batch handler
+                batch end
+            loader end
+        epoch end
+    stage end
     """
 
     def on_stage_start(self, state):

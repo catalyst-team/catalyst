@@ -20,8 +20,7 @@ class RunnerState(FrozenClass):
         criterion=None,
         optimizer: Optimizer = None,
         scheduler=None,
-        mode="infer",
-        stage=None,
+        stage="infer",
         main_metric="loss",
         minimize_metric=True,
         valid_loader="valid",
@@ -43,7 +42,6 @@ class RunnerState(FrozenClass):
 
         # special info
         self.stage = stage
-        self.mode = mode
         self.device = device
         self.loader_name = None
 

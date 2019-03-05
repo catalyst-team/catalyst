@@ -1,7 +1,5 @@
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from catalyst.dl.runner import SupervisedModelRunner
 from catalyst.contrib.registry import Registry
 
 
@@ -24,20 +22,3 @@ class SimpleNet(nn.Module):
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
         return x
-
-
-class ModelRunner(SupervisedModelRunner):
-    @staticmethod
-    def prepare_stage_model(*, model, stage, **kwargs):
-        SupervisedModelRunner.prepare_stage_model(
-            model=model, stage=stage, **kwargs
-        )
-        model_ = model
-        if isinstance(model, torch.nn.DataParallel):
-            model_ = model_.module
-
-        if stage == "stage2":
-            for key in ["conv1", "pool", "conv2"]:
-                layer = getattr(model_, key)
-                for param in layer.parameters():
-                    param.requires_grad = False

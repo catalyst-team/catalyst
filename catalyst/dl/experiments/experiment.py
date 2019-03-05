@@ -7,6 +7,7 @@ from typing import Iterable, Any, Mapping, Dict, List
 
 from catalyst.contrib.registry import Registry
 from catalyst.dl.callbacks import Callback
+from catalyst.dl.utils import UtilsFactory
 from catalyst.dl.fp16 import Fp16Wrap
 from catalyst.utils.misc import merge_dicts
 
@@ -51,7 +52,7 @@ class Experiment(ABC):
         pass
 
     @abstractmethod
-    def get_model(self) -> _Model:
+    def get_model(self, stage: str) -> _Model:
         pass
 
     @abstractmethod
@@ -73,7 +74,7 @@ class Experiment(ABC):
         return criterion, optimizer, scheduler
 
     @abstractmethod
-    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
+    def get_callbacks(self, stage: str) -> "List[Callback]":
         pass
 
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
@@ -90,7 +91,7 @@ class Experiment(ABC):
         pass
 
     @abstractmethod
-    def get_transforms(self, mode, stage: str = None):
+    def get_transforms(self, stage: str = None, mode: str = None):
         pass
 
 
@@ -136,7 +137,7 @@ class SimpleExperiment(Experiment):
 
     @property
     def stages(self) -> Iterable[str]:
-        return ["base"]
+        return ["train"]
 
     def get_total_epochs(self, stage: str):
         return self._epochs
@@ -150,7 +151,7 @@ class SimpleExperiment(Experiment):
     def get_minimize_metric(self, stage: str):
         return self._minimize_metric
 
-    def get_model(self) -> _Model:
+    def get_model(self, stage: str) -> _Model:
         return self._model
 
     def get_criterion(self, stage: str) -> _Criterion:
@@ -168,14 +169,14 @@ class SimpleExperiment(Experiment):
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         return self._loaders
 
-    def get_transforms(self, mode, stage: str = None):
+    def get_transforms(self, stage: str = None, mode: str = None):
         return self._transforms
 
 
 class ConfigExperiment(Experiment):
     STAGE_KEYWORDS = [
-        "epochs", "criterion_params", "optimizer_params", "scheduler_params",
-        "stage_params", "state_params", "data_params", "callbacks_params"
+        "criterion_params", "optimizer_params", "scheduler_params",
+        "data_params", "state_params", "callbacks_params"
     ]
 
     def __init__(self, config: Dict):
@@ -187,39 +188,52 @@ class ConfigExperiment(Experiment):
         stages_defaults = {}
         for key in self.STAGE_KEYWORDS:
             stages_defaults[key] = stages_config.pop(key, {})
-
-        for stages in stages_config:
+        for stage in stages_config:
             for key in self.STAGE_KEYWORDS:
-                stages_config[stages][key] = merge_dicts(
-                    stages_config[stages][key], stages_defaults.get(key, {})
+                stages_config[stage][key] = merge_dicts(
+                    stages_config[stage].get(key, {}),
+                    stages_defaults.get(key, {})
                 )
-
         return stages_config
 
     @property
     def logdir(self):
         # TODO formatting from config keys by default
-        return self._config["logdir"]
+        return self._config["args"]["logdir"]
 
     @property
-    def stages(self) -> Iterable[str]:
-        stages_keys = self.stages_config.keys()
+    def stages(self) -> List[str]:
+        stages_keys = list(self.stages_config.keys())
         return stages_keys
 
     def get_total_epochs(self, stage: str):
-        return self.stages_config[stage]["epochs"]
+        return self.stages_config[stage]["state_params"]["total_epochs"]
 
     def get_valid_loader(self, stage: str):
-        return self.stages_config[stage].get("valid_loader", "valid")
+        return self.stages_config[stage]["state_params"]\
+            .get("valid_loader", "valid")
 
     def get_main_metric(self, stage: str):
-        return self.stages_config[stage].get("main_metric", "loss")
+        return self.stages_config[stage]["state_params"]\
+            .get("main_metric", "loss")
 
     def get_minimize_metric(self, stage: str):
-        return self.stages_config[stage].get("minimize_metric", True)
+        return self.stages_config[stage]["state_params"]\
+            .get("minimize_metric", True)
 
-    def get_model(self) -> _Model:
+    @abstractmethod
+    def _prepare_model_for_stage(self, stage: str, model: _Model):
+        pass
+
+    def get_model(self, stage: str) -> _Model:
         model = Registry.get_model(**self._config["model_params"])
+        stage_index = self.stages.index(stage)
+        if stage_index > 0:
+            checkpoint_path = \
+                f"{self.logdir}/checkpoints/checkpoint.best.pth.tar"
+            checkpoint = UtilsFactory.load_checkpoint(checkpoint_path)
+            UtilsFactory.unpack_checkpoint(checkpoint, model=model)
+        model = self._prepare_model_for_stage(stage, model)
         return model
 
     def get_criterion(self, stage: str) -> _Criterion:
@@ -241,23 +255,23 @@ class ConfigExperiment(Experiment):
         return scheduler
 
     @abstractmethod
-    def get_datasets(self, **kwargs) -> "OrderedDict[str, Dataset]":
+    def get_datasets(self, stage: str, **kwargs) -> "OrderedDict[str, Dataset]":
         pass
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
-        data_conf = dict(self.stages_config[stage]['data_params'])
-        batch_size = data_conf.pop('batch_size')
-        n_workers = data_conf.pop('n_workers')
-        drop_last = data_conf.pop('drop_last', True)
+        data_conf = dict(self.stages_config[stage]["data_params"])
+        batch_size = data_conf.pop("batch_size")
+        n_workers = data_conf.pop("n_workers")
+        drop_last = data_conf.pop("drop_last", True)
 
-        datasets = self.get_datasets(**data_conf)
+        datasets = self.get_datasets(stage=stage, **data_conf)
 
         loaders = OrderedDict()
         for name, ds in datasets.items():
             loaders[name] = DataLoader(
                 ds,
                 batch_size,
-                shuffle=name.startswith('train'),
+                shuffle=name.startswith("train"),
                 num_workers=n_workers,
                 pin_memory=torch.cuda.is_available(),
                 drop_last=drop_last
@@ -265,13 +279,13 @@ class ConfigExperiment(Experiment):
 
         return loaders
 
-    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
+    def get_callbacks(self, stage: str) -> "List[Callback]":
         callbacks_params = self.stages_config[stage].get("callbacks_params", {})
 
-        callbacks = OrderedDict()
+        callbacks = []
         for key, value in callbacks_params.items():
             callback = Registry.get_callback(**value)
-            callbacks[key] = callback
+            callbacks.append(callback)
 
         return callbacks
 

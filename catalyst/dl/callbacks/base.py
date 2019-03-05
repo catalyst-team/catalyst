@@ -96,7 +96,7 @@ class CheckpointCallback(Callback):
             self.load_checkpoint(filename=self.resume, state=state)
 
     def on_epoch_end(self, state: RunnerState):
-        if state.mode == "infer":
+        if state.stage.startswith("infer"):
             return
 
         checkpoint = self.pack_checkpoint(
@@ -318,7 +318,7 @@ class EarlyStoppingCallback(Callback):
             self.is_better = lambda score, best: score >= (best - min_delta)
 
     def on_epoch_end(self, state: RunnerState) -> None:
-        if state.mode == "infer":
+        if state.stage.startswith("infer"):
             return
 
         score = state.metrics.valid_values[self.metric]

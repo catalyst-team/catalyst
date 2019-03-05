@@ -4,7 +4,7 @@ import argparse
 
 from catalyst.dl.scripts.utils import prepare_modules
 from catalyst.contrib.registry import Registry
-from catalyst.utils.config import prepare_config
+from catalyst.utils.config import parse_args_uargs
 from catalyst.utils.misc import set_global_seeds, boolean_flag
 
 
@@ -49,7 +49,7 @@ def parse_args():
 
 
 def main(args, unknown_args):
-    args, config = prepare_config(args, unknown_args)
+    args, config = parse_args_uargs(args, unknown_args)
     set_global_seeds(args.seed)
 
     modules = prepare_modules(expdir=args.expdir)

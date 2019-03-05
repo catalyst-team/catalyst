@@ -24,8 +24,6 @@ class Runner(ABC):
         """
         @TODO: write docs
         """
-        assert model or config
-
         self.model: nn.Module = model
         self.device = device
 
@@ -39,26 +37,25 @@ class Runner(ABC):
 
         self.callbacks: List[Callback] = None
 
-        if device is None:
+        if model is not None and device is None:
             self._prepare_model()
 
-    @staticmethod
-    def _batch2device(batch: Mapping[str, Any], device):
+    def _batch2device(self, batch: Mapping[str, Any], device):
         res = {
             key: value.to(device) if torch.is_tensor(value) else value
             for key, value in batch.items()
         }
         return res
 
-    def _prepare_model(self):
+    def _prepare_model(self, stage: str = None):
         """
         Inner method for children's classes for model specific initialization.
         As baseline, checks device support and puts model on it.
         :return:
         """
 
-        if self.model is None:
-            self.model = self.experiment.get_model()
+        if stage is not None:
+            self.model = self.experiment.get_model(stage)
 
         self.model, self.device = \
             UtilsFactory.prepare_model(self.model)
@@ -71,7 +68,7 @@ class Runner(ABC):
                 "epoch": self.state.epoch + 1
             })
 
-        self._prepare_model()
+        self._prepare_model(stage)
         criterion, optimizer, scheduler = \
             self.experiment.get_model_stuff(self.model, stage)
 
@@ -191,25 +188,29 @@ class Runner(ABC):
     def _prepare_simple_experiment(self, **kwargs):
         return self._simple_exp_parser(model=self.model, **kwargs)
 
-    def _prepare_experiment(self, *, config, **kwargs):
-        experiment = self._prepare_config_experiment(config) \
-            if config is not None \
-            else self._prepare_simple_experiment(**kwargs)
+    def _prepare_experiment(self, *, config, parser=None, **kwargs):
+        if config is not None:
+            experiment = parser(config) \
+                if parser is not None \
+                else self._prepare_config_experiment(config)
+        else:
+            experiment = self._prepare_simple_experiment(**kwargs)
         return experiment
 
-    def run(self, *, mode, config=None, **kwargs):
+    def run(self, *, mode, config=None, parser=None, **kwargs):
         self._verbose = kwargs.pop("verbose", False)
         self._check_run = kwargs.pop("check_run", False)
-        experiment = self._prepare_experiment(config=config, **kwargs)
+        experiment = self._prepare_experiment(
+            config=config, parser=parser, **kwargs)
         return self.run_experiment(
             mode=mode,
             experiment=experiment)
 
-    def train(self, *, config=None, **kwargs):
-        return self.run(mode="train", config=config, **kwargs)
+    def train(self, *, config=None, parser=None, **kwargs):
+        return self.run(mode="train", config=config, parser=parser, **kwargs)
 
-    def infer(self, *, config=None, **kwargs):
-        return self.run(mode="infer", config=config, **kwargs)
+    def infer(self, *, config=None, parser=None,  **kwargs):
+        return self.run(mode="infer", config=config, parser=parser, **kwargs)
 
 
 class SupervisedRunner(Runner):
@@ -223,7 +224,8 @@ class SupervisedRunner(Runner):
         config: Dict = None,
         device=None,
         input_key: str = "features",
-        output_key: str = "logits"
+        output_key: str = "logits",
+        input_target_key: str = "targets",
     ):
         """
         @TODO update docs
@@ -237,6 +239,14 @@ class SupervisedRunner(Runner):
         super().__init__(model=model, config=config, device=device)
         self.input_key = input_key
         self.output_key = output_key
+        self.target_key = input_target_key
+
+    def _batch2device(self, batch: Mapping[str, Any], device):
+        if isinstance(batch, (tuple, list)):
+            assert len(batch) == 2
+            batch = {self.input_key: batch[0], self.target_key: batch[1]}
+        batch = super()._batch2device(batch, device)
+        return batch
 
     def predict_batch(self, batch: Mapping[str, Any]):
         output = self.model(batch[self.input_key])
