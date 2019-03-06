@@ -4,7 +4,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 import torchvision
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader
 from torchvision import transforms
 
 from catalyst.dl.callbacks import PrecisionCallback, EarlyStoppingCallback, \
@@ -19,25 +19,12 @@ transforms = transforms.Compose(
 )
 
 
-class DictDatasetAdapter(Dataset):
-    def __init__(self, dataset):
-        self.dataset = dataset
-
-    def __getitem__(self, index):
-        image, target = self.dataset[index]
-
-        return dict(image=image, targets=target)
-
-    def __len__(self):
-        return len(self.dataset)
-
-
 def get_loaders():
     train_set = torchvision.datasets.CIFAR10(
         root='./data', train=True, download=True, transform=transforms
     )
     train_loader = DataLoader(
-        DictDatasetAdapter(train_set),
+        train_set,
         batch_size=100,
         shuffle=True,
         num_workers=0
@@ -48,7 +35,7 @@ def get_loaders():
     )
 
     validation_loader = DataLoader(
-        DictDatasetAdapter(validation_set),
+        validation_set,
         batch_size=100,
         shuffle=False,
         num_workers=0
@@ -83,9 +70,9 @@ criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
 scheduler = torch.optim.lr_scheduler.MultiStepLR(
     optimizer,
-    milestones=[2, 3],
+    milestones=[5,10],
     gamma=0.2)
-runner = SupervisedRunner(input_key="image")
+runner = SupervisedRunner()
 
 # training
 runner.train(
@@ -96,25 +83,24 @@ runner.train(
     loaders=loaders,
     callbacks=[
         PrecisionCallback(),
-        EarlyStoppingCallback(patience=2, min_delta=0.1)
+        EarlyStoppingCallback(patience=2, min_delta=0.01)
     ],
     verbose=True,
     logdir="./logs/01",
     n_epochs=500,
     main_metric="precision03",
-    minimize_metric=False,
-    check=True
+    minimize_metric=False
 )
 print("-"*80)
 
+optimizer = torch.optim.SGD(model.parameters(), lr=0.05)
 runner.train(
     model=model,
     criterion=criterion,
     optimizer=optimizer,
     loaders=loaders,
     logdir="./logs/02",
-    n_epochs=2,
-    check=True
+    n_epochs=2
 )
 print("-"*80)
 
@@ -122,7 +108,6 @@ loaders = OrderedDict([("infer", loaders["train"])])
 runner.infer(
     model=model,
     loaders=loaders,
-    callbacks=[InferCallback()],
-    check=True
+    callbacks=[InferCallback(out_prefix="./logs/02/{suffix}.npy")],
 )
 print("-"*80)

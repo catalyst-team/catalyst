@@ -23,7 +23,7 @@ class InferCallback(Callback):
             value = getattr(state, key, None)
             if value is not None:
                 setattr(self, key, value)
-        assert self.out_prefix is not None
+        # assert self.out_prefix is not None
 
     def on_loader_start(self, state):
         self.predictions = defaultdict(lambda: [])
