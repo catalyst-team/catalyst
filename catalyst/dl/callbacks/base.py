@@ -34,7 +34,6 @@ class CheckpointCallback(Callback):
             checkpoint = UtilsFactory.load_checkpoint(filename)
 
             state.epoch = checkpoint["epoch"]
-            state.best_metrics = checkpoint["best_metrics"]
 
             UtilsFactory.unpack_checkpoint(
                 checkpoint,
