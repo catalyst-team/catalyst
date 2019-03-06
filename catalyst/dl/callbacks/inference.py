@@ -13,10 +13,11 @@ from .core import Callback
 
 # @TODO: refactor
 class InferCallback(Callback):
-    def __init__(self, out_prefix=None):
+    def __init__(self, out_dir=None, out_prefix=None):
+        self.out_dir = out_dir
         self.out_prefix = out_prefix
         self.predictions = defaultdict(lambda: [])
-        self._keys_from_state = ["out_prefix"]
+        self._keys_from_state = ["out_dir", "out_prefix"]
 
     def on_stage_start(self, state):
         for key in self._keys_from_state:
@@ -24,6 +25,8 @@ class InferCallback(Callback):
             if value is not None:
                 setattr(self, key, value)
         # assert self.out_prefix is not None
+        if self.out_dir is not None:
+            self.out_prefix = str(self.out_dir) + "/" + str(self.out_prefix)
 
     def on_loader_start(self, state):
         self.predictions = defaultdict(lambda: [])
@@ -51,6 +54,7 @@ class InferCallback(Callback):
 class InferMaskCallback(Callback):
     def __init__(
         self,
+        out_dir=None,
         out_prefix=None,
         input_key=None,
         output_key=None,
@@ -61,6 +65,7 @@ class InferMaskCallback(Callback):
         name_key=None,
         dump_mask=False,
     ):
+        self.out_dir = out_dir
         self.out_prefix = out_prefix
         self.mean = mean or np.array([0.485, 0.456, 0.406])
         self.std = std or np.array([0.229, 0.224, 0.225])
@@ -74,14 +79,16 @@ class InferMaskCallback(Callback):
         self.name_key = name_key
         self.dump_mask = dump_mask
         self.counter = 0
-        self._keys_from_state = ["out_prefix"]
+        self._keys_from_state = ["out_dir", "out_prefix"]
 
     def on_stage_start(self, state):
         for key in self._keys_from_state:
             value = getattr(state, key, None)
             if value is not None:
                 setattr(self, key, value)
-        assert self.out_prefix is not None
+        # assert self.out_prefix is not None
+        if self.out_dir is not None:
+            self.out_prefix = str(self.out_dir) + "/" + str(self.out_prefix)
 
     @staticmethod
     def _get_spaced_colors2(n_colors, seed=42):

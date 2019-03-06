@@ -71,9 +71,10 @@ class Experiment(ABC):
 
     @abstractmethod
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
-        pass
+        raise NotImplementedError
 
-    def get_transforms(self, stage: str = None, mode: str = None):
+    @staticmethod
+    def get_transforms(stage: str = None, mode: str = None):
         raise NotImplementedError
 
 
@@ -188,8 +189,8 @@ class ConfigExperiment(Experiment):
         self._config = config.copy()
         # @TODO: good enough solution?
         self._config["stages"]["state_params"] = merge_dicts(
-            self._config["stages"].get("state_params", {}),
-            self._config.get("args", {})
+            self._config["stages"].get("state_params", {}).copy(),
+            self._config.get("args", {}).copy()
         )
         self.stages_config = self._prepare_stages_config(config["stages"])
         self._logdir = \
@@ -203,8 +204,8 @@ class ConfigExperiment(Experiment):
         for stage in stages_config:
             for key in self.STAGE_KEYWORDS:
                 stages_config[stage][key] = merge_dicts(
-                    stages_config[stage].get(key, {}),
-                    stages_defaults.get(key, {})
+                    stages_config[stage].get(key, {}).copy(),
+                    stages_defaults.get(key, {}).copy()
                 )
         return stages_config
 
@@ -261,6 +262,7 @@ class ConfigExperiment(Experiment):
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         data_conf = dict(self.stages_config[stage]["data_params"])
+
         batch_size = data_conf.pop("batch_size")
         n_workers = data_conf.pop("n_workers")
         drop_last = data_conf.pop("drop_last", True)
