@@ -249,7 +249,7 @@ class SchedulerCallback(Callback):
         self,
         scheduler_key: str = None,
         mode: str = "epoch",
-        reduce_metric: str = None
+        reduce_metric: str = "loss"
     ):
         self.scheduler_key = scheduler_key
         self.mode = mode
@@ -262,7 +262,7 @@ class SchedulerCallback(Callback):
 
         lr, momentum = scheduler_step(
             scheduler=scheduler,
-            valid_metric=state.metrics.epoch_values.get(
+            valid_metric=state.metrics.valid_values.get(
                 self.reduce_metric, None)
         )
 
