@@ -34,7 +34,7 @@ class RunnerState(FrozenClass):
         from .callbacks.loggers import (
             VerboseLogger, ConsoleLogger, TensorboardLogger)
 
-        self.logdir = Path(logdir)
+        self.logdir = Path(logdir) if logdir is not None else None
         self.model = model
         self.criterion = criterion
         self.optimizer = optimizer
@@ -65,9 +65,12 @@ class RunnerState(FrozenClass):
             main_metric=main_metric,
             minimize=minimize_metric
         )
-        self.loggers = [ConsoleLogger(), TensorboardLogger()]
+        self.loggers = []
         if verbose:
             self.loggers.insert(0, VerboseLogger())
+        if not stage.startswith("infer"):
+            self.loggers.extend([ConsoleLogger(), TensorboardLogger()])
+
         self.timer = TimerManager()
 
         # base metrics
@@ -119,8 +122,13 @@ class RunnerState(FrozenClass):
             logger.on_stage_end(self)
 
     def on_epoch_start_pre(self):
+        self.metrics.begin_epoch()
         for logger in self.loggers:
             logger.on_epoch_start(self)
+
+    def on_epoch_end_pre(self):
+        if not self.stage.startswith("infer"):
+            self.metrics.end_epoch_train()
 
     def on_epoch_end_post(self):
         for logger in self.loggers:

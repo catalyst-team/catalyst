@@ -7,9 +7,9 @@ import torchvision
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 
-from catalyst.dl.callbacks import PrecisionCallback, EarlyStoppingCallback
-from catalyst.dl.experiments.runner import SupervisedRunner
-from catalyst.dl.experiments.experiment import SupervisedExperiment
+from catalyst.dl.callbacks import PrecisionCallback, EarlyStoppingCallback, \
+    InferCallback
+from catalyst.dl.experiments import SupervisedRunner
 
 transforms = transforms.Compose(
     [
@@ -86,7 +86,9 @@ scheduler = torch.optim.lr_scheduler.MultiStepLR(
     milestones=[2, 3],
     gamma=0.2)
 runner = SupervisedRunner(input_key="image")
-experiment = SupervisedExperiment(
+
+# training
+runner.train(
     model=model,
     criterion=criterion,
     optimizer=optimizer,
@@ -94,14 +96,33 @@ experiment = SupervisedExperiment(
     loaders=loaders,
     callbacks=[
         PrecisionCallback(),
-        EarlyStoppingCallback(patience=2, min_delta=0.5)
+        EarlyStoppingCallback(patience=2, min_delta=0.1)
     ],
     verbose=True,
     logdir="./logs/01",
     n_epochs=500,
     main_metric="precision03",
     minimize_metric=False,
+    check=True
 )
+print("-"*80)
 
-# training
-runner.run(experiment)
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    logdir="./logs/02",
+    n_epochs=2,
+    check=True
+)
+print("-"*80)
+
+loaders = OrderedDict([("infer", loaders["train"])])
+runner.infer(
+    model=model,
+    loaders=loaders,
+    callbacks=[InferCallback()],
+    check=True
+)
+print("-"*80)

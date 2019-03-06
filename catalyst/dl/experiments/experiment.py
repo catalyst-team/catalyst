@@ -67,15 +67,14 @@ class Experiment(ABC):
         pass
 
     def get_datasets(self, stage: str, **kwargs) -> "OrderedDict[str, Dataset]":
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         pass
 
-    @abstractmethod
     def get_transforms(self, stage: str = None, mode: str = None):
-        pass
+        raise NotImplementedError
 
 
 class BaseExperiment(Experiment):
@@ -88,24 +87,22 @@ class BaseExperiment(Experiment):
         self,
         model: _Model,
         loaders: "OrderedDict[str, DataLoader]",
-        callbacks: "List[Callback]",
+        callbacks: "List[Callback]" = None,
         logdir: str = None,
         stage: str = "train",
         criterion: _Criterion = None,
         optimizer: _Optimizer = None,
         scheduler: _Scheduler = None,
-        transforms=None,
         n_epochs: int = 1,
         valid_loader: str = "valid",
         main_metric: str = "loss",
         minimize_metric: bool = True,
         verbose: bool = False,
-        **state_kwargs
+        state_kwargs: Dict = None
     ):
         self._model = model
         self._loaders = loaders
-        self._callbacks = callbacks
-        self._transforms = transforms
+        self._callbacks = callbacks or []
 
         self._criterion = criterion
         self._optimizer = optimizer
@@ -118,7 +115,7 @@ class BaseExperiment(Experiment):
         self._main_metric = main_metric
         self._minimize_metric = minimize_metric
         self._verbose = verbose
-        self._additional_state_kwargs = state_kwargs
+        self._additional_state_kwargs = state_kwargs or {}
 
     @property
     def logdir(self):
@@ -161,25 +158,24 @@ class BaseExperiment(Experiment):
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         return self._loaders
 
-    def get_transforms(self, stage: str = None, mode: str = None):
-        return self._transforms
-
 
 class SupervisedExperiment(BaseExperiment):
 
     def get_callbacks(self, stage: str) -> "List[Callback]":
-        default_callbacks = [
-            (self._criterion, LossCallback),
-            (self._optimizer, OptimizerCallback),
-            (self._scheduler, SchedulerCallback),
-            ("_default_saver", CheckpointCallback),
-        ]
+        callbacks = self._callbacks
+        if not stage.startswith("infer"):
+            default_callbacks = [
+                (self._criterion, LossCallback),
+                (self._optimizer, OptimizerCallback),
+                (self._scheduler, SchedulerCallback),
+                ("_default_saver", CheckpointCallback),
+            ]
 
-        for key, value in default_callbacks:
-            if key is not None \
-                    and not any(isinstance(x, value) for x in self._callbacks):
-                self._callbacks.append(value())
-        return self._callbacks
+            for key, value in default_callbacks:
+                if key is not None \
+                        and not any(isinstance(x, value) for x in callbacks):
+                    callbacks.append(value())
+        return callbacks
 
 
 class ConfigExperiment(Experiment):

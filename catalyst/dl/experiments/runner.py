@@ -1,13 +1,21 @@
-from typing import Mapping, Any, List
+from typing import Any, Mapping, Dict, List
 from abc import ABC, abstractmethod
+from collections import OrderedDict
 
 import torch
-from torch import nn
+from torch import nn, optim
+from torch.utils.data import DataLoader
 
 from catalyst.dl.callbacks import Callback
 from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
-from . import Experiment
+from . import Experiment, SupervisedExperiment
+
+_Model = nn.Module
+_Criterion = nn.Module
+_Optimizer = optim.Optimizer
+# noinspection PyProtectedMember
+_Scheduler = optim.lr_scheduler._LRScheduler
 
 
 class Runner(ABC):
@@ -161,11 +169,11 @@ class Runner(ABC):
         self._run_event("stage_start")
         for epoch in range(self.state.n_epochs):
             self.state.epoch = epoch
-            self.state.metrics.begin_epoch()
+
             self._run_event("epoch_start")
             self._run_epoch(loaders)
-            self.state.metrics.end_epoch()
             self._run_event("epoch_end")
+
             if self._check_run and epoch >= 3:
                 break
             if self.state.early_stop:
@@ -173,7 +181,7 @@ class Runner(ABC):
                 break
         self._run_event("stage_end")
 
-    def run(
+    def run_experiment(
         self,
         experiment: Experiment,
         check: bool = False
@@ -190,6 +198,7 @@ class SupervisedRunner(Runner):
     """
     Runner for experiments with supervised model
     """
+    _default_experiment = SupervisedExperiment
 
     def __init__(
         self,
@@ -224,3 +233,57 @@ class SupervisedRunner(Runner):
         output = self.model(batch[self.input_key])
         output = {self.output_key: output}
         return output
+
+    def train(
+        self,
+        model: _Model,
+        criterion: _Criterion,
+        optimizer: _Optimizer,
+        loaders: "OrderedDict[str, DataLoader]",
+        logdir: str,
+        callbacks: "List[Callback]" = None,
+        scheduler: _Scheduler = None,
+        n_epochs: int = 1,
+        valid_loader: str = "valid",
+        main_metric: str = "loss",
+        minimize_metric: bool = True,
+        verbose: bool = False,
+        state_kwargs: Dict = None,
+        check: bool = False
+    ):
+        experiment = self._default_experiment(
+            stage="train",
+            model=model,
+            loaders=loaders,
+            callbacks=callbacks,
+            logdir=logdir,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            n_epochs=n_epochs,
+            valid_loader=valid_loader,
+            main_metric=main_metric,
+            minimize_metric=minimize_metric,
+            verbose=verbose,
+            state_kwargs=state_kwargs
+        )
+        self.run_experiment(experiment, check=check)
+
+    def infer(
+        self,
+        model: _Model,
+        loaders: "OrderedDict[str, DataLoader]",
+        callbacks: "List[Callback]" = None,
+        verbose: bool = False,
+        state_kwargs: Dict = None,
+        check: bool = False
+    ):
+        experiment = self._default_experiment(
+            stage="infer",
+            model=model,
+            loaders=loaders,
+            callbacks=callbacks,
+            verbose=verbose,
+            state_kwargs=state_kwargs
+        )
+        self.run_experiment(experiment, check=check)

@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 
-import os
-import sys
 import argparse
-from importlib.util import spec_from_file_location, module_from_spec
 from pathlib import Path
 
 from catalyst.utils.config import parse_args_uargs
 from catalyst.utils.misc import set_global_seeds, boolean_flag
+from .utils import import_experiment_and_runner, dump_code
 
 
 def build_args(parser):
@@ -51,22 +49,6 @@ def parse_args():
     return args, unknown_args
 
 
-def import_experiment_and_runner(exp_dir: Path):
-    # @TODO: better PYTHONPATH handling
-    sys.path.insert(0, str(exp_dir.absolute()))
-    sys.path.insert(0, os.path.dirname(str(exp_dir.absolute())))
-    s = spec_from_file_location(
-        exp_dir.name,
-        str(exp_dir.absolute() / "__init__.py"),
-        submodule_search_locations=[exp_dir.absolute()]
-    )
-    m = module_from_spec(s)
-    s.loader.exec_module(m)
-    sys.modules[exp_dir.name] = m
-    Experiment, Runner = m.Experiment, m.Runner
-    return Experiment, Runner
-
-
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args, dump_config=True)
     set_global_seeds(config.get("seed", 42))
@@ -75,8 +57,9 @@ def main(args, unknown_args):
 
     experiment = Experiment(config)
     runner = Runner()
+    dump_code(args.expdir, experiment.logdir)
 
-    runner.run(
+    runner.run_experiment(
         experiment,
         check=args.check
     )

@@ -62,7 +62,7 @@ class MetricManager:
     def begin_epoch(self):
         self.epoch_values = defaultdict(lambda: {})
 
-    def end_epoch(self):
+    def end_epoch_train(self):
         assert self._valid_loader in self.epoch_values, \
             f"{self._valid_loader} is not available by the epoch end"
         assert self._main_metric in self.epoch_values[self._valid_loader], \
