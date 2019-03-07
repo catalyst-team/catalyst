@@ -7,12 +7,12 @@ def test_arg_parser_train():
     parser = main.build_parser()
 
     args, uargs = parser.parse_known_args([
-        'train',
+        'run',
         '--config', 'test.yml',
         '--unknown'
     ])
 
-    assert args.command == 'train'
+    assert args.command == 'run'
     assert args.config == 'test.yml'
     assert '--unknown' in uargs
 
@@ -21,12 +21,12 @@ def test_arg_parser_infer():
     parser = main.build_parser()
 
     args, uargs = parser.parse_known_args([
-        'infer',
+        'run',
         '--config', 'test.yml',
         '--unknown'
     ])
 
-    assert args.command == 'infer'
+    assert args.command == 'run'
     assert args.config == 'test.yml'
     assert '--unknown' in uargs
 

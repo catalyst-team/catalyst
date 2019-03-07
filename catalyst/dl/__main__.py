@@ -1,11 +1,9 @@
 from collections import OrderedDict
 from argparse import ArgumentParser, RawTextHelpFormatter
 
-from .scripts import train, inference, make_report
+from .scripts import run, make_report
 
-COMMANDS = OrderedDict(
-    [("train", train), ("infer", inference), ("make-report", make_report)]
-)
+COMMANDS = OrderedDict([("run", run), ("make-report", make_report)])
 
 
 def build_parser() -> ArgumentParser:

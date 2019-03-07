@@ -1,4 +1,4 @@
-from typing import Iterable, Any
+from typing import Iterable, Any, Optional
 
 import copy
 import random
@@ -141,3 +141,23 @@ class FrozenClass(object):
 
     def _freeze(self):
         self.__isfrozen = True
+
+
+def args_are_not_none(*args: Optional[Any]) -> bool:
+    """
+    Check that all arguments are not None
+    Args:
+        *args (Any): values
+    Returns:
+         bool: True if all value were not None, False otherwise
+    """
+    result = args is not None
+    if not result:
+        return result
+
+    for arg in args:
+        if arg is None:
+            result = False
+            break
+
+    return result

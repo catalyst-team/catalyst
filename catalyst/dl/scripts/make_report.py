@@ -38,7 +38,7 @@ def plot_report(report, y_key, filename):
 
 
 def report_by_dir(folder):
-    checkpoint = f"{folder}/checkpoint.best.pth.tar"
+    checkpoint = f"{folder}/best.pth"
     checkpoint = UtilsFactory.load_checkpoint(checkpoint)
     exp_name = folder.rsplit("/", 1)[-1]
     row = {"exp_name": exp_name, "epoch": checkpoint["epoch"]}
@@ -50,7 +50,7 @@ def build_args(parser):
     parser.add_argument("--in-logdir", type=str, required=True)
     parser.add_argument("--out-logdir", type=str, required=True)
     parser.add_argument(
-        "--keys", type=str, default="loss,base/sample_per_second,epoch"
+        "--keys", type=str, default="loss,base/_fps,epoch"
     )
 
     return parser

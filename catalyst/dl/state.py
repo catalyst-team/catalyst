@@ -1,11 +1,12 @@
-import time
-from collections import defaultdict
-from torchnet import meter
-from catalyst.dl.callbacks.utils import get_val_from_metric, \
-    process_epoch_metrics
+from pathlib import Path
+from torch.optim.optimizer import Optimizer
+
 from catalyst.utils.misc import FrozenClass
+from .metric_manager import MetricManager, TimerManager
 
 
+# TODO Deep refactoring
+#  - lr/loss/momentum bypass (how to deal when multiple optimizers?)
 class RunnerState(FrozenClass):
     """
     An object that is used to pass internal state during train/valid/infer.
@@ -17,15 +18,24 @@ class RunnerState(FrozenClass):
         device=None,
         model=None,
         criterion=None,
-        optimizer=None,
+        optimizer: Optimizer = None,
         scheduler=None,
-        stage=None,
+        stage="infer",
         main_metric="loss",
         minimize_metric=True,
         valid_loader="valid",
-        reset_step=False,
+        n_epochs=1,
+        logdir="logs",
+        verbose=False,
         **kwargs
     ):
+        # @TODO: refactor
+        # hack to prevent cycle imports
+        from .callbacks.loggers import (
+            VerboseLogger, ConsoleLogger, TensorboardLogger
+        )
+
+        self.logdir = Path(logdir) if logdir is not None else None
         self.model = model
         self.criterion = criterion
         self.optimizer = optimizer
@@ -33,42 +43,45 @@ class RunnerState(FrozenClass):
 
         # special info
         self.stage = stage
-        self.mode = "infer"
         self.device = device
-        self.loader_mode = None
-        self.reset_step = reset_step
-
-        self.main_metric = main_metric
-        self.minimize_metric = minimize_metric
-        self.valid_loader = valid_loader
+        self.loader_name = None
 
         # data pipeline
         self.input = None
         self.output = None
 
         # counters
-        self._datatime = time.time()
         self.loader_len = 0
         self.batch_size = 0
         self.step = 0
         self.epoch = 0
-        self.is_best_epoch = False
+        self.n_epochs = n_epochs
 
-        # metrics
-        self.lr = None  # defaultdict(lambda: 0)
-        self.momentum = None  # defaultdict(lambda: 0)
-        self.loss = None  # defaultdict(lambda: 0)
-
-        self.batch_metrics = defaultdict(lambda: 0)
-        self.epoch_metrics = defaultdict(
-            lambda: defaultdict(lambda: meter.AverageValueMeter())
+        # metrics & logging
+        self.main_metric = main_metric
+        self.minimize_metric = minimize_metric
+        self.valid_loader = valid_loader
+        self.metrics = MetricManager(
+            valid_loader=valid_loader,
+            main_metric=main_metric,
+            minimize=minimize_metric
         )
-        self.valid_metrics = None
-        self.best_metrics = None
+        self.loggers = []
+        if verbose:
+            self.loggers.insert(0, VerboseLogger())
+        if not stage.startswith("infer"):
+            self.loggers.extend([ConsoleLogger(), TensorboardLogger()])
+
+        self.timer = TimerManager()
+
+        # base metrics
+        self.lr = None
+        self.momentum = None
+        self.loss = None
 
         # other
-        self.key2device = defaultdict(lambda: True)
-        self.is_train = False
+        self.need_backward = False
+        self.early_stop = False
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -86,126 +99,58 @@ class RunnerState(FrozenClass):
         else:
             getattr(self, key)[inner_key] = value
 
-    @staticmethod
-    def on_stage_init_pre(model, stage):
-        pass
+    def _handle_runner_metrics(self):
+        values = {}
+        for key, value in zip(
+            ["base/lr", "base/momentum", "loss"],
+            [self.lr, self.momentum, self.loss]
+        ):
+            if value is not None:
+                values[key] = value
 
-    @staticmethod
-    def on_stage_init_post(model, stage):
-        pass
+        values.update(self.timer.elapsed)
 
-    @staticmethod
-    def on_train_start_pre(state):
-        pass
+        values["_fps"] = \
+            self.batch_size / self.timer.elapsed["base/batch_time"]
 
-    @staticmethod
-    def on_train_start_post(state):
-        pass
+        self.metrics.add_batch_value(metrics_dict=values)
 
-    @staticmethod
-    def on_train_end_pre(state):
-        pass
+    def on_stage_start_pre(self):
+        for logger in self.loggers:
+            logger.on_stage_start(self)
 
-    @staticmethod
-    def on_train_end_post(state):
-        pass
+    def on_stage_end_post(self):
+        for logger in self.loggers:
+            logger.on_stage_end(self)
 
-    @staticmethod
-    def on_infer_start_pre(state):
-        pass
+    def on_epoch_start_pre(self):
+        self.metrics.begin_epoch()
+        for logger in self.loggers:
+            logger.on_epoch_start(self)
 
-    @staticmethod
-    def on_infer_start_post(state):
-        pass
+    def on_epoch_end_pre(self):
+        if not self.stage.startswith("infer"):
+            self.metrics.end_epoch_train()
 
-    @staticmethod
-    def on_infer_end_pre(state):
-        pass
+    def on_epoch_end_post(self):
+        for logger in self.loggers:
+            logger.on_epoch_end(self)
 
-    @staticmethod
-    def on_infer_end_post(state):
-        pass
+    def on_loader_start_pre(self):
+        self.metrics.begin_loader(self.loader_name)
+        for logger in self.loggers:
+            logger.on_loader_start(self)
 
-    @staticmethod
-    def on_epoch_start_pre(state):
-        pass
+    def on_loader_end_post(self):
+        self.metrics.end_loader()
+        for logger in self.loggers:
+            logger.on_loader_end(self)
 
-    @staticmethod
-    def on_epoch_start_post(state):
-        pass
+    def on_batch_start_pre(self):
+        self.metrics.begin_batch()
 
-    @staticmethod
-    def on_epoch_end_pre(state):
-        if state.mode == "infer":
-            return
-
-        best_metrics, valid_metrics, is_best = \
-            process_epoch_metrics(
-                state.epoch_metrics,
-                state.best_metrics,
-                valid_loader=state.valid_loader,
-                main_metric=state.main_metric,
-                minimize=state.minimize_metric)
-        valid_metrics = {
-            key: value
-            for key, value in valid_metrics.items()
-            if isinstance(value, float)
-        }
-        state.best_metrics = {
-            key: value
-            for key, value in best_metrics.items() if isinstance(value, float)
-        }
-        state.valid_metrics = valid_metrics
-        state.is_best_epoch = is_best
-
-    @staticmethod
-    def on_epoch_end_post(state):
-        state.epoch_metrics = defaultdict(
-            lambda: defaultdict(lambda: meter.AverageValueMeter())
-        )
-
-    @staticmethod
-    def on_loader_start_pre(state):
-        pass
-
-    @staticmethod
-    def on_loader_start_post(state):
-        state._datatime = time.time()
-
-    @staticmethod
-    def on_loader_end_pre(state):
-        lm = state.loader_mode
-        state.epoch_metrics[lm] = {
-            key: get_val_from_metric(value)
-            for key, value in state.epoch_metrics[lm].items()
-        }
-
-    @staticmethod
-    def on_loader_end_post(state):
-        if state.reset_step:
-            state.step = None
-
-    @staticmethod
-    def on_batch_start_pre(state):
-        state.batch_metrics = defaultdict(lambda: 0)
-        state.batch_metrics["base/data_time"] = time.time() - state._datatime
-
-    @staticmethod
-    def on_batch_start_post(state):
-        pass
-
-    @staticmethod
-    def on_batch_end_pre(state):
-        elapsed_time = time.time() - state._datatime
-
-        state.batch_metrics["base/batch_time"] = elapsed_time
-        state.batch_metrics["base/sample_per_second"] = \
-            state.batch_size / elapsed_time
-
-    @staticmethod
-    def on_batch_end_post(state):
-        lm = state.loader_mode
-        for key, value in state.batch_metrics.items():
-            state.epoch_metrics[lm][key].add(value)
-        state.step += state.batch_size
-        state._datatime = time.time()
+    def on_batch_end_post(self):
+        self._handle_runner_metrics()
+        self.metrics.end_batch()
+        for logger in self.loggers:
+            logger.on_batch_end(self)

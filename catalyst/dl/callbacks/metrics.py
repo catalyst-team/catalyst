@@ -1,8 +1,8 @@
 from typing import Callable, List
 
 from catalyst.dl import metrics
+from catalyst.dl.state import RunnerState
 from .core import Callback
-from .utils import get_val_from_metric
 
 
 class MetricCallback(Callback):
@@ -24,11 +24,11 @@ class MetricCallback(Callback):
         self.output_key = output_key
         self.metric_params = metric_params
 
-    def on_batch_end(self, state):
+    def on_batch_end(self, state: RunnerState):
         outputs = state.output[self.output_key]
         targets = state.input[self.input_key]
         metric = self.metric_fn(outputs, targets, **self.metric_params)
-        state.batch_metrics[self.prefix] = get_val_from_metric(metric)
+        state.metrics.add_batch_value(name=self.prefix, value=metric)
 
 
 class MultiMetricCallback(Callback):
@@ -60,12 +60,14 @@ class MultiMetricCallback(Callback):
             outputs, targets, self.list_args, **self.metric_params
         )
 
+        batch_metrics = {}
         for arg, metric in zip(self.list_args, metrics_):
             if isinstance(arg, int):
                 key = f"{self.prefix}{arg:02}"
             else:
                 key = f"{self.prefix}_{arg}"
-            state.batch_metrics[key] = get_val_from_metric(metric)
+            batch_metrics[key] = metric
+        state.metrics.add_batch_value(metrics_dict=batch_metrics)
 
 
 class DiceCallback(MetricCallback):
@@ -77,7 +79,7 @@ class DiceCallback(MetricCallback):
         self,
         input_key: str = "targets",
         output_key: str = "logits",
-        prefix="dice",
+        prefix: str = "dice",
         eps: float = 1e-7,
         activation: str = "sigmoid"
     ):
@@ -106,7 +108,7 @@ class JaccardCallback(MetricCallback):
         self,
         input_key: str = "targets",
         output_key: str = "logits",
-        prefix="jaccard",
+        prefix: str = "jaccard",
         eps: float = 1e-7
     ):
         """
@@ -133,8 +135,8 @@ class PrecisionCallback(MultiMetricCallback):
         self,
         input_key: str = "targets",
         output_key: str = "logits",
+        prefix: str = "precision",
         precision_args: List[int] = None,
-        prefix="precision"
     ):
         """
         :param input_key: input key to use for precision calculation;
@@ -164,8 +166,8 @@ class MapKCallback(MultiMetricCallback):
         self,
         input_key: str = "targets",
         output_key: str = "logits",
+        prefix: str = "map",
         map_args: List[int] = None,
-        prefix="map"
     ):
         """
         :param input_key: input key to use for

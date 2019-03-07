@@ -16,9 +16,11 @@ _REGISTERS = {
     "callback": callbacks.__dict__,
     "criterion": criterion.__dict__,
     "environment": environments.__dict__,
+    "experiment": {},
     "model": models.__dict__,
     "module": modules.__dict__,
     "optimizer": optimizers.__dict__,
+    "runner": {},
 }
 
 
@@ -100,6 +102,13 @@ class Registry:
         return Registry._inner_register("environment", *environment_factories)
 
     @staticmethod
+    def experiment(*factories: Factory) -> Union[Factory, List[Factory]]:
+        """
+        @TODO: refactor registry
+        """
+        return Registry._inner_register("experiment", *factories)
+
+    @staticmethod
     def model(*models_factories: Factory) -> Union[Factory, List[Factory]]:
         """Add model type or factory method to global
             model list to make it available in config
@@ -133,6 +142,13 @@ class Registry:
             :returns: single optimizer factory or list of them
         """
         return Registry._inner_register("optimizer", *optimizer_factories)
+
+    @staticmethod
+    def runner(*factories: Factory) -> Union[Factory, List[Factory]]:
+        """
+        @TODO: refactor registry
+        """
+        return Registry._inner_register("runner", *factories)
 
     @staticmethod
     def name2nn(name):

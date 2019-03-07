@@ -109,10 +109,10 @@ ENV/
 tmp/
 logs/
 
-*.ipynb
+
 *.csv
 *.tsv
-*.txt
+*.ipynb
 
 examples/data/
 examples/logs/

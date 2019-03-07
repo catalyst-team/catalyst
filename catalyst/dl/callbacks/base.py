@@ -1,51 +1,31 @@
 import os
 from typing import Dict
 import torch
+
+from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
 from .core import Callback
 from catalyst.dl.fp16 import Fp16Wrap, copy_params, copy_grads
 from .utils import get_optimizer_momentum, scheduler_step
 
 
-class LoggerCallback(Callback):
-    """
-    Base class for anything that needs logdir to be specified in 'train' mode.
-    """
-
-    def __init__(self, logdir: str = None):
-        """
-        Args:
-            logdir: directory where logs will be created
-                If directory doesn't exists it will be created
-                If None, RunnerState.logdir will be used
-        """
-        self.logdir = logdir
-
-    def on_train_start(self, state):
-        assert self.logdir or state.logdir, \
-            "Please, specify logdir for callback usage"
-        if self.logdir is None:
-            self.logdir = state.logdir
-        os.makedirs(self.logdir, exist_ok=True)
-
-
-class CheckpointCallback(LoggerCallback):
+class CheckpointCallback(Callback):
     """
     Checkpoint callback to save/restore your model/criterion/optimizer/metrics.
     """
 
     def __init__(
-        self, logdir: str = None, save_n_best: int = 5, resume: str = None
+        self, save_n_best: int = 3, resume: str = None
     ):
         """
-        :param logdir: log directory to use for checkpoint saving
         :param save_n_best: number of best checkpoint to keep
         :param resume: path to checkpoint to load and initialize runner state
         """
-        super().__init__(logdir)
         self.save_n_best = save_n_best
         self.resume = resume
         self.top_best_metrics = []
+
+        self._keys_from_state = ["resume"]
 
     @staticmethod
     def load_checkpoint(*, filename, state):
@@ -54,7 +34,6 @@ class CheckpointCallback(LoggerCallback):
             checkpoint = UtilsFactory.load_checkpoint(filename)
 
             state.epoch = checkpoint["epoch"]
-            state.best_metrics = checkpoint["best_metrics"]
 
             UtilsFactory.unpack_checkpoint(
                 checkpoint,
@@ -83,12 +62,13 @@ class CheckpointCallback(LoggerCallback):
     ):
         suffix = f"{checkpoint['stage']}.{checkpoint['epoch']}"
         filepath = UtilsFactory.save_checkpoint(
-            logdir=logdir,
+            logdir=f"{logdir}/checkpoints/",
             checkpoint=checkpoint,
             suffix=suffix,
             is_best=is_best,
             is_last=True
         )
+
         checkpoint_metric = checkpoint["valid_metrics"].get(main_metric, None)
         checkpoint_metric = checkpoint_metric or checkpoint.get("epoch", -1)
         self.top_best_metrics.append((filepath, checkpoint_metric))
@@ -105,19 +85,17 @@ class CheckpointCallback(LoggerCallback):
     def pack_checkpoint(self, **kwargs):
         return UtilsFactory.pack_checkpoint(**kwargs)
 
-    def on_mode_start(self, state):
+    def on_stage_start(self, state):
+        for key in self._keys_from_state:
+            value = getattr(state, key, None)
+            if value is not None:
+                setattr(self, key, value)
+
         if self.resume is not None:
             self.load_checkpoint(filename=self.resume, state=state)
 
-    def on_train_start(self, state):
-        super().on_train_start(state)
-        return self.on_mode_start(state=state)
-
-    def on_infer_start(self, state):
-        return self.on_mode_start(state=state)
-
-    def on_epoch_end(self, state):
-        if state.mode == "infer":
+    def on_epoch_end(self, state: RunnerState):
+        if state.stage.startswith("infer"):
             return
 
         checkpoint = self.pack_checkpoint(
@@ -125,26 +103,25 @@ class CheckpointCallback(LoggerCallback):
             criterion=state.criterion,
             optimizer=state.optimizer,
             scheduler=state.scheduler,
-            valid_metrics=dict(state.valid_metrics),  # @TODO: save defaultdict
-            epoch_metrics=dict(state.epoch_metrics),  # @TODO: save defaultdict
-            best_metrics=dict(state.best_metrics),  # @TODO: save defaultdict
+            epoch_metrics=dict(state.metrics.epoch_values),
+            valid_metrics=dict(state.metrics.valid_values),
             stage=state.stage,
             epoch=state.epoch
         )
         self.save_checkpoint(
-            logdir=self.logdir,
+            logdir=state.logdir,
             checkpoint=checkpoint,
-            is_best=state.is_best_epoch,
+            is_best=state.metrics.is_best,
             save_n_best=self.save_n_best,
             main_metric=state.main_metric,
             minimize_metric=state.minimize_metric
         )
 
-    def on_train_end(self, state):
+    def on_stage_end(self, state):
         print("Top best models:")
         top_best_metrics_str = "\n".join(
             [
-                "{filepath}\t{metric:.4f}".format(
+                "{filepath}\t{metric:3.4f}".format(
                     filepath=filepath, metric=metric
                 ) for filepath, metric in self.top_best_metrics
             ]
@@ -180,14 +157,15 @@ class OptimizerCallback(Callback):
         self.accumulation_steps = accumulation_steps
         self.optimizer_key = optimizer_key
         self.loss_key = loss_key
-        self.optimizer_wd = 0
-        self.accumulation_counter = 0
+        self._optimizer_wd = 0
+        self._accumulation_counter = 0
 
-    def on_train_start(self, state):
+    def on_stage_start(self, state: RunnerState):
         self.fp16 = isinstance(state.model, Fp16Wrap)
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
         )
+        assert optimizer is not None
         lr = optimizer.defaults["lr"]
         momentum = get_optimizer_momentum(optimizer)
         state.set_key(lr, "lr", inner_key=self.optimizer_key)
@@ -197,7 +175,7 @@ class OptimizerCallback(Callback):
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
         )
-        self.optimizer_wd = optimizer.param_groups[0].get("weight_decay", 0.0)
+        self._optimizer_wd = optimizer.param_groups[0].get("weight_decay", 0.0)
         optimizer.param_groups[0]["weight_decay"] = 0.0
 
     @staticmethod
@@ -213,10 +191,10 @@ class OptimizerCallback(Callback):
         optimizer.step()
 
     def on_batch_end(self, state):
-        if not state.is_train:
+        if not state.need_backward:
             return
 
-        self.accumulation_counter += 1
+        self._accumulation_counter += 1
         if not self.fp16:
             model = state.model
             optimizer = state.get_key(
@@ -225,14 +203,14 @@ class OptimizerCallback(Callback):
             loss = state.get_key(key="loss", inner_key=self.loss_key)
             loss.backward()
 
-            if (self.accumulation_counter + 1) % self.accumulation_steps == 0:
+            if (self._accumulation_counter + 1) % self.accumulation_steps == 0:
                 self.grad_step(
                     optimizer=optimizer,
-                    optimizer_wd=self.optimizer_wd,
+                    optimizer_wd=self._optimizer_wd,
                     grad_clip_fn=self.grad_clip_fn
                 )
                 model.zero_grad()
-                self.accumulation_counter = 0
+                self._accumulation_counter = 0
         else:
             model = state.model
             model.zero_grad()
@@ -252,7 +230,7 @@ class OptimizerCallback(Callback):
                 param.grad.data.mul_(1. / self.fp16_grad_scale)
             self.grad_step(
                 optimizer=optimizer,
-                optimizer_wd=self.optimizer_wd,
+                optimizer_wd=self._optimizer_wd,
                 grad_clip_fn=self.grad_clip_fn
             )
             copy_params(source=master_params, target=model_params)
@@ -262,7 +240,7 @@ class OptimizerCallback(Callback):
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
         )
-        optimizer.param_groups[0]["weight_decay"] = self.optimizer_wd
+        optimizer.param_groups[0]["weight_decay"] = self._optimizer_wd
 
 
 class SchedulerCallback(Callback):
@@ -270,7 +248,7 @@ class SchedulerCallback(Callback):
         self,
         scheduler_key: str = None,
         mode: str = "epoch",
-        reduce_metric: str = None
+        reduce_metric: str = "loss"
     ):
         self.scheduler_key = scheduler_key
         self.mode = mode
@@ -283,11 +261,18 @@ class SchedulerCallback(Callback):
 
         lr, momentum = scheduler_step(
             scheduler=scheduler,
-            valid_metric=state.valid_metrics[self.reduce_metric]
+            valid_metric=state.metrics.valid_values.get(
+                self.reduce_metric, None)
         )
 
         state.set_key(lr, key="lr", inner_key=self.scheduler_key)
         state.set_key(momentum, key="momentum", inner_key=self.scheduler_key)
+
+    def on_stage_start(self, state):
+        scheduler = state.get_key(
+            key="scheduler", inner_key=self.scheduler_key
+        )
+        assert scheduler is not None
 
     def on_batch_end(self, state):
         if self.mode == "batch":
@@ -303,7 +288,47 @@ class LossCallback(Callback):
         self.input_key = input_key
         self.output_key = output_key
 
+    def on_stage_start(self, state):
+        assert state.criterion is not None
+
     def on_batch_end(self, state):
         state.loss = state.criterion(
             state.output[self.output_key], state.input[self.input_key]
         )
+
+
+class EarlyStoppingCallback(Callback):
+    def __init__(
+        self,
+        patience: int,
+        metric: str = "loss",
+        minimize: bool = True,
+        min_delta: float = 1e-6
+    ):
+        self.best_score = None
+        self.metric = metric
+        self.patience = patience
+        self.num_bad_epochs = 0
+        self.is_better = None
+
+        if minimize:
+            self.is_better = lambda score, best: score <= (best - min_delta)
+        else:
+            self.is_better = lambda score, best: score >= (best - min_delta)
+
+    def on_epoch_end(self, state: RunnerState) -> None:
+        if state.stage.startswith("infer"):
+            return
+
+        score = state.metrics.valid_values[self.metric]
+        if self.best_score is None:
+            self.best_score = score
+        if self.is_better(score, self.best_score):
+            self.num_bad_epochs = 0
+            self.best_score = score
+        else:
+            self.num_bad_epochs += 1
+
+        if self.num_bad_epochs >= self.patience:
+            print(f"Early stop at {state.epoch} epoch")
+            state.early_stop = True

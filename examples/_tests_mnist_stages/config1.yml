@@ -23,11 +23,6 @@ stages:
       lr: 0.001
       weight_decay: 0.0001
 
-  scheduler_params:
-    scheduler: MultiStepLR
-    milestones: [1]
-    gamma: 0.3
-
   stage1:
     state_params:
       n_epochs: &train_epoch 3
@@ -40,14 +35,14 @@ stages:
       precision:
         callback: PrecisionCallback
         precision_args: [1, 3, 5]
-#      scheduler:
-#        callback: OneCycleLR
-#        cycle_len: *train_epoch
-#        div: 3
-#        cut_div: 4
-#        momentum_range: [0.95, 0.85]
       scheduler:
-        callback: SchedulerCallback
-        reduce_metric: *reduce_metric
+        callback: OneCycleLR
+        cycle_len: *train_epoch
+        div: 3
+        cut_div: 4
+        momentum_range: [0.95, 0.85]
+#      scheduler:
+#        callback: SchedulerCallback
+#        reduce_metric: *reduce_metric
       saver:
         callback: CheckpointCallback

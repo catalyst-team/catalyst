@@ -6,10 +6,10 @@ Run all examples from this dir.
 
 DL notebooks
 
-1. [cifar10 notebook](notebook-example.ipynb)
+1. [cifar10 notebook](notebook-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebook-example.ipynb)
     - cifar10 classification model
     - Runner usage example
-2. [segmentation notebook](segmentation-example.ipynb)
+2. [segmentation notebook](segmentation-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/segmentation-example.ipynb)
     - segmentation with unet
     - model training and inference
     - predictions visialization
@@ -23,15 +23,15 @@ DL pipelines
     - metrics visualization with tensorboard
 2. [cifar10 model training with stages](cifar_stages)
     - pipeline example with stages
-3. [finetune](finetune)
+3. [finetune project](https://github.com/catalyst-team/finetune.catalyst)
     - classification model training and inference
     - different augmentations and stages usage
     - knn index model example
     - embeddings projector
     - LrFinder usage
     - grid search metrics visualization
-4. [autolabel](autolabel)
-    - WIP
+4. [autolabel project](https://github.com/catalyst-team/autolabel.catalyst)
+    - pseudolabeling for your dataset
 
 ---
 

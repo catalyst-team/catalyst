@@ -1,10 +1,7 @@
 import torch.nn as nn
 import torch.nn.functional as F
-from catalyst.dl.runner import SupervisedModelRunner as ModelRunner  # noqa F401
-from catalyst.contrib.registry import Registry
 
 
-@Registry.model
 class SimpleNet(nn.Module):
     def __init__(self):
         super().__init__()

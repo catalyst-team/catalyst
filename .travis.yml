@@ -58,15 +58,22 @@ jobs:
       install: *requirements
       script:
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/dl/scripts/train.py
+          python catalyst/dl/scripts/run.py
           --expdir=./examples/_tests_mnist_stages
-          --config=./examples/_tests_mnist_stages/config.yml
-          --logdir=./examples/logs/_tests_mnist_stages
+          --config=./examples/_tests_mnist_stages/config1.yml
+          --logdir=./examples/logs/_tests_mnist_stages1
+          --check
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/dl/scripts/train.py
+          python catalyst/dl/scripts/run.py
           --expdir=./examples/_tests_mnist_stages
           --config=./examples/_tests_mnist_stages/config2.yml
-          --logdir=./examples/logs/_tests_mnist_stages2 &
+          --logdir=./examples/logs/_tests_mnist_stages1
+          --check
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/dl/scripts/run.py
+          --expdir=./examples/_tests_mnist_stages
+          --config=./examples/_tests_mnist_stages/config_finder.yml
+          --logdir=./examples/logs/_tests_mnist_stages_finder &
         - sleep 30
         - kill %1
 

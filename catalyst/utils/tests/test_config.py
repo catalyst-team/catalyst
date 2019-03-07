@@ -22,7 +22,7 @@ def test_parse_config_args():
 
     args, uargs = parser.parse_known_args(
         [
-            "--command", "train", "--path=test.yml:str",
+            "--command", "run", "--path=test.yml:str",
             "--stages/zero=cero:str", "-C=like:str"
         ]
     )
@@ -31,7 +31,7 @@ def test_parse_config_args():
         config=configuration, args=args, unknown_args=uargs
     )
 
-    assert args.command == "train"
+    assert args.command == "run"
     assert args.path == "test.yml"
     assert configuration.get("stages") is not None
     assert "zero" in configuration["stages"]
@@ -39,7 +39,7 @@ def test_parse_config_args():
     assert configuration.get("args") is not None
     assert configuration["args"]["path"] == "test.yml"
     assert configuration["args"]["C"] == "like"
-    assert configuration["args"]["command"] == "train"
+    assert configuration["args"]["command"] == "run"
 
     for key, value in args._get_kwargs():
         v = configuration["args"].get(key)
