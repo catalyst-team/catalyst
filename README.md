@@ -78,7 +78,7 @@ optimizer = torch.optim.Adam(model.parameters())
 # model runner
 runner = SupervisedRunner()
 
-# model trianing
+# model training
 runner.train(
     model=model,
     criterion=criterion,
