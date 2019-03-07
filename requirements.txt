@@ -3,6 +3,7 @@ torch>=0.4.1
 numpy
 jpeg4py
 opencv-python
+skimage
 torchvision==0.2.1
 tqdm
 PyYAML
