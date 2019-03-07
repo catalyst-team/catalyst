@@ -57,7 +57,6 @@ jobs:
       before_install: *before_install
       install: *requirements
       script:
-        - pip install -e -U .
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
           python catalyst/dl/scripts/run.py
           --expdir=./examples/_tests_mnist_stages
