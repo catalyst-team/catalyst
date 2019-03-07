@@ -16,7 +16,7 @@ class TimerManager:
 
     def stop(self, name):
         assert name in self._starts, "Timer wasn't started"
-        
+
         self.elapsed[name] = time() - self._starts[name]
         del self._starts[name]
 
@@ -26,7 +26,6 @@ class TimerManager:
 
 
 class MetricManager:
-
     @staticmethod
     def _to_single_value(value):
         if hasattr(value, "item"):
@@ -42,7 +41,7 @@ class MetricManager:
         self,
         valid_loader="valid",
         main_metric="loss",
-        minimize=True
+        minimize=True,
     ):
         self._valid_loader = valid_loader
         self._main_metric = main_metric
@@ -50,7 +49,7 @@ class MetricManager:
 
         self._meters: Dict[str, AverageValueMeter] = None
         self._batch_values: Dict[str, float] = None
-        self.epoch_values: Dict[str, Dict[str: float]] = None
+        self.epoch_values: Dict[str, Dict[str:float]] = None
         self.valid_values: Dict[str, float] = None
 
         self.best_main_metric_value: float = \

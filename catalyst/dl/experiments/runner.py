@@ -1,10 +1,10 @@
 from typing import Any, Mapping, Dict, List
 from abc import ABC, abstractmethod
-from collections import OrderedDict
+from collections import OrderedDict  # noqa F401
 
 import torch
 from torch import nn, optim
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader  # noqa F401
 
 from catalyst.dl.callbacks import Callback
 from catalyst.dl.state import RunnerState

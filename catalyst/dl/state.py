@@ -32,7 +32,8 @@ class RunnerState(FrozenClass):
         # @TODO: refactor
         # hack to prevent cycle imports
         from .callbacks.loggers import (
-            VerboseLogger, ConsoleLogger, TensorboardLogger)
+            VerboseLogger, ConsoleLogger, TensorboardLogger
+        )
 
         self.logdir = Path(logdir) if logdir is not None else None
         self.model = model
@@ -101,8 +102,9 @@ class RunnerState(FrozenClass):
     def _handle_runner_metrics(self):
         values = {}
         for key, value in zip(
-                ["base/lr", "base/momentum", "loss"],
-                [self.lr, self.momentum, self.loss]):
+            ["base/lr", "base/momentum", "loss"],
+            [self.lr, self.momentum, self.loss]
+        ):
             if value is not None:
                 values[key] = value
 

@@ -7,7 +7,6 @@ from catalyst.dl.experiments import ConfigExperiment
 
 
 class Experiment(ConfigExperiment):
-
     def _postprocess_model_for_stage(self, stage: str, model: nn.Module):
         model_ = model
         if isinstance(model, torch.nn.DataParallel):

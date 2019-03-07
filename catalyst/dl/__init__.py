@@ -1,4 +1,4 @@
-from .experiments.experiment import ConfigExperiment, BaseExperiment, Experiment
-from .experiments.runner import Runner
-
-
+# flake8: noqa
+from .experiments.experiment import Experiment, BaseExperiment, \
+    ConfigExperiment, SupervisedExperiment
+from .experiments.runner import Runner, SupervisedRunner

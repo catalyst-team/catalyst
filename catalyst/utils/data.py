@@ -2,8 +2,7 @@ import glob
 import itertools
 import os
 from collections import defaultdict
-from typing import Callable, Tuple, Union
-from typing import List, Dict
+from typing import Callable, Tuple, Dict
 
 import numpy as np
 import pandas as pd

@@ -102,9 +102,7 @@ class Registry:
         return Registry._inner_register("environment", *environment_factories)
 
     @staticmethod
-    def experiment(
-            *factories: Factory
-    ) -> Union[Factory, List[Factory]]:
+    def experiment(*factories: Factory) -> Union[Factory, List[Factory]]:
         """
         @TODO: refactor registry
         """
@@ -146,9 +144,7 @@ class Registry:
         return Registry._inner_register("optimizer", *optimizer_factories)
 
     @staticmethod
-    def runner(
-            *factories: Factory
-    ) -> Union[Factory, List[Factory]]:
+    def runner(*factories: Factory) -> Union[Factory, List[Factory]]:
         """
         @TODO: refactor registry
         """

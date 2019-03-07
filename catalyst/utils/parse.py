@@ -49,11 +49,11 @@ def folds_to_list(folds: Union[list, str, pd.Series]) -> List[int]:
 
 
 def map_dataframe(
-        dataframe: pd.DataFrame,
-        tag_column: str,
-        class_column: str,
-        tag2class: Dict[str, int],
-        verbose: bool = False
+    dataframe: pd.DataFrame,
+    tag_column: str,
+    class_column: str,
+    tag2class: Dict[str, int],
+    verbose: bool = False
 ) -> pd.DataFrame:
     """
     This function maps tags from ``tag_column`` to ints into ``class_column``
@@ -83,15 +83,15 @@ def map_dataframe(
 
 
 def split_dataframe(
-        dataframe: pd.DataFrame,
-        train_folds: List[int],
-        valid_folds: Optional[List[int]] = None,
-        infer_folds: Optional[List[int]] = None,
-        tag2class: Optional[Dict[str, int]] = None,
-        tag_column: str = None,
-        class_column: str = None,
-        seed: int = 42,
-        n_folds: int = 5
+    dataframe: pd.DataFrame,
+    train_folds: List[int],
+    valid_folds: Optional[List[int]] = None,
+    infer_folds: Optional[List[int]] = None,
+    tag2class: Optional[Dict[str, int]] = None,
+    tag_column: str = None,
+    class_column: str = None,
+    seed: int = 42,
+    n_folds: int = 5
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Split a Pandas DataFrame into folds.
@@ -149,8 +149,7 @@ def split_dataframe(
 
 
 def merge_multiple_fold_csv(
-        fold_name: str,
-        paths: Optional[str]
+    fold_name: str, paths: Optional[str]
 ) -> pd.DataFrame:
     """
     Reads csv into one DataFrame with column ``fold``
@@ -171,12 +170,12 @@ def merge_multiple_fold_csv(
 
 
 def read_multiple_dataframes(
-        in_csv_train: str = None,
-        in_csv_valid: str = None,
-        in_csv_infer: str = None,
-        tag2class: Optional[Dict[str, int]] = None,
-        class_column: str = None,
-        tag_column: str = None
+    in_csv_train: str = None,
+    in_csv_valid: str = None,
+    in_csv_infer: str = None,
+    tag2class: Optional[Dict[str, int]] = None,
+    class_column: str = None,
+    tag_column: str = None
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """This function reads train/valid/infer dataframes from giving paths
     Args:
@@ -207,20 +206,18 @@ def read_multiple_dataframes(
 
 
 def read_csv_data(
-        in_csv: str = None,
-        train_folds: Optional[List[int]] = None,
-        valid_folds: Optional[List[int]] = None,
-        infer_folds: Optional[List[int]] = None,
-        seed: int = 42,
-        n_folds: int = 5,
-
-        in_csv_train: str = None,
-        in_csv_valid: str = None,
-        in_csv_infer: str = None,
-
-        tag2class: Optional[Dict[str, int]] = None,
-        class_column: str = None,
-        tag_column: str = None,
+    in_csv: str = None,
+    train_folds: Optional[List[int]] = None,
+    valid_folds: Optional[List[int]] = None,
+    infer_folds: Optional[List[int]] = None,
+    seed: int = 42,
+    n_folds: int = 5,
+    in_csv_train: str = None,
+    in_csv_valid: str = None,
+    in_csv_infer: str = None,
+    tag2class: Optional[Dict[str, int]] = None,
+    class_column: str = None,
+    tag_column: str = None,
 ) -> Tuple[pd.DataFrame, List[dict], List[dict], List[dict]]:
     """
     From giving path ``in_csv`` reads a dataframe
@@ -265,8 +262,9 @@ def read_csv_data(
             and list with infer data)
     """
     from_one_df: bool = in_csv is not None
-    from_multiple_df: bool = args_are_not_none(in_csv_train, in_csv_valid) \
-                             or in_csv_infer is not None
+    from_multiple_df: bool = \
+        args_are_not_none(in_csv_train, in_csv_valid) \
+        or in_csv_infer is not None
 
     if from_one_df == from_multiple_df:
         raise ValueError(
@@ -302,9 +300,7 @@ def read_csv_data(
             del data["fold"]
 
     result = (
-        dataframe,
-        dataframe_to_list(df_train),
-        dataframe_to_list(df_valid),
+        dataframe, dataframe_to_list(df_train), dataframe_to_list(df_valid),
         dataframe_to_list(df_infer)
     )
 

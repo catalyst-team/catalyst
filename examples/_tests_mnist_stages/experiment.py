@@ -5,13 +5,12 @@ from catalyst.dl.experiments import ConfigExperiment
 
 
 class Experiment(ConfigExperiment):
-
     @staticmethod
     def get_transforms(stage: str = None, mode: str = None):
         return transforms.Compose(
             [
                 transforms.ToTensor(),
-                transforms.Normalize((0.1307,), (0.3081,))
+                transforms.Normalize((0.1307, ), (0.3081, ))
             ]
         )
 
@@ -22,17 +21,13 @@ class Experiment(ConfigExperiment):
             "./data",
             train=False,
             download=True,
-            transform=Experiment.get_transforms(
-                mode="train", stage=stage
-            )
+            transform=Experiment.get_transforms(mode="train", stage=stage)
         )
         testset = torchvision.datasets.MNIST(
             "./data",
             train=False,
             download=True,
-            transform=Experiment.get_transforms(
-                mode="train", stage=stage
-            )
+            transform=Experiment.get_transforms(mode="train", stage=stage)
         )
 
         datasets["train"] = trainset

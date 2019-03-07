@@ -1,13 +1,14 @@
 import torch
 from collections import OrderedDict
 from torch import nn, optim
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader, Dataset  # noqa F401
 from abc import abstractmethod, ABC
 from typing import Iterable, Any, Mapping, Dict, List
 
 from catalyst.contrib.registry import Registry
-from catalyst.dl.callbacks import Callback, \
-    LossCallback, OptimizerCallback, SchedulerCallback, CheckpointCallback
+from catalyst.dl.callbacks import Callback  # noqa F401
+from catalyst.dl.callbacks import LossCallback, OptimizerCallback, \
+    SchedulerCallback, CheckpointCallback
 from catalyst.dl.utils import UtilsFactory
 from catalyst.dl.fp16 import Fp16Wrap
 from catalyst.utils.misc import merge_dicts
@@ -66,7 +67,11 @@ class Experiment(ABC):
     def get_callbacks(self, stage: str) -> "List[Callback]":
         pass
 
-    def get_datasets(self, stage: str, **kwargs) -> "OrderedDict[str, Dataset]":
+    def get_datasets(
+        self,
+        stage: str,
+        **kwargs,
+    ) -> "OrderedDict[str, Dataset]":
         raise NotImplementedError
 
     @abstractmethod
@@ -80,8 +85,8 @@ class Experiment(ABC):
 
 class BaseExperiment(Experiment):
     """
-    Super-simple one-staged experiment you can use to declare experiment
-    in code 
+    Super-simple one-staged experiment
+        you can use to declare experiment in code
     """
 
     def __init__(
@@ -243,20 +248,23 @@ class ConfigExperiment(Experiment):
         return model
 
     def get_criterion(self, stage: str) -> _Criterion:
-        criterion_params = self.stages_config[stage].get("criterion_params", {})
+        criterion_params = (
+            self.stages_config[stage].get("criterion_params", {}))
         criterion = Registry.get_criterion(**criterion_params)
         return criterion
 
     def get_optimizer(self, stage: str, model) -> _Optimizer:
         fp16 = isinstance(model, Fp16Wrap)
-        optimizer_params = self.stages_config[stage].get("optimizer_params", {})
+        optimizer_params = (
+            self.stages_config[stage].get("optimizer_params", {}))
         optimizer = Registry.get_optimizer(
             model, **optimizer_params, fp16=fp16
         )
         return optimizer
 
     def get_scheduler(self, stage: str, optimizer) -> _Scheduler:
-        scheduler_params = self.stages_config[stage].get("scheduler_params", {})
+        scheduler_params = (
+            self.stages_config[stage].get("scheduler_params", {}))
         scheduler = Registry.get_scheduler(optimizer, **scheduler_params)
         return scheduler
 
@@ -283,7 +291,8 @@ class ConfigExperiment(Experiment):
         return loaders
 
     def get_callbacks(self, stage: str) -> "List[Callback]":
-        callbacks_params = self.stages_config[stage].get("callbacks_params", {})
+        callbacks_params = (
+            self.stages_config[stage].get("callbacks_params", {}))
 
         callbacks = []
         for key, value in callbacks_params.items():

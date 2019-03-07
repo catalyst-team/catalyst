@@ -52,8 +52,7 @@ from catalyst.contrib.scripts import check_images, \
 
 COMMANDS = OrderedDict(
     [
-        ("tag2label", tag2label),
-        ("check-images", check_images),
+        ("tag2label", tag2label), ("check-images", check_images),
         ("image2embedding", image2embedding),
         ("split-dataframe", split_dataframe)
     ]

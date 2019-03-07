@@ -1,6 +1,3 @@
-from typing import Dict
-
-
 class Callback:
     """
     An abstract class that all callback(e.g., Logger) classes extends from.

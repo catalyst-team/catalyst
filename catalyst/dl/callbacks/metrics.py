@@ -3,7 +3,6 @@ from typing import Callable, List
 from catalyst.dl import metrics
 from catalyst.dl.state import RunnerState
 from .core import Callback
-from .utils import get_val_from_metric
 
 
 class MetricCallback(Callback):

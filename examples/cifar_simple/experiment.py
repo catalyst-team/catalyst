@@ -1,13 +1,10 @@
 from collections import OrderedDict
-import torch
-import torch.nn as nn
 import torchvision
 from torchvision import transforms
 from catalyst.dl.experiments import ConfigExperiment
 
 
 class Experiment(ConfigExperiment):
-
     @staticmethod
     def get_transforms(stage: str = None, mode: str = None):
         return transforms.Compose(

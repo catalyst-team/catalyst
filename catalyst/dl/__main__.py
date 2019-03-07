@@ -3,9 +3,7 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 
 from .scripts import run, make_report
 
-COMMANDS = OrderedDict(
-    [("run", run), ("make-report", make_report)]
-)
+COMMANDS = OrderedDict([("run", run), ("make-report", make_report)])
 
 
 def build_parser() -> ArgumentParser:
