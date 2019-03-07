@@ -61,31 +61,33 @@ with distributed training support.
 
 ```python
 import torch
-from catalyst.dl.runner import SupervisedModelRunner
-from your_experiment import get_loaders, get_model, get_callbacks
+from catalyst.dl.experiments import SupervisedRunner
 
 # experiment setup
 logdir = "./logdir"
 n_epochs = 42
 
 # data
-loaders = get_loaders()
+loaders = {"train": ..., "valid": ...}
 
-# model and all training stuff
-model = get_model()
+# model, criterion, optimizer
+model = Net()
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters())
-scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[3, 8])
 
-# callbacks - metrics, loggers, etc
-callbacks = get_callbacks()
+# model runner
+runner = SupervisedRunner()
 
-runner = SupervisedModelRunner(
-    model=model, criterion=criterion,
-    optimizer=optimizer, scheduler=scheduler)
+# model trianing
 runner.train(
-    loaders=loaders, callbacks=callbacks,
-    logdir=logdir, epochs=n_epochs, verbose=True)
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    logdir=logdir,
+    n_epochs=n_epochs,
+    verbose=True
+)
 ```
 
 ## Docker
