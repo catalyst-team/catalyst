@@ -147,12 +147,12 @@ class UtilsFactory:
         logdir, checkpoint, suffix="", is_best=False, is_last=False
     ):
         os.makedirs(logdir, exist_ok=True)
-        filename = f"{logdir}/checkpoint.{suffix}.pth.tar"
+        filename = f"{logdir}/{suffix}.pth"
         torch.save(checkpoint, filename)
         if is_best:
-            shutil.copyfile(filename, f"{logdir}/checkpoint.best.pth.tar")
+            shutil.copyfile(filename, f"{logdir}/best.pth")
         if is_last:
-            shutil.copyfile(filename, f"{logdir}/checkpoint.last.pth.tar")
+            shutil.copyfile(filename, f"{logdir}/last.pth")
         return filename
 
     @staticmethod

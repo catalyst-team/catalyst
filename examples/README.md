@@ -23,15 +23,15 @@ DL pipelines
     - metrics visualization with tensorboard
 2. [cifar10 model training with stages](cifar_stages)
     - pipeline example with stages
-3. [finetune](finetune)
+3. [finetune project](https://github.com/catalyst-team/finetune.catalyst)
     - classification model training and inference
     - different augmentations and stages usage
     - knn index model example
     - embeddings projector
     - LrFinder usage
     - grid search metrics visualization
-4. [autolabel](autolabel)
-    - WIP
+4. [autolabel project](https://github.com/catalyst-team/autolabel.catalyst)
+    - pseudolabeling for your dataset
 
 ---
 

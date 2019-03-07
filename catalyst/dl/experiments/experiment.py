@@ -228,7 +228,7 @@ class ConfigExperiment(Experiment):
         stage_index = self.stages.index(stage)
         if stage_index > 0:
             checkpoint_path = \
-                f"{self.logdir}/checkpoints/checkpoint.best.pth.tar"
+                f"{self.logdir}/checkpoints/best.pth"
             checkpoint = UtilsFactory.load_checkpoint(checkpoint_path)
             UtilsFactory.unpack_checkpoint(checkpoint, model=model)
         return model

@@ -3,7 +3,7 @@
 ### Local run
 
 ```bash
-catalyst-dl train --config=./cifar_simple/config.yml
+catalyst-dl run --config=./cifar_simple/config.yml
 ```
 
 ### Docker run
@@ -15,7 +15,7 @@ export LOGDIR=$(pwd)/logs/cifar_simple
 docker run -it --rm \
    -v $(pwd):/workspace -v $LOGDIR:/logdir/ \
    catalyst-base \
-   catalyst-dl train --config=./cifar_simple/config.yml --logdir=/logdir
+   catalyst-dl run --config=./cifar_simple/config.yml --logdir=/logdir
 ```
 
 

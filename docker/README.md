@@ -30,6 +30,6 @@ export LOGDIR=...
 docker run -it --rm --runtime=nvidia \
    -v $(pwd):/workspace -v $LOGDIR:/logdir/ \
    -e "CUDA_VISIBLE_DEVICES=${GPUS}" \
-   catalyst-base catalyst-dl train \
+   catalyst-base catalyst-dl run \
    --config=./configs/train.yml --logdir=/logdir
 ```

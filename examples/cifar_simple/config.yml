@@ -1,51 +1,48 @@
 model_params:
-  fp16: false       # general flag
   model: SimpleNet
 
+
 args:
-  workers: 1
   expdir: "cifar_simple"
   logdir: "./logs/cifar_simple"
 
+
 stages:
 
+  data_params:
+    batch_size: 64
+    n_workers: 1
+
   state_params:
+    n_epochs: 2
     main_metric: &reduce_metric precision01
     minimize_metric: False
 
   criterion_params:
-      criterion: CrossEntropyLoss
+    criterion: CrossEntropyLoss
 
-  optimizer_params:
+  scheduler_params:
+    scheduler: MultiStepLR
+    milestones: [10]
+    gamma: 0.3
+
+  callbacks_params:
+    loss:
+      callback: LossCallback
+    optimizer:
+      callback: OptimizerCallback
+    precision:
+      callback: PrecisionCallback
+      precision_args: [1, 3, 5]
+    scheduler:
+      callback: SchedulerCallback
+      reduce_metric: *reduce_metric
+    saver:
+      callback: CheckpointCallback
+
+  stage1:
+
+    optimizer_params:
       optimizer: Adam
       lr: 0.001
       weight_decay: 0.0001
-
-  stage1:
-    args:
-      epochs: &train_epoch 10
-      batch_size: 64
-
-    callbacks_params:
-      loss:
-        callback: LossCallback
-      optimizer:
-        callback: OptimizerCallback
-      precision:
-        callback: PrecisionCallback
-        precision_args: [1, 3, 5]
-      scheduler:
-        callback: OneCycleLR
-        cycle_len: *train_epoch
-        div: 3
-        cut_div: 4
-        momentum_range: [0.95, 0.85]
-#      scheduler:
-#        callback: SchedulerCallback
-#        reduce_metric: *reduce_metric
-      saver:
-        callback: CheckpointCallback
-      logger:
-        callback: Logger
-      tflogger:
-        callback: TensorboardLogger

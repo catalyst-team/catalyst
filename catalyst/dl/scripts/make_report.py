@@ -38,7 +38,7 @@ def plot_report(report, y_key, filename):
 
 
 def report_by_dir(folder):
-    checkpoint = f"{folder}/checkpoint.best.pth.tar"
+    checkpoint = f"{folder}/best.pth"
     checkpoint = UtilsFactory.load_checkpoint(checkpoint)
     exp_name = folder.rsplit("/", 1)[-1]
     row = {"exp_name": exp_name, "epoch": checkpoint["epoch"]}
