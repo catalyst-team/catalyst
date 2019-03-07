@@ -6,10 +6,10 @@ Run all examples from this dir.
 
 DL notebooks
 
-1. [cifar10 notebook](notebook-example.ipynb)
+1. [cifar10 notebook](notebook-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebook-example.ipynb)
     - cifar10 classification model
     - Runner usage example
-2. [segmentation notebook](segmentation-example.ipynb)
+2. [segmentation notebook](segmentation-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/segmentation-example.ipynb)
     - segmentation with unet
     - model training and inference
     - predictions visialization

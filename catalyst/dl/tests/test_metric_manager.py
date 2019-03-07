@@ -8,7 +8,7 @@ def test_to_value():
 
 
 def test_epoch_metrics():
-    metrics = MetricManager("valid/test", True)
+    metrics = MetricManager("valid", "test", True)
 
     metrics.begin_epoch()
     metrics.begin_loader("train")
@@ -35,12 +35,12 @@ def test_epoch_metrics():
     metrics.end_loader()
     metrics.end_epoch_train()
 
-    assert metrics.epoch_values["valid/test"] == 0.5
-    assert metrics.epoch_values["train/test"] == 2
+    assert metrics.epoch_values["valid"]["test"] == 0.5
+    assert metrics.epoch_values["train"]["test"] == 2
 
 
 def test_best():
-    metrics = MetricManager("valid/test", True)
+    metrics = MetricManager("valid", "test", True)
 
     metrics.begin_epoch()
     metrics.begin_loader("valid")
@@ -65,7 +65,7 @@ def test_best():
     assert metrics.is_best
     assert metrics.best_main_metric_value == 0
 
-    metrics = MetricManager("valid/test", False)
+    metrics = MetricManager("valid", "test", False)
 
     metrics.begin_epoch()
     metrics.begin_loader("valid")
