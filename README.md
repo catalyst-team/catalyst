@@ -34,13 +34,20 @@ pip install catalyst
 
 ## Overview
 
+Catalyst helps you write compact
+but full-featured DL & RL pipelines in a few lines of code.
+You get a training loop with metrics, early-stopping, model checkpointing
+and other features without the boilerplate.
+
 #### Features
 
-- Universal train/inference loop;
-- Configuration files for model/data hyperparameters;
-- Reproducibility – even source code will be saved;
-- Training stages support;
+- Universal train/inference loop.
+- Configuration files for model/data hyperparameters.
+- Reproducibility – even source code will be saved.
 - Callbacks – reusable train/inference pipeline parts.
+- Training stages support.
+- Easy customization.
+- PyTorch best practices (SWA, AdamW, 1Cycle, FP16 and more).
 
 
 #### Structure
