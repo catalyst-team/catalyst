@@ -51,8 +51,6 @@ def main(args, unknown_args):
         # come on, just refactor whole rl
         environment_fn = Registry.get_fn("environment", args.environment)
         env = environment_fn(**config["env"])
-        config["shared"]["observation_size"] = env.observation_shape[0]
-        config["shared"]["action_size"] = env.action_shape[0]
         del env
     algorithm_kwargs = algorithm.prepare_for_trainer(config)
 

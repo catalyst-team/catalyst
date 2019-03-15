@@ -99,8 +99,8 @@ class Algorithm:
         if resume is not None:
             self.load_checkpoint(resume, load_optimizer=load_optimizer)
 
-    def _init(self, **kwards):
-        assert len(kwards) == 0
+    def _init(self, **kwargs):
+        assert len(kwargs) == 0
 
     def __repr__(self):
         str_val = " ".join(

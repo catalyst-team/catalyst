@@ -80,7 +80,7 @@ class Sampler:
         self.eps = exploration_eps_init
         self.eps_final = exploration_eps_final
         self.eps_delta = \
-            (self.eps - self.eps_final) / exploration_annealing_steps
+            (self.eps - self.eps_final) / (exploration_annealing_steps + 1)
 
         self.infer = mode == "infer"
         self.seeds = seeds

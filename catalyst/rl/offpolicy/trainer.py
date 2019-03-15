@@ -12,6 +12,7 @@ from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.serialization import serialize, deserialize
 from catalyst.rl.offpolicy.utils import BufferDataset, BufferSampler
 
+
 def redis2queue_loop(redis, queue, max_size):
     pointer = 0
     redis_len = redis.llen("trajectories") - 1
@@ -68,7 +69,7 @@ class Trainer:
         self.episodes_queue = mp.Queue()
 
         self.buffer = BufferDataset(
-            state_shape=state_shape,
+            observation_shape=state_shape,
             action_shape=action_shape,
             max_size=replay_buffer_size,
             history_len=history_len,

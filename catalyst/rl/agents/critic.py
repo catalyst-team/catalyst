@@ -148,6 +148,7 @@ class ValueCritic(StateNet):
     Critic which learns value function V(s).
     """
 
+    @classmethod
     def create_from_params(
         cls,
         state_shape,

@@ -66,8 +66,8 @@ class Algorithm:
         if resume is not None:
             self.load_checkpoint(resume, load_optimizer=load_optimizer)
 
-    def _init(self, **kwards):
-        assert len(kwards) == 0
+    def _init(self, **kwargs):
+        assert len(kwargs) == 0
 
     def __repr__(self):
         str_val = " ".join(
@@ -91,7 +91,7 @@ class Algorithm:
             batch["next_state"], batch["done"]
 
         states_t = self._to_tensor(states_t)
-        actions_t = self._to_tensor(actions_t)
+        actions_t = self._to_tensor(actions_t).type(torch.LongTensor)
         rewards_t = self._to_tensor(rewards_t).unsqueeze(1)
         states_tp1 = self._to_tensor(states_tp1)
         done_t = self._to_tensor(done_t).unsqueeze(1)
@@ -176,7 +176,6 @@ class Algorithm:
         critic = Registry.get_agent(
             agent=critic_fn,
             state_shape=state_shape,
-            action_size=num_actions,
             **config_["critic"]
         )
 
@@ -215,7 +214,6 @@ class Algorithm:
         critic = Registry.get_agent(
             agent=critic_fn,
             state_shape=state_shape,
-            action_size=num_actions,
             **config_["critic"]
         )
 

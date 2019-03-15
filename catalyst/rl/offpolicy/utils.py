@@ -189,7 +189,7 @@ class SamplerBuffer:
     def push_transition(self, transition):
         """ transition = [s_tp1, a_t, r_t, d_t]
         """
-        s_tp1, a_t, r_t, d_t, ts_t = transition
+        s_tp1, a_t, r_t, d_t = transition
         self.observations[self.pointer + 1] = s_tp1
         self.actions[self.pointer] = a_t
         self.rewards[self.pointer] = r_t
