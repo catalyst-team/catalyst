@@ -10,128 +10,7 @@ from torch.utils.data import Dataset, Sampler, DataLoader
 
 from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.serialization import serialize, deserialize
-
-
-class BufferDataset(Dataset):
-    def __init__(
-        self,
-        state_shape,
-        action_shape,
-        max_size=int(1e6),
-        history_len=1,
-        n_step=1,
-        gamma=0.99
-    ):
-        self.state_shape = state_shape
-        self.action_shape = action_shape
-        self.history_len = history_len
-        self.n_step = n_step
-        self.gamma = gamma
-        self.max_size = max_size
-        self.len = 0
-        self.pointer = 0
-
-        self._store_lock = mp.RLock()
-        self.states = np.empty(
-            (self.max_size, ) + self.state_shape, dtype=np.float32
-        )
-        self.actions = np.empty(
-            (self.max_size, ) + self.action_shape, dtype=np.float32
-        )
-        self.rewards = np.empty((self.max_size, ), dtype=np.float32)
-        self.dones = np.empty((self.max_size, ), dtype=np.bool)
-
-    def push_episode(self, episode):
-        with self._store_lock:
-            states, actions, rewards, dones = episode
-            episode_len = len(rewards)
-            self.len = min(self.len + episode_len, self.max_size)
-
-            indices = np.arange(
-                self.pointer, self.pointer + episode_len
-            ) % self.max_size
-            self.states[indices] = np.array(states)
-            self.actions[indices] = np.array(actions)
-            self.rewards[indices] = np.array(rewards)
-            self.dones[indices] = np.array(dones)
-
-            self.pointer = (self.pointer + episode_len) % self.max_size
-
-    def get_state(self, idx, history_len=1):
-        """ compose the state from a number (history_len) of observations
-        """
-        start_idx = idx - history_len + 1
-
-        if start_idx < 0 or np.any(self.dones[start_idx:idx + 1]):
-            state = np.zeros(
-                (history_len, ) + self.state_shape, dtype=np.float32
-            )
-            indices = [idx]
-            for i in range(history_len - 1):
-                next_idx = (idx - i - 1) % self.max_size
-                if next_idx >= self.len or self.dones[next_idx]:
-                    break
-                indices.append(next_idx)
-            indices = indices[::-1]
-            state[-len(indices):] = self.states[indices]
-        else:
-            state = self.states[slice(start_idx, idx + 1, 1)]
-
-        return state
-
-    def get_transition_n_step(self, idx, history_len=1, n_step=1, gamma=0.99):
-        state = self.get_state(idx, history_len)
-        next_state = self.get_state(
-            (idx + n_step) % self.max_size, history_len
-        )
-        cum_reward = 0
-        indices = np.arange(idx, idx + n_step) % self.max_size
-        for num, i in enumerate(indices):
-            cum_reward += self.rewards[i] * (gamma**num)
-            done = self.dones[i]
-            if done:
-                break
-        return state, self.actions[idx], cum_reward, next_state, done
-
-    def __getitem__(self, index):
-        with self._store_lock:
-            state, action, reward, next_state, done = \
-                self.get_transition_n_step(
-                    index,
-                    history_len=self.history_len,
-                    n_step=self.n_step,
-                    gamma=self.gamma)
-
-        dct = {
-            "state": np.array(state).astype(np.float32),
-            "action": np.array(action).astype(np.float32),
-            "reward": np.array(reward).astype(np.float32),
-            "next_state": np.array(next_state).astype(np.float32),
-            "done": np.array(done).astype(np.float32)
-        }
-
-        return dct
-
-    def __len__(self):
-        return self.len
-
-
-class BufferSampler(Sampler):
-    def __init__(self, buffer, epoch_len, batch_size):
-        super().__init__(None)
-        self.buffer = buffer
-        self.buffer_history_len = buffer.history_len
-        self.epoch_len = epoch_len
-        self.batch_size = batch_size
-        self.len = self.epoch_len * self.batch_size
-
-    def __iter__(self):
-        indices = np.random.choice(range(len(self.buffer)), size=self.len)
-        return iter(indices)
-
-    def __len__(self):
-        return self.len
-
+from catalyst.rl.offpolicy.utils import BufferDataset, BufferSampler
 
 def redis2queue_loop(redis, queue, max_size):
     pointer = 0
@@ -168,6 +47,7 @@ class Trainer:
         gamma=0.99,
         n_step=1,
         history_len=1,
+        discrete_actions=False,
         epoch_len=int(1e2),
         save_period=10,
         target_update_period=1,
@@ -199,6 +79,7 @@ class Trainer:
         self.gamma = gamma
         self.n_step = n_step
         self.history_len = history_len
+        self.discrete_actions = discrete_actions
 
         self.batch_size = batch_size
         self.n_workers = n_workers
@@ -340,13 +221,14 @@ class Trainer:
             start_time = time.time()
 
     def update_target_weights(self, step_index):
-        if step_index % self.actor_update_period == 0:
-            self.algorithm.target_actor_update()
-            self.actor_updates += 1
+        if not self.discrete_actions:
+            if step_index % self.actor_update_period == 0:
+                self.algorithm.target_actor_update()
+                self.actor_updates += 1
 
-            self.logger.add_scalar(
-                "actor updates", self.actor_updates, step_index
-            )
+                self.logger.add_scalar(
+                    "actor updates", self.actor_updates, step_index
+                )
 
         if step_index % self.critic_update_period == 0:
             self.algorithm.target_critic_update()
@@ -368,6 +250,12 @@ class Trainer:
             print("Checkpoint saved to: %s" % filename)
 
     def update_samplers_weights(self):
+        if self.discrete_actions:
+            self.update_critic_weights()
+        else:
+            self.update_actor_weights()
+
+    def update_actor_weights(self):
         if self.epoch % self.weights_sync_period == 0:
             actor_state_dict = self.algorithm.actor.state_dict()
             actor_state_dict = {
@@ -377,4 +265,16 @@ class Trainer:
             self.redis_server.set(
                 f"{self.redis_prefix}_actor_weights",
                 serialize(actor_state_dict)
+            )
+
+    def update_critic_weights(self):
+        if self.epoch % self.weights_sync_period == 0:
+            critic_state_dict = self.algorithm.critic.state_dict()
+            critic_state_dict = {
+                k: v.tolist()
+                for k, v in critic_state_dict.items()
+            }
+            self.redis_server.set(
+                f"{self.redis_prefix}_critic_weights",
+                serialize(critic_state_dict)
             )
