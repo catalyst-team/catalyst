@@ -11,7 +11,7 @@ from catalyst.utils.misc import set_global_seeds
 from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.serialization import serialize, deserialize
 from catalyst.rl.random_process import RandomProcess
-from catalyst.rl.offpolicy.utils import SamplerBuffer
+from catalyst.rl.offpolicy.utils import SamplerBuffer, ActionHandler
 
 # speed up optimization
 os.environ["OMP_NUM_THREADS"] = "1"
@@ -47,6 +47,8 @@ class Sampler:
         redis_prefix=None,
         buffer_size=int(1e4),
         history_len=1,
+        critic_distribution=None,
+        values_range=(-10., 10.),
         weights_sync_period=1,
         mode="infer",
         resume=None,
@@ -100,6 +102,15 @@ class Sampler:
             discrete_actions=True
         )
 
+        self.action_handler = ActionHandler(
+            device=sef._device,
+            discrete_actions=True,
+            deterministic=self.infer,
+            critic_distribution=critic_distribution,
+            n_atoms=self.critic.out_features,
+            values_range=values_range
+        )
+
     def __repr__(self):
         str_val = " ".join(
             [
@@ -142,13 +153,11 @@ class Sampler:
         self.redis_server.rpush("trajectories", episode)
 
     def act(self, state):
-        with torch.no_grad():
-            states = self.to_tensor(state).unsqueeze(0)
-            q_values = self.critic(states)[0].detach().cpu().numpy()
-            action = np.argmax(q_values)
-            if np.random.rand() < self.eps:
-                action = np.random.randint(self.num_actions)
-            return action
+        if np.random.rand() < self.eps:
+            action = np.random.randint(self.num_actions)
+        else:
+            action = self.action_handler._act_fn(self.critic, state)
+        return action
 
     def run(self):
         self.episode_index = 1

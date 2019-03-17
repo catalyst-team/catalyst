@@ -2,6 +2,9 @@ import os
 import time
 import numpy as np
 import multiprocessing as mp
+
+import torch
+import torch.nn.functional as F
 from torch.utils.data import Dataset, Sampler, DataLoader
 
 
@@ -211,3 +214,62 @@ class SamplerBuffer:
         ]
         states = np.array(states)
         return states
+
+
+class ActionHandler:
+    def __init__(
+        self,
+        device,
+        discrete_actions=False,
+        deterministic=False,
+        critic_distribution=None,
+        n_atoms=1,
+        values_range=(-10., 10.)
+    ):
+        self._device = device
+        self.deterministic = determinisic
+
+        if discrete_actions:
+            if critic_distribution == "categorical":
+                v_min, v_max = values_range
+                z = torch.linspace(start=v_min, end=v_max, steps=n_atoms)
+                self.z = self._to_tensor(z)
+                self._act_fn = self._sample_from_categorical_critic
+            elif critic_distribution == "quantile":
+                self._act_fn = self._sample_from_quantile_critic
+            else:
+                self._act_fn = self._sample_from_critic
+        else:
+            self._act_fn = self._sample_from_actor
+
+    def _to_tensor(self, *args, **kwargs):
+        return torch.Tensor(*args, **kwargs).to(self._device)
+
+    def _sample_from_actor(self, actor, state):
+        with torch.no_grad():
+            states = self.to_tensor(state).unsqueeze(0)
+            action = actor(states, deterministic=self.deterministic)
+            action = action[0].detach().cpu().numpy()
+            return action
+
+    def _sample_from_critic(self, critic, state):
+        with torch.no_grad():
+            states = self.to_tensor(state).unsqueeze(0)
+            q_values = critic(states)[0]
+            action = np.argmax(q_values.detach().cpu().numpy())
+            return action
+
+    def _sample_from_categorical_critic(self, critic, state):
+        with torch.no_grad():
+            states = self.to_tensor(state).unsqueeze(0)
+            probs = F.softmax(critic(states)[0], dim=-1)
+            q_values = torch.sum(probs * self.z, dim=-1)
+            action = np.argmax(q_values.detach().cpu().numpy())
+            return action
+
+    def _sample_from_quantile_critic(self, critic, state):
+        with torch.no_grad():
+            states = self.to_tensor(state).unsqueeze(0)
+            q_values = torch.mean(critic(states)[0], dim=-1)
+            action = np.argmax(q_values.detach().cpu().numpy())
+            return action

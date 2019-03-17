@@ -11,6 +11,7 @@ from catalyst.utils.misc import set_global_seeds
 from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.serialization import serialize, deserialize
 from catalyst.rl.random_process import RandomProcess
+from catalyst.rl.offpolicy.utils import ActionHandler
 
 # speed up optimization
 os.environ["OMP_NUM_THREADS"] = "1"
