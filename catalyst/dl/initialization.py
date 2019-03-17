@@ -1,3 +1,5 @@
+from typing import Callable
+
 import torch.nn as nn
 
 ACTIVATIONS = {
@@ -10,12 +12,15 @@ ACTIVATIONS = {
 }
 
 
-def create_optimal_inner_init(nonlinearity, **kwargs):
+def create_optimal_inner_init(
+        nonlinearity: nn.Module,
+        **kwargs
+) -> Callable[[nn.Module], None]:
     """
     Create initializer for inner layers
     based on their activation function (nonlinearity).
     """
-    nonlinearity = ACTIVATIONS.get(nonlinearity, nonlinearity)
+    nonlinearity: str = ACTIVATIONS.get(nonlinearity, nonlinearity)
     assert isinstance(nonlinearity, str)
     nonlinearity = nonlinearity.lower()
 
@@ -37,7 +42,7 @@ def create_optimal_inner_init(nonlinearity, **kwargs):
     return inner_init
 
 
-def outer_init(layer):
+def outer_init(layer: nn.Module) -> None:
     """
     Initialization for output layers of policy and value networks typically
     used in deep reinforcement learning literature.
