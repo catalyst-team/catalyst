@@ -13,8 +13,7 @@ ACTIVATIONS = {
 
 
 def create_optimal_inner_init(
-        nonlinearity: nn.Module,
-        **kwargs
+    nonlinearity: nn.Module, **kwargs
 ) -> Callable[[nn.Module], None]:
     """
     Create initializer for inner layers
