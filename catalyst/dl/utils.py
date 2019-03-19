@@ -1,5 +1,8 @@
+from typing import List, Tuple
+
 import os
 import shutil
+
 from collections import OrderedDict
 from tensorboardX import SummaryWriter
 import torch
@@ -42,13 +45,15 @@ class UtilsFactory:
         return loader
 
     @staticmethod
-    def create_tflogger(logdir, name):
+    def create_tflogger(logdir: str, name: str) -> SummaryWriter:
         log_dir = os.path.join(logdir, f"{name}_log")
         logger = SummaryWriter(log_dir)
         return logger
 
     @staticmethod
-    def create_loggers(logdir, loaders):
+    def create_loggers(
+        logdir: str, loaders: List[str]
+    ) -> "OrderedDict[str, SummaryWriter]":
         os.makedirs(logdir, exist_ok=True)
 
         loggers = []
@@ -61,11 +66,11 @@ class UtilsFactory:
         return loggers
 
     @staticmethod
-    def prepare_device():
+    def prepare_device() -> torch.device:
         return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     @staticmethod
-    def prepare_model(model):
+    def prepare_model(model: nn.Module) -> Tuple[nn.Module, torch.device]:
         device = UtilsFactory.prepare_device()
 
         if torch.cuda.is_available():

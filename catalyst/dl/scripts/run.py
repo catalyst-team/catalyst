@@ -9,7 +9,12 @@ from catalyst.dl.scripts.utils import import_experiment_and_runner, dump_code
 
 
 def build_args(parser):
-    parser.add_argument("--config", required=True)
+    parser.add_argument(
+        "-C",
+        "--config",
+        help="path to config/configs",
+        required=True
+    )
     parser.add_argument("--expdir", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument(
