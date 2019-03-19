@@ -53,7 +53,7 @@ class UtilsFactory:
     @staticmethod
     def create_loggers(
         logdir: str, loaders: List[str]
-    ) -> OrderedDict[str, SummaryWriter]:
+    ) -> 'OrderedDict[str, SummaryWriter]':
         os.makedirs(logdir, exist_ok=True)
 
         loggers = []
