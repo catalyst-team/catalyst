@@ -250,6 +250,23 @@ class StateActionNet(nn.Module):
         return value
 
 
+class DistributionHead(nn.Module):
+    def __init__(self, num_inputs, num_actions, num_atoms):
+        super().__init__()
+        self.num_actions = num_actions
+        self.num_atoms = num_atoms
+        self.net = nn.Linear(
+            in_features=num_inputs,
+            out_features=num_actions * num_atoms,
+            bias=False
+        )
+        self.net.out_features = num_atoms
+
+    def forward(self, inputs):
+        x = self.net(inputs).view(-1, self.num_actions, self.num_atoms)
+        return x
+
+
 class SquashingLayer(nn.Module):
     def __init__(self, squashing_fn=nn.Tanh):
         """ Layer that squashes samples from some distribution to be bounded.

@@ -74,7 +74,8 @@ class Trainer:
             max_size=replay_buffer_size,
             history_len=history_len,
             n_step=n_step,
-            gamma=gamma
+            gamma=gamma,
+            discrete_actions=discrete_actions
         )
 
         self.gamma = gamma

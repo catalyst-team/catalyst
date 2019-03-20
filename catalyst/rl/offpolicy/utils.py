@@ -38,7 +38,7 @@ class BufferDataset(Dataset):
                 e.g. observations are RGB images
         """
         self.observation_shape = observation_shape
-        self.action_shape = action_shape
+        self.action_shape = (1, ) if discrete_actions else action_shape
         self.history_len = history_len
         self.n_step = n_step
         self.gamma = gamma
@@ -227,7 +227,7 @@ class ActionHandler:
         values_range=(-10., 10.)
     ):
         self._device = device
-        self.deterministic = determinisic
+        self.deterministic = deterministic
 
         if discrete_actions:
             if critic_distribution == "categorical":
@@ -247,21 +247,21 @@ class ActionHandler:
 
     def _sample_from_actor(self, actor, state):
         with torch.no_grad():
-            states = self.to_tensor(state).unsqueeze(0)
+            states = self._to_tensor(state).unsqueeze(0)
             action = actor(states, deterministic=self.deterministic)
             action = action[0].detach().cpu().numpy()
             return action
 
     def _sample_from_critic(self, critic, state):
         with torch.no_grad():
-            states = self.to_tensor(state).unsqueeze(0)
+            states = self._to_tensor(state).unsqueeze(0)
             q_values = critic(states)[0]
             action = np.argmax(q_values.detach().cpu().numpy())
             return action
 
     def _sample_from_categorical_critic(self, critic, state):
         with torch.no_grad():
-            states = self.to_tensor(state).unsqueeze(0)
+            states = self._to_tensor(state).unsqueeze(0)
             probs = F.softmax(critic(states)[0], dim=-1)
             q_values = torch.sum(probs * self.z, dim=-1)
             action = np.argmax(q_values.detach().cpu().numpy())
@@ -269,7 +269,7 @@ class ActionHandler:
 
     def _sample_from_quantile_critic(self, critic, state):
         with torch.no_grad():
-            states = self.to_tensor(state).unsqueeze(0)
+            states = self._to_tensor(state).unsqueeze(0)
             q_values = torch.mean(critic(states)[0], dim=-1)
             action = np.argmax(q_values.detach().cpu().numpy())
             return action

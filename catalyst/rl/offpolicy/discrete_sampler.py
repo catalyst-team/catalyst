@@ -103,7 +103,7 @@ class Sampler:
         )
 
         self.action_handler = ActionHandler(
-            device=sef._device,
+            device=self._device,
             discrete_actions=True,
             deterministic=self.infer,
             critic_distribution=critic_distribution,
@@ -157,7 +157,7 @@ class Sampler:
             action = np.random.randint(self.num_actions)
         else:
             action = self.action_handler._act_fn(self.critic, state)
-        return action
+        return np.array(action)
 
     def run(self):
         self.episode_index = 1

@@ -27,15 +27,17 @@ env:
   step_delay: 0.01
 
 critic:
-  agent: ValueCritic
+  agent: DiscreteCritic
   observation_hiddens: []
-  head_hiddens: [128, 128, *num_actions]
+  head_hiddens: [128, 128, *num_actions, 64]
   layer_fn: Linear
   bias: false
   norm_fn: LayerNorm
   activation_fn: ReLU
 
 algorithm:
+  critic_distribution: categorical
+  values_range: [-10.0, 10.0]
   critic_tau: 0.01
 
   critic_optimizer_params:

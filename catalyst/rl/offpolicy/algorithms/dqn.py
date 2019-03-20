@@ -107,7 +107,7 @@ class DQN(Algorithm):
 
     @classmethod
     def prepare_for_sampler(cls, config):
-        kwargs = super().preparer_for_sampler(cls, config)
+        kwargs = super(DQN, cls).prepare_for_sampler(config)
         config_ = config.copy()
         critic_distribution = config_["algorithm"]["critic_distribution"]
         values_range = config_["algorithm"]["values_range"]
