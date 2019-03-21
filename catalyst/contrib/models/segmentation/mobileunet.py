@@ -4,12 +4,12 @@ import math
 import torch
 import torch.nn as nn
 
-from ..classification.mobilenet_v2 import MobileNetV2, InvertedResidual
+from ..classification.mobilenet import MobileNetV2, InvertedResidual
 
 
-class MobileNetV2_unet(nn.Module):
+class MobileUnet(nn.Module):
     def __init__(self, num_classes=1):
-        super(MobileNetV2_unet, self).__init__()
+        super().__init__()
 
         self.backbone = MobileNetV2()
 
@@ -30,6 +30,20 @@ class MobileNetV2_unet(nn.Module):
 
         self._init_weights()
 
+    def _init_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d):
+                n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
+                m.weight.data.normal_(0, math.sqrt(2. / n))
+                if m.bias is not None:
+                    m.bias.data.zero_()
+            elif isinstance(m, nn.BatchNorm2d):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()
+            elif isinstance(m, nn.Linear):
+                m.weight.data.normal_(0, 0.01)
+                m.bias.data.zero_()
+
     def forward(self, x):
         for n in range(0, 2):
             x = self.backbone.encoder[n](x)
@@ -49,7 +63,7 @@ class MobileNetV2_unet(nn.Module):
 
         for n in range(14, 19):
             x = self.backbone.encoder[n](x)
-        x5 = x
+        # x5 = x
 
         up1 = torch.cat([
             x4,
@@ -79,17 +93,3 @@ class MobileNetV2_unet(nn.Module):
         logits = self.conv_score(x)
 
         return logits
-
-    def _init_weights(self):
-        for m in self.modules():
-            if isinstance(m, nn.Conv2d) or isinstance(m, nn.ConvTranspose2d):
-                n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
-                m.weight.data.normal_(0, math.sqrt(2. / n))
-                if m.bias is not None:
-                    m.bias.data.zero_()
-            elif isinstance(m, nn.BatchNorm2d):
-                m.weight.data.fill_(1)
-                m.bias.data.zero_()
-            elif isinstance(m, nn.Linear):
-                m.weight.data.normal_(0, 0.01)
-                m.bias.data.zero_()
