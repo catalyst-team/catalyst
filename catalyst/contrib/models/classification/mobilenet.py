@@ -1,10 +1,46 @@
-# https://github.com/akirasosa/mobile-semantic-segmentation
+"""
+Creates a MobileNetV2 Model as defined in:
+Mark Sandler, Andrew Howard, Menglong Zhu,
+Andrey Zhmoginov, Liang-Chieh Chen. (2018).
+MobileNetV2: Inverted Residuals and Linear Bottlenecks
+arXiv preprint arXiv:1801.04381.
+import from https://github.com/tonylins/pytorch-mobilenet-v2
+
+source https://github.com/d-li14/mobilenetv2.pytorch
+"""
 
 import math
 import torch.nn as nn
+import torch.utils.model_zoo as model_zoo
+
+model_urls = {
+    "1.0": "https://github.com/catalyst-team/model_zoo/raw/master/mobilenet_v2/mobilenetv2-91156ee6c9cbc9d320b9414ddaf52a1681f35f5088ab74b08722b292cb34d665.pth",  # noqa:E501
+    "0.5": "https://github.com/catalyst-team/model_zoo/raw/master/mobilenet_v2/mobilenetv2_0.5-b23b05d4da1172bc16cd3e9536198f60c53dc20a230301c13c2980df1ab8c613.pth",  # noqa:E501
+    "0.25": "https://github.com/catalyst-team/model_zoo/raw/master/mobilenet_v2/mobilenetv2_0.25-dd945b24220c9296162de0362e22f56f2b3f82c072d98e22548eb371194b1549.pth"  # noqa:E501
+}
 
 
-def conv_bn(inp, oup, stride):
+def _make_divisible(v, divisor, min_value=None):
+    """
+    This function is taken from the original tf repo.
+    It ensures that all layers have a channel number that is divisible by 8
+    It can be seen here:
+    https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet/mobilenet.py
+    :param v:
+    :param divisor:
+    :param min_value:
+    :return:
+    """
+    if min_value is None:
+        min_value = divisor
+    new_v = max(min_value, int(v + divisor / 2) // divisor * divisor)
+    # Make sure that round down does not go down by more than 10%.
+    if new_v < 0.9 * v:
+        new_v += divisor
+    return new_v
+
+
+def conv_3x3_bn(inp, oup, stride):
     return nn.Sequential(
         nn.Conv2d(inp, oup, 3, stride, 1, bias=False),
         nn.BatchNorm2d(oup),
@@ -23,11 +59,10 @@ def conv_1x1_bn(inp, oup):
 class InvertedResidual(nn.Module):
     def __init__(self, inp, oup, stride, expand_ratio):
         super(InvertedResidual, self).__init__()
-        self.stride = stride
         assert stride in [1, 2]
 
         hidden_dim = round(inp * expand_ratio)
-        self.use_res_connect = self.stride == 1 and inp == oup
+        self.identity = stride == 1 and inp == oup
 
         if expand_ratio == 1:
             self.conv = nn.Sequential(
@@ -59,19 +94,23 @@ class InvertedResidual(nn.Module):
             )
 
     def forward(self, x):
-        if self.use_res_connect:
+        if self.identity:
             return x + self.conv(x)
         else:
             return self.conv(x)
 
 
 class MobileNetV2(nn.Module):
-    def __init__(self, num_classes=1000, input_size=224, width_mult=1.):
+    def __init__(
+        self,
+        num_classes=1000,
+        input_size=224,
+        width_mult=1.0,
+        pretrained=None
+    ):
         super().__init__()
-        block = InvertedResidual
-        input_channel = 32
-        last_channel = 1280
-        interverted_residual_setting = [
+        # setting of inverted residual blocks
+        self.cfgs = [
             # t, c, n, s
             [1, 16, 1, 1],
             [6, 24, 2, 2],
@@ -84,42 +123,36 @@ class MobileNetV2(nn.Module):
 
         # building first layer
         assert input_size % 32 == 0
-        input_channel = int(input_channel * width_mult)
-        self.last_channel = int(last_channel * width_mult) \
-            if width_mult > 1.0 \
-            else last_channel
-        self.encoder = [conv_bn(3, input_channel, 2)]
+        input_channel = _make_divisible(32 * width_mult, 8)
+        layers = [conv_3x3_bn(3, input_channel, 2)]
         # building inverted residual blocks
-        for t, c, n, s in interverted_residual_setting:
-            output_channel = int(c * width_mult)
-            for i in range(n):
-                if i == 0:
-                    self.encoder.append(
-                        block(
-                            input_channel,
-                            output_channel,
-                            s,
-                            expand_ratio=t))
-                else:
-                    self.encoder.append(
-                        block(
-                            input_channel,
-                            output_channel,
-                            1,
-                            expand_ratio=t))
+        block = InvertedResidual
+        for t, c, n, s in self.cfgs:
+            output_channel = _make_divisible(c * width_mult, 8)
+            layers.append(block(input_channel, output_channel, s, t))
+            input_channel = output_channel
+            for i in range(1, n):
+                layers.append(block(input_channel, output_channel, 1, t))
                 input_channel = output_channel
         # building last several layers
-        self.encoder.append(conv_1x1_bn(input_channel, self.last_channel))
-        # make it nn.Sequential
-        self.encoder = nn.Sequential(*self.encoder)
+        self.output_channel = _make_divisible(1280 * width_mult, 8) \
+            if width_mult > 1.0 \
+            else 1280
+        layers.append(conv_1x1_bn(input_channel, self.output_channel))
 
-        # building classifier
-        self.classifier = nn.Sequential(
-            nn.Dropout(0.2),
-            nn.Linear(self.last_channel, num_classes),
-        )
+        self.encoder = nn.Sequential(*layers)
+        self.avgpool = nn.AvgPool2d(input_size // 32, stride=1)
+        self.classifier = nn.Linear(self.output_channel, num_classes)
 
         self._initialize_weights()
+
+        if pretrained is not None:
+            pretrained = str(width_mult)
+            if pretrained in model_urls:
+                state_dict = model_zoo.load_url(model_urls[pretrained])
+                self.load_state_dict(state_dict)
+            else:
+                raise NotImplementedError
 
     def _initialize_weights(self):
         for m in self.modules():
@@ -138,6 +171,8 @@ class MobileNetV2(nn.Module):
 
     def forward(self, x):
         x = self.encoder(x)
-        x = x.mean(3).mean(2)
+        x = self.conv(x)
+        x = self.avgpool(x)
+        x = x.view(x.size(0), -1)
         x = self.classifier(x)
         return x

@@ -8,10 +8,18 @@ from ..classification.mobilenet import MobileNetV2, InvertedResidual
 
 
 class MobileUnet(nn.Module):
-    def __init__(self, num_classes=1):
+    def __init__(
+            self,
+            num_classes=1,
+            input_size=224,
+            width_mult=1.,
+            pretrained=None):
         super().__init__()
 
-        self.backbone = MobileNetV2()
+        self.backbone_encoder = MobileNetV2(
+            input_size=input_size,
+            width_mult=width_mult,
+            pretrained=pretrained).encoder
 
         self.dconv1 = nn.ConvTranspose2d(1280, 96, 4, padding=1, stride=2)
         self.invres1 = InvertedResidual(192, 96, 1, 6)
@@ -46,23 +54,23 @@ class MobileUnet(nn.Module):
 
     def forward(self, x):
         for n in range(0, 2):
-            x = self.backbone.encoder[n](x)
+            x = self.backbone_encoder[n](x)
         x1 = x
 
         for n in range(2, 4):
-            x = self.backbone.encoder[n](x)
+            x = self.backbone_encoder[n](x)
         x2 = x
 
         for n in range(4, 7):
-            x = self.backbone.encoder[n](x)
+            x = self.backbone_encoder[n](x)
         x3 = x
 
         for n in range(7, 14):
-            x = self.backbone.encoder[n](x)
+            x = self.backbone_encoder[n](x)
         x4 = x
 
         for n in range(14, 19):
-            x = self.backbone.encoder[n](x)
+            x = self.backbone_encoder[n](x)
         # x5 = x
 
         up1 = torch.cat([
