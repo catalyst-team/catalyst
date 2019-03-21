@@ -26,26 +26,26 @@ class ResnetEncoder(nn.Module):
 
         if pooling is not None:
             pooling_kwargs = pooling_kwargs or {}
-            pooling_layer = Registry.name2nn(pooling)
-            pooling_fn = pooling_layer(
+            pooling_layer_fn = Registry.name2nn(pooling)
+            pooling_layer = pooling_layer_fn(
                 in_features=resnet.fc.in_features, **pooling_kwargs) \
                 if "attn" in pooling.lower() \
-                else pooling_layer(**pooling_kwargs)
-            modules += [pooling_fn]
+                else pooling_layer_fn(**pooling_kwargs)
+            modules += [pooling_layer]
 
-            resnet_out_features = pooling_fn.out_features(
+            out_features = pooling_layer.out_features(
                 in_features=resnet.fc.in_features
             )
         else:
-            resnet_out_features = resnet.fc.in_features
+            out_features = resnet.fc.in_features
 
         flatten = Registry.name2nn("Flatten")
         modules += [flatten()]
-        self.out_features = resnet_out_features
+        self.out_features = out_features
 
-        self.feature_net = nn.Sequential(*modules)
+        self.encoder = nn.Sequential(*modules)
 
     def forward(self, image):
         """Extract the image feature vectors."""
-        features = self.feature_net(image)
+        features = self.encoder(image)
         return features

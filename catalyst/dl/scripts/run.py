@@ -19,7 +19,7 @@ def build_args(parser):
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument(
         "-j",
-        "--n-workers",
+        "--num-workers",
         default=None,
         type=int,
         help="number of data loading workers"
@@ -29,7 +29,7 @@ def build_args(parser):
     )
     parser.add_argument(
         "-e",
-        "--n-epochs",
+        "--num-epochs",
         default=None,
         type=int,
         help="number of epochs"

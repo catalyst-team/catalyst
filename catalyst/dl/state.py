@@ -20,12 +20,12 @@ class RunnerState(FrozenClass):
         criterion=None,
         optimizer: Optimizer = None,
         scheduler=None,
+        logdir="logs",
         stage="infer",
+        num_epochs=1,
         main_metric="loss",
         minimize_metric=True,
         valid_loader="valid",
-        n_epochs=1,
-        logdir="logs",
         verbose=False,
         **kwargs
     ):
@@ -55,7 +55,7 @@ class RunnerState(FrozenClass):
         self.batch_size = 0
         self.step = 0
         self.epoch = 0
-        self.n_epochs = n_epochs
+        self.num_epochs = num_epochs
 
         # metrics & logging
         self.main_metric = main_metric
