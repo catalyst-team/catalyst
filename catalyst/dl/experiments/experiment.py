@@ -290,6 +290,8 @@ class ConfigExperiment(Experiment):
                 loader_params["dataset"] = ds_
                 loader_params["shuffle"] = name.startswith("train")
             elif isinstance(ds_, dict):
+                assert "dataset" in ds_, \
+                    "You need to specify dataset for dataloader"
                 loader_params["shuffle"] = (
                     name.startswith("train")
                     and ds_.get("sampler") is None)
