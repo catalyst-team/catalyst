@@ -9,7 +9,7 @@ stages:
 
   data_params:
     batch_size: 64
-    n_workers: 0
+    num_workers: 0
 
   criterion_params:
       criterion: CrossEntropyLoss
@@ -21,7 +21,7 @@ stages:
 
   stage1:
     state_params:
-      n_epochs: &train_epoch 100
+      num_epochs: &num_epochs 100
 
     callbacks_params:
       loss:

@@ -167,7 +167,7 @@ class Runner(ABC):
         self.state.stage = stage
 
         self._run_event("stage_start")
-        for epoch in range(self.state.n_epochs):
+        for epoch in range(self.state.num_epochs):
             self.state.epoch = epoch
 
             self._run_event("epoch_start")
@@ -243,7 +243,7 @@ class SupervisedRunner(Runner):
         logdir: str,
         callbacks: "List[Callback]" = None,
         scheduler: _Scheduler = None,
-        n_epochs: int = 1,
+        num_epochs: int = 1,
         valid_loader: str = "valid",
         main_metric: str = "loss",
         minimize_metric: bool = True,
@@ -260,7 +260,7 @@ class SupervisedRunner(Runner):
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
-            n_epochs=n_epochs,
+            num_epochs=num_epochs,
             valid_loader=valid_loader,
             main_metric=main_metric,
             minimize_metric=minimize_metric,

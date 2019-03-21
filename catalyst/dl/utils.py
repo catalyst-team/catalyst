@@ -21,11 +21,12 @@ class UtilsFactory:
         open_fn,
         dict_transform=None,
         dataset_cache_prob=-1,
-        batch_size=32,
-        workers=4,
-        shuffle=False,
         sampler=None,
-        collate_fn=default_collate_fn
+        collate_fn=default_collate_fn,
+        batch_size=32,
+        num_workers=4,
+        shuffle=False,
+        drop_last=False
     ):
         dataset = ListDataset(
             data_source,
@@ -34,13 +35,14 @@ class UtilsFactory:
             cache_prob=dataset_cache_prob
         )
         loader = torch.utils.data.DataLoader(
-            dataset,
-            batch_size=batch_size,
-            shuffle=shuffle,
-            num_workers=workers,
-            pin_memory=torch.cuda.is_available(),
+            dataset=dataset,
             sampler=sampler,
-            collate_fn=collate_fn
+            collate_fn=collate_fn,
+            batch_size=batch_size,
+            num_workers=num_workers,
+            shuffle=shuffle,
+            pin_memory=torch.cuda.is_available(),
+            drop_last=drop_last,
         )
         return loader
 

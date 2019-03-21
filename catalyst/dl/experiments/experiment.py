@@ -1,9 +1,10 @@
-import torch
-from collections import OrderedDict
-from torch import nn, optim
-from torch.utils.data import DataLoader, Dataset  # noqa F401
 from abc import abstractmethod, ABC
 from typing import Iterable, Any, Mapping, Dict, List
+from collections import OrderedDict
+
+import torch
+from torch import nn, optim
+from torch.utils.data import DataLoader, Dataset  # noqa F401
 
 from catalyst.contrib.registry import Registry
 from catalyst.dl.callbacks import Callback  # noqa F401
@@ -99,7 +100,7 @@ class BaseExperiment(Experiment):
         criterion: _Criterion = None,
         optimizer: _Optimizer = None,
         scheduler: _Scheduler = None,
-        n_epochs: int = 1,
+        num_epochs: int = 1,
         valid_loader: str = "valid",
         main_metric: str = "loss",
         minimize_metric: bool = True,
@@ -116,7 +117,7 @@ class BaseExperiment(Experiment):
 
         self._logdir = logdir
         self._stage = stage
-        self._epochs = n_epochs
+        self._num_epochs = num_epochs
         self._valid_loader = valid_loader
         self._main_metric = main_metric
         self._minimize_metric = minimize_metric
@@ -134,7 +135,7 @@ class BaseExperiment(Experiment):
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
         default_params = dict(
             logdir=self.logdir,
-            n_epochs=self._epochs,
+            num_epochs=self._num_epochs,
             valid_loader=self._valid_loader,
             main_metric=self._main_metric,
             verbose=self._verbose,
@@ -272,21 +273,30 @@ class ConfigExperiment(Experiment):
         data_conf = dict(self.stages_config[stage]["data_params"])
 
         batch_size = data_conf.pop("batch_size")
-        n_workers = data_conf.pop("n_workers")
-        drop_last = data_conf.pop("drop_last", True)
+        num_workers = data_conf.pop("num_workers")
+        drop_last = data_conf.pop("drop_last", False)
 
         datasets = self.get_datasets(stage=stage, **data_conf)
 
         loaders = OrderedDict()
-        for name, ds in datasets.items():
-            loaders[name] = DataLoader(
-                ds,
-                batch_size,
-                shuffle=name.startswith("train"),
-                num_workers=n_workers,
-                pin_memory=torch.cuda.is_available(),
-                drop_last=drop_last
-            )
+        for name, ds_ in datasets.items():
+            loader_params = {
+                "batch_size": batch_size,
+                "num_workers": num_workers,
+                "pin_memory": torch.cuda.is_available(),
+                "drop_last": drop_last,
+            }
+            if isinstance(ds_, Dataset):
+                loader_params["dataset"] = ds_
+                loader_params["shuffle"] = name.startswith("train")
+            elif isinstance(ds_, dict):
+                loader_params["shuffle"] = (
+                    name.startswith("train")
+                    and ds_.get("sampler") is None)
+                loader_params = merge_dicts(ds_, loader_params)
+            else:
+                raise NotImplementedError
+            loaders[name] = DataLoader(**loader_params)
 
         return loaders
 
