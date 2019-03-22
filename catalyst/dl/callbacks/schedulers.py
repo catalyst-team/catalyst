@@ -66,10 +66,12 @@ class LRUpdater(Callback):
         self.init_lr = optimizer.defaults["lr"]
 
     def on_loader_start(self, state):
-        self.update_optimizer(state=state)
+        if state.need_backward:
+            self.update_optimizer(state=state)
 
     def on_batch_end(self, state):
-        self.update_optimizer(state=state)
+        if state.need_backward:
+            self.update_optimizer(state=state)
 
 
 class OneCycleLR(LRUpdater):
@@ -82,8 +84,8 @@ class OneCycleLR(LRUpdater):
     def __init__(
         self,
         cycle_len: int,
-        div: int,
-        cut_div: int,
+        div_factor: float,
+        increase_fraction: float,
         momentum_range: Tuple[float, float],
         optimizer_key: str = None
     ):
@@ -91,23 +93,31 @@ class OneCycleLR(LRUpdater):
 
         :param init_lr: init learning rate for torch optimizer
         :param cycle_len: (int) num epochs to apply one cycle policy
-        :param div: (int) ratio between initial lr and maximum lr
-        :param cut_div: (int) which part of cycle lr will grow
-            (Ex: cut_div=4 -> 1/4 lr grow, 3/4 lr decrease
+        :param div_factor: max_lr / init_lr
+        :param increase_fraction:
+            the part of cycle when learning rate increases
         :param momentum_range: (tuple(int, int)) max and min momentum values
         :param optimizer_key: which optimizer key to use
             for learning rate scheduling
         """
         super().__init__(optimizer_key=optimizer_key)
         self.total_iter = None
-        self.div = div
-        self.cut_div = cut_div
+        self.cycle_len = cycle_len
+        self.momentum_range = momentum_range
+        self.div_factor = div_factor
+        self.increase_fraction = increase_fraction
+
         self.cycle_iter = 0
-        self.cycle_count = 0
         self.cycle_len = cycle_len
         # point in iterations for starting lr decreasing
         self.cut_point = None
-        self.momentum_range = momentum_range
+
+    def on_loader_start(self, state):
+        if state.need_backward:
+            self.total_iter = state.loader_len * self.cycle_len - 1
+            self.cut_point = int(self.total_iter * self.increase_fraction)
+
+        super().on_loader_start(state=state)
 
     def calc_lr(self):
         # calculate percent for learning rate change
@@ -117,12 +127,13 @@ class OneCycleLR(LRUpdater):
             percent = (1 - percent_curr / percent_all)
         else:
             percent = self.cycle_iter / self.cut_point
-        res = self.init_lr * (1 + percent * (self.div - 1)) / self.div
+
+        current_mult = (1 + percent * (self.div_factor - 1)) / self.div_factor
+        res = self.init_lr * current_mult
 
         self.cycle_iter += 1
         if self.cycle_iter == self.total_iter:
             self.cycle_iter = 0
-            self.cycle_count += 1
         return res
 
     def calc_momentum(self):
@@ -137,13 +148,6 @@ class OneCycleLR(LRUpdater):
             percent * (self.momentum_range[0] - self.momentum_range[1])
         )
         return res
-
-    def on_loader_start(self, state):
-        if state.need_backward:
-            self.total_iter = state.loader_len * self.cycle_len
-            self.cut_point = self.total_iter // self.cut_div
-
-        super().on_loader_start(state=state)
 
 
 class LRFinder(LRUpdater):
