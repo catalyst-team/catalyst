@@ -1,20 +1,19 @@
 shared:
+  observation_size: 8
+  num_actions: &num_actions 4
+  discrete_actions: True
+
   history_len: 3
   n_step: 1
   gamma: 0.99
-  observation_size: 8
-  num_actions: &num_actions 4
 
 args:
   logdir: ./logs/rl_gym  #  change me
   algorithm: DQN
-  environment: GymWrapperDiscrete
+  environment: GymWrapper
   vis: 0
   infer: 0  #  change me
   train: 1  #  change me
-  exploration_eps_init: 1.0
-  exploration_eps_final: 0.05
-  exploration_annealing_steps: 10000
 
 redis:
   port: 12000
@@ -22,6 +21,7 @@ redis:
 
 env:
   env_name: LunarLander-v2
+  env_type: discrete
   reward_scale: 0.01
   frame_skip: 2
   step_delay: 0.01
@@ -55,19 +55,29 @@ algorithm:
 
 trainer:
   batch_size: 256              # transitions
-
   n_workers: 1
   replay_buffer_size: 1000000  # transitions
-
   start_learning: 500          # transitions
   epoch_len: 1000               # batches
   target_update_period: 1      # batches
   save_period: 1               # epochs
   weights_sync_period: 1       # epochs
-  discrete_actions: True
 
 sampler:
   weights_sync_period: 1
   buffer_size: 1100
 
 seeds: [1, 10, 1000, 10000, 42000]
+
+exploration:
+  - strategy: EpsilonGreedy
+    probability: 0.95
+    params:
+      eps_init: 1.0
+      eps_final: 0.02
+      annealing_steps: 100000
+      num_actions: *num_actions
+
+  - strategy: Greedy
+    probability: 0.05
+    params:

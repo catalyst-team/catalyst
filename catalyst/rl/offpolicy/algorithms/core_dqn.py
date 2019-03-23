@@ -219,6 +219,6 @@ class Algorithm:
 
         history_len = config_["shared"]["history_len"]
 
-        kwargs = {"critic": critic, "history_len": history_len}
+        kwargs = {"network": critic, "history_len": history_len}
 
         return kwargs

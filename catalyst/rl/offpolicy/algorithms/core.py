@@ -281,6 +281,6 @@ class Algorithm:
 
         history_len = config_["shared"]["history_len"]
 
-        kwargs = {"actor": actor, "history_len": history_len}
+        kwargs = {"network": actor, "history_len": history_len}
 
         return kwargs

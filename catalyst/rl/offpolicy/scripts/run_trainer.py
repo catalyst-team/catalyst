@@ -63,6 +63,7 @@ def main(args, unknown_args):
     trainer = Trainer(
         **config["trainer"],
         **algorithm_kwargs,
+        discrete_actions=config["shared"]["discrete_actions"],
         logdir=args.logdir,
         redis_server=redis_server,
         redis_prefix=redis_prefix)

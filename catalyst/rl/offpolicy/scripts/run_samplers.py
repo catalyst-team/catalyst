@@ -44,26 +44,6 @@ def build_args(parser):
         "--train",
         type=int,
         default=None)
-    parser.add_argument(
-        "--action-noise-prob",
-        type=float,
-        default=None)
-    parser.add_argument(
-        "--param-noise-prob",
-        type=float,
-        default=None)
-    parser.add_argument(
-        "--max-noise-power",
-        type=float,
-        default=None)
-    parser.add_argument(
-        "--max-action-noise",
-        type=float,
-        default=None)
-    parser.add_argument(
-        "--max-param-noise",
-        type=float,
-        default=None)
 
     boolean_flag(parser, "debug", default=False)
     boolean_flag(parser, "redis", default=True)
@@ -84,17 +64,11 @@ def run_sampler(
     algorithm,
     environment,
     config, vis, infer,
-    action_noise_prob,
-    param_noise_prob,
-    action_noise=None,
-    param_noise=None,
     id=None,
     resume=None,
     redis=True
 ):
     config_ = copy.deepcopy(config)
-    action_noise = action_noise or 0
-    param_noise = param_noise or 0
 
     if not redis:
         redis_server = None
@@ -118,13 +92,6 @@ def run_sampler(
     config_["shared"]["action_size"] = env.action_shape[0]
 
     algo_kwargs = algorithm.prepare_for_sampler(config_)
-
-    rp_params = config_.get("random_process", {})
-    random_process = rp.__dict__[
-        rp_params.pop("random_process", "RandomProcess")]
-    rp_params["sigma"] = action_noise
-    rp_params["size"] = config_["shared"]["action_size"]
-    random_process = random_process(**rp_params)
 
     seeds = config_.get("seeds", None) \
         if infer \
@@ -150,14 +117,10 @@ def run_sampler(
         redis_server=redis_server,
         redis_prefix=redis_prefix,
         mode="infer" if infer else "train",
-        random_process=random_process,
-        action_noise_prob=action_noise_prob,
-        param_noise_prob=param_noise_prob,
-        param_noise_d=param_noise,
         seeds=seeds,
-        min_episode_steps=min_episode_steps,
-        min_episode_reward=min_episode_reward,
-        resume=resume)
+        resume=resume,
+        discrete_actions=config_["shared"]["discrete_actions"]
+    )
 
     pprint(sampler)
 
@@ -199,10 +162,6 @@ def main(args, unknown_args):
         params_ = dict(
             vis=False,
             infer=False,
-            action_noise=0.5,
-            param_noise=0.5,
-            action_noise_prob=args.action_noise_prob,
-            param_noise_prob=args.param_noise_prob,
             id=sampler_id,
         )
         run_sampler(**params, **params_)
@@ -211,8 +170,6 @@ def main(args, unknown_args):
         params_ = dict(
             vis=False,
             infer=False,
-            action_noise_prob=0,
-            param_noise_prob=0,
             id=sampler_id,
         )
         p = mp.Process(target=run_sampler, kwargs=dict(**params, **params_))
@@ -224,8 +181,6 @@ def main(args, unknown_args):
         params_ = dict(
             vis=False,
             infer=True,
-            action_noise_prob=0,
-            param_noise_prob=0,
             id=sampler_id,
         )
         p = mp.Process(target=run_sampler, kwargs=dict(**params, **params_))
@@ -234,19 +189,9 @@ def main(args, unknown_args):
         sampler_id += 1
 
     for i in range(1, args.train + 1):
-        action_noise = args.max_action_noise * i / args.train \
-            if args.max_action_noise is not None \
-            else None
-        param_noise = args.max_param_noise * i / args.train \
-            if args.max_param_noise is not None \
-            else None
         params_ = dict(
             vis=False,
             infer=False,
-            action_noise=action_noise,
-            param_noise=param_noise,
-            action_noise_prob=args.action_noise_prob,
-            param_noise_prob=args.param_noise_prob,
             id=sampler_id,
         )
         p = mp.Process(target=run_sampler, kwargs=dict(**params, **params_))
@@ -261,27 +206,3 @@ def main(args, unknown_args):
 if __name__ == "__main__":
     args, unknown_args = parse_args()
     main(args, unknown_args)
-
-    # args, config = parse_args_uargs(args, unknown_args)
-    #
-    # explorator = Explorator(config)
-    #
-    #
-    # action = np.random.random(3)
-    # print (action)
-    #
-    # print (f"EXPLORATOR PROBS, {explorator.probs}")
-    #
-    # for i in range(10):
-    #     strategy = explorator.get_exploration_strategy()
-    #     #noisy_action = strategy._explore(action, 0)
-    #     #print (noisy_action)
-    #     print (type(strategy))
-    #
-    #
-    #
-    # for c in config["exploration"]:
-    #    print (sigma_square(**c["params"]))
-    # for c in config:
-    #    print (c)
-    # main(args, unknown_args)

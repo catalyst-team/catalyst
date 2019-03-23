@@ -1,4 +1,7 @@
 shared:
+  observation_size: 8
+  action_size: 2
+
   history_len: 3
   n_step: 1
   gamma: 0.99
@@ -10,10 +13,6 @@ args:
   vis: 0
   infer: 0  #  change me
   train: 1  #  change me
-  action_noise_prob: 0.5
-  param_noise_prob: 0.2
-  max_action_noise: 0.2
-  max_param_noise: 0.1
 
 redis:
   port: 12000
@@ -21,6 +20,7 @@ redis:
 
 env:
   env_name: LunarLanderContinuous-v2
+  env_type: continuous
   reward_scale: 0.01
   frame_skip: 2
   step_delay: 0.01
@@ -77,10 +77,8 @@ algorithm:
 
 trainer:
   batch_size: 256              # transitions
-
   n_workers: 1
   replay_buffer_size: 1000000  # transitions
-
   start_learning: 500          # transitions
   epoch_len: 1000               # batches
   target_update_period: 1      # batches
@@ -89,31 +87,24 @@ trainer:
 
 sampler:
   weights_sync_period: 1
-
   buffer_size: 1100
-  param_noise_steps: 1000
-
-  action_noise_t: 1
   action_clip: [*min_action, *max_action]
-
-random_process:
-  random_process: GaussianWhiteNoiseProcess
 
 seeds: [1, 10, 1000, 10000, 42000]
 
 exploration:
   - strategy: ParameterSpaceNoise
-    probability: 0.1
+    probability: 0.2
     params:
-      target_sigma: 0.2
+      target_sigma: 0.1
       tolerance: 0.001
       max_steps: 1000
 
   - strategy: GaussNoise
-    probability: 0.3
+    probability: 0.6
     params:
-      sigma: 0.05
+      sigma: 0.2
 
   - strategy: Greedy
-    probability: 0.6
+    probability: 0.2
     params:

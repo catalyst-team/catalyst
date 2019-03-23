@@ -1,4 +1,6 @@
 import numpy as np
+import torch
+
 
 def get_network_weights(network, exclude_norm=False):
     """
@@ -38,6 +40,10 @@ def set_params_noise(actor, states, noise_delta=0.2, tol=1e-3, max_steps=1000):
         tol: float, controls the tolerance of binary search
         max_steps: maximum number of steps in binary search
     """
+
+    if states is None:
+        return noise_delta
+
     exclude_norm = True
     orig_weights = get_network_weights(actor, exclude_norm=exclude_norm)
     orig_actions = actor(states)
@@ -93,7 +99,6 @@ class Explorator:
     def get_exploration_strategy(self):
         strategy_idx = np.random.choice(self.num_strategies, p=self.probs)
         strategy = self.strategies[strategy_idx]
-        #strategy._run()
         return strategy
 
 
@@ -132,3 +137,18 @@ class GaussNoise(ExplorationStrategy):
 class Greedy(ExplorationStrategy):
     def __init__(self, **kwargs):
         pass
+
+
+class EpsilonGreedy(ExplorationStrategy):
+    def __init__(self, eps_init, eps_final, annealing_steps, num_actions):
+        self.eps = eps_init
+        self.eps_final = eps_final
+        self.delta_eps = (eps_init - eps_final) / annealing_steps
+        self.num_actions = num_actions
+        
+    def _explore(self, action):
+        if np.random.random() < self.eps:
+            action = np.random.randint(self.num_actions)
+        self.eps = max(self.eps_final, self.eps - self.delta_eps)
+        return action
+            
