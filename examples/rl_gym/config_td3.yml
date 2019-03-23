@@ -100,3 +100,20 @@ random_process:
   random_process: GaussianWhiteNoiseProcess
 
 seeds: [1, 10, 1000, 10000, 42000]
+
+exploration:
+  - strategy: ParameterSpaceNoise
+    probability: 0.1
+    params:
+      target_sigma: 0.2
+      tolerance: 0.001
+      max_steps: 1000
+
+  - strategy: GaussNoise
+    probability: 0.3
+    params:
+      sigma: 0.05
+
+  - strategy: Greedy
+    probability: 0.6
+    params:

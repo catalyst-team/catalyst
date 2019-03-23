@@ -5,7 +5,7 @@ import torch.nn as nn
 from catalyst.contrib import criterion, models, modules, optimizers
 from catalyst.dl import callbacks
 from catalyst.rl import agents, environments
-from catalyst.rl.offpolicy import algorithms
+from catalyst.rl.offpolicy import algorithms, exploration
 from catalyst.dl.fp16 import Fp16Wrap
 
 Factory = Union[Type, Callable]
@@ -13,6 +13,7 @@ Factory = Union[Type, Callable]
 _REGISTERS = {
     "agent": agents.__dict__,
     "algorithm": algorithms.__dict__,
+    "exploration": exploration.__dict__,
     "callback": callbacks.__dict__,
     "criterion": criterion.__dict__,
     "environment": environments.__dict__,
@@ -61,6 +62,11 @@ class Registry:
             :returns: single algorithm factory or list of them
         """
         return Registry._inner_register("algorithm", *algorithm_factories)
+
+    def exploration(
+        *exploration_factories: Factory
+    ) -> Union[Factory, List[Factory]]:
+        return Registry._inner_register("exploration", *exploration_factories)
 
     @staticmethod
     def callback(
@@ -186,6 +192,17 @@ class Registry:
         except Exception:
             algorithm = algorithm_fn.create_from_params(**algorithm_params)
         return algorithm
+
+    @staticmethod
+    def get_exploration(strategy=None, **exploration_params):
+        if strategy is None:
+            return None
+        strategy_fn = _REGISTERS["exploration"][strategy]
+        try:
+            strategy = strategy_fn(**exploration_params)
+        except Exception:
+            strategy = strategy_fn.create_from_params(**exploration_params)
+        return strategy
 
     @staticmethod
     def get_callback(callback=None, **callback_params):

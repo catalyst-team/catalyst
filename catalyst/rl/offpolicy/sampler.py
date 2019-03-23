@@ -11,7 +11,8 @@ from catalyst.utils.misc import set_global_seeds
 from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.serialization import serialize, deserialize
 from catalyst.rl.random_process import RandomProcess
-from catalyst.rl.offpolicy.utils import ActionHandler
+from catalyst.rl.offpolicy.utils import SamplerBuffer, ActionHandler
+from catalyst.rl.offpolicy.exploration import ParameterSpaceNoise
 
 # speed up optimization
 os.environ["OMP_NUM_THREADS"] = "1"
@@ -19,119 +20,11 @@ torch.set_num_threads(1)
 SEED_RANGE = 2**32 - 2
 
 
-def get_actor_weights(actor, exclude_norm=False):
-    state_dict = actor.state_dict()
-    if exclude_norm:
-        state_dict = {
-            key: value
-            for key, value in state_dict.items()
-            if all(x not in key for x in ["norm", "lstm"])
-        }
-    state_dict = {key: value.clone() for key, value in state_dict.items()}
-    return state_dict
-
-
-def set_actor_weights(actor, weights, strict=True):
-    actor.load_state_dict(weights, strict=strict)
-
-
-def set_params_noise(actor, states, target_d=0.2, tol=1e-3, max_steps=1000):
-    exclude_norm = True
-    orig_weights = get_actor_weights(actor, exclude_norm=exclude_norm)
-    orig_act = actor(states)
-
-    sigma_min = 0.
-    sigma_max = 100.
-    sigma = sigma_max
-    step = 0
-
-    while step < max_steps:
-        dist = torch.distributions.normal.Normal(0, sigma)
-        weights = {
-            key: w.clone() + dist.sample(w.shape)
-            for key, w in orig_weights.items()
-        }
-        set_actor_weights(actor, weights, strict=not exclude_norm)
-        new_act = actor(states)
-
-        diff = new_act - orig_act
-        d = torch.mean(torch.sqrt(torch.sum(torch.pow(diff, 2), 1))).item()
-
-        dd = d - target_d
-        if np.abs(dd) < tol:
-            break
-
-        # too big sigma
-        if dd > 0:
-            sigma_max = sigma
-        # too small sigma
-        else:
-            sigma_min = sigma
-        sigma = sigma_min + (sigma_max - sigma_min) / 2
-        step += 1
-    return d
-
-
-class SamplerBuffer:
-    def __init__(self, capacity, observation_shape, action_shape):
-        self.size = capacity
-        self.observation_shape = observation_shape
-        self.action_shape = action_shape
-        self.pointer = 0
-        self.observations = np.empty(
-            (self.size, ) + tuple(self.observation_shape), dtype=np.float32
-        )
-        self.actions = np.empty(
-            (self.size, ) + tuple(self.action_shape), dtype=np.float32
-        )
-        self.rewards = np.empty((self.size, ), dtype=np.float32)
-        self.dones = np.empty((self.size, ), dtype=np.bool)
-
-    def init_with_observation(self, observation):
-        self.observations[0] = observation
-        self.pointer = 0
-
-    def get_state(self, history_len=1, pointer=None):
-        pointer = pointer or self.pointer
-        state = np.zeros(
-            (history_len, ) + self.observation_shape,
-            dtype=np.float32
-        )
-        indices = np.arange(max(0, pointer - history_len + 1), pointer + 1)
-        state[-len(indices):] = self.observations[indices]
-        return state
-
-    def push_transition(self, transition):
-        """ transition = [s_tp1, a_t, r_t, d_t]
-        """
-        s_tp1, a_t, r_t, d_t, ts_t = transition
-        self.observations[self.pointer + 1] = s_tp1
-        self.actions[self.pointer] = a_t
-        self.rewards[self.pointer] = r_t
-        self.dones[self.pointer] = d_t
-        self.pointer += 1
-
-    def get_complete_episode(self):
-        indices = np.arange(self.pointer)
-        states = self.observations[indices]
-        actions = self.actions[indices]
-        rewards = self.rewards[indices]
-        dones = self.dones[indices]
-        return states, actions, rewards, dones
-
-    def get_states_history(self, history_len=1):
-        states = [
-            self.get_state(history_len=history_len, pointer=i)
-            for i in range(self.pointer)
-        ]
-        states = np.array(states)
-        return states
-
-
 class Sampler:
     def __init__(
         self,
         actor,
+        explorator,
         env,
         id,
         logdir=None,
@@ -142,12 +35,12 @@ class Sampler:
         weights_sync_period=1,
         mode="infer",
         resume=None,
-        action_noise_prob=0,
-        action_noise_t=1,
-        random_process=None,
-        param_noise_prob=0,
-        param_noise_d=0.2,
-        param_noise_steps=1000,
+        #action_noise_prob=0,
+        #action_noise_t=1,
+        #random_process=None,
+        #param_noise_prob=0,
+        #param_noise_d=0.2,
+        #param_noise_steps=1000,
         seeds=None,
         action_clip=(-1, 1),
         episode_limit=None,
@@ -162,6 +55,7 @@ class Sampler:
         self._sampler_id = id
         self._device = UtilsFactory.prepare_device()
         self.actor = copy.deepcopy(actor).to(self._device)
+        self.explorator = explorator
         self.env = env
         self.redis_server = redis_server
         self.redis_prefix = redis_prefix or ""
@@ -187,17 +81,17 @@ class Sampler:
         self.infer = mode == "infer"
         self.seeds = seeds
 
-        self.action_noise_prob = action_noise_prob
-        self.action_noise_t = action_noise_t
-        self.random_process = random_process or RandomProcess()
+        #self.action_noise_prob = action_noise_prob
+        #self.action_noise_t = action_noise_t
+        #self.random_process = random_process or RandomProcess()
 
-        self.param_noise_prob = param_noise_prob
-        self.param_noise_d = param_noise_d
-        self.param_noise_steps = param_noise_steps
+        #self.param_noise_prob = param_noise_prob
+        #self.param_noise_d = param_noise_d
+        #self.param_noise_steps = param_noise_steps
 
-        if self.infer:
-            self.action_noise_prob = 0
-            self.param_noise_prob = 0
+        #if self.infer:
+        #    self.action_noise_prob = 0
+        #    self.param_noise_prob = 0
 
         if logdir is not None:
             current_date = datetime.now().strftime("%y-%m-%d-%H-%M-%S-%M-%f")
@@ -217,7 +111,7 @@ class Sampler:
         str_val = " ".join(
             [
                 f"{key}: {str(getattr(self, key, ''))}"
-                for key in ["history_len", "action_noise_t", "action_clip"]
+                for key in ["history_len", "action_clip"]
             ]
         )
         return f"Sampler. {str_val}"
@@ -257,18 +151,21 @@ class Sampler:
             f"{self.redis_prefix}_{self._sampler_id}_hard_seeds", hard_seeds
         )
 
-    def act(self, state):
+    def act(self, state, exploration_strategy):
         with torch.no_grad():
             states = self.to_tensor(state).unsqueeze(0)
             action = self.actor(states, deterministic=self.infer)
             action = action[0].detach().cpu().numpy()
+            if not self.infer:
+                action = exploration_strategy._explore(action)
             return action
 
     def run(self):
         self.episode_index = 1
         self.load_actor_weights()
         self.buffer = SamplerBuffer(
-            self.buffer_size, self.env.observation_shape,
+            self.buffer_size,
+            self.env.observation_shape,
             self.env.action_shape
         )
 
@@ -279,12 +176,12 @@ class Sampler:
             else random.choice(self.seeds)
         set_global_seeds(seed)
         self.buffer.init_with_observation(self.env.reset())
-        self.random_process.reset_states()
+        #self.random_process.reset_states()
 
-        action_noise = False
-        param_noise_d = 0
-        noise_action = 0
-        action_noise_t = 0
+        #action_noise = False
+        #param_noise_d = 0
+        #noise_action = 0
+        #action_noise_t = 0
         step_index = 0
         episode_reward = 0
         episode_reward_orig = 0
@@ -292,18 +189,23 @@ class Sampler:
         done = False
 
         while True:
+
+            exploration_strategy = self.explorator.get_exploration_strategy()
+            if isinstance(exploration_strategy, ParameterSpaceNoise):
+                exploration_strategy.run(self.actor, states)
+
             while not done:
                 state = self.buffer.get_state(history_len=self.history_len)
-                action = self.act(state)
+                action = self.act(state, exploration_strategy)
 
-                if action_noise \
-                        and action_noise_t + self.action_noise_t >= step_index:
-                    noise_action = self.random_process.sample()
-                    action_noise_t = step_index
-                else:
-                    noise_action = noise_action
-
-                action = action + noise_action
+                #if action_noise \
+                #        and action_noise_t + self.action_noise_t >= step_index:
+                #    noise_action = self.random_process.sample()
+                #    action_noise_t = step_index
+                #else:
+                #    noise_action = noise_action
+                #
+                #action = action + noise_action
                 action = np.clip(
                     action,
                     a_min=self.action_clip[0],
@@ -337,13 +239,13 @@ class Sampler:
 
             if self.logger is not None:
                 self.logger.add_scalar("steps", step_index, self.episode_index)
-                self.logger.add_scalar(
-                    "action noise sigma", self.random_process.current_sigma,
-                    self.episode_index
-                )
-                self.logger.add_scalar(
-                    "param noise d", param_noise_d, self.episode_index
-                )
+                #self.logger.add_scalar(
+                #    "action noise sigma", self.random_process.current_sigma,
+                #    self.episode_index
+                #)
+                #self.logger.add_scalar(
+                #    "param noise d", param_noise_d, self.episode_index
+                #)
                 self.logger.add_scalar(
                     "reward", episode_reward, self.episode_index
                 )
@@ -377,28 +279,28 @@ class Sampler:
             if self.episode_index % self.weights_sync_period == 0:
                 self.load_actor_weights()
 
-                noise_prob_ = random.random()
+                # noise_prob_ = random.random()
 
-                if noise_prob_ < self.param_noise_prob:
-                    states = self.buffer.get_states_history(
-                        history_len=self.history_len
-                    )
-                    states = self.to_tensor(states).detach()
-                    param_noise_d = set_params_noise(
-                        actor=self.actor,
-                        states=states,
-                        target_d=self.param_noise_d,
-                        tol=1e-3,
-                        max_steps=self.param_noise_steps
-                    )
-                    action_noise = False
-                elif noise_prob_ < \
-                        self.param_noise_prob + self.action_noise_prob:
-                    action_noise = True
-                    param_noise_d = 0
-                else:
-                    action_noise = False
-                    param_noise_d = 0
+                # if noise_prob_ < self.param_noise_prob:
+                #     states = self.buffer.get_states_history(
+                #         history_len=self.history_len
+                #     )
+                #     states = self.to_tensor(states).detach()
+                #     param_noise_d = set_params_noise(
+                #         actor=self.actor,
+                #         states=states,
+                #         target_d=self.param_noise_d,
+                #         tol=1e-3,
+                #         max_steps=self.param_noise_steps
+                #     )
+                #     action_noise = False
+                # elif noise_prob_ < \
+                #         self.param_noise_prob + self.action_noise_prob:
+                #     action_noise = True
+                #     param_noise_d = 0
+                # else:
+                #     action_noise = False
+                #     param_noise_d = 0
 
             self.buffer = SamplerBuffer(
                 capacity=self.buffer_size,
@@ -418,10 +320,10 @@ class Sampler:
                 seed = random.choice(self.seeds)
             set_global_seeds(seed)
             self.buffer.init_with_observation(self.env.reset())
-            self.random_process.reset_states()
+            #self.random_process.reset_states()
 
-            noise_action = 0
-            action_noise_t = 0
+            #noise_action = 0
+            #action_noise_t = 0
             step_index = 0
             episode_reward = 0
             episode_reward_orig = 0

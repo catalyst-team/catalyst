@@ -14,7 +14,10 @@ from catalyst.contrib.registry import Registry
 from catalyst.utils.config import parse_args_uargs, save_config
 from catalyst.utils.misc import set_global_seeds, boolean_flag
 from catalyst.rl.offpolicy.sampler import Sampler
+from catalyst.rl.offpolicy.exploration import Explorator
 import catalyst.rl.random_process as rp
+
+import numpy as np
 
 set_global_seeds(42)
 os.environ["OMP_NUM_THREADS"] = "1"
@@ -104,6 +107,8 @@ def run_sampler(
     id = id or 0
     set_global_seeds(42 + id)
 
+    explorator = Explorator(config_)
+
     if "randomized_start" in config_["env"]:
         config_["env"]["randomized_start"] = (
                 config_["env"]["randomized_start"] and not infer)
@@ -139,6 +144,7 @@ def run_sampler(
     sampler = Sampler(
         **config_["sampler"],
         **algo_kwargs,
+        explorator=explorator,
         env=env,
         logdir=logdir, id=id,
         redis_server=redis_server,
@@ -255,3 +261,27 @@ def main(args, unknown_args):
 if __name__ == "__main__":
     args, unknown_args = parse_args()
     main(args, unknown_args)
+
+    # args, config = parse_args_uargs(args, unknown_args)
+    #
+    # explorator = Explorator(config)
+    #
+    #
+    # action = np.random.random(3)
+    # print (action)
+    #
+    # print (f"EXPLORATOR PROBS, {explorator.probs}")
+    #
+    # for i in range(10):
+    #     strategy = explorator.get_exploration_strategy()
+    #     #noisy_action = strategy._explore(action, 0)
+    #     #print (noisy_action)
+    #     print (type(strategy))
+    #
+    #
+    #
+    # for c in config["exploration"]:
+    #    print (sigma_square(**c["params"]))
+    # for c in config:
+    #    print (c)
+    # main(args, unknown_args)
