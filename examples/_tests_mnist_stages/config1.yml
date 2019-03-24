@@ -38,11 +38,8 @@ stages:
       scheduler:
         callback: OneCycleLR
         cycle_len: *num_epochs
-        div: 3
-        cut_div: 4
+        div_factor: 3
+        increase_fraction: 0.25
         momentum_range: [0.95, 0.85]
-#      scheduler:
-#        callback: SchedulerCallback
-#        reduce_metric: *reduce_metric
       saver:
         callback: CheckpointCallback

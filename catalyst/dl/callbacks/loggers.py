@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict
+import sys
 import logging
 import json
 from datetime import datetime
@@ -23,6 +24,7 @@ class VerboseLogger(Callback):
             f" * Epoch ({state.loader_name})",
             leave=True,
             ncols=0,
+            file=sys.stdout
         )
 
     def on_batch_end(self, state: RunnerState):
@@ -137,6 +139,9 @@ class ConsoleLogger(Callback):
         assert state.logdir is not None
         state.logdir.mkdir(parents=True, exist_ok=True)
         self.logger = self._get_logger(state.logdir)
+
+    def on_stage_end(self, state):
+        self.logger.handlers = []
 
     @staticmethod
     def _get_logger(logdir):
