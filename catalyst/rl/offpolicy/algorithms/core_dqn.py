@@ -91,7 +91,7 @@ class Algorithm:
             batch["next_state"], batch["done"]
 
         states_t = self._to_tensor(states_t)
-        actions_t = self._to_tensor(actions_t).type(torch.LongTensor)
+        actions_t = self._to_tensor(actions_t).long()
         rewards_t = self._to_tensor(rewards_t).unsqueeze(1)
         states_tp1 = self._to_tensor(states_tp1)
         done_t = self._to_tensor(done_t).unsqueeze(1)

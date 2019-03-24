@@ -5,14 +5,15 @@ shared:
   history_len: 3
   n_step: 1
   gamma: 0.99
+  discrete_actions: False
 
 args:
   logdir: ./logs/rl_gym  #  change me
   algorithm: TD3
   environment: GymWrapper
   vis: 0
-  infer: 0  #  change me
-  train: 1  #  change me
+  infer: 1  #  change me
+  train: 3  #  change me
 
 redis:
   port: 12000

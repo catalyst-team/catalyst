@@ -83,9 +83,6 @@ def run_sampler(
 
     explorator = Explorator(config_)
 
-    if "randomized_start" in config_["env"]:
-        config_["env"]["randomized_start"] = (
-                config_["env"]["randomized_start"] and not infer)
     env = environment(**config_["env"], visualize=vis)
     # @TODO: remove this hack
     config_["shared"]["observation_size"] = env.observation_shape[0]
@@ -96,10 +93,6 @@ def run_sampler(
     seeds = config_.get("seeds", None) \
         if infer \
         else config_.get("train_seeds", None)
-    min_episode_steps = config_["sampler"].pop("min_episode_steps", None)
-    min_episode_steps = min_episode_steps if not infer else None
-    min_episode_reward = config_["sampler"].pop("min_episode_reward", None)
-    min_episode_reward = min_episode_reward if not infer else None
 
     if seeds is not None:
         min_episode_steps = None

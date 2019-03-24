@@ -36,7 +36,7 @@ critic:
   activation_fn: ReLU
 
 algorithm:
-  critic_distribution: categorical
+  critic_distribution: quantile
   values_range: [-10.0, 10.0]
   critic_tau: 0.01
 
@@ -54,13 +54,13 @@ algorithm:
     clip_delta: 1.0
 
 trainer:
-  batch_size: 256              # transitions
+  batch_size: 32              # transitions
   n_workers: 1
   replay_buffer_size: 1000000  # transitions
   start_learning: 500          # transitions
   epoch_len: 1000               # batches
   target_update_period: 1      # batches
-  save_period: 1               # epochs
+  save_period: 100               # epochs
   weights_sync_period: 1       # epochs
 
 sampler:
@@ -71,13 +71,13 @@ seeds: [1, 10, 1000, 10000, 42000]
 
 exploration:
   - strategy: EpsilonGreedy
-    probability: 0.95
+    probability: 0.98
     params:
       eps_init: 1.0
-      eps_final: 0.02
-      annealing_steps: 100000
+      eps_final: 0.05
+      annealing_steps: 20000
       num_actions: *num_actions
 
   - strategy: Greedy
-    probability: 0.05
+    probability: 0.02
     params:

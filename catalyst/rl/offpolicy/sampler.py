@@ -38,7 +38,7 @@ class Sampler:
         mode="infer",
         resume=None,
         seeds=None,
-        action_clip=(-1, 1),
+        action_clip=None,
         episode_limit=None,
         force_store=False,
         discrete_actions=False
@@ -80,7 +80,8 @@ class Sampler:
         self.buffer = SamplerBuffer(
             capacity=self.buffer_size,
             observation_shape=self.env.observation_shape,
-            action_shape=self.env.action_shape
+            action_shape=self.env.action_shape,
+            discrete_actions=self.discrete_actions
         )
 
         n_atoms = 1 if not self.discrete_actions else self.network.out_features
@@ -125,9 +126,10 @@ class Sampler:
     def store_episode(self):
         if self.redis_server is None:
             return
-        states, actions, rewards, dones = self.buffer.get_complete_episode()
+        observations, actions, rewards, dones = \
+            self.buffer.get_complete_episode()
         episode = [
-            states.tolist(),
+            observations.tolist(),
             actions.tolist(),
             rewards.tolist(),
             dones.tolist()
@@ -136,38 +138,40 @@ class Sampler:
         self.redis_server.rpush("trajectories", episode)
 
     def act(self, state, exploration_strategy):
-        with torch.no_grad():
-            action = self.action_handler._act_fn(self.network, state)
-            if not self.infer:
-                action = exploration_strategy._explore(action)
-            return action
+        action = self.action_handler._act_fn(self.network, state)
+        if not self.infer:
+            action = exploration_strategy._explore(action)
+        return action
 
     def run(self):
         self.episode_index = 1
         self.load_network_weights()
-        self.buffer = SamplerBuffer(
-            capacity=self.buffer_size,
-            observation_shape=self.env.observation_shape,
-            action_shape=self.env.action_shape,
-            discrete_actions=self.discrete_actions
-        )
 
-        seed = self._seed + random.randrange(SEED_RANGE)
-        set_global_seeds(seed)
-        seed = random.randrange(SEED_RANGE) \
-            if self.seeds is None \
-            else random.choice(self.seeds)
-        set_global_seeds(seed)
-        self.buffer.init_with_observation(self.env.reset())
-
-        step_index = 0
-        episode_reward = 0
-        episode_reward_orig = 0
-        start_time = time.time()
-        done = False
         states = None
 
         while True:
+
+            seed = self._seed + random.randrange(SEED_RANGE)
+            set_global_seeds(seed)
+            if self.seeds is None:
+                seed = random.randrange(SEED_RANGE)
+            else:
+                seed = random.choice(self.seeds)
+            set_global_seeds(seed)
+
+            self.buffer = SamplerBuffer(
+                capacity=self.buffer_size,
+                observation_shape=self.env.observation_shape,
+                action_shape=self.env.action_shape,
+                discrete_actions=self.discrete_actions
+            )
+            self.buffer.init_with_observation(self.env.reset())
+
+            step_index = 0
+            episode_reward = 0
+            episode_reward_orig = 0
+            start_time = time.time()
+            done = False
 
             exploration_strategy = self.explorator.get_exploration_strategy()
             if isinstance(exploration_strategy, ParameterSpaceNoise):
@@ -184,11 +188,11 @@ class Sampler:
                         a_max=self.action_clip[1]
                     )
 
-                next_state, reward, done, info = self.env.step(action)
+                next_obs, reward, done, info = self.env.step(action)
                 episode_reward += reward
                 episode_reward_orig += info.get("reward_origin", 0)
 
-                transition = [next_state, action, reward, done]
+                transition = [next_obs, action, reward, done]
                 self.buffer.push_transition(transition)
                 step_index += 1
 
@@ -242,25 +246,3 @@ class Sampler:
                     history_len=self.history_len
                 )
                 states = self.to_tensor(states).detach()
-
-            self.buffer = SamplerBuffer(
-                capacity=self.buffer_size,
-                observation_shape=self.env.observation_shape,
-                action_shape=self.env.action_shape,
-                discrete_actions=self.discrete_actions
-            )
-
-            seed = self._seed + random.randrange(SEED_RANGE)
-            set_global_seeds(seed)
-            if self.seeds is None:
-                seed = random.randrange(SEED_RANGE)
-            else:
-                seed = random.choice(self.seeds)
-            set_global_seeds(seed)
-            self.buffer.init_with_observation(self.env.reset())
-
-            step_index = 0
-            episode_reward = 0
-            episode_reward_orig = 0
-            start_time = time.time()
-            done = False
