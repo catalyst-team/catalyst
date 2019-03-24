@@ -1,5 +1,8 @@
+from typing import List, Tuple, Union, Optional
 import os
 import shutil
+from pathlib import Path
+
 from collections import OrderedDict
 from tensorboardX import SummaryWriter
 import torch
@@ -9,6 +12,10 @@ from torch.utils.data.dataloader import default_collate as default_collate_fn
 
 from catalyst.data.dataset import ListDataset
 from catalyst.dl.fp16 import Fp16Wrap
+from catalyst.utils.plotly import plot_tensorboard_log
+
+import logging
+logging.getLogger('tensorflow').addFilter(lambda x: 0)
 
 
 class UtilsFactory:
@@ -18,11 +25,12 @@ class UtilsFactory:
         open_fn,
         dict_transform=None,
         dataset_cache_prob=-1,
-        batch_size=32,
-        workers=4,
-        shuffle=False,
         sampler=None,
-        collate_fn=default_collate_fn
+        collate_fn=default_collate_fn,
+        batch_size=32,
+        num_workers=4,
+        shuffle=False,
+        drop_last=False
     ):
         dataset = ListDataset(
             data_source,
@@ -31,24 +39,27 @@ class UtilsFactory:
             cache_prob=dataset_cache_prob
         )
         loader = torch.utils.data.DataLoader(
-            dataset,
-            batch_size=batch_size,
-            shuffle=shuffle,
-            num_workers=workers,
-            pin_memory=torch.cuda.is_available(),
+            dataset=dataset,
             sampler=sampler,
-            collate_fn=collate_fn
+            collate_fn=collate_fn,
+            batch_size=batch_size,
+            num_workers=num_workers,
+            shuffle=shuffle,
+            pin_memory=torch.cuda.is_available(),
+            drop_last=drop_last,
         )
         return loader
 
     @staticmethod
-    def create_tflogger(logdir, name):
+    def create_tflogger(logdir: str, name: str) -> SummaryWriter:
         log_dir = os.path.join(logdir, f"{name}_log")
         logger = SummaryWriter(log_dir)
         return logger
 
     @staticmethod
-    def create_loggers(logdir, loaders):
+    def create_loggers(
+        logdir: str, loaders: List[str]
+    ) -> "OrderedDict[str, SummaryWriter]":
         os.makedirs(logdir, exist_ok=True)
 
         loggers = []
@@ -61,11 +72,11 @@ class UtilsFactory:
         return loggers
 
     @staticmethod
-    def prepare_device():
+    def prepare_device() -> torch.device:
         return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     @staticmethod
-    def prepare_model(model):
+    def prepare_model(model: nn.Module) -> Tuple[nn.Module, torch.device]:
         device = UtilsFactory.prepare_device()
 
         if torch.cuda.is_available():
@@ -161,3 +172,30 @@ class UtilsFactory:
             filepath, map_location=lambda storage, loc: storage
         )
         return checkpoint
+
+    @staticmethod
+    def plot_metrics(
+        logdir: Union[str, Path],
+        step: Optional[str] = "epoch",
+        metrics: Optional[List[str]] = None,
+        height: Optional[int] = None,
+        width: Optional[int] = None
+    ) -> None:
+        """Plots your learning results.
+
+        Args:
+            logdir: the logdir that was specified during training.
+            step: 'batch' or 'epoch' - what logs to show: for batches or
+                for epochs
+            metrics: list of metrics to plot. The loss should be specified as
+                'loss', learning rate = 'base/lr' and other metrics should be
+                specified as names in metrics dict
+                that was specified during training
+            height: the height of the whole resulting plot
+            width: the width of the whole resulting plot
+
+        """
+        assert step in ["batch", "epoch"], \
+            f"Step should be either 'batch' or 'epoch', got '{step}'"
+        metrics = metrics or ["loss"]
+        plot_tensorboard_log(logdir, step, metrics, height, width)

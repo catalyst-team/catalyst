@@ -69,8 +69,7 @@ class CheckpointCallback(Callback):
             is_last=True
         )
 
-        checkpoint_metric = checkpoint["valid_metrics"].get(main_metric, None)
-        checkpoint_metric = checkpoint_metric or checkpoint.get("epoch", -1)
+        checkpoint_metric = checkpoint["valid_metrics"][main_metric]
         self.top_best_metrics.append((filepath, checkpoint_metric))
         self.top_best_metrics = sorted(
             self.top_best_metrics,

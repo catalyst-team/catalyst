@@ -165,7 +165,7 @@ class Algorithm:
             config_["shared"]["history_len"],
             config_["shared"]["observation_size"],
         )
-        num_actions = config_["shared"]["num_actions"]
+        # num_actions = config_["shared"]["num_actions"]
         n_step = config_["shared"]["n_step"]
         gamma = config_["shared"]["gamma"]
         history_len = config_["shared"]["history_len"]
@@ -208,7 +208,7 @@ class Algorithm:
             config_["shared"]["history_len"],
             config_["shared"]["observation_size"],
         )
-        num_actions = config_["shared"]["num_actions"]
+        # num_actions = config_["shared"]["num_actions"]
 
         critic_fn = config_["critic"].pop("agent", None)
         critic = Registry.get_agent(

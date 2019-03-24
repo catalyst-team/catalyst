@@ -77,9 +77,9 @@ def build_args(parser):
         help="Type of pooling to use"
     )
     parser.add_argument(
-        "--n-workers",
+        "--num-workers",
         type=int,
-        dest="n_workers",
+        dest="num_workers",
         help="Count of workers for dataloader",
         default=4
     )
@@ -129,7 +129,7 @@ def main(args, _=None):
         images_df,
         open_fn,
         batch_size=args.batch_size,
-        workers=args.n_workers,
+        num_workers=args.num_workers,
         dict_transform=dict_transformer
     )
 

@@ -10,7 +10,6 @@ from tensorboardX import SummaryWriter
 from catalyst.utils.misc import set_global_seeds
 from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.serialization import serialize, deserialize
-from catalyst.rl.random_process import RandomProcess
 from catalyst.rl.offpolicy.utils import SamplerBuffer, ActionHandler
 from catalyst.rl.offpolicy.exploration import ParameterSpaceNoise
 

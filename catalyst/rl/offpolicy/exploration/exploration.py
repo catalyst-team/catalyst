@@ -103,13 +103,11 @@ class Explorator:
 
 
 class ExplorationStrategy:
-    def __init__(self, **params):
-        pass
 
     def _explore(self, action):
         return action
 
-    def _run(self):
+    def _run(self, actor, states):
         pass
 
 
@@ -145,10 +143,9 @@ class EpsilonGreedy(ExplorationStrategy):
         self.eps_final = eps_final
         self.delta_eps = (eps_init - eps_final) / annealing_steps
         self.num_actions = num_actions
-        
+
     def _explore(self, action):
         if np.random.random() < self.eps:
             action = np.random.randint(self.num_actions)
         self.eps = max(self.eps_final, self.eps - self.delta_eps)
         return action
-            

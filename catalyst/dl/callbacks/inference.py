@@ -28,7 +28,7 @@ class InferCallback(Callback):
         if self.out_dir is not None:
             self.out_prefix = str(self.out_dir) + "/" + str(self.out_prefix)
         if self.out_prefix is not None:
-            os.makedirs(os.path.dirname(self.out_prefix))
+            os.makedirs(os.path.dirname(self.out_prefix), exist_ok=True)
 
     def on_loader_start(self, state):
         self.predictions = defaultdict(lambda: [])
@@ -92,7 +92,7 @@ class InferMaskCallback(Callback):
         if self.out_dir is not None:
             self.out_prefix = str(self.out_dir) + "/" + str(self.out_prefix)
         if self.out_prefix is not None:
-            os.makedirs(os.path.dirname(self.out_prefix))
+            os.makedirs(os.path.dirname(self.out_prefix), exist_ok=True)
 
     @staticmethod
     def _get_spaced_colors2(n_colors, seed=42):

@@ -1,6 +1,8 @@
 # flake8: noqa
-from .segmentation import *
-from .resnet_encoder import *
 from .sequential import *
+from .encoder import *
+from .classification import *
+from .segmentation import *
+
 
 __all__ = ['UNet', 'ResNetUnet', 'LinkNet']

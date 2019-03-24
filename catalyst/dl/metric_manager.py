@@ -11,37 +11,46 @@ class TimerManager:
         self._starts = {}
         self.elapsed = {}
 
-    def start(self, name):
+    def start(self, name: str) -> None:
+        """Starts timer ``name``
+        Args:
+            name (str): name of a timer
+        """
         self._starts[name] = time()
 
-    def stop(self, name):
-        assert name in self._starts, "Timer wasn't started"
+    def stop(self, name: str) -> None:
+        """Stops timer ``name``
+        Args:
+            name (str): name of a timer
+        """
+        assert name in self._starts, f"Timer '{name}' wasn't started"
 
         self.elapsed[name] = time() - self._starts[name]
         del self._starts[name]
 
-    def reset(self):
+    def reset(self) -> None:
+        """Reset all previous timers"""
         self.elapsed = {}
         self._starts = {}
 
 
 class MetricManager:
     @staticmethod
-    def _to_single_value(value):
+    def _to_single_value(value: Any) -> float:
         if hasattr(value, "item"):
             value = value.item()
 
         assert isinstance(value, Number), \
             f"{type(value)} is not a python number"
 
-        # noinspection PyTypeChecker
-        return float(value)
+        value = float(value)
+        return value
 
     def __init__(
         self,
-        valid_loader="valid",
-        main_metric="loss",
-        minimize=True,
+        valid_loader: str = "valid",
+        main_metric: str = "loss",
+        minimize: bool = True,
     ):
         self._valid_loader = valid_loader
         self._main_metric = main_metric
@@ -101,7 +110,7 @@ class MetricManager:
     def add_batch_value(
         self,
         name: str = None,
-        value=None,
+        value: Any = None,
         metrics_dict: Dict[str, Any] = None
     ):
         metrics_dict = metrics_dict or {}

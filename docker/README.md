@@ -4,7 +4,7 @@
 ### Base version
 
 ```bash
-# PyTorch 0.4.1 version
+# PyTorch 0.4.1 version (old)
 docker build -t catalyst-base -f ./Dockerfile-041 .
 
 # PyTorch 1.0.0 version
@@ -15,7 +15,7 @@ docker build -t catalyst-base -f ./Dockerfile-100 .
 ### Contrib version
 
 ```bash
-# PyTorch 0.4.1 version
+# PyTorch 0.4.1 version (old)
 docker build -t catalyst-contrib -f ./Dockerfile-contrib-041 .
 
 # PyTorch 1.0.0 version

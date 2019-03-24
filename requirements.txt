@@ -1,19 +1,21 @@
 # Framework must-haves
+numpy>=1.14.6
 torch>=0.4.1
-numpy
+torchvision>=0.2.1
 jpeg4py
 opencv-python
 scikit-image
-torchvision==0.2.1
-tqdm
+tqdm>=4.29.1
 PyYAML
-tensorboardX
+tensorboardX>=1.6
+plotly>=3.6.1
+tensorflow==1.12
 torchnet
 
 # Used in scripts
 matplotlib
-pandas
-sklearn
+pandas>=0.22
+scikit-learn>=0.20
 
 # For RL
 mock

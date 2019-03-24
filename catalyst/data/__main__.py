@@ -39,7 +39,7 @@ Examples:
             --arch=resnet34 \\
             --pooling=GlobalMaxPool2d \\
             --batch-size=8 \\
-            --n-workers=16 \\
+            --num-workers=16 \\
             --verbose
 
 """

@@ -1,11 +1,9 @@
-import os
-import time
 import numpy as np
 import multiprocessing as mp
 
 import torch
 import torch.nn.functional as F
-from torch.utils.data import Dataset, Sampler, DataLoader
+from torch.utils.data import Dataset, Sampler
 
 
 class BufferDataset(Dataset):

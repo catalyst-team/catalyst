@@ -1,12 +1,11 @@
 import os
 import time
-import numpy as np
 from datetime import datetime
 from tensorboardX import SummaryWriter
 import multiprocessing as mp
 import queue
 import torch
-from torch.utils.data import Dataset, Sampler, DataLoader
+from torch.utils.data import DataLoader
 
 from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.serialization import serialize, deserialize
@@ -41,7 +40,7 @@ class Trainer:
         logdir,
         redis_server=None,
         redis_prefix=None,
-        n_workers=2,
+        num_workers=1,
         replay_buffer_size=int(1e6),
         batch_size=64,
         start_learning=int(1e3),
@@ -84,7 +83,7 @@ class Trainer:
         self.discrete_actions = discrete_actions
 
         self.batch_size = batch_size
-        self.n_workers = n_workers
+        self.num_workers = num_workers
 
         self.sampler = BufferSampler(
             buffer=self.buffer, epoch_len=epoch_len, batch_size=batch_size
@@ -94,7 +93,7 @@ class Trainer:
             dataset=self.buffer,
             batch_size=self.batch_size,
             shuffle=False,
-            num_workers=self.n_workers,
+            num_workers=self.num_workers,
             pin_memory=torch.cuda.is_available(),
             sampler=self.sampler
         )

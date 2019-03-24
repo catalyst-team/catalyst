@@ -23,7 +23,7 @@ class GymWrapper:
         self.step_delay = step_delay
 
         self.observation_shape = self.env.observation_space.shape
-        
+
         if env_type == "continuous":
             self.action_shape = self.env.action_space.shape
         elif env_type == "discrete":

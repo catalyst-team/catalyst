@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict
+import sys
 import logging
 import json
 from datetime import datetime
@@ -19,10 +20,11 @@ class VerboseLogger(Callback):
         self.step = 0
         self.tqdm = tqdm(
             total=state.loader_len,
-            desc=f"{state.epoch}/{state.n_epochs}"
+            desc=f"{state.epoch}/{state.num_epochs}"
             f" * Epoch ({state.loader_name})",
             leave=True,
             ncols=0,
+            file=sys.stdout
         )
 
     def on_batch_end(self, state: RunnerState):
@@ -96,7 +98,7 @@ class TxtMetricsFormatter(MetricsFormatter):
         metrics = self._format_metrics(state.metrics.epoch_values)
         for key, value in metrics.items():
             message.append(
-                f"{state.epoch}/{state.n_epochs} * Epoch ({key}): {value}")
+                f"{state.epoch}/{state.num_epochs} * Epoch ({key}): {value}")
         message = "\n".join(message)
         return message
 
@@ -137,6 +139,9 @@ class ConsoleLogger(Callback):
         assert state.logdir is not None
         state.logdir.mkdir(parents=True, exist_ok=True)
         self.logger = self._get_logger(state.logdir)
+
+    def on_stage_end(self, state):
+        self.logger.handlers = []
 
     @staticmethod
     def _get_logger(logdir):

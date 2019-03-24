@@ -15,9 +15,6 @@ from catalyst.utils.config import parse_args_uargs, save_config
 from catalyst.utils.misc import set_global_seeds, boolean_flag
 from catalyst.rl.offpolicy.sampler import Sampler
 from catalyst.rl.offpolicy.exploration import Explorator
-import catalyst.rl.random_process as rp
-
-import numpy as np
 
 set_global_seeds(42)
 os.environ["OMP_NUM_THREADS"] = "1"
@@ -93,10 +90,6 @@ def run_sampler(
     seeds = config_.get("seeds", None) \
         if infer \
         else config_.get("train_seeds", None)
-
-    if seeds is not None:
-        min_episode_steps = None
-        min_episode_reward = None
 
     pprint(config_["sampler"])
     pprint(algo_kwargs)

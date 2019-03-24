@@ -11,10 +11,10 @@ stages:
 
   data_params:
     batch_size: 64
-    n_workers: 1
+    num_workers: 1
 
   state_params:
-    n_epochs: 2
+    num_epochs: 2
     main_metric: &reduce_metric precision01
     minimize_metric: False
 

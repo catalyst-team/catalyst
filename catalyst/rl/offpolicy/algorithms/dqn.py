@@ -36,7 +36,8 @@ class DQN(Algorithm):
 
         # critic loss
         q_values_t = self.critic(states_t).squeeze(-1).gather(-1, actions_t)
-        q_values_tp1 = self.target_critic(states_tp1).squeeze(-1).max(-1, keepdim=True)[0]
+        q_values_tp1 = \
+            self.target_critic(states_tp1).squeeze(-1).max(-1, keepdim=True)[0]
         q_target_t = rewards_t + (1 - done_t) * gamma * q_values_tp1.detach()
         value_loss = self.critic_criterion(q_values_t, q_target_t).mean()
 

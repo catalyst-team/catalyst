@@ -46,12 +46,6 @@ def main(args, unknown_args):
             dump_dir=args.logdir)
 
     algorithm = Registry.get_fn("algorithm", args.algorithm)
-    if args.environment is not None:
-        # @TODO: remove this hack
-        # come on, just refactor whole rl
-        environment_fn = Registry.get_fn("environment", args.environment)
-        env = environment_fn(**config["env"])
-        del env
     algorithm_kwargs = algorithm.prepare_for_trainer(config)
 
     redis_server = StrictRedis(port=config.get("redis", {}).get("port", 12000))
