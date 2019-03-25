@@ -1,54 +1,79 @@
 #!/usr/bin/env python
 
 import gym
+from gym import spaces
 import time
 
 
 class GymWrapper:
     def __init__(
         self,
-        env_name="LunarLanderContinuous-v2",
-        env_type="continuous",
+        env_name="LunarLander-v2",  # "LunarLanderContinuous-v2",
+        # env_wrappers=None,
+        history_len=1,
         frame_skip=1,
         visualize=False,
         reward_scale=1,
-        step_delay=0.1
+        step_delay=0.0
     ):
-        assert env_type in ["discrete", "continuous"]
         self.env = gym.make(env_name)
+        # @TODO: add logic with registry and env_wrappers
 
-        self.visualize = visualize
-        self.frame_skip = frame_skip
-        self.reward_scale = reward_scale
-        self.step_delay = step_delay
+        self._history_len = history_len
+        self._frame_skip = frame_skip
+        self._visualize = visualize
+        self._reward_scale = reward_scale
+        self._step_delay = step_delay
 
-        self.observation_shape = self.env.observation_space.shape
+        self._prepare_spaces()
 
-        if env_type == "continuous":
-            self.action_shape = self.env.action_space.shape
-        elif env_type == "discrete":
-            self.action_shape = (1, )
+    @property
+    def observation_space(self) -> spaces.space.Space:
+        return self._observation_space
 
-        self.time_step = 0
-        self.total_reward = 0
+    @property
+    def state_space(self) -> spaces.space.Space:
+        return self._state_space
+
+    @property
+    def action_space(self) -> spaces.space.Space:
+        return self._action_space
+
+    def _prepare_spaces(self):
+        self._observation_space = self.env.observation_space
+        self._action_space = self.env.action_space
+
+        if isinstance(self._observation_space, spaces.Box):
+            self._state_space = spaces.Box(
+                low=self._observation_space.low,
+                high=self._observation_space.high,
+                shape=(self._history_len,) + self._observation_space.shape,
+                dtype=self._observation_space.dtype
+            )
+        else:
+            raise NotImplementedError("not yet implemented")
+
+    @staticmethod
+    def _action_preprocessing(action):
+        return action
+
+    @staticmethod
+    def _observation_preprocessing(observation):
+        return observation
 
     def reset(self):
-        self.time_step = 0
-        self.total_reward = 0
         return self.env.reset()
 
     def step(self, action):
-        time.sleep(self.step_delay)
+        time.sleep(self._step_delay)
         reward = 0
-        for i in range(self.frame_skip):
+        for i in range(self._frame_skip):
             observation, r, done, info = self.env.step(action)
-            if self.visualize:
+            if self._visualize:
                 self.env.render()
             reward += r
             if done:
                 break
-        self.total_reward += reward
-        self.time_step += 1
         info["reward_origin"] = reward
-        reward *= self.reward_scale
+        reward *= self._reward_scale
         return observation, reward, done, info

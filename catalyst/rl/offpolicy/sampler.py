@@ -7,23 +7,24 @@ import torch
 from datetime import datetime
 from tensorboardX import SummaryWriter
 
-from catalyst.utils.misc import set_global_seeds
+from catalyst.utils.misc import set_global_seed
 from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.serialization import serialize, deserialize
-from catalyst.rl.offpolicy.utils import SamplerBuffer, ActionHandler
-from catalyst.rl.offpolicy.exploration import ParameterSpaceNoise
+from catalyst.rl.offpolicy.utils import EnvWrapper, ActionHandler
+from catalyst.rl.offpolicy.exploration import ExplorationHandler
+from catalyst.rl.offpolicy.exploration.strategies import ParameterSpaceNoise
 
 # speed up optimization
 os.environ["OMP_NUM_THREADS"] = "1"
 torch.set_num_threads(1)
-SEED_RANGE = 2**32 - 2
+_BIG_NUM = int(2 ** 32 - 2)
+_SEED_RANGE = _BIG_NUM
 
 
 class Sampler:
     def __init__(
         self,
         network,
-        explorator,
         env,
         id,
         logdir=None,
@@ -44,30 +45,10 @@ class Sampler:
     ):
 
         self._seed = 42 + id
-        set_global_seeds(self._seed)
-
+        set_global_seed(self._seed)
         self._sampler_id = id
-        self._device = UtilsFactory.prepare_device()
-        self.network = copy.deepcopy(network).to(self._device)
-        self.explorator = explorator
-        self.env = env
-        self.redis_server = redis_server
-        self.redis_prefix = redis_prefix or ""
-        self.resume = resume
-        self.episode_limit = episode_limit or int(2**32 - 2)
-        self.force_store = force_store
-        self.discrete_actions = discrete_actions
-        self.network_type = "critic" if self.discrete_actions else "actor"
 
-        self.history_len = history_len
-        self.buffer_size = buffer_size
-        self.weights_sync_period = weights_sync_period
-        self.episode_index = 0
-        self.action_clip = action_clip
-
-        self.infer = mode == "infer"
-        self.seeds = seeds
-
+        # logging
         if logdir is not None:
             current_date = datetime.now().strftime("%y-%m-%d-%H-%M-%S-%M-%f")
             logpath = f"{logdir}/sampler-{mode}-{id}-{current_date}"
@@ -76,172 +57,163 @@ class Sampler:
         else:
             self.logger = None
 
-        self.buffer = SamplerBuffer(
-            capacity=self.buffer_size,
-            observation_shape=self.env.observation_shape,
-            action_shape=self.env.action_shape,
-            discrete_actions=self.discrete_actions
-        )
+        # environment, model, exploration & action handlers
+        self.env = env
+        self._device = UtilsFactory.prepare_device()
+        self.network = copy.deepcopy(network).to(self._device)
+        self.exploration_handler: ExplorationHandler = ExplorationHandler()
 
         n_atoms = 1 if not self.discrete_actions else self.network.out_features
         self.action_handler = ActionHandler(
             device=self._device,
             discrete_actions=self.discrete_actions,
-            deterministic=self.infer,
+            deterministic=self._infer,
             critic_distribution=critic_distribution,
             n_atoms=n_atoms,
-            values_range=values_range
+            values_range=values_range,
+            action_clip=action_clip
         )
 
-    def __repr__(self):
-        str_val = " ".join(
-            [
-                f"{key}: {str(getattr(self, key, ''))}"
-                for key in ["history_len", "action_clip"]
-            ]
-        )
-        return f"Sampler. {str_val}"
+        # main attributes
+        self.history_len = history_len
+        self.buffer_size = buffer_size
+        self.weights_sync_period = weights_sync_period
+        self.episode_index = 0
 
-    def to_tensor(self, *args, **kwargs):
+        self.trajectory_buffer: EnvWrapper = None
+
+        # synchronization configuration
+        self.redis_server = redis_server
+        self.redis_prefix = redis_prefix or ""
+        self.episode_limit = episode_limit or _BIG_NUM
+        self.force_store = force_store
+
+        self.discrete_actions = discrete_actions
+        self._sampler_weight_mode = \
+            "critic" if self.discrete_actions else "actor"
+
+        # other
+        self._infer = mode == "infer"
+        self.seeds = seeds
+
+        # resume
+        if resume is not None:
+            self.load_checkpoint(resume=resume)
+
+    def _to_tensor(self, *args, **kwargs):
         return torch.Tensor(*args, **kwargs).to(self._device)
 
-    def load_network_weights(self):
-        if self.resume is not None:
-            checkpoint = UtilsFactory.load_checkpoint(self.resume)
-            weights = checkpoint[f"{self.network_type}_state_dict"]
+    def load_checkpoint(self, *, resume=None, redis_server=None):
+        if resume is not None:
+            checkpoint = UtilsFactory.load_checkpoint(resume)
+            weights = checkpoint[f"{self._sampler_weight_mode}_state_dict"]
             self.network.load_state_dict(weights)
-        elif self.redis_server is not None:
+        elif redis_server is not None:
             weights = deserialize(
-                self.redis_server.get(
-                    f"{self.redis_prefix}_{self.network_type}_weights"
+                redis_server.get(
+                    f"{self.redis_prefix}_{self._sampler_weight_mode}_weights"
                 )
             )
-            weights = {k: self.to_tensor(v) for k, v in weights.items()}
+            weights = {k: self._to_tensor(v) for k, v in weights.items()}
             self.network.load_state_dict(weights)
         else:
             raise NotImplementedError
         self.network.eval()
 
-    def store_episode(self):
+    def _store_trajectory(self):
         if self.redis_server is None:
             return
-        observations, actions, rewards, dones = \
-            self.buffer.get_complete_episode()
-        episode = [
-            observations.tolist(),
-            actions.tolist(),
-            rewards.tolist(),
-            dones.tolist()
-        ]
-        episode = serialize(episode)
-        self.redis_server.rpush("trajectories", episode)
+        trajectory = self.env_wrapper.get_trajectory(tolist=True)
+        trajectory = serialize(trajectory)
+        self.redis_server.rpush("trajectories", trajectory)
 
-    def act(self, state, exploration_strategy):
-        action = self.action_handler._act_fn(self.network, state)
-        if not self.infer:
-            action = exploration_strategy._explore(action)
-        return action
+    def _prepare_seed(self):
+        seed = self._seed + random.randrange(_SEED_RANGE)
+        set_global_seed(seed)
+        if self.seeds is None:
+            seed = random.randrange(_SEED_RANGE)
+        else:
+            seed = random.choice(self.seeds)
+        set_global_seed(seed)
+        return seed
+
+    def _prepare_exploration_strategy(self):
+        exploration_strategy = \
+            self.exploration_handler.get_exploration_strategy()
+        if isinstance(exploration_strategy, ParameterSpaceNoise) \
+                and self.episode_index > 1:
+            states = self.trajectory_buffer._get_states_history(
+                history_len=self.history_len
+            )
+            states = self._to_tensor(states).detach()
+            exploration_strategy.update_actor(self.network, states)
+        return exploration_strategy
+
+    def _log_to_console(self, *, episode_reward, num_steps, elapsed_time, seed):
+        print(
+            f"--- episode {self.episode_index:5d}:\t"
+            f"steps: {num_steps:5d}\t"
+            f"reward: {episode_reward:9.4f}\t"
+            f"time: {elapsed_time:5d}\t"
+            f"seed: {seed}"
+        )
+
+    def _log_to_tensorboard(self, *, episode_reward, num_steps, elapsed_time):
+        if self.logger is not None:
+            self.logger.add_scalar(
+                "episode/num_steps", num_steps, self.episode_index
+            )
+            self.logger.add_scalar(
+                "episode/reward", episode_reward, self.episode_index
+            )
+            self.logger.add_scalar(
+                "time/episode per minute", 60. / elapsed_time,
+                self.episode_index
+            )
+            self.logger.add_scalar(
+                "time/steps per second", num_steps / elapsed_time,
+                self.episode_index
+            )
+            self.logger.add_scalar(
+                "time/episode time (sec)", elapsed_time, self.episode_index
+            )
+            self.logger.add_scalar(
+                "time/step time (sec)", elapsed_time / num_steps,
+                self.episode_index
+            )
 
     def run(self):
-        self.episode_index = 1
-        self.load_network_weights()
-
-        states = None
+        self.episode_index = 0
 
         while True:
+            if self.episode_index % self.weights_sync_period == 0:
+                self.load_checkpoint(redis_server=self.redis_server)
 
-            seed = self._seed + random.randrange(SEED_RANGE)
-            set_global_seeds(seed)
-            if self.seeds is None:
-                seed = random.randrange(SEED_RANGE)
-            else:
-                seed = random.choice(self.seeds)
-            set_global_seeds(seed)
-
-            self.buffer = SamplerBuffer(
-                capacity=self.buffer_size,
-                observation_shape=self.env.observation_shape,
-                action_shape=self.env.action_shape,
-                discrete_actions=self.discrete_actions
+            seed = self._prepare_seed()
+            exploration_strategy = self._prepare_exploration_strategy()
+            self.env_wrapper = EnvWrapper(
+                env=self.env,
+                capacity=self.buffer_size
             )
-            self.buffer.init_with_observation(self.env.reset())
 
-            step_index = 0
-            episode_reward = 0
-            episode_reward_orig = 0
             start_time = time.time()
-            done = False
-
-            exploration_strategy = self.explorator.get_exploration_strategy()
-            if isinstance(exploration_strategy, ParameterSpaceNoise):
-                exploration_strategy._run(self.network, states)
-
-            while not done:
-                state = self.buffer.get_state(history_len=self.history_len)
-                action = self.act(state, exploration_strategy)
-
-                if self.action_clip is not None:
-                    action = np.clip(
-                        action,
-                        a_min=self.action_clip[0],
-                        a_max=self.action_clip[1]
-                    )
-
-                next_obs, reward, done, info = self.env.step(action)
-                episode_reward += reward
-                episode_reward_orig += info.get("reward_origin", 0)
-
-                transition = [next_obs, action, reward, done]
-                self.buffer.push_transition(transition)
-                step_index += 1
-
+            episode_info = self.env_wrapper.play_episode(
+                actor=self.network,
+                exploration_strategy=exploration_strategy)
             elapsed_time = time.time() - start_time
-            if not self.infer or self.force_store:
-                self.store_episode()
 
-            print(
-                f"--- episode {self.episode_index:5d}:\t"
-                f"steps: {step_index:5d}\t"
-                f"reward: {episode_reward:10.4f}/{episode_reward_orig:10.4f}\t"
-                f"seed: {seed}"
-            )
+            if not self._infer or self.force_store:
+                self._store_trajectory()
 
-            if self.logger is not None:
-                self.logger.add_scalar("steps", step_index, self.episode_index)
-                self.logger.add_scalar(
-                    "reward", episode_reward, self.episode_index
-                )
-                self.logger.add_scalar(
-                    "reward_origin", episode_reward_orig, self.episode_index
-                )
-                self.logger.add_scalar(
-                    "episode per minute", 1. / elapsed_time * 60,
-                    self.episode_index
-                )
-                self.logger.add_scalar(
-                    "steps per second", step_index / elapsed_time,
-                    self.episode_index
-                )
-                self.logger.add_scalar(
-                    "episode time (sec)", elapsed_time, self.episode_index
-                )
-                self.logger.add_scalar(
-                    "episode time (min)", elapsed_time / 60, self.episode_index
-                )
-                self.logger.add_scalar(
-                    "step time (sec)", elapsed_time / step_index,
-                    self.episode_index
-                )
+            self._log_to_console(
+                **episode_info,
+                elapsed_time=elapsed_time,
+                seed=seed)
+
+            self._log_to_tensorboard(
+                **episode_info,
+                elapsed_time=elapsed_time)
 
             self.episode_index += 1
-
             if self.episode_index >= self.episode_limit:
                 return
-
-            if self.episode_index % self.weights_sync_period == 0:
-                self.load_network_weights()
-
-                states = self.buffer.get_states_history(
-                    history_len=self.history_len
-                )
-                states = self.to_tensor(states).detach()

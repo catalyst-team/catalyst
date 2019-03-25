@@ -4,7 +4,7 @@ import argparse
 from pathlib import Path
 
 from catalyst.utils.config import parse_args_uargs
-from catalyst.utils.misc import set_global_seeds, boolean_flag
+from catalyst.utils.misc import set_global_seed, boolean_flag
 from catalyst.dl.scripts.utils import import_experiment_and_runner, dump_code
 
 
@@ -57,7 +57,7 @@ def parse_args():
 
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args, dump_config=True)
-    set_global_seeds(config.get("seed", 42))
+    set_global_seed(args.seed)
 
     Experiment, Runner = import_experiment_and_runner(Path(args.expdir))
 

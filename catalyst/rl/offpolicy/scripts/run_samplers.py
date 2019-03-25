@@ -4,30 +4,32 @@ import os
 import copy
 import atexit
 import argparse
-from pprint import pprint
 import multiprocessing as mp
 from redis import StrictRedis
 import torch
 
-from catalyst.dl.scripts.utils import prepare_modules
+from catalyst.dl.scripts.utils import import_module
 from catalyst.contrib.registry import Registry
 from catalyst.utils.config import parse_args_uargs, save_config
-from catalyst.utils.misc import set_global_seeds, boolean_flag
+from catalyst.utils.misc import set_global_seed, boolean_flag
 from catalyst.rl.offpolicy.sampler import Sampler
-from catalyst.rl.offpolicy.exploration import Explorator
+from catalyst.rl.offpolicy.exploration import ExplorationHandler
 
-set_global_seeds(42)
 os.environ["OMP_NUM_THREADS"] = "1"
 torch.set_num_threads(1)
 
 
 def build_args(parser):
-    parser.add_argument("--config", type=str, required=True)
+    parser.add_argument(
+        "-C",
+        "--config",
+        help="path to config/configs",
+        required=True
+    )
     parser.add_argument("--expdir", type=str, default=None)
-    parser.add_argument("--algorithm", type=str, default=None)
-    parser.add_argument("--environment", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--resume", type=str, default=None)
+    parser.add_argument("--seed", type=int, default=42)
 
     parser.add_argument(
         "--vis",
@@ -42,7 +44,7 @@ def build_args(parser):
         type=int,
         default=None)
 
-    boolean_flag(parser, "debug", default=False)
+    boolean_flag(parser, "check", default=False)
     boolean_flag(parser, "redis", default=True)
 
     return parser
@@ -57,15 +59,20 @@ def parse_args():
 
 def run_sampler(
     *,
+    config,
     logdir,
-    algorithm,
-    environment,
-    config, vis, infer,
+    algorithm_fn,
+    environment_fn,
+    vis,
+    infer,
+    seed=42,
     id=None,
     resume=None,
     redis=True
 ):
     config_ = copy.deepcopy(config)
+    id = id or 0
+    set_global_seed(seed + id)
 
     if not redis:
         redis_server = None
@@ -75,56 +82,35 @@ def run_sampler(
             port=config_.get("redis", {}).get("port", 12000))
         redis_prefix = config_.get("redis", {}).get("prefix", "")
 
-    id = id or 0
-    set_global_seeds(42 + id)
+    env = environment_fn(**config_["environment"])
+    config_["environment"] = \
+        env.update_environment_config(config_["environment"])
 
-    explorator = Explorator(config_)
-
-    env = environment(**config_["env"], visualize=vis)
-    # @TODO: remove this hack
-    config_["shared"]["observation_size"] = env.observation_shape[0]
-    config_["shared"]["action_size"] = env.action_shape[0]
-
-    algo_kwargs = algorithm.prepare_for_sampler(config_)
-
-    seeds = config_.get("seeds", None) \
-        if infer \
-        else config_.get("train_seeds", None)
-
-    pprint(config_["sampler"])
-    pprint(algo_kwargs)
+    algorithm_kwargs = algorithm_fn.prepare_for_sampler(config_)
 
     sampler = Sampler(
         **config_["sampler"],
-        **algo_kwargs,
-        explorator=explorator,
-        env=env,
-        logdir=logdir, id=id,
+        **algorithm_kwargs,
+        logdir=logdir,
         redis_server=redis_server,
         redis_prefix=redis_prefix,
+        env=env,
+        id=id,
         mode="infer" if infer else "train",
-        seeds=seeds,
-        resume=resume,
-        discrete_actions=config_["shared"]["discrete_actions"]
+        resume=resume
     )
-
-    pprint(sampler)
 
     sampler.run()
 
 
 def main(args, unknown_args):
-    args, config = parse_args_uargs(args, unknown_args)
+    args, config = parse_args_uargs(args, unknown_args, dump_config=True)
+    set_global_seed(args.seed)
 
-    os.makedirs(args.logdir, exist_ok=True)
-    save_config(config=config, logdir=args.logdir)
-    if args.expdir is not None:
-        modules = prepare_modules(  # noqa: F841
-            expdir=args.expdir,
-            dump_dir=args.logdir)
+    module = import_module(expdir=args.expdir)  # noqa: F841
 
-    algorithm = Registry.get_fn("algorithm", args.algorithm)
-    environment = Registry.get_fn("environment", args.environment)
+    algorithm_fn = Registry.get_fn("algorithm", args.algorithm)
+    environment_fn = Registry.get_fn("environment", args.environment)
 
     processes = []
     sampler_id = 0
@@ -136,15 +122,16 @@ def main(args, unknown_args):
     atexit.register(on_exit)
 
     params = dict(
+        seed=args.seed,
         logdir=args.logdir,
-        algorithm=algorithm,
-        environment=environment,
+        algorithm=algorithm_fn,
+        environment=environment_fn,
         config=config,
         resume=args.resume,
         redis=args.redis
     )
 
-    if args.debug:
+    if args.check:
         params_ = dict(
             vis=False,
             infer=False,
@@ -174,7 +161,7 @@ def main(args, unknown_args):
         processes.append(p)
         sampler_id += 1
 
-    for i in range(1, args.train + 1):
+    for i in range(1, args._train + 1):
         params_ = dict(
             vis=False,
             infer=False,

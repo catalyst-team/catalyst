@@ -3,27 +3,30 @@
 import os
 import atexit
 import argparse
-from pprint import pprint
 from redis import StrictRedis
 import torch
 
-from catalyst.dl.scripts.utils import prepare_modules
+from catalyst.dl.scripts.utils import import_module
 from catalyst.contrib.registry import Registry
-from catalyst.utils.config import parse_args_uargs, save_config
-from catalyst.utils.misc import set_global_seeds
+from catalyst.utils.config import parse_args_uargs
+from catalyst.utils.misc import set_global_seed
 from catalyst.rl.offpolicy.trainer import Trainer
 
-set_global_seeds(42)
 os.environ["OMP_NUM_THREADS"] = "1"
 torch.set_num_threads(1)
 
 
 def build_args(parser):
-    parser.add_argument("--config", type=str, required=True)
+    parser.add_argument(
+        "-C",
+        "--config",
+        help="path to config/configs",
+        required=True
+    )
     parser.add_argument("--expdir", type=str, default=None)
-    parser.add_argument("--algorithm", type=str, default=None)
-    parser.add_argument("--environment", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
+    parser.add_argument("--resume", type=str, default=None)
+    parser.add_argument("--seed", type=int, default=42)
 
     return parser
 
@@ -37,32 +40,30 @@ def parse_args():
 
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args, dump_config=True)
+    set_global_seed(args.seed)
 
-    os.makedirs(args.logdir, exist_ok=True)
-    save_config(config=config, logdir=args.logdir)
-    if args.expdir is not None:
-        modules = prepare_modules(  # noqa: F841
-            expdir=args.expdir,
-            dump_dir=args.logdir)
-
-    algorithm = Registry.get_fn("algorithm", args.algorithm)
-    algorithm_kwargs = algorithm.prepare_for_trainer(config)
+    module = import_module(expdir=args.expdir)  # noqa: F841
 
     redis_server = StrictRedis(port=config.get("redis", {}).get("port", 12000))
     redis_prefix = config.get("redis", {}).get("prefix", "")
 
-    pprint(config["trainer"])
-    pprint(algorithm_kwargs)
+    environment_fn = Registry.get_fn("environment", args.environment)
+    env = environment_fn(**config["environment"])
+    config["environment"] = \
+        env.update_environment_config(config["environment"])
+    del env
+
+    algorithm = Registry.get_fn("algorithm", args.algorithm)
+    algorithm_kwargs = algorithm.prepare_for_trainer(config)
 
     trainer = Trainer(
         **config["trainer"],
         **algorithm_kwargs,
-        discrete_actions=config["shared"]["discrete_actions"],
         logdir=args.logdir,
         redis_server=redis_server,
-        redis_prefix=redis_prefix)
-
-    pprint(trainer)
+        redis_prefix=redis_prefix,
+        resume=args.resume,
+    )
 
     def on_exit():
         for p in trainer.get_processes():

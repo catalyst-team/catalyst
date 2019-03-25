@@ -1,56 +1,35 @@
-shared:
-  history_len: 3
-  n_step: 1
-  gamma: 0.99
-
 args:
   logdir: ./logs/rl_gym  #  change me
-  algorithm: SAC
-  environment: GymWrapper
+  expdir: null
+
   vis: 0
   infer: 0  #  change me
   train: 1  #  change me
-  action_noise_prob: 0.5
-  param_noise_prob: 0.2
-  max_action_noise: 0.0001
-  max_param_noise: 0.0001
 
 redis:
   port: 12000
   prefix: gym
 
-env:
+environment:
+  environment: GymWrapper
   env_name: LunarLanderContinuous-v2
-  reward_scale: 0.01
+  history_len: 3
   frame_skip: 2
+  visualize: false
+  reward_scale: 0.01
   step_delay: 0.01
 
-actor:
-  agent: Actor
-  head_hiddens: [128, 128]
-  layer_fn: Linear
-  bias: false
-  norm_fn: LayerNorm
-  activation_fn: ReLU
-  out_activation: Tanh
-  policy_type: gauss
-
-critic:
-  agent: Critic
-  observation_hiddens: []
-  action_hiddens: []
-  head_hiddens: [128, 128, 1]
-  layer_fn: Linear
-  bias: false
-  norm_fn: LayerNorm
-  activation_fn: ReLU
-
 algorithm:
+  algorithm: SAC
+
+  n_step: 1
+  gamma: 0.99
+
   actor_tau: 0.01
   critic_tau: 0.01
   reward_scale: 200.0
-  min_action: &min_action -1.0
-  max_action: &max_action 1.0
+  min_action: &min_action -1.0  # @TODO: take from env
+  max_action: &max_action 1.0   # @TODO: take from env
   #critic_distribution: quantile
 
   actor_optimizer_params:
@@ -77,28 +56,54 @@ algorithm:
     criterion: HuberLoss
     clip_delta: 1.0
 
+agents:
+  actor:
+    agent: Actor
+    head_hiddens: [128, 128]
+    layer_fn: Linear
+    bias: false
+    norm_fn: LayerNorm
+    activation_fn: ReLU
+    out_activation: Tanh
+    policy_type: gauss
+
+  critic:
+    agent: ContinuousCritic
+    head_hiddens: [128, 128]
+    num_atoms: 1
+    layer_fn: Linear
+    bias: false
+    norm_fn: LayerNorm
+    activation_fn: ReLU
+
 trainer:
   batch_size: 256              # transitions
-
   num_workers: 1
-  replay_buffer_size: 1000000  # transitions
-
-  start_learning: 500          # transitions
   epoch_len: 1000               # batches
-  target_update_period: 1      # batches
-  save_period: 1               # epochs
+
+  replay_buffer_size: 1000000  # transitions
+  start_learning: 500          # transitions
+
+  save_period: 100             # epochs
   weights_sync_period: 1       # epochs
+  target_update_period: 1      # batches
 
 sampler:
   weights_sync_period: 1
-
   buffer_size: 1100
-  param_noise_steps: 1000
 
-  action_noise_t: 1
-  action_clip: [*min_action, *max_action]
+  valid_seeds: [1, 10, 1000, 10000, 42000]
 
-random_process:
-  random_process: GaussianWhiteNoiseProcess
+  exploration:
+    - strategy: GaussNoise
+      probability: 0.6
+      params:
+        sigma: 0.2
 
-seeds: [1, 10, 1000, 10000, 42000]
+    - strategy: ParameterSpaceNoise
+        probability: 0.3
+        params:
+          target_sigma: 0.2
+
+    - strategy: Greedy
+      probability: 0.1

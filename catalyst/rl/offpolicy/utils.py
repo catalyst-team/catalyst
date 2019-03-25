@@ -2,11 +2,13 @@ import numpy as np
 import multiprocessing as mp
 
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, Sampler
+from catalyst.rl.environments.gym_wrapper import GymWrapper
 
 
-class BufferDataset(Dataset):
+class ReplayBufferDataset(Dataset):
     def __init__(
         self,
         observation_shape,
@@ -132,7 +134,7 @@ class BufferDataset(Dataset):
         return self.len
 
 
-class BufferSampler(Sampler):
+class ReplayBufferSampler(Sampler):
     def __init__(self, buffer, epoch_len, batch_size):
         super().__init__(None)
         self.buffer = buffer
@@ -149,46 +151,37 @@ class BufferSampler(Sampler):
         return self.len
 
 
-class SamplerBuffer:
+class EnvWrapper:
     def __init__(
         self,
-        capacity,
-        observation_shape,
-        action_shape=(1, ),
-        discrete_actions=False,
-        byte_observations=False
+        env: GymWrapper,
+        capacity
     ):
-        self.size = capacity
-        self.observation_shape = observation_shape
-        self.action_shape = action_shape
-        self.obs_dtype = np.unit8 if byte_observations else np.float32
-        self.act_dtype = np.int if discrete_actions else np.float32
+        self.env = env
+        self.capacity = capacity
+
+        self._init_buffers()
+
+    def _init_buffers(self):
         self.pointer = 0
         self.observations = np.empty(
-            (self.size, ) + tuple(self.observation_shape), dtype=self.obs_dtype
+            (self.capacity,) + tuple(self.env.observation_space.shape),
+            dtype=self.env.observation_space.dtype
         )
         self.actions = np.empty(
-            (self.size, ) + tuple(self.action_shape), dtype=self.act_dtype
+            (self.capacity,) + tuple(self.env.action_space.shape),
+            dtype=self.env.action_space.dtype
         )
-        self.rewards = np.empty((self.size, ), dtype=np.float32)
-        self.dones = np.empty((self.size, ), dtype=np.bool)
+        self.rewards = np.empty((self.capacity,), dtype=np.float32)
+        self.dones = np.empty((self.capacity,), dtype=np.bool)
 
-    def init_with_observation(self, observation):
+    def _init_with_observation(self, observation):
         self.observations[0] = observation
         self.pointer = 0
 
-    def get_state(self, history_len=1, pointer=None):
-        pointer = pointer or self.pointer
-        state = np.zeros(
-            (history_len, ) + self.observation_shape,
-            dtype=self.obs_dtype
-        )
-        indices = np.arange(max(0, pointer - history_len + 1), pointer + 1)
-        state[-len(indices):] = self.observations[indices]
-        return state
-
-    def push_transition(self, transition):
-        """ transition = [s_tp1, a_t, r_t, d_t]
+    def _put_transition(self, transition):
+        """
+        transition = [s_tp1, a_t, r_t, d_t]
         """
         s_tp1, a_t, r_t, d_t = transition
         self.observations[self.pointer + 1] = s_tp1
@@ -197,21 +190,69 @@ class SamplerBuffer:
         self.dones[self.pointer] = d_t
         self.pointer += 1
 
-    def get_complete_episode(self):
-        indices = np.arange(self.pointer)
-        observations = self.observations[indices]
-        actions = self.actions[indices]
-        rewards = self.rewards[indices]
-        dones = self.dones[indices]
-        return observations, actions, rewards, dones
-
-    def get_states_history(self, history_len=1):
+    def _get_states_history(self, history_len=1):
         states = [
             self.get_state(history_len=history_len, pointer=i)
             for i in range(self.pointer)
         ]
         states = np.array(states)
         return states
+
+    def get_state(self, pointer=None, history_len=None):
+        pointer = pointer if pointer is not None else self.pointer
+        history_len = history_len or self.env._history_len
+
+        state = np.zeros(
+            (history_len, ) + self.env.observation_space.shape,
+            dtype=self.env.observation_space.dtype
+        )
+
+        indices = np.arange(max(0, pointer - history_len + 1), pointer + 1)
+        state[-len(indices):] = self.observations[indices]
+        return state
+
+    def get_trajectory(self, tolist=False):
+        indices = np.arange(self.pointer)
+        observations = self.observations[indices]
+        actions = self.actions[indices]
+        rewards = self.rewards[indices]
+        dones = self.dones[indices]
+        if not tolist:
+            trajectory = (observations, actions, rewards, dones)
+        else:
+            trajectory = (
+                observations.tolist(),
+                actions.tolist(),
+                rewards.tolist(),
+                dones.tolist()
+            )
+        return trajectory
+
+    def reset(self):
+        self._init_buffers()
+        self._init_with_observation(self.env.reset())
+
+    def play_episode(self, actor, exploration_strategy):
+        episode_reward, num_steps, done = 0, 0, False
+        action_handler = ActionHandler(env, actor)
+
+        while not done:
+            state = self.get_state()
+            action = action_handler.act(state, exploration_strategy)
+
+            next_observation, reward, done, info = self.env.step(action)
+            episode_reward += reward
+
+            transition = [next_observation, action, reward, done]
+            self._put_transition(transition)
+            num_steps += 1
+
+        results = {
+            "episode_reward": episode_reward,
+            "num_steps": num_steps
+        }
+
+        return results
 
 
 class ActionHandler:
@@ -222,10 +263,12 @@ class ActionHandler:
         deterministic=False,
         critic_distribution=None,
         n_atoms=1,
-        values_range=(-10., 10.)
+        values_range=(-10., 10.),
+        action_clip=None
     ):
         self._device = device
         self.deterministic = deterministic
+        self.action_clip = action_clip
 
         if discrete_actions:
             if critic_distribution == "categorical":
@@ -271,3 +314,18 @@ class ActionHandler:
             q_values = torch.mean(critic(states)[0], dim=-1)
             action = np.argmax(q_values.detach().cpu().numpy())
             return action
+
+    def act(self, network, state, exploration_strategy=None):
+        action = self._act_fn(network, state)
+
+        if exploration_strategy is not None:
+            action = exploration_strategy.update_action(action)
+
+        if self.action_clip is not None:
+            action = np.clip(
+                action,
+                a_min=self.action_clip[0],
+                a_max=self.action_clip[1]
+            )
+
+        return action
