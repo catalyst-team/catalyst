@@ -7,6 +7,8 @@ from catalyst.rl.agents.utils import log1p_exp, get_out_features, \
     normal_sample, normal_log_prob
 
 # log_sigma of Gaussian policy are capped at (LOG_SIG_MIN, LOG_SIG_MAX)
+from catalyst.rl.registry import MODULES
+
 LOG_SIG_MAX = 2
 LOG_SIG_MIN = -10
 
@@ -255,9 +257,8 @@ class SquashingLayer(nn.Module):
         """ Layer that squashes samples from some distribution to be bounded.
         """
         super().__init__()
-        # hack to prevent cycle imports
-        from catalyst.contrib.registry import Registry
-        self.squashing_fn = Registry.name2nn(squashing_fn)()
+
+        self.squashing_fn = MODULES.get(squashing_fn)()
 
     def forward(self, action, log_pi):
         # compute log det jacobian of squashing transformation
@@ -307,9 +308,7 @@ class RealNVPPolicy(nn.Module):
         bias=False
     ):
         super().__init__()
-        # hack to prevent cycle imports
-        from catalyst.contrib.registry import Registry
-        activation_fn = Registry.name2nn(activation_fn)
+        activation_fn = MODULES.get(activation_fn)
         self.action_size = action_size
 
         self.coupling1 = CouplingLayer(
@@ -369,12 +368,10 @@ class CouplingLayer(nn.Module):
         is being copied and which is being transformed.
         """
         super().__init__()
-        # hack to prevent cycle imports
-        from catalyst.contrib.registry import Registry
 
-        layer_fn = Registry.name2nn(layer_fn)
-        activation_fn = Registry.name2nn(activation_fn)
-        norm_fn = Registry.name2nn(norm_fn)
+        layer_fn = MODULES.get(layer_fn)
+        activation_fn = MODULES.get(activation_fn)
+        norm_fn = MODULES.get(norm_fn)
 
         self.parity = parity
         if self.parity == "odd":

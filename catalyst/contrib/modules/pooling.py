@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from catalyst.contrib.registry import MODULES
+
 
 class GlobalAvgPool2d(nn.Module):
     def __init__(self):
@@ -46,9 +48,8 @@ class GlobalConcatPool2d(nn.Module):
 class GlobalAttnPool2d(nn.Module):
     def __init__(self, in_features, activation_fn="Tanh"):
         super().__init__()
-        # hack to prevent cycle imports
-        from catalyst.contrib.registry import Registry
-        activation_fn = Registry.name2nn(activation_fn)
+
+        activation_fn = MODULES.get(activation_fn)
         self.attn = nn.Sequential(
             nn.Conv2d(
                 in_features, 1, kernel_size=1, stride=1, padding=0, bias=False

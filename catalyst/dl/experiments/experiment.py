@@ -1,17 +1,19 @@
-from abc import abstractmethod, ABC
-from typing import Iterable, Any, Mapping, Dict, List
 from collections import OrderedDict
 
 import torch
+from abc import abstractmethod, ABC
 from torch import nn, optim
 from torch.utils.data import DataLoader, Dataset  # noqa F401
+from typing import Iterable, Any, Mapping, Dict, List
 
-from catalyst.contrib.registry import Registry
+from catalyst.dl.registry import \
+    MODELS, CRITERIONS, OPTIMIZERS, SCHEDULERS, CALLBACKS
+from catalyst.dl import utils
 from catalyst.dl.callbacks import Callback  # noqa F401
-from catalyst.dl.callbacks import LossCallback, OptimizerCallback, \
-    SchedulerCallback, CheckpointCallback
-from catalyst.dl.utils import UtilsFactory
+from catalyst.dl.callbacks import \
+    LossCallback, OptimizerCallback, SchedulerCallback, CheckpointCallback
 from catalyst.dl.fp16 import Fp16Wrap
+from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.misc import merge_dicts
 
 _Model = nn.Module
@@ -179,8 +181,9 @@ class SupervisedExperiment(BaseExperiment):
             ]
 
             for key, value in default_callbacks:
-                if key is not None \
-                        and not any(isinstance(x, value) for x in callbacks):
+                is_already_present = any(
+                    isinstance(x, value) for x in callbacks)
+                if key is not None and not is_already_present:
                     callbacks.append(value())
         return callbacks
 
@@ -243,30 +246,47 @@ class ConfigExperiment(Experiment):
         return model
 
     def get_model(self, stage: str) -> _Model:
-        model = Registry.get_model(**self._config["model_params"])
+        config = self._config["model_params"]
+        fp16 = config.pop("fp16", False)
+
+        model = MODELS.get_from_params(**config)
+
+        if fp16:
+            utils.assert_fp16_available()
+            model = Fp16Wrap(model)
+
         model = self._preprocess_model_for_stage(stage, model)
         model = self._postprocess_model_for_stage(stage, model)
         return model
 
     def get_criterion(self, stage: str) -> _Criterion:
-        criterion_params = (
-            self.stages_config[stage].get("criterion_params", {}))
-        criterion = Registry.get_criterion(**criterion_params)
+        criterion_params = \
+            self.stages_config[stage].get("criterion_params", {})
+
+        criterion = CRITERIONS.get_from_params(**criterion_params)
+
+        if torch.cuda.is_available():
+            criterion = criterion.cuda()
         return criterion
 
-    def get_optimizer(self, stage: str, model) -> _Optimizer:
+    def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
         fp16 = isinstance(model, Fp16Wrap)
-        optimizer_params = (
-            self.stages_config[stage].get("optimizer_params", {}))
-        optimizer = Registry.get_optimizer(
-            model, **optimizer_params, fp16=fp16
+        params = utils.prepare_optimizable_params(model.parameters(), fp16)
+
+        optimizer_params = \
+            self.stages_config[stage].get("optimizer_params", {})
+
+        optimizer = OPTIMIZERS.get_from_params(
+            **optimizer_params,
+            params=params
         )
         return optimizer
 
     def get_scheduler(self, stage: str, optimizer) -> _Scheduler:
-        scheduler_params = (
-            self.stages_config[stage].get("scheduler_params", {}))
-        scheduler = Registry.get_scheduler(optimizer, **scheduler_params)
+        config = \
+            self.stages_config[stage].get("scheduler_params", {})
+
+        scheduler = SCHEDULERS.get_from_params(**config, optimizer=optimizer)
         return scheduler
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
@@ -307,8 +327,8 @@ class ConfigExperiment(Experiment):
             self.stages_config[stage].get("callbacks_params", {}))
 
         callbacks = []
-        for key, value in callbacks_params.items():
-            callback = Registry.get_callback(**value)
+        for key, config in callbacks_params.items():
+            callback = CALLBACKS.get_from_params(**config)
             callbacks.append(callback)
 
         return callbacks

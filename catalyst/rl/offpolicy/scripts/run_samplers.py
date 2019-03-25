@@ -10,7 +10,7 @@ from redis import StrictRedis
 import torch
 
 from catalyst.dl.scripts.utils import prepare_modules
-from catalyst.contrib.registry import Registry
+from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS
 from catalyst.utils.config import parse_args_uargs, save_config
 from catalyst.utils.misc import set_global_seeds, boolean_flag
 from catalyst.rl.offpolicy.sampler import Sampler
@@ -106,7 +106,7 @@ def run_sampler(
 
     if "randomized_start" in config_["env"]:
         config_["env"]["randomized_start"] = (
-                config_["env"]["randomized_start"] and not infer)
+            config_["env"]["randomized_start"] and not infer)
     env = environment(**config_["env"], visualize=vis)
     # @TODO: remove this hack
     config_["shared"]["observation_size"] = env.observation_shape[0]
@@ -168,8 +168,8 @@ def main(args, unknown_args):
             expdir=args.expdir,
             dump_dir=args.logdir)
 
-    algorithm = Registry.get_fn("algorithm", args.algorithm)
-    environment = Registry.get_fn("environment", args.environment)
+    algorithm = ALGORITHMS.get(args.algorithm)
+    environment = ENVIRONMENTS.get(args.environment)
 
     processes = []
     sampler_id = 0

@@ -1,17 +1,17 @@
 #!/usr/bin/env python
-
-import os
 import atexit
+
 import argparse
+import os
+import torch
 from pprint import pprint
 from redis import StrictRedis
-import torch
 
 from catalyst.dl.scripts.utils import prepare_modules
-from catalyst.contrib.registry import Registry
+from catalyst.rl.offpolicy.trainer import Trainer
+from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS
 from catalyst.utils.config import parse_args_uargs, save_config
 from catalyst.utils.misc import set_global_seeds
-from catalyst.rl.offpolicy.trainer import Trainer
 
 set_global_seeds(42)
 os.environ["OMP_NUM_THREADS"] = "1"
@@ -45,11 +45,11 @@ def main(args, unknown_args):
             expdir=args.expdir,
             dump_dir=args.logdir)
 
-    algorithm = Registry.get_fn("algorithm", args.algorithm)
+    algorithm = ALGORITHMS.get(args.algorithm)
     if args.environment is not None:
         # @TODO: remove this hack
         # come on, just refactor whole rl
-        environment_fn = Registry.get_fn("environment", args.environment)
+        environment_fn = ENVIRONMENTS.get(args.environment)
         env = environment_fn(**config["env"])
         config["shared"]["observation_size"] = env.observation_shape[0]
         config["shared"]["action_size"] = env.action_shape[0]

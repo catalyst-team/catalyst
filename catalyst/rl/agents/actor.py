@@ -6,6 +6,7 @@ from catalyst.dl.initialization import create_optimal_inner_init, outer_init
 from catalyst.rl.agents.layers import StateNet, \
     GaussPolicy, RealNVPPolicy, \
     LamaPooling
+from catalyst.rl.registry import MODULES
 
 
 class Actor(StateNet):
@@ -35,20 +36,18 @@ class Actor(StateNet):
         **kwargs
     ):
         assert len(kwargs) == 0
-        # hack to prevent cycle imports
-        from catalyst.contrib.registry import Registry
 
         observation_hiddens = observation_hiddens or []
         head_hiddens = head_hiddens or []
 
-        layer_fn = Registry.name2nn(layer_fn)
-        activation_fn = Registry.name2nn(activation_fn)
-        norm_fn = Registry.name2nn(norm_fn)
-        out_activation = Registry.name2nn(out_activation)
+        layer_fn = MODULES.get(layer_fn)
+        activation_fn = MODULES.get(activation_fn)
+        norm_fn = MODULES.get(norm_fn)
+        out_activation = MODULES.get(out_activation)
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
 
         if isinstance(state_shape, int):
-            state_shape = (state_shape, )
+            state_shape = (state_shape,)
 
         if len(state_shape) in [1, 2]:
             # linear case: one observation or several one

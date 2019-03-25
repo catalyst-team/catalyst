@@ -1,6 +1,9 @@
 import torch.nn as nn
 import torchvision
 
+from catalyst.contrib.modules import Flatten
+from catalyst.contrib.registry import MODULES
+
 
 class ResnetEncoder(nn.Module):
     def __init__(
@@ -13,8 +16,6 @@ class ResnetEncoder(nn.Module):
         cut_layers=2
     ):
         super().__init__()
-        # hack to prevent cycle imports
-        from catalyst.contrib.registry import Registry
 
         resnet = torchvision.models.__dict__[arch](pretrained=pretrained)
         modules = list(resnet.children())[:-cut_layers]  # delete last layers
@@ -26,7 +27,7 @@ class ResnetEncoder(nn.Module):
 
         if pooling is not None:
             pooling_kwargs = pooling_kwargs or {}
-            pooling_layer_fn = Registry.name2nn(pooling)
+            pooling_layer_fn = MODULES.get(pooling)
             pooling_layer = pooling_layer_fn(
                 in_features=resnet.fc.in_features, **pooling_kwargs) \
                 if "attn" in pooling.lower() \
@@ -39,8 +40,7 @@ class ResnetEncoder(nn.Module):
         else:
             out_features = resnet.fc.in_features
 
-        flatten = Registry.name2nn("Flatten")
-        modules += [flatten()]
+        modules += [Flatten()]
         self.out_features = out_features
 
         self.encoder = nn.Sequential(*modules)

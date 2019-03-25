@@ -1,7 +1,16 @@
+from collections import OrderedDict
+
 import torch
 import torch.nn as nn
-from collections import OrderedDict
+
+from catalyst.contrib.registry import MODULES
 from catalyst.utils.misc import pairwise
+
+
+def _class_or_name(obj):
+    if obj is not None and type(obj) is str:
+        return MODULES.get(obj)
+    return obj
 
 
 class ResidualWrapper(nn.Module):
@@ -26,13 +35,11 @@ class SequentialNet(nn.Module):
         residual=False
     ):
         super().__init__()
-        # hack to prevent cycle imports
-        from catalyst.contrib.registry import Registry
 
-        layer_fn = Registry.name2nn(layer_fn)
-        activation_fn = Registry.name2nn(activation_fn)
-        norm_fn = Registry.name2nn(norm_fn)
-        dropout = Registry.name2nn(dropout)
+        layer_fn = _class_or_name(layer_fn)
+        activation_fn = _class_or_name(activation_fn)
+        norm_fn = _class_or_name(norm_fn)
+        dropout = _class_or_name(dropout)
 
         layer_order = layer_order or ["layer", "norm", "drop", "act"]
 
