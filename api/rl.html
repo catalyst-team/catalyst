@@ -1,0 +1,828 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>RL &mdash; Catalyst 19.03-rc0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../',
+              VERSION:'19.03-rc0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contrib" href="contrib.html" />
+    <link rel="prev" title="DL" href="dl.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Catalyst
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                19.03
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../info/contributing.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../info/license.html">License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="dl.html">DL</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">RL</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.rl.random_process">Random process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#agents">Agents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-catalyst.rl.agents.layers">Layers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-catalyst.rl.agents.utils">Utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#offpolicy">Offpolicy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-catalyst.rl.offpolicy.trainer">Trainer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-catalyst.rl.offpolicy.sampler">Sampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-catalyst.rl.offpolicy.algorithms">Algorithms</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Catalyst</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>RL</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/api/rl.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-catalyst.rl">
+<span id="rl"></span><h1>RL<a class="headerlink" href="#module-catalyst.rl" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-catalyst.rl.random_process">
+<span id="random-process"></span><h2>Random process<a class="headerlink" href="#module-catalyst.rl.random_process" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.rl.random_process.AnnealedGaussianProcess">
+<em class="property">class </em><code class="descclassname">catalyst.rl.random_process.</code><code class="descname">AnnealedGaussianProcess</code><span class="sig-paren">(</span><em>mu</em>, <em>sigma</em>, <em>sigma_min</em>, <em>n_steps_annealing</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/random_process.html#AnnealedGaussianProcess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.random_process.AnnealedGaussianProcess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.rl.random_process.RandomProcess" title="catalyst.rl.random_process.RandomProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.rl.random_process.RandomProcess</span></code></a></p>
+<dl class="attribute">
+<dt id="catalyst.rl.random_process.AnnealedGaussianProcess.current_sigma">
+<code class="descname">current_sigma</code><a class="headerlink" href="#catalyst.rl.random_process.AnnealedGaussianProcess.current_sigma" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.rl.random_process.GaussianWhiteNoiseProcess">
+<em class="property">class </em><code class="descclassname">catalyst.rl.random_process.</code><code class="descname">GaussianWhiteNoiseProcess</code><span class="sig-paren">(</span><em>mu=0.0</em>, <em>sigma=1.0</em>, <em>sigma_min=None</em>, <em>n_steps_annealing=1000</em>, <em>size=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/random_process.html#GaussianWhiteNoiseProcess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.random_process.GaussianWhiteNoiseProcess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.rl.random_process.AnnealedGaussianProcess" title="catalyst.rl.random_process.AnnealedGaussianProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.rl.random_process.AnnealedGaussianProcess</span></code></a></p>
+<dl class="method">
+<dt id="catalyst.rl.random_process.GaussianWhiteNoiseProcess.sample">
+<code class="descname">sample</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/random_process.html#GaussianWhiteNoiseProcess.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.random_process.GaussianWhiteNoiseProcess.sample" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.rl.random_process.OrnsteinUhlenbeckProcess">
+<em class="property">class </em><code class="descclassname">catalyst.rl.random_process.</code><code class="descname">OrnsteinUhlenbeckProcess</code><span class="sig-paren">(</span><em>theta</em>, <em>mu=0.0</em>, <em>sigma=1.0</em>, <em>dt=0.01</em>, <em>x0=None</em>, <em>size=1</em>, <em>sigma_min=None</em>, <em>n_steps_annealing=1000</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/random_process.html#OrnsteinUhlenbeckProcess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.random_process.OrnsteinUhlenbeckProcess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.rl.random_process.AnnealedGaussianProcess" title="catalyst.rl.random_process.AnnealedGaussianProcess"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.rl.random_process.AnnealedGaussianProcess</span></code></a></p>
+<dl class="method">
+<dt id="catalyst.rl.random_process.OrnsteinUhlenbeckProcess.reset_states">
+<code class="descname">reset_states</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/random_process.html#OrnsteinUhlenbeckProcess.reset_states"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.random_process.OrnsteinUhlenbeckProcess.reset_states" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.random_process.OrnsteinUhlenbeckProcess.sample">
+<code class="descname">sample</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/random_process.html#OrnsteinUhlenbeckProcess.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.random_process.OrnsteinUhlenbeckProcess.sample" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.rl.random_process.RandomProcess">
+<em class="property">class </em><code class="descclassname">catalyst.rl.random_process.</code><code class="descname">RandomProcess</code><span class="sig-paren">(</span><em>sigma=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/random_process.html#RandomProcess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.random_process.RandomProcess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="catalyst.rl.random_process.RandomProcess.current_sigma">
+<code class="descname">current_sigma</code><a class="headerlink" href="#catalyst.rl.random_process.RandomProcess.current_sigma" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.random_process.RandomProcess.reset_states">
+<code class="descname">reset_states</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/random_process.html#RandomProcess.reset_states"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.random_process.RandomProcess.reset_states" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.random_process.RandomProcess.sample">
+<code class="descname">sample</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/random_process.html#RandomProcess.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.random_process.RandomProcess.sample" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="agents">
+<h2>Agents<a class="headerlink" href="#agents" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.rl.agents.Actor">
+<em class="property">class </em><code class="descclassname">catalyst.rl.agents.</code><code class="descname">Actor</code><span class="sig-paren">(</span><em>main_net</em>, <em>head_net</em>, <em>observation_net=None</em>, <em>aggregation_net=None</em>, <em>policy_net=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/actor.html#Actor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.Actor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Actor which learns deterministic policy.</p>
+<dl class="classmethod">
+<dt id="catalyst.rl.agents.Actor.create_from_params">
+<em class="property">classmethod </em><code class="descname">create_from_params</code><span class="sig-paren">(</span><em>state_shape</em>, <em>action_size</em>, <em>observation_hiddens=None</em>, <em>head_hiddens=None</em>, <em>layer_fn=&lt;class 'torch.nn.modules.linear.Linear'&gt;</em>, <em>activation_fn=&lt;class 'torch.nn.modules.activation.ReLU'&gt;</em>, <em>dropout=None</em>, <em>norm_fn=None</em>, <em>bias=True</em>, <em>layer_order=None</em>, <em>residual=False</em>, <em>out_activation=None</em>, <em>observation_aggregation=None</em>, <em>lama_poolings=None</em>, <em>policy_type=None</em>, <em>squashing_fn=&lt;class 'torch.nn.modules.activation.Tanh'&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/actor.html#Actor.create_from_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.Actor.create_from_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.rl.agents.Critic">
+<em class="property">class </em><code class="descclassname">catalyst.rl.agents.</code><code class="descname">Critic</code><span class="sig-paren">(</span><em>main_net</em>, <em>head_net</em>, <em>observation_net=None</em>, <em>action_net=None</em>, <em>aggregation_net=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/critic.html#Critic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.Critic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Critic which learns state-action value function Q(s,a).</p>
+<dl class="classmethod">
+<dt id="catalyst.rl.agents.Critic.create_from_params">
+<em class="property">classmethod </em><code class="descname">create_from_params</code><span class="sig-paren">(</span><em>state_shape</em>, <em>action_size</em>, <em>observation_hiddens=None</em>, <em>action_hiddens=None</em>, <em>head_hiddens=None</em>, <em>layer_fn=&lt;class 'torch.nn.modules.linear.Linear'&gt;</em>, <em>activation_fn=&lt;class 'torch.nn.modules.activation.ReLU'&gt;</em>, <em>dropout=None</em>, <em>norm_fn=None</em>, <em>bias=True</em>, <em>layer_order=None</em>, <em>residual=False</em>, <em>out_activation=None</em>, <em>observation_aggregation=None</em>, <em>lama_poolings=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/critic.html#Critic.create_from_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.Critic.create_from_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.rl.agents.ValueCritic">
+<em class="property">class </em><code class="descclassname">catalyst.rl.agents.</code><code class="descname">ValueCritic</code><span class="sig-paren">(</span><em>main_net</em>, <em>head_net</em>, <em>observation_net=None</em>, <em>aggregation_net=None</em>, <em>policy_net=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/critic.html#ValueCritic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.ValueCritic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Critic which learns value function V(s).</p>
+<dl class="method">
+<dt id="catalyst.rl.agents.ValueCritic.create_from_params">
+<code class="descname">create_from_params</code><span class="sig-paren">(</span><em>state_shape</em>, <em>observation_hiddens=None</em>, <em>head_hiddens=None</em>, <em>layer_fn=&lt;class 'torch.nn.modules.linear.Linear'&gt;</em>, <em>activation_fn=&lt;class 'torch.nn.modules.activation.ReLU'&gt;</em>, <em>dropout=None</em>, <em>norm_fn=None</em>, <em>bias=True</em>, <em>layer_order=None</em>, <em>residual=False</em>, <em>out_activation=None</em>, <em>observation_aggregation=None</em>, <em>lama_poolings=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/critic.html#ValueCritic.create_from_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.ValueCritic.create_from_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="section" id="module-catalyst.rl.agents.layers">
+<span id="layers"></span><h3>Layers<a class="headerlink" href="#module-catalyst.rl.agents.layers" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.rl.agents.layers.CouplingLayer">
+<em class="property">class </em><code class="descclassname">catalyst.rl.agents.layers.</code><code class="descname">CouplingLayer</code><span class="sig-paren">(</span><em>action_size</em>, <em>layer_fn</em>, <em>activation_fn=&lt;class 'torch.nn.modules.activation.ReLU'&gt;</em>, <em>bias=True</em>, <em>parity='odd'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/layers.html#CouplingLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.layers.CouplingLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="method">
+<dt id="catalyst.rl.agents.layers.CouplingLayer.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>action_size</em>, <em>layer_fn</em>, <em>activation_fn=&lt;class 'torch.nn.modules.activation.ReLU'&gt;</em>, <em>bias=True</em>, <em>parity='odd'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/layers.html#CouplingLayer.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.layers.CouplingLayer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conditional affine coupling layer used in Real NVP Bijector.
+Original paper: <a class="reference external" href="https://arxiv.org/abs/1605.08803">https://arxiv.org/abs/1605.08803</a>
+Adaptation to RL: <a class="reference external" href="https://arxiv.org/abs/1804.02808">https://arxiv.org/abs/1804.02808</a>
+Important notes
+—————
+1. State embeddings are supposed to have size (action_size * 2).
+2. Scale and translation networks used in the Real NVP Bijector
+both have one hidden layer of (action_size) (activation_fn) units.
+3. Parity (“odd” or “even”) determines which part of the input
+is being copied and which is being transformed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.agents.layers.CouplingLayer.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>action</em>, <em>state_embedding</em>, <em>log_pi</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/layers.html#CouplingLayer.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.layers.CouplingLayer.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.rl.agents.layers.GaussPolicy">
+<em class="property">class </em><code class="descclassname">catalyst.rl.agents.layers.</code><code class="descname">GaussPolicy</code><span class="sig-paren">(</span><em>squashing_fn=&lt;class 'torch.nn.modules.activation.Tanh'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/layers.html#GaussPolicy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.layers.GaussPolicy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="method">
+<dt id="catalyst.rl.agents.layers.GaussPolicy.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>inputs</em>, <em>with_log_pi=True</em>, <em>deterministic=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/layers.html#GaussPolicy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.layers.GaussPolicy.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.rl.agents.layers.LamaPooling">
+<em class="property">class </em><code class="descclassname">catalyst.rl.agents.layers.</code><code class="descname">LamaPooling</code><span class="sig-paren">(</span><em>features_in</em>, <em>poolings=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/layers.html#LamaPooling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.layers.LamaPooling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="attribute">
+<dt id="catalyst.rl.agents.layers.LamaPooling.available_poolings">
+<code class="descname">available_poolings</code><em class="property"> = ['last', 'avg_all', 'avg', 'max_all', 'max', 'softmax_all', 'softmax', 'tanh_all', 'tanh', 'sigmoid_all', 'sigmoid']</em><a class="headerlink" href="#catalyst.rl.agents.layers.LamaPooling.available_poolings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.agents.layers.LamaPooling.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>features</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/layers.html#LamaPooling.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.layers.LamaPooling.forward" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>features</strong> – [batch_size, history_len, feature_size]</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.rl.agents.layers.RealNVPPolicy">
+<em class="property">class </em><code class="descclassname">catalyst.rl.agents.layers.</code><code class="descname">RealNVPPolicy</code><span class="sig-paren">(</span><em>action_size</em>, <em>layer_fn</em>, <em>activation_fn=&lt;class 'torch.nn.modules.activation.ReLU'&gt;</em>, <em>squashing_fn=&lt;class 'torch.nn.modules.activation.Tanh'&gt;</em>, <em>norm_fn=None</em>, <em>bias=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/layers.html#RealNVPPolicy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.layers.RealNVPPolicy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="method">
+<dt id="catalyst.rl.agents.layers.RealNVPPolicy.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>inputs</em>, <em>with_log_pi=True</em>, <em>deterministic=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/layers.html#RealNVPPolicy.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.layers.RealNVPPolicy.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.rl.agents.layers.SquashingLayer">
+<em class="property">class </em><code class="descclassname">catalyst.rl.agents.layers.</code><code class="descname">SquashingLayer</code><span class="sig-paren">(</span><em>squashing_fn=&lt;class 'torch.nn.modules.activation.Tanh'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/layers.html#SquashingLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.layers.SquashingLayer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="method">
+<dt id="catalyst.rl.agents.layers.SquashingLayer.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>squashing_fn=&lt;class 'torch.nn.modules.activation.Tanh'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/layers.html#SquashingLayer.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.layers.SquashingLayer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Layer that squashes samples from some distribution to be bounded.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.agents.layers.SquashingLayer.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>action</em>, <em>log_pi</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/layers.html#SquashingLayer.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.layers.SquashingLayer.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.rl.agents.layers.StateActionNet">
+<em class="property">class </em><code class="descclassname">catalyst.rl.agents.layers.</code><code class="descname">StateActionNet</code><span class="sig-paren">(</span><em>main_net</em>, <em>head_net</em>, <em>observation_net=None</em>, <em>action_net=None</em>, <em>aggregation_net=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/layers.html#StateActionNet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.layers.StateActionNet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="method">
+<dt id="catalyst.rl.agents.layers.StateActionNet.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/layers.html#StateActionNet.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.layers.StateActionNet.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.rl.agents.layers.StateNet">
+<em class="property">class </em><code class="descclassname">catalyst.rl.agents.layers.</code><code class="descname">StateNet</code><span class="sig-paren">(</span><em>main_net</em>, <em>head_net</em>, <em>observation_net=None</em>, <em>aggregation_net=None</em>, <em>policy_net=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/layers.html#StateNet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.layers.StateNet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="method">
+<dt id="catalyst.rl.agents.layers.StateNet.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>*args</em>, <em>with_log_pi=False</em>, <em>deterministic=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/layers.html#StateNet.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.layers.StateNet.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.rl.agents.layers.TemporalAttentionPooling">
+<em class="property">class </em><code class="descclassname">catalyst.rl.agents.layers.</code><code class="descname">TemporalAttentionPooling</code><span class="sig-paren">(</span><em>features_in</em>, <em>pooling=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/layers.html#TemporalAttentionPooling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.layers.TemporalAttentionPooling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="method">
+<dt id="catalyst.rl.agents.layers.TemporalAttentionPooling.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>features</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/layers.html#TemporalAttentionPooling.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.layers.TemporalAttentionPooling.forward" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>features</strong> – [batch_size, history_len, feature_size]</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.rl.agents.layers.TemporalAttentionPooling.name2fn">
+<code class="descname">name2fn</code><em class="property"> = {'sigmoid': Sigmoid(), 'softmax': Softmax(), 'tanh': Tanh()}</em><a class="headerlink" href="#catalyst.rl.agents.layers.TemporalAttentionPooling.name2fn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.rl.agents.utils">
+<span id="utils"></span><h3>Utils<a class="headerlink" href="#module-catalyst.rl.agents.utils" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="catalyst.rl.agents.utils.get_out_features">
+<code class="descclassname">catalyst.rl.agents.utils.</code><code class="descname">get_out_features</code><span class="sig-paren">(</span><em>head_net</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/utils.html#get_out_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.utils.get_out_features" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.rl.agents.utils.log1p_exp">
+<code class="descclassname">catalyst.rl.agents.utils.</code><code class="descname">log1p_exp</code><span class="sig-paren">(</span><em>input_tensor</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/utils.html#log1p_exp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.utils.log1p_exp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computationally stable function for computing log(1+exp(x)).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.rl.agents.utils.normal_log_prob">
+<code class="descclassname">catalyst.rl.agents.utils.</code><code class="descname">normal_log_prob</code><span class="sig-paren">(</span><em>mu</em>, <em>sigma</em>, <em>z</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/utils.html#normal_log_prob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.utils.normal_log_prob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Probability density function of multivariate Gaussian distribution
+N(z|mu,sigma).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.rl.agents.utils.normal_sample">
+<code class="descclassname">catalyst.rl.agents.utils.</code><code class="descname">normal_sample</code><span class="sig-paren">(</span><em>mu</em>, <em>sigma</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agents/utils.html#normal_sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agents.utils.normal_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample from multivariate Gaussian distribution z ~ N(z|mu,sigma)
+while supporting backpropagation through its mean and variance.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="offpolicy">
+<h2>Offpolicy<a class="headerlink" href="#offpolicy" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-catalyst.rl.offpolicy.trainer">
+<span id="trainer"></span><h3>Trainer<a class="headerlink" href="#module-catalyst.rl.offpolicy.trainer" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.rl.offpolicy.trainer.BufferDataset">
+<em class="property">class </em><code class="descclassname">catalyst.rl.offpolicy.trainer.</code><code class="descname">BufferDataset</code><span class="sig-paren">(</span><em>state_shape</em>, <em>action_shape</em>, <em>max_size=1000000</em>, <em>history_len=1</em>, <em>n_step=1</em>, <em>gamma=0.99</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/trainer.html#BufferDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.trainer.BufferDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.trainer.BufferDataset.get_state">
+<code class="descname">get_state</code><span class="sig-paren">(</span><em>idx</em>, <em>history_len=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/trainer.html#BufferDataset.get_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.trainer.BufferDataset.get_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>compose the state from a number (history_len) of observations</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.trainer.BufferDataset.get_transition_n_step">
+<code class="descname">get_transition_n_step</code><span class="sig-paren">(</span><em>idx</em>, <em>history_len=1</em>, <em>n_step=1</em>, <em>gamma=0.99</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/trainer.html#BufferDataset.get_transition_n_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.trainer.BufferDataset.get_transition_n_step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.trainer.BufferDataset.push_episode">
+<code class="descname">push_episode</code><span class="sig-paren">(</span><em>episode</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/trainer.html#BufferDataset.push_episode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.trainer.BufferDataset.push_episode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.rl.offpolicy.trainer.BufferSampler">
+<em class="property">class </em><code class="descclassname">catalyst.rl.offpolicy.trainer.</code><code class="descname">BufferSampler</code><span class="sig-paren">(</span><em>buffer</em>, <em>epoch_len</em>, <em>batch_size</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/trainer.html#BufferSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.trainer.BufferSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.sampler.Sampler</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.rl.offpolicy.trainer.Trainer">
+<em class="property">class </em><code class="descclassname">catalyst.rl.offpolicy.trainer.</code><code class="descname">Trainer</code><span class="sig-paren">(</span><em>algorithm</em>, <em>state_shape</em>, <em>action_shape</em>, <em>logdir</em>, <em>redis_server=None</em>, <em>redis_prefix=None</em>, <em>num_workers=1</em>, <em>replay_buffer_size=1000000</em>, <em>batch_size=64</em>, <em>start_learning=1000</em>, <em>gamma=0.99</em>, <em>n_step=1</em>, <em>history_len=1</em>, <em>epoch_len=100</em>, <em>save_period=10</em>, <em>target_update_period=1</em>, <em>online_update_period=1</em>, <em>weights_sync_period=1</em>, <em>max_redis_trials=1000</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/trainer.html#Trainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.trainer.Trainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.trainer.Trainer.fetch_episodes">
+<code class="descname">fetch_episodes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/trainer.html#Trainer.fetch_episodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.trainer.Trainer.fetch_episodes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.trainer.Trainer.get_processes">
+<code class="descname">get_processes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/trainer.html#Trainer.get_processes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.trainer.Trainer.get_processes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.trainer.Trainer.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/trainer.html#Trainer.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.trainer.Trainer.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.trainer.Trainer.save">
+<code class="descname">save</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/trainer.html#Trainer.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.trainer.Trainer.save" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.trainer.Trainer.start_redis_loop">
+<code class="descname">start_redis_loop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/trainer.html#Trainer.start_redis_loop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.trainer.Trainer.start_redis_loop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.trainer.Trainer.start_train_loop">
+<code class="descname">start_train_loop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/trainer.html#Trainer.start_train_loop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.trainer.Trainer.start_train_loop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.trainer.Trainer.train">
+<code class="descname">train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/trainer.html#Trainer.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.trainer.Trainer.train" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.trainer.Trainer.update_samplers_weights">
+<code class="descname">update_samplers_weights</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/trainer.html#Trainer.update_samplers_weights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.trainer.Trainer.update_samplers_weights" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.trainer.Trainer.update_target_weights">
+<code class="descname">update_target_weights</code><span class="sig-paren">(</span><em>step_index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/trainer.html#Trainer.update_target_weights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.trainer.Trainer.update_target_weights" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.rl.offpolicy.sampler">
+<span id="sampler"></span><h3>Sampler<a class="headerlink" href="#module-catalyst.rl.offpolicy.sampler" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.rl.offpolicy.sampler.Sampler">
+<em class="property">class </em><code class="descclassname">catalyst.rl.offpolicy.sampler.</code><code class="descname">Sampler</code><span class="sig-paren">(</span><em>actor</em>, <em>env</em>, <em>id</em>, <em>logdir=None</em>, <em>redis_server=None</em>, <em>redis_prefix=None</em>, <em>buffer_size=10000</em>, <em>history_len=1</em>, <em>weights_sync_period=1</em>, <em>mode='infer'</em>, <em>resume=None</em>, <em>action_noise_prob=0</em>, <em>action_noise_t=1</em>, <em>random_process=None</em>, <em>param_noise_prob=0</em>, <em>param_noise_d=0.2</em>, <em>param_noise_steps=1000</em>, <em>seeds=None</em>, <em>action_clip=(-1</em>, <em>1)</em>, <em>episode_limit=None</em>, <em>force_store=False</em>, <em>min_episode_steps=None</em>, <em>min_episode_reward=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/sampler.html#Sampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.sampler.Sampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.sampler.Sampler.act">
+<code class="descname">act</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/sampler.html#Sampler.act"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.sampler.Sampler.act" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.sampler.Sampler.load_actor_weights">
+<code class="descname">load_actor_weights</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/sampler.html#Sampler.load_actor_weights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.sampler.Sampler.load_actor_weights" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.sampler.Sampler.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/sampler.html#Sampler.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.sampler.Sampler.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.sampler.Sampler.store_episode">
+<code class="descname">store_episode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/sampler.html#Sampler.store_episode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.sampler.Sampler.store_episode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.sampler.Sampler.to_tensor">
+<code class="descname">to_tensor</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/sampler.html#Sampler.to_tensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.sampler.Sampler.to_tensor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.rl.offpolicy.sampler.SamplerBuffer">
+<em class="property">class </em><code class="descclassname">catalyst.rl.offpolicy.sampler.</code><code class="descname">SamplerBuffer</code><span class="sig-paren">(</span><em>capacity</em>, <em>observation_shape</em>, <em>action_shape</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/sampler.html#SamplerBuffer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.sampler.SamplerBuffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.sampler.SamplerBuffer.get_complete_episode">
+<code class="descname">get_complete_episode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/sampler.html#SamplerBuffer.get_complete_episode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.sampler.SamplerBuffer.get_complete_episode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.sampler.SamplerBuffer.get_state">
+<code class="descname">get_state</code><span class="sig-paren">(</span><em>history_len=1</em>, <em>pointer=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/sampler.html#SamplerBuffer.get_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.sampler.SamplerBuffer.get_state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.sampler.SamplerBuffer.get_states_history">
+<code class="descname">get_states_history</code><span class="sig-paren">(</span><em>history_len=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/sampler.html#SamplerBuffer.get_states_history"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.sampler.SamplerBuffer.get_states_history" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.sampler.SamplerBuffer.init_with_observation">
+<code class="descname">init_with_observation</code><span class="sig-paren">(</span><em>observation</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/sampler.html#SamplerBuffer.init_with_observation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.sampler.SamplerBuffer.init_with_observation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.sampler.SamplerBuffer.push_transition">
+<code class="descname">push_transition</code><span class="sig-paren">(</span><em>transition</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/sampler.html#SamplerBuffer.push_transition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.sampler.SamplerBuffer.push_transition" title="Permalink to this definition">¶</a></dt>
+<dd><p>transition = [s_tp1, a_t, r_t, d_t]</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.rl.offpolicy.algorithms">
+<span id="algorithms"></span><h3>Algorithms<a class="headerlink" href="#module-catalyst.rl.offpolicy.algorithms" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-catalyst.rl.offpolicy.algorithms.core"></span><dl class="class">
+<dt id="catalyst.rl.offpolicy.algorithms.core.Algorithm">
+<em class="property">class </em><code class="descclassname">catalyst.rl.offpolicy.algorithms.core.</code><code class="descname">Algorithm</code><span class="sig-paren">(</span><em>actor</em>, <em>critic</em>, <em>gamma</em>, <em>n_step</em>, <em>actor_optimizer_params</em>, <em>critic_optimizer_params</em>, <em>actor_grad_clip_params=None</em>, <em>critic_grad_clip_params=None</em>, <em>actor_loss_params=None</em>, <em>critic_loss_params=None</em>, <em>actor_scheduler_params=None</em>, <em>critic_scheduler_params=None</em>, <em>resume=None</em>, <em>load_optimizer=True</em>, <em>actor_tau=1.0</em>, <em>critic_tau=1.0</em>, <em>min_action=-1.0</em>, <em>max_action=1.0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/core.html#Algorithm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.core.Algorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.core.Algorithm.actor_update">
+<code class="descname">actor_update</code><span class="sig-paren">(</span><em>loss</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/core.html#Algorithm.actor_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.core.Algorithm.actor_update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.core.Algorithm.critic_update">
+<code class="descname">critic_update</code><span class="sig-paren">(</span><em>loss</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/core.html#Algorithm.critic_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.core.Algorithm.critic_update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.core.Algorithm.get_td_errors">
+<code class="descname">get_td_errors</code><span class="sig-paren">(</span><em>batch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/core.html#Algorithm.get_td_errors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.core.Algorithm.get_td_errors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.core.Algorithm.load_checkpoint">
+<code class="descname">load_checkpoint</code><span class="sig-paren">(</span><em>filepath</em>, <em>load_optimizer=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/core.html#Algorithm.load_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.core.Algorithm.load_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.core.Algorithm.prepare_checkpoint">
+<code class="descname">prepare_checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/core.html#Algorithm.prepare_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.core.Algorithm.prepare_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="catalyst.rl.offpolicy.algorithms.core.Algorithm.prepare_for_sampler">
+<em class="property">classmethod </em><code class="descname">prepare_for_sampler</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/core.html#Algorithm.prepare_for_sampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.core.Algorithm.prepare_for_sampler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="catalyst.rl.offpolicy.algorithms.core.Algorithm.prepare_for_trainer">
+<em class="property">classmethod </em><code class="descname">prepare_for_trainer</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/core.html#Algorithm.prepare_for_trainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.core.Algorithm.prepare_for_trainer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.core.Algorithm.target_actor_update">
+<code class="descname">target_actor_update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/core.html#Algorithm.target_actor_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.core.Algorithm.target_actor_update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.core.Algorithm.target_critic_update">
+<code class="descname">target_critic_update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/core.html#Algorithm.target_critic_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.core.Algorithm.target_critic_update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.core.Algorithm.train">
+<code class="descname">train</code><span class="sig-paren">(</span><em>batch</em>, <em>actor_update=True</em>, <em>critic_update=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/core.html#Algorithm.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.core.Algorithm.train" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.core.Algorithm.update_step">
+<code class="descname">update_step</code><span class="sig-paren">(</span><em>policy_loss</em>, <em>value_loss</em>, <em>actor_update=True</em>, <em>critic_update=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/core.html#Algorithm.update_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.core.Algorithm.update_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>updates parameters of neural networks and returns learning metrics</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-catalyst.rl.offpolicy.algorithms.ddpg"></span><dl class="class">
+<dt id="catalyst.rl.offpolicy.algorithms.ddpg.DDPG">
+<em class="property">class </em><code class="descclassname">catalyst.rl.offpolicy.algorithms.ddpg.</code><code class="descname">DDPG</code><span class="sig-paren">(</span><em>actor</em>, <em>critic</em>, <em>gamma</em>, <em>n_step</em>, <em>actor_optimizer_params</em>, <em>critic_optimizer_params</em>, <em>actor_grad_clip_params=None</em>, <em>critic_grad_clip_params=None</em>, <em>actor_loss_params=None</em>, <em>critic_loss_params=None</em>, <em>actor_scheduler_params=None</em>, <em>critic_scheduler_params=None</em>, <em>resume=None</em>, <em>load_optimizer=True</em>, <em>actor_tau=1.0</em>, <em>critic_tau=1.0</em>, <em>min_action=-1.0</em>, <em>max_action=1.0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/ddpg.html#DDPG"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.ddpg.DDPG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.rl.offpolicy.algorithms.core.Algorithm" title="catalyst.rl.offpolicy.algorithms.core.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.rl.offpolicy.algorithms.core.Algorithm</span></code></a></p>
+<p>Swiss Army knife DDPG algorithm.</p>
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.ddpg.DDPG.update_step">
+<code class="descname">update_step</code><span class="sig-paren">(</span><em>policy_loss</em>, <em>value_loss</em>, <em>actor_update=True</em>, <em>critic_update=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/ddpg.html#DDPG.update_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.ddpg.DDPG.update_step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-catalyst.rl.offpolicy.algorithms.sac"></span><dl class="class">
+<dt id="catalyst.rl.offpolicy.algorithms.sac.SAC">
+<em class="property">class </em><code class="descclassname">catalyst.rl.offpolicy.algorithms.sac.</code><code class="descname">SAC</code><span class="sig-paren">(</span><em>actor</em>, <em>critic</em>, <em>gamma</em>, <em>n_step</em>, <em>actor_optimizer_params</em>, <em>critic_optimizer_params</em>, <em>actor_grad_clip_params=None</em>, <em>critic_grad_clip_params=None</em>, <em>actor_loss_params=None</em>, <em>critic_loss_params=None</em>, <em>actor_scheduler_params=None</em>, <em>critic_scheduler_params=None</em>, <em>resume=None</em>, <em>load_optimizer=True</em>, <em>actor_tau=1.0</em>, <em>critic_tau=1.0</em>, <em>min_action=-1.0</em>, <em>max_action=1.0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/sac.html#SAC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.sac.SAC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.rl.offpolicy.algorithms.core.Algorithm" title="catalyst.rl.offpolicy.algorithms.core.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.rl.offpolicy.algorithms.core.Algorithm</span></code></a></p>
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.sac.SAC.critic_update">
+<code class="descname">critic_update</code><span class="sig-paren">(</span><em>loss</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/sac.html#SAC.critic_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.sac.SAC.critic_update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.sac.SAC.load_checkpoint">
+<code class="descname">load_checkpoint</code><span class="sig-paren">(</span><em>filepath</em>, <em>load_optimizer=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/sac.html#SAC.load_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.sac.SAC.load_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.sac.SAC.prepare_checkpoint">
+<code class="descname">prepare_checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/sac.html#SAC.prepare_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.sac.SAC.prepare_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="catalyst.rl.offpolicy.algorithms.sac.SAC.prepare_for_sampler">
+<em class="property">classmethod </em><code class="descname">prepare_for_sampler</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/sac.html#SAC.prepare_for_sampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.sac.SAC.prepare_for_sampler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="catalyst.rl.offpolicy.algorithms.sac.SAC.prepare_for_trainer">
+<em class="property">classmethod </em><code class="descname">prepare_for_trainer</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/sac.html#SAC.prepare_for_trainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.sac.SAC.prepare_for_trainer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.sac.SAC.target_actor_update">
+<code class="descname">target_actor_update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/sac.html#SAC.target_actor_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.sac.SAC.target_actor_update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.sac.SAC.target_critic_update">
+<code class="descname">target_critic_update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/sac.html#SAC.target_critic_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.sac.SAC.target_critic_update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.sac.SAC.update_step">
+<code class="descname">update_step</code><span class="sig-paren">(</span><em>policy_loss</em>, <em>value_loss</em>, <em>actor_update=True</em>, <em>critic_update=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/sac.html#SAC.update_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.sac.SAC.update_step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-catalyst.rl.offpolicy.algorithms.td3"></span><dl class="class">
+<dt id="catalyst.rl.offpolicy.algorithms.td3.TD3">
+<em class="property">class </em><code class="descclassname">catalyst.rl.offpolicy.algorithms.td3.</code><code class="descname">TD3</code><span class="sig-paren">(</span><em>actor</em>, <em>critic</em>, <em>gamma</em>, <em>n_step</em>, <em>actor_optimizer_params</em>, <em>critic_optimizer_params</em>, <em>actor_grad_clip_params=None</em>, <em>critic_grad_clip_params=None</em>, <em>actor_loss_params=None</em>, <em>critic_loss_params=None</em>, <em>actor_scheduler_params=None</em>, <em>critic_scheduler_params=None</em>, <em>resume=None</em>, <em>load_optimizer=True</em>, <em>actor_tau=1.0</em>, <em>critic_tau=1.0</em>, <em>min_action=-1.0</em>, <em>max_action=1.0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/td3.html#TD3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.td3.TD3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.rl.offpolicy.algorithms.core.Algorithm" title="catalyst.rl.offpolicy.algorithms.core.Algorithm"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.rl.offpolicy.algorithms.core.Algorithm</span></code></a></p>
+<p>Swiss Army knife TD3 algorithm.</p>
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.td3.TD3.critic_update">
+<code class="descname">critic_update</code><span class="sig-paren">(</span><em>loss</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/td3.html#TD3.critic_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.td3.TD3.critic_update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.td3.TD3.load_checkpoint">
+<code class="descname">load_checkpoint</code><span class="sig-paren">(</span><em>filepath</em>, <em>load_optimizer=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/td3.html#TD3.load_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.td3.TD3.load_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.td3.TD3.prepare_checkpoint">
+<code class="descname">prepare_checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/td3.html#TD3.prepare_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.td3.TD3.prepare_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="catalyst.rl.offpolicy.algorithms.td3.TD3.prepare_for_sampler">
+<em class="property">classmethod </em><code class="descname">prepare_for_sampler</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/td3.html#TD3.prepare_for_sampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.td3.TD3.prepare_for_sampler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="catalyst.rl.offpolicy.algorithms.td3.TD3.prepare_for_trainer">
+<em class="property">classmethod </em><code class="descname">prepare_for_trainer</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/td3.html#TD3.prepare_for_trainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.td3.TD3.prepare_for_trainer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.td3.TD3.target_critic_update">
+<code class="descname">target_critic_update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/td3.html#TD3.target_critic_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.td3.TD3.target_critic_update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.offpolicy.algorithms.td3.TD3.update_step">
+<code class="descname">update_step</code><span class="sig-paren">(</span><em>policy_loss</em>, <em>value_loss</em>, <em>actor_update=True</em>, <em>critic_update=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/td3.html#TD3.update_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.td3.TD3.update_step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="contrib.html" class="btn btn-neutral float-right" title="Contrib" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="dl.html" class="btn btn-neutral float-left" title="DL" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Scitator
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

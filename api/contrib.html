@@ -1,0 +1,634 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Contrib &mdash; Catalyst 19.03-rc0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../',
+              VERSION:'19.03-rc0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Data" href="data.html" />
+    <link rel="prev" title="RL" href="rl.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Catalyst
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                19.03
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../info/contributing.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../info/license.html">License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rl.html">RL</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contrib</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#registry">Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#criterion">Criterion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.contrib.models">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modules">Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.contrib.optimizers">Optimizers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Catalyst</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Contrib</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/api/contrib.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="contrib">
+<h1>Contrib<a class="headerlink" href="#contrib" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="registry">
+<h2>Registry<a class="headerlink" href="#registry" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.contrib.registry.Registry">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.registry.</code><code class="descname">Registry</code><a class="reference internal" href="../_modules/catalyst/utils/registry.html#Registry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.registry.Registry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Universal class allowing to add and access various factories by name</p>
+<dl class="method">
+<dt id="catalyst.contrib.registry.Registry.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/registry.html#Registry.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.registry.Registry.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>default_name_key</strong> – Default key containing factory name when
+creating from config</li>
+<li><strong>default_meta_factory</strong> – default object that calls factory.
+Optional. Default just calls factory.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.registry.Registry.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>factory: Union[Type</em>, <em>Callable[...</em>, <em>Any]] = None</em>, <em>*factories</em>, <em>name: str = None</em>, <em>**named_factories</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="reference internal" href="../_modules/catalyst/utils/registry.html#Registry.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.registry.Registry.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds factory to registry with it’s __name__ attribute or provided
+name.
+Signature is flexible.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>factory</strong> – Factory instance</li>
+<li><strong>factories</strong> – More instances</li>
+<li><strong>name</strong> – Provided name for first instance. Use only when pass</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>single instance.
+:param named_factories: Factory and their names as kwargs</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">First factory passed</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.registry.Registry.add_from_module">
+<code class="descname">add_from_module</code><span class="sig-paren">(</span><em>module</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/registry.html#Registry.add_from_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.registry.Registry.add_from_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds all factories present in module.
+If __all__ attribute is present, takes ony what mentioned in it</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>module</strong> – module to scan</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.registry.Registry.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>name: str</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any], None]<a class="reference internal" href="../_modules/catalyst/utils/registry.html#Registry.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.registry.Registry.get" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Retrieves factory, without creating any objects with it</dt>
+<dd>or raises error</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> – factory name</td>
+</tr>
+</tbody>
+</table>
+<p>:returns Factory</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.registry.Registry.get_from_params">
+<code class="descname">get_from_params</code><span class="sig-paren">(</span><em>*</em>, <em>meta_factory=None</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; Union[Any, Tuple[Any, Mapping[str, Any]]]<a class="reference internal" href="../_modules/catalyst/utils/registry.html#Registry.get_from_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.registry.Registry.get_from_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates instance based in configuration dict with instantiation_fn.
+If config[name_key] is None, None is returned.</p>
+<p>NOTE: original dict not changed in any way</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>meta_factory</strong> – Function that calls factory the right way.
+If not provided, default is used.</li>
+<li><strong>kwargs</strong> – additional kwargs for factory</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">result of calling instantiate_fn(factory, <a href="#id1"><span class="problematic" id="id2">**</span></a>config)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.registry.Registry.get_if_str">
+<code class="descname">get_if_str</code><span class="sig-paren">(</span><em>obj: Union[str, Type, Callable[..., Any]]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/registry.html#Registry.get_if_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.registry.Registry.get_if_str" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.registry.Registry.get_instance">
+<code class="descname">get_instance</code><span class="sig-paren">(</span><em>name: str</em>, <em>*args</em>, <em>meta_factory=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/registry.html#Registry.get_instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.registry.Registry.get_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates instance by calling specified factory
+with instantiate_fn
+:param name: factory name
+:param meta_factory: Function that calls factory the right way.</p>
+<blockquote>
+<div>If not provided, default is used</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> – args to pass to the factory</li>
+<li><strong>kwargs</strong> – kwargs to pass to the factory</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">created instance</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.registry.Registry.late_add">
+<code class="descname">late_add</code><span class="sig-paren">(</span><em>cb: Callable[Registry, None]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/registry.html#Registry.late_add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.registry.Registry.late_add" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Allows to prevent cycle imports by delaying some imports till next</dt>
+<dd>registry query</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cb</strong> – Callback receives registry and must call it’s methods to
+register factories</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="criterion">
+<h2>Criterion<a class="headerlink" href="#criterion" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.contrib.criterion.BCESoftmaxLoss">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.criterion.</code><code class="descname">BCESoftmaxLoss</code><span class="sig-paren">(</span><em>bce_indices</em>, <em>ce_indices</em>, <em>bce2ce_alpha=0.5</em>, <em>reduction='elementwise_mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/bcece.html#BCESoftmaxLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.BCESoftmaxLoss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.criterion.NaiveCrossEntropyLoss">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.criterion.</code><code class="descname">NaiveCrossEntropyLoss</code><span class="sig-paren">(</span><em>size_average=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/ce.html#NaiveCrossEntropyLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.NaiveCrossEntropyLoss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.criterion.CenterLoss">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.criterion.</code><code class="descname">CenterLoss</code><span class="sig-paren">(</span><em>num_classes</em>, <em>feature_dim</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/center_loss.html#CenterLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.CenterLoss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.criterion.ContrastiveDistanceLoss">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.criterion.</code><code class="descname">ContrastiveDistanceLoss</code><span class="sig-paren">(</span><em>margin=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveDistanceLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.ContrastiveDistanceLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contrastive distance loss</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.criterion.ContrastiveEmbeddingLoss">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.criterion.</code><code class="descname">ContrastiveEmbeddingLoss</code><span class="sig-paren">(</span><em>margin=1.0</em>, <em>reduction='elementwise_mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveEmbeddingLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.ContrastiveEmbeddingLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contrastive embedding loss</p>
+<p>paper: <a class="reference external" href="http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf">http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf</a></p>
+<dl class="method">
+<dt id="catalyst.contrib.criterion.ContrastiveEmbeddingLoss.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x0</em>, <em>x1</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveEmbeddingLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.ContrastiveEmbeddingLoss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x0</strong> – </li>
+<li><strong>x1</strong> – </li>
+<li><strong>y</strong> – 0 if same class else 1</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.criterion.BCEDiceLoss">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.criterion.</code><code class="descname">BCEDiceLoss</code><span class="sig-paren">(</span><em>activation='sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/dice.html#BCEDiceLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.BCEDiceLoss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.criterion.DiceLoss">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.criterion.</code><code class="descname">DiceLoss</code><span class="sig-paren">(</span><em>eps=1e-07</em>, <em>activation='sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/dice.html#DiceLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.DiceLoss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.criterion.FocalLoss">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.criterion.</code><code class="descname">FocalLoss</code><span class="sig-paren">(</span><em>gamma=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/focal_loss.html#FocalLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.FocalLoss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.criterion.HuberLoss">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.criterion.</code><code class="descname">HuberLoss</code><span class="sig-paren">(</span><em>clip_delta=1.0</em>, <em>reduction='elementwise_mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/huber.html#HuberLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.HuberLoss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.criterion.LossBinary">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.criterion.</code><code class="descname">LossBinary</code><span class="sig-paren">(</span><em>jaccard_weight=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/unet.html#LossBinary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.LossBinary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loss defined as BCE - log(soft_jaccard)</p>
+<p>Vladimir Iglovikov, Sergey Mushinskiy, Vladimir Osin,
+Satellite Imagery Feature Detection
+using Deep Convolutional Neural Network: A Kaggle Competition
+arXiv:1706.06169</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.criterion.LossMulti">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.criterion.</code><code class="descname">LossMulti</code><span class="sig-paren">(</span><em>jaccard_weight=0</em>, <em>num_classes=1</em>, <em>class_weights=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/unet.html#LossMulti"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.LossMulti" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.contrib.models">
+<span id="models"></span><h2>Models<a class="headerlink" href="#module-catalyst.contrib.models" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.contrib.models.UNet">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.models.</code><code class="descname">UNet</code><span class="sig-paren">(</span><em>num_classes=1</em>, <em>in_channels=3</em>, <em>num_filters=64</em>, <em>num_blocks=4</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/unet.html#UNet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.UNet" title="Permalink to this definition">¶</a></dt>
+<dd><p>CNN architecture for semantic segmentation
+Made by &#64;nizhib</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.models.ResNetUnet">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.models.</code><code class="descname">ResNetUnet</code><span class="sig-paren">(</span><em>num_classes=1</em>, <em>num_filters=32</em>, <em>backbone='resnet34'</em>, <em>pretrained=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/resnetunet.html#ResNetUnet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.ResNetUnet" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>U-Net inspired encoder-decoder architecture for semantic segmentation,</dt>
+<dd>with a ResNet encoder as proposed by Alexander Buslaev.</dd>
+</dl>
+<p>Also known as AlbuNet</p>
+<p>See:
+- <a class="reference external" href="https://arxiv.org/abs/1505.04597">https://arxiv.org/abs/1505.04597</a> -</p>
+<blockquote>
+<div>U-Net: Convolutional Networks for Biomedical Image Segmentation</div></blockquote>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt><a class="reference external" href="https://arxiv.org/abs/1411.4038">https://arxiv.org/abs/1411.4038</a>  -</dt>
+<dd>Fully Convolutional Networks for Semantic Segmentation</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><a class="reference external" href="https://arxiv.org/abs/1512.03385">https://arxiv.org/abs/1512.03385</a> -</dt>
+<dd>Deep Residual Learning for Image Recognition</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><a class="reference external" href="https://arxiv.org/abs/1801.05746">https://arxiv.org/abs/1801.05746</a> -</dt>
+<dd>TernausNet: U-Net with VGG11
+Encoder Pre-Trained on ImageNet for Image Segmentation</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><a class="reference external" href="https://arxiv.org/abs/1806.00844">https://arxiv.org/abs/1806.00844</a> -</dt>
+<dd>TernausNetV2: Fully Convolutional Network for Instance Segmentation</dd>
+</dl>
+</li>
+</ul>
+<p>based on <a class="reference external" href="https://github.com/mapbox/robosat/blob/master/robosat/unet.py">https://github.com/mapbox/robosat/blob/master/robosat/unet.py</a></p>
+<dl class="method">
+<dt id="catalyst.contrib.models.ResNetUnet.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>num_classes=1</em>, <em>num_filters=32</em>, <em>backbone='resnet34'</em>, <em>pretrained=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/resnetunet.html#ResNetUnet.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.ResNetUnet.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an <cite>UNet</cite> instance for semantic segmentation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>num_classes</strong> – number of classes to predict.</li>
+<li><strong>pretrained</strong> – use ImageNet pre-trained backbone feature extractor</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.models.ResNetUnet.forward">
+<code class="descname">forward</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/resnetunet.html#ResNetUnet.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.ResNetUnet.forward" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>The networks forward pass for which</dt>
+<dd>autograd synthesizes the backwards pass.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> – the input tensor</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The networks output tensor.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="modules">
+<h2>Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.contrib.modules.Lambda">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.modules.</code><code class="descname">Lambda</code><span class="sig-paren">(</span><em>lambda_fn</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/common.html#Lambda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.Lambda" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.modules.Flatten">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.modules.</code><code class="descname">Flatten</code><a class="reference internal" href="../_modules/catalyst/contrib/modules/common.html#Flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.Flatten" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.modules.NoisyLinear">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.modules.</code><code class="descname">NoisyLinear</code><span class="sig-paren">(</span><em>in_features</em>, <em>out_features</em>, <em>sigma_init=0.017</em>, <em>bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/noisy.html#NoisyLinear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.NoisyLinear" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.modules.GlobalAvgPool2d">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.modules.</code><code class="descname">GlobalAvgPool2d</code><a class="reference internal" href="../_modules/catalyst/contrib/modules/pooling.html#GlobalAvgPool2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.GlobalAvgPool2d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.modules.GlobalMaxPool2d">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.modules.</code><code class="descname">GlobalMaxPool2d</code><a class="reference internal" href="../_modules/catalyst/contrib/modules/pooling.html#GlobalMaxPool2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.GlobalMaxPool2d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.modules.GlobalConcatPool2d">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.modules.</code><code class="descname">GlobalConcatPool2d</code><a class="reference internal" href="../_modules/catalyst/contrib/modules/pooling.html#GlobalConcatPool2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.GlobalConcatPool2d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.modules.GlobalAttnPool2d">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.modules.</code><code class="descname">GlobalAttnPool2d</code><span class="sig-paren">(</span><em>in_features</em>, <em>activation_fn='Tanh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/pooling.html#GlobalAttnPool2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.GlobalAttnPool2d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.modules.GlobalAvgAttnPool2d">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.modules.</code><code class="descname">GlobalAvgAttnPool2d</code><span class="sig-paren">(</span><em>in_features</em>, <em>activation_fn='Tanh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/pooling.html#GlobalAvgAttnPool2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.GlobalAvgAttnPool2d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.modules.GlobalMaxAttnPool2d">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.modules.</code><code class="descname">GlobalMaxAttnPool2d</code><span class="sig-paren">(</span><em>in_features</em>, <em>activation_fn='Tanh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/pooling.html#GlobalMaxAttnPool2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.GlobalMaxAttnPool2d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.modules.GlobalConcatAttnPool2d">
+<em class="property">class </em><code class="descclassname">catalyst.contrib.modules.</code><code class="descname">GlobalConcatAttnPool2d</code><span class="sig-paren">(</span><em>in_features</em>, <em>activation_fn='Tanh'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/pooling.html#GlobalConcatAttnPool2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.GlobalConcatAttnPool2d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.contrib.optimizers">
+<span id="optimizers"></span><h2>Optimizers<a class="headerlink" href="#module-catalyst.contrib.optimizers" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="data.html" class="btn btn-neutral float-right" title="Data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="rl.html" class="btn btn-neutral float-left" title="RL" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Scitator
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

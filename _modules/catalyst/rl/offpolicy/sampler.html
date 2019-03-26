@@ -1,0 +1,641 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>catalyst.rl.offpolicy.sampler &mdash; Catalyst 19.03-rc0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../../../',
+              VERSION:'19.03-rc0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Catalyst
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                19.03
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/contributing.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/license.html">License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/rl.html">RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Catalyst</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>catalyst.rl.offpolicy.sampler</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for catalyst.rl.offpolicy.sampler</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">tensorboardX</span> <span class="k">import</span> <span class="n">SummaryWriter</span>
+
+<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="k">import</span> <span class="n">set_global_seeds</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="k">import</span> <span class="n">UtilsFactory</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.serialization</span> <span class="k">import</span> <span class="n">serialize</span><span class="p">,</span> <span class="n">deserialize</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl.random_process</span> <span class="k">import</span> <span class="n">RandomProcess</span>
+
+<span class="c1"># speed up optimization</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;OMP_NUM_THREADS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">set_num_threads</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">SEED_RANGE</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">32</span> <span class="o">-</span> <span class="mi">2</span>
+
+
+<span class="k">def</span> <span class="nf">get_actor_weights</span><span class="p">(</span><span class="n">actor</span><span class="p">,</span> <span class="n">exclude_norm</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">state_dict</span> <span class="o">=</span> <span class="n">actor</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">exclude_norm</span><span class="p">:</span>
+        <span class="n">state_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">value</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">state_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">key</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;norm&quot;</span><span class="p">,</span> <span class="s2">&quot;lstm&quot;</span><span class="p">])</span>
+        <span class="p">}</span>
+    <span class="n">state_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">state_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">return</span> <span class="n">state_dict</span>
+
+
+<span class="k">def</span> <span class="nf">set_actor_weights</span><span class="p">(</span><span class="n">actor</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="n">actor</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="n">strict</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">set_params_noise</span><span class="p">(</span><span class="n">actor</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">target_d</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">max_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="n">exclude_norm</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">orig_weights</span> <span class="o">=</span> <span class="n">get_actor_weights</span><span class="p">(</span><span class="n">actor</span><span class="p">,</span> <span class="n">exclude_norm</span><span class="o">=</span><span class="n">exclude_norm</span><span class="p">)</span>
+    <span class="n">orig_act</span> <span class="o">=</span> <span class="n">actor</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+
+    <span class="n">sigma_min</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="n">sigma_max</span> <span class="o">=</span> <span class="mf">100.</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma_max</span>
+    <span class="n">step</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="n">step</span> <span class="o">&lt;</span> <span class="n">max_steps</span><span class="p">:</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">normal</span><span class="o">.</span><span class="n">Normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">w</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span> <span class="o">+</span> <span class="n">dist</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">orig_weights</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="n">set_actor_weights</span><span class="p">(</span><span class="n">actor</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="ow">not</span> <span class="n">exclude_norm</span><span class="p">)</span>
+        <span class="n">new_act</span> <span class="o">=</span> <span class="n">actor</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">new_act</span> <span class="o">-</span> <span class="n">orig_act</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">1</span><span class="p">)))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+        <span class="n">dd</span> <span class="o">=</span> <span class="n">d</span> <span class="o">-</span> <span class="n">target_d</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dd</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">:</span>
+            <span class="k">break</span>
+
+        <span class="c1"># too big sigma</span>
+        <span class="k">if</span> <span class="n">dd</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">sigma_max</span> <span class="o">=</span> <span class="n">sigma</span>
+        <span class="c1"># too small sigma</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sigma_min</span> <span class="o">=</span> <span class="n">sigma</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma_min</span> <span class="o">+</span> <span class="p">(</span><span class="n">sigma_max</span> <span class="o">-</span> <span class="n">sigma_min</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">step</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">d</span>
+
+
+<div class="viewcode-block" id="SamplerBuffer"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.offpolicy.sampler.SamplerBuffer">[docs]</a><span class="k">class</span> <span class="nc">SamplerBuffer</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capacity</span><span class="p">,</span> <span class="n">observation_shape</span><span class="p">,</span> <span class="n">action_shape</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">capacity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_shape</span> <span class="o">=</span> <span class="n">observation_shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_shape</span> <span class="o">=</span> <span class="n">action_shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pointer</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_shape</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_shape</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewards</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SamplerBuffer.init_with_observation"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.offpolicy.sampler.SamplerBuffer.init_with_observation">[docs]</a>    <span class="k">def</span> <span class="nf">init_with_observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">observation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pointer</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="SamplerBuffer.get_state"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.offpolicy.sampler.SamplerBuffer.get_state">[docs]</a>    <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">history_len</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">pointer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">pointer</span> <span class="o">=</span> <span class="n">pointer</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">pointer</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">history_len</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_shape</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+        <span class="p">)</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pointer</span> <span class="o">-</span> <span class="n">history_len</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">pointer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">state</span><span class="p">[</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">):]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">state</span></div>
+
+<div class="viewcode-block" id="SamplerBuffer.push_transition"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.offpolicy.sampler.SamplerBuffer.push_transition">[docs]</a>    <span class="k">def</span> <span class="nf">push_transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transition</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; transition = [s_tp1, a_t, r_t, d_t]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s_tp1</span><span class="p">,</span> <span class="n">a_t</span><span class="p">,</span> <span class="n">r_t</span><span class="p">,</span> <span class="n">d_t</span><span class="p">,</span> <span class="n">ts_t</span> <span class="o">=</span> <span class="n">transition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pointer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">s_tp1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pointer</span><span class="p">]</span> <span class="o">=</span> <span class="n">a_t</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rewards</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pointer</span><span class="p">]</span> <span class="o">=</span> <span class="n">r_t</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dones</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pointer</span><span class="p">]</span> <span class="o">=</span> <span class="n">d_t</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pointer</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="SamplerBuffer.get_complete_episode"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.offpolicy.sampler.SamplerBuffer.get_complete_episode">[docs]</a>    <span class="k">def</span> <span class="nf">get_complete_episode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pointer</span><span class="p">)</span>
+        <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+        <span class="n">rewards</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewards</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+        <span class="n">dones</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dones</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">states</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">dones</span></div>
+
+<div class="viewcode-block" id="SamplerBuffer.get_states_history"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.offpolicy.sampler.SamplerBuffer.get_states_history">[docs]</a>    <span class="k">def</span> <span class="nf">get_states_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">history_len</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">states</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">history_len</span><span class="o">=</span><span class="n">history_len</span><span class="p">,</span> <span class="n">pointer</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pointer</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">states</span></div></div>
+
+
+<div class="viewcode-block" id="Sampler"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.offpolicy.sampler.Sampler">[docs]</a><span class="k">class</span> <span class="nc">Sampler</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">actor</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">,</span>
+        <span class="n">logdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">redis_server</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">redis_prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">buffer_size</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span>
+        <span class="n">history_len</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">weights_sync_period</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;infer&quot;</span><span class="p">,</span>
+        <span class="n">resume</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">action_noise_prob</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">action_noise_t</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">random_process</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">param_noise_prob</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">param_noise_d</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="n">param_noise_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="n">seeds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">action_clip</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">episode_limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">force_store</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">min_episode_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">min_episode_reward</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">=</span> <span class="mi">42</span> <span class="o">+</span> <span class="nb">id</span>
+        <span class="n">set_global_seeds</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_seed</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_id</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">UtilsFactory</span><span class="o">.</span><span class="n">prepare_device</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actor</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">actor</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">redis_server</span> <span class="o">=</span> <span class="n">redis_server</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">redis_prefix</span> <span class="o">=</span> <span class="n">redis_prefix</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resume</span> <span class="o">=</span> <span class="n">resume</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">episode_limit</span> <span class="o">=</span> <span class="n">episode_limit</span> <span class="ow">or</span> <span class="nb">int</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">32</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">force_store</span> <span class="o">=</span> <span class="n">force_store</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_episode_steps</span> <span class="o">=</span> <span class="n">min_episode_steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_episode_reward</span> <span class="o">=</span> <span class="n">min_episode_reward</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hard_seeds</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">min_episode_flag_</span> <span class="o">=</span> \
+            <span class="n">min_episode_steps</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">min_episode_reward</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">min_episode_flag_</span> <span class="ow">or</span> <span class="n">seeds</span> <span class="ow">is</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_episode_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_episode_steps</span> <span class="ow">or</span> <span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e6</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_episode_reward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_episode_reward</span> <span class="ow">or</span> <span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e6</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">history_len</span> <span class="o">=</span> <span class="n">history_len</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer_size</span> <span class="o">=</span> <span class="n">buffer_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights_sync_period</span> <span class="o">=</span> <span class="n">weights_sync_period</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">episode_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_clip</span> <span class="o">=</span> <span class="n">action_clip</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">infer</span> <span class="o">=</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;infer&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seeds</span> <span class="o">=</span> <span class="n">seeds</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_noise_prob</span> <span class="o">=</span> <span class="n">action_noise_prob</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_noise_t</span> <span class="o">=</span> <span class="n">action_noise_t</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">random_process</span> <span class="o">=</span> <span class="n">random_process</span> <span class="ow">or</span> <span class="n">RandomProcess</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_noise_prob</span> <span class="o">=</span> <span class="n">param_noise_prob</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_noise_d</span> <span class="o">=</span> <span class="n">param_noise_d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_noise_steps</span> <span class="o">=</span> <span class="n">param_noise_steps</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">infer</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_noise_prob</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param_noise_prob</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">current_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%y-%m-</span><span class="si">%d</span><span class="s2">-%H-%M-%S-%M-</span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">logpath</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/sampler-</span><span class="si">{mode}</span><span class="s2">-</span><span class="si">{id}</span><span class="s2">-</span><span class="si">{current_date}</span><span class="s2">&quot;</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">logpath</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">logpath</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">SamplerBuffer</span><span class="p">(</span>
+            <span class="n">capacity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer_size</span><span class="p">,</span>
+            <span class="n">observation_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_shape</span><span class="p">,</span>
+            <span class="n">action_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">action_shape</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">str_val</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">: {str(getattr(self, key, &#39;&#39;))}&quot;</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;history_len&quot;</span><span class="p">,</span> <span class="s2">&quot;action_noise_t&quot;</span><span class="p">,</span> <span class="s2">&quot;action_clip&quot;</span><span class="p">]</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;Sampler. </span><span class="si">{str_val}</span><span class="s2">&quot;</span>
+
+<div class="viewcode-block" id="Sampler.to_tensor"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.offpolicy.sampler.Sampler.to_tensor">[docs]</a>    <span class="k">def</span> <span class="nf">to_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Sampler.load_actor_weights"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.offpolicy.sampler.Sampler.load_actor_weights">[docs]</a>    <span class="k">def</span> <span class="nf">load_actor_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resume</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">UtilsFactory</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resume</span><span class="p">)</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;actor_state_dict&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">redis_server</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">deserialize</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">redis_server</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{self.redis_prefix}</span><span class="s2">_actor_weights&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_tensor</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">weights</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Sampler.store_episode"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.offpolicy.sampler.Sampler.store_episode">[docs]</a>    <span class="k">def</span> <span class="nf">store_episode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">redis_server</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">states</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">dones</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">get_complete_episode</span><span class="p">()</span>
+        <span class="n">episode</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">states</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="n">actions</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="n">rewards</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+            <span class="n">dones</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="p">]</span>
+        <span class="n">episode</span> <span class="o">=</span> <span class="n">serialize</span><span class="p">(</span><span class="n">episode</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">redis_server</span><span class="o">.</span><span class="n">rpush</span><span class="p">(</span><span class="s2">&quot;trajectories&quot;</span><span class="p">,</span> <span class="n">episode</span><span class="p">)</span>
+        <span class="n">hard_seeds</span> <span class="o">=</span> <span class="n">serialize</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hard_seeds</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">redis_server</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+            <span class="n">f</span><span class="s2">&quot;</span><span class="si">{self.redis_prefix}</span><span class="s2">_</span><span class="si">{self._sampler_id}</span><span class="s2">_hard_seeds&quot;</span><span class="p">,</span> <span class="n">hard_seeds</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Sampler.act"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.offpolicy.sampler.Sampler.act">[docs]</a>    <span class="k">def</span> <span class="nf">act</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_tensor</span><span class="p">(</span><span class="n">state</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">infer</span><span class="p">)</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">action</span></div>
+
+<div class="viewcode-block" id="Sampler.run"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.offpolicy.sampler.Sampler.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">episode_index</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_actor_weights</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">SamplerBuffer</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buffer_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_shape</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">action_shape</span>
+        <span class="p">)</span>
+
+        <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">+</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="n">SEED_RANGE</span><span class="p">)</span>
+        <span class="n">set_global_seeds</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">seed</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="n">SEED_RANGE</span><span class="p">)</span> \
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeds</span> <span class="ow">is</span> <span class="kc">None</span> \
+            <span class="k">else</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seeds</span><span class="p">)</span>
+        <span class="n">set_global_seeds</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">init_with_observation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">random_process</span><span class="o">.</span><span class="n">reset_states</span><span class="p">()</span>
+
+        <span class="n">action_noise</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">param_noise_d</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">noise_action</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">action_noise_t</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">step_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">episode_reward</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">episode_reward_orig</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">history_len</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">history_len</span><span class="p">)</span>
+                <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">act</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">action_noise</span> \
+                        <span class="ow">and</span> <span class="n">action_noise_t</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_noise_t</span> <span class="o">&gt;=</span> <span class="n">step_index</span><span class="p">:</span>
+                    <span class="n">noise_action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_process</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+                    <span class="n">action_noise_t</span> <span class="o">=</span> <span class="n">step_index</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">noise_action</span> <span class="o">=</span> <span class="n">noise_action</span>
+
+                <span class="n">action</span> <span class="o">=</span> <span class="n">action</span> <span class="o">+</span> <span class="n">noise_action</span>
+                <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
+                    <span class="n">action</span><span class="p">,</span>
+                    <span class="n">a_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">action_clip</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="n">a_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">action_clip</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="p">)</span>
+
+                <span class="n">next_state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+                <span class="n">episode_reward</span> <span class="o">+=</span> <span class="n">reward</span>
+                <span class="n">episode_reward_orig</span> <span class="o">+=</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reward_origin&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+                <span class="n">transition</span> <span class="o">=</span> <span class="p">[</span><span class="n">next_state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">step_index</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">push_transition</span><span class="p">(</span><span class="n">transition</span><span class="p">)</span>
+                <span class="n">step_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">infer</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_store</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">store_episode</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">step_index</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_episode_steps</span> \
+                    <span class="ow">or</span> <span class="n">episode_reward</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_episode_reward</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">hard_seeds</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">hard_seeds</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="n">f</span><span class="s2">&quot;--- episode </span><span class="si">{self.episode_index:5d}</span><span class="s2">:</span><span class="se">\t</span><span class="s2">&quot;</span>
+                <span class="n">f</span><span class="s2">&quot;steps: </span><span class="si">{step_index:5d}</span><span class="se">\t</span><span class="s2">&quot;</span>
+                <span class="n">f</span><span class="s2">&quot;reward: </span><span class="si">{episode_reward:10.4f}</span><span class="s2">/</span><span class="si">{episode_reward_orig:10.4f}</span><span class="se">\t</span><span class="s2">&quot;</span>
+                <span class="n">f</span><span class="s2">&quot;seed: </span><span class="si">{seed}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">,</span> <span class="n">step_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_index</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span>
+                    <span class="s2">&quot;action noise sigma&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_process</span><span class="o">.</span><span class="n">current_sigma</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">episode_index</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span>
+                    <span class="s2">&quot;param noise d&quot;</span><span class="p">,</span> <span class="n">param_noise_d</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_index</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span>
+                    <span class="s2">&quot;reward&quot;</span><span class="p">,</span> <span class="n">episode_reward</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_index</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span>
+                    <span class="s2">&quot;reward_origin&quot;</span><span class="p">,</span> <span class="n">episode_reward_orig</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_index</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span>
+                    <span class="s2">&quot;episode per minute&quot;</span><span class="p">,</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">elapsed_time</span> <span class="o">*</span> <span class="mi">60</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">episode_index</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span>
+                    <span class="s2">&quot;steps per second&quot;</span><span class="p">,</span> <span class="n">step_index</span> <span class="o">/</span> <span class="n">elapsed_time</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">episode_index</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span>
+                    <span class="s2">&quot;episode time (sec)&quot;</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_index</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span>
+                    <span class="s2">&quot;episode time (min)&quot;</span><span class="p">,</span> <span class="n">elapsed_time</span> <span class="o">/</span> <span class="mi">60</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_index</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span>
+                    <span class="s2">&quot;step time (sec)&quot;</span><span class="p">,</span> <span class="n">elapsed_time</span> <span class="o">/</span> <span class="n">step_index</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">episode_index</span>
+                <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">episode_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_index</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_limit</span><span class="p">:</span>
+                <span class="k">return</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_index</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights_sync_period</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">load_actor_weights</span><span class="p">()</span>
+
+                <span class="n">noise_prob_</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">noise_prob_</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_noise_prob</span><span class="p">:</span>
+                    <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">get_states_history</span><span class="p">(</span>
+                        <span class="n">history_len</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">history_len</span>
+                    <span class="p">)</span>
+                    <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_tensor</span><span class="p">(</span><span class="n">states</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+                    <span class="n">param_noise_d</span> <span class="o">=</span> <span class="n">set_params_noise</span><span class="p">(</span>
+                        <span class="n">actor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">,</span>
+                        <span class="n">states</span><span class="o">=</span><span class="n">states</span><span class="p">,</span>
+                        <span class="n">target_d</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">param_noise_d</span><span class="p">,</span>
+                        <span class="n">tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+                        <span class="n">max_steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">param_noise_steps</span>
+                    <span class="p">)</span>
+                    <span class="n">action_noise</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">elif</span> <span class="n">noise_prob_</span> <span class="o">&lt;</span> \
+                        <span class="bp">self</span><span class="o">.</span><span class="n">param_noise_prob</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_noise_prob</span><span class="p">:</span>
+                    <span class="n">action_noise</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">param_noise_d</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">action_noise</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="n">param_noise_d</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">SamplerBuffer</span><span class="p">(</span>
+                <span class="n">capacity</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer_size</span><span class="p">,</span>
+                <span class="n">observation_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_shape</span><span class="p">,</span>
+                <span class="n">action_shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">action_shape</span>
+            <span class="p">)</span>
+
+            <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">+</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="n">SEED_RANGE</span><span class="p">)</span>
+            <span class="n">set_global_seeds</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">hard_seed_prob</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hard_seeds</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">hard_seed_prob</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
+                    <span class="n">seed</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hard_seeds</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">seed</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="n">SEED_RANGE</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">seed</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seeds</span><span class="p">)</span>
+            <span class="n">set_global_seeds</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">init_with_observation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">random_process</span><span class="o">.</span><span class="n">reset_states</span><span class="p">()</span>
+
+            <span class="n">noise_action</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">action_noise_t</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">step_index</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">episode_reward</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">episode_reward_orig</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Scitator
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,399 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>catalyst.contrib.models.segmentation.resnetunet &mdash; Catalyst 19.03-rc0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../../../../',
+              VERSION:'19.03-rc0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../../index.html" class="icon icon-home"> Catalyst
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                19.03
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../info/contributing.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../info/license.html">License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/rl.html">RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Catalyst</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>catalyst.contrib.models.segmentation.resnetunet</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for catalyst.contrib.models.segmentation.resnetunet</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+
+<span class="kn">from</span> <span class="nn">torchvision</span> <span class="k">import</span> <span class="n">models</span>
+
+
+<span class="k">def</span> <span class="nf">get_channels</span><span class="p">(</span><span class="n">architecture</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">architecture</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;resnet18&quot;</span><span class="p">,</span> <span class="s2">&quot;resnet34&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="mi">512</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">64</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">architecture</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;resnet50&quot;</span><span class="p">,</span> <span class="s2">&quot;resnet101&quot;</span><span class="p">,</span> <span class="s2">&quot;resnet152&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="mi">2048</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">256</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{architecture}</span><span class="s2"> is not supported as backbone&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">ConvRelu</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;3x3 convolution followed by ReLU activation building block.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_in</span><span class="p">,</span> <span class="n">num_out</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a `ConvReLU` building block.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          num_in: number of input feature maps</span>
+<span class="sd">          num_out: number of output feature maps</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span>
+            <span class="n">num_in</span><span class="p">,</span> <span class="n">num_out</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The networks forward pass for which</span>
+<span class="sd">            autograd synthesizes the backwards pass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          x: the input tensor</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          The networks output tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">DecoderBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Decoder building block upsampling resolution by a factor of two.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_in</span><span class="p">,</span> <span class="n">num_out</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a `DecoderBlock` building block.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          num_in: number of input feature maps</span>
+<span class="sd">          num_out: number of output feature maps</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">ConvRelu</span><span class="p">(</span><span class="n">num_in</span><span class="p">,</span> <span class="n">num_out</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The networks forward pass for which</span>
+<span class="sd">            autograd synthesizes the backwards pass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          x: the input tensor</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          The networks output tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">scale_factor</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="ResNetUnet"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.models.ResNetUnet">[docs]</a><span class="k">class</span> <span class="nc">ResNetUnet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    U-Net inspired encoder-decoder architecture for semantic segmentation,</span>
+<span class="sd">        with a ResNet encoder as proposed by Alexander Buslaev.</span>
+
+<span class="sd">    Also known as AlbuNet</span>
+
+<span class="sd">    See:</span>
+<span class="sd">    - https://arxiv.org/abs/1505.04597 -</span>
+<span class="sd">        U-Net: Convolutional Networks for Biomedical Image Segmentation</span>
+<span class="sd">    - https://arxiv.org/abs/1411.4038  -</span>
+<span class="sd">        Fully Convolutional Networks for Semantic Segmentation</span>
+<span class="sd">    - https://arxiv.org/abs/1512.03385 -</span>
+<span class="sd">        Deep Residual Learning for Image Recognition</span>
+<span class="sd">    - https://arxiv.org/abs/1801.05746 -</span>
+<span class="sd">        TernausNet: U-Net with VGG11</span>
+<span class="sd">        Encoder Pre-Trained on ImageNet for Image Segmentation</span>
+<span class="sd">    - https://arxiv.org/abs/1806.00844 -</span>
+<span class="sd">        TernausNetV2: Fully Convolutional Network for Instance Segmentation</span>
+
+<span class="sd">    based on https://github.com/mapbox/robosat/blob/master/robosat/unet.py</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ResNetUnet.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.models.ResNetUnet.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">num_classes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">num_filters</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+        <span class="n">backbone</span><span class="o">=</span><span class="s2">&quot;resnet34&quot;</span><span class="p">,</span>
+        <span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates an `UNet` instance for semantic segmentation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          num_classes: number of classes to predict.</span>
+<span class="sd">          pretrained: use ImageNet pre-trained backbone feature extractor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># Todo: make input channels configurable,</span>
+        <span class="c1"># not hard-coded to three channels for RGB</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">resnet</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">backbone</span><span class="p">](</span><span class="n">pretrained</span><span class="o">=</span><span class="n">pretrained</span><span class="p">)</span>
+        <span class="n">encoder_channels</span> <span class="o">=</span> <span class="n">get_channels</span><span class="p">(</span><span class="n">backbone</span><span class="p">)</span>
+
+        <span class="c1"># Access resnet directly in forward pass; do not store refs here due to</span>
+        <span class="c1"># https://github.com/pytorch/pytorch/issues/8392</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">center</span> <span class="o">=</span> <span class="n">DecoderBlock</span><span class="p">(</span><span class="n">encoder_channels</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">num_filters</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dec0</span> <span class="o">=</span> <span class="n">DecoderBlock</span><span class="p">(</span>
+            <span class="n">num_in</span><span class="o">=</span><span class="n">encoder_channels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">num_filters</span> <span class="o">*</span> <span class="mi">8</span><span class="p">,</span>
+            <span class="n">num_out</span><span class="o">=</span><span class="n">num_filters</span> <span class="o">*</span> <span class="mi">8</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dec1</span> <span class="o">=</span> <span class="n">DecoderBlock</span><span class="p">(</span>
+            <span class="n">num_in</span><span class="o">=</span><span class="n">encoder_channels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">num_filters</span> <span class="o">*</span> <span class="mi">8</span><span class="p">,</span>
+            <span class="n">num_out</span><span class="o">=</span><span class="n">num_filters</span> <span class="o">*</span> <span class="mi">8</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dec2</span> <span class="o">=</span> <span class="n">DecoderBlock</span><span class="p">(</span>
+            <span class="n">num_in</span><span class="o">=</span><span class="n">encoder_channels</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">num_filters</span> <span class="o">*</span> <span class="mi">8</span><span class="p">,</span>
+            <span class="n">num_out</span><span class="o">=</span><span class="n">num_filters</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dec3</span> <span class="o">=</span> <span class="n">DecoderBlock</span><span class="p">(</span>
+            <span class="n">num_in</span><span class="o">=</span><span class="n">encoder_channels</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">num_filters</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">num_out</span><span class="o">=</span><span class="n">num_filters</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dec4</span> <span class="o">=</span> <span class="n">DecoderBlock</span><span class="p">(</span><span class="n">num_filters</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">num_filters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dec5</span> <span class="o">=</span> <span class="n">ConvRelu</span><span class="p">(</span><span class="n">num_filters</span><span class="p">,</span> <span class="n">num_filters</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">final</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">num_filters</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ResNetUnet.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.models.ResNetUnet.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The networks forward pass for which</span>
+<span class="sd">            autograd synthesizes the backwards pass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">          x: the input tensor</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          The networks output tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">size</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">%</span> <span class="mi">64</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">size</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">%</span> <span class="mi">64</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> \
+            <span class="s2">&quot;image resolution has to be divisible by 64 for resnet&quot;</span>
+
+        <span class="n">enc0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resnet</span><span class="o">.</span><span class="n">conv1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">enc0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resnet</span><span class="o">.</span><span class="n">bn1</span><span class="p">(</span><span class="n">enc0</span><span class="p">)</span>
+        <span class="n">enc0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resnet</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">enc0</span><span class="p">)</span>
+        <span class="n">enc0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resnet</span><span class="o">.</span><span class="n">maxpool</span><span class="p">(</span><span class="n">enc0</span><span class="p">)</span>
+
+        <span class="n">enc1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resnet</span><span class="o">.</span><span class="n">layer1</span><span class="p">(</span><span class="n">enc0</span><span class="p">)</span>
+        <span class="n">enc2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resnet</span><span class="o">.</span><span class="n">layer2</span><span class="p">(</span><span class="n">enc1</span><span class="p">)</span>
+        <span class="n">enc3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resnet</span><span class="o">.</span><span class="n">layer3</span><span class="p">(</span><span class="n">enc2</span><span class="p">)</span>
+        <span class="n">enc4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resnet</span><span class="o">.</span><span class="n">layer4</span><span class="p">(</span><span class="n">enc3</span><span class="p">)</span>
+
+        <span class="n">center</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">max_pool2d</span><span class="p">(</span><span class="n">enc4</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+
+        <span class="n">dec0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec0</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">enc4</span><span class="p">,</span> <span class="n">center</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">dec1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec1</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">enc3</span><span class="p">,</span> <span class="n">dec0</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">dec2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec2</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">enc2</span><span class="p">,</span> <span class="n">dec1</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">dec3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec3</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">enc1</span><span class="p">,</span> <span class="n">dec2</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">dec4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec4</span><span class="p">(</span><span class="n">dec3</span><span class="p">)</span>
+        <span class="n">dec5</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dec5</span><span class="p">(</span><span class="n">dec4</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">final</span><span class="p">(</span><span class="n">dec5</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Scitator
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

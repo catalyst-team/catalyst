@@ -1,0 +1,1048 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Utils &mdash; Catalyst 19.03-rc0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../',
+              VERSION:'19.03-rc0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Data" href="data.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Catalyst
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                19.03
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../info/contributing.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../info/license.html">License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rl.html">RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Utils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.utils.config">Config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.utils.data">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.utils.parse">Parse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.utils.misc">Misc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.utils.parallelize">Parallelize</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.utils.serialization">Serialization</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Catalyst</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/api/utils.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-catalyst.utils">
+<span id="utils"></span><h1>Utils<a class="headerlink" href="#module-catalyst.utils" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-catalyst.utils.config">
+<span id="config"></span><h2>Config<a class="headerlink" href="#module-catalyst.utils.config" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="catalyst.utils.config.load_ordered_yaml">
+<code class="descclassname">catalyst.utils.config.</code><code class="descname">load_ordered_yaml</code><span class="sig-paren">(</span><em>stream</em>, <em>Loader=&lt;class 'yaml.loader.Loader'&gt;</em>, <em>object_pairs_hook=&lt;class 'collections.OrderedDict'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/config.html#load_ordered_yaml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.load_ordered_yaml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads <cite>yaml</cite> config into OrderedDict</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>stream</strong> – opened file with yaml</li>
+<li><strong>Loader</strong> – base class for yaml Loader</li>
+<li><strong>object_pairs_hook</strong> – type of mapping</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">configuration</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.config.parse_args_uargs">
+<code class="descclassname">catalyst.utils.config.</code><code class="descname">parse_args_uargs</code><span class="sig-paren">(</span><em>args</em>, <em>unknown_args</em>, <em>dump_config=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/config.html#parse_args_uargs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.parse_args_uargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for parsing configuration files</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> – recognized arguments</li>
+<li><strong>unknown_args</strong> – unrecognized arguments</li>
+<li><strong>dump_config</strong> – if True, saves config to args.logdir</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">updated arguments, dict with config</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.config.save_config">
+<code class="descclassname">catalyst.utils.config.</code><code class="descname">save_config</code><span class="sig-paren">(</span><em>config</em>, <em>logdir: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/config.html#save_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.save_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves config into JSON in logdir</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>config</strong> – dictionary with config</li>
+<li><strong>logdir</strong> (<em>str</em>) – path to directory to save JSON</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.utils.data">
+<span id="data"></span><h2>Data<a class="headerlink" href="#module-catalyst.utils.data" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="catalyst.utils.data.balance_classes">
+<code class="descclassname">catalyst.utils.data.</code><code class="descname">balance_classes</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>class_column: str = 'label'</em>, <em>random_state: int = 42</em>, <em>how: str = 'downsampling'</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/data.html#balance_classes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.balance_classes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Balance classes in dataframe by <code class="docutils literal notranslate"><span class="pre">class_column</span></code></p>
+<p>See also <a class="reference internal" href="data.html#catalyst.data.sampler.BalanceClassSampler" title="catalyst.data.sampler.BalanceClassSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.data.sampler.BalanceClassSampler</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataframe</strong> – a dataset</li>
+<li><strong>class_column</strong> – which column to use for split</li>
+<li><strong>random_state</strong> – seed for random shuffle</li>
+<li><strong>how</strong> – strategy to sample
+must be one on [“downsampling”, “upsampling”]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">new dataframe with balanced <code class="docutils literal notranslate"><span class="pre">class_column</span></code></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.data.column_fold_split">
+<code class="descclassname">catalyst.utils.data.</code><code class="descname">column_fold_split</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>column: str</em>, <em>random_state: int = 42</em>, <em>n_folds: int = 5</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/data.html#column_fold_split"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.column_fold_split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits DataFrame into <cite>N</cite> folds.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataframe</strong> – a dataset</li>
+<li><strong>column</strong> – which column to use</li>
+<li><strong>random_state</strong> – seed for random shuffle</li>
+<li><strong>n_folds</strong> – number of result folds</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">new dataframe with <cite>fold</cite> column</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.data.create_dataframe">
+<code class="descclassname">catalyst.utils.data.</code><code class="descname">create_dataframe</code><span class="sig-paren">(</span><em>dataset: pandas.core.frame.DataFrame</em>, <em>**dataframe_args</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/data.html#create_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.create_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create pd.DataFrame from dict like <cite>{key: [values]}</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataset</strong> – dict like <cite>{key: [values]}</cite></li>
+<li><strong>**dataframe_args</strong> – <dl class="docutils">
+<dt>index <span class="classifier-delimiter">:</span> <span class="classifier">Index or array-like</span></dt>
+<dd>Index to use for resulting frame.
+Will default to np.arange(n) if no indexing information
+part of input data and no index provided</dd>
+<dt>columns <span class="classifier-delimiter">:</span> <span class="classifier">Index or array-like</span></dt>
+<dd>Column labels to use for resulting frame. Will default to
+np.arange(n) if no column labels are provided</dd>
+<dt>dtype <span class="classifier-delimiter">:</span> <span class="classifier">dtype, default None</span></dt>
+<dd>Data type to force, otherwise infer</dd>
+</dl>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dataframe from giving dataset</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.data.create_dataset">
+<code class="descclassname">catalyst.utils.data.</code><code class="descname">create_dataset</code><span class="sig-paren">(</span><em>dirs: str</em>, <em>extension: str = None</em>, <em>process_fn: Callable[str</em>, <em>object] = None</em><span class="sig-paren">)</span> &#x2192; Dict[str, object]<a class="reference internal" href="../_modules/catalyst/utils/data.html#create_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.create_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create dataset (dict like <cite>{key: [values]}</cite>) from vctk-like dataset:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">/</span>
+    <span class="n">cat</span><span class="o">/</span>
+        <span class="o">*.</span><span class="n">ext</span>
+    <span class="n">dog</span><span class="o">/</span>
+        <span class="o">*.</span><span class="n">ext</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dirs</strong> – path to dirs, for example /home/user/data/**</li>
+<li><strong>extension</strong> – data extension you are looking for</li>
+<li><strong>process_fn</strong> – function(path_to_file) -&gt; object
+process function for found files, by default</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dataset</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.data.default_fold_split">
+<code class="descclassname">catalyst.utils.data.</code><code class="descname">default_fold_split</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>random_state: int = 42</em>, <em>n_folds: int = 5</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/data.html#default_fold_split"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.default_fold_split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits DataFrame into <cite>N</cite> folds.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataframe</strong> – a dataset</li>
+<li><strong>random_state</strong> – seed for random shuffle</li>
+<li><strong>n_folds</strong> – number of result folds</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">new dataframe with <cite>fold</cite> column</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.data.prepare_dataset_labeling">
+<code class="descclassname">catalyst.utils.data.</code><code class="descname">prepare_dataset_labeling</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>class_column: str</em><span class="sig-paren">)</span> &#x2192; Dict[str, int]<a class="reference internal" href="../_modules/catalyst/utils/data.html#prepare_dataset_labeling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.prepare_dataset_labeling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares a mapping using unique values from <code class="docutils literal notranslate"><span class="pre">class_column</span></code></p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;class_name_0&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;class_name_1&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">...</span>
+    <span class="s2">&quot;class_name_N&quot;</span><span class="o">:</span> <span class="nx">N</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataframe</strong> – a dataset</li>
+<li><strong>class_column</strong> – which column to use</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">mapping from tag to labels</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Dict[str, int]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.data.separate_tags">
+<code class="descclassname">catalyst.utils.data.</code><code class="descname">separate_tags</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>tag_column: str = 'label'</em>, <em>tag_delim: str = '-'</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/data.html#separate_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.separate_tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Separates values in <code class="docutils literal notranslate"><span class="pre">class_column</span></code> column</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dataframe</strong> – a dataset</li>
+<li><strong>tag_column</strong> – column name to separate values</li>
+<li><strong>tag_delim</strong> – delimiter to separate values</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.data.split_dataframe">
+<code class="descclassname">catalyst.utils.data.</code><code class="descname">split_dataframe</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>**train_test_split_args</em><span class="sig-paren">)</span> &#x2192; Tuple[pandas.core.frame.DataFrame, pandas.core.frame.DataFrame]<a class="reference internal" href="../_modules/catalyst/utils/data.html#split_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.split_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split dataframe in train and test part.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataframe</strong> – pd.DataFrame to split</li>
+<li><strong>**train_test_split_args</strong> – <dl class="docutils">
+<dt>test_size <span class="classifier-delimiter">:</span> <span class="classifier">float, int, or None (default is None)</span></dt>
+<dd>If float, should be between 0.0 and 1.0 and represent the
+proportion of the dataset to include in the test split. If
+int, represents the absolute number of test samples. If None,
+the value is automatically set
+to the complement of the train size.
+If train size is also None, test size is set to 0.25.</dd>
+<dt>train_size <span class="classifier-delimiter">:</span> <span class="classifier">float, int, or None (default is None)</span></dt>
+<dd>If float, should be between 0.0 and 1.0 and represent the
+proportion of the dataset to include in the train split. If
+int, represents the absolute number of train samples. If None,
+the value is automatically set
+to the complement of the test size.</dd>
+<dt>random_state <span class="classifier-delimiter">:</span> <span class="classifier">int or RandomState</span></dt>
+<dd>Pseudo-random number generator state used for random sampling.</dd>
+<dt>stratify <span class="classifier-delimiter">:</span> <span class="classifier">array-like or None (default is None)</span></dt>
+<dd>If not None, data is split in a stratified fashion,
+using this as the class labels.</dd>
+</dl>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">train and test DataFrames</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>PS. It exist cause sklearn <cite>split</cite> is overcomplicated.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.data.split_dataset">
+<code class="descclassname">catalyst.utils.data.</code><code class="descname">split_dataset</code><span class="sig-paren">(</span><em>dataset: pandas.core.frame.DataFrame</em>, <em>**train_test_split_args</em><span class="sig-paren">)</span> &#x2192; Tuple[Dict[str, object], Dict[str, object]]<a class="reference internal" href="../_modules/catalyst/utils/data.html#split_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.split_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split dataset in train and test parts.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataset</strong> – dict like dataset</li>
+<li><strong>**train_test_split_args</strong> – <dl class="docutils">
+<dt>test_size <span class="classifier-delimiter">:</span> <span class="classifier">float, int, or None (default is None)</span></dt>
+<dd>If float, should be between 0.0 and 1.0 and represent the
+proportion of the dataset to include in the test split. If
+int, represents the absolute number of test samples. If None,
+the value is automatically set
+to the complement of the train size.
+If train size is also None, test size is set to 0.25.</dd>
+<dt>train_size <span class="classifier-delimiter">:</span> <span class="classifier">float, int, or None (default is None)</span></dt>
+<dd>If float, should be between 0.0 and 1.0 and represent the
+proportion of the dataset to include in the train split. If
+int, represents the absolute number of train samples. If None,
+the value is automatically set
+to the complement of the test size.</dd>
+<dt>random_state <span class="classifier-delimiter">:</span> <span class="classifier">int or RandomState</span></dt>
+<dd>Pseudo-random number generator state used for random sampling.</dd>
+<dt>stratify <span class="classifier-delimiter">:</span> <span class="classifier">array-like or None (default is None)</span></dt>
+<dd>If not None, data is split in a stratified fashion,
+using this as the class labels.</dd>
+</dl>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">train and test dicts</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.data.stratified_fold_split">
+<code class="descclassname">catalyst.utils.data.</code><code class="descname">stratified_fold_split</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>class_column: str</em>, <em>random_state: int = 42</em>, <em>n_folds: int = 5</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/data.html#stratified_fold_split"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.stratified_fold_split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits DataFrame into <cite>N</cite> stratified folds.</p>
+<p>Also see <a class="reference internal" href="data.html#catalyst.data.sampler.BalanceClassSampler" title="catalyst.data.sampler.BalanceClassSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.data.sampler.BalanceClassSampler</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataframe</strong> – a dataset</li>
+<li><strong>class_column</strong> – which column to use for split</li>
+<li><strong>random_state</strong> – seed for random shuffle</li>
+<li><strong>n_folds</strong> – number of result folds</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">new dataframe with <cite>fold</cite> column</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.utils.parse">
+<span id="parse"></span><h2>Parse<a class="headerlink" href="#module-catalyst.utils.parse" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="catalyst.utils.parse.dataframe_to_list">
+<code class="descclassname">catalyst.utils.parse.</code><code class="descname">dataframe_to_list</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; List[dict]<a class="reference internal" href="../_modules/catalyst/utils/parse.html#dataframe_to_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parse.dataframe_to_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts dataframe to a list of rows (without indexes)
+:param dataframe: input dataframe
+:type dataframe: DataFrame</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of rows</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">(List[dict])</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.parse.folds_to_list">
+<code class="descclassname">catalyst.utils.parse.</code><code class="descname">folds_to_list</code><span class="sig-paren">(</span><em>folds: Union[list, str, pandas.core.series.Series]</em><span class="sig-paren">)</span> &#x2192; List[int]<a class="reference internal" href="../_modules/catalyst/utils/parse.html#folds_to_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parse.folds_to_list" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>This function formats string or either list of numbers</dt>
+<dd>into a list of unique int</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>folds</strong> (<em>Union</em><em>[</em><em>list</em><em>, </em><em>str</em><em>, </em><em>pd.Series</em><em>]</em>) – Either list of numbers or
+one string with numbers separated by commas or
+pandas series</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of unique ints</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">List[int]</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">folds_to_list</span><span class="p">(</span><span class="s2">&quot;1,2,1,3,4,2,4,6&quot;</span><span class="p">)</span>
+<span class="go">[1, 2, 3, 4, 6]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">folds_to_list</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="go">[1, 2, 3, 5]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code> – if value in string or array cannot be casted to int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.parse.map_dataframe">
+<code class="descclassname">catalyst.utils.parse.</code><code class="descname">map_dataframe</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame, tag_column: str, class_column: str, tag2class: Dict[str, int], verbose: bool = False</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/parse.html#map_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parse.map_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function maps tags from <code class="docutils literal notranslate"><span class="pre">tag_column</span></code> to ints into <code class="docutils literal notranslate"><span class="pre">class_column</span></code>
+Using <code class="docutils literal notranslate"><span class="pre">tag2class</span></code> dictionary</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dataframe</strong> (<em>pd.DataFrame</em>) – input dataframe</li>
+<li><strong>tag_column</strong> (<em>str</em>) – column with tags</li>
+<li><strong>class_column</strong> (<em>str</em>) – </li>
+<li><strong>tag2class</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – mapping from tags to class labels</li>
+<li><strong>verbose</strong> – flag if true, uses tqdm</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">updated dataframe with <code class="docutils literal notranslate"><span class="pre">class_column</span></code></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">pd.DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.parse.merge_multiple_fold_csv">
+<code class="descclassname">catalyst.utils.parse.</code><code class="descname">merge_multiple_fold_csv</code><span class="sig-paren">(</span><em>fold_name: str, paths: Optional[str]</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/parse.html#merge_multiple_fold_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parse.merge_multiple_fold_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads csv into one DataFrame with column <code class="docutils literal notranslate"><span class="pre">fold</span></code>
+:param fold_name: current fold name
+:type fold_name: str
+:param paths: paths to csv separated by commas
+:type paths: str</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">merged dataframes with column <code class="docutils literal notranslate"><span class="pre">fold</span></code> == <code class="docutils literal notranslate"><span class="pre">fold_name</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">pd.DataFrame</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.parse.read_csv_data">
+<code class="descclassname">catalyst.utils.parse.</code><code class="descname">read_csv_data</code><span class="sig-paren">(</span><em>in_csv: str = None</em>, <em>train_folds: Optional[List[int]] = None</em>, <em>valid_folds: Optional[List[int]] = None</em>, <em>infer_folds: Optional[List[int]] = None</em>, <em>seed: int = 42</em>, <em>n_folds: int = 5</em>, <em>in_csv_train: str = None</em>, <em>in_csv_valid: str = None</em>, <em>in_csv_infer: str = None</em>, <em>tag2class: Optional[Dict[str</em>, <em>int]] = None</em>, <em>class_column: str = None</em>, <em>tag_column: str = None</em><span class="sig-paren">)</span> &#x2192; Tuple[pandas.core.frame.DataFrame, List[dict], List[dict], List[dict]]<a class="reference internal" href="../_modules/catalyst/utils/parse.html#read_csv_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parse.read_csv_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>From giving path <code class="docutils literal notranslate"><span class="pre">in_csv</span></code> reads a dataframe
+and split it to train/valid/infer folds
+or from several paths <code class="docutils literal notranslate"><span class="pre">in_csv_train</span></code>, <code class="docutils literal notranslate"><span class="pre">in_csv_valid</span></code>, <code class="docutils literal notranslate"><span class="pre">in_csv_infer</span></code>
+reads independent folds.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<dl class="last docutils">
+<dt>This function can be used with different combinations of params.</dt>
+<dd><dl class="first last docutils">
+<dt>First block is used to get dataset from one <cite>csv</cite>:</dt>
+<dd>in_csv, train_folds, valid_folds, infer_folds, seed, n_folds</dd>
+<dt>Second includes paths to different csv for train/valid and infer parts:</dt>
+<dd>in_csv_train, in_csv_valid, in_csv_infer</dd>
+<dt>The other params (tag2class, tag_column, class_column) are optional</dt>
+<dd>for any previous block</dd>
+</dl>
+</dd>
+</dl>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_csv</strong> (<em>str</em>) – paths to whole dataset</li>
+<li><strong>train_folds</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – train folds</li>
+<li><strong>valid_folds</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – valid folds.
+If none takes all folds not included in <code class="docutils literal notranslate"><span class="pre">train_folds</span></code></li>
+<li><strong>infer_folds</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – infer folds.
+If none takes all folds not included in <code class="docutils literal notranslate"><span class="pre">train_folds</span></code>
+and <code class="docutils literal notranslate"><span class="pre">valid_folds</span></code></li>
+<li><strong>seed</strong> (<em>int</em>) – seed for split</li>
+<li><strong>n_folds</strong> (<em>int</em>) – number of folds</li>
+<li><strong>in_csv_train</strong> (<em>str</em>) – paths to train csv separated by commas</li>
+<li><strong>in_csv_valid</strong> (<em>str</em>) – paths to valid csv separated by commas</li>
+<li><strong>in_csv_infer</strong> (<em>str</em>) – paths to infer csv separated by commas</li>
+<li><strong>tag2class</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – mapping from label names into ints</li>
+<li><strong>tag_column</strong> (<em>str</em>) – column with label names</li>
+<li><strong>class_column</strong> (<em>str</em>) – column to use for split</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">tuple with 4 elements
+(whole dataframe,
+list with train data,
+list with valid data
+and list with infer data)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(Tuple[pd.DataFrame, List[dict], List[dict], List[dict]])</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.parse.read_multiple_dataframes">
+<code class="descclassname">catalyst.utils.parse.</code><code class="descname">read_multiple_dataframes</code><span class="sig-paren">(</span><em>in_csv_train: str = None</em>, <em>in_csv_valid: str = None</em>, <em>in_csv_infer: str = None</em>, <em>tag2class: Optional[Dict[str</em>, <em>int]] = None</em>, <em>class_column: str = None</em>, <em>tag_column: str = None</em><span class="sig-paren">)</span> &#x2192; Tuple[pandas.core.frame.DataFrame, pandas.core.frame.DataFrame, pandas.core.frame.DataFrame, pandas.core.frame.DataFrame]<a class="reference internal" href="../_modules/catalyst/utils/parse.html#read_multiple_dataframes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parse.read_multiple_dataframes" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function reads train/valid/infer dataframes from giving paths
+:param in_csv_train: paths to train csv separated by commas
+:type in_csv_train: str
+:param in_csv_valid: paths to valid csv separated by commas
+:type in_csv_valid: str
+:param in_csv_infer: paths to infer csv separated by commas
+:type in_csv_infer: str
+:param tag2class: mapping from label names into int
+:type tag2class: Dict[str, int], optional
+:param tag_column: column with label names
+:type tag_column: str, optional
+:param class_column: column to use for split
+:type class_column: str, optional</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>tuple with 4 dataframes</dt>
+<dd>whole dataframe, train part, valid part and infer part</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">(tuple)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.parse.split_dataframe">
+<code class="descclassname">catalyst.utils.parse.</code><code class="descname">split_dataframe</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame, train_folds: List[int], valid_folds: Optional[List[int]] = None, infer_folds: Optional[List[int]] = None, tag2class: Optional[Dict[str, int]] = None, tag_column: str = None, class_column: str = None, seed: int = 42, n_folds: int = 5</em><span class="sig-paren">)</span> &#x2192; Tuple[pandas.core.frame.DataFrame, pandas.core.frame.DataFrame, pandas.core.frame.DataFrame, pandas.core.frame.DataFrame]<a class="reference internal" href="../_modules/catalyst/utils/parse.html#split_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parse.split_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split a Pandas DataFrame into folds.
+:param dataframe: input dataframe
+:type dataframe: pd.DataFrame
+:param train_folds: train folds
+:type train_folds: List[int]
+:param valid_folds: valid folds.</p>
+<blockquote>
+<div>If none takes all folds not included in <code class="docutils literal notranslate"><span class="pre">train_folds</span></code></div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>infer_folds</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – infer folds.
+If none takes all folds not included in <code class="docutils literal notranslate"><span class="pre">train_folds</span></code>
+and <code class="docutils literal notranslate"><span class="pre">valid_folds</span></code></li>
+<li><strong>tag2class</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em><em>, </em><em>optional</em>) – mapping from label names into int</li>
+<li><strong>tag_column</strong> (<em>str</em><em>, </em><em>optional</em>) – column with label names</li>
+<li><strong>class_column</strong> (<em>str</em><em>, </em><em>optional</em>) – column to use for split</li>
+<li><strong>seed</strong> (<em>int</em>) – seed for split</li>
+<li><strong>n_folds</strong> (<em>int</em>) – number of folds</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>tuple with 4 dataframes</dt>
+<dd><p class="first last">whole dataframe, train part, valid part and infer part</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(tuple)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.utils.misc">
+<span id="misc"></span><h2>Misc<a class="headerlink" href="#module-catalyst.utils.misc" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.utils.misc.FrozenClass">
+<em class="property">class </em><code class="descclassname">catalyst.utils.misc.</code><code class="descname">FrozenClass</code><a class="reference internal" href="../_modules/catalyst/utils/misc.html#FrozenClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.FrozenClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class which prohibit <code class="docutils literal notranslate"><span class="pre">__setattr__</span></code> on existing attributes</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">RunnerState</span><span class="p">(</span><span class="n">FrozenClass</span><span class="p">):</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.misc.args_are_not_none">
+<code class="descclassname">catalyst.utils.misc.</code><code class="descname">args_are_not_none</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/misc.html#args_are_not_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.args_are_not_none" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that all arguments are not None
+:param *args: values
+:type *args: Any</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if all value were not None, False otherwise</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.misc.boolean_flag">
+<code class="descclassname">catalyst.utils.misc.</code><code class="descname">boolean_flag</code><span class="sig-paren">(</span><em>parser</em>, <em>name: str</em>, <em>default: bool = False</em>, <em>help: str = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/misc.html#boolean_flag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.boolean_flag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a boolean flag to argparse parser.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parser</strong> (<em>argparse.Parser</em>) – parser to add the flag to</li>
+<li><strong>name</strong> (<em>str</em>) – –&lt;name&gt; will enable the flag,
+while –no-&lt;name&gt; will disable it</li>
+<li><strong>default</strong> (<em>bool</em><em>, </em><em>optional</em>) – default value of the flag</li>
+<li><strong>help</strong> (<em>str</em>) – help string for the flag</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.misc.import_module">
+<code class="descclassname">catalyst.utils.misc.</code><code class="descname">import_module</code><span class="sig-paren">(</span><em>name: str</em>, <em>path: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#import_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.import_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Imports module by filepath</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> – name of the module</li>
+<li><strong>path</strong> – file location</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">imported module</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.misc.merge_dicts">
+<code class="descclassname">catalyst.utils.misc.</code><code class="descname">merge_dicts</code><span class="sig-paren">(</span><em>*dicts</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="../_modules/catalyst/utils/misc.html#merge_dicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.merge_dicts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursive dict merge.
+Instead of updating only top-level keys,
+<code class="docutils literal notranslate"><span class="pre">merge_dicts</span></code> recurses down into dicts nested
+to an arbitrary depth, updating keys.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>*dicts</strong> – several dictionaries to merge</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">deep-merged dictionary</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.misc.set_global_seeds">
+<code class="descclassname">catalyst.utils.misc.</code><code class="descname">set_global_seeds</code><span class="sig-paren">(</span><em>seed: int</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/misc.html#set_global_seeds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.set_global_seeds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets random seed into PyTorch, TensorFlow, Numpy and Random</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seed</strong> – random seed</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.utils.parallelize">
+<span id="parallelize"></span><h2>Parallelize<a class="headerlink" href="#module-catalyst.utils.parallelize" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.utils.parallelize.StoppableThread">
+<em class="property">class </em><code class="descclassname">catalyst.utils.parallelize.</code><code class="descname">StoppableThread</code><span class="sig-paren">(</span><em>func: Callable</em>, <em>items: Iterable</em>, <em>callback: Callable = None</em>, <em>callback_each: int = 1</em>, <em>continue_on_exception: bool = False</em>, <em>exception_impute=None</em>, <em>exception_callback: Callable = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/parallelize.html#StoppableThread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parallelize.StoppableThread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Thread that can be stopped</p>
+<ul class="simple">
+<li>code modified from <a class="reference external" href="https://github.com/rampeer/py-parallelize">https://github.com/rampeer/py-parallelize</a></li>
+</ul>
+<dl class="method">
+<dt id="catalyst.utils.parallelize.StoppableThread.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/parallelize.html#StoppableThread.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parallelize.StoppableThread.run" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.parallelize.parallelize">
+<code class="descclassname">catalyst.utils.parallelize.</code><code class="descname">parallelize</code><span class="sig-paren">(</span><em>items: Iterable</em>, <em>func: Callable</em>, <em>thread_count: int = None</em>, <em>progressbar: bool = False</em>, <em>progressbar_tick: int = 1</em>, <em>continue_on_exception: bool = False</em>, <em>exception_impute=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/parallelize.html#parallelize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parallelize.parallelize" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function iterates (in multithreaded fashion)
+over <cite>items</cite> and calls <cite>fun</cite> for each item.</p>
+<ul class="simple">
+<li>code modified from <a class="reference external" href="https://github.com/rampeer/py-parallelize">https://github.com/rampeer/py-parallelize</a></li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>items</strong> – items to process.</li>
+<li><strong>func</strong> – function to apply to each <cite>items</cite> element.</li>
+<li><strong>progressbar</strong> – should progressbar be displayed?</li>
+<li><strong>progressbar_tick</strong> – how often should we update progressbar?</li>
+<li><strong>thread_count</strong> – how many threads should be allocated?
+If None, this parameter will be chosen automatically.</li>
+<li><strong>continue_on_exception</strong> – if True, it will print warning
+if <cite>func</cite> fails on some element, instead of halting</li>
+<li><strong>exception_impute</strong> – which value should be put into output
+if <cite>func</cite> throws an exception?</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.utils.serialization">
+<span id="serialization"></span><h2>Serialization<a class="headerlink" href="#module-catalyst.utils.serialization" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="catalyst.utils.serialization.deserialize">
+<code class="descclassname">catalyst.utils.serialization.</code><code class="descname">deserialize</code><span class="sig-paren">(</span><em>bytes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/serialization.html#deserialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.serialization.deserialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize bytes into an object using zlib and marshal</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>bytes</strong> – a bytes object containing compressed with zlib data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Returns a value decompressed from the bytes-like object.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.serialization.serialize">
+<code class="descclassname">catalyst.utils.serialization.</code><code class="descname">serialize</code><span class="sig-paren">(</span><em>object</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/serialization.html#serialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.serialization.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize the data into bytes using marshal and zlib</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>object</strong> – a value</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Returns a bytes object containing compressed with zlib data.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="data.html" class="btn btn-neutral float-left" title="Data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Scitator
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

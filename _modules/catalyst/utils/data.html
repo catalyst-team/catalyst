@@ -1,0 +1,580 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>catalyst.utils.data &mdash; Catalyst 19.03-rc0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../../',
+              VERSION:'19.03-rc0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Catalyst
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                19.03
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../info/contributing.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../info/license.html">License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/rl.html">RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Catalyst</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>catalyst.utils.data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for catalyst.utils.data</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">StratifiedKFold</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils</span> <span class="k">import</span> <span class="n">shuffle</span>
+
+<span class="n">DictDataset</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="create_dataset"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.data.create_dataset">[docs]</a><span class="k">def</span> <span class="nf">create_dataset</span><span class="p">(</span>
+    <span class="n">dirs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">process_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DictDataset</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create dataset (dict like `{key: [values]}`) from vctk-like dataset::</span>
+
+<span class="sd">        dataset/</span>
+<span class="sd">            cat/</span>
+<span class="sd">                *.ext</span>
+<span class="sd">            dog/</span>
+<span class="sd">                *.ext</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dirs: path to dirs, for example /home/user/data/**</span>
+<span class="sd">        extension: data extension you are looking for</span>
+<span class="sd">        process_fn: function(path_to_file) -&gt; object</span>
+<span class="sd">            process function for found files, by default</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: dataset</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">extension</span> <span class="o">=</span> <span class="n">extension</span> <span class="ow">or</span> <span class="s2">&quot;*&quot;</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="n">dirs</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">dirs</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+    <span class="n">dirs</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dirs</span><span class="p">))</span>
+    <span class="n">dirs</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dirs</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span>
+
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">dirs</span><span class="p">):</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">))</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">d</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">extension</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">process_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dataset</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dataset</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">process_fn</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">files</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">dataset</span></div>
+
+
+<div class="viewcode-block" id="split_dataset"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.data.split_dataset">[docs]</a><span class="k">def</span> <span class="nf">split_dataset</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">**</span><span class="n">train_test_split_args</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">DictDataset</span><span class="p">,</span> <span class="n">DictDataset</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split dataset in train and test parts.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset: dict like dataset</span>
+<span class="sd">        **train_test_split_args:</span>
+<span class="sd">            test_size : float, int, or None (default is None)</span>
+<span class="sd">                If float, should be between 0.0 and 1.0 and represent the</span>
+<span class="sd">                proportion of the dataset to include in the test split. If</span>
+<span class="sd">                int, represents the absolute number of test samples. If None,</span>
+<span class="sd">                the value is automatically set</span>
+<span class="sd">                to the complement of the train size.</span>
+<span class="sd">                If train size is also None, test size is set to 0.25.</span>
+
+<span class="sd">            train_size : float, int, or None (default is None)</span>
+<span class="sd">                If float, should be between 0.0 and 1.0 and represent the</span>
+<span class="sd">                proportion of the dataset to include in the train split. If</span>
+<span class="sd">                int, represents the absolute number of train samples. If None,</span>
+<span class="sd">                the value is automatically set</span>
+<span class="sd">                to the complement of the test size.</span>
+
+<span class="sd">            random_state : int or RandomState</span>
+<span class="sd">                Pseudo-random number generator state used for random sampling.</span>
+
+<span class="sd">            stratify : array-like or None (default is None)</span>
+<span class="sd">                If not None, data is split in a stratified fashion,</span>
+<span class="sd">                using this as the class labels.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        train and test dicts</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">train_dataset</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">test_dataset</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">train_ids</span><span class="p">,</span> <span class="n">test_ids</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)),</span> <span class="o">**</span><span class="n">train_test_split_args</span>
+        <span class="p">)</span>
+        <span class="n">train_dataset</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">value</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">train_ids</span><span class="p">])</span>
+        <span class="n">test_dataset</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">value</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">test_ids</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">train_dataset</span><span class="p">,</span> <span class="n">test_dataset</span></div>
+
+
+<div class="viewcode-block" id="create_dataframe"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.data.create_dataframe">[docs]</a><span class="k">def</span> <span class="nf">create_dataframe</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">**</span><span class="n">dataframe_args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create pd.DataFrame from dict like `{key: [values]}`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset: dict like `{key: [values]}`</span>
+<span class="sd">        **dataframe_args:</span>
+<span class="sd">            index : Index or array-like</span>
+<span class="sd">                Index to use for resulting frame.</span>
+<span class="sd">                Will default to np.arange(n) if no indexing information</span>
+<span class="sd">                part of input data and no index provided</span>
+<span class="sd">            columns : Index or array-like</span>
+<span class="sd">                Column labels to use for resulting frame. Will default to</span>
+<span class="sd">                np.arange(n) if no column labels are provided</span>
+<span class="sd">            dtype : dtype, default None</span>
+<span class="sd">                Data type to force, otherwise infer</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: dataframe from giving dataset</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span>
+    <span class="p">]</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">dataframe_args</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="split_dataframe"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.data.split_dataframe">[docs]</a><span class="k">def</span> <span class="nf">split_dataframe</span><span class="p">(</span>
+    <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">**</span><span class="n">train_test_split_args</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split dataframe in train and test part.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataframe: pd.DataFrame to split</span>
+<span class="sd">        **train_test_split_args:</span>
+<span class="sd">            test_size : float, int, or None (default is None)</span>
+<span class="sd">                If float, should be between 0.0 and 1.0 and represent the</span>
+<span class="sd">                proportion of the dataset to include in the test split. If</span>
+<span class="sd">                int, represents the absolute number of test samples. If None,</span>
+<span class="sd">                the value is automatically set</span>
+<span class="sd">                to the complement of the train size.</span>
+<span class="sd">                If train size is also None, test size is set to 0.25.</span>
+
+<span class="sd">            train_size : float, int, or None (default is None)</span>
+<span class="sd">                If float, should be between 0.0 and 1.0 and represent the</span>
+<span class="sd">                proportion of the dataset to include in the train split. If</span>
+<span class="sd">                int, represents the absolute number of train samples. If None,</span>
+<span class="sd">                the value is automatically set</span>
+<span class="sd">                to the complement of the test size.</span>
+
+<span class="sd">            random_state : int or RandomState</span>
+<span class="sd">                Pseudo-random number generator state used for random sampling.</span>
+
+<span class="sd">            stratify : array-like or None (default is None)</span>
+<span class="sd">                If not None, data is split in a stratified fashion,</span>
+<span class="sd">                using this as the class labels.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        train and test DataFrames</span>
+
+
+<span class="sd">    PS. It exist cause sklearn `split` is overcomplicated.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_train</span><span class="p">,</span> <span class="n">df_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="o">**</span><span class="n">train_test_split_args</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df_train</span><span class="p">,</span> <span class="n">df_test</span></div>
+
+
+<div class="viewcode-block" id="default_fold_split"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.data.default_fold_split">[docs]</a><span class="k">def</span> <span class="nf">default_fold_split</span><span class="p">(</span>
+    <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">random_state</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span> <span class="n">n_folds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Splits DataFrame into `N` folds.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataframe: a dataset</span>
+<span class="sd">        random_state: seed for random shuffle</span>
+<span class="sd">        n_folds: number of result folds</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: new dataframe with `fold` column</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dataframe</span> <span class="o">=</span> <span class="n">shuffle</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
+
+    <span class="n">df_tmp</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">df_el</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">n_folds</span><span class="p">)):</span>
+        <span class="n">df_el</span><span class="p">[</span><span class="s2">&quot;fold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="n">df_tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_el</span><span class="p">)</span>
+    <span class="n">dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_tmp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dataframe</span></div>
+
+
+<div class="viewcode-block" id="stratified_fold_split"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.data.stratified_fold_split">[docs]</a><span class="k">def</span> <span class="nf">stratified_fold_split</span><span class="p">(</span>
+    <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">class_column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+    <span class="n">n_folds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Splits DataFrame into `N` stratified folds.</span>
+
+<span class="sd">    Also see :class:`catalyst.data.sampler.BalanceClassSampler`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataframe: a dataset</span>
+<span class="sd">        class_column: which column to use for split</span>
+<span class="sd">        random_state: seed for random shuffle</span>
+<span class="sd">        n_folds: number of result folds</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: new dataframe with `fold` column</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">skf</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span>
+        <span class="n">n_splits</span><span class="o">=</span><span class="n">n_folds</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span>
+    <span class="p">)</span>
+    <span class="n">fold_column</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataframe</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">test_index</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+        <span class="n">skf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataframe</span><span class="p">)),</span> <span class="n">dataframe</span><span class="p">[</span><span class="n">class_column</span><span class="p">])</span>
+    <span class="p">):</span>
+        <span class="n">fold_column</span><span class="p">[</span><span class="n">test_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+    <span class="n">dataframe</span><span class="p">[</span><span class="s2">&quot;fold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fold_column</span>
+    <span class="k">return</span> <span class="n">dataframe</span></div>
+
+
+<div class="viewcode-block" id="column_fold_split"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.data.column_fold_split">[docs]</a><span class="k">def</span> <span class="nf">column_fold_split</span><span class="p">(</span>
+    <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+    <span class="n">n_folds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Splits DataFrame into `N` folds.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataframe: a dataset</span>
+<span class="sd">        column: which column to use</span>
+<span class="sd">        random_state: seed for random shuffle</span>
+<span class="sd">        n_folds: number of result folds</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: new dataframe with `fold` column</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_tmp</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">shuffle</span><span class="p">(</span>
+        <span class="nb">sorted</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()),</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">fold_labels</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">n_folds</span><span class="p">)):</span>
+        <span class="n">df_label</span> <span class="o">=</span> <span class="n">dataframe</span><span class="p">[</span><span class="n">dataframe</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">fold_labels</span><span class="p">)]</span>
+        <span class="n">df_label</span><span class="p">[</span><span class="s2">&quot;fold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="n">df_tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_label</span><span class="p">)</span>
+    <span class="n">dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_tmp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dataframe</span></div>
+
+
+<div class="viewcode-block" id="balance_classes"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.data.balance_classes">[docs]</a><span class="k">def</span> <span class="nf">balance_classes</span><span class="p">(</span>
+    <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">class_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+    <span class="n">how</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;downsampling&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Balance classes in dataframe by ``class_column``</span>
+
+<span class="sd">    See also :class:`catalyst.data.sampler.BalanceClassSampler`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataframe: a dataset</span>
+<span class="sd">        class_column: which column to use for split</span>
+<span class="sd">        random_state: seed for random shuffle</span>
+<span class="sd">        how: strategy to sample</span>
+<span class="sd">            must be one on [&quot;downsampling&quot;, &quot;upsampling&quot;]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: new dataframe with balanced ``class_column``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cnt</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="n">class_column</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()):</span>
+        <span class="n">cnt</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="n">dataframe</span><span class="p">[</span><span class="n">class_column</span><span class="p">]</span> <span class="o">==</span> <span class="n">label</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">how</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">how</span> <span class="o">==</span> <span class="s2">&quot;upsampling&quot;</span><span class="p">:</span>
+        <span class="n">samples_per_class</span> <span class="o">=</span> <span class="n">how</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">how</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="n">cnt</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+        <span class="n">balanced_dfs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="n">class_column</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()):</span>
+            <span class="n">df_class_column</span> <span class="o">=</span> <span class="n">dataframe</span><span class="p">[</span><span class="n">dataframe</span><span class="p">[</span><span class="n">class_column</span><span class="p">]</span> <span class="o">==</span> <span class="n">label</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">samples_per_class</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_class_column</span><span class="p">):</span>
+                <span class="n">balanced_dfs</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_class_column</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
+                    <span class="n">samples_per_class</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df_class_column_additional</span> <span class="o">=</span> <span class="n">df_class_column</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
+                    <span class="n">samples_per_class</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_class_column</span><span class="p">),</span>
+                    <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span>
+                <span class="p">)</span>
+                <span class="n">balanced_dfs</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">df_class_column</span><span class="p">,</span> <span class="n">df_class_column_additional</span><span class="p">)</span>
+                <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">how</span> <span class="o">==</span> <span class="s2">&quot;downsampling&quot;</span><span class="p">:</span>
+        <span class="n">samples_per_class</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">cnt</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+        <span class="n">balanced_dfs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="n">class_column</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()):</span>
+            <span class="n">balanced_dfs</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataframe</span><span class="p">[</span><span class="n">dataframe</span><span class="p">[</span><span class="n">class_column</span><span class="p">]</span> <span class="o">==</span> <span class="n">label</span>
+                                            <span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
+                                                <span class="n">samples_per_class</span><span class="p">,</span>
+                                                <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                                <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span>
+                                            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="n">balanced_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">balanced_dfs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">balanced_df</span></div>
+
+
+<div class="viewcode-block" id="prepare_dataset_labeling"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.data.prepare_dataset_labeling">[docs]</a><span class="k">def</span> <span class="nf">prepare_dataset_labeling</span><span class="p">(</span>
+    <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">class_column</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prepares a mapping using unique values from ``class_column``</span>
+
+<span class="sd">    .. code-block:: javascript</span>
+
+<span class="sd">        {</span>
+<span class="sd">            &quot;class_name_0&quot;: 0,</span>
+<span class="sd">            &quot;class_name_1&quot;: 1,</span>
+<span class="sd">            ...</span>
+<span class="sd">            &quot;class_name_N&quot;: N</span>
+<span class="sd">        }</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataframe: a dataset</span>
+<span class="sd">        class_column: which column to use</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Dict[str, int]: mapping from tag to labels</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tag_to_labels</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">class_name</span><span class="p">):</span> <span class="n">label</span>
+        <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">class_name</span> <span class="ow">in</span>
+        <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">dataframe</span><span class="p">[</span><span class="n">class_column</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()))</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">tag_to_labels</span></div>
+
+
+<div class="viewcode-block" id="separate_tags"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.data.separate_tags">[docs]</a><span class="k">def</span> <span class="nf">separate_tags</span><span class="p">(</span>
+    <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">tag_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">tag_delim</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Separates values in ``class_column`` column</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataframe: a dataset</span>
+<span class="sd">        tag_column: column name to separate values</span>
+<span class="sd">        tag_delim: delimiter to separate values</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_new</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">class_name</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="n">tag_column</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">tag_delim</span><span class="p">):</span>
+            <span class="n">df_new</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="o">**</span><span class="n">row</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="n">tag_column</span><span class="p">:</span> <span class="n">class_name</span><span class="p">}})</span>
+    <span class="n">df_new</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df_new</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df_new</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Scitator
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,794 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Data &mdash; Catalyst 19.03-rc0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../',
+              VERSION:'19.03-rc0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Utils" href="utils.html" />
+    <link rel="prev" title="Contrib" href="contrib.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Catalyst
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                19.03
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../info/contributing.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../info/license.html">License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rl.html">RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contrib.html">Contrib</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#scripts">Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reader">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.data.dataset">Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.data.sampler">Sampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.data.collate_fn">Collate Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.data.mixin">Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#augmentor">Augmentor</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Catalyst</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/api/data.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="data">
+<h1>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h1>
+<p>Data subpackage has data preprocessers and dataloader abstractions.</p>
+<span class="target" id="module-catalyst.data"></span><div class="section" id="scripts">
+<h2>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
+<p>You can use scripts typing <cite>catalyst-data</cite> in your terminal.
+For example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-data tag2label --help
+</pre></div>
+</div>
+<span class="target" id="module-catalyst.data.__main__"></span><p>Catalyst-data scripts.</p>
+<p class="rubric">Examples</p>
+<p>1. <strong>tag2label</strong> prepares a dataset to json like
+<cite>{“class_id”:  class_column_from_dataset}</cite></p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>$ catalyst-data tag2label \
+    --in-dir=./data/ants_bees \
+    --out-dataset=./data/ants_bees/dataset.csv \
+    --out-labeling=./data/ants_bees/tag2cls.json
+</pre></div>
+</div>
+<p>2. <strong>check-images</strong> checks images in your data
+to be non-broken and writes a flag:
+<cite>true</cite> if image opened without an error and <cite>false</cite> otherwise</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>$ catalyst-data check-images \
+    --in-csv=./data/input.csv \
+    --img-datapath=./data/images \
+    --img-col=&quot;filename&quot; \
+    --out-csv=./data/input_checked.csv \
+    --n-cpu=4
+</pre></div>
+</div>
+<p>3. <strong>image2embedding</strong> embeds images from your csv
+or image directory with specified neural net architecture</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>$ catalyst-data image2embedding \
+    --in-csv=./data/input.csv \
+    --img-col=&quot;filename&quot; \
+    --img-size=64 \
+    --out-npy=./embeddings.npy \
+    --arch=resnet34 \
+    --pooling=GlobalMaxPool2d \
+    --batch-size=8 \
+    --num-workers=16 \
+    --verbose
+</pre></div>
+</div>
+</div>
+<div class="section" id="reader">
+<h2>Reader<a class="headerlink" href="#reader" title="Permalink to this headline">¶</a></h2>
+<p>Readers are the abstraction for your dataset. They can open an elem from the dataset and transform it to data, needed by your network.
+For example open image by path, or read string and tokenize it.</p>
+<dl class="class">
+<dt id="catalyst.data.reader.BaseReader">
+<em class="property">class </em><code class="descclassname">catalyst.data.reader.</code><code class="descname">BaseReader</code><span class="sig-paren">(</span><em>input_key: str</em>, <em>output_key: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#BaseReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.BaseReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reader abstraction for all Readers. Applies a function
+to an element of your data.
+For example to a row from csv, or to an image, etc.</p>
+<p>All inherited classes have to implement <cite>__call__</cite>.</p>
+<dl class="method">
+<dt id="catalyst.data.reader.BaseReader.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>row</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#BaseReader.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.BaseReader.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a row from your annotations dict and
+transfer it to data, needed by your network
+for example open image by path, or read string and tokenize it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>row</strong> – elem in your dataset.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Data object used for your neural network</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.reader.BaseReader.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>input_key: str</em>, <em>output_key: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#BaseReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.BaseReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_key</strong> (<em>str</em>) – input key to use from annotation dict</li>
+<li><strong>output_key</strong> (<em>str</em>) – output key to use to store the result</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.data.reader.LambdaReader">
+<em class="property">class </em><code class="descclassname">catalyst.data.reader.</code><code class="descname">LambdaReader</code><span class="sig-paren">(</span><em>input_key: str</em>, <em>output_key: str</em>, <em>encode_fn: Callable = &lt;function LambdaReader.&lt;lambda&gt;&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#LambdaReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.LambdaReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reader abstraction with an lambda encoder.
+Can read an elem from dataset and apply <cite>encode_fn</cite> function to it</p>
+<dl class="method">
+<dt id="catalyst.data.reader.LambdaReader.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>row</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#LambdaReader.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.LambdaReader.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a row from your annotations dict
+and applies <cite>encode_fn</cite> function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>row</strong> – elem in your dataset.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Value after applying <cite>encode_fn</cite> function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.reader.LambdaReader.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>input_key: str</em>, <em>output_key: str</em>, <em>encode_fn: Callable = &lt;function LambdaReader.&lt;lambda&gt;&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#LambdaReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.LambdaReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_key</strong> (<em>str</em>) – input key to use from annotation dict</li>
+<li><strong>output_key</strong> (<em>str</em>) – output key to use to store the result</li>
+<li><strong>encode_fn</strong> (<em>callable</em>) – encode function to use to prepare your data
+(for example convert chars/words/tokens to indices, etc)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.data.reader.ScalarReader">
+<em class="property">class </em><code class="descclassname">catalyst.data.reader.</code><code class="descname">ScalarReader</code><span class="sig-paren">(</span><em>input_key: str</em>, <em>output_key: str</em>, <em>dtype: Type = &lt;class 'numpy.float32'&gt;</em>, <em>default_value: float = None</em>, <em>one_hot_classes: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ScalarReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ScalarReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Numeric data reader abstraction.
+Reads a single float, int, str or other from data</p>
+<dl class="method">
+<dt id="catalyst.data.reader.ScalarReader.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>row</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ScalarReader.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ScalarReader.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a row from your annotations dict with filename and
+transfer it to a single value</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>row</strong> – elem in your dataset.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Scalar value</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dtype</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.reader.ScalarReader.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>input_key: str</em>, <em>output_key: str</em>, <em>dtype: Type = &lt;class 'numpy.float32'&gt;</em>, <em>default_value: float = None</em>, <em>one_hot_classes: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ScalarReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ScalarReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_key</strong> (<em>str</em>) – input key to use from annotation dict</li>
+<li><strong>output_key</strong> (<em>str</em>) – output key to use to store the result</li>
+<li><strong>dtype</strong> (<em>type</em>) – datatype of scalar values to use</li>
+<li><strong>default_value</strong> – default value to use if something goes wrong</li>
+<li><strong>one_hot_classes</strong> (<em>int</em>) – number of one-hot classes</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.data.reader.ImageReader">
+<em class="property">class </em><code class="descclassname">catalyst.data.reader.</code><code class="descname">ImageReader</code><span class="sig-paren">(</span><em>input_key: str</em>, <em>output_key: str</em>, <em>datapath: str = None</em>, <em>grayscale: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ImageReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ImageReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Image reader abstraction. Reads images from a <cite>csv</cite> dataset.</p>
+<dl class="method">
+<dt id="catalyst.data.reader.ImageReader.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>row</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ImageReader.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ImageReader.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a row from your annotations dict with filename and
+transfer it to an image</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>row</strong> – elem in your dataset.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Image</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">np.ndarray</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.reader.ImageReader.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>input_key: str</em>, <em>output_key: str</em>, <em>datapath: str = None</em>, <em>grayscale: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ImageReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ImageReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_key</strong> (<em>str</em>) – key to use from annotation dict</li>
+<li><strong>output_key</strong> (<em>str</em>) – key to use to store the result</li>
+<li><strong>datapath</strong> (<em>str</em>) – path to images dataset
+(so your can use relative paths in annotations)</li>
+<li><strong>grayscale</strong> (<em>bool</em>) – flag if you need to work only
+with grayscale images</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.data.reader.ReaderCompose">
+<em class="property">class </em><code class="descclassname">catalyst.data.reader.</code><code class="descname">ReaderCompose</code><span class="sig-paren">(</span><em>readers: List[catalyst.data.reader.BaseReader], mixins: [] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ReaderCompose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ReaderCompose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstraction to compose several readers into one open function.</p>
+<dl class="method">
+<dt id="catalyst.data.reader.ReaderCompose.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>row</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ReaderCompose.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ReaderCompose.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a row from your annotations dict
+and applies all readers and mixins</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>row</strong> – elem in your dataset.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Value after applying all readers and mixins</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.reader.ReaderCompose.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>readers: List[catalyst.data.reader.BaseReader], mixins: [] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ReaderCompose.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ReaderCompose.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>readers</strong> (<em>List</em><em>[</em><a class="reference internal" href="#catalyst.data.reader.BaseReader" title="catalyst.data.reader.BaseReader"><em>BaseReader</em></a><em>]</em>) – list of reader to compose</li>
+<li><strong>mixins</strong> – list of mixins to use</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.data.dataset">
+<span id="dataset"></span><h2>Dataset<a class="headerlink" href="#module-catalyst.data.dataset" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.data.dataset.ListDataset">
+<em class="property">class </em><code class="descclassname">catalyst.data.dataset.</code><code class="descname">ListDataset</code><span class="sig-paren">(</span><em>list_data: List[Dict], open_fn: Callable, dict_transform: Callable = None, cache_prob: float = -1, cache_transforms: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#ListDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.ListDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
+<p>General purpose dataset class with several data sources <cite>list_data</cite></p>
+<dl class="method">
+<dt id="catalyst.data.dataset.ListDataset.__getitem__">
+<code class="descname">__getitem__</code><span class="sig-paren">(</span><em>index: int</em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="../_modules/catalyst/data/dataset.html#ListDataset.__getitem__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.ListDataset.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets element of the dataset</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>int</em>) – index of the element in the dataset</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Single element by index</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.dataset.ListDataset.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>list_data: List[Dict], open_fn: Callable, dict_transform: Callable = None, cache_prob: float = -1, cache_transforms: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#ListDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.ListDataset.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>list_data</strong> (<em>List</em><em>[</em><em>Dict</em><em>]</em>) – list of dicts, that stores
+you data annotations,
+(for example path to images, labels, bboxes, etc.)</li>
+<li><strong>open_fn</strong> (<em>callable</em>) – function, that can open your
+annotations dict and
+transfer it to data, needed by your network
+(for example open image by path, or tokenize read string.)</li>
+<li><strong>dict_transform</strong> (<em>callable</em>) – transforms to use on dict.
+(for example normalize image, add blur, crop/resize/etc)</li>
+<li><strong>cache_prob</strong> (<em>float</em>) – probability of saving opened dict to RAM
+for speedup</li>
+<li><strong>cache_transforms</strong> (<em>bool</em>) – flag if you need
+to cache sample after transformations to RAM</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.dataset.ListDataset.__len__">
+<code class="descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/catalyst/data/dataset.html#ListDataset.__len__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.ListDataset.__len__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">length of the dataset</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.data.dataset.MergeDataset">
+<em class="property">class </em><code class="descclassname">catalyst.data.dataset.</code><code class="descname">MergeDataset</code><span class="sig-paren">(</span><em>*datasets</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#MergeDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.MergeDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
+<p>Abstraction to merge several datasets into one dataset.</p>
+<dl class="method">
+<dt id="catalyst.data.dataset.MergeDataset.__getitem__">
+<code class="descname">__getitem__</code><span class="sig-paren">(</span><em>index: int</em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="../_modules/catalyst/data/dataset.html#MergeDataset.__getitem__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.MergeDataset.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get item from all datasets</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>int</em>) – index to value from all datasets</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of value in every dataset</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.dataset.MergeDataset.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>*datasets</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#MergeDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.MergeDataset.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>datasets</strong> (<em>List</em><em>[</em><em>Dataset</em><em>]</em>) – params count of datasets to merge</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.data.sampler">
+<span id="sampler"></span><h2>Sampler<a class="headerlink" href="#module-catalyst.data.sampler" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.data.sampler.BalanceClassSampler">
+<em class="property">class </em><code class="descclassname">catalyst.data.sampler.</code><code class="descname">BalanceClassSampler</code><span class="sig-paren">(</span><em>labels: List[int], mode: str = 'downsampling'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceClassSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceClassSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstraction over data sampler. Allows you to create stratified sample
+on unbalanced classes.</p>
+<dl class="method">
+<dt id="catalyst.data.sampler.BalanceClassSampler.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>labels: List[int], mode: str = 'downsampling'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceClassSampler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceClassSampler.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>labels</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – list of class label
+for each elem in the datasety</li>
+<li><strong>mode</strong> (<em>str</em>) – Strategy to balance classes.
+Must be one of [downsampling, upsampling]</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.sampler.BalanceClassSampler.__iter__">
+<code class="descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Iterator[int]<a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceClassSampler.__iter__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceClassSampler.__iter__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Yields:</th><td class="field-body">indices of stratified sample</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.sampler.BalanceClassSampler.__len__">
+<code class="descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceClassSampler.__len__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceClassSampler.__len__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">length of result sample</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.data.collate_fn">
+<span id="collate-functions"></span><h2>Collate Functions<a class="headerlink" href="#module-catalyst.data.collate_fn" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.data.collate_fn.FilteringCollateFn">
+<em class="property">class </em><code class="descclassname">catalyst.data.collate_fn.</code><code class="descname">FilteringCollateFn</code><span class="sig-paren">(</span><em>*keys</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/collate_fn.html#FilteringCollateFn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.collate_fn.FilteringCollateFn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Callable object doing job of <code class="docutils literal notranslate"><span class="pre">collate_fn</span></code> like <code class="docutils literal notranslate"><span class="pre">default_collate</span></code>,
+but does not cast batch items with specified key to <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code>.</p>
+<p>Only adds them to list.
+Supports only key-value format batches</p>
+<dl class="method">
+<dt id="catalyst.data.collate_fn.FilteringCollateFn.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>batch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/collate_fn.html#FilteringCollateFn.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.collate_fn.FilteringCollateFn.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>batch</strong> – current batch</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">batch values filtered by <cite>keys</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.collate_fn.FilteringCollateFn.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>*keys</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/collate_fn.html#FilteringCollateFn.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.collate_fn.FilteringCollateFn.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>keys</strong> – Keys for values that will not be
+converted to tensor and stacked</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.data.mixin">
+<span id="mixins"></span><h2>Mixins<a class="headerlink" href="#module-catalyst.data.mixin" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.data.mixin.ImageHistogramMixin">
+<em class="property">class </em><code class="descclassname">catalyst.data.mixin.</code><code class="descname">ImageHistogramMixin</code><span class="sig-paren">(</span><em>input_key: str</em>, <em>output_key: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/mixin.html#ImageHistogramMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.mixin.ImageHistogramMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates color histogram for images in dataset</p>
+<dl class="method">
+<dt id="catalyst.data.mixin.ImageHistogramMixin.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>input_key: str</em>, <em>output_key: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/mixin.html#ImageHistogramMixin.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.mixin.ImageHistogramMixin.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_key</strong> (<em>str</em>) – input key to use from annotation dict</li>
+<li><strong>output_key</strong> (<em>str</em>) – output key to use to store the result</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="augmentor">
+<h2>Augmentor<a class="headerlink" href="#augmentor" title="Permalink to this headline">¶</a></h2>
+<p>Legacy classes for augmentations.
+For modern Catalyst use <a class="reference external" href="https://github.com/albu/albumentations">albumentations</a>.</p>
+<span class="target" id="module-catalyst.data.augmentor"></span><dl class="class">
+<dt id="catalyst.data.augmentor.Augmentor">
+<em class="property">class </em><code class="descclassname">catalyst.data.augmentor.</code><code class="descname">Augmentor</code><span class="sig-paren">(</span><em>dict_key: str</em>, <em>augment_fn: Callable</em>, <em>default_kwargs: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/augmentor.html#Augmentor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.augmentor.Augmentor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Augmentation abstraction to use with data dictionaries.</p>
+<dl class="method">
+<dt id="catalyst.data.augmentor.Augmentor.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>dict_key: str</em>, <em>augment_fn: Callable</em>, <em>default_kwargs: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/augmentor.html#Augmentor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.augmentor.Augmentor.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dict_key</strong> – key to transform</li>
+<li><strong>augment_fn</strong> – augmentation function to use</li>
+<li><strong>default_kwargs</strong> – default kwargs for augmentations function</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.data.augmentor.AugmentorKeys">
+<em class="property">class </em><code class="descclassname">catalyst.data.augmentor.</code><code class="descname">AugmentorKeys</code><span class="sig-paren">(</span><em>dict2fn_dict: Dict[str, str], augment_fn: Callable</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/augmentor.html#AugmentorKeys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.augmentor.AugmentorKeys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Augmentation abstraction to match input and augmentations keys</p>
+<dl class="method">
+<dt id="catalyst.data.augmentor.AugmentorKeys.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>dict2fn_dict: Dict[str, str], augment_fn: Callable</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/augmentor.html#AugmentorKeys.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.augmentor.AugmentorKeys.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dict2fn_dict</strong> – keys matching dict {input_key: augment_fn_key}
+ex: {“image”: “image”, “mask”: “mask”}</li>
+<li><strong>augment_fn</strong> – augmentation function</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.data.augmentor.MixupAugmentor">
+<em class="property">class </em><code class="descclassname">catalyst.data.augmentor.</code><code class="descname">MixupAugmentor</code><span class="sig-paren">(</span><em>alpha: float</em>, <em>share_lambda: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/augmentor.html#MixupAugmentor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.augmentor.MixupAugmentor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="utils.html" class="btn btn-neutral float-right" title="Utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="contrib.html" class="btn btn-neutral float-left" title="Contrib" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Scitator
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

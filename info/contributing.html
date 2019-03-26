@@ -1,0 +1,301 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Contribution &mdash; Catalyst 19.03-rc0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../',
+              VERSION:'19.03-rc0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="License" href="license.html" />
+    <link rel="prev" title="Examples" href="examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Catalyst
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                19.03
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contribution</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#issues">Issues</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#step-by-step-guide">Step-by-step guide</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#new-feature">New feature</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bugfix">Bugfix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#contribution-best-practices">Contribution best practices</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#codestyle">Codestyle</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/rl.html">RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Catalyst</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Contribution</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/info/contributing.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="contribution">
+<h1>Contribution<a class="headerlink" href="#contribution" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="issues">
+<h2>Issues<a class="headerlink" href="#issues" title="Permalink to this headline">¶</a></h2>
+<p>We use <a class="reference external" href="https://github.com/catalyst-team/catalyst/issues">GitHub issues</a> for bug reports and feature requests.</p>
+<div class="section" id="step-by-step-guide">
+<h3>Step-by-step guide<a class="headerlink" href="#step-by-step-guide" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="new-feature">
+<h4>New feature<a class="headerlink" href="#new-feature" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic simple">
+<li>Make an issue with your feature description;</li>
+<li>We shall discuss the design and its implementation details;</li>
+<li>Once we agree that the plan looks good, go ahead and implement it.</li>
+</ol>
+</div>
+<div class="section" id="bugfix">
+<h4>Bugfix<a class="headerlink" href="#bugfix" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic simple">
+<li>Goto <a class="reference external" href="https://github.com/catalyst-team/catalyst/issues">GitHub issues</a>;</li>
+<li>Pick an issue and comment on the task that you want to work on this
+feature;</li>
+<li>If you need more context on a specific issue, please ask, and we will
+discuss the details.</li>
+</ol>
+<p>Once you finish implementing a feature or bugfix, please send a Pull
+Request.</p>
+<p>If you are not familiar with creating a Pull Request, here are some
+guides:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://stackoverflow.com/questions/14680711/how-to-do-a-github-pull-request">http://stackoverflow.com/questions/14680711/how-to-do-a-github-pull-request</a></li>
+<li><a class="reference external" href="https://help.github.com/articles/creating-a-pull-request/">https://help.github.com/articles/creating-a-pull-request/</a></li>
+</ul>
+</div>
+<div class="section" id="contribution-best-practices">
+<h4>Contribution best practices<a class="headerlink" href="#contribution-best-practices" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic simple">
+<li>Break your work into small, single-purpose updates if possible. It’s
+much harder to merge in a large change with a lot of disjoint
+features.</li>
+<li>Submit the update as a GitHub pull request against the <code class="docutils literal notranslate"><span class="pre">dev</span></code>
+branch.</li>
+<li>Make sure that your code passes the unit tests.</li>
+<li>Add new unit tests for your code.</li>
+</ol>
+</div>
+</div>
+<div class="section" id="codestyle">
+<h3>Codestyle<a class="headerlink" href="#codestyle" title="Permalink to this headline">¶</a></h3>
+<p>Do not forget to check the codestyle for your PR with</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ bash ./codestyle.sh
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>Catalyst uses <a class="reference external" href="http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html">Google style</a> for formatting <a class="reference external" href="https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings">docstrings</a>. Length of line
+inside docstrings block must be limited to 80 characters to fit into
+Jupyter documentation popups.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="license.html" class="btn btn-neutral float-right" title="License" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="examples.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Scitator
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

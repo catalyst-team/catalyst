@@ -1,0 +1,380 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Catalyst &mdash; Catalyst 19.03-rc0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'19.03-rc0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="info/examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home"> Catalyst
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                19.03
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info/contributing.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info/license.html">License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/rl.html">RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Catalyst</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>Catalyst</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/index.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="catalyst">
+<h1>Catalyst<a class="headerlink" href="#catalyst" title="Permalink to this headline">¶</a></h1>
+<a class="reference external image-reference" href="https://travis-ci.com/catalyst-team/catalyst"><img alt="Build Status" src="https://travis-ci.com/catalyst-team/catalyst.svg?branch=master" /></a>
+<img alt="License" src="https://img.shields.io/github/license/catalyst-team/catalyst.svg" /><a class="reference external image-reference" href="https://pypi.org/project/catalyst/"><img alt="Pipi version" src="https://img.shields.io/pypi/v/catalyst.svg" /></a>
+<a class="reference external image-reference" href="https://catalyst-team.github.io/catalyst/index.html"><img alt="Docs" src="https://img.shields.io/badge/dynamic/json.svg?label=docs&amp;url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&amp;query=%24.info.version&amp;colorB=brightgreen&amp;prefix=v" /></a>
+<a class="reference external image-reference" href="https://github.com/catalyst-team/catalyst"><img alt="Catalyst logo" src="https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png" /></a>
+<p>High-level utils for PyTorch DL &amp; RL research. It was developed with a focus on reproducibility, fast experimentation and code/ideas reusing. Being able to research/develop something new, rather then write another regular train loop.</p>
+<p>Break the cycle - use the <a class="reference external" href="https://github.com/catalyst-team/catalyst">Catalyst</a>!</p>
+<hr class="docutils" />
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Overview</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info/contributing.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info/license.html">License</a></li>
+</ul>
+</div>
+<p>Catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+.</p>
+<p>API documentation and an overview of the library can be found here.</p>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>Examples and tutorials could be found <a class="reference internal" href="info/examples.html"><span class="doc">here</span></a>.
+In the examples folder of the repository, you can find advanced tutorials: finetuning, RL agent training, etc.</p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">catalyst</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="features">
+<h3>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Universal train/inference loop;</li>
+<li>Configuration files for model/data hyperparameters;</li>
+<li>Reproducibility – even source code will be saved;</li>
+<li>Training stages support;</li>
+<li>Callbacks – reusable train/inference pipeline parts.</li>
+</ul>
+</div>
+<div class="section" id="structure">
+<h3>Structure<a class="headerlink" href="#structure" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>DL</strong> – runner for training and inference, all of the classic
+machine learning and computer vision metrics and a variety of
+callbacks for training, validation and inference of neural networks.</li>
+<li><strong>RL</strong> – scalable Reinforcement Learning, all of the off-policy
+continuous actions space algorithms and their improvements with
+distributed training support.</li>
+<li><strong>contrib</strong> - additional modules contributed by Catalyst users.</li>
+<li><strong>data</strong> - useful tools and scripts for data processing.</li>
+</ul>
+</div>
+<div class="section" id="getting-started-30-seconds-with-catalyst">
+<h3>Getting started: 30 seconds with Catalyst<a class="headerlink" href="#getting-started-30-seconds-with-catalyst" title="Permalink to this headline">¶</a></h3>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.runner</span> <span class="k">import</span> <span class="n">SupervisedModelRunner</span>
+<span class="kn">from</span> <span class="nn">your_experiment</span> <span class="k">import</span> <span class="n">get_loaders</span><span class="p">,</span> <span class="n">get_model</span><span class="p">,</span> <span class="n">get_callbacks</span>
+
+<span class="c1"># experiment setup</span>
+<span class="n">logdir</span> <span class="o">=</span> <span class="s2">&quot;./logdir&quot;</span>
+<span class="n">n_epochs</span> <span class="o">=</span> <span class="mi">42</span>
+
+<span class="c1"># data</span>
+<span class="n">loaders</span> <span class="o">=</span> <span class="n">get_loaders</span><span class="p">()</span>
+
+<span class="c1"># model and all training stuff</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">()</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+<span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">milestones</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span>
+
+<span class="c1"># callbacks - metrics, loggers, etc</span>
+<span class="n">callbacks</span> <span class="o">=</span> <span class="n">get_callbacks</span><span class="p">()</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedModelRunner</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">)</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
+    <span class="n">logdir</span><span class="o">=</span><span class="n">logdir</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="n">n_epochs</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/dl.html">DL</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/dl.html#module-catalyst.dl.state">Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/dl.html#module-catalyst.dl.metrics">Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/dl.html#callbacks">Callbacks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/dl.html#module-catalyst.dl.fp16">Fp16</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/dl.html#module-catalyst.dl.initialization">Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/dl.html#id2">Utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/rl.html">RL</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/rl.html#module-catalyst.rl.random_process">Random process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/rl.html#agents">Agents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/rl.html#offpolicy">Offpolicy</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contrib</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#registry">Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#criterion">Criterion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.models">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#modules">Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.optimizers">Optimizers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/data.html">Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#scripts">Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#reader">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.dataset">Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.sampler">Sampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.collate_fn">Collate Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.mixin">Mixins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#augmentor">Augmentor</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/utils.html">Utils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.config">Config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.data">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.parse">Parse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.misc">Misc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.parallelize">Parallelize</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.serialization">Serialization</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="contribution-guide">
+<h2>Contribution guide<a class="headerlink" href="#contribution-guide" title="Permalink to this headline">¶</a></h2>
+<p>We appreciate all contributions. If you are planning to contribute back
+bug-fixes, please do so without any further discussion. If you plan to
+contribute new features, utility functions or extensions, please first
+open an issue and discuss the feature with us.</p>
+<p>Please see the <a class="reference internal" href="info/contributing.html"><span class="doc">contribution guide</span></a> for more information.</p>
+</div>
+<div class="section" id="changelog">
+<h2>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h2>
+<p>Please see <a class="reference internal" href="changelog.html"><span class="doc">the changelog</span></a>.</p>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="info/examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Scitator
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
