@@ -7,12 +7,6 @@ from catalyst.contrib.registry import MODULES
 from catalyst.utils.misc import pairwise
 
 
-def _class_or_name(obj):
-    if obj is not None and type(obj) is str:
-        return MODULES.get(obj)
-    return obj
-
-
 class ResidualWrapper(nn.Module):
     def __init__(self, net):
         super().__init__()
@@ -36,10 +30,10 @@ class SequentialNet(nn.Module):
     ):
         super().__init__()
 
-        layer_fn = _class_or_name(layer_fn)
-        activation_fn = _class_or_name(activation_fn)
-        norm_fn = _class_or_name(norm_fn)
-        dropout = _class_or_name(dropout)
+        layer_fn = MODULES.get_if_str(layer_fn)
+        activation_fn = MODULES.get_if_str(activation_fn)
+        norm_fn = MODULES.get_if_str(norm_fn)
+        dropout = MODULES.get_if_str(dropout)
 
         layer_order = layer_order or ["layer", "norm", "drop", "act"]
 

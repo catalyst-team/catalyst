@@ -309,16 +309,16 @@ class SAC(Algorithm):
         trainer_state_shape = (config_["shared"]["observation_size"],)
         trainer_action_shape = (config_["shared"]["action_size"],)
 
-        actror_conf = config_["actor"]
+        actor_params = config_["actor"]
         actor = AGENTS.get_from_params(
-            **actror_conf,
+            **actor_params,
             state_shape=actor_state_shape,
             action_size=actor_action_size
         )
 
-        critic_conf = config_["critic"]
+        critic_params = config_["critic"]
         critic = AGENTS.get_from_params(
-            **critic_conf,
+            **critic_params,
             state_shape=actor_state_shape,
             action_size=actor_action_size
         )
@@ -326,7 +326,8 @@ class SAC(Algorithm):
         n_critics = config_["algorithm"].pop("n_critics", 2)
         critics = [
             AGENTS.get_from_params(
-                **critic_conf, state_shape=actor_state_shape,
+                **critic_params,
+                state_shape=actor_state_shape,
                 action_size=actor_action_size
             ) for _ in
             range(n_critics - 1)
@@ -362,9 +363,9 @@ class SAC(Algorithm):
         )
         actor_action_size = config_["shared"]["action_size"]
 
-        agent_conf = config_["actor"]
+        actor_params = config_["actor"]
         actor = AGENTS.get_from_params(
-            **agent_conf,
+            **actor_params,
             state_shape=actor_state_shape,
             action_size=actor_action_size
         )

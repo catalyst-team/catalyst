@@ -134,10 +134,10 @@ class Registry:
 
     def get(self, name: str) -> Optional[Factory]:
         """
-        Retrieves factory, without creating any objects with it or raises
-        error
+        Retrieves factory, without creating any objects with it
+            or raises error
 
-        :param factory name
+        :param name: factory name
         :returns Factory
         """
 
@@ -192,7 +192,6 @@ class Registry:
 
         NOTE: original dict not changed in any way
 
-        :param config: config dict
         :param meta_factory: Function that calls factory the right way.
             If not provided, default is used.
         :param kwargs: additional kwargs for factory

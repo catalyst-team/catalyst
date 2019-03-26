@@ -38,10 +38,10 @@ class Critic(StateActionNet):
         action_hiddens = action_hiddens or []
         head_hiddens = head_hiddens or []
 
-        layer_fn = MODULES.get(layer_fn)
-        activation_fn = MODULES.get(activation_fn)
-        norm_fn = MODULES.get(norm_fn)
-        out_activation = MODULES.get(out_activation)
+        layer_fn = MODULES.get_if_str(layer_fn)
+        activation_fn = MODULES.get_if_str(activation_fn)
+        norm_fn = MODULES.get_if_str(norm_fn)
+        out_activation = MODULES.get_if_str(out_activation)
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
 
         if isinstance(state_shape, int):
@@ -169,10 +169,10 @@ class ValueCritic(StateNet):
         observation_hiddens = observation_hiddens or []
         head_hiddens = head_hiddens or []
 
-        layer_fn = MODULES.get(layer_fn)
-        activation_fn = MODULES.get(activation_fn)
-        norm_fn = MODULES.get(norm_fn)
-        out_activation = MODULES.get(out_activation)
+        layer_fn = MODULES.get_if_str(layer_fn)
+        activation_fn = MODULES.get_if_str(activation_fn)
+        norm_fn = MODULES.get_if_str(norm_fn)
+        out_activation = MODULES.get_if_str(out_activation)
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
 
         if isinstance(state_shape, int):

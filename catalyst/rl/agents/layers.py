@@ -258,7 +258,7 @@ class SquashingLayer(nn.Module):
         """
         super().__init__()
 
-        self.squashing_fn = MODULES.get(squashing_fn)()
+        self.squashing_fn = MODULES.get_if_str(squashing_fn)()
 
     def forward(self, action, log_pi):
         # compute log det jacobian of squashing transformation
@@ -308,14 +308,13 @@ class RealNVPPolicy(nn.Module):
         bias=False
     ):
         super().__init__()
-        activation_fn = MODULES.get(activation_fn)
+        activation_fn = MODULES.get_if_str(activation_fn)
         self.action_size = action_size
 
         self.coupling1 = CouplingLayer(
             action_size=action_size,
             layer_fn=layer_fn,
             activation_fn=activation_fn,
-            norm_fn=None,
             bias=bias,
             parity="odd"
         )
@@ -323,7 +322,6 @@ class RealNVPPolicy(nn.Module):
             action_size=action_size,
             layer_fn=layer_fn,
             activation_fn=activation_fn,
-            norm_fn=None,
             bias=bias,
             parity="even"
         )
@@ -352,7 +350,6 @@ class CouplingLayer(nn.Module):
         action_size,
         layer_fn,
         activation_fn=nn.ReLU,
-        norm_fn=None,
         bias=True,
         parity="odd"
     ):
@@ -369,9 +366,8 @@ class CouplingLayer(nn.Module):
         """
         super().__init__()
 
-        layer_fn = MODULES.get(layer_fn)
-        activation_fn = MODULES.get(activation_fn)
-        norm_fn = MODULES.get(norm_fn)
+        layer_fn = MODULES.get_if_str(layer_fn)
+        activation_fn = MODULES.get_if_str(activation_fn)
 
         self.parity = parity
         if self.parity == "odd":

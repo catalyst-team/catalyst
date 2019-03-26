@@ -246,10 +246,10 @@ class ConfigExperiment(Experiment):
         return model
 
     def get_model(self, stage: str) -> _Model:
-        config = self._config["model_params"]
-        fp16 = config.pop("fp16", False)
+        model_params = self._config["model_params"]
+        fp16 = model_params.pop("fp16", False)
 
-        model = MODELS.get_from_params(**config)
+        model = MODELS.get_from_params(**model_params)
 
         if fp16:
             utils.assert_fp16_available()
@@ -283,10 +283,13 @@ class ConfigExperiment(Experiment):
         return optimizer
 
     def get_scheduler(self, stage: str, optimizer) -> _Scheduler:
-        config = \
+        scheduler_params = \
             self.stages_config[stage].get("scheduler_params", {})
 
-        scheduler = SCHEDULERS.get_from_params(**config, optimizer=optimizer)
+        scheduler = SCHEDULERS.get_from_params(
+            **scheduler_params,
+            optimizer=optimizer
+        )
         return scheduler
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
@@ -327,8 +330,8 @@ class ConfigExperiment(Experiment):
             self.stages_config[stage].get("callbacks_params", {}))
 
         callbacks = []
-        for key, config in callbacks_params.items():
-            callback = CALLBACKS.get_from_params(**config)
+        for key, callback_params in callbacks_params.items():
+            callback = CALLBACKS.get_from_params(**callback_params)
             callbacks.append(callback)
 
         return callbacks
