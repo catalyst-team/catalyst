@@ -1,10 +1,13 @@
 import copy
 import torch
 import torch.nn.functional as F
+
+from catalyst.rl.registry import OPTIMIZERS, SCHEDULERS, AGENTS
 from catalyst.dl.utils import UtilsFactory
 from catalyst.rl.offpolicy.algorithms.core import Algorithm
 from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
     quantile_loss, soft_update
+from catalyst.utils.model import prepare_optimizable_params
 
 
 class TD3(Algorithm):
@@ -22,8 +25,6 @@ class TD3(Algorithm):
         **kwargs
     ):
         super()._init(**kwargs)
-        # hack to prevent cycle dependencies
-        from catalyst.contrib.registry import Registry
 
         self.n_atoms = self.critic.out_features
         self._loss_fn = self._base_loss
@@ -33,11 +34,17 @@ class TD3(Algorithm):
 
         critics = [x.to(self._device) for x in critics]
         critics_optimizer = [
-            Registry.get_optimizer(x, **self.critic_optimizer_params)
+            OPTIMIZERS.get_from_params(
+                **self.critic_optimizer_params,
+                params=prepare_optimizable_params(x)
+            )
             for x in critics
         ]
         critics_scheduler = [
-            Registry.get_scheduler(x, **self.critic_scheduler_params)
+            SCHEDULERS.get_from_params(
+                **self.critic_scheduler_params,
+                optimizer=x
+            )
             for x in critics_optimizer
         ]
         target_critics = [copy.deepcopy(x).to(self._device) for x in critics]
@@ -80,7 +87,7 @@ class TD3(Algorithm):
             [x(states_tp1, actions_tp1) for x in self.target_critics], dim=-1
         )
         q_values_tp1 = q_values_tp1.min(dim=1, keepdim=True)[0].detach()
-        gamma = self.gamma**self.n_step
+        gamma = self.gamma ** self.n_step
         q_target_t = rewards_t + (1 - done_t) * gamma * q_values_tp1
         value_loss = [
             self.critic_criterion(x, q_target_t).mean() for x in q_values_t
@@ -114,9 +121,9 @@ class TD3(Algorithm):
         probs_ids_tp1_min = torch.cat(q_values_tp1, dim=-1).argmin(dim=1)
 
         logits_tp1 = torch.cat([x.unsqueeze(-1) for x in logits_tp1], dim=-1)
-        logits_tp1 = logits_tp1[range(len(logits_tp1)), :, probs_ids_tp1_min
-                                ].detach()
-        gamma = self.gamma**self.n_step
+        logits_tp1 = \
+            logits_tp1[range(len(logits_tp1)), :, probs_ids_tp1_min].detach()
+        gamma = self.gamma ** self.n_step
         atoms_target_t = rewards_t + (1 - done_t) * gamma * self.z
         value_loss = [
             categorical_loss(
@@ -153,9 +160,9 @@ class TD3(Algorithm):
             dim=-1
         )
         atoms_ids_tp1_min = atoms_tp1.mean(dim=1).argmin(dim=1)
-        atoms_tp1 = atoms_tp1[range(len(atoms_tp1)), :, atoms_ids_tp1_min
-                              ].detach()
-        gamma = self.gamma**self.n_step
+        atoms_tp1 = \
+            atoms_tp1[range(len(atoms_tp1)), :, atoms_ids_tp1_min].detach()
+        gamma = self.gamma ** self.n_step
         atoms_target_t = rewards_t + (1 - done_t) * gamma * atoms_tp1
         value_loss = [
             quantile_loss(
@@ -276,8 +283,6 @@ class TD3(Algorithm):
 
     @classmethod
     def prepare_for_trainer(cls, config):
-        # hack to prevent cycle dependencies
-        from catalyst.contrib.registry import Registry
 
         config_ = config.copy()
 
@@ -289,33 +294,31 @@ class TD3(Algorithm):
         n_step = config_["shared"]["n_step"]
         gamma = config_["shared"]["gamma"]
         history_len = config_["shared"]["history_len"]
-        trainer_state_shape = (config_["shared"]["observation_size"], )
-        trainer_action_shape = (config_["shared"]["action_size"], )
+        trainer_state_shape = (config_["shared"]["observation_size"],)
+        trainer_action_shape = (config_["shared"]["action_size"],)
 
-        actor_fn = config_["actor"].pop("agent", None)
-        actor = Registry.get_agent(
-            agent=actor_fn,
+        actor_params = config_["actor"]
+        actor = AGENTS.get_from_params(
+            **actor_params,
             state_shape=actor_state_shape,
-            action_size=actor_action_size,
-            **config_["actor"]
+            action_size=actor_action_size
         )
 
-        critic_fn = config_["critic"].pop("agent", None)
-        critic = Registry.get_agent(
-            agent=critic_fn,
+        critic_params = config_["critic"]
+        critic = AGENTS.get_from_params(
+            **critic_params,
             state_shape=actor_state_shape,
-            action_size=actor_action_size,
-            **config_["critic"]
+            action_size=actor_action_size
         )
 
         n_critics = config_["algorithm"].pop("n_critics", 2)
         critics = [
-            Registry.get_agent(
-                agent=critic_fn,
+            AGENTS.get_from_params(
+                **critic_params,
                 state_shape=actor_state_shape,
-                action_size=actor_action_size,
-                **config_["critic"]
-            ) for _ in range(n_critics - 1)
+                action_size=actor_action_size
+            ) for _ in
+            range(n_critics - 1)
         ]
 
         algorithm = cls(
@@ -340,8 +343,6 @@ class TD3(Algorithm):
 
     @classmethod
     def prepare_for_sampler(cls, config):
-        # hack to prevent cycle dependencies
-        from catalyst.contrib.registry import Registry
 
         config_ = config.copy()
 
@@ -351,12 +352,11 @@ class TD3(Algorithm):
         )
         actor_action_size = config_["shared"]["action_size"]
 
-        actor_fn = config_["actor"].pop("agent", None)
-        actor = Registry.get_agent(
-            agent=actor_fn,
+        actor_params = config_["actor"]
+        actor = AGENTS.get_from_params(
+            **actor_params,
             state_shape=actor_state_shape,
-            action_size=actor_action_size,
-            **config_["actor"]
+            action_size=actor_action_size
         )
 
         history_len = config_["shared"]["history_len"]

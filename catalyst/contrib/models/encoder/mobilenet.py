@@ -1,6 +1,8 @@
-import torch.nn as nn
 import math
 
+import torch.nn as nn
+
+from catalyst.contrib.registry import MODULES
 from ..classification import MobileNetV2
 
 
@@ -14,8 +16,6 @@ class MobileNetEncoder(nn.Module):
         pooling_kwargs=None,
     ):
         super().__init__()
-        # hack to prevent cycle imports
-        from catalyst.contrib.registry import Registry
 
         net = MobileNetV2(
             input_size=input_size,
@@ -25,7 +25,7 @@ class MobileNetEncoder(nn.Module):
 
         if pooling is not None:
             pooling_kwargs = pooling_kwargs or {}
-            pooling_layer_fn = Registry.name2nn(pooling)
+            pooling_layer_fn = MODULES.get(pooling)
             pooling_layer = pooling_layer_fn(
                 in_features=self.last_channel, **pooling_kwargs) \
                 if "attn" in pooling.lower() \

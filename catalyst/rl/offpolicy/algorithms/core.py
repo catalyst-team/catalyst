@@ -2,6 +2,9 @@ import copy
 import torch
 
 from catalyst.dl.utils import UtilsFactory
+from catalyst.rl.registry import \
+    CRITERIONS, GRAD_CLIPPERS, OPTIMIZERS, SCHEDULERS, AGENTS
+from catalyst.utils.model import prepare_optimizable_params
 from .utils import soft_update
 
 
@@ -28,9 +31,6 @@ class Algorithm:
         max_action=1.0,
         **kwargs
     ):
-        # hack to prevent cycle dependencies
-        from catalyst.contrib.registry import Registry
-
         self._device = UtilsFactory.prepare_device()
 
         self.actor = actor.to(self._device)
@@ -39,24 +39,27 @@ class Algorithm:
         self.target_actor = copy.deepcopy(actor).to(self._device)
         self.target_critic = copy.deepcopy(critic).to(self._device)
 
-        self.actor_optimizer = Registry.get_optimizer(
-            self.actor, **actor_optimizer_params
+        self.actor_optimizer = OPTIMIZERS.get_from_params(
+            **actor_optimizer_params,
+            params=prepare_optimizable_params(self.actor)
         )
-        self.critic_optimizer = Registry.get_optimizer(
-            self.critic, **critic_optimizer_params
+        self.critic_optimizer = OPTIMIZERS.get_from_params(
+            **critic_optimizer_params,
+            params=prepare_optimizable_params(self.critic)
         )
-
         self.actor_optimizer_params = actor_optimizer_params
         self.critic_optimizer_params = critic_optimizer_params
 
         actor_scheduler_params = actor_scheduler_params or {}
         critic_scheduler_params = critic_scheduler_params or {}
 
-        self.actor_scheduler = Registry.get_scheduler(
-            self.actor_optimizer, **actor_scheduler_params
+        self.actor_scheduler = SCHEDULERS.get_from_params(
+            **actor_scheduler_params,
+            optimizer=self.actor_optimizer
         )
-        self.critic_scheduler = Registry.get_scheduler(
-            self.critic_optimizer, **critic_scheduler_params
+        self.critic_scheduler = SCHEDULERS.get_from_params(
+            **critic_scheduler_params,
+            optimizer=self.critic_optimizer
         )
 
         self.actor_scheduler_params = actor_scheduler_params
@@ -68,20 +71,18 @@ class Algorithm:
         actor_grad_clip_params = actor_grad_clip_params or {}
         critic_grad_clip_params = critic_grad_clip_params or {}
 
-        self.actor_grad_clip_fn = Registry.get_grad_clip_fn(
-            **actor_grad_clip_params
-        )
-        self.critic_grad_clip_fn = Registry.get_grad_clip_fn(
-            **critic_grad_clip_params
-        )
+        self.actor_grad_clip_fn = \
+            GRAD_CLIPPERS.get_from_params(**actor_grad_clip_params)
+        self.critic_grad_clip_fn = \
+            GRAD_CLIPPERS.get_from_params(**critic_grad_clip_params)
 
         self.actor_grad_clip_params = actor_grad_clip_params
         self.critic_grad_clip_params = critic_grad_clip_params
 
-        self.actor_criterion = Registry.get_criterion(
+        self.actor_criterion = CRITERIONS.get_from_params(
             **(actor_loss_params or {})
         )
-        self.critic_criterion = Registry.get_criterion(
+        self.critic_criterion = CRITERIONS.get_from_params(
             **(critic_loss_params or {})
         )
 
@@ -207,8 +208,6 @@ class Algorithm:
 
     @classmethod
     def prepare_for_trainer(cls, config):
-        # hack to prevent cycle dependencies
-        from catalyst.contrib.registry import Registry
 
         config_ = config.copy()
 
@@ -220,23 +219,21 @@ class Algorithm:
         n_step = config_["shared"]["n_step"]
         gamma = config_["shared"]["gamma"]
         history_len = config_["shared"]["history_len"]
-        trainer_state_shape = (config_["shared"]["observation_size"], )
-        trainer_action_shape = (config_["shared"]["action_size"], )
+        trainer_state_shape = (config_["shared"]["observation_size"],)
+        trainer_action_shape = (config_["shared"]["action_size"],)
 
-        actor_fn = config_["actor"].pop("agent", None)
-        actor = Registry.get_agent(
-            agent=actor_fn,
+        actor_params = config_["actor"]
+        actor = AGENTS.get_from_params(
+            **actor_params,
             state_shape=actor_state_shape,
-            action_size=actor_action_size,
-            **config_["actor"]
+            action_size=actor_action_size
         )
 
-        critic_fn = config_["critic"].pop("agent", None)
-        critic = Registry.get_agent(
-            agent=critic_fn,
+        critic_params = config_["critic"]
+        critic = AGENTS.get_from_params(
+            **critic_params,
             state_shape=actor_state_shape,
-            action_size=actor_action_size,
-            **config_["critic"]
+            action_size=actor_action_size
         )
 
         algorithm = cls(
@@ -260,8 +257,6 @@ class Algorithm:
 
     @classmethod
     def prepare_for_sampler(cls, config):
-        # hack to prevent cycle dependencies
-        from catalyst.contrib.registry import Registry
 
         config_ = config.copy()
 
@@ -271,12 +266,11 @@ class Algorithm:
         )
         actor_action_size = config_["shared"]["action_size"]
 
-        actor_fn = config_["actor"].pop("agent", None)
-        actor = Registry.get_agent(
-            agent=actor_fn,
+        actor_params = config_["actor"]
+        actor = AGENTS.get_from_params(
+            **actor_params,
             state_shape=actor_state_shape,
-            action_size=actor_action_size,
-            **config_["actor"]
+            action_size=actor_action_size
         )
 
         history_len = config_["shared"]["history_len"]

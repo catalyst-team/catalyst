@@ -1,24 +1,28 @@
-from typing import List, Tuple, Union, Optional
+from collections import OrderedDict
+from typing import Union, Optional, List, Tuple
 import os
 import shutil
 from pathlib import Path
+import logging
 
-from collections import OrderedDict
-from tensorboardX import SummaryWriter
 import torch
-import torch.nn as nn
 import torch.backends.cudnn as cudnn
+import torch.nn as nn
+from tensorboardX import SummaryWriter
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
 from catalyst.data.dataset import ListDataset
 from catalyst.dl.fp16 import Fp16Wrap
 from catalyst.utils.plotly import plot_tensorboard_log
+from ..utils.model import prepare_optimizable_params, assert_fp16_available
 
-import logging
 logging.getLogger('tensorflow').addFilter(lambda x: 0)
 
 
 class UtilsFactory:
+    prepare_optimizable_params = prepare_optimizable_params
+    assert_fp16_available = assert_fp16_available
+
     @staticmethod
     def create_loader(
         data_source,
