@@ -3,7 +3,7 @@
 import argparse
 from pathlib import Path
 
-from catalyst.utils.config import parse_args_uargs
+from catalyst.utils.config import parse_args_uargs, dump_config
 from catalyst.utils.misc import set_global_seeds, boolean_flag
 from catalyst.dl.scripts.utils import import_experiment_and_runner, dump_code
 
@@ -17,6 +17,7 @@ def build_args(parser):
     )
     parser.add_argument("--expdir", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
+    parser.add_argument("--baselogdir", type=str, default=None)
     parser.add_argument(
         "-j",
         "--num-workers",
@@ -56,14 +57,17 @@ def parse_args():
 
 
 def main(args, unknown_args):
-    args, config = parse_args_uargs(args, unknown_args, dump_config=True)
+    args, config = parse_args_uargs(args, unknown_args)
     set_global_seeds(config.get("seed", 42))
 
     Experiment, Runner = import_experiment_and_runner(Path(args.expdir))
 
     experiment = Experiment(config)
     runner = Runner()
-    dump_code(args.expdir, experiment.logdir)
+
+    if experiment.logdir is not None:
+        dump_config(args.config, experiment.logdir)
+        dump_code(args.expdir, experiment.logdir)
 
     runner.run_experiment(
         experiment,

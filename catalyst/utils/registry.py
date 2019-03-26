@@ -1,4 +1,3 @@
-import copy
 import warnings
 from typing import Dict, Callable, Any, Union, Type, Mapping, Tuple, List, \
     Optional
@@ -94,11 +93,12 @@ class Registry:
         if len(named_factories) == 0:
             warnings.warn("No factories were provided!")
 
-        for name in named_factories:
-            if name in self._factories:
-                raise RegistryException(
-                    f"Factory with name '{name}' is already present"
-                )
+        # @TODO: return warning
+        # for name in named_factories:
+        #     if name in self._factories:
+        #         raise RegistryException(
+        #             f"Factory with name '{name}' is already present"
+        #         )
 
         self._factories.update(named_factories)
 
@@ -190,15 +190,11 @@ class Registry:
         Creates instance based in configuration dict with instantiation_fn.
         If config[name_key] is None, None is returned.
 
-        NOTE: original dict not changed in any way
-
         :param meta_factory: Function that calls factory the right way.
             If not provided, default is used.
         :param kwargs: additional kwargs for factory
         :return: result of calling instantiate_fn(factory, **config)
         """
-
-        kwargs = copy.deepcopy(kwargs)
 
         name = kwargs.pop(self._name_key, None)
         if name:

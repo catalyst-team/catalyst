@@ -34,17 +34,29 @@ def load_ordered_yaml(
     return yaml.load(stream, OrderedLoader)
 
 
-def save_config(config, logdir: str) -> None:
+def dump_config(config: str, logdir: str) -> None:
     """
     Saves config into JSON in logdir
 
     Args:
-        config: dictionary with config
+        config: path(s) to config
         logdir (str): path to directory to save JSON
     """
-    os.makedirs(logdir, exist_ok=True)
-    with open("{}/config.json".format(logdir), "w") as fout:
-        json.dump(config, fout, indent=2, ensure_ascii=False)
+    config_dir = f"{logdir}/configs/"
+    os.makedirs(config_dir, exist_ok=True)
+
+    for config_path in config.split(","):
+        config_name = config_path.rsplit("/", 1)[-1].rsplit(".", 1)[0]
+        with open(config_path, "r") as fin:
+            if config_path.endswith("json"):
+                config_ = json.load(fin, object_pairs_hook=OrderedDict)
+            elif config_path.endswith("yml"):
+                config_ = load_ordered_yaml(fin)
+            else:
+                raise Exception("Unknown file format")
+
+            with open(f"{config_dir}/{config_name}.json", "w") as fout:
+                json.dump(config_, fout, indent=2, ensure_ascii=False)
 
 
 def parse_config_args(*, config, args, unknown_args):
@@ -87,14 +99,13 @@ def parse_config_args(*, config, args, unknown_args):
     return config, args
 
 
-def parse_args_uargs(args, unknown_args, dump_config=False):
+def parse_args_uargs(args, unknown_args):
     """
     Function for parsing configuration files
 
     Args:
         args: recognized arguments
         unknown_args: unrecognized arguments
-        dump_config: if True, saves config to args.logdir
 
     Returns:
         tuple: updated arguments, dict with config
@@ -125,8 +136,5 @@ def parse_args_uargs(args, unknown_args, dump_config=False):
             if arg_value is None:
                 arg_value = value
             setattr(args_, key, arg_value)
-
-    if dump_config and getattr(args_, "logdir", None) is not None:
-        save_config(config=config, logdir=args_.logdir)
 
     return args_, config

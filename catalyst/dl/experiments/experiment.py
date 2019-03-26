@@ -196,27 +196,40 @@ class ConfigExperiment(Experiment):
 
     def __init__(self, config: Dict):
         self._config = config.copy()
-        # @TODO: good enough solution?
+
+        logdir = self._config.get("args", {}).get("logdir", None)
+        baselogdir = self._config.get("args", {}).get("baselogdir", None)
+        if logdir is not None:
+            self._logdir = logdir
+        elif logdir is None and baselogdir is not None:
+            logdir_postfix = self._prepare_logdir(config)
+            self._logdir = f"{baselogdir}/{logdir_postfix}"
+        else:
+            self._logdir = None
+
         self._config["stages"]["state_params"] = merge_dicts(
             self._config["stages"].get("state_params", {}).copy(),
-            self._config.get("args", {}).copy()
+            self._config.get("args", {}).copy(),
+            {"logdir": self._logdir}
         )
         self.stages_config = self._prepare_stages_config(config["stages"])
-        self._logdir = \
-            self._config.get("args", {}).get("logdir", None) \
-            or self._prepare_logdir(config)
 
-    def _prepare_stages_config(self, stages_config):
+    def _prepare_stages_config(self, stages_config_in):
         stages_defaults = {}
+        stages_config_out = {}
         for key in self.STAGE_KEYWORDS:
-            stages_defaults[key] = stages_config.pop(key, {})
-        for stage in stages_config:
+            stages_defaults[key] = stages_config_in.get(key, {}).copy()
+        for stage in stages_config_in:
+            if stage in self.STAGE_KEYWORDS:
+                continue
+            stages_config_out[stage] = {}
             for key in self.STAGE_KEYWORDS:
-                stages_config[stage][key] = merge_dicts(
-                    stages_config[stage].get(key, {}).copy(),
+                stages_config_out[stage][key] = merge_dicts(
+                    stages_config_in[stage].get(key, {}).copy(),
                     stages_defaults.get(key, {}).copy()
                 )
-        return stages_config
+
+        return stages_config_out
 
     @property
     def logdir(self):
@@ -231,7 +244,7 @@ class ConfigExperiment(Experiment):
         return stages_keys
 
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
-        return self.stages_config[stage]["state_params"]
+        return self.stages_config[stage].get("state_params", {})
 
     def _preprocess_model_for_stage(self, stage: str, model: _Model):
         stage_index = self.stages.index(stage)
@@ -265,7 +278,7 @@ class ConfigExperiment(Experiment):
 
         criterion = CRITERIONS.get_from_params(**criterion_params)
 
-        if torch.cuda.is_available():
+        if criterion is not None and torch.cuda.is_available():
             criterion = criterion.cuda()
         return criterion
 
@@ -275,7 +288,6 @@ class ConfigExperiment(Experiment):
 
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
-
         optimizer = OPTIMIZERS.get_from_params(
             **optimizer_params,
             params=params
@@ -298,11 +310,17 @@ class ConfigExperiment(Experiment):
         batch_size = data_conf.pop("batch_size")
         num_workers = data_conf.pop("num_workers")
         drop_last = data_conf.pop("drop_last", False)
+        per_gpu_batch_size = data_conf.pop("per_gpu_batch_size", False)
+
+        if per_gpu_batch_size:
+            batch_size *= max(1, torch.cuda.device_count())
 
         datasets = self.get_datasets(stage=stage, **data_conf)
 
         loaders = OrderedDict()
         for name, ds_ in datasets.items():
+            assert isinstance(ds_, (Dataset, dict)), \
+                f"{ds_} should be Dataset of Dict"
             loader_params = {
                 "batch_size": batch_size,
                 "num_workers": num_workers,
