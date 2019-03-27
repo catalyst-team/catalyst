@@ -46,11 +46,8 @@ class InferCallback(Callback):
         }
         if self.out_prefix is not None:
             for key, value in self.predictions.items():
-                np.save(
-                    self.out_prefix.format(
-                        suffix=".".join([state.loader_name, key])
-                    ), value
-                )
+                suffix = ".".join([state.loader_name, key])
+                np.save(f"{self.out_prefix}/{suffix}.npy", value)
 
 
 class InferMaskCallback(Callback):

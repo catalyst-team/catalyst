@@ -214,18 +214,18 @@ class ConfigExperiment(Experiment):
         )
         self.stages_config = self._prepare_stages_config(config["stages"])
 
-    def _prepare_stages_config(self, stages_config_in):
+    def _prepare_stages_config(self, stages_config):
         stages_defaults = {}
         stages_config_out = {}
         for key in self.STAGE_KEYWORDS:
-            stages_defaults[key] = stages_config_in.get(key, {}).copy()
-        for stage in stages_config_in:
+            stages_defaults[key] = stages_config.get(key, {}).copy()
+        for stage in stages_config:
             if stage in self.STAGE_KEYWORDS:
                 continue
             stages_config_out[stage] = {}
             for key in self.STAGE_KEYWORDS:
                 stages_config_out[stage][key] = merge_dicts(
-                    stages_config_in[stage].get(key, {}).copy(),
+                    stages_config[stage].get(key, {}).copy(),
                     stages_defaults.get(key, {}).copy()
                 )
 
@@ -288,6 +288,7 @@ class ConfigExperiment(Experiment):
 
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
+
         optimizer = OPTIMIZERS.get_from_params(
             **optimizer_params,
             params=params

@@ -17,20 +17,29 @@ class Experiment(ConfigExperiment):
     def get_datasets(self, stage: str, **kwargs):
         datasets = OrderedDict()
 
-        trainset = torchvision.datasets.MNIST(
-            "./data",
-            train=False,
-            download=True,
-            transform=Experiment.get_transforms(mode="train", stage=stage)
-        )
-        testset = torchvision.datasets.MNIST(
-            "./data",
-            train=False,
-            download=True,
-            transform=Experiment.get_transforms(mode="train", stage=stage)
-        )
+        if stage != "infer":
+            trainset = torchvision.datasets.MNIST(
+                "./data",
+                train=False,
+                download=True,
+                transform=Experiment.get_transforms(stage=stage, mode="train")
+            )
+            testset = torchvision.datasets.MNIST(
+                "./data",
+                train=False,
+                download=True,
+                transform=Experiment.get_transforms(stage=stage, mode="valid")
+            )
 
-        datasets["train"] = trainset
-        datasets["valid"] = testset
+            datasets["train"] = trainset
+            datasets["valid"] = testset
+        else:
+            testset = torchvision.datasets.MNIST(
+                "./data",
+                train=False,
+                download=True,
+                transform=Experiment.get_transforms(stage=stage, mode="valid")
+            )
+            datasets["infer"] = testset
 
         return datasets

@@ -135,6 +135,31 @@ class ConsoleLogger(Callback):
     def __init__(self):
         self.logger = None
 
+    @staticmethod
+    def _get_logger(logdir):
+        logger = logging.getLogger("metrics")
+        logger.setLevel(logging.INFO)
+
+        fh = logging.FileHandler(f"{logdir}/metrics.txt")
+        fh.setLevel(logging.INFO)
+        ch = logging.StreamHandler(sys.stdout)
+        ch.setLevel(logging.INFO)
+        # @TODO: fix json logger
+        # jh = logging.FileHandler(f"{logdir}/metrics.json")
+        # jh.setLevel(logging.INFO)
+
+        txt_formatter = TxtMetricsFormatter()
+        # json_formatter = JsonMetricsFormatter()
+        fh.setFormatter(txt_formatter)
+        ch.setFormatter(txt_formatter)
+        # jh.setFormatter(json_formatter)
+
+        # add the handlers to the logger
+        logger.addHandler(fh)
+        logger.addHandler(ch)
+        # logger.addHandler(jh)
+        return logger
+
     def on_stage_start(self, state: RunnerState):
         assert state.logdir is not None
         state.logdir.mkdir(parents=True, exist_ok=True)
@@ -142,30 +167,6 @@ class ConsoleLogger(Callback):
 
     def on_stage_end(self, state):
         self.logger.handlers = []
-
-    @staticmethod
-    def _get_logger(logdir):
-        logger = logging.getLogger("metrics")
-        logger.setLevel(logging.DEBUG)
-
-        fh = logging.FileHandler(f"{logdir}/metrics.txt")
-        fh.setLevel(logging.INFO)
-        ch = logging.StreamHandler()
-        ch.setLevel(logging.INFO)
-        jh = logging.FileHandler(f"{logdir}/metrics.json")
-        jh.setLevel(logging.INFO)
-
-        txt_formatter = TxtMetricsFormatter()
-        json_formatter = JsonMetricsFormatter()
-        fh.setFormatter(txt_formatter)
-        ch.setFormatter(txt_formatter)
-        jh.setFormatter(json_formatter)
-
-        # add the handlers to the logger
-        logger.addHandler(fh)
-        logger.addHandler(ch)
-        logger.addHandler(jh)
-        return logger
 
     def on_epoch_end(self, state):
         self.logger.info("", extra={"state": state})

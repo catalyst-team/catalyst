@@ -7,7 +7,7 @@ import torch
 from pprint import pprint
 from redis import StrictRedis
 
-from catalyst.dl.scripts.utils import prepare_modules, dump_code
+from catalyst.dl.scripts.utils import prepare_modules
 from catalyst.rl.offpolicy.trainer import Trainer
 from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS
 from catalyst.utils.config import parse_args_uargs, dump_config
@@ -41,7 +41,6 @@ def main(args, unknown_args):
     if args.logdir is not None:
         os.makedirs(args.logdir, exist_ok=True)
         dump_config(args.config, args.logdir)
-        dump_code(args.expdir, args.logdir)
 
     if args.expdir is not None:
         modules = prepare_modules(  # noqa: F841
