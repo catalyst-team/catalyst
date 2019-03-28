@@ -44,12 +44,12 @@ def test_fail_multiple_with_name():
         r.add(foo, foo, name="bar")
 
 
-def test_fail_double_add():
-    r = Registry("")
-    r.add(foo)
-
-    with pytest.raises(RegistryException):
-        r.add(foo)
+# def test_fail_double_add():
+#     r = Registry("")
+#     r.add(foo)
+#
+#     with pytest.raises(RegistryException):
+#         r.add(foo)
 
 
 def test_instantiations():

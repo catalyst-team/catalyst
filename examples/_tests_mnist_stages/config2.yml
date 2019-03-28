@@ -2,7 +2,7 @@ model_params:
   model: SimpleNet
 
 args:
-  expdir: "mnist_simple"
+  expdir: "_tests_mnist_stages"
   logdir: "./logs/mnist_simple"
 
 stages:

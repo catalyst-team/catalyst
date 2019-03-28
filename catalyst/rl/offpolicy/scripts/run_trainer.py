@@ -10,7 +10,7 @@ from redis import StrictRedis
 from catalyst.dl.scripts.utils import prepare_modules
 from catalyst.rl.offpolicy.trainer import Trainer
 from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS
-from catalyst.utils.config import parse_args_uargs, save_config
+from catalyst.utils.config import parse_args_uargs, dump_config
 from catalyst.utils.misc import set_global_seeds
 
 set_global_seeds(42)
@@ -36,10 +36,12 @@ def parse_args():
 
 
 def main(args, unknown_args):
-    args, config = parse_args_uargs(args, unknown_args, dump_config=True)
+    args, config = parse_args_uargs(args, unknown_args)
 
-    os.makedirs(args.logdir, exist_ok=True)
-    save_config(config=config, logdir=args.logdir)
+    if args.logdir is not None:
+        os.makedirs(args.logdir, exist_ok=True)
+        dump_config(args.config, args.logdir)
+
     if args.expdir is not None:
         modules = prepare_modules(  # noqa: F841
             expdir=args.expdir,

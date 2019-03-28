@@ -11,7 +11,7 @@ import torch
 
 from catalyst.dl.scripts.utils import prepare_modules
 from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS
-from catalyst.utils.config import parse_args_uargs, save_config
+from catalyst.utils.config import parse_args_uargs
 from catalyst.utils.misc import set_global_seeds, boolean_flag
 from catalyst.rl.offpolicy.sampler import Sampler
 import catalyst.rl.random_process as rp
@@ -161,8 +161,6 @@ def run_sampler(
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
 
-    os.makedirs(args.logdir, exist_ok=True)
-    save_config(config=config, logdir=args.logdir)
     if args.expdir is not None:
         modules = prepare_modules(  # noqa: F841
             expdir=args.expdir,

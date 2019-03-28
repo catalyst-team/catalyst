@@ -3,7 +3,6 @@ from typing import Union, Optional, List, Tuple
 import os
 import shutil
 from pathlib import Path
-import logging
 
 import torch
 import torch.backends.cudnn as cudnn
@@ -15,8 +14,6 @@ from catalyst.data.dataset import ListDataset
 from catalyst.dl.fp16 import Fp16Wrap
 from catalyst.utils.plotly import plot_tensorboard_log
 from ..utils.model import prepare_optimizable_params, assert_fp16_available
-
-logging.getLogger('tensorflow').addFilter(lambda x: 0)
 
 
 class UtilsFactory:

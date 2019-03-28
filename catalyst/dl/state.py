@@ -20,7 +20,7 @@ class RunnerState(FrozenClass):
         criterion=None,
         optimizer: Optimizer = None,
         scheduler=None,
-        logdir="logs",
+        logdir=None,
         stage="infer",
         num_epochs=1,
         main_metric="loss",
