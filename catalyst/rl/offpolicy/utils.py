@@ -1,22 +1,23 @@
 import numpy as np
 import multiprocessing as mp
+from gym.spaces import Discrete
 
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, Sampler
 from catalyst.rl.environments.gym_wrapper import GymWrapper
+from catalyst.rl.offpolicy.exploration.strategies import ParameterSpaceNoise
 
 
 class ReplayBufferDataset(Dataset):
     def __init__(
         self,
         observation_shape,
-        action_shape=(1, ),
+        action_shape,
         max_size=int(1e6),
-        history_len=1,
         n_step=1,
         gamma=0.99,
+        history_len=1,
         discrete_actions=False,
         byte_observations=False
     ):
@@ -151,14 +152,99 @@ class ReplayBufferSampler(Sampler):
         return self.len
 
 
+class ActionHandler:
+    def __init__(
+        self,
+        env,
+        actor,
+        deterministic=False,
+    ):
+        self.env = env
+        self.actor = actor
+        self.deterministic = deterministic
+        self._init()
+
+    def _init(self):
+        discrete_actions = isinstance(self.env.action_space, Discrete)
+
+        # DQN
+        if discrete_actions:
+            if critic_distribution == "categorical":
+                v_min, v_max = values_range
+                z = torch.linspace(start=v_min, end=v_max, steps=n_atoms)
+                self.z = self._to_tensor(z)
+                self._act_fn = self._sample_from_categorical_critic
+            elif critic_distribution == "quantile":
+                self._act_fn = self._sample_from_quantile_critic
+            else:
+                self._act_fn = self._sample_from_critic
+        # DDPG
+        else:
+            self.action_clip = \
+                self.env.action_space.low, self.env.action_space.high
+            self._act_fn = self._sample_from_actor
+
+    def _to_tensor(self, *args, **kwargs):
+        return torch.Tensor(*args, **kwargs).to(self._device)
+
+    def _sample_from_actor(self, actor, state):
+        with torch.no_grad():
+            states = self._to_tensor(state).unsqueeze(0)
+            action = actor(states, deterministic=self.deterministic)
+            action = action[0].detach().cpu().numpy()
+
+        if self.action_clip is not None:
+            action = np.clip(
+                action,
+                a_min=self.action_clip[0],
+                a_max=self.action_clip[1]
+            )
+        return action
+
+    def _sample_from_critic(self, critic, state):
+        with torch.no_grad():
+            states = self._to_tensor(state).unsqueeze(0)
+            q_values = critic(states)[0]
+            action = np.argmax(q_values.detach().cpu().numpy())
+            return action
+
+    def _sample_from_categorical_critic(self, critic, state):
+        with torch.no_grad():
+            states = self._to_tensor(state).unsqueeze(0)
+            probs = F.softmax(critic(states)[0], dim=-1)
+            q_values = torch.sum(probs * self.z, dim=-1)
+            action = np.argmax(q_values.detach().cpu().numpy())
+            return action
+
+    def _sample_from_quantile_critic(self, critic, state):
+        with torch.no_grad():
+            states = self._to_tensor(state).unsqueeze(0)
+            q_values = torch.mean(critic(states)[0], dim=-1)
+            action = np.argmax(q_values.detach().cpu().numpy())
+            return action
+
+    def act(self, network, state, exploration_strategy=None):
+        action = self._act_fn(network, state)
+
+        if exploration_strategy is not None:
+            action = exploration_strategy.update_action(action)
+
+        return action
+
+
 class EnvWrapper:
     def __init__(
         self,
         env: GymWrapper,
-        capacity
+        actor,
+        capacity,
+        deterministic=False,
     ):
         self.env = env
+        self.actor = actor
         self.capacity = capacity
+        self.action_handler = ActionHandler(
+            self.env, self.actor, deterministic=deterministic)
 
         self._init_buffers()
 
@@ -174,6 +260,9 @@ class EnvWrapper:
         )
         self.rewards = np.empty((self.capacity,), dtype=np.float32)
         self.dones = np.empty((self.capacity,), dtype=np.bool)
+
+    def _to_tensor(self, *args, **kwargs):
+        return torch.Tensor(*args, **kwargs).to(self.actor.device)
 
     def _init_with_observation(self, observation):
         self.observations[0] = observation
@@ -228,17 +317,24 @@ class EnvWrapper:
             )
         return trajectory
 
-    def reset(self):
+    def reset(self, exploration_strategy=None):
+
+        if isinstance(exploration_strategy, ParameterSpaceNoise) \
+                and self.pointer > 1:
+            with torch.no_grad():
+                states = self._get_states_history()
+                states = self._to_tensor(states)
+                exploration_strategy.update_actor(self.actor, states)
+
         self._init_buffers()
         self._init_with_observation(self.env.reset())
 
-    def play_episode(self, actor, exploration_strategy):
+    def play_episode(self, exploration_strategy):
         episode_reward, num_steps, done = 0, 0, False
-        action_handler = ActionHandler(env, actor)
 
         while not done:
             state = self.get_state()
-            action = action_handler.act(state, exploration_strategy)
+            action = self.action_handler.act(state, exploration_strategy)
 
             next_observation, reward, done, info = self.env.step(action)
             episode_reward += reward
@@ -253,79 +349,3 @@ class EnvWrapper:
         }
 
         return results
-
-
-class ActionHandler:
-    def __init__(
-        self,
-        device,
-        discrete_actions=False,
-        deterministic=False,
-        critic_distribution=None,
-        n_atoms=1,
-        values_range=(-10., 10.),
-        action_clip=None
-    ):
-        self._device = device
-        self.deterministic = deterministic
-        self.action_clip = action_clip
-
-        if discrete_actions:
-            if critic_distribution == "categorical":
-                v_min, v_max = values_range
-                z = torch.linspace(start=v_min, end=v_max, steps=n_atoms)
-                self.z = self._to_tensor(z)
-                self._act_fn = self._sample_from_categorical_critic
-            elif critic_distribution == "quantile":
-                self._act_fn = self._sample_from_quantile_critic
-            else:
-                self._act_fn = self._sample_from_critic
-        else:
-            self._act_fn = self._sample_from_actor
-
-    def _to_tensor(self, *args, **kwargs):
-        return torch.Tensor(*args, **kwargs).to(self._device)
-
-    def _sample_from_actor(self, actor, state):
-        with torch.no_grad():
-            states = self._to_tensor(state).unsqueeze(0)
-            action = actor(states, deterministic=self.deterministic)
-            action = action[0].detach().cpu().numpy()
-            return action
-
-    def _sample_from_critic(self, critic, state):
-        with torch.no_grad():
-            states = self._to_tensor(state).unsqueeze(0)
-            q_values = critic(states)[0]
-            action = np.argmax(q_values.detach().cpu().numpy())
-            return action
-
-    def _sample_from_categorical_critic(self, critic, state):
-        with torch.no_grad():
-            states = self._to_tensor(state).unsqueeze(0)
-            probs = F.softmax(critic(states)[0], dim=-1)
-            q_values = torch.sum(probs * self.z, dim=-1)
-            action = np.argmax(q_values.detach().cpu().numpy())
-            return action
-
-    def _sample_from_quantile_critic(self, critic, state):
-        with torch.no_grad():
-            states = self._to_tensor(state).unsqueeze(0)
-            q_values = torch.mean(critic(states)[0], dim=-1)
-            action = np.argmax(q_values.detach().cpu().numpy())
-            return action
-
-    def act(self, network, state, exploration_strategy=None):
-        action = self._act_fn(network, state)
-
-        if exploration_strategy is not None:
-            action = exploration_strategy.update_action(action)
-
-        if self.action_clip is not None:
-            action = np.clip(
-                action,
-                a_min=self.action_clip[0],
-                a_max=self.action_clip[1]
-            )
-
-        return action

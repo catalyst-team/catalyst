@@ -8,7 +8,7 @@ args:
 
 redis:
   port: 12000
-  prefix: gym
+  prefix: gym  # TODO: remove
 
 environment:
   environment: GymWrapper

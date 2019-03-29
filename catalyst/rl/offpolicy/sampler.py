@@ -2,17 +2,15 @@ import os
 import time
 import copy
 import random
-import numpy as np
-import torch
 from datetime import datetime
+import torch
 from tensorboardX import SummaryWriter
 
 from catalyst.utils.misc import set_global_seed
 from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.serialization import serialize, deserialize
-from catalyst.rl.offpolicy.utils import EnvWrapper, ActionHandler
+from catalyst.rl.offpolicy.utils import EnvWrapper
 from catalyst.rl.offpolicy.exploration import ExplorationHandler
-from catalyst.rl.offpolicy.exploration.strategies import ParameterSpaceNoise
 
 # speed up optimization
 os.environ["OMP_NUM_THREADS"] = "1"
@@ -31,9 +29,6 @@ class Sampler:
         redis_server=None,
         redis_prefix=None,
         buffer_size=int(1e4),
-        history_len=1,
-        critic_distribution=None,
-        values_range=(-10., 10.),
         weights_sync_period=1,
         mode="infer",
         resume=None,
@@ -57,44 +52,35 @@ class Sampler:
         else:
             self.logger = None
 
-        # environment, model, exploration & action handlers
-        self.env = env
-        self._device = UtilsFactory.prepare_device()
-        self.network = copy.deepcopy(network).to(self._device)
-        self.exploration_handler: ExplorationHandler = ExplorationHandler()
-
-        n_atoms = 1 if not self.discrete_actions else self.network.out_features
-        self.action_handler = ActionHandler(
-            device=self._device,
-            discrete_actions=self.discrete_actions,
-            deterministic=self._infer,
-            critic_distribution=critic_distribution,
-            n_atoms=n_atoms,
-            values_range=values_range,
-            action_clip=action_clip
-        )
-
         # main attributes
-        self.history_len = history_len
-        self.buffer_size = buffer_size
         self.weights_sync_period = weights_sync_period
-        self.episode_index = 0
-
-        self.trajectory_buffer: EnvWrapper = None
 
         # synchronization configuration
         self.redis_server = redis_server
         self.redis_prefix = redis_prefix or ""
         self.episode_limit = episode_limit or _BIG_NUM
-        self.force_store = force_store
+        self._force_store = force_store
 
-        self.discrete_actions = discrete_actions
-        self._sampler_weight_mode = \
-            "critic" if self.discrete_actions else "actor"
+        # discrete_actions = isinstance(self.env.action_space, Discrete)
+        # self._sampler_weight_mode = \
+        #     "critic" if discrete_actions else "actor"
 
         # other
         self._infer = mode == "infer"
         self.seeds = seeds
+
+        # environment, model, exploration & action handlers
+        self.env = env
+        self._device = UtilsFactory.prepare_device()
+        self.network = copy.deepcopy(network).to(self._device)
+        self.exploration_handler: ExplorationHandler = ExplorationHandler()
+        self.episode_index = 0
+        self.env_wrapper = EnvWrapper(
+            env=self.env,
+            actor=self.network,
+            capacity=buffer_size,
+            deterministic=self._infer
+        )
 
         # resume
         if resume is not None:
@@ -137,18 +123,6 @@ class Sampler:
         set_global_seed(seed)
         return seed
 
-    def _prepare_exploration_strategy(self):
-        exploration_strategy = \
-            self.exploration_handler.get_exploration_strategy()
-        if isinstance(exploration_strategy, ParameterSpaceNoise) \
-                and self.episode_index > 1:
-            states = self.trajectory_buffer._get_states_history(
-                history_len=self.history_len
-            )
-            states = self._to_tensor(states).detach()
-            exploration_strategy.update_actor(self.network, states)
-        return exploration_strategy
-
     def _log_to_console(self, *, episode_reward, num_steps, elapsed_time, seed):
         print(
             f"--- episode {self.episode_index:5d}:\t"
@@ -183,26 +157,20 @@ class Sampler:
             )
 
     def run(self):
-        self.episode_index = 0
-
         while True:
             if self.episode_index % self.weights_sync_period == 0:
                 self.load_checkpoint(redis_server=self.redis_server)
-
             seed = self._prepare_seed()
-            exploration_strategy = self._prepare_exploration_strategy()
-            self.env_wrapper = EnvWrapper(
-                env=self.env,
-                capacity=self.buffer_size
-            )
+            exploration_strategy = \
+                self.exploration_handler.get_exploration_strategy()
+            self.env_wrapper.reset(exploration_strategy)
 
             start_time = time.time()
             episode_info = self.env_wrapper.play_episode(
-                actor=self.network,
                 exploration_strategy=exploration_strategy)
             elapsed_time = time.time() - start_time
 
-            if not self._infer or self.force_store:
+            if not self._infer or self._force_store:
                 self._store_trajectory()
 
             self._log_to_console(
