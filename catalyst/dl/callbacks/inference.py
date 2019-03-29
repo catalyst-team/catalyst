@@ -46,11 +46,8 @@ class InferCallback(Callback):
         }
         if self.out_prefix is not None:
             for key, value in self.predictions.items():
-                np.save(
-                    self.out_prefix.format(
-                        suffix=".".join([state.loader_name, key])
-                    ), value
-                )
+                suffix = ".".join([state.loader_name, key])
+                np.save(f"{self.out_prefix}/{suffix}.npy", value)
 
 
 class InferMaskCallback(Callback):
@@ -60,11 +57,11 @@ class InferMaskCallback(Callback):
         out_prefix=None,
         input_key=None,
         output_key=None,
+        name_key=None,
         mean=None,
         std=None,
         mask_type="soft",
         threshold=None,
-        name_key=None,
         dump_mask=False,
     ):
         self.out_dir = out_dir
@@ -109,12 +106,12 @@ class InferMaskCallback(Callback):
         return ret
 
     def on_loader_start(self, state):
-        lm = state.loader_mode
+        lm = state.loader_name
         os.makedirs(f"{self.out_prefix}/{lm}/", exist_ok=True)
 
     def on_batch_end(self, state):
-        lm = state.loader_mode
-        names = state.input.get(self.name_key, {})
+        lm = state.loader_name
+        names = state.input.get(self.name_key, [])
 
         features = state.input[self.input_key]
         logits = state.output[self.output_key]
@@ -136,7 +133,10 @@ class InferMaskCallback(Callback):
         colors = self._get_spaced_colors2(n_colors=probs.shape[3])
         for i in range(probs.shape[0]):
             img = np.uint8(255 * (self.std * features[i] + self.mean))
-            suffix = names.get(i, f"{self.counter}:6d")
+            try:
+                suffix = names[i]
+            except IndexError:
+                suffix = f"{self.counter:06d}"
             self.counter += 1
 
             shw = img.copy()

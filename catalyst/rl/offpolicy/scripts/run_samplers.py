@@ -9,8 +9,8 @@ from redis import StrictRedis
 import torch
 
 from catalyst.dl.scripts.utils import import_module
-from catalyst.contrib.registry import Registry
-from catalyst.utils.config import parse_args_uargs, save_config
+from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS
+from catalyst.utils.config import parse_args_uargs
 from catalyst.utils.misc import set_global_seed, boolean_flag
 from catalyst.rl.offpolicy.sampler import Sampler
 from catalyst.rl.offpolicy.exploration import ExplorationHandler
@@ -82,7 +82,7 @@ def run_sampler(
             port=config_.get("redis", {}).get("port", 12000))
         redis_prefix = config_.get("redis", {}).get("prefix", "")
 
-    env = environment_fn(**config_["environment"])
+    env = environment_fn(**config_["environment"], visualize=vis)
     config_["environment"] = \
         env.update_environment_config(config_["environment"])
 
@@ -104,13 +104,13 @@ def run_sampler(
 
 
 def main(args, unknown_args):
-    args, config = parse_args_uargs(args, unknown_args, dump_config=True)
-    set_global_seed(args.seed)
+    args, config = parse_args_uargs(args, unknown_args)
 
-    module = import_module(expdir=args.expdir)  # noqa: F841
+    if args.expdir is not None:
+        module = import_module(expdir=args.expdir)  # noqa: F841
 
-    algorithm_fn = Registry.get_fn("algorithm", args.algorithm)
-    environment_fn = Registry.get_fn("environment", args.environment)
+    algorithm_fn = ALGORITHMS.get(args.algorithm)
+    environment_fn = ENVIRONMENTS.get(args.environment)
 
     processes = []
     sampler_id = 0

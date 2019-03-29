@@ -9,6 +9,10 @@ from plotly.offline import init_notebook_mode, iplot
 import plotly.graph_objs as go
 from tensorboard.backend.event_processing.event_accumulator import \
     EventAccumulator, ScalarEvent
+import logging
+
+logging.getLogger("tensorboard").addFilter(lambda x: 0)
+logging.getLogger("tensorflow").addFilter(lambda x: 0)
 
 
 def get_tensorboard_scalars(

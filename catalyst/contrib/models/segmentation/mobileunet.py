@@ -3,6 +3,7 @@
 import math
 import torch
 import torch.nn as nn
+from torch.nn.functional import interpolate
 
 from ..classification.mobilenet import MobileNetV2, InvertedResidual
 
@@ -15,11 +16,6 @@ class MobileUnet(nn.Module):
             width_mult=1.,
             pretrained=None):
         super().__init__()
-
-        self.backbone_encoder = MobileNetV2(
-            input_size=input_size,
-            width_mult=width_mult,
-            pretrained=pretrained).encoder
 
         self.dconv1 = nn.ConvTranspose2d(1280, 96, 4, padding=1, stride=2)
         self.invres1 = InvertedResidual(192, 96, 1, 6)
@@ -37,6 +33,11 @@ class MobileUnet(nn.Module):
         self.conv_score = nn.Conv2d(3, num_classes, 1)
 
         self._init_weights()
+
+        self.backbone_encoder = MobileNetV2(
+            input_size=input_size,
+            width_mult=width_mult,
+            pretrained=pretrained).encoder
 
     def _init_weights(self):
         for m in self.modules():
@@ -73,31 +74,22 @@ class MobileUnet(nn.Module):
             x = self.backbone_encoder[n](x)
         # x5 = x
 
-        up1 = torch.cat([
-            x4,
-            self.dconv1(x)
-        ], dim=1)
+        up1 = torch.cat([x4, self.dconv1(x)], dim=1)
         up1 = self.invres1(up1)
 
-        up2 = torch.cat([
-            x3,
-            self.dconv2(up1)
-        ], dim=1)
+        up2 = torch.cat([x3, self.dconv2(up1)], dim=1)
         up2 = self.invres2(up2)
 
-        up3 = torch.cat([
-            x2,
-            self.dconv3(up2)
-        ], dim=1)
+        up3 = torch.cat([x2, self.dconv3(up2)], dim=1)
         up3 = self.invres3(up3)
 
-        up4 = torch.cat([
-            x1,
-            self.dconv4(up3)
-        ], dim=1)
+        up4 = torch.cat([x1, self.dconv4(up3)], dim=1)
         up4 = self.invres4(up4)
 
-        x = self.conv_last(up4)
-        logits = self.conv_score(x)
+        x = up4
+        x = interpolate(
+            x, scale_factor=2, mode="bilinear", align_corners=False)
+        x = self.conv_last(x)
+        x = self.conv_score(x)
 
-        return logits
+        return x

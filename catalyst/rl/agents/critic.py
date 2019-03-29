@@ -5,6 +5,7 @@ from catalyst.contrib.models import SequentialNet
 from catalyst.dl.initialization import create_optimal_inner_init, outer_init
 from catalyst.rl.agents.layers import StateNet, StateActionNet, \
     LamaPooling, DistributionHead
+from ..registry import MODULES
 
 
 class Critic(StateActionNet):
@@ -33,21 +34,19 @@ class Critic(StateActionNet):
         **kwargs
     ):
         assert len(kwargs) == 0
-        # hack to prevent cycle imports
-        from catalyst.contrib.registry import Registry
 
         observation_hiddens = observation_hiddens or []
         action_hiddens = action_hiddens or []
         head_hiddens = head_hiddens or []
 
-        layer_fn = Registry.name2nn(layer_fn)
-        activation_fn = Registry.name2nn(activation_fn)
-        norm_fn = Registry.name2nn(norm_fn)
-        out_activation = Registry.name2nn(out_activation)
+        layer_fn = MODULES.get_if_str(layer_fn)
+        activation_fn = MODULES.get_if_str(activation_fn)
+        norm_fn = MODULES.get_if_str(norm_fn)
+        out_activation = MODULES.get_if_str(out_activation)
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
 
         if isinstance(state_shape, int):
-            state_shape = (state_shape, )
+            state_shape = (state_shape,)
 
         if len(state_shape) in [1, 2]:
             # linear case: one observation or several one
@@ -168,16 +167,13 @@ class DiscreteCritic(StateNet):
         **kwargs
     ):
         assert len(kwargs) == 0
-        # hack to prevent cycle imports
-        from catalyst.contrib.registry import Registry
 
         observation_hiddens = observation_hiddens or []
         head_hiddens = head_hiddens or []
 
-        layer_fn = Registry.name2nn(layer_fn)
-        activation_fn = Registry.name2nn(activation_fn)
-        norm_fn = Registry.name2nn(norm_fn)
-        out_activation = Registry.name2nn(out_activation)
+        layer_fn = MODULES.get_if_str(layer_fn)
+        activation_fn = MODULES.get_if_str(activation_fn)
+        norm_fn = MODULES.get_if_str(norm_fn)
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
 
         if isinstance(state_shape, int):
@@ -283,20 +279,18 @@ class ValueCritic(StateNet):
         **kwargs
     ):
         assert len(kwargs) == 0
-        # hack to prevent cycle imports
-        from catalyst.contrib.registry import Registry
 
         observation_hiddens = observation_hiddens or []
         head_hiddens = head_hiddens or []
 
-        layer_fn = Registry.name2nn(layer_fn)
-        activation_fn = Registry.name2nn(activation_fn)
-        norm_fn = Registry.name2nn(norm_fn)
-        out_activation = Registry.name2nn(out_activation)
+        layer_fn = MODULES.get_if_str(layer_fn)
+        activation_fn = MODULES.get_if_str(activation_fn)
+        norm_fn = MODULES.get_if_str(norm_fn)
+        out_activation = MODULES.get_if_str(out_activation)
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
 
         if isinstance(state_shape, int):
-            state_shape = (state_shape, )
+            state_shape = (state_shape,)
 
         if len(state_shape) in [1, 2]:
             # linear case: one observation or several one

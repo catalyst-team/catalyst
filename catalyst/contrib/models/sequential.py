@@ -1,6 +1,9 @@
+from collections import OrderedDict
+
 import torch
 import torch.nn as nn
-from collections import OrderedDict
+
+from catalyst.contrib.registry import MODULES
 from catalyst.utils.misc import pairwise
 
 
@@ -26,13 +29,11 @@ class SequentialNet(nn.Module):
         residual=False
     ):
         super().__init__()
-        # hack to prevent cycle imports
-        from catalyst.contrib.registry import Registry
 
-        layer_fn = Registry.name2nn(layer_fn)
-        activation_fn = Registry.name2nn(activation_fn)
-        norm_fn = Registry.name2nn(norm_fn)
-        dropout = Registry.name2nn(dropout)
+        layer_fn = MODULES.get_if_str(layer_fn)
+        activation_fn = MODULES.get_if_str(activation_fn)
+        norm_fn = MODULES.get_if_str(norm_fn)
+        dropout = MODULES.get_if_str(dropout)
 
         layer_order = layer_order or ["layer", "norm", "drop", "act"]
 

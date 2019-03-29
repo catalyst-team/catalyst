@@ -156,7 +156,8 @@ class Runner(ABC):
             self.model.train(self.state.need_backward)
 
             self._run_event("loader_start")
-            self._run_loader(loaders[loader_name])
+            with torch.set_grad_enabled(self.state.need_backward):
+                self._run_loader(loaders[loader_name])
             self._run_event("loader_end")
 
     def _run_stage(self, stage: str):

@@ -2,7 +2,6 @@ import os
 import sys
 import shutil
 import pathlib
-from datetime import datetime
 from importlib.util import spec_from_file_location, module_from_spec
 
 
@@ -27,18 +26,45 @@ def import_experiment_and_runner(expdir: pathlib.Path):
     return Experiment, Runner
 
 
+def _tricky_dir_copy(dir_from, dir_to):
+    os.makedirs(dir_to, exist_ok=True)
+    shutil.rmtree(dir_to)
+    shutil.copytree(dir_from, dir_to)
+
+
 def dump_code(expdir, logdir):
     expdir = expdir[:-1] if expdir.endswith("/") else expdir
-
-    current_date = datetime.now().strftime("%y-%m-%d-%H-%M-%S-%M-%f")
-    new_src_dir = f"/src-{current_date}/"
+    new_src_dir = f"/code/"
 
     # @TODO: hardcoded
     old_pro_dir = os.path.dirname(os.path.abspath(__file__)) + "/../../"
     new_pro_dir = logdir + f"/{new_src_dir}/catalyst/"
-    shutil.copytree(old_pro_dir, new_pro_dir)
+    _tricky_dir_copy(old_pro_dir, new_pro_dir)
 
     old_expdir = os.path.abspath(expdir)
     expdir_ = expdir.rsplit("/", 1)[-1]
     new_expdir = logdir + f"/{new_src_dir}/{expdir_}/"
-    shutil.copytree(old_expdir, new_expdir)
+    _tricky_dir_copy(old_expdir, new_expdir)
+
+
+def prepare_modules(expdir, dump_dir=None):
+    expdir = expdir[:-1] if expdir.endswith("/") else expdir
+    expdir_name = expdir.rsplit("/", 1)[-1]
+
+    if dump_dir is not None:
+        dump_code(expdir, dump_dir)
+
+    pyfiles = list(
+        map(lambda x: x.name[:-3],
+            pathlib.Path(expdir).glob("*.py"))
+    )
+
+    modules = {}
+    for name in pyfiles:
+        module_name = f"{expdir_name}.{name}"
+        module_src = expdir + "/" + f"{name}.py"
+
+        module = import_module(module_name, module_src)
+        modules[name] = module
+
+    return modules

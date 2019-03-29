@@ -4,16 +4,12 @@ import os
 import atexit
 import argparse
 from redis import StrictRedis
-import torch
 
 from catalyst.dl.scripts.utils import import_module
-from catalyst.contrib.registry import Registry
-from catalyst.utils.config import parse_args_uargs
-from catalyst.utils.misc import set_global_seed
 from catalyst.rl.offpolicy.trainer import Trainer
-
-os.environ["OMP_NUM_THREADS"] = "1"
-torch.set_num_threads(1)
+from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS
+from catalyst.utils.config import parse_args_uargs, dump_config
+from catalyst.utils.misc import set_global_seed
 
 
 def build_args(parser):
@@ -39,21 +35,26 @@ def parse_args():
 
 
 def main(args, unknown_args):
-    args, config = parse_args_uargs(args, unknown_args, dump_config=True)
+    args, config = parse_args_uargs(args, unknown_args)
     set_global_seed(args.seed)
 
-    module = import_module(expdir=args.expdir)  # noqa: F841
+    if args.logdir is not None:
+        os.makedirs(args.logdir, exist_ok=True)
+        dump_config(args.config, args.logdir)
+
+    if args.expdir is not None:
+        module = import_module(expdir=args.expdir)  # noqa: F841
 
     redis_server = StrictRedis(port=config.get("redis", {}).get("port", 12000))
     redis_prefix = config.get("redis", {}).get("prefix", "")
 
-    environment_fn = Registry.get_fn("environment", args.environment)
+    environment_fn = ENVIRONMENTS.get(args.environment)
     env = environment_fn(**config["environment"])
     config["environment"] = \
         env.update_environment_config(config["environment"])
     del env
 
-    algorithm = Registry.get_fn("algorithm", args.algorithm)
+    algorithm = ALGORITHMS.get(args.algorithm)
     algorithm_kwargs = algorithm.prepare_for_trainer(config)
 
     trainer = Trainer(

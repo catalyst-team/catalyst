@@ -1,17 +1,19 @@
-from abc import abstractmethod, ABC
-from typing import Iterable, Any, Mapping, Dict, List
 from collections import OrderedDict
 
 import torch
+from abc import abstractmethod, ABC
 from torch import nn, optim
 from torch.utils.data import DataLoader, Dataset  # noqa F401
+from typing import Iterable, Any, Mapping, Dict, List
 
-from catalyst.contrib.registry import Registry
+from catalyst.dl.registry import \
+    MODELS, CRITERIONS, OPTIMIZERS, SCHEDULERS, CALLBACKS
+from catalyst.dl import utils
 from catalyst.dl.callbacks import Callback  # noqa F401
-from catalyst.dl.callbacks import LossCallback, OptimizerCallback, \
-    SchedulerCallback, CheckpointCallback
-from catalyst.dl.utils import UtilsFactory
+from catalyst.dl.callbacks import \
+    LossCallback, OptimizerCallback, SchedulerCallback, CheckpointCallback
 from catalyst.dl.fp16 import Fp16Wrap
+from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.misc import merge_dicts
 
 _Model = nn.Module
@@ -179,8 +181,9 @@ class SupervisedExperiment(BaseExperiment):
             ]
 
             for key, value in default_callbacks:
-                if key is not None \
-                        and not any(isinstance(x, value) for x in callbacks):
+                is_already_present = any(
+                    isinstance(x, value) for x in callbacks)
+                if key is not None and not is_already_present:
                     callbacks.append(value())
         return callbacks
 
@@ -193,27 +196,40 @@ class ConfigExperiment(Experiment):
 
     def __init__(self, config: Dict):
         self._config = config.copy()
-        # @TODO: good enough solution?
+
+        logdir = self._config.get("args", {}).get("logdir", None)
+        baselogdir = self._config.get("args", {}).get("baselogdir", None)
+        if logdir is not None:
+            self._logdir = logdir
+        elif logdir is None and baselogdir is not None:
+            logdir_postfix = self._prepare_logdir(config)
+            self._logdir = f"{baselogdir}/{logdir_postfix}"
+        else:
+            self._logdir = None
+
         self._config["stages"]["state_params"] = merge_dicts(
             self._config["stages"].get("state_params", {}).copy(),
-            self._config.get("args", {}).copy()
+            self._config.get("args", {}).copy(),
+            {"logdir": self._logdir}
         )
         self.stages_config = self._prepare_stages_config(config["stages"])
-        self._logdir = \
-            self._config.get("args", {}).get("logdir", None) \
-            or self._prepare_logdir(config)
 
     def _prepare_stages_config(self, stages_config):
         stages_defaults = {}
+        stages_config_out = {}
         for key in self.STAGE_KEYWORDS:
-            stages_defaults[key] = stages_config.pop(key, {})
+            stages_defaults[key] = stages_config.get(key, {}).copy()
         for stage in stages_config:
+            if stage in self.STAGE_KEYWORDS:
+                continue
+            stages_config_out[stage] = {}
             for key in self.STAGE_KEYWORDS:
-                stages_config[stage][key] = merge_dicts(
+                stages_config_out[stage][key] = merge_dicts(
                     stages_config[stage].get(key, {}).copy(),
                     stages_defaults.get(key, {}).copy()
                 )
-        return stages_config
+
+        return stages_config_out
 
     @property
     def logdir(self):
@@ -228,7 +244,7 @@ class ConfigExperiment(Experiment):
         return stages_keys
 
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
-        return self.stages_config[stage]["state_params"]
+        return self.stages_config[stage].get("state_params", {})
 
     def _preprocess_model_for_stage(self, stage: str, model: _Model):
         stage_index = self.stages.index(stage)
@@ -243,30 +259,50 @@ class ConfigExperiment(Experiment):
         return model
 
     def get_model(self, stage: str) -> _Model:
-        model = Registry.get_model(**self._config["model_params"])
+        model_params = self._config["model_params"]
+        fp16 = model_params.pop("fp16", False)
+
+        model = MODELS.get_from_params(**model_params)
+
+        if fp16:
+            utils.assert_fp16_available()
+            model = Fp16Wrap(model)
+
         model = self._preprocess_model_for_stage(stage, model)
         model = self._postprocess_model_for_stage(stage, model)
         return model
 
     def get_criterion(self, stage: str) -> _Criterion:
-        criterion_params = (
-            self.stages_config[stage].get("criterion_params", {}))
-        criterion = Registry.get_criterion(**criterion_params)
+        criterion_params = \
+            self.stages_config[stage].get("criterion_params", {})
+
+        criterion = CRITERIONS.get_from_params(**criterion_params)
+
+        if criterion is not None and torch.cuda.is_available():
+            criterion = criterion.cuda()
         return criterion
 
-    def get_optimizer(self, stage: str, model) -> _Optimizer:
+    def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
         fp16 = isinstance(model, Fp16Wrap)
-        optimizer_params = (
-            self.stages_config[stage].get("optimizer_params", {}))
-        optimizer = Registry.get_optimizer(
-            model, **optimizer_params, fp16=fp16
+        params = utils.prepare_optimizable_params(model.parameters(), fp16)
+
+        optimizer_params = \
+            self.stages_config[stage].get("optimizer_params", {})
+
+        optimizer = OPTIMIZERS.get_from_params(
+            **optimizer_params,
+            params=params
         )
         return optimizer
 
     def get_scheduler(self, stage: str, optimizer) -> _Scheduler:
-        scheduler_params = (
-            self.stages_config[stage].get("scheduler_params", {}))
-        scheduler = Registry.get_scheduler(optimizer, **scheduler_params)
+        scheduler_params = \
+            self.stages_config[stage].get("scheduler_params", {})
+
+        scheduler = SCHEDULERS.get_from_params(
+            **scheduler_params,
+            optimizer=optimizer
+        )
         return scheduler
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
@@ -275,11 +311,17 @@ class ConfigExperiment(Experiment):
         batch_size = data_conf.pop("batch_size")
         num_workers = data_conf.pop("num_workers")
         drop_last = data_conf.pop("drop_last", False)
+        per_gpu_batch_size = data_conf.pop("per_gpu_batch_size", False)
+
+        if per_gpu_batch_size:
+            batch_size *= max(1, torch.cuda.device_count())
 
         datasets = self.get_datasets(stage=stage, **data_conf)
 
         loaders = OrderedDict()
         for name, ds_ in datasets.items():
+            assert isinstance(ds_, (Dataset, dict)), \
+                f"{ds_} should be Dataset of Dict"
             loader_params = {
                 "batch_size": batch_size,
                 "num_workers": num_workers,
@@ -307,8 +349,8 @@ class ConfigExperiment(Experiment):
             self.stages_config[stage].get("callbacks_params", {}))
 
         callbacks = []
-        for key, value in callbacks_params.items():
-            callback = Registry.get_callback(**value)
+        for key, callback_params in callbacks_params.items():
+            callback = CALLBACKS.get_from_params(**callback_params)
             callbacks.append(callback)
 
         return callbacks
