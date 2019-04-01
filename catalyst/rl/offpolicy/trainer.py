@@ -8,59 +8,65 @@ import torch
 from torch.utils.data import DataLoader
 
 from catalyst.dl.utils import UtilsFactory
-from catalyst.utils.serialization import serialize, deserialize
 from catalyst.rl.offpolicy.utils import \
     ReplayBufferDataset, ReplayBufferSampler
+from catalyst.rl.db.core import DBSpec
+from catalyst.rl.environments.core import EnvironmentSpec
+from catalyst.rl.offpolicy.algorithms.core import AlgorithmSpec
 
 
-def redis2queue_loop(redis, queue, max_size):
+def db2queue_loop(db_server: DBSpec, queue: mp.Queue, max_size: int):
     pointer = 0
-    redis_len = redis.llen("trajectories") - 1
+    num_trajectories = db_server.num_trajectories
     while True:
         try:
-            need_more = pointer < redis_len and queue.qsize() < max_size
+            need_more = pointer < num_trajectories and queue.qsize() < max_size
         except NotImplementedError:  # MacOS qsize issue (no sem_getvalue)
-            need_more = pointer < redis_len
+            need_more = pointer < num_trajectories
 
         if need_more:
-            episode = deserialize(redis.lindex("trajectories", pointer))
+            episode = db_server.get_trajectory(pointer)
             queue.put(episode, block=True, timeout=1.0)
             pointer += 1
         else:
             time.sleep(1.0)
 
-        redis_len = redis.llen("trajectories") - 1
+        num_trajectories = db_server.num_trajectories
+
+
+def _make_tuple(tuple_like):
+    tuple_like = (
+        tuple_like
+        if isinstance(tuple_like, (list, tuple))
+        else (tuple_like, tuple_like)
+    )
+    return tuple_like
 
 
 class Trainer:
     def __init__(
         self,
-        algorithm,
-        state_shape,
-        action_shape,
-        logdir,
-        redis_server=None,
-        redis_prefix=None,
-        num_workers=1,
-        replay_buffer_size=int(1e6),
-        batch_size=64,
-        start_learning=int(1e3),
-        gamma=0.99,
-        n_step=1,
-        history_len=1,
-        discrete_actions=False,
-        epoch_len=int(1e2),
-        save_period=10,
-        target_update_period=1,
-        online_update_period=1,
-        weights_sync_period=1,
-        max_redis_trials=1000,
-        resume=None
+        algorithm: AlgorithmSpec,
+        env_spec: EnvironmentSpec,
+        db_server: DBSpec,
+        logdir: str,
+        num_workers: int = 1,
+        replay_buffer_size: int = int(1e6),
+        batch_size: int = 64,
+        start_learning: int = int(1e3),
+        epoch_len: int = int(1e2),
+        save_period: int = 10,
+        target_update_period: int = 1,
+        online_update_period: int = 1,
+        weights_sync_period: int = 1,
+        max_db_trials: int = 1000,
+        resume: str = None,
     ):
         # algorithm
         self.algorithm = algorithm
         if resume is not None:
             self.algorithm.load_checkpoint(resume)
+        self.env_spec = env_spec
 
         # logging
         self.logdir = logdir
@@ -69,25 +75,19 @@ class Trainer:
         os.makedirs(logpath, exist_ok=True)
         self.logger = SummaryWriter(logpath)
 
-        # main attributes
-        self.gamma = gamma
-        self.n_step = n_step
-        self.history_len = history_len
-        self.discrete_actions = discrete_actions
-
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.epoch = 0
         self.epoch_len = epoch_len
 
         self.replay_buffer = ReplayBufferDataset(
-            observation_shape=state_shape,
-            action_shape=action_shape,
+            observation_shape=self.env_spec.observation_space.shape,
+            action_shape=self.env_spec.action_space.shape,
             max_size=replay_buffer_size,
-            history_len=history_len,
-            n_step=n_step,
-            gamma=gamma,
-            discrete_actions=discrete_actions
+            history_len=self.env_spec.history_len,
+            n_step=self.algorithm.n_step,
+            gamma=self.algorithm.gamma,
+            discrete_actions=self.env_spec.discrete_actions
         )
 
         self.replay_sampler = ReplayBufferSampler(
@@ -107,30 +107,18 @@ class Trainer:
 
         # updates configuration
         # (actor_period, critic_period)
-        target_update_period = (
-            target_update_period
-            if isinstance(target_update_period, list)
-            else (target_update_period, target_update_period)
-        )
         self.actor_update_period, self.critic_update_period = \
-            target_update_period
-
+            _make_tuple(target_update_period)
         self.actor_updates = 0
         self.critic_updates = 0
 
         # (actor_period, critic_period)
-        online_update_period = (
-            online_update_period
-            if isinstance(online_update_period, list)
-            else (online_update_period, online_update_period)
-        )
         self.actor_grad_period, self.critic_grad_period = \
-            online_update_period
+            _make_tuple(online_update_period)
 
         # synchronization configuration
-        self.redis_server = redis_server
-        self.redis_prefix = redis_prefix
-        self.max_redis_trials = max_redis_trials
+        self.db_server = db_server
+        self.max_db_trials = max_db_trials
         self.start_learning = start_learning
 
         self.save_period = save_period
@@ -140,11 +128,11 @@ class Trainer:
         self._redis_loop_process = None
 
         self._sampler_weight_mode = \
-            "critic" if self.discrete_actions else "actor"
+            "critic" if self.env_spec.discrete_actions else "actor"
 
     def save(self):
         if self.epoch % self.save_period == 0:
-            checkpoint = self.algorithm.prepare_checkpoint()
+            checkpoint = self.algorithm.pack_checkpoint()
             checkpoint["epoch"] = self.epoch
             filename = UtilsFactory.save_checkpoint(
                 logdir=self.logdir,
@@ -162,17 +150,17 @@ class Trainer:
 
     def _start_redis_loop(self):
         self._redis_loop_process = mp.Process(
-            target=redis2queue_loop,
+            target=db2queue_loop,
             kwargs={
-                "redis": self.redis_server,
+                "db_server": self.db_server,
                 "queue": self.episodes_queue,
-                "max_size": int(self.max_redis_trials * 2)
+                "max_size": int(self.max_db_trials * 2)
             }
         )
         self._redis_loop_process.start()
 
     def _fetch_episodes(self):
-        for i in range(self.max_redis_trials):
+        for i in range(self.max_db_trials):
             try:
                 episode = self.episodes_queue.get(block=True, timeout=1.0)
                 self.replay_buffer.push_episode(episode)
@@ -190,13 +178,10 @@ class Trainer:
                 k: v.tolist()
                 for k, v in state_dict.items()
             }
-            self.redis_server.set(
-                f"{self.redis_prefix}_{mode}_weights",
-                serialize(state_dict)
-            )
+            self.db_server.dump_weights(weights=state_dict, suffix=mode)
 
     def _update_target_weights(self, step_index):
-        if not self.discrete_actions:
+        if not self.env_spec.discrete_actions:
             if step_index % self.actor_update_period == 0:
                 self.algorithm.target_actor_update()
                 self.actor_updates += 1

@@ -5,7 +5,6 @@ import copy
 import atexit
 import argparse
 import multiprocessing as mp
-from redis import StrictRedis
 import torch
 
 from catalyst.dl.scripts.utils import import_module
@@ -13,7 +12,7 @@ from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS
 from catalyst.utils.config import parse_args_uargs
 from catalyst.utils.misc import set_global_seed, boolean_flag
 from catalyst.rl.offpolicy.sampler import Sampler
-from catalyst.rl.offpolicy.exploration import ExplorationHandler
+from catalyst.rl.db.redis import RedisDB
 
 os.environ["OMP_NUM_THREADS"] = "1"
 torch.set_num_threads(1)
@@ -45,7 +44,7 @@ def build_args(parser):
         default=None)
 
     boolean_flag(parser, "check", default=False)
-    boolean_flag(parser, "redis", default=True)
+    boolean_flag(parser, "db", default=True)
 
     return parser
 
@@ -68,33 +67,29 @@ def run_sampler(
     seed=42,
     id=None,
     resume=None,
-    redis=True
+    db=True
 ):
     config_ = copy.deepcopy(config)
-    id = id or 0
+    id = 0 if id is None else id
     set_global_seed(seed + id)
 
-    if not redis:
-        redis_server = None
-        redis_prefix = None
+    if not db:
+        db_server = None
     else:
-        redis_server = StrictRedis(
-            port=config_.get("redis", {}).get("port", 12000))
-        redis_prefix = config_.get("redis", {}).get("prefix", "")
+        db_server = RedisDB(
+            port=config.get("redis", {}).get("port", 12000),
+            prefix=config.get("redis", {}).get("prefix", "")
+        )
 
     env = environment_fn(**config_["environment"], visualize=vis)
-    config_["environment"] = \
-        env.update_environment_config(config_["environment"])
-
-    algorithm_kwargs = algorithm_fn.prepare_for_sampler(config_)
+    network = algorithm_fn.prepare_for_sampler(config_)
 
     sampler = Sampler(
-        **config_["sampler"],
-        **algorithm_kwargs,
-        logdir=logdir,
-        redis_server=redis_server,
-        redis_prefix=redis_prefix,
+        network=network,
         env=env,
+        db_server=db_server,
+        **config_["sampler"],
+        logdir=logdir,
         id=id,
         mode="infer" if infer else "train",
         resume=resume
@@ -128,7 +123,7 @@ def main(args, unknown_args):
         environment=environment_fn,
         config=config,
         resume=args.resume,
-        redis=args.redis
+        db=args.db
     )
 
     if args.check:

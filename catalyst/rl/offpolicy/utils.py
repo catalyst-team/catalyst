@@ -38,6 +38,7 @@ class ReplayBufferDataset(Dataset):
             byte_observations: True if observation values are ints in [0, 255]
                 e.g. observations are RGB images
         """
+        # @TODO: Refactor !!!
         self.observation_shape = observation_shape
         self.action_shape = (1, ) if discrete_actions else action_shape
         self.history_len = history_len

@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 from catalyst.rl.registry import OPTIMIZERS, SCHEDULERS, AGENTS
 from catalyst.dl.utils import UtilsFactory
-from catalyst.rl.offpolicy.algorithms.core import Algorithm
+from catalyst.rl.offpolicy.algorithms.core_continuous import Algorithm
 from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
     quantile_loss, soft_update
 from catalyst.utils.model import prepare_optimizable_params

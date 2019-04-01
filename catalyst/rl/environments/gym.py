@@ -3,9 +3,10 @@
 import gym
 from gym import spaces
 import time
+from .core import EnvironmentSpec
 
 
-class GymWrapper:
+class GymSpec(EnvironmentSpec):
     def __init__(
         self,
         env_name="LunarLander-v2",  # "LunarLanderContinuous-v2",
@@ -26,6 +27,9 @@ class GymWrapper:
         self._step_delay = step_delay
 
         self._prepare_spaces()
+
+    def history_len(self):
+        return self._history_len
 
     @property
     def observation_space(self) -> spaces.space.Space:
@@ -52,14 +56,6 @@ class GymWrapper:
             )
         else:
             raise NotImplementedError("not yet implemented")
-
-    @staticmethod
-    def _action_preprocessing(action):
-        return action
-
-    @staticmethod
-    def _observation_preprocessing(observation):
-        return observation
 
     def reset(self):
         return self.env.reset()

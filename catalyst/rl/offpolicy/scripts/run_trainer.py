@@ -3,11 +3,12 @@
 import os
 import atexit
 import argparse
-from redis import StrictRedis
+
 
 from catalyst.dl.scripts.utils import import_module
-from catalyst.rl.offpolicy.trainer import Trainer
 from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS
+from catalyst.rl.offpolicy.trainer import Trainer
+from catalyst.rl.db.redis import RedisDB
 from catalyst.utils.config import parse_args_uargs, dump_config
 from catalyst.utils.misc import set_global_seed
 
@@ -45,24 +46,25 @@ def main(args, unknown_args):
     if args.expdir is not None:
         module = import_module(expdir=args.expdir)  # noqa: F841
 
-    redis_server = StrictRedis(port=config.get("redis", {}).get("port", 12000))
-    redis_prefix = config.get("redis", {}).get("prefix", "")
+    db_server = RedisDB(
+        port=config.get("redis", {}).get("port", 12000),
+        prefix=config.get("redis", {}).get("prefix", "")
+    )
 
     environment_fn = ENVIRONMENTS.get(args.environment)
     env = environment_fn(**config["environment"])
     config["environment"] = \
         env.update_environment_config(config["environment"])
-    del env
 
-    algorithm = ALGORITHMS.get(args.algorithm)
-    algorithm_kwargs = algorithm.prepare_for_trainer(config)
+    algorithm_fn = ALGORITHMS.get(args.algorithm)
+    algorithm = algorithm_fn.prepare_for_trainer(config)
 
     trainer = Trainer(
+        algorithm=algorithm,
+        env_spec=env,
+        db_server=db_server,
         **config["trainer"],
-        **algorithm_kwargs,
         logdir=args.logdir,
-        redis_server=redis_server,
-        redis_prefix=redis_prefix,
         resume=args.resume,
     )
 

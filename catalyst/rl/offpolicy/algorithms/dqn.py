@@ -1,6 +1,6 @@
 import torch
 import torch.nn.functional as F
-from catalyst.rl.offpolicy.algorithms.core_dqn import Algorithm
+from catalyst.rl.offpolicy.algorithms.core_discrete import Algorithm
 from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
     quantile_loss
 
