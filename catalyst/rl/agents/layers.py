@@ -117,158 +117,6 @@ class LamaPooling(nn.Module):
         return x
 
 
-class StateNet(nn.Module):
-    def __init__(
-        self,
-        main_net,
-        head_net,
-        observation_net=None,
-        aggregation_net=None,
-        policy_net=None,
-    ):
-        super().__init__()
-        self.observation_net = observation_net
-        self.main_net = main_net
-        self.aggregation_net = aggregation_net
-        self.head_net = head_net
-        self.policy_net = policy_net
-
-        self.out_features = get_out_features(head_net)
-
-        self._forward_fn = None
-        if aggregation_net is None:
-            self._forward_fn = self._forward_ff
-        elif isinstance(aggregation_net, LamaPooling):
-            self._forward_fn = self._forward_lama
-        else:
-            raise NotImplementedError
-
-        self._policy_fn = None
-        if policy_net is None:
-            self._policy_fn = lambda *args: args[0]
-        elif isinstance(policy_net, GaussPolicy):
-            self._policy_fn = self.policy_net.forward
-        elif isinstance(policy_net, RealNVPPolicy):
-            self._policy_fn = self.policy_net.forward
-        else:
-            raise NotImplementedError
-
-    def _forward_ff(self, observation):
-        x = observation.view(observation.shape[0], -1)
-        if self.observation_net is not None:
-            x = self.observation_net(x)
-
-        x = self.main_net(x)
-        x = self.head_net(x)
-        return x
-
-    def _forward_lama(self, observation):
-        x = observation
-        if len(x.shape) < 3:
-            x = x.unsqueeze(1)
-
-        if self.observation_net is not None:
-            batch_size, history_len, feature_size = x.shape
-            x = x.view(-1, feature_size)
-            x = self.observation_net(x)
-            x = x.view(batch_size, history_len, -1)
-            x = self.aggregation_net(x)
-
-        x = x
-        x = self.main_net(x)
-        x = self.head_net(x)
-        return x
-
-    def forward(self, *args, with_log_pi=False, deterministic=False, **kwargs):
-        x = self._forward_fn(*args, **kwargs)
-        x = self._policy_fn(x, with_log_pi, deterministic)
-        return x
-
-
-class StateActionNet(nn.Module):
-    def __init__(
-        self,
-        main_net,
-        head_net,
-        observation_net=None,
-        action_net=None,
-        aggregation_net=None
-    ):
-        super().__init__()
-        self.observation_net = observation_net
-        self.action_net = action_net
-        self.aggregation_net = aggregation_net
-        self.main_net = main_net
-        self.head_net = head_net
-
-        self.out_features = get_out_features(head_net)
-
-        self._forward_fn = None
-        if aggregation_net is None:
-            self._forward_fn = self._forward_ff
-        elif isinstance(aggregation_net, LamaPooling):
-            self._forward_fn = self._forward_lama
-        else:
-            raise NotImplementedError
-
-    def _forward_ff(self, observation, action):
-        obs_ = observation.view(observation.shape[0], -1)
-        if self.observation_net is not None:
-            obs_ = self.observation_net(obs_)
-
-        act_ = action.view(action.shape[0], -1)
-        if self.action_net is not None:
-            act_ = self.action_net(act_)
-
-        x = torch.cat((obs_, act_), dim=1)
-        x = self.main_net(x)
-        x = self.head_net(x)
-        return x
-
-    def _forward_lama(self, observation, action):
-        obs_ = observation
-        if len(obs_.shape) < 3:
-            obs_ = obs_.unsqueeze(1)
-
-        if self.observation_net is not None:
-            batch_size, history_len, feature_size = obs_.shape
-            obs_ = obs_.view(-1, feature_size)
-            obs_ = self.observation_net(obs_)
-            obs_ = obs_.view(batch_size, history_len, -1)
-            obs_ = self.aggregation_net(obs_)
-
-        # @TODO: add option to collapse observations based on action
-        act_ = action.view(action.shape[0], -1)
-        if self.action_net is not None:
-            act_ = self.action_net(act_)
-
-        x = torch.cat((obs_, act_), dim=1)
-        x = self.main_net(x)
-        x = self.head_net(x)
-        return x
-
-    def forward(self, *args, **kwargs):
-        value = self._forward_fn(*args, **kwargs)
-        return value
-
-
-class DistributionHead(nn.Module):
-    def __init__(self, num_inputs, num_actions, num_atoms):
-        super().__init__()
-        self.num_actions = num_actions
-        self.num_atoms = num_atoms
-        self.net = nn.Linear(
-            in_features=num_inputs,
-            out_features=num_actions * num_atoms,
-            bias=False
-        )
-        self.net.out_features = num_atoms
-
-    def forward(self, inputs):
-        x = self.net(inputs).view(-1, self.num_actions, self.num_atoms)
-        return x
-
-
 class SquashingLayer(nn.Module):
     def __init__(self, squashing_fn=nn.Tanh):
         """ Layer that squashes samples from some distribution to be bounded.
@@ -321,7 +169,6 @@ class RealNVPPolicy(nn.Module):
         layer_fn,
         activation_fn=nn.ReLU,
         squashing_fn=nn.Tanh,
-        norm_fn=None,
         bias=False
     ):
         super().__init__()
@@ -455,3 +302,191 @@ class CouplingLayer(nn.Module):
         log_pi = log_pi - log_det_jacobian
 
         return action, log_pi
+
+
+class DistributionHead(nn.Module):
+    def __init__(
+        self,
+        in_features: int,
+        out_features: int,
+        num_atoms: int = 1,
+        bias: bool = False,
+    ):
+        super().__init__()
+        self.out_features = out_features
+        self.num_atoms = num_atoms
+        self.net = nn.Linear(
+            in_features=in_features,
+            out_features=out_features * num_atoms,
+            bias=bias
+        )
+        self.apply(outer_init)
+
+    def forward(self, inputs):
+        x: torch.Tensor = \
+            self.net(inputs).view(-1, self.out_features, self.num_atoms)
+        x = x.squeeze_(dim=-1)
+        return x
+
+
+class PolicyHead(nn.Module):
+    def __init__(
+        self,
+        in_features: int,
+        out_features: int,
+        policy_type: str = None,
+        out_activation: nn.Module = None
+    ):
+        super().__init__()
+
+        layer_fn = nn.Linear
+        activation_fn = nn.ReLU
+        squashing_fn = nn.Tanh
+        bias = True
+
+        if policy_type == "gauss":
+            head_size = out_features * 2
+            policy_net = GaussPolicy(squashing_fn)
+        elif policy_type == "real_nvp":
+            head_size = out_features * 2
+            policy_net = RealNVPPolicy(
+                action_size=out_features,
+                layer_fn=layer_fn,
+                activation_fn=activation_fn,
+                squashing_fn=squashing_fn,
+                bias=bias
+            )
+        else:
+            head_size = out_features
+            policy_net = None
+            policy_type = "logits"
+
+        self.policy_type = policy_type
+
+        head_net = SequentialNet(
+            hiddens=[in_features, head_size],
+            layer_fn=nn.Linear,
+            activation_fn=out_activation,
+            norm_fn=None,
+            bias=True
+        )
+        head_net.apply(outer_init)
+
+        self._policy_fn = None
+        if policy_net is None:
+            self._policy_fn = lambda *args: args[0]
+        elif isinstance(policy_net, (GaussPolicy, RealNVPPolicy)):
+            self._policy_fn = self.policy_net.forward
+        else:
+            raise NotImplementedError
+
+    def forward(self, inputs, with_log_pi=False, deterministic=False):
+        x = self.head_net(inputs)
+        x = self._policy_fn(x, with_log_pi, deterministic)
+        return x
+
+
+class StateNet(nn.Module):
+    def __init__(
+        self,
+        main_net: nn.Module,
+        observation_net: nn.Module = None,
+        aggregation_net: nn.Module = None,
+    ):
+        super().__init__()
+        self.main_net = main_net
+        self.observation_net = observation_net or (lambda x: x)
+        self.aggregation_net = aggregation_net
+
+        self._forward_fn = None
+        if aggregation_net is None:
+            self._forward_fn = self._forward_ff
+        elif isinstance(aggregation_net, LamaPooling):
+            self._forward_fn = self._forward_lama
+        else:
+            raise NotImplementedError
+
+    def _forward_ff(self, state):
+        x = state.view(state.shape[0], -1)
+        x = self.observation_net(x)
+        x = self.main_net(x)
+        return x
+
+    def _forward_lama(self, state):
+        x = state
+        if len(x.shape) < 3:
+            x = x.unsqueeze(1)
+
+        if isinstance(self.observation_net, nn.Module):
+            batch_size, history_len, feature_size = x.shape
+            x = x.view(-1, feature_size)
+            x = self.observation_net(x)
+            x = x.view(batch_size, history_len, -1)
+
+        x = self.aggregation_net(x)
+
+        x = self.main_net(x)
+        return x
+
+    def forward(self, state):
+        x = self._forward_fn(state)
+        return x
+
+
+class StateActionNet(nn.Module):
+    def __init__(
+        self,
+        main_net: nn.Module,
+        observation_net: nn.Module = None,
+        action_net: nn.Module = None,
+        aggregation_net: nn.Module = None
+    ):
+        super().__init__()
+        self.main_net = main_net
+        self.observation_net = observation_net or (lambda x: x)
+        self.action_net = action_net or (lambda x: x)
+        self.aggregation_net = aggregation_net
+
+        self._forward_fn = None
+        if aggregation_net is None:
+            self._forward_fn = self._forward_ff
+        elif isinstance(aggregation_net, LamaPooling):
+            self._forward_fn = self._forward_lama
+        else:
+            raise NotImplementedError
+
+    def _forward_ff(self, state, action):
+        state_ = state.view(state.shape[0], -1)
+        state_ = self.observation_net(state_)
+
+        action_ = action.view(action.shape[0], -1)
+        action_ = self.action_net(action_)
+
+        x = torch.cat((state_, action_), dim=1)
+        x = self.main_net(x)
+        return x
+
+    def _forward_lama(self, state, action):
+        state_ = state
+        if len(state_.shape) < 3:
+            state_ = state_.unsqueeze(1)
+
+        if isinstance(self.observation_net, nn.Module):
+            batch_size, history_len, feature_size = state_.shape
+            state_ = state_.view(-1, feature_size)
+            state_ = self.observation_net(state_)
+            state_ = state_.view(batch_size, history_len, -1)
+
+        state_ = self.aggregation_net(state_)
+
+        # @TODO: add option to collapse observations based on action
+        action_ = action.view(action.shape[0], -1)
+        action_ = self.action_net(action_)
+
+        x = torch.cat((state_, action_), dim=1)
+        x = self.main_net(x)
+        return x
+
+    def forward(self, state, action):
+        x = self._forward_fn(state, action)
+        return x

@@ -2,17 +2,40 @@ import torch.nn as nn
 from functools import reduce
 
 from catalyst.contrib.models import SequentialNet
-from catalyst.dl.initialization import create_optimal_inner_init, outer_init
-from catalyst.rl.agents.layers import StateNet, \
-    GaussPolicy, RealNVPPolicy, \
-    LamaPooling
+from catalyst.dl.initialization import create_optimal_inner_init
+from catalyst.rl.agents.layers import StateNet, LamaPooling, PolicyHead
 from catalyst.rl.registry import MODULES
+from .core import ActorSpec
 
 
-class Actor(StateNet):
+class Actor(ActorSpec):
     """
-    Actor which learns deterministic policy.
+    Actor which learns agents policy.
     """
+
+    def __init__(
+        self,
+        main_net: nn.Module,
+        head_net: PolicyHead = None,
+        observation_net: nn.Module = None,
+        aggregation_net: nn.Module = None,
+    ):
+        super().__init__()
+        self.representation_net = StateNet(
+            main_net=main_net,
+            observation_net=observation_net,
+            aggregation_net=aggregation_net
+        )
+        self.head_net = head_net
+
+    def forward(self, state, with_log_pi=False, deterministic=False):
+        x = self.representation_net(state)
+        x = self.head_net(x, with_log_pi, deterministic)
+        return x
+
+    @property
+    def policy_type(self) -> str:
+        return self.head_net.policy_type
 
     @classmethod
     def create_from_params(
@@ -32,10 +55,7 @@ class Actor(StateNet):
         observation_aggregation=None,
         lama_poolings=None,
         policy_type=None,
-        squashing_fn=nn.Tanh,
-        **kwargs
     ):
-        assert len(kwargs) == 0
 
         observation_hiddens = observation_hiddens or []
         head_hiddens = head_hiddens or []
@@ -107,38 +127,18 @@ class Actor(StateNet):
 
         # @TODO: place for memory network
 
-        if policy_type == "gauss":
-            head_size = action_size * 2
-            policy_net = GaussPolicy(squashing_fn)
-        elif policy_type == "real_nvp":
-            head_size = action_size * 2
-            policy_net = RealNVPPolicy(
-                action_size=action_size,
-                layer_fn=layer_fn,
-                activation_fn=activation_fn,
-                squashing_fn=squashing_fn,
-                norm_fn=None,
-                bias=bias
-            )
-        else:
-            head_size = action_size
-            policy_net = None
-
-        head_net = SequentialNet(
-            hiddens=[head_hiddens[-1], head_size],
-            layer_fn=nn.Linear,
-            activation_fn=out_activation,
-            norm_fn=None,
-            bias=True
+        head_net = PolicyHead(
+            in_features=head_hiddens[-1],
+            out_features=action_size,
+            policy_type=policy_type,
+            out_activation=out_activation
         )
-        head_net.apply(outer_init)
 
         actor_net = cls(
             observation_net=observation_net,
             aggregation_net=aggregation_net,
             main_net=main_net,
             head_net=head_net,
-            policy_net=policy_net
         )
 
         return actor_net

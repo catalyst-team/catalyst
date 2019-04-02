@@ -73,19 +73,16 @@ def run_sampler(
     id = 0 if id is None else id
     set_global_seed(seed + id)
 
-    if not db:
-        db_server = None
-    else:
-        db_server = RedisDB(
-            port=config.get("redis", {}).get("port", 12000),
-            prefix=config.get("redis", {}).get("prefix", "")
-        )
+    db_server = RedisDB(
+        port=config.get("redis", {}).get("port", 12000),
+        prefix=config.get("redis", {}).get("prefix", "")
+    ) if db else None
 
     env = environment_fn(**config_["environment"], visualize=vis)
-    network = algorithm_fn.prepare_for_sampler(config_)
+    agent = algorithm_fn.prepare_for_sampler(config_)
 
     sampler = Sampler(
-        network=network,
+        agent=agent,
         env=env,
         db_server=db_server,
         **config_["sampler"],
@@ -119,8 +116,8 @@ def main(args, unknown_args):
     params = dict(
         seed=args.seed,
         logdir=args.logdir,
-        algorithm=algorithm_fn,
-        environment=environment_fn,
+        algorithm_fn=algorithm_fn,
+        environment_fn=environment_fn,
         config=config,
         resume=args.resume,
         db=args.db
@@ -156,7 +153,7 @@ def main(args, unknown_args):
         processes.append(p)
         sampler_id += 1
 
-    for i in range(1, args._train + 1):
+    for i in range(1, args.train + 1):
         params_ = dict(
             vis=False,
             infer=False,

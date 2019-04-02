@@ -3,16 +3,6 @@ from abc import abstractmethod, ABC
 
 class DBSpec(ABC):
 
-    # @property
-    # @abstractmethod
-    # def prefix(self) -> int:
-    #     pass
-    #
-    # @property
-    # @abstractmethod
-    # def instance(self) -> int:
-    #     pass
-
     @property
     @abstractmethod
     def num_trajectories(self) -> int:

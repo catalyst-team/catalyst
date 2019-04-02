@@ -1,20 +1,19 @@
-from typing import List
+from typing import Union, List
 
 import os
 import time
-import copy
 import random
 from datetime import datetime
 import torch
-import torch.nn as nn
 from tensorboardX import SummaryWriter
 
 from catalyst.utils.misc import set_global_seed
 from catalyst.dl.utils import UtilsFactory
-from catalyst.rl.offpolicy.utils import EnvWrapper
+from catalyst.rl.offpolicy.utils import EpisodeRunner
 from catalyst.rl.offpolicy.exploration import ExplorationHandler
 from catalyst.rl.environments.core import EnvironmentSpec
 from catalyst.rl.db.core import DBSpec
+from catalyst.rl.agents.core import ActorSpec, CriticSpec
 
 # speed up optimization
 os.environ["OMP_NUM_THREADS"] = "1"
@@ -26,7 +25,7 @@ _SEED_RANGE = _BIG_NUM
 class Sampler:
     def __init__(
         self,
-        network: nn.Module,  # @TODO: actor policy specification?
+        agent: Union[ActorSpec, CriticSpec],
         env: EnvironmentSpec,
         db_server: DBSpec = None,
         logdir: str = None,
@@ -44,32 +43,29 @@ class Sampler:
         set_global_seed(self._seed)
         self._sampler_id = id
 
+        self._infer = mode == "infer"
+        self.seeds = seeds
+
         # logging
         self._prepare_logger(logdir, mode)
+
+        # environment, model, exploration & action handlers
+        self.env = env
+        self.agent = agent
+        self.exploration_handler: ExplorationHandler = ExplorationHandler()
+        self.episode_index = 0
+        self.episode_runner = EpisodeRunner(
+            env=self.env,
+            agent=self.agent,
+            capacity=buffer_size,
+            deterministic=self._infer
+        )
 
         # synchronization configuration
         self.db_server = db_server
         self.weights_sync_period = weights_sync_period
         self.episode_limit = episode_limit or _BIG_NUM
         self._force_store = force_store
-
-        # other
-        self._infer = mode == "infer"
-        self.seeds = seeds
-
-        # environment, model, exploration & action handlers
-        self.env = env
-        self._device = UtilsFactory.prepare_device()
-        self.network = copy.deepcopy(network).to(self._device)
-        self.exploration_handler: ExplorationHandler = ExplorationHandler()
-        self.episode_index = 0
-        self.env_wrapper = EnvWrapper(
-            env=self.env,
-            actor=self.network,
-            capacity=buffer_size,
-            deterministic=self._infer
-        )
-
         self._sampler_weight_mode = \
             "critic" if env.discrete_actions else "actor"
 
@@ -87,25 +83,25 @@ class Sampler:
             self.logger = None
 
     def _to_tensor(self, *args, **kwargs):
-        return torch.Tensor(*args, **kwargs).to(self._device)
+        return torch.Tensor(*args, **kwargs).to(self.agent.device)
 
     def load_checkpoint(self, *, resume: str = None, db_server: DBSpec = None):
         if resume is not None:
             checkpoint = UtilsFactory.load_checkpoint(resume)
             weights = checkpoint[f"{self._sampler_weight_mode}_state_dict"]
-            self.network.load_state_dict(weights)
+            self.agent.load_state_dict(weights)
         elif db_server is not None:
             weights = db_server.load_weights(suffix=self._sampler_weight_mode)
             weights = {k: self._to_tensor(v) for k, v in weights.items()}
-            self.network.load_state_dict(weights)
+            self.agent.load_state_dict(weights)
         else:
             raise NotImplementedError
-        self.network.eval()
+        self.agent.eval()
 
     def _store_trajectory(self):
         if self.db_server is None:
             return
-        trajectory = self.env_wrapper.get_trajectory(tolist=True)
+        trajectory = self.episode_runner.get_trajectory(tolist=True)
         self.db_server.push_trajectory(trajectory)
 
     def _prepare_seed(self):
@@ -158,10 +154,10 @@ class Sampler:
             seed = self._prepare_seed()
             exploration_strategy = \
                 self.exploration_handler.get_exploration_strategy()
-            self.env_wrapper.reset(exploration_strategy)
+            self.episode_runner.reset(exploration_strategy)
 
             start_time = time.time()
-            episode_info = self.env_wrapper.play_episode(
+            episode_info = self.episode_runner.play_episode(
                 exploration_strategy=exploration_strategy)
             elapsed_time = time.time() - start_time
 

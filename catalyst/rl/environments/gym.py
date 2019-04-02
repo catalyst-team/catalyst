@@ -6,7 +6,7 @@ import time
 from .core import EnvironmentSpec
 
 
-class GymSpec(EnvironmentSpec):
+class GymWrapper(EnvironmentSpec):
     def __init__(
         self,
         env_name="LunarLander-v2",  # "LunarLanderContinuous-v2",
