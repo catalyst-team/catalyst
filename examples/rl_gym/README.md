@@ -18,10 +18,10 @@
     export GPUS=""  # like GPUS="0" or GPUS="0,1" for multi-gpu training
  
     CUDA_VISIBLE_DEVICES="$GPUS" catalyst-rl run-trainer \
-       --config=./rl_gym/config_td3.yml
+       --config=./rl_gym/config_dqn.yml
     
     CUDA_VISIBLE_DEVICES="" catalyst-rl run-samplers \
-       --config=./rl_gym/config_td3.yml
+       --config=./rl_gym/config_dqn.yml
     
     CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs/rl_gym
     ```

@@ -74,12 +74,14 @@ def run_sampler(
     set_global_seed(seed + id)
 
     db_server = RedisDB(
-        port=config.get("redis", {}).get("port", 12000),
-        prefix=config.get("redis", {}).get("prefix", "")
+        port=config.get("db", {}).get("port", 12000),
+        prefix=config.get("db", {}).get("prefix", "")
     ) if db else None
 
     env = environment_fn(**config_["environment"], visualize=vis)
-    agent = algorithm_fn.prepare_for_sampler(config_)
+    agent = algorithm_fn.prepare_for_sampler(env_spec=env, config=config_)
+
+    valid_seeds = config_["sampler"].pop("valid_seeds")
 
     sampler = Sampler(
         agent=agent,
@@ -89,8 +91,11 @@ def run_sampler(
         logdir=logdir,
         id=id,
         mode="infer" if infer else "train",
-        resume=resume
+        seeds=valid_seeds if infer else None
     )
+
+    if resume is not None:
+        sampler.load_checkpoint(filepath=resume)
 
     sampler.run()
 
@@ -101,8 +106,11 @@ def main(args, unknown_args):
     if args.expdir is not None:
         module = import_module(expdir=args.expdir)  # noqa: F841
 
-    algorithm_fn = ALGORITHMS.get(args.algorithm)
-    environment_fn = ENVIRONMENTS.get(args.environment)
+    environment_name = config["environment"].pop("environment")
+    environment_fn = ENVIRONMENTS.get(environment_name)
+
+    algorithm_name = config["algorithm"].pop("algorithm")
+    algorithm_fn = ALGORITHMS.get(algorithm_name)
 
     processes = []
     sampler_id = 0

@@ -36,9 +36,9 @@ class Sampler:
         seeds: List = None,
         episode_limit: int = None,
         force_store: bool = False,
-        resume: str = None,
+        exploration=None  # @TODO
     ):
-
+        self._device = UtilsFactory.prepare_device()
         self._seed = 42 + id
         set_global_seed(self._seed)
         self._sampler_id = id
@@ -52,11 +52,12 @@ class Sampler:
         # environment, model, exploration & action handlers
         self.env = env
         self.agent = agent
-        self.exploration_handler: ExplorationHandler = ExplorationHandler()
+        # self.exploration_handler: ExplorationHandler = ExplorationHandler()
         self.episode_index = 0
         self.episode_runner = EpisodeRunner(
             env=self.env,
             agent=self.agent,
+            device=self._device,
             capacity=buffer_size,
             deterministic=self._infer
         )
@@ -69,10 +70,6 @@ class Sampler:
         self._sampler_weight_mode = \
             "critic" if env.discrete_actions else "actor"
 
-        # resume
-        if resume is not None:
-            self.load_checkpoint(resume=resume)
-
     def _prepare_logger(self, logdir, mode):
         if logdir is not None:
             current_date = datetime.now().strftime("%y-%m-%d-%H-%M-%S-%M-%f")
@@ -83,11 +80,11 @@ class Sampler:
             self.logger = None
 
     def _to_tensor(self, *args, **kwargs):
-        return torch.Tensor(*args, **kwargs).to(self.agent.device)
+        return torch.Tensor(*args, **kwargs).to(self._device)
 
-    def load_checkpoint(self, *, resume: str = None, db_server: DBSpec = None):
-        if resume is not None:
-            checkpoint = UtilsFactory.load_checkpoint(resume)
+    def load_checkpoint(self, *, filepath: str = None, db_server: DBSpec = None):
+        if filepath is not None:
+            checkpoint = UtilsFactory.load_checkpoint(filepath)
             weights = checkpoint[f"{self._sampler_weight_mode}_state_dict"]
             self.agent.load_state_dict(weights)
         elif db_server is not None:
@@ -96,6 +93,8 @@ class Sampler:
             self.agent.load_state_dict(weights)
         else:
             raise NotImplementedError
+
+        self.agent.to(self._device)
         self.agent.eval()
 
     def _store_trajectory(self):
@@ -116,10 +115,10 @@ class Sampler:
 
     def _log_to_console(self, *, episode_reward, num_steps, elapsed_time, seed):
         print(
-            f"--- episode {self.episode_index:5d}:\t"
-            f"steps: {num_steps:5d}\t"
+            f"--- episode {int(self.episode_index):05d}:\t"
+            f"steps: {int(num_steps):05d}\t"
             f"reward: {episode_reward:9.4f}\t"
-            f"time: {elapsed_time:5d}\t"
+            f"time: {elapsed_time:5f}\t"
             f"seed: {seed}"
         )
 
@@ -152,8 +151,8 @@ class Sampler:
             if self.episode_index % self.weights_sync_period == 0:
                 self.load_checkpoint(db_server=self.db_server)
             seed = self._prepare_seed()
-            exploration_strategy = \
-                self.exploration_handler.get_exploration_strategy()
+            exploration_strategy = None
+                # self.exploration_handler.get_exploration_strategy()
             self.episode_runner.reset(exploration_strategy)
 
             start_time = time.time()

@@ -47,17 +47,18 @@ def main(args, unknown_args):
         module = import_module(expdir=args.expdir)  # noqa: F841
 
     db_server = RedisDB(
-        port=config.get("redis", {}).get("port", 12000),
-        prefix=config.get("redis", {}).get("prefix", "")
+        port=config.get("db", {}).get("port", 12000),
+        prefix=config.get("db", {}).get("prefix", "")
     )
 
-    environment_fn = ENVIRONMENTS.get(args.environment)
-    env = environment_fn(**config["environment"])
-    config["environment"] = \
-        env.update_environment_config(config["environment"])
+    env = ENVIRONMENTS.get_from_params(**config["environment"])
 
-    algorithm_fn = ALGORITHMS.get(args.algorithm)
-    algorithm = algorithm_fn.prepare_for_trainer(config)
+    algorithm_name = config["algorithm"].pop("algorithm")
+    algorithm_fn = ALGORITHMS.get(algorithm_name)
+    algorithm = algorithm_fn.prepare_for_trainer(env_spec=env, config=config)
+
+    if args.resume is not None:
+        algorithm.load_checkpoint(filepath=args.resume)
 
     trainer = Trainer(
         algorithm=algorithm,
@@ -65,7 +66,6 @@ def main(args, unknown_args):
         db_server=db_server,
         **config["trainer"],
         logdir=args.logdir,
-        resume=args.resume,
     )
 
     def on_exit():

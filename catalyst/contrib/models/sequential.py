@@ -5,6 +5,7 @@ import torch.nn as nn
 
 from catalyst.contrib.registry import MODULES
 from catalyst.utils.misc import pairwise
+from catalyst.dl.initialization import create_optimal_inner_init
 
 
 class ResidualWrapper(nn.Module):
@@ -34,6 +35,7 @@ class SequentialNet(nn.Module):
         activation_fn = MODULES.get_if_str(activation_fn)
         norm_fn = MODULES.get_if_str(norm_fn)
         dropout = MODULES.get_if_str(dropout)
+        inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
 
         layer_order = layer_order or ["layer", "norm", "drop", "act"]
 
@@ -75,6 +77,7 @@ class SequentialNet(nn.Module):
             net.append((f"block_{i}", block))
 
         self.net = torch.nn.Sequential(OrderedDict(net))
+        self.net.apply(inner_init)
 
     def forward(self, x):
         x = self.net.forward(x)

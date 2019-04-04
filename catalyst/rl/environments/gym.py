@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import numpy as np
 import gym
 from gym import spaces
 import time
@@ -28,6 +29,7 @@ class GymWrapper(EnvironmentSpec):
 
         self._prepare_spaces()
 
+    @property
     def history_len(self):
         return self._history_len
 
@@ -47,11 +49,15 @@ class GymWrapper(EnvironmentSpec):
         self._observation_space = self.env.observation_space
         self._action_space = self.env.action_space
 
+        def _expand_to_history_len(np_array):
+            return np.concatenate(
+                self._history_len * [np.expand_dims(np_array, 0)], axis=0)
+
         if isinstance(self._observation_space, spaces.Box):
             self._state_space = spaces.Box(
-                low=self._observation_space.low,
-                high=self._observation_space.high,
-                shape=(self._history_len,) + self._observation_space.shape,
+                low=_expand_to_history_len(self._observation_space.low),
+                high=_expand_to_history_len(self._observation_space.high),
+                # shape=(self._history_len,) + self._observation_space.shape,
                 dtype=self._observation_space.dtype
             )
         else:

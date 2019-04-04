@@ -6,7 +6,7 @@ args:
   infer: 0  #  change me
   train: 1  #  change me
 
-redis:
+db:
   port: 12000
   prefix: gym  # TODO: remove
 

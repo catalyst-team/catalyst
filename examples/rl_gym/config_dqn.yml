@@ -6,18 +6,40 @@ args:
   infer: 0  #  change me
   train: 1  #  change me
 
-redis:
+db:
   port: 12000
   prefix: gym  # TODO: remove
 
 environment:
   environment: GymWrapper
   env_name: LunarLander-v2
+
   history_len: 3
+
   frame_skip: 2
-  visualize: false
   reward_scale: 0.01
   step_delay: 0.01
+
+agents:
+  critic:
+    agent: ActionCritic
+
+    state_net_params:  # state -> hidden representation
+      encoder_net_params:
+        hiddens: [128]
+        layer_fn: Linear
+        norm_fn: LayerNorm
+        activation_fn: ReLU
+        bias: false
+      main_net_params:
+        hiddens: [128]
+        layer_fn: Linear
+        norm_fn: LayerNorm
+        activation_fn: ReLU
+        bias: false
+    value_head_params:  # hidden representation -> ~policy
+      in_features: 128
+      num_atoms: 1
 
 algorithm:
   algorithm: DQN
@@ -25,9 +47,13 @@ algorithm:
   n_step: 1
   gamma: 0.99
 
-  critic_distribution: quantile
-  values_range: [-10.0, 10.0]
+#  critic_distribution: quantile
+#  values_range: [-10.0, 10.0]
   critic_tau: 0.01
+
+  critic_loss_params:
+    criterion: HuberLoss
+    clip_delta: 10.0
 
   critic_optimizer_params:
     optimizer: Adam
@@ -37,20 +63,6 @@ algorithm:
     scheduler: MultiStepLR
     milestones: [2000000]  # batches
     gamma: 1.0
-
-  critic_loss_params:
-    criterion: HuberLoss
-    clip_delta: 1.0
-
-agents:
-  critic:
-    agent: DiscreteCritic
-    head_hiddens: [128, 128]
-    num_atoms: 64
-    layer_fn: Linear
-    bias: false
-    norm_fn: LayerNorm
-    activation_fn: ReLU
 
 trainer:
   batch_size: 32               # transitions

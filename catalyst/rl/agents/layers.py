@@ -3,8 +3,7 @@ import torch.nn as nn
 
 from catalyst.contrib.models import SequentialNet
 from catalyst.dl.initialization import create_optimal_inner_init, outer_init
-from catalyst.rl.agents.utils import log1p_exp, get_out_features, \
-    normal_sample, normal_log_prob
+from catalyst.rl.agents.utils import log1p_exp, normal_sample, normal_log_prob
 
 # log_sigma of Gaussian policy are capped at (LOG_SIG_MIN, LOG_SIG_MAX)
 from catalyst.rl.registry import MODULES
@@ -304,17 +303,32 @@ class CouplingLayer(nn.Module):
         return action, log_pi
 
 
-class DistributionHead(nn.Module):
+class ValueHead(nn.Module):
     def __init__(
         self,
         in_features: int,
         out_features: int,
         num_atoms: int = 1,
         bias: bool = False,
+        distribution: str = None,
+        values_range: tuple = None
     ):
         super().__init__()
+
         self.out_features = out_features
         self.num_atoms = num_atoms
+        self.distribution = distribution
+        self.values_range = values_range
+
+        if distribution is None:  # mean case
+            assert values_range is None and num_atoms == 1
+        elif distribution == "categorical":
+            assert values_range is not None and num_atoms > 1
+        elif distribution == "quantile":
+            assert values_range is None and num_atoms > 1
+        else:
+            raise NotImplementedError()
+
         self.net = nn.Linear(
             in_features=in_features,
             out_features=out_features * num_atoms,
@@ -387,6 +401,19 @@ class PolicyHead(nn.Module):
 
 
 class StateNet(nn.Module):
+    """
+    Abstract network, that takes some tensor T of shape [bs; history_len; ...]
+    and outputs some representation tensor R of shape [bs; representation_size]
+
+    input_T [bs; history_len; in_features]
+        -> observation_net (aka observation_encoder) ->
+    observations_representations [bs; history_len; obs_features]
+        -> aggregation_net (flatten in simplified case)->
+    aggregated_representation [bs; hid_features]
+        -> main_net ->
+    output_T [bs; representation_size]
+    """
+
     def __init__(
         self,
         main_net: nn.Module,
@@ -431,6 +458,21 @@ class StateNet(nn.Module):
     def forward(self, state):
         x = self._forward_fn(state)
         return x
+
+    @classmethod
+    def get_from_params(
+        cls,
+        encoder_net_params=None,
+        aggregation_net_params=None,
+        main_net_params=None,
+    ) -> "StateNet":
+        assert encoder_net_params is not None
+        assert aggregation_net_params is None, "Lama is not implemented yet"
+
+        observation_encoder = SequentialNet(**encoder_net_params)
+        main_net = SequentialNet(**main_net_params)
+        state_net = cls(main_net=main_net, observation_net=observation_encoder)
+        return state_net
 
 
 class StateActionNet(nn.Module):

@@ -129,7 +129,6 @@ class Registry:
         names_to_add = getattr(module, "__all__", list(factories.keys()))
 
         to_add = {name: factories[name] for name in names_to_add}
-
         self.add(**to_add)
 
     def get(self, name: str) -> Optional[Factory]:
@@ -175,8 +174,8 @@ class Registry:
         f = self.get(name)
 
         try:
-            if hasattr(f, "create_from_params"):
-                return f.create_from_params(*args, **kwargs)
+            if hasattr(f, "get_from_params"):
+                return f.get_from_params(*args, **kwargs)
             return meta_factory(f, args, kwargs)
         except Exception as e:
             raise RegistryException(

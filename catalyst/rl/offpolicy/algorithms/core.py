@@ -1,4 +1,7 @@
+from typing import Union, Dict
 from abc import abstractmethod, ABC
+from catalyst.rl.agents.core import ActorSpec, CriticSpec
+from catalyst.rl.environments.core import EnvironmentSpec
 
 
 class AlgorithmSpec(ABC):
@@ -22,7 +25,7 @@ class AlgorithmSpec(ABC):
         pass
 
     @abstractmethod
-    def dump_checkpoint(self, filepath):
+    def save_checkpoint(self, filepath):
         pass
 
     @abstractmethod
@@ -51,10 +54,14 @@ class AlgorithmSpec(ABC):
 
     @classmethod
     @abstractmethod
-    def prepare_for_trainer(cls, config):
+    def prepare_for_trainer(cls, env_spec: EnvironmentSpec, config: Dict):
         pass
 
     @classmethod
     @abstractmethod
-    def prepare_for_sampler(cls, config):
+    def prepare_for_sampler(
+        cls,
+        env_spec: EnvironmentSpec,
+        config: Dict
+    ) -> Union[ActorSpec, CriticSpec]:
         pass

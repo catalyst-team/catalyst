@@ -160,6 +160,7 @@ class PolicyHandler:
         self,
         env_spec: EnvironmentSpec,
         agent_spec: Union[ActorSpec, CriticSpec],
+        device
     ):
         discrete_actions = isinstance(env_spec.action_space, Discrete)
 
@@ -172,7 +173,7 @@ class PolicyHandler:
                     start=v_min,
                     end=v_max,
                     steps=agent_spec.num_atoms
-                ).to(agent_spec.device)
+                ).to(device)
                 self._act_fn = self._sample_from_categorical_critic
             elif agent_spec.distribution == "quantile":
                 self._act_fn = self._sample_from_quantile_critic
@@ -189,10 +190,11 @@ class PolicyHandler:
         self,
         actor: ActorSpec,
         state: np.ndarray,
+        device,
         deterministic: bool = False
     ):
         with torch.no_grad():
-            states = torch.Tensor(state).to(actor.device).unsqueeze(0)
+            states = torch.Tensor(state).to(device).unsqueeze(0)
             action = actor(states, deterministic=deterministic)
             action = action[0].cpu().numpy()
 
@@ -208,10 +210,11 @@ class PolicyHandler:
         self,
         critic: CriticSpec,
         state: np.ndarray,
+        device,
         **kwargs
     ):
         with torch.no_grad():
-            states = torch.Tensor(state).to(critic.device).unsqueeze(0)
+            states = torch.Tensor(state).to(device).unsqueeze(0)
             q_values = critic(states)[0]
             action = np.argmax(q_values.detach().cpu().numpy())
             return action
@@ -220,10 +223,11 @@ class PolicyHandler:
         self,
         critic: CriticSpec,
         state: np.ndarray,
+        device,
         **kwargs
     ):
         with torch.no_grad():
-            states = torch.Tensor(state).to(critic.device).unsqueeze(0)
+            states = torch.Tensor(state).to(device).unsqueeze(0)
             probs = F.softmax(critic(states)[0], dim=-1)
             q_values = torch.sum(probs * self.z, dim=-1)
             action = np.argmax(q_values.cpu().numpy())
@@ -233,10 +237,11 @@ class PolicyHandler:
         self,
         critic: CriticSpec,
         state: np.ndarray,
+        device,
         **kwargs
     ):
         with torch.no_grad():
-            states = torch.Tensor(state).to(critic.device).unsqueeze(0)
+            states = torch.Tensor(state).to(device).unsqueeze(0)
             q_values = torch.mean(critic(states)[0], dim=-1)
             action = np.argmax(q_values.cpu().numpy())
             return action
@@ -245,10 +250,11 @@ class PolicyHandler:
         self,
         agent: Union[ActorSpec, CriticSpec],
         state: np.ndarray,
+        device,
         deterministic: bool = False,
         exploration_strategy=None,
     ):
-        action = self._act_fn(agent, state, deterministic=deterministic)
+        action = self._act_fn(agent, state, device, deterministic=deterministic)
 
         if exploration_strategy is not None:
             action = exploration_strategy.update_action(action)
@@ -261,14 +267,17 @@ class EpisodeRunner:
         self,
         env: EnvironmentSpec,
         agent: Union[ActorSpec, CriticSpec],
+        device,
         capacity: int,
         deterministic: bool = False,
     ):
         self.env = env
         self.agent = agent
+        self._device = device
         self.capacity = capacity
         self.deterministic = deterministic
-        self.policy_handler = PolicyHandler(self.env, self.agent)
+        self.policy_handler = PolicyHandler(
+            env_spec=self.env, agent_spec=self.agent, device=device)
 
         self._init_buffers()
 
@@ -286,7 +295,7 @@ class EpisodeRunner:
         self.dones = np.empty((self.capacity,), dtype=np.bool)
 
     def _to_tensor(self, *args, **kwargs):
-        return torch.Tensor(*args, **kwargs).to(self.agent.device)
+        return torch.Tensor(*args, **kwargs).to(self._device)
 
     def _init_with_observation(self, observation):
         self.observations[0] = observation
@@ -361,6 +370,7 @@ class EpisodeRunner:
             action = self.policy_handler.act(
                 agent=self.agent,
                 state=state,
+                device=self._device,
                 exploration_strategy=exploration_strategy,
                 deterministic=self.deterministic
             )
