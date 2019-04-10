@@ -130,7 +130,7 @@ class InferMaskCallback(Callback):
         probs = probs.detach().cpu().numpy()
         probs = np.transpose(probs, (0, 2, 3, 1))
 
-        colors = self._get_spaced_colors2(n_colors=probs.shape[3])
+        # colors = self._get_spaced_colors2(n_colors=probs.shape[3])
         for i in range(probs.shape[0]):
             img = np.uint8(255 * (self.std * features[i] + self.mean))
             try:
@@ -139,7 +139,7 @@ class InferMaskCallback(Callback):
                 suffix = f"{self.counter:06d}"
             self.counter += 1
 
-            shw = img.copy()
+            # shw = img.copy()
             masks = []
             for t in range(probs.shape[3]):
                 mask = probs[i, :, :, t] > self.threshold \

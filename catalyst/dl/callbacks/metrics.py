@@ -129,7 +129,9 @@ class JaccardCallback(MetricCallback):
         elif mode == "soft":
             metric_fn = metrics.soft_jaccard
         else:
-            raise ValueError(f"Mode must be one of ['hard', 'soft'], got '{mode}.")
+            raise ValueError(
+                f"Mode must be one of ['hard', 'soft'], got {mode}."
+            )
 
         super().__init__(
             prefix=prefix,
