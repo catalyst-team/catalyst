@@ -129,22 +129,52 @@ def dice(outputs, targets, eps: float = 1e-7, activation: str = "sigmoid"):
     return (2 * intersection + eps) / sum_
 
 
-def jaccard(outputs, targets, eps: float = 1e-7):
+def jaccard(
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    eps: float = 1e-7,
+    threshold: float = 0.5
+):
     """
-    Computes the jaccard metric.
-    Parameters
-    ----------
-    outputs : list
-                A list of predicted elements
-    targets : list
-             A list of elements that are to be predicted
-    eps : float
-    Returns
-    -------
-    score : double
-            Jaccard score
+    Args:
+        outputs (torch.Tensor): A list of predicted elements
+        targets (torch.Tensor):  A list of elements that are to be predicted
+        eps (float): epsilon to avoid zero division
+        threshold (float): threshold for outputs binarization
+    Returns:
+        float: Jaccard (IoU) score
     """
-    outputs = (outputs > 0).float()
+    outputs = (outputs > threshold).float()
     intersection = torch.sum(targets * outputs)
     union = torch.sum(targets) + torch.sum(outputs) - intersection + eps
     return (intersection + eps) / union
+
+
+iou = jaccard
+
+
+def soft_jaccard(
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    eps: float = 1e-7,
+    threshold: float = 0.5
+):
+    """
+    Args:
+        outputs (torch.Tensor): A list of predicted elements
+        targets (torch.Tensor):  A list of elements that are to be predicted
+        eps (float): epsilon to avoid zero division
+        threshold (float): threshold for outputs binarization
+    Returns:
+        float: SoftJaccard score
+    """
+    jaccards = []
+    for class_i in range(outputs.shape[1]):
+        jaccard_i = jaccard(
+            outputs[:, class_i, :, :],
+            targets[:, class_i, :, :],
+            eps=eps,
+            threshold=threshold,
+        )
+        jaccards.append(jaccard_i)
+    return torch.mean(torch.stack(jaccards))

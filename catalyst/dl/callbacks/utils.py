@@ -1,4 +1,8 @@
+from typing import List
+
+import numpy as np
 import torch
+from skimage.color import label2rgb
 
 
 def get_val_from_metric(metric_value):
@@ -62,3 +66,17 @@ def scheduler_step(scheduler, valid_metric=None):
     momentum = get_optimizer_momentum(scheduler.optimizer)
 
     return lr, momentum
+
+
+def binary_mask_to_overlay_image(image: np.ndarray, masks: List[np.ndarray]):
+    """Draws every mask for with some color over image"""
+    h, w = image.shape[:2]
+    labels = np.zeros((h, w), np.uint8)
+
+    for idx, mask in enumerate(masks):
+        labels[mask > 0] = idx + 1
+
+    image_with_overlay = label2rgb(labels, image)
+
+    image_with_overlay = (image_with_overlay * 255).round().astype(np.uint8)
+    return image_with_overlay

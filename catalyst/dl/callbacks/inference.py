@@ -2,13 +2,13 @@ import os
 from collections import defaultdict
 import random
 import numpy as np
-from skimage.morphology import erosion, disk
 import cv2
 
 import torch
 import torch.nn.functional as F
 
 from .core import Callback
+from .utils import binary_mask_to_overlay_image
 
 
 # @TODO: refactor
@@ -140,6 +140,7 @@ class InferMaskCallback(Callback):
             self.counter += 1
 
             shw = img.copy()
+            masks = []
             for t in range(probs.shape[3]):
                 mask = probs[i, :, :, t] > self.threshold \
                     if self.threshold is not None \
@@ -153,8 +154,11 @@ class InferMaskCallback(Callback):
                     filename_ = f"{self.out_prefix}/{lm}/{suffix}_{t}.jpg"
                     cv2.imwrite(filename_, mask_)
 
-                mask = mask - erosion(mask, disk(4))
-                shw[mask > 0.5] = colors[t]
+                masks.append(mask)
+                # mask = mask - erosion(mask, disk(4))
+                # shw[mask > 0.5] = colors[t]
+
+            shw = binary_mask_to_overlay_image(img.copy(), masks)
 
             filename = f"{self.out_prefix}/{lm}/{suffix}.jpg"
             cv2.imwrite(filename, shw[:, :, ::-1])
