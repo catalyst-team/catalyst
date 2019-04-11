@@ -129,7 +129,7 @@ def dice(outputs, targets, eps: float = 1e-7, activation: str = "sigmoid"):
     return (2 * intersection + eps) / sum_
 
 
-def jaccard(
+def iou(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     eps: float = 1e-7,
@@ -142,7 +142,7 @@ def jaccard(
         eps (float): epsilon to avoid zero division
         threshold (float): threshold for outputs binarization
     Returns:
-        float: Jaccard (IoU) score
+        float: IoU (Jaccard) score
     """
     outputs = (outputs > threshold).float()
     intersection = torch.sum(targets * outputs)
@@ -150,10 +150,10 @@ def jaccard(
     return (intersection + eps) / union
 
 
-iou = jaccard
+jaccard = iou
 
 
-def soft_jaccard(
+def soft_iou(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     eps: float = 1e-7,
@@ -166,11 +166,11 @@ def soft_jaccard(
         eps (float): epsilon to avoid zero division
         threshold (float): threshold for outputs binarization
     Returns:
-        float: SoftJaccard score
+        float: SoftIoU (SoftJaccard) score
     """
     jaccards = []
     for class_i in range(outputs.shape[1]):
-        jaccard_i = jaccard(
+        jaccard_i = iou(
             outputs[:, class_i, :, :],
             targets[:, class_i, :, :],
             eps=eps,

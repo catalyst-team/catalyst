@@ -63,7 +63,7 @@ Metrics
     :members:
     :undoc-members:
 
-.. autoclass:: JaccardCallback
+.. autoclass:: IoUCallback
     :members:
     :undoc-members:
 

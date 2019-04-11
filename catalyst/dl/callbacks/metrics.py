@@ -99,9 +99,9 @@ class DiceCallback(MetricCallback):
         )
 
 
-class JaccardCallback(MetricCallback):
+class IouCallback(MetricCallback):
     """
-    Jaccard (IoU) metric callback.
+    IoU (Jaccard) metric callback.
     """
 
     def __init__(
@@ -109,7 +109,7 @@ class JaccardCallback(MetricCallback):
         input_key: str = "targets",
         output_key: str = "logits",
         mode: str = "hard",
-        prefix: str = "jaccard",
+        prefix: str = "iou",
         eps: float = 1e-7,
         threshold: float = 0.5
     ):
@@ -119,15 +119,15 @@ class JaccardCallback(MetricCallback):
                 specifies our ``y_true``.
             output_key (str): output key to use for iou calculation;
                 specifies our ``y_pred``
-            mode (str): one of ``['hard', 'soft']`` to calculate Jaccard
+            mode (str): one of ``['hard', 'soft']`` to calculate IoU
             prefix (str): key to store in logs
             eps (float): epsilon to avoid zero division
             threshold (float): threshold for outputs binarization
         """
         if mode == "hard":
-            metric_fn = metrics.jaccard
+            metric_fn = metrics.iou
         elif mode == "soft":
-            metric_fn = metrics.soft_jaccard
+            metric_fn = metrics.soft_iou
         else:
             raise ValueError(
                 f"Mode must be one of ['hard', 'soft'], got {mode}."
@@ -143,7 +143,7 @@ class JaccardCallback(MetricCallback):
         )
 
 
-IouCallback = JaccardCallback
+JaccardCallback = IouCallback
 
 
 class PrecisionCallback(MultiMetricCallback):
