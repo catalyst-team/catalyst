@@ -1,4 +1,5 @@
 import warnings
+import inspect
 from typing import Dict, Callable, Any, Union, Type, Mapping, Tuple, List, \
     Optional, Iterator
 
@@ -123,7 +124,11 @@ class Registry(Mapping):
         :param module: module to scan
         :return: None
         """
-        factories = module.__dict__
+        factories = {
+            k: v
+            for k, v in module.__dict__.items()
+            if inspect.isclass(v) or inspect.isfunction(v)
+        }
 
         # Filter by __all__ if present
         names_to_add = getattr(module, "__all__", list(factories.keys()))
@@ -214,6 +219,12 @@ class Registry(Mapping):
         :return: length of registered items
         """
         return len(self._factories)
+
+    def __str__(self) -> str:
+        return self.all().__str__()
+
+    def __repr__(self) -> str:
+        return self.all().__str__()
 
     # mapping methods
     def __len__(self) -> int:
