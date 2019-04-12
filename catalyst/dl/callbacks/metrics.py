@@ -52,7 +52,7 @@ class MultiMetricCallback(Callback):
         self.output_key = output_key
         self.metric_params = metric_params
 
-    def on_batch_end(self, state):
+    def on_batch_end(self, state: RunnerState):
         outputs = state.output[self.output_key]
         targets = state.input[self.input_key]
 
@@ -108,8 +108,8 @@ class IouCallback(MetricCallback):
         self,
         input_key: str = "targets",
         output_key: str = "logits",
-        mode: str = "hard",
         prefix: str = "iou",
+        mode: str = "hard",
         eps: float = 1e-7,
         threshold: float = 0.5
     ):
@@ -119,8 +119,8 @@ class IouCallback(MetricCallback):
                 specifies our ``y_true``.
             output_key (str): output key to use for iou calculation;
                 specifies our ``y_pred``
-            mode (str): one of ``['hard', 'soft']`` to calculate IoU
             prefix (str): key to store in logs
+            mode (str): one of ``['hard', 'soft']`` to calculate IoU
             eps (float): epsilon to avoid zero division
             threshold (float): threshold for outputs binarization
         """
