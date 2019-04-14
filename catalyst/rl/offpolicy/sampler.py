@@ -28,6 +28,7 @@ class Sampler:
         agent: Union[ActorSpec, CriticSpec],
         env: EnvironmentSpec,
         db_server: DBSpec = None,
+        exploration_handler: ExplorationHandler = None,
         logdir: str = None,
         id: int = 0,
         mode: str = "infer",
@@ -36,7 +37,6 @@ class Sampler:
         seeds: List = None,
         episode_limit: int = None,
         force_store: bool = False,
-        exploration=None  # @TODO
     ):
         self._device = UtilsFactory.prepare_device()
         self._seed = 42 + id
@@ -52,7 +52,7 @@ class Sampler:
         # environment, model, exploration & action handlers
         self.env = env
         self.agent = agent
-        # self.exploration_handler: ExplorationHandler = ExplorationHandler()
+        self.exploration_handler = exploration_handler
         self.episode_index = 0
         self.episode_runner = EpisodeRunner(
             env=self.env,
@@ -151,8 +151,10 @@ class Sampler:
             if self.episode_index % self.weights_sync_period == 0:
                 self.load_checkpoint(db_server=self.db_server)
             seed = self._prepare_seed()
-            exploration_strategy = None
-                # self.exploration_handler.get_exploration_strategy()
+            exploration_strategy = \
+                self.exploration_handler.get_exploration_strategy() \
+                if self.exploration_handler is not None \
+                else None
             self.episode_runner.reset(exploration_strategy)
 
             start_time = time.time()

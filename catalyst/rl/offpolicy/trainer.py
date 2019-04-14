@@ -81,13 +81,12 @@ class Trainer:
         self.epoch_len = epoch_len
 
         self.replay_buffer = ReplayBufferDataset(
-            observation_shape=self.env_spec.observation_space.shape,
-            action_shape=self.env_spec.action_space.shape,
-            max_size=replay_buffer_size,
+            observation_space=self.env_spec.observation_space,
+            action_space=self.env_spec.action_space,
+            capacity=replay_buffer_size,
             history_len=self.env_spec.history_len,
             n_step=self.algorithm.n_step,
-            gamma=self.algorithm.gamma,
-            discrete_actions=self.env_spec.discrete_actions
+            gamma=self.algorithm.gamma
         )
 
         self.replay_sampler = ReplayBufferSampler(

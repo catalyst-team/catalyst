@@ -20,7 +20,7 @@ def _copy_params(params):
 class Algorithm(AlgorithmSpec):
     def __init__(
         self,
-        critic,
+        critic: CriticSpec,
         gamma,
         n_step,
         critic_loss_params=None,
@@ -120,7 +120,7 @@ class Algorithm(AlgorithmSpec):
                         value_l.load_state_dict(value_r)
 
     def _to_tensor(self, *args, **kwargs):
-        return torch.from_numpy(*args, **kwargs).to(self._device)
+        return torch.Tensor(*args, **kwargs).to(self._device)
 
     def actor_update(self, loss):
         raise NotImplementedError()
@@ -152,10 +152,18 @@ class Algorithm(AlgorithmSpec):
             batch["next_state"], batch["done"]
 
         states_t = self._to_tensor(states_t)
-        actions_t = self._to_tensor(actions_t).long()
+        actions_t = self._to_tensor(actions_t).unsqueeze(1).long()
         rewards_t = self._to_tensor(rewards_t).unsqueeze(1)
         states_tp1 = self._to_tensor(states_tp1)
         done_t = self._to_tensor(done_t).unsqueeze(1)
+
+        """
+        states_t: [bs; history_len; observation_len]
+        actions_t: [bs; 1]
+        rewards_t: [bs; 1]
+        states_tp1: [bs; history_len; observation_len]
+        done_t: [bs; 1]
+        """
 
         value_loss = self._loss_fn(
             states_t, actions_t, rewards_t, states_tp1, done_t

@@ -7,22 +7,14 @@ from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
 
 class DQN(Algorithm):
 
-    def _init(
-        self, values_range=(-10., 10.), critic_distribution=None, **kwargs
-    ):
-        super()._init(**kwargs)
-        self.num_atoms = self.critic.num_atoms
+    def _init(self, **kwargs):
+        critic_distribution = self.critic.distribution
         self._loss_fn = self._base_loss
+        assert critic_distribution in [None, "categorical", "quantile"]
 
-        if critic_distribution == "quantile":
-            tau_min = 1 / (2 * self.num_atoms)
-            tau_max = 1 - tau_min
-            tau = torch.linspace(
-                start=tau_min, end=tau_max, steps=self.num_atoms
-            )
-            self.tau = self._to_tensor(tau)
-            self._loss_fn = self._quantile_loss
-        elif critic_distribution == "categorical":
+        if critic_distribution == "categorical":
+            self.num_atoms = self.critic.num_atoms
+            values_range = self.critic.values_range
             self.v_min, self.v_max = values_range
             self.delta_z = (self.v_max - self.v_min) / (self.num_atoms - 1)
             z = torch.linspace(
@@ -30,39 +22,27 @@ class DQN(Algorithm):
             )
             self.z = self._to_tensor(z)
             self._loss_fn = self._categorical_loss
+        elif critic_distribution == "quantile":
+            self.num_atoms = self.critic.num_atoms
+            tau_min = 1 / (2 * self.num_atoms)
+            tau_max = 1 - tau_min
+            tau = torch.linspace(
+                start=tau_min, end=tau_max, steps=self.num_atoms
+            )
+            self.tau = self._to_tensor(tau)
+            self._loss_fn = self._quantile_loss
+
+        super()._init(**kwargs)
 
     def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
-        gamma = self._gamma ** self._n_step
+        gamma_ = self._gamma ** self._n_step
 
         # critic loss
         q_values_t = self.critic(states_t).squeeze(-1).gather(-1, actions_t)
         q_values_tp1 = \
             self.target_critic(states_tp1).squeeze(-1).max(-1, keepdim=True)[0]
-        q_target_t = rewards_t + (1 - done_t) * gamma * q_values_tp1.detach()
+        q_target_t = rewards_t + (1 - done_t) * gamma_ * q_values_tp1.detach()
         value_loss = self.critic_criterion(q_values_t, q_target_t).mean()
-
-        return value_loss
-
-    def _quantile_loss(
-        self, states_t, actions_t, rewards_t, states_tp1, done_t
-    ):
-        gamma = self._gamma ** self._n_step
-
-        # critic loss (quantile regression)
-        indices_t = actions_t.repeat(1, self.num_atoms).unsqueeze(1)
-        atoms_t = self.critic(states_t).gather(1, indices_t).squeeze(1)
-
-        all_atoms_tp1 = self.target_critic(states_tp1).detach()
-        q_values_tp1 = all_atoms_tp1.mean(dim=-1)
-        actions_tp1 = torch.argmax(q_values_tp1, dim=-1, keepdim=True)
-        indices_tp1 = actions_tp1.repeat(1, self.num_atoms).unsqueeze(1)
-        atoms_tp1 = all_atoms_tp1.gather(1, indices_tp1).squeeze(1)
-        atoms_target_t = rewards_t + (1 - done_t) * gamma * atoms_tp1
-
-        value_loss = quantile_loss(
-            atoms_t, atoms_target_t, self.tau, self.num_atoms,
-            self.critic_criterion
-        )
 
         return value_loss
 
@@ -87,6 +67,29 @@ class DQN(Algorithm):
         value_loss = categorical_loss(
             logits_t, logits_tp1, atoms_target_t, self.z, self.delta_z,
             self.v_min, self.v_max
+        )
+
+        return value_loss
+
+    def _quantile_loss(
+        self, states_t, actions_t, rewards_t, states_tp1, done_t
+    ):
+        gamma = self._gamma ** self._n_step
+
+        # critic loss (quantile regression)
+        indices_t = actions_t.repeat(1, self.num_atoms).unsqueeze(1)
+        atoms_t = self.critic(states_t).gather(1, indices_t).squeeze(1)
+
+        all_atoms_tp1 = self.target_critic(states_tp1).detach()
+        q_values_tp1 = all_atoms_tp1.mean(dim=-1)
+        actions_tp1 = torch.argmax(q_values_tp1, dim=-1, keepdim=True)
+        indices_tp1 = actions_tp1.repeat(1, self.num_atoms).unsqueeze(1)
+        atoms_tp1 = all_atoms_tp1.gather(1, indices_tp1).squeeze(1)
+        atoms_target_t = rewards_t + (1 - done_t) * gamma * atoms_tp1
+
+        value_loss = quantile_loss(
+            atoms_t, atoms_target_t, self.tau, self.num_atoms,
+            self.critic_criterion
         )
 
         return value_loss

@@ -12,6 +12,7 @@ from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS
 from catalyst.utils.config import parse_args_uargs
 from catalyst.utils.misc import set_global_seed, boolean_flag
 from catalyst.rl.offpolicy.sampler import Sampler
+from catalyst.rl.offpolicy.exploration import ExplorationHandler
 from catalyst.rl.db.redis import RedisDB
 
 os.environ["OMP_NUM_THREADS"] = "1"
@@ -81,17 +82,25 @@ def run_sampler(
     env = environment_fn(**config_["environment"], visualize=vis)
     agent = algorithm_fn.prepare_for_sampler(env_spec=env, config=config_)
 
+    exploration_params = config_["sampler"].pop("exploration_params", None)
+    exploration_handler = ExplorationHandler(env=env, *exploration_params) \
+        if exploration_params is not None \
+        else None
+
+    mode = "infer" if infer else "train"
     valid_seeds = config_["sampler"].pop("valid_seeds")
+    seeds = valid_seeds if infer else None
 
     sampler = Sampler(
         agent=agent,
         env=env,
         db_server=db_server,
+        exploration_handler=exploration_handler,
         **config_["sampler"],
         logdir=logdir,
         id=id,
-        mode="infer" if infer else "train",
-        seeds=valid_seeds if infer else None
+        mode=mode,
+        seeds=seeds
     )
 
     if resume is not None:
