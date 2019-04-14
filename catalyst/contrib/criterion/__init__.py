@@ -1,5 +1,5 @@
 # flake8: noqa
-from torch.nn import *
+from torch.nn.modules.loss import *
 from .bcece import *
 from .ce import *
 from .center_loss import *
