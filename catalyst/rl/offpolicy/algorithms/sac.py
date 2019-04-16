@@ -1,86 +1,72 @@
+from typing import Dict
 import copy
+from gym.spaces import Box
 import torch
 import torch.nn.functional as F
 
-from catalyst.rl.registry import SCHEDULERS, OPTIMIZERS, AGENTS
+from catalyst.rl.registry import AGENTS
 from catalyst.dl.utils import UtilsFactory
-from catalyst.rl.offpolicy.algorithms.core_continuous import Algorithm
-from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
-    quantile_loss, soft_update
-from catalyst.utils.model import prepare_optimizable_params
+from catalyst.rl.offpolicy.algorithms.core_continuous import AlgorithmContinuous
+from .utils import categorical_loss, quantile_loss, soft_update, \
+    get_agent_stuff_from_params
+from .core import AlgorithmSpec
+from catalyst.rl.environments.core import EnvironmentSpec
 
 
-class SAC(Algorithm):
+class SAC(AlgorithmContinuous):
     def _init(
         self,
         critics,
-        reward_scale=1.0,
-        values_range=(-10., 10.),
-        critic_distribution=None,
-        **kwargs
+        reward_scale=1.0
     ):
-        """
-        Parameters
-        ----------
-        reward_scale: float,
-            THE MOST IMPORTANT HYPERPARAMETER which controls the ratio
-            between maximizing rewards and acting as randomly as possible
-        use_regularization: bool,
-            whether to use l2 regularization on policy network outputs,
-            regularization can not be used with RealNVPActor
-        mu_and_sigma_reg: float,
-            coefficient for l2 regularization on mu and log_sigma
-        policy_grad_estimator: str,
-            "reinforce": may be used with arbitrary explicit policy
-            "reparametrization_trick": may be used with reparametrizable
-            policy, e.g. Gaussian, normalizing flow (Real NVP).
-        """
-        super()._init(**kwargs)
-
-        self.n_atoms = self.critic.out_features
-        self._loss_fn = self._base_loss
-
         self.reward_scale = reward_scale
         # @TODO: policy regularization
 
         critics = [x.to(self._device) for x in critics]
-        critics_optimizer = [
-            OPTIMIZERS.get_from_params(
-                **self.critic_optimizer_params,
-                params=prepare_optimizable_params(x)
-            )
-            for x in critics
-        ]
-        critics_scheduler = [
-            SCHEDULERS.get_from_params(
-                **self.critic_scheduler_params,
-                optimizer=x
-            )
-            for x in critics_optimizer
-        ]
         target_critics = [copy.deepcopy(x).to(self._device) for x in critics]
+        critics_optimizer = []
+        critics_scheduler = []
+
+        for critic in critics:
+            critic_stuff = get_agent_stuff_from_params(
+                agent=critic,
+                loss_params=self._critic_loss_params,
+                optimizer_params=self._critic_optimizer_params,
+                scheduler_params=self._critic_scheduler_params,
+                grad_clip_params=self._critic_grad_clip_params
+            )
+            critics_optimizer.append(critic_stuff["optimizer"])
+            critics_scheduler.append(critic_stuff["scheduler"])
 
         self.critics = [self.critic] + critics
         self.critics_optimizer = [self.critic_optimizer] + critics_optimizer
         self.critics_scheduler = [self.critic_scheduler] + critics_scheduler
         self.target_critics = [self.target_critic] + target_critics
 
-        if critic_distribution == "quantile":
-            tau_min = 1 / (2 * self.n_atoms)
-            tau_max = 1 - tau_min
-            tau = torch.linspace(
-                start=tau_min, end=tau_max, steps=self.n_atoms
-            )
-            self.tau = self._to_tensor(tau)
-            self._loss_fn = self._quantile_loss
-        elif critic_distribution == "categorical":
+        # value distribution approximation
+        critic_distribution = self.critic.distribution
+        self._loss_fn = self._base_loss
+        assert critic_distribution in [None, "categorical", "quantile"]
+
+        if critic_distribution == "categorical":
+            self.num_atoms = self.critic.num_atoms
+            values_range = self.critic.values_range
             self.v_min, self.v_max = values_range
-            self.delta_z = (self.v_max - self.v_min) / (self.n_atoms - 1)
+            self.delta_z = (self.v_max - self.v_min) / (self.num_atoms - 1)
             z = torch.linspace(
-                start=self.v_min, end=self.v_max, steps=self.n_atoms
+                start=self.v_min, end=self.v_max, steps=self.num_atoms
             )
             self.z = self._to_tensor(z)
             self._loss_fn = self._categorical_loss
+        elif critic_distribution == "quantile":
+            self.num_atoms = self.critic.num_atoms
+            tau_min = 1 / (2 * self.num_atoms)
+            tau_max = 1 - tau_min
+            tau = torch.linspace(
+                start=tau_min, end=tau_max, steps=self.num_atoms
+            )
+            self.tau = self._to_tensor(tau)
+            self._loss_fn = self._quantile_loss
 
     def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
 
@@ -194,6 +180,57 @@ class SAC(Algorithm):
 
         return policy_loss, value_loss
 
+    def pack_checkpoint(self):
+        checkpoint = {}
+
+        for key in ["actor", "critic"]:
+            checkpoint[f"{key}_state_dict"] = getattr(self, key).state_dict()
+            for key2 in ["optimizer", "scheduler"]:
+                key2 = f"{key}_{key2}"
+                value2 = getattr(self, key2, None)
+                if value2 is not None:
+                    checkpoint[f"{key2}_state_dict"] = value2.state_dict()
+
+        key = "critics"
+        for i in range(len(self.critics)):
+            value = getattr(self, key)
+            checkpoint[f"{key}{i}_state_dict"] = value[i].state_dict()
+            for key2 in ["optimizer", "scheduler"]:
+                key2 = f"{key}_{key2}"
+                value2 = getattr(self, key2, None)
+                if value2 is not None:
+                    value2_i = value2[i]
+                    if value2_i is not None:
+                        value2_i = value2_i.state_dict()
+                        checkpoint[f"{key2}{i}_state_dict"] = value2_i
+
+        return checkpoint
+
+    def unpack_checkpoint(self, checkpoint):
+        raise NotImplementedError()
+
+    def save_checkpoint(self, filepath):
+        raise NotImplementedError()
+
+    def load_checkpoint(self, filepath, load_optimizer=True):
+        super().load_checkpoint(filepath, load_optimizer)
+
+        checkpoint = UtilsFactory.load_checkpoint(filepath)
+        key = "critics"
+        for i in range(len(self.critics)):
+            value_l = getattr(self, key, None)
+            value_l = value_l[i] if value_l is not None else None
+            if value_l is not None:
+                value_r = checkpoint[f"{key}{i}_state_dict"]
+                value_l.load_state_dict(value_r)
+            if load_optimizer:
+                for key2 in ["optimizer", "scheduler"]:
+                    key2 = f"{key}_{key2}"
+                    value_l = getattr(self, key2, None)
+                    if value_l is not None:
+                        value_r = checkpoint[f"{key2}_state_dict"]
+                        value_l.load_state_dict(value_r)
+
     def critic_update(self, loss):
         metrics = {}
         for i in range(len(self.critics)):
@@ -211,7 +248,7 @@ class SAC(Algorithm):
 
     def target_critic_update(self):
         for target, source in zip(self.target_critics, self.critics):
-            soft_update(target, source, self.critic_tau)
+            soft_update(target, source, self._critic_tau)
 
     def update_step(
         self, policy_loss, value_loss, actor_update=True, critic_update=True
@@ -249,129 +286,49 @@ class SAC(Algorithm):
     def target_actor_update(self):
         pass
 
-    def prepare_checkpoint(self):
-        checkpoint = {}
-
-        for key in ["actor", "critic"]:
-            checkpoint[f"{key}_state_dict"] = getattr(self, key).state_dict()
-            for key2 in ["optimizer", "scheduler"]:
-                key2 = f"{key}_{key2}"
-                value2 = getattr(self, key2, None)
-                if value2 is not None:
-                    checkpoint[f"{key2}_state_dict"] = value2.state_dict()
-
-        key = "critics"
-        for i in range(len(self.critics)):
-            value = getattr(self, key)
-            checkpoint[f"{key}{i}_state_dict"] = value[i].state_dict()
-            for key2 in ["optimizer", "scheduler"]:
-                key2 = f"{key}_{key2}"
-                value2 = getattr(self, key2, None)
-                if value2 is not None:
-                    value2_i = value2[i]
-                    if value2_i is not None:
-                        value2_i = value2_i.state_dict()
-                        checkpoint[f"{key2}{i}_state_dict"] = value2_i
-
-        return checkpoint
-
-    def load_checkpoint(self, filepath, load_optimizer=True):
-        super().load_checkpoint(filepath, load_optimizer)
-
-        checkpoint = UtilsFactory.load_checkpoint(filepath)
-        key = "critics"
-        for i in range(len(self.critics)):
-            value_l = getattr(self, key, None)
-            value_l = value_l[i] if value_l is not None else None
-            if value_l is not None:
-                value_r = checkpoint[f"{key}{i}_state_dict"]
-                value_l.load_state_dict(value_r)
-            if load_optimizer:
-                for key2 in ["optimizer", "scheduler"]:
-                    key2 = f"{key}_{key2}"
-                    value_l = getattr(self, key2, None)
-                    if value_l is not None:
-                        value_r = checkpoint[f"{key2}_state_dict"]
-                        value_l.load_state_dict(value_r)
-
     @classmethod
-    def prepare_for_trainer(cls, config):
+    def prepare_for_trainer(
+        cls,
+        env_spec: EnvironmentSpec,
+        config: Dict
+    ) -> "AlgorithmSpec":
         config_ = config.copy()
+        agents_config = config_["agents"]
 
-        actor_state_shape = (
-            config_["shared"]["history_len"],
-            config_["shared"]["observation_size"],
-        )
-        actor_action_size = config_["shared"]["action_size"]
-        n_step = config_["shared"]["n_step"]
-        gamma = config_["shared"]["gamma"]
-        history_len = config_["shared"]["history_len"]
-        trainer_state_shape = (config_["shared"]["observation_size"],)
-        trainer_action_shape = (config_["shared"]["action_size"],)
-
-        actor_params = config_["actor"]
+        actor_params = agents_config["actor"]
         actor = AGENTS.get_from_params(
             **actor_params,
-            state_shape=actor_state_shape,
-            action_size=actor_action_size
+            env_spec=env_spec,
         )
 
-        critic_params = config_["critic"]
+        critic_params = agents_config["critic"]
         critic = AGENTS.get_from_params(
             **critic_params,
-            state_shape=actor_state_shape,
-            action_size=actor_action_size
+            env_spec=env_spec,
         )
 
-        n_critics = config_["algorithm"].pop("n_critics", 2)
+        num_critics = config_["algorithm"].pop("num_critics", 2)
         critics = [
             AGENTS.get_from_params(
                 **critic_params,
-                state_shape=actor_state_shape,
-                action_size=actor_action_size
+                env_spec=env_spec,
             ) for _ in
-            range(n_critics - 1)
+            range(num_critics - 1)
+        ]
+
+        action_space = env_spec.action_space
+        assert isinstance(action_space, Box)
+        action_boundaries = [
+            action_space.low[0],
+            action_space.high[0]
         ]
 
         algorithm = cls(
             **config_["algorithm"],
+            action_boundaries=action_boundaries,
             actor=actor,
             critic=critic,
             critics=critics,
-            n_step=n_step,
-            gamma=gamma
         )
 
-        kwargs = {
-            "algorithm": algorithm,
-            "state_shape": trainer_state_shape,
-            "action_shape": trainer_action_shape,
-            "n_step": n_step,
-            "gamma": gamma,
-            "history_len": history_len
-        }
-
-        return kwargs
-
-    @classmethod
-    def prepare_for_sampler(cls, config):
-        config_ = config.copy()
-
-        actor_state_shape = (
-            config_["shared"]["history_len"],
-            config_["shared"]["observation_size"],
-        )
-        actor_action_size = config_["shared"]["action_size"]
-
-        actor_params = config_["actor"]
-        actor = AGENTS.get_from_params(
-            **actor_params,
-            state_shape=actor_state_shape,
-            action_size=actor_action_size
-        )
-
-        history_len = config_["shared"]["history_len"]
-
-        kwargs = {"actor": actor, "history_len": history_len}
-
-        return kwargs
+        return algorithm

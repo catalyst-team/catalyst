@@ -1,13 +1,14 @@
 import torch
 import torch.nn.functional as F
-from catalyst.rl.offpolicy.algorithms.core_discrete import Algorithm
+from catalyst.rl.offpolicy.algorithms.core_discrete import AlgorithmDiscrete
 from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
     quantile_loss
 
 
-class DQN(Algorithm):
+class DQN(AlgorithmDiscrete):
 
     def _init(self, **kwargs):
+        # value distribution approximation
         critic_distribution = self.critic.distribution
         self._loss_fn = self._base_loss
         assert critic_distribution in [None, "categorical", "quantile"]

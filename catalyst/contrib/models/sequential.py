@@ -30,6 +30,7 @@ class SequentialNet(nn.Module):
         residual=False
     ):
         super().__init__()
+        assert len(hiddens) > 1, "No sequence found"
 
         layer_fn = MODULES.get_if_str(layer_fn)
         activation_fn = MODULES.get_if_str(activation_fn)

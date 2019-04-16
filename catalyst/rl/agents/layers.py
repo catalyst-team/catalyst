@@ -353,6 +353,7 @@ class PolicyHead(nn.Module):
     ):
         super().__init__()
 
+        # @TODO: refactor
         layer_fn = nn.Linear
         activation_fn = nn.ReLU
         squashing_fn = nn.Tanh
@@ -385,12 +386,14 @@ class PolicyHead(nn.Module):
             bias=True
         )
         head_net.apply(outer_init)
+        self.head_net = head_net
 
+        self.policy_net = policy_net
         self._policy_fn = None
         if policy_net is None:
             self._policy_fn = lambda *args: args[0]
         elif isinstance(policy_net, (GaussPolicy, RealNVPPolicy)):
-            self._policy_fn = self.policy_net.forward
+            self._policy_fn = policy_net.forward
         else:
             raise NotImplementedError
 
@@ -462,17 +465,17 @@ class StateNet(nn.Module):
     @classmethod
     def get_from_params(
         cls,
-        encoder_net_params=None,
+        observation_net_params=None,
         aggregation_net_params=None,
         main_net_params=None,
     ) -> "StateNet":
-        assert encoder_net_params is not None
+        assert observation_net_params is not None
         assert aggregation_net_params is None, "Lama is not implemented yet"
 
-        observation_encoder = SequentialNet(**encoder_net_params)
+        observation_net = SequentialNet(**observation_net_params)
         main_net = SequentialNet(**main_net_params)
-        state_net = cls(main_net=main_net, observation_net=observation_encoder)
-        return state_net
+        net = cls(main_net=main_net, observation_net=observation_net)
+        return net
 
 
 class StateActionNet(nn.Module):
@@ -532,3 +535,25 @@ class StateActionNet(nn.Module):
     def forward(self, state, action):
         x = self._forward_fn(state, action)
         return x
+
+    @classmethod
+    def get_from_params(
+        cls,
+        observation_net_params=None,
+        action_net_params=None,
+        aggregation_net_params=None,
+        main_net_params=None,
+    ) -> "StateNet":
+        assert observation_net_params is not None
+        assert action_net_params is not None
+        assert aggregation_net_params is None, "Lama is not implemented yet"
+
+        observation_net = SequentialNet(**observation_net_params)
+        action_net = SequentialNet(**action_net_params)
+        main_net = SequentialNet(**main_net_params)
+        net = cls(
+            observation_net=observation_net,
+            action_net=action_net,
+            main_net=main_net
+        )
+        return net

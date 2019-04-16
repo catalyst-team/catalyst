@@ -4,13 +4,13 @@ import torch.nn.functional as F
 
 from catalyst.rl.registry import OPTIMIZERS, SCHEDULERS, AGENTS
 from catalyst.dl.utils import UtilsFactory
-from catalyst.rl.offpolicy.algorithms.core_continuous import Algorithm
+from catalyst.rl.offpolicy.algorithms.core_continuous import AlgorithmContinuous
 from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
     quantile_loss, soft_update
 from catalyst.utils.model import prepare_optimizable_params
 
 
-class TD3(Algorithm):
+class TD3(AlgorithmContinuous):
     """
     Swiss Army knife TD3 algorithm.
     """
@@ -201,7 +201,7 @@ class TD3(Algorithm):
 
     def target_critic_update(self):
         for target, source in zip(self.target_critics, self.critics):
-            soft_update(target, source, self.critic_tau)
+            soft_update(target, source, self._critic_tau)
 
     def update_step(
         self, policy_loss, value_loss, actor_update=True, critic_update=True

@@ -3,29 +3,22 @@ import copy
 import torch
 
 from catalyst.dl.utils import UtilsFactory
-from catalyst.rl.registry import \
-    CRITERIONS, GRAD_CLIPPERS, OPTIMIZERS, SCHEDULERS, AGENTS
-from .utils import soft_update
+from catalyst.rl.registry import AGENTS
+from .utils import soft_update, get_agent_stuff_from_params
 from .core import AlgorithmSpec
 from catalyst.rl.agents.core import ActorSpec, CriticSpec
 from catalyst.rl.environments.core import EnvironmentSpec
 
 
-def _copy_params(params):
-    if params is None:
-        return {}
-    return params.copy()
-
-
-class Algorithm(AlgorithmSpec):
+class AlgorithmDiscrete(AlgorithmSpec):
     def __init__(
         self,
         critic: CriticSpec,
-        gamma,
-        n_step,
-        critic_loss_params=None,
-        critic_optimizer_params=None,
-        critic_scheduler_params=None,
+        gamma: float,
+        n_step: int,
+        critic_loss_params: Dict = None,
+        critic_optimizer_params: Dict = None,
+        critic_scheduler_params: Dict = None,
         critic_grad_clip_params=None,
         critic_tau=1.0,
         **kwargs
@@ -34,36 +27,26 @@ class Algorithm(AlgorithmSpec):
         self.critic = critic.to(self._device)
         self.target_critic = copy.deepcopy(critic).to(self._device)
 
+        # preparation
+        agent_stuff = get_agent_stuff_from_params(
+            agent=self.critic,
+            loss_params=critic_loss_params,
+            optimizer_params=critic_optimizer_params,
+            scheduler_params=critic_scheduler_params,
+            grad_clip_params=critic_grad_clip_params
+        )
         # criterion
-        self._critic_loss_params = _copy_params(critic_loss_params)
-        self.critic_criterion = CRITERIONS.get_from_params(
-            **self._critic_loss_params
-        )
-        if self.critic_criterion is not None \
-                and torch.cuda.is_available():
-            self.critic_criterion = self.critic_criterion.cuda()
-
+        self._critic_loss_params = agent_stuff["loss_params"]
+        self.critic_criterion = agent_stuff["criterion"]
         # optimizer
-        critic_params = UtilsFactory.prepare_optimizable_params(
-            self.critic.parameters())
-        self._critic_optimizer_params = _copy_params(critic_optimizer_params)
-        self.critic_optimizer = OPTIMIZERS.get_from_params(
-            **self._critic_optimizer_params,
-            params=critic_params
-        )
-
+        self._critic_optimizer_params = agent_stuff["optimizer_params"]
+        self.critic_optimizer = agent_stuff["optimizer"]
         # scheduler
-        self._critic_scheduler_params = _copy_params(critic_scheduler_params)
-        self.critic_scheduler = SCHEDULERS.get_from_params(
-            **self._critic_scheduler_params,
-            optimizer = self.critic_optimizer
-        )
-
+        self._critic_scheduler_params = agent_stuff["scheduler_params"]
+        self.critic_scheduler = agent_stuff["scheduler"]
         # grad clipping
-        self._critic_grad_clip_params = _copy_params(critic_grad_clip_params)
-        self.critic_grad_clip_fn = GRAD_CLIPPERS.get_from_params(
-            **self._critic_grad_clip_params
-        )
+        self._critic_grad_clip_params = agent_stuff["grad_clip_params"]
+        self.critic_grad_clip_fn = agent_stuff["grad_clip_fn"]
 
         # other hyperparameters
         self._n_step = n_step
@@ -83,6 +66,9 @@ class Algorithm(AlgorithmSpec):
     @property
     def gamma(self) -> float:
         return self._gamma
+
+    def _to_tensor(self, *args, **kwargs):
+        return torch.Tensor(*args, **kwargs).to(self._device)
 
     def pack_checkpoint(self):
         checkpoint = {}
@@ -118,9 +104,6 @@ class Algorithm(AlgorithmSpec):
                     if value_l is not None:
                         value_r = checkpoint[f"{key2}_state_dict"]
                         value_l.load_state_dict(value_r)
-
-    def _to_tensor(self, *args, **kwargs):
-        return torch.Tensor(*args, **kwargs).to(self._device)
 
     def actor_update(self, loss):
         raise NotImplementedError()
@@ -181,7 +164,11 @@ class Algorithm(AlgorithmSpec):
         raise NotImplementedError
 
     @classmethod
-    def prepare_for_trainer(cls, env_spec: EnvironmentSpec, config: Dict):
+    def prepare_for_trainer(
+        cls,
+        env_spec: EnvironmentSpec,
+        config: Dict
+    ) -> "AlgorithmSpec":
         config_ = config.copy()
         agents_config = config_["agents"]
         critic_params = agents_config["critic"]

@@ -8,10 +8,9 @@
 
     ```bash
     pip install gym['box2d']
-    pip install tensorflow # for visualization
     ```
 
-3. Run
+3. Run DQN – discrete action space environment
 
     ```bash
     redis-server --port 12000
@@ -25,6 +24,20 @@
     
     CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs/rl_gym
     ```
+
+4. Run SAC – continuous action space environment
+
+    ```bash
+    redis-server --port 12000
+    export GPUS=""  # like GPUS="0" or GPUS="0,1" for multi-gpu training
+ 
+    CUDA_VISIBLE_DEVICES="$GPUS" catalyst-rl run-trainer \
+       --config=./rl_gym/config_sac.yml
+    
+    CUDA_VISIBLE_DEVICES="" catalyst-rl run-samplers \
+       --config=./rl_gym/config_sac.yml
+    
+    CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs/rl_gym
 
 
 ## Additional links

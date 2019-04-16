@@ -324,7 +324,8 @@ class EpisodeRunner:
         self.dones[self.pointer] = d_t
         self.pointer += 1
 
-    def _get_states_history(self, history_len=1):
+    def _get_states_history(self, history_len=None):
+        history_len = history_len or self.env.history_len
         states = [
             self.get_state(history_len=history_len, pointer=i)
             for i in range(self.pointer)

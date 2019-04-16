@@ -1,11 +1,11 @@
 import torch
 import torch.nn.functional as F
-from catalyst.rl.offpolicy.algorithms.core_continuous import Algorithm
+from catalyst.rl.offpolicy.algorithms.core_continuous import AlgorithmContinuous
 from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
     quantile_loss
 
 
-class DDPG(Algorithm):
+class DDPG(AlgorithmContinuous):
     """
     Swiss Army knife DDPG algorithm.
     """
