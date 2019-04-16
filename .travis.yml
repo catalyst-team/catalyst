@@ -118,12 +118,14 @@ jobs:
           python catalyst/rl/offpolicy/scripts/run_trainer.py
           --config=./examples/_tests_rl_gym/config_dqn.yml
           --logdir=./examples/logs/_tests_rl_gym
+          --trainer/save_period=1:int
           --trainer/start_learning=10:int &
         - sleep 30
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
           python catalyst/rl/offpolicy/scripts/run_samplers.py
           --config=./examples/_tests_rl_gym/config_dqn.yml
           --logdir=./examples/logs/_tests_rl_gym
+          --trainer/save_period=1:int
           --trainer/start_learning=10:int &
         - sleep 120
         - kill %3
@@ -143,12 +145,14 @@ jobs:
           python catalyst/rl/offpolicy/scripts/run_trainer.py
           --config=./examples/_tests_rl_gym/config_sac.yml
           --logdir=./examples/logs/_tests_rl_gym
+          --trainer/save_period=1:int
           --trainer/start_learning=10:int &
         - sleep 30
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
           python catalyst/rl/offpolicy/scripts/run_samplers.py
           --config=./examples/_tests_rl_gym/config_sac.yml
           --logdir=./examples/logs/_tests_rl_gym
+          --trainer/save_period=1:int
           --trainer/start_learning=10:int &
         - sleep 120
         - kill %3
