@@ -83,3 +83,6 @@ class SequentialNet(nn.Module):
     def forward(self, x):
         x = self.net.forward(x)
         return x
+
+
+__all__ = ["ResidualWrapper", "SequentialNet"]

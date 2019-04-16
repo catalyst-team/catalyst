@@ -72,7 +72,7 @@ from catalyst.dl.experiments import SupervisedRunner
 
 # experiment setup
 logdir = "./logdir"
-n_epochs = 42
+num_epochs = 42
 
 # data
 loaders = {"train": ..., "valid": ...}
@@ -92,7 +92,7 @@ runner.train(
     optimizer=optimizer,
     loaders=loaders,
     logdir=logdir,
-    n_epochs=n_epochs,
+    num_epochs=num_epochs,
     verbose=True
 )
 ```
