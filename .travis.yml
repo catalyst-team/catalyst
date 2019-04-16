@@ -159,7 +159,6 @@ jobs:
         - kill %2
         - kill %1
         - rm ./examples/logs/_tests_rl_gym/0.pth
-        - rm ./examples/logs/_tests_rl_gym/1.pth
 
 # speed up for now
 #    - stage: Deploy
