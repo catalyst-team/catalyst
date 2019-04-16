@@ -1,6 +1,7 @@
 import warnings
+import inspect
 from typing import Dict, Callable, Any, Union, Type, Mapping, Tuple, List, \
-    Optional
+    Optional, Iterator
 
 Factory = Union[Type, Callable[..., Any]]
 LateAddCallbak = Callable[["Registry"], None]
@@ -16,7 +17,7 @@ class RegistryException(Exception):
         super().__init__(message)
 
 
-class Registry:
+class Registry(Mapping):
     """
     Universal class allowing to add and access various factories by name
     """
@@ -123,7 +124,11 @@ class Registry:
         :param module: module to scan
         :return: None
         """
-        factories = module.__dict__
+        factories = {
+            k: v
+            for k, v in module.__dict__.items()
+            if inspect.isclass(v) or inspect.isfunction(v)
+        }
 
         # Filter by __all__ if present
         names_to_add = getattr(module, "__all__", list(factories.keys()))
@@ -199,5 +204,45 @@ class Registry:
         if name:
             return self.get_instance(name, meta_factory=meta_factory, **kwargs)
 
+    def all(self) -> List[str]:
+        """
+        :return: list of names of registered items
+        """
+        self._do_late_add()
+        result = list(self._factories.keys())
 
-__all__ = ["Registry"]
+        return result
+
+    def len(self) -> int:
+        """
+        :return: length of registered items
+        """
+        return len(self._factories)
+
+    def __str__(self) -> str:
+        return self.all().__str__()
+
+    def __repr__(self) -> str:
+        return self.all().__str__()
+
+    # mapping methods
+    def __len__(self) -> int:
+        self._do_late_add()
+        return self.len()
+
+    def __getitem__(self, name: str) -> Optional[Factory]:
+        return self.get(name)
+
+    def __iter__(self) -> Iterator[str]:
+        self._do_late_add()
+        return self._factories.__iter__()
+
+    def __contains__(self, name: str):
+        self._do_late_add()
+        return self._factories.__contains__(name)
+
+    def __setitem__(self, name: str, factory: Factory) -> None:
+        self.add(factory, name=name)
+
+
+__all__ = ["Registry", "RegistryException"]

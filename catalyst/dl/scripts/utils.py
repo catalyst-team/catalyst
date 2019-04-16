@@ -21,7 +21,7 @@ def import_module(expdir: pathlib.Path):
 
 
 def import_experiment_and_runner(expdir: pathlib.Path):
-    m = import_experiment_and_runner(expdir)
+    m = import_module(expdir)
     Experiment, Runner = m.Experiment, m.Runner
     return Experiment, Runner
 

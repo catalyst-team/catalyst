@@ -52,7 +52,7 @@ class MultiMetricCallback(Callback):
         self.output_key = output_key
         self.metric_params = metric_params
 
-    def on_batch_end(self, state):
+    def on_batch_end(self, state: RunnerState):
         outputs = state.output[self.output_key]
         targets = state.input[self.input_key]
 
@@ -99,31 +99,51 @@ class DiceCallback(MetricCallback):
         )
 
 
-class JaccardCallback(MetricCallback):
+class IouCallback(MetricCallback):
     """
-    Jaccard metric callback.
+    IoU (Jaccard) metric callback.
     """
 
     def __init__(
         self,
         input_key: str = "targets",
         output_key: str = "logits",
-        prefix: str = "jaccard",
-        eps: float = 1e-7
+        prefix: str = "iou",
+        mode: str = "hard",
+        eps: float = 1e-7,
+        threshold: float = 0.5
     ):
         """
-        :param input_key: input key to use for iou calculation;
-            specifies our `y_true`.
-        :param output_key: output key to use for iou calculation;
-            specifies our `y_pred`
+        Args:
+            input_key (str): input key to use for iou calculation
+                specifies our ``y_true``.
+            output_key (str): output key to use for iou calculation;
+                specifies our ``y_pred``
+            prefix (str): key to store in logs
+            mode (str): one of ``['hard', 'soft']`` to calculate IoU
+            eps (float): epsilon to avoid zero division
+            threshold (float): threshold for outputs binarization
         """
+        if mode == "hard":
+            metric_fn = metrics.iou
+        elif mode == "soft":
+            metric_fn = metrics.soft_iou
+        else:
+            raise ValueError(
+                f"Mode must be one of ['hard', 'soft'], got {mode}."
+            )
+
         super().__init__(
             prefix=prefix,
-            metric_fn=metrics.jaccard,
+            metric_fn=metric_fn,
             input_key=input_key,
             output_key=output_key,
-            eps=eps
+            eps=eps,
+            threshold=threshold
         )
+
+
+JaccardCallback = IouCallback
 
 
 class PrecisionCallback(MultiMetricCallback):
