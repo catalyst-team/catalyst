@@ -25,8 +25,8 @@ class EpsilonGreedy(ExplorationStrategy):
 
         self.eps_init = eps_init
         self.eps_final = eps_final
-        self.annealing_steps = annealing_steps
-        self.delta_eps = (self.eps_init - self.eps_final) / self.annealing_steps
+        self.num_steps = annealing_steps
+        self.delta_eps = (self.eps_init - self.eps_final) / self.num_steps
         self.eps = eps_init
         self.num_actions = num_actions
 
@@ -34,7 +34,7 @@ class EpsilonGreedy(ExplorationStrategy):
         super().set_power(value)
         self.eps_init *= self._power
         self.eps_final = self._power
-        self.delta_eps = (self.eps_init - self.eps_final) / self.annealing_steps
+        self.delta_eps = (self.eps_init - self.eps_final) / self.num_steps
         self.eps = self.eps_init
 
     def update_action(self, action):

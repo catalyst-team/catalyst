@@ -29,6 +29,11 @@ class ExplorationHandler:
         self.num_strategies = len(self.probs)
         assert np.isclose(np.sum(self.probs), 1.0)
 
+    def set_power(self, value):
+        assert 0. <= value <= 1.0
+        for exploration in self.exploration_strategies:
+            exploration.set_power(value=value)
+
     def get_exploration_strategy(self):
         strategy_idx = np.random.choice(self.num_strategies, p=self.probs)
         strategy = self.exploration_strategies[strategy_idx]

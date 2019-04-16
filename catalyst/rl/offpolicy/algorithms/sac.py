@@ -6,7 +6,7 @@ import torch.nn.functional as F
 
 from catalyst.rl.registry import AGENTS
 from catalyst.dl.utils import UtilsFactory
-from catalyst.rl.offpolicy.algorithms.core_continuous import AlgorithmContinuous
+from .core_continuous import AlgorithmContinuous
 from .utils import categorical_loss, quantile_loss, soft_update, \
     get_agent_stuff_from_params
 from .core import AlgorithmSpec

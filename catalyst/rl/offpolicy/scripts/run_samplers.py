@@ -68,7 +68,8 @@ def run_sampler(
     seed=42,
     id=None,
     resume=None,
-    db=True
+    db=True,
+    exploration_power=1.0
 ):
     config_ = copy.deepcopy(config)
     id = 0 if id is None else id
@@ -86,6 +87,8 @@ def run_sampler(
     exploration_handler = ExplorationHandler(env=env, *exploration_params) \
         if exploration_params is not None \
         else None
+    if exploration_handler is not None:
+        exploration_handler.set_power(exploration_power)
 
     mode = "infer" if infer else "train"
     valid_seeds = config_["sampler"].pop("valid_seeds")
@@ -144,15 +147,16 @@ def main(args, unknown_args):
         params_ = dict(
             vis=False,
             infer=False,
-            id=sampler_id,
+            id=sampler_id
         )
         run_sampler(**params, **params_)
 
     for i in range(args.vis):
         params_ = dict(
-            vis=False,
-            infer=False,
+            vis=True,
+            infer=True,
             id=sampler_id,
+            exploration_power=0.0
         )
         p = mp.Process(target=run_sampler, kwargs=dict(**params, **params_))
         p.start()
@@ -164,6 +168,7 @@ def main(args, unknown_args):
             vis=False,
             infer=True,
             id=sampler_id,
+            exploration_power=0.0
         )
         p = mp.Process(target=run_sampler, kwargs=dict(**params, **params_))
         p.start()
@@ -171,10 +176,12 @@ def main(args, unknown_args):
         sampler_id += 1
 
     for i in range(1, args.train + 1):
+        exploration_power = i / args.train
         params_ = dict(
             vis=False,
             infer=False,
             id=sampler_id,
+            exploration_power=exploration_power
         )
         p = mp.Process(target=run_sampler, kwargs=dict(**params, **params_))
         p.start()

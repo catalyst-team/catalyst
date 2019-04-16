@@ -269,7 +269,8 @@ class PolicyHandler:
             deterministic: bool = False,
             exploration_strategy=None,
     ):
-        action = self._act_fn(agent, state, device, deterministic=deterministic)
+        action = self._act_fn(
+            agent, state, device, deterministic=deterministic)
 
         if exploration_strategy is not None:
             action = exploration_strategy.update_action(action)

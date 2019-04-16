@@ -82,7 +82,12 @@ class Sampler:
     def _to_tensor(self, *args, **kwargs):
         return torch.Tensor(*args, **kwargs).to(self._device)
 
-    def load_checkpoint(self, *, filepath: str = None, db_server: DBSpec = None):
+    def load_checkpoint(
+        self,
+        *,
+        filepath: str = None,
+        db_server: DBSpec = None
+    ):
         if filepath is not None:
             checkpoint = UtilsFactory.load_checkpoint(filepath)
             weights = checkpoint[f"{self._sampler_weight_mode}_state_dict"]
@@ -113,7 +118,14 @@ class Sampler:
         set_global_seed(seed)
         return seed
 
-    def _log_to_console(self, *, episode_reward, num_steps, elapsed_time, seed):
+    def _log_to_console(
+        self,
+        *,
+        episode_reward,
+        num_steps,
+        elapsed_time,
+        seed
+    ):
         print(
             f"--- episode {int(self.episode_index):05d}:\t"
             f"steps: {int(num_steps):05d}\t"
