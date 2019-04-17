@@ -88,6 +88,8 @@ class AlgorithmContinuous(AlgorithmSpec):
         self._critic_tau = critic_tau
 
         if action_boundaries is not None:
+            assert len(action_boundaries) == 2, \
+                "Should be min and max action boundaries"
             self._action_boundaries = action_boundaries
 
         # other init
@@ -186,6 +188,14 @@ class AlgorithmContinuous(AlgorithmSpec):
         rewards_t = self._to_tensor(rewards_t).unsqueeze(1)
         states_tp1 = self._to_tensor(states_tp1)
         done_t = self._to_tensor(done_t).unsqueeze(1)
+
+        """
+        states_t: [bs; history_len; observation_len]
+        actions_t: [bs; action_len]
+        rewards_t: [bs; 1]
+        states_tp1: [bs; history_len; observation_len]
+        done_t: [bs; 1]
+        """
 
         policy_loss, value_loss = self._loss_fn(
             states_t, actions_t, rewards_t, states_tp1, done_t

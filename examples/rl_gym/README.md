@@ -22,10 +22,40 @@
     CUDA_VISIBLE_DEVICES="" catalyst-rl run-samplers \
        --config=./rl_gym/config_dqn.yml
     
-    CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs/rl_gym
+    CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs
     ```
 
-4. Run SAC – continuous action space environment
+4. Run DDPG – continuous action space environment
+
+    ```bash
+    redis-server --port 12000
+    export GPUS=""  # like GPUS="0" or GPUS="0,1" for multi-gpu training
+ 
+    CUDA_VISIBLE_DEVICES="$GPUS" catalyst-rl run-trainer \
+       --config=./rl_gym/config_ddpg.yml
+    
+    CUDA_VISIBLE_DEVICES="" catalyst-rl run-samplers \
+       --config=./rl_gym/config_ddpg.yml
+    
+    CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs
+    ```
+ 
+5. Run TD3 – continuous action space environment
+
+    ```bash
+    redis-server --port 12000
+    export GPUS=""  # like GPUS="0" or GPUS="0,1" for multi-gpu training
+ 
+    CUDA_VISIBLE_DEVICES="$GPUS" catalyst-rl run-trainer \
+       --config=./rl_gym/config_td3.yml
+    
+    CUDA_VISIBLE_DEVICES="" catalyst-rl run-samplers \
+       --config=./rl_gym/config_td3.yml
+    
+    CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs
+    ```
+
+6. Run SAC – continuous action space environment
 
     ```bash
     redis-server --port 12000
@@ -37,8 +67,8 @@
     CUDA_VISIBLE_DEVICES="" catalyst-rl run-samplers \
        --config=./rl_gym/config_sac.yml
     
-    CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs/rl_gym
-
+    CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs
+    ```
 
 ## Additional links
 
