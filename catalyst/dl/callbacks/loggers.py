@@ -211,9 +211,11 @@ class TensorboardLogger(Callback):
         self, metrics: Dict[str, float], step: int, mode: str, suffix=""
     ):
         if self.metrics_to_log is None:
-            self.metrics_to_log = sorted(list(metrics.keys()))
+            metrics_to_log = sorted(list(metrics.keys()))
+        else:
+            metrics_to_log = self.metrics_to_log
 
-        for name in self.metrics_to_log:
+        for name in metrics_to_log:
             if name in metrics:
                 self.loggers[mode].add_scalar(
                     f"{name}{suffix}", metrics[name], step
