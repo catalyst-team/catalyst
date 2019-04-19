@@ -74,6 +74,8 @@ class EpochSampler(Sampler):
         batches_per_epoch (int): Size of batches by one epoch
         drop_last (bool): If ``True``, sampler will drop the last batches if
             its size would be less than ``batches_per_epoch``
+        shuffle (bool): If ``True``, sampler will shuffle indices on every
+            real epoch
 
     Example:
         >>> EpochSampler(len(dataset), batches_per_epoch=100)
@@ -84,7 +86,8 @@ class EpochSampler(Sampler):
             self,
             data_len: int,
             batches_per_epoch: int,
-            drop_last: bool = False
+            drop_last: bool = False,
+            shuffle: bool = True,
     ):
         super().__init__(None)
 
@@ -102,14 +105,24 @@ class EpochSampler(Sampler):
         else:
             self.divider = self.steps
 
+        self.indices = np.arange(self.data_len)
+
+        self.need_shuffle = shuffle
+        self.shuffle()
+
+    def shuffle(self):
+        if self.need_shuffle and self.state_i == 0:
+            np.random.shuffle(self.indices)
+
     def __iter__(self) -> Iterator[int]:
         self.state_i = self.state_i % self.divider
+        self.shuffle()
 
         start = self.state_i * self.epoch_len
         stop = self.data_len if (self.state_i == self.steps) \
             else (self.state_i + 1) * self.epoch_len
 
-        indices = range(start, stop)
+        indices = self.indices[start:stop].tolist()
 
         self.state_i += 1
         return iter(indices)
