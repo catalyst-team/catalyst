@@ -45,7 +45,7 @@ def folds_to_list(folds: Union[list, str, pd.Series]) -> List[int]:
     elif isinstance(folds, pd.Series):
         folds = list(sorted(folds.unique()))
 
-    return list({int(x) for x in folds})
+    return list(sorted(list({int(x) for x in folds})))
 
 
 def map_dataframe(

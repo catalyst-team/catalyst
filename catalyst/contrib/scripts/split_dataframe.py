@@ -2,7 +2,7 @@ import argparse
 import json
 import pandas as pd
 
-from catalyst.utils.parse import split_dataframe
+from catalyst.utils.parse import split_dataframe, folds_to_list
 
 
 def build_args(parser):
@@ -90,23 +90,18 @@ def parse_args():
 def main(args, uargs=None):
     dataframe = pd.read_csv(args.in_csv)
 
-    train_folds = (
-        list(map(int, args.train_folds.split(",")))
+    train_folds = \
+        folds_to_list(args.train_folds) \
         if args.train_folds is not None else None
-    )
-    valid_folds = (
-        list(map(int, args.valid_folds.split(",")))
+    valid_folds = \
+        folds_to_list(args.valid_folds) \
         if args.valid_folds is not None else None
-    )
-    infer_folds = (
-        list(map(int, args.infer_folds.split(",")))
+    infer_folds = \
+        folds_to_list(args.infer_folds) \
         if args.infer_folds is not None else None
-    )
 
-    if args.tag2class is not None:
-        tag2class = json.load(open(args.tag2class))
-    else:
-        tag2class = None
+    tag2class = json.load(open(args.tag2class)) \
+        if args.tag2class is not None else None
 
     df_all, train, valid, infer = split_dataframe(
         dataframe,
