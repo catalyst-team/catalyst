@@ -74,7 +74,7 @@ def build_args(parser):
     )
 
     parser.add_argument(
-        "-n", "--n_folds", type=int, default=5, help="Number of result folds"
+        "-n", "--n-folds", type=int, default=5, help="Number of result folds"
     )
 
     return parser
@@ -90,16 +90,29 @@ def parse_args():
 def main(args, uargs=None):
     dataframe = pd.read_csv(args.in_csv)
 
+    train_folds = (
+        list(map(int, args.train_folds.split(",")))
+        if args.train_folds is not None else None
+    )
+    valid_folds = (
+        list(map(int, args.valid_folds.split(",")))
+        if args.valid_folds is not None else None
+    )
+    infer_folds = (
+        list(map(int, args.infer_folds.split(",")))
+        if args.infer_folds is not None else None
+    )
+
     if args.tag2class is not None:
         tag2class = json.load(open(args.tag2class))
     else:
         tag2class = None
 
-    _, train, valid, infer = split_dataframe(
+    df_all, train, valid, infer = split_dataframe(
         dataframe,
-        train_folds=args.train_folds,
-        valid_folds=args.valid_folds,
-        infer_folds=args.infer_folds,
+        train_folds=train_folds,
+        valid_folds=valid_folds,
+        infer_folds=infer_folds,
         tag2class=tag2class,
         tag_column=args.tag_column,
         class_column=args.class_column,
@@ -111,6 +124,7 @@ def main(args, uargs=None):
     if out_csv.endswith(".csv"):
         out_csv = out_csv[:-4]
 
+    df_all.to_csv(f"{out_csv}.csv", index=False)
     train.to_csv(f"{out_csv}_train.csv", index=False)
     valid.to_csv(f"{out_csv}_valid.csv", index=False)
     infer.to_csv(f"{out_csv}_infer.csv", index=False)
