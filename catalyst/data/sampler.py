@@ -67,11 +67,13 @@ class BalanceClassSampler(Sampler):
 
 
 class MiniEpochSampler(Sampler):
-    r"""Sample indices by ``batches_per_epoch`` in one epoch
+    r"""Sampler iterates mini epochs from the dataset
+        used by ``mini_epoch_len``
 
     Args:
         data_len (int): Size of the dataset
-        batches_per_epoch (int): Size of batches by one epoch
+        mini_epoch_len (int): Num samples from the dataset used in one
+            mini epoch.
         drop_last (bool): If ``True``, sampler will drop the last batches if
             its size would be less than ``batches_per_epoch``
         shuffle (str): one of  ``["always", "real_epoch", None]``.
@@ -91,19 +93,19 @@ class MiniEpochSampler(Sampler):
     def __init__(
         self,
         data_len: int,
-        batches_per_epoch: int,
+        mini_epoch_len: int,
         drop_last: bool = False,
         shuffle: str = None
     ):
         super().__init__(None)
 
         self.data_len = int(data_len)
-        self.epoch_len = int(batches_per_epoch)
+        self.mini_epoch_len = int(mini_epoch_len)
 
-        self.steps = int(data_len / self.epoch_len)
+        self.steps = int(data_len / self.mini_epoch_len)
         self.state_i = 0
 
-        has_reminder = data_len - self.steps * batches_per_epoch > 0
+        has_reminder = data_len - self.steps * mini_epoch_len > 0
         if self.steps == 0:
             self.divider = 1
         elif has_reminder and not drop_last:
@@ -129,9 +131,9 @@ class MiniEpochSampler(Sampler):
         self.state_i = self.state_i % self.divider
         self.shuffle()
 
-        start = self.state_i * self.epoch_len
+        start = self.state_i * self.mini_epoch_len
         stop = self.data_len if (self.state_i == self.steps) \
-            else (self.state_i + 1) * self.epoch_len
+            else (self.state_i + 1) * self.mini_epoch_len
 
         indices = self.indices[start:stop].tolist()
 
@@ -139,4 +141,4 @@ class MiniEpochSampler(Sampler):
         return iter(indices)
 
     def __len__(self) -> int:
-        return self.epoch_len
+        return self.mini_epoch_len
