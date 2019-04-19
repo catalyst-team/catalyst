@@ -327,5 +327,5 @@ class EarlyStoppingCallback(Callback):
             self.num_bad_epochs += 1
 
         if self.num_bad_epochs >= self.patience:
-            print(f"Early stop at {state.epoch} epoch")
+            print(f"Early stop at {state.stage_epoch} epoch")
             state.early_stop = True

@@ -55,6 +55,7 @@ class RunnerState(FrozenClass):
         self.batch_size = 0
         self.step = 0
         self.epoch = 0
+        self.stage_epoch = 0
         self.num_epochs = num_epochs
 
         # metrics & logging
