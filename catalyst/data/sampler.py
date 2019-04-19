@@ -64,3 +64,55 @@ class BalanceClassSampler(Sampler):
              length of result sample
         """
         return self.length
+
+
+class EpochSampler(Sampler):
+    r"""Sample indices by ``batches_by_epoch`` in one epoch
+
+    Args:
+        data_len (int): Size of the dataset
+        batches_by_epoch (int): Size of batches by one epoch
+        drop_last (bool): If ``True``, sampler will drop the last batches if
+            its size would be less than ``batches_by_epoch``
+
+    Example:
+        >>> EpochSampler(len(dataset), batches_by_epoch=100)
+        >>> EpochSampler(len(dataset), batches_by_epoch=100, drop_last=True)
+
+    """
+    def __init__(
+            self,
+            data_len: int,
+            batches_by_epoch: int,
+            drop_last: bool = False
+    ):
+        super().__init__(None)
+
+        self.data_len = int(data_len)
+        self.epoch_len = int(batches_by_epoch)
+
+        self.steps = int(data_len / batches_by_epoch)
+        self.state_i = 0
+
+        has_reminder = data_len - self.steps * batches_by_epoch > 0
+        if self.steps == 0:
+            self.divider = 1
+        elif has_reminder and not drop_last:
+            self.divider = self.steps + 1
+        else:
+            self.divider = self.steps
+
+    def __iter__(self) -> Iterator[int]:
+        self.state_i = self.state_i % self.divider
+
+        start = self.state_i * self.epoch_len
+        stop = self.data_len if (self.state_i == self.steps) \
+            else (self.state_i + 1) * self.epoch_len
+
+        indices = range(start, stop)
+
+        self.state_i += 1
+        return iter(indices)
+
+    def __len__(self) -> int:
+        return self.epoch_len
