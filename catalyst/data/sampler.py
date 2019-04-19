@@ -66,7 +66,7 @@ class BalanceClassSampler(Sampler):
         return self.length
 
 
-class EpochSampler(Sampler):
+class MiniEpochSampler(Sampler):
     r"""Sample indices by ``batches_per_epoch`` in one epoch
 
     Args:
@@ -75,24 +75,25 @@ class EpochSampler(Sampler):
         drop_last (bool): If ``True``, sampler will drop the last batches if
             its size would be less than ``batches_per_epoch``
         shuffle (str): one of  ``["always", "real_epoch", None]``.
-            The sampler will shuffle indices:
-                > "always" -- every ``__iter__`` call
-                > "real_epoch" -- every real epoch
-                > None -- don't shuffle
+            The sampler will shuffle indices
+            > "per_mini_epoch" -- every mini epoch (every ``__iter__`` call)
+            > "per_epoch" -- every real epoch
+            > None -- don't shuffle
 
     Example:
-        >>> EpochSampler(len(dataset), batches_per_epoch=100)
-        >>> EpochSampler(len(dataset), batches_per_epoch=100, drop_last=True)
-        >>> EpochSampler(len(dataset), batches_per_epoch=100, \
-            shuffle="real_epoch")
-
+        >>> MiniEpochSampler(len(dataset), batches_per_epoch=100)
+        >>> MiniEpochSampler(len(dataset), batches_per_epoch=100, \
+            drop_last=True)
+        >>> MiniEpochSampler(len(dataset), batches_per_epoch=100, \
+            shuffle="per_epoch")
     """
+
     def __init__(
-            self,
-            data_len: int,
-            batches_per_epoch: int,
-            drop_last: bool = False,
-            shuffle: str = None
+        self,
+        data_len: int,
+        batches_per_epoch: int,
+        drop_last: bool = False,
+        shuffle: str = None
     ):
         super().__init__(None)
 
@@ -112,16 +113,16 @@ class EpochSampler(Sampler):
 
         self.indices = np.arange(self.data_len)
 
-        if not (shuffle is None or shuffle in ["always", "real_epoch"]):
+        if not (shuffle is None or shuffle in ["per_mini_epoch", "per_epoch"]):
             raise ValueError(
-                f"Shuffle must be one of ['always', 'real_epoch']. "
+                f"Shuffle must be one of ['per_mini_epoch', 'per_epoch']. "
                 f"Got {shuffle}"
             )
         self.shuffle_type = shuffle
 
     def shuffle(self):
-        if self.shuffle_type == "always" or \
-                (self.shuffle_type == "real_epoch" and self.state_i == 0):
+        if self.shuffle_type == "per_mini_epoch" or \
+                (self.shuffle_type == "per_epoch" and self.state_i == 0):
             np.random.shuffle(self.indices)
 
     def __iter__(self) -> Iterator[int]:
