@@ -74,12 +74,17 @@ class EpochSampler(Sampler):
         batches_per_epoch (int): Size of batches by one epoch
         drop_last (bool): If ``True``, sampler will drop the last batches if
             its size would be less than ``batches_per_epoch``
-        shuffle (bool): If ``True``, sampler will shuffle indices on every
-            real epoch
+        shuffle (str): one of  ``["always", "real_epoch", None]``.
+            The sampler will shuffle indices:
+                > "always" -- every ``__iter__`` call
+                > "real_epoch" -- every real epoch
+                > None -- don't shuffle
 
     Example:
         >>> EpochSampler(len(dataset), batches_per_epoch=100)
         >>> EpochSampler(len(dataset), batches_per_epoch=100, drop_last=True)
+        >>> EpochSampler(len(dataset), batches_per_epoch=100, \
+            shuffle="real_epoch")
 
     """
     def __init__(
@@ -87,7 +92,7 @@ class EpochSampler(Sampler):
             data_len: int,
             batches_per_epoch: int,
             drop_last: bool = False,
-            shuffle: bool = True,
+            shuffle: str = None
     ):
         super().__init__(None)
 
@@ -107,11 +112,16 @@ class EpochSampler(Sampler):
 
         self.indices = np.arange(self.data_len)
 
-        self.need_shuffle = shuffle
-        self.shuffle()
+        if not (shuffle is None or shuffle in ["always", "real_epoch"]):
+            raise ValueError(
+                f"Shuffle must be one of ['always', 'real_epoch']. "
+                f"Got {shuffle}"
+            )
+        self.shuffle_type = shuffle
 
     def shuffle(self):
-        if self.need_shuffle and self.state_i == 0:
+        if self.shuffle_type == "always" or \
+                (self.shuffle_type == "real_epoch" and self.state_i == 0):
             np.random.shuffle(self.indices)
 
     def __iter__(self) -> Iterator[int]:
