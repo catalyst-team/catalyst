@@ -180,7 +180,7 @@ class PrecisionCallback(MultiMetricCallback):
         super().__init__(
             prefix=prefix,
             metric_fn=metrics.precision,
-            list_args=precision_args or [1, 3, 5],
+            list_args=precision_args or [1],
             input_key=input_key,
             output_key=output_key
         )
@@ -213,7 +213,7 @@ class MapKCallback(MultiMetricCallback):
         super().__init__(
             prefix=prefix,
             metric_fn=metrics.mean_average_precision,
-            list_args=map_args or [1, 3, 5],
+            list_args=map_args or [1],
             input_key=input_key,
             output_key=output_key
         )
