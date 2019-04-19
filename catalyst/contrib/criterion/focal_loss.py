@@ -103,8 +103,6 @@ class FocalLossMultiLabel(_Loss):
         """
         num_classes = logits.size(1)
         loss = 0
-        targets = targets.view(-1)
-        logits = logits.view(-1, num_classes)
 
         for cls in range(num_classes):
             # Filter anchors with -1 label from loss computation
