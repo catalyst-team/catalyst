@@ -97,7 +97,8 @@ def plot_confusion_matrix(
     fname=None,
     show=True,
     figsize=12,
-    fontsize=22,
+    fontsize=32,
+    colormap="Blues"
 
 ):
     """
@@ -108,15 +109,16 @@ def plot_confusion_matrix(
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     plt.ioff()
-    plt.rcParams.update({"font.size": fontsize})
 
-    cmap = plt.cm.Blues
+    cmap = plt.cm.__dict__[colormap]
 
     if class_names is None:
         class_names = [str(i) for i in range(len(np.diag(cm)))]
 
     if normalize:
         cm = cm.astype(np.float32) / cm.sum(axis=1)[:, np.newaxis]
+
+    plt.rcParams.update({"font.size": int(fontsize/np.log2(len(class_names)))})
 
     f = plt.figure(figsize=(figsize, figsize))
     plt.title(title)

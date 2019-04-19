@@ -1,4 +1,4 @@
-from typing import Callable, List
+from typing import Callable, List, Dict
 import numpy as np
 
 from torchnet.meter import AUCMeter, ConfusionMeter
@@ -287,7 +287,8 @@ class ConfusionMatrixCallback(Callback):
         prefix: str = "confusion_matrix",
         version: str = "tnt",
         class_names: List[str] = None,
-        num_classes: int = None
+        num_classes: int = None,
+        plot_params: Dict = None
     ):
         self.prefix = prefix
         self.output_key = output_key
@@ -295,6 +296,7 @@ class ConfusionMatrixCallback(Callback):
 
         assert version in ["tnt", "sklearn"]
         self._version = version
+        self._plot_params = plot_params or {}
 
         self.class_names = class_names
         self.num_classes = num_classes \
@@ -353,7 +355,8 @@ class ConfusionMatrixCallback(Callback):
             confusion_matrix,
             class_names=class_names,
             normalize=True,
-            show=False
+            show=False,
+            **self._plot_params
         )
         fig = render_figure_to_tensor(fig)
         logger.add_image(f"{self.prefix}/epoch", fig, global_step=epoch)
