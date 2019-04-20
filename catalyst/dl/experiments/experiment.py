@@ -231,8 +231,8 @@ class ConfigExperiment(Experiment):
             stages_config_out[stage] = {}
             for key in self.STAGE_KEYWORDS:
                 stages_config_out[stage][key] = merge_dicts(
+                    stages_defaults.get(key, {}).copy(),
                     stages_config[stage].get(key, {}).copy(),
-                    stages_defaults.get(key, {}).copy()
                 )
 
         return stages_config_out

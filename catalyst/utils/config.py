@@ -103,6 +103,8 @@ def parse_config_args(*, config, args, unknown_args):
 
     for key, value in args._get_kwargs():
         if value is not None:
+            if key in ["logdir", "baselogdir"] and value == "":
+                continue
             config["args"][key] = value
 
     return config, args
@@ -142,7 +144,8 @@ def parse_args_uargs(args, unknown_args):
     if config_args is not None:
         for key, value in config_args.items():
             arg_value = getattr(args_, key, None)
-            if arg_value is None:
+            if arg_value is None \
+                    or (key in ["logdir", "baselogdir"] and arg_value == ""):
                 arg_value = value
             setattr(args_, key, arg_value)
 
