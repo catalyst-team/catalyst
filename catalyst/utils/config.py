@@ -76,6 +76,9 @@ def parse_config_args(*, config, args, unknown_args):
             arg_names = arg_name.split("/")
             if value_type == "str":
                 arg_value = value_content
+
+                if arg_value.lower() == "none":
+                    arg_value = None
             else:
                 arg_value = eval("%s(%s)" % (value_type, value_content))
 

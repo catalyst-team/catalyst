@@ -196,16 +196,7 @@ class ConfigExperiment(Experiment):
 
     def __init__(self, config: Dict):
         self._config = config.copy()
-
-        logdir = self._config.get("args", {}).get("logdir", None)
-        baselogdir = self._config.get("args", {}).get("baselogdir", None)
-        if logdir is not None:
-            self._logdir = logdir
-        elif logdir is None and baselogdir is not None:
-            logdir_postfix = self._prepare_logdir(config)
-            self._logdir = f"{baselogdir}/{logdir_postfix}"
-        else:
-            self._logdir = None
+        self.__prepare_logdir()
 
         self._config["stages"]["state_params"] = merge_dicts(
             self._config["stages"].get("state_params", {}).copy(),
@@ -214,13 +205,28 @@ class ConfigExperiment(Experiment):
         )
         self.stages_config = self._prepare_stages_config(config["stages"])
 
+    def __prepare_logdir(self):
+        EXCLUDE_TAG = "none"
+
+        logdir = self._config.get("args", {}).get("logdir", None)
+        baselogdir = self._config.get("args", {}).get("baselogdir", None)
+
+        if logdir is not None and logdir.lower() != EXCLUDE_TAG:
+            self._logdir = logdir
+        elif baselogdir is not None and baselogdir.lower() != EXCLUDE_TAG:
+            logdir_postfix = self._prepare_logdir(self._config)
+            self._logdir = f"{baselogdir}/{logdir_postfix}"
+        else:
+            self._logdir = None
+
     def _prepare_stages_config(self, stages_config):
         stages_defaults = {}
         stages_config_out = {}
         for key in self.STAGE_KEYWORDS:
             stages_defaults[key] = stages_config.get(key, {}).copy()
         for stage in stages_config:
-            if stage in self.STAGE_KEYWORDS:
+            if stage in self.STAGE_KEYWORDS \
+                    or stages_config.get(stage) is None:
                 continue
             stages_config_out[stage] = {}
             for key in self.STAGE_KEYWORDS:

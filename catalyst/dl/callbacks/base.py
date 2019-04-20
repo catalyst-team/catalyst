@@ -16,7 +16,7 @@ class CheckpointCallback(Callback):
     """
 
     def __init__(
-        self, save_n_best: int = 3, resume: str = None
+        self, save_n_best: int = 3, resume: str = None, resume_dir: str = None
     ):
         """
         :param save_n_best: number of best checkpoint to keep
@@ -24,9 +24,10 @@ class CheckpointCallback(Callback):
         """
         self.save_n_best = save_n_best
         self.resume = resume
+        self.resume_dir = resume_dir
         self.top_best_metrics = []
 
-        self._keys_from_state = ["resume"]
+        self._keys_from_state = ["resume", "resume_dir"]
 
     @staticmethod
     def load_checkpoint(*, filename, state):
@@ -90,6 +91,9 @@ class CheckpointCallback(Callback):
             value = getattr(state, key, None)
             if value is not None:
                 setattr(self, key, value)
+
+        if self.resume_dir is not None:
+            self.resume = str(self.resume_dir) + "/" + str(self.resume)
 
         if self.resume is not None:
             self.load_checkpoint(filename=self.resume, state=state)
