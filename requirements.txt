@@ -13,6 +13,7 @@ tensorflow==1.13.1
 torchnet
 
 # Used in scripts
+seaborn
 matplotlib
 pandas>=0.22
 scikit-learn>=0.20
