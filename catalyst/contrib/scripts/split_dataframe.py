@@ -2,7 +2,7 @@ import argparse
 import json
 import pandas as pd
 
-from catalyst.utils.parse import split_dataframe
+from catalyst.utils.parse import split_dataframe, folds_to_list
 
 
 def build_args(parser):
@@ -74,7 +74,7 @@ def build_args(parser):
     )
 
     parser.add_argument(
-        "-n", "--n_folds", type=int, default=5, help="Number of result folds"
+        "-n", "--n-folds", type=int, default=5, help="Number of result folds"
     )
 
     return parser
@@ -90,16 +90,24 @@ def parse_args():
 def main(args, uargs=None):
     dataframe = pd.read_csv(args.in_csv)
 
-    if args.tag2class is not None:
-        tag2class = json.load(open(args.tag2class))
-    else:
-        tag2class = None
+    train_folds = \
+        folds_to_list(args.train_folds) \
+        if args.train_folds is not None else None
+    valid_folds = \
+        folds_to_list(args.valid_folds) \
+        if args.valid_folds is not None else None
+    infer_folds = \
+        folds_to_list(args.infer_folds) \
+        if args.infer_folds is not None else None
 
-    _, train, valid, infer = split_dataframe(
+    tag2class = json.load(open(args.tag2class)) \
+        if args.tag2class is not None else None
+
+    df_all, train, valid, infer = split_dataframe(
         dataframe,
-        train_folds=args.train_folds,
-        valid_folds=args.valid_folds,
-        infer_folds=args.infer_folds,
+        train_folds=train_folds,
+        valid_folds=valid_folds,
+        infer_folds=infer_folds,
         tag2class=tag2class,
         tag_column=args.tag_column,
         class_column=args.class_column,
@@ -111,6 +119,7 @@ def main(args, uargs=None):
     if out_csv.endswith(".csv"):
         out_csv = out_csv[:-4]
 
+    df_all.to_csv(f"{out_csv}.csv", index=False)
     train.to_csv(f"{out_csv}_train.csv", index=False)
     valid.to_csv(f"{out_csv}_valid.csv", index=False)
     infer.to_csv(f"{out_csv}_infer.csv", index=False)

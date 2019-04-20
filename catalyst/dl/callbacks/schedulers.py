@@ -163,14 +163,14 @@ class LRFinder(LRUpdater):
         self,
         final_lr,
         scale="log",
-        n_steps=None,
+        num_steps=None,
         optimizer_key=None
     ):
         """
 
         :param final_lr: final learning rate to try with
         :param scale: learning rate increasing scale ("log" or "linear")
-        :param n_steps:  number of batches to try;
+        :param num_steps:  number of batches to try;
             if None - whole loader would be used.
         :param optimizer_key: which optimizer key to use
             for learning rate scheduling
@@ -179,7 +179,7 @@ class LRFinder(LRUpdater):
 
         self.final_lr = final_lr
         self.scale = scale
-        self.n_steps = n_steps
+        self.num_steps = num_steps
         self.multiplier = 0
         self.lr_step = 0
         self.find_iter = 0
@@ -206,13 +206,13 @@ class LRFinder(LRUpdater):
     def on_loader_start(self, state):
         if state.need_backward:
             lr_ = self.final_lr / self.init_lr
-            self.n_steps = self.n_steps or state.loader_len
-            self.multiplier = lr_**(1 / self.n_steps)
-            self.lr_step = (self.final_lr - self.init_lr) / self.n_steps
+            self.num_steps = self.num_steps or state.loader_len
+            self.multiplier = lr_**(1 / self.num_steps)
+            self.lr_step = (self.final_lr - self.init_lr) / self.num_steps
 
         super().on_loader_start(state=state)
 
     def on_batch_end(self, state):
         super().on_batch_end(state=state)
-        if self.find_iter > self.n_steps:
+        if self.find_iter > self.num_steps:
             raise NotImplementedError("End of LRFinder")
