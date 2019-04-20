@@ -94,12 +94,15 @@ class Registry(Mapping):
         if len(named_factories) == 0:
             warnings.warn("No factories were provided!")
 
-        # @TODO: return warning
-        # for name in named_factories:
-        #     if name in self._factories:
-        #         raise RegistryException(
-        #             f"Factory with name '{name}' is already present"
-        #         )
+        for name, f in named_factories.items():
+            # self._factories[name] != f is a workaround for
+            # https://github.com/catalyst-team/catalyst/issues/135
+            if name in self._factories and self._factories[name] != f:
+                raise RegistryException(
+                    f"Factory with name '{name}' is already present\n"
+                    f"Already registered: '{self._factories[name]}'\n"
+                    f"New: '{f}'"
+                )
 
         self._factories.update(named_factories)
 
