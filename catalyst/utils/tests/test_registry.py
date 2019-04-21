@@ -44,12 +44,24 @@ def test_fail_multiple_with_name():
         r.add(foo, foo, name="bar")
 
 
-# def test_fail_double_add():
-#     r = Registry("")
-#     r.add(foo)
-#
-#     with pytest.raises(RegistryException):
-#         r.add(foo)
+def test_fail_double_add_different():
+    r = Registry("")
+    r.add(foo)
+
+    with pytest.raises(RegistryException):
+        def bar():
+            pass
+
+        r.add(foo=bar)
+
+
+def test_double_add_same_nofail():
+    r = Registry("")
+    r.add(foo)
+    # It's ok to add same twice, forced by python relative import
+    # implementation
+    # https://github.com/catalyst-team/catalyst/issues/135
+    r.add(foo)
 
 
 def test_instantiations():
