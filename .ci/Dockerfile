@@ -1,12 +1,17 @@
 FROM nvidia/cuda:9.2-cudnn7-runtime-ubuntu18.04
 
 # Set up locale to prevent bugs with encoding
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 LOGDIR=/logs
 
 RUN apt-get update && \
       apt-get install -y \
             python3 \
-            python3-pip && \
+            python3-pip \
+            # opencv dependencies
+            libsm6 \
+            libxrender1 \
+            libxext6 \
+            && \
       apt-get clean && \
       rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -16,5 +21,5 @@ COPY requirements-dev.txt /workspace/requirements-dev.txt
 RUN pip3 install -r /workspace/requirements.txt
 RUN pip3 install -r /workspace/requirements-dev.txt
 
+RUN mkdir /project
 WORKDIR /workspace
-
