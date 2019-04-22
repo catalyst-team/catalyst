@@ -221,7 +221,7 @@ class ConfigExperiment(Experiment):
 
     def _prepare_stages_config(self, stages_config):
         stages_defaults = {}
-        stages_config_out = {}
+        stages_config_out = OrderedDict()
         for key in self.STAGE_KEYWORDS:
             stages_defaults[key] = stages_config.get(key, {}).copy()
         for stage in stages_config:
