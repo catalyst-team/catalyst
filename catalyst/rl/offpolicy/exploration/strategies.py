@@ -33,7 +33,7 @@ class EpsilonGreedy(ExplorationStrategy):
     def set_power(self, value):
         super().set_power(value)
         self.eps_init *= self._power
-        self.eps_final = self._power
+        self.eps_final *= self._power
         self.delta_eps = (self.eps_init - self.eps_final) / self.num_steps
         self.eps = self.eps_init
 
