@@ -8,3 +8,4 @@ from .dice import *
 from .focal_loss import *
 from .huber import *
 from .unet import *
+from .iou import *

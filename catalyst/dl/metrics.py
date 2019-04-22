@@ -181,12 +181,12 @@ def soft_iou(
 
 
 def f_score(
-        outputs: torch.Tensor,
-        targets: torch.Tensor,
-        beta: float = 1,
-        eps: float = 1e-7,
-        threshold: float = 0.5,
-        activation: str = "sigmoid"
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    beta: float = 1,
+    eps: float = 1e-7,
+    threshold: float = 0.5,
+    activation: str = "sigmoid"
 ):
     """
     Source:
@@ -214,8 +214,8 @@ def f_score(
     false_negative = torch.sum(targets) - true_positive
 
     precision_plus_recall = (1 + beta ** 2) * true_positive + \
-                            beta ** 2 * false_negative + false_positive + eps
+        beta ** 2 * false_negative + false_positive + eps
 
-    score = ((1 + beta ** 2) * true_positive + eps) / precision_plus_recall
+    score = ((1 + beta**2) * true_positive + eps) / precision_plus_recall
 
     return score

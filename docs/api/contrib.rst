@@ -46,6 +46,12 @@ Criterion
 .. autoclass:: LossMulti
     :members:
 
+.. autoclass:: IoULoss
+    :members:
+
+.. autoclass:: BCEIoULoss
+    :members:
+
 Models
 ---------------------
 .. automodule:: catalyst.contrib.models
