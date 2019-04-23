@@ -31,4 +31,4 @@ stages:
       finder:
         callback: LRFinder
         final_lr: 0.1
-        n_steps: 1000
+        num_steps: 1000

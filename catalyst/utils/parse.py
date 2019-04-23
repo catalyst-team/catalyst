@@ -45,7 +45,7 @@ def folds_to_list(folds: Union[list, str, pd.Series]) -> List[int]:
     elif isinstance(folds, pd.Series):
         folds = list(sorted(folds.unique()))
 
-    return list({int(x) for x in folds})
+    return list(sorted(list({int(x) for x in folds})))
 
 
 def map_dataframe(
@@ -263,7 +263,8 @@ def read_csv_data(
     """
     from_one_df: bool = in_csv is not None
     from_multiple_df: bool = \
-        args_are_not_none(in_csv_train, in_csv_valid) \
+        in_csv_train is not None \
+        or in_csv_valid is not None \
         or in_csv_infer is not None
 
     if from_one_df == from_multiple_df:
