@@ -113,26 +113,22 @@ jobs:
       install: *requirements
       script:
         - redis-server --port 12000 &
-        - sleep 10
+        - sleep 5
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
           python catalyst/rl/offpolicy/scripts/run_trainer.py
           --config=./examples/_tests_rl_gym/config_dqn.yml
-          --logdir=./examples/logs/_tests_rl_gym
-          --trainer/save_period=1:int
-          --trainer/start_learning=10:int &
-        - sleep 30
+          --logdir=./examples/logs/_tests_rl_gym_dqn &
+        - sleep 10
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
           python catalyst/rl/offpolicy/scripts/run_samplers.py
           --config=./examples/_tests_rl_gym/config_dqn.yml
-          --logdir=./examples/logs/_tests_rl_gym
-          --trainer/save_period=1:int
-          --trainer/start_learning=10:int &
-        - sleep 120
+          --logdir=./examples/logs/_tests_rl_gym_dqn &
+        - sleep 60
         - kill %3
         - kill %2
         - kill %1
-        - rm ./examples/logs/_tests_rl_gym/0.pth
-        - rm ./examples/logs/_tests_rl_gym/1.pth
+        - rm ./examples/logs/_tests_rl_gym_dqn/0.pth
+        - rm ./examples/logs/_tests_rl_gym_dqn/1.pth
 
     - stage: Examples
       name: "Examples RL – Continuous"
@@ -140,26 +136,46 @@ jobs:
       install: *requirements
       script:
         - redis-server --port 12000 &
-        - sleep 10
+        - sleep 5
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/rl/offpolicy/scripts/run_trainer.py
+          --config=./examples/_tests_rl_gym/config_ddpg.yml
+          --logdir=./examples/logs/_tests_rl_gym_ddpg &
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/rl/offpolicy/scripts/run_trainer.py
+          --config=./examples/_tests_rl_gym/config_td3.yml
+          --logdir=./examples/logs/_tests_rl_gym_td3 &
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
           python catalyst/rl/offpolicy/scripts/run_trainer.py
           --config=./examples/_tests_rl_gym/config_sac.yml
-          --logdir=./examples/logs/_tests_rl_gym
-          --trainer/save_period=1:int
-          --trainer/start_learning=10:int &
-        - sleep 30
+          --logdir=./examples/logs/_tests_rl_gym_sac &
+        - sleep 10
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/rl/offpolicy/scripts/run_samplers.py
+          --config=./examples/_tests_rl_gym/config_ddpg.yml
+          --logdir=./examples/logs/_tests_rl_gym_ddpg &
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/rl/offpolicy/scripts/run_samplers.py
+          --config=./examples/_tests_rl_gym/config_td3.yml
+          --logdir=./examples/logs/_tests_rl_gym_td3 &
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
           python catalyst/rl/offpolicy/scripts/run_samplers.py
           --config=./examples/_tests_rl_gym/config_sac.yml
-          --logdir=./examples/logs/_tests_rl_gym
-          --trainer/save_period=1:int
-          --trainer/start_learning=10:int &
-        - sleep 120
+          --logdir=./examples/logs/_tests_rl_gym_sac &
+        - sleep 180
+        - kill %7
+        - kill %6
+        - kill %5
+        - kill %4
         - kill %3
         - kill %2
         - kill %1
-        - rm ./examples/logs/_tests_rl_gym/0.pth
-        - rm ./examples/logs/_tests_rl_gym/1.pth
+        - rm ./examples/logs/_tests_rl_gym_ddpg/0.pth
+        - rm ./examples/logs/_tests_rl_gym_ddpg/1.pth
+        - rm ./examples/logs/_tests_rl_gym_td3/0.pth
+        - rm ./examples/logs/_tests_rl_gym_td3/1.pth
+        - rm ./examples/logs/_tests_rl_gym_sac/0.pth
+        - rm ./examples/logs/_tests_rl_gym_sac/1.pth
 
 # speed up for now
 #    - stage: Deploy

@@ -1,5 +1,5 @@
 args:
-  logdir: ./logs/_tests_rl_gym  #  change me
+  logdir: ./logs/_tests_rl_gym_sac  #  change me
   expdir: null
 
   vis: 0
@@ -8,7 +8,7 @@ args:
 
 db:
   port: 12000
-  prefix: gym  # TODO: remove
+  prefix: gym-sac  # TODO: remove
 
 environment:
   environment: GymWrapper
@@ -112,14 +112,14 @@ algorithm:
     clip_value: 1.0
 
 trainer:
-  batch_size: 256              # transitions
+  batch_size: 16               # transitions
   num_workers: 1
-  epoch_len: 1000               # batches
+  epoch_len: 10                # batches
 
-  replay_buffer_size: 1000000  # transitions
-  start_learning: 500          # transitions
+  replay_buffer_size: 100000   # transitions
+  start_learning: 32           # transitions
 
-  save_period: 100             # epochs
+  save_period: 1               # epochs
   weights_sync_period: 1       # epochs
   target_update_period: 1      # batches
 

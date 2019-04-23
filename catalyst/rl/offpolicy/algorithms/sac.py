@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 import copy
 from gym.spaces import Box
 import torch
@@ -11,12 +11,13 @@ from .utils import categorical_loss, quantile_loss, soft_update, \
     get_agent_stuff_from_params
 from .core import AlgorithmSpec
 from catalyst.rl.environments.core import EnvironmentSpec
+from catalyst.rl.agents.core import CriticSpec
 
 
 class SAC(AlgorithmContinuous):
     def _init(
         self,
-        critics,
+        critics: List[CriticSpec],
         reward_scale=1.0
     ):
         self.reward_scale = reward_scale
