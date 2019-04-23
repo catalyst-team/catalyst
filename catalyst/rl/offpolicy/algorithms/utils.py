@@ -1,5 +1,63 @@
 import torch
 import torch.nn.functional as F
+from catalyst.dl.utils import UtilsFactory
+from catalyst.rl.registry import \
+    CRITERIONS, GRAD_CLIPPERS, OPTIMIZERS, SCHEDULERS
+
+
+def _copy_params(params):
+    if params is None:
+        return {}
+    return params.copy()
+
+
+def get_agent_stuff_from_params(
+    *,
+    agent,
+    loss_params=None,
+    optimizer_params=None,
+    scheduler_params=None,
+    grad_clip_params=None
+):
+    # criterion
+    loss_params = _copy_params(loss_params)
+    criterion = CRITERIONS.get_from_params(**loss_params)
+    if criterion is not None \
+            and torch.cuda.is_available():
+        criterion = criterion.cuda()
+
+    # optimizer
+    agent_params = UtilsFactory.prepare_optimizable_params(
+        agent.parameters())
+    optimizer_params = _copy_params(optimizer_params)
+    optimizer = OPTIMIZERS.get_from_params(
+        **optimizer_params,
+        params=agent_params
+    )
+
+    # scheduler
+    scheduler_params = _copy_params(scheduler_params)
+    scheduler = SCHEDULERS.get_from_params(
+        **scheduler_params,
+        optimizer=optimizer
+    )
+
+    # grad clipping
+    grad_clip_params = _copy_params(grad_clip_params)
+    grad_clip_fn = GRAD_CLIPPERS.get_from_params(**grad_clip_params)
+
+    result = {
+        "loss_params": loss_params,
+        "criterion": criterion,
+        "optimizer_params": optimizer_params,
+        "optimizer": optimizer,
+        "scheduler_params": scheduler_params,
+        "scheduler": scheduler,
+        "grad_clip_params": grad_clip_params,
+        "grad_clip_fn": grad_clip_fn
+    }
+
+    return result
 
 
 def soft_update(target, source, tau):

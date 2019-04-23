@@ -1,203 +1,76 @@
+from typing import Union, List
+
 import os
 import time
-import copy
 import random
-import numpy as np
-import torch
 from datetime import datetime
+import torch
 from tensorboardX import SummaryWriter
 
-from catalyst.utils.misc import set_global_seeds
+from catalyst.utils.misc import set_global_seed
 from catalyst.dl.utils import UtilsFactory
-from catalyst.utils.serialization import serialize, deserialize
-from catalyst.rl.random_process import RandomProcess
+from catalyst.rl.offpolicy.utils import EpisodeRunner
+from catalyst.rl.offpolicy.exploration import ExplorationHandler
+from catalyst.rl.environments.core import EnvironmentSpec
+from catalyst.rl.db.core import DBSpec
+from catalyst.rl.agents.core import ActorSpec, CriticSpec
 
 # speed up optimization
 os.environ["OMP_NUM_THREADS"] = "1"
 torch.set_num_threads(1)
-SEED_RANGE = 2**32 - 2
-
-
-def get_actor_weights(actor, exclude_norm=False):
-    state_dict = actor.state_dict()
-    if exclude_norm:
-        state_dict = {
-            key: value
-            for key, value in state_dict.items()
-            if all(x not in key for x in ["norm", "lstm"])
-        }
-    state_dict = {key: value.clone() for key, value in state_dict.items()}
-    return state_dict
-
-
-def set_actor_weights(actor, weights, strict=True):
-    actor.load_state_dict(weights, strict=strict)
-
-
-def set_params_noise(actor, states, target_d=0.2, tol=1e-3, max_steps=1000):
-    exclude_norm = True
-    orig_weights = get_actor_weights(actor, exclude_norm=exclude_norm)
-    orig_act = actor(states)
-
-    sigma_min = 0.
-    sigma_max = 100.
-    sigma = sigma_max
-    step = 0
-
-    while step < max_steps:
-        dist = torch.distributions.normal.Normal(0, sigma)
-        weights = {
-            key: w.clone() + dist.sample(w.shape)
-            for key, w in orig_weights.items()
-        }
-        set_actor_weights(actor, weights, strict=not exclude_norm)
-        new_act = actor(states)
-
-        diff = new_act - orig_act
-        d = torch.mean(torch.sqrt(torch.sum(torch.pow(diff, 2), 1))).item()
-
-        dd = d - target_d
-        if np.abs(dd) < tol:
-            break
-
-        # too big sigma
-        if dd > 0:
-            sigma_max = sigma
-        # too small sigma
-        else:
-            sigma_min = sigma
-        sigma = sigma_min + (sigma_max - sigma_min) / 2
-        step += 1
-    return d
-
-
-class SamplerBuffer:
-    def __init__(self, capacity, observation_shape, action_shape):
-        self.size = capacity
-        self.observation_shape = observation_shape
-        self.action_shape = action_shape
-        self.pointer = 0
-        self.observations = np.empty(
-            (self.size, ) + tuple(self.observation_shape), dtype=np.float32
-        )
-        self.actions = np.empty(
-            (self.size, ) + tuple(self.action_shape), dtype=np.float32
-        )
-        self.rewards = np.empty((self.size, ), dtype=np.float32)
-        self.dones = np.empty((self.size, ), dtype=np.bool)
-
-    def init_with_observation(self, observation):
-        self.observations[0] = observation
-        self.pointer = 0
-
-    def get_state(self, history_len=1, pointer=None):
-        pointer = pointer or self.pointer
-        state = np.zeros(
-            (history_len, ) + self.observation_shape,
-            dtype=np.float32
-        )
-        indices = np.arange(max(0, pointer - history_len + 1), pointer + 1)
-        state[-len(indices):] = self.observations[indices]
-        return state
-
-    def push_transition(self, transition):
-        """ transition = [s_tp1, a_t, r_t, d_t]
-        """
-        s_tp1, a_t, r_t, d_t, ts_t = transition
-        self.observations[self.pointer + 1] = s_tp1
-        self.actions[self.pointer] = a_t
-        self.rewards[self.pointer] = r_t
-        self.dones[self.pointer] = d_t
-        self.pointer += 1
-
-    def get_complete_episode(self):
-        indices = np.arange(self.pointer)
-        states = self.observations[indices]
-        actions = self.actions[indices]
-        rewards = self.rewards[indices]
-        dones = self.dones[indices]
-        return states, actions, rewards, dones
-
-    def get_states_history(self, history_len=1):
-        states = [
-            self.get_state(history_len=history_len, pointer=i)
-            for i in range(self.pointer)
-        ]
-        states = np.array(states)
-        return states
+_BIG_NUM = int(2 ** 32 - 2)
+_SEED_RANGE = _BIG_NUM
 
 
 class Sampler:
     def __init__(
         self,
-        actor,
-        env,
-        id,
-        logdir=None,
-        redis_server=None,
-        redis_prefix=None,
-        buffer_size=int(1e4),
-        history_len=1,
-        weights_sync_period=1,
-        mode="infer",
-        resume=None,
-        action_noise_prob=0,
-        action_noise_t=1,
-        random_process=None,
-        param_noise_prob=0,
-        param_noise_d=0.2,
-        param_noise_steps=1000,
-        seeds=None,
-        action_clip=(-1, 1),
-        episode_limit=None,
-        force_store=False,
-        min_episode_steps=None,
-        min_episode_reward=None
+        agent: Union[ActorSpec, CriticSpec],
+        env: EnvironmentSpec,
+        db_server: DBSpec = None,
+        exploration_handler: ExplorationHandler = None,
+        logdir: str = None,
+        id: int = 0,
+        mode: str = "infer",
+        buffer_size: int = int(1e4),
+        weights_sync_period: int = 1,
+        seeds: List = None,
+        episode_limit: int = None,
+        force_store: bool = False,
     ):
-
-        self._seed = 42 + id
-        set_global_seeds(self._seed)
-
-        self._sampler_id = id
         self._device = UtilsFactory.prepare_device()
-        self.actor = copy.deepcopy(actor).to(self._device)
-        self.env = env
-        self.redis_server = redis_server
-        self.redis_prefix = redis_prefix or ""
-        self.resume = resume
-        self.episode_limit = episode_limit or int(2**32 - 2)
-        self.force_store = force_store
-        self.min_episode_steps = min_episode_steps
-        self.min_episode_reward = min_episode_reward
-        self.hard_seeds = set()
-        min_episode_flag_ = \
-            min_episode_steps is None and min_episode_reward is None
-        assert min_episode_flag_ or seeds is None
+        self._seed = 42 + id
+        set_global_seed(self._seed)
+        self._sampler_id = id
 
-        self.min_episode_steps = self.min_episode_steps or -int(1e6)
-        self.min_episode_reward = self.min_episode_reward or -int(1e6)
-
-        self.history_len = history_len
-        self.buffer_size = buffer_size
-        self.weights_sync_period = weights_sync_period
-        self.episode_index = 0
-        self.action_clip = action_clip
-
-        self.infer = mode == "infer"
+        self._infer = mode == "infer"
         self.seeds = seeds
 
-        self.action_noise_prob = action_noise_prob
-        self.action_noise_t = action_noise_t
-        self.random_process = random_process or RandomProcess()
+        # logging
+        self._prepare_logger(logdir, mode)
 
-        self.param_noise_prob = param_noise_prob
-        self.param_noise_d = param_noise_d
-        self.param_noise_steps = param_noise_steps
+        # environment, model, exploration & action handlers
+        self.env = env
+        self.agent = agent
+        self.exploration_handler = exploration_handler
+        self.episode_index = 0
+        self.episode_runner = EpisodeRunner(
+            env=self.env,
+            agent=self.agent,
+            device=self._device,
+            capacity=buffer_size,
+            deterministic=self._infer
+        )
 
-        if self.infer:
-            self.action_noise_prob = 0
-            self.param_noise_prob = 0
+        # synchronization configuration
+        self.db_server = db_server
+        self.weights_sync_period = weights_sync_period
+        self.episode_limit = episode_limit or _BIG_NUM
+        self._force_store = force_store
+        self._sampler_weight_mode = \
+            "critic" if env.discrete_actions else "actor"
 
+    def _prepare_logger(self, logdir, mode):
         if logdir is not None:
             current_date = datetime.now().strftime("%y-%m-%d-%H-%M-%S-%M-%f")
             logpath = f"{logdir}/sampler-{mode}-{id}-{current_date}"
@@ -206,223 +79,113 @@ class Sampler:
         else:
             self.logger = None
 
-        self.buffer = SamplerBuffer(
-            capacity=self.buffer_size,
-            observation_shape=self.env.observation_shape,
-            action_shape=self.env.action_shape
-        )
-
-    def __repr__(self):
-        str_val = " ".join(
-            [
-                f"{key}: {str(getattr(self, key, ''))}"
-                for key in ["history_len", "action_noise_t", "action_clip"]
-            ]
-        )
-        return f"Sampler. {str_val}"
-
-    def to_tensor(self, *args, **kwargs):
+    def _to_tensor(self, *args, **kwargs):
         return torch.Tensor(*args, **kwargs).to(self._device)
 
-    def load_actor_weights(self):
-        if self.resume is not None:
-            checkpoint = UtilsFactory.load_checkpoint(self.resume)
-            weights = checkpoint[f"actor_state_dict"]
-            self.actor.load_state_dict(weights)
-        elif self.redis_server is not None:
-            weights = deserialize(
-                self.redis_server.get(f"{self.redis_prefix}_actor_weights")
-            )
-            weights = {k: self.to_tensor(v) for k, v in weights.items()}
-            self.actor.load_state_dict(weights)
+    def load_checkpoint(
+        self,
+        *,
+        filepath: str = None,
+        db_server: DBSpec = None
+    ):
+        if filepath is not None:
+            checkpoint = UtilsFactory.load_checkpoint(filepath)
+            weights = checkpoint[f"{self._sampler_weight_mode}_state_dict"]
+            self.agent.load_state_dict(weights)
+        elif db_server is not None:
+            weights = db_server.load_weights(suffix=self._sampler_weight_mode)
+            weights = {k: self._to_tensor(v) for k, v in weights.items()}
+            self.agent.load_state_dict(weights)
         else:
             raise NotImplementedError
-        self.actor.eval()
 
-    def store_episode(self):
-        if self.redis_server is None:
+        self.agent.to(self._device)
+        self.agent.eval()
+
+    def _store_trajectory(self):
+        if self.db_server is None:
             return
-        states, actions, rewards, dones = self.buffer.get_complete_episode()
-        episode = [
-            states.tolist(),
-            actions.tolist(),
-            rewards.tolist(),
-            dones.tolist()
-        ]
-        episode = serialize(episode)
-        self.redis_server.rpush("trajectories", episode)
-        hard_seeds = serialize(list(self.hard_seeds))
-        self.redis_server.set(
-            f"{self.redis_prefix}_{self._sampler_id}_hard_seeds", hard_seeds
+        trajectory = self.episode_runner.get_trajectory(tolist=True)
+        self.db_server.push_trajectory(trajectory)
+
+    def _prepare_seed(self):
+        seed = self._seed + random.randrange(_SEED_RANGE)
+        set_global_seed(seed)
+        if self.seeds is None:
+            seed = random.randrange(_SEED_RANGE)
+        else:
+            seed = random.choice(self.seeds)
+        set_global_seed(seed)
+        return seed
+
+    def _log_to_console(
+        self,
+        *,
+        episode_reward,
+        num_steps,
+        elapsed_time,
+        seed
+    ):
+        print(
+            f"--- episode {int(self.episode_index):05d}:\t"
+            f"steps: {int(num_steps):05d}\t"
+            f"reward: {episode_reward:9.4f}\t"
+            f"time: {elapsed_time:5f}\t"
+            f"seed: {seed}"
         )
 
-    def act(self, state):
-        with torch.no_grad():
-            states = self.to_tensor(state).unsqueeze(0)
-            action = self.actor(states, deterministic=self.infer)
-            action = action[0].detach().cpu().numpy()
-            return action
+    def _log_to_tensorboard(self, *, episode_reward, num_steps, elapsed_time):
+        if self.logger is not None:
+            self.logger.add_scalar(
+                "episode/num_steps", num_steps, self.episode_index
+            )
+            self.logger.add_scalar(
+                "episode/reward", episode_reward, self.episode_index
+            )
+            self.logger.add_scalar(
+                "time/episode per minute", 60. / elapsed_time,
+                self.episode_index
+            )
+            self.logger.add_scalar(
+                "time/steps per second", num_steps / elapsed_time,
+                self.episode_index
+            )
+            self.logger.add_scalar(
+                "time/episode time (sec)", elapsed_time, self.episode_index
+            )
+            self.logger.add_scalar(
+                "time/step time (sec)", elapsed_time / num_steps,
+                self.episode_index
+            )
 
     def run(self):
-        self.episode_index = 1
-        self.load_actor_weights()
-        self.buffer = SamplerBuffer(
-            self.buffer_size, self.env.observation_shape,
-            self.env.action_shape
-        )
-
-        seed = self._seed + random.randrange(SEED_RANGE)
-        set_global_seeds(seed)
-        seed = random.randrange(SEED_RANGE) \
-            if self.seeds is None \
-            else random.choice(self.seeds)
-        set_global_seeds(seed)
-        self.buffer.init_with_observation(self.env.reset())
-        self.random_process.reset_states()
-
-        action_noise = False
-        param_noise_d = 0
-        noise_action = 0
-        action_noise_t = 0
-        step_index = 0
-        episode_reward = 0
-        episode_reward_orig = 0
-        start_time = time.time()
-        done = False
-
         while True:
-            while not done:
-                state = self.buffer.get_state(history_len=self.history_len)
-                action = self.act(state)
+            if self.episode_index % self.weights_sync_period == 0:
+                self.load_checkpoint(db_server=self.db_server)
+            seed = self._prepare_seed()
+            exploration_strategy = \
+                self.exploration_handler.get_exploration_strategy() \
+                if self.exploration_handler is not None \
+                else None
+            self.episode_runner.reset(exploration_strategy)
 
-                if action_noise \
-                        and action_noise_t + self.action_noise_t >= step_index:
-                    noise_action = self.random_process.sample()
-                    action_noise_t = step_index
-                else:
-                    noise_action = noise_action
-
-                action = action + noise_action
-                action = np.clip(
-                    action,
-                    a_min=self.action_clip[0],
-                    a_max=self.action_clip[1]
-                )
-
-                next_state, reward, done, info = self.env.step(action)
-                episode_reward += reward
-                episode_reward_orig += info.get("reward_origin", 0)
-
-                transition = [next_state, action, reward, done, step_index]
-                self.buffer.push_transition(transition)
-                step_index += 1
-
+            start_time = time.time()
+            episode_info = self.episode_runner.play_episode(
+                exploration_strategy=exploration_strategy)
             elapsed_time = time.time() - start_time
-            if not self.infer or self.force_store:
-                self.store_episode()
 
-            if step_index < self.min_episode_steps \
-                    or episode_reward < self.min_episode_reward:
-                self.hard_seeds.add(seed)
-            else:
-                self.hard_seeds.discard(seed)
+            if not self._infer or self._force_store:
+                self._store_trajectory()
 
-            print(
-                f"--- episode {self.episode_index:5d}:\t"
-                f"steps: {step_index:5d}\t"
-                f"reward: {episode_reward:10.4f}/{episode_reward_orig:10.4f}\t"
-                f"seed: {seed}"
-            )
+            self._log_to_console(
+                **episode_info,
+                elapsed_time=elapsed_time,
+                seed=seed)
 
-            if self.logger is not None:
-                self.logger.add_scalar("steps", step_index, self.episode_index)
-                self.logger.add_scalar(
-                    "action noise sigma", self.random_process.current_sigma,
-                    self.episode_index
-                )
-                self.logger.add_scalar(
-                    "param noise d", param_noise_d, self.episode_index
-                )
-                self.logger.add_scalar(
-                    "reward", episode_reward, self.episode_index
-                )
-                self.logger.add_scalar(
-                    "reward_origin", episode_reward_orig, self.episode_index
-                )
-                self.logger.add_scalar(
-                    "episode per minute", 1. / elapsed_time * 60,
-                    self.episode_index
-                )
-                self.logger.add_scalar(
-                    "steps per second", step_index / elapsed_time,
-                    self.episode_index
-                )
-                self.logger.add_scalar(
-                    "episode time (sec)", elapsed_time, self.episode_index
-                )
-                self.logger.add_scalar(
-                    "episode time (min)", elapsed_time / 60, self.episode_index
-                )
-                self.logger.add_scalar(
-                    "step time (sec)", elapsed_time / step_index,
-                    self.episode_index
-                )
+            self._log_to_tensorboard(
+                **episode_info,
+                elapsed_time=elapsed_time)
 
             self.episode_index += 1
-
             if self.episode_index >= self.episode_limit:
                 return
-
-            if self.episode_index % self.weights_sync_period == 0:
-                self.load_actor_weights()
-
-                noise_prob_ = random.random()
-
-                if noise_prob_ < self.param_noise_prob:
-                    states = self.buffer.get_states_history(
-                        history_len=self.history_len
-                    )
-                    states = self.to_tensor(states).detach()
-                    param_noise_d = set_params_noise(
-                        actor=self.actor,
-                        states=states,
-                        target_d=self.param_noise_d,
-                        tol=1e-3,
-                        max_steps=self.param_noise_steps
-                    )
-                    action_noise = False
-                elif noise_prob_ < \
-                        self.param_noise_prob + self.action_noise_prob:
-                    action_noise = True
-                    param_noise_d = 0
-                else:
-                    action_noise = False
-                    param_noise_d = 0
-
-            self.buffer = SamplerBuffer(
-                capacity=self.buffer_size,
-                observation_shape=self.env.observation_shape,
-                action_shape=self.env.action_shape
-            )
-
-            seed = self._seed + random.randrange(SEED_RANGE)
-            set_global_seeds(seed)
-            if self.seeds is None:
-                hard_seed_prob = random.random()
-                if len(self.hard_seeds) > 0 and hard_seed_prob < 0.5:
-                    seed = random.sample(self.hard_seeds, 1)[0]
-                else:
-                    seed = random.randrange(SEED_RANGE)
-            else:
-                seed = random.choice(self.seeds)
-            set_global_seeds(seed)
-            self.buffer.init_with_observation(self.env.reset())
-            self.random_process.reset_states()
-
-            noise_action = 0
-            action_noise_t = 0
-            step_index = 0
-            episode_reward = 0
-            episode_reward_orig = 0
-            start_time = time.time()
-            done = False
