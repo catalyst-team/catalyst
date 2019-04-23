@@ -4,7 +4,7 @@ args:
 
   vis: 0
   infer: 1  #  change me
-  train: 4  #  change me
+  train: 1  #  change me
 
 db:
   port: 12000
@@ -17,7 +17,7 @@ environment:
   history_len: 3
 
   frame_skip: 2
-  reward_scale: 0.01
+  reward_scale: 1.0
   step_delay: 0.01
 
 agents:
@@ -53,7 +53,7 @@ algorithm:
 
   n_step: 1
   gamma: 0.99
-  critic_tau: 0.01
+  critic_tau: 1.0
 
   critic_loss_params:
     criterion: HuberLoss
@@ -76,9 +76,9 @@ trainer:
   replay_buffer_size: 1000000  # transitions
   start_learning: 500          # transitions
 
-  save_period: 100             # epochs
+  save_period: 10000           # epochs
   weights_sync_period: 1       # epochs
-  target_update_period: 1      # batches
+  target_update_period: 500    # batches
 
 sampler:
   weights_sync_period: 1
@@ -90,8 +90,7 @@ sampler:
     - exploration: EpsilonGreedy
       probability: 0.98
       eps_init: 1.0
-      eps_final: 0.5
-      annealing_steps: 20000
-
+      eps_final: 0.05
+      annealing_steps: 1000
     - exploration: Greedy
       probability: 0.02
