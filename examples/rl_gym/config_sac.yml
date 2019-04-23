@@ -1,57 +1,95 @@
-shared:
-  history_len: 3
-  n_step: 1
-  gamma: 0.99
-
 args:
-  logdir: ./logs/rl_gym  #  change me
-  algorithm: SAC
-  environment: GymWrapper
+  logdir: ./logs/rl-gym-sac  #  change me
+  expdir: null
+
   vis: 0
-  infer: 0  #  change me
-  train: 1  #  change me
-  action_noise_prob: 0.5
-  param_noise_prob: 0.2
-  max_action_noise: 0.0001
-  max_param_noise: 0.0001
+  infer: 1  #  change me
+  train: 4  #  change me
 
-redis:
+db:
   port: 12000
-  prefix: gym
+  prefix: gym-sac  # TODO: remove
 
-env:
+environment:
+  environment: GymWrapper
   env_name: LunarLanderContinuous-v2
-  reward_scale: 0.01
+
+  history_len: 3
+
   frame_skip: 2
+  reward_scale: 0.01
   step_delay: 0.01
 
-actor:
-  agent: Actor
-  head_hiddens: [128, 128]
-  layer_fn: Linear
-  bias: false
-  norm_fn: LayerNorm
-  activation_fn: ReLU
-  out_activation: Tanh
-  policy_type: gauss
+agents:
+  actor:
+    agent: Actor
 
-critic:
-  agent: Critic
-  observation_hiddens: []
-  action_hiddens: []
-  head_hiddens: [128, 128, 1]
-  layer_fn: Linear
-  bias: false
-  norm_fn: LayerNorm
-  activation_fn: ReLU
+    state_net_params:  # state -> hidden representation
+      observation_net_params:
+        hiddens: [32]  # first hidden would be taken from state_shape
+        layer_fn: Linear
+        norm_fn: LayerNorm
+        activation_fn: ReLU
+        bias: false
+      main_net_params:
+        hiddens: [32, 32]
+        layer_fn: Linear
+        norm_fn: LayerNorm
+        activation_fn: ReLU
+        bias: false
+    policy_head_params:  # hidden representation -> ~policy
+      in_features: 32  # out features would be taken from action_shape
+      policy_type: gauss
+      out_activation: Tanh
+
+  critic:
+    agent: StateActionCritic
+
+    state_action_net_params:  # state -> hidden representation
+      observation_net_params:
+        hiddens: [32]  # first hidden would be taken from state_shape
+        layer_fn: Linear
+        norm_fn: LayerNorm
+        activation_fn: ReLU
+        bias: false
+      action_net_params:
+        hiddens: [32]  # first hidden would be taken from action_shape
+        layer_fn: Linear
+        norm_fn: LayerNorm
+        activation_fn: ReLU
+        bias: false
+      main_net_params:
+        hiddens: [64, 32]
+        layer_fn: Linear
+        norm_fn: LayerNorm
+        activation_fn: ReLU
+        bias: false
+
+    value_head_params:  # hidden representation -> value
+      in_features: 32  # out features would be taken from action_shape
+      num_atoms: 1
+
+#      distribution: categorical
+#      num_atoms: 4
+#      values_range: [-10.0, 10.0]
+
+#      distribution: quantile
+#      num_atoms: 4
 
 algorithm:
+  algorithm: SAC
+
+  n_step: 1
+  gamma: 0.99
   actor_tau: 0.01
   critic_tau: 0.01
+
+  num_critics: 2
   reward_scale: 200.0
-  min_action: &min_action -1.0
-  max_action: &max_action 1.0
-  #critic_distribution: quantile
+
+  critic_loss_params:
+    criterion: HuberLoss
+    clip_delta: 1.0
 
   actor_optimizer_params:
     optimizer: Adam
@@ -59,10 +97,6 @@ algorithm:
   critic_optimizer_params:
     optimizer: Adam
     lr: 0.0003
-
-  actor_grad_clip_params:
-    func: clip_grad_value_
-    clip_value: 1.0
 
   actor_scheduler_params:
     scheduler: MultiStepLR
@@ -73,32 +107,36 @@ algorithm:
     milestones: [2000000]  # batches
     gamma: 1.0
 
-  critic_loss_params:
-    criterion: HuberLoss
-    clip_delta: 1.0
+  actor_grad_clip_params:
+    func: clip_grad_value_
+    clip_value: 1.0
 
 trainer:
   batch_size: 256              # transitions
-
   num_workers: 1
-  replay_buffer_size: 1000000  # transitions
+  epoch_len: 100               # batches
 
+  replay_buffer_size: 1000000  # transitions
   start_learning: 500          # transitions
-  epoch_len: 1000               # batches
-  target_update_period: 1      # batches
-  save_period: 1               # epochs
+
+  save_period: 100             # epochs
   weights_sync_period: 1       # epochs
+  target_update_period: 1      # batches
 
 sampler:
   weights_sync_period: 1
-
   buffer_size: 1100
-  param_noise_steps: 1000
 
-  action_noise_t: 1
-  action_clip: [*min_action, *max_action]
+  valid_seeds: [1, 10, 1000, 10000, 42000]
 
-random_process:
-  random_process: GaussianWhiteNoiseProcess
+  exploration_params:
+    - exploration: GaussNoise
+      probability: 0.6
+      sigma: 0.2
 
-seeds: [1, 10, 1000, 10000, 42000]
+    - exploration: ParameterSpaceNoise
+      probability: 0.3
+      target_sigma: 0.2
+
+    - exploration: Greedy
+      probability: 0.1

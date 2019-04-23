@@ -1,16 +1,13 @@
 import torch
 import torch.nn.functional as F
-from .core_continuous import AlgorithmContinuous
+from catalyst.rl.offpolicy.algorithms.core_discrete import AlgorithmDiscrete
 from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
     quantile_loss
 
 
-class DDPG(AlgorithmContinuous):
-    """
-    Swiss Army knife DDPG algorithm.
-    """
+class DQN(AlgorithmDiscrete):
 
-    def _init(self):
+    def _init(self, **kwargs):
         # value distribution approximation
         critic_distribution = self.critic.distribution
         self._loss_fn = self._base_loss
@@ -36,39 +33,36 @@ class DDPG(AlgorithmContinuous):
             self.tau = self._to_tensor(tau)
             self._loss_fn = self._quantile_loss
 
-    def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
-        gamma = self.gamma**self.n_step
+        super()._init(**kwargs)
 
-        # actor loss
-        policy_loss = -torch.mean(self.critic(states_t, self.actor(states_t)))
+    def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
+        gamma_ = self._gamma ** self._n_step
 
         # critic loss
-        q_values_t = self.critic(states_t, actions_t)
-        q_values_tp1 = self.target_critic(
-            states_tp1, self.target_actor(states_tp1)
-        ).detach()
-        q_target_t = rewards_t + (1 - done_t) * gamma * q_values_tp1
-
+        q_values_t = self.critic(states_t).squeeze(-1).gather(-1, actions_t)
+        q_values_tp1 = \
+            self.target_critic(states_tp1).squeeze(-1).max(-1, keepdim=True)[0]
+        q_target_t = rewards_t + (1 - done_t) * gamma_ * q_values_tp1.detach()
         value_loss = self.critic_criterion(q_values_t, q_target_t).mean()
 
-        return policy_loss, value_loss
+        return value_loss
 
     def _categorical_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
-        gamma = self.gamma**self.n_step
-
-        # actor loss
-        logits_tp0 = self.critic(states_t, self.actor(states_t))
-        probs_tp0 = F.softmax(logits_tp0, dim=-1)
-        q_values_tp0 = torch.sum(probs_tp0 * self.z, dim=-1)
-        policy_loss = -torch.mean(q_values_tp0)
+        gamma = self._gamma ** self._n_step
 
         # critic loss (kl-divergence between categorical distributions)
-        logits_t = self.critic(states_t, actions_t)
-        logits_tp1 = self.target_critic(
-            states_tp1, self.target_actor(states_tp1)
-        ).detach()
+        indices_t = actions_t.repeat(1, self.num_atoms).unsqueeze(1)
+        logits_t = self.critic(states_t).gather(1, indices_t).squeeze(1)
+
+        all_logits_tp1 = self.target_critic(states_tp1).detach()
+        q_values_tp1 = torch.sum(
+            F.softmax(all_logits_tp1, dim=-1) * self.z, dim=-1
+        )
+        actions_tp1 = torch.argmax(q_values_tp1, dim=-1, keepdim=True)
+        indices_tp1 = actions_tp1.repeat(1, self.num_atoms).unsqueeze(1)
+        logits_tp1 = all_logits_tp1.gather(1, indices_tp1).squeeze(1)
         atoms_target_t = rewards_t + (1 - done_t) * gamma * self.z
 
         value_loss = categorical_loss(
@@ -76,49 +70,42 @@ class DDPG(AlgorithmContinuous):
             self.v_min, self.v_max
         )
 
-        return policy_loss, value_loss
+        return value_loss
 
     def _quantile_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
-        gamma = self.gamma**self.n_step
-
-        # actor loss
-        policy_loss = -torch.mean(self.critic(states_t, self.actor(states_t)))
+        gamma = self._gamma ** self._n_step
 
         # critic loss (quantile regression)
-        atoms_t = self.critic(states_t, actions_t)
-        atoms_tp1 = self.target_critic(
-            states_tp1, self.target_actor(states_tp1)
-        ).detach()
+        indices_t = actions_t.repeat(1, self.num_atoms).unsqueeze(1)
+        atoms_t = self.critic(states_t).gather(1, indices_t).squeeze(1)
+
+        all_atoms_tp1 = self.target_critic(states_tp1).detach()
+        q_values_tp1 = all_atoms_tp1.mean(dim=-1)
+        actions_tp1 = torch.argmax(q_values_tp1, dim=-1, keepdim=True)
+        indices_tp1 = actions_tp1.repeat(1, self.num_atoms).unsqueeze(1)
+        atoms_tp1 = all_atoms_tp1.gather(1, indices_tp1).squeeze(1)
         atoms_target_t = rewards_t + (1 - done_t) * gamma * atoms_tp1
 
         value_loss = quantile_loss(
-            atoms_t, atoms_target_t, self.tau, self.n_atoms,
+            atoms_t, atoms_target_t, self.tau, self.num_atoms,
             self.critic_criterion
         )
 
-        return policy_loss, value_loss
+        return value_loss
 
-    def update_step(
-        self, policy_loss, value_loss, actor_update=True, critic_update=True
-    ):
-        # actor update
-        actor_update_metrics = {}
-        if actor_update:
-            actor_update_metrics = self.actor_update(policy_loss) or {}
-
+    def update_step(self, value_loss, critic_update=True):
         # critic update
         critic_update_metrics = {}
         if critic_update:
             critic_update_metrics = self.critic_update(value_loss) or {}
 
-        loss = value_loss + policy_loss
+        loss = value_loss
         metrics = {
             "loss": loss.item(),
-            "loss_critic": value_loss.item(),
-            "loss_actor": policy_loss.item()
+            "loss_critic": value_loss.item()
         }
-        metrics = {**metrics, **actor_update_metrics, **critic_update_metrics}
+        metrics = {**metrics, **critic_update_metrics}
 
         return metrics
