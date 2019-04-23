@@ -2,9 +2,9 @@ import numpy as np
 import torch
 
 
-def precision(outputs, targets, topk=(1, )):
+def accuracy(outputs, targets, topk=(1, )):
     """
-    Computes the precision@k for the specified values of k
+    Computes the accuracy@k for the specified values of k
     """
     max_k = max(topk)
     batch_size = targets.size(0)
@@ -20,10 +20,10 @@ def precision(outputs, targets, topk=(1, )):
     return res
 
 
-def average_precision(outputs, targets, k=10):
+def average_accuracy(outputs, targets, k=10):
     """
-    Computes the average precision at k.
-    This function computes the average precision at k
+    Computes the average accuracy at k.
+    This function computes the average accuracy at k
         between two lists of items.
     Parameters
     ----------
@@ -36,7 +36,7 @@ def average_precision(outputs, targets, k=10):
     Returns
     -------
     score : double
-            The average precision at k over the input lists
+            The average accuracy at k over the input lists
     """
     if len(outputs) > k:
         outputs = outputs[:k]
@@ -55,10 +55,10 @@ def average_precision(outputs, targets, k=10):
     return score / min(len(targets), k)
 
 
-def mean_average_precision(outputs, targets, topk=(1, )):
+def mean_average_accuracy(outputs, targets, topk=(1, )):
     """
-    Computes the mean average precision at k.
-    This function computes the mean average precision at k between two lists
+    Computes the mean average accuracy at k.
+    This function computes the mean average accuracy at k between two lists
         of lists of items.
     Parameters
     ----------
@@ -71,7 +71,7 @@ def mean_average_precision(outputs, targets, topk=(1, )):
     Returns
     -------
     score : double
-            The mean average precision at k over the input lists
+            The mean average accuracy at k over the input lists
     """
     max_k = max(topk)
     _, pred = outputs.topk(max_k, 1, True, True)
@@ -86,7 +86,7 @@ def mean_average_precision(outputs, targets, topk=(1, )):
     res = []
     for k in topk:
         ap = np.mean(
-            [average_precision(p, a, k) for a, p in zip(targets, pred)]
+            [average_accuracy(p, a, k) for a, p in zip(targets, pred)]
         )
         res.append(ap)
     return res

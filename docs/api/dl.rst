@@ -75,7 +75,7 @@ MultiMetrics
     :members:
     :undoc-members:
 
-.. autoclass:: PrecisionCallback
+.. autoclass:: AccuracyCallback
     :members:
     :undoc-members:
 
