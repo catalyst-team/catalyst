@@ -1,5 +1,5 @@
 args:
-  logdir: ./logs/rl-gym-td3  #  change me
+  logdir: ./logs/rl-gym-ddpg  #  change me
   expdir: null
 
   vis: 0
@@ -8,7 +8,7 @@ args:
 
 db:
   port: 12000
-  prefix: gym-td3  # TODO: remove
+  prefix: gym-ddpg
 
 environment:
   environment: GymWrapper
@@ -77,16 +77,12 @@ agents:
 #      num_atoms: 4
 
 algorithm:
-  algorithm: TD3
+  algorithm: DDPG
 
   n_step: 1
   gamma: 0.99
   actor_tau: 0.01
   critic_tau: 0.01
-
-  num_critics: 2
-  action_noise_std: 0.1
-  action_noise_clip: 0.5
 
   critic_loss_params:
     criterion: HuberLoss

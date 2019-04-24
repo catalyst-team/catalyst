@@ -3,21 +3,25 @@ import sys
 import shutil
 import pathlib
 from importlib.util import spec_from_file_location, module_from_spec
-from catalyst.utils.misc import import_module
 
 
-def import_experiment_and_runner(exp_dir: pathlib.Path):
+def import_module(expdir: pathlib.Path):
     # @TODO: better PYTHONPATH handling
-    sys.path.insert(0, str(exp_dir.absolute()))
-    sys.path.insert(0, os.path.dirname(str(exp_dir.absolute())))
+    sys.path.insert(0, str(expdir.absolute()))
+    sys.path.insert(0, os.path.dirname(str(expdir.absolute())))
     s = spec_from_file_location(
-        exp_dir.name,
-        str(exp_dir.absolute() / "__init__.py"),
-        submodule_search_locations=[exp_dir.absolute()]
+        expdir.name,
+        str(expdir.absolute() / "__init__.py"),
+        submodule_search_locations=[expdir.absolute()]
     )
     m = module_from_spec(s)
     s.loader.exec_module(m)
-    sys.modules[exp_dir.name] = m
+    sys.modules[expdir.name] = m
+    return m
+
+
+def import_experiment_and_runner(expdir: pathlib.Path):
+    m = import_module(expdir)
     Experiment, Runner = m.Experiment, m.Runner
     return Experiment, Runner
 

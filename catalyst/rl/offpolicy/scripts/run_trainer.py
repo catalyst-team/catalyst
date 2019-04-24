@@ -1,29 +1,29 @@
 #!/usr/bin/env python
-import atexit
 
-import argparse
 import os
-import torch
-from pprint import pprint
-from redis import StrictRedis
+import atexit
+import argparse
 
-from catalyst.dl.scripts.utils import prepare_modules
-from catalyst.rl.offpolicy.trainer import Trainer
+
+from catalyst.dl.scripts.utils import import_module
 from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS
+from catalyst.rl.offpolicy.trainer import Trainer
+from catalyst.rl.db.redis import RedisDB
 from catalyst.utils.config import parse_args_uargs, dump_config
-from catalyst.utils.misc import set_global_seeds
-
-set_global_seeds(42)
-os.environ["OMP_NUM_THREADS"] = "1"
-torch.set_num_threads(1)
+from catalyst.utils.misc import set_global_seed
 
 
 def build_args(parser):
-    parser.add_argument("--config", type=str, required=True)
+    parser.add_argument(
+        "-C",
+        "--config",
+        help="path to config/configs",
+        required=True
+    )
     parser.add_argument("--expdir", type=str, default=None)
-    parser.add_argument("--algorithm", type=str, default=None)
-    parser.add_argument("--environment", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
+    parser.add_argument("--resume", type=str, default=None)
+    parser.add_argument("--seed", type=int, default=42)
 
     return parser
 
@@ -37,41 +37,36 @@ def parse_args():
 
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
+    set_global_seed(args.seed)
 
     if args.logdir is not None:
         os.makedirs(args.logdir, exist_ok=True)
         dump_config(args.config, args.logdir)
 
     if args.expdir is not None:
-        modules = prepare_modules(  # noqa: F841
-            expdir=args.expdir,
-            dump_dir=args.logdir)
+        module = import_module(expdir=args.expdir)  # noqa: F841
 
-    algorithm = ALGORITHMS.get(args.algorithm)
-    if args.environment is not None:
-        # @TODO: remove this hack
-        # come on, just refactor whole rl
-        environment_fn = ENVIRONMENTS.get(args.environment)
-        env = environment_fn(**config["env"])
-        config["shared"]["observation_size"] = env.observation_shape[0]
-        config["shared"]["action_size"] = env.action_shape[0]
-        del env
-    algorithm_kwargs = algorithm.prepare_for_trainer(config)
+    db_server = RedisDB(
+        port=config.get("db", {}).get("port", 12000),
+        prefix=config.get("db", {}).get("prefix", "")
+    )
 
-    redis_server = StrictRedis(port=config.get("redis", {}).get("port", 12000))
-    redis_prefix = config.get("redis", {}).get("prefix", "")
+    env = ENVIRONMENTS.get_from_params(**config["environment"])
 
-    pprint(config["trainer"])
-    pprint(algorithm_kwargs)
+    algorithm_name = config["algorithm"].pop("algorithm")
+    algorithm_fn = ALGORITHMS.get(algorithm_name)
+    algorithm = algorithm_fn.prepare_for_trainer(env_spec=env, config=config)
+
+    if args.resume is not None:
+        algorithm.load_checkpoint(filepath=args.resume)
 
     trainer = Trainer(
+        algorithm=algorithm,
+        env_spec=env,
+        db_server=db_server,
         **config["trainer"],
-        **algorithm_kwargs,
         logdir=args.logdir,
-        redis_server=redis_server,
-        redis_prefix=redis_prefix)
-
-    pprint(trainer)
+    )
 
     def on_exit():
         for p in trainer.get_processes():

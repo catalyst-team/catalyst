@@ -4,30 +4,32 @@ import os
 import copy
 import atexit
 import argparse
-from pprint import pprint
 import multiprocessing as mp
-from redis import StrictRedis
 import torch
 
-from catalyst.dl.scripts.utils import prepare_modules
+from catalyst.dl.scripts.utils import import_module
 from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS
 from catalyst.utils.config import parse_args_uargs
-from catalyst.utils.misc import set_global_seeds, boolean_flag
+from catalyst.utils.misc import set_global_seed, boolean_flag
 from catalyst.rl.offpolicy.sampler import Sampler
-import catalyst.rl.random_process as rp
+from catalyst.rl.offpolicy.exploration import ExplorationHandler
+from catalyst.rl.db.redis import RedisDB
 
-set_global_seeds(42)
 os.environ["OMP_NUM_THREADS"] = "1"
 torch.set_num_threads(1)
 
 
 def build_args(parser):
-    parser.add_argument("--config", type=str, required=True)
+    parser.add_argument(
+        "-C",
+        "--config",
+        help="path to config/configs",
+        required=True
+    )
     parser.add_argument("--expdir", type=str, default=None)
-    parser.add_argument("--algorithm", type=str, default=None)
-    parser.add_argument("--environment", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--resume", type=str, default=None)
+    parser.add_argument("--seed", type=int, default=42)
 
     parser.add_argument(
         "--vis",
@@ -41,29 +43,9 @@ def build_args(parser):
         "--train",
         type=int,
         default=None)
-    parser.add_argument(
-        "--action-noise-prob",
-        type=float,
-        default=None)
-    parser.add_argument(
-        "--param-noise-prob",
-        type=float,
-        default=None)
-    parser.add_argument(
-        "--max-noise-power",
-        type=float,
-        default=None)
-    parser.add_argument(
-        "--max-action-noise",
-        type=float,
-        default=None)
-    parser.add_argument(
-        "--max-param-noise",
-        type=float,
-        default=None)
 
-    boolean_flag(parser, "debug", default=False)
-    boolean_flag(parser, "redis", default=True)
+    boolean_flag(parser, "check", default=False)
+    boolean_flag(parser, "db", default=True)
 
     return parser
 
@@ -77,83 +59,55 @@ def parse_args():
 
 def run_sampler(
     *,
+    config,
     logdir,
-    algorithm,
-    environment,
-    config, vis, infer,
-    action_noise_prob,
-    param_noise_prob,
-    action_noise=None,
-    param_noise=None,
+    algorithm_fn,
+    environment_fn,
+    vis,
+    infer,
+    seed=42,
     id=None,
     resume=None,
-    redis=True
+    db=True,
+    exploration_power=1.0
 ):
     config_ = copy.deepcopy(config)
-    action_noise = action_noise or 0
-    param_noise = param_noise or 0
+    id = 0 if id is None else id
+    set_global_seed(seed + id)
 
-    if not redis:
-        redis_server = None
-        redis_prefix = None
-    else:
-        redis_server = StrictRedis(
-            port=config_.get("redis", {}).get("port", 12000))
-        redis_prefix = config_.get("redis", {}).get("prefix", "")
+    db_server = RedisDB(
+        port=config.get("db", {}).get("port", 12000),
+        prefix=config.get("db", {}).get("prefix", "")
+    ) if db else None
 
-    id = id or 0
-    set_global_seeds(42 + id)
+    env = environment_fn(**config_["environment"], visualize=vis)
+    agent = algorithm_fn.prepare_for_sampler(env_spec=env, config=config_)
 
-    if "randomized_start" in config_["env"]:
-        config_["env"]["randomized_start"] = (
-            config_["env"]["randomized_start"] and not infer)
-    env = environment(**config_["env"], visualize=vis)
-    # @TODO: remove this hack
-    config_["shared"]["observation_size"] = env.observation_shape[0]
-    config_["shared"]["action_size"] = env.action_shape[0]
+    exploration_params = config_["sampler"].pop("exploration_params", None)
+    exploration_handler = ExplorationHandler(env=env, *exploration_params) \
+        if exploration_params is not None \
+        else None
+    if exploration_handler is not None:
+        exploration_handler.set_power(exploration_power)
 
-    algo_kwargs = algorithm.prepare_for_sampler(config_)
-
-    rp_params = config_.get("random_process", {})
-    random_process = rp.__dict__[
-        rp_params.pop("random_process", "RandomProcess")]
-    rp_params["sigma"] = action_noise
-    rp_params["size"] = config_["shared"]["action_size"]
-    random_process = random_process(**rp_params)
-
-    seeds = config_.get("seeds", None) \
-        if infer \
-        else config_.get("train_seeds", None)
-    min_episode_steps = config_["sampler"].pop("min_episode_steps", None)
-    min_episode_steps = min_episode_steps if not infer else None
-    min_episode_reward = config_["sampler"].pop("min_episode_reward", None)
-    min_episode_reward = min_episode_reward if not infer else None
-
-    if seeds is not None:
-        min_episode_steps = None
-        min_episode_reward = None
-
-    pprint(config_["sampler"])
-    pprint(algo_kwargs)
+    mode = "infer" if infer else "train"
+    valid_seeds = config_["sampler"].pop("valid_seeds")
+    seeds = valid_seeds if infer else None
 
     sampler = Sampler(
-        **config_["sampler"],
-        **algo_kwargs,
+        agent=agent,
         env=env,
-        logdir=logdir, id=id,
-        redis_server=redis_server,
-        redis_prefix=redis_prefix,
-        mode="infer" if infer else "train",
-        random_process=random_process,
-        action_noise_prob=action_noise_prob,
-        param_noise_prob=param_noise_prob,
-        param_noise_d=param_noise,
-        seeds=seeds,
-        min_episode_steps=min_episode_steps,
-        min_episode_reward=min_episode_reward,
-        resume=resume)
+        db_server=db_server,
+        exploration_handler=exploration_handler,
+        **config_["sampler"],
+        logdir=logdir,
+        id=id,
+        mode=mode,
+        seeds=seeds
+    )
 
-    pprint(sampler)
+    if resume is not None:
+        sampler.load_checkpoint(filepath=resume)
 
     sampler.run()
 
@@ -162,12 +116,13 @@ def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
 
     if args.expdir is not None:
-        modules = prepare_modules(  # noqa: F841
-            expdir=args.expdir,
-            dump_dir=args.logdir)
+        module = import_module(expdir=args.expdir)  # noqa: F841
 
-    algorithm = ALGORITHMS.get(args.algorithm)
-    environment = ENVIRONMENTS.get(args.environment)
+    environment_name = config["environment"].pop("environment")
+    environment_fn = ENVIRONMENTS.get(environment_name)
+
+    algorithm_name = config["algorithm"].pop("algorithm")
+    algorithm_fn = ALGORITHMS.get(algorithm_name)
 
     processes = []
     sampler_id = 0
@@ -179,33 +134,29 @@ def main(args, unknown_args):
     atexit.register(on_exit)
 
     params = dict(
+        seed=args.seed,
         logdir=args.logdir,
-        algorithm=algorithm,
-        environment=environment,
+        algorithm_fn=algorithm_fn,
+        environment_fn=environment_fn,
         config=config,
         resume=args.resume,
-        redis=args.redis
+        db=args.db
     )
 
-    if args.debug:
+    if args.check:
         params_ = dict(
             vis=False,
             infer=False,
-            action_noise=0.5,
-            param_noise=0.5,
-            action_noise_prob=args.action_noise_prob,
-            param_noise_prob=args.param_noise_prob,
-            id=sampler_id,
+            id=sampler_id
         )
         run_sampler(**params, **params_)
 
     for i in range(args.vis):
         params_ = dict(
-            vis=False,
-            infer=False,
-            action_noise_prob=0,
-            param_noise_prob=0,
+            vis=True,
+            infer=True,
             id=sampler_id,
+            exploration_power=0.0
         )
         p = mp.Process(target=run_sampler, kwargs=dict(**params, **params_))
         p.start()
@@ -216,9 +167,8 @@ def main(args, unknown_args):
         params_ = dict(
             vis=False,
             infer=True,
-            action_noise_prob=0,
-            param_noise_prob=0,
             id=sampler_id,
+            exploration_power=0.0
         )
         p = mp.Process(target=run_sampler, kwargs=dict(**params, **params_))
         p.start()
@@ -226,20 +176,12 @@ def main(args, unknown_args):
         sampler_id += 1
 
     for i in range(1, args.train + 1):
-        action_noise = args.max_action_noise * i / args.train \
-            if args.max_action_noise is not None \
-            else None
-        param_noise = args.max_param_noise * i / args.train \
-            if args.max_param_noise is not None \
-            else None
+        exploration_power = i / args.train
         params_ = dict(
             vis=False,
             infer=False,
-            action_noise=action_noise,
-            param_noise=param_noise,
-            action_noise_prob=args.action_noise_prob,
-            param_noise_prob=args.param_noise_prob,
             id=sampler_id,
+            exploration_power=exploration_power
         )
         p = mp.Process(target=run_sampler, kwargs=dict(**params, **params_))
         p.start()

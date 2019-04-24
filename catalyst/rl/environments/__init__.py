@@ -1,2 +1,6 @@
 # flake8: noqa
-from .gym_wrapper import *
+from .core import *
+from .gym import *
+
+
+__all__ = ["EnvironmentSpec", "GymWrapper"]

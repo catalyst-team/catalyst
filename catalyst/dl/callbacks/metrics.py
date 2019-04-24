@@ -121,7 +121,7 @@ class IouCallback(MetricCallback):
         mode: str = "hard",
         eps: float = 1e-7,
         threshold: float = 0.5,
-        activation: str = "sigmoid"
+        activation: str = "sigmoid",
     ):
         """
         Args:
@@ -200,32 +200,32 @@ class F1ScoreCallback(MetricCallback):
         )
 
 
-class PrecisionCallback(MultiMetricCallback):
+class AccuracyCallback(MultiMetricCallback):
     """
-    Precision metric callback.
+    Accuracy metric callback.
     """
 
     def __init__(
         self,
         input_key: str = "targets",
         output_key: str = "logits",
-        prefix: str = "precision",
-        precision_args: List[int] = None,
+        prefix: str = "accuracy",
+        accuracy_args: List[int] = None,
     ):
         """
-        :param input_key: input key to use for precision calculation;
+        :param input_key: input key to use for accuracy calculation;
             specifies our `y_true`.
-        :param output_key: output key to use for precision calculation;
+        :param output_key: output key to use for accuracy calculation;
             specifies our `y_pred`.
-        :param precision_args: specifies which precision@K to log.
+        :param accuracy_args: specifies which accuracy@K to log.
             [1] - accuracy
-            [1, 3] - accuracy and precision@3
-            [1, 3, 5] - precision at 1, 3 and 5
+            [1, 3] - accuracy at 1 and 3
+            [1, 3, 5] - accuracy at 1, 3 and 5
         """
         super().__init__(
             prefix=prefix,
-            metric_fn=metrics.precision,
-            list_args=precision_args or [1],
+            metric_fn=metrics.accuracy,
+            list_args=accuracy_args or [1],
             input_key=input_key,
             output_key=output_key
         )
@@ -245,10 +245,10 @@ class MapKCallback(MultiMetricCallback):
     ):
         """
         :param input_key: input key to use for
-            calculation mean average precision at k;
+            calculation mean average accuracy at k;
             specifies our `y_true`.
         :param output_key: output key to use for
-            calculation mean average precision at k;
+            calculation mean average accuracy at k;
             specifies our `y_pred`.
         :param map_args: specifies which map@K to log.
             [1] - map@1
@@ -257,7 +257,7 @@ class MapKCallback(MultiMetricCallback):
         """
         super().__init__(
             prefix=prefix,
-            metric_fn=metrics.mean_average_precision,
+            metric_fn=metrics.mean_average_accuracy,
             list_args=map_args or [1],
             input_key=input_key,
             output_key=output_key

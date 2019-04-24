@@ -4,7 +4,6 @@ import copy
 import random
 import collections
 import numpy as np
-import importlib.util
 from itertools import tee
 
 
@@ -60,7 +59,7 @@ def merge_dicts(*dicts: dict) -> dict:
     return dict_
 
 
-def set_global_seeds(seed: int) -> None:
+def set_global_seed(seed: int) -> None:
     """
     Sets random seed into PyTorch, TensorFlow, Numpy and Random
 
@@ -82,23 +81,6 @@ def set_global_seeds(seed: int) -> None:
         tf.set_random_seed(seed)
     random.seed(seed)
     np.random.seed(seed)
-
-
-def import_module(name: str, path: str):
-    """
-    Imports module by filepath
-
-    Args:
-        name: name of the module
-        path: file location
-
-    Returns:
-        imported module
-    """
-    spec = importlib.util.spec_from_file_location(name, path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
 
 
 def boolean_flag(

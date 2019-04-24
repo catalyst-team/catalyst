@@ -34,8 +34,19 @@ ENVIRONMENTS = Registry("environment")
 ENVIRONMENTS.late_add(_env_late_add)
 Environment = ENVIRONMENTS.add
 
+
+def _exploration_late_add(r: Registry):
+    from .offpolicy import exploration as m
+    r.add_from_module(m)
+
+
+EXPLORATION = Registry("exploration")
+EXPLORATION.late_add(_exploration_late_add)
+Exploration = EXPLORATION.add
+
 __all__ = [
-    "Agent", "Environment", "Algorithm", "Criterion", "Optimizer", "Scheduler",
-    "Module", "MODULES", "CRITERIONS", "OPTIMIZERS", "SCHEDULERS",
+    "Agent", "Algorithm", "Environment", "Exploration", "AGENTS", "ALGORITHMS",
+    "ENVIRONMENTS", "EXPLORATION", "Module", "Criterion", "Optimizer",
+    "Scheduler", "MODULES", "CRITERIONS", "OPTIMIZERS", "SCHEDULERS",
     "GRAD_CLIPPERS"
 ]

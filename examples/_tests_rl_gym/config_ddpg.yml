@@ -1,18 +1,18 @@
 args:
-  logdir: ./logs/rl-gym-td3  #  change me
+  logdir: ./logs/_tests_rl_gym_ddpg  #  change me
   expdir: null
 
   vis: 0
-  infer: 1  #  change me
-  train: 4  #  change me
+  infer: 0  #  change me
+  train: 1  #  change me
 
 db:
   port: 12000
-  prefix: gym-td3  # TODO: remove
+  prefix: gym-ddpg  # TODO: remove
 
 environment:
   environment: GymWrapper
-  env_name: LunarLanderContinuous-v2
+  env_name: MountainCarContinuous-v0
 
   history_len: 3
 
@@ -26,19 +26,19 @@ agents:
 
     state_net_params:  # state -> hidden representation
       observation_net_params:
-        hiddens: [32]  # first hidden would be taken from state_shape
+        hiddens: [8]  # first hidden would be taken from state_shape
         layer_fn: Linear
         norm_fn: LayerNorm
         activation_fn: ReLU
         bias: false
       main_net_params:
-        hiddens: [32, 32]
+        hiddens: [8, 8]
         layer_fn: Linear
         norm_fn: LayerNorm
         activation_fn: ReLU
         bias: false
     policy_head_params:  # hidden representation -> ~policy
-      in_features: 32  # out features would be taken from action_shape
+      in_features: 8  # out features would be taken from action_shape
       policy_type: null
       out_activation: Tanh
 
@@ -47,26 +47,26 @@ agents:
 
     state_action_net_params:  # state -> hidden representation
       observation_net_params:
-        hiddens: [32]  # first hidden would be taken from state_shape
+        hiddens: [8]  # first hidden would be taken from state_shape
         layer_fn: Linear
         norm_fn: LayerNorm
         activation_fn: ReLU
         bias: false
       action_net_params:
-        hiddens: [32]  # first hidden would be taken from action_shape
+        hiddens: [8]  # first hidden would be taken from action_shape
         layer_fn: Linear
         norm_fn: LayerNorm
         activation_fn: ReLU
         bias: false
       main_net_params:
-        hiddens: [64, 32]
+        hiddens: [16, 8]
         layer_fn: Linear
         norm_fn: LayerNorm
         activation_fn: ReLU
         bias: false
 
     value_head_params:  # hidden representation -> value
-      in_features: 32  # out features would be taken from action_shape
+      in_features: 8  # out features would be taken from action_shape
       num_atoms: 1
 
 #      distribution: categorical
@@ -77,16 +77,12 @@ agents:
 #      num_atoms: 4
 
 algorithm:
-  algorithm: TD3
+  algorithm: DDPG
 
   n_step: 1
   gamma: 0.99
   actor_tau: 0.01
   critic_tau: 0.01
-
-  num_critics: 2
-  action_noise_std: 0.1
-  action_noise_clip: 0.5
 
   critic_loss_params:
     criterion: HuberLoss
@@ -113,14 +109,14 @@ algorithm:
     clip_value: 1.0
 
 trainer:
-  batch_size: 256              # transitions
+  batch_size: 16               # transitions
   num_workers: 1
-  epoch_len: 100               # batches
+  epoch_len: 10                # batches
 
-  replay_buffer_size: 1000000  # transitions
-  start_learning: 500          # transitions
+  replay_buffer_size: 100000   # transitions
+  start_learning: 32           # transitions
 
-  save_period: 100             # epochs
+  save_period: 1               # epochs
   weights_sync_period: 1       # epochs
   target_update_period: 1      # batches
 
