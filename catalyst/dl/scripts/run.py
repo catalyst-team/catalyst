@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+from argparse import ArgumentParser
 from pathlib import Path
 
 from catalyst.utils.config import parse_args_uargs, dump_config
@@ -8,11 +9,15 @@ from catalyst.utils.misc import set_global_seed, boolean_flag
 from catalyst.dl.scripts.utils import import_experiment_and_runner, dump_code
 
 
-def build_args(parser):
+def build_args(parser: ArgumentParser):
     parser.add_argument(
-        "-C",
         "--config",
+        "--configs",
+        "-C",
+        nargs="+",
         help="path to config/configs",
+        metavar="CONFIG_PATH",
+        dest="configs",
         required=True
     )
     parser.add_argument("--expdir", type=str, default=None)
@@ -66,7 +71,7 @@ def main(args, unknown_args):
     runner = Runner()
 
     if experiment.logdir is not None:
-        dump_config(args.config, experiment.logdir)
+        dump_config(args.configs, experiment.logdir)
         dump_code(args.expdir, experiment.logdir)
 
     runner.run_experiment(

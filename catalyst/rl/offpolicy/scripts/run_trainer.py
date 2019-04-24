@@ -4,7 +4,6 @@ import os
 import atexit
 import argparse
 
-
 from catalyst.dl.scripts.utils import import_module
 from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS
 from catalyst.rl.offpolicy.trainer import Trainer
@@ -15,9 +14,13 @@ from catalyst.utils.misc import set_global_seed
 
 def build_args(parser):
     parser.add_argument(
-        "-C",
         "--config",
+        "--configs",
+        "-C",
+        nargs="+",
         help="path to config/configs",
+        metavar="CONFIG_PATH",
+        dest="configs",
         required=True
     )
     parser.add_argument("--expdir", type=str, default=None)
@@ -41,7 +44,7 @@ def main(args, unknown_args):
 
     if args.logdir is not None:
         os.makedirs(args.logdir, exist_ok=True)
-        dump_config(args.config, args.logdir)
+        dump_config(args.configs, args.logdir)
 
     if args.expdir is not None:
         module = import_module(expdir=args.expdir)  # noqa: F841

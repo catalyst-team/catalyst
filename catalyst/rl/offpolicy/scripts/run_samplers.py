@@ -5,6 +5,7 @@ import copy
 import atexit
 import argparse
 import multiprocessing as mp
+
 import torch
 
 from catalyst.dl.scripts.utils import import_module
@@ -21,9 +22,13 @@ torch.set_num_threads(1)
 
 def build_args(parser):
     parser.add_argument(
-        "-C",
         "--config",
+        "--configs",
+        "-C",
+        nargs="+",
         help="path to config/configs",
+        metavar="CONFIG_PATH",
+        dest="configs",
         required=True
     )
     parser.add_argument("--expdir", type=str, default=None)
