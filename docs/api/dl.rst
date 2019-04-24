@@ -10,7 +10,12 @@ DL
 Runner
 ----------
 
-.. automodule:: catalyst.dl.runner
+.. automodule:: catalyst.dl.experiments.runner
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.dl.experiments.experiment
     :members:
     :undoc-members:
     :show-inheritance:
@@ -64,6 +69,18 @@ Metrics
     :undoc-members:
 
 .. autoclass:: IoUCallback
+    :members:
+    :undoc-members:
+
+.. autoclass:: F1ScoreCallback
+    :members:
+    :undoc-members:
+
+.. autoclass:: AUCCallback
+    :members:
+    :undoc-members:
+
+.. autoclass:: ConfusionMatrixCallback
     :members:
     :undoc-members:
 

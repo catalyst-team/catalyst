@@ -200,3 +200,17 @@ class UtilsFactory:
             f"Step should be either 'batch' or 'epoch', got '{step}'"
         metrics = metrics or ["loss"]
         plot_tensorboard_log(logdir, step, metrics, height, width)
+
+
+def get_activation_by_name(activation: str = None):
+    if activation is None or activation == "none":
+        activation_fn = lambda x: x
+    elif activation == "sigmoid":
+        activation_fn = torch.nn.Sigmoid()
+    elif activation == "softmax2d":
+        activation_fn = torch.nn.Softmax2d()
+    else:
+        raise NotImplementedError(
+            "Activation implemented for sigmoid and softmax2d"
+        )
+    return activation_fn

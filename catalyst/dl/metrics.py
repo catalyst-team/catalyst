@@ -1,6 +1,8 @@
 import numpy as np
 import torch
 
+from .utils import get_activation_by_name
+
 
 def accuracy(outputs, targets, topk=(1, )):
     """
@@ -95,32 +97,16 @@ def mean_average_accuracy(outputs, targets, topk=(1, )):
 def dice(outputs, targets, eps: float = 1e-7, activation: str = "sigmoid"):
     """
     Computes the dice metric
-    Parameters
-    ----------
-    outputs : list
-        A list of predicted elements
-    targets : list
-        A list of elements that are to be predicted
-    eps : float
-        epsilon
-    activation: str
-        An torch.nn activation applied to the outputs.
-        Must be one of ['none', 'sigmoid', 'softmax2d']
-    Returns
-    -------
-    score : double
-            Dice score
+        Args:
+        outputs (list):  A list of predicted elements
+        targets (list): A list of elements that are to be predicted
+        eps (float): epsilon
+        activation (str): An torch.nn activation applied to the outputs.
+            Must be one of ['none', 'sigmoid', 'softmax2d']
+    Returns:
+        double:  Dice score
     """
-    if activation is None or activation == "none":
-        activation_fn = lambda x: x
-    elif activation == "sigmoid":
-        activation_fn = torch.nn.Sigmoid()
-    elif activation == "softmax2d":
-        activation_fn = torch.nn.Softmax2d()
-    else:
-        raise NotImplementedError(
-            "Dice is only implemented for sigmoid and softmax2d"
-        )
+    activation_fn = get_activation_by_name(activation)
 
     outputs = activation_fn(outputs)
     intersection = torch.sum(targets * outputs)
@@ -133,7 +119,8 @@ def iou(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     eps: float = 1e-7,
-    threshold: float = 0.5
+    threshold: float = 0.5,
+    activation: str = "sigmoid"
 ):
     """
     Args:
@@ -141,12 +128,21 @@ def iou(
         targets (torch.Tensor):  A list of elements that are to be predicted
         eps (float): epsilon to avoid zero division
         threshold (float): threshold for outputs binarization
+        activation (str): An torch.nn activation applied to the outputs.
+            Must be one of ['none', 'sigmoid', 'softmax2d']
     Returns:
         float: IoU (Jaccard) score
     """
-    outputs = (outputs > threshold).float()
+    activation_fn = get_activation_by_name(activation)
+
+    outputs = activation_fn(outputs)
+
+    if threshold is not None:
+        outputs = (outputs > threshold).float()
+
     intersection = torch.sum(targets * outputs)
     union = torch.sum(targets) + torch.sum(outputs) - intersection + eps
+
     return (intersection + eps) / union
 
 
@@ -157,7 +153,8 @@ def soft_iou(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     eps: float = 1e-7,
-    threshold: float = 0.5
+    threshold: float = 0.5,
+    activation: str = "sigmoid"
 ):
     """
     Args:
@@ -165,6 +162,8 @@ def soft_iou(
         targets (torch.Tensor):  A list of elements that are to be predicted
         eps (float): epsilon to avoid zero division
         threshold (float): threshold for outputs binarization
+        activation (str): An torch.nn activation applied to the outputs.
+            Must be one of ['none', 'sigmoid', 'softmax2d']
     Returns:
         float: SoftIoU (SoftJaccard) score
     """
@@ -175,6 +174,48 @@ def soft_iou(
             targets[:, class_i, :, :],
             eps=eps,
             threshold=threshold,
+            activation=activation,
         )
         jaccards.append(jaccard_i)
     return torch.mean(torch.stack(jaccards))
+
+
+def f_score(
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    beta: float = 1,
+    eps: float = 1e-7,
+    threshold: float = 0.5,
+    activation: str = "sigmoid"
+):
+    """
+    Source:
+        https://github.com/qubvel/segmentation_models.pytorch
+    Args:
+        outputs (torch.Tensor): A list of predicted elements
+        targets (torch.Tensor):  A list of elements that are to be predicted
+        eps (float): epsilon to avoid zero division
+        beta (float): beta param for f_score
+        threshold (float): threshold for outputs binarization
+        activation (str): An torch.nn activation applied to the outputs.
+            Must be one of ['none', 'sigmoid', 'softmax2d']
+    Returns:
+        float: F_1 score
+    """
+    activation_fn = get_activation_by_name(activation)
+
+    outputs = activation_fn(outputs)
+
+    if threshold is not None:
+        outputs = (outputs > threshold).float()
+
+    true_positive = torch.sum(targets * outputs)
+    false_positive = torch.sum(outputs) - true_positive
+    false_negative = torch.sum(targets) - true_positive
+
+    precision_plus_recall = (1 + beta ** 2) * true_positive + \
+        beta ** 2 * false_negative + false_positive + eps
+
+    score = ((1 + beta**2) * true_positive + eps) / precision_plus_recall
+
+    return score
