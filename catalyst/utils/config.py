@@ -1,9 +1,11 @@
 import os
 import json
-import yaml
 import copy
 import shutil
 from collections import OrderedDict
+
+import yaml
+
 from catalyst.utils.misc import merge_dicts
 
 
@@ -47,7 +49,7 @@ def dump_config(config_path: str, logdir: str) -> None:
     os.makedirs(config_dir, exist_ok=True)
 
     config = {}
-    for config_path_in in config_path.split(","):
+    for config_path_in in config_path:
         config_name = config_path_in.rsplit("/", 1)[-1]
         config_path_out = f"{config_dir}/{config_name}"
         shutil.copyfile(config_path_in, config_path_out)
@@ -125,7 +127,7 @@ def parse_args_uargs(args, unknown_args):
 
     # load params
     config = {}
-    for config_path in args_.config.split(","):
+    for config_path in args_.configs:
         with open(config_path, "r") as fin:
             if config_path.endswith("json"):
                 config_ = json.load(fin, object_pairs_hook=OrderedDict)
