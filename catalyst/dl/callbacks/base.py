@@ -144,8 +144,7 @@ class OptimizerCallback(Callback):
         fp16_grad_scale: float = 128.0,
         accumulation_steps: int = 1,
         optimizer_key: str = None,
-        loss_key: str = None,
-        prefix: str = None
+        loss_key: str = None
     ):
         """
         @TODO: docs
@@ -159,7 +158,6 @@ class OptimizerCallback(Callback):
         self.accumulation_steps = accumulation_steps
         self.optimizer_key = optimizer_key
         self.loss_key = loss_key
-        self.prefix = prefix
         self._optimizer_wd = 0
         self._accumulation_counter = 0
 
@@ -193,19 +191,7 @@ class OptimizerCallback(Callback):
                 grad_clip_fn(group["params"])
         optimizer.step()
 
-    def on_batch_start(self, state):
-        state.loss = None
-
     def on_batch_end(self, state):
-        loss = state.get_key(key="loss", inner_key=self.loss_key)
-        if isinstance(loss, list):
-            loss = torch.mean(torch.stack(loss))
-
-        if self.prefix is not None:
-            state.metrics.add_batch_value(metrics_dict={
-                self.prefix: loss.item(),
-            })
-
         if not state.need_backward:
             return
 
@@ -215,6 +201,7 @@ class OptimizerCallback(Callback):
             optimizer = state.get_key(
                 key="optimizer", inner_key=self.optimizer_key
             )
+            loss = state.get_key(key="loss", inner_key=self.loss_key)
             loss.backward()
 
             if (self._accumulation_counter + 1) % self.accumulation_steps == 0:
@@ -298,54 +285,17 @@ class SchedulerCallback(Callback):
 
 
 class LossCallback(Callback):
-    def __init__(
-        self,
-        input_key: str = "targets",
-        output_key: str = "logits",
-        prefix: str = "loss",
-        criterion_key: str = None,
-        loss_key: str = None
-    ):
+    def __init__(self, input_key: str = "targets", output_key: str = "logits"):
         self.input_key = input_key
         self.output_key = output_key
-        self.prefix = prefix
-        self.criterion_key = criterion_key
-        self.loss_key = loss_key
-
-    def _add_loss_to_state(self, state, loss):
-        if self.loss_key is None:
-            if state.loss is not None:
-                if isinstance(state.loss, list):
-                    state.loss.append(loss)
-                else:
-                    state.loss = [state.loss, loss]
-            else:
-                state.loss = loss
-        else:
-            if state.loss is not None:
-                assert isinstance(state.loss, dict)
-                state.loss[self.loss_key] = loss
-            else:
-                state.loss = {self.loss_key: loss}
 
     def on_stage_start(self, state):
         assert state.criterion is not None
 
     def on_batch_end(self, state):
-        criterion = state.get_key(
-            key="criterion", inner_key=self.criterion_key
+        state.loss = state.criterion(
+            state.output[self.output_key], state.input[self.input_key]
         )
-
-        loss = criterion(
-            state.output[self.output_key],
-            state.input[self.input_key]
-        )
-
-        state.metrics.add_batch_value(metrics_dict={
-            self.prefix: loss.item(),
-        })
-
-        self._add_loss_to_state(state, loss)
 
 
 class EarlyStoppingCallback(Callback):

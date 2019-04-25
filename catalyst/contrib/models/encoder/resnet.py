@@ -34,12 +34,9 @@ class ResnetEncoder(nn.Module):
                 else pooling_layer_fn(**pooling_kwargs)
             modules += [pooling_layer]
 
-            if hasattr(pooling_layer, "out_features"):
-                out_features = pooling_layer.out_features(
-                    in_features=resnet.fc.in_features
-                )
-            else:
-                out_features = None
+            out_features = pooling_layer.out_features(
+                in_features=resnet.fc.in_features
+            )
         else:
             out_features = resnet.fc.in_features
 

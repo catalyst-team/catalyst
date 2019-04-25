@@ -46,7 +46,7 @@ class GlobalConcatPool2d(nn.Module):
 
 
 class GlobalAttnPool2d(nn.Module):
-    def __init__(self, in_features, activation_fn="Sigmoid"):
+    def __init__(self, in_features, activation_fn="Tanh"):
         super().__init__()
 
         activation_fn = MODULES.get_if_str(activation_fn)
@@ -57,9 +57,10 @@ class GlobalAttnPool2d(nn.Module):
         )
 
     def forward(self, x):
+        h, w = x.shape[2:]
         x_a = self.attn(x)
         x = x * x_a
-        x = torch.sum(x, dim=[-2, -1], keepdim=True)
+        x = torch.sum(x, dim=[-2, -1])
         return x
 
     @staticmethod
@@ -68,7 +69,7 @@ class GlobalAttnPool2d(nn.Module):
 
 
 class GlobalAvgAttnPool2d(nn.Module):
-    def __init__(self, in_features, activation_fn="Sigmoid"):
+    def __init__(self, in_features, activation_fn="Tanh"):
         super().__init__()
         self.avg = GlobalAvgPool2d()
         self.attn = GlobalAttnPool2d(in_features, activation_fn)
@@ -82,7 +83,7 @@ class GlobalAvgAttnPool2d(nn.Module):
 
 
 class GlobalMaxAttnPool2d(nn.Module):
-    def __init__(self, in_features, activation_fn="Sigmoid"):
+    def __init__(self, in_features, activation_fn="Tanh"):
         super().__init__()
         self.max = GlobalMaxPool2d()
         self.attn = GlobalAttnPool2d(in_features, activation_fn)
@@ -96,7 +97,7 @@ class GlobalMaxAttnPool2d(nn.Module):
 
 
 class GlobalConcatAttnPool2d(nn.Module):
-    def __init__(self, in_features, activation_fn="Sigmoid"):
+    def __init__(self, in_features, activation_fn="Tanh"):
         super().__init__()
         self.avg = GlobalAvgPool2d()
         self.max = GlobalMaxPool2d()
