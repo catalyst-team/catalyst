@@ -213,7 +213,7 @@ def stratified_fold_split(
     skf = StratifiedKFold(
         n_splits=n_folds, shuffle=True, random_state=random_state
     )
-    fold_column = np.zeros(len(dataframe))
+    fold_column = np.zeros(len(dataframe), dtype=int)
     for i, (_, test_index) in enumerate(
         skf.split(range(len(dataframe)), dataframe[class_column])
     ):
