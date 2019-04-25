@@ -278,51 +278,87 @@ class ConfigExperiment(Experiment):
         model = self._postprocess_model_for_stage(stage, model)
         return model
 
+    @staticmethod
+    def _get_criterion(**params):
+        key_value_flag = params.pop("_key_value", False)
+
+        if key_value_flag:
+            criterion = {}
+            for key, params_ in params.items():
+                criterion[key] = ConfigExperiment._get_criterion(**params_)
+        else:
+            criterion = CRITERIONS.get_from_params(**params)
+            if criterion is not None and torch.cuda.is_available():
+                criterion = criterion.cuda()
+        return criterion
+
     def get_criterion(self, stage: str) -> _Criterion:
         criterion_params = \
             self.stages_config[stage].get("criterion_params", {})
-
-        criterion = CRITERIONS.get_from_params(**criterion_params)
-
-        if criterion is not None and torch.cuda.is_available():
-            criterion = criterion.cuda()
+        criterion = self._get_criterion(**criterion_params)
         return criterion
+
+    @staticmethod
+    def _get_optimizer(*, model_params, **params):
+        key_value_flag = params.pop("_key_value", False)
+
+        if key_value_flag:
+            optimizer = {}
+            for key, params_ in params.items():
+                optimizer[key] = ConfigExperiment._get_optimizer(
+                    model_params=model_params, **params_)
+        else:
+            optimizer = OPTIMIZERS.get_from_params(
+                **params,
+                params=model_params
+            )
+        return optimizer
 
     def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
         fp16 = isinstance(model, Fp16Wrap)
-        params = utils.prepare_optimizable_params(model.parameters(), fp16)
-
+        model_params = utils.prepare_optimizable_params(
+            model.parameters(), fp16)
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
-
-        optimizer = OPTIMIZERS.get_from_params(
-            **optimizer_params,
-            params=params
-        )
+        optimizer = self._get_optimizer(
+            model_params=model_params, **optimizer_params)
         return optimizer
+
+    @staticmethod
+    def _get_scheduler(*, optimizer, **params):
+        key_value_flag = params.pop("_key_value", False)
+
+        if key_value_flag:
+            scheduler = {}
+            for key, params_ in params.items():
+                scheduler[key] = ConfigExperiment._get_scheduler(
+                    optimizer=optimizer, **params_)
+        else:
+            scheduler = SCHEDULERS.get_from_params(
+                **params,
+                optimizer=optimizer
+            )
+        return scheduler
 
     def get_scheduler(self, stage: str, optimizer) -> _Scheduler:
         scheduler_params = \
             self.stages_config[stage].get("scheduler_params", {})
-
-        scheduler = SCHEDULERS.get_from_params(
-            **scheduler_params,
-            optimizer=optimizer
-        )
+        scheduler = self._get_scheduler(
+            optimizer=optimizer, **scheduler_params)
         return scheduler
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
-        data_conf = dict(self.stages_config[stage]["data_params"])
+        data_params = dict(self.stages_config[stage]["data_params"])
 
-        batch_size = data_conf.pop("batch_size")
-        num_workers = data_conf.pop("num_workers")
-        drop_last = data_conf.pop("drop_last", False)
-        per_gpu_batch_size = data_conf.pop("per_gpu_batch_size", False)
+        batch_size = data_params.pop("batch_size")
+        num_workers = data_params.pop("num_workers")
+        drop_last = data_params.pop("drop_last", False)
+        per_gpu_batch_size = data_params.pop("per_gpu_batch_size", False)
 
         if per_gpu_batch_size:
             batch_size *= max(1, torch.cuda.device_count())
 
-        datasets = self.get_datasets(stage=stage, **data_conf)
+        datasets = self.get_datasets(stage=stage, **data_params)
 
         loaders = OrderedDict()
         for name, ds_ in datasets.items():
