@@ -103,7 +103,8 @@ class RunnerState(FrozenClass):
     def _handle_runner_metrics(self):
         values = {}
         for key, value in zip(
-            ["base/lr", "base/momentum"], [self.lr, self.momentum]
+            ["base/lr", "base/momentum", "loss"],
+            [self.lr, self.momentum, self.loss]
         ):
             if value is not None:
                 values[key] = value
