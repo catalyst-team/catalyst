@@ -174,7 +174,7 @@ class Trainer:
             mode = self._sampler_weight_mode
             state_dict = self.algorithm.__dict__[mode].state_dict()
             state_dict = {
-                k: v.tolist()
+                k: v.detach().cpu().numpy()
                 for k, v in state_dict.items()
             }
             self.db_server.dump_weights(weights=state_dict, suffix=mode)

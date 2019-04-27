@@ -1,21 +1,20 @@
-import zlib
-import marshal
+import pyarrow
 
 
-def serialize(object):
+def serialize(x):
     """
     Serialize the data into bytes using marshal and zlib
 
     Args:
-        object: a value
+        x: a value
 
     Returns:
         Returns a bytes object containing compressed with zlib data.
     """
-    return zlib.compress(marshal.dumps(object, 2))
+    return pyarrow.serialize(x).to_buffer().to_pybytes()
 
 
-def deserialize(bytes):
+def deserialize(serialized_x):
     """
     Deserialize bytes into an object using zlib and marshal
 
@@ -25,4 +24,4 @@ def deserialize(bytes):
     Returns:
         Returns a value decompressed from the bytes-like object.
     """
-    return marshal.loads(zlib.decompress(bytes))
+    return pyarrow.deserialize(serialized_x)

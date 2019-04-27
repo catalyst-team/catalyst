@@ -105,7 +105,7 @@ class Sampler:
     def _store_trajectory(self):
         if self.db_server is None:
             return
-        trajectory = self.episode_runner.get_trajectory(tolist=True)
+        trajectory = self.episode_runner.get_trajectory()
         self.db_server.push_trajectory(trajectory)
 
     def _prepare_seed(self):

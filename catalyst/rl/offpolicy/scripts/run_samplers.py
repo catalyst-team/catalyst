@@ -2,6 +2,7 @@
 
 import os
 import copy
+import time
 import atexit
 import argparse
 import multiprocessing as mp
@@ -18,6 +19,7 @@ from catalyst.rl.db.redis import RedisDB
 
 os.environ["OMP_NUM_THREADS"] = "1"
 torch.set_num_threads(1)
+STEP_DELAY = 1
 
 
 def build_args(parser):
@@ -167,6 +169,7 @@ def main(args, unknown_args):
         p.start()
         processes.append(p)
         sampler_id += 1
+        time.sleep(STEP_DELAY)
 
     for i in range(args.infer):
         params_ = dict(
@@ -179,6 +182,7 @@ def main(args, unknown_args):
         p.start()
         processes.append(p)
         sampler_id += 1
+        time.sleep(STEP_DELAY)
 
     for i in range(1, args.train + 1):
         exploration_power = i / args.train
@@ -192,6 +196,7 @@ def main(args, unknown_args):
         p.start()
         processes.append(p)
         sampler_id += 1
+        time.sleep(STEP_DELAY)
 
     for p in processes:
         p.join()

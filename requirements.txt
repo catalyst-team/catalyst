@@ -20,4 +20,5 @@ scikit-learn>=0.20
 # For RL
 mock
 redis
+pyarrow
 gym

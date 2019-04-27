@@ -7,6 +7,8 @@ from importlib.util import spec_from_file_location, module_from_spec
 
 def import_module(expdir: pathlib.Path):
     # @TODO: better PYTHONPATH handling
+    if not isinstance(expdir, pathlib.Path):
+        expdir = pathlib.Path(expdir)
     sys.path.insert(0, str(expdir.absolute()))
     sys.path.insert(0, os.path.dirname(str(expdir.absolute())))
     s = spec_from_file_location(
@@ -21,6 +23,8 @@ def import_module(expdir: pathlib.Path):
 
 
 def import_experiment_and_runner(expdir: pathlib.Path):
+    if not isinstance(expdir, pathlib.Path):
+        expdir = pathlib.Path(expdir)
     m = import_module(expdir)
     Experiment, Runner = m.Experiment, m.Runner
     return Experiment, Runner
