@@ -1,3 +1,4 @@
+safitty
 # Framework must-haves
 numpy>=1.14.6
 torch>=0.4.1

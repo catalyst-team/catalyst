@@ -4,6 +4,8 @@ import numpy as np
 import torch
 from skimage.color import label2rgb
 
+from catalyst.dl.utils import get_optimizer_momentum
+
 
 def get_val_from_metric(metric_value):
     if isinstance(metric_value, (int, float)):
@@ -44,15 +46,6 @@ def to_batch_metrics(*, state, metric_key, state_key=None):
     else:
         state.batch_metrics[f"{metric_key}"] = \
             get_val_from_metric(metric)
-
-
-def get_optimizer_momentum(optimizer):
-    if isinstance(optimizer, torch.optim.Adam):
-        return list(optimizer.param_groups)[0]["betas"][0]
-    elif isinstance(optimizer, torch.optim.SGD):
-        return list(optimizer.param_groups)[0]["momentum"]
-    else:
-        return None
 
 
 def scheduler_step(scheduler, valid_metric=None):

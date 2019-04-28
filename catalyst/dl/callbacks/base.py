@@ -4,10 +4,10 @@ from typing import Dict
 
 from catalyst.dl.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.dl.state import RunnerState
-from catalyst.dl.utils import UtilsFactory
+from catalyst.dl.utils import UtilsFactory, get_optimizer_momentum
 from catalyst.rl.registry import GRAD_CLIPPERS
 from .core import Callback
-from .utils import get_optimizer_momentum, scheduler_step
+from .utils import scheduler_step
 
 
 class CheckpointCallback(Callback):

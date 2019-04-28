@@ -1,13 +1,15 @@
-from collections import OrderedDict
-from typing import Union, Optional, List, Tuple
 import os
 import shutil
+from collections import OrderedDict
 from pathlib import Path
+from typing import Union, Optional, List, Tuple
 
+import safitty
 import torch
 import torch.backends.cudnn as cudnn
 import torch.nn as nn
 from tensorboardX import SummaryWriter
+from torch.optim import Optimizer
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
 from catalyst.data.dataset import ListDataset
@@ -214,3 +216,19 @@ def get_activation_by_name(activation: str = None):
             "Activation implemented for sigmoid and softmax2d"
         )
     return activation_fn
+
+
+def get_optimizer_momentum(optimizer: Optimizer):
+    beta = safitty.get(optimizer.param_groups, 0, "betas", 0)
+    momentum = safitty.get(optimizer.param_groups, 0, "momentum")
+    return beta if beta is not None else momentum
+
+
+def set_optimizer_momentum(optimizer: Optimizer, value: float):
+    betas = safitty.get(optimizer.param_groups, 0, "betas")
+    momentum = safitty.get(optimizer.param_groups, 0, "momentum")
+    if betas is not None:
+        _, beta = betas
+        safitty.set(optimizer.param_groups, 0, "betas", value=(value, beta))
+    elif momentum is not None:
+        safitty.set(optimizer.param_groups, 0, "momentum", value=value)
