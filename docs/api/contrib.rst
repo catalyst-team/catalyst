@@ -95,6 +95,9 @@ Schedulers
 -----------------------
 .. currentmodule:: catalyst.contrib.scheduler
 
+.. autoclass:: BaseScheduler
+    :members:
+
 .. autoclass:: OneCycleLR
     :members:
 
