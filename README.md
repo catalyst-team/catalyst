@@ -97,6 +97,7 @@ runner.train(
 )
 ```
 
+
 ## Docker
 
 Please see the [docker folder](docker) 
@@ -113,3 +114,17 @@ please first open an issue and discuss the feature with us.
 
 Please see the [contribution guide](CONTRIBUTING.md) 
 for more information.
+
+
+## Citation
+
+Please use this bibtex if you want to cite this repository in your publications:
+
+    @misc{catalyst,
+        author = {Kolesnikov, Sergey},
+        title = {Reproducible and fast DL & RL.},
+        year = {2018},
+        publisher = {GitHub},
+        journal = {GitHub repository},
+        howpublished = {\url{https://github.com/catalyst-team/catalyst}},
+    }
