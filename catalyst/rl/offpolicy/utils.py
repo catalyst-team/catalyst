@@ -54,8 +54,6 @@ class ReplayBufferDataset(Dataset):
                 state in TD backup
             gamma: discount factor
             discrete actions: True if actions are discrete
-            byte_observations: True if observation values are ints in [0, 255]
-                e.g. observations are RGB images
         """
         # @TODO: Refactor !!!
         self.observation_space = observation_space
