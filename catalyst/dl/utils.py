@@ -245,6 +245,8 @@ def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
     momentum = safitty.get(optimizer.param_groups, index, "momentum")
     if betas is not None:
         _, beta = betas
-        safitty.set(optimizer.param_groups, index, "betas", value=(value, beta))
+        safitty.set(
+            optimizer.param_groups, index, "betas", value=(value, beta)
+        )
     elif momentum is not None:
         safitty.set(optimizer.param_groups, index, "momentum", value=value)
