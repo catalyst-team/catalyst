@@ -99,7 +99,7 @@ class OneCycleLR(BaseScheduler):
             momentum_decay, momentum_annealing, momentum_warmup
         ))
 
-        self.total_groups = len(self.optimizer.param_groups)
+        self.total_groups = len(optimizer.param_groups)
         super().__init__(optimizer)
 
     def get_lr(self) -> List[float]:
