@@ -22,12 +22,12 @@ class OneCycleLR(BaseScheduler):
     def __init__(
             self,
             optimizer: Optimizer,
-            num_epochs: int,
+            num_steps: int,
             lr_range=(1.0, 0.005),
             init_lr: float = None,
-            warmup_epochs: int = 0,
+            warmup_steps: int = 0,
             warmup_fraction: float = None,
-            decay_epochs: int = 0,
+            decay_steps: int = 0,
             decay_fraction: float = None,
             momentum_range=(0.8, 0.99, 0.999),
             init_momentum: float = None,
@@ -35,18 +35,18 @@ class OneCycleLR(BaseScheduler):
         """
         Args:
             optimizer: PyTorch optimizer
-            num_epochs (int): total number of epochs
+            num_steps (int): total number of steps
             lr_range: tuple with two or three elements
                 (max_lr, min_lr, [final_lr])
             init_lr (float, optional): initial lr
-            warmup_epochs (int): count of epochs for warm-up stage
+            warmup_steps (int): count of steps for warm-up stage
             warmup_fraction (float, optional): fraction in [0; 1) to calculate
                 number of warmup epochs.
-                Cannot be set together with ``warmup_epochs``
-            decay_epochs (int): count of epochs for lr decay stage
+                Cannot be set together with ``warmup_steps``
+            decay_steps (int): count of steps for lr decay stage
             decay_fraction (float, optional): fraction in [0; 1) to calculate
                 number of decay epochs.
-                Cannot be set together with ``decay_epochs``
+                Cannot be set together with ``decay_steps``
             momentum_range: tuple with two or three elements
                 (min_momentum, max_momentum, [final_momentum])
             init_momentum (float, optional): initial momentum
@@ -68,33 +68,31 @@ class OneCycleLR(BaseScheduler):
         if init_momentum is None:
             init_momentum = get_optimizer_momentum(optimizer)
 
-        if warmup_fraction is not None:
-            assert 0.0 <= warmup_fraction < 1.0 and warmup_epochs == 0, \
-                "You should pass either warmup_epochs or " \
-                "warmup_fraction in range [0; 1) "
-            warmup_epochs = int(num_epochs * warmup_fraction)
+        warmup_steps = self._calculate_warmup(
+            num_steps, warmup_steps, warmup_fraction
+        )
 
-        if decay_fraction is not None:
-            assert 0.0 <= decay_fraction < 1.0 and decay_epochs == 0, \
-                "You should pass either decay_epochs or " \
-                "decay_fraction in range [0; 1) "
-            decay_epochs = int(num_epochs * decay_fraction)
+        decay_steps = self._calculate_decay(
+            num_steps, decay_steps, decay_fraction
+        )
 
-        lr_annealing_epochs = num_epochs - (warmup_epochs + decay_epochs)
+        lr_annealing_steps = num_steps - (warmup_steps + decay_steps)
 
-        lr_warmup = np.linspace(init_lr, max_lr, warmup_epochs)
-        lr_annealing = np.linspace(max_lr, min_lr, lr_annealing_epochs)
-        lr_decay = np.linspace(min_lr, final_lr, decay_epochs)
+        lr_warmup = np.linspace(init_lr, max_lr, warmup_steps)
+        lr_annealing = np.linspace(max_lr, min_lr, lr_annealing_steps)
+        lr_decay = np.linspace(min_lr, final_lr, decay_steps)
+        self.final_lr = final_lr
         self.learning_rates = np.concatenate(
             (lr_warmup, lr_annealing, lr_decay)
         )
 
         momentum_decay = np.linspace(
-            init_momentum, min_momentum, warmup_epochs)
+            init_momentum, min_momentum, warmup_steps)
         momentum_annealing = np.linspace(
-            min_momentum, max_momentum, lr_annealing_epochs)
+            min_momentum, max_momentum, lr_annealing_steps)
         momentum_warmup = np.linspace(
-            max_momentum, final_momentum, decay_epochs)
+            max_momentum, final_momentum, decay_steps)
+        self.final_momentum = final_momentum
         self.momentums = np.concatenate((
             momentum_decay, momentum_annealing, momentum_warmup
         ))
@@ -102,13 +100,48 @@ class OneCycleLR(BaseScheduler):
         self.total_groups = len(optimizer.param_groups)
         super().__init__(optimizer)
 
+    def _calculate_warmup(
+            self,
+            num_steps: int,
+            warmup_steps: int,
+            warmup_fraction: float
+    ):
+        if warmup_fraction is not None:
+            assert 0.0 <= warmup_fraction < 1.0 and warmup_steps == 0, \
+                "You should pass either warmup_epochs or " \
+                "warmup_fraction in range [0; 1) "
+            warmup_steps = int(num_steps * warmup_fraction)
+
+        self.warmup_steps = warmup_steps
+        self.has_warmup = warmup_steps != 0
+        return self.warmup_steps
+
+    def _calculate_decay(
+            self,
+            num_steps: int,
+            decay_steps: int,
+            decay_fraction: float
+    ):
+        if decay_fraction is not None:
+            assert 0.0 <= decay_fraction < 1.0 and decay_steps == 0, \
+                "You should pass either decay_epochs or " \
+                "decay_fraction in range [0; 1) "
+            decay_steps = int(num_steps * decay_fraction)
+
+        self.decay_steps = decay_steps
+        self.has_decay = decay_steps != 0
+        return self.decay_steps
+
     def get_lr(self) -> List[float]:
         """
         Function that returns the new lr for optimizer
         Returns:
             List[float]: calculated lr for every param groups
         """
-        lr = self.learning_rates[self.last_epoch]
+        if self.last_epoch < len(self.learning_rates):
+            lr = self.learning_rates[self.last_epoch]
+        else:
+            lr = self.final_lr
         return [lr] * self.total_groups
 
     def get_momentum(self) -> List[float]:
@@ -117,5 +150,8 @@ class OneCycleLR(BaseScheduler):
         Returns:
             List[float]: calculated momentum for every param groups
         """
-        momentum = self.momentums[self.last_epoch]
+        if self.last_epoch < len(self.momentums):
+            momentum = self.momentums[self.last_epoch]
+        else:
+            momentum = self.final_momentum
         return [momentum] * self.total_groups
