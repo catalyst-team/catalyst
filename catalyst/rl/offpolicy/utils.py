@@ -54,8 +54,6 @@ class ReplayBufferDataset(Dataset):
                 state in TD backup
             gamma: discount factor
             discrete actions: True if actions are discrete
-            byte_observations: True if observation values are ints in [0, 255]
-                e.g. observations are RGB images
         """
         # @TODO: Refactor !!!
         self.observation_space = observation_space
@@ -347,21 +345,15 @@ class EpisodeRunner:
         state[-len(indices):] = self.observations[indices]
         return state
 
-    def get_trajectory(self, tolist=False):
+    def get_trajectory(self):
         indices = np.arange(self.pointer)
+
         observations = self.observations[indices]
         actions = self.actions[indices]
         rewards = self.rewards[indices]
         dones = self.dones[indices]
-        if not tolist:
-            trajectory = (observations, actions, rewards, dones)
-        else:
-            trajectory = (
-                observations.tolist(),
-                actions.tolist(),
-                rewards.tolist(),
-                dones.tolist()
-            )
+
+        trajectory = (observations, actions, rewards, dones)
         return trajectory
 
     def reset(self, exploration_strategy=None):

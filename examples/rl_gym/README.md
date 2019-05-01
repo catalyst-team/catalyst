@@ -4,7 +4,7 @@
 
     `sudo apt install redis-server`
 
-2. Python requirements – box2d
+2. Python requirements – OpenAI Gym box2d
 
     ```bash
     pip install gym['box2d']

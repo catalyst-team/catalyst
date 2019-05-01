@@ -73,7 +73,8 @@ class Sampler:
     def _prepare_logger(self, logdir, mode):
         if logdir is not None:
             current_date = datetime.now().strftime("%y-%m-%d-%H-%M-%S-%M-%f")
-            logpath = f"{logdir}/sampler-{mode}-{id}-{current_date}"
+            logpath = f"{logdir}/" \
+                f"sampler-{mode}-{self._sampler_id}-{current_date}"
             os.makedirs(logpath, exist_ok=True)
             self.logger = SummaryWriter(logpath)
         else:
@@ -105,7 +106,7 @@ class Sampler:
     def _store_trajectory(self):
         if self.db_server is None:
             return
-        trajectory = self.episode_runner.get_trajectory(tolist=True)
+        trajectory = self.episode_runner.get_trajectory()
         self.db_server.push_trajectory(trajectory)
 
     def _prepare_seed(self):
