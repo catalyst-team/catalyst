@@ -125,6 +125,8 @@ class Trainer:
 
         self.episodes_queue = mp.Queue()
         self._redis_loop_process = None
+        self._num_trajectories = 0
+        self._num_transitions = 0
 
         self._sampler_weight_mode = \
             "critic" if self.env_spec.discrete_actions else "actor"
@@ -163,10 +165,18 @@ class Trainer:
             try:
                 episode = self.episodes_queue.get(block=True, timeout=1.0)
                 self.replay_buffer.push_episode(episode)
+                self._num_trajectories += 1
+                self._num_transitions += len(episode[-1])
             except queue.Empty:
                 break
         stored = len(self.replay_buffer)
-        print(f"transitions: {stored}")
+
+        print(
+            f"--- trajectories: {self._num_trajectories:06d}\t"
+            f"transitions: {self._num_transitions:08d}\t"
+            f"buffer size: {stored:08d}"
+        )
+
         return i
 
     def _update_samplers_weights(self):

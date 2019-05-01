@@ -1,8 +1,5 @@
-import numpy as np
-import os
-
-os.environ.setdefault("PATH", "")
 from collections import deque
+import numpy as np
 import gym
 from gym import spaces
 import cv2
@@ -46,7 +43,7 @@ class TransposeImage(TransposeObs):
         assert len(op) == 3, f"Error: Operation, {str(op)}, must be dim3"
         self.op = op
         obs_shape = self.observation_space.shape
-        self.observation_space = spaces.Box(
+        self.observation_space = gym.spaces.Box(
             self.observation_space.low[0, 0, 0],
             self.observation_space.high[0, 0, 0], [
                 obs_shape[self.op[0]], obs_shape[self.op[1]],
@@ -60,7 +57,8 @@ class TransposeImage(TransposeObs):
 
 class NoopResetEnv(gym.Wrapper):
     def __init__(self, env, noop_max=30):
-        """Sample initial states by taking random number of no-ops on reset.
+        """
+        Sample initial states by taking random number of no-ops on reset.
         No-op is assumed to be action 0.
         """
         gym.Wrapper.__init__(self, env)
@@ -92,7 +90,9 @@ class NoopResetEnv(gym.Wrapper):
 
 class FireResetEnv(gym.Wrapper):
     def __init__(self, env):
-        """Take action on reset for environments that are fixed until firing."""
+        """
+        Take action on reset for environments that are fixed until firing.
+        """
         gym.Wrapper.__init__(self, env)
         assert env.unwrapped.get_action_meanings()[1] == "FIRE"
         assert len(env.unwrapped.get_action_meanings()) >= 3
@@ -113,7 +113,8 @@ class FireResetEnv(gym.Wrapper):
 
 class EpisodicLifeEnv(gym.Wrapper):
     def __init__(self, env):
-        """Make end-of-life == end-of-episode, but only reset on true game over.
+        """
+        Make end-of-life == end-of-episode, but only reset on true game over.
         Done by DeepMind for the DQN and co. since it helps value estimation.
         """
         gym.Wrapper.__init__(self, env)
@@ -127,7 +128,8 @@ class EpisodicLifeEnv(gym.Wrapper):
         # then update lives to handle bonus lives
         lives = self.env.unwrapped.ale.lives()
         if lives < self.lives and lives > 0:
-            # for Qbert sometimes we stay in lives == 0 condition for a few frames
+            # for Qbert sometimes we stay in lives == 0
+            # condition for a few frames
             # so it"s important to keep lives > 0, so that we only reset once
             # the environment advertises done.
             done = True
@@ -163,8 +165,10 @@ class MaxAndSkipEnv(gym.Wrapper):
         done = None
         for i in range(self._skip):
             obs, reward, done, info = self.env.step(action)
-            if i == self._skip - 2: self._obs_buffer[0] = obs
-            if i == self._skip - 1: self._obs_buffer[1] = obs
+            if i == self._skip - 2:
+                self._obs_buffer[0] = obs
+            if i == self._skip - 1:
+                self._obs_buffer[1] = obs
             total_reward += reward
             if done:
                 break
@@ -268,11 +272,14 @@ class ScaledFloatFrame(gym.ObservationWrapper):
 
 class LazyFrames(object):
     def __init__(self, frames):
-        """This object ensures that common frames between the observations are only stored once.
-        It exists purely to optimize memory usage which can be huge for DQN"s 1M frames replay
-        buffers.
+        """
+        This object ensures that common frames
+            between the observations are only stored once.
+        It exists purely to optimize memory usage
+            which can be huge for DQN"s 1M frames replay buffers.
 
-        This object should only be converted to numpy array before being passed to the model.
+        This object should only be converted to numpy array
+            before being passed to the model.
 
         You"d not believe how complex the previous solution was."""
         self._frames = frames
@@ -308,11 +315,11 @@ def make_atari(env_id, max_episode_steps=None):
 
 
 def wrap_deepmind(
-        env,
-        episode_life=True,
-        clip_rewards=True,
-        frame_stack=False,
-        scale=False
+    env,
+    episode_life=True,
+    clip_rewards=True,
+    frame_stack=False,
+    scale=False
 ):
     """Configure environment for DeepMind-style Atari.
     """

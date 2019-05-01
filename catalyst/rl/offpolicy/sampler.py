@@ -73,7 +73,8 @@ class Sampler:
     def _prepare_logger(self, logdir, mode):
         if logdir is not None:
             current_date = datetime.now().strftime("%y-%m-%d-%H-%M-%S-%M-%f")
-            logpath = f"{logdir}/sampler-{mode}-{id}-{current_date}"
+            logpath = f"{logdir}/" \
+                f"sampler-{mode}-{self._sampler_id}-{current_date}"
             os.makedirs(logpath, exist_ok=True)
             self.logger = SummaryWriter(logpath)
         else:

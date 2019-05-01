@@ -1,9 +1,15 @@
+## Catalyst.RL – Atari example
+
+This example shows how to use Catalyst.RL with
+- your custom environment, like Atari with a bunch of wrappers,
+- and custom agent, like CNN-based critic.
+
 
 1. System requirements – redis
 
     `sudo apt install redis-server`
 
-2. Python requirements – box2d
+2. Python requirements – OpenAI Gym  Atari
 
     ```bash
     pip install gym['atari']

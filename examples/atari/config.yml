@@ -3,8 +3,8 @@ args:
   expdir: src
 
   vis: 0
-  infer: 1   #  change me
-  train: 32  #  change me
+  infer: 0   #  change me
+  train: 8  #  change me
 
 db:
   port: 12000
