@@ -1,4 +1,5 @@
 import os
+import gc
 import time
 from datetime import datetime
 from tensorboardX import SummaryWriter
@@ -16,22 +17,20 @@ from catalyst.rl.offpolicy.algorithms.core import AlgorithmSpec
 
 
 def db2queue_loop(db_server: DBSpec, queue: mp.Queue, max_size: int):
-    pointer = 0
-    num_trajectories = db_server.num_trajectories
     while True:
         try:
-            need_more = pointer < num_trajectories and queue.qsize() < max_size
+            need_more = queue.qsize() < max_size
         except NotImplementedError:  # MacOS qsize issue (no sem_getvalue)
-            need_more = pointer < num_trajectories
+            need_more = True
 
         if need_more:
-            episode = db_server.get_trajectory(pointer)
-            queue.put(episode, block=True, timeout=1.0)
-            pointer += 1
+            trajectory = db_server.get_trajectory()
+            if trajectory is not None:
+                queue.put(trajectory, block=True, timeout=1.0)
+            else:
+                time.sleep(1.0)
         else:
             time.sleep(1.0)
-
-        num_trajectories = db_server.num_trajectories
 
 
 def _make_tuple(tuple_like):
@@ -52,6 +51,7 @@ class Trainer:
         logdir: str,
         num_workers: int = 1,
         replay_buffer_size: int = int(1e6),
+        replay_buffer_mode: str = "numpy",
         batch_size: int = 64,
         start_learning: int = int(1e3),
         epoch_len: int = int(1e2),
@@ -61,6 +61,7 @@ class Trainer:
         weights_sync_period: int = 1,
         max_db_trials: int = 1000,
         resume: str = None,
+        gc_period: int = 10,
     ):
         # algorithm
         self.algorithm = algorithm
@@ -86,7 +87,9 @@ class Trainer:
             capacity=replay_buffer_size,
             history_len=self.env_spec.history_len,
             n_step=self.algorithm.n_step,
-            gamma=self.algorithm.gamma
+            gamma=self.algorithm.gamma,
+            mode=replay_buffer_mode,
+            logdir=logdir
         )
 
         self.replay_sampler = ReplayBufferSampler(
@@ -130,6 +133,7 @@ class Trainer:
 
         self._sampler_weight_mode = \
             "critic" if self.env_spec.discrete_actions else "actor"
+        self._gc_period = gc_period
 
     def save(self):
         if self.epoch % self.save_period == 0:
@@ -172,9 +176,9 @@ class Trainer:
         stored = len(self.replay_buffer)
 
         print(
-            f"--- trajectories: {self._num_trajectories:06d}\t"
-            f"transitions: {self._num_transitions:08d}\t"
-            f"buffer size: {stored:08d}"
+            f"--- trajectories: {self._num_trajectories:09d}\t"
+            f"transitions: {self._num_transitions:09d}\t"
+            f"buffer size: {stored:09d}"
         )
 
         return i
@@ -187,7 +191,7 @@ class Trainer:
                 k: v.detach().cpu().numpy()
                 for k, v in state_dict.items()
             }
-            self.db_server.dump_weights(weights=state_dict, suffix=mode)
+            self.db_server.dump_weights(weights=state_dict, prefix=mode)
 
     def _update_target_weights(self, step_index):
         if not self.env_spec.discrete_actions:
@@ -245,6 +249,8 @@ class Trainer:
             self.save()
             self._update_samplers_weights()
             self.epoch += 1
+            if self.epoch % self._gc_period == 0:
+                gc.collect()
             start_time = time.time()
 
     def _start_train_loop(self):

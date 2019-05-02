@@ -1,6 +1,7 @@
 from typing import Union, List
 
 import os
+import gc
 import time
 import random
 from datetime import datetime
@@ -37,6 +38,7 @@ class Sampler:
         seeds: List = None,
         episode_limit: int = None,
         force_store: bool = False,
+        gc_period: int = 10,
     ):
         self._device = UtilsFactory.prepare_device()
         self._seed = 42 + id
@@ -69,6 +71,7 @@ class Sampler:
         self._force_store = force_store
         self._sampler_weight_mode = \
             "critic" if env.discrete_actions else "actor"
+        self._gc_period = gc_period
 
     def _prepare_logger(self, logdir, mode):
         if logdir is not None:
@@ -94,7 +97,7 @@ class Sampler:
             weights = checkpoint[f"{self._sampler_weight_mode}_state_dict"]
             self.agent.load_state_dict(weights)
         elif db_server is not None:
-            weights = db_server.load_weights(suffix=self._sampler_weight_mode)
+            weights = db_server.load_weights(prefix=self._sampler_weight_mode)
             weights = {k: self._to_tensor(v) for k, v in weights.items()}
             self.agent.load_state_dict(weights)
         else:
@@ -131,7 +134,7 @@ class Sampler:
             f"--- episode {int(self.episode_index):05d}:\t"
             f"steps: {int(num_steps):05d}\t"
             f"reward: {episode_reward:9.4f}\t"
-            f"time: {elapsed_time:5f}\t"
+            f"time: {elapsed_time:9.4f}\t"
             f"seed: {seed}"
         )
 
@@ -188,5 +191,7 @@ class Sampler:
                 elapsed_time=elapsed_time)
 
             self.episode_index += 1
+            if self.episode_index % self._gc_period == 0:
+                gc.collect()
             if self.episode_index >= self.episode_limit:
                 return
