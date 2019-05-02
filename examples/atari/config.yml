@@ -1,0 +1,101 @@
+args:
+  logdir: ./logs/rl-gym-dqn  #  change me
+  expdir: src
+
+  vis: 0
+  infer: 0   #  change me
+  train: 8  #  change me
+
+db:
+  db: MongoDB  # RedisDB or MongoDB
+  port: 12000
+  prefix: gym-dqn  # TODO: remove
+
+environment:
+  environment: AtariEnvWrapper
+  env_id: PongNoFrameskip-v4
+
+  history_len: 4
+  frame_skip: 1
+  reward_scale: 1.0
+  step_delay: 0.0
+
+agents:
+  critic:
+    agent: ConvActionCritic
+
+#    state_net_params:  # state -> hidden representation
+#      observation_net_params:
+#        hiddens: [32]  # first hidden would be taken from state_shape
+#        layer_fn: Linear
+#        norm_fn: LayerNorm
+#        activation_fn: ReLU
+#        bias: false
+#      main_net_params:
+#        hiddens: [32, 32]
+#        layer_fn: Linear
+#        norm_fn: LayerNorm
+#        activation_fn: ReLU
+#        bias: false
+    value_head_params:  # hidden representation -> ~policy
+      in_features: 512  # out features would be taken from action_shape
+#      num_atoms: 1
+
+      distribution: categorical
+      num_atoms: 51
+      values_range: [-10.0, 10.0]
+
+#      distribution: quantile
+#      num_atoms: 51
+
+algorithm:
+  algorithm: DQN
+
+  n_step: 3
+  gamma: 0.99
+  critic_tau: 1.0
+
+#  critic_loss_params:
+#    criterion: HuberLoss
+#    clip_delta: 1.0
+
+  critic_optimizer_params:
+    optimizer: Adam
+    lr: 0.0003
+
+  critic_scheduler_params:
+    scheduler: MultiStepLR
+    milestones: [2000000]  # batches
+    gamma: 1.0
+
+  critic_grad_clip_params:
+    func: clip_grad_value_
+    clip_value: 1.0
+
+trainer:
+  batch_size: 256              # transitions
+  num_workers: 2
+  epoch_len: 1000              # batches
+
+  replay_buffer_size: 1000000  # transitions
+  replay_buffer_mode: memmap   # numpy or memmap
+  start_learning: 50000        # transitions
+
+  save_period: 100             # epochs
+  weights_sync_period: 1       # epochs
+  target_update_period: 500    # batches
+
+sampler:
+  weights_sync_period: 1
+  buffer_size: 20000
+
+  valid_seeds: [1, 10, 1000, 10000, 42000]
+
+  exploration_params:
+    - exploration: EpsilonGreedy
+      probability: 0.98
+      eps_init: 1.0
+      eps_final: 0.5
+      annealing_steps: 100000
+    - exploration: Greedy
+      probability: 0.02

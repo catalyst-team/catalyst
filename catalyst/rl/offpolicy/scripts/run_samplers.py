@@ -2,6 +2,7 @@
 
 import os
 import copy
+import time
 import atexit
 import argparse
 import multiprocessing as mp
@@ -9,15 +10,15 @@ import multiprocessing as mp
 import torch
 
 from catalyst.dl.scripts.utils import import_module
-from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS
+from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS, DATABASES
 from catalyst.utils.config import parse_args_uargs
 from catalyst.utils.misc import set_global_seed, boolean_flag
 from catalyst.rl.offpolicy.sampler import Sampler
 from catalyst.rl.offpolicy.exploration import ExplorationHandler
-from catalyst.rl.db.redis import RedisDB
 
 os.environ["OMP_NUM_THREADS"] = "1"
 torch.set_num_threads(1)
+STEP_DELAY = 1
 
 
 def build_args(parser):
@@ -80,9 +81,8 @@ def run_sampler(
     id = 0 if id is None else id
     set_global_seed(seed + id)
 
-    db_server = RedisDB(
-        port=config.get("db", {}).get("port", 12000),
-        prefix=config.get("db", {}).get("prefix", "")
+    db_server = DATABASES.get_from_params(
+        **config.get("db", {})
     ) if db else None
 
     env = environment_fn(**config_["environment"], visualize=vis)
@@ -167,6 +167,7 @@ def main(args, unknown_args):
         p.start()
         processes.append(p)
         sampler_id += 1
+        time.sleep(STEP_DELAY)
 
     for i in range(args.infer):
         params_ = dict(
@@ -179,6 +180,7 @@ def main(args, unknown_args):
         p.start()
         processes.append(p)
         sampler_id += 1
+        time.sleep(STEP_DELAY)
 
     for i in range(1, args.train + 1):
         exploration_power = i / args.train
@@ -192,6 +194,7 @@ def main(args, unknown_args):
         p.start()
         processes.append(p)
         sampler_id += 1
+        time.sleep(STEP_DELAY)
 
     for p in processes:
         p.join()

@@ -13,13 +13,13 @@ class DBSpec(ABC):
         pass
 
     @abstractmethod
-    def get_trajectory(self, index):
+    def get_trajectory(self, index=None):
         pass
 
     @abstractmethod
-    def dump_weights(self, weights, suffix):
+    def dump_weights(self, weights, prefix):
         pass
 
     @abstractmethod
-    def load_weights(self, suffix):
+    def load_weights(self, prefix):
         pass

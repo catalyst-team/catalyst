@@ -50,7 +50,7 @@ def build_args(parser):
     parser.add_argument("--in-logdir", type=str, required=True)
     parser.add_argument("--out-logdir", type=str, required=True)
     parser.add_argument(
-        "--keys", type=str, default="loss,base/_fps,epoch"
+        "--keys", type=str, default="loss,_timers/fps,epoch"
     )
 
     return parser

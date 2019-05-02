@@ -7,6 +7,7 @@ args:
   train: 1  #  change me
 
 db:
+  db: RedisDB
   port: 12000
   prefix: gym-dqn  # TODO: remove
 
