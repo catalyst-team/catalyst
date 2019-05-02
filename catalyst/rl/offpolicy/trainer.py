@@ -1,4 +1,5 @@
 import os
+import gc
 import time
 from datetime import datetime
 from tensorboardX import SummaryWriter
@@ -60,6 +61,7 @@ class Trainer:
         weights_sync_period: int = 1,
         max_db_trials: int = 1000,
         resume: str = None,
+        gc_period: int = 10,
     ):
         # algorithm
         self.algorithm = algorithm
@@ -131,6 +133,7 @@ class Trainer:
 
         self._sampler_weight_mode = \
             "critic" if self.env_spec.discrete_actions else "actor"
+        self._gc_period = gc_period
 
     def save(self):
         if self.epoch % self.save_period == 0:
@@ -246,6 +249,8 @@ class Trainer:
             self.save()
             self._update_samplers_weights()
             self.epoch += 1
+            if self.epoch % self._gc_period == 0:
+                gc.collect()
             start_time = time.time()
 
     def _start_train_loop(self):
