@@ -14,7 +14,7 @@ from catalyst.dl.utils import UtilsFactory
 class VerboseLogger(Callback):
     def __init__(
         self,
-        always_show: List[str] = "_timers/_fps"
+        always_show: List[str] = ["_timers/_fps"]
     ):
         """
         Log params into console
