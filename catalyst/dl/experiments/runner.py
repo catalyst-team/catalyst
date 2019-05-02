@@ -115,20 +115,20 @@ class Runner(ABC):
         # @TODO: remove time usage, use it under the hood
         self.state.timer.reset()
 
-        self.state.timer.start("base/batch_time")
-        self.state.timer.start("base/data_time")
+        self.state.timer.start("_timers/batch_time")
+        self.state.timer.start("_timers/data_time")
 
         for i, batch in enumerate(loader):
             batch = self._batch2device(batch, self.device)
-            self.state.timer.stop("base/data_time")
+            self.state.timer.stop("_timers/data_time")
 
             self._run_event("batch_start")
 
-            self.state.timer.start("base/model_time")
+            self.state.timer.start("_timers/model_time")
             self._run_batch(batch)
-            self.state.timer.stop("base/model_time")
+            self.state.timer.stop("_timers/model_time")
 
-            self.state.timer.stop("base/batch_time")
+            self.state.timer.stop("_timers/batch_time")
             self._run_event("batch_end")
 
             self.state.timer.reset()
@@ -136,8 +136,8 @@ class Runner(ABC):
             if self._check_run and i >= 3:
                 break
 
-            self.state.timer.start("base/batch_time")
-            self.state.timer.start("base/data_time")
+            self.state.timer.start("_timers/batch_time")
+            self.state.timer.start("_timers/data_time")
 
     def _run_epoch(self, loaders):
         # @TODO: better solution with train/inference handling ?

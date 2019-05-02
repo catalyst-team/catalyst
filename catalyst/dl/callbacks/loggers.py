@@ -33,7 +33,7 @@ class VerboseLogger(Callback):
                 k: "{:3.3f}".format(v)
                 for k, v in
                 sorted(state.metrics.batch_values.items())
-                if not k.startswith("base")
+                if not (k.startswith("base") or k.startswith("_timers"))
             }
         )
         self.tqdm.update()

@@ -110,8 +110,8 @@ class RunnerState(FrozenClass):
 
         values.update(self.timer.elapsed)
 
-        values["_fps"] = \
-            self.batch_size / self.timer.elapsed["base/batch_time"]
+        values["_timers/fps"] = \
+            self.batch_size / self.timer.elapsed["_timers/batch_time"]
 
         self.metrics.add_batch_value(metrics_dict=values)
 
