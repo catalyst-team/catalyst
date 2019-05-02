@@ -72,6 +72,7 @@ class ReplayBufferDataset(Dataset):
         n_step=1,
         gamma=0.99,
         history_len=1,
+        mode="numpy",
         logdir=None
     ):
         """
@@ -107,7 +108,7 @@ class ReplayBufferDataset(Dataset):
                 capacity=capacity,
                 observation_space=observation_space,
                 action_space=action_space,
-                mode="memmap",
+                mode=mode,
                 logdir=logdir
             )
 

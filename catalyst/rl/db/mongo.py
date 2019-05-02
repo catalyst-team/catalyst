@@ -6,7 +6,7 @@ from .core import DBSpec
 
 
 class MongoDB(DBSpec):
-    def __init__(self, port, prefix=None, use_compression=True):
+    def __init__(self, port=12000, prefix=None, use_compression=True):
         self._server = pymongo.MongoClient(host="127.0.0.1", port=port)
         self._prefix = "" if prefix is None else prefix
 
@@ -27,8 +27,8 @@ class MongoDB(DBSpec):
 
     @property
     def num_trajectories(self) -> int:
-        result = self._trajectory_collection.count() - 1
-        return result
+        num_trajectories = self._trajectory_collection.count() - 1
+        return num_trajectories
 
     def push_trajectory(self, trajectory):
         trajectory = self._pack(trajectory)
@@ -37,29 +37,34 @@ class MongoDB(DBSpec):
             "date": datetime.datetime.utcnow()
         })
 
-    def get_trajectory(self, index):
+    def get_trajectory(self, index=None):
+        assert index is None
+
         trajectory_obj = self._trajectory_collection.find_one(
             {"date": {"$gt": self._last_datetime}}
         )
-        trajectory = trajectory_obj["trajectory"]
-        trajectory = self._unpack(trajectory)
-        self._last_datetime = trajectory_obj["date"]
+        if trajectory_obj is not None:
+            trajectory = trajectory_obj["trajectory"]
+            trajectory = self._unpack(trajectory)
+            self._last_datetime = trajectory_obj["date"]
+        else:
+            trajectory = None
         return trajectory
 
-    def dump_weights(self, weights, suffix):
+    def dump_weights(self, weights, prefix):
         weights = self._pack(weights)
 
         self._weights_collection.replace_one(
-            {"prefix": suffix},
+            {"prefix": prefix},
             {
                 "weights": weights,
-                "prefix": suffix
+                "prefix": prefix
             },
             upsert=True
         )
 
-    def load_weights(self, suffix):
-        weights_obj = self._weights_collection.find_one({"prefix": suffix})
+    def load_weights(self, prefix):
+        weights_obj = self._weights_collection.find_one({"prefix": prefix})
         weights = weights_obj.get("weights")
         if weights is None:
             return None

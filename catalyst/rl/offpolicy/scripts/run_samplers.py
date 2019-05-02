@@ -10,13 +10,11 @@ import multiprocessing as mp
 import torch
 
 from catalyst.dl.scripts.utils import import_module
-from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS
+from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS, DATABASES
 from catalyst.utils.config import parse_args_uargs
 from catalyst.utils.misc import set_global_seed, boolean_flag
 from catalyst.rl.offpolicy.sampler import Sampler
 from catalyst.rl.offpolicy.exploration import ExplorationHandler
-from catalyst.rl.db.redis import RedisDB
-from catalyst.rl.db.mongo import MongoDB
 
 os.environ["OMP_NUM_THREADS"] = "1"
 torch.set_num_threads(1)
@@ -83,9 +81,8 @@ def run_sampler(
     id = 0 if id is None else id
     set_global_seed(seed + id)
 
-    db_server = MongoDB(
-        port=config.get("db", {}).get("port", 12000),
-        prefix=config.get("db", {}).get("prefix", "")
+    db_server = DATABASES.get_from_params(
+        **config.get("db", {})
     ) if db else None
 
     env = environment_fn(**config_["environment"], visualize=vis)

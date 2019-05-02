@@ -94,7 +94,7 @@ class Sampler:
             weights = checkpoint[f"{self._sampler_weight_mode}_state_dict"]
             self.agent.load_state_dict(weights)
         elif db_server is not None:
-            weights = db_server.load_weights(suffix=self._sampler_weight_mode)
+            weights = db_server.load_weights(prefix=self._sampler_weight_mode)
             weights = {k: self._to_tensor(v) for k, v in weights.items()}
             self.agent.load_state_dict(weights)
         else:

@@ -16,22 +16,20 @@ from catalyst.rl.offpolicy.algorithms.core import AlgorithmSpec
 
 
 def db2queue_loop(db_server: DBSpec, queue: mp.Queue, max_size: int):
-    pointer = 0
-    num_trajectories = db_server.num_trajectories
     while True:
         try:
-            need_more = pointer < num_trajectories and queue.qsize() < max_size
+            need_more = queue.qsize() < max_size
         except NotImplementedError:  # MacOS qsize issue (no sem_getvalue)
-            need_more = pointer < num_trajectories
+            need_more = True
 
         if need_more:
-            episode = db_server.get_trajectory(pointer)
-            queue.put(episode, block=True, timeout=1.0)
-            pointer += 1
+            trajectory = db_server.get_trajectory()
+            if trajectory is not None:
+                queue.put(trajectory, block=True, timeout=1.0)
+            else:
+                time.sleep(1.0)
         else:
             time.sleep(1.0)
-
-        num_trajectories = db_server.num_trajectories
 
 
 def _make_tuple(tuple_like):
@@ -52,6 +50,7 @@ class Trainer:
         logdir: str,
         num_workers: int = 1,
         replay_buffer_size: int = int(1e6),
+        replay_buffer_mode: str = "numpy",
         batch_size: int = 64,
         start_learning: int = int(1e3),
         epoch_len: int = int(1e2),
@@ -87,6 +86,7 @@ class Trainer:
             history_len=self.env_spec.history_len,
             n_step=self.algorithm.n_step,
             gamma=self.algorithm.gamma,
+            mode=replay_buffer_mode,
             logdir=logdir
         )
 
@@ -188,7 +188,7 @@ class Trainer:
                 k: v.detach().cpu().numpy()
                 for k, v in state_dict.items()
             }
-            self.db_server.dump_weights(weights=state_dict, suffix=mode)
+            self.db_server.dump_weights(weights=state_dict, prefix=mode)
 
     def _update_target_weights(self, step_index):
         if not self.env_spec.discrete_actions:

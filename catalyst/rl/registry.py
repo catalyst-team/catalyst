@@ -5,6 +5,16 @@ from catalyst.contrib.registry import (
 from ..utils.registry import Registry
 
 
+def _dbs_late_add(r: Registry):
+    from . import db as m
+    r.add_from_module(m)
+
+
+DATABASES = Registry("db")
+DATABASES.late_add(_dbs_late_add)
+Database = DATABASES.add
+
+
 def _agents_late_add(r: Registry):
     from . import agents as m
     r.add_from_module(m)
