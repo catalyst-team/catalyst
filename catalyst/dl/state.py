@@ -103,14 +103,14 @@ class RunnerState(FrozenClass):
     def _handle_runner_metrics(self):
         values = {}
         for key, value in zip(
-            ["base/lr", "base/momentum"], [self.lr, self.momentum]
+            ["_base/lr", "_base/momentum"], [self.lr, self.momentum]
         ):
             if value is not None:
                 values[key] = value
 
         values.update(self.timer.elapsed)
 
-        values["_timers/fps"] = \
+        values["_timers/_fps"] = \
             self.batch_size / self.timer.elapsed["_timers/batch_time"]
 
         self.metrics.add_batch_value(metrics_dict=values)

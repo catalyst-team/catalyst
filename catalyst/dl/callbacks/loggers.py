@@ -12,9 +12,18 @@ from catalyst.dl.utils import UtilsFactory
 
 
 class VerboseLogger(Callback):
-    def __init__(self):
+    def __init__(
+        self,
+        always_show: List[str] = "_timers/_fps"
+    ):
+        """
+        Log params into console
+        Args:
+            always_show (List[str]): list of metrics to always show
+        """
         self.tqdm: tqdm = None
         self.step = 0
+        self.always_show = always_show
 
     def on_loader_start(self, state: RunnerState):
         self.step = 0
@@ -27,13 +36,19 @@ class VerboseLogger(Callback):
             file=sys.stdout
         )
 
+    def _need_show(self, key: str):
+        is_always_show: bool = key in self.always_show
+        not_basic = not (key.startswith("_base") or key.startswith("_timers"))
+
+        return is_always_show or not_basic
+
     def on_batch_end(self, state: RunnerState):
         self.tqdm.set_postfix(
             **{
                 k: "{:3.3f}".format(v)
                 for k, v in
                 sorted(state.metrics.batch_values.items())
-                if not (k.startswith("base") or k.startswith("_timers"))
+                if self._need_show(k)
             }
         )
         self.tqdm.update()
