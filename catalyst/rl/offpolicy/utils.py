@@ -4,7 +4,6 @@ import multiprocessing as mp
 from gym.spaces import Box, Discrete, Space
 
 import torch
-import torch.nn.functional as F
 from torch.utils.data import Dataset, Sampler
 from catalyst.rl.offpolicy.exploration.strategies import ParameterSpaceNoise
 from catalyst.rl.agents.core import ActorSpec, CriticSpec
@@ -241,7 +240,7 @@ class PolicyHandler:
     ):
         with torch.no_grad():
             states = torch.Tensor(state).to(device).unsqueeze(0)
-            probs = F.softmax(critic(states)[0], dim=-1)
+            probs = torch.softmax(critic(states)[0], dim=-1)
             q_values = torch.sum(probs * self.z, dim=-1)
             action = np.argmax(q_values.cpu().numpy())
             return action

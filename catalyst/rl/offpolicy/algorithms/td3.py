@@ -2,7 +2,6 @@ from typing import Dict, List
 import copy
 from gym.spaces import Box
 import torch
-import torch.nn.functional as F
 
 from catalyst.rl.registry import AGENTS
 from catalyst.dl.utils import UtilsFactory
@@ -120,9 +119,9 @@ class TD3(AlgorithmContinuous):
         # actor loss
         actions_tp0 = self.actor(states_t)
         logits_tp0 = [x(states_t, actions_tp0) for x in self.critics]
-        probs_tp0 = [F.softmax(x, dim=-1) for x in logits_tp0]
+        probs_tp0 = [torch.softmax(x, dim=-1) for x in logits_tp0]
         q_values_tp0 = [
-            torch.sum(x * self.z, dim=-1).unsqueeze_(-1) for x in probs_tp0
+            torch.sum(x * self.z, dim=-1, keepdim=True) for x in probs_tp0
         ]
         q_values_tp0_min = torch.cat(q_values_tp0, dim=-1).min(dim=-1)[0]
         policy_loss = -torch.mean(q_values_tp0_min)
@@ -132,9 +131,9 @@ class TD3(AlgorithmContinuous):
         actions_tp1 = self._add_noise_to_actions(actions_tp1)
         logits_t = [x(states_t, actions_t) for x in self.critics]
         logits_tp1 = [x(states_tp1, actions_tp1) for x in self.target_critics]
-        probs_tp1 = [F.softmax(x, dim=-1) for x in logits_tp1]
+        probs_tp1 = [torch.softmax(x, dim=-1) for x in logits_tp1]
         q_values_tp1 = [
-            torch.sum(x * self.z, dim=-1).unsqueeze_(-1) for x in probs_tp1
+            torch.sum(x * self.z, dim=-1, keepdim=True) for x in probs_tp1
         ]
         probs_ids_tp1_min = torch.cat(q_values_tp1, dim=-1).argmin(dim=1)
 

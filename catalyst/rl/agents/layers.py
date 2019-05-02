@@ -339,7 +339,10 @@ class ValueHead(nn.Module):
     def forward(self, inputs):
         x: torch.Tensor = \
             self.net(inputs).view(-1, self.out_features, self.num_atoms)
-        x = x.squeeze_(dim=-1)
+        x = x.squeeze_(dim=1).squeeze_(dim=-1)
+        if self.num_atoms == 1 and self.out_features == 1:
+            # make critic outputs (B, 1) instead of (B, )
+            x = x.unsqueeze_(dim=1)
         return x
 
 
