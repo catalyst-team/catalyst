@@ -16,6 +16,7 @@ from catalyst.utils.misc import set_global_seed, boolean_flag
 from catalyst.rl.offpolicy.sampler import Sampler
 from catalyst.rl.offpolicy.exploration import ExplorationHandler
 from catalyst.rl.db.redis import RedisDB
+from catalyst.rl.db.mongo import MongoDB
 
 os.environ["OMP_NUM_THREADS"] = "1"
 torch.set_num_threads(1)
@@ -82,7 +83,7 @@ def run_sampler(
     id = 0 if id is None else id
     set_global_seed(seed + id)
 
-    db_server = RedisDB(
+    db_server = MongoDB(
         port=config.get("db", {}).get("port", 12000),
         prefix=config.get("db", {}).get("prefix", "")
     ) if db else None

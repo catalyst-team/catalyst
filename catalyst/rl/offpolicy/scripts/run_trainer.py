@@ -8,6 +8,7 @@ from catalyst.dl.scripts.utils import import_module
 from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS
 from catalyst.rl.offpolicy.trainer import Trainer
 from catalyst.rl.db.redis import RedisDB
+from catalyst.rl.db.mongo import MongoDB
 from catalyst.utils.config import parse_args_uargs, dump_config
 from catalyst.utils.misc import set_global_seed
 
@@ -49,7 +50,7 @@ def main(args, unknown_args):
     if args.expdir is not None:
         module = import_module(expdir=args.expdir)  # noqa: F841
 
-    db_server = RedisDB(
+    db_server = MongoDB(
         port=config.get("db", {}).get("port", 12000),
         prefix=config.get("db", {}).get("prefix", "")
     )

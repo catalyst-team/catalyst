@@ -86,7 +86,8 @@ class Trainer:
             capacity=replay_buffer_size,
             history_len=self.env_spec.history_len,
             n_step=self.algorithm.n_step,
-            gamma=self.algorithm.gamma
+            gamma=self.algorithm.gamma,
+            logdir=logdir
         )
 
         self.replay_sampler = ReplayBufferSampler(
@@ -172,9 +173,9 @@ class Trainer:
         stored = len(self.replay_buffer)
 
         print(
-            f"--- trajectories: {self._num_trajectories:06d}\t"
-            f"transitions: {self._num_transitions:08d}\t"
-            f"buffer size: {stored:08d}"
+            f"--- trajectories: {self._num_trajectories:09d}\t"
+            f"transitions: {self._num_transitions:09d}\t"
+            f"buffer size: {stored:09d}"
         )
 
         return i

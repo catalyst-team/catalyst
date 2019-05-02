@@ -14,18 +14,51 @@ from catalyst.rl.environments.core import EnvironmentSpec
 def _get_buffers(
     observation_space: Space,
     action_space: Space,
-    capacity: int
+    capacity: int,
+    mode: str = "numpy",
+    logdir: str = None
 ):
-    observations = np.empty(
-        (capacity,) + tuple(observation_space.shape),
-        dtype=observation_space.dtype
-    )
-    actions = np.empty(
-        (capacity,) + tuple(action_space.shape),
-        dtype=action_space.dtype
-    )
-    rewards = np.empty((capacity,), dtype=np.float32)
-    dones = np.empty((capacity,), dtype=np.bool)
+    assert mode in ["numpy", "memmap"]
+    if mode == "numpy":
+        observations = np.empty(
+            (capacity,) + tuple(observation_space.shape),
+            dtype=observation_space.dtype
+        )
+        actions = np.empty(
+            (capacity,) + tuple(action_space.shape),
+            dtype=action_space.dtype
+        )
+        rewards = np.empty((capacity,), dtype=np.float32)
+        dones = np.empty((capacity,), dtype=np.bool)
+    elif mode == "memmap":
+        assert logdir is not None
+
+        observations = np.memmap(
+            f"{logdir}/observations.memmap",
+            mode="w+",
+            shape=(capacity,) + tuple(observation_space.shape),
+            dtype=observation_space.dtype
+        )
+        actions = np.memmap(
+            f"{logdir}/actions.memmap",
+            mode="w+",
+            shape=(capacity,) + tuple(action_space.shape),
+            dtype=action_space.dtype
+        )
+        rewards = np.memmap(
+            f"{logdir}/rewards.memmap",
+            mode="w+",
+            shape=(capacity,),
+            dtype=np.float32
+        )
+        dones = np.memmap(
+            f"{logdir}/dones.memmap",
+            mode="w+",
+            shape=(capacity,),
+            dtype=np.bool
+        )
+    else:
+        raise NotImplementedError()
 
     return observations, actions, rewards, dones
 
@@ -39,6 +72,7 @@ class ReplayBufferDataset(Dataset):
         n_step=1,
         gamma=0.99,
         history_len=1,
+        logdir=None
     ):
         """
         Experience replay buffer for off-policy RL algorithms.
@@ -72,7 +106,9 @@ class ReplayBufferDataset(Dataset):
             _get_buffers(
                 capacity=capacity,
                 observation_space=observation_space,
-                action_space=action_space
+                action_space=action_space,
+                mode="memmap",
+                logdir=logdir
             )
 
     def push_episode(self, episode):
