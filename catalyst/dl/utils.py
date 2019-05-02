@@ -189,7 +189,7 @@ class UtilsFactory:
             step: 'batch' or 'epoch' - what logs to show: for batches or
                 for epochs
             metrics: list of metrics to plot. The loss should be specified as
-                'loss', learning rate = 'base/lr' and other metrics should be
+                'loss', learning rate = '_base/lr' and other metrics should be
                 specified as names in metrics dict
                 that was specified during training
             height: the height of the whole resulting plot
