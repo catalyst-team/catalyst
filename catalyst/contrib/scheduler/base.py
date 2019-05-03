@@ -27,3 +27,20 @@ class BaseScheduler(_LRScheduler, ABC):
         momentums = self.get_momentum()
         for i, momentum in enumerate(momentums):
             set_optimizer_momentum(self.optimizer, momentum, index=i)
+
+
+class BatchScheduler(BaseScheduler):
+    """
+    Base class for all schedulers with ``step_batch`` function
+    """
+    def step_batch(
+            self,
+            total_batches: Optional[int] = None
+    ) -> None:
+        """
+        Make one step on batch
+        Args:
+            total_batches (int, optional): total count of batches in an epoch
+        """
+        self.last_epoch -= 1
+        self.step()

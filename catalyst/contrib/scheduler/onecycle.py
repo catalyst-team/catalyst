@@ -1,13 +1,13 @@
-from typing import List
+from typing import List, Optional
 
 import numpy as np
 from torch.optim import Optimizer
 
-from catalyst.dl.utils import get_optimizer_momentum
-from .base import BaseScheduler
+from catalyst.dl.utils import get_optimizer_momentum, set_optimizer_momentum
+from .base import BatchScheduler
 
 
-class OneCycleLR(BaseScheduler):
+class OneCycleLR(BatchScheduler):
     """
     OneCycle scheduler with warm-up & lr decay stages.
     First stage increases lr from ``init_lr`` to ``max_lr``,
@@ -98,6 +98,7 @@ class OneCycleLR(BaseScheduler):
         ))
 
         self.total_groups = len(optimizer.param_groups)
+        self.batch = 0
         super().__init__(optimizer)
 
     def _calculate_warmup(
@@ -132,16 +133,25 @@ class OneCycleLR(BaseScheduler):
         self.has_decay = decay_steps != 0
         return self.decay_steps
 
+    def _get_epoch_lr_momentum(self, step_num: int):
+        if step_num < len(self.learning_rates):
+            lr = self.learning_rates[step_num]
+        else:
+            lr = self.final_lr
+
+        if step_num < len(self.momentums):
+            momentum = self.momentums[step_num]
+        else:
+            momentum = self.final_momentum
+        return lr, momentum
+
     def get_lr(self) -> List[float]:
         """
         Function that returns the new lr for optimizer
         Returns:
             List[float]: calculated lr for every param groups
         """
-        if self.last_epoch < len(self.learning_rates):
-            lr = self.learning_rates[self.last_epoch]
-        else:
-            lr = self.final_lr
+        lr, _ = self._get_epoch_lr_momentum(self.last_epoch)
         return [lr] * self.total_groups
 
     def get_momentum(self) -> List[float]:
@@ -150,8 +160,36 @@ class OneCycleLR(BaseScheduler):
         Returns:
             List[float]: calculated momentum for every param groups
         """
-        if self.last_epoch < len(self.momentums):
-            momentum = self.momentums[self.last_epoch]
-        else:
-            momentum = self.final_momentum
+        _, momentum = self._get_epoch_lr_momentum(self.last_epoch)
         return [momentum] * self.total_groups
+
+    def step_batch(
+            self,
+            total_batches: Optional[int] = None
+    ) -> None:
+        """
+        Make one step on batch
+        Args:
+            total_batches (int, optional): total count of batches in an epoch
+        """
+        self.batch = (self.batch + 1) % total_batches
+
+        if self.batch == 0:
+            self.step()
+            return
+        prev_lr, prev_momentum = self._get_epoch_lr_momentum(self.last_epoch)
+
+        next_step = self.last_epoch + 1
+        next_lr, next_momentum = self._get_epoch_lr_momentum(next_step)
+
+        batch_lrs = np.linspace(prev_lr, next_lr, total_batches)
+        batch_momentum = \
+            np.linspace(prev_momentum, next_momentum, total_batches)
+
+        current_lrs = [batch_lrs[self.batch]] * self.total_groups
+        current_momentums = [batch_momentum[self.batch]] * self.total_groups
+
+        for param_group, lr in zip(self.optimizer.param_groups, current_lrs):
+            param_group['lr'] = lr
+        for i, momentum in enumerate(current_momentums):
+            set_optimizer_momentum(self.optimizer, momentum, index=i)

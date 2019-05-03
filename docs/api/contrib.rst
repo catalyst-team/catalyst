@@ -98,6 +98,9 @@ Schedulers
 .. autoclass:: BaseScheduler
     :members:
 
+.. autoclass:: BatchScheduler
+    :members:
+
 .. autoclass:: OneCycleLR
     :members:
 

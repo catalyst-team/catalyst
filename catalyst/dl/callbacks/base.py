@@ -2,6 +2,8 @@ import os
 import torch
 from typing import Dict
 
+import safitty
+
 from catalyst.dl.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory, get_optimizer_momentum
@@ -268,15 +270,18 @@ class SchedulerCallback(Callback):
         self.mode = mode
         self.reduce_metric = reduce_metric
 
-    def step(self, state):
+    def step(self, state: RunnerState):
         scheduler = state.get_key(
             key="scheduler", inner_key=self.scheduler_key
         )
 
+        valid_metric = \
+            safitty.get(state.metrics.valid_values, self.reduce_metric)
         lr, momentum = scheduler_step(
             scheduler=scheduler,
-            valid_metric=state.metrics.valid_values.get(
-                self.reduce_metric, None)
+            mode=self.mode,
+            valid_metric=valid_metric,
+            total_batches=state.loader_len
         )
 
         state.set_key(lr, key="lr", inner_key=self.scheduler_key)

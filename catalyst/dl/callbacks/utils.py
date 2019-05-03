@@ -1,9 +1,12 @@
-from typing import List
 import itertools
+from typing import List, Optional
+
 import numpy as np
+import safitty
 import torch
 from skimage.color import label2rgb
 
+from catalyst.contrib.scheduler import BatchScheduler
 from catalyst.dl.utils import get_optimizer_momentum
 
 
@@ -48,10 +51,18 @@ def to_batch_metrics(*, state, metric_key, state_key=None):
             get_val_from_metric(metric)
 
 
-def scheduler_step(scheduler, valid_metric=None):
-    if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+def scheduler_step(
+        scheduler,
+        mode: str = "epoch",
+        valid_metric=None,
+        total_batches: Optional[int] = None,
+):
+    if isinstance(scheduler, BatchScheduler) and mode == "batch":
+        scheduler.step_batch(total_batches=total_batches)
+        lr = scheduler.get_lr()[0]
+    elif isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
         scheduler.step(valid_metric)
-        lr = list(scheduler.optimizer.param_groups)[0]["lr"]
+        lr = safitty.get(scheduler.optimizer.param_groups, 0, "lr")
     else:
         scheduler.step()
         lr = scheduler.get_lr()[0]
