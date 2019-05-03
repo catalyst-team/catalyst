@@ -44,6 +44,30 @@ class EpsilonGreedy(ExplorationStrategy):
         return action
 
 
+class Boltzmann(ExplorationStrategy):
+    def __init__(self, temp_init, temp_final, annealing_steps):
+        super().__init__()
+
+        self.temp_init = temp_init
+        self.temp_final = temp_final
+        self.num_steps = annealing_steps
+        self.delta_temp = (self.temp_init - self.temp_final) / self.num_steps
+        self.temperature = temp_init
+
+    def set_power(self, value):
+        super().set_power(value)
+        self.temp_init *= self._power
+        self.temp_final *= self._power
+        self.delta_temp = (self.temp_init - self.temp_final) / self.num_steps
+        self.temperature = self.temp_init
+
+    def update_action(self, action):
+        self.temperature = max(
+            self.temp_final, self.temperature - self.delta_temp
+        )
+        return action
+
+
 class GaussNoise(ExplorationStrategy):
     def __init__(self, sigma):
         super().__init__()

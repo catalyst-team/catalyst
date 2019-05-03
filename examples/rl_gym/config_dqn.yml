@@ -88,10 +88,16 @@ sampler:
 
   exploration_params:
     - exploration: EpsilonGreedy
-      probability: 0.98
+      probability: 0.9
       eps_init: 1.0
       eps_final: 0.05
       annealing_steps: 1000
 
     - exploration: Greedy
-      probability: 0.02
+      probability: 0.05
+
+    - exploration: Boltzmann
+      probability: 0.05
+      temp_init: 1.0
+      temp_final: 0.05
+      annealing_steps: 1000

@@ -5,7 +5,8 @@ from gym.spaces import Box, Discrete, Space
 
 import torch
 from torch.utils.data import Dataset, Sampler
-from catalyst.rl.offpolicy.exploration.strategies import ParameterSpaceNoise
+from catalyst.rl.offpolicy.exploration.strategies import \
+    ParameterSpaceNoise, Boltzmann
 from catalyst.rl.agents.core import ActorSpec, CriticSpec
 from catalyst.rl.environments.core import EnvironmentSpec
 
@@ -27,6 +28,11 @@ def _get_buffers(
     dones = np.empty((capacity,), dtype=np.bool)
 
     return observations, actions, rewards, dones
+
+
+def np_softmax(x):
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum(axis=-1)
 
 
 class ReplayBufferDataset(Dataset):
@@ -174,30 +180,45 @@ class PolicyHandler:
         agent: Union[ActorSpec, CriticSpec],
         device
     ):
-        discrete_actions = isinstance(env.action_space, Discrete)
+        self.discrete_actions = isinstance(env.action_space, Discrete)
 
         # DQN
-        if discrete_actions:
+        if self.discrete_actions:
             assert isinstance(agent, CriticSpec)
-            if agent.distribution == "categorical":
+            self.value_distribution = agent.distribution
+            if self.value_distribution == "categorical":
                 v_min, v_max = agent.values_range
                 self.z = torch.linspace(
                     start=v_min,
                     end=v_max,
                     steps=agent.num_atoms
                 ).to(device)
-                self._act_fn = self._sample_from_categorical_critic
-            elif agent.distribution == "quantile":
-                self._act_fn = self._sample_from_quantile_critic
-            else:
-                self._act_fn = self._sample_from_critic
+
         # DDPG
         else:
             assert isinstance(agent, ActorSpec)
             action_space: Box = env.action_space
             self.action_clip = action_space.low, action_space.high
-            self._act_fn = self._sample_from_actor
 
+    @torch.no_grad()
+    def _get_q_values(
+        self,
+        critic: CriticSpec,
+        state: np.ndarray,
+        device,
+        distribution=None
+    ):
+        states = torch.Tensor(state).to(device).unsqueeze(0)
+        if distribution == "categorical":
+            probs = torch.softmax(critic(states)[0], dim=-1)
+            q_values = torch.sum(probs * self.z, dim=-1)
+        elif distribution == "quantile":
+            q_values = torch.mean(critic(states)[0], dim=-1)
+        else:
+            q_values = critic(states)[0]
+        return q_values.cpu().numpy()
+
+    @torch.no_grad()
     def _sample_from_actor(
         self,
         actor: ActorSpec,
@@ -205,10 +226,9 @@ class PolicyHandler:
         device,
         deterministic: bool = False
     ):
-        with torch.no_grad():
-            states = torch.Tensor(state).to(device).unsqueeze(0)
-            action = actor(states, deterministic=deterministic)
-            action = action[0].cpu().numpy()
+        states = torch.Tensor(state).to(device).unsqueeze(0)
+        action = actor(states, deterministic=deterministic)
+        action = action[0].cpu().numpy()
 
         if self.action_clip is not None:
             action = np.clip(
@@ -218,56 +238,29 @@ class PolicyHandler:
             )
         return action
 
-    def _sample_from_critic(
-        self,
-        critic: CriticSpec,
-        state: np.ndarray,
-        device,
-        **kwargs
-    ):
-        with torch.no_grad():
-            states = torch.Tensor(state).to(device).unsqueeze(0)
-            q_values = critic(states)[0]
-            action = np.argmax(q_values.detach().cpu().numpy())
-            return action
-
-    def _sample_from_categorical_critic(
-        self,
-        critic: CriticSpec,
-        state: np.ndarray,
-        device,
-        **kwargs
-    ):
-        with torch.no_grad():
-            states = torch.Tensor(state).to(device).unsqueeze(0)
-            probs = torch.softmax(critic(states)[0], dim=-1)
-            q_values = torch.sum(probs * self.z, dim=-1)
-            action = np.argmax(q_values.cpu().numpy())
-            return action
-
-    def _sample_from_quantile_critic(
-        self,
-        critic: CriticSpec,
-        state: np.ndarray,
-        device,
-        **kwargs
-    ):
-        with torch.no_grad():
-            states = torch.Tensor(state).to(device).unsqueeze(0)
-            q_values = torch.mean(critic(states)[0], dim=-1)
-            action = np.argmax(q_values.cpu().numpy())
-            return action
-
     def act(
-            self,
-            agent: Union[ActorSpec, CriticSpec],
-            state: np.ndarray,
-            device,
-            deterministic: bool = False,
-            exploration_strategy=None,
+        self,
+        agent: Union[ActorSpec, CriticSpec],
+        state: np.ndarray,
+        device,
+        deterministic: bool = False,
+        exploration_strategy=None
     ):
-        action = self._act_fn(
-            agent, state, device, deterministic=deterministic)
+
+        if self.discrete_actions:
+            q_values = self._get_q_values(
+                agent, state, device, self.value_distribution
+            )
+            if isinstance(exploration_strategy, Boltzmann):
+                soft_temperature = exploration_strategy.temperature
+                probs = np_softmax(q_values / soft_temperature)
+                action = np.random.choice(np.arange(len(probs)), p=probs)
+            else:
+                action = np.argmax(q_values)
+        else:
+            action = self._sample_from_actor(
+                agent, state, device, deterministic=deterministic
+            )
 
         if exploration_strategy is not None:
             action = exploration_strategy.update_action(action)
