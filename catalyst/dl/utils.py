@@ -83,8 +83,17 @@ class UtilsFactory:
         if torch.cuda.is_available():
             cudnn.benchmark = True
 
-        if torch.cuda.device_count() > 1 and not isinstance(model, Fp16Wrap):
-            model = torch.nn.DataParallel(model).to(device)
+        is_apex_ddp = False
+        try:
+            from apex.parallel import DistributedDataParallel as apex_DDP
+            is_apex_ddp = isinstance(model, apex_DDP)
+        except ImportError:
+            pass
+
+        if torch.cuda.device_count() > 1 and not isinstance(model, (torch.nn.DataParallel,
+                                                                    nn.parallel.DistributedDataParallel,
+                                                                    Fp16Wrap)) and not is_apex_ddp:
+            model = torch.nn.DataParallel(model)
         else:
             model = model.to(device)
 
