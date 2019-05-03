@@ -215,7 +215,16 @@ class OptimizerCallback(Callback):
             optimizer = state.get_key(
                 key="optimizer", inner_key=self.optimizer_key
             )
-            loss.backward()
+
+            # This is very hacky check whether we have AMP optimizer and this may
+            # change in future. But alternative solution is to have AmpOptimizerCallback
+            # or expose another c'tor argument.
+            if hasattr(optimizer, '_amp_stash'):
+                from apex import amp
+                with amp.scale_loss(loss, optimizer) as scaled_loss:
+                    scaled_loss.backward()
+            else:
+                loss.backward()
 
             if (self._accumulation_counter + 1) % self.accumulation_steps == 0:
                 self.grad_step(
