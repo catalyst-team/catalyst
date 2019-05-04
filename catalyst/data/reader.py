@@ -1,3 +1,4 @@
+import functools
 from typing import Callable, Type, List
 
 import numpy as np
@@ -138,7 +139,8 @@ class LambdaReader(BaseReader):
         self,
         input_key: str,
         output_key: str,
-        encode_fn: Callable = lambda x: x
+        encode_fn: Callable = lambda x: x,
+        **kwargs
     ):
         """
         Args:
@@ -146,9 +148,10 @@ class LambdaReader(BaseReader):
             output_key (str): output key to use to store the result
             encode_fn (callable): encode function to use to prepare your data
                 (for example convert chars/words/tokens to indices, etc)
+            kwargs: kwargs for encode function
         """
         super().__init__(input_key, output_key)
-        self.encode_fn = encode_fn
+        self.encode_fn = functools.partial(encode_fn, **kwargs)
 
     def __call__(self, row):
         """Reads a row from your annotations dict
