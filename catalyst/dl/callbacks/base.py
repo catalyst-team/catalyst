@@ -309,13 +309,15 @@ class LossCallback(Callback):
         output_key: str = "logits",
         prefix: str = "loss",
         criterion_key: str = None,
-        loss_key: str = None
+        loss_key: str = None,
+        multiplier: float = 1.0
     ):
         self.input_key = input_key
         self.output_key = output_key
         self.prefix = prefix
         self.criterion_key = criterion_key
         self.loss_key = loss_key
+        self.multiplier = multiplier
 
     def _add_loss_to_state(self, state, loss):
         if self.loss_key is None:
@@ -348,7 +350,7 @@ class LossCallback(Callback):
             key="criterion", inner_key=self.criterion_key
         )
 
-        loss = self._compute_loss(state, criterion)
+        loss = self._compute_loss(state, criterion) * self.multiplier
 
         state.metrics.add_batch_value(metrics_dict={
             self.prefix: loss.item(),
