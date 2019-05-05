@@ -12,7 +12,6 @@ from catalyst.dl import utils
 from catalyst.dl.callbacks import Callback  # noqa F401
 from catalyst.dl.callbacks import \
     LossCallback, OptimizerCallback, SchedulerCallback, CheckpointCallback
-from catalyst.dl.fp16 import Fp16Wrap
 from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.misc import merge_dicts
 
@@ -316,8 +315,7 @@ class ConfigExperiment(Experiment):
 
     def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
         fp16 = isinstance(model, Fp16Wrap)
-        model_params = utils.prepare_optimizable_params(
-            model.parameters(), fp16)
+        model_params = utils.prepare_optimizable_params(model.parameters(), fp16)
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
         optimizer = self._get_optimizer(

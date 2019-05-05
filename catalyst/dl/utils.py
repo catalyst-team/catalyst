@@ -11,7 +11,6 @@ from tensorboardX import SummaryWriter
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
 from catalyst.data.dataset import ListDataset
-from catalyst.dl.fp16 import Fp16Wrap
 from catalyst.utils.plotly import plot_tensorboard_log
 from ..utils.model import prepare_optimizable_params, assert_fp16_available
 
@@ -90,9 +89,9 @@ class UtilsFactory:
         except ImportError:
             pass
 
-        if torch.cuda.device_count() > 1 and not isinstance(model, (torch.nn.DataParallel,
-                                                                    nn.parallel.DistributedDataParallel,
-                                                                    Fp16Wrap)) and not is_apex_ddp:
+        if torch.cuda.device_count() > 1 \
+                and not isinstance(model, (torch.nn.DataParallel, nn.parallel.DistributedDataParallel)) \
+                and not is_apex_ddp:
             model = torch.nn.DataParallel(model)
         else:
             model = model.to(device)
@@ -111,8 +110,6 @@ class UtilsFactory:
             model_ = model
             if isinstance(model_, nn.DataParallel):
                 model_ = model_.module
-            if isinstance(model_, Fp16Wrap):
-                model_ = model_.network
             checkpoint["model_state_dict"] = model_.state_dict()
 
         for dict2save, name2save in zip(
@@ -142,10 +139,8 @@ class UtilsFactory:
         if model is not None:
             if isinstance(model, torch.nn.DataParallel):
                 model = model.module
-            if isinstance(model, Fp16Wrap):
-                model.network.load_state_dict(checkpoint["model_state_dict"])
-            else:
-                model.load_state_dict(checkpoint["model_state_dict"])
+
+            model.load_state_dict(checkpoint["model_state_dict"])
 
         for dict2load, name2load in zip(
             [criterion, optimizer, scheduler],

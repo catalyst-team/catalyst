@@ -25,5 +25,10 @@ def assert_fp16_available():
     assert torch.backends.cudnn.enabled, \
         "fp16 mode requires cudnn backend to be enabled."
 
+    try:
+        from apex import amp
+    except ImportError:
+        assert False, "NVidia Apex package must be installed. See https://github.com/NVIDIA/apex."
+
 
 __all__ = ["assert_fp16_available", "prepare_optimizable_params"]
