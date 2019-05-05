@@ -102,7 +102,7 @@ class Trainer:
         self.weights_sync_period = weights_sync_period
 
         self.episodes_queue = mp.Queue()
-        self._redis_loop_process = None
+        self._db_loop_process = None
         self._num_trajectories = 0
         self._num_transitions = 0
 
@@ -123,13 +123,13 @@ class Trainer:
 
     def get_processes(self):
         processes = []
-        if self._redis_loop_process is not None:
-            processes.append(self._redis_loop_process)
+        if self._db_loop_process is not None:
+            processes.append(self._db_loop_process)
 
         return processes
 
-    def _start_redis_loop(self):
-        self._redis_loop_process = mp.Process(
+    def _start_db_loop(self):
+        self._db_loop_process = mp.Process(
             target=db2queue_loop,
             kwargs={
                 "db_server": self.db_server,
@@ -137,7 +137,7 @@ class Trainer:
                 "max_size": int(self.max_db_trials * 2)
             }
         )
-        self._redis_loop_process.start()
+        self._db_loop_process.start()
 
     def _fetch_episodes(self):
         for i in range(self.max_db_trials):
@@ -239,5 +239,5 @@ class Trainer:
 
     def run(self):
         self._update_samplers_weights()
-        self._start_redis_loop()
+        self._start_db_loop()
         self._start_train_loop()

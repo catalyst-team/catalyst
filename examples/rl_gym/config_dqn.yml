@@ -93,5 +93,6 @@ sampler:
       eps_init: 1.0
       eps_final: 0.05
       annealing_steps: 1000
+
     - exploration: Greedy
       probability: 0.02

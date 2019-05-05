@@ -1,6 +1,6 @@
 from typing import Dict
 from functools import reduce
-from gym.spaces import Box
+from gym.spaces import Box, Discrete
 
 from .core import ActorSpec
 from catalyst.rl.environments.core import EnvironmentSpec
@@ -47,8 +47,12 @@ class Actor(ActorSpec):
 
         # @TODO: any better solution?
         action_space = env_spec.action_space
-        assert isinstance(action_space, Box)
-        policy_head_params["out_features"] = action_space.shape[0]
+        if isinstance(action_space, Box):
+            policy_head_params["out_features"] = action_space.shape[0]
+        elif isinstance(action_space, Discrete):
+            policy_head_params["out_features"] = action_space.n
+        else:
+            raise NotImplementedError()
 
         # @TODO: make by init?
         state_net = StateNet.get_from_params(**state_net_params)

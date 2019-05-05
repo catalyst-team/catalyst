@@ -24,6 +24,13 @@ class RedisDB(DBSpec):
         num_trajectories = self._server.llen("trajectories") - 1
         return num_trajectories
 
+    def set_sample_flag(self, sample: bool):
+        self._server.set("sample_flag", int(sample))
+
+    def get_sample_flag(self) -> bool:
+        flag = int(self._server.get("sample_flag") or -1) == int(1)
+        return flag
+
     def push_trajectory(self, trajectory):
         trajectory = self._pack(trajectory)
         self._server.rpush("trajectories", trajectory)
@@ -36,6 +43,10 @@ class RedisDB(DBSpec):
             self.index = index + 1
         return trajectory
 
+    def clean_trajectories(self):
+        self._server.delete("trajectories")
+        self.index = 0
+
     def dump_weights(self, weights, prefix):
         weights = self._pack(weights)
         self._server.set(f"{self._prefix}_{prefix}_weights", weights)
@@ -45,3 +56,6 @@ class RedisDB(DBSpec):
         if weights is not None:
             weights = self._unpack(weights)
         return weights
+
+    def clean_weights(self, prefix):
+        self._server.delete(f"{self._prefix}_{prefix}_weights")

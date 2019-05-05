@@ -13,7 +13,6 @@ from catalyst.rl.offpolicy.trainer import Trainer as OffpolicyTrainer
 from catalyst.rl.onpolicy.trainer import Trainer as OnpolicyTrainer
 
 
-
 def build_args(parser):
     parser.add_argument(
         "--config",

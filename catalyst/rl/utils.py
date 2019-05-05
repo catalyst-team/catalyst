@@ -15,9 +15,8 @@ from catalyst.rl.db.core import DBSpec
 
 def _make_tuple(tuple_like):
     tuple_like = (
-        tuple_like
-        if isinstance(tuple_like, (list, tuple))
-        else (tuple_like, tuple_like)
+        tuple_like if isinstance(tuple_like, (list, tuple)) else
+        (tuple_like, tuple_like)
     )
     return tuple_like
 
@@ -32,40 +31,39 @@ def _get_buffers(
     assert mode in ["numpy", "memmap"]
     if mode == "numpy":
         observations = np.empty(
-            (capacity,) + tuple(observation_space.shape),
+            (capacity, ) + tuple(observation_space.shape),
             dtype=observation_space.dtype
         )
         actions = np.empty(
-            (capacity,) + tuple(action_space.shape),
-            dtype=action_space.dtype
+            (capacity, ) + tuple(action_space.shape), dtype=action_space.dtype
         )
-        rewards = np.empty((capacity,), dtype=np.float32)
-        dones = np.empty((capacity,), dtype=np.bool)
+        rewards = np.empty((capacity, ), dtype=np.float32)
+        dones = np.empty((capacity, ), dtype=np.bool)
     elif mode == "memmap":
         assert logdir is not None
 
         observations = np.memmap(
             f"{logdir}/observations.memmap",
             mode="w+",
-            shape=(capacity,) + tuple(observation_space.shape),
+            shape=(capacity, ) + tuple(observation_space.shape),
             dtype=observation_space.dtype
         )
         actions = np.memmap(
             f"{logdir}/actions.memmap",
             mode="w+",
-            shape=(capacity,) + tuple(action_space.shape),
+            shape=(capacity, ) + tuple(action_space.shape),
             dtype=action_space.dtype
         )
         rewards = np.memmap(
             f"{logdir}/rewards.memmap",
             mode="w+",
-            shape=(capacity,),
+            shape=(capacity, ),
             dtype=np.float32
         )
         dones = np.memmap(
             f"{logdir}/dones.memmap",
             mode="w+",
-            shape=(capacity,),
+            shape=(capacity, ),
             dtype=np.bool
         )
     else:
@@ -163,7 +161,7 @@ class ReplayBufferDataset(Dataset):
 
         if start_idx < 0 or np.any(self.dones[start_idx:idx + 1]):
             state = np.zeros(
-                (history_len,) + self.observation_space.shape,
+                (history_len, ) + self.observation_space.shape,
                 dtype=self.observation_space.dtype
             )
             indices = [idx]
@@ -187,7 +185,7 @@ class ReplayBufferDataset(Dataset):
         cum_reward = 0
         indices = np.arange(idx, idx + n_step) % self.capacity
         for num, i in enumerate(indices):
-            cum_reward += self.rewards[i] * (gamma ** num)
+            cum_reward += self.rewards[i] * (gamma**num)
             done = self.dones[i]
             if done:
                 break
@@ -233,30 +231,123 @@ class ReplayBufferSampler(Sampler):
         return self.len
 
 
-class PolicyHandler:
+class ReplayBufferDataset2(Dataset):
     def __init__(
         self,
-        env: EnvironmentSpec,
-        agent: Union[ActorSpec, CriticSpec],
-        device
+        state_space: Space,
+        action_space: Space,
+        capacity=int(1e6),
+        n_step=1,
+        gamma=0.99,
+        history_len=1,
+        mode="numpy",
+        logdir=None
+    ):
+        # @TODO: Refactor !!!
+        self.state_space = state_space
+        self.action_space = action_space
+        self.history_len = history_len
+
+        self.capacity = capacity
+        self.n_step = n_step
+        self.gamma = gamma
+
+        self.len = 0
+        self.pointer = 0
+        self._store_lock = mp.RLock()
+
+        self.states = np.empty(
+            (capacity, ) + tuple(state_space.shape), dtype=state_space.dtype
+        )
+        self.actions = np.empty(
+            (capacity, ) + tuple(action_space.shape), dtype=action_space.dtype
+        )
+        self.returns = np.empty((capacity, ), dtype=np.float32)
+        self.values = np.empty((capacity, ), dtype=np.float32)
+        self.advantages = np.empty((capacity, ), dtype=np.float32)
+        self.log_pis = np.empty((capacity, ), dtype=np.float32)
+
+    def push_episode(self, episode):
+        with self._store_lock:
+            states, actions, returns, values, advantages, log_pis = episode
+            episode_len = len(actions)
+            self.len = min(self.len + episode_len, self.capacity)
+            indices = np.arange(
+                self.pointer, self.pointer + episode_len
+            ) % self.capacity
+            self.states[indices] = states
+            self.actions[indices] = actions
+            self.returns[indices] = returns
+            self.values[indices] = values
+            self.advantages[indices] = advantages
+            self.log_pis[indices] = log_pis
+            self.pointer = (self.pointer + episode_len) % self.capacity
+
+    def rescale_advantages(self):
+        adv_centered = \
+            self.advantages[:self.len] - self.advantages[:self.len].mean()
+        self.advantages[:self.len] = \
+            adv_centered / (self.advantages[:self.len].std() + 1e-6)
+
+    def __getitem__(self, index):
+        dct = {
+            "state": np.array(self.states[index]).astype(np.float32),
+            "action": np.array(self.actions[index]).astype(np.float32),
+            "return": np.array(self.returns[index]).astype(np.float32),
+            "advantage": np.array(self.advantages[index]).astype(np.float32),
+            "log_pi": np.array(self.log_pis[index]).astype(np.float32)
+        }
+        return dct
+
+    def __len__(self):
+        return self.len
+
+
+class ReplayBufferSampler2(Sampler):
+    def __init__(self, buffer, num_mini_epochs):
+        super().__init__(None)
+        self.buffer = buffer
+        self.num_mini_epochs = num_mini_epochs
+        buffer_len = len(self.buffer)
+        self.len = buffer_len * num_mini_epochs
+
+        indices = []
+        for i in range(num_mini_epochs):
+            idx = np.arange(buffer_len)
+            np.random.shuffle(idx)
+            indices.append(idx)
+        self.indices = np.concatenate(indices)
+
+    def __iter__(self):
+        return iter(self.indices)
+
+    def __len__(self):
+        return self.len
+
+
+class PolicyHandler:
+    def __init__(
+        self, env: EnvironmentSpec, agent: Union[ActorSpec, CriticSpec], device
     ):
         discrete_actions = isinstance(env.action_space, Discrete)
 
         # DQN
         if discrete_actions:
-            assert isinstance(agent, CriticSpec)
-            if agent.distribution == "categorical":
-                v_min, v_max = agent.values_range
-                self.z = torch.linspace(
-                    start=v_min,
-                    end=v_max,
-                    steps=agent.num_atoms
-                ).to(device)
-                self._act_fn = self._sample_from_categorical_critic
-            elif agent.distribution == "quantile":
-                self._act_fn = self._sample_from_quantile_critic
+            if isinstance(agent, ActorSpec):
+                raise NotImplementedError()
+            elif isinstance(agent, CriticSpec):
+                if agent.distribution == "categorical":
+                    v_min, v_max = agent.values_range
+                    self.z = torch.linspace(
+                        start=v_min, end=v_max, steps=agent.num_atoms
+                    ).to(device)
+                    self._act_fn = self._sample_from_categorical_critic
+                elif agent.distribution == "quantile":
+                    self._act_fn = self._sample_from_quantile_critic
+                else:
+                    self._act_fn = self._sample_from_critic
             else:
-                self._act_fn = self._sample_from_critic
+                raise NotImplementedError()
         # DDPG
         else:
             assert isinstance(agent, ActorSpec)
@@ -278,18 +369,12 @@ class PolicyHandler:
 
         if self.action_clip is not None:
             action = np.clip(
-                action,
-                a_min=self.action_clip[0],
-                a_max=self.action_clip[1]
+                action, a_min=self.action_clip[0], a_max=self.action_clip[1]
             )
         return action
 
     def _sample_from_critic(
-        self,
-        critic: CriticSpec,
-        state: np.ndarray,
-        device,
-        **kwargs
+        self, critic: CriticSpec, state: np.ndarray, device, **kwargs
     ):
         with torch.no_grad():
             states = torch.Tensor(state).to(device).unsqueeze(0)
@@ -298,11 +383,7 @@ class PolicyHandler:
             return action
 
     def _sample_from_categorical_critic(
-        self,
-        critic: CriticSpec,
-        state: np.ndarray,
-        device,
-        **kwargs
+        self, critic: CriticSpec, state: np.ndarray, device, **kwargs
     ):
         with torch.no_grad():
             states = torch.Tensor(state).to(device).unsqueeze(0)
@@ -312,11 +393,7 @@ class PolicyHandler:
             return action
 
     def _sample_from_quantile_critic(
-        self,
-        critic: CriticSpec,
-        state: np.ndarray,
-        device,
-        **kwargs
+        self, critic: CriticSpec, state: np.ndarray, device, **kwargs
     ):
         with torch.no_grad():
             states = torch.Tensor(state).to(device).unsqueeze(0)
@@ -325,15 +402,16 @@ class PolicyHandler:
             return action
 
     def act(
-            self,
-            agent: Union[ActorSpec, CriticSpec],
-            state: np.ndarray,
-            device,
-            deterministic: bool = False,
-            exploration_strategy=None,
+        self,
+        agent: Union[ActorSpec, CriticSpec],
+        state: np.ndarray,
+        device,
+        deterministic: bool = False,
+        exploration_strategy=None,
     ):
         action = self._act_fn(
-            agent, state, device, deterministic=deterministic)
+            agent, state, device, deterministic=deterministic
+        )
 
         if exploration_strategy is not None:
             action = exploration_strategy.update_action(action)
@@ -356,7 +434,8 @@ class EpisodeRunner:
         self.capacity = capacity
         self.deterministic = deterministic
         self.policy_handler = PolicyHandler(
-            env=self.env, agent=self.agent, device=device)
+            env=self.env, agent=self.agent, device=device
+        )
 
         self._init_buffers()
 
@@ -402,7 +481,7 @@ class EpisodeRunner:
         history_len = history_len or self.env.history_len
 
         state = np.zeros(
-            (history_len,) + self.env.observation_space.shape,
+            (history_len, ) + self.env.observation_space.shape,
             dtype=self.env.observation_space.dtype
         )
 
@@ -453,9 +532,6 @@ class EpisodeRunner:
             self._put_transition(transition)
             num_steps += 1
 
-        results = {
-            "episode_reward": episode_reward,
-            "num_steps": num_steps
-        }
+        results = {"episode_reward": episode_reward, "num_steps": num_steps}
 
         return results
