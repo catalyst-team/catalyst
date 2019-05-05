@@ -10,11 +10,14 @@ import multiprocessing as mp
 import torch
 
 from catalyst.dl.scripts.utils import import_module
-from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS, DATABASES
 from catalyst.utils.config import parse_args_uargs
 from catalyst.utils.misc import set_global_seed, boolean_flag
-from catalyst.rl.offpolicy.sampler import Sampler
-from catalyst.rl.offpolicy.exploration import ExplorationHandler
+from catalyst.rl.registry import OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
+    ENVIRONMENTS, DATABASES
+from catalyst.rl.exploration import ExplorationHandler
+from catalyst.rl.offpolicy.sampler import Sampler as OffpolicySampler
+from catalyst.rl.onpolicy.sampler import Sampler as OnpolicySampler
+
 
 os.environ["OMP_NUM_THREADS"] = "1"
 torch.set_num_threads(1)
@@ -36,6 +39,12 @@ def build_args(parser):
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--resume", type=str, default=None)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument(
+        "--setup",
+        type=str,
+        required=True,
+        choices=["off-policy", "on-policy"]
+    )
 
     parser.add_argument(
         "--vis",
@@ -69,6 +78,7 @@ def run_sampler(
     logdir,
     algorithm_fn,
     environment_fn,
+    sampler_fn,
     vis,
     infer,
     seed=42,
@@ -99,7 +109,7 @@ def run_sampler(
     valid_seeds = config_["sampler"].pop("valid_seeds")
     seeds = valid_seeds if infer else None
 
-    sampler = Sampler(
+    sampler = sampler_fn(
         agent=agent,
         env=env,
         db_server=db_server,
@@ -119,6 +129,13 @@ def run_sampler(
 
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
+
+    if args.setup == "off-policy":
+        ALGORITHMS = OFFPOLICY_ALGORITHMS
+        sampler_fn = OffpolicySampler
+    else:
+        ALGORITHMS = ONPOLICY_ALGORITHMS
+        sampler_fn = OnpolicySampler
 
     if args.expdir is not None:
         module = import_module(expdir=args.expdir)  # noqa: F841
@@ -143,6 +160,7 @@ def main(args, unknown_args):
         logdir=args.logdir,
         algorithm_fn=algorithm_fn,
         environment_fn=environment_fn,
+        sampler_fn=sampler_fn,
         config=config,
         resume=args.resume,
         db=args.db

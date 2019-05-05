@@ -1,4 +1,5 @@
 from typing import Union
+import time
 import numpy as np
 import multiprocessing as mp
 from gym.spaces import Box, Discrete, Space
@@ -6,9 +7,19 @@ from gym.spaces import Box, Discrete, Space
 import torch
 import torch.nn.functional as F
 from torch.utils.data import Dataset, Sampler
-from catalyst.rl.offpolicy.exploration.strategies import ParameterSpaceNoise
+from catalyst.rl.exploration import ParameterSpaceNoise
 from catalyst.rl.agents.core import ActorSpec, CriticSpec
 from catalyst.rl.environments.core import EnvironmentSpec
+from catalyst.rl.db.core import DBSpec
+
+
+def _make_tuple(tuple_like):
+    tuple_like = (
+        tuple_like
+        if isinstance(tuple_like, (list, tuple))
+        else (tuple_like, tuple_like)
+    )
+    return tuple_like
 
 
 def _get_buffers(
@@ -61,6 +72,23 @@ def _get_buffers(
         raise NotImplementedError()
 
     return observations, actions, rewards, dones
+
+
+def db2queue_loop(db_server: DBSpec, queue: mp.Queue, max_size: int):
+    while True:
+        try:
+            need_more = queue.qsize() < max_size
+        except NotImplementedError:  # MacOS qsize issue (no sem_getvalue)
+            need_more = True
+
+        if need_more:
+            trajectory = db_server.get_trajectory()
+            if trajectory is not None:
+                queue.put(trajectory, block=True, timeout=1.0)
+            else:
+                time.sleep(1.0)
+        else:
+            time.sleep(1.0)
 
 
 class ReplayBufferDataset(Dataset):
@@ -351,10 +379,10 @@ class EpisodeRunner:
 
     def _put_transition(self, transition):
         """
-        transition = [s_tp1, a_t, r_t, d_t]
+        transition = [o_tp1, a_t, r_t, d_t]
         """
-        s_tp1, a_t, r_t, d_t = transition
-        self.observations[self.pointer + 1] = s_tp1
+        o_tp1, a_t, r_t, d_t = transition
+        self.observations[self.pointer + 1] = o_tp1
         self.actions[self.pointer] = a_t
         self.rewards[self.pointer] = r_t
         self.dones[self.pointer] = d_t
@@ -405,7 +433,7 @@ class EpisodeRunner:
         self._init_buffers()
         self._init_with_observation(self.env.reset())
 
-    def play_episode(self, exploration_strategy):
+    def run(self, exploration_strategy):
         episode_reward, num_steps, done = 0, 0, False
 
         while not done:

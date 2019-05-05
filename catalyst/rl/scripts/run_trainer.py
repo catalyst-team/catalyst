@@ -5,10 +5,13 @@ import atexit
 import argparse
 
 from catalyst.dl.scripts.utils import import_module
-from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS, DATABASES
-from catalyst.rl.offpolicy.trainer import Trainer
 from catalyst.utils.config import parse_args_uargs, dump_config
 from catalyst.utils.misc import set_global_seed
+from catalyst.rl.registry import OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
+    ENVIRONMENTS, DATABASES
+from catalyst.rl.offpolicy.trainer import Trainer as OffpolicyTrainer
+from catalyst.rl.onpolicy.trainer import Trainer as OnpolicyTrainer
+
 
 
 def build_args(parser):
@@ -26,6 +29,12 @@ def build_args(parser):
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--resume", type=str, default=None)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument(
+        "--setup",
+        type=str,
+        required=True,
+        choices=["off-policy", "on-policy"]
+    )
 
     return parser
 
@@ -40,6 +49,13 @@ def parse_args():
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
     set_global_seed(args.seed)
+
+    if args.setup == "off-policy":
+        ALGORITHMS = OFFPOLICY_ALGORITHMS
+        trainer_fn = OffpolicyTrainer
+    else:
+        ALGORITHMS = ONPOLICY_ALGORITHMS
+        trainer_fn = OnpolicyTrainer
 
     if args.logdir is not None:
         os.makedirs(args.logdir, exist_ok=True)
@@ -61,7 +77,7 @@ def main(args, unknown_args):
     if args.resume is not None:
         algorithm.load_checkpoint(filepath=args.resume)
 
-    trainer = Trainer(
+    trainer = trainer_fn(
         algorithm=algorithm,
         env_spec=env,
         db_server=db_server,
