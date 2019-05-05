@@ -1,10 +1,9 @@
 from typing import List
 from copy import deepcopy
 import numpy as np
-from gym.spaces import Discrete
 from catalyst.rl.registry import EXPLORATION
 from catalyst.rl.environments.core import EnvironmentSpec
-from .strategies import ExplorationStrategy, EpsilonGreedy
+from .strategies import ExplorationStrategy
 
 
 class ExplorationHandler:

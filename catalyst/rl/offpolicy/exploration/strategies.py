@@ -3,7 +3,11 @@ from .utils import np_softmax, set_params_noise
 
 
 class ExplorationStrategy:
-
+    """
+    Base class for working with various exploration strategies.
+    In discrete case must contain method get_action(q_values)
+    In continuous case must contain method get_action(action)
+    """
     def __init__(self, power=1.0):
         self._power = power
 

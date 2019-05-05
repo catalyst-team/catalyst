@@ -6,7 +6,7 @@ from gym.spaces import Box, Discrete, Space
 import torch
 from torch.utils.data import Dataset, Sampler
 from catalyst.rl.offpolicy.exploration.strategies import \
-    ParameterSpaceNoise, Boltzmann
+    ParameterSpaceNoise
 from catalyst.rl.agents.core import ActorSpec, CriticSpec
 from catalyst.rl.environments.core import EnvironmentSpec
 
