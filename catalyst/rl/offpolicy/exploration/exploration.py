@@ -18,10 +18,6 @@ class ExplorationHandler:
             probability = params_.pop("probability")
             strategy_fn = EXPLORATION.get(exploration_name)
 
-            if issubclass(strategy_fn, EpsilonGreedy):
-                assert isinstance(env.action_space, Discrete)
-                params_["num_actions"] = env.action_space.n
-
             strategy = strategy_fn(**params_)
             self.exploration_strategies.append(strategy)
             self.probs.append(probability)

@@ -2,6 +2,11 @@ import numpy as np
 import torch
 
 
+def np_softmax(x):
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum(axis=-1)
+
+
 def get_network_weights(network, exclude_norm=False):
     """
     Args:

@@ -173,7 +173,7 @@ class SAC(AlgorithmContinuous):
         atoms_target_t = rewards_t + (1 - done_t) * gamma * atoms_tp1
         value_loss = [
             quantile_loss(
-                x, atoms_target_t, self.tau, self.n_atoms,
+                x, atoms_target_t, self.tau, self.num_atoms,
                 self.critic_criterion
             ) for x in atoms_t
         ]

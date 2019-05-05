@@ -30,11 +30,6 @@ def _get_buffers(
     return observations, actions, rewards, dones
 
 
-def np_softmax(x):
-    e_x = np.exp(x - np.max(x))
-    return e_x / e_x.sum(axis=-1)
-
-
 class ReplayBufferDataset(Dataset):
     def __init__(
         self,
@@ -205,14 +200,13 @@ class PolicyHandler:
         self,
         critic: CriticSpec,
         state: np.ndarray,
-        device,
-        distribution=None
+        device
     ):
         states = torch.Tensor(state).to(device).unsqueeze(0)
-        if distribution == "categorical":
+        if self.value_distribution == "categorical":
             probs = torch.softmax(critic(states)[0], dim=-1)
             q_values = torch.sum(probs * self.z, dim=-1)
-        elif distribution == "quantile":
+        elif self.value_distribution == "quantile":
             q_values = torch.mean(critic(states)[0], dim=-1)
         else:
             q_values = critic(states)[0]
@@ -238,35 +232,6 @@ class PolicyHandler:
             )
         return action
 
-    def act(
-        self,
-        agent: Union[ActorSpec, CriticSpec],
-        state: np.ndarray,
-        device,
-        deterministic: bool = False,
-        exploration_strategy=None
-    ):
-
-        if self.discrete_actions:
-            q_values = self._get_q_values(
-                agent, state, device, self.value_distribution
-            )
-            if isinstance(exploration_strategy, Boltzmann):
-                soft_temperature = exploration_strategy.temperature
-                probs = np_softmax(q_values / soft_temperature)
-                action = np.random.choice(np.arange(len(probs)), p=probs)
-            else:
-                action = np.argmax(q_values)
-        else:
-            action = self._sample_from_actor(
-                agent, state, device, deterministic=deterministic
-            )
-
-        if exploration_strategy is not None:
-            action = exploration_strategy.update_action(action)
-
-        return action
-
 
 class EpisodeRunner:
     def __init__(
@@ -283,13 +248,18 @@ class EpisodeRunner:
         self.capacity = capacity
         self.deterministic = deterministic
         self.policy_handler = PolicyHandler(
-            env=self.env, agent=self.agent, device=device)
+            env=self.env, agent=self.agent, device=device
+        )
+
+        if isinstance(env.action_space, Discrete):
+            self._act_fn = self._act_discrete
+        else:
+            self._act_fn = self._act_continuous
 
         self._init_buffers()
 
     def _init_buffers(self):
         self.pointer = 0
-
         self.observations, self.actions, self.rewards, self.dones = \
             _get_buffers(
                 capacity=self.capacity,
@@ -348,14 +318,14 @@ class EpisodeRunner:
         trajectory = (observations, actions, rewards, dones)
         return trajectory
 
+    @torch.no_grad()
     def reset(self, exploration_strategy=None):
 
         if isinstance(exploration_strategy, ParameterSpaceNoise) \
                 and self.pointer > 1:
-            with torch.no_grad():
-                states = self._get_states_history()
-                states = self._to_tensor(states)
-                exploration_strategy.update_actor(self.agent, states)
+            states = self._get_states_history()
+            states = self._to_tensor(states)
+            exploration_strategy.update_actor(self.agent, states)
 
         self._init_buffers()
         self._init_with_observation(self.env.reset())
@@ -365,7 +335,7 @@ class EpisodeRunner:
 
         while not done:
             state = self.get_state()
-            action = self.policy_handler.act(
+            action = self._act_fn(
                 agent=self.agent,
                 state=state,
                 device=self._device,
@@ -386,3 +356,29 @@ class EpisodeRunner:
         }
 
         return results
+
+    def _act_discrete(
+        self,
+        agent: CriticSpec,
+        state: np.ndarray,
+        device,
+        deterministic: bool = False,
+        exploration_strategy=None
+    ):
+        q_values = self.policy_handler._get_q_values(agent, state, device)
+        action = exploration_strategy.get_action(q_values)
+        return action
+
+    def _act_continuous(
+        self,
+        agent: ActorSpec,
+        state: np.ndarray,
+        device,
+        deterministic: bool = False,
+        exploration_strategy=None
+    ):
+        action = self.policy_handler._sample_from_actor(
+            agent, state, device, deterministic
+        )
+        action = exploration_strategy.get_action(action)
+        return action
