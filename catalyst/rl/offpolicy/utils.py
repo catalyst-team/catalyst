@@ -4,9 +4,9 @@ import multiprocessing as mp
 from gym.spaces import Box, Discrete, Space
 
 import torch
-import torch.nn.functional as F
 from torch.utils.data import Dataset, Sampler
-from catalyst.rl.offpolicy.exploration.strategies import ParameterSpaceNoise
+from catalyst.rl.offpolicy.exploration.strategies import \
+    OrnsteinUhlenbeckProcess, ParameterSpaceNoise
 from catalyst.rl.agents.core import ActorSpec, CriticSpec
 from catalyst.rl.environments.core import EnvironmentSpec
 
@@ -212,30 +212,44 @@ class PolicyHandler:
         agent: Union[ActorSpec, CriticSpec],
         device
     ):
-        discrete_actions = isinstance(env.action_space, Discrete)
+        self.discrete_actions = isinstance(env.action_space, Discrete)
 
         # DQN
-        if discrete_actions:
+        if self.discrete_actions:
             assert isinstance(agent, CriticSpec)
-            if agent.distribution == "categorical":
+            self.value_distribution = agent.distribution
+            if self.value_distribution == "categorical":
                 v_min, v_max = agent.values_range
                 self.z = torch.linspace(
                     start=v_min,
                     end=v_max,
                     steps=agent.num_atoms
                 ).to(device)
-                self._act_fn = self._sample_from_categorical_critic
-            elif agent.distribution == "quantile":
-                self._act_fn = self._sample_from_quantile_critic
-            else:
-                self._act_fn = self._sample_from_critic
+
         # DDPG
         else:
             assert isinstance(agent, ActorSpec)
             action_space: Box = env.action_space
             self.action_clip = action_space.low, action_space.high
-            self._act_fn = self._sample_from_actor
 
+    @torch.no_grad()
+    def _get_q_values(
+        self,
+        critic: CriticSpec,
+        state: np.ndarray,
+        device
+    ):
+        states = torch.Tensor(state).to(device).unsqueeze(0)
+        if self.value_distribution == "categorical":
+            probs = torch.softmax(critic(states)[0], dim=-1)
+            q_values = torch.sum(probs * self.z, dim=-1)
+        elif self.value_distribution == "quantile":
+            q_values = torch.mean(critic(states)[0], dim=-1)
+        else:
+            q_values = critic(states)[0]
+        return q_values.cpu().numpy()
+
+    @torch.no_grad()
     def _sample_from_actor(
         self,
         actor: ActorSpec,
@@ -243,10 +257,9 @@ class PolicyHandler:
         device,
         deterministic: bool = False
     ):
-        with torch.no_grad():
-            states = torch.Tensor(state).to(device).unsqueeze(0)
-            action = actor(states, deterministic=deterministic)
-            action = action[0].cpu().numpy()
+        states = torch.Tensor(state).to(device).unsqueeze(0)
+        action = actor(states, deterministic=deterministic)
+        action = action[0].cpu().numpy()
 
         if self.action_clip is not None:
             action = np.clip(
@@ -254,62 +267,6 @@ class PolicyHandler:
                 a_min=self.action_clip[0],
                 a_max=self.action_clip[1]
             )
-        return action
-
-    def _sample_from_critic(
-        self,
-        critic: CriticSpec,
-        state: np.ndarray,
-        device,
-        **kwargs
-    ):
-        with torch.no_grad():
-            states = torch.Tensor(state).to(device).unsqueeze(0)
-            q_values = critic(states)[0]
-            action = np.argmax(q_values.detach().cpu().numpy())
-            return action
-
-    def _sample_from_categorical_critic(
-        self,
-        critic: CriticSpec,
-        state: np.ndarray,
-        device,
-        **kwargs
-    ):
-        with torch.no_grad():
-            states = torch.Tensor(state).to(device).unsqueeze(0)
-            probs = F.softmax(critic(states)[0], dim=-1)
-            q_values = torch.sum(probs * self.z, dim=-1)
-            action = np.argmax(q_values.cpu().numpy())
-            return action
-
-    def _sample_from_quantile_critic(
-        self,
-        critic: CriticSpec,
-        state: np.ndarray,
-        device,
-        **kwargs
-    ):
-        with torch.no_grad():
-            states = torch.Tensor(state).to(device).unsqueeze(0)
-            q_values = torch.mean(critic(states)[0], dim=-1)
-            action = np.argmax(q_values.cpu().numpy())
-            return action
-
-    def act(
-            self,
-            agent: Union[ActorSpec, CriticSpec],
-            state: np.ndarray,
-            device,
-            deterministic: bool = False,
-            exploration_strategy=None,
-    ):
-        action = self._act_fn(
-            agent, state, device, deterministic=deterministic)
-
-        if exploration_strategy is not None:
-            action = exploration_strategy.update_action(action)
-
         return action
 
 
@@ -328,13 +285,18 @@ class EpisodeRunner:
         self.capacity = capacity
         self.deterministic = deterministic
         self.policy_handler = PolicyHandler(
-            env=self.env, agent=self.agent, device=device)
+            env=self.env, agent=self.agent, device=device
+        )
+
+        if isinstance(env.action_space, Discrete):
+            self._act_fn = self._act_discrete
+        else:
+            self._act_fn = self._act_continuous
 
         self._init_buffers()
 
     def _init_buffers(self):
         self.pointer = 0
-
         self.observations, self.actions, self.rewards, self.dones = \
             _get_buffers(
                 capacity=self.capacity,
@@ -393,14 +355,17 @@ class EpisodeRunner:
         trajectory = (observations, actions, rewards, dones)
         return trajectory
 
+    @torch.no_grad()
     def reset(self, exploration_strategy=None):
+
+        if isinstance(exploration_strategy, OrnsteinUhlenbeckProcess):
+            exploration_strategy.reset_state(self.env.action_space.shape[0])
 
         if isinstance(exploration_strategy, ParameterSpaceNoise) \
                 and self.pointer > 1:
-            with torch.no_grad():
-                states = self._get_states_history()
-                states = self._to_tensor(states)
-                exploration_strategy.update_actor(self.agent, states)
+            states = self._get_states_history()
+            states = self._to_tensor(states)
+            exploration_strategy.update_actor(self.agent, states)
 
         self._init_buffers()
         self._init_with_observation(self.env.reset())
@@ -410,7 +375,7 @@ class EpisodeRunner:
 
         while not done:
             state = self.get_state()
-            action = self.policy_handler.act(
+            action = self._act_fn(
                 agent=self.agent,
                 state=state,
                 device=self._device,
@@ -431,3 +396,29 @@ class EpisodeRunner:
         }
 
         return results
+
+    def _act_discrete(
+        self,
+        agent: CriticSpec,
+        state: np.ndarray,
+        device,
+        deterministic: bool = False,
+        exploration_strategy=None
+    ):
+        q_values = self.policy_handler._get_q_values(agent, state, device)
+        action = exploration_strategy.get_action(q_values)
+        return action
+
+    def _act_continuous(
+        self,
+        agent: ActorSpec,
+        state: np.ndarray,
+        device,
+        deterministic: bool = False,
+        exploration_strategy=None
+    ):
+        action = self.policy_handler._sample_from_actor(
+            agent, state, device, deterministic
+        )
+        action = exploration_strategy.get_action(action)
+        return action

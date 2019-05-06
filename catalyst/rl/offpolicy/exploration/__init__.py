@@ -4,6 +4,7 @@ from .strategies import *
 
 __all__ = [
     "ExplorationHandler", "ExplorationStrategy",
-    "Greedy", "EpsilonGreedy",
-    "GaussNoise", "ParameterSpaceNoise"
+    "Greedy", "EpsilonGreedy", "Boltzmann",
+    "NoExploration", "GaussNoise", "OrnsteinUhlenbeckProcess",
+    "ParameterSpaceNoise"
 ]
