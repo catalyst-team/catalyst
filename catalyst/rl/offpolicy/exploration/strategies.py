@@ -5,8 +5,8 @@ from .utils import np_softmax, set_params_noise
 class ExplorationStrategy:
     """
     Base class for working with various exploration strategies.
-    In discrete case must contain method get_action(q_values)
-    In continuous case must contain method get_action(action)
+    In discrete case must contain method get_action(q_values).
+    In continuous case must contain method get_action(action).
     """
     def __init__(self, power=1.0):
         self._power = power
@@ -16,18 +16,24 @@ class ExplorationStrategy:
         self._power = value
 
 
-class NoExploration(ExplorationStrategy):
-    def get_action(self, action):
-        return action
-
-
 class Greedy(ExplorationStrategy):
+    """
+    For discrete environments only.
+    Selects greedy action (argmax_a Q(s,a)).
+    """
     def get_action(self, q_values):
         action = np.argmax(q_values)
         return action
 
 
 class EpsilonGreedy(ExplorationStrategy):
+    """
+    For discrete environments only.
+    Selects random action with probability eps and greedy action
+    (argmax_a Q(s,a)) with probability 1-eps.
+    Random action selection probability eps usually decreases
+    from 1 to 0.01-0.05 during the course of training.
+    """
     def __init__(self, eps_init, eps_final, annealing_steps):
         super().__init__()
 
@@ -54,6 +60,13 @@ class EpsilonGreedy(ExplorationStrategy):
 
 
 class Boltzmann(ExplorationStrategy):
+    """
+    For discrete environments only.
+    Selects soft maximum action (softmax_a [Q(s,a)/t]).
+    Temperature parameter t usually decreases during the course of
+    training. Importantly, the effective range of t depends on the
+    magnitutdes of environment rewards.
+    """
     def __init__(self, temp_init, temp_final, annealing_steps):
         super().__init__()
 
@@ -79,7 +92,20 @@ class Boltzmann(ExplorationStrategy):
         return action
 
 
+class NoExploration(ExplorationStrategy):
+    """
+    For continuous environments only.
+    Returns action produced by the actor network without changes.
+    """
+    def get_action(self, action):
+        return action
+
+
 class GaussNoise(ExplorationStrategy):
+    """
+    For continuous environments only.
+    Adds spherical Gaussian noise to the action produced by actor.
+    """
     def __init__(self, sigma):
         super().__init__()
 
@@ -94,7 +120,43 @@ class GaussNoise(ExplorationStrategy):
         return noisy_action
 
 
+class OrnsteinUhlenbeckProcess(ExplorationStrategy):
+    """
+    For continuous environments only.
+    Adds temporally correlated Gaussian noise generated with
+    Ornstein-Uhlenbeck process.
+    Paper: https://arxiv.org/abs/1509.02971
+    """
+    def __init__(self, sigma, theta, dt=1e-2):
+        super().__init__()
+
+        self.sigma = sigma
+        self.theta = theta
+        self.dt = dt
+
+    def set_power(self, value):
+        super().set_power(value)
+        self.sigma *= self._power
+
+    def reset_state(self, action_size):
+        self.x_prev = np.zeros(action_size)
+
+    def get_action(self, action):
+        mu = self.x_prev * (1 - self.theta * self.dt)
+        sigma = self.sigma * np.sqrt(self.dt)
+        x = np.random.normal(mu, sigma)
+        noisy_action = action + x
+        self.x_prev = x
+        return noisy_action
+
+
 class ParameterSpaceNoise(ExplorationStrategy):
+    """
+    For continuous environments only.
+    At the beginning of the episode, perturbs the weights of actor network
+    forcing it to produce more diverse actions.
+    Paper: https://arxiv.org/abs/1706.01905
+    """
     def __init__(self, target_sigma, tolerance=1e-3, max_steps=1000):
         super().__init__()
 

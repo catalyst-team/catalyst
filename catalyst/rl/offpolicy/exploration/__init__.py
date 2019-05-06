@@ -5,5 +5,6 @@ from .strategies import *
 __all__ = [
     "ExplorationHandler", "ExplorationStrategy",
     "Greedy", "EpsilonGreedy", "Boltzmann",
-    "NoExploration", "GaussNoise", "ParameterSpaceNoise"
+    "NoExploration", "GaussNoise", "OrnsteinUhlenbeckProcess",
+    "ParameterSpaceNoise"
 ]

@@ -6,7 +6,7 @@ from gym.spaces import Box, Discrete, Space
 import torch
 from torch.utils.data import Dataset, Sampler
 from catalyst.rl.offpolicy.exploration.strategies import \
-    ParameterSpaceNoise
+    OrnsteinUhlenbeckProcess, ParameterSpaceNoise
 from catalyst.rl.agents.core import ActorSpec, CriticSpec
 from catalyst.rl.environments.core import EnvironmentSpec
 
@@ -320,6 +320,9 @@ class EpisodeRunner:
 
     @torch.no_grad()
     def reset(self, exploration_strategy=None):
+
+        if isinstance(exploration_strategy, OrnsteinUhlenbeckProcess):
+            exploration_strategy.reset_state(self.env.action_space.shape[0])
 
         if isinstance(exploration_strategy, ParameterSpaceNoise) \
                 and self.pointer > 1:

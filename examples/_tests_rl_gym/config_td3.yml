@@ -139,5 +139,5 @@ sampler:
       probability: 0.3
       target_sigma: 0.2
 
-    - exploration: Greedy
+    - exploration: NoExploration
       probability: 0.1
