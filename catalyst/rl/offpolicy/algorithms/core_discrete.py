@@ -19,8 +19,8 @@ class AlgorithmDiscrete(AlgorithmSpec):
         critic_loss_params: Dict = None,
         critic_optimizer_params: Dict = None,
         critic_scheduler_params: Dict = None,
-        critic_grad_clip_params=None,
-        critic_tau=1.0,
+        critic_grad_clip_params: Dict = None,
+        critic_tau: float = 1.0,
         **kwargs
     ):
         self._device = UtilsFactory.prepare_device()

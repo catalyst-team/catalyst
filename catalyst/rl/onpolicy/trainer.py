@@ -18,7 +18,7 @@ from catalyst.rl.offpolicy.algorithms.core import AlgorithmSpec
 from catalyst.rl.utils import _make_tuple, db2queue_loop
 
 
-def make_states_from_observations(observations, history_len=1):
+def get_states_from_observations(observations, history_len=1):
     """
     DB stores observations but not states.
     This function creates states from observations
@@ -93,6 +93,7 @@ class Trainer:
         self.save_period = save_period
 
         self.episodes_queue = mp.Queue()
+        # self.episodes_queue = None
         self._db_loop_process = None
         self._num_trajectories = 0
         self._num_transitions = 0
@@ -143,26 +144,25 @@ class Trainer:
 
         while self._num_trajectories < self.min_num_trajectories \
                 and self._num_transitions < self.min_num_transitions:
+            print(
+                f"waiting for transitions, "
+                f"{self._num_transitions:09d}\t"
+                f"{self._num_trajectories:09d}")
             try:
                 episode = self.episodes_queue.get(block=True, timeout=1.0)
             except queue.Empty:
-                print(
-                    f"waiting for transitions, "
-                    f"{self._num_transitions:09d}\t"
-                    f"{self._num_trajectories:09d}")
                 time.sleep(1.0)
                 continue
             self._num_trajectories += 1
             self._num_transitions += len(episode[-1])
 
             observations, actions, rewards, dones = episode
-            states = make_states_from_observations(
+            states = get_states_from_observations(
                 observations, self.env_spec.history_len)
-
-            returns, values, advantages, log_pis = \
+            returns, values, advantages, action_logprobs = \
                 self.algorithm.evaluate_trajectory(states, actions, rewards)
-
-            episode = (states, actions, returns, values, advantages, log_pis)
+            episode = (
+                states, actions, returns, values, advantages, action_logprobs)
             self.replay_buffer.push_episode(episode)
 
         elapsed_time = time.time() - start_time
@@ -225,19 +225,25 @@ class Trainer:
             gc.collect()
 
     def _start_train_loop(self):
-        self._update_samplers_weights()
-        self.db_server.set_sample_flag(sample=True)
         while True:
-            if self._num_transitions < self.min_num_transitions:
+            if self._num_trajectories < self.min_num_trajectories \
+                    and self._num_transitions < self.min_num_transitions:
+                self.db_server.set_sample_flag(sample=True)
                 self._fetch_episodes()
             else:
+                # stop samplers
                 self.db_server.set_sample_flag(sample=False)
+                # train & update
                 self._train()
                 self._update_samplers_weights()
+                # cleanup
                 self.db_server.clean_trajectories()
-                self.db_server.set_sample_flag(sample=True)
+                while not self.episodes_queue.empty():
+                    self.episodes_queue.get()
+                self._num_trajectories = 0
+                self._num_transitions = 0
 
     def run(self):
-        self._update_samplers_weights()
         self._start_db_loop()
+        self._update_samplers_weights()
         self._start_train_loop()

@@ -18,7 +18,7 @@ class SAC(AlgorithmContinuous):
     def _init(
         self,
         critics: List[CriticSpec],
-        reward_scale=1.0
+        reward_scale: float = 1.0
     ):
         self.reward_scale = reward_scale
         # @TODO: policy regularization

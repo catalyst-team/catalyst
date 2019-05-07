@@ -3,13 +3,8 @@ import torch.nn as nn
 
 from catalyst.contrib.models import SequentialNet
 from catalyst.dl.initialization import create_optimal_inner_init, outer_init
-from catalyst.rl.agents.utils import log1p_exp, normal_sample, normal_log_prob
-
-# log_sigma of Gaussian policy are capped at (LOG_SIG_MIN, LOG_SIG_MAX)
+from catalyst.rl.agents.utils import log1p_exp
 from catalyst.rl.registry import MODULES
-
-LOG_SIG_MAX = 2
-LOG_SIG_MIN = -10
 
 
 class TemporalAttentionPooling(nn.Module):
@@ -118,7 +113,8 @@ class LamaPooling(nn.Module):
 
 class SquashingLayer(nn.Module):
     def __init__(self, squashing_fn=nn.Tanh):
-        """ Layer that squashes samples from some distribution to be bounded.
+        """
+        Layer that squashes samples from some distribution to be bounded.
         """
         super().__init__()
 
@@ -142,71 +138,6 @@ class SquashingLayer(nn.Module):
         return action, log_pi
 
 
-class GaussPolicy(nn.Module):
-    def __init__(self, squashing_fn=nn.Tanh):
-        super().__init__()
-        self.squashing_layer = SquashingLayer(squashing_fn)
-
-    def forward(self, inputs, with_log_pi=True, deterministic=False):
-        action_size = inputs.shape[1] // 2
-        mu, log_sigma = inputs[:, :action_size], inputs[:, action_size:]
-        log_sigma = torch.clamp(log_sigma, LOG_SIG_MIN, LOG_SIG_MAX)
-        sigma = torch.exp(log_sigma)
-        z = mu if deterministic else normal_sample(mu, sigma)
-        log_pi = normal_log_prob(mu, sigma, z)
-        action, log_pi = self.squashing_layer.forward(z, log_pi)
-
-        if with_log_pi:
-            return action, log_pi
-        return action
-
-
-class RealNVPPolicy(nn.Module):
-    def __init__(
-        self,
-        action_size,
-        layer_fn,
-        activation_fn=nn.ReLU,
-        squashing_fn=nn.Tanh,
-        bias=False
-    ):
-        super().__init__()
-        activation_fn = MODULES.get_if_str(activation_fn)
-        self.action_size = action_size
-
-        self.coupling1 = CouplingLayer(
-            action_size=action_size,
-            layer_fn=layer_fn,
-            activation_fn=activation_fn,
-            bias=bias,
-            parity="odd"
-        )
-        self.coupling2 = CouplingLayer(
-            action_size=action_size,
-            layer_fn=layer_fn,
-            activation_fn=activation_fn,
-            bias=bias,
-            parity="even"
-        )
-        self.squashing_layer = SquashingLayer(squashing_fn)
-
-    def forward(self, inputs, with_log_pi=True, deterministic=False):
-        state_embedding = inputs
-        mu = torch.zeros((state_embedding.shape[0], self.action_size)).to(
-            state_embedding.device
-        )
-        sigma = torch.ones_like(mu).to(mu.device)
-        z = mu if deterministic else normal_sample(mu, sigma)
-        log_pi = normal_log_prob(mu, sigma, z)
-        z, log_pi = self.coupling1.forward(z, state_embedding, log_pi)
-        z, log_pi = self.coupling2.forward(z, state_embedding, log_pi)
-        action, log_pi = self.squashing_layer.forward(z, log_pi)
-
-        if with_log_pi:
-            return action, log_pi
-        return action
-
-
 class CouplingLayer(nn.Module):
     def __init__(
         self,
@@ -216,7 +147,8 @@ class CouplingLayer(nn.Module):
         bias=True,
         parity="odd"
     ):
-        """ Conditional affine coupling layer used in Real NVP Bijector.
+        """
+        Conditional affine coupling layer used in Real NVP Bijector.
         Original paper: https://arxiv.org/abs/1605.08803
         Adaptation to RL: https://arxiv.org/abs/1804.02808
         Important notes
@@ -301,259 +233,3 @@ class CouplingLayer(nn.Module):
         log_pi = log_pi - log_det_jacobian
 
         return action, log_pi
-
-
-class ValueHead(nn.Module):
-    def __init__(
-        self,
-        in_features: int,
-        out_features: int,
-        num_atoms: int = 1,
-        bias: bool = False,
-        distribution: str = None,
-        values_range: tuple = None
-    ):
-        super().__init__()
-
-        self.out_features = out_features
-        self.num_atoms = num_atoms
-        self.distribution = distribution
-        self.values_range = values_range
-
-        if distribution is None:  # mean case
-            assert values_range is None and num_atoms == 1
-        elif distribution == "categorical":
-            assert values_range is not None and num_atoms > 1
-        elif distribution == "quantile":
-            assert values_range is None and num_atoms > 1
-        else:
-            raise NotImplementedError()
-
-        self.net = nn.Linear(
-            in_features=in_features,
-            out_features=out_features * num_atoms,
-            bias=bias
-        )
-        self.apply(outer_init)
-
-    def forward(self, inputs):
-        x: torch.Tensor = \
-            self.net(inputs).view(-1, self.out_features, self.num_atoms)
-        x = x.squeeze_(dim=-1)
-        return x
-
-
-class PolicyHead(nn.Module):
-    def __init__(
-        self,
-        in_features: int,
-        out_features: int,
-        policy_type: str = None,
-        out_activation: nn.Module = None
-    ):
-        super().__init__()
-
-        # @TODO: refactor
-        layer_fn = nn.Linear
-        activation_fn = nn.ReLU
-        squashing_fn = nn.Tanh
-        bias = True
-
-        if policy_type == "gauss":
-            head_size = out_features * 2
-            policy_net = GaussPolicy(squashing_fn)
-        elif policy_type == "real_nvp":
-            head_size = out_features * 2
-            policy_net = RealNVPPolicy(
-                action_size=out_features,
-                layer_fn=layer_fn,
-                activation_fn=activation_fn,
-                squashing_fn=squashing_fn,
-                bias=bias
-            )
-        else:
-            head_size = out_features
-            policy_net = None
-            policy_type = "logits"
-
-        self.policy_type = policy_type
-
-        head_net = SequentialNet(
-            hiddens=[in_features, head_size],
-            layer_fn=nn.Linear,
-            activation_fn=out_activation,
-            norm_fn=None,
-            bias=True
-        )
-        head_net.apply(outer_init)
-        self.head_net = head_net
-
-        self.policy_net = policy_net
-        self._policy_fn = None
-        if policy_net is None:
-            self._policy_fn = lambda *args: args[0]
-        elif isinstance(policy_net, (GaussPolicy, RealNVPPolicy)):
-            self._policy_fn = policy_net.forward
-        else:
-            raise NotImplementedError
-
-    def forward(self, inputs, with_log_pi=False, deterministic=False):
-        x = self.head_net(inputs)
-        x = self._policy_fn(x, with_log_pi, deterministic)
-        return x
-
-
-class StateNet(nn.Module):
-    """
-    Abstract network, that takes some tensor T of shape [bs; history_len; ...]
-    and outputs some representation tensor R of shape [bs; representation_size]
-
-    input_T [bs; history_len; in_features]
-        -> observation_net (aka observation_encoder) ->
-    observations_representations [bs; history_len; obs_features]
-        -> aggregation_net (flatten in simplified case)->
-    aggregated_representation [bs; hid_features]
-        -> main_net ->
-    output_T [bs; representation_size]
-    """
-
-    def __init__(
-        self,
-        main_net: nn.Module,
-        observation_net: nn.Module = None,
-        aggregation_net: nn.Module = None,
-    ):
-        super().__init__()
-        self.main_net = main_net
-        self.observation_net = observation_net or (lambda x: x)
-        self.aggregation_net = aggregation_net
-
-        self._forward_fn = None
-        if aggregation_net is None:
-            self._forward_fn = self._forward_ff
-        elif isinstance(aggregation_net, LamaPooling):
-            self._forward_fn = self._forward_lama
-        else:
-            raise NotImplementedError
-
-    def _forward_ff(self, state):
-        x = state.view(state.shape[0], -1)
-        x = self.observation_net(x)
-        x = self.main_net(x)
-        return x
-
-    def _forward_lama(self, state):
-        x = state
-        if len(x.shape) < 3:
-            x = x.unsqueeze(1)
-
-        if isinstance(self.observation_net, nn.Module):
-            batch_size, history_len, feature_size = x.shape
-            x = x.view(-1, feature_size)
-            x = self.observation_net(x)
-            x = x.view(batch_size, history_len, -1)
-
-        x = self.aggregation_net(x)
-
-        x = self.main_net(x)
-        return x
-
-    def forward(self, state):
-        x = self._forward_fn(state)
-        return x
-
-    @classmethod
-    def get_from_params(
-        cls,
-        observation_net_params=None,
-        aggregation_net_params=None,
-        main_net_params=None,
-    ) -> "StateNet":
-        assert observation_net_params is not None
-        assert aggregation_net_params is None, "Lama is not implemented yet"
-
-        observation_net = SequentialNet(**observation_net_params)
-        main_net = SequentialNet(**main_net_params)
-        net = cls(main_net=main_net, observation_net=observation_net)
-        return net
-
-
-class StateActionNet(nn.Module):
-    def __init__(
-        self,
-        main_net: nn.Module,
-        observation_net: nn.Module = None,
-        action_net: nn.Module = None,
-        aggregation_net: nn.Module = None
-    ):
-        super().__init__()
-        self.main_net = main_net
-        self.observation_net = observation_net or (lambda x: x)
-        self.action_net = action_net or (lambda x: x)
-        self.aggregation_net = aggregation_net
-
-        self._forward_fn = None
-        if aggregation_net is None:
-            self._forward_fn = self._forward_ff
-        elif isinstance(aggregation_net, LamaPooling):
-            self._forward_fn = self._forward_lama
-        else:
-            raise NotImplementedError
-
-    def _forward_ff(self, state, action):
-        state_ = state.view(state.shape[0], -1)
-        state_ = self.observation_net(state_)
-
-        action_ = action.view(action.shape[0], -1)
-        action_ = self.action_net(action_)
-
-        x = torch.cat((state_, action_), dim=1)
-        x = self.main_net(x)
-        return x
-
-    def _forward_lama(self, state, action):
-        state_ = state
-        if len(state_.shape) < 3:
-            state_ = state_.unsqueeze(1)
-
-        if isinstance(self.observation_net, nn.Module):
-            batch_size, history_len, feature_size = state_.shape
-            state_ = state_.view(-1, feature_size)
-            state_ = self.observation_net(state_)
-            state_ = state_.view(batch_size, history_len, -1)
-
-        state_ = self.aggregation_net(state_)
-
-        # @TODO: add option to collapse observations based on action
-        action_ = action.view(action.shape[0], -1)
-        action_ = self.action_net(action_)
-
-        x = torch.cat((state_, action_), dim=1)
-        x = self.main_net(x)
-        return x
-
-    def forward(self, state, action):
-        x = self._forward_fn(state, action)
-        return x
-
-    @classmethod
-    def get_from_params(
-        cls,
-        observation_net_params=None,
-        action_net_params=None,
-        aggregation_net_params=None,
-        main_net_params=None,
-    ) -> "StateNet":
-        assert observation_net_params is not None
-        assert action_net_params is not None
-        assert aggregation_net_params is None, "Lama is not implemented yet"
-
-        observation_net = SequentialNet(**observation_net_params)
-        action_net = SequentialNet(**action_net_params)
-        main_net = SequentialNet(**main_net_params)
-        net = cls(
-            observation_net=observation_net,
-            action_net=action_net,
-            main_net=main_net
-        )
-        return net

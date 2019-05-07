@@ -2,9 +2,10 @@ from typing import Dict
 from functools import reduce
 from gym.spaces import Box, Discrete
 
-from .core import ActorSpec
 from catalyst.rl.environments.core import EnvironmentSpec
-from catalyst.rl.agents.layers import StateNet, PolicyHead
+from .core import ActorSpec
+from .net import StateNet
+from .head import PolicyHead
 
 
 class Actor(ActorSpec):

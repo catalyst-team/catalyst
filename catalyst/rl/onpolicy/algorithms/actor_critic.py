@@ -1,17 +1,15 @@
 from typing import Union, Dict
-import copy
-from gym.spaces import Box
 import torch
 
 from catalyst.dl.utils import UtilsFactory
 from catalyst.rl.registry import AGENTS
-from .utils import soft_update, get_agent_stuff_from_params
-from .core import AlgorithmSpec
 from catalyst.rl.agents.core import ActorSpec, CriticSpec
 from catalyst.rl.environments.core import EnvironmentSpec
+from catalyst.rl.offpolicy.algorithms.utils import get_agent_stuff_from_params
+from .core import AlgorithmSpec
 
 
-class AlgorithmContinuous(AlgorithmSpec):
+class ActorCriticAlgorithmSpec(AlgorithmSpec):
     def __init__(
         self,
         actor: ActorSpec,
@@ -26,18 +24,12 @@ class AlgorithmContinuous(AlgorithmSpec):
         critic_scheduler_params: Dict = None,
         actor_grad_clip_params: Dict = None,
         critic_grad_clip_params: Dict = None,
-        actor_tau: float = 1.0,
-        critic_tau: float = 1.0,
-        action_boundaries: tuple = None,
         **kwargs
     ):
         self._device = UtilsFactory.prepare_device()
 
         self.actor = actor.to(self._device)
         self.critic = critic.to(self._device)
-
-        self.target_actor = copy.deepcopy(actor).to(self._device)
-        self.target_critic = copy.deepcopy(critic).to(self._device)
 
         # actor preparation
         actor_stuff = get_agent_stuff_from_params(
@@ -84,19 +76,12 @@ class AlgorithmContinuous(AlgorithmSpec):
         # other hyperparameters
         self._n_step = n_step
         self._gamma = gamma
-        self._actor_tau = actor_tau
-        self._critic_tau = critic_tau
-
-        if action_boundaries is not None:
-            assert len(action_boundaries) == 2, \
-                "Should be min and max action boundaries"
-            self._action_boundaries = action_boundaries
 
         # other init
         self._init(**kwargs)
 
-    def _init(self, **kwargs):
-        assert len(kwargs) == 0
+    def _to_tensor(self, *args, **kwargs):
+        return torch.Tensor(*args, **kwargs).to(self._device)
 
     @property
     def n_step(self) -> int:
@@ -105,9 +90,6 @@ class AlgorithmContinuous(AlgorithmSpec):
     @property
     def gamma(self) -> float:
         return self._gamma
-
-    def _to_tensor(self, *args, **kwargs):
-        return torch.Tensor(*args, **kwargs).to(self._device)
 
     def pack_checkpoint(self):
         checkpoint = {}
@@ -166,54 +148,6 @@ class AlgorithmContinuous(AlgorithmSpec):
             self.critic_scheduler.step()
             return {"lr_critic": self.critic_scheduler.get_lr()[0]}
 
-    def target_actor_update(self):
-        soft_update(self.target_actor, self.actor, self._actor_tau)
-
-    def target_critic_update(self):
-        soft_update(self.target_critic, self.critic, self._critic_tau)
-
-    def update_step(
-        self, policy_loss, value_loss, actor_update=True, critic_update=True
-    ):
-        "updates parameters of neural networks and returns learning metrics"
-        raise NotImplementedError
-
-    def train(self, batch, actor_update=True, critic_update=True):
-        states_t, actions_t, rewards_t, states_tp1, done_t = \
-            batch["state"], batch["action"], batch["reward"], \
-            batch["next_state"], batch["done"]
-
-        states_t = self._to_tensor(states_t)
-        actions_t = self._to_tensor(actions_t)
-        rewards_t = self._to_tensor(rewards_t).unsqueeze(1)
-        states_tp1 = self._to_tensor(states_tp1)
-        done_t = self._to_tensor(done_t).unsqueeze(1)
-
-        """
-        states_t: [bs; history_len; observation_len]
-        actions_t: [bs; action_len]
-        rewards_t: [bs; 1]
-        states_tp1: [bs; history_len; observation_len]
-        done_t: [bs; 1]
-        """
-
-        policy_loss, value_loss = self._loss_fn(
-            states_t, actions_t, rewards_t, states_tp1, done_t
-        )
-
-        metrics = self.update_step(
-            policy_loss=policy_loss,
-            value_loss=value_loss,
-            actor_update=actor_update,
-            critic_update=critic_update
-        )
-
-        return metrics
-
-    def get_td_errors(self, batch):
-        # @TODO: for prioritized replay
-        raise NotImplementedError
-
     @classmethod
     def prepare_for_trainer(
         cls,
@@ -235,16 +169,8 @@ class AlgorithmContinuous(AlgorithmSpec):
             env_spec=env_spec,
         )
 
-        action_space = env_spec.action_space
-        assert isinstance(action_space, Box)
-        action_boundaries = [
-            action_space.low[0],
-            action_space.high[0]
-        ]
-
         algorithm = cls(
             **config_["algorithm"],
-            action_boundaries=action_boundaries,
             actor=actor,
             critic=critic,
         )

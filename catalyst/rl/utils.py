@@ -265,11 +265,12 @@ class ReplayBufferDataset2(Dataset):
         self.returns = np.empty((capacity, ), dtype=np.float32)
         self.values = np.empty((capacity, ), dtype=np.float32)
         self.advantages = np.empty((capacity, ), dtype=np.float32)
-        self.log_pis = np.empty((capacity, ), dtype=np.float32)
+        self.action_logprobs = np.empty((capacity,), dtype=np.float32)
 
     def push_episode(self, episode):
         with self._store_lock:
-            states, actions, returns, values, advantages, log_pis = episode
+            states, actions, returns, values, advantages, action_logprobs = \
+                episode
             episode_len = len(actions)
             self.len = min(self.len + episode_len, self.capacity)
             indices = np.arange(
@@ -280,7 +281,7 @@ class ReplayBufferDataset2(Dataset):
             self.returns[indices] = returns
             self.values[indices] = values
             self.advantages[indices] = advantages
-            self.log_pis[indices] = log_pis
+            self.action_logprobs[indices] = action_logprobs
             self.pointer = (self.pointer + episode_len) % self.capacity
 
     def rescale_advantages(self):
@@ -294,8 +295,10 @@ class ReplayBufferDataset2(Dataset):
             "state": np.array(self.states[index]).astype(np.float32),
             "action": np.array(self.actions[index]).astype(np.float32),
             "return": np.array(self.returns[index]).astype(np.float32),
+            "value": np.array(self.values[index]).astype(np.float32),
             "advantage": np.array(self.advantages[index]).astype(np.float32),
-            "log_pi": np.array(self.log_pis[index]).astype(np.float32)
+            "action_logprob":
+                np.array(self.action_logprobs[index]).astype(np.float32)
         }
         return dct
 
@@ -334,7 +337,8 @@ class PolicyHandler:
         # DQN
         if discrete_actions:
             if isinstance(agent, ActorSpec):
-                raise NotImplementedError()
+                self._act_fn = self._sample_from_actor
+                self.action_clip = None
             elif isinstance(agent, CriticSpec):
                 if agent.distribution == "categorical":
                     v_min, v_max = agent.values_range

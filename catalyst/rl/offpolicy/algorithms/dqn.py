@@ -7,7 +7,7 @@ from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
 
 class DQN(AlgorithmDiscrete):
 
-    def _init(self, **kwargs):
+    def _init(self):
         # value distribution approximation
         critic_distribution = self.critic.distribution
         self._loss_fn = self._base_loss
@@ -32,8 +32,6 @@ class DQN(AlgorithmDiscrete):
             )
             self.tau = self._to_tensor(tau)
             self._loss_fn = self._quantile_loss
-
-        super()._init(**kwargs)
 
     def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
         gamma_ = self._gamma ** self._n_step
