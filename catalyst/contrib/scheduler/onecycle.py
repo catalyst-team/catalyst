@@ -1,13 +1,13 @@
-from typing import List, Optional
+from typing import List
 
 import numpy as np
 from torch.optim import Optimizer
 
-from catalyst.dl.utils import get_optimizer_momentum, set_optimizer_momentum
-from .base import BatchScheduler
+from catalyst.dl.utils import get_optimizer_momentum
+from .base import BaseScheduler
 
 
-class OneCycleLR(BatchScheduler):
+class OneCycleLR(BaseScheduler):
     """
     OneCycle scheduler with warm-up & lr decay stages.
     First stage increases lr from ``init_lr`` to ``max_lr``,
@@ -78,27 +78,22 @@ class OneCycleLR(BatchScheduler):
 
         lr_annealing_steps = num_steps - (warmup_steps + decay_steps)
 
-        lr_warmup = np.linspace(init_lr, max_lr, warmup_steps)
-        lr_annealing = np.linspace(max_lr, min_lr, lr_annealing_steps)
-        lr_decay = np.linspace(min_lr, final_lr, decay_steps)
-        self.final_lr = final_lr
-        self.learning_rates = np.concatenate(
-            (lr_warmup, lr_annealing, lr_decay)
+        self.warmup_steps = warmup_steps
+        self.lr_annealing_steps = lr_annealing_steps
+        self.decay_steps = decay_steps
+        self.num_steps = warmup_steps + lr_annealing_steps + decay_steps
+
+        self.lr_range = init_lr, max_lr, min_lr, final_lr
+        self.momentum_range = \
+            init_momentum, min_momentum, max_momentum, final_momentum
+
+        self._calculate_lr_momentum(
+            warmup_steps,
+            lr_annealing_steps,
+            decay_steps
         )
 
-        momentum_decay = np.linspace(
-            init_momentum, min_momentum, warmup_steps)
-        momentum_annealing = np.linspace(
-            min_momentum, max_momentum, lr_annealing_steps)
-        momentum_warmup = np.linspace(
-            max_momentum, final_momentum, decay_steps)
-        self.final_momentum = final_momentum
-        self.momentums = np.concatenate((
-            momentum_decay, momentum_annealing, momentum_warmup
-        ))
-
         self.total_groups = len(optimizer.param_groups)
-        self.batch = 0
         super().__init__(optimizer)
 
     def _calculate_warmup(
@@ -133,16 +128,47 @@ class OneCycleLR(BatchScheduler):
         self.has_decay = decay_steps != 0
         return self.decay_steps
 
+    def _calculate_lr_momentum(
+            self,
+            warmup_steps: int,
+            lr_annealing_steps: int,
+            decay_steps: int
+    ):
+        init_lr, max_lr, min_lr, final_lr = self.lr_range
+        init_momentum, min_momentum, max_momentum, final_momentum = \
+            self.momentum_range
+
+        lr_warmup = np.linspace(init_lr, max_lr, warmup_steps)
+        lr_annealing = np.linspace(max_lr, min_lr, lr_annealing_steps)
+        lr_decay = np.linspace(min_lr, final_lr, decay_steps)
+
+        self.learning_rates = np.concatenate(
+            (lr_warmup, lr_annealing, lr_decay)
+        )
+
+        momentum_decay = np.linspace(
+            init_momentum, min_momentum, warmup_steps)
+        momentum_annealing = np.linspace(
+            min_momentum, max_momentum, lr_annealing_steps)
+        momentum_warmup = np.linspace(
+            max_momentum, final_momentum, decay_steps)
+
+        self.momentums = np.concatenate((
+            momentum_decay, momentum_annealing, momentum_warmup
+        ))
+
     def _get_epoch_lr_momentum(self, step_num: int):
         if step_num < len(self.learning_rates):
             lr = self.learning_rates[step_num]
         else:
-            lr = self.final_lr
+            _, _, _, final_lr = self.lr_range
+            lr = final_lr
 
         if step_num < len(self.momentums):
             momentum = self.momentums[step_num]
         else:
-            momentum = self.final_momentum
+            _, _, _, final_momentum = self.momentum_range
+            momentum = final_momentum
         return lr, momentum
 
     def get_lr(self) -> List[float]:
@@ -163,33 +189,30 @@ class OneCycleLR(BatchScheduler):
         _, momentum = self._get_epoch_lr_momentum(self.last_epoch)
         return [momentum] * self.total_groups
 
-    def step_batch(
+    def reset(self):
+        self._calculate_lr_momentum(
+            self.warmup_steps,
+            self.lr_annealing_steps,
+            self.decay_steps
+        )
+        self.last_epoch = 0
+
+    def recalculate_(
             self,
-            total_batches: Optional[int] = None
+            loader_len: int
     ) -> None:
         """
-        Make one step on batch
+        Recalculates total num_steps for ``batch`` mode
         Args:
-            total_batches (int, optional): total count of batches in an epoch
+            loader_len (int): total count of batches in an epoch
         """
-        self.batch = (self.batch + 1) % total_batches
+        warmup_steps = self.warmup_steps * loader_len
+        lr_annealing_steps = self.lr_annealing_steps * loader_len
+        decay_steps = self.decay_steps * loader_len
 
-        if self.batch == 0:
-            self.step()
-            return
-        prev_lr, prev_momentum = self._get_epoch_lr_momentum(self.last_epoch)
-
-        next_step = self.last_epoch + 1
-        next_lr, next_momentum = self._get_epoch_lr_momentum(next_step)
-
-        batch_lrs = np.linspace(prev_lr, next_lr, total_batches)
-        batch_momentum = \
-            np.linspace(prev_momentum, next_momentum, total_batches)
-
-        current_lrs = [batch_lrs[self.batch]] * self.total_groups
-        current_momentums = [batch_momentum[self.batch]] * self.total_groups
-
-        for param_group, lr in zip(self.optimizer.param_groups, current_lrs):
-            param_group['lr'] = lr
-        for i, momentum in enumerate(current_momentums):
-            set_optimizer_momentum(self.optimizer, momentum, index=i)
+        self._calculate_lr_momentum(
+            warmup_steps,
+            lr_annealing_steps,
+            decay_steps
+        )
+        self.last_epoch = self.last_epoch * loader_len
