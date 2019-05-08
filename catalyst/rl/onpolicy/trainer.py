@@ -4,8 +4,6 @@ import time
 from datetime import datetime
 from tensorboardX import SummaryWriter
 import numpy as np
-import multiprocessing as mp
-import queue
 import torch
 from torch.utils.data import DataLoader
 
@@ -14,8 +12,8 @@ from catalyst.rl.utils import \
     ReplayBufferDataset2, ReplayBufferSampler2
 from catalyst.rl.db.core import DBSpec
 from catalyst.rl.environments.core import EnvironmentSpec
-from catalyst.rl.offpolicy.algorithms.core import AlgorithmSpec
-from catalyst.rl.utils import _make_tuple, db2queue_loop
+from catalyst.rl.onpolicy.algorithms.core import AlgorithmSpec
+from catalyst.rl.utils import _make_tuple
 
 
 def get_states_from_observations(observations, history_len=1):
@@ -84,26 +82,17 @@ class Trainer:
         self.db_server = db_server
         self.min_num_trajectories = min_num_trajectories
         self.min_num_transitions = min_num_transitions
-        self.max_num_transitions = min_num_transitions * 2
+        self.max_num_transitions = min_num_transitions * 3
 
         self.save_period = save_period
 
-        self.episodes_queue = None  # mp.Queue()
-        self._db_loop_process = None
         self._num_trajectories = 0
         self._num_transitions = 0
 
         self._sampler_weight_mode = "actor"
         self._gc_period = gc_period
 
-        self.replay_buffer = ReplayBufferDataset2(
-            state_space=self.env_spec.state_space,
-            action_space=self.env_spec.action_space,
-            capacity=self.max_num_transitions,
-            history_len=self.env_spec.history_len,
-            n_step=self.algorithm.n_step,
-            gamma=self.algorithm.gamma,
-        )
+        self.replay_buffer = None
 
     def save(self):
         if self.epoch % self.save_period == 0:
@@ -117,39 +106,19 @@ class Trainer:
             print("Checkpoint saved to: %s" % filename)
 
     def get_processes(self):
-        processes = []
-        if self._db_loop_process is not None:
-            processes.append(self._db_loop_process)
-
-        return processes
-
-    def _start_db_loop(self):
-        self.episodes_queue = mp.Queue()
-        self._db_loop_process = mp.Process(
-            target=db2queue_loop,
-            kwargs={
-                "db_server": self.db_server,
-                "queue": self.episodes_queue,
-                "max_size": int(self.min_num_trajectories * 2)
-            }
-        )
-        self._db_loop_process.start()
-
-    def _stop_db_loop(self):
-        self._db_loop_process.terminate()
-        self.db_server.clean_trajectories()
-        while not self.episodes_queue.empty():
-            self.episodes_queue.get()
-        self.episodes_queue.close()
-
-        del self.episodes_queue
-        del self._db_loop_process
-        self._num_trajectories = 0
-        self._num_transitions = 0
-
-        gc.collect()
+        return []
 
     def _fetch_episodes(self):
+
+        self.replay_buffer = ReplayBufferDataset2(
+            state_space=self.env_spec.state_space,
+            action_space=self.env_spec.action_space,
+            capacity=self.max_num_transitions,
+            history_len=self.env_spec.history_len,
+            n_step=self.algorithm.n_step,
+            gamma=self.algorithm.gamma,
+        )
+
         start_time = time.time()
 
         while self._num_trajectories < self.min_num_trajectories \
@@ -173,10 +142,12 @@ class Trainer:
             )
 
             try:
-                episode = self.episodes_queue.get(block=True, timeout=1.0)
-            except queue.Empty:
+                episode = self.db_server.get_trajectory()
+                assert episode is not None
+            except Exception:
                 time.sleep(1.0)
                 continue
+
             self._num_trajectories += 1
             self._num_transitions += len(episode[-1])
 
@@ -244,27 +215,29 @@ class Trainer:
         )
 
         self.save()
-        self._update_samplers_weights()
-        self.epoch += 1
         if self.epoch % self._gc_period == 0:
             gc.collect()
 
     def _start_train_loop(self):
         while True:
             # start samplers
-            self._start_db_loop()
             self.db_server.set_sample_flag(sample=True)
             # get trajectories
             self._fetch_episodes()
 
             # stop samplers
             self.db_server.set_sample_flag(sample=False)
-            # cleanup trajectories
-            self._stop_db_loop()
 
             # train & update
             self._train()
             self._update_samplers_weights()
+            self.epoch += 1
+
+            # cleanup trajectories
+            self.db_server.clean_trajectories()
+            self._num_trajectories = 0
+            self._num_transitions = 0
+            del self.replay_buffer
 
     def run(self):
         self._update_samplers_weights()

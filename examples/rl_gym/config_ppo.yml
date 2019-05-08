@@ -76,7 +76,6 @@ algorithm:
   n_step: 1
   gamma: 0.99
 
-  use_value_clipping: True
   gae_lambda: 0.95
   clip_eps: 0.2
   entropy_reg_coefficient: 0.01

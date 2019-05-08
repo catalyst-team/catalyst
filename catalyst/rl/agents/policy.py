@@ -15,8 +15,10 @@ class CategoricalPolicy(nn.Module):
     def forward(self, inputs, with_log_pi=False, deterministic=False):
         dist = torch.distributions.Categorical(logits=inputs)
         action = torch.argmax(inputs) if deterministic else dist.sample()
-        if (isinstance(with_log_pi, bool) and with_log_pi) or \
-                (not isinstance(with_log_pi, bool) and with_log_pi is not None):
+        flag_bool = isinstance(with_log_pi, bool) and with_log_pi
+        flag_value = \
+            not isinstance(with_log_pi, bool) and with_log_pi is not None
+        if flag_bool or flag_value:
             # @TODO: refactor
             log_pi = dist.log_prob(with_log_pi)
             return action, log_pi

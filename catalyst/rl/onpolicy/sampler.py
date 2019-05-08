@@ -107,6 +107,8 @@ class Sampler:
     def _store_trajectory(self):
         if self.db_server is None:
             return
+        if not self.db_server.get_sample_flag():
+            return
         trajectory = self.episode_runner.get_trajectory()
         self.db_server.push_trajectory(trajectory)
 

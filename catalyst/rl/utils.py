@@ -6,7 +6,8 @@ from gym.spaces import Box, Discrete, Space
 
 import torch
 from torch.utils.data import Dataset, Sampler
-from catalyst.rl.exploration import ParameterSpaceNoise, OrnsteinUhlenbeckProcess
+from catalyst.rl.exploration import \
+    ParameterSpaceNoise, OrnsteinUhlenbeckProcess
 from catalyst.rl.agents.core import ActorSpec, CriticSpec
 from catalyst.rl.environments.core import EnvironmentSpec
 from catalyst.rl.db.core import DBSpec
@@ -264,7 +265,7 @@ class ReplayBufferDataset2(Dataset):
         self.returns = np.empty((capacity, ), dtype=np.float32)
         self.values = np.empty((capacity, ), dtype=np.float32)
         self.advantages = np.empty((capacity, ), dtype=np.float32)
-        self.action_logprobs = np.empty((capacity,), dtype=np.float32)
+        self.action_logprobs = np.empty((capacity, ), dtype=np.float32)
 
     def push_episode(self, episode):
         with self._store_lock:
@@ -296,8 +297,9 @@ class ReplayBufferDataset2(Dataset):
             "return": np.array(self.returns[index]).astype(np.float32),
             "value": np.array(self.values[index]).astype(np.float32),
             "advantage": np.array(self.advantages[index]).astype(np.float32),
-            "action_logprob":
-                np.array(self.action_logprobs[index]).astype(np.float32)
+            "action_logprob": np.array(self.action_logprobs[index]).astype(
+                np.float32
+            )
         }
         return dct
 
@@ -345,9 +347,7 @@ class PolicyHandler:
                 if self.value_distribution == "categorical":
                     v_min, v_max = agent.values_range
                     self.z = torch.linspace(
-                        start=v_min,
-                        end=v_max,
-                        steps=agent.num_atoms
+                        start=v_min, end=v_max, steps=agent.num_atoms
                     ).to(device)
         # DDPG, SAC, TD3
         else:
@@ -357,12 +357,7 @@ class PolicyHandler:
             self.action_fn = self._actor_handler
 
     @torch.no_grad()
-    def _get_q_values(
-        self,
-        critic: CriticSpec,
-        state: np.ndarray,
-        device
-    ):
+    def _get_q_values(self, critic: CriticSpec, state: np.ndarray, device):
         states = torch.Tensor(state).to(device).unsqueeze(0)
         if self.value_distribution == "categorical":
             probs = torch.softmax(critic(states)[0], dim=-1)
@@ -411,9 +406,7 @@ class PolicyHandler:
         deterministic: bool = False,
         exploration_strategy=None
     ):
-        action = self._sample_from_actor(
-            agent, state, device, deterministic
-        )
+        action = self._sample_from_actor(agent, state, device, deterministic)
         action = exploration_strategy.get_action(action)
         return action
 

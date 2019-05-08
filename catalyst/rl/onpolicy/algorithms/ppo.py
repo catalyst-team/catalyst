@@ -10,18 +10,15 @@ class PPO(ActorCriticAlgorithmSpec):
 
     def _init(
         self,
-        use_value_clipping: bool = True,
         gae_lambda: float = 0.95,
         clip_eps: float = 0.2,
-        max_episode_length : int = 1000,
+        max_episode_length: int = 1000,
         entropy_reg_coefficient: float = 0.
     ):
-        assert use_value_clipping
-
-        self.use_value_clipping = use_value_clipping
         self.clip_eps = clip_eps
         self.entropy_reg_coefficient = entropy_reg_coefficient
 
+        # @TODO: remove max_episode_length from initialization
         # matrix for estimating advantages with GAE
         # used in policy loss
         self.gam_lam_matrix = create_gamma_matrix(
@@ -53,17 +50,6 @@ class PPO(ActorCriticAlgorithmSpec):
         value_loss = 0.5 * torch.max(
             value_loss_unclipped, value_loss_clipped).mean()
 
-        # if self.use_value_clipping:
-        #     values_clip = old_values + torch.clamp(
-        #         values - old_values, -self.clip_eps, self.clip_eps)
-        #     value_loss_unclipped = (values - returns).pow(2)
-        #     value_loss_clipped = (values_clip - returns).pow(2)
-        #     value_loss = 0.5 * torch.max(
-        #         value_loss_unclipped, value_loss_clipped).mean()
-        # else:
-        #     value_loss = self.critic_criterion(
-        #         values[:, None], returns[:, None]).mean()
-
         # actor loss
         _, logprobs = self.actor(states, with_log_pi=actions)
 
@@ -75,8 +61,8 @@ class PPO(ActorCriticAlgorithmSpec):
             policy_loss_unclipped, policy_loss_clipped).mean()
 
         entropy = -(torch.exp(logprobs) * logprobs).mean()
-        entropy_reg = self.entropy_reg_coefficient * entropy
-        policy_loss = policy_loss + entropy_reg
+        entropy_loss = self.entropy_reg_coefficient * entropy
+        policy_loss = policy_loss + entropy_loss
 
         # actor update
         actor_update_metrics = self.actor_update(policy_loss) or {}
