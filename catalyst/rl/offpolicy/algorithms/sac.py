@@ -2,7 +2,6 @@ from typing import Dict, List
 import copy
 from gym.spaces import Box
 import torch
-import torch.nn.functional as F
 
 from catalyst.rl.registry import AGENTS
 from catalyst.dl.utils import UtilsFactory
@@ -105,9 +104,9 @@ class SAC(AlgorithmContinuous):
         actions_tp0, log_pi_tp0 = self.actor(states_t, with_log_pi=True)
         log_pi_tp0 = log_pi_tp0 / self.reward_scale
         logits_tp0 = [x(states_t, actions_tp0) for x in self.critics]
-        probs_tp0 = [F.softmax(x, dim=-1) for x in logits_tp0]
+        probs_tp0 = [torch.softmax(x, dim=-1) for x in logits_tp0]
         q_values_tp0 = [
-            torch.sum(x * self.z, dim=-1).unsqueeze_(-1) for x in probs_tp0
+            torch.sum(x * self.z, dim=-1, keepdim=True) for x in probs_tp0
         ]
         q_values_tp0_min = torch.cat(q_values_tp0, dim=-1).min(dim=-1)[0]
         policy_loss = torch.mean(log_pi_tp0 - q_values_tp0_min)
@@ -119,9 +118,9 @@ class SAC(AlgorithmContinuous):
         log_pi_tp1 = log_pi_tp1 / self.reward_scale
         logits_t = [x(states_t, actions_t) for x in self.critics]
         logits_tp1 = [x(states_tp1, actions_tp1) for x in self.target_critics]
-        probs_tp1 = [F.softmax(x, dim=-1) for x in logits_tp1]
+        probs_tp1 = [torch.softmax(x, dim=-1) for x in logits_tp1]
         q_values_tp1 = [
-            torch.sum(x * self.z, dim=-1).unsqueeze_(-1) for x in probs_tp1
+            torch.sum(x * self.z, dim=-1, keepdim=True) for x in probs_tp1
         ]
         probs_ids_tp1_min = torch.cat(q_values_tp1, dim=-1).argmin(dim=1)
 
@@ -174,7 +173,7 @@ class SAC(AlgorithmContinuous):
         atoms_target_t = rewards_t + (1 - done_t) * gamma * atoms_tp1
         value_loss = [
             quantile_loss(
-                x, atoms_target_t, self.tau, self.n_atoms,
+                x, atoms_target_t, self.tau, self.num_atoms,
                 self.critic_criterion
             ) for x in atoms_t
         ]

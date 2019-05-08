@@ -1,5 +1,4 @@
 import torch
-import torch.nn.functional as F
 from .core_continuous import AlgorithmContinuous
 from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
     quantile_loss
@@ -60,7 +59,7 @@ class DDPG(AlgorithmContinuous):
 
         # actor loss
         logits_tp0 = self.critic(states_t, self.actor(states_t))
-        probs_tp0 = F.softmax(logits_tp0, dim=-1)
+        probs_tp0 = torch.softmax(logits_tp0, dim=-1)
         q_values_tp0 = torch.sum(probs_tp0 * self.z, dim=-1)
         policy_loss = -torch.mean(q_values_tp0)
 

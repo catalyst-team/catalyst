@@ -1,5 +1,4 @@
 import torch
-import torch.nn.functional as F
 from catalyst.rl.offpolicy.algorithms.core_discrete import AlgorithmDiscrete
 from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
     quantile_loss
@@ -56,7 +55,7 @@ class DQN(AlgorithmDiscrete):
 
         all_logits_tp1 = self.target_critic(states_tp1).detach()
         q_values_tp1 = torch.sum(
-            F.softmax(all_logits_tp1, dim=-1) * self.z, dim=-1
+            torch.softmax(all_logits_tp1, dim=-1) * self.z, dim=-1
         )
         actions_tp1 = torch.argmax(q_values_tp1, dim=-1, keepdim=True)
         indices_tp1 = actions_tp1.repeat(1, self.num_atoms).unsqueeze(1)

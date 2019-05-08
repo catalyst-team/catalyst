@@ -70,6 +70,21 @@
     CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs
     ```
 
+7. Run PPO – on-policy algorithm for discrete action space environment
+
+    ```bash
+    redis-server --port 12000
+    export GPUS=""  # like GPUS="0" or GPUS="0,1" for multi-gpu training
+
+    CUDA_VISIBLE_DEVICES="$GPUS" catalyst-rl run-trainer \
+       --config=./rl_gym/config_ppo.yml --setup=on-policy
+
+    CUDA_VISIBLE_DEVICES="" catalyst-rl run-samplers \
+       --config=./rl_gym/config_ppo.yml --setup=on-policy
+
+    CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs
+    ```
+
 ## Additional links
 
 [NeurIPS'18 Catalyst.RL solution](https://github.com/Scitator/neurips-18-prosthetics-challenge)

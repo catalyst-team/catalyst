@@ -44,13 +44,10 @@ class Trainer:
         logdir: str,
         num_workers: int = 1,
         batch_size: int = 64,
-        epoch_len: int = int(1e2),
         num_mini_epochs: int = 10,
         min_num_trajectories: int = 100,
         min_num_transitions: int = 8192,
-        max_num_transitions: int = None,
         save_period: int = 10,
-        target_update_period: int = 1,
         online_update_period: int = 1,
         resume: str = None,
         gc_period: int = 10,
@@ -71,7 +68,7 @@ class Trainer:
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.epoch = 0
-        self.epoch_len = epoch_len
+        self.step = 0
         self.num_mini_epochs = num_mini_epochs
 
         # updates configuration
@@ -87,13 +84,11 @@ class Trainer:
         self.db_server = db_server
         self.min_num_trajectories = min_num_trajectories
         self.min_num_transitions = min_num_transitions
-        self.max_num_transitions = \
-            max_num_transitions or (min_num_transitions * 2)
+        self.max_num_transitions = min_num_transitions * 2
 
         self.save_period = save_period
 
-        self.episodes_queue = mp.Queue()
-        # self.episodes_queue = None
+        self.episodes_queue = None  # mp.Queue()
         self._db_loop_process = None
         self._num_trajectories = 0
         self._num_transitions = 0
@@ -129,25 +124,54 @@ class Trainer:
         return processes
 
     def _start_db_loop(self):
+        self.episodes_queue = mp.Queue()
         self._db_loop_process = mp.Process(
             target=db2queue_loop,
             kwargs={
                 "db_server": self.db_server,
                 "queue": self.episodes_queue,
-                "max_size": int(1e3)
+                "max_size": int(self.min_num_trajectories * 2)
             }
         )
         self._db_loop_process.start()
+
+    def _stop_db_loop(self):
+        self._db_loop_process.terminate()
+        self.db_server.clean_trajectories()
+        while not self.episodes_queue.empty():
+            self.episodes_queue.get()
+        self.episodes_queue.close()
+
+        del self.episodes_queue
+        del self._db_loop_process
+        self._num_trajectories = 0
+        self._num_transitions = 0
+
+        gc.collect()
 
     def _fetch_episodes(self):
         start_time = time.time()
 
         while self._num_trajectories < self.min_num_trajectories \
                 and self._num_transitions < self.min_num_transitions:
+
+            trajectories_percentrage = \
+                100 * self._num_trajectories / self.min_num_trajectories
+            trajectories_stats = \
+                f"{self._num_trajectories:09d} / " \
+                f"{self.min_num_trajectories:09d} " \
+                f"({trajectories_percentrage:5.2f}%)"
+            transitions_percentrage = \
+                100 * self._num_transitions / self.min_num_transitions
+            transitions_stats = \
+                f"{self._num_transitions:09d} / " \
+                f"{self.min_num_transitions:09d} " \
+                f"({transitions_percentrage:5.2f}%)"
             print(
-                f"waiting for transitions, "
-                f"{self._num_transitions:09d}\t"
-                f"{self._num_trajectories:09d}")
+                f"trajectories, {trajectories_stats}\t"
+                f"transitions, {transitions_stats}\t"
+            )
+
             try:
                 episode = self.episodes_queue.get(block=True, timeout=1.0)
             except queue.Empty:
@@ -194,16 +218,17 @@ class Trainer:
             sampler=sampler)
 
         for i, batch in enumerate(loader):
-            step_index = self.epoch * self.epoch_len + i + 1
             metrics = self.algorithm.train(
                 batch,
-                actor_update=(step_index % self.actor_grad_period == 0),
-                critic_update=(step_index % self.critic_grad_period == 0)
+                actor_update=(self.step % self.actor_grad_period == 0),
+                critic_update=(self.step % self.critic_grad_period == 0)
             )
 
             for key, value in metrics.items():
                 if isinstance(value, float):
-                    self.logger.add_scalar(key, value, step_index)
+                    self.logger.add_scalar(key, value, self.step)
+
+            self.step += 1
 
         elapsed_time = time.time() - start_time
 
@@ -226,24 +251,21 @@ class Trainer:
 
     def _start_train_loop(self):
         while True:
-            if self._num_trajectories < self.min_num_trajectories \
-                    and self._num_transitions < self.min_num_transitions:
-                self.db_server.set_sample_flag(sample=True)
-                self._fetch_episodes()
-            else:
-                # stop samplers
-                self.db_server.set_sample_flag(sample=False)
-                # train & update
-                self._train()
-                self._update_samplers_weights()
-                # cleanup
-                self.db_server.clean_trajectories()
-                while not self.episodes_queue.empty():
-                    self.episodes_queue.get()
-                self._num_trajectories = 0
-                self._num_transitions = 0
+            # start samplers
+            self._start_db_loop()
+            self.db_server.set_sample_flag(sample=True)
+            # get trajectories
+            self._fetch_episodes()
+
+            # stop samplers
+            self.db_server.set_sample_flag(sample=False)
+            # cleanup trajectories
+            self._stop_db_loop()
+
+            # train & update
+            self._train()
+            self._update_samplers_weights()
 
     def run(self):
-        self._start_db_loop()
         self._update_samplers_weights()
         self._start_train_loop()
