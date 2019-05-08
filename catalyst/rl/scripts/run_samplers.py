@@ -168,8 +168,8 @@ def main(args, unknown_args):
 
     if args.check:
         params_ = dict(
-            vis=False,
-            infer=False,
+            vis=(args.vis is not None and args.vis > 0),
+            infer=(args.infer is not None and args.infer > 0),
             id=sampler_id
         )
         run_sampler(**params, **params_)
