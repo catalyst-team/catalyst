@@ -11,7 +11,7 @@ from catalyst.rl.registry import OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
     ENVIRONMENTS, DATABASES
 from catalyst.rl.offpolicy.trainer import Trainer as OffpolicyTrainer
 from catalyst.rl.onpolicy.trainer import Trainer as OnpolicyTrainer
-from .utils import OFFPOLICY_ALGORITHMS_NAMES
+from catalyst.rl.scripts.utils import OFFPOLICY_ALGORITHMS_NAMES
 
 
 def build_args(parser):

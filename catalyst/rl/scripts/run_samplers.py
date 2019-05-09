@@ -17,7 +17,7 @@ from catalyst.rl.registry import OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
 from catalyst.rl.exploration import ExplorationHandler
 from catalyst.rl.offpolicy.sampler import Sampler as OffpolicySampler
 from catalyst.rl.onpolicy.sampler import Sampler as OnpolicySampler
-from .utils import OFFPOLICY_ALGORITHMS_NAMES
+from catalyst.rl.scripts.utils import OFFPOLICY_ALGORITHMS_NAMES
 
 
 os.environ["OMP_NUM_THREADS"] = "1"
