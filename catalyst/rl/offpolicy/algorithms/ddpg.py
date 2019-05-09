@@ -93,7 +93,7 @@ class DDPG(AlgorithmContinuous):
         atoms_target_t = rewards_t + (1 - done_t) * gamma * atoms_tp1
 
         value_loss = quantile_loss(
-            atoms_t, atoms_target_t, self.tau, self.n_atoms,
+            atoms_t, atoms_target_t, self.tau, self.num_atoms,
             self.critic_criterion
         )
 
