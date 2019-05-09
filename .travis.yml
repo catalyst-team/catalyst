@@ -115,12 +115,12 @@ jobs:
         - redis-server --port 12000 &
         - sleep 5
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/rl/offpolicy/scripts/run_trainer.py
+          python catalyst/rl/scripts/run_trainer.py
           --config=./examples/_tests_rl_gym/config_dqn.yml
           --logdir=./examples/logs/_tests_rl_gym_dqn &
         - sleep 10
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/rl/offpolicy/scripts/run_samplers.py
+          python catalyst/rl/scripts/run_samplers.py
           --config=./examples/_tests_rl_gym/config_dqn.yml
           --logdir=./examples/logs/_tests_rl_gym_dqn &
         - sleep 60
@@ -138,28 +138,28 @@ jobs:
         - redis-server --port 12000 &
         - sleep 5
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/rl/offpolicy/scripts/run_trainer.py
+          python catalyst/rl/scripts/run_trainer.py
           --config=./examples/_tests_rl_gym/config_ddpg.yml
           --logdir=./examples/logs/_tests_rl_gym_ddpg &
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/rl/offpolicy/scripts/run_trainer.py
+          python catalyst/rl/scripts/run_trainer.py
           --config=./examples/_tests_rl_gym/config_td3.yml
           --logdir=./examples/logs/_tests_rl_gym_td3 &
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/rl/offpolicy/scripts/run_trainer.py
+          python catalyst/rl/scripts/run_trainer.py
           --config=./examples/_tests_rl_gym/config_sac.yml
           --logdir=./examples/logs/_tests_rl_gym_sac &
         - sleep 10
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/rl/offpolicy/scripts/run_samplers.py
+          python catalyst/rl/scripts/run_samplers.py
           --config=./examples/_tests_rl_gym/config_ddpg.yml
           --logdir=./examples/logs/_tests_rl_gym_ddpg &
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/rl/offpolicy/scripts/run_samplers.py
+          python catalyst/rl/scripts/run_samplers.py
           --config=./examples/_tests_rl_gym/config_td3.yml
           --logdir=./examples/logs/_tests_rl_gym_td3 &
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/rl/offpolicy/scripts/run_samplers.py
+          python catalyst/rl/scripts/run_samplers.py
           --config=./examples/_tests_rl_gym/config_sac.yml
           --logdir=./examples/logs/_tests_rl_gym_sac &
         - sleep 180
