@@ -17,6 +17,7 @@ from catalyst.rl.registry import OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
 from catalyst.rl.exploration import ExplorationHandler
 from catalyst.rl.offpolicy.sampler import Sampler as OffpolicySampler
 from catalyst.rl.onpolicy.sampler import Sampler as OnpolicySampler
+from .utils import OFFPOLICY_ALGORITHMS_NAMES
 
 
 os.environ["OMP_NUM_THREADS"] = "1"
@@ -39,12 +40,6 @@ def build_args(parser):
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--resume", type=str, default=None)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument(
-        "--setup",
-        type=str,
-        required=True,
-        choices=["off-policy", "on-policy"]
-    )
 
     parser.add_argument(
         "--vis",
@@ -130,13 +125,6 @@ def run_sampler(
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
 
-    if args.setup == "off-policy":
-        ALGORITHMS = OFFPOLICY_ALGORITHMS
-        sampler_fn = OffpolicySampler
-    else:
-        ALGORITHMS = ONPOLICY_ALGORITHMS
-        sampler_fn = OnpolicySampler
-
     if args.expdir is not None:
         module = import_module(expdir=args.expdir)  # noqa: F841
 
@@ -144,6 +132,14 @@ def main(args, unknown_args):
     environment_fn = ENVIRONMENTS.get(environment_name)
 
     algorithm_name = config["algorithm"].pop("algorithm")
+
+    if algorithm_name in OFFPOLICY_ALGORITHMS_NAMES:
+        ALGORITHMS = OFFPOLICY_ALGORITHMS
+        sampler_fn = OffpolicySampler
+    else:
+        ALGORITHMS = ONPOLICY_ALGORITHMS
+        sampler_fn = OnpolicySampler
+
     algorithm_fn = ALGORITHMS.get(algorithm_name)
 
     processes = []

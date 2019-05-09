@@ -6,6 +6,9 @@ This example shows how to use Catalyst.RL with
 - MongoDB and memmap replay buffer for efficient resource management.
 
 
+![logs](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/atari_logs.jpeg)
+
+
 1. System requirements – Mongo/Redis
 
     - [Mongo installation](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)

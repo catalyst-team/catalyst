@@ -11,6 +11,7 @@ from catalyst.rl.registry import OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
     ENVIRONMENTS, DATABASES
 from catalyst.rl.offpolicy.trainer import Trainer as OffpolicyTrainer
 from catalyst.rl.onpolicy.trainer import Trainer as OnpolicyTrainer
+from .utils import OFFPOLICY_ALGORITHMS_NAMES
 
 
 def build_args(parser):
@@ -28,12 +29,6 @@ def build_args(parser):
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--resume", type=str, default=None)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument(
-        "--setup",
-        type=str,
-        required=True,
-        choices=["off-policy", "on-policy"]
-    )
 
     return parser
 
@@ -49,13 +44,6 @@ def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
     set_global_seed(args.seed)
 
-    if args.setup == "off-policy":
-        ALGORITHMS = OFFPOLICY_ALGORITHMS
-        trainer_fn = OffpolicyTrainer
-    else:
-        ALGORITHMS = ONPOLICY_ALGORITHMS
-        trainer_fn = OnpolicyTrainer
-
     if args.logdir is not None:
         os.makedirs(args.logdir, exist_ok=True)
         dump_config(args.configs, args.logdir)
@@ -70,6 +58,14 @@ def main(args, unknown_args):
     env = ENVIRONMENTS.get_from_params(**config["environment"])
 
     algorithm_name = config["algorithm"].pop("algorithm")
+
+    if algorithm_name in OFFPOLICY_ALGORITHMS_NAMES:
+        ALGORITHMS = OFFPOLICY_ALGORITHMS
+        trainer_fn = OffpolicyTrainer
+    else:
+        ALGORITHMS = ONPOLICY_ALGORITHMS
+        trainer_fn = OnpolicyTrainer
+
     algorithm_fn = ALGORITHMS.get(algorithm_name)
     algorithm = algorithm_fn.prepare_for_trainer(env_spec=env, config=config)
 
