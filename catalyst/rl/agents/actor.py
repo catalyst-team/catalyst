@@ -22,9 +22,9 @@ class Actor(ActorSpec):
         self.state_net = state_net
         self.head_net = head_net
 
-    def forward(self, state, with_log_pi=False, deterministic=False):
+    def forward(self, state, logprob=False, deterministic=False):
         x = self.state_net(state)
-        x = self.head_net(x, with_log_pi, deterministic)
+        x = self.head_net(x, logprob, deterministic)
         return x
 
     @property

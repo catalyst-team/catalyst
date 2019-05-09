@@ -44,11 +44,20 @@ class AlgorithmSpec(ABC):
         pass
 
     @abstractmethod
-    def train(self, batch, actor_update=True, critic_update=True):
+    def get_rollout_spec(self) -> Dict:
         pass
 
     @abstractmethod
-    def evaluate_trajectory(self, states, actions, rewards):
+    def get_rollout(self, states, actions, rewards):
+        pass
+
+    @abstractmethod
+    def postprocess_buffer(self, buffers, len):
+        # @TODO: rewrite
+        pass
+
+    @abstractmethod
+    def train(self, batch, actor_update=True, critic_update=True):
         pass
 
     @classmethod

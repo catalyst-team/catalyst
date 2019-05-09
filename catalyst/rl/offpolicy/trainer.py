@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 
 from catalyst.dl.utils import UtilsFactory
 from catalyst.rl.utils import \
-    ReplayBufferDataset, ReplayBufferSampler
+    OffpolicyReplayBuffer, OffpolicyReplaySampler
 from catalyst.rl.db.core import DBSpec
 from catalyst.rl.environments.core import EnvironmentSpec
 from catalyst.rl.offpolicy.algorithms.core import AlgorithmSpec
@@ -56,7 +56,7 @@ class Trainer:
         self.epoch = 0
         self.epoch_len = epoch_len
 
-        self.replay_buffer = ReplayBufferDataset(
+        self.replay_buffer = OffpolicyReplayBuffer(
             observation_space=self.env_spec.observation_space,
             action_space=self.env_spec.action_space,
             capacity=replay_buffer_size,
@@ -67,7 +67,7 @@ class Trainer:
             logdir=logdir
         )
 
-        self.replay_sampler = ReplayBufferSampler(
+        self.replay_sampler = OffpolicyReplaySampler(
             buffer=self.replay_buffer,
             epoch_len=epoch_len,
             batch_size=batch_size

@@ -3,34 +3,16 @@ import gc
 import time
 from datetime import datetime
 from tensorboardX import SummaryWriter
-import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
 from catalyst.dl.utils import UtilsFactory
 from catalyst.rl.utils import \
-    ReplayBufferDataset2, ReplayBufferSampler2
+    OnpolicyRolloutBuffer, OnpolicyRolloutSampler, \
+    _get_states_from_observations, _make_tuple
 from catalyst.rl.db.core import DBSpec
 from catalyst.rl.environments.core import EnvironmentSpec
 from catalyst.rl.onpolicy.algorithms.core import AlgorithmSpec
-from catalyst.rl.utils import _make_tuple
-
-
-def get_states_from_observations(observations, history_len=1):
-    """
-    DB stores observations but not states.
-    This function creates states from observations
-    by adding new dimension of size (history_len).
-    """
-    observations = np.array(observations)
-    episode_size = observations.shape[0]
-    states = np.zeros(
-        (episode_size, history_len) + observations.shape[1:])
-    for i in range(history_len - 1):
-        pivot = history_len - i - 1
-        states[pivot:, i, :] = observations[:-pivot, :]
-    states[:, -1, :] = observations
-    return states
 
 
 class Trainer:
@@ -110,13 +92,12 @@ class Trainer:
 
     def _fetch_episodes(self):
 
-        self.replay_buffer = ReplayBufferDataset2(
+        rollout_spec = self.algorithm.get_rollout_spec()
+        self.replay_buffer = OnpolicyRolloutBuffer(
             state_space=self.env_spec.state_space,
             action_space=self.env_spec.action_space,
             capacity=self.max_num_transitions,
-            history_len=self.env_spec.history_len,
-            n_step=self.algorithm.n_step,
-            gamma=self.algorithm.gamma,
+            **rollout_spec
         )
 
         start_time = time.time()
@@ -151,14 +132,21 @@ class Trainer:
             self._num_trajectories += 1
             self._num_transitions += len(episode[-1])
 
-            observations, actions, rewards, dones = episode
-            states = get_states_from_observations(
+            observations, actions, rewards, _ = episode
+            states = _get_states_from_observations(
                 observations, self.env_spec.history_len)
-            returns, values, advantages, action_logprobs = \
-                self.algorithm.evaluate_trajectory(states, actions, rewards)
-            episode = (
-                states, actions, returns, values, advantages, action_logprobs)
-            self.replay_buffer.push_episode(episode)
+            rollout = self.algorithm.get_rollout(states, actions, rewards)
+            self.replay_buffer.push_rollout(
+                state=states,
+                action=actions,
+                reward=rewards,
+                **rollout,
+            )
+
+        # @TODO: refactor
+        self.algorithm.postprocess_buffer(
+            self.replay_buffer.buffers,
+            len(self.replay_buffer))
 
         elapsed_time = time.time() - start_time
         self.logger.add_scalar("fetch time", elapsed_time, self.epoch)
@@ -175,9 +163,7 @@ class Trainer:
     def _train(self):
         start_time = time.time()
 
-        self.replay_buffer.rescale_advantages()
-
-        sampler = ReplayBufferSampler2(
+        sampler = OnpolicyRolloutSampler(
             buffer=self.replay_buffer,
             num_mini_epochs=self.num_mini_epochs)
         loader = DataLoader(
@@ -215,8 +201,6 @@ class Trainer:
         )
 
         self.save()
-        if self.epoch % self._gc_period == 0:
-            gc.collect()
 
     def _start_train_loop(self):
         while True:
@@ -238,6 +222,8 @@ class Trainer:
             self._num_trajectories = 0
             self._num_transitions = 0
             del self.replay_buffer
+            if self.epoch % self._gc_period == 0:
+                gc.collect()
 
     def run(self):
         self._update_samplers_weights()

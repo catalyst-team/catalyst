@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Dict
 import time
 import numpy as np
 import multiprocessing as mp
@@ -72,6 +72,22 @@ def _get_buffers(
     return observations, actions, rewards, dones
 
 
+def _get_states_from_observations(observations, history_len=1):
+    """
+    DB stores observations but not states.
+    This function creates states from observations
+    by adding new dimension of size (history_len).
+    """
+    observations = np.array(observations)
+    episode_size = observations.shape[0]
+    states = np.zeros((episode_size, history_len) + observations.shape[1:])
+    for i in range(history_len - 1):
+        pivot = history_len - i - 1
+        states[pivot:, i, :] = observations[:-pivot, :]
+    states[:, -1, :] = observations
+    return states
+
+
 def db2queue_loop(db_server: DBSpec, queue: mp.Queue, max_size: int):
     while True:
         try:
@@ -89,7 +105,7 @@ def db2queue_loop(db_server: DBSpec, queue: mp.Queue, max_size: int):
             time.sleep(1.0)
 
 
-class ReplayBufferDataset(Dataset):
+class OffpolicyReplayBuffer(Dataset):
     def __init__(
         self,
         observation_space: Space,
@@ -105,18 +121,16 @@ class ReplayBufferDataset(Dataset):
         Experience replay buffer for off-policy RL algorithms.
 
         Args:
-            observation_shape: shape of environment observation
+            observation_space: space of environment observation
                 e.g. (8, ) for vector of floats or (84, 84, 3) for RGB image
-            action_shape: shape of action the agent can take
+            action_space: space of action the agent can take
                 e.g. (3, ) for 3-dimensional continuous control
             capacity: replay buffer capacity
-            history_len: number of subsequent observations considered a state
             n_step: number of time steps between the current state and the next
                 state in TD backup
             gamma: discount factor
-            discrete actions: True if actions are discrete
+            history_len: number of subsequent observations considered a state
         """
-        # @TODO: Refactor !!!
         self.observation_space = observation_space
         self.action_space = action_space
         self.history_len = history_len
@@ -214,7 +228,7 @@ class ReplayBufferDataset(Dataset):
         return self.len
 
 
-class ReplayBufferSampler(Sampler):
+class OffpolicyReplaySampler(Sampler):
     def __init__(self, buffer, epoch_len, batch_size):
         super().__init__(None)
         self.buffer = buffer
@@ -231,75 +245,52 @@ class ReplayBufferSampler(Sampler):
         return self.len
 
 
-class ReplayBufferDataset2(Dataset):
+class OnpolicyRolloutBuffer(Dataset):
     def __init__(
         self,
         state_space: Space,
         action_space: Space,
         capacity=int(1e6),
-        n_step=1,
-        gamma=0.99,
-        history_len=1,
-        mode="numpy",
-        logdir=None
+        **rollout_spec
     ):
-        # @TODO: Refactor !!!
         self.state_space = state_space
         self.action_space = action_space
-        self.history_len = history_len
 
         self.capacity = capacity
-        self.n_step = n_step
-        self.gamma = gamma
 
         self.len = 0
         self.pointer = 0
-        self._store_lock = mp.RLock()
 
-        self.states = np.empty(
-            (capacity, ) + tuple(state_space.shape), dtype=state_space.dtype
-        )
-        self.actions = np.empty(
-            (capacity, ) + tuple(action_space.shape), dtype=action_space.dtype
-        )
-        self.returns = np.empty((capacity, ), dtype=np.float32)
-        self.values = np.empty((capacity, ), dtype=np.float32)
-        self.advantages = np.empty((capacity, ), dtype=np.float32)
-        self.action_logprobs = np.empty((capacity, ), dtype=np.float32)
+        self.buffers = {
+            "state": np.empty(
+                (capacity, ) + tuple(state_space.shape),
+                dtype=state_space.dtype
+            ),
+            "action": np.empty(
+                (capacity, ) + tuple(action_space.shape),
+                dtype=action_space.dtype
+            )
+        }
+        for key, value in rollout_spec.items():
+            self.buffers[key] = np.empty(
+                (capacity, ) + tuple(value["shape"]), dtype=value["dtype"]
+            )
 
-    def push_episode(self, episode):
-        with self._store_lock:
-            states, actions, returns, values, advantages, action_logprobs = \
-                episode
-            episode_len = len(actions)
-            self.len = min(self.len + episode_len, self.capacity)
-            indices = np.arange(
-                self.pointer, self.pointer + episode_len
-            ) % self.capacity
-            self.states[indices] = states
-            self.actions[indices] = actions
-            self.returns[indices] = returns
-            self.values[indices] = values
-            self.advantages[indices] = advantages
-            self.action_logprobs[indices] = action_logprobs
-            self.pointer = (self.pointer + episode_len) % self.capacity
+    def push_rollout(self, **rollout: Dict):
+        episode_len = len(rollout["state"])
+        self.len = min(self.len + episode_len, self.capacity)
+        indices = np.arange(
+            self.pointer, self.pointer + episode_len
+        ) % self.capacity
+        self.pointer = (self.pointer + episode_len) % self.capacity
 
-    def rescale_advantages(self):
-        adv_centered = \
-            self.advantages[:self.len] - self.advantages[:self.len].mean()
-        self.advantages[:self.len] = \
-            adv_centered / (self.advantages[:self.len].std() + 1e-6)
+        for key in self.buffers:
+            self.buffers[key][indices] = rollout[key]
 
     def __getitem__(self, index):
         dct = {
-            "state": np.array(self.states[index]).astype(np.float32),
-            "action": np.array(self.actions[index]).astype(np.float32),
-            "return": np.array(self.returns[index]).astype(np.float32),
-            "value": np.array(self.values[index]).astype(np.float32),
-            "advantage": np.array(self.advantages[index]).astype(np.float32),
-            "action_logprob": np.array(self.action_logprobs[index]).astype(
-                np.float32
-            )
+            key: np.array(value[index]).astype(np.float32)
+            for key, value in self.buffers.items()
         }
         return dct
 
@@ -307,7 +298,7 @@ class ReplayBufferDataset2(Dataset):
         return self.len
 
 
-class ReplayBufferSampler2(Sampler):
+class OnpolicyRolloutSampler(Sampler):
     def __init__(self, buffer, num_mini_epochs):
         super().__init__(None)
         self.buffer = buffer

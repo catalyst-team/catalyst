@@ -29,6 +29,52 @@ class PPO(ActorCriticAlgorithmSpec):
         self.gam_matrix = create_gamma_matrix(
             self.gamma, max_episode_length)
 
+    def get_rollout_spec(self):
+        return {
+            "return": {"shape": (), "dtype": np.float32},
+            "value": {"shape": (), "dtype": np.float32},
+            "advantage": {"shape": (), "dtype": np.float32},
+            "action_logprob": {"shape": (), "dtype": np.float32},
+        }
+
+    @torch.no_grad()
+    def get_rollout(self, states, actions, rewards):
+        states = self._to_tensor(states)
+        actions = self._to_tensor(actions)
+        rewards = np.array(rewards)
+        trajectory_len = rewards.shape[0]
+
+        values = torch.zeros((trajectory_len + 1, 1)).to(self._device)
+        values[:trajectory_len] = self.critic(states)
+        values = values.cpu().numpy().reshape(-1)
+
+        _, logprobs = self.actor(states, logprob=actions)
+        logprobs = logprobs.cpu().numpy().reshape(-1)
+
+        deltas = rewards + self.gamma * values[1:] - values[:-1]
+        advantages = np.dot(
+            self.gam_lam_matrix[:trajectory_len, :trajectory_len],
+            deltas)
+        returns = np.dot(
+            self.gam_matrix[:trajectory_len, :trajectory_len],
+            rewards)
+
+        rollout = {
+            "return": returns,
+            "value": values[:trajectory_len],
+            "advantage": advantages,
+            "action_logprob": logprobs
+        }
+
+        return rollout
+
+    def postprocess_buffer(self, buffers, len):
+        adv_centered = \
+            buffers["advantage"][:len] \
+            - buffers["advantage"][:len].mean()
+        adv_std = buffers["advantage"][:len].std()
+        buffers["advantage"][:len] = adv_centered / (adv_std + 1e-6)
+
     def train(self, batch, actor_update=True, critic_update=True):
         states, actions, returns, values, advantages, action_logprobs = \
             batch["state"], batch["action"], batch["return"], \
@@ -41,6 +87,7 @@ class PPO(ActorCriticAlgorithmSpec):
         advantages = self._to_tensor(advantages)
         old_logprobs = self._to_tensor(action_logprobs)
 
+        # critic loss
         values = self.critic(states).squeeze()
 
         values_clip = old_values + torch.clamp(
@@ -51,7 +98,7 @@ class PPO(ActorCriticAlgorithmSpec):
             value_loss_unclipped, value_loss_clipped).mean()
 
         # actor loss
-        _, logprobs = self.actor(states, with_log_pi=actions)
+        _, logprobs = self.actor(states, logprob=actions)
 
         ratio = torch.exp(logprobs - old_logprobs)
         policy_loss_unclipped = advantages * ratio
@@ -82,27 +129,3 @@ class PPO(ActorCriticAlgorithmSpec):
         }
         metrics = {**metrics, **actor_update_metrics, **critic_update_metrics}
         return metrics
-
-    @torch.no_grad()
-    def evaluate_trajectory(self, states, actions, rewards):
-        states = self._to_tensor(states)
-        actions = self._to_tensor(actions)
-        rewards = np.array(rewards)
-        trajectory_len = rewards.shape[0]
-
-        values = torch.zeros((trajectory_len + 1, 1)).to(self._device)
-        values[:trajectory_len] = self.critic(states)
-        values = values.cpu().numpy().reshape(-1)
-
-        _, logprobs = self.actor(states, with_log_pi=actions)
-        logprobs = logprobs.cpu().numpy().reshape(-1)
-
-        deltas = rewards + self.gamma * values[1:] - values[:-1]
-        advantages = np.dot(
-            self.gam_lam_matrix[:trajectory_len, :trajectory_len],
-            deltas)
-        returns = np.dot(
-            self.gam_matrix[:trajectory_len, :trajectory_len],
-            rewards)
-
-        return returns, values[:trajectory_len], advantages, logprobs

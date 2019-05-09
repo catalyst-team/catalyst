@@ -112,7 +112,7 @@ class PolicyHead(nn.Module):
         else:
             raise NotImplementedError
 
-    def forward(self, inputs, with_log_pi=False, deterministic=False):
+    def forward(self, inputs, logprob=False, deterministic=False):
         x = self.head_net(inputs)
-        x = self._policy_fn(x, with_log_pi, deterministic)
+        x = self._policy_fn(x, logprob, deterministic)
         return x
