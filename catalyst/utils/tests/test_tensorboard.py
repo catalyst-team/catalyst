@@ -6,7 +6,8 @@ import numpy as np
 import pytest
 from mock import patch
 
-from catalyst.utils.tensorboard import EventsFileReader, EventReadingError, SummaryReader
+from catalyst.utils.tensorboard import \
+    EventsFileReader, EventReadingError, SummaryReader
 
 
 def _get_test_data():
