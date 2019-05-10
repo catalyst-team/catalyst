@@ -298,8 +298,7 @@ class ConfigExperiment(Experiment):
         criterion = self._get_criterion(**criterion_params)
         return criterion
 
-    @staticmethod
-    def _get_optimizer(*, model_params, **params):
+    def _get_optimizer(self, *, model_params, **params):
         key_value_flag = params.pop("_key_value", False)
 
         if key_value_flag:
@@ -308,10 +307,22 @@ class ConfigExperiment(Experiment):
                 optimizer[key] = ConfigExperiment._get_optimizer(
                     model_params=model_params, **params_)
         else:
+            load_from_previous_stage = \
+                params.pop("load_from_previous_stage", False)
             optimizer = OPTIMIZERS.get_from_params(
                 **params,
                 params=model_params
             )
+
+            if load_from_previous_stage:
+                checkpoint_path = \
+                    f"{self.logdir}/checkpoints/best.pth"
+                checkpoint = UtilsFactory.load_checkpoint(checkpoint_path)
+                UtilsFactory.unpack_checkpoint(checkpoint, optimizer=optimizer)
+                for key, value in params.items():
+                    for pg in optimizer.param_groups:
+                        pg[key] = value
+
         return optimizer
 
     def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
