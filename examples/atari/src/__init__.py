@@ -1,7 +1,10 @@
 from catalyst.rl import registry
 
 from .env import AtariEnvWrapper
-from .critic import ConvActionCritic
+from .actor import ConvActor
+from .critic import ConvCritic, ConvQCritic
 
 registry.Environment(AtariEnvWrapper)
-registry.Agent(ConvActionCritic)
+registry.Agent(ConvActor)
+registry.Agent(ConvCritic)
+registry.Agent(ConvQCritic)
