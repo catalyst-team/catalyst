@@ -4,7 +4,7 @@ import torch
 from abc import abstractmethod, ABC
 from torch import nn, optim
 from torch.utils.data import DataLoader, Dataset  # noqa F401
-from typing import Iterable, Any, Mapping, Dict, List
+from typing import Iterable, Any, Mapping, Dict, List, Tuple
 
 from catalyst.dl.registry import \
     MODELS, CRITERIONS, OPTIMIZERS, SCHEDULERS, CALLBACKS
@@ -52,7 +52,7 @@ class Experiment(ABC):
         pass
 
     @abstractmethod
-    def get_optimizer(self, stage: str, model) -> _Optimizer:
+    def get_optimizer(self, stage: str, model) -> Tuple[_Optimizer, _Model]:
         pass
 
     @abstractmethod
@@ -61,18 +61,18 @@ class Experiment(ABC):
 
     def get_model_stuff(self, model, stage: str):
         criterion = self.get_criterion(stage)
-        optimizer = self.get_optimizer(stage, model)
+        optimizer, model = self.get_optimizer(stage, model)
         scheduler = self.get_scheduler(stage, optimizer)
-        return criterion, optimizer, scheduler
+        return criterion, optimizer, scheduler, model
 
     @abstractmethod
     def get_callbacks(self, stage: str) -> "List[Callback]":
         pass
 
     def get_datasets(
-        self,
-        stage: str,
-        **kwargs,
+            self,
+            stage: str,
+            **kwargs,
     ) -> "OrderedDict[str, Dataset]":
         raise NotImplementedError
 
@@ -92,21 +92,21 @@ class BaseExperiment(Experiment):
     """
 
     def __init__(
-        self,
-        model: _Model,
-        loaders: "OrderedDict[str, DataLoader]",
-        callbacks: "List[Callback]" = None,
-        logdir: str = None,
-        stage: str = "train",
-        criterion: _Criterion = None,
-        optimizer: _Optimizer = None,
-        scheduler: _Scheduler = None,
-        num_epochs: int = 1,
-        valid_loader: str = "valid",
-        main_metric: str = "loss",
-        minimize_metric: bool = True,
-        verbose: bool = False,
-        state_kwargs: Dict = None
+            self,
+            model: _Model,
+            loaders: "OrderedDict[str, DataLoader]",
+            callbacks: "List[Callback]" = None,
+            logdir: str = None,
+            stage: str = "train",
+            criterion: _Criterion = None,
+            optimizer: _Optimizer = None,
+            scheduler: _Scheduler = None,
+            num_epochs: int = 1,
+            valid_loader: str = "valid",
+            main_metric: str = "loss",
+            minimize_metric: bool = True,
+            verbose: bool = False,
+            state_kwargs: Dict = None
     ):
         self._model = model
         self._loaders = loaders
@@ -154,8 +154,8 @@ class BaseExperiment(Experiment):
     def get_criterion(self, stage: str) -> _Criterion:
         return self._criterion
 
-    def get_optimizer(self, stage: str, model=None) -> _Optimizer:
-        return self._optimizer
+    def get_optimizer(self, stage: str, model=None) -> Tuple[_Optimizer, _Model]:
+        return self._optimizer, model
 
     def get_scheduler(self, stage: str, optimizer=None) -> _Scheduler:
         return self._scheduler
@@ -265,13 +265,13 @@ class ConfigExperiment(Experiment):
 
     def get_model(self, stage: str) -> _Model:
         model_params = self._config["model_params"]
-        fp16 = model_params.pop("fp16", False)
+        # fp16 = model_params.pop("fp16", False)
 
         model = MODELS.get_from_params(**model_params)
 
-        if fp16:
-            utils.assert_fp16_available()
-            model = Fp16Wrap(model)
+        # if fp16:
+        #     utils.assert_fp16_available()
+        #     model = Fp16Wrap(model)
 
         model = self._preprocess_model_for_stage(stage, model)
         model = self._postprocess_model_for_stage(stage, model)
@@ -314,12 +314,26 @@ class ConfigExperiment(Experiment):
         return optimizer
 
     def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
-        fp16 = isinstance(model, Fp16Wrap)
+
+        model_params = self._config["model_params"]
+        fp16 = model_params.pop("fp16", False)
+
         model_params = utils.prepare_optimizable_params(model.parameters(), fp16)
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
         optimizer = self._get_optimizer(
             model_params=model_params, **optimizer_params)
+
+        if fp16:
+            utils.assert_fp16_available()
+            from apex import amp
+            if isinstance(fp16, bool):
+                fp16 = 'O1'
+            if not fp16 in {"O1", "O2", "O3"}:
+                raise ValueError("fp16 mode must be one of O1, O2, O3")
+
+            model, optimizer = amp.initialize(model, optimizer, fp16)
+
         return optimizer
 
     @staticmethod
@@ -375,8 +389,8 @@ class ConfigExperiment(Experiment):
                 assert "dataset" in ds_, \
                     "You need to specify dataset for dataloader"
                 loader_params["shuffle"] = (
-                    name.startswith("train")
-                    and ds_.get("sampler") is None)
+                        name.startswith("train")
+                        and ds_.get("sampler") is None)
                 loader_params = merge_dicts(ds_, loader_params)
             else:
                 raise NotImplementedError
