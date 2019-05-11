@@ -52,7 +52,7 @@ class Experiment(ABC):
         pass
 
     @abstractmethod
-    def get_optimizer(self, stage: str, model) -> Tuple[_Optimizer, _Model]:
+    def get_optimizer_and_model(self, stage: str, model) -> Tuple[_Optimizer, _Model]:
         pass
 
     @abstractmethod
@@ -61,7 +61,7 @@ class Experiment(ABC):
 
     def get_model_stuff(self, model, stage: str):
         criterion = self.get_criterion(stage)
-        optimizer, model = self.get_optimizer(stage, model)
+        optimizer, model = self.get_optimizer_and_model(stage, model)
         scheduler = self.get_scheduler(stage, optimizer)
         return criterion, optimizer, scheduler, model
 
@@ -154,7 +154,7 @@ class BaseExperiment(Experiment):
     def get_criterion(self, stage: str) -> _Criterion:
         return self._criterion
 
-    def get_optimizer(self, stage: str, model=None) -> Tuple[_Optimizer, _Model]:
+    def get_optimizer_and_model(self, stage: str, model=None) -> Tuple[_Optimizer, _Model]:
         return self._optimizer, model
 
     def get_scheduler(self, stage: str, optimizer=None) -> _Scheduler:
@@ -313,12 +313,11 @@ class ConfigExperiment(Experiment):
             )
         return optimizer
 
-    def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
-
+    def get_optimizer_and_model(self, stage: str, model: nn.Module) -> [_Optimizer, _Model]:
         model_params = self._config["model_params"]
         fp16 = model_params.pop("fp16", False)
 
-        model_params = utils.prepare_optimizable_params(model.parameters(), fp16)
+        model_params = utils.prepare_optimizable_params(model.parameters())
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
         optimizer = self._get_optimizer(
@@ -334,7 +333,7 @@ class ConfigExperiment(Experiment):
 
             model, optimizer = amp.initialize(model, optimizer, fp16)
 
-        return optimizer
+        return optimizer, model
 
     @staticmethod
     def _get_scheduler(*, optimizer, **params):
