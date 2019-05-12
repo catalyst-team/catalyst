@@ -193,6 +193,8 @@ class OptimizerCallback(Callback):
 
     def on_batch_end(self, state):
         loss = state.get_key(key="loss", inner_key=self.loss_key)
+        if isinstance(loss, dict):
+            loss = list(loss.values())
         if isinstance(loss, list):
             loss = torch.mean(torch.stack(loss))
 
