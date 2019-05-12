@@ -80,6 +80,7 @@ class Runner(ABC):
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
+            loaders=self.experiment.get_loaders(stage),
             **self.experiment.get_state_params(stage),
             **migrating_params
         )

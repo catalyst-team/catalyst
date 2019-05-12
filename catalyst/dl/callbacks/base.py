@@ -2,6 +2,7 @@ import os
 from typing import Dict
 
 import safitty
+import numpy as np
 import torch
 
 from catalyst.contrib.scheduler import OneCycleLR
@@ -301,10 +302,17 @@ class SchedulerCallback(Callback):
         scheduler = state.get_key(
             key="scheduler", inner_key=self.scheduler_key
         )
-        if state.loader_name == "train" and \
+        if state.loader_name.startswith("train") and \
                 isinstance(scheduler, OneCycleLR) and self.mode == "batch":
             if not self._onecycle_recalculated:
-                scheduler.recalculate_(loader_len=state.loader_len)
+                loaders = state.loaders
+
+                train_loaders_len = [
+                    len(train_loader) for train_loader in loaders
+                    if train_loader.startswith("train")
+                ]
+                loader_len = np.array(train_loaders_len).sum().item()
+                scheduler.recalculate(loader_len=loader_len)
                 self._onecycle_recalculated = True
 
     def on_batch_end(self, state):
@@ -315,8 +323,8 @@ class SchedulerCallback(Callback):
         if self.mode == "epoch":
             self.step(state=state)
 
+    @staticmethod
     def _scheduler_step(
-            self,
             scheduler,
             valid_metric=None,
     ):

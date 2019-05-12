@@ -197,7 +197,7 @@ class OneCycleLR(BaseScheduler):
         )
         self.last_epoch = 0
 
-    def recalculate_(
+    def recalculate(
             self,
             loader_len: int
     ) -> None:
