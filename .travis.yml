@@ -108,7 +108,30 @@ jobs:
         - kill %1
 
     - stage: Examples
-      name: "Examples RL – Discrete"
+      name: "Examples on-policy RL – PPO"
+      before_install: *before_install
+      install: *requirements
+      script:
+        - redis-server --port 12000 &
+        - sleep 5
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/rl/scripts/run_trainer.py
+          --config=./examples/_tests_rl_gym/config_ppo.yml
+          --logdir=./examples/logs/_tests_rl_gym_ppo &
+        - sleep 10
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/rl/scripts/run_samplers.py
+          --config=./examples/_tests_rl_gym/config_ppo.yml
+          --logdir=./examples/logs/_tests_rl_gym_ppo &
+        - sleep 120
+        - kill %3
+        - kill %2
+        - kill %1
+        - rm ./examples/logs/_tests_rl_gym_ppo/1.pth
+        - rm ./examples/logs/_tests_rl_gym_ppo/2.pth
+
+    - stage: Examples
+      name: "Examples off-policy RL – Discrete"
       before_install: *before_install
       install: *requirements
       script:
@@ -127,11 +150,11 @@ jobs:
         - kill %3
         - kill %2
         - kill %1
-        - rm ./examples/logs/_tests_rl_gym_dqn/0.pth
         - rm ./examples/logs/_tests_rl_gym_dqn/1.pth
+        - rm ./examples/logs/_tests_rl_gym_dqn/2.pth
 
     - stage: Examples
-      name: "Examples RL – Continuous"
+      name: "Examples off-policy RL – Continuous"
       before_install: *before_install
       install: *requirements
       script:
@@ -170,12 +193,12 @@ jobs:
         - kill %3
         - kill %2
         - kill %1
-        - rm ./examples/logs/_tests_rl_gym_ddpg/0.pth
         - rm ./examples/logs/_tests_rl_gym_ddpg/1.pth
-        - rm ./examples/logs/_tests_rl_gym_td3/0.pth
+        - rm ./examples/logs/_tests_rl_gym_ddpg/2.pth
         - rm ./examples/logs/_tests_rl_gym_td3/1.pth
-        - rm ./examples/logs/_tests_rl_gym_sac/0.pth
+        - rm ./examples/logs/_tests_rl_gym_td3/2.pth
         - rm ./examples/logs/_tests_rl_gym_sac/1.pth
+        - rm ./examples/logs/_tests_rl_gym_sac/2.pth
 
 # speed up for now
 #    - stage: Deploy
