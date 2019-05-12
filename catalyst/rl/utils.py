@@ -1,14 +1,24 @@
-from typing import Union
+from typing import Union, Dict
+import time
 import numpy as np
 import multiprocessing as mp
 from gym.spaces import Box, Discrete, Space
 
 import torch
 from torch.utils.data import Dataset, Sampler
-from catalyst.rl.offpolicy.exploration.strategies import \
-    OrnsteinUhlenbeckProcess, ParameterSpaceNoise
+from catalyst.rl.exploration import \
+    ParameterSpaceNoise, OrnsteinUhlenbeckProcess
 from catalyst.rl.agents.core import ActorSpec, CriticSpec
 from catalyst.rl.environments.core import EnvironmentSpec
+from catalyst.rl.db.core import DBSpec
+
+
+def _make_tuple(tuple_like):
+    tuple_like = (
+        tuple_like if isinstance(tuple_like, (list, tuple)) else
+        (tuple_like, tuple_like)
+    )
+    return tuple_like
 
 
 def _get_buffers(
@@ -21,40 +31,39 @@ def _get_buffers(
     assert mode in ["numpy", "memmap"]
     if mode == "numpy":
         observations = np.empty(
-            (capacity,) + tuple(observation_space.shape),
+            (capacity, ) + tuple(observation_space.shape),
             dtype=observation_space.dtype
         )
         actions = np.empty(
-            (capacity,) + tuple(action_space.shape),
-            dtype=action_space.dtype
+            (capacity, ) + tuple(action_space.shape), dtype=action_space.dtype
         )
-        rewards = np.empty((capacity,), dtype=np.float32)
-        dones = np.empty((capacity,), dtype=np.bool)
+        rewards = np.empty((capacity, ), dtype=np.float32)
+        dones = np.empty((capacity, ), dtype=np.bool)
     elif mode == "memmap":
         assert logdir is not None
 
         observations = np.memmap(
             f"{logdir}/observations.memmap",
             mode="w+",
-            shape=(capacity,) + tuple(observation_space.shape),
+            shape=(capacity, ) + tuple(observation_space.shape),
             dtype=observation_space.dtype
         )
         actions = np.memmap(
             f"{logdir}/actions.memmap",
             mode="w+",
-            shape=(capacity,) + tuple(action_space.shape),
+            shape=(capacity, ) + tuple(action_space.shape),
             dtype=action_space.dtype
         )
         rewards = np.memmap(
             f"{logdir}/rewards.memmap",
             mode="w+",
-            shape=(capacity,),
+            shape=(capacity, ),
             dtype=np.float32
         )
         dones = np.memmap(
             f"{logdir}/dones.memmap",
             mode="w+",
-            shape=(capacity,),
+            shape=(capacity, ),
             dtype=np.bool
         )
     else:
@@ -63,7 +72,40 @@ def _get_buffers(
     return observations, actions, rewards, dones
 
 
-class ReplayBufferDataset(Dataset):
+def _get_states_from_observations(observations, history_len=1):
+    """
+    DB stores observations but not states.
+    This function creates states from observations
+    by adding new dimension of size (history_len).
+    """
+    observations = np.array(observations)
+    episode_size = observations.shape[0]
+    states = np.zeros((episode_size, history_len) + observations.shape[1:])
+    for i in range(history_len - 1):
+        pivot = history_len - i - 1
+        states[pivot:, i, :] = observations[:-pivot, :]
+    states[:, -1, :] = observations
+    return states
+
+
+def db2queue_loop(db_server: DBSpec, queue: mp.Queue, max_size: int):
+    while True:
+        try:
+            need_more = queue.qsize() < max_size
+        except NotImplementedError:  # MacOS qsize issue (no sem_getvalue)
+            need_more = True
+
+        if need_more:
+            trajectory = db_server.get_trajectory()
+            if trajectory is not None:
+                queue.put(trajectory, block=True, timeout=1.0)
+            else:
+                time.sleep(1.0)
+        else:
+            time.sleep(1.0)
+
+
+class OffpolicyReplayBuffer(Dataset):
     def __init__(
         self,
         observation_space: Space,
@@ -79,18 +121,16 @@ class ReplayBufferDataset(Dataset):
         Experience replay buffer for off-policy RL algorithms.
 
         Args:
-            observation_shape: shape of environment observation
+            observation_space: space of environment observation
                 e.g. (8, ) for vector of floats or (84, 84, 3) for RGB image
-            action_shape: shape of action the agent can take
+            action_space: space of action the agent can take
                 e.g. (3, ) for 3-dimensional continuous control
             capacity: replay buffer capacity
-            history_len: number of subsequent observations considered a state
             n_step: number of time steps between the current state and the next
                 state in TD backup
             gamma: discount factor
-            discrete actions: True if actions are discrete
+            history_len: number of subsequent observations considered a state
         """
-        # @TODO: Refactor !!!
         self.observation_space = observation_space
         self.action_space = action_space
         self.history_len = history_len
@@ -135,7 +175,7 @@ class ReplayBufferDataset(Dataset):
 
         if start_idx < 0 or np.any(self.dones[start_idx:idx + 1]):
             state = np.zeros(
-                (history_len,) + self.observation_space.shape,
+                (history_len, ) + self.observation_space.shape,
                 dtype=self.observation_space.dtype
             )
             indices = [idx]
@@ -159,7 +199,7 @@ class ReplayBufferDataset(Dataset):
         cum_reward = 0
         indices = np.arange(idx, idx + n_step) % self.capacity
         for num, i in enumerate(indices):
-            cum_reward += self.rewards[i] * (gamma ** num)
+            cum_reward += self.rewards[i] * (gamma**num)
             done = self.dones[i]
             if done:
                 break
@@ -188,7 +228,7 @@ class ReplayBufferDataset(Dataset):
         return self.len
 
 
-class ReplayBufferSampler(Sampler):
+class OffpolicyReplaySampler(Sampler):
     def __init__(self, buffer, epoch_len, batch_size):
         super().__init__(None)
         self.buffer = buffer
@@ -205,40 +245,110 @@ class ReplayBufferSampler(Sampler):
         return self.len
 
 
-class PolicyHandler:
+class OnpolicyRolloutBuffer(Dataset):
     def __init__(
         self,
-        env: EnvironmentSpec,
-        agent: Union[ActorSpec, CriticSpec],
-        device
+        state_space: Space,
+        action_space: Space,
+        capacity=int(1e6),
+        **rollout_spec
     ):
+        self.state_space = state_space
+        self.action_space = action_space
+
+        self.capacity = capacity
+
+        self.len = 0
+        self.pointer = 0
+
+        self.buffers = {
+            "state": np.empty(
+                (capacity, ) + tuple(state_space.shape),
+                dtype=state_space.dtype
+            ),
+            "action": np.empty(
+                (capacity, ) + tuple(action_space.shape),
+                dtype=action_space.dtype
+            )
+        }
+        for key, value in rollout_spec.items():
+            self.buffers[key] = np.empty(
+                (capacity, ) + tuple(value["shape"]), dtype=value["dtype"]
+            )
+
+    def push_rollout(self, **rollout: Dict):
+        episode_len = len(rollout["state"])
+        self.len = min(self.len + episode_len, self.capacity)
+        indices = np.arange(
+            self.pointer, self.pointer + episode_len
+        ) % self.capacity
+        self.pointer = (self.pointer + episode_len) % self.capacity
+
+        for key in self.buffers:
+            self.buffers[key][indices] = rollout[key]
+
+    def __getitem__(self, index):
+        dct = {
+            key: np.array(value[index]).astype(np.float32)
+            for key, value in self.buffers.items()
+        }
+        return dct
+
+    def __len__(self):
+        return self.len
+
+
+class OnpolicyRolloutSampler(Sampler):
+    def __init__(self, buffer, num_mini_epochs):
+        super().__init__(None)
+        self.buffer = buffer
+        self.num_mini_epochs = num_mini_epochs
+        buffer_len = len(self.buffer)
+        self.len = buffer_len * num_mini_epochs
+
+        indices = []
+        for i in range(num_mini_epochs):
+            idx = np.arange(buffer_len)
+            np.random.shuffle(idx)
+            indices.append(idx)
+        self.indices = np.concatenate(indices)
+
+    def __iter__(self):
+        return iter(self.indices)
+
+    def __len__(self):
+        return self.len
+
+
+class PolicyHandler:
+    def __init__(
+        self, env: EnvironmentSpec, agent: Union[ActorSpec, CriticSpec], device
+    ):
+        self.action_fn = None
         self.discrete_actions = isinstance(env.action_space, Discrete)
 
-        # DQN
+        # DQN, PPO
         if self.discrete_actions:
-            assert isinstance(agent, CriticSpec)
-            self.value_distribution = agent.distribution
-            if self.value_distribution == "categorical":
-                v_min, v_max = agent.values_range
-                self.z = torch.linspace(
-                    start=v_min,
-                    end=v_max,
-                    steps=agent.num_atoms
-                ).to(device)
-
-        # DDPG
+            if isinstance(agent, ActorSpec):
+                self.action_clip = None
+                self.action_fn = self._actor_handler
+            elif isinstance(agent, CriticSpec):
+                self.action_fn = self._critic_handler
+                self.value_distribution = agent.distribution
+                if self.value_distribution == "categorical":
+                    v_min, v_max = agent.values_range
+                    self.z = torch.linspace(
+                        start=v_min, end=v_max, steps=agent.num_atoms
+                    ).to(device)
+        # DDPG, SAC, TD3
         else:
             assert isinstance(agent, ActorSpec)
             action_space: Box = env.action_space
             self.action_clip = action_space.low, action_space.high
+            self.action_fn = self._actor_handler
 
     @torch.no_grad()
-    def _get_q_values(
-        self,
-        critic: CriticSpec,
-        state: np.ndarray,
-        device
-    ):
+    def _get_q_values(self, critic: CriticSpec, state: np.ndarray, device):
         states = torch.Tensor(state).to(device).unsqueeze(0)
         if self.value_distribution == "categorical":
             probs = torch.softmax(critic(states)[0], dim=-1)
@@ -263,10 +373,32 @@ class PolicyHandler:
 
         if self.action_clip is not None:
             action = np.clip(
-                action,
-                a_min=self.action_clip[0],
-                a_max=self.action_clip[1]
+                action, a_min=self.action_clip[0], a_max=self.action_clip[1]
             )
+        return action
+
+    def _critic_handler(
+        self,
+        agent: CriticSpec,
+        state: np.ndarray,
+        device,
+        deterministic: bool = False,
+        exploration_strategy=None
+    ):
+        q_values = self._get_q_values(agent, state, device)
+        action = exploration_strategy.get_action(q_values)
+        return action
+
+    def _actor_handler(
+        self,
+        agent: ActorSpec,
+        state: np.ndarray,
+        device,
+        deterministic: bool = False,
+        exploration_strategy=None
+    ):
+        action = self._sample_from_actor(agent, state, device, deterministic)
+        action = exploration_strategy.get_action(action)
         return action
 
 
@@ -288,11 +420,6 @@ class EpisodeRunner:
             env=self.env, agent=self.agent, device=device
         )
 
-        if isinstance(env.action_space, Discrete):
-            self._act_fn = self._act_discrete
-        else:
-            self._act_fn = self._act_continuous
-
         self._init_buffers()
 
     def _init_buffers(self):
@@ -313,10 +440,10 @@ class EpisodeRunner:
 
     def _put_transition(self, transition):
         """
-        transition = [s_tp1, a_t, r_t, d_t]
+        transition = [o_tp1, a_t, r_t, d_t]
         """
-        s_tp1, a_t, r_t, d_t = transition
-        self.observations[self.pointer + 1] = s_tp1
+        o_tp1, a_t, r_t, d_t = transition
+        self.observations[self.pointer + 1] = o_tp1
         self.actions[self.pointer] = a_t
         self.rewards[self.pointer] = r_t
         self.dones[self.pointer] = d_t
@@ -336,7 +463,7 @@ class EpisodeRunner:
         history_len = history_len or self.env.history_len
 
         state = np.zeros(
-            (history_len,) + self.env.observation_space.shape,
+            (history_len, ) + self.env.observation_space.shape,
             dtype=self.env.observation_space.dtype
         )
 
@@ -370,12 +497,12 @@ class EpisodeRunner:
         self._init_buffers()
         self._init_with_observation(self.env.reset())
 
-    def play_episode(self, exploration_strategy):
+    def run(self, exploration_strategy):
         episode_reward, num_steps, done = 0, 0, False
 
         while not done:
             state = self.get_state()
-            action = self._act_fn(
+            action = self.policy_handler.action_fn(
                 agent=self.agent,
                 state=state,
                 device=self._device,
@@ -390,35 +517,6 @@ class EpisodeRunner:
             self._put_transition(transition)
             num_steps += 1
 
-        results = {
-            "episode_reward": episode_reward,
-            "num_steps": num_steps
-        }
+        results = {"episode_reward": episode_reward, "num_steps": num_steps}
 
         return results
-
-    def _act_discrete(
-        self,
-        agent: CriticSpec,
-        state: np.ndarray,
-        device,
-        deterministic: bool = False,
-        exploration_strategy=None
-    ):
-        q_values = self.policy_handler._get_q_values(agent, state, device)
-        action = exploration_strategy.get_action(q_values)
-        return action
-
-    def _act_continuous(
-        self,
-        agent: ActorSpec,
-        state: np.ndarray,
-        device,
-        deterministic: bool = False,
-        exploration_strategy=None
-    ):
-        action = self.policy_handler._sample_from_actor(
-            agent, state, device, deterministic
-        )
-        action = exploration_strategy.get_action(action)
-        return action
