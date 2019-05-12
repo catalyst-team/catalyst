@@ -166,7 +166,11 @@ class Trainer:
                 k: v.detach().cpu().numpy()
                 for k, v in state_dict.items()
             }
-            self.db_server.dump_weights(weights=state_dict, prefix=mode)
+            self.db_server.dump_weights(
+                weights=state_dict,
+                prefix=mode,
+                epoch=self.epoch
+            )
 
     def _update_target_weights(self, step_index):
         if not self.env_spec.discrete_actions:
@@ -221,9 +225,9 @@ class Trainer:
                 self.epoch
             )
 
+            self.epoch += 1
             self.save()
             self._update_samplers_weights()
-            self.epoch += 1
             if self.epoch % self._gc_period == 0:
                 gc.collect()
             start_time = time.time()

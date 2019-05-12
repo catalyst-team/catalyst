@@ -74,6 +74,7 @@ class ActorCriticAlgorithmSpec(AlgorithmSpec):
         self.critic_grad_clip_fn = critic_stuff["grad_clip_fn"]
 
         # other hyperparameters
+        assert n_step == 1, "For now, on-policy setup works only with n-step=1"
         self._n_step = n_step
         self._gamma = gamma
 

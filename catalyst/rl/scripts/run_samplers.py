@@ -80,14 +80,15 @@ def run_sampler(
     id=None,
     resume=None,
     db=True,
-    exploration_power=1.0
+    exploration_power=1.0,
+    sync_epoch=False
 ):
     config_ = copy.deepcopy(config)
     id = 0 if id is None else id
     set_global_seed(seed + id)
 
     db_server = DATABASES.get_from_params(
-        **config.get("db", {})
+        **config.get("db", {}), sync_epoch=sync_epoch
     ) if db else None
 
     env = environment_fn(**config_["environment"], visualize=vis)
@@ -136,9 +137,11 @@ def main(args, unknown_args):
     if algorithm_name in OFFPOLICY_ALGORITHMS_NAMES:
         ALGORITHMS = OFFPOLICY_ALGORITHMS
         sampler_fn = OffpolicySampler
+        sync_epoch = False
     else:
         ALGORITHMS = ONPOLICY_ALGORITHMS
         sampler_fn = OnpolicySampler
+        sync_epoch = True
 
     algorithm_fn = ALGORITHMS.get(algorithm_name)
 
@@ -159,7 +162,8 @@ def main(args, unknown_args):
         sampler_fn=sampler_fn,
         config=config,
         resume=args.resume,
-        db=args.db
+        db=args.db,
+        sync_epoch=sync_epoch
     )
 
     if args.check:

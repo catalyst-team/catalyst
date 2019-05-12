@@ -51,20 +51,21 @@ def main(args, unknown_args):
     if args.expdir is not None:
         module = import_module(expdir=args.expdir)  # noqa: F841
 
-    db_server = DATABASES.get_from_params(
-        **config.get("db", {})
-    )
-
-    env = ENVIRONMENTS.get_from_params(**config["environment"])
-
     algorithm_name = config["algorithm"].pop("algorithm")
-
     if algorithm_name in OFFPOLICY_ALGORITHMS_NAMES:
         ALGORITHMS = OFFPOLICY_ALGORITHMS
         trainer_fn = OffpolicyTrainer
+        sync_epoch = False
     else:
         ALGORITHMS = ONPOLICY_ALGORITHMS
         trainer_fn = OnpolicyTrainer
+        sync_epoch = True
+
+    db_server = DATABASES.get_from_params(
+        **config.get("db", {}), sync_epoch=sync_epoch
+    )
+
+    env = ENVIRONMENTS.get_from_params(**config["environment"])
 
     algorithm_fn = ALGORITHMS.get(algorithm_name)
     algorithm = algorithm_fn.prepare_for_trainer(env_spec=env, config=config)

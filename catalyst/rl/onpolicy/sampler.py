@@ -109,6 +109,7 @@ class Sampler:
             return
         if not self.db_server.get_sample_flag():
             return
+
         trajectory = self.episode_runner.get_trajectory()
         self.db_server.push_trajectory(trajectory)
 

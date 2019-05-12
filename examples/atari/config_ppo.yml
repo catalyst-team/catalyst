@@ -72,7 +72,7 @@ agents:
 algorithm:
   algorithm: PPO
 
-  n_step: 3
+  n_step: 1
   gamma: 0.99
 
   gae_lambda: 0.95
@@ -92,7 +92,7 @@ algorithm:
     clip_value: 1.0
 
 trainer:
-  batch_size: 256              # transitions
+  batch_size: 2048             # transitions
   num_workers: 2
   num_mini_epochs: 10
   min_num_trajectories: 100

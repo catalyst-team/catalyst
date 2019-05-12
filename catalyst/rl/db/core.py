@@ -29,7 +29,7 @@ class DBSpec(ABC):
         pass
 
     @abstractmethod
-    def dump_weights(self, weights, prefix):
+    def dump_weights(self, weights, prefix, epoch):
         pass
 
     @abstractmethod

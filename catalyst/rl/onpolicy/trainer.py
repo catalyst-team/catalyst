@@ -126,7 +126,7 @@ class Trainer:
                 episode = self.db_server.get_trajectory()
                 assert episode is not None
             except Exception:
-                time.sleep(1.0)
+                time.sleep(0.5)
                 continue
 
             self._num_trajectories += 1
@@ -158,7 +158,11 @@ class Trainer:
             k: v.detach().cpu().numpy()
             for k, v in state_dict.items()
         }
-        self.db_server.dump_weights(weights=state_dict, prefix=mode)
+        self.db_server.dump_weights(
+            weights=state_dict,
+            prefix=mode,
+            epoch=self.epoch
+        )
 
     def _train(self):
         start_time = time.time()
@@ -188,7 +192,6 @@ class Trainer:
             self.step += 1
 
         elapsed_time = time.time() - start_time
-
         self.logger.add_scalar("batch size", self.batch_size, self.epoch)
         self.logger.add_scalar(
             "buffer size", len(self.replay_buffer), self.epoch)
@@ -200,7 +203,9 @@ class Trainer:
             self.epoch
         )
 
+        self.epoch += 1
         self.save()
+        self._update_samplers_weights()
 
     def _start_train_loop(self):
         while True:
@@ -214,8 +219,6 @@ class Trainer:
 
             # train & update
             self._train()
-            self._update_samplers_weights()
-            self.epoch += 1
 
             # cleanup trajectories
             self.db_server.clean_trajectories()
