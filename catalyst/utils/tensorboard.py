@@ -116,15 +116,20 @@ class SummaryReader(Iterable):
     """
 
     def __init__(
-        self, logdir: Union[str, Path], tag_filter: Optional[Iterable] = None
+        self, logdir: Union[str, Path],
+        tag_filter: Optional[Iterable] = None,
+        type_filter: Optional[Iterable] = None
     ):
         """
         Initalize new summary reader
         :param logdir: A directory with Tensorboard summary data
         :param tag_filter: A list of tags to leave (`None` for all)
+        :param type_filter: A list of types to leave (`None` for all)
+            Note that only 'scalar' and 'image' types are allowed at the moment.
         """
         self._logdir = Path(logdir)
         self._tag_filter = set(tag_filter) if tag_filter is not None else None
+        self._type_filter = set(type_filter) if type_filter is not None else None
 
     @staticmethod
     def _decode_image(encoded_image) -> np.ndarray:
@@ -174,6 +179,14 @@ class SummaryReader(Iterable):
         """
         return self._tag_filter is None or tag in self._tag_filter
 
+    def _check_type(self, event_type: str) -> bool:
+        """
+        Check if a tag matches the current tag filter
+        :param event_type: A string with type name
+        :return: A boolean value.
+        """
+        return self._type_filter is None or event_type in self._type_filter
+
     def __iter__(self) -> SummaryItem:
         """
         Iterate over events in all the files in the current logdir
@@ -185,5 +198,7 @@ class SummaryReader(Iterable):
                 reader = EventsFileReader(f)
                 yield from (
                     item for item in self._decode_events(reader)
-                    if item is not None and self._check_tag(item.tag)
+                    if item is not None
+                       and self._check_tag(item.tag)
+                       and self._check_type(item.type)
                 )

@@ -174,3 +174,22 @@ def test_summary_reader_filter():
         assert item.type == event_raw['type']
         assert item.tag in tags
         assert np.all(item.value == event_raw['value'])
+
+
+@patch('pathlib.Path.glob', lambda s, p: [Path('1'), Path('2')])
+@patch('pathlib.Path.is_file', lambda s: True)
+@patch('builtins.open', _open)
+def test_summary_reader_filter_scalars():
+    types = ['scalar']
+    reader = SummaryReader('logs', type_filter=types)
+    _, data_raw = _get_test_data()
+    data_raw2 = 2 * [d for d in data_raw if d is not None and d['type'] in types]
+    items = list(reader)
+
+    assert len(items) == len(data_raw2)
+
+    for item, event_raw in zip(items, data_raw2):
+        assert item.step == event_raw['step']
+        assert item.tag == event_raw['tag']
+        assert item.type == 'scalar'
+        assert np.all(item.value == event_raw['value'])
