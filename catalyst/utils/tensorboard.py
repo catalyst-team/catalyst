@@ -158,7 +158,7 @@ class SummaryReader(Iterable):
         :param logdir: A directory with Tensorboard summary data
         :param tag_filter: A list of tags to leave (`None` for all)
         :param types: A list of types to get.
-            Note that only 'scalar' and 'image' types are allowed at the moment.
+            Only 'scalar' and 'image' types are allowed at the moment.
         """
         self._logdir = Path(logdir)
 
@@ -172,7 +172,7 @@ class SummaryReader(Iterable):
         if not all(
             type_name in self._DECODERS.keys() for type_name in self._types
         ):
-            raise ValueError('Invalid type filter')
+            raise ValueError('Invalid type name')
 
     def _decode_events(self, events: Iterable) -> Optional[SummaryItem]:
         """
