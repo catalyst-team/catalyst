@@ -142,7 +142,7 @@ def _open(path, mode):
 @patch('pathlib.Path.is_file', lambda s: True)
 @patch('builtins.open', _open)
 def test_summary_reader_iterate():
-    reader = SummaryReader('logs')
+    reader = SummaryReader('logs', types=['scalar', 'image'])
     _, data_raw = _get_test_data()
     data_raw2 = 2 * [d for d in data_raw if d is not None]
     items = list(reader)
@@ -161,7 +161,7 @@ def test_summary_reader_iterate():
 @patch('builtins.open', _open)
 def test_summary_reader_filter():
     tags = ['x', 'z']
-    reader = SummaryReader('logs', tag_filter=tags)
+    reader = SummaryReader('logs', tag_filter=tags, types=['scalar', 'image'])
     _, data_raw = _get_test_data()
     data_raw2 = 2 * [d for d in data_raw if d is not None and d['tag'] in tags]
     items = list(reader)
@@ -181,7 +181,7 @@ def test_summary_reader_filter():
 @patch('builtins.open', _open)
 def test_summary_reader_filter_scalars():
     types = ['scalar']
-    reader = SummaryReader('logs', type_filter=types)
+    reader = SummaryReader('logs', types=types)
     _, data_raw = _get_test_data()
     data_raw2 = 2 * [d for d in data_raw if d is not None and d['type'] in types]
     items = list(reader)
@@ -197,4 +197,4 @@ def test_summary_reader_filter_scalars():
 
 def test_summary_reader_invalid_type():
     with pytest.raises(ValueError):
-        SummaryReader('.', type_filter=['unknown-type'])
+        SummaryReader('.', types=['unknown-type'])

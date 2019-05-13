@@ -151,29 +151,26 @@ class SummaryReader(Iterable):
         self,
         logdir: Union[str, Path],
         tag_filter: Optional[Iterable] = None,
-        type_filter: Optional[Iterable] = None
+        types: Iterable = ('scalar', )
     ):
         """
         Initalize new summary reader
         :param logdir: A directory with Tensorboard summary data
         :param tag_filter: A list of tags to leave (`None` for all)
-        :param type_filter: A list of types to leave (`None` for all)
+        :param types: A list of types to get.
             Note that only 'scalar' and 'image' types are allowed at the moment.
         """
         self._logdir = Path(logdir)
 
         self._tag_filter = set(tag_filter) if tag_filter is not None else None
-        self._type_filter = set(
-            type_filter
-        ) if type_filter is not None else None
+        self._types = set(types)
         self._check_type_names()
 
     def _check_type_names(self):
-        if self._type_filter is None:
+        if self._types is None:
             return
         if not all(
-            type_name in self._DECODERS.keys()
-            for type_name in self._type_filter
+            type_name in self._DECODERS.keys() for type_name in self._types
         ):
             raise ValueError('Invalid type filter')
 
@@ -184,10 +181,6 @@ class SummaryReader(Iterable):
         :return: A generator with decoded events
             or `None`s if an event can't be decoded
         """
-        if self._type_filter is not None:
-            type_list = self._type_filter
-        else:
-            type_list = self._DECODERS.keys()
 
         for event in events:
             if not event.HasField('summary'):
@@ -196,7 +189,7 @@ class SummaryReader(Iterable):
             wall_time = event.wall_time
             for value in event.summary.value:
                 tag = value.tag
-                for value_type in type_list:
+                for value_type in self._types:
                     decoder = self._DECODERS[value_type]
                     data = decoder(value)
                     if data is not None:
@@ -207,7 +200,6 @@ class SummaryReader(Iterable):
                             value=data,
                             type=value_type
                         )
-                        break
                 else:
                     yield None
 
@@ -225,7 +217,7 @@ class SummaryReader(Iterable):
         :param event_type: A string with type name
         :return: A boolean value.
         """
-        return self._type_filter is None or event_type in self._type_filter
+        return self._types is None or event_type in self._types
 
     def __iter__(self) -> SummaryItem:
         """
@@ -239,5 +231,5 @@ class SummaryReader(Iterable):
                 yield from (
                     item for item in self._decode_events(reader)
                     if item is not None and self._check_tag(item.tag)
-                    and self._check_type(item.type)
+                    and item.type in self._types
                 )
