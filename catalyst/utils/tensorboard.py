@@ -106,7 +106,9 @@ class EventsFileReader(Iterable):
             yield event
 
 
-SummaryItem = namedtuple('SummaryItem', ['tag', 'step', 'wall_time', 'value', 'type'])
+SummaryItem = namedtuple(
+    'SummaryItem', ['tag', 'step', 'wall_time', 'value', 'type']
+)
 
 
 def _get_scalar(value):
@@ -143,7 +145,8 @@ class SummaryReader(Iterable):
     }
 
     def __init__(
-        self, logdir: Union[str, Path],
+        self,
+        logdir: Union[str, Path],
         tag_filter: Optional[Iterable] = None,
         type_filter: Optional[Iterable] = None
     ):
@@ -157,14 +160,18 @@ class SummaryReader(Iterable):
         self._logdir = Path(logdir)
 
         self._tag_filter = set(tag_filter) if tag_filter is not None else None
-        self._type_filter = set(type_filter) if type_filter is not None else None
+        self._type_filter = set(
+            type_filter
+        ) if type_filter is not None else None
         self._check_type_names()
 
     def _check_type_names(self):
         if self._type_filter is None:
             return
-        if not all(type_name in self._DECODERS.keys()
-                   for type_name in self._type_filter):
+        if not all(
+            type_name in self._DECODERS.keys()
+            for type_name in self._type_filter
+        ):
             raise ValueError('Invalid type filter')
 
     @staticmethod
@@ -197,8 +204,11 @@ class SummaryReader(Iterable):
                     data = decoder(value)
                     if data is not None:
                         yield SummaryItem(
-                            tag=tag, step=step, wall_time=wall_time,
-                            value=data, type=value_type
+                            tag=tag,
+                            step=step,
+                            wall_time=wall_time,
+                            value=data,
+                            type=value_type
                         )
                         break
                 else:
@@ -231,7 +241,6 @@ class SummaryReader(Iterable):
                 reader = EventsFileReader(f)
                 yield from (
                     item for item in self._decode_events(reader)
-                    if item is not None
-                       and self._check_tag(item.tag)
-                       and self._check_type(item.type)
+                    if item is not None and self._check_tag(item.tag)
+                    and self._check_type(item.type)
                 )

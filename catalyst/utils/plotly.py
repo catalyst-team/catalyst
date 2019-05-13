@@ -19,7 +19,9 @@ def get_tensorboard_scalars(
 
     items = defaultdict(list)
     for item in summary_reader:
-        if step in item.tag and (metrics is None or any(m in item.tag for m in metrics)):
+        if step in item.tag and (
+            metrics is None or any(m in item.tag for m in metrics)
+        ):
             items[item.tag].append(item.value)
     return items
 
