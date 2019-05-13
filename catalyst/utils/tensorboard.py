@@ -185,14 +185,18 @@ class SummaryReader(Iterable):
         data = cv2.imdecode(buf, cv2.IMREAD_COLOR)
         return data
 
-    @classmethod
-    def _decode_events(cls, events: Iterable) -> Optional[SummaryItem]:
+    def _decode_events(self, events: Iterable) -> Optional[SummaryItem]:
         """
         Convert events to `SummaryItem` instances
         :param events: An iterable with events objects
         :return: A generator with decoded events
             or `None`s if an event can't be decoded
         """
+        if self._type_filter is not None:
+            type_list = self._type_filter
+        else:
+            type_list = self._DECODERS.keys()
+
         for event in events:
             if not event.HasField('summary'):
                 yield None
@@ -200,7 +204,8 @@ class SummaryReader(Iterable):
             wall_time = event.wall_time
             for value in event.summary.value:
                 tag = value.tag
-                for value_type, decoder in cls._DECODERS.items():
+                for value_type in type_list:
+                    decoder = self._DECODERS[value_type]
                     data = decoder(value)
                     if data is not None:
                         yield SummaryItem(
