@@ -111,7 +111,7 @@ SummaryItem = namedtuple(
 )
 
 
-def _get_scalar(value):
+def _get_scalar(value) -> Optional[np.ndarray]:
     """
     Decode an scalar event
     :param value: A value field of an event
@@ -122,14 +122,17 @@ def _get_scalar(value):
     return None
 
 
-def _get_image(value):
+def _get_image(value) -> Optional[np.ndarray]:
     """
     Decode an image event
     :param value: A value field of an event
     :return: Decoded image
     """
     if value.HasField('image'):
-        return SummaryReader._decode_image(value.image.encoded_image_string)
+        encoded_image = value.image.encoded_image_string
+        buf = np.frombuffer(encoded_image, np.uint8)
+        data = cv2.imdecode(buf, cv2.IMREAD_COLOR)
+        return data
     return None
 
 
@@ -173,17 +176,6 @@ class SummaryReader(Iterable):
             for type_name in self._type_filter
         ):
             raise ValueError('Invalid type filter')
-
-    @staticmethod
-    def _decode_image(encoded_image) -> np.ndarray:
-        """
-        Decode binary image representation to Numpy array
-        :param encoded_image: An encoded image data
-        :return: A Numpy array with an H×W×C image
-        """
-        buf = np.frombuffer(encoded_image, np.uint8)
-        data = cv2.imdecode(buf, cv2.IMREAD_COLOR)
-        return data
 
     def _decode_events(self, events: Iterable) -> Optional[SummaryItem]:
         """
