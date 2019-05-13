@@ -22,7 +22,7 @@ def get_tensorboard_scalars(
         if step in item.tag and (
             metrics is None or any(m in item.tag for m in metrics)
         ):
-            items[item.tag].append(item.value)
+            items[item.tag].append(item)
     return items
 
 
