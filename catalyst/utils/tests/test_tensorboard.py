@@ -152,6 +152,7 @@ def test_summary_reader_iterate():
     for item, event_raw in zip(items, data_raw2):
         assert item.step == event_raw['step']
         assert item.tag == event_raw['tag']
+        assert item.type == event_raw['type']
         assert np.all(item.value == event_raw['value'])
 
 
@@ -170,5 +171,6 @@ def test_summary_reader_filter():
     for item, event_raw in zip(items, data_raw2):
         assert item.step == event_raw['step']
         assert item.tag == event_raw['tag']
+        assert item.type == event_raw['type']
         assert item.tag in tags
         assert np.all(item.value == event_raw['value'])

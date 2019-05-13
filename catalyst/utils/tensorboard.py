@@ -106,7 +106,7 @@ class EventsFileReader(Iterable):
             yield event
 
 
-SummaryItem = namedtuple('SummaryItem', ['tag', 'step', 'wall_time', 'value'])
+SummaryItem = namedtuple('SummaryItem', ['tag', 'step', 'wall_time', 'value', 'type'])
 
 
 class SummaryReader(Iterable):
@@ -154,13 +154,16 @@ class SummaryReader(Iterable):
                 tag = value.tag
                 if value.HasField('simple_value'):
                     data = value.simple_value
+                    event_type = 'scalar'
                 elif value.HasField('image'):
                     data = cls._decode_image(value.image.encoded_image_string)
+                    event_type = 'image'
                 else:
                     yield None
                     continue
                 yield SummaryItem(
-                    tag=tag, step=step, wall_time=wall_time, value=data
+                    tag=tag, step=step, wall_time=wall_time,
+                    value=data, type=event_type
                 )
 
     def _check_tag(self, tag: str) -> bool:
