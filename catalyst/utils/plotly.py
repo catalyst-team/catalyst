@@ -2,41 +2,31 @@
 code modified from https://github.com/belskikh/kekas/blob/master/kekas/utils.py
 """
 
-from typing import List, Dict, Union, Optional
 from collections import defaultdict
 from pathlib import Path
-from plotly.offline import init_notebook_mode, iplot
-import plotly.graph_objs as go
-from tensorboard.backend.event_processing.event_accumulator import \
-    EventAccumulator, ScalarEvent
-import logging
+from typing import List, Dict, Union, Optional
 
-logging.getLogger("tensorboard").addFilter(lambda x: 0)
-logging.getLogger("tensorflow").addFilter(lambda x: 0)
+import plotly.graph_objs as go
+from plotly.offline import init_notebook_mode, iplot
+
+from catalyst.utils.tensorboard import SummaryReader, SummaryItem
 
 
 def get_tensorboard_scalars(
     logdir: Union[str, Path], metrics: Optional[List[str]], step: str
 ) -> Dict[str, List]:
-    event_acc = EventAccumulator(str(logdir))
-    event_acc.Reload()
+    summary_reader = SummaryReader(logdir, type_filter='scalar')
 
-    if metrics is not None:
-        scalar_names = [
-            n for n in event_acc.Tags()["scalars"]
-            if step in n and any(m in n for m in metrics)
-        ]
-    else:
-        scalar_names = [n for n in event_acc.Tags()["scalars"] if step in n]
-
-    scalars = {sn: event_acc.Scalars(sn) for sn in scalar_names}
-    return scalars
+    items = defaultdict(list)
+    for item in summary_reader:
+        if step in item.tag and (metrics is None or any(m in item.tag for m in metrics)):
+            items[item.tag].append(item.value)
+    return items
 
 
-def get_scatter(scalars: List[ScalarEvent], name: str) -> go.Scatter:
+def get_scatter(scalars: List[SummaryItem], name: str) -> go.Scatter:
     xs = [s.step for s in scalars]
     ys = [s.value for s in scalars]
-
     return go.Scatter(x=xs, y=ys, name=name)
 
 
@@ -56,11 +46,11 @@ def plot_tensorboard_log(
     }
 
     scalars_per_loader = {
-        key: get_tensorboard_scalars(value, metrics, step)
-        for key, value in logdirs.items()
+        key: get_tensorboard_scalars(inner_logdir, metrics, step)
+        for key, inner_logdir in logdirs.items()
     }
 
-    scalars_per_metric = defaultdict(lambda: {})
+    scalars_per_metric = defaultdict(dict)
     for key, value in scalars_per_loader.items():
         for key2, value2 in value.items():
             scalars_per_metric[key2][key] = value2
