@@ -109,11 +109,38 @@ class EventsFileReader(Iterable):
 SummaryItem = namedtuple('SummaryItem', ['tag', 'step', 'wall_time', 'value', 'type'])
 
 
+def _get_scalar(value):
+    """
+    Decode an scalar event
+    :param value: A value field of an event
+    :return: Decoded scalar
+    """
+    if value.HasField('simple_value'):
+        return value.simple_value
+    return None
+
+
+def _get_image(value):
+    """
+    Decode an image event
+    :param value: A value field of an event
+    :return: Decoded image
+    """
+    if value.HasField('image'):
+        return SummaryReader._decode_image(value.image.encoded_image_string)
+    return None
+
+
 class SummaryReader(Iterable):
     """
     Iterates over events in all the files in the current logdir.
     Only scalars and images are supported at the moment.
     """
+
+    _DECODERS = {
+        'scalar': _get_scalar,
+        'image': _get_image,
+    }
 
     def __init__(
         self, logdir: Union[str, Path],
@@ -128,8 +155,17 @@ class SummaryReader(Iterable):
             Note that only 'scalar' and 'image' types are allowed at the moment.
         """
         self._logdir = Path(logdir)
+
         self._tag_filter = set(tag_filter) if tag_filter is not None else None
         self._type_filter = set(type_filter) if type_filter is not None else None
+        self._check_type_names()
+
+    def _check_type_names(self):
+        if self._type_filter is None:
+            return
+        if not all(type_name in self._DECODERS.keys()
+                   for type_name in self._type_filter):
+            raise ValueError('Invalid type filter')
 
     @staticmethod
     def _decode_image(encoded_image) -> np.ndarray:
@@ -157,19 +193,16 @@ class SummaryReader(Iterable):
             wall_time = event.wall_time
             for value in event.summary.value:
                 tag = value.tag
-                if value.HasField('simple_value'):
-                    data = value.simple_value
-                    event_type = 'scalar'
-                elif value.HasField('image'):
-                    data = cls._decode_image(value.image.encoded_image_string)
-                    event_type = 'image'
+                for value_type, decoder in cls._DECODERS.items():
+                    data = decoder(value)
+                    if data is not None:
+                        yield SummaryItem(
+                            tag=tag, step=step, wall_time=wall_time,
+                            value=data, type=value_type
+                        )
+                        break
                 else:
                     yield None
-                    continue
-                yield SummaryItem(
-                    tag=tag, step=step, wall_time=wall_time,
-                    value=data, type=event_type
-                )
 
     def _check_tag(self, tag: str) -> bool:
         """

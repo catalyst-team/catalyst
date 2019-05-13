@@ -193,3 +193,8 @@ def test_summary_reader_filter_scalars():
         assert item.tag == event_raw['tag']
         assert item.type == 'scalar'
         assert np.all(item.value == event_raw['value'])
+
+
+def test_summary_reader_invalid_type():
+    with pytest.raises(ValueError):
+        SummaryReader('.', type_filter=['unknown-type'])
