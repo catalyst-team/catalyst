@@ -1,5 +1,4 @@
 import torch
-import torch.nn.functional as F
 from catalyst.dl.utils import UtilsFactory
 from catalyst.rl.registry import \
     CRITERIONS, GRAD_CLIPPERS, OPTIMIZERS, SCHEDULERS
@@ -68,7 +67,7 @@ def soft_update(target, source, tau):
 
 
 def ce_with_logits(logits, target):
-    return torch.sum(-target * F.log_softmax(logits, -1), -1)
+    return torch.sum(-target * torch.log_softmax(logits, -1), -1)
 
 
 def categorical_loss(
@@ -84,7 +83,7 @@ def categorical_loss(
     delta_z:         fineness of categorical VD
     v_min, v_max:    left and right borders of catgorical VD
     """
-    probs_tp1 = F.softmax(logits_tp1, dim=-1)
+    probs_tp1 = torch.softmax(logits_tp1, dim=-1)
     tz = torch.clamp(atoms_target_t, v_min, v_max)
     tz_z = torch.abs(tz[:, None, :] - z[None, :, None])
     tz_z = torch.clamp(1.0 - (tz_z / delta_z), 0., 1.)

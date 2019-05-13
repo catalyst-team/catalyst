@@ -1,0 +1,110 @@
+args:
+  logdir: ./logs/rl-gym-ppo  #  change me
+  expdir: src
+
+  vis: 0
+  infer: 0   #  change me
+  train: 8   #  change me
+
+db:
+  db: RedisDB  # RedisDB or MongoDB
+  port: 12000
+  prefix: gym-ppo  # TODO: remove
+
+environment:
+  environment: AtariEnvWrapper
+  env_id: PongNoFrameskip-v4
+
+  history_len: 4
+  frame_skip: 1
+  reward_scale: 1.0
+  step_delay: 0.0
+
+agents:
+  actor:
+    agent: ConvActor
+
+#    state_net_params:  # state -> hidden representation
+#      observation_net_params:
+#        hiddens: [32]  # first hidden would be taken from state_shape
+#        layer_fn: Linear
+#        norm_fn: LayerNorm
+#        activation_fn: ReLU
+#        bias: false
+#      main_net_params:
+#        hiddens: [32, 32]
+#        layer_fn: Linear
+#        norm_fn: LayerNorm
+#        activation_fn: ReLU
+#        bias: false
+    policy_head_params:  # hidden representation -> ~policy
+      in_features: 512  # out features would be taken from action_shape
+      policy_type: categorical
+
+  critic:
+    agent: ConvCritic
+
+#    state_net_params:  # state -> hidden representation
+#      observation_net_params:
+#        hiddens: [32]  # first hidden would be taken from state_shape
+#        layer_fn: Linear
+#        norm_fn: LayerNorm
+#        activation_fn: ReLU
+#        bias: false
+#      main_net_params:
+#        hiddens: [32, 32]
+#        layer_fn: Linear
+#        norm_fn: LayerNorm
+#        activation_fn: ReLU
+#        bias: false
+    value_head_params:  # hidden representation -> value
+      in_features: 512
+      num_atoms: 1
+      out_features: 1
+
+    #      distribution: categorical
+    #      num_atoms: 4
+    #      values_range: [-10.0, 10.0]
+
+    #      distribution: quantile
+    #      num_atoms: 4
+
+algorithm:
+  algorithm: PPO
+
+  n_step: 1
+  gamma: 0.99
+
+  gae_lambda: 0.95
+  clip_eps: 0.2
+  entropy_reg_coefficient: 0.01
+  max_episode_length: &max_episode_length 10000
+
+  actor_optimizer_params:
+    optimizer: Adam
+    lr: 0.0005
+  critic_optimizer_params:
+    optimizer: Adam
+    lr: 0.0005
+
+  actor_grad_clip_params:
+    func: clip_grad_value_
+    clip_value: 1.0
+
+trainer:
+  batch_size: 2048             # transitions
+  num_workers: 2
+  num_mini_epochs: 10
+  min_num_trajectories: 100
+  min_num_transitions: 50000
+
+  save_period: 25              # epochs
+
+sampler:
+  buffer_size: *max_episode_length
+
+  valid_seeds: [1, 10, 1000, 10000, 42000]
+
+  exploration_params:
+    - exploration: NoExploration
+      probability: 1.0

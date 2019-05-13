@@ -25,14 +25,24 @@ AGENTS.late_add(_agents_late_add)
 Agent = AGENTS.add
 
 
-def _algorithms_late_add(r: Registry):
+def _offpolicy_algorithms_late_add(r: Registry):
     from .offpolicy import algorithms as m
     r.add_from_module(m)
 
 
-ALGORITHMS = Registry("algorithm")
-ALGORITHMS.late_add(_algorithms_late_add)
-Algorithm = ALGORITHMS.add
+OFFPOLICY_ALGORITHMS = Registry("algorithm")
+OFFPOLICY_ALGORITHMS.late_add(_offpolicy_algorithms_late_add)
+OffpolicyAlgorithm = OFFPOLICY_ALGORITHMS.add
+
+
+def _onpolicy_algorithms_late_add(r: Registry):
+    from .onpolicy import algorithms as m
+    r.add_from_module(m)
+
+
+ONPOLICY_ALGORITHMS = Registry("algorithm")
+ONPOLICY_ALGORITHMS.late_add(_onpolicy_algorithms_late_add)
+OnpolicyAlgorithm = ONPOLICY_ALGORITHMS.add
 
 
 def _env_late_add(r: Registry):
@@ -46,7 +56,7 @@ Environment = ENVIRONMENTS.add
 
 
 def _exploration_late_add(r: Registry):
-    from .offpolicy import exploration as m
+    from . import exploration as m
     r.add_from_module(m)
 
 
@@ -55,8 +65,23 @@ EXPLORATION.late_add(_exploration_late_add)
 Exploration = EXPLORATION.add
 
 __all__ = [
-    "Agent", "Algorithm", "Environment", "Exploration", "AGENTS", "ALGORITHMS",
-    "ENVIRONMENTS", "EXPLORATION", "Module", "Criterion", "Optimizer",
-    "Scheduler", "MODULES", "CRITERIONS", "OPTIMIZERS", "SCHEDULERS",
-    "GRAD_CLIPPERS"
+    "Agent",
+    "AGENTS",
+    "Criterion",
+    "CRITERIONS",
+    "Environment",
+    "ENVIRONMENTS",
+    "Exploration",
+    "EXPLORATION",
+    "GRAD_CLIPPERS",
+    "Module",
+    "MODULES",
+    "OffpolicyAlgorithm",
+    "OFFPOLICY_ALGORITHMS",
+    "OnpolicyAlgorithm",
+    "ONPOLICY_ALGORITHMS",
+    "Optimizer",
+    "OPTIMIZERS",
+    "Scheduler",
+    "SCHEDULERS",
 ]

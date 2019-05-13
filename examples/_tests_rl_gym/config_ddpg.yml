@@ -129,12 +129,17 @@ sampler:
 
   exploration_params:
     - exploration: GaussNoise
-      probability: 0.6
+      probability: 0.4
       sigma: 0.2
 
-    - exploration: ParameterSpaceNoise
+    - exploration: OrnsteinUhlenbeckProcess
       probability: 0.3
+      sigma: 0.2
+      theta: 0.15
+
+    - exploration: ParameterSpaceNoise
+      probability: 0.2
       target_sigma: 0.2
 
-    - exploration: Greedy
+    - exploration: NoExploration
       probability: 0.1

@@ -10,63 +10,50 @@
     pip install gym['box2d']
     ```
 
-3. Run DQN – discrete action space environment
+3. Start DB service
 
     ```bash
     redis-server --port 12000
-    export GPUS=""  # like GPUS="0" or GPUS="0,1" for multi-gpu training
+    ```
+    
+4. Select config
+    ```bash
+    # DQN        – off-policy algorithm on discrete action space LunarLander environment
+    export CONFIG=./rl_gym/config_dqn.yml
+    
+    # DDPG       – off-policy algorithm on continuous action space environment LunarLander environment
+    export CONFIG=./rl_gym/config_ddpg.yml
  
-    CUDA_VISIBLE_DEVICES="$GPUS" catalyst-rl run-trainer \
-       --config=./rl_gym/config_dqn.yml
-    
-    CUDA_VISIBLE_DEVICES="" catalyst-rl run-samplers \
-       --config=./rl_gym/config_dqn.yml
-    
-    CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs
+    # TD3        – off-policy algorithm on continuous action space environment LunarLander environment
+    export CONFIG=./rl_gym/config_td3.yml
+ 
+    # SAC        – off-policy algorithm on continuous action space environment LunarLander environment
+    export CONFIG=./rl_gym/config_sac.yml
+
+
+    # REINFORCE  – on-policy algorithm on discrete action space LunarLander environment
+    export CONFIG=./rl_gym/config_reinforce.yml
+
+    # PPO        – on-policy algorithm on discrete action space LunarLander environment
+    export CONFIG=./rl_gym/config_ppo.yml
     ```
 
-4. Run DDPG – continuous action space environment
+3. Run trainer
 
     ```bash
-    redis-server --port 12000
     export GPUS=""  # like GPUS="0" or GPUS="0,1" for multi-gpu training
- 
-    CUDA_VISIBLE_DEVICES="$GPUS" catalyst-rl run-trainer \
-       --config=./rl_gym/config_ddpg.yml
-    
-    CUDA_VISIBLE_DEVICES="" catalyst-rl run-samplers \
-       --config=./rl_gym/config_ddpg.yml
-    
-    CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs
-    ```
- 
-5. Run TD3 – continuous action space environment
-
-    ```bash
-    redis-server --port 12000
-    export GPUS=""  # like GPUS="0" or GPUS="0,1" for multi-gpu training
- 
-    CUDA_VISIBLE_DEVICES="$GPUS" catalyst-rl run-trainer \
-       --config=./rl_gym/config_td3.yml
-    
-    CUDA_VISIBLE_DEVICES="" catalyst-rl run-samplers \
-       --config=./rl_gym/config_td3.yml
-    
-    CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs
+    CUDA_VISIBLE_DEVICES="$GPUS" catalyst-rl run-trainer --config="$CONFIG"
     ```
 
-6. Run SAC – continuous action space environment
+4. Run samplers
 
     ```bash
-    redis-server --port 12000
-    export GPUS=""  # like GPUS="0" or GPUS="0,1" for multi-gpu training
- 
-    CUDA_VISIBLE_DEVICES="$GPUS" catalyst-rl run-trainer \
-       --config=./rl_gym/config_sac.yml
-    
-    CUDA_VISIBLE_DEVICES="" catalyst-rl run-samplers \
-       --config=./rl_gym/config_sac.yml
-    
+    CUDA_VISIBLE_DEVICES="" catalyst-rl run-samplers --config="$CONFIG"
+    ```
+
+5. For logs visualization, use
+
+    ```bash
     CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs
     ```
 

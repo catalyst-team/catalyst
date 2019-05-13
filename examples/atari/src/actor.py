@@ -1,25 +1,21 @@
 from typing import Dict
-from gym.spaces import Discrete
+from gym.spaces import Box, Discrete
 
 import torch
 import torch.nn as nn
 from catalyst.contrib.modules import Flatten
 
-from catalyst.rl.agents.head import ValueHead  # , StateNet
-from catalyst.rl.agents import CriticSpec
+from catalyst.rl.agents.head import PolicyHead  # , StateNet
+from catalyst.rl.agents import ActorSpec
 from catalyst.rl.environments import EnvironmentSpec
 from catalyst.dl.initialization import create_optimal_inner_init
 
 
-class ConvCritic(CriticSpec):
-    """
-    Critic that learns state value functions, like V(s).
-    """
-
+class ConvActor(ActorSpec):
     def __init__(
         self,
         # state_net: StateNet,
-        head_net: ValueHead,
+        head_net: PolicyHead,
     ):
         super().__init__()
         # self.state_net = state_net
@@ -45,22 +41,10 @@ class ConvCritic(CriticSpec):
         self.head_net = head_net
 
     @property
-    def num_outputs(self) -> int:
-        return self.head_net.out_features
+    def policy_type(self) -> str:
+        return self.head_net.policy_type
 
-    @property
-    def num_atoms(self) -> int:
-        return self.head_net.num_atoms
-
-    @property
-    def distribution(self) -> str:
-        return self.head_net.distribution
-
-    @property
-    def values_range(self) -> tuple:
-        return self.head_net.values_range
-
-    def forward(self, state: torch.Tensor):
+    def forward(self, state: torch.Tensor, logprob=False, deterministic=False):
         x = state
         if len(x.shape) < 3:
             x = x.unsqueeze(1)
@@ -73,41 +57,31 @@ class ConvCritic(CriticSpec):
 
         x = self.aggregation_net(x)
 
-        x = self.head_net(x)
+        x = self.head_net(x, logprob, deterministic)
         return x
 
     @classmethod
     def get_from_params(
         cls,
         # state_net_params: Dict,
-        value_head_params: Dict,
+        policy_head_params: Dict,
         env_spec: EnvironmentSpec,
     ):
+        # @TODO: any better solution?
+        action_space = env_spec.action_space
+        if isinstance(action_space, Box):
+            policy_head_params["out_features"] = action_space.shape[0]
+        elif isinstance(action_space, Discrete):
+            policy_head_params["out_features"] = action_space.n
+        else:
+            raise NotImplementedError()
+
         # state_net = StateNet.get_from_params(**state_net_params)
-        head_net = ValueHead(**value_head_params)
+        head_net = PolicyHead(**policy_head_params)
 
         net = cls(
             # state_net=state_net,
             head_net=head_net
         )
 
-        return net
-
-
-class ConvQCritic(ConvCritic):
-    """
-    Critic that learns state qvalue functions, like Q(s,a).
-    """
-
-    @classmethod
-    def get_from_params(
-            cls,
-            # state_net_params: Dict,
-            value_head_params: Dict,
-            env_spec: EnvironmentSpec,
-    ):
-        action_space = env_spec.action_space
-        assert isinstance(action_space, Discrete)
-        value_head_params["out_features"] = action_space.n
-        net = super().get_from_params(value_head_params, env_spec)
         return net

@@ -10,7 +10,7 @@ class ActorSpec(ABC, nn.Module):
         pass
 
     @abstractmethod
-    def forward(self, state, with_log_pi=False, deterministic=False):
+    def forward(self, state, logprob=False, deterministic=False):
         pass
 
 

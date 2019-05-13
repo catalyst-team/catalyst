@@ -1,10 +1,9 @@
 from typing import List
 from copy import deepcopy
 import numpy as np
-from gym.spaces import Discrete
 from catalyst.rl.registry import EXPLORATION
 from catalyst.rl.environments.core import EnvironmentSpec
-from .strategies import ExplorationStrategy, EpsilonGreedy
+from .strategies import ExplorationStrategy
 
 
 class ExplorationHandler:
@@ -17,10 +16,6 @@ class ExplorationHandler:
             exploration_name = params_.pop("exploration")
             probability = params_.pop("probability")
             strategy_fn = EXPLORATION.get(exploration_name)
-
-            if issubclass(strategy_fn, EpsilonGreedy):
-                assert isinstance(env.action_space, Discrete)
-                params_["num_actions"] = env.action_space.n
 
             strategy = strategy_fn(**params_)
             self.exploration_strategies.append(strategy)
