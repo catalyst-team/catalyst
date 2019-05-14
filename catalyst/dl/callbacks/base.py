@@ -111,7 +111,8 @@ class CheckpointCallback(Callback):
             valid_metrics=dict(state.metrics.valid_values),
             stage=state.stage,
             epoch=state.epoch,
-            extra_checkpoint_data=state.extra_checkpoint_data
+            extra_checkpoint_data=state.extra_checkpoint_data \
+                if hasattr(state, 'extra_checkpoint_data') else {}
         )
         self.save_checkpoint(
             logdir=state.logdir,
