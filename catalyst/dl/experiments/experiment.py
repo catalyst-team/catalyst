@@ -304,7 +304,7 @@ class ConfigExperiment(Experiment):
         if key_value_flag:
             optimizer = {}
             for key, params_ in params.items():
-                optimizer[key] = ConfigExperiment._get_optimizer(
+                optimizer[key] = self._get_optimizer(
                     model_params=model_params, **params_)
         else:
             load_from_previous_stage = \
