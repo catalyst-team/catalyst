@@ -104,7 +104,7 @@ class CheckpointCallback(Callback):
 
         extra_checkpoint_data = state.extra_checkpoint_data \
             if hasattr(state, 'extra_checkpoint_data') else {}
-  
+
         checkpoint = self.pack_checkpoint(
             model=state.model,
             criterion=state.criterion,
