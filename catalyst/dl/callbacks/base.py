@@ -101,10 +101,10 @@ class CheckpointCallback(Callback):
     def on_epoch_end(self, state: RunnerState):
         if state.stage.startswith("infer"):
             return
-        
+
         extra_checkpoint_data = state.extra_checkpoint_data \
             if hasattr(state, 'extra_checkpoint_data') else {}
-            
+  
         checkpoint = self.pack_checkpoint(
             model=state.model,
             criterion=state.criterion,
