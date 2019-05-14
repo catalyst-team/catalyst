@@ -211,14 +211,6 @@ class SummaryReader(Iterable):
         """
         return self._tag_filter is None or tag in self._tag_filter
 
-    def _check_type(self, event_type: str) -> bool:
-        """
-        Check if a tag matches the current tag filter
-        :param event_type: A string with type name
-        :return: A boolean value.
-        """
-        return self._types is None or event_type in self._types
-
     def __iter__(self) -> SummaryItem:
         """
         Iterate over events in all the files in the current logdir
