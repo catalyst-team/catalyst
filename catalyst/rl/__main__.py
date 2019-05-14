@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from argparse import ArgumentParser, RawTextHelpFormatter
 
-from .offpolicy.scripts import dump_redis, load_redis, \
+from .scripts import dump_redis, load_redis, \
     run_samplers, run_trainer
 
 COMMANDS = OrderedDict(

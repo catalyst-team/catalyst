@@ -9,37 +9,12 @@ import torch
 from torch.utils.data import DataLoader
 
 from catalyst.dl.utils import UtilsFactory
-from catalyst.rl.offpolicy.utils import \
-    ReplayBufferDataset, ReplayBufferSampler
+from catalyst.rl.utils import \
+    OffpolicyReplayBuffer, OffpolicyReplaySampler
 from catalyst.rl.db.core import DBSpec
 from catalyst.rl.environments.core import EnvironmentSpec
 from catalyst.rl.offpolicy.algorithms.core import AlgorithmSpec
-
-
-def db2queue_loop(db_server: DBSpec, queue: mp.Queue, max_size: int):
-    while True:
-        try:
-            need_more = queue.qsize() < max_size
-        except NotImplementedError:  # MacOS qsize issue (no sem_getvalue)
-            need_more = True
-
-        if need_more:
-            trajectory = db_server.get_trajectory()
-            if trajectory is not None:
-                queue.put(trajectory, block=True, timeout=1.0)
-            else:
-                time.sleep(1.0)
-        else:
-            time.sleep(1.0)
-
-
-def _make_tuple(tuple_like):
-    tuple_like = (
-        tuple_like
-        if isinstance(tuple_like, (list, tuple))
-        else (tuple_like, tuple_like)
-    )
-    return tuple_like
+from catalyst.rl.utils import _make_tuple, db2queue_loop
 
 
 class Trainer:
@@ -81,7 +56,7 @@ class Trainer:
         self.epoch = 0
         self.epoch_len = epoch_len
 
-        self.replay_buffer = ReplayBufferDataset(
+        self.replay_buffer = OffpolicyReplayBuffer(
             observation_space=self.env_spec.observation_space,
             action_space=self.env_spec.action_space,
             capacity=replay_buffer_size,
@@ -92,7 +67,7 @@ class Trainer:
             logdir=logdir
         )
 
-        self.replay_sampler = ReplayBufferSampler(
+        self.replay_sampler = OffpolicyReplaySampler(
             buffer=self.replay_buffer,
             epoch_len=epoch_len,
             batch_size=batch_size
@@ -127,7 +102,7 @@ class Trainer:
         self.weights_sync_period = weights_sync_period
 
         self.episodes_queue = mp.Queue()
-        self._redis_loop_process = None
+        self._db_loop_process = None
         self._num_trajectories = 0
         self._num_transitions = 0
 
@@ -148,13 +123,13 @@ class Trainer:
 
     def get_processes(self):
         processes = []
-        if self._redis_loop_process is not None:
-            processes.append(self._redis_loop_process)
+        if self._db_loop_process is not None:
+            processes.append(self._db_loop_process)
 
         return processes
 
-    def _start_redis_loop(self):
-        self._redis_loop_process = mp.Process(
+    def _start_db_loop(self):
+        self._db_loop_process = mp.Process(
             target=db2queue_loop,
             kwargs={
                 "db_server": self.db_server,
@@ -162,7 +137,7 @@ class Trainer:
                 "max_size": int(self.max_db_trials * 2)
             }
         )
-        self._redis_loop_process.start()
+        self._db_loop_process.start()
 
     def _fetch_episodes(self):
         for i in range(self.max_db_trials):
@@ -191,7 +166,11 @@ class Trainer:
                 k: v.detach().cpu().numpy()
                 for k, v in state_dict.items()
             }
-            self.db_server.dump_weights(weights=state_dict, prefix=mode)
+            self.db_server.dump_weights(
+                weights=state_dict,
+                prefix=mode,
+                epoch=self.epoch
+            )
 
     def _update_target_weights(self, step_index):
         if not self.env_spec.discrete_actions:
@@ -246,9 +225,9 @@ class Trainer:
                 self.epoch
             )
 
+            self.epoch += 1
             self.save()
             self._update_samplers_weights()
-            self.epoch += 1
             if self.epoch % self._gc_period == 0:
                 gc.collect()
             start_time = time.time()
@@ -264,5 +243,5 @@ class Trainer:
 
     def run(self):
         self._update_samplers_weights()
-        self._start_redis_loop()
+        self._start_db_loop()
         self._start_train_loop()

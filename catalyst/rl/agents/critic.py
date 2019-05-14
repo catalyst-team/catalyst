@@ -2,9 +2,10 @@ from typing import Dict
 from functools import reduce
 from gym.spaces import Discrete
 
-from catalyst.rl.agents.layers import StateNet, StateActionNet, ValueHead
-from .core import CriticSpec
 from catalyst.rl.environments.core import EnvironmentSpec
+from .core import CriticSpec
+from .net import StateNet, StateActionNet
+from .head import ValueHead
 
 
 class StateCritic(CriticSpec):

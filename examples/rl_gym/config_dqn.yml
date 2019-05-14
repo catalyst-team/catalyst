@@ -27,27 +27,27 @@ agents:
 
     state_net_params:  # state -> hidden representation
       observation_net_params:
-        hiddens: [32]  # first hidden would be taken from state_shape
+        hiddens: [128]  # first hidden would be taken from state_shape
         layer_fn: Linear
         norm_fn: LayerNorm
         activation_fn: ReLU
         bias: false
       main_net_params:
-        hiddens: [32, 32]
+        hiddens: [128, 128]
         layer_fn: Linear
         norm_fn: LayerNorm
         activation_fn: ReLU
         bias: false
     value_head_params:  # hidden representation -> ~policy
-      in_features: 32  # out features would be taken from action_shape
+      in_features: 128  # out features would be taken from action_shape
       num_atoms: 1
 
 #      distribution: categorical
-#      num_atoms: 4
-#      values_range: [-10.0, 10.0]
+#      num_atoms: 65
+#      values_range: [-300.0, 300.0]
 
 #      distribution: quantile
-#      num_atoms: 4
+#      num_atoms: 64
 
 algorithm:
   algorithm: DQN
@@ -58,7 +58,7 @@ algorithm:
 
   critic_loss_params:
     criterion: HuberLoss
-    clip_delta: 1.0
+    clip_delta: 10.0
 
   critic_optimizer_params:
     optimizer: Adam
@@ -72,12 +72,12 @@ algorithm:
 trainer:
   batch_size: 256              # transitions
   num_workers: 1
-  epoch_len: 100               # batches
+  epoch_len: 1000              # batches
 
   replay_buffer_size: 1000000  # transitions
   start_learning: 500          # transitions
 
-  save_period: 10000           # epochs
+  save_period: 1000            # epochs
   weights_sync_period: 1       # epochs
   target_update_period: 500    # batches
 
@@ -89,9 +89,16 @@ sampler:
 
   exploration_params:
     - exploration: EpsilonGreedy
-      probability: 0.98
+      probability: 0.9
       eps_init: 1.0
       eps_final: 0.05
       annealing_steps: 1000
+
     - exploration: Greedy
-      probability: 0.02
+      probability: 0.05
+
+    - exploration: Boltzmann
+      probability: 0.05
+      temp_init: 1.0
+      temp_final: 0.05
+      annealing_steps: 1000

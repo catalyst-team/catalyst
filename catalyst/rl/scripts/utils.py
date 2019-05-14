@@ -1,0 +1,3 @@
+OFFPOLICY_ALGORITHMS_NAMES = [
+    "DQN", "DDPG", "SAC", "TD3"
+]

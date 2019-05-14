@@ -9,6 +9,14 @@ class DBSpec(ABC):
         pass
 
     @abstractmethod
+    def set_sample_flag(self, sample: bool):
+        pass
+
+    @abstractmethod
+    def get_sample_flag(self) -> bool:
+        pass
+
+    @abstractmethod
     def push_trajectory(self, trajectory):
         pass
 
@@ -17,9 +25,17 @@ class DBSpec(ABC):
         pass
 
     @abstractmethod
-    def dump_weights(self, weights, prefix):
+    def clean_trajectories(self):
+        pass
+
+    @abstractmethod
+    def dump_weights(self, weights, prefix, epoch):
         pass
 
     @abstractmethod
     def load_weights(self, prefix):
+        pass
+
+    @abstractmethod
+    def clean_weights(self, prefix):
         pass

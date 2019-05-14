@@ -34,7 +34,6 @@ class Sampler:
         id: int = 0,
         mode: str = "infer",
         buffer_size: int = int(1e4),
-        weights_sync_period: int = 1,
         seeds: List = None,
         episode_limit: int = None,
         force_store: bool = False,
@@ -65,11 +64,9 @@ class Sampler:
 
         # synchronization configuration
         self.db_server = db_server
-        self.weights_sync_period = weights_sync_period
         self.episode_limit = episode_limit or _BIG_NUM
         self._force_store = force_store
-        self._sampler_weight_mode = \
-            "critic" if env.discrete_actions else "actor"
+        self._sampler_weight_mode = "actor"
         self._gc_period = gc_period
 
     def _prepare_logger(self, logdir, mode):
@@ -96,6 +93,8 @@ class Sampler:
             weights = checkpoint[f"{self._sampler_weight_mode}_state_dict"]
             self.agent.load_state_dict(weights)
         elif db_server is not None:
+            while not db_server.get_sample_flag():
+                time.sleep(1.0)
             weights = db_server.load_weights(prefix=self._sampler_weight_mode)
             weights = {k: self._to_tensor(v) for k, v in weights.items()}
             self.agent.load_state_dict(weights)
@@ -108,6 +107,9 @@ class Sampler:
     def _store_trajectory(self):
         if self.db_server is None:
             return
+        if not self.db_server.get_sample_flag():
+            return
+
         trajectory = self.episode_runner.get_trajectory()
         self.db_server.push_trajectory(trajectory)
 
@@ -163,8 +165,7 @@ class Sampler:
 
     def run(self):
         while True:
-            if self.episode_index % self.weights_sync_period == 0:
-                self.load_checkpoint(db_server=self.db_server)
+            self.load_checkpoint(db_server=self.db_server)
             seed = self._prepare_seed()
             exploration_strategy = \
                 self.exploration_handler.get_exploration_strategy() \

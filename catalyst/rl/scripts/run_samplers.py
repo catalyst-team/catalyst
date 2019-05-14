@@ -10,11 +10,15 @@ import multiprocessing as mp
 import torch
 
 from catalyst.dl.scripts.utils import import_module
-from catalyst.rl.registry import ALGORITHMS, ENVIRONMENTS, DATABASES
 from catalyst.utils.config import parse_args_uargs
 from catalyst.utils.misc import set_global_seed, boolean_flag
-from catalyst.rl.offpolicy.sampler import Sampler
-from catalyst.rl.offpolicy.exploration import ExplorationHandler
+from catalyst.rl.registry import OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
+    ENVIRONMENTS, DATABASES
+from catalyst.rl.exploration import ExplorationHandler
+from catalyst.rl.offpolicy.sampler import Sampler as OffpolicySampler
+from catalyst.rl.onpolicy.sampler import Sampler as OnpolicySampler
+from catalyst.rl.scripts.utils import OFFPOLICY_ALGORITHMS_NAMES
+
 
 os.environ["OMP_NUM_THREADS"] = "1"
 torch.set_num_threads(1)
@@ -69,20 +73,22 @@ def run_sampler(
     logdir,
     algorithm_fn,
     environment_fn,
+    sampler_fn,
     vis,
     infer,
     seed=42,
     id=None,
     resume=None,
     db=True,
-    exploration_power=1.0
+    exploration_power=1.0,
+    sync_epoch=False
 ):
     config_ = copy.deepcopy(config)
     id = 0 if id is None else id
     set_global_seed(seed + id)
 
     db_server = DATABASES.get_from_params(
-        **config.get("db", {})
+        **config.get("db", {}), sync_epoch=sync_epoch
     ) if db else None
 
     env = environment_fn(**config_["environment"], visualize=vis)
@@ -99,7 +105,7 @@ def run_sampler(
     valid_seeds = config_["sampler"].pop("valid_seeds")
     seeds = valid_seeds if infer else None
 
-    sampler = Sampler(
+    sampler = sampler_fn(
         agent=agent,
         env=env,
         db_server=db_server,
@@ -127,6 +133,16 @@ def main(args, unknown_args):
     environment_fn = ENVIRONMENTS.get(environment_name)
 
     algorithm_name = config["algorithm"].pop("algorithm")
+
+    if algorithm_name in OFFPOLICY_ALGORITHMS_NAMES:
+        ALGORITHMS = OFFPOLICY_ALGORITHMS
+        sampler_fn = OffpolicySampler
+        sync_epoch = False
+    else:
+        ALGORITHMS = ONPOLICY_ALGORITHMS
+        sampler_fn = OnpolicySampler
+        sync_epoch = True
+
     algorithm_fn = ALGORITHMS.get(algorithm_name)
 
     processes = []
@@ -143,15 +159,17 @@ def main(args, unknown_args):
         logdir=args.logdir,
         algorithm_fn=algorithm_fn,
         environment_fn=environment_fn,
+        sampler_fn=sampler_fn,
         config=config,
         resume=args.resume,
-        db=args.db
+        db=args.db,
+        sync_epoch=sync_epoch
     )
 
     if args.check:
         params_ = dict(
-            vis=False,
-            infer=False,
+            vis=(args.vis is not None and args.vis > 0),
+            infer=(args.infer is not None and args.infer > 0),
             id=sampler_id
         )
         run_sampler(**params, **params_)
