@@ -54,7 +54,7 @@ class DecoderBlock(nn.Module):
     def __init__(self, out_channels):
         super().__init__()
 
-        self.uppool = nn.Upsample(
+        self.uppool = nn.functional.interpolate(
             scale_factor=2, mode="bilinear", align_corners=True
         )
         self.upconv = conv3x3(out_channels * 2, out_channels)
