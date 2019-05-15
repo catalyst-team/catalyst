@@ -15,6 +15,7 @@ safitty==0.9.7
 
 # Used in scripts
 matplotlib
+seaborn
 pandas>=0.22
 scikit-learn>=0.20
 
