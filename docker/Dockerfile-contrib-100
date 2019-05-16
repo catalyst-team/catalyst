@@ -36,7 +36,8 @@ RUN pip install --no-cache-dir \
     albumentations \
     seaborn \
     tensorboardX \
-    wrappa
+    wrappa \
+    crc32c
 
 CMD mkdir -p /workspace
 WORKDIR /workspace
