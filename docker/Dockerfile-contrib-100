@@ -35,7 +35,6 @@ RUN pip install --no-cache-dir \
     nmslib \
     albumentations \
     seaborn \
-    tensorboard \
     tensorboardX \
     wrappa
 

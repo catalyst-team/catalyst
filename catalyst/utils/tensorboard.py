@@ -7,7 +7,7 @@ from typing import BinaryIO, Union, Optional
 
 import cv2
 import numpy as np
-from tensorboard.compat.proto.event_pb2 import Event
+from tensorboardX.proto.event_pb2 import Event
 
 
 def _u32(x):
