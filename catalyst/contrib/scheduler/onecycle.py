@@ -199,12 +199,14 @@ class OneCycleLR(BaseScheduler):
 
     def recalculate(
             self,
-            loader_len: int
+            loader_len: int,
+            current_step: int,
     ) -> None:
         """
         Recalculates total num_steps for ``batch`` mode
         Args:
             loader_len (int): total count of batches in an epoch
+            current_step (int): current step
         """
         warmup_steps = self.warmup_steps * loader_len
         lr_annealing_steps = self.lr_annealing_steps * loader_len
@@ -215,4 +217,4 @@ class OneCycleLR(BaseScheduler):
             lr_annealing_steps,
             decay_steps
         )
-        self.last_epoch = self.last_epoch * loader_len
+        self.last_epoch = current_step * loader_len

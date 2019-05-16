@@ -2,7 +2,6 @@ import os
 from typing import Dict
 
 import safitty
-import numpy as np
 import torch
 
 from catalyst.contrib.scheduler import OneCycleLR
@@ -271,8 +270,6 @@ class SchedulerCallback(Callback):
         self.mode = mode
         self.reduce_metric = reduce_metric
 
-        self._onecycle_recalculated = False
-
     def step(self, state: RunnerState):
         scheduler = state.get_key(
             key="scheduler", inner_key=self.scheduler_key
@@ -295,7 +292,6 @@ class SchedulerCallback(Callback):
         assert scheduler is not None
 
         if isinstance(scheduler, OneCycleLR) and self.mode == "batch":
-            self._onecycle_recalculated = False
             scheduler.reset()
 
     def on_loader_start(self, state: RunnerState):
@@ -304,16 +300,10 @@ class SchedulerCallback(Callback):
         )
         if state.loader_name.startswith("train") and \
                 isinstance(scheduler, OneCycleLR) and self.mode == "batch":
-            if not self._onecycle_recalculated:
-                loaders = state.loaders
-
-                train_loaders_len = [
-                    len(train_loader) for train_loader in loaders
-                    if train_loader.startswith("train")
-                ]
-                loader_len = np.array(train_loaders_len).sum().item()
-                scheduler.recalculate(loader_len=loader_len)
-                self._onecycle_recalculated = True
+            scheduler.recalculate(
+                loader_len=state.loader_len,
+                current_step=state.stage_epoch
+            )
 
     def on_batch_end(self, state):
         if self.mode == "batch":
