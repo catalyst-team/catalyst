@@ -1,13 +1,17 @@
 import struct
 from collections import namedtuple
 from collections.abc import Iterable
-from crc32c import crc32 as crc32c
 from pathlib import Path
 from typing import BinaryIO, Union, Optional
 
 import cv2
 import numpy as np
 from tensorboardX.proto.event_pb2 import Event
+
+import os
+if os.environ.get('CRC32C_SW_MODE', None) is None:
+    os.environ['CRC32C_SW_MODE'] = 'auto'
+from crc32c import crc32 as crc32c  # noqa: E402
 
 
 def _u32(x):
