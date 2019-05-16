@@ -31,7 +31,9 @@ RUN pip install --no-cache-dir \
     torchnet \
     redis \
     gym \
-    catalyst
+    catalyst \
+    tensorboardX \
+    crc32c
 
 CMD mkdir -p /workspace
 WORKDIR /workspace

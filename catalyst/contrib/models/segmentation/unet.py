@@ -54,15 +54,14 @@ class DecoderBlock(nn.Module):
     def __init__(self, out_channels):
         super().__init__()
 
-        self.uppool = nn.Upsample(
-            scale_factor=2, mode="bilinear", align_corners=True
-        )
         self.upconv = conv3x3(out_channels * 2, out_channels)
         self.conv1 = conv3x3(out_channels * 2, out_channels)
         self.conv2 = conv3x3(out_channels, out_channels)
 
     def forward(self, down, left):
-        x = self.uppool(down)
+        x = nn.functional.interpolate(
+            down, scale_factor=2, mode="bilinear", align_corners=True
+        )
         x = self.upconv(x)
         x = torch.cat([left, x], 1)
         x = self.conv1(x)

@@ -9,9 +9,9 @@ tqdm>=4.29.1
 PyYAML
 tensorboardX>=1.6
 plotly>=3.6.1
-tensorflow==1.13.1
 torchnet
-safitty==0.9.7
+safitty>=0.9.7
+crc32c>=1.7
 
 # Used in scripts
 matplotlib
