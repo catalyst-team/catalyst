@@ -4,7 +4,7 @@ from typing import Dict
 import safitty
 import torch
 
-from catalyst.contrib.scheduler import OneCycleLR
+from catalyst.contrib.scheduler import OneCycleLR, BatchScheduler
 from catalyst.dl.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory, get_optimizer_momentum
@@ -263,7 +263,7 @@ class SchedulerCallback(Callback):
     def __init__(
         self,
         scheduler_key: str = None,
-        mode: str = "epoch",
+        mode: str = None,
         reduce_metric: str = "loss"
     ):
         self.scheduler_key = scheduler_key
@@ -290,6 +290,12 @@ class SchedulerCallback(Callback):
             key="scheduler", inner_key=self.scheduler_key
         )
         assert scheduler is not None
+
+        if self.mode is None:
+            if isinstance(scheduler, BatchScheduler):
+                self.mode = "batch"
+            else:
+                self.mode = "epoch"
 
         if isinstance(scheduler, OneCycleLR) and self.mode == "batch":
             scheduler.reset()

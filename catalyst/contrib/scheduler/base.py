@@ -27,3 +27,7 @@ class BaseScheduler(_LRScheduler, ABC):
         momentums = self.get_momentum()
         for i, momentum in enumerate(momentums):
             set_optimizer_momentum(self.optimizer, momentum, index=i)
+
+
+class BatchScheduler(BaseScheduler, ABC):
+    pass
