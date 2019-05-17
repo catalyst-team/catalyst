@@ -44,9 +44,10 @@ Examples:
 
 """
 
-from collections import OrderedDict
 from argparse import ArgumentParser, RawTextHelpFormatter
+from collections import OrderedDict
 
+from catalyst.__version__ import __version__
 from catalyst.contrib.scripts import check_images, \
     image2embedding, tag2label, split_dataframe
 
@@ -62,6 +63,11 @@ COMMANDS = OrderedDict(
 def build_parser() -> ArgumentParser:
     parser = ArgumentParser(
         "catalyst-data", formatter_class=RawTextHelpFormatter
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}"
     )
     all_commands = ', \n'.join(map(lambda x: f"    {x}", COMMANDS.keys()))
 
