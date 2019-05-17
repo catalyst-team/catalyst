@@ -1,7 +1,5 @@
-from typing import Tuple
-
 from .core import Callback
-from catalyst.dl.callbacks.utils import get_optimizer_momentum
+from catalyst.dl.utils import get_optimizer_momentum
 
 
 class LRUpdater(Callback):
@@ -72,82 +70,6 @@ class LRUpdater(Callback):
     def on_batch_end(self, state):
         if state.need_backward:
             self.update_optimizer(state=state)
-
-
-class OneCycleLR(LRUpdater):
-    """
-    An learning rate updater
-        that implements the Circular Learning Rate (CLR) scheme.
-    Learning rate is increased then decreased linearly.
-    """
-
-    def __init__(
-        self,
-        cycle_len: int,
-        div_factor: float,
-        increase_fraction: float,
-        momentum_range: Tuple[float, float],
-        optimizer_key: str = None
-    ):
-        """
-
-        :param init_lr: init learning rate for torch optimizer
-        :param cycle_len: (int) num epochs to apply one cycle policy
-        :param div_factor: max_lr / init_lr
-        :param increase_fraction:
-            the part of cycle when learning rate increases
-        :param momentum_range: (tuple(int, int)) max and min momentum values
-        :param optimizer_key: which optimizer key to use
-            for learning rate scheduling
-        """
-        super().__init__(optimizer_key=optimizer_key)
-        self.total_iter = None
-        self.cycle_len = cycle_len
-        self.momentum_range = momentum_range
-        self.div_factor = div_factor
-        self.increase_fraction = increase_fraction
-
-        self.cycle_iter = 0
-        self.cycle_len = cycle_len
-        # point in iterations for starting lr decreasing
-        self.cut_point = None
-
-    def on_loader_start(self, state):
-        if state.need_backward:
-            self.total_iter = state.loader_len * self.cycle_len - 1
-            self.cut_point = int(self.total_iter * self.increase_fraction)
-
-        super().on_loader_start(state=state)
-
-    def calc_lr(self):
-        # calculate percent for learning rate change
-        if self.cycle_iter > self.cut_point:
-            percent_curr = (self.cycle_iter - self.cut_point)
-            percent_all = (self.total_iter - self.cut_point)
-            percent = (1 - percent_curr / percent_all)
-        else:
-            percent = self.cycle_iter / self.cut_point
-
-        current_mult = (1 + percent * (self.div_factor - 1)) / self.div_factor
-        res = self.init_lr * current_mult
-
-        self.cycle_iter += 1
-        if self.cycle_iter == self.total_iter:
-            self.cycle_iter = 0
-        return res
-
-    def calc_momentum(self):
-        if self.cycle_iter > self.cut_point:
-            now_ = (self.cycle_iter - self.cut_point)
-            all_ = (self.total_iter - self.cut_point)
-            percent = now_ / all_
-        else:
-            percent = 1 - self.cycle_iter / self.cut_point
-        res = (
-            self.momentum_range[1] +
-            percent * (self.momentum_range[0] - self.momentum_range[1])
-        )
-        return res
 
 
 class LRFinder(LRUpdater):
