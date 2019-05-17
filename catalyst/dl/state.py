@@ -27,7 +27,6 @@ class RunnerState(FrozenClass):
         minimize_metric=True,
         valid_loader="valid",
         verbose=False,
-        loaders=None,
         **kwargs
     ):
         # @TODO: refactor
@@ -46,7 +45,6 @@ class RunnerState(FrozenClass):
         self.stage = stage
         self.device = device
         self.loader_name = None
-        self.loaders = loaders
 
         # data pipeline
         self.input = None
