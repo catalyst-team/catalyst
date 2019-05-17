@@ -65,7 +65,7 @@ def build_parser() -> ArgumentParser:
         "catalyst-data", formatter_class=RawTextHelpFormatter
     )
     parser.add_argument(
-        "--version", action="version", version=f"%(prog)s {__version__}"
+        "-v", "--version", action="version", version=f"%(prog)s {__version__}"
     )
     all_commands = ', \n'.join(map(lambda x: f"    {x}", COMMANDS.keys()))
 
