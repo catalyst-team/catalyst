@@ -1,6 +1,7 @@
-from collections import OrderedDict
 from argparse import ArgumentParser, RawTextHelpFormatter
+from collections import OrderedDict
 
+from catalyst.__version__ import __version__
 from .scripts import dump_redis, load_redis, \
     run_samplers, run_trainer
 
@@ -17,6 +18,9 @@ COMMANDS = OrderedDict(
 def build_parser() -> ArgumentParser:
     parser = ArgumentParser(
         "catalyst-rl", formatter_class=RawTextHelpFormatter
+    )
+    parser.add_argument(
+        "-v", "--version", action="version", version=f"%(prog)s {__version__}"
     )
     all_commands = ', \n'.join(map(lambda x: f"    {x}", COMMANDS.keys()))
 
