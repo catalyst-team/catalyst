@@ -112,7 +112,8 @@ class CheckpointCallback(Callback):
             epoch_metrics=dict(state.metrics.epoch_values),
             valid_metrics=dict(state.metrics.valid_values),
             stage=state.stage,
-            epoch=state.epoch
+            epoch=state.epoch,
+            checkpoint_data=state.checkpoint_data
         )
         self.save_checkpoint(
             logdir=state.logdir,

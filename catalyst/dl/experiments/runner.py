@@ -252,7 +252,8 @@ class SupervisedRunner(Runner):
         minimize_metric: bool = True,
         verbose: bool = False,
         state_kwargs: Dict = None,
-        check: bool = False
+        check: bool = False,
+        checkpoint_data: Dict = None
     ):
         experiment = self._default_experiment(
             stage="train",
@@ -268,7 +269,8 @@ class SupervisedRunner(Runner):
             main_metric=main_metric,
             minimize_metric=minimize_metric,
             verbose=verbose,
-            state_kwargs=state_kwargs
+            state_kwargs=state_kwargs,
+            checkpoint_data=checkpoint_data
         )
         self.run_experiment(experiment, check=check)
 
