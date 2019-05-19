@@ -35,8 +35,9 @@ RUN pip install --no-cache-dir \
     nmslib \
     albumentations \
     seaborn \
-    tensorflow \
-    wrappa
+    tensorboardX \
+    wrappa \
+    crc32c
 
 CMD mkdir -p /workspace
 WORKDIR /workspace

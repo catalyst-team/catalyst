@@ -91,6 +91,15 @@ Modules
 .. autoclass:: GlobalConcatAttnPool2d
     :members:
 
+Schedulers
+-----------------------
+.. currentmodule:: catalyst.contrib.scheduler
+
+.. autoclass:: BaseScheduler
+    :members:
+
+.. autoclass:: OneCycleLR
+    :members:
 
 Optimizers
 ---------------------

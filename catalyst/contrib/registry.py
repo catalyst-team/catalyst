@@ -65,7 +65,7 @@ Optimizer = OPTIMIZERS.add
 
 
 def _schedulers_loader(r: Registry):
-    from torch.optim import lr_scheduler as m
+    from catalyst.contrib import scheduler as m
     r.add_from_module(m)
 
 

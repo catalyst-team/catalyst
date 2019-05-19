@@ -111,10 +111,6 @@ Schedulers
     :members:
     :undoc-members:
 
-.. autoclass:: OneCycleLR
-    :members:
-    :undoc-members:
-
 
 Utils
 ~~~~~~~~~~
