@@ -108,7 +108,7 @@ class BaseExperiment(Experiment):
         minimize_metric: bool = True,
         verbose: bool = False,
         state_kwargs: Dict = None,
-        extra_checkpoint_data: Dict = None
+        checkpoint_data: Dict = None
     ):
         self._model = model
         self._loaders = loaders
@@ -126,7 +126,7 @@ class BaseExperiment(Experiment):
         self._minimize_metric = minimize_metric
         self._verbose = verbose
         self._additional_state_kwargs = state_kwargs or {}
-        self._extra_checkpoint_data = extra_checkpoint_data or {}
+        self.checkpoint_data = checkpoint_data or {}
 
     @property
     def logdir(self):
@@ -144,7 +144,7 @@ class BaseExperiment(Experiment):
             main_metric=self._main_metric,
             verbose=self._verbose,
             minimize_metric=self._minimize_metric,
-            extra_checkpoint_data=self._extra_checkpoint_data
+            checkpoint_data=self.checkpoint_data
         )
         state_params = {
             **self._additional_state_kwargs,

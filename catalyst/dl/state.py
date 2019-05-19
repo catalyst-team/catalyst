@@ -1,4 +1,6 @@
 from pathlib import Path
+from typing import Dict
+
 from torch.optim.optimizer import Optimizer
 
 from catalyst.utils.misc import FrozenClass
@@ -27,6 +29,7 @@ class RunnerState(FrozenClass):
         minimize_metric=True,
         valid_loader="valid",
         verbose=False,
+        checkpoint_data: Dict = None,
         **kwargs
     ):
         # @TODO: refactor
@@ -79,6 +82,9 @@ class RunnerState(FrozenClass):
         self.lr = None
         self.momentum = None
         self.loss = None
+
+        # extra checkpoint data for saving in checkpoint files
+        self.checkpoint_data = checkpoint_data or {}
 
         # other
         self.need_backward = False
