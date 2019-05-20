@@ -70,12 +70,12 @@ class Runner(ABC):
             })
 
         self._prepare_model(stage)
-        criterion, optimizer, scheduler = \
+        criterion, optimizer, scheduler, model = \
             self.experiment.get_model_stuff(self.model, stage)
 
         self.state = RunnerState(
             stage=stage,
-            model=self.model,
+            model=model,
             device=self.device,
             criterion=criterion,
             optimizer=optimizer,
@@ -234,7 +234,14 @@ class SupervisedRunner(Runner):
 
     def predict_batch(self, batch: Mapping[str, Any]):
         output = self.model(batch[self.input_key])
-        output = {self.output_key: output}
+        if isinstance(output, dict):
+            pass
+        elif isinstance(output, (list, tuple)) \
+                and isinstance(self.output_key, list):
+            output = dict((key, value) for key, value in
+                          zip(self.output_key, output))
+        else:
+            output = {self.output_key: output}
         return output
 
     def train(

@@ -4,7 +4,7 @@ import torch
 from abc import abstractmethod, ABC
 from torch import nn, optim
 from torch.utils.data import DataLoader, Dataset  # noqa F401
-from typing import Iterable, Any, Mapping, Dict, List
+from typing import Iterable, Any, Mapping, Dict, List, Tuple
 
 from catalyst.dl.registry import \
     MODELS, CRITERIONS, OPTIMIZERS, SCHEDULERS, CALLBACKS
@@ -12,7 +12,6 @@ from catalyst.dl import utils
 from catalyst.dl.callbacks import Callback  # noqa F401
 from catalyst.dl.callbacks import \
     LossCallback, OptimizerCallback, SchedulerCallback, CheckpointCallback
-from catalyst.dl.fp16 import Fp16Wrap
 from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.misc import merge_dicts
 
@@ -53,7 +52,8 @@ class Experiment(ABC):
         pass
 
     @abstractmethod
-    def get_optimizer(self, stage: str, model) -> _Optimizer:
+    def get_optimizer_and_model(self, stage: str,
+                                model) -> Tuple[_Optimizer, _Model]:
         pass
 
     @abstractmethod
@@ -62,18 +62,18 @@ class Experiment(ABC):
 
     def get_model_stuff(self, model, stage: str):
         criterion = self.get_criterion(stage)
-        optimizer = self.get_optimizer(stage, model)
+        optimizer, model = self.get_optimizer_and_model(stage, model)
         scheduler = self.get_scheduler(stage, optimizer)
-        return criterion, optimizer, scheduler
+        return criterion, optimizer, scheduler, model
 
     @abstractmethod
     def get_callbacks(self, stage: str) -> "List[Callback]":
         pass
 
     def get_datasets(
-        self,
-        stage: str,
-        **kwargs,
+            self,
+            stage: str,
+            **kwargs,
     ) -> "OrderedDict[str, Dataset]":
         raise NotImplementedError
 
@@ -158,8 +158,9 @@ class BaseExperiment(Experiment):
     def get_criterion(self, stage: str) -> _Criterion:
         return self._criterion
 
-    def get_optimizer(self, stage: str, model=None) -> _Optimizer:
-        return self._optimizer
+    def get_optimizer_and_model(self, stage: str,
+                                model=None) -> Tuple[_Optimizer, _Model]:
+        return self._optimizer, model
 
     def get_scheduler(self, stage: str, optimizer=None) -> _Scheduler:
         return self._scheduler
@@ -269,13 +270,7 @@ class ConfigExperiment(Experiment):
 
     def get_model(self, stage: str) -> _Model:
         model_params = self._config["model_params"]
-        fp16 = model_params.pop("fp16", False)
-
         model = MODELS.get_from_params(**model_params)
-
-        if fp16:
-            utils.assert_fp16_available()
-            model = Fp16Wrap(model)
 
         model = self._preprocess_model_for_stage(stage, model)
         model = self._postprocess_model_for_stage(stage, model)
@@ -328,15 +323,35 @@ class ConfigExperiment(Experiment):
 
         return optimizer
 
-    def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
-        fp16 = isinstance(model, Fp16Wrap)
-        model_params = utils.prepare_optimizable_params(
-            model.parameters(), fp16)
+    def get_optimizer_and_model(self, stage: str,
+                                model: nn.Module) -> [_Optimizer, _Model]:
+
+        model_params = utils.prepare_optimizable_params(model.parameters())
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
+
+        fp16 = optimizer_params.get("fp16", False)
+        fp16_opt_level = optimizer_params.get("fp16_opt_level", "O1")
+
+        # Prevent leaking fp16-related params to optimizer factory
+        optimizer_params = dict((k, v) for k, v in optimizer_params.items()
+                                if k not in {'fp16', 'fp16_opt_level'})
+
         optimizer = self._get_optimizer(
             model_params=model_params, **optimizer_params)
-        return optimizer
+
+        if fp16:
+            utils.assert_fp16_available()
+            from apex import amp
+            if fp16_opt_level not in {"O1", "O2", "O3"}:
+                raise ValueError("fp16 mode must be one of O1, O2, O3")
+
+            model, optimizer = amp.initialize(model, optimizer,
+                                              opt_level=fp16_opt_level)
+        elif torch.cuda.device_count() > 1:
+            model = torch.nn.DataParallel(model)
+
+        return optimizer, model
 
     @staticmethod
     def _get_scheduler(*, optimizer, **params):
@@ -391,8 +406,8 @@ class ConfigExperiment(Experiment):
                 assert "dataset" in ds_, \
                     "You need to specify dataset for dataloader"
                 loader_params["shuffle"] = (
-                    name.startswith("train")
-                    and ds_.get("sampler") is None)
+                        name.startswith("train")
+                        and ds_.get("sampler") is None)
                 loader_params = merge_dicts(ds_, loader_params)
             else:
                 raise NotImplementedError
