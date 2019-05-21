@@ -63,11 +63,6 @@ algorithm:
     optimizer: Adam
     lr: 0.0003
 
-  critic_scheduler_params:
-    scheduler: MultiStepLR
-    milestones: [2000000]  # batches
-    gamma: 1.0
-
   critic_grad_clip_params:
     func: clip_grad_value_
     clip_value: 1.0

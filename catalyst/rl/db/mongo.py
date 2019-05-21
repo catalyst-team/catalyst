@@ -68,6 +68,9 @@ class MongoDB(DBSpec):
 
         return trajectory
 
+    def clean_trajectories(self):
+        self._trajectory_collection.drop()
+
     def dump_weights(self, weights, prefix, epoch):
         self._epoch = epoch
 
@@ -90,3 +93,6 @@ class MongoDB(DBSpec):
         self._epoch = weights_obj["epoch"]
         weights = unpack(weights)
         return weights
+
+    def clean_weights(self, prefix):
+        self._weights_collection.delete_one({"prefix": prefix})
