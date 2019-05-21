@@ -1,16 +1,37 @@
+from functools import partial
+
 from torch.nn.modules.loss import _Loss
-from catalyst.dl.losses import sigmoid_focal_loss
+from catalyst.dl.losses import sigmoid_focal_loss, reduced_focal_loss
 
 
 class FocalLossBinary(_Loss):
-    def __init__(self, alpha=0.5, gamma=2, ignore=None):
+    def __init__(
+        self,
+        ignore: int = None,
+        reduced: bool = False,
+        gamma: float = 2.0,
+        alpha: float = 0.25,
+        threshold: float = 0.5,
+        reduction: str = "mean",
+    ):
         """
         Compute focal loss for binary classification problem.
         """
         super().__init__()
-        self.alpha = alpha
-        self.gamma = gamma
         self.ignore = ignore
+
+        if reduced:
+            self.loss_fn = partial(
+                reduced_focal_loss,
+                gamma=gamma,
+                threshold=threshold,
+                reduction=reduction)
+        else:
+            self.loss_fn = partial(
+                sigmoid_focal_loss,
+                gamma=gamma,
+                alpha=alpha,
+                reduction=reduction)
 
     def forward(self, logits, targets):
         """
@@ -28,26 +49,16 @@ class FocalLossBinary(_Loss):
             logits = logits[not_ignored]
             targets = targets[not_ignored]
 
-        loss = sigmoid_focal_loss(
-            logits,
-            targets,
-            gamma=self.gamma,
-            alpha=self.alpha
-        )
+        loss = self.loss_fn(logits, targets)
 
         return loss
 
 
-class FocalLossMultiClass(_Loss):
-    def __init__(self, alpha=0.5, gamma=2, ignore=None):
-        """
-        Compute focal loss for multi-class problem.
-        Ignores targets having -1 label
-        """
-        super().__init__()
-        self.alpha = alpha
-        self.gamma = gamma
-        self.ignore = ignore
+class FocalLossMultiClass(FocalLossBinary):
+    """
+    Compute focal loss for multi-class problem.
+    Ignores targets having -1 label
+    """
 
     def forward(self, logits, targets):
         """
@@ -73,26 +84,16 @@ class FocalLossMultiClass(_Loss):
                 cls_label_target = cls_label_target[not_ignored]
                 cls_label_input = cls_label_input[not_ignored]
 
-            loss += sigmoid_focal_loss(
-                cls_label_input,
-                cls_label_target,
-                gamma=self.gamma,
-                alpha=self.alpha
-            )
+            loss += self.loss_fn(cls_label_input, cls_label_target)
 
         return loss
 
 
 class FocalLossMultiLabel(_Loss):
-    def __init__(self, alpha=0.5, gamma=2, ignore=None):
-        """
-        Compute focal loss for multi-label problem.
-        Ignores targets having -1 label
-        """
-        super().__init__()
-        self.alpha = alpha
-        self.gamma = gamma
-        self.ignore = ignore
+    """
+    Compute focal loss for multi-label problem.
+    Ignores targets having -1 label
+    """
 
     def forward(self, logits, targets):
         """
@@ -112,12 +113,7 @@ class FocalLossMultiLabel(_Loss):
             cls_label_target = targets[..., cls].long()
             cls_label_input = logits[..., cls]
 
-            loss += sigmoid_focal_loss(
-                cls_label_input,
-                cls_label_target,
-                gamma=self.gamma,
-                alpha=self.alpha
-            )
+            loss += self.loss_fn(cls_label_input, cls_label_target)
 
         return loss
 

@@ -1,3 +1,5 @@
+from functools import partial
+
 import torch.nn as nn
 from catalyst.dl import metrics
 
@@ -10,18 +12,15 @@ class DiceLoss(nn.Module):
         activation: str = "sigmoid"
     ):
         super(DiceLoss, self).__init__()
-        self.eps = eps
-        self.threshold = threshold
-        self.activation = activation
 
-    def forward(self, outputs, targets):
-        dice = metrics.dice(
-            outputs, targets,
-            eps=self.eps,
-            threshold=self.threshold,
-            activation=self.activation
-        )
+        self.loss_fn = partial(
+            metrics.dice,
+            eps=eps,
+            threshold=threshold,
+            activation=activation)
 
+    def forward(self, logits, targets):
+        dice = self.loss_fn(logits, targets)
         return 1 - dice
 
 
@@ -41,7 +40,7 @@ class BCEDiceLoss(nn.Module):
         )
 
     def forward(self, outputs, targets):
-        dice = self.dice_loss.forward(outputs, targets)
+        dice = self.dice_loss(outputs, targets)
         bce = self.bce_loss(outputs, targets)
         loss = dice + bce
         return loss

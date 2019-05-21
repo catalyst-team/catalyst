@@ -1,3 +1,4 @@
+from functools import partial
 import torch.nn as nn
 from catalyst.dl import metrics
 
@@ -25,22 +26,20 @@ class IoULoss(nn.Module):
         self.mode = mode
 
         if mode == "hard":
-            self.metric_fn = metrics.iou
+            self.metric_fn = partial(
+                metrics.iou,
+                eps=eps,
+                threshold=threshold,
+                activation=activation)
         else:
-            self.metric_fn = metrics.soft_iou
-
-        self.activation = activation
-        self.eps = eps
-        self.threshold = threshold
+            self.metric_fn = partial(
+                metrics.soft_iou,
+                eps=eps,
+                threshold=threshold,
+                activation=activation)
 
     def forward(self, outputs, targets):
-        iou = self.metric_fn(
-            outputs,
-            targets,
-            eps=self.eps,
-            threshold=self.threshold,
-            activation=self.activation,
-        )
+        iou = self.metric_fn(outputs, targets)
         return 1 - iou
 
 
@@ -53,8 +52,7 @@ class BCEIoULoss(nn.Module):
         threshold (float): threshold for outputs binarization
         activation (str): An torch.nn activation applied to the outputs.
             Must be one of ['none', 'sigmoid', 'softmax2d']
-        reduction (str): Specifies the reduction to apply to the output
-            of BCE
+        reduction (str): Specifies the reduction to apply to the output of BCE
     """
     def __init__(
         self,
@@ -66,7 +64,7 @@ class BCEIoULoss(nn.Module):
     ):
         super().__init__()
         self.bce_loss = nn.BCEWithLogitsLoss(reduction=reduction)
-        self.iou_loss = IoULoss(mode, eps, activation, threshold)
+        self.iou_loss = IoULoss(mode, eps, threshold, activation)
 
     def forward(self, outputs, targets):
         iou = self.iou_loss.forward(outputs, targets)

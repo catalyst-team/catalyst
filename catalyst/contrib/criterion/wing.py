@@ -1,3 +1,5 @@
+from functools import partial
+
 import torch.nn as nn
 from catalyst.dl import losses
 
@@ -10,18 +12,12 @@ class WingLoss(nn.Module):
         reduction: str = "mean"
     ):
         super().__init__()
-        self.metric_fn = losses.wing_loss
-
-        self.width = width
-        self.curvature = curvature
-        self.reduction = reduction
+        self.loss_fn = partial(
+            losses.wing_loss,
+            width=width,
+            curvature=curvature,
+            reduction=reduction)
 
     def forward(self, outputs, targets):
-        wing = self.metric_fn(
-            outputs,
-            targets,
-            width=self.width,
-            curvature=self.curvature,
-            reduction=self.reduction,
-        )
-        return wing
+        loss = self.loss_fn(outputs, targets)
+        return loss
