@@ -94,32 +94,44 @@ def mean_average_accuracy(outputs, targets, topk=(1, )):
     return res
 
 
-def dice(outputs, targets, eps: float = 1e-7, activation: str = "sigmoid"):
+def dice(
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    eps: float = 1e-7,
+    threshold: float = None,
+    activation: str = "sigmoid"
+):
     """
     Computes the dice metric
         Args:
         outputs (list):  A list of predicted elements
         targets (list): A list of elements that are to be predicted
         eps (float): epsilon
+        threshold (float): threshold for outputs binarization
         activation (str): An torch.nn activation applied to the outputs.
-            Must be one of ['none', 'sigmoid', 'softmax2d']
+            Must be one of ["none", "sigmoid", "softmax2d"]
+
     Returns:
         double:  Dice score
     """
     activation_fn = get_activation_by_name(activation)
-
     outputs = activation_fn(outputs)
-    intersection = torch.sum(targets * outputs)
-    sum_ = torch.sum(targets) + torch.sum(outputs) + eps
 
-    return (2 * intersection + eps) / sum_
+    if threshold is not None:
+        outputs = (outputs > threshold).float()
+
+    intersection = torch.sum(targets * outputs)
+    union = torch.sum(targets) + torch.sum(outputs)
+    dice = 2 * intersection / (union + eps)
+
+    return dice
 
 
 def iou(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     eps: float = 1e-7,
-    threshold: float = 0.5,
+    threshold: float = None,
     activation: str = "sigmoid"
 ):
     """
@@ -129,21 +141,22 @@ def iou(
         eps (float): epsilon to avoid zero division
         threshold (float): threshold for outputs binarization
         activation (str): An torch.nn activation applied to the outputs.
-            Must be one of ['none', 'sigmoid', 'softmax2d']
+            Must be one of ["none", "sigmoid", "softmax2d"]
+
     Returns:
         float: IoU (Jaccard) score
     """
     activation_fn = get_activation_by_name(activation)
-
     outputs = activation_fn(outputs)
 
     if threshold is not None:
         outputs = (outputs > threshold).float()
 
     intersection = torch.sum(targets * outputs)
-    union = torch.sum(targets) + torch.sum(outputs) - intersection + eps
+    union = torch.sum(targets) + torch.sum(outputs)
+    iou = intersection / (union - intersection + eps)
 
-    return (intersection + eps) / union
+    return iou
 
 
 jaccard = iou
@@ -153,7 +166,7 @@ def soft_iou(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     eps: float = 1e-7,
-    threshold: float = 0.5,
+    threshold: float = None,
     activation: str = "sigmoid"
 ):
     """
@@ -163,11 +176,12 @@ def soft_iou(
         eps (float): epsilon to avoid zero division
         threshold (float): threshold for outputs binarization
         activation (str): An torch.nn activation applied to the outputs.
-            Must be one of ['none', 'sigmoid', 'softmax2d']
+            Must be one of ["none", "sigmoid", "softmax2d"]
+
     Returns:
         float: SoftIoU (SoftJaccard) score
     """
-    jaccards = []
+    ious = []
     for class_i in range(outputs.shape[1]):
         jaccard_i = iou(
             outputs[:, class_i, :, :],
@@ -176,16 +190,21 @@ def soft_iou(
             threshold=threshold,
             activation=activation,
         )
-        jaccards.append(jaccard_i)
-    return torch.mean(torch.stack(jaccards))
+        ious.append(jaccard_i)
+    soft_iou = torch.mean(torch.stack(ious))
+
+    return soft_iou
 
 
-def f_score(
+soft_jaccard = soft_iou
+
+
+def f1_score(
     outputs: torch.Tensor,
     targets: torch.Tensor,
-    beta: float = 1,
+    beta: float = 1.0,
     eps: float = 1e-7,
-    threshold: float = 0.5,
+    threshold: float = None,
     activation: str = "sigmoid"
 ):
     """
@@ -198,7 +217,7 @@ def f_score(
         beta (float): beta param for f_score
         threshold (float): threshold for outputs binarization
         activation (str): An torch.nn activation applied to the outputs.
-            Must be one of ['none', 'sigmoid', 'softmax2d']
+            Must be one of ["none", "sigmoid", "softmax2d"]
     Returns:
         float: F_1 score
     """

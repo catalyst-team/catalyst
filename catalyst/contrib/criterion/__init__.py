@@ -1,11 +1,11 @@
 # flake8: noqa
 from torch.nn.modules.loss import *
-from .bcece import *
 from .ce import *
-from .center_loss import *
+from .center import *
 from .contrastive import *
 from .dice import *
-from .focal_loss import *
+from .focal import *
 from .huber import *
-from .unet import *
 from .iou import *
+from .lovasz import *
+from .wing import *
