@@ -90,6 +90,7 @@ class DiceCallback(MetricCallback):
         output_key: str = "logits",
         prefix: str = "dice",
         eps: float = 1e-7,
+        threshold: float = None,
         activation: str = "sigmoid"
     ):
         """
@@ -104,6 +105,7 @@ class DiceCallback(MetricCallback):
             input_key=input_key,
             output_key=output_key,
             eps=eps,
+            threshold=threshold,
             activation=activation
         )
 
@@ -120,7 +122,7 @@ class IouCallback(MetricCallback):
         prefix: str = "iou",
         mode: str = "hard",
         eps: float = 1e-7,
-        threshold: float = 0.5,
+        threshold: float = None,
         activation: str = "sigmoid",
     ):
         """
@@ -169,9 +171,9 @@ class F1ScoreCallback(MetricCallback):
         input_key: str = "targets",
         output_key: str = "logits",
         prefix: str = "f1_score",
-        beta: float = 1,
+        beta: float = 1.0,
         eps: float = 1e-7,
-        threshold: float = 0.5,
+        threshold: float = None,
         activation: str = "sigmoid"
     ):
         """
@@ -190,7 +192,7 @@ class F1ScoreCallback(MetricCallback):
 
         super().__init__(
             prefix=prefix,
-            metric_fn=metrics.f_score,
+            metric_fn=metrics.f1_score,
             input_key=input_key,
             output_key=output_key,
             beta=beta,

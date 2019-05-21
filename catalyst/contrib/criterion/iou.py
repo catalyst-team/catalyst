@@ -13,11 +13,11 @@ class IoULoss(nn.Module):
             Must be one of ['none', 'sigmoid', 'softmax2d']
     """
     def __init__(
-            self,
-            mode: str = "hard",
-            eps: float = 1e-7,
-            activation: str = "sigmoid",
-            threshold: float = 0.5
+        self,
+        mode: str = "hard",
+        eps: float = 1e-7,
+        threshold: float = None,
+        activation: str = "sigmoid",
     ):
         super().__init__()
         assert mode in ["hard", "soft"], \
@@ -57,12 +57,12 @@ class BCEIoULoss(nn.Module):
             of BCE
     """
     def __init__(
-            self,
-            mode: str = "hard",
-            eps: float = 1e-7,
-            activation: str = "sigmoid",
-            threshold: float = 0.5,
-            reduction: str = "mean",
+        self,
+        mode: str = "hard",
+        eps: float = 1e-7,
+        threshold: float = None,
+        activation: str = "sigmoid",
+        reduction: str = "mean",
     ):
         super().__init__()
         self.bce_loss = nn.BCEWithLogitsLoss(reduction=reduction)
@@ -71,4 +71,5 @@ class BCEIoULoss(nn.Module):
     def forward(self, outputs, targets):
         iou = self.iou_loss.forward(outputs, targets)
         bce = self.bce_loss(outputs, targets)
-        return iou + bce
+        loss = iou + bce
+        return loss

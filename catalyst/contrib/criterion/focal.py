@@ -1,5 +1,5 @@
-from .functional import sigmoid_focal_loss
 from torch.nn.modules.loss import _Loss
+from catalyst.dl.losses import sigmoid_focal_loss
 
 
 class FocalLossBinary(_Loss):
@@ -15,8 +15,8 @@ class FocalLossBinary(_Loss):
     def forward(self, logits, targets):
         """
 
-        :param logits: [bs]
-        :param targets: [bs]
+        :param logits: [bs; ...]
+        :param targets: [bs; ...]
         :return:
         """
         targets = targets.view(-1)
@@ -52,8 +52,8 @@ class FocalLossMultiClass(_Loss):
     def forward(self, logits, targets):
         """
 
-        :param logits: [bs; num_classes]
-        :param targets: [bs]
+        :param logits: [bs; num_classes; ...]
+        :param targets: [bs; ...]
         :return:
         """
         num_classes = logits.size(1)
