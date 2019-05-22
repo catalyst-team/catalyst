@@ -10,17 +10,15 @@ def make_hash_sha256(o):
 
 def make_hashable(o):
     if isinstance(o, (tuple, list)):
-        return tuple((
-            (type(o).__name__, make_hashable(e))
-            for e in o))
+        return tuple(((type(o).__name__, make_hashable(e)) for e in o))
     if isinstance(o, dict):
-        return tuple(sorted(
-            (type(o).__name__, k, make_hashable(v))
-            for k,v in o.items()))
+        return tuple(
+            sorted(
+                (type(o).__name__, k, make_hashable(v)) for k, v in o.items()
+            )
+        )
     if isinstance(o, (set, frozenset)):
-        return tuple(sorted(
-            (type(o).__name__, make_hashable(e))
-            for e in o))
+        return tuple(sorted((type(o).__name__, make_hashable(e)) for e in o))
     return o
 
 

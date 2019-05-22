@@ -1,116 +1,56 @@
+from typing import List
 import torch
-from torch import nn
+import torch.nn as nn
+
+from .encoder import EncoderSpec, UnetEncoder
+from .bridge import BridgeSpec, UnetBridge
+from .decoder import DecoderSpec, UNetDecoder
+from .head import HeadSpec, UnetHead
 
 
-def conv3x3(in_channels, out_channels, dilation=1):
-    return nn.Conv2d(
-        in_channels, out_channels, 3, padding=dilation, dilation=dilation
-    )
-
-
-class EncoderBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, batch_norm=False):
-        super().__init__()
-
-        self.block = nn.Sequential()
-        self.block.add_module("conv1", conv3x3(in_channels, out_channels))
-        if batch_norm:
-            self.block.add_module("bn1", nn.BatchNorm2d(out_channels))
-        self.block.add_module("relu1", nn.ReLU())
-        self.block.add_module("conv2", conv3x3(out_channels, out_channels))
-        if batch_norm:
-            self.block.add_module("bn2", nn.BatchNorm2d(out_channels))
-        self.block.add_module("relu2", nn.ReLU())
-
-    def forward(self, x):
-        return self.block(x)
-
-
-class Encoder(nn.Module):
-    def __init__(self, in_channels, num_filters, num_blocks):
-        super().__init__()
-
-        self.num_blocks = num_blocks
-        for i in range(num_blocks):
-            in_channels = in_channels if not i else num_filters * 2**(i - 1)
-            out_channels = num_filters * 2**i
-            self.add_module(
-                f"block{i + 1}", EncoderBlock(in_channels, out_channels)
-            )
-            if i != num_blocks - 1:
-                self.add_module(f"pool{i + 1}", nn.MaxPool2d(2, 2))
-
-    def forward(self, x):
-        acts = []
-        for i in range(self.num_blocks):
-            x = self.__getattr__(f"block{i + 1}")(x)
-            acts.append(x)
-            if i != self.num_blocks - 1:
-                x = self.__getattr__(f"pool{i + 1}")(x)
-        return acts
-
-
-class DecoderBlock(nn.Module):
-    def __init__(self, out_channels):
-        super().__init__()
-
-        self.upconv = conv3x3(out_channels * 2, out_channels)
-        self.conv1 = conv3x3(out_channels * 2, out_channels)
-        self.conv2 = conv3x3(out_channels, out_channels)
-
-    def forward(self, down, left):
-        x = nn.functional.interpolate(
-            down, scale_factor=2, mode="bilinear", align_corners=True
-        )
-        x = self.upconv(x)
-        x = torch.cat([left, x], 1)
-        x = self.conv1(x)
-        x = self.conv2(x)
-        return x
-
-
-class Decoder(nn.Module):
-    def __init__(self, num_filters, num_blocks):
-        super().__init__()
-
-        for i in range(num_blocks):
-            self.add_module(
-                f"block{num_blocks - i}", DecoderBlock(num_filters * 2**i)
-            )
-
-    def forward(self, acts):
-        up = acts[-1]
-        for i, left in enumerate(acts[-2::-1]):
-            up = self.__getattr__(f"block{i + 1}")(up, left)
-        return up
-
-
-class UNet(nn.Module):
-    """
-    CNN architecture for semantic segmentation
-    Made by @nizhib
-    """
+class MetaUnet(nn.Module):
     def __init__(
-        self, num_classes=1, in_channels=3, num_filters=64, num_blocks=4
+        self,
+        encoder: EncoderSpec,
+        bridge: BridgeSpec,
+        decoder: DecoderSpec,
+        head: HeadSpec
     ):
         super().__init__()
+        self.encoder = encoder
+        self.bridge = bridge
+        self.decoder = decoder
+        self.head = head
 
-        self.encoder = Encoder(in_channels, num_filters, num_blocks)
-        self.decoder = Decoder(num_filters, num_blocks - 1)
-        self.final = nn.Conv2d(num_filters, num_classes, 1)
-
-    def forward(self, x):
-        acts = self.encoder(x)
-        x = self.decoder(acts)
-        x = self.final(x)
-        return x
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        encoder_features: List[torch.Tensor] = self.encoder(x)
+        bridge_features: List[torch.Tensor] = self.bridge(encoder_features)
+        decoder_features: List[torch.Tensor] = self.decoder(bridge_features)
+        output: torch.Tensor = self.head(decoder_features)
+        return output
 
 
-if __name__ == "__main__":
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    model = UNet(num_classes=1).to(device)
-    images = torch.randn(4, 3, 256, 256).to(device)
-
-    out = model.forward(images)
-    print(out.size())
+class UNet(MetaUnet):
+    def __init__(
+        self, num_classes=1, in_channels=3, num_channels=64, num_blocks=4
+    ):
+        encoder = UnetEncoder(
+            in_channels=in_channels,
+            num_channels=num_channels,
+            num_blocks=num_blocks
+        )
+        bridge = UnetBridge(
+            in_channels=encoder.out_channels,
+            out_channels=encoder.out_channels[-1] * 2
+        )
+        decoder = UNetDecoder(
+            in_channels=bridge.out_channels,
+            dilation_factors=encoder.out_strides
+        )
+        head = UnetHead(num_channels, num_classes)
+        super().__init__(
+            encoder=encoder,
+            bridge=bridge,
+            decoder=decoder,
+            head=head
+        )
