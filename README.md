@@ -52,16 +52,15 @@ and other features without the boilerplate.
 
 #### Structure
 
-- **DL** – runner for training and inference, 
-all of the classic machine learning and computer vision metrics 
-and a variety of callbacks for training, validation 
-and inference of neural networks.
-- **RL** – scalable Reinforcement Learning,
-actor-critic off-policy continuous actions space algorithms
-and their improvements
-with distributed training support.
-- **contrib** - additional modules contributed by Catalyst users.
-- **data** - useful tools and scripts for data processing.
+-  **DL** – runner for training and inference,
+   all of the classic machine learning and computer vision metrics
+   and a variety of callbacks for training, validation
+   and inference of neural networks.
+-  **RL** – scalable Reinforcement Learning,
+   on-policy & off-policy algorithms and their improvements
+   with distributed training support.
+-  **contrib** - additional modules contributed by Catalyst users.
+-  **data** - useful tools and scripts for data processing.
 
 
 ## Getting started: 30 seconds with Catalyst
@@ -81,6 +80,7 @@ loaders = {"train": ..., "valid": ...}
 model = Net()
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters())
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer)
 
 # model runner
 runner = SupervisedRunner()
@@ -90,6 +90,7 @@ runner.train(
     model=model,
     criterion=criterion,
     optimizer=optimizer,
+    scheduler=scheduler,
     loaders=loaders,
     logdir=logdir,
     num_epochs=num_epochs,
