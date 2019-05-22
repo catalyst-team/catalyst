@@ -1,89 +1,19 @@
 from collections import OrderedDict
+from typing import Iterable, Any, Mapping, Dict, List
 
 import torch
-from abc import abstractmethod, ABC
-from torch import nn, optim
+from torch import nn
 from torch.utils.data import DataLoader, Dataset  # noqa F401
-from typing import Iterable, Any, Mapping, Dict, List
 
 from catalyst.dl.registry import \
     MODELS, CRITERIONS, OPTIMIZERS, SCHEDULERS, CALLBACKS
 from catalyst.dl import utils
-from catalyst.dl.callbacks import Callback  # noqa F401
-from catalyst.dl.callbacks import \
-    LossCallback, OptimizerCallback, SchedulerCallback, CheckpointCallback
+from catalyst.dl.callbacks import Callback, LossCallback, OptimizerCallback, \
+    SchedulerCallback, CheckpointCallback  # noqa F401
 from catalyst.dl.fp16 import Fp16Wrap
 from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.misc import merge_dicts
-
-_Model = nn.Module
-_Criterion = nn.Module
-_Optimizer = optim.Optimizer
-# noinspection PyProtectedMember
-_Scheduler = optim.lr_scheduler._LRScheduler
-
-
-class Experiment(ABC):
-    """
-    Object containing all information required to run the experiment
-
-    Abstract, look for implementations
-    """
-
-    @property
-    @abstractmethod
-    def logdir(self) -> str:
-        pass
-
-    @property
-    @abstractmethod
-    def stages(self) -> Iterable[str]:
-        pass
-
-    @abstractmethod
-    def get_state_params(self, stage: str) -> Mapping[str, Any]:
-        pass
-
-    @abstractmethod
-    def get_model(self, stage: str) -> _Model:
-        pass
-
-    @abstractmethod
-    def get_criterion(self, stage: str) -> _Criterion:
-        pass
-
-    @abstractmethod
-    def get_optimizer(self, stage: str, model) -> _Optimizer:
-        pass
-
-    @abstractmethod
-    def get_scheduler(self, stage: str, optimizer) -> _Scheduler:
-        pass
-
-    def get_model_stuff(self, model, stage: str):
-        criterion = self.get_criterion(stage)
-        optimizer = self.get_optimizer(stage, model)
-        scheduler = self.get_scheduler(stage, optimizer)
-        return criterion, optimizer, scheduler
-
-    @abstractmethod
-    def get_callbacks(self, stage: str) -> "List[Callback]":
-        pass
-
-    def get_datasets(
-        self,
-        stage: str,
-        **kwargs,
-    ) -> "OrderedDict[str, Dataset]":
-        raise NotImplementedError
-
-    @abstractmethod
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
-        raise NotImplementedError
-
-    @staticmethod
-    def get_transforms(stage: str = None, mode: str = None):
-        raise NotImplementedError
+from .core import Experiment, _Model, _Criterion, _Optimizer, _Scheduler
 
 
 class BaseExperiment(Experiment):
