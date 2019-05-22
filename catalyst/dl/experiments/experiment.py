@@ -1,10 +1,11 @@
+from typing import Iterable, Any, Mapping, Dict, List
+from abc import abstractmethod, ABC
 from collections import OrderedDict
+import datetime
 
 import torch
-from abc import abstractmethod, ABC
 from torch import nn, optim
 from torch.utils.data import DataLoader, Dataset  # noqa F401
-from typing import Iterable, Any, Mapping, Dict, List
 
 from catalyst.dl.registry import \
     MODELS, CRITERIONS, OPTIMIZERS, SCHEDULERS, CALLBACKS
@@ -15,6 +16,7 @@ from catalyst.dl.callbacks import \
 from catalyst.dl.fp16 import Fp16Wrap
 from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.misc import merge_dicts
+from catalyst.utils.hash import get_hash
 
 _Model = nn.Module
 _Criterion = nn.Module
@@ -244,8 +246,11 @@ class ConfigExperiment(Experiment):
     def logdir(self):
         return self._logdir
 
-    def _prepare_logdir(self, config: Dict):
-        raise NotImplementedError
+    def _prepare_logdir(self, config: Dict) -> str:
+        timestamp = datetime.datetime.utcnow().strftime("%y%m%d.%H%M%S.%f")
+        config_hash = get_hash(config)
+        postfix = f"{timestamp}.{config_hash}"
+        return postfix
 
     @property
     def stages(self) -> List[str]:
