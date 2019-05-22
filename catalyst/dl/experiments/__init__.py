@@ -1,4 +1,6 @@
 # flake8: noqa
-from .experiment import Experiment, BaseExperiment, ConfigExperiment, \
+from .experiment import BaseExperiment, ConfigExperiment, \
     SupervisedExperiment
-from .runner import Runner, SupervisedRunner
+from .core import Experiment
+from .runner import SupervisedRunner
+from catalyst.dl.experiments.core import Runner
