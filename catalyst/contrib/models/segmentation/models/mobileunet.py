@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 from torch.nn.functional import interpolate
 
-from catalyst.contrib.models.classification.mobilenetv2 import MobileNetV2, InvertedResidual
+from ...classification.mobilenetv2 import MobileNetV2, InvertedResidual
 
 
 class MobileUnet(nn.Module):

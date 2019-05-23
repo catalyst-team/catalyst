@@ -96,7 +96,7 @@ class FinalBlock(nn.Module):
         return x
 
 
-class ResnetLinknet(nn.Module):
+class ResLinknet(nn.Module):
     def __init__(self, num_classes=1, arch="resnet18", pretrained=True):
         super().__init__()
 

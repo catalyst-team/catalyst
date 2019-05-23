@@ -1,7 +1,7 @@
 from typing import List
 from functools import partial
 
-from .blocks import CentralBlock, UnetUpsampleBlock, UnetDecoderBlock
+from .blocks import UnetDownsampleBlock, UnetUpsampleBlock, UnetDecoderBlock
 
 from .encoder import UnetEncoder, ResnetEncoder
 from .bridge import BaseUnetBridge
@@ -22,7 +22,7 @@ class UNet(UnetSpec):
         bridge = BaseUnetBridge(
             in_channels=encoder.out_channels,
             out_channels=encoder.out_channels[-1] * 2,
-            block_fn=CentralBlock
+            block_fn=UnetDownsampleBlock
         )
         decoder = UNetDecoder(
             in_channels=bridge.out_channels,
@@ -70,7 +70,7 @@ class ResnetUnet(UnetSpec):
         head = BaseUnetHead(
             decoder.out_channels[-1],
             num_classes,
-            upsample_first=True)
+            upsample=1)
         super().__init__(
             encoder=encoder,
             bridge=bridge,
