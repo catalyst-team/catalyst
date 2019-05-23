@@ -12,14 +12,18 @@ class UNetDecoder(DecoderSpec):
     def __init__(
         self,
         in_channels: List[int],
+        out_channels: List[int] = None,
         dilation_factors: List[int] = None,
-        decoder_block: DecoderBlock = UnetDecoderBlock,
+        block_fn: DecoderBlock = UnetDecoderBlock,
         **kwargs
     ):
         super().__init__()
 
+        if out_channels is not None:
+            assert len(out_channels) == len(in_channels) - 1
+
         # features from center block
-        out_channels = [in_channels[-1]]
+        out_channels_ = [in_channels[-1]]
         # features from encoder blocks
         reversed_features = list(reversed(in_channels[:-1]))
 
@@ -31,17 +35,20 @@ class UNetDecoder(DecoderSpec):
 
         blocks = []
         for block_index, encoder_features in enumerate(reversed_features):
+            if out_channels is not None:
+                out_channels_.append(out_channels[block_index])
+            else:
+                out_channels_.append(encoder_features)
             blocks.append(
-                decoder_block(
-                    in_channels=out_channels[-1],
+                block_fn(
+                    in_channels=out_channels_[-2],
                     enc_channels=encoder_features,
-                    out_channels=encoder_features,
+                    out_channels=out_channels_[-1],
                     dilation=dilation_factors[block_index],
                     **kwargs))
-            out_channels.append(encoder_features)
 
         self.blocks = nn.ModuleList(blocks)
-        self._out_channels = out_channels
+        self._out_channels = out_channels_
 
     @property
     def out_channels(self) -> List[int]:

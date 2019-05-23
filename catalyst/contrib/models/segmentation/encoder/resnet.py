@@ -35,7 +35,7 @@ RESNET_PARAMS = {
 class ResnetEncoder(EncoderSpec):
     def __init__(
         self,
-        arch: str,
+        arch: str = "resnet18",
         pretrained: bool = True,
         requires_grad: bool = False,
         layers: List[int] = None
@@ -70,11 +70,11 @@ class ResnetEncoder(EncoderSpec):
 
     @property
     def out_channels(self) -> List[int]:
-        return self._channels
+        return _take(self._channels, self._layers)
 
     @property
     def out_strides(self) -> List[int]:
-        return self._strides
+        return _take(self._strides, self._layers)
 
     @property
     def encoder_layers(self):

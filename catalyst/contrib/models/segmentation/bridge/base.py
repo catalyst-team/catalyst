@@ -2,15 +2,21 @@ from typing import List
 import torch
 
 from .core import BridgeSpec
-from ..blocks.unet import UnetCentralBlock
+from ..blocks import CentralBlock, UnetDownsampleBlock
 
 
 class BaseUnetBridge(BridgeSpec):
-    def __init__(self, in_channels: List[int], out_channels: int, **kwargs):
+    def __init__(
+        self,
+        in_channels: List[int],
+        out_channels: int,
+        block_fn: CentralBlock = UnetDownsampleBlock,
+        **kwargs
+    ):
         super().__init__()
         self._in_channels = in_channels
         self._out_channels = in_channels + [out_channels]
-        self.block = UnetCentralBlock(
+        self.block = block_fn(
             in_channels=in_channels[-1],
             out_channels=out_channels,
             **kwargs

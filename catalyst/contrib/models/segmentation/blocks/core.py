@@ -47,5 +47,9 @@ class DecoderBlock(ABC, nn.Module):
         pass
 
     @abstractmethod
-    def forward(self, down: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self,
+        down: torch.Tensor,
+        left: torch.Tensor
+    ) -> torch.Tensor:
         pass

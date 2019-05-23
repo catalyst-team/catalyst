@@ -8,7 +8,7 @@ from .blocks import LinknetDecoderBlock
 
 class Linknet(UnetSpec):
     def __init__(
-        self, num_classes=1, in_channels=3, num_channels=64, num_blocks=4
+        self, num_classes=1, in_channels=3, num_channels=32, num_blocks=4
     ):
         encoder = UnetEncoder(
             in_channels=in_channels,
@@ -22,7 +22,7 @@ class Linknet(UnetSpec):
         decoder = UNetDecoder(
             in_channels=bridge.out_channels,
             dilation_factors=encoder.out_strides,
-            decoder_block=LinknetDecoderBlock
+            block_fn=LinknetDecoderBlock
         )
         head = BaseUnetHead(num_channels, num_classes)
         super().__init__(
