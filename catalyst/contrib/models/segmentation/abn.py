@@ -7,8 +7,8 @@ __all__ = [
 
 # Activation names
 ACT_RELU = "relu"
-ACT_LEAKY_RELU = "leaky_relu"
 ACT_ELU = "elu"
+ACT_LEAKY_RELU = "leaky_relu"
 ACT_SELU = "selu"
 ACT_NONE = "none"
 

@@ -4,11 +4,17 @@ import torch
 import torch.nn as nn
 
 from .core import EncoderSpec
-from ..unet_blocks import UnetEncoderBlock
+from ..blocks.unet import UnetEncoderBlock
 
 
 class UnetEncoder(EncoderSpec):
-    def __init__(self, in_channels: int, num_channels: int, num_blocks: int):
+    def __init__(
+        self,
+        in_channels: int,
+        num_channels: int,
+        num_blocks: int,
+        **kwargs
+    ):
         super().__init__()
 
         self.num_filters = num_channels
@@ -17,7 +23,8 @@ class UnetEncoder(EncoderSpec):
             in_channels = in_channels if not i else num_channels * 2 ** (i - 1)
             out_channels = num_channels * 2 ** i
             self.add_module(
-                f"block{i + 1}", UnetEncoderBlock(in_channels, out_channels)
+                f"block{i + 1}",
+                UnetEncoderBlock(in_channels, out_channels, **kwargs)
             )
             self.add_module(f"pool{i + 1}", nn.MaxPool2d(2, 2))
 

@@ -188,10 +188,9 @@ class MobileNetV3(nn.Module):
                 input_channel,
                 _make_divisible(exp_size * width_mult, 8)
             ),
-            SELayer(
-                (_make_divisible(exp_size * width_mult, 8))
-                if mode == "small"
-                else nn.Sequential())
+            (SELayer(_make_divisible(exp_size * width_mult, 8))
+             if mode == "small"
+             else nn.Sequential())
         )
         layers.append(last_conv)
         self.output_channel = _make_divisible(1280 * width_mult, 8) \

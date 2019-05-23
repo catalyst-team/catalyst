@@ -2,10 +2,10 @@ from typing import List
 import torch
 
 from .core import BridgeSpec
-from ..unet_blocks import UnetCentralBlock
+from ..blocks.unet import UnetCentralBlock
 
 
-class UnetBridge(BridgeSpec):
+class BaseUnetBridge(BridgeSpec):
     def __init__(self, in_channels: List[int], out_channels: int, **kwargs):
         super().__init__()
         self._in_channels = in_channels

@@ -6,7 +6,7 @@ import torch.nn as nn
 from .core import HeadSpec
 
 
-class UnetHead(HeadSpec):
+class BaseUnetHead(HeadSpec):
     def __init__(self, in_channels: int, out_channels: int):
         super().__init__()
         self.head = nn.Conv2d(in_channels, out_channels, 1)

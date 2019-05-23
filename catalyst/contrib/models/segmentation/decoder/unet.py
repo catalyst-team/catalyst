@@ -4,7 +4,8 @@ import torch
 import torch.nn as nn
 
 from .core import DecoderSpec
-from ..unet_blocks import UnetDecoderBlock
+from ..blocks.core import DecoderBlock
+from ..blocks.unet import UnetDecoderBlock
 
 
 class UNetDecoder(DecoderSpec):
@@ -12,6 +13,8 @@ class UNetDecoder(DecoderSpec):
         self,
         in_channels: List[int],
         dilation_factors: List[int] = None,
+        decoder_block: DecoderBlock = UnetDecoderBlock,
+        **kwargs
     ):
         super().__init__()
 
@@ -22,14 +25,19 @@ class UNetDecoder(DecoderSpec):
 
         if dilation_factors is None:
             dilation_factors = [1] * len(reversed_features)
+        else:
+            assert len(dilation_factors) == len(reversed_features)
+            dilation_factors = list(reversed(dilation_factors))
 
         blocks = []
         for block_index, encoder_features in enumerate(reversed_features):
             blocks.append(
-                UnetDecoderBlock(
-                    in_channels=out_channels[-1] + encoder_features,
+                decoder_block(
+                    in_channels=out_channels[-1],
+                    enc_channels=encoder_features,
                     out_channels=encoder_features,
-                    dilation=dilation_factors[block_index]))
+                    dilation=dilation_factors[block_index],
+                    **kwargs))
             out_channels.append(encoder_features)
 
         self.blocks = nn.ModuleList(blocks)
