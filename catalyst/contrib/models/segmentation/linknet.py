@@ -1,7 +1,7 @@
 from typing import List
 from functools import partial
 
-from .blocks import UnetUpsampleBlock, LinknetDecoderBlock
+from .blocks import LinknetDecoderBlock
 
 from .encoder import UnetEncoder, ResnetEncoder
 from .bridge import BaseUnetBridge
@@ -54,11 +54,6 @@ class ResnetLinknet(UnetSpec):
             layers=layers
         )
         bridge = None
-        # bridge = BaseUnetBridge(
-        #     in_channels=encoder.out_channels,
-        #     out_channels=encoder.out_channels[-1],
-        #     block_fn=partial(UnetUpsampleBlock, pool_first=False)
-        # )
         decoder_in_channels = encoder.out_channels \
             if bridge is None \
             else bridge.out_channels

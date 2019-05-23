@@ -59,8 +59,11 @@ class ResnetUnet(UnetSpec):
             out_channels=encoder.out_channels[-1],
             block_fn=partial(UnetUpsampleBlock, pool_first=True)
         )
+        decoder_in_channels = encoder.out_channels \
+            if bridge is None \
+            else bridge.out_channels
         decoder = UNetDecoder(
-            in_channels=bridge.out_channels,
+            in_channels=decoder_in_channels,
             block_fn=partial(
                 UnetDecoderBlock,
                 cat_first=True,

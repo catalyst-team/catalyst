@@ -1,3 +1,4 @@
+# flake8: noqa
 from .blocks import *
 from .unet import *
 from .linknet import *

@@ -3,7 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from ..abn import ABN, ACT_RELU
-from .core import EncoderBlock, CentralBlock, DecoderBlock
+from .core import EncoderBlock, CentralBlock, DecoderBlock, \
+    _get_block, _upsample
 
 
 class UnetEncoderBlock(EncoderBlock):
@@ -17,17 +18,14 @@ class UnetEncoderBlock(EncoderBlock):
         **kwargs
     ):
         super().__init__()
-        self._block = nn.Sequential(
-            nn.Conv2d(
-                in_channels, out_channels,
-                kernel_size=3, padding=1, stride=1, bias=False,
-                **kwargs),
-            abn_block(out_channels, activation=activation),
-            nn.Conv2d(
-                out_channels, out_channels,
-                kernel_size=3, padding=1, stride=stride, bias=False,
-                **kwargs),
-            abn_block(out_channels, activation=activation)
+        self._block = _get_block(
+            in_channels=in_channels,
+            out_channels=out_channels,
+            abn_block=abn_block,
+            activation=activation,
+            first_stride=1,
+            second_stride=stride,
+            **kwargs
         )
 
     @property
@@ -45,17 +43,14 @@ class UnetDownsampleBlock(CentralBlock):
         **kwargs
     ):
         super().__init__()
-        self._block = nn.Sequential(
-            nn.Conv2d(
-                in_channels, out_channels,
-                kernel_size=3, padding=1, stride=2, bias=False,
-                **kwargs),
-            abn_block(out_channels, activation=activation),
-            nn.Conv2d(
-                out_channels, out_channels,
-                kernel_size=3, padding=1, bias=False,
-                **kwargs),
-            abn_block(out_channels, activation=activation)
+        self._block = _get_block(
+            in_channels=in_channels,
+            out_channels=out_channels,
+            abn_block=abn_block,
+            activation=activation,
+            first_stride=2,
+            second_stride=1,
+            **kwargs
         )
 
     @property
@@ -75,17 +70,14 @@ class UnetUpsampleBlock(CentralBlock):
     ):
         super().__init__()
         self.pool_first = pool_first
-        self._block = nn.Sequential(
-            nn.Conv2d(
-                in_channels, out_channels,
-                kernel_size=3, padding=1, stride=1, bias=False,
-                **kwargs),
-            abn_block(out_channels, activation=activation),
-            nn.Conv2d(
-                out_channels, out_channels,
-                kernel_size=3, padding=1, bias=False,
-                **kwargs),
-            abn_block(out_channels, activation=activation)
+        self._block = _get_block(
+            in_channels=in_channels,
+            out_channels=out_channels,
+            abn_block=abn_block,
+            activation=activation,
+            first_stride=1,
+            second_stride=1,
+            **kwargs
         )
 
     @property
@@ -123,42 +115,21 @@ class UnetDecoderBlock(DecoderBlock):
 
         self._block = nn.Sequential(
             nn.Dropout(pre_dropout_rate, inplace=True),
-            nn.Conv2d(
-                in_channels + enc_channels, out_channels,
-                kernel_size=3, padding=1, stride=1, bias=False,
-                **kwargs),
-            abn_block(out_channels, activation=activation),
-            nn.Conv2d(
-                out_channels, out_channels,
-                kernel_size=3, padding=1, stride=1, bias=False,
-                **kwargs),
-            abn_block(out_channels, activation=activation),
+            _get_block(
+                in_channels=in_channels + enc_channels,
+                out_channels=out_channels,
+                abn_block=abn_block,
+                activation=activation,
+                first_stride=1,
+                second_stride=1,
+                **kwargs
+            ),
             nn.Dropout(post_dropout_rate, inplace=True)
         )
 
     @property
     def block(self):
         return self._block
-
-    def upsample(
-        self,
-        x: torch.Tensor,
-        scale: int = None,
-        size: int = None
-    ) -> torch.Tensor:
-        if scale is None:
-            x = F.interpolate(
-                x,
-                size=size,
-                mode=self.interpolation_mode,
-                align_corners=self.align_corners)
-        else:
-            x = F.interpolate(
-                x,
-                scale_factor=self.upsample_scale,
-                mode=self.interpolation_mode,
-                align_corners=self.align_corners)
-        return x
 
     def forward(
         self,
@@ -168,12 +139,20 @@ class UnetDecoderBlock(DecoderBlock):
 
         if self.cat_first:
             x = torch.cat([down, left], 1)
-            x = self.upsample(x, scale=self.upsample_scale)
+            x = _upsample(
+                x,
+                scale=self.upsample_scale,
+                interpolation_mode=self.interpolation_mode,
+                align_corners=self.align_corners
+            )
         else:
-            down = self.upsample(
+            x = _upsample(
                 down,
                 scale=self.upsample_scale,
-                size=left.shape[2:])
-            x = torch.cat([down, left], 1)
+                size=left.shape[2:],
+                interpolation_mode=self.interpolation_mode,
+                align_corners=self.align_corners
+            )
+            x = torch.cat([x, left], 1)
 
         return self.block(x)

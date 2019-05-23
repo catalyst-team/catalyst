@@ -1,8 +1,7 @@
 import torch
-import torch.nn.functional as F
 import torch.nn as nn
 
-from .core import DecoderBlock
+from .core import DecoderBlock, _get_block, _upsample
 from ..abn import ABN, ACT_RELU
 
 
@@ -31,49 +30,21 @@ class LinknetDecoderBlock(DecoderBlock):
 
         self._block = nn.Sequential(
             nn.Dropout(pre_dropout_rate, inplace=True),
-            nn.Conv2d(
-                in_channels, out_channels,
-                kernel_size=3, padding=1, stride=1, bias=False,
-                **kwargs),
-            abn_block(out_channels, activation=activation),
-            nn.Conv2d(
-                out_channels, out_channels,
-                kernel_size=3, padding=1, stride=1, bias=False,
-                **kwargs),
-            abn_block(out_channels, activation=activation),
+            _get_block(
+                in_channels=in_channels,
+                out_channels=out_channels,
+                abn_block=abn_block,
+                activation=activation,
+                first_stride=1,
+                second_stride=1,
+                **kwargs
+            ),
             nn.Dropout(post_dropout_rate, inplace=True)
         )
 
     @property
     def block(self):
         return self._block
-
-    def upsample(
-        self,
-        x: torch.Tensor,
-        scale: int = None,
-        size: int = None
-    ) -> torch.Tensor:
-        if scale is None:
-            x = F.interpolate(
-                x,
-                size=size,
-                mode=self.interpolation_mode,
-                align_corners=self.align_corners)
-        else:
-            x = F.interpolate(
-                x,
-                scale_factor=self.upsample_scale,
-                mode=self.interpolation_mode,
-                align_corners=self.align_corners)
-        return x
-
-    def forward(self, down: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
-        encoder_hw = left.shape[2:]
-        x = F.interpolate(
-            down, size=encoder_hw, mode="bilinear", align_corners=True)
-        x = self.block(x)
-        return x + left
 
     def forward(
         self,
@@ -83,13 +54,21 @@ class LinknetDecoderBlock(DecoderBlock):
 
         if self.sum_first:
             x = down + left
-            x = self.upsample(x, scale=self.upsample_scale)
+            x = _upsample(
+                x,
+                scale=self.upsample_scale,
+                interpolation_mode=self.interpolation_mode,
+                align_corners=self.align_corners
+            )
             x = self.block(x)
         else:
-            x = self.upsample(
+            x = _upsample(
                 down,
                 scale=self.upsample_scale,
-                size=left.shape[2:])
+                size=left.shape[2:],
+                interpolation_mode=self.interpolation_mode,
+                align_corners=self.align_corners
+            )
             x = self.block(x)
             x = x + left
 

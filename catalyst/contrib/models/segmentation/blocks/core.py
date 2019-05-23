@@ -2,6 +2,61 @@ from abc import abstractmethod, ABC
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
+
+from ..abn import ABN, ACT_RELU
+
+
+def _get_block(
+    in_channels: int,
+    out_channels: int,
+    abn_block: nn.Module = ABN,
+    activation: str = ACT_RELU,
+    first_stride: int = 1,
+    second_stride: int = 1,
+    complexity: int = 1,
+    **kwargs
+):
+    layers = [
+        nn.Conv2d(
+            in_channels, out_channels,
+            kernel_size=3, padding=1, stride=first_stride, bias=False,
+            **kwargs),
+        abn_block(out_channels, activation=activation),
+    ]
+    if complexity > 0:
+        layers_ = [
+            nn.Conv2d(
+                out_channels, out_channels,
+                kernel_size=3, padding=1, stride=second_stride, bias=False,
+                **kwargs),
+            abn_block(out_channels, activation=activation)
+        ] * complexity
+        layers = layers + layers_
+    block = nn.Sequential(*layers)
+    return block
+
+
+def _upsample(
+    x: torch.Tensor,
+    scale: int = None,
+    size: int = None,
+    interpolation_mode: str = "bilinear",
+    align_corners: bool = True
+) -> torch.Tensor:
+    if scale is None:
+        x = F.interpolate(
+            x,
+            size=size,
+            mode=interpolation_mode,
+            align_corners=align_corners)
+    else:
+        x = F.interpolate(
+            x,
+            scale_factor=scale,
+            mode=interpolation_mode,
+            align_corners=align_corners)
+    return x
 
 
 class EncoderBlock(ABC, nn.Module):
