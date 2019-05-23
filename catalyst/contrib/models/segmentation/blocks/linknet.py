@@ -48,12 +48,12 @@ class LinknetDecoderBlock(DecoderBlock):
 
     def forward(
         self,
-        down: torch.Tensor,
+        bottom: torch.Tensor,
         left: torch.Tensor
     ) -> torch.Tensor:
 
         if self.sum_first:
-            x = down + left
+            x = bottom + left
             x = _upsample(
                 x,
                 scale=self.upsample_scale,
@@ -63,7 +63,7 @@ class LinknetDecoderBlock(DecoderBlock):
             x = self.block(x)
         else:
             x = _upsample(
-                down,
+                bottom,
                 scale=self.upsample_scale,
                 size=left.shape[2:],
                 interpolation_mode=self.interpolation_mode,

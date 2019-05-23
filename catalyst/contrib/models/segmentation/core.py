@@ -1,4 +1,6 @@
 from typing import List
+from pprint import pprint
+
 import torch
 import torch.nn as nn
 
@@ -23,13 +25,13 @@ class UnetSpec(nn.Module):
         self.head = head or (lambda x: x)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        print(f"x: {[z.shape for z in [x]]}")
+        pprint(f"x: {[z.shape for z in [x]]}")
         encoder_features: List[torch.Tensor] = self.encoder(x)
-        print(f"encoder_features: {[z.shape for z in encoder_features]}")
+        pprint(f"encoder_features: {[z.shape for z in encoder_features]}")
         bridge_features: List[torch.Tensor] = self.bridge(encoder_features)
-        print(f"bridge_features: {[z.shape for z in bridge_features]}")
+        pprint(f"bridge_features: {[z.shape for z in bridge_features]}")
         decoder_features: List[torch.Tensor] = self.decoder(bridge_features)
-        print(f"decoder_features: {[z.shape for z in decoder_features]}")
+        pprint(f"decoder_features: {[z.shape for z in decoder_features]}")
         output: torch.Tensor = self.head(decoder_features)
-        print(f"output: {[z.shape for z in [output]]}")
+        pprint(f"output: {[z.shape for z in [output]]}")
         return output

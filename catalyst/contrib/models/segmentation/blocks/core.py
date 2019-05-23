@@ -104,7 +104,7 @@ class DecoderBlock(ABC, nn.Module):
     @abstractmethod
     def forward(
         self,
-        down: torch.Tensor,
+        bottom: torch.Tensor,
         left: torch.Tensor
     ) -> torch.Tensor:
         pass

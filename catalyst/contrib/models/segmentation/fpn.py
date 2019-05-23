@@ -1,16 +1,14 @@
 from typing import List
-from functools import partial
-
-from .blocks import LinknetDecoderBlock
 
 from .encoder import UnetEncoder, ResnetEncoder
 from .bridge import BaseUnetBridge
-from .decoder import UNetDecoder
+from .decoder import FPNDecoder
 from .head import BaseUnetHead
 from .core import UnetSpec
 
 
-class Linknet(UnetSpec):
+class FPNUnet(UnetSpec):
+
     def __init__(
         self, num_classes=1, in_channels=3, num_channels=32, num_blocks=4
     ):
@@ -23,12 +21,16 @@ class Linknet(UnetSpec):
             in_channels=encoder.out_channels,
             out_channels=encoder.out_channels[-1] * 2
         )
-        decoder = UNetDecoder(
-            in_channels=bridge.out_channels,
-            dilation_factors=encoder.out_strides,
-            block_fn=LinknetDecoderBlock
+        decoder_in_channels = encoder.out_channels \
+            if bridge is None \
+            else bridge.out_channels
+        decoder = FPNDecoder(
+            in_channels=decoder_in_channels,
+            # dilation_factors=encoder.out_strides
         )
-        head = BaseUnetHead(num_channels, num_classes)
+        head = BaseUnetHead(
+            decoder.out_channels[-1],
+            num_classes)
         super().__init__(
             encoder=encoder,
             bridge=bridge,
@@ -37,7 +39,7 @@ class Linknet(UnetSpec):
         )
 
 
-class ResnetLinknet(UnetSpec):
+class ResnetFPNUnet(UnetSpec):
 
     def __init__(
         self,
@@ -57,18 +59,16 @@ class ResnetLinknet(UnetSpec):
         decoder_in_channels = encoder.out_channels \
             if bridge is None \
             else bridge.out_channels
-        decoder = UNetDecoder(
+        decoder = FPNDecoder(
             in_channels=decoder_in_channels,
-            block_fn=partial(
-                LinknetDecoderBlock,
-                sum_first=False,
-                upsample_scale=None)
             # dilation_factors=encoder.out_strides
         )
         head = BaseUnetHead(
             decoder.out_channels[-1],
             num_classes,
-            num_upsample_blocks=2)
+            upsample_scale=4,
+            interpolation_mode="bilinear",
+            align_corners=True)
         super().__init__(
             encoder=encoder,
             bridge=bridge,

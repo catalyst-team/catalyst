@@ -73,7 +73,7 @@ class ResnetUnet(UnetSpec):
         head = BaseUnetHead(
             decoder.out_channels[-1],
             num_classes,
-            upsample=1)
+            num_upsample_blocks=1)
         super().__init__(
             encoder=encoder,
             bridge=bridge,

@@ -66,10 +66,16 @@ class UnetUpsampleBlock(CentralBlock):
         abn_block: nn.Module = ABN,
         activation: str = ACT_RELU,
         pool_first: bool = False,
+        upsample_scale: int = 2,
+        interpolation_mode: str = "nearest",
+        align_corners: bool = None,
         **kwargs
     ):
         super().__init__()
         self.pool_first = pool_first
+        self.upsample_scale = upsample_scale
+        self.interpolation_mode = interpolation_mode
+        self.align_corners = align_corners
         self._block = _get_block(
             in_channels=in_channels,
             out_channels=out_channels,
@@ -86,8 +92,15 @@ class UnetUpsampleBlock(CentralBlock):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         if self.pool_first:
-            x = F.max_pool2d(x, kernel_size=2, stride=2)
-        x = F.interpolate(x, scale_factor=2, mode="nearest")
+            x = F.max_pool2d(
+                x,
+                kernel_size=self.upsample_scale,
+                stride=self.upsample_scale)
+        x = F.interpolate(
+            x,
+            scale_factor=self.upsample_scale,
+            mode=self.interpolation_mode,
+            align_corners=self.align_corners)
         return self.block(x)
 
 
@@ -133,26 +146,24 @@ class UnetDecoderBlock(DecoderBlock):
 
     def forward(
         self,
-        down: torch.Tensor,
+        bottom: torch.Tensor,
         left: torch.Tensor
     ) -> torch.Tensor:
 
         if self.cat_first:
-            x = torch.cat([down, left], 1)
+            x = torch.cat([bottom, left], 1)
             x = _upsample(
                 x,
                 scale=self.upsample_scale,
                 interpolation_mode=self.interpolation_mode,
-                align_corners=self.align_corners
-            )
+                align_corners=self.align_corners)
         else:
             x = _upsample(
-                down,
+                bottom,
                 scale=self.upsample_scale,
                 size=left.shape[2:],
                 interpolation_mode=self.interpolation_mode,
-                align_corners=self.align_corners
-            )
+                align_corners=self.align_corners)
             x = torch.cat([x, left], 1)
 
         return self.block(x)
