@@ -24,4 +24,5 @@ mock
 redis
 pymongo
 pyarrow
+lz4
 gym

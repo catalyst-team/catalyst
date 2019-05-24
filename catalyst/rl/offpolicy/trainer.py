@@ -148,6 +148,7 @@ class Trainer:
                 self._num_transitions += len(episode[-1])
             except queue.Empty:
                 break
+        self.replay_buffer.recalculate_index()
         stored = len(self.replay_buffer)
 
         print(

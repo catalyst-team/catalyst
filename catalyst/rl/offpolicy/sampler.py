@@ -1,24 +1,28 @@
 from typing import Union, List
 
 import os
-import gc
-import time
-import random
-from datetime import datetime
-import torch
-from tensorboardX import SummaryWriter
-
-from catalyst.utils.misc import set_global_seed
-from catalyst.dl.utils import UtilsFactory
-from catalyst.rl.utils import EpisodeRunner
-from catalyst.rl.exploration import ExplorationHandler
-from catalyst.rl.environments.core import EnvironmentSpec
-from catalyst.rl.db.core import DBSpec
-from catalyst.rl.agents.core import ActorSpec, CriticSpec
-
-# speed up optimization
 os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+
+import gc  # noqa E402
+import time  # noqa E402
+import random  # noqa E402
+from datetime import datetime  # noqa E402
+
+import torch  # noqa E402
 torch.set_num_threads(1)
+
+from tensorboardX import SummaryWriter  # noqa E402
+
+from catalyst.utils.misc import set_global_seed  # noqa E402
+from catalyst.dl.utils import UtilsFactory  # noqa E402
+from catalyst.rl.utils import EpisodeRunner  # noqa E402
+from catalyst.rl.exploration import ExplorationHandler  # noqa E402
+from catalyst.rl.environments.core import EnvironmentSpec  # noqa E402
+from catalyst.rl.db.core import DBSpec  # noqa E402
+from catalyst.rl.agents.core import ActorSpec, CriticSpec  # noqa E402
+
+
 _BIG_NUM = int(2 ** 32 - 2)
 _SEED_RANGE = _BIG_NUM
 
