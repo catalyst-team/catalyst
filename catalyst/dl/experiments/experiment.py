@@ -159,7 +159,7 @@ class BaseExperiment(Experiment):
         return self._criterion
 
     def get_optimizer_and_model(self, stage: str,
-                                model=None) -> Tuple[_Optimizer, _Model]:
+                                model: nn.Module = None) -> Tuple[_Optimizer, _Model]:
         return self._optimizer, model
 
     def get_scheduler(self, stage: str, optimizer=None) -> _Scheduler:
@@ -173,6 +173,40 @@ class BaseExperiment(Experiment):
 
 
 class SupervisedExperiment(BaseExperiment):
+
+    def __init__(self, model: _Model,
+             loaders: "OrderedDict[str, DataLoader]",
+             callbacks: "List[Callback]" = None,
+             logdir: str = None,
+             stage: str = "train",
+             criterion: _Criterion = None,
+             optimizer: _Optimizer = None,
+             scheduler: _Scheduler = None,
+             num_epochs: int = 1,
+             valid_loader: str = "valid",
+             main_metric: str = "loss",
+             minimize_metric: bool = True,
+             verbose: bool = False,
+             state_kwargs: Dict = None,
+             checkpoint_data: Dict = None,
+             fp16=False):
+
+        super().__init__(model,
+             loaders,
+             callbacks,
+             logdir,
+             stage,
+             criterion,
+             optimizer,
+             scheduler,
+             num_epochs,
+             valid_loader,
+             main_metric,
+             minimize_metric,
+             verbose,
+             state_kwargs,
+             checkpoint_data)
+        self.fp16 = fp16
 
     def get_callbacks(self, stage: str) -> "List[Callback]":
         callbacks = self._callbacks
@@ -190,6 +224,22 @@ class SupervisedExperiment(BaseExperiment):
                 if key is not None and not is_already_present:
                     callbacks.append(value())
         return callbacks
+
+    def get_optimizer_and_model(self, stage: str,
+            model: nn.Module) -> Tuple[_Optimizer, _Model]:
+
+        optimizer = self._optimizer
+
+        if self.fp16:
+            utils.assert_fp16_available()
+            from apex import amp
+
+            model, optimizer = amp.initialize(model, optimizer,
+                                              opt_level="O1")
+        elif torch.cuda.device_count() > 1:
+            model = torch.nn.DataParallel(model)
+
+        return optimizer, model
 
 
 class ConfigExperiment(Experiment):
