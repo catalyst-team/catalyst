@@ -13,6 +13,53 @@ ACT_SELU = "selu"
 ACT_NONE = "none"
 
 
+class ABN_fake(nn.Module):
+
+    def __init__(
+        self,
+        num_features,
+        activation="leaky_relu",
+        slope=0.01
+    ):
+        """
+        Create an Activated Batch Normalization module
+        Parameters
+        ----------
+        num_features : int
+            Number of feature channels in the input and output.
+        activation : str
+            Name of the activation functions, one of:
+                `leaky_relu`, `elu` or `none`.
+        slope : float
+            Negative slope for the `leaky_relu` activation.
+        """
+        super().__init__()
+        self.num_features = num_features
+        self.activation = activation
+        self.slope = slope
+
+    def forward(self, x):
+        if self.activation == ACT_RELU:
+            return functional.relu(x, inplace=True)
+        elif self.activation == ACT_LEAKY_RELU:
+            return functional.leaky_relu(
+                x, negative_slope=self.slope, inplace=True)
+        elif self.activation == ACT_ELU:
+            return functional.elu(x, inplace=True)
+        elif self.activation == ACT_SELU:
+            return functional.selu(x, inplace=True)
+        else:
+            return x
+
+    def __repr__(self):
+        rep = "{name}({num_features}, activation={activation}"
+        if self.activation == "leaky_relu":
+            rep += ", slope={slope})"
+        else:
+            rep += ")"
+        return rep.format(name=self.__class__.__name__, **self.__dict__)
+
+
 class ABN(nn.Module):
     """
     Activated Batch Normalization
@@ -47,7 +94,7 @@ class ABN(nn.Module):
         slope : float
             Negative slope for the `leaky_relu` activation.
         """
-        super(ABN, self).__init__()
+        super().__init__()
         self.num_features = num_features
         self.affine = affine
         self.eps = eps

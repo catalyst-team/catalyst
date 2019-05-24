@@ -10,7 +10,12 @@ from .core import UnetSpec
 class FPNUnet(UnetSpec):
 
     def __init__(
-        self, num_classes=1, in_channels=3, num_channels=32, num_blocks=4
+        self,
+        num_classes: int = 1,
+        in_channels: int = 3,
+        num_channels: int = 32,
+        num_blocks: int = 4,
+        dropout: float = 0.0,
     ):
         encoder = UnetEncoder(
             in_channels=in_channels,
@@ -30,7 +35,9 @@ class FPNUnet(UnetSpec):
         )
         head = BaseUnetHead(
             decoder.out_channels[-1],
-            num_classes)
+            num_classes,
+            dropout=dropout,
+        )
         super().__init__(
             encoder=encoder,
             bridge=bridge,
@@ -47,7 +54,8 @@ class ResnetFPNUnet(UnetSpec):
         arch: str = "resnet18",
         pretrained: bool = True,
         requires_grad: bool = False,
-        layers: List[int] = None
+        layers: List[int] = None,
+        dropout: float = 0.0,
     ):
         encoder = ResnetEncoder(
             arch=arch,
@@ -66,9 +74,11 @@ class ResnetFPNUnet(UnetSpec):
         head = BaseUnetHead(
             decoder.out_channels[-1],
             num_classes,
+            dropout=dropout,
             upsample_scale=4,
             interpolation_mode="bilinear",
-            align_corners=True)
+            align_corners=True
+        )
         super().__init__(
             encoder=encoder,
             bridge=bridge,

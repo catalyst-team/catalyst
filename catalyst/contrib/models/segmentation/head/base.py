@@ -27,8 +27,9 @@ class BaseUnetHead(HeadSpec):
         upsamples = (
                 [UnetUpsampleBlock(in_channels, in_channels)]
                 * num_upsample_blocks)
+        if dropout > 0:
+            upsamples.insert(0, nn.Dropout2d(p=dropout, inplace=True))
         self.head = nn.Sequential(
-            nn.Dropout2d(p=dropout, inplace=True),
             *upsamples,
             nn.Conv2d(in_channels, out_channels, 1)
         )

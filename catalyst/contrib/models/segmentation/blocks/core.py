@@ -12,6 +12,8 @@ def _get_block(
     out_channels: int,
     abn_block: nn.Module = ABN,
     activation: str = ACT_RELU,
+    kernel_size: int = 3,
+    padding: int = 1,
     first_stride: int = 1,
     second_stride: int = 1,
     complexity: int = 1,
@@ -20,7 +22,10 @@ def _get_block(
     layers = [
         nn.Conv2d(
             in_channels, out_channels,
-            kernel_size=3, padding=1, stride=first_stride, bias=False,
+            kernel_size=kernel_size,
+            padding=padding,
+            stride=first_stride,
+            bias=False,
             **kwargs),
         abn_block(out_channels, activation=activation),
     ]
@@ -28,7 +33,10 @@ def _get_block(
         layers_ = [
             nn.Conv2d(
                 out_channels, out_channels,
-                kernel_size=3, padding=1, stride=second_stride, bias=False,
+                kernel_size=kernel_size,
+                padding=padding,
+                stride=second_stride,
+                bias=False,
                 **kwargs),
             abn_block(out_channels, activation=activation)
         ] * complexity

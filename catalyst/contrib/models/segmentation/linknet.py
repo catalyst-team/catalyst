@@ -11,8 +11,14 @@ from .core import UnetSpec
 
 
 class Linknet(UnetSpec):
+
     def __init__(
-        self, num_classes=1, in_channels=3, num_channels=32, num_blocks=4
+        self,
+        num_classes: int = 1,
+        in_channels: int = 3,
+        num_channels: int = 32,
+        num_blocks: int = 4,
+        dropout: float = 0.0,
     ):
         encoder = UnetEncoder(
             in_channels=in_channels,
@@ -28,7 +34,11 @@ class Linknet(UnetSpec):
             dilation_factors=encoder.out_strides,
             block_fn=LinknetDecoderBlock
         )
-        head = BaseUnetHead(num_channels, num_classes)
+        head = BaseUnetHead(
+            decoder.out_channels[-1],
+            num_classes,
+            dropout=dropout,
+        )
         super().__init__(
             encoder=encoder,
             bridge=bridge,
@@ -45,7 +55,8 @@ class ResnetLinknet(UnetSpec):
         arch: str = "resnet18",
         pretrained: bool = True,
         requires_grad: bool = False,
-        layers: List[int] = None
+        layers: List[int] = None,
+        dropout: float = 0.0,
     ):
         encoder = ResnetEncoder(
             arch=arch,
@@ -68,7 +79,9 @@ class ResnetLinknet(UnetSpec):
         head = BaseUnetHead(
             decoder.out_channels[-1],
             num_classes,
-            num_upsample_blocks=2)
+            dropout=dropout,
+            num_upsample_blocks=2,
+        )
         super().__init__(
             encoder=encoder,
             bridge=bridge,

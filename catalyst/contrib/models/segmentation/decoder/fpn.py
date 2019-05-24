@@ -45,7 +45,7 @@ class FPNDecoder(DecoderSpec):
     def out_channels(self) -> List[int]:
         return self._out_channels
 
-    def forward(self, x: List[torch.Tensor]):
+    def forward(self, x: List[torch.Tensor]) -> List[torch.Tensor]:
         # features from center block
         fpn_features = [self.conv1(x[-1])]
         # features from encoder blocks
