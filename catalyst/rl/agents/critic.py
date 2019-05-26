@@ -174,7 +174,6 @@ class StateActionCritic(CriticSpec):
         else:
             head_net = ValueHead(**value_head_params)
 
-
         net = cls(
             state_action_net=state_action_net,
             head_net=head_net

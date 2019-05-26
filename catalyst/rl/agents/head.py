@@ -80,21 +80,21 @@ class MultiValueHead(nn.Module):
             assert values_range is None and num_atoms > 1
         else:
             raise NotImplementedError()
-
-        self.net = nn.ModuleList([self._build_head(in_features,
-                                                   out_features,
-                                                   num_atoms,
-                                                   bias) for _ in range(num_heads)])
+        heads = [self._build_head(in_features, out_features, num_atoms,
+                                  bias) for _ in range(num_heads)]
+        self.net = nn.ModuleList(heads)
 
         self.apply(outer_init)
 
     def forward(self, inputs):
-        x: List[torch.Tensor] = list(map(lambda net:
-                                         net(inputs).view(-1, self.out_features, self.num_atoms), self.net))
-        x = list(map(lambda z: z.squeeze_(dim=1).squeeze_(dim=-1), x))
+        x: List[torch.Tensor] = []
+        for net in self.net:
+            x.append(net(inputs).view(-1, self.out_features, self.num_atoms))
+
+        x = [z.squeeze_(dim=1).squeeze_(dim=-1) for z in x]
         if self.num_atoms == 1 and self.out_features == 1:
             # make critic outputs (B, 1) instead of (B, )
-            x = list(map(lambda z: z.unsqueeze_(dim=1), x))
+            x = [z.unsqueeze_(dim=1) for z in x]
 
         return x
 
