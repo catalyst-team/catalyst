@@ -201,12 +201,10 @@ class Trainer:
             self.logger.add_scalar(
                 "buffer size", len(self.replay_buffer), self.epoch)
             self.logger.add_scalar(
-                "batches per second", i / elapsed_time, self.epoch
-            )
+                "batches per second", i / elapsed_time, self.epoch)
             self.logger.add_scalar(
                 "updates per second", i * self.batch_size / elapsed_time,
-                self.epoch
-            )
+                self.epoch)
 
             self.epoch += 1
             self.save()

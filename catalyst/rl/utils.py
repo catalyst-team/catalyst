@@ -191,25 +191,28 @@ class OffpolicyReplayBuffer(Dataset):
             if curr_p > self.capacity:
                 diff = curr_p - self.capacity
 
-                trajectories_lens_ = np.cumsum(self._trajectories_lens)
-                trajectories_lens_mask = trajectories_lens_ < diff
-                offset = np.where(
-                    trajectories_lens_mask, trajectories_lens_, 0
-                ).argmax() + 1
-                self._trajectories_lens = self._trajectories_lens[offset + 1:]
-                offset = trajectories_lens_[offset]
+                tr_cumsum = np.cumsum(self._trajectories_lens)
+                tr_cumsum_mask = tr_cumsum < diff
+                tr_offset = np.where(tr_cumsum_mask, tr_cumsum, -1)
+                offset = tr_offset.argmax()
+                offset += 1 if tr_offset[offset] > -1 else 0
 
-                curr_p = self.capacity_limit - offset
-                self.observations[:curr_p] = self.observations[offset:]
-                self.observations[curr_p:] = np.zeros_like(
-                    self.observations[curr_p:]
-                )
-                self.actions[:curr_p] = self.actions[offset:]
-                self.actions[curr_p:] = np.zeros_like(self.actions[curr_p:])
-                self.rewards[:curr_p] = self.rewards[offset:]
-                self.rewards[curr_p:] = np.zeros_like(self.rewards[curr_p:])
-                self.dones[:curr_p] = self.dones[offset:]
-                self.dones[curr_p:] = np.zeros_like(self.dones[curr_p:])
+                self._trajectories_lens = self._trajectories_lens[offset + 1:]
+                offset = tr_cumsum[offset]
+                curr_p = curr_p - offset
+
+                delta = int(1e5)
+                for i in range(0, curr_p, delta):
+                    i_start = i * delta
+                    i_end = min((i + 1) * delta, curr_p)
+                    self.observations[i_start:i_end] = \
+                        self.observations[offset+i_start:offset+i_end]
+                    self.actions[i_start:i_end] = \
+                        self.actions[offset + i_start:offset + i_end]
+                    self.rewards[i_start:i_end] = \
+                        self.rewards[offset + i_start:offset + i_end]
+                    self.dones[i_start:i_end] = \
+                        self.dones[offset + i_start:offset + i_end]
 
                 self.pointer.value = curr_p
             self.length = curr_p

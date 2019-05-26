@@ -1,10 +1,10 @@
 args:
-  logdir: ./logs/rl-gym-dqn  #  change me
+  logdir: ./logs/atari-dqn
   expdir: src
 
   vis: 0
   infer: 0   #  change me
-  train: 8  #  change me
+  train: 16  #  change me
 
 db:
   db: MongoDB  # RedisDB or MongoDB
@@ -61,24 +61,24 @@ algorithm:
 
   critic_optimizer_params:
     optimizer: Adam
-    lr: 0.0003
+    lr: 0.001
 
   critic_grad_clip_params:
     func: clip_grad_value_
     clip_value: 1.0
 
 trainer:
-  batch_size: 256              # transitions
-  num_workers: 2
-  epoch_len: 1000              # batches
+  batch_size: 1024              # transitions
+  num_workers: 4
+  epoch_len: 1000               # batches
 
-  replay_buffer_size: 1000000  # transitions
-  replay_buffer_mode: memmap   # numpy or memmap
-  start_learning: 50000        # transitions
+  replay_buffer_size: 10000000  # transitions
+  replay_buffer_mode: memmap    # numpy or memmap
+  start_learning: 50000         # transitions
 
-  save_period: 100             # epochs
-  weights_sync_period: 1       # epochs
-  target_update_period: 500    # batches
+  save_period: 100              # epochs
+  weights_sync_period: 1        # epochs
+  target_update_period: 500     # batches
 
 sampler:
   weights_sync_period: 1
