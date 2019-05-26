@@ -55,7 +55,7 @@ class DQN(AlgorithmDiscrete):
             value_loss = self.critic_criterion(q_values_t, q_target_t).mean()
             total_loss = total_loss + value_loss
 
-        return total_loss
+        return torch.mean(total_loss)
 
     def _categorical_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
@@ -86,7 +86,7 @@ class DQN(AlgorithmDiscrete):
             )
             total_loss = total_loss + value_loss
 
-        return total_loss
+        return torch.mean(total_loss)
 
     def _quantile_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
@@ -115,7 +115,7 @@ class DQN(AlgorithmDiscrete):
             )
             total_loss = total_loss + value_loss
 
-        return total_loss
+        return torch.mean(total_loss)
 
     def update_step(self, value_loss, critic_update=True):
         # critic update
