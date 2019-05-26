@@ -25,12 +25,12 @@ class REINFORCE(ActorAlgorithmSpec):
 
     @torch.no_grad()
     def get_rollout(self, states, actions, rewards, dones):
-        states = self._to_tensor(states)
-        actions = self._to_tensor(actions)
+        states2gpu = self._to_tensor(states)
+        actions2gpu = self._to_tensor(actions)
         rewards = np.array(rewards)
         trajectory_len = rewards.shape[0]
 
-        _, logprobs = self.actor(states, logprob=actions)
+        _, logprobs = self.actor(states2gpu, logprob=actions2gpu)
         logprobs = logprobs.cpu().numpy().reshape(-1)
 
         returns = np.dot(
@@ -38,6 +38,9 @@ class REINFORCE(ActorAlgorithmSpec):
             rewards)
 
         rollout = {
+            "state": states,
+            "action": actions,
+            "reward": rewards,
             "return": returns,
             "action_logprob": logprobs
         }

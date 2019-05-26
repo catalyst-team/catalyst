@@ -138,12 +138,7 @@ class Trainer:
             rollout = self.algorithm.get_rollout(
                 states, actions, rewards, dones
             )
-            self.replay_buffer.push_rollout(
-                state=states,
-                action=actions,
-                reward=rewards,
-                **rollout,
-            )
+            self.replay_buffer.push_rollout(**rollout)
 
         # @TODO: refactor
         self.algorithm.postprocess_buffer(

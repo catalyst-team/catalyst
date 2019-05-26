@@ -500,7 +500,10 @@ class EpisodeRunner:
             exploration_strategy.update_actor(self.agent, states)
 
         self._init_buffers()
-        self._init_with_observation(self.init_observation or self.env.reset())
+        if self.init_observation is not None:
+            self._init_with_observation(self.init_observation)
+        else:
+            self._init_with_observation(self.env.reset())
 
     def run(self, exploration_strategy):
         episode_reward, num_steps, done = 0, 0, False
@@ -521,8 +524,7 @@ class EpisodeRunner:
             transition = [next_observation, action, reward, done]
             self._put_transition(transition)
             num_steps += 1
-
-            if num_steps % self.segment_length:
+            if num_steps % self.segment_length == 0:
                 break
 
         if done:

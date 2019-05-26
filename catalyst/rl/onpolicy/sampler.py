@@ -60,7 +60,7 @@ class Sampler:
             agent=self.agent,
             device=self._device,
             capacity=buffer_size,
-            deterministic=self._infer
+            deterministic=self._infer,
             segment_length=segment_length
         )
 

@@ -39,16 +39,16 @@ class PPO(ActorCriticAlgorithmSpec):
 
     @torch.no_grad()
     def get_rollout(self, states, actions, rewards, dones):
-        states = self._to_tensor(states)
-        actions = self._to_tensor(actions)
+        states2gpu = self._to_tensor(states)
+        actions2gpu = self._to_tensor(actions)
         rewards = np.array(rewards)
         trajectory_len = rewards.shape[0]
 
         values = torch.zeros((trajectory_len + 1, 1)).to(self._device)
-        values[:trajectory_len] = self.critic(states)
+        values[:trajectory_len] = self.critic(states2gpu)
         values = values.cpu().numpy().reshape(-1)
 
-        _, logprobs = self.actor(states, logprob=actions)
+        _, logprobs = self.actor(states2gpu, logprob=actions2gpu)
         logprobs = logprobs.cpu().numpy().reshape(-1)
 
         deltas = rewards + self.gamma * values[1:] - values[:-1]
@@ -65,6 +65,9 @@ class PPO(ActorCriticAlgorithmSpec):
         pivot = trajectory_len if dones[-1] else trajectory_len - 1
 
         rollout = {
+            "state": states[:pivot],
+            "action": actions[:pivot],
+            "reward": rewards[:pivot],
             "return": returns[:pivot],
             "value": values[:pivot],
             "advantage": advantages[:pivot],
