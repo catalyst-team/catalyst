@@ -38,6 +38,7 @@ class Sampler:
         episode_limit: int = None,
         force_store: bool = False,
         gc_period: int = 10,
+        segment_length: int = None
     ):
         self._device = UtilsFactory.prepare_device()
         self._seed = 42 + id
@@ -60,6 +61,7 @@ class Sampler:
             device=self._device,
             capacity=buffer_size,
             deterministic=self._infer
+            segment_length=segment_length
         )
 
         # synchronization configuration

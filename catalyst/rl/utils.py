@@ -12,6 +12,8 @@ from catalyst.rl.agents.core import ActorSpec, CriticSpec
 from catalyst.rl.environments.core import EnvironmentSpec
 from catalyst.rl.db.core import DBSpec
 
+_BIG_NUM = int(2 ** 32 - 2)
+
 
 def _make_tuple(tuple_like):
     tuple_like = (
@@ -410,12 +412,15 @@ class EpisodeRunner:
         device,
         capacity: int,
         deterministic: bool = False,
+        segment_length=None
     ):
         self.env = env
         self.agent = agent
         self._device = device
         self.capacity = capacity
         self.deterministic = deterministic
+        self.segment_length = segment_length or _BIG_NUM
+        self.init_observation = None
         self.policy_handler = PolicyHandler(
             env=self.env, agent=self.agent, device=device
         )
@@ -495,7 +500,7 @@ class EpisodeRunner:
             exploration_strategy.update_actor(self.agent, states)
 
         self._init_buffers()
-        self._init_with_observation(self.env.reset())
+        self._init_with_observation(self.init_observation or self.env.reset())
 
     def run(self, exploration_strategy):
         episode_reward, num_steps, done = 0, 0, False
@@ -516,6 +521,14 @@ class EpisodeRunner:
             transition = [next_observation, action, reward, done]
             self._put_transition(transition)
             num_steps += 1
+
+            if num_steps % self.segment_length:
+                break
+
+        if done:
+            self.init_observation = None
+        else:
+            self.init_observation = next_observation
 
         results = {"episode_reward": episode_reward, "num_steps": num_steps}
 
