@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 from catalyst.contrib.modules import Flatten
 
-from catalyst.rl.agents.head import ValueHead  # , StateNet
+from catalyst.rl.agents.head import ValueHead, MultiValueHead  # , StateNet
 from catalyst.rl.agents import CriticSpec
 from catalyst.rl.environments import EnvironmentSpec
 from catalyst.dl.initialization import create_optimal_inner_init
@@ -60,6 +60,17 @@ class ConvCritic(CriticSpec):
     def values_range(self) -> tuple:
         return self.head_net.values_range
 
+    @property
+    def num_heads(self) -> int:
+        return self.head_net.num_heads
+
+    @property
+    def hyperbolic_constant(self) -> float:
+        if self.num_heads == 1:
+            return 1.0
+        else:
+            return self.head_net.hyperbolic_constant
+
     def forward(self, state: torch.Tensor):
         x = state
         if len(x.shape) < 3:
@@ -84,7 +95,13 @@ class ConvCritic(CriticSpec):
         env_spec: EnvironmentSpec,
     ):
         # state_net = StateNet.get_from_params(**state_net_params)
-        head_net = ValueHead(**value_head_params)
+        if 'num_heads' in value_head_params:
+            if value_head_params['num_heads'] > 1:
+                head_net = MultiValueHead(**value_head_params)
+            else:
+                head_net = ValueHead(**value_head_params)
+        else:
+            head_net = ValueHead(**value_head_params)
 
         net = cls(
             # state_net=state_net,
