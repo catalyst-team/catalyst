@@ -38,7 +38,7 @@ class PPO(ActorCriticAlgorithmSpec):
         }
 
     @torch.no_grad()
-    def get_rollout(self, states, actions, rewards):
+    def get_rollout(self, states, actions, rewards, dones):
         states = self._to_tensor(states)
         actions = self._to_tensor(actions)
         rewards = np.array(rewards)
@@ -59,11 +59,16 @@ class PPO(ActorCriticAlgorithmSpec):
             self.gam_matrix[:trajectory_len, :trajectory_len],
             rewards)
 
+        # if trajectory segment ends with done=True (end of episode)
+        # we can estimate advantage of the last state, otherwise,
+        # it can not be estimated and, thus, is excluded
+        pivot = trajectory_len if dones[-1] else trajectory_len - 1
+
         rollout = {
-            "return": returns,
-            "value": values[:trajectory_len],
-            "advantage": advantages,
-            "action_logprob": logprobs
+            "return": returns[:pivot],
+            "value": values[:pivot],
+            "advantage": advantages[:pivot],
+            "action_logprob": logprobs[:pivot]
         }
 
         return rollout

@@ -24,7 +24,7 @@ class REINFORCE(ActorAlgorithmSpec):
         }
 
     @torch.no_grad()
-    def get_rollout(self, states, actions, rewards):
+    def get_rollout(self, states, actions, rewards, dones):
         states = self._to_tensor(states)
         actions = self._to_tensor(actions)
         rewards = np.array(rewards)

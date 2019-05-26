@@ -132,10 +132,12 @@ class Trainer:
             self._num_trajectories += 1
             self._num_transitions += len(episode[-1])
 
-            observations, actions, rewards, _ = episode
+            observations, actions, rewards, dones = episode
             states = _get_states_from_observations(
                 observations, self.env_spec.history_len)
-            rollout = self.algorithm.get_rollout(states, actions, rewards)
+            rollout = self.algorithm.get_rollout(
+                states, actions, rewards, dones
+            )
             self.replay_buffer.push_rollout(
                 state=states,
                 action=actions,
