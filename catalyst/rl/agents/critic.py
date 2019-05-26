@@ -5,7 +5,7 @@ from gym.spaces import Discrete
 from catalyst.rl.environments.core import EnvironmentSpec
 from .core import CriticSpec
 from .net import StateNet, StateActionNet
-from .head import ValueHead
+from .head import ValueHead, MultiValueHead
 
 
 class StateCritic(CriticSpec):
@@ -129,6 +129,17 @@ class StateActionCritic(CriticSpec):
     def values_range(self) -> tuple:
         return self.head_net.values_range
 
+    @property
+    def num_heads(self) -> int:
+        return self.head_net.num_heads
+
+    @property
+    def hyperbolic_constant(self) -> float:
+        if self.num_heads == 1:
+            return 1.0
+        else:
+            return self.head_net.hyperbolic_constant
+
     @classmethod
     def get_from_params(
         cls,
@@ -154,7 +165,15 @@ class StateActionCritic(CriticSpec):
         # @TODO: make by init?
         state_action_net = StateActionNet.get_from_params(
             **state_action_net_params)
-        head_net = ValueHead(**value_head_params)
+
+        if 'num_heads' in value_head_params:
+            if value_head_params['num_heads'] > 1:
+                head_net = MultiValueHead(**value_head_params)
+            else:
+                head_net = ValueHead(**value_head_params)
+        else:
+            head_net = ValueHead(**value_head_params)
+
 
         net = cls(
             state_action_net=state_action_net,

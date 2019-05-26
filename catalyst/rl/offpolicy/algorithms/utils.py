@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 from catalyst.dl.utils import UtilsFactory
 from catalyst.rl.registry import \
     CRITERIONS, GRAD_CLIPPERS, OPTIMIZERS, SCHEDULERS
@@ -111,3 +112,9 @@ def quantile_loss(atoms_t, atoms_target_t, tau, num_atoms, criterion):
         atoms_t[:, :, None], atoms_target_t[:, None, :], huber_weights
     ).mean()
     return loss
+
+def hyperbolic_gammas(gamma_max, k, num_heads):
+    # Formula (27) from https://arxiv.org/pdf/1902.06865.pdf
+    b = np.exp(np.log(1 - gamma_max**(1 / k)) / num_heads)
+    gammas = (1 - b**(np.arange(num_heads) + 1)) ** k
+    return gammas
