@@ -4,7 +4,8 @@ import time
 from datetime import datetime
 from tensorboardX import SummaryWriter
 import multiprocessing as mp
-import queue
+import threading
+
 import torch
 from torch.utils.data import DataLoader
 
@@ -14,7 +15,7 @@ from catalyst.rl.utils import \
 from catalyst.rl.db.core import DBSpec
 from catalyst.rl.environments.core import EnvironmentSpec
 from catalyst.rl.offpolicy.algorithms.core import AlgorithmSpec
-from catalyst.rl.utils import _make_tuple, db2queue_loop
+from catalyst.rl.utils import _make_tuple, _db2buffer_loop
 
 
 class Trainer:
@@ -102,7 +103,7 @@ class Trainer:
         self.weights_sync_period = weights_sync_period
 
         self.episodes_queue = mp.Queue()
-        self._db_loop_process = None
+        self._db_loop_thread = None
         self._num_trajectories = 0
         self._num_transitions = 0
 
@@ -121,43 +122,15 @@ class Trainer:
             )
             print("Checkpoint saved to: %s" % filename)
 
-    def get_processes(self):
-        processes = []
-        if self._db_loop_process is not None:
-            processes.append(self._db_loop_process)
-
-        return processes
-
     def _start_db_loop(self):
-        self._db_loop_process = mp.Process(
-            target=db2queue_loop,
+        self._db_loop_thread = threading.Thread(
+            target=_db2buffer_loop,
             kwargs={
                 "db_server": self.db_server,
-                "queue": self.episodes_queue,
-                "max_size": int(self.max_db_trials * 2)
+                "buffer": self.replay_buffer,
             }
         )
-        self._db_loop_process.start()
-
-    def _fetch_episodes(self):
-        for i in range(self.max_db_trials):
-            try:
-                episode = self.episodes_queue.get(block=True, timeout=1.0)
-                self.replay_buffer.push_episode(episode)
-                self._num_trajectories += 1
-                self._num_transitions += len(episode[-1])
-            except queue.Empty:
-                break
-        self.replay_buffer.recalculate_index()
-        stored = len(self.replay_buffer)
-
-        print(
-            f"--- trajectories: {self._num_trajectories:09d}\t"
-            f"transitions: {self._num_transitions:09d}\t"
-            f"buffer size: {stored:09d}"
-        )
-
-        return i
+        self._db_loop_thread.start()
 
     def _update_samplers_weights(self):
         if self.epoch % self.weights_sync_period == 0:
@@ -192,12 +165,20 @@ class Trainer:
             )
 
     def _train(self):
-        start_time = time.time()
         while True:
-            fetch_i = self._fetch_episodes()
-            elapsed_time = time.time() - start_time
-            self.logger.add_scalar("fetch time", elapsed_time, self.epoch)
-            self.logger.add_scalar("fetch index", fetch_i, self.epoch)
+            self.replay_buffer.recalculate_index()
+
+            num_trajectories = self.replay_buffer.num_trajectories.value
+            num_transitions = self.replay_buffer.num_transitions.value
+            buffer_stored = len(self.replay_buffer)
+
+            print(
+                "--- "
+                f"trajectories: {num_trajectories:09d}\t"
+                f"transitions: {num_transitions:09d}\t"
+                f"buffer size: {buffer_stored:09d}"
+            )
+
             start_time = time.time()
 
             for i, batch in enumerate(self.loader):
@@ -215,6 +196,7 @@ class Trainer:
                 self._update_target_weights(step_index)
 
             elapsed_time = time.time() - start_time
+
             self.logger.add_scalar("batch size", self.batch_size, self.epoch)
             self.logger.add_scalar(
                 "buffer size", len(self.replay_buffer), self.epoch)
@@ -231,14 +213,23 @@ class Trainer:
             self._update_samplers_weights()
             if self.epoch % self._gc_period == 0:
                 gc.collect()
-            start_time = time.time()
 
     def _start_train_loop(self):
-        stored = len(self.replay_buffer)
-        while stored < self.start_learning:
-            self._fetch_episodes()
-            stored = len(self.replay_buffer)
-            print(f"waiting for transitions: {stored}/{self.start_learning}")
+        buffer_stored = len(self.replay_buffer)
+        while buffer_stored < self.start_learning:
+            self.replay_buffer.recalculate_index()
+
+            num_trajectories = self.replay_buffer.num_trajectories.value
+            num_transitions = self.replay_buffer.num_transitions.value
+            buffer_stored = len(self.replay_buffer)
+
+            print(
+                "--- "
+                f"trajectories: {num_trajectories:09d}\t"
+                f"transitions: {num_transitions:09d}\t"
+                f"buffer size: {buffer_stored:09d}/{self.start_learning:09d}"
+            )
+
             time.sleep(1.0)
         self._train()
 

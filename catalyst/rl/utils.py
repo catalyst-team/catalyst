@@ -1,4 +1,5 @@
 from typing import Union, Dict
+
 import time
 import numpy as np
 import multiprocessing as mp
@@ -6,6 +7,7 @@ from gym.spaces import Box, Discrete, Space
 
 import torch
 from torch.utils.data import Dataset, Sampler
+
 from catalyst.rl.exploration import \
     ParameterSpaceNoise, OrnsteinUhlenbeckProcess
 from catalyst.rl.agents.core import ActorSpec, CriticSpec
@@ -88,7 +90,7 @@ def _get_states_from_observations(observations, history_len=1):
     return states
 
 
-def db2queue_loop(db_server: DBSpec, queue: mp.Queue, max_size: int):
+def _db2queue_loop(db_server: DBSpec, queue: mp.Queue, max_size: int):
     while True:
         try:
             need_more = queue.qsize() < max_size
@@ -110,12 +112,13 @@ class OffpolicyReplayBuffer(Dataset):
         self,
         observation_space: Space,
         action_space: Space,
-        capacity=int(1e6),
-        n_step=1,
-        gamma=0.99,
-        history_len=1,
-        mode="numpy",
-        logdir=None
+        capacity: int = int(1e6),
+        capacity_mult: int = 2,
+        n_step: int = 1,
+        gamma: float = 0.99,
+        history_len: int = 1,
+        mode: str = "numpy",
+        logdir: str = None
     ):
         """
         Experience replay buffer for off-policy RL algorithms.
@@ -134,18 +137,23 @@ class OffpolicyReplayBuffer(Dataset):
         self.observation_space = observation_space
         self.action_space = action_space
         self.history_len = history_len
-
-        self.capacity = capacity
         self.n_step = n_step
         self.gamma = gamma
 
-        self._pointer = 0
+        self.length = 0
+        self.capacity = capacity
+        self.capacity_mult = capacity_mult
+        self.capacity_limit = capacity * capacity_mult
+
+        self._store_lock = mp.Lock()
+        self.num_trajectories = mp.Value("i", 0)
+        self.num_transitions = mp.Value("i", 0)
+        self.pointer = mp.Value("i", 0)
         self._trajectories_lens = []
-        self._store_lock = mp.RLock()
 
         self.observations, self.actions, self.rewards, self.dones = \
             _get_buffers(
-                capacity=capacity * 2,
+                capacity=self.capacity_limit,
                 observation_space=observation_space,
                 action_space=action_space,
                 mode=mode,
@@ -156,42 +164,55 @@ class OffpolicyReplayBuffer(Dataset):
         with self._store_lock:
             observations, actions, rewards, dones = episode
             episode_len = len(rewards)
+            curr_p = self.pointer.value
 
-            self.observations[self._pointer:self._pointer + episode_len] = \
+            if curr_p + episode_len >= self.capacity_limit:
+                return False
+
+            self.observations[curr_p:curr_p + episode_len] = \
                 np.array(observations)
-            self.actions[self._pointer:self._pointer + episode_len] = \
+            self.actions[curr_p:curr_p + episode_len] = \
                 np.array(actions)
-            self.rewards[self._pointer:self._pointer + episode_len] = \
+            self.rewards[curr_p:curr_p + episode_len] = \
                 np.array(rewards)
-            self.dones[self._pointer:self._pointer + episode_len] = \
+            self.dones[curr_p:curr_p + episode_len] = \
                 np.array(dones)
 
             self._trajectories_lens.append(episode_len)
-            self._pointer = self._pointer + episode_len
+            self.pointer.value += episode_len
+            self.num_trajectories.value += 1
+            self.num_transitions.value += episode_len
+
+        return True
 
     def recalculate_index(self):
         with self._store_lock:
-            if self._pointer > self.capacity:
-                diff = self.capacity - self._pointer
+            curr_p = self.pointer.value
+            if curr_p > self.capacity:
+                diff = curr_p - self.capacity
 
                 trajectories_lens_ = np.cumsum(self._trajectories_lens)
                 trajectories_lens_mask = trajectories_lens_ < diff
                 offset = np.where(
                     trajectories_lens_mask, trajectories_lens_, 0
-                ).argmax()
-                self._trajectories_lens = self._trajectories_lens[offset:]
+                ).argmax() + 1
+                self._trajectories_lens = self._trajectories_lens[offset + 1:]
                 offset = trajectories_lens_[offset]
 
-                self.observations[:self._pointer] = \
-                    self.observations[offset:offset + self._pointer]
-                self.actions[:self._pointer] = \
-                    self.actions[offset:offset + self._pointer]
-                self.rewards[:self._pointer] = \
-                    self.rewards[offset:offset + self._pointer]
-                self.dones[:self._pointer] = \
-                    self.dones[offset:offset + self._pointer]
+                curr_p = self.capacity_limit - offset
+                self.observations[:curr_p] = self.observations[offset:]
+                self.observations[curr_p:] = np.zeros_like(
+                    self.observations[curr_p:]
+                )
+                self.actions[:curr_p] = self.actions[offset:]
+                self.actions[curr_p:] = np.zeros_like(self.actions[curr_p:])
+                self.rewards[:curr_p] = self.rewards[offset:]
+                self.rewards[curr_p:] = np.zeros_like(self.rewards[curr_p:])
+                self.dones[:curr_p] = self.dones[offset:]
+                self.dones[curr_p:] = np.zeros_like(self.dones[curr_p:])
 
-                self._pointer = self._pointer - offset
+                self.pointer.value = curr_p
+            self.length = curr_p
 
     def get_state(self, idx, history_len=1):
         """
@@ -207,7 +228,8 @@ class OffpolicyReplayBuffer(Dataset):
             indices = [idx]
             for i in range(history_len - 1):
                 next_idx = (idx - i - 1) % self.capacity
-                if next_idx >= self._pointer or self.dones[next_idx]:
+
+                if next_idx >= self.length or self.dones[next_idx]:
                     break
                 indices.append(next_idx)
             indices = indices[::-1]
@@ -219,11 +241,9 @@ class OffpolicyReplayBuffer(Dataset):
 
     def get_transition_n_step(self, idx, history_len=1, n_step=1, gamma=0.99):
         state = self.get_state(idx, history_len)
-        next_state = self.get_state(
-            (idx + n_step) % self.capacity, history_len
-        )
+        next_state = self.get_state((idx + n_step) % self.length, history_len)
         cum_reward = 0
-        indices = np.arange(idx, idx + n_step) % self.capacity
+        indices = np.arange(idx, idx + n_step) % self.length
         for num, i in enumerate(indices):
             cum_reward += self.rewards[i] * (gamma**num)
             done = self.dones[i]
@@ -250,7 +270,7 @@ class OffpolicyReplayBuffer(Dataset):
         return dct
 
     def __len__(self):
-        return min(self._pointer, self.capacity)
+        return self.length
 
 
 class OffpolicyReplaySampler(Sampler):
@@ -268,6 +288,21 @@ class OffpolicyReplaySampler(Sampler):
 
     def __len__(self):
         return self.len
+
+
+def _db2buffer_loop(db_server: DBSpec, buffer: OffpolicyReplayBuffer):
+    trajectory = None
+    while True:
+        if trajectory is None:
+            trajectory = db_server.get_trajectory()
+
+        if trajectory is not None:
+            if buffer.push_episode(trajectory):
+                trajectory = None
+            else:
+                time.sleep(1.0)
+        else:
+            time.sleep(1.0)
 
 
 class OnpolicyRolloutBuffer(Dataset):
