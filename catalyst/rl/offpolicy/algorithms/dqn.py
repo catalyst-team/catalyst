@@ -11,10 +11,10 @@ class DQN(AlgorithmDiscrete):
         critic_distribution = self.critic.distribution
         self._loss_fn = self._base_loss
         self._num_heads = self.critic.num_heads
-        self._hyperbolic_exponent = self.critic.hyperbolic_exponent
+        self._hyperbolic_constant = self.critic.hyperbolic_constant
         self._gammas = \
             hyperbolic_gammas(self._gamma,
-                              self._hyperbolic_exponent,
+                              self._hyperbolic_constant,
                               self._num_heads)
         assert critic_distribution in [None, "categorical", "quantile"]
 
