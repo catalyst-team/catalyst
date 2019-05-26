@@ -183,14 +183,14 @@ class Sampler:
             if not self._infer or self._force_store:
                 self._store_trajectory()
 
-            self._log_to_console(
-                **episode_info,
-                elapsed_time=elapsed_time,
-                seed=seed)
-
-            self._log_to_tensorboard(
-                **episode_info,
-                elapsed_time=elapsed_time)
+            if episode_info:
+                self._log_to_console(
+                    **episode_info,
+                    elapsed_time=elapsed_time,
+                    seed=seed)
+                self._log_to_tensorboard(
+                    **episode_info,
+                    elapsed_time=elapsed_time)
 
             self.episode_index += 1
             if self.episode_index % self._gc_period == 0:

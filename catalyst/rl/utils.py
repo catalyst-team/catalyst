@@ -421,6 +421,8 @@ class EpisodeRunner:
         self.deterministic = deterministic
         self.segment_length = segment_length or _BIG_NUM
         self.init_observation = None
+        self.episode_reward = 0
+        self.episode_num_steps = 0
         self.policy_handler = PolicyHandler(
             env=self.env, agent=self.agent, device=device
         )
@@ -527,11 +529,18 @@ class EpisodeRunner:
             if num_steps % self.segment_length == 0:
                 break
 
+        self.episode_reward += episode_reward
+        self.episode_num_steps += num_steps
         if done:
             self.init_observation = None
+            results = {
+                "episode_reward": self.episode_reward,
+                "num_steps": self.episode_num_steps
+            }
+            self.episode_reward = 0
+            self.episode_num_steps = 0
         else:
             self.init_observation = next_observation
-
-        results = {"episode_reward": episode_reward, "num_steps": num_steps}
+            results = {}
 
         return results
