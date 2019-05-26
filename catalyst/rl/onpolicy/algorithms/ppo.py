@@ -3,7 +3,7 @@ import torch
 
 
 from .actor_critic import ActorCriticAlgorithmSpec
-from .utils import create_gamma_matrix
+from .utils import geometric_cumsum
 
 
 class PPO(ActorCriticAlgorithmSpec):
@@ -12,22 +12,11 @@ class PPO(ActorCriticAlgorithmSpec):
         self,
         gae_lambda: float = 0.95,
         clip_eps: float = 0.2,
-        max_episode_length: int = 1000,
         entropy_reg_coefficient: float = 0.
     ):
+        self.gae_lambda = gae_lambda
         self.clip_eps = clip_eps
         self.entropy_reg_coefficient = entropy_reg_coefficient
-
-        # @TODO: remove max_episode_length from initialization
-        # matrix for estimating advantages with GAE
-        # used in policy loss
-        self.gam_lam_matrix = create_gamma_matrix(
-            self.gamma * gae_lambda, max_episode_length)
-
-        # matrix for estimating cummulative discounted returns
-        # used in value loss
-        self.gam_matrix = create_gamma_matrix(
-            self.gamma, max_episode_length)
 
     def get_rollout_spec(self):
         return {
@@ -52,12 +41,8 @@ class PPO(ActorCriticAlgorithmSpec):
         logprobs = logprobs.cpu().numpy().reshape(-1)
 
         deltas = rewards + self.gamma * values[1:] - values[:-1]
-        advantages = np.dot(
-            self.gam_lam_matrix[:trajectory_len, :trajectory_len],
-            deltas)
-        returns = np.dot(
-            self.gam_matrix[:trajectory_len, :trajectory_len],
-            rewards)
+        advantages = geometric_cumsum(self.gamma, deltas)[0]
+        returns = geometric_cumsum(self.gamma * self.gae_lambda, rewards)[0]
 
         rollout = {
             "return": returns,

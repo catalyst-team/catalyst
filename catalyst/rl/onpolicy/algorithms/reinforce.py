@@ -2,7 +2,7 @@ import numpy as np
 import torch
 
 from .actor import ActorAlgorithmSpec
-from .utils import create_gamma_matrix
+from .utils import geometric_cumsum
 
 
 class REINFORCE(ActorAlgorithmSpec):
@@ -12,10 +12,6 @@ class REINFORCE(ActorAlgorithmSpec):
         entropy_reg_coefficient: float = 0.
     ):
         self.entropy_reg_coefficient = entropy_reg_coefficient
-        # matrix for estimating cummulative discounted returns
-        # used in value loss
-        self.gam_matrix = create_gamma_matrix(
-            self.gamma, max_episode_length)
 
     def get_rollout_spec(self):
         return {
@@ -33,9 +29,7 @@ class REINFORCE(ActorAlgorithmSpec):
         _, logprobs = self.actor(states, logprob=actions)
         logprobs = logprobs.cpu().numpy().reshape(-1)
 
-        returns = np.dot(
-            self.gam_matrix[:trajectory_len, :trajectory_len],
-            rewards)
+        returns = geometric_cumsum(self.gamma, rewards)[0]
 
         rollout = {
             "return": returns,

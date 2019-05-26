@@ -1,19 +1,13 @@
 import numpy as np
+from scipy.signal import lfilter
 
 
-def create_gamma_matrix(tau, matrix_size):
+def geometric_cumsum(alpha, x):
+    r"""
+    Adapopted from https://github.com/zuoxingdong/lagom
     """
-    Matrix of the following form
-    --------------------
-    1     y   y^2    y^3
-    0     1     y    y^2
-    0     0     1      y
-    0     0     0      1
-    --------------------
-    for fast gae calculation
-    """
-    i = np.arange(matrix_size)
-    j = np.arange(matrix_size)
-    pow_ = i[None, :] - j[:, None]
-    mat = np.power(tau, pow_) * (pow_ >= 0)
-    return mat
+    x = np.asarray(x)
+    if x.ndim == 1:
+        x = np.expand_dims(x, 0)
+    assert x.ndim == 2
+    return lfilter([1], [1, -alpha], x[:, ::-1], axis=1)[:, ::-1]
