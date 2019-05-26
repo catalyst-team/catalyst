@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Union
 from functools import reduce
 from gym.spaces import Discrete
 
@@ -16,7 +16,7 @@ class StateCritic(CriticSpec):
     def __init__(
         self,
         state_net: StateNet,
-        head_net: ValueHead,
+        head_net: Union[ValueHead, MultiValueHead]
     ):
         super().__init__()
         self.state_net = state_net
@@ -43,6 +43,17 @@ class StateCritic(CriticSpec):
         x = self.head_net(x)
         return x
 
+    @property
+    def num_heads(self) -> int:
+        return self.head_net.num_heads
+
+    @property
+    def hyperbolic_constant(self) -> float:
+        if self.num_heads == 1:
+            return 1.0
+        else:
+            return self.head_net.hyperbolic_constant
+
     @classmethod
     def get_from_params(
         cls,
@@ -60,7 +71,13 @@ class StateCritic(CriticSpec):
 
         # @TODO: make by init?
         state_net = StateNet.get_from_params(**state_net_params)
-        head_net = ValueHead(**value_head_params)
+        if 'num_heads' in value_head_params:
+            if value_head_params['num_heads'] > 1:
+                head_net = MultiValueHead(**value_head_params)
+            else:
+                head_net = ValueHead(**value_head_params)
+        else:
+            head_net = ValueHead(**value_head_params)
 
         net = cls(
             state_net=state_net,
@@ -102,7 +119,7 @@ class StateActionCritic(CriticSpec):
     def __init__(
         self,
         state_action_net: StateActionNet,
-        head_net: ValueHead,
+        head_net: Union[ValueHead, MultiValueHead]
     ):
         super().__init__()
         self.state_action_net = state_action_net
