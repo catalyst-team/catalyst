@@ -95,13 +95,8 @@ class ConvCritic(CriticSpec):
         env_spec: EnvironmentSpec,
     ):
         # state_net = StateNet.get_from_params(**state_net_params)
-        if 'num_heads' in value_head_params:
-            if value_head_params['num_heads'] > 1:
-                head_net = MultiValueHead(**value_head_params)
-            else:
-                head_net = ValueHead(**value_head_params)
-        else:
-            head_net = ValueHead(**value_head_params)
+
+        head_net = ValueHead(**value_head_params)
 
         net = cls(
             # state_net=state_net,
