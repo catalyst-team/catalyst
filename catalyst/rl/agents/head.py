@@ -14,51 +14,6 @@ class ValueHead(nn.Module):
         num_atoms: int = 1,
         bias: bool = False,
         distribution: str = None,
-        values_range: tuple = None
-    ):
-        super().__init__()
-
-        self.out_features = out_features
-        self.num_atoms = num_atoms
-        self.distribution = distribution
-        self.values_range = values_range
-        self.num_heads = 1
-
-        if distribution is None:  # mean case
-            assert values_range is None and num_atoms == 1
-        elif distribution == "categorical":
-            assert values_range is not None and num_atoms > 1
-        elif distribution == "quantile":
-            assert values_range is None and num_atoms > 1
-        else:
-            raise NotImplementedError()
-
-        self.net = nn.Linear(
-            in_features=in_features,
-            out_features=out_features * num_atoms,
-            bias=bias
-        )
-        self.apply(outer_init)
-
-    def forward(self, inputs):
-        x: torch.Tensor = \
-            self.net(inputs).view(-1, self.out_features, self.num_atoms)
-        # x = x.squeeze_(dim=-1)
-        x = x.squeeze_(dim=1).squeeze_(dim=-1)
-        if self.num_atoms == 1 and self.out_features == 1:
-            # make critic outputs (B, 1) instead of (B, )
-            x = x.unsqueeze_(dim=1)
-        return x
-
-
-class MultiValueHead(nn.Module):
-    def __init__(
-        self,
-        in_features: int,
-        out_features: int,
-        num_atoms: int = 1,
-        bias: bool = False,
-        distribution: str = None,
         values_range: tuple = None,
         num_heads=1,
         hyperbolic_constant=0.01
@@ -80,8 +35,13 @@ class MultiValueHead(nn.Module):
             assert values_range is None and num_atoms > 1
         else:
             raise NotImplementedError()
-        heads = [self._build_head(in_features, out_features, num_atoms,
-                                  bias) for _ in range(num_heads)]
+        heads = [
+            self._build_head(
+                in_features,
+                out_features,
+                num_atoms,
+                bias)
+            for _ in range(num_heads)]
         self.net = nn.ModuleList(heads)
 
         self.apply(outer_init)
@@ -96,17 +56,22 @@ class MultiValueHead(nn.Module):
             # make critic outputs (B, 1) instead of (B, )
             x = [z.unsqueeze_(dim=1) for z in x]
 
-        return x
+        # B x num_heads x num_outputs x num_atoms
+        # if num_heads == 1, squeeze it out not to crash other algorithms
+        return torch.stack(x, dim=1).squeeze(1)
 
-    def _build_head(self,
-                    in_features,
-                    out_features,
-                    num_atoms,
-                    bias):
+    def _build_head(
+        self,
+        in_features,
+        out_features,
+        num_atoms,
+        bias
+    ):
         return nn.Linear(
             in_features=in_features,
             out_features=out_features * num_atoms,
-            bias=bias)
+            bias=bias
+        )
 
 
 class PolicyHead(nn.Module):

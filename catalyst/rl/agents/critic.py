@@ -5,7 +5,7 @@ from gym.spaces import Discrete
 from catalyst.rl.environments.core import EnvironmentSpec
 from .core import CriticSpec
 from .net import StateNet, StateActionNet
-from .head import ValueHead, MultiValueHead
+from .head import ValueHead
 
 
 class StateCritic(CriticSpec):
@@ -16,7 +16,7 @@ class StateCritic(CriticSpec):
     def __init__(
         self,
         state_net: StateNet,
-        head_net: Union[ValueHead, MultiValueHead]
+        head_net: ValueHead
     ):
         super().__init__()
         self.state_net = state_net
@@ -71,13 +71,7 @@ class StateCritic(CriticSpec):
 
         # @TODO: make by init?
         state_net = StateNet.get_from_params(**state_net_params)
-        if 'num_heads' in value_head_params:
-            if value_head_params['num_heads'] > 1:
-                head_net = MultiValueHead(**value_head_params)
-            else:
-                head_net = ValueHead(**value_head_params)
-        else:
-            head_net = ValueHead(**value_head_params)
+        head_net = ValueHead(**value_head_params)
 
         net = cls(
             state_net=state_net,
@@ -119,7 +113,7 @@ class StateActionCritic(CriticSpec):
     def __init__(
         self,
         state_action_net: StateActionNet,
-        head_net: Union[ValueHead, MultiValueHead]
+        head_net: ValueHead
     ):
         super().__init__()
         self.state_action_net = state_action_net
@@ -183,13 +177,7 @@ class StateActionCritic(CriticSpec):
         state_action_net = StateActionNet.get_from_params(
             **state_action_net_params)
 
-        if 'num_heads' in value_head_params:
-            if value_head_params['num_heads'] > 1:
-                head_net = MultiValueHead(**value_head_params)
-            else:
-                head_net = ValueHead(**value_head_params)
-        else:
-            head_net = ValueHead(**value_head_params)
+        head_net = ValueHead(**value_head_params)
 
         net = cls(
             state_action_net=state_action_net,
