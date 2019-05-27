@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Dict
 from functools import reduce
 from gym.spaces import Discrete
 
