@@ -5,6 +5,7 @@ import numpy as np
 import multiprocessing as mp
 from gym.spaces import Box, Discrete, Space
 
+from dynarray import DynamicArray
 import torch
 from torch.utils.data import Dataset, Sampler
 
@@ -471,14 +472,14 @@ class EpisodeRunner:
         env: EnvironmentSpec,
         agent: Union[ActorSpec, CriticSpec],
         device,
-        capacity: int,
         deterministic: bool = False,
+        initial_capacity: int = int(1e3)
     ):
         self.env = env
         self.agent = agent
         self._device = device
-        self.capacity = capacity
         self.deterministic = deterministic
+        self.initial_capacity = initial_capacity
         self.policy_handler = PolicyHandler(
             env=self.env, agent=self.agent, device=device
         )
@@ -486,63 +487,72 @@ class EpisodeRunner:
         self._init_buffers()
 
     def _init_buffers(self):
-        self.pointer = 0
-        self.observations, self.actions, self.rewards, self.dones = \
-            _get_buffers(
-                capacity=self.capacity,
-                observation_space=self.env.observation_space,
-                action_space=self.env.action_space
-            )
+        self.observations = DynamicArray(
+            array_or_shape=(None, ) + tuple(self.env.observation_space.shape),
+            dtype=self.env.observation_space.dtype,
+            capacity=int(self.initial_capacity)
+        )
+        self.actions = DynamicArray(
+            array_or_shape=(None, ) + tuple(self.env.action_space.shape),
+            dtype=self.env.action_space.dtype,
+            capacity=int(self.initial_capacity)
+        )
+        self.rewards = DynamicArray(
+            array_or_shape=(None, ),
+            dtype=np.float32,
+            capacity=int(self.initial_capacity)
+        )
+        self.dones = DynamicArray(
+            array_or_shape=(None, ),
+            dtype=np.bool,
+            capacity=int(self.initial_capacity)
+        )
 
     def _to_tensor(self, *args, **kwargs):
         return torch.Tensor(*args, **kwargs).to(self._device)
 
     def _init_with_observation(self, observation):
-        self.observations[0] = observation
-        self.pointer = 0
+        self.observations.append(observation)
 
     def _put_transition(self, transition):
         """
         transition = [o_tp1, a_t, r_t, d_t]
         """
         o_tp1, a_t, r_t, d_t = transition
-        self.observations[self.pointer + 1] = o_tp1
-        self.actions[self.pointer] = a_t
-        self.rewards[self.pointer] = r_t
-        self.dones[self.pointer] = d_t
-        self.pointer += 1
+        self.observations.append(o_tp1)
+        self.actions.append(a_t)
+        self.rewards.append(r_t)
+        self.dones.append(d_t)
 
     def _get_states_history(self, history_len=None):
         history_len = history_len or self.env.history_len
         states = [
-            self.get_state(history_len=history_len, pointer=i)
-            for i in range(self.pointer)
+            self.get_state(history_len=history_len, index=i)
+            for i in range(len(self.observations))
         ]
         states = np.array(states)
         return states
 
-    def get_state(self, pointer=None, history_len=None):
-        pointer = pointer if pointer is not None else self.pointer
-        history_len = history_len or self.env.history_len
+    def get_state(self, index=None, history_len=None):
+        index = index if index is not None else len(self.observations) - 1
+        history_len = history_len \
+            if history_len is not None \
+            else self.env.history_len
 
         state = np.zeros(
             (history_len, ) + self.env.observation_space.shape,
             dtype=self.env.observation_space.dtype
         )
 
-        indices = np.arange(max(0, pointer - history_len + 1), pointer + 1)
+        indices = np.arange(max(0, index - history_len + 1), index + 1)
         state[-len(indices):] = self.observations[indices]
         return state
 
     def get_trajectory(self):
-        indices = np.arange(self.pointer)
-
-        observations = self.observations[indices]
-        actions = self.actions[indices]
-        rewards = self.rewards[indices]
-        dones = self.dones[indices]
-
-        trajectory = (observations, actions, rewards, dones)
+        trajectory = (
+            np.array(self.observations[:-1]), np.array(self.actions),
+            np.array(self.rewards), np.array(self.dones)
+        )
         return trajectory
 
     @torch.no_grad()
@@ -552,7 +562,7 @@ class EpisodeRunner:
             exploration_strategy.reset_state(self.env.action_space.shape[0])
 
         if isinstance(exploration_strategy, ParameterSpaceNoise) \
-                and self.pointer > 1:
+                and len(self.observations) > 1:
             states = self._get_states_history()
             states = self._to_tensor(states)
             exploration_strategy.update_actor(self.agent, states)

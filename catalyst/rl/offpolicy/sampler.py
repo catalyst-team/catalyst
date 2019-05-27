@@ -37,10 +37,9 @@ class Sampler:
         logdir: str = None,
         id: int = 0,
         mode: str = "infer",
-        buffer_size: int = int(1e4),
         weights_sync_period: int = 1,
         seeds: List = None,
-        episode_limit: int = None,
+        max_trajectories_to_sample: int = None,
         force_store: bool = False,
         gc_period: int = 10,
     ):
@@ -63,14 +62,13 @@ class Sampler:
             env=self.env,
             agent=self.agent,
             device=self._device,
-            capacity=buffer_size,
             deterministic=self._infer
         )
 
         # synchronization configuration
         self.db_server = db_server
         self.weights_sync_period = weights_sync_period
-        self.episode_limit = episode_limit or _BIG_NUM
+        self.episode_limit = max_trajectories_to_sample or _BIG_NUM
         self._force_store = force_store
         self._sampler_weight_mode = \
             "critic" if env.discrete_actions else "actor"
