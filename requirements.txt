@@ -21,7 +21,9 @@ scikit-learn>=0.20
 
 # For RL
 mock
+dynarray
 redis
 pymongo
 pyarrow
+lz4
 gym

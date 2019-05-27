@@ -73,8 +73,6 @@ trainer:
   save_period: 100             # epochs
 
 sampler:
-  buffer_size: 1100
-
   valid_seeds: [1, 10, 1000, 10000, 42000]
 
   exploration_params:
