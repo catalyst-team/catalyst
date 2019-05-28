@@ -1,32 +1,49 @@
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from .core import DecoderBlock
 
-class FPNBlock(nn.Module):
+
+class DecoderFPNBlock(DecoderBlock):
     def __init__(
         self,
-        pyramid_channels: int,
-        encoder_channels: int,
+        in_channels: int,
+        enc_channels: int,
+        out_channels: int,
+        in_strides: int = None,
         upsample_scale: int = 2,
         interpolation_mode: str = "nearest",
         align_corners: bool = None,
+        aggregate_first: bool = False,
+        **kwargs
     ):
-        super().__init__()
         self.upsample_scale = upsample_scale
         self.interpolation_mode = interpolation_mode
         self.align_corners = align_corners
-        self._block = nn.Conv2d(
-            encoder_channels,
-            pyramid_channels,
-            kernel_size=1)
+        super().__init__(
+            in_channels, enc_channels, out_channels, in_strides,
+            **kwargs
+        )
 
-    def forward(self, bottom, left):
+    def _get_block(self):
+        block = nn.Conv2d(
+            self.enc_channels,
+            self.out_channels,
+            kernel_size=1)
+        return block
+
+    def forward(
+        self,
+        bottom: torch.Tensor,
+        left: torch.Tensor
+    ) -> torch.Tensor:
         x = F.interpolate(
             bottom,
             scale_factor=self.upsample_scale,
             mode=self.interpolation_mode,
             align_corners=self.align_corners)
-        left = self._block(left)
+        left = self.block(left)
         x = x + left
         return x
 

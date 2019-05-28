@@ -38,15 +38,17 @@ class ResnetEncoder(EncoderSpec):
         arch: str = "resnet18",
         pretrained: bool = True,
         requires_grad: bool = False,
-        layers: List[int] = None
+        layers_indices: List[int] = None
     ):
         super().__init__()
 
         resnet = torchvision.models.__dict__[arch](pretrained=pretrained)
         resnet_params = RESNET_PARAMS[arch]
-        self._layers = layers or [1, 2, 3, 4]
+        self._layers_indices = layers_indices or [1, 2, 3, 4]
         self._channels, self._strides = \
             resnet_params["channels"], resnet_params["strides"]
+        self._channels = _take(self._channels, self._layers_indices)
+        self._strides = _take(self._strides, self._layers_indices)
 
         self.layer0 = nn.Sequential(
             OrderedDict([
@@ -56,29 +58,12 @@ class ResnetEncoder(EncoderSpec):
             ])
         )
         self.maxpool = resnet.maxpool
-
         self.layer1 = resnet.layer1
         self.layer2 = resnet.layer2
         self.layer3 = resnet.layer3
         self.layer4 = resnet.layer4
 
-        self.set_requires_grad(requires_grad)
-
-    @property
-    def layers(self) -> List[int]:
-        return self._layers
-
-    @property
-    def out_channels(self) -> List[int]:
-        return _take(self._channels, self._layers)
-
-    @property
-    def out_strides(self) -> List[int]:
-        return _take(self._strides, self._layers)
-
-    @property
-    def encoder_layers(self):
-        return [
+        self._layers = [
             self.layer0,
             self.layer1,
             self.layer2,
@@ -86,18 +71,27 @@ class ResnetEncoder(EncoderSpec):
             self.layer4
         ]
 
+        self.set_requires_grad(requires_grad)
+
+    @property
+    def out_channels(self) -> List[int]:
+        return self._channels
+
+    @property
+    def out_strides(self) -> List[int]:
+        return self._strides
+
     def forward(self, x: torch.Tensor) -> List[torch.Tensor]:
-        input = x
-        output_features = []
-        for layer in self.encoder_layers:
-            output = layer(input)
-            output_features.append(output)
+        output = []
+        for layer in self._layers:
+            layer_output = layer(x)
+            output.append(layer_output)
 
             if layer == self.layer0:
                 # Fist maxpool operator is not a part of layer0
                 # because we want that layer0 output to have stride of 2
-                output = self.maxpool(output)
-            input = output
+                layer_output = self.maxpool(layer_output)
+            x = layer_output
 
-        output = _take(output_features, self.layers)
+        output = _take(output, self._layers_indices)
         return output

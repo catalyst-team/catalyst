@@ -91,7 +91,7 @@ class DiceCallback(MetricCallback):
         prefix: str = "dice",
         eps: float = 1e-7,
         threshold: float = None,
-        activation: str = "sigmoid"
+        activation: str = "Sigmoid"
     ):
         """
         :param input_key: input key to use for dice calculation;
@@ -123,7 +123,7 @@ class IouCallback(MetricCallback):
         mode: str = "hard",
         eps: float = 1e-7,
         threshold: float = None,
-        activation: str = "sigmoid",
+        activation: str = "Sigmoid",
     ):
         """
         Args:
@@ -174,7 +174,7 @@ class F1ScoreCallback(MetricCallback):
         beta: float = 1.0,
         eps: float = 1e-7,
         threshold: float = None,
-        activation: str = "sigmoid"
+        activation: str = "Sigmoid"
     ):
         """
         Args:

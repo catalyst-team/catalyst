@@ -3,75 +3,70 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from ..abn import ABN, ACT_RELU
-from .core import EncoderBlock, CentralBlock, DecoderBlock, \
+from .core import EncoderBlock, DecoderBlock, \
     _get_block, _upsample
 
 
-class UnetEncoderBlock(EncoderBlock):
+class EncoderDownsampleBlock(EncoderBlock):
     def __init__(
         self,
         in_channels: int,
         out_channels: int,
+        in_strides: int = None,
         abn_block: nn.Module = ABN,
         activation: str = ACT_RELU,
-        stride: int = 1,
+        first_stride: int = 2,
+        second_stride: int = 1,
         **kwargs
     ):
-        super().__init__()
+        super().__init__(in_channels, out_channels, in_strides)
+        self._out_strides = in_strides * first_stride * second_stride \
+            if in_strides is not None \
+            else None
         self._block = _get_block(
             in_channels=in_channels,
             out_channels=out_channels,
             abn_block=abn_block,
             activation=activation,
-            first_stride=1,
-            second_stride=stride,
+            first_stride=first_stride,
+            second_stride=second_stride,
             **kwargs
         )
+
+    @property
+    def out_strides(self) -> int:
+        return self._out_strides
 
     @property
     def block(self):
         return self._block
 
 
-class UnetDownsampleBlock(CentralBlock):
+class EncoderUpsampleBlock(EncoderBlock):
     def __init__(
         self,
         in_channels: int,
         out_channels: int,
+        in_strides: int = None,
         abn_block: nn.Module = ABN,
         activation: str = ACT_RELU,
-        **kwargs
-    ):
-        super().__init__()
-        self._block = _get_block(
-            in_channels=in_channels,
-            out_channels=out_channels,
-            abn_block=abn_block,
-            activation=activation,
-            first_stride=2,
-            second_stride=1,
-            **kwargs
-        )
-
-    @property
-    def block(self):
-        return self._block
-
-
-class UnetUpsampleBlock(CentralBlock):
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        abn_block: nn.Module = ABN,
-        activation: str = ACT_RELU,
+        first_stride: int = 1,
+        second_stride: int = 1,
         pool_first: bool = False,
         upsample_scale: int = 2,
         interpolation_mode: str = "nearest",
         align_corners: bool = None,
         **kwargs
     ):
-        super().__init__()
+        super().__init__(in_channels, out_channels, in_strides)
+        if in_strides is None:
+            self._out_strides = None
+        elif pool_first:
+            self._out_strides = \
+                in_strides * first_stride * second_stride * 2 // upsample_scale
+        else:
+            self._out_strides = \
+                in_strides * first_stride * second_stride // upsample_scale
         self.pool_first = pool_first
         self.upsample_scale = upsample_scale
         self.interpolation_mode = interpolation_mode
@@ -81,10 +76,14 @@ class UnetUpsampleBlock(CentralBlock):
             out_channels=out_channels,
             abn_block=abn_block,
             activation=activation,
-            first_stride=1,
-            second_stride=1,
+            first_stride=first_stride,
+            second_stride=second_stride,
             **kwargs
         )
+
+    @property
+    def out_strides(self) -> int:
+        return self._out_strides
 
     @property
     def block(self):
@@ -104,12 +103,13 @@ class UnetUpsampleBlock(CentralBlock):
         return self.block(x)
 
 
-class UnetDecoderBlock(DecoderBlock):
+class DecoderConcatBlock(DecoderBlock):
     def __init__(
         self,
         in_channels: int,
         enc_channels: int,
         out_channels: int,
+        in_strides: int = None,
         abn_block: nn.Module = ABN,
         activation: str = ACT_RELU,
         pre_dropout_rate: float = 0.,
@@ -117,32 +117,48 @@ class UnetDecoderBlock(DecoderBlock):
         upsample_scale: int = None,
         interpolation_mode: str = "bilinear",
         align_corners: bool = True,
-        cat_first: bool = False,
+        aggregate_first: bool = False,
         **kwargs
     ):
-        super().__init__(in_channels, enc_channels, out_channels)
+
         self.upsample_scale = upsample_scale
         self.interpolation_mode = interpolation_mode
         self.align_corners = align_corners
-        self.cat_first = cat_first
+        self.aggregate_first = aggregate_first
 
-        self._block = nn.Sequential(
-            nn.Dropout(pre_dropout_rate, inplace=True),
+        super().__init__(
+            in_channels, enc_channels, out_channels, in_strides,
+            abn_block=abn_block, activation=activation,
+            pre_dropout_rate=pre_dropout_rate,
+            post_dropout_rate=post_dropout_rate,
+            **kwargs
+        )
+
+    def _get_block(
+        self,
+        abn_block: nn.Module = ABN,
+        activation: str = ACT_RELU,
+        pre_dropout_rate: float = 0.,
+        post_dropout_rate: float = 0.,
+        **kwargs
+    ):
+        layers = []
+        if pre_dropout_rate > 0:
+            layers.append(nn.Dropout2d(pre_dropout_rate, inplace=True))
+        layers.append(
             _get_block(
-                in_channels=in_channels + enc_channels,
-                out_channels=out_channels,
+                in_channels=self.in_channels + self.enc_channels,
+                out_channels=self.out_channels,
                 abn_block=abn_block,
                 activation=activation,
                 first_stride=1,
                 second_stride=1,
-                **kwargs
-            ),
-            nn.Dropout(post_dropout_rate, inplace=True)
-        )
+                **kwargs))
+        if post_dropout_rate > 0:
+            layers.append(nn.Dropout2d(pre_dropout_rate, inplace=True))
 
-    @property
-    def block(self):
-        return self._block
+        block = nn.Sequential(*layers)
+        return block
 
     def forward(
         self,
@@ -150,7 +166,7 @@ class UnetDecoderBlock(DecoderBlock):
         left: torch.Tensor
     ) -> torch.Tensor:
 
-        if self.cat_first:
+        if self.aggregate_first:
             x = torch.cat([bottom, left], 1)
             x = _upsample(
                 x,
@@ -167,3 +183,41 @@ class UnetDecoderBlock(DecoderBlock):
             x = torch.cat([x, left], 1)
 
         return self.block(x)
+
+
+class DecoderSumBlock(DecoderConcatBlock):
+
+    def __init__(
+        self,
+        enc_channels: int,
+        **kwargs
+    ):
+        super().__init__(enc_channels=0, **kwargs)
+
+    def forward(
+        self,
+        bottom: torch.Tensor,
+        left: torch.Tensor
+    ) -> torch.Tensor:
+
+        if self.aggregate_first:
+            x = bottom + left
+            x = _upsample(
+                x,
+                scale=self.upsample_scale,
+                interpolation_mode=self.interpolation_mode,
+                align_corners=self.align_corners
+            )
+            x = self.block(x)
+        else:
+            x = _upsample(
+                bottom,
+                scale=self.upsample_scale,
+                size=left.shape[2:],
+                interpolation_mode=self.interpolation_mode,
+                align_corners=self.align_corners
+            )
+            x = self.block(x)
+            x = x + left
+
+        return x

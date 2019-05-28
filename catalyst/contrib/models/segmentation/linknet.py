@@ -1,90 +1,72 @@
-from typing import List
+from typing import Dict
 from functools import partial
 
-from .blocks import LinknetDecoderBlock
+from .blocks import EncoderDownsampleBlock, DecoderSumBlock
 
 from .encoder import UnetEncoder, ResnetEncoder
-from .bridge import BaseUnetBridge
+from .bridge import UnetBridge
 from .decoder import UNetDecoder
-from .head import BaseUnetHead
-from .core import UnetSpec
+from .head import UnetHead
+from .core import _UnetSpec, _ResnetUnetSpec
 
 
-class Linknet(UnetSpec):
+class Linknet(_UnetSpec):
 
-    def __init__(
+    def _get_components(
         self,
-        num_classes: int = 1,
-        in_channels: int = 3,
-        num_channels: int = 32,
-        num_blocks: int = 4,
-        dropout: float = 0.0,
+        encoder: UnetEncoder,
+        num_classes: int,
+        bridge_params: Dict,
+        decoder_params: Dict,
+        head_params: Dict,
     ):
-        encoder = UnetEncoder(
-            in_channels=in_channels,
-            num_channels=num_channels,
-            num_blocks=num_blocks
-        )
-        bridge = BaseUnetBridge(
+        bridge = UnetBridge(
             in_channels=encoder.out_channels,
-            out_channels=encoder.out_channels[-1] * 2
+            in_strides=encoder.out_strides,
+            out_channels=encoder.out_channels[-1] * 2,
+            block_fn=EncoderDownsampleBlock,
+            **bridge_params
         )
         decoder = UNetDecoder(
             in_channels=bridge.out_channels,
-            dilation_factors=encoder.out_strides,
-            block_fn=LinknetDecoderBlock
+            in_strides=bridge.out_strides,
+            block_fn=DecoderSumBlock,
+            **decoder_params
         )
-        head = BaseUnetHead(
-            decoder.out_channels[-1],
-            num_classes,
-            dropout=dropout,
+        head = UnetHead(
+            in_channels=decoder.out_channels,
+            in_strides=decoder.out_strides,
+            out_channels=num_classes,
+            **head_params
         )
-        super().__init__(
-            encoder=encoder,
-            bridge=bridge,
-            decoder=decoder,
-            head=head
-        )
+        return encoder, bridge, decoder, head
 
 
-class ResnetLinknet(UnetSpec):
+class ResnetLinknet(_ResnetUnetSpec):
 
-    def __init__(
+    def _get_components(
         self,
-        num_classes=1,
-        arch: str = "resnet18",
-        pretrained: bool = True,
-        requires_grad: bool = False,
-        layers: List[int] = None,
-        dropout: float = 0.0,
+        encoder: ResnetEncoder,
+        num_classes: int,
+        bridge_params: Dict,
+        decoder_params: Dict,
+        head_params: Dict,
     ):
-        encoder = ResnetEncoder(
-            arch=arch,
-            pretrained=pretrained,
-            requires_grad=requires_grad,
-            layers=layers
-        )
         bridge = None
-        decoder_in_channels = encoder.out_channels \
-            if bridge is None \
-            else bridge.out_channels
         decoder = UNetDecoder(
-            in_channels=decoder_in_channels,
+            in_channels=encoder.out_channels,
+            in_strides=encoder.out_strides,
             block_fn=partial(
-                LinknetDecoderBlock,
-                sum_first=False,
-                upsample_scale=None)
-            # dilation_factors=encoder.out_strides
+                DecoderSumBlock,
+                aggregate_first=False,
+                upsample_scale=None),
+            **decoder_params
         )
-        head = BaseUnetHead(
-            decoder.out_channels[-1],
-            num_classes,
-            dropout=dropout,
-            num_upsample_blocks=2,
+        head = UnetHead(
+            in_channels=decoder.out_channels,
+            in_strides=decoder.out_strides,
+            out_channels=num_classes,
+            num_upsample_blocks=6 - len(encoder.out_strides),
+            **head_params
         )
-        super().__init__(
-            encoder=encoder,
-            bridge=bridge,
-            decoder=decoder,
-            head=head
-        )
+        return encoder, bridge, decoder, head

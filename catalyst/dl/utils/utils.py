@@ -206,16 +206,10 @@ class UtilsFactory:
 
 
 def get_activation_by_name(activation: str = None):
-    if activation is None or activation == "none":
+    if activation is None or activation.lower() == "none":
         activation_fn = lambda x: x
-    elif activation == "sigmoid":
-        activation_fn = torch.nn.Sigmoid()
-    elif activation == "softmax2d":
-        activation_fn = torch.nn.Softmax2d()
     else:
-        raise NotImplementedError(
-            "Activation implemented for sigmoid and softmax2d"
-        )
+        activation_fn = torch.nn.__dict__[activation]()
     return activation_fn
 
 

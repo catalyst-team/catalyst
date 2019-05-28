@@ -12,15 +12,13 @@ class PSPDecoder(DecoderSpec):
     def __init__(
         self,
         in_channels: List[int],
+        in_strides: List[int],
         downsample_factor: int = 8,
         use_batchnorm: bool = True,
-        out_channels: int = 512,
-        block_offset: int = 0,
+        out_channels: int = 512
     ):
-        super().__init__()
-        self.block_offset = self._get_block_offset(
-            downsample_factor,
-            block_offset)
+        super().__init__(in_channels, in_strides)
+        self.block_offset = self._get_block_offset(downsample_factor)
         psp_out_channels: int = self._get(in_channels)
 
         self.psp = PSPBlock(
@@ -44,18 +42,13 @@ class PSPDecoder(DecoderSpec):
     def out_channels(self) -> List[int]:
         return [self._out_channels]
 
-    def _get_block_offset(self, downsample_factor: int, block_offset: int = 0):
-        if downsample_factor == 4:
-            offset = 1
-        elif downsample_factor == 8:
-            offset = 2
-        elif downsample_factor == 16:
-            offset = 3
-        else:
-            raise ValueError(
-                f"Downsample factor should bi in [4, 8, 16],"
-                f" got {downsample_factor}")
-        return block_offset + offset
+    @property
+    def out_strides(self) -> List[int]:
+        return [self.downsample_factor]
+
+    def _get_block_offset(self, downsample_factor: int):
+        offset = self.in_strides.index(downsample_factor)
+        return offset
 
     def _get(self, xs: List):
         return xs[self.block_offset]

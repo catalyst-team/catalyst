@@ -4,21 +4,21 @@ import torch
 import torch.nn as nn
 
 from .core import DecoderSpec
-from ..blocks.fpn import FPNBlock, SegmentationBlock
+from ..blocks.fpn import DecoderFPNBlock
 
 
 class FPNDecoder(DecoderSpec):
     def __init__(
         self,
         in_channels: List[int],
+        in_strides: List[int],
         pyramid_channels: int = 256,
-        segmentation_channels: int = 128,
         **kwargs
     ):
-        super().__init__()
-        self._out_channels = [segmentation_channels]
+        super().__init__(in_channels, in_strides)
+        out_strides_ = [in_strides[-1]]
 
-        self.conv1 = nn.Conv2d(
+        self.center_conv = nn.Conv2d(
             in_channels[-1],
             pyramid_channels,
             kernel_size=1)
@@ -26,41 +26,38 @@ class FPNDecoder(DecoderSpec):
         # features from encoder blocks
         reversed_features = list(reversed(in_channels[:-1]))
 
-        fpn_block = []
+        blocks = []
         for encoder_features in reversed_features:
-            fpn_block.append(FPNBlock(pyramid_channels, encoder_features))
-        self.fpn_block = nn.ModuleList(fpn_block)
-
-        segmentation_blocks = []
-        for i in range(len(in_channels)):
-            segmentation_blocks.append(
-                SegmentationBlock(
-                    pyramid_channels,
-                    segmentation_channels,
-                    num_upsamples=i))
-        segmentation_blocks = list(reversed(segmentation_blocks))
-        self.segmentation_blocks = nn.ModuleList(segmentation_blocks)
+            blocks.append(
+                DecoderFPNBlock(
+                    in_channels=pyramid_channels,
+                    enc_channels=encoder_features,
+                    out_channels=pyramid_channels,
+                    in_strides=out_strides_[-1],
+                    **kwargs
+                ))
+            out_strides_.append(blocks[-1].out_strides)
+        self.blocks = nn.ModuleList(blocks)
+        self._out_channels = [pyramid_channels] * len(in_channels)
+        self._out_strides = out_strides_
 
     @property
     def out_channels(self) -> List[int]:
         return self._out_channels
 
+    @property
+    def out_strides(self) -> List[int]:
+        return self._out_strides
+
     def forward(self, x: List[torch.Tensor]) -> List[torch.Tensor]:
         # features from center block
-        fpn_features = [self.conv1(x[-1])]
+        fpn_features = [self.center_conv(x[-1])]
         # features from encoder blocks
         reversed_features = list(reversed(x[:-1]))
 
         for i, (fpn_block, encoder_output) \
-                in enumerate(zip(self.fpn_block, reversed_features)):
+                in enumerate(zip(self.blocks, reversed_features)):
             fpn_features.append(
                 fpn_block(fpn_features[-1], encoder_output))
 
-        segmentation_features = list(map(
-            lambda block, features: block(features),
-            self.segmentation_blocks,
-            fpn_features))
-
-        x = sum(segmentation_features)
-
-        return [x]
+        return fpn_features

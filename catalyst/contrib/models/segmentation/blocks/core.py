@@ -69,16 +69,21 @@ def _upsample(
 
 class EncoderBlock(ABC, nn.Module):
 
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        in_strides: int = None
+    ):
+        super().__init__()
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.in_strides = in_strides
+
     @property
     @abstractmethod
-    def block(self) -> nn.Module:
+    def out_strides(self) -> int:
         pass
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.block(x)
-
-
-class CentralBlock(ABC, nn.Module):
 
     @property
     @abstractmethod
@@ -96,18 +101,25 @@ class DecoderBlock(ABC, nn.Module):
         in_channels: int,
         enc_channels: int,
         out_channels: int,
+        in_strides: int = None,
+        *args,
         **kwargs
     ):
         super().__init__()
         self.in_channels = in_channels
         self.enc_channels = enc_channels
         self.out_channels = out_channels
+        self.in_strides = in_strides
+
+        self.block = self._get_block(*args, **kwargs)
+
+    @abstractmethod
+    def _get_block(self, *args, **kwargs) -> nn.Module:
         pass
 
     @property
-    @abstractmethod
-    def block(self) -> nn.Module:
-        pass
+    def out_strides(self) -> int:
+        return self.in_strides // 2 if self.in_strides is not None else None
 
     @abstractmethod
     def forward(

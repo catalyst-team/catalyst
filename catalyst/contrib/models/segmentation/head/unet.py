@@ -5,33 +5,35 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from .core import HeadSpec
-from ..blocks import UnetUpsampleBlock
+from ..blocks import EncoderUpsampleBlock
 
 
-class BaseUnetHead(HeadSpec):
+class UnetHead(HeadSpec):
     def __init__(
         self,
-        in_channels: int,
+        in_channels: List[int],
         out_channels: int,
+        in_strides: List[int] = None,
         dropout: float = 0.0,
         num_upsample_blocks: int = 0,
         upsample_scale: int = None,
         interpolation_mode: str = "bilinear",
         align_corners: bool = True,
     ):
-        super().__init__()
+        super().__init__(in_channels, out_channels, in_strides)
         self.upsample_scale = upsample_scale
         self.interpolation_mode = interpolation_mode
         self.align_corners = align_corners
 
-        upsamples = (
-                [UnetUpsampleBlock(in_channels, in_channels)]
-                * num_upsample_blocks)
+        in_channels_ = in_channels[-1]
+        additional_layers = [
+            EncoderUpsampleBlock(in_channels_, in_channels_)
+        ] * num_upsample_blocks
         if dropout > 0:
-            upsamples.insert(0, nn.Dropout2d(p=dropout, inplace=True))
+            additional_layers.append(nn.Dropout2d(p=dropout, inplace=True))
         self.head = nn.Sequential(
-            *upsamples,
-            nn.Conv2d(in_channels, out_channels, 1)
+            *additional_layers,
+            nn.Conv2d(in_channels_, out_channels, 1)
         )
 
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
