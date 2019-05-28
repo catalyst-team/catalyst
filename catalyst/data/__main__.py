@@ -9,9 +9,9 @@ Examples:
     .. code:: bash
 
         $ catalyst-data tag2label \\
-            --in-dir=./data/ants_bees \\
-            --out-dataset=./data/ants_bees/dataset.csv \\
-            --out-labeling=./data/ants_bees/tag2cls.json
+            --in-dir=./data/dataset \\
+            --out-dataset=./data/dataset_raw.csv \\
+            --out-labeling=./data/tag2cls.json
 
     2. **check-images** checks images in your data
     to be non-broken and writes a flag:
@@ -20,13 +20,26 @@ Examples:
     .. code:: bash
 
         $ catalyst-data check-images \\
-            --in-csv=./data/input.csv \\
-            --img-datapath=./data/images \\
-            --img-col="filename" \\
-            --out-csv=./data/input_checked.csv \\
+            --in-csv=./data/dataset_raw.csv \\
+            --img-datapath=./data/dataset \\
+            --img-col="tag" \\
+            --out-csv=./data/dataset_checked.csv \\
             --n-cpu=4
 
-    3. **image2embedding** embeds images from your csv
+    3. **split-dataframe** split your dataset into train/valid folds
+
+     .. code:: bash
+
+         $ catalyst-data split-dataframe \\
+            --in-csv=./data/dataset_raw.csv \\
+            --tag2class=./data/tag2cls.json \\
+            --tag-column=tag \\
+            --class-column=class \\
+            --n-folds=5 \\
+            --train-folds=0,1,2,3 \\
+            --out-csv=./data/dataset.csv
+
+    4. **image2embedding** embeds images from your csv
     or image directory with specified neural net architecture
 
     .. code:: bash
@@ -53,9 +66,10 @@ from catalyst.contrib.scripts import check_images, \
 
 COMMANDS = OrderedDict(
     [
-        ("tag2label", tag2label), ("check-images", check_images),
+        ("tag2label", tag2label),
+        ("check-images", check_images),
+        ("split-dataframe", split_dataframe),
         ("image2embedding", image2embedding),
-        ("split-dataframe", split_dataframe)
     ]
 )
 

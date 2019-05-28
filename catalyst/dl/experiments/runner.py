@@ -1,4 +1,4 @@
-from typing import Any, Mapping, Dict, List
+from typing import Any, Mapping, Dict, List, Union
 from collections import OrderedDict  # noqa F401
 
 from torch import nn, optim
@@ -52,7 +52,14 @@ class SupervisedRunner(Runner):
 
     def predict_batch(self, batch: Mapping[str, Any]):
         output = self.model(batch[self.input_key])
-        output = {self.output_key: output}
+        if isinstance(output, dict):
+            pass
+        elif isinstance(output, (list, tuple)) \
+                and isinstance(self.output_key, list):
+            output = dict(
+                (key, value) for key, value in zip(self.output_key, output))
+        else:
+            output = {self.output_key: output}
         return output
 
     def train(
@@ -70,9 +77,12 @@ class SupervisedRunner(Runner):
         minimize_metric: bool = True,
         verbose: bool = False,
         state_kwargs: Dict = None,
+        checkpoint_data: Dict = None,
+        fp16: Union[Dict, bool] = None,
         check: bool = False,
-        checkpoint_data: Dict = None
     ):
+        if isinstance(fp16, bool):
+            fp16 = {"opt_level": "O1"}
         experiment = self._default_experiment(
             stage="train",
             model=model,
@@ -88,7 +98,8 @@ class SupervisedRunner(Runner):
             minimize_metric=minimize_metric,
             verbose=verbose,
             state_kwargs=state_kwargs,
-            checkpoint_data=checkpoint_data
+            checkpoint_data=checkpoint_data,
+            distributed_params=fp16
         )
         self.run_experiment(experiment, check=check)
 
@@ -99,14 +110,18 @@ class SupervisedRunner(Runner):
         callbacks: "List[Callback]" = None,
         verbose: bool = False,
         state_kwargs: Dict = None,
-        check: bool = False
+        fp16: Union[Dict, bool] = None,
+        check: bool = False,
     ):
+        if isinstance(fp16, bool):
+            fp16 = {"opt_level": "O1"}
         experiment = self._default_experiment(
             stage="infer",
             model=model,
             loaders=loaders,
             callbacks=callbacks,
             verbose=verbose,
-            state_kwargs=state_kwargs
+            state_kwargs=state_kwargs,
+            distributed_params=fp16
         )
         self.run_experiment(experiment, check=check)

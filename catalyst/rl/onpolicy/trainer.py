@@ -87,9 +87,6 @@ class Trainer:
             )
             print("Checkpoint saved to: %s" % filename)
 
-    def get_processes(self):
-        return []
-
     def _fetch_episodes(self):
 
         rollout_spec = self.algorithm.get_rollout_spec()

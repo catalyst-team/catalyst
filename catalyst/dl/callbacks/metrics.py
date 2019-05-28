@@ -136,7 +136,7 @@ class IouCallback(MetricCallback):
             eps (float): epsilon to avoid zero division
             threshold (float): threshold for outputs binarization
             activation (str): An torch.nn activation applied to the outputs.
-                Must be one of ['none', 'sigmoid', 'softmax2d']
+                Must be one of ['none', 'Sigmoid', 'Softmax2d']
         """
         if mode == "hard":
             metric_fn = metrics.iou
@@ -187,7 +187,7 @@ class F1ScoreCallback(MetricCallback):
             eps (float): epsilon to avoid zero division
             threshold (float): threshold for outputs binarization
             activation (str): An torch.nn activation applied to the outputs.
-                Must be one of ['none', 'sigmoid', 'softmax2d']
+                Must be one of ['none', 'Sigmoid', 'Softmax2d']
         """
 
         super().__init__(

@@ -1,5 +1,5 @@
 args:
-  logdir: ./logs/rl-gym-ppo  #  change me
+  logdir: ./logs/atari-ppo
   expdir: src
 
   vis: 0

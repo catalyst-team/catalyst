@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-import atexit
 import argparse
 
 from catalyst.dl.scripts.utils import import_module
@@ -80,12 +79,6 @@ def main(args, unknown_args):
         **config["trainer"],
         logdir=args.logdir,
     )
-
-    def on_exit():
-        for p in trainer.get_processes():
-            p.terminate()
-
-    atexit.register(on_exit)
 
     trainer.run()
 

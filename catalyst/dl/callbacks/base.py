@@ -1,11 +1,9 @@
 import os
-from typing import Dict
-
 import safitty
 import torch
+from typing import Dict
 
 from catalyst.contrib.scheduler import OneCycleLR, BatchScheduler
-from catalyst.dl.fp16 import Fp16Wrap, copy_params, copy_grads
 from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory, get_optimizer_momentum
 from catalyst.rl.registry import GRAD_CLIPPERS
@@ -144,7 +142,6 @@ class OptimizerCallback(Callback):
     def __init__(
         self,
         grad_clip_params: Dict = None,
-        fp16_grad_scale: float = 128.0,
         accumulation_steps: int = 1,
         optimizer_key: str = None,
         loss_key: str = None,
@@ -157,8 +154,6 @@ class OptimizerCallback(Callback):
         grad_clip_params = grad_clip_params or {}
         self.grad_clip_fn = GRAD_CLIPPERS.get_from_params(**grad_clip_params)
 
-        self.fp16 = False
-        self.fp16_grad_scale = fp16_grad_scale
         self.accumulation_steps = accumulation_steps
         self.optimizer_key = optimizer_key
         self.loss_key = loss_key
@@ -167,7 +162,6 @@ class OptimizerCallback(Callback):
         self._accumulation_counter = 0
 
     def on_stage_start(self, state: RunnerState):
-        self.fp16 = isinstance(state.model, Fp16Wrap)
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
         )
@@ -201,6 +195,8 @@ class OptimizerCallback(Callback):
 
     def on_batch_end(self, state):
         loss = state.get_key(key="loss", inner_key=self.loss_key)
+        if isinstance(loss, dict):
+            loss = list(loss.values())
         if isinstance(loss, list):
             loss = torch.mean(torch.stack(loss))
 
@@ -213,45 +209,30 @@ class OptimizerCallback(Callback):
             return
 
         self._accumulation_counter += 1
-        if not self.fp16:
-            model = state.model
-            optimizer = state.get_key(
-                key="optimizer", inner_key=self.optimizer_key
-            )
+        model = state.model
+        optimizer = state.get_key(
+            key="optimizer", inner_key=self.optimizer_key
+        )
+
+        # This is very hacky check whether we have AMP optimizer and this may
+        # change in future.
+        # But alternative solution is to have AmpOptimizerCallback.
+        # or expose another c'tor argument.
+        if hasattr(optimizer, "_amp_stash"):
+            from apex import amp
+            with amp.scale_loss(loss, optimizer) as scaled_loss:
+                scaled_loss.backward()
+        else:
             loss.backward()
 
-            if (self._accumulation_counter + 1) % self.accumulation_steps == 0:
-                self.grad_step(
-                    optimizer=optimizer,
-                    optimizer_wd=self._optimizer_wd,
-                    grad_clip_fn=self.grad_clip_fn
-                )
-                model.zero_grad()
-                self._accumulation_counter = 0
-        else:
-            model = state.model
-            model.zero_grad()
-            optimizer = state.get_key(
-                key="optimizer", inner_key=self.optimizer_key
-            )
-            loss = state.get_key(key="loss", inner_key=self.optimizer_key)
-            scaled_loss = self.fp16_grad_scale * loss.float()
-            scaled_loss.backward()
-
-            master_params = list(optimizer.param_groups[0]["params"])
-            model_params = list(
-                filter(lambda p: p.requires_grad, model.parameters())
-            )
-            copy_grads(source=model_params, target=master_params)
-            for param in master_params:
-                param.grad.data.mul_(1. / self.fp16_grad_scale)
+        if (self._accumulation_counter + 1) % self.accumulation_steps == 0:
             self.grad_step(
                 optimizer=optimizer,
                 optimizer_wd=self._optimizer_wd,
                 grad_clip_fn=self.grad_clip_fn
             )
-            copy_params(source=master_params, target=model_params)
-            torch.cuda.synchronize()
+            model.zero_grad()
+            self._accumulation_counter = 0
 
     def on_epoch_end(self, state):
         optimizer = state.get_key(

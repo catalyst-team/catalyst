@@ -10,7 +10,7 @@ class IoULoss(nn.Module):
         eps (float): epsilon to avoid zero division
         threshold (float): threshold for outputs binarization
         activation (str): An torch.nn activation applied to the outputs.
-            Must be one of ['none', 'sigmoid', 'softmax2d']
+            Must be one of ['none', 'Sigmoid', 'Softmax2d']
     """
     def __init__(
         self,
@@ -38,7 +38,7 @@ class BCEIoULoss(nn.Module):
         eps (float): epsilon to avoid zero division
         threshold (float): threshold for outputs binarization
         activation (str): An torch.nn activation applied to the outputs.
-            Must be one of ['none', 'sigmoid', 'softmax2d']
+            Must be one of ['none', 'Sigmoid', 'Softmax2d']
         reduction (str): Specifies the reduction to apply to the output of BCE
     """
     def __init__(
