@@ -1,27 +1,32 @@
 #!/usr/bin/env python
 
 import os
-import copy
-import time
-import atexit
-import argparse
-import multiprocessing as mp
-
-import torch
-
-from catalyst.dl.scripts.utils import import_module
-from catalyst.utils.config import parse_args_uargs
-from catalyst.utils.misc import set_global_seed, boolean_flag
-from catalyst.rl.registry import OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
-    ENVIRONMENTS, DATABASES
-from catalyst.rl.exploration import ExplorationHandler
-from catalyst.rl.offpolicy.sampler import Sampler as OffpolicySampler
-from catalyst.rl.onpolicy.sampler import Sampler as OnpolicySampler
-from catalyst.rl.scripts.utils import OFFPOLICY_ALGORITHMS_NAMES
-
-
 os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+
+import copy  # noqa E402
+import time  # noqa E402
+import atexit  # noqa E402
+import argparse  # noqa E402
+import multiprocessing as mp  # noqa E402
+
+import torch  # noqa E402
 torch.set_num_threads(1)
+
+from catalyst.dl.scripts.utils import import_module  # noqa E402
+from catalyst.utils.config import parse_args_uargs  # noqa E402
+from catalyst.utils.misc import set_global_seed, boolean_flag  # noqa E402
+from catalyst.rl.registry import \
+    OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
+    ENVIRONMENTS, DATABASES  # noqa E402
+from catalyst.rl.exploration import ExplorationHandler  # noqa E402
+from catalyst.rl.offpolicy.sampler import \
+    Sampler as OffpolicySampler  # noqa E402
+from catalyst.rl.onpolicy.sampler import \
+    Sampler as OnpolicySampler  # noqa E402
+from catalyst.rl.scripts.utils import OFFPOLICY_ALGORITHMS_NAMES  # noqa E402
+
+
 STEP_DELAY = 1
 
 

@@ -20,8 +20,9 @@ def assert_fp16_available():
     try:
         __import__('apex')
     except ImportError:
-        assert False, "NVidia Apex package must be installed. " \
-                      "See https://github.com/NVIDIA/apex."
+        assert False, \
+            "NVidia Apex package must be installed. " \
+            "See https://github.com/NVIDIA/apex."
 
 
 __all__ = ["assert_fp16_available", "prepare_optimizable_params"]

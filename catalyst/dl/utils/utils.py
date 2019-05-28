@@ -14,7 +14,8 @@ from torch.utils.data.dataloader import default_collate as default_collate_fn
 
 from catalyst.data.dataset import ListDataset
 from catalyst.utils.plotly import plot_tensorboard_log
-from ..utils.model import prepare_optimizable_params, assert_fp16_available
+from catalyst.utils.model import \
+    prepare_optimizable_params, assert_fp16_available
 
 
 class UtilsFactory:

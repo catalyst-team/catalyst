@@ -110,6 +110,7 @@ tmp/
 logs/
 
 
+*.bak
 *.csv
 *.tsv
 *.ipynb
