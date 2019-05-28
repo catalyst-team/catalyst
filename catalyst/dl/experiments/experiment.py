@@ -1,5 +1,5 @@
+from typing import Iterable, Any, Mapping, Dict, List, Tuple
 from collections import OrderedDict
-from typing import Iterable, Any, Mapping, Dict, List
 
 import torch
 from torch import nn
@@ -10,7 +10,6 @@ from catalyst.dl.registry import \
 from catalyst.dl import utils
 from catalyst.dl.callbacks import Callback, LossCallback, OptimizerCallback, \
     SchedulerCallback, CheckpointCallback  # noqa F401
-from catalyst.dl.fp16 import Fp16Wrap
 from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.misc import merge_dicts
 from .core import Experiment, _Model, _Criterion, _Optimizer, _Scheduler
@@ -38,7 +37,8 @@ class BaseExperiment(Experiment):
         minimize_metric: bool = True,
         verbose: bool = False,
         state_kwargs: Dict = None,
-        checkpoint_data: Dict = None
+        checkpoint_data: Dict = None,
+        distributed_params: Dict = None
     ):
         self._model = model
         self._loaders = loaders
@@ -57,6 +57,7 @@ class BaseExperiment(Experiment):
         self._verbose = verbose
         self._additional_state_kwargs = state_kwargs or {}
         self.checkpoint_data = checkpoint_data or {}
+        self.distributed_params = distributed_params or {}
 
     @property
     def logdir(self):
@@ -88,8 +89,24 @@ class BaseExperiment(Experiment):
     def get_criterion(self, stage: str) -> _Criterion:
         return self._criterion
 
-    def get_optimizer(self, stage: str, model=None) -> _Optimizer:
-        return self._optimizer
+    def get_optimizer_and_model(
+        self,
+        stage: str,
+        model: nn.Module
+    ) -> Tuple[_Optimizer, _Model]:
+
+        optimizer = self._optimizer
+
+        if len(self.distributed_params) > 0:
+            utils.assert_fp16_available()
+            from apex import amp
+
+            model, optimizer = amp.initialize(
+                model, optimizer, **self.distributed_params)
+        elif torch.cuda.device_count() > 1:
+            model = torch.nn.DataParallel(model)
+
+        return optimizer, model
 
     def get_scheduler(self, stage: str, optimizer=None) -> _Scheduler:
         return self._scheduler
@@ -125,6 +142,7 @@ class ConfigExperiment(Experiment):
     STAGE_KEYWORDS = [
         "criterion_params", "optimizer_params", "scheduler_params",
         "data_params", "state_params", "callbacks_params",
+        "distributed_params"
     ]
 
     def __init__(self, config: Dict):
@@ -199,13 +217,7 @@ class ConfigExperiment(Experiment):
 
     def get_model(self, stage: str) -> _Model:
         model_params = self._config["model_params"]
-        fp16 = model_params.pop("fp16", False)
-
         model = MODELS.get_from_params(**model_params)
-
-        if fp16:
-            utils.assert_fp16_available()
-            model = Fp16Wrap(model)
 
         model = self._preprocess_model_for_stage(stage, model)
         model = self._postprocess_model_for_stage(stage, model)
@@ -258,15 +270,31 @@ class ConfigExperiment(Experiment):
 
         return optimizer
 
-    def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
-        fp16 = isinstance(model, Fp16Wrap)
-        model_params = utils.prepare_optimizable_params(
-            model.parameters(), fp16)
+    def get_optimizer_and_model(
+        self,
+        stage: str,
+        model: nn.Module
+    ) -> [_Optimizer, _Model]:
+
+        model_params = utils.prepare_optimizable_params(model.parameters())
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
+        distributed_params = \
+            self.stages_config[stage].get("distributed_params", {})
+
         optimizer = self._get_optimizer(
             model_params=model_params, **optimizer_params)
-        return optimizer
+
+        if len(distributed_params) > 0:
+            utils.assert_fp16_available()
+            from apex import amp
+
+            model, optimizer = amp.initialize(
+                model, optimizer, **distributed_params)
+        elif torch.cuda.device_count() > 1:
+            model = torch.nn.DataParallel(model)
+
+        return optimizer, model
 
     @staticmethod
     def _get_scheduler(*, optimizer, **params):

@@ -13,7 +13,6 @@ from torch.optim import Optimizer
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
 from catalyst.data.dataset import ListDataset
-from catalyst.dl.fp16 import Fp16Wrap
 from catalyst.utils.plotly import plot_tensorboard_log
 from catalyst.utils.model import \
     prepare_optimizable_params, assert_fp16_available
@@ -86,10 +85,7 @@ class UtilsFactory:
         if torch.cuda.is_available():
             cudnn.benchmark = True
 
-        if torch.cuda.device_count() > 1 and not isinstance(model, Fp16Wrap):
-            model = torch.nn.DataParallel(model).to(device)
-        else:
-            model = model.to(device)
+        model = model.to(device)
 
         return model, device
 
@@ -102,11 +98,7 @@ class UtilsFactory:
         if isinstance(model, OrderedDict):
             raise NotImplementedError()
         else:
-            model_ = model
-            if isinstance(model_, nn.DataParallel):
-                model_ = model_.module
-            if isinstance(model_, Fp16Wrap):
-                model_ = model_.network
+            model_ = real_module_from_maybe_ddp(model)
             checkpoint["model_state_dict"] = model_.state_dict()
 
         for dict2save, name2save in zip(
@@ -134,12 +126,8 @@ class UtilsFactory:
         checkpoint, model=None, criterion=None, optimizer=None, scheduler=None
     ):
         if model is not None:
-            if isinstance(model, torch.nn.DataParallel):
-                model = model.module
-            if isinstance(model, Fp16Wrap):
-                model.network.load_state_dict(checkpoint["model_state_dict"])
-            else:
-                model.load_state_dict(checkpoint["model_state_dict"])
+            model = real_module_from_maybe_ddp(model)
+            model.load_state_dict(checkpoint["model_state_dict"])
 
         for dict2load, name2load in zip(
             [criterion, optimizer, scheduler],
@@ -221,7 +209,8 @@ def get_activation_by_name(activation: str = None):
 
 def get_optimizer_momentum(optimizer: Optimizer) -> float:
     """
-    Get momentum of current optimizer
+    Get momentum of current optimizer.
+
     Args:
         optimizer: PyTorch optimizer
 
@@ -251,3 +240,37 @@ def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
         )
     elif momentum is not None:
         safitty.set(optimizer.param_groups, index, "momentum", value=value)
+
+
+def is_wrapped_with_ddp(model: nn.Module) -> bool:
+    """
+    Checks whether model is wrapped with DataParallel/DistributedDataParallel.
+    :param model:
+    :return:
+    """
+    parallel_wrappers = torch.nn.DataParallel, \
+        torch.nn.parallel.DistributedDataParallel
+
+    # Check whether Apex is installed and if it is,
+    # add Apex's DistributedDataParallel to list of checked types
+    try:
+        from apex.parallel import DistributedDataParallel as apex_DDP
+        parallel_wrappers = parallel_wrappers + (apex_DDP, )
+    except ImportError:
+        pass
+
+    return isinstance(model, parallel_wrappers)
+
+
+def real_module_from_maybe_ddp(model: nn.Module) -> nn.Module:
+    """
+    Return a real model from a torch.nn.DataParallel,
+    torch.nn.parallel.DistributedDataParallel, or
+    apex.parallel.DistributedDataParallel.
+
+    :param model: A model, or DataParallel wrapper.
+    :return: A model
+    """
+    if is_wrapped_with_ddp(model):
+        model = model.module
+    return model
