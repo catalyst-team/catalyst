@@ -1,5 +1,18 @@
-.PHONY: check-style
+.PHONY: check-style check-docs docker docker-dev clean
 
 check-style:
-	flake8 catalyst/ setup.py --count --ignore=E126,E226,E704,E731,W503,W504 --max-complexity=16 --show-source --statistics
-	flake8 catalyst/ setup.py --count --exit-zero --max-complexity=10 --statistics
+	bash ./checks/codestyle.sh
+
+check-docs:
+	bash ./checks/docs.sh
+
+docker: requirements.txt
+	docker build -t catalyst-base:latest . -f ./docker/Dockerfile
+
+docker-dev: requirements.txt requirements-dev.txt
+	docker build -t catalyst-dev:latest . -f ./docker/Dockerfile-dev
+
+clean:
+	rm -rf build/
+	docker rmi -f catalyst-base:latest
+	docker rmi -f catalyst-dev:latest

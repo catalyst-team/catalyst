@@ -4,22 +4,13 @@
 ### Base version
 
 ```bash
-# PyTorch 0.4.1 version (old)
-docker build -t catalyst-base -f ./Dockerfile-041 .
-
-# PyTorch 1.0.0 version
-docker build -t catalyst-base -f ./Dockerfile-100 .
-
+make docker
 ```
 
-### Contrib version
+### Developer version
 
 ```bash
-# PyTorch 0.4.1 version (old)
-docker build -t catalyst-contrib -f ./Dockerfile-contrib-041 .
-
-# PyTorch 1.0.0 version
-docker build -t catalyst-contrib -f ./Dockerfile-contrib-100 .
+make docker-dev
 ```
 
 ## How to use
