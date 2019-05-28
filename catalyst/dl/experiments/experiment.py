@@ -38,7 +38,7 @@ class BaseExperiment(Experiment):
         verbose: bool = False,
         state_kwargs: Dict = None,
         checkpoint_data: Dict = None,
-        fp16: bool = False
+        distributed_params: Dict = None
     ):
         self._model = model
         self._loaders = loaders
@@ -57,7 +57,7 @@ class BaseExperiment(Experiment):
         self._verbose = verbose
         self._additional_state_kwargs = state_kwargs or {}
         self.checkpoint_data = checkpoint_data or {}
-        self.fp16 = fp16
+        self.distributed_params = distributed_params or {}
 
     @property
     def logdir(self):
@@ -97,12 +97,12 @@ class BaseExperiment(Experiment):
 
         optimizer = self._optimizer
 
-        if self.fp16:
+        if len(self.distributed_params) > 0:
             utils.assert_fp16_available()
             from apex import amp
 
             model, optimizer = amp.initialize(
-                model, optimizer, opt_level="O1")
+                model, optimizer, **self.distributed_params)
         elif torch.cuda.device_count() > 1:
             model = torch.nn.DataParallel(model)
 
@@ -142,6 +142,7 @@ class ConfigExperiment(Experiment):
     STAGE_KEYWORDS = [
         "criterion_params", "optimizer_params", "scheduler_params",
         "data_params", "state_params", "callbacks_params",
+        "distributed_params"
     ]
 
     def __init__(self, config: Dict):
@@ -278,21 +279,18 @@ class ConfigExperiment(Experiment):
         model_params = utils.prepare_optimizable_params(model.parameters())
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
-
-        fp16 = optimizer_params.pop("fp16", False)
-        fp16_opt_level = optimizer_params.pop("fp16_opt_level", "O1")
+        distributed_params = \
+            self.stages_config[stage].get("distributed_params", {})
 
         optimizer = self._get_optimizer(
             model_params=model_params, **optimizer_params)
 
-        if fp16:
+        if len(distributed_params) > 0:
             utils.assert_fp16_available()
             from apex import amp
-            if fp16_opt_level not in {"O1", "O2", "O3"}:
-                raise ValueError("fp16 mode must be one of O1, O2, O3")
 
             model, optimizer = amp.initialize(
-                model, optimizer, opt_level=fp16_opt_level)
+                model, optimizer, **distributed_params)
         elif torch.cuda.device_count() > 1:
             model = torch.nn.DataParallel(model)
 

@@ -1,4 +1,4 @@
-from typing import Any, Mapping, Dict, List
+from typing import Any, Mapping, Dict, List, Union
 from collections import OrderedDict  # noqa F401
 
 from torch import nn, optim
@@ -78,9 +78,11 @@ class SupervisedRunner(Runner):
         verbose: bool = False,
         state_kwargs: Dict = None,
         checkpoint_data: Dict = None,
-        fp16: bool = False,
+        fp16: Union[Dict, bool] = None,
         check: bool = False,
     ):
+        if isinstance(fp16, bool):
+            fp16 = {"opt_level": "O1"}
         experiment = self._default_experiment(
             stage="train",
             model=model,
@@ -97,7 +99,7 @@ class SupervisedRunner(Runner):
             verbose=verbose,
             state_kwargs=state_kwargs,
             checkpoint_data=checkpoint_data,
-            fp16=fp16
+            distributed_params=fp16
         )
         self.run_experiment(experiment, check=check)
 
@@ -108,9 +110,11 @@ class SupervisedRunner(Runner):
         callbacks: "List[Callback]" = None,
         verbose: bool = False,
         state_kwargs: Dict = None,
-        fp16: bool = False,
+        fp16: Union[Dict, bool] = None,
         check: bool = False,
     ):
+        if isinstance(fp16, bool):
+            fp16 = {"opt_level": "O1"}
         experiment = self._default_experiment(
             stage="infer",
             model=model,
@@ -118,6 +122,6 @@ class SupervisedRunner(Runner):
             callbacks=callbacks,
             verbose=verbose,
             state_kwargs=state_kwargs,
-            fp16=fp16
+            distributed_params=fp16
         )
         self.run_experiment(experiment, check=check)

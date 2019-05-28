@@ -58,7 +58,11 @@ class Experiment(ABC):
     def get_scheduler(self, stage: str, optimizer) -> _Scheduler:
         pass
 
-    def get_experiment_components(self, model, stage: str):
+    def get_experiment_components(
+        self,
+        model: nn.Module,
+        stage: str
+    ) -> Tuple[_Model, _Criterion, _Optimizer, _Scheduler]:
         criterion = self.get_criterion(stage)
         optimizer, model = self.get_optimizer_and_model(stage, model)
         scheduler = self.get_scheduler(stage, optimizer)
