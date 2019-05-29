@@ -1,4 +1,5 @@
 from typing import List
+import numpy as np
 
 import torch
 import torch.nn as nn
@@ -17,7 +18,7 @@ class FPNHead(HeadSpec):
         in_strides: List[int] = None,
         dropout: float = 0.0,
         num_upsample_blocks: int = 0,
-        upsample_scale: int = None,
+        upsample_scale: int = 1,
         interpolation_mode: str = "bilinear",
         align_corners: bool = True,
     ):
@@ -28,22 +29,24 @@ class FPNHead(HeadSpec):
 
         segmentation_blocks = []
         for i, in_channels_ in enumerate(in_channels):
+            if in_strides is not None:
+                i = np.log2(in_strides[i]) \
+                    - num_upsample_blocks - np.log2(upsample_scale)
             segmentation_blocks.append(
                 SegmentationBlock(
                     in_channels=in_channels_,
                     out_channels=hid_channel,
-                    num_upsamples=i))
-        self.segmentation_blocks = list(reversed(segmentation_blocks))
+                    num_upsamples=int(i)))
+        self.segmentation_blocks = segmentation_blocks
 
-        in_channels_ = in_channels[-1]
         additional_layers = [
-            EncoderUpsampleBlock(in_channels_, in_channels_)
+            EncoderUpsampleBlock(hid_channel, hid_channel)
         ] * num_upsample_blocks
         if dropout > 0:
             additional_layers.append(nn.Dropout2d(p=dropout, inplace=True))
         self.head = nn.Sequential(
             *additional_layers,
-            nn.Conv2d(in_channels_, out_channels, 1)
+            nn.Conv2d(hid_channel, out_channels, 1)
         )
 
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
@@ -53,7 +56,7 @@ class FPNHead(HeadSpec):
             x))
         x = sum(x)
         x = self.head(x)
-        if self.upsample_scale is not None:
+        if self.upsample_scale > 1:
             x = F.interpolate(
                 x,
                 scale_factor=self.upsample_scale,

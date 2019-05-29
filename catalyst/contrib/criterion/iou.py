@@ -34,7 +34,6 @@ class BCEIoULoss(nn.Module):
     """
     Intersection over union (Jaccard) with BCE loss
     Args:
-        mode (str): one of ``['hard', 'soft']`` to calculate IoU
         eps (float): epsilon to avoid zero division
         threshold (float): threshold for outputs binarization
         activation (str): An torch.nn activation applied to the outputs.

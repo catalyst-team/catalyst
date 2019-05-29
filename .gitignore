@@ -106,15 +106,14 @@ ENV/
 .idea
 .code
 
-tmp/
-logs/
-
-
 *.bak
 *.csv
 *.tsv
 *.ipynb
 
+tmp/
+logs/
+data/
 examples/data/
 examples/logs/
 notebooks/

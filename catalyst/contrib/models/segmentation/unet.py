@@ -1,9 +1,9 @@
 from typing import Dict
 from functools import partial
+import numpy as np
 
 from .blocks import EncoderDownsampleBlock, EncoderUpsampleBlock, \
     DecoderConcatBlock
-
 from .encoder import UnetEncoder, ResnetEncoder
 from .bridge import UnetBridge
 from .decoder import UNetDecoder
@@ -38,6 +38,7 @@ class UNet(_UnetSpec):
             in_channels=decoder.out_channels,
             in_strides=decoder.out_strides,
             out_channels=num_classes,
+            num_upsample_blocks=int(np.log2(decoder.out_strides[-1])),
             **head_params
         )
 
@@ -74,7 +75,7 @@ class ResnetUnet(_ResnetUnetSpec):
             in_channels=decoder.out_channels,
             in_strides=decoder.out_strides,
             out_channels=num_classes,
-            num_upsample_blocks=1,
+            num_upsample_blocks=int(np.log2(decoder.out_strides[-1])),
             **head_params
         )
         return encoder, bridge, decoder, head

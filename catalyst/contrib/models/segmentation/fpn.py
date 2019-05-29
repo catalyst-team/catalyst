@@ -1,7 +1,6 @@
 from typing import Dict
 
 from .blocks import EncoderDownsampleBlock
-
 from .encoder import UnetEncoder, ResnetEncoder
 from .bridge import UnetBridge
 from .decoder import FPNDecoder
@@ -35,6 +34,9 @@ class FPNUnet(_UnetSpec):
             in_channels=decoder.out_channels,
             in_strides=decoder.out_strides,
             out_channels=num_classes,
+            upsample_scale=decoder.out_strides[-1],
+            interpolation_mode="bilinear",
+            align_corners=True,
             **head_params
         )
         return encoder, bridge, decoder, head
@@ -60,7 +62,7 @@ class ResnetFPNUnet(_ResnetUnetSpec):
             in_channels=decoder.out_channels,
             in_strides=decoder.out_strides,
             out_channels=num_classes,
-            upsample_scale=2 ** (6 - len(encoder.out_channels)),
+            upsample_scale=decoder.out_strides[-1],
             interpolation_mode="bilinear",
             align_corners=True,
             **head_params

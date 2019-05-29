@@ -26,7 +26,7 @@ class PSPnet(_UnetSpec):
             in_channels=decoder.out_channels,
             in_strides=decoder.out_strides,
             out_channels=num_classes,
-            upsample_scale=decoder.downsample_factor,
+            upsample_scale=decoder.out_strides[-1],
             interpolation_mode="bilinear",
             align_corners=True,
             **head_params
@@ -48,12 +48,13 @@ class ResnetPSPnet(_ResnetUnetSpec):
         decoder = PSPDecoder(
             in_channels=encoder.out_channels,
             in_strides=encoder.out_strides,
+            **decoder_params
         )
         head = UnetHead(
             in_channels=decoder.out_channels,
             in_strides=decoder.out_strides,
             out_channels=num_classes,
-            upsample_scale=decoder.downsample_factor,
+            upsample_scale=decoder.out_strides[-1],
             interpolation_mode="bilinear",
             align_corners=True,
             **head_params

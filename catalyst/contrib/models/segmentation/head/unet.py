@@ -16,7 +16,7 @@ class UnetHead(HeadSpec):
         in_strides: List[int] = None,
         dropout: float = 0.0,
         num_upsample_blocks: int = 0,
-        upsample_scale: int = None,
+        upsample_scale: int = 1,
         interpolation_mode: str = "bilinear",
         align_corners: bool = True,
     ):
@@ -39,7 +39,7 @@ class UnetHead(HeadSpec):
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
         x_ = x[-1]
         x = self.head(x_)
-        if self.upsample_scale is not None:
+        if self.upsample_scale > 1:
             x = F.interpolate(
                 x,
                 scale_factor=self.upsample_scale,
