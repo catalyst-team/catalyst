@@ -37,7 +37,7 @@ class FPNHead(HeadSpec):
                     in_channels=in_channels_,
                     out_channels=hid_channel,
                     num_upsamples=int(i)))
-        self.segmentation_blocks = segmentation_blocks
+        self.segmentation_blocks = nn.ModuleList(segmentation_blocks)
 
         additional_layers = [
             EncoderUpsampleBlock(hid_channel, hid_channel)
