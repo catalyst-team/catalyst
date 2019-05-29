@@ -64,7 +64,7 @@ class Conv3x3GNReLU(nn.Module):
         self.interpolation_mode = interpolation_mode
         self.align_corners = align_corners
 
-        self._block = nn.Sequential(
+        self.block = nn.Sequential(
             nn.Conv2d(
                 in_channels,
                 out_channels,
@@ -75,7 +75,7 @@ class Conv3x3GNReLU(nn.Module):
         )
 
     def forward(self, x):
-        x = self._block(x)
+        x = self.block(x)
         if self.upsample:
             x = F.interpolate(
                 x,
@@ -106,7 +106,7 @@ class SegmentationBlock(nn.Module):
                 blocks.append(
                     Conv3x3GNReLU(out_channels, out_channels, upsample=True))
 
-        self._block = nn.Sequential(*blocks)
+        self.block = nn.Sequential(*blocks)
 
     def forward(self, x):
-        return self._block(x)
+        return self.block(x)
