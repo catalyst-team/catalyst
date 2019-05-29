@@ -53,10 +53,6 @@ Base
     :members:
     :undoc-members:
 
-.. autoclass:: CallbackCompose
-    :members:
-    :undoc-members:
-
 Metrics
 ~~~~~~~~~~
 
@@ -68,7 +64,8 @@ Metrics
     :members:
     :undoc-members:
 
-.. autoclass:: IoUCallback
+
+.. autoclass:: IouCallback
     :members:
     :undoc-members:
 

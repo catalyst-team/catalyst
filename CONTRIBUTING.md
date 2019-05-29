@@ -52,10 +52,26 @@ Do not forget to check the codestyle for your PR with
 or with
 
 ```bash
-$ ./codestyle.sh
+$ make check-style
 ```
 
 ## Documentation
 
 Catalyst uses [Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for formatting [docstrings](https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings). 
 Length of line inside docstrings block must be limited to 80 characters to fit into Jupyter documentation popups.
+
+Check that you wrote working docs with:
+```bash
+$ make check-docs
+```
+
+The command requires `Sphinx` and some sphinx-specific libraries.
+If you don't want to install them, you may make a catalyst-dev container
+```bash
+make docker-dev
+# and then run test
+docker run \
+    -v `pwd`/:/workspace/ \
+    catalyst-dev:latest \
+    bash -c "make check-docs"
+```
