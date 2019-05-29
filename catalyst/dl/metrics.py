@@ -99,7 +99,7 @@ def dice(
     targets: torch.Tensor,
     eps: float = 1e-7,
     threshold: float = None,
-    activation: str = "sigmoid"
+    activation: str = "Sigmoid"
 ):
     """
     Computes the dice metric
@@ -109,7 +109,7 @@ def dice(
         eps (float): epsilon
         threshold (float): threshold for outputs binarization
         activation (str): An torch.nn activation applied to the outputs.
-            Must be one of ["none", "sigmoid", "softmax2d"]
+            Must be one of ["none", "Sigmoid", "Softmax2d"]
 
     Returns:
         double:  Dice score
@@ -132,7 +132,7 @@ def iou(
     targets: torch.Tensor,
     eps: float = 1e-7,
     threshold: float = None,
-    activation: str = "sigmoid"
+    activation: str = "Sigmoid"
 ):
     """
     Args:
@@ -141,7 +141,7 @@ def iou(
         eps (float): epsilon to avoid zero division
         threshold (float): threshold for outputs binarization
         activation (str): An torch.nn activation applied to the outputs.
-            Must be one of ["none", "sigmoid", "softmax2d"]
+            Must be one of ["none", "Sigmoid", "Softmax2d"]
 
     Returns:
         float: IoU (Jaccard) score
@@ -162,50 +162,13 @@ def iou(
 jaccard = iou
 
 
-def soft_iou(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    eps: float = 1e-7,
-    threshold: float = None,
-    activation: str = "sigmoid"
-):
-    """
-    Args:
-        outputs (torch.Tensor): A list of predicted elements
-        targets (torch.Tensor):  A list of elements that are to be predicted
-        eps (float): epsilon to avoid zero division
-        threshold (float): threshold for outputs binarization
-        activation (str): An torch.nn activation applied to the outputs.
-            Must be one of ["none", "sigmoid", "softmax2d"]
-
-    Returns:
-        float: SoftIoU (SoftJaccard) score
-    """
-    ious = []
-    for class_i in range(outputs.shape[1]):
-        jaccard_i = iou(
-            outputs[:, class_i, :, :],
-            targets[:, class_i, :, :],
-            eps=eps,
-            threshold=threshold,
-            activation=activation,
-        )
-        ious.append(jaccard_i)
-    soft_iou = torch.mean(torch.stack(ious))
-
-    return soft_iou
-
-
-soft_jaccard = soft_iou
-
-
 def f1_score(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     beta: float = 1.0,
     eps: float = 1e-7,
     threshold: float = None,
-    activation: str = "sigmoid"
+    activation: str = "Sigmoid"
 ):
     """
     Source:
@@ -217,7 +180,7 @@ def f1_score(
         beta (float): beta param for f_score
         threshold (float): threshold for outputs binarization
         activation (str): An torch.nn activation applied to the outputs.
-            Must be one of ["none", "sigmoid", "softmax2d"]
+            Must be one of ["none", "Sigmoid", "Softmax2d"]
     Returns:
         float: F_1 score
     """

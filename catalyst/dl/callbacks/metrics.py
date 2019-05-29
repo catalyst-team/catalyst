@@ -91,7 +91,7 @@ class DiceCallback(MetricCallback):
         prefix: str = "dice",
         eps: float = 1e-7,
         threshold: float = None,
-        activation: str = "sigmoid"
+        activation: str = "Sigmoid"
     ):
         """
         :param input_key: input key to use for dice calculation;
@@ -120,10 +120,9 @@ class IouCallback(MetricCallback):
         input_key: str = "targets",
         output_key: str = "logits",
         prefix: str = "iou",
-        mode: str = "hard",
         eps: float = 1e-7,
         threshold: float = None,
-        activation: str = "sigmoid",
+        activation: str = "Sigmoid",
     ):
         """
         Args:
@@ -132,24 +131,14 @@ class IouCallback(MetricCallback):
             output_key (str): output key to use for iou calculation;
                 specifies our ``y_pred``
             prefix (str): key to store in logs
-            mode (str): one of ``['hard', 'soft']`` to calculate IoU
             eps (float): epsilon to avoid zero division
             threshold (float): threshold for outputs binarization
             activation (str): An torch.nn activation applied to the outputs.
-                Must be one of ['none', 'sigmoid', 'softmax2d']
+                Must be one of ['none', 'Sigmoid', 'Softmax2d']
         """
-        if mode == "hard":
-            metric_fn = metrics.iou
-        elif mode == "soft":
-            metric_fn = metrics.soft_iou
-        else:
-            raise ValueError(
-                f"Mode must be one of ['hard', 'soft'], got {mode}."
-            )
-
         super().__init__(
             prefix=prefix,
-            metric_fn=metric_fn,
+            metric_fn=metrics.iou,
             input_key=input_key,
             output_key=output_key,
             eps=eps,
@@ -174,7 +163,7 @@ class F1ScoreCallback(MetricCallback):
         beta: float = 1.0,
         eps: float = 1e-7,
         threshold: float = None,
-        activation: str = "sigmoid"
+        activation: str = "Sigmoid"
     ):
         """
         Args:
@@ -187,7 +176,7 @@ class F1ScoreCallback(MetricCallback):
             eps (float): epsilon to avoid zero division
             threshold (float): threshold for outputs binarization
             activation (str): An torch.nn activation applied to the outputs.
-                Must be one of ['none', 'sigmoid', 'softmax2d']
+                Must be one of ['none', 'Sigmoid', 'Softmax2d']
         """
 
         super().__init__(

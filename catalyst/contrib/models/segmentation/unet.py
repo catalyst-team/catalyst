@@ -1,116 +1,81 @@
-import torch
-from torch import nn
+from typing import Dict
+from functools import partial
+import numpy as np
+
+from .blocks import EncoderDownsampleBlock, EncoderUpsampleBlock, \
+    DecoderConcatBlock
+from .encoder import UnetEncoder, ResnetEncoder
+from .bridge import UnetBridge
+from .decoder import UNetDecoder
+from .head import UnetHead
+from .core import _UnetSpec, _ResnetUnetSpec
 
 
-def conv3x3(in_channels, out_channels, dilation=1):
-    return nn.Conv2d(
-        in_channels, out_channels, 3, padding=dilation, dilation=dilation
-    )
+class UNet(_UnetSpec):
 
-
-class EncoderBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, batch_norm=False):
-        super().__init__()
-
-        self.block = nn.Sequential()
-        self.block.add_module("conv1", conv3x3(in_channels, out_channels))
-        if batch_norm:
-            self.block.add_module("bn1", nn.BatchNorm2d(out_channels))
-        self.block.add_module("relu1", nn.ReLU())
-        self.block.add_module("conv2", conv3x3(out_channels, out_channels))
-        if batch_norm:
-            self.block.add_module("bn2", nn.BatchNorm2d(out_channels))
-        self.block.add_module("relu2", nn.ReLU())
-
-    def forward(self, x):
-        return self.block(x)
-
-
-class Encoder(nn.Module):
-    def __init__(self, in_channels, num_filters, num_blocks):
-        super().__init__()
-
-        self.num_blocks = num_blocks
-        for i in range(num_blocks):
-            in_channels = in_channels if not i else num_filters * 2**(i - 1)
-            out_channels = num_filters * 2**i
-            self.add_module(
-                f"block{i + 1}", EncoderBlock(in_channels, out_channels)
-            )
-            if i != num_blocks - 1:
-                self.add_module(f"pool{i + 1}", nn.MaxPool2d(2, 2))
-
-    def forward(self, x):
-        acts = []
-        for i in range(self.num_blocks):
-            x = self.__getattr__(f"block{i + 1}")(x)
-            acts.append(x)
-            if i != self.num_blocks - 1:
-                x = self.__getattr__(f"pool{i + 1}")(x)
-        return acts
-
-
-class DecoderBlock(nn.Module):
-    def __init__(self, out_channels):
-        super().__init__()
-
-        self.upconv = conv3x3(out_channels * 2, out_channels)
-        self.conv1 = conv3x3(out_channels * 2, out_channels)
-        self.conv2 = conv3x3(out_channels, out_channels)
-
-    def forward(self, down, left):
-        x = nn.functional.interpolate(
-            down, scale_factor=2, mode="bilinear", align_corners=True
-        )
-        x = self.upconv(x)
-        x = torch.cat([left, x], 1)
-        x = self.conv1(x)
-        x = self.conv2(x)
-        return x
-
-
-class Decoder(nn.Module):
-    def __init__(self, num_filters, num_blocks):
-        super().__init__()
-
-        for i in range(num_blocks):
-            self.add_module(
-                f"block{num_blocks - i}", DecoderBlock(num_filters * 2**i)
-            )
-
-    def forward(self, acts):
-        up = acts[-1]
-        for i, left in enumerate(acts[-2::-1]):
-            up = self.__getattr__(f"block{i + 1}")(up, left)
-        return up
-
-
-class UNet(nn.Module):
-    """
-    CNN architecture for semantic segmentation
-    Made by @nizhib
-    """
-    def __init__(
-        self, num_classes=1, in_channels=3, num_filters=64, num_blocks=4
+    def _get_components(
+        self,
+        encoder: UnetEncoder,
+        num_classes: int,
+        bridge_params: Dict,
+        decoder_params: Dict,
+        head_params: Dict,
     ):
-        super().__init__()
+        bridge = UnetBridge(
+            in_channels=encoder.out_channels,
+            in_strides=encoder.out_strides,
+            out_channels=encoder.out_channels[-1] * 2,
+            block_fn=EncoderDownsampleBlock,
+            **bridge_params
+        )
+        decoder = UNetDecoder(
+            in_channels=bridge.out_channels,
+            in_strides=bridge.out_strides,
+            block_fn=DecoderConcatBlock,
+            **decoder_params,
+        )
+        head = UnetHead(
+            in_channels=decoder.out_channels,
+            in_strides=decoder.out_strides,
+            out_channels=num_classes,
+            num_upsample_blocks=int(np.log2(decoder.out_strides[-1])),
+            **head_params
+        )
 
-        self.encoder = Encoder(in_channels, num_filters, num_blocks)
-        self.decoder = Decoder(num_filters, num_blocks - 1)
-        self.final = nn.Conv2d(num_filters, num_classes, 1)
-
-    def forward(self, x):
-        acts = self.encoder(x)
-        x = self.decoder(acts)
-        x = self.final(x)
-        return x
+        return encoder, bridge, decoder, head
 
 
-if __name__ == "__main__":
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+class ResnetUnet(_ResnetUnetSpec):
 
-    model = UNet(num_classes=1).to(device)
-    images = torch.randn(4, 3, 256, 256).to(device)
-
-    out = model.forward(images)
-    print(out.size())
+    def _get_components(
+        self,
+        encoder: ResnetEncoder,
+        num_classes: int,
+        bridge_params: Dict,
+        decoder_params: Dict,
+        head_params: Dict,
+    ):
+        bridge = UnetBridge(
+            in_channels=encoder.out_channels,
+            in_strides=encoder.out_strides,
+            out_channels=encoder.out_channels[-1],
+            block_fn=partial(EncoderUpsampleBlock, pool_first=True),
+            **bridge_params
+        )
+        decoder = UNetDecoder(
+            in_channels=bridge.out_channels,
+            in_strides=bridge.out_strides,
+            block_fn=partial(
+                DecoderConcatBlock,
+                aggregate_first=True,
+                upsample_scale=2),
+            **decoder_params
+        )
+        head = UnetHead(
+            in_channels=decoder.out_channels,
+            in_strides=decoder.out_strides,
+            out_channels=num_classes,
+            num_upsample_blocks=int(np.log2(decoder.out_strides[-1])),
+            **head_params
+        )
+        return encoder, bridge, decoder, head

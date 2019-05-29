@@ -78,7 +78,7 @@ class DecoderBlock(nn.Module):
         return self.block(F.interpolate(x, scale_factor=2, mode="nearest"))
 
 
-class ResNetUnet(nn.Module):
+class ResUnet(nn.Module):
     """
     U-Net inspired encoder-decoder architecture for semantic segmentation,
         with a ResNet encoder as proposed by Alexander Buslaev.
@@ -104,11 +104,12 @@ class ResNetUnet(nn.Module):
     def __init__(
         self,
         num_classes=1,
-        num_filters=32,
-        backbone="resnet34",
+        num_channels=32,
+        arch="resnet18",
         pretrained=True
     ):
-        """Creates an `UNet` instance for semantic segmentation.
+        """
+        Creates an `UNet` instance for semantic segmentation.
 
         Args:
           num_classes: number of classes to predict.
@@ -120,34 +121,34 @@ class ResNetUnet(nn.Module):
         # Todo: make input channels configurable,
         # not hard-coded to three channels for RGB
 
-        self.resnet = models.__dict__[backbone](pretrained=pretrained)
-        encoder_channels = get_channels(backbone)
+        self.resnet = models.__dict__[arch](pretrained=pretrained)
+        encoder_channels = get_channels(arch)
 
         # Access resnet directly in forward pass; do not store refs here due to
         # https://github.com/pytorch/pytorch/issues/8392
 
-        self.center = DecoderBlock(encoder_channels[0], num_filters * 8)
+        self.center = DecoderBlock(encoder_channels[0], num_channels * 8)
 
         self.dec0 = DecoderBlock(
-            num_in=encoder_channels[0] + num_filters * 8,
-            num_out=num_filters * 8
+            num_in=encoder_channels[0] + num_channels * 8,
+            num_out=num_channels * 8
         )
         self.dec1 = DecoderBlock(
-            num_in=encoder_channels[1] + num_filters * 8,
-            num_out=num_filters * 8
+            num_in=encoder_channels[1] + num_channels * 8,
+            num_out=num_channels * 8
         )
         self.dec2 = DecoderBlock(
-            num_in=encoder_channels[2] + num_filters * 8,
-            num_out=num_filters * 2
+            num_in=encoder_channels[2] + num_channels * 8,
+            num_out=num_channels * 2
         )
         self.dec3 = DecoderBlock(
-            num_in=encoder_channels[3] + num_filters * 2,
-            num_out=num_filters * 2 * 2
+            num_in=encoder_channels[3] + num_channels * 2,
+            num_out=num_channels * 2 * 2
         )
-        self.dec4 = DecoderBlock(num_filters * 2 * 2, num_filters)
-        self.dec5 = ConvRelu(num_filters, num_filters)
+        self.dec4 = DecoderBlock(num_channels * 2 * 2, num_channels)
+        self.dec5 = ConvRelu(num_channels, num_channels)
 
-        self.final = nn.Conv2d(num_filters, num_classes, kernel_size=1)
+        self.final = nn.Conv2d(num_channels, num_classes, kernel_size=1)
 
     def forward(self, x):
         """

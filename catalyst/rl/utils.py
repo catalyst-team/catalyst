@@ -1,11 +1,14 @@
 from typing import Union, Dict
+
 import time
 import numpy as np
 import multiprocessing as mp
 from gym.spaces import Box, Discrete, Space
 
+from dynarray import DynamicArray
 import torch
 from torch.utils.data import Dataset, Sampler
+
 from catalyst.rl.exploration import \
     ParameterSpaceNoise, OrnsteinUhlenbeckProcess
 from catalyst.rl.agents.core import ActorSpec, CriticSpec
@@ -88,7 +91,7 @@ def _get_states_from_observations(observations, history_len=1):
     return states
 
 
-def db2queue_loop(db_server: DBSpec, queue: mp.Queue, max_size: int):
+def _db2queue_loop(db_server: DBSpec, queue: mp.Queue, max_size: int):
     while True:
         try:
             need_more = queue.qsize() < max_size
@@ -110,12 +113,13 @@ class OffpolicyReplayBuffer(Dataset):
         self,
         observation_space: Space,
         action_space: Space,
-        capacity=int(1e6),
-        n_step=1,
-        gamma=0.99,
-        history_len=1,
-        mode="numpy",
-        logdir=None
+        capacity: int = int(1e6),
+        capacity_mult: int = 2,
+        n_step: int = 1,
+        gamma: float = 0.99,
+        history_len: int = 1,
+        mode: str = "numpy",
+        logdir: str = None
     ):
         """
         Experience replay buffer for off-policy RL algorithms.
@@ -134,18 +138,23 @@ class OffpolicyReplayBuffer(Dataset):
         self.observation_space = observation_space
         self.action_space = action_space
         self.history_len = history_len
-
-        self.capacity = capacity
         self.n_step = n_step
         self.gamma = gamma
 
-        self.len = 0
-        self.pointer = 0
-        self._store_lock = mp.RLock()
+        self.length = 0
+        self.capacity = capacity
+        self.capacity_mult = capacity_mult
+        self.capacity_limit = capacity * capacity_mult
+
+        self._store_lock = mp.Lock()
+        self.num_trajectories = mp.Value("i", 0)
+        self.num_transitions = mp.Value("i", 0)
+        self.pointer = mp.Value("i", 0)
+        self._trajectories_lens = []
 
         self.observations, self.actions, self.rewards, self.dones = \
             _get_buffers(
-                capacity=capacity,
+                capacity=self.capacity_limit,
                 observation_space=observation_space,
                 action_space=action_space,
                 mode=mode,
@@ -156,20 +165,62 @@ class OffpolicyReplayBuffer(Dataset):
         with self._store_lock:
             observations, actions, rewards, dones = episode
             episode_len = len(rewards)
-            self.len = min(self.len + episode_len, self.capacity)
+            curr_p = self.pointer.value
 
-            indices = np.arange(
-                self.pointer, self.pointer + episode_len
-            ) % self.capacity
-            self.observations[indices] = np.array(observations)
-            self.actions[indices] = np.array(actions)
-            self.rewards[indices] = np.array(rewards)
-            self.dones[indices] = np.array(dones)
+            if curr_p + episode_len >= self.capacity_limit:
+                return False
 
-            self.pointer = (self.pointer + episode_len) % self.capacity
+            self.observations[curr_p:curr_p + episode_len] = \
+                np.array(observations)
+            self.actions[curr_p:curr_p + episode_len] = \
+                np.array(actions)
+            self.rewards[curr_p:curr_p + episode_len] = \
+                np.array(rewards)
+            self.dones[curr_p:curr_p + episode_len] = \
+                np.array(dones)
+
+            self._trajectories_lens.append(episode_len)
+            self.pointer.value += episode_len
+            self.num_trajectories.value += 1
+            self.num_transitions.value += episode_len
+
+        return True
+
+    def recalculate_index(self):
+        with self._store_lock:
+            curr_p = self.pointer.value
+            if curr_p > self.capacity:
+                diff = curr_p - self.capacity
+
+                tr_cumsum = np.cumsum(self._trajectories_lens)
+                tr_cumsum_mask = tr_cumsum < diff
+                tr_offset = np.where(tr_cumsum_mask, tr_cumsum, -1)
+                offset = tr_offset.argmax()
+                offset += 1 if tr_offset[offset] > -1 else 0
+
+                self._trajectories_lens = self._trajectories_lens[offset + 1:]
+                offset = tr_cumsum[offset]
+                curr_p = curr_p - offset
+
+                delta = int(1e5)
+                for i in range(0, curr_p, delta):
+                    i_start = i * delta
+                    i_end = min((i + 1) * delta, curr_p)
+                    self.observations[i_start:i_end] = \
+                        self.observations[offset+i_start:offset+i_end]
+                    self.actions[i_start:i_end] = \
+                        self.actions[offset + i_start:offset + i_end]
+                    self.rewards[i_start:i_end] = \
+                        self.rewards[offset + i_start:offset + i_end]
+                    self.dones[i_start:i_end] = \
+                        self.dones[offset + i_start:offset + i_end]
+
+                self.pointer.value = curr_p
+            self.length = curr_p
 
     def get_state(self, idx, history_len=1):
-        """ compose the state from a number (history_len) of observations
+        """
+        compose the state from a number (history_len) of observations
         """
         start_idx = idx - history_len + 1
 
@@ -181,7 +232,8 @@ class OffpolicyReplayBuffer(Dataset):
             indices = [idx]
             for i in range(history_len - 1):
                 next_idx = (idx - i - 1) % self.capacity
-                if next_idx >= self.len or self.dones[next_idx]:
+
+                if next_idx >= self.length or self.dones[next_idx]:
                     break
                 indices.append(next_idx)
             indices = indices[::-1]
@@ -193,11 +245,9 @@ class OffpolicyReplayBuffer(Dataset):
 
     def get_transition_n_step(self, idx, history_len=1, n_step=1, gamma=0.99):
         state = self.get_state(idx, history_len)
-        next_state = self.get_state(
-            (idx + n_step) % self.capacity, history_len
-        )
+        next_state = self.get_state((idx + n_step) % self.length, history_len)
         cum_reward = 0
-        indices = np.arange(idx, idx + n_step) % self.capacity
+        indices = np.arange(idx, idx + n_step) % self.length
         for num, i in enumerate(indices):
             cum_reward += self.rewards[i] * (gamma**num)
             done = self.dones[i]
@@ -206,13 +256,12 @@ class OffpolicyReplayBuffer(Dataset):
         return state, self.actions[idx], cum_reward, next_state, done
 
     def __getitem__(self, index):
-        with self._store_lock:
-            state, action, reward, next_state, done = \
-                self.get_transition_n_step(
-                    index,
-                    history_len=self.history_len,
-                    n_step=self.n_step,
-                    gamma=self.gamma)
+        state, action, reward, next_state, done = \
+            self.get_transition_n_step(
+                index,
+                history_len=self.history_len,
+                n_step=self.n_step,
+                gamma=self.gamma)
 
         dct = {
             "state": np.array(state).astype(np.float32),
@@ -225,7 +274,7 @@ class OffpolicyReplayBuffer(Dataset):
         return dct
 
     def __len__(self):
-        return self.len
+        return self.length
 
 
 class OffpolicyReplaySampler(Sampler):
@@ -243,6 +292,21 @@ class OffpolicyReplaySampler(Sampler):
 
     def __len__(self):
         return self.len
+
+
+def _db2buffer_loop(db_server: DBSpec, buffer: OffpolicyReplayBuffer):
+    trajectory = None
+    while True:
+        if trajectory is None:
+            trajectory = db_server.get_trajectory()
+
+        if trajectory is not None:
+            if buffer.push_episode(trajectory):
+                trajectory = None
+            else:
+                time.sleep(1.0)
+        else:
+            time.sleep(1.0)
 
 
 class OnpolicyRolloutBuffer(Dataset):
@@ -414,14 +478,14 @@ class EpisodeRunner:
         env: EnvironmentSpec,
         agent: Union[ActorSpec, CriticSpec],
         device,
-        capacity: int,
         deterministic: bool = False,
+        initial_capacity: int = int(1e3)
     ):
         self.env = env
         self.agent = agent
         self._device = device
-        self.capacity = capacity
         self.deterministic = deterministic
+        self.initial_capacity = initial_capacity
         self.policy_handler = PolicyHandler(
             env=self.env, agent=self.agent, device=device
         )
@@ -429,63 +493,72 @@ class EpisodeRunner:
         self._init_buffers()
 
     def _init_buffers(self):
-        self.pointer = 0
-        self.observations, self.actions, self.rewards, self.dones = \
-            _get_buffers(
-                capacity=self.capacity,
-                observation_space=self.env.observation_space,
-                action_space=self.env.action_space
-            )
+        self.observations = DynamicArray(
+            array_or_shape=(None, ) + tuple(self.env.observation_space.shape),
+            dtype=self.env.observation_space.dtype,
+            capacity=int(self.initial_capacity)
+        )
+        self.actions = DynamicArray(
+            array_or_shape=(None, ) + tuple(self.env.action_space.shape),
+            dtype=self.env.action_space.dtype,
+            capacity=int(self.initial_capacity)
+        )
+        self.rewards = DynamicArray(
+            array_or_shape=(None, ),
+            dtype=np.float32,
+            capacity=int(self.initial_capacity)
+        )
+        self.dones = DynamicArray(
+            array_or_shape=(None, ),
+            dtype=np.bool,
+            capacity=int(self.initial_capacity)
+        )
 
     def _to_tensor(self, *args, **kwargs):
         return torch.Tensor(*args, **kwargs).to(self._device)
 
     def _init_with_observation(self, observation):
-        self.observations[0] = observation
-        self.pointer = 0
+        self.observations.append(observation)
 
     def _put_transition(self, transition):
         """
         transition = [o_tp1, a_t, r_t, d_t]
         """
         o_tp1, a_t, r_t, d_t = transition
-        self.observations[self.pointer + 1] = o_tp1
-        self.actions[self.pointer] = a_t
-        self.rewards[self.pointer] = r_t
-        self.dones[self.pointer] = d_t
-        self.pointer += 1
+        self.observations.append(o_tp1)
+        self.actions.append(a_t)
+        self.rewards.append(r_t)
+        self.dones.append(d_t)
 
     def _get_states_history(self, history_len=None):
         history_len = history_len or self.env.history_len
         states = [
-            self.get_state(history_len=history_len, pointer=i)
-            for i in range(self.pointer)
+            self.get_state(history_len=history_len, index=i)
+            for i in range(len(self.observations))
         ]
         states = np.array(states)
         return states
 
-    def get_state(self, pointer=None, history_len=None):
-        pointer = pointer if pointer is not None else self.pointer
-        history_len = history_len or self.env.history_len
+    def get_state(self, index=None, history_len=None):
+        index = index if index is not None else len(self.observations) - 1
+        history_len = history_len \
+            if history_len is not None \
+            else self.env.history_len
 
         state = np.zeros(
             (history_len, ) + self.env.observation_space.shape,
             dtype=self.env.observation_space.dtype
         )
 
-        indices = np.arange(max(0, pointer - history_len + 1), pointer + 1)
+        indices = np.arange(max(0, index - history_len + 1), index + 1)
         state[-len(indices):] = self.observations[indices]
         return state
 
     def get_trajectory(self):
-        indices = np.arange(self.pointer)
-
-        observations = self.observations[indices]
-        actions = self.actions[indices]
-        rewards = self.rewards[indices]
-        dones = self.dones[indices]
-
-        trajectory = (observations, actions, rewards, dones)
+        trajectory = (
+            np.array(self.observations[:-1]), np.array(self.actions),
+            np.array(self.rewards), np.array(self.dones)
+        )
         return trajectory
 
     @torch.no_grad()
@@ -495,7 +568,7 @@ class EpisodeRunner:
             exploration_strategy.reset_state(self.env.action_space.shape[0])
 
         if isinstance(exploration_strategy, ParameterSpaceNoise) \
-                and self.pointer > 1:
+                and len(self.observations) > 1:
             states = self._get_states_history()
             states = self._to_tensor(states)
             exploration_strategy.update_actor(self.agent, states)

@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from typing import Iterable, Mapping, Any, List
+from typing import Iterable, Mapping, Any, List, Tuple
 from collections import OrderedDict
 
 import torch
@@ -47,18 +47,26 @@ class Experiment(ABC):
         pass
 
     @abstractmethod
-    def get_optimizer(self, stage: str, model) -> _Optimizer:
+    def get_optimizer_and_model(
+        self,
+        stage: str,
+        model: nn.Module
+    ) -> Tuple[_Optimizer, _Model]:
         pass
 
     @abstractmethod
     def get_scheduler(self, stage: str, optimizer) -> _Scheduler:
         pass
 
-    def get_model_stuff(self, model, stage: str):
+    def get_experiment_components(
+        self,
+        model: nn.Module,
+        stage: str
+    ) -> Tuple[_Model, _Criterion, _Optimizer, _Scheduler]:
         criterion = self.get_criterion(stage)
-        optimizer = self.get_optimizer(stage, model)
+        optimizer, model = self.get_optimizer_and_model(stage, model)
         scheduler = self.get_scheduler(stage, optimizer)
-        return criterion, optimizer, scheduler
+        return model, criterion, optimizer, scheduler
 
     @abstractmethod
     def get_callbacks(self, stage: str) -> "List[Callback]":
@@ -132,8 +140,8 @@ class Runner(ABC):
             })
 
         self._prepare_model(stage)
-        criterion, optimizer, scheduler = \
-            self.experiment.get_model_stuff(self.model, stage)
+        self.model, criterion, optimizer, scheduler = \
+            self.experiment.get_experiment_components(self.model, stage)
 
         self.state = RunnerState(
             stage=stage,

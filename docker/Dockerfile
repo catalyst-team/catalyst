@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:0.4.1-cuda9-cudnn7-devel
+FROM pytorch/pytorch:1.1.0-cuda10.0-cudnn7.5-devel
 
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -20,20 +20,9 @@ RUN apt-get update && apt-get install -y \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN pip install --no-cache-dir \
-    numpy \
-    pandas \
-    sklearn \
-    jpeg4py \
-    opencv-python \
-    tqdm \
-    PyYAML \
-    torchnet \
-    redis \
-    gym \
-    catalyst \
-    tensorboardX \
-    crc32c
-
 CMD mkdir -p /workspace
+COPY requirements.txt /workspace/requirements.txt
+
+RUN pip install -r /workspace/requirements.txt --no-cache-dir
+
 WORKDIR /workspace
