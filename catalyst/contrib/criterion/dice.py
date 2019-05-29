@@ -9,7 +9,7 @@ class DiceLoss(nn.Module):
         self,
         eps: float = 1e-7,
         threshold: float = None,
-        activation: str = "sigmoid"
+        activation: str = "Sigmoid"
     ):
         super(DiceLoss, self).__init__()
 
@@ -29,7 +29,7 @@ class BCEDiceLoss(nn.Module):
         self,
         eps: float = 1e-7,
         threshold: float = None,
-        activation: str = "sigmoid"
+        activation: str = "Sigmoid"
     ):
         super().__init__()
         self.bce_loss = nn.BCEWithLogitsLoss()

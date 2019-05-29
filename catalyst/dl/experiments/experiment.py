@@ -1,5 +1,6 @@
 from typing import Iterable, Any, Mapping, Dict, List, Tuple
 from collections import OrderedDict
+import datetime
 
 import torch
 from torch import nn
@@ -12,6 +13,8 @@ from catalyst.dl.callbacks import Callback, LossCallback, OptimizerCallback, \
     SchedulerCallback, CheckpointCallback  # noqa F401
 from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.misc import merge_dicts
+from catalyst.utils.hash import get_hash
+
 from .core import Experiment, _Model, _Criterion, _Optimizer, _Scheduler
 
 
@@ -192,8 +195,11 @@ class ConfigExperiment(Experiment):
     def logdir(self):
         return self._logdir
 
-    def _prepare_logdir(self, config: Dict):
-        raise NotImplementedError
+    def _prepare_logdir(self, config: Dict) -> str:
+        timestamp = datetime.datetime.utcnow().strftime("%y%m%d.%H%M%S.%f")
+        config_hash = get_hash(config)
+        postfix = f"{timestamp}.{config_hash}"
+        return postfix
 
     @property
     def stages(self) -> List[str]:
