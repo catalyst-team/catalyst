@@ -62,7 +62,7 @@ Length of line inside docstrings block must be limited to 80 characters to fit i
 
 Check that you wrote working docs with:
 ```bash
-make check-docs
+$ make check-docs
 ```
 
 The command requires `Sphinx` and some sphinx-specific libraries.
@@ -70,5 +70,8 @@ If you don't want to install them, you may make a catalyst-dev container
 ```bash
 make docker-dev
 # and then run test
-make check-docs
+docker run \
+    -v `pwd`/:/workspace/ \
+    catalyst-dev:latest \
+    bash -c "make check-docs"
 ```
