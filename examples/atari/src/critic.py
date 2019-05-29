@@ -66,10 +66,7 @@ class ConvCritic(CriticSpec):
 
     @property
     def hyperbolic_constant(self) -> float:
-        if self.num_heads == 1:
-            return 1.0
-        else:
-            return self.head_net.hyperbolic_constant
+        return self.head_net.hyperbolic_constant
 
     def forward(self, state: torch.Tensor):
         x = state

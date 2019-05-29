@@ -15,8 +15,8 @@ class ValueHead(nn.Module):
         bias: bool = False,
         distribution: str = None,
         values_range: tuple = None,
-        num_heads=1,
-        hyperbolic_constant=0.01
+        num_heads: int = 1,
+        hyperbolic_constant: float = 1.0
     ):
         super().__init__()
 
@@ -25,6 +25,8 @@ class ValueHead(nn.Module):
         self.distribution = distribution
         self.values_range = values_range
         self.num_heads = num_heads
+        if self.num_heads == 1:
+            hyperbolic_constant = 1.0
         self.hyperbolic_constant = hyperbolic_constant
 
         if distribution is None:  # mean case
@@ -46,6 +48,19 @@ class ValueHead(nn.Module):
 
         self.apply(outer_init)
 
+    def _build_head(
+        self,
+        in_features,
+        out_features,
+        num_atoms,
+        bias
+    ):
+        return nn.Linear(
+            in_features=in_features,
+            out_features=out_features * num_atoms,
+            bias=bias
+        )
+
     def forward(self, inputs):
         x: List[torch.Tensor] = []
         for net in self.net:
@@ -59,19 +74,6 @@ class ValueHead(nn.Module):
         # B x num_heads x num_outputs x num_atoms
         # if num_heads == 1, squeeze it out not to crash other algorithms
         return torch.stack(x, dim=1).squeeze(1)
-
-    def _build_head(
-        self,
-        in_features,
-        out_features,
-        num_atoms,
-        bias
-    ):
-        return nn.Linear(
-            in_features=in_features,
-            out_features=out_features * num_atoms,
-            bias=bias
-        )
 
 
 class PolicyHead(nn.Module):
