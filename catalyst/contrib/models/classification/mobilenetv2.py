@@ -6,7 +6,7 @@ MobileNetV2: Inverted Residuals and Linear Bottlenecks
 arXiv preprint arXiv:1801.04381.
 import from https://github.com/tonylins/pytorch-mobilenet-v2
 
-source https://github.com/d-li14/mobilenetv2.pytorch
+source: https://github.com/d-li14/mobilenetv2.pytorch
 """
 
 import math
@@ -25,7 +25,7 @@ def _make_divisible(v, divisor, min_value=None):
     This function is taken from the original tf repo.
     It ensures that all layers have a channel number that is divisible by 8
     It can be seen here:
-    https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet/mobilenet.py
+        https://github.com/tensorflow/models/blob/master/research/slim/nets/mobilenet/mobilenet.py
     :param v:
     :param divisor:
     :param min_value:
@@ -109,8 +109,14 @@ class MobileNetV2(nn.Module):
         pretrained=None
     ):
         super().__init__()
+
+        # building first layer
+        assert input_size % 32 == 0
+        input_channel = _make_divisible(32 * width_mult, 8)
+        layers = [conv_3x3_bn(3, input_channel, 2)]
+
         # setting of inverted residual blocks
-        self.cfgs = [
+        inverted_residual_settings = [
             # t, c, n, s
             [1, 16, 1, 1],
             [6, 24, 2, 2],
@@ -120,26 +126,23 @@ class MobileNetV2(nn.Module):
             [6, 160, 3, 2],
             [6, 320, 1, 1],
         ]
-
-        # building first layer
-        assert input_size % 32 == 0
-        input_channel = _make_divisible(32 * width_mult, 8)
-        layers = [conv_3x3_bn(3, input_channel, 2)]
         # building inverted residual blocks
         block = InvertedResidual
-        for t, c, n, s in self.cfgs:
+        for t, c, n, s in inverted_residual_settings:
             output_channel = _make_divisible(c * width_mult, 8)
             layers.append(block(input_channel, output_channel, s, t))
             input_channel = output_channel
             for i in range(1, n):
                 layers.append(block(input_channel, output_channel, 1, t))
                 input_channel = output_channel
+
         # building last several layers
         self.output_channel = _make_divisible(1280 * width_mult, 8) \
             if width_mult > 1.0 \
             else 1280
         layers.append(conv_1x1_bn(input_channel, self.output_channel))
 
+        self.layers = layers
         self.encoder = nn.Sequential(*layers)
         self.avgpool = nn.AvgPool2d(input_size // 32, stride=1)
         self.classifier = nn.Linear(self.output_channel, num_classes)
@@ -171,8 +174,10 @@ class MobileNetV2(nn.Module):
 
     def forward(self, x):
         x = self.encoder(x)
-        x = self.conv(x)
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
         return x
+
+
+__all__ = ["MobileNetV2"]

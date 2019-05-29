@@ -1,16 +1,14 @@
 from typing import Dict
-from functools import partial
-import numpy as np
 
-from .blocks import EncoderDownsampleBlock, DecoderSumBlock
+from .blocks import EncoderDownsampleBlock
 from .encoder import UnetEncoder, ResnetEncoder
 from .bridge import UnetBridge
-from .decoder import UNetDecoder
-from .head import UnetHead
+from .decoder import FPNDecoder
+from .head import FPNHead
 from .core import _UnetSpec, _ResnetUnetSpec
 
 
-class Linknet(_UnetSpec):
+class FPNUnet(_UnetSpec):
 
     def _get_components(
         self,
@@ -27,23 +25,24 @@ class Linknet(_UnetSpec):
             block_fn=EncoderDownsampleBlock,
             **bridge_params
         )
-        decoder = UNetDecoder(
+        decoder = FPNDecoder(
             in_channels=bridge.out_channels,
             in_strides=bridge.out_strides,
-            block_fn=DecoderSumBlock,
             **decoder_params
         )
-        head = UnetHead(
+        head = FPNHead(
             in_channels=decoder.out_channels,
             in_strides=decoder.out_strides,
             out_channels=num_classes,
-            num_upsample_blocks=int(np.log2(decoder.out_strides[-1])),
+            upsample_scale=decoder.out_strides[-1],
+            interpolation_mode="bilinear",
+            align_corners=True,
             **head_params
         )
         return encoder, bridge, decoder, head
 
 
-class ResnetLinknet(_ResnetUnetSpec):
+class ResnetFPNUnet(_ResnetUnetSpec):
 
     def _get_components(
         self,
@@ -54,20 +53,18 @@ class ResnetLinknet(_ResnetUnetSpec):
         head_params: Dict,
     ):
         bridge = None
-        decoder = UNetDecoder(
+        decoder = FPNDecoder(
             in_channels=encoder.out_channels,
             in_strides=encoder.out_strides,
-            block_fn=partial(
-                DecoderSumBlock,
-                aggregate_first=False,
-                upsample_scale=None),
             **decoder_params
         )
-        head = UnetHead(
+        head = FPNHead(
             in_channels=decoder.out_channels,
             in_strides=decoder.out_strides,
             out_channels=num_classes,
-            num_upsample_blocks=int(np.log2(decoder.out_strides[-1])),
+            upsample_scale=decoder.out_strides[-1],
+            interpolation_mode="bilinear",
+            align_corners=True,
             **head_params
         )
         return encoder, bridge, decoder, head
