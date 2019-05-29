@@ -83,6 +83,7 @@ trainer:
 
 sampler:
   weights_sync_period: 1
+  valid_seeds: [1, 10, 1000, 10000, 42000]
 
   exploration_params:
     - exploration: Boltzmann
@@ -99,3 +100,4 @@ sampler:
 
     - exploration: Greedy
       probability: 0.05
+
