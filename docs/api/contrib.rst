@@ -3,7 +3,9 @@ Contrib
 
 Registry
 ----------
-.. currentmodule:: catalyst.contrib.registry
+@TODO docs: write an explanation about usage Registry
+
+.. currentmodule:: catalyst.utils.registry
 
 .. autoclass:: Registry
     :members:
@@ -12,9 +14,6 @@ Registry
 Criterion
 ----------
 .. currentmodule:: catalyst.contrib.criterion
-
-.. autoclass:: BCESoftmaxLoss
-    :members:
 
 .. autoclass:: NaiveCrossEntropyLoss
     :members:
@@ -33,6 +32,8 @@ Criterion
 
 .. autoclass:: DiceLoss
     :members:
+
+@TODO docs: change FocalLoss to FocalLossBinary/FocalLossMultiClass etc
 
 .. autoclass:: FocalLoss
     :members:
