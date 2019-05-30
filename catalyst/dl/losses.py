@@ -13,7 +13,7 @@ def sigmoid_focal_loss(
     """
     Compute binary focal loss between target and output logits.
 
-    Source: https://github.com/BloodAxe/pytorch-toolbelt
+    Source https://github.com/BloodAxe/pytorch-toolbelt
     See :class:`~pytorch_toolbelt.losses` for details.
 
     Args:
@@ -27,8 +27,7 @@ def sigmoid_focal_loss(
                 elements in the output,
             "sum": the output will be summed.
 
-    References::
-        https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/loss/losses.py
+    See https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/loss/losses.py
     """
     targets = targets.type(outputs.type())
 
@@ -63,7 +62,7 @@ def reduced_focal_loss(
     """
     Compute reduced focal loss between target and output logits.
 
-    Source: https://github.com/BloodAxe/pytorch-toolbelt
+    Source https://github.com/BloodAxe/pytorch-toolbelt
     See :class:`~pytorch_toolbelt.losses` for details.
 
     Args:
@@ -83,8 +82,7 @@ def reduced_focal_loss(
             "batchwise_mean" computes mean loss per sample in batch.
             Default: "mean"
 
-    References::
-        https://arxiv.org/abs/1903.01347
+    See https://arxiv.org/abs/1903.01347
     """
     targets = targets.type(outputs.type())
 
@@ -118,14 +116,8 @@ def wing_loss(
 ):
     """
     https://arxiv.org/pdf/1711.06753.pdf
-    :param outputs:
-    :param targets:
-    :param width:
-    :param curvature:
-    :param reduction:
-    :return:
 
-    Source: https://github.com/BloodAxe/pytorch-toolbelt
+    Source https://github.com/BloodAxe/pytorch-toolbelt
     See :class:`~pytorch_toolbelt.losses` for details.
     """
     diff_abs = (targets - outputs).abs()

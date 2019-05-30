@@ -183,6 +183,7 @@ class OneCycleLR(BatchScheduler):
     def get_momentum(self) -> List[float]:
         """
         Function that returns the new momentum for optimizer
+
         Returns:
             List[float]: calculated momentum for every param groups
         """
@@ -204,6 +205,7 @@ class OneCycleLR(BatchScheduler):
     ) -> None:
         """
         Recalculates total num_steps for ``batch`` mode
+
         Args:
             loader_len (int): total count of batches in an epoch
             current_step (int): current step

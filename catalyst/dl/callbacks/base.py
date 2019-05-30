@@ -19,8 +19,9 @@ class CheckpointCallback(Callback):
         self, save_n_best: int = 3, resume: str = None, resume_dir: str = None
     ):
         """
-        :param save_n_best: number of best checkpoint to keep
-        :param resume: path to checkpoint to load and initialize runner state
+        Args:
+            save_n_best: number of best checkpoint to keep
+            resume: path to checkpoint to load and initialize runner state
         """
         self.save_n_best = save_n_best
         self.resume = resume

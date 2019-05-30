@@ -15,17 +15,15 @@ Runner
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.dl.experiments.experiment
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 .. automodule:: catalyst.dl.state
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.dl.datasource
+Experiment
+----------
+
+.. automodule:: catalyst.dl.experiments.experiment
     :members:
     :undoc-members:
     :show-inheritance:
@@ -35,6 +33,11 @@ Metrics
 ----------
 
 .. automodule:: catalyst.dl.metrics
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.dl.metric_manager
     :members:
     :undoc-members:
     :show-inheritance:
@@ -52,6 +55,27 @@ Base
 .. autoclass:: Callback
     :members:
     :undoc-members:
+
+.. autoclass:: LossCallback
+    :members:
+    :undoc-members:
+
+.. autoclass:: OptimizerCallback
+    :members:
+    :undoc-members:
+
+.. autoclass:: SchedulerCallback
+    :members:
+    :undoc-members:
+
+.. autoclass:: CheckpointCallback
+    :members:
+    :undoc-members:
+
+.. autoclass:: EarlyStoppingCallback
+    :members:
+    :undoc-members:
+
 
 Metrics
 ~~~~~~~~~~
@@ -98,13 +122,57 @@ MultiMetrics
     :undoc-members:
 
 
+Loggers
+~~~~~~~~~~~~~~
+
+.. autoclass:: TensorboardLogger
+    :members:
+    :undoc-members:
+
+.. autoclass:: ConsoleLogger
+    :members:
+    :undoc-members:
+
+.. autoclass:: VerboseLogger
+    :members:
+    :undoc-members:
+
+Formatters
+""""""""""""""""""
+
+.. autoclass:: MetricsFormatter
+    :members:
+    :undoc-members:
+
+.. autoclass:: TxtMetricsFormatter
+    :members:
+    :undoc-members:
+
+.. autoclass:: JsonMetricsFormatter
+    :members:
+    :undoc-members:
+
+
 Schedulers
 ~~~~~~~~~~~~~~
+
+.. autoclass:: LRUpdater
+    :members:
+    :undoc-members:
+
 .. autoclass:: LRFinder
     :members:
     :undoc-members:
 
-.. autoclass:: LRUpdater
+
+Inference
+~~~~~~~~~~~~~~
+
+.. autoclass:: InferCallback
+    :members:
+    :undoc-members:
+
+.. autoclass:: InferMaskCallback
     :members:
     :undoc-members:
 
@@ -116,15 +184,22 @@ Utils
     :members:
     :undoc-members:
 
+Losses
+-----------------
 
-Fp16
-----------
-
-.. automodule:: catalyst.dl.fp16
+.. automodule:: catalyst.dl.losses
     :members:
     :undoc-members:
     :show-inheritance:
 
+Metrics
+-----------------
+Metric functions
+
+.. automodule:: catalyst.dl.metrics
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Initialization
 -----------------
@@ -134,6 +209,13 @@ Initialization
     :undoc-members:
     :show-inheritance:
 
+Tracing
+----------
+
+.. automodule:: catalyst.dl.utils.trace
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Utils
 ----------

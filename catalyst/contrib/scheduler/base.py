@@ -12,6 +12,7 @@ class BaseScheduler(_LRScheduler, ABC):
     def get_momentum(self) -> List[float]:
         """
         Function that returns the new momentum for optimizer
+
         Returns:
             List[float]: calculated momentum for every param groups
         """
@@ -20,6 +21,7 @@ class BaseScheduler(_LRScheduler, ABC):
     def step(self, epoch: Optional[int] = None) -> None:
         """
         Make one scheduler step
+
         Args:
             epoch (int, optional): current epoch's num
         """

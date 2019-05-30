@@ -218,7 +218,8 @@ def get_optimizer_momentum(optimizer: Optimizer) -> float:
 
 def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
     """
-    Set momentum of ``index``'th param group of optimizer to ``value``
+    Set momentum of ``index`` 'th param group of optimizer to ``value``
+
     Args:
         optimizer: PyTorch optimizer
         value (float): new value of momentum
@@ -239,8 +240,6 @@ def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
 def is_wrapped_with_ddp(model: nn.Module) -> bool:
     """
     Checks whether model is wrapped with DataParallel/DistributedDataParallel.
-    :param model:
-    :return:
     """
     parallel_wrappers = torch.nn.DataParallel, \
         torch.nn.parallel.DistributedDataParallel
@@ -262,8 +261,11 @@ def real_module_from_maybe_ddp(model: nn.Module) -> nn.Module:
     torch.nn.parallel.DistributedDataParallel, or
     apex.parallel.DistributedDataParallel.
 
-    :param model: A model, or DataParallel wrapper.
-    :return: A model
+    Args:
+        model: A model, or DataParallel wrapper.
+
+    Returns:
+        A model
     """
     if is_wrapped_with_ddp(model):
         model = model.module
