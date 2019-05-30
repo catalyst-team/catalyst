@@ -78,7 +78,7 @@ class DecoderBlock(nn.Module):
         return self.block(F.interpolate(x, scale_factor=2, mode="nearest"))
 
 
-class ResUnet(nn.Module):
+class ResNetUnet(nn.Module):
     """
     U-Net inspired encoder-decoder architecture for semantic segmentation,
         with a ResNet encoder as proposed by Alexander Buslaev.
@@ -185,3 +185,6 @@ class ResUnet(nn.Module):
         dec5 = self.dec5(dec4)
 
         return self.final(dec5)
+
+
+__all__ = ["ResNetUnet"]

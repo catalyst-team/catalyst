@@ -96,7 +96,7 @@ class FinalBlock(nn.Module):
         return x
 
 
-class ResLinknet(nn.Module):
+class ResNetLinknet(nn.Module):
     def __init__(self, num_classes=1, arch="resnet18", pretrained=True):
         super().__init__()
 
@@ -133,3 +133,6 @@ class ResLinknet(nn.Module):
         d1 = self.decoder1(d2)
 
         return self.final(d1)
+
+
+__all__ = ["ResNetLinknet"]

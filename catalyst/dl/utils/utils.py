@@ -108,8 +108,19 @@ class UtilsFactory:
             UtilsFactory.assert_fp16_available()
             from apex import amp
 
+            distributed_rank = distributed_params.pop("rank", -1)
+
+            if distributed_rank > -1:
+                torch.cuda.set_device(distributed_rank)
+                torch.distributed.init_process_group(
+                    backend="nccl", init_method="env://")
+
             model, optimizer = amp.initialize(
                 model, optimizer, **distributed_params)
+
+            if distributed_rank > -1:
+                from apex.parallel import DistributedDataParallel
+                model = DistributedDataParallel(model)
         elif torch.cuda.device_count() > 1:
             model = torch.nn.DataParallel(model)
 

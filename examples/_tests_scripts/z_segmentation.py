@@ -79,7 +79,7 @@ loaders["valid"] = valid_loader
 
 # In[ ]:
 
-from catalyst.contrib.models.segmentation import UNet
+from catalyst.contrib.models.segmentation import Unet
 
 # # Train
 
@@ -94,7 +94,7 @@ num_epochs = 2
 logdir = "./logs/segmentation_notebook"
 
 # model, criterion, optimizer
-model = UNet(num_classes=1, in_channels=1, num_channels=32, num_blocks=2)
+model = Unet(num_classes=1, in_channels=1, num_channels=32, num_blocks=2)
 criterion = nn.BCEWithLogitsLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 scheduler = torch.optim.lr_scheduler.MultiStepLR(
