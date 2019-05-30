@@ -31,7 +31,7 @@ class AlgorithmContinuous(AlgorithmSpec):
         action_boundaries: tuple = None,
         **kwargs
     ):
-        self._device = UtilsFactory.prepare_device()
+        self._device = UtilsFactory.get_device()
 
         self.actor = actor.to(self._device)
         self.critic = critic.to(self._device)

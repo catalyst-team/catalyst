@@ -23,7 +23,7 @@ class AlgorithmDiscrete(AlgorithmSpec):
         critic_tau: float = 1.0,
         **kwargs
     ):
-        self._device = UtilsFactory.prepare_device()
+        self._device = UtilsFactory.get_device()
         self.critic = critic.to(self._device)
         self.target_critic = copy.deepcopy(critic).to(self._device)
 

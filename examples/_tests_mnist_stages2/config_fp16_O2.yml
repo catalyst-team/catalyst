@@ -5,6 +5,9 @@ args:
   expdir: "mnist_simple"
   logdir: "./logs/mnist_simple"
 
+distributed_params:
+  opt_level: O2
+
 stages:
 
   data_params:
@@ -27,9 +30,6 @@ stages:
     scheduler: MultiStepLR
     milestones: [1]
     gamma: 0.3
-
-  distributed_params:
-    opt_level: O2
 
   stage1:
     state_params:

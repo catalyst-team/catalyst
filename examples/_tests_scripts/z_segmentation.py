@@ -54,7 +54,7 @@ open_fn = lambda x: {"features": x[0], "targets": x[1]}
 
 loaders = collections.OrderedDict()
 
-train_loader = UtilsFactory.create_loader(
+train_loader = UtilsFactory.get_loader(
     train_data,
     open_fn=open_fn,
     dict_transform=data_transform,
@@ -63,7 +63,7 @@ train_loader = UtilsFactory.create_loader(
     shuffle=True
 )
 
-valid_loader = UtilsFactory.create_loader(
+valid_loader = UtilsFactory.get_loader(
     valid_data,
     open_fn=open_fn,
     dict_transform=data_transform,

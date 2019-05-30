@@ -1,11 +1,12 @@
 from typing import List
+from functools import partial
 
 import torch
 
 from .core import DecoderSpec
 from ..blocks.core import _get_block
 from ..blocks.psp import PSPBlock
-from ..abn import ABN_fake, ABN
+from ..abn import ABN
 
 
 class PSPDecoder(DecoderSpec):
@@ -24,7 +25,7 @@ class PSPDecoder(DecoderSpec):
         self.psp = PSPBlock(
             psp_out_channels,
             pool_sizes=(1, 2, 3, 6),
-            use_bathcnorm=use_batchnorm,
+            use_batchnorm=use_batchnorm,
         )
 
         self.conv = _get_block(
@@ -32,7 +33,7 @@ class PSPDecoder(DecoderSpec):
             out_channels,
             kernel_size=1,
             padding=0,
-            abn_block=ABN if use_batchnorm else ABN_fake,
+            abn_block=partial(ABN, use_batchnorm=use_batchnorm),
             complexity=0,
         )
         self._out_channels = out_channels

@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from typing import Iterable, Mapping, Any, List, Tuple
+from typing import Iterable, Mapping, Any, List, Tuple, Dict
 from collections import OrderedDict
 
 import torch
@@ -34,6 +34,11 @@ class Experiment(ABC):
     def stages(self) -> Iterable[str]:
         pass
 
+    @property
+    @abstractmethod
+    def distributed_params(self) -> Dict:
+        pass
+
     @abstractmethod
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
         pass
@@ -47,11 +52,11 @@ class Experiment(ABC):
         pass
 
     @abstractmethod
-    def get_optimizer_and_model(
+    def get_optimizer(
         self,
         stage: str,
         model: nn.Module
-    ) -> Tuple[_Optimizer, _Model]:
+    ) -> _Optimizer:
         pass
 
     @abstractmethod
@@ -62,11 +67,11 @@ class Experiment(ABC):
         self,
         model: nn.Module,
         stage: str
-    ) -> Tuple[_Model, _Criterion, _Optimizer, _Scheduler]:
+    ) -> Tuple[_Criterion, _Optimizer, _Scheduler]:
         criterion = self.get_criterion(stage)
-        optimizer, model = self.get_optimizer_and_model(stage, model)
+        optimizer = self.get_optimizer(stage, model)
         scheduler = self.get_scheduler(stage, optimizer)
-        return model, criterion, optimizer, scheduler
+        return criterion, optimizer, scheduler
 
     @abstractmethod
     def get_callbacks(self, stage: str) -> "List[Callback]":
@@ -108,9 +113,6 @@ class Runner(ABC):
         # additional
         self._check_run = False
 
-        if model is not None and device is None:
-            self._prepare_model()
-
     def _batch2device(self, batch: Mapping[str, Any], device):
         res = {
             key: value.to(device) if torch.is_tensor(value) else value
@@ -118,18 +120,30 @@ class Runner(ABC):
         }
         return res
 
-    def _prepare_model(self, stage: str = None):
+    def _get_experiment_components(
+        self,
+        stage: str = None
+    ) -> Tuple[_Model, _Criterion, _Optimizer, _Scheduler, torch.device]:
         """
         Inner method for children's classes for model specific initialization.
         As baseline, checks device support and puts model on it.
         :return:
         """
 
-        if stage is not None:
-            self.model = self.experiment.get_model(stage)
+        model = self.experiment.get_model(stage)
+        criterion, optimizer, scheduler = \
+            self.experiment.get_experiment_components(model, stage)
 
-        self.model, self.device = \
-            UtilsFactory.prepare_model(self.model)
+        model, criterion, optimizer, scheduler, device = \
+            UtilsFactory.process_components(
+                model=model,
+                criterion=criterion,
+                optimizer=optimizer,
+                scheduler=scheduler,
+                distributed_params=self.experiment.distributed_params
+            )
+
+        return model, criterion, optimizer, scheduler, device
 
     def _prepare_state(self, stage: str):
         migrating_params = {}
@@ -139,9 +153,8 @@ class Runner(ABC):
                 "epoch": self.state.epoch + 1
             })
 
-        self._prepare_model(stage)
-        self.model, criterion, optimizer, scheduler = \
-            self.experiment.get_experiment_components(self.model, stage)
+        self.model, criterion, optimizer, scheduler, self.device = \
+            self._get_experiment_components(stage)
 
         self.state = RunnerState(
             stage=stage,
@@ -167,7 +180,7 @@ class Runner(ABC):
             getattr(self.state, f"on_{event}_post")()
 
     @abstractmethod
-    def predict_batch(self, batch: Mapping[str, Any]):
+    def predict_batch(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
         pass
 
     def _run_batch(self, batch):

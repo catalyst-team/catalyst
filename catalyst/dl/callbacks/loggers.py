@@ -219,7 +219,7 @@ class TensorboardLogger(Callback):
     def on_loader_start(self, state):
         lm = state.loader_name
         if lm not in self.loggers:
-            self.loggers[lm] = UtilsFactory.create_tflogger(
+            self.loggers[lm] = UtilsFactory.get_tflogger(
                 logdir=state.logdir, name=lm
             )
 

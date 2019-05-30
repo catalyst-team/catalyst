@@ -1,29 +1,36 @@
+from typing import Union, Optional, List, Tuple, Dict
 import os
 import shutil
 from collections import OrderedDict
 from pathlib import Path
-from typing import Union, Optional, List, Tuple
 
-import safitty
 import torch
 import torch.backends.cudnn as cudnn
-import torch.nn as nn
-from tensorboardX import SummaryWriter
+from torch import nn, optim
 from torch.optim import Optimizer
 from torch.utils.data.dataloader import default_collate as default_collate_fn
+from tensorboardX import SummaryWriter
 
+import safitty
 from catalyst.data.dataset import ListDataset
 from catalyst.utils.plotly import plot_tensorboard_log
 from catalyst.utils.model import \
-    prepare_optimizable_params, assert_fp16_available
+    get_optimizable_params, assert_fp16_available
+
+
+_Model = nn.Module
+_Criterion = nn.Module
+_Optimizer = optim.Optimizer
+# noinspection PyProtectedMember
+_Scheduler = optim.lr_scheduler._LRScheduler
 
 
 class UtilsFactory:
-    prepare_optimizable_params = prepare_optimizable_params
+    get_optimizable_params = get_optimizable_params
     assert_fp16_available = assert_fp16_available
 
     @staticmethod
-    def create_loader(
+    def get_loader(
         data_source,
         open_fn,
         dict_transform=None,
@@ -54,20 +61,20 @@ class UtilsFactory:
         return loader
 
     @staticmethod
-    def create_tflogger(logdir: str, name: str) -> SummaryWriter:
+    def get_tflogger(logdir: str, name: str) -> SummaryWriter:
         log_dir = os.path.join(logdir, f"{name}_log")
         logger = SummaryWriter(log_dir)
         return logger
 
     @staticmethod
-    def create_loggers(
+    def get_loggers(
         logdir: str, loaders: List[str]
     ) -> "OrderedDict[str, SummaryWriter]":
         os.makedirs(logdir, exist_ok=True)
 
         loggers = []
         for key in loaders:
-            logger = UtilsFactory.create_tflogger(logdir=logdir, name=key)
+            logger = UtilsFactory.get_tflogger(logdir=logdir, name=key)
             loggers.append((key, logger))
 
         loggers = OrderedDict(loggers)
@@ -75,19 +82,40 @@ class UtilsFactory:
         return loggers
 
     @staticmethod
-    def prepare_device() -> torch.device:
+    def get_device() -> torch.device:
         return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     @staticmethod
-    def prepare_model(model: nn.Module) -> Tuple[nn.Module, torch.device]:
-        device = UtilsFactory.prepare_device()
+    def process_components(
+        model: _Model,
+        criterion: _Criterion = None,
+        optimizer: _Optimizer = None,
+        scheduler: _Scheduler = None,
+        distributed_params: Dict = None
+    ) -> Tuple[_Model, _Criterion, _Optimizer, _Scheduler, torch.device]:
+
+        distributed_params = distributed_params or {}
+        device = UtilsFactory.get_device()
 
         if torch.cuda.is_available():
             cudnn.benchmark = True
 
         model = model.to(device)
 
-        return model, device
+        if is_wrapped_with_ddp(model):
+            pass
+        elif len(distributed_params) > 0:
+            UtilsFactory.assert_fp16_available()
+            from apex import amp
+
+            model, optimizer = amp.initialize(
+                model, optimizer, **distributed_params)
+        elif torch.cuda.device_count() > 1:
+            model = torch.nn.DataParallel(model)
+
+        model = model.to(device)
+
+        return model, criterion, optimizer, scheduler, device
 
     @staticmethod
     def pack_checkpoint(

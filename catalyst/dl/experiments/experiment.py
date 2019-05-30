@@ -1,4 +1,4 @@
-from typing import Iterable, Any, Mapping, Dict, List, Tuple
+from typing import Iterable, Any, Mapping, Dict, List
 from collections import OrderedDict
 import datetime
 
@@ -60,7 +60,7 @@ class BaseExperiment(Experiment):
         self._verbose = verbose
         self._additional_state_kwargs = state_kwargs or {}
         self.checkpoint_data = checkpoint_data or {}
-        self.distributed_params = distributed_params or {}
+        self._distributed_params = distributed_params or {}
 
     @property
     def logdir(self):
@@ -69,6 +69,10 @@ class BaseExperiment(Experiment):
     @property
     def stages(self) -> Iterable[str]:
         return [self._stage]
+
+    @property
+    def distributed_params(self) -> Dict:
+        return self._distributed_params
 
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
         default_params = dict(
@@ -92,24 +96,13 @@ class BaseExperiment(Experiment):
     def get_criterion(self, stage: str) -> _Criterion:
         return self._criterion
 
-    def get_optimizer_and_model(
+    def get_optimizer(
         self,
         stage: str,
         model: nn.Module
-    ) -> Tuple[_Optimizer, _Model]:
+    ) -> _Optimizer:
 
-        optimizer = self._optimizer
-
-        if len(self.distributed_params) > 0:
-            utils.assert_fp16_available()
-            from apex import amp
-
-            model, optimizer = amp.initialize(
-                model, optimizer, **self.distributed_params)
-        elif torch.cuda.device_count() > 1:
-            model = torch.nn.DataParallel(model)
-
-        return optimizer, model
+        return self._optimizer
 
     def get_scheduler(self, stage: str, optimizer=None) -> _Scheduler:
         return self._scheduler
@@ -145,7 +138,6 @@ class ConfigExperiment(Experiment):
     STAGE_KEYWORDS = [
         "criterion_params", "optimizer_params", "scheduler_params",
         "data_params", "state_params", "callbacks_params",
-        "distributed_params"
     ]
 
     def __init__(self, config: Dict):
@@ -157,7 +149,7 @@ class ConfigExperiment(Experiment):
             self._config.get("args", {}).copy(),
             {"logdir": self._logdir}
         )
-        self.stages_config = self._prepare_stages_config(config["stages"])
+        self.stages_config = self._get_stages_config(config["stages"])
 
     def __prepare_logdir(self):
         EXCLUDE_TAG = "none"
@@ -168,12 +160,12 @@ class ConfigExperiment(Experiment):
         if logdir is not None and logdir.lower() != EXCLUDE_TAG:
             self._logdir = logdir
         elif baselogdir is not None and baselogdir.lower() != EXCLUDE_TAG:
-            logdir_postfix = self._prepare_logdir(self._config)
+            logdir_postfix = self._get_logdir(self._config)
             self._logdir = f"{baselogdir}/{logdir_postfix}"
         else:
             self._logdir = None
 
-    def _prepare_stages_config(self, stages_config):
+    def _get_stages_config(self, stages_config):
         stages_defaults = {}
         stages_config_out = OrderedDict()
         for key in self.STAGE_KEYWORDS:
@@ -195,16 +187,20 @@ class ConfigExperiment(Experiment):
     def logdir(self):
         return self._logdir
 
-    def _prepare_logdir(self, config: Dict) -> str:
+    def _get_logdir(self, config: Dict) -> str:
         timestamp = datetime.datetime.utcnow().strftime("%y%m%d.%H%M%S.%f")
         config_hash = get_hash(config)
-        postfix = f"{timestamp}.{config_hash}"
-        return postfix
+        logdir = f"{timestamp}.{config_hash}"
+        return logdir
 
     @property
     def stages(self) -> List[str]:
         stages_keys = list(self.stages_config.keys())
         return stages_keys
+
+    @property
+    def distributed_params(self) -> Dict:
+        return self._config.get("distributed_params", {})
 
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
         return self.stages_config[stage].get("state_params", {})
@@ -276,31 +272,20 @@ class ConfigExperiment(Experiment):
 
         return optimizer
 
-    def get_optimizer_and_model(
+    def get_optimizer(
         self,
         stage: str,
         model: nn.Module
-    ) -> [_Optimizer, _Model]:
+    ) -> _Optimizer:
 
-        model_params = utils.prepare_optimizable_params(model.parameters())
+        model_params = utils.get_optimizable_params(model.parameters())
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
-        distributed_params = \
-            self.stages_config[stage].get("distributed_params", {})
 
         optimizer = self._get_optimizer(
             model_params=model_params, **optimizer_params)
 
-        if len(distributed_params) > 0:
-            utils.assert_fp16_available()
-            from apex import amp
-
-            model, optimizer = amp.initialize(
-                model, optimizer, **distributed_params)
-        elif torch.cuda.device_count() > 1:
-            model = torch.nn.DataParallel(model)
-
-        return optimizer, model
+        return optimizer
 
     @staticmethod
     def _get_scheduler(*, optimizer, **params):

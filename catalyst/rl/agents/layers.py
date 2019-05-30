@@ -58,12 +58,12 @@ class LamaPooling(nn.Module):
         self.features_out = features_in * len(self.poolings)
 
         self.poolings = nn.ModuleDict({
-            k: self._prepare_for_pooling(k, self.features_in)
+            k: self._get_pooling(k, self.features_in)
             for k in self.poolings
         })
 
     @staticmethod
-    def _prepare_for_pooling(key, features_in):
+    def _get_pooling(key, features_in):
         if any([x in key for x in ["softmax", "tanh", "sigmoid"]]):
             key = key.split("_", 1)[0]
             pooling = TemporalAttentionPooling(

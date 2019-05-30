@@ -21,7 +21,7 @@ class ActorAlgorithmSpec(AlgorithmSpec):
         actor_grad_clip_params: Dict = None,
         **kwargs
     ):
-        self._device = UtilsFactory.prepare_device()
+        self._device = UtilsFactory.get_device()
 
         self.actor = actor.to(self._device)
 
