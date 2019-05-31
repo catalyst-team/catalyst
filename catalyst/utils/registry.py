@@ -21,6 +21,7 @@ class Registry(Mapping):
     """
     Universal class allowing to add and access various factories by name
     """
+
     def __init__(
         self,
         default_name_key: str,

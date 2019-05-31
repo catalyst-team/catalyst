@@ -192,7 +192,8 @@ def _lovasz_softmax(
     Args:
         probabilities: [B, C, H, W]
             class probabilities at each prediction (between 0 and 1).
-            Interpreted as binary (sigmoid) output with outputs of size [B, H, W].
+            Interpreted as binary (sigmoid) output
+            with outputs of size [B, H, W].
         targets: [B, H, W] ground truth targets (between 0 and C - 1)
         classes: "all" for all,
             "present" for classes present in targets,

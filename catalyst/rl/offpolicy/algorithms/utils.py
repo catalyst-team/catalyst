@@ -10,7 +10,7 @@ def _copy_params(params):
     return params.copy()
 
 
-def get_agent_stuff_from_params(
+def get_trainer_components(
     *,
     agent,
     loss_params=None,

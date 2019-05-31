@@ -5,7 +5,7 @@ from catalyst.dl.utils import UtilsFactory
 from catalyst.rl.registry import AGENTS
 from catalyst.rl.agents.core import ActorSpec, CriticSpec
 from catalyst.rl.environments.core import EnvironmentSpec
-from catalyst.rl.offpolicy.algorithms.utils import get_agent_stuff_from_params
+from catalyst.rl.offpolicy.algorithms.utils import get_trainer_components
 from .core import AlgorithmSpec
 
 
@@ -26,7 +26,7 @@ class ActorAlgorithmSpec(AlgorithmSpec):
         self.actor = actor.to(self._device)
 
         # actor preparation
-        actor_stuff = get_agent_stuff_from_params(
+        actor_components = get_trainer_components(
             agent=self.actor,
             loss_params=actor_loss_params,
             optimizer_params=actor_optimizer_params,
@@ -34,17 +34,17 @@ class ActorAlgorithmSpec(AlgorithmSpec):
             grad_clip_params=actor_grad_clip_params
         )
         # criterion
-        self._actor_loss_params = actor_stuff["loss_params"]
-        self.actor_criterion = actor_stuff["criterion"]
+        self._actor_loss_params = actor_components["loss_params"]
+        self.actor_criterion = actor_components["criterion"]
         # optimizer
-        self._actor_optimizer_params = actor_stuff["optimizer_params"]
-        self.actor_optimizer = actor_stuff["optimizer"]
+        self._actor_optimizer_params = actor_components["optimizer_params"]
+        self.actor_optimizer = actor_components["optimizer"]
         # scheduler
-        self._actor_scheduler_params = actor_stuff["scheduler_params"]
-        self.actor_scheduler = actor_stuff["scheduler"]
+        self._actor_scheduler_params = actor_components["scheduler_params"]
+        self.actor_scheduler = actor_components["scheduler"]
         # grad clipping
-        self._actor_grad_clip_params = actor_stuff["grad_clip_params"]
-        self.actor_grad_clip_fn = actor_stuff["grad_clip_fn"]
+        self._actor_grad_clip_params = actor_components["grad_clip_params"]
+        self.actor_grad_clip_fn = actor_components["grad_clip_fn"]
 
         # other hyperparameters
         self._n_step = n_step

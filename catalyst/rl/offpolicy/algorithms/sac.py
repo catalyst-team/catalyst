@@ -7,7 +7,7 @@ from catalyst.rl.registry import AGENTS
 from catalyst.dl.utils import UtilsFactory
 from .core_continuous import AlgorithmContinuous
 from .utils import categorical_loss, quantile_loss, soft_update, \
-    get_agent_stuff_from_params
+    get_trainer_components
 from .core import AlgorithmSpec
 from catalyst.rl.environments.core import EnvironmentSpec
 from catalyst.rl.agents.core import CriticSpec
@@ -28,15 +28,15 @@ class SAC(AlgorithmContinuous):
         critics_scheduler = []
 
         for critic in critics:
-            critic_stuff = get_agent_stuff_from_params(
+            critic_components = get_trainer_components(
                 agent=critic,
                 loss_params=self._critic_loss_params,
                 optimizer_params=self._critic_optimizer_params,
                 scheduler_params=self._critic_scheduler_params,
                 grad_clip_params=self._critic_grad_clip_params
             )
-            critics_optimizer.append(critic_stuff["optimizer"])
-            critics_scheduler.append(critic_stuff["scheduler"])
+            critics_optimizer.append(critic_components["optimizer"])
+            critics_scheduler.append(critic_components["scheduler"])
 
         self.critics = [self.critic] + critics
         self.critics_optimizer = [self.critic_optimizer] + critics_optimizer

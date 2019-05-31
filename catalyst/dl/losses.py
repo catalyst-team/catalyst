@@ -27,7 +27,7 @@ def sigmoid_focal_loss(
                 elements in the output,
             "sum": the output will be summed.
 
-    See https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/loss/losses.py
+    See https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/loss/losses.py  # noqa: E501
     """
     targets = targets.type(outputs.type())
 
