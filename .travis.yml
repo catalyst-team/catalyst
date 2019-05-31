@@ -20,10 +20,9 @@ matrix:
 #      sudo: required  # required for Python 3.7 (travis-ci/travis-ci#9069)
 
 stages:
-#  - Codestyle
-#  - Tests
-#  - Examples
+  - Tests
   - Deploy
+  - Examples
 
 before_install: &before_install
   sudo apt install redis-server
@@ -33,8 +32,11 @@ install: &requirements
 
 jobs:
   include:
-    - stage: Codestyle
-      install: pip install flake8 yapf
+    - stage: Tests
+      install:
+        - *requirements
+        - pip install flake8 yapf
+        - pip install -U pytest
       script:
         # stop the build if there are any unexpected flake8 issues
         - flake8 . --count --ignore=E126,E226,E704,E731,W503,W504 --max-complexity=16
@@ -43,13 +45,6 @@ jobs:
         - flake8 . --count --exit-zero --max-complexity=10 --statistics
         # test to make sure the code is yapf compliant
         - ./yapf.sh --all
-
-    - stage: Tests
-      install:
-        - *requirements
-        - pip install seaborn
-        - pip install -U pytest
-      script:
         - pytest
 
     - stage: Examples
