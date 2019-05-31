@@ -1,5 +1,6 @@
-import warnings
+import collections
 import inspect
+import warnings
 from typing import Dict, Callable, Any, Union, Type, Mapping, Tuple, List, \
     Optional, Iterator
 
@@ -17,7 +18,7 @@ class RegistryException(Exception):
         super().__init__(message)
 
 
-class Registry:
+class Registry(collections.MutableMapping):
     """
     Universal class allowing to add and access various factories by name
     """
@@ -31,7 +32,7 @@ class Registry:
         Args:
             default_name_key (str): Default key containing factory name when
                 creating from config
-            default_meta_factory (MetaFactory, optional): default object
+            default_meta_factory (MetaFactory): default object
                 that calls factory. Optional. Default just calls factory.
         """
         self.meta_factory = default_meta_factory
@@ -68,7 +69,7 @@ class Registry:
         **named_factories: Factory
     ) -> Factory:
         """
-        Adds factory to registry with it's __name__ attribute or provided
+        Adds factory to registry with it's ``__name__`` attribute or provided
         name. Signature is flexible.
 
         Args:
@@ -148,6 +149,7 @@ class Registry:
 
         Args:
             name: factory name
+
         Returns:
             Factory: factory by name
         """
@@ -209,6 +211,7 @@ class Registry:
             meta_factory: Function that calls factory the right way.
                 If not provided, default is used.
             **kwargs: additional kwargs for factory
+
         Returns:
              result of calling ``instantiate_fn(factory, **config)``
         """
@@ -258,6 +261,9 @@ class Registry:
 
     def __setitem__(self, name: str, factory: Factory) -> None:
         self.add(factory, name=name)
+
+    def __delitem__(self, name: str) -> None:
+        self._factories.pop(name)
 
 
 __all__ = ["Registry", "RegistryException"]
