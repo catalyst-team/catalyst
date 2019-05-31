@@ -76,7 +76,7 @@ class LRUpdater(Callback):
 class LRFinder(LRUpdater):
     """
     Helps you find an optimal learning rate for a model,
-        as per suggestion of 2015 CLR paper.
+    as per suggestion of 2015 CLR paper.
     Learning rate is increased in linear or log scale, depending on user input.
 
     https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html

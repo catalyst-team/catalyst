@@ -1,5 +1,5 @@
 DL
-===========
+================================================
 
 .. automodule:: catalyst.dl
     :members:
@@ -8,7 +8,7 @@ DL
 
 
 Runner
-----------
+--------------------
 
 .. automodule:: catalyst.dl.experiments.runner
     :members:
@@ -21,7 +21,7 @@ Runner
     :show-inheritance:
 
 Experiment
-----------
+--------------------
 
 .. automodule:: catalyst.dl.experiments.experiment
     :members:
@@ -30,7 +30,7 @@ Experiment
 
 
 Metrics
-----------
+--------------------
 
 .. automodule:: catalyst.dl.metrics
     :members:
@@ -44,13 +44,13 @@ Metrics
 
 
 Callbacks
-----------
+--------------------
 Callbacks are the main idea for reproducible pipeline
 
 .. currentmodule:: catalyst.dl.callbacks
 
 Base
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 .. autoclass:: Callback
     :members:
@@ -78,7 +78,7 @@ Base
 
 
 Metrics
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 .. autoclass:: MetricCallback
     :members:
@@ -107,7 +107,7 @@ Metrics
 
 
 MultiMetrics
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 .. autoclass:: MultiMetricCallback
     :members:
@@ -123,7 +123,7 @@ MultiMetrics
 
 
 Loggers
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 .. autoclass:: TensorboardLogger
     :members:
@@ -138,7 +138,7 @@ Loggers
     :undoc-members:
 
 Formatters
-""""""""""""""""""
+""""""""""""""""
 
 .. autoclass:: MetricsFormatter
     :members:
@@ -154,7 +154,7 @@ Formatters
 
 
 Schedulers
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 .. autoclass:: LRUpdater
     :members:
@@ -166,7 +166,7 @@ Schedulers
 
 
 Inference
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 .. autoclass:: InferCallback
     :members:
@@ -178,14 +178,14 @@ Inference
 
 
 Utils
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 .. automodule:: catalyst.dl.callbacks.utils
     :members:
     :undoc-members:
 
 Losses
------------------
+--------------------
 
 .. automodule:: catalyst.dl.losses
     :members:
@@ -193,7 +193,7 @@ Losses
     :show-inheritance:
 
 Metrics
------------------
+--------------------
 Metric functions
 
 .. automodule:: catalyst.dl.metrics
@@ -202,7 +202,7 @@ Metric functions
     :show-inheritance:
 
 Initialization
------------------
+--------------------
 
 .. automodule:: catalyst.dl.initialization
     :members:
@@ -210,7 +210,7 @@ Initialization
     :show-inheritance:
 
 Tracing
-----------
+--------------------
 
 .. automodule:: catalyst.dl.utils.trace
     :members:
@@ -218,7 +218,7 @@ Tracing
     :show-inheritance:
 
 Utils
-----------
+--------------------
 
 .. automodule:: catalyst.dl.utils
     :members:

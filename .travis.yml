@@ -221,6 +221,6 @@ jobs:
         - pip install git+https://github.com/bitprophet/releases/#egg=releases
 #        - pip install -U git+https://github.com/leokoppel/sphinxcontrib-versioning
       script:
-        - travis-sphinx build --source docs/ --nowarn
+        - travis-sphinx build --source docs/
       after_success:
         - travis-sphinx deploy

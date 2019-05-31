@@ -89,8 +89,9 @@ class TxtMetricsFormatter(MetricsFormatter):
     For details refer to official docs for 'logging' module.
 
     Note:
-        This is inner class used by Logger callback,
-        no need to use it directly!
+
+    This is inner class used by Logger callback,
+    no need to use it directly!
     """
 
     def __init__(self):
@@ -197,16 +198,14 @@ class TensorboardLogger(Callback):
     def __init__(
         self,
         metric_names: List[str] = None,
-        log_on_batch_end=True,
-        log_on_epoch_end=True
+        log_on_batch_end: bool = True,
+        log_on_epoch_end: bool = True
     ):
         """
         Args:
-            logdir: directory where logs will be created
             metric_names: List of metric names to log.
                 If none - logs everything.
-            log_on_batch_end: Logs per-batch value of metrics,
-                prepends 'batch_' prefix to their names.
+            log_on_batch_end: Logs per-batch metrics if set True.
             log_on_epoch_end: Logs per-epoch metrics if set True.
         """
         self.metrics_to_log = metric_names

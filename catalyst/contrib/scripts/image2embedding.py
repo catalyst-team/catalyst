@@ -8,7 +8,7 @@ from torchvision import transforms
 
 from catalyst.dl.utils import UtilsFactory
 from catalyst.data.reader import ImageReader
-from catalyst.contrib.models import ResnetEncoder
+from catalyst.contrib.models.encoder import ResnetEncoder
 
 cv2.setNumThreads(0)
 cv2.ocl.setUseOpenCL(False)
