@@ -6,18 +6,6 @@ Contrib
     :undoc-members:
     :show-inheritance:
 
-
-Registry
---------------------
-@TODO docs: write an explanation about usage Registry
-
-.. currentmodule:: catalyst.utils.registry
-
-.. autoclass:: Registry
-    :members:
-    :undoc-members:
-
-
 Criterion
 --------------------
 
