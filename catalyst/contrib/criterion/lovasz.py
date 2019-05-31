@@ -42,7 +42,7 @@ def mean(values, ignore_nan=False, empty=0):
 def _lovasz_grad(gt_sorted):
     """
     Compute gradient of the Lovasz extension w.r.t sorted errors
-        See Alg. 1 in paper
+    See Alg. 1 in paper
     """
     p = len(gt_sorted)
     gts = gt_sorted.sum()
@@ -75,6 +75,7 @@ def _flatten_binary_scores(logits, targets, ignore=None):
 def _lovasz_hinge_flat(logits, targets):
     """
     Binary Lovasz hinge loss
+
     Args:
         logits: [P] Variable, logits at each prediction
             (between -iinfinity and +iinfinity)
@@ -97,6 +98,8 @@ def _lovasz_hinge_flat(logits, targets):
 def _lovasz_hinge(logits, targets, per_image=True, ignore=None):
     """
     Binary Lovasz hinge loss
+
+    Args:
         logits: [B, H, W] Variable, logits at each pixel
             (between -infinity and +infinity)
         targets: [B, H, W] Tensor, binary ground truth masks (0 or 1)
@@ -143,11 +146,12 @@ def _flatten_probabilities(probabilities, targets, ignore=None):
 def _lovasz_softmax_flat(probabilities, targets, classes="present"):
     """
     Multi-class Lovasz-Softmax loss
+
     Args:
-        @param probabilities: [P, C]
+        probabilities: [P, C]
             class probabilities at each prediction (between 0 and 1)
-        @param targets: [P] ground truth targets (between 0 and C - 1)
-        @param classes: "all" for all,
+        targets: [P] ground truth targets (between 0 and C - 1)
+        classes: "all" for all,
             "present" for classes present in targets,
              or a list of classes to average.
     """
@@ -184,16 +188,17 @@ def _lovasz_softmax(
 ):
     """
     Multi-class Lovasz-Softmax loss
+
     Args:
-        @param probabilities: [B, C, H, W]
+        probabilities: [B, C, H, W]
             class probabilities at each prediction (between 0 and 1).
-        Interpreted as binary (sigmoid) output with outputs of size [B, H, W].
-        @param targets: [B, H, W] ground truth targets (between 0 and C - 1)
-        @param classes: "all" for all,
+            Interpreted as binary (sigmoid) output with outputs of size [B, H, W].
+        targets: [B, H, W] ground truth targets (between 0 and C - 1)
+        classes: "all" for all,
             "present" for classes present in targets,
             or a list of classes to average.
-        @param per_image: compute the loss per image instead of per batch
-        @param ignore: void class targets
+        per_image: compute the loss per image instead of per batch
+        ignore: void class targets
     """
     if per_image:
         loss = mean(
@@ -222,10 +227,9 @@ class LovaszLossBinary(_Loss):
 
     def forward(self, logits, targets):
         """
-
-        :param logits: [bs; ...]
-        :param targets: [bs; ...]
-        :return:
+        Args:
+            logits: [bs; ...]
+            targets: [bs; ...]
         """
         loss = _lovasz_hinge(
             logits,
@@ -243,10 +247,9 @@ class LovaszLossMultiClass(_Loss):
 
     def forward(self, logits, targets):
         """
-
-        :param logits: [bs; num_classes; ...]
-        :param targets: [bs; ...]
-        :return:
+        Args:
+            logits: [bs; num_classes; ...]
+            targets: [bs; ...]
         """
         loss = _lovasz_softmax(
             logits,
@@ -264,10 +267,9 @@ class LovaszLossMultiLabel(_Loss):
 
     def forward(self, logits, targets):
         """
-
-        :param logits: [bs; num_classes; ...]
-        :param targets: [bs; num_classes; ...]
-        :return:
+        Args:
+            logits: [bs; num_classes; ...]
+            targets: [bs; num_classes; ...]
         """
         losses = [
             _lovasz_hinge(

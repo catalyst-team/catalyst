@@ -62,8 +62,9 @@ class VerboseLogger(Callback):
 class MetricsFormatter(ABC, logging.Formatter):
     def __init__(self, message_prefix):
         """
-        :param message_prefix:
-            logging format string that will be prepended to message
+        Args:
+            message_prefix: logging format string
+                that will be prepended to message
         """
         super().__init__(f"{message_prefix}{{message}}", style="{")
 
@@ -145,7 +146,7 @@ class JsonMetricsFormatter(MetricsFormatter):
 
 class ConsoleLogger(Callback):
     """
-    Logger callback, translates state.metrics to console and text file
+    Logger callback, translates ``state.metrics`` to console and text file
     """
 
     def __init__(self):
@@ -200,12 +201,13 @@ class TensorboardLogger(Callback):
         log_on_epoch_end=True
     ):
         """
-        :param logdir: directory where logs will be created
-        :param metric_names: List of metric names to log.
-            If none - logs everything.
-        :param log_on_batch_end: Logs per-batch value of metrics,
-            prepends 'batch_' prefix to their names.
-        :param log_on_epoch_end: Logs per-epoch metrics if set True.
+        Args:
+            logdir: directory where logs will be created
+            metric_names: List of metric names to log.
+                If none - logs everything.
+            log_on_batch_end: Logs per-batch value of metrics,
+                prepends 'batch_' prefix to their names.
+            log_on_epoch_end: Logs per-epoch metrics if set True.
         """
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
