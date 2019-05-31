@@ -32,8 +32,8 @@ def check_unet(net_fn):
 
 # In[ ]:
 
-from catalyst.contrib.models.segmentation import UNet
-net = check_unet(UNet)
+from catalyst.contrib.models.segmentation import Unet
+net = check_unet(Unet)
 
 # In[ ]:
 
@@ -80,10 +80,10 @@ net = check_unet(ResnetPSPnet)
 
 # In[ ]:
 
-from catalyst.contrib.models.segmentation import ResUnet
-net = check_unet(ResUnet)
+from catalyst.contrib.models.segmentation import ResNetUnet
+net = check_unet(ResNetUnet)
 
 # In[ ]:
 
-from catalyst.contrib.models.segmentation import ResLinknet
-net = check_unet(ResLinknet)
+from catalyst.contrib.models.segmentation import ResNetLinknet
+net = check_unet(ResNetLinknet)

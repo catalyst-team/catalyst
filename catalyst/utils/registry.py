@@ -1,5 +1,6 @@
-import warnings
+import collections
 import inspect
+import warnings
 from typing import Dict, Callable, Any, Union, Type, Mapping, Tuple, List, \
     Optional, Iterator
 
@@ -17,7 +18,7 @@ class RegistryException(Exception):
         super().__init__(message)
 
 
-class Registry(Mapping):
+class Registry(collections.MutableMapping):
     """
     Universal class allowing to add and access various factories by name
     """
@@ -28,10 +29,11 @@ class Registry(Mapping):
         default_meta_factory: MetaFactory = _default_meta_factory
     ):
         """
-        :param default_name_key: Default key containing factory name when
-            creating from config
-        :param default_meta_factory: default object that calls factory.
-            Optional. Default just calls factory.
+        Args:
+            default_name_key (str): Default key containing factory name when
+                creating from config
+            default_meta_factory (MetaFactory): default object
+                that calls factory. Optional. Default just calls factory.
         """
         self.meta_factory = default_meta_factory
         self._name_key = default_name_key
@@ -67,17 +69,18 @@ class Registry(Mapping):
         **named_factories: Factory
     ) -> Factory:
         """
-        Adds factory to registry with it's __name__ attribute or provided
-        name.
-        Signature is flexible.
+        Adds factory to registry with it's ``__name__`` attribute or provided
+        name. Signature is flexible.
 
-        :param factory: Factory instance
-        :param factories: More instances
-        :param name: Provided name for first instance. Use only when pass
-        single instance.
-        :param named_factories: Factory and their names as kwargs
+        Args:
+            factory: Factory instance
+            factories: More instances
+            name: Provided name for first instance. Use only when pass
+                single instance.
+            named_factories: Factory and their names as kwargs
 
-        :return: First factory passed
+        Returns:
+            (Factory): First factory passed
         """
         if len(factories) > 0 and name is not None:
             raise RegistryException(
@@ -111,21 +114,21 @@ class Registry(Mapping):
     def late_add(self, cb: LateAddCallbak):
         """
         Allows to prevent cycle imports by delaying some imports till next
-            registry query
+        registry query
 
-        :param cb: Callback receives registry and must call it's methods to
-            register factories
-        :return:
+        Args:
+            cb: Callback receives registry and must call it's methods to
+                register factories
         """
         self._late_add_callbacks.append(cb)
 
     def add_from_module(self, module) -> None:
         """
         Adds all factories present in module.
-        If __all__ attribute is present, takes ony what mentioned in it
+        If ``__all__`` attribute is present, takes ony what mentioned in it
 
-        :param module: module to scan
-        :return: None
+        Args:
+            module: module to scan
         """
         factories = {
             k: v
@@ -142,10 +145,13 @@ class Registry(Mapping):
     def get(self, name: str) -> Optional[Factory]:
         """
         Retrieves factory, without creating any objects with it
-            or raises error
+        or raises error
 
-        :param name: factory name
-        :returns Factory
+        Args:
+            name: factory name
+
+        Returns:
+            Factory: factory by name
         """
 
         self._do_late_add()
@@ -171,12 +177,16 @@ class Registry(Mapping):
         """
         Creates instance by calling specified factory
         with instantiate_fn
-        :param name: factory name
-        :param meta_factory: Function that calls factory the right way.
-            If not provided, default is used
-        :param args: args to pass to the factory
-        :param kwargs: kwargs to pass to the factory
-        :return: created instance
+
+        Args:
+            name: factory name
+            meta_factory: Function that calls factory the right way.
+                If not provided, default is used
+            args: args to pass to the factory
+            **kwargs: kwargs to pass to the factory
+
+        Returns:
+             created instance
         """
         meta_factory = meta_factory or self.meta_factory
         f = self.get(name)
@@ -194,13 +204,16 @@ class Registry(Mapping):
         self, *, meta_factory=None, **kwargs
     ) -> Union[Any, Tuple[Any, Mapping[str, Any]]]:
         """
-        Creates instance based in configuration dict with instantiation_fn.
-        If config[name_key] is None, None is returned.
+        Creates instance based in configuration dict with ``instantiation_fn``.
+        If ``config[name_key]`` is None, None is returned.
 
-        :param meta_factory: Function that calls factory the right way.
-            If not provided, default is used.
-        :param kwargs: additional kwargs for factory
-        :return: result of calling instantiate_fn(factory, **config)
+        Args:
+            meta_factory: Function that calls factory the right way.
+                If not provided, default is used.
+            **kwargs: additional kwargs for factory
+
+        Returns:
+             result of calling ``instantiate_fn(factory, **config)``
         """
 
         name = kwargs.pop(self._name_key, None)
@@ -209,7 +222,8 @@ class Registry(Mapping):
 
     def all(self) -> List[str]:
         """
-        :return: list of names of registered items
+        Returns:
+            list of names of registered items
         """
         self._do_late_add()
         result = list(self._factories.keys())
@@ -218,7 +232,8 @@ class Registry(Mapping):
 
     def len(self) -> int:
         """
-        :return: length of registered items
+        Returns:
+            length of registered items
         """
         return len(self._factories)
 
@@ -246,6 +261,9 @@ class Registry(Mapping):
 
     def __setitem__(self, name: str, factory: Factory) -> None:
         self.add(factory, name=name)
+
+    def __delitem__(self, name: str) -> None:
+        self._factories.pop(name)
 
 
 __all__ = ["Registry", "RegistryException"]

@@ -11,7 +11,7 @@ from .head import UnetHead
 from .core import _UnetSpec, _ResnetUnetSpec
 
 
-class UNet(_UnetSpec):
+class Unet(_UnetSpec):
 
     def _get_components(
         self,

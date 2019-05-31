@@ -31,12 +31,9 @@ class SupervisedRunner(Runner):
     ):
         """
         @TODO update docs
-
-        :type output_key: str
-        :type input_key: str
-
-        :param input_key: Key in batch dict mapping to model input
-        :param output_key: Key in output dict model output will be stored under
+        Args:
+            input_key: Key in batch dict mapping to model input
+            output_key: Key in output dict model output will be stored under
         """
         super().__init__(model=model, device=device)
         self.input_key = input_key

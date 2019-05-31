@@ -1,5 +1,5 @@
 DL
-===========
+================================================
 
 .. automodule:: catalyst.dl
     :members:
@@ -8,14 +8,9 @@ DL
 
 
 Runner
-----------
+--------------------
 
 .. automodule:: catalyst.dl.experiments.runner
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.experiments.experiment
     :members:
     :undoc-members:
     :show-inheritance:
@@ -25,36 +20,65 @@ Runner
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.dl.datasource
+Experiment
+--------------------
+
+.. automodule:: catalyst.dl.experiments.experiment
     :members:
     :undoc-members:
     :show-inheritance:
 
 
-Metrics
-----------
+Metric functions
+--------------------
 
 .. automodule:: catalyst.dl.metrics
     :members:
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: catalyst.dl.metric_manager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Callbacks
-----------
+--------------------
 Callbacks are the main idea for reproducible pipeline
 
 .. currentmodule:: catalyst.dl.callbacks
 
 Base
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 .. autoclass:: Callback
     :members:
     :undoc-members:
 
+.. autoclass:: LossCallback
+    :members:
+    :undoc-members:
+
+.. autoclass:: OptimizerCallback
+    :members:
+    :undoc-members:
+
+.. autoclass:: SchedulerCallback
+    :members:
+    :undoc-members:
+
+.. autoclass:: CheckpointCallback
+    :members:
+    :undoc-members:
+
+.. autoclass:: EarlyStoppingCallback
+    :members:
+    :undoc-members:
+
+
 Metrics
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 .. autoclass:: MetricCallback
     :members:
@@ -83,7 +107,7 @@ Metrics
 
 
 MultiMetrics
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 .. autoclass:: MultiMetricCallback
     :members:
@@ -98,45 +122,94 @@ MultiMetrics
     :undoc-members:
 
 
-Schedulers
-~~~~~~~~~~~~~~
-.. autoclass:: LRFinder
+Loggers
+~~~~~~~~~~~~~~~~
+
+.. autoclass:: TensorboardLogger
     :members:
     :undoc-members:
+
+.. autoclass:: ConsoleLogger
+    :members:
+    :undoc-members:
+
+.. autoclass:: VerboseLogger
+    :members:
+    :undoc-members:
+
+Formatters
+""""""""""""""""
+
+.. autoclass:: MetricsFormatter
+    :members:
+    :undoc-members:
+
+.. autoclass:: TxtMetricsFormatter
+    :members:
+    :undoc-members:
+
+.. autoclass:: JsonMetricsFormatter
+    :members:
+    :undoc-members:
+
+
+Schedulers
+~~~~~~~~~~~~~~~~
 
 .. autoclass:: LRUpdater
     :members:
     :undoc-members:
 
+.. autoclass:: LRFinder
+    :members:
+    :undoc-members:
+
+
+Inference
+~~~~~~~~~~~~~~~~
+
+.. autoclass:: InferCallback
+    :members:
+    :undoc-members:
+
+.. autoclass:: InferMaskCallback
+    :members:
+    :undoc-members:
+
 
 Utils
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 .. automodule:: catalyst.dl.callbacks.utils
     :members:
     :undoc-members:
 
+Losses
+--------------------
 
-Fp16
-----------
-
-.. automodule:: catalyst.dl.fp16
+.. automodule:: catalyst.dl.losses
     :members:
     :undoc-members:
     :show-inheritance:
 
-
 Initialization
------------------
+--------------------
 
 .. automodule:: catalyst.dl.initialization
     :members:
     :undoc-members:
     :show-inheritance:
 
+Tracing
+--------------------
+
+.. automodule:: catalyst.dl.utils.trace
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Utils
-----------
+--------------------
 
 .. automodule:: catalyst.dl.utils
     :members:

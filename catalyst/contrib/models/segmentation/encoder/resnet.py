@@ -37,7 +37,7 @@ class ResnetEncoder(EncoderSpec):
         self,
         arch: str = "resnet18",
         pretrained: bool = True,
-        requires_grad: bool = False,
+        requires_grad: bool = None,
         layers_indices: List[int] = None
     ):
         super().__init__()
@@ -50,26 +50,24 @@ class ResnetEncoder(EncoderSpec):
         self._channels = _take(self._channels, self._layers_indices)
         self._strides = _take(self._strides, self._layers_indices)
 
-        self.layer0 = nn.Sequential(
+        layer0 = nn.Sequential(
             OrderedDict([
                 ("conv1", resnet.conv1),
                 ("bn1", resnet.bn1),
                 ("relu", resnet.relu)
             ])
         )
-        self.maxpool = resnet.maxpool
-        self.layer1 = resnet.layer1
-        self.layer2 = resnet.layer2
-        self.layer3 = resnet.layer3
-        self.layer4 = resnet.layer4
+        self._layers = nn.ModuleList([
+            layer0,
+            resnet.layer1,
+            resnet.layer2,
+            resnet.layer3,
+            resnet.layer4
+        ])
+        self.maxpool0 = resnet.maxpool
 
-        self._layers = [
-            self.layer0,
-            self.layer1,
-            self.layer2,
-            self.layer3,
-            self.layer4
-        ]
+        if requires_grad is None:
+            requires_grad = not pretrained
 
         self.set_requires_grad(requires_grad)
 
@@ -83,14 +81,14 @@ class ResnetEncoder(EncoderSpec):
 
     def forward(self, x: torch.Tensor) -> List[torch.Tensor]:
         output = []
-        for layer in self._layers:
+        for i, layer in enumerate(self._layers):
             layer_output = layer(x)
             output.append(layer_output)
 
-            if layer == self.layer0:
+            if i == 0:
                 # Fist maxpool operator is not a part of layer0
                 # because we want that layer0 output to have stride of 2
-                layer_output = self.maxpool(layer_output)
+                layer_output = self.maxpool0(layer_output)
             x = layer_output
 
         output = _take(output, self._layers_indices)

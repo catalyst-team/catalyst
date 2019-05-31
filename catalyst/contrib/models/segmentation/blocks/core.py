@@ -4,14 +4,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from ..abn import ABN, ACT_RELU
+from ..abn import ABN
 
 
 def _get_block(
     in_channels: int,
     out_channels: int,
     abn_block: nn.Module = ABN,
-    activation: str = ACT_RELU,
+    activation: str = "ReLU",
     kernel_size: int = 3,
     padding: int = 1,
     first_stride: int = 1,

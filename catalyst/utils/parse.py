@@ -12,6 +12,7 @@ tqdm.pandas()
 def dataframe_to_list(dataframe: pd.DataFrame) -> List[dict]:
     """
     Converts dataframe to a list of rows (without indexes)
+
     Args:
         dataframe (DataFrame): input dataframe
     Returns:
@@ -24,7 +25,8 @@ def dataframe_to_list(dataframe: pd.DataFrame) -> List[dict]:
 def folds_to_list(folds: Union[list, str, pd.Series]) -> List[int]:
     """
     This function formats string or either list of numbers
-        into a list of unique int
+    into a list of unique int
+
     Args:
         folds (Union[list, str, pd.Series]): Either list of numbers or
             one string with numbers separated by commas or
@@ -95,6 +97,7 @@ def split_dataframe(
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Split a Pandas DataFrame into folds.
+
     Args:
         dataframe (pd.DataFrame): input dataframe
         train_folds (List[int]): train folds

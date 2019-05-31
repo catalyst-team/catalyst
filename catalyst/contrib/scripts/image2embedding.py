@@ -8,7 +8,7 @@ from torchvision import transforms
 
 from catalyst.dl.utils import UtilsFactory
 from catalyst.data.reader import ImageReader
-from catalyst.contrib.models import ResnetEncoder
+from catalyst.contrib.models.encoder import ResnetEncoder
 
 cv2.setNumThreads(0)
 cv2.ocl.setUseOpenCL(False)
@@ -115,7 +115,7 @@ def main(args, _=None):
 
     model = ResnetEncoder(arch=args.arch, pooling=args.pooling)
     model = model.eval()
-    model, device = UtilsFactory.prepare_model(model)
+    model, device = UtilsFactory.process_components(model)
 
     images_df = pd.read_csv(args.in_csv)
     images_df = images_df.reset_index().drop("index", axis=1)
@@ -125,7 +125,7 @@ def main(args, _=None):
         input_key=args.img_col, output_key="image", datapath=args.datapath
     )
 
-    dataloader = UtilsFactory.create_loader(
+    dataloader = UtilsFactory.get_loader(
         images_df,
         open_fn,
         batch_size=args.batch_size,

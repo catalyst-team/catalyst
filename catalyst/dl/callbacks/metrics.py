@@ -204,14 +204,15 @@ class AccuracyCallback(MultiMetricCallback):
         accuracy_args: List[int] = None,
     ):
         """
-        :param input_key: input key to use for accuracy calculation;
-            specifies our `y_true`.
-        :param output_key: output key to use for accuracy calculation;
-            specifies our `y_pred`.
-        :param accuracy_args: specifies which accuracy@K to log.
-            [1] - accuracy
-            [1, 3] - accuracy at 1 and 3
-            [1, 3, 5] - accuracy at 1, 3 and 5
+        Args:
+            input_key: input key to use for accuracy calculation;
+                specifies our `y_true`.
+            output_key: output key to use for accuracy calculation;
+                specifies our `y_pred`.
+            accuracy_args: specifies which accuracy@K to log.
+                [1] - accuracy
+                [1, 3] - accuracy at 1 and 3
+                [1, 3, 5] - accuracy at 1, 3 and 5
         """
         super().__init__(
             prefix=prefix,
@@ -235,16 +236,17 @@ class MapKCallback(MultiMetricCallback):
         map_args: List[int] = None,
     ):
         """
-        :param input_key: input key to use for
-            calculation mean average accuracy at k;
-            specifies our `y_true`.
-        :param output_key: output key to use for
-            calculation mean average accuracy at k;
-            specifies our `y_pred`.
-        :param map_args: specifies which map@K to log.
-            [1] - map@1
-            [1, 3] - map@1 and map@3
-            [1, 3, 5] - map@1, map@3 and map@5
+        Args:
+            input_key: input key to use for
+                calculation mean average accuracy at k;
+                specifies our `y_true`.
+            output_key: output key to use for
+                calculation mean average accuracy at k;
+                specifies our `y_pred`.
+            map_args: specifies which map@K to log.
+                [1] - map@1
+                [1, 3] - map@1 and map@3
+                [1, 3, 5] - map@1, map@3 and map@5
         """
         super().__init__(
             prefix=prefix,

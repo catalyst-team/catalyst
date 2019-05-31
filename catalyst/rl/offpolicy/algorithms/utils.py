@@ -10,7 +10,7 @@ def _copy_params(params):
     return params.copy()
 
 
-def get_agent_stuff_from_params(
+def get_trainer_components(
     *,
     agent,
     loss_params=None,
@@ -26,7 +26,7 @@ def get_agent_stuff_from_params(
         criterion = criterion.cuda()
 
     # optimizer
-    agent_params = UtilsFactory.prepare_optimizable_params(
+    agent_params = UtilsFactory.get_optimizable_params(
         agent.parameters())
     optimizer_params = _copy_params(optimizer_params)
     optimizer = OPTIMIZERS.get_from_params(

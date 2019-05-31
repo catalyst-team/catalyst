@@ -6,6 +6,7 @@ from catalyst.dl import metrics
 class IoULoss(nn.Module):
     """
     Intersection over union (Jaccard) loss
+
     Args:
         eps (float): epsilon to avoid zero division
         threshold (float): threshold for outputs binarization
@@ -33,6 +34,7 @@ class IoULoss(nn.Module):
 class BCEIoULoss(nn.Module):
     """
     Intersection over union (Jaccard) with BCE loss
+
     Args:
         eps (float): epsilon to avoid zero division
         threshold (float): threshold for outputs binarization

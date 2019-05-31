@@ -4,7 +4,7 @@ import torch
 
 from catalyst.dl.utils import UtilsFactory
 from catalyst.rl.registry import AGENTS
-from .utils import soft_update, get_agent_stuff_from_params
+from .utils import soft_update, get_trainer_components
 from .core import AlgorithmSpec
 from catalyst.rl.agents.core import ActorSpec, CriticSpec
 from catalyst.rl.environments.core import EnvironmentSpec
@@ -23,12 +23,12 @@ class AlgorithmDiscrete(AlgorithmSpec):
         critic_tau: float = 1.0,
         **kwargs
     ):
-        self._device = UtilsFactory.prepare_device()
+        self._device = UtilsFactory.get_device()
         self.critic = critic.to(self._device)
         self.target_critic = copy.deepcopy(critic).to(self._device)
 
         # preparation
-        agent_stuff = get_agent_stuff_from_params(
+        agent_stuff = get_trainer_components(
             agent=self.critic,
             loss_params=critic_loss_params,
             optimizer_params=critic_optimizer_params,
