@@ -17,7 +17,7 @@ class RegistryException(Exception):
         super().__init__(message)
 
 
-class Registry(Mapping):
+class Registry:
     """
     Universal class allowing to add and access various factories by name
     """
