@@ -192,14 +192,6 @@ Losses
     :undoc-members:
     :show-inheritance:
 
-Metrics
---------------------
-Metric functions
-
-.. automodule:: catalyst.dl.metrics
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 Initialization
 --------------------

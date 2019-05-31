@@ -20,9 +20,9 @@ matrix:
 #      sudo: required  # required for Python 3.7 (travis-ci/travis-ci#9069)
 
 stages:
-  - Codestyle
-  - Tests
-  - Examples
+#  - Codestyle
+#  - Tests
+#  - Examples
   - Deploy
 
 before_install: &before_install

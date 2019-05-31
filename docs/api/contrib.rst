@@ -1,5 +1,5 @@
 Contrib
-================
+================================================
 
 .. automodule:: catalyst.contrib
     :members:
@@ -8,7 +8,7 @@ Contrib
 
 
 Registry
-----------
+--------------------
 @TODO docs: write an explanation about usage Registry
 
 .. currentmodule:: catalyst.utils.registry
@@ -17,8 +17,9 @@ Registry
     :members:
     :undoc-members:
 
+
 Criterion
-----------
+--------------------
 
 .. automodule:: catalyst.contrib.criterion.ce
     :members:
@@ -76,7 +77,7 @@ Criterion
 
 
 Schedulers
------------------------
+--------------------
 
 .. currentmodule:: catalyst.contrib.scheduler
 
@@ -86,8 +87,9 @@ Schedulers
 .. autoclass:: OneCycleLR
     :members:
 
+
 Models
----------------------
+--------------------
 .. automodule:: catalyst.contrib.models
     :members:
     :undoc-members:
@@ -95,8 +97,9 @@ Models
 
 @TODO: update with new classes
 
+
 Modules
------------------------
+--------------------
 
 .. automodule:: catalyst.contrib.modules.common
     :members:

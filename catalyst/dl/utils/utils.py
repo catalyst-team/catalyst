@@ -1,5 +1,6 @@
 from typing import Union, Optional, List, Tuple, Dict
 import os
+import copy
 import shutil
 from collections import OrderedDict
 from pathlib import Path
@@ -95,6 +96,7 @@ class UtilsFactory:
     ) -> Tuple[_Model, _Criterion, _Optimizer, _Scheduler, torch.device]:
 
         distributed_params = distributed_params or {}
+        distributed_params = copy.deepcopy(distributed_params)
         device = UtilsFactory.get_device()
 
         if torch.cuda.is_available():

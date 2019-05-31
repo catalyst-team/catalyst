@@ -5,6 +5,7 @@ import datetime
 import torch
 from torch import nn
 from torch.utils.data import DataLoader, Dataset  # noqa F401
+from torch.utils.data import DistributedSampler
 
 from catalyst.dl.registry import \
     MODELS, CRITERIONS, OPTIMIZERS, SCHEDULERS, CALLBACKS
@@ -13,7 +14,7 @@ from catalyst.dl.callbacks import Callback, LossCallback, OptimizerCallback, \
     SchedulerCallback, CheckpointCallback  # noqa F401
 from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.misc import merge_dicts
-from catalyst.utils.hash import get_hash
+from catalyst.utils.hash import get_short_hash
 
 from .core import Experiment, _Model, _Criterion, _Optimizer, _Scheduler
 
@@ -188,9 +189,12 @@ class ConfigExperiment(Experiment):
         return self._logdir
 
     def _get_logdir(self, config: Dict) -> str:
-        timestamp = datetime.datetime.utcnow().strftime("%y%m%d.%H%M%S.%f")
-        config_hash = get_hash(config)
+        timestamp = datetime.datetime.utcnow().strftime("%y%m%d.%H%M%S")
+        config_hash = get_short_hash(config)
         logdir = f"{timestamp}.{config_hash}"
+        distributed_rank = self.distributed_params.get("rank", -1)
+        if distributed_rank > -1:
+            logdir = f"{logdir}.rank{distributed_rank:02d}"
         return logdir
 
     @property
@@ -316,10 +320,14 @@ class ConfigExperiment(Experiment):
         batch_size = data_params.pop("batch_size")
         num_workers = data_params.pop("num_workers")
         drop_last = data_params.pop("drop_last", False)
-        per_gpu_batch_size = data_params.pop("per_gpu_batch_size", False)
+        per_gpu_scaling = data_params.pop("per_gpu_scaling", False)
+        distributed_rank = self.distributed_params.get("rank", -1)
+        distributed = distributed_rank > -1
 
-        if per_gpu_batch_size:
-            batch_size *= max(1, torch.cuda.device_count())
+        if per_gpu_scaling and not distributed:
+            num_gpus = max(1, torch.cuda.device_count())
+            batch_size *= num_gpus
+            num_workers *= num_gpus
 
         datasets = self.get_datasets(stage=stage, **data_params)
 
@@ -327,24 +335,35 @@ class ConfigExperiment(Experiment):
         for name, ds_ in datasets.items():
             assert isinstance(ds_, (Dataset, dict)), \
                 f"{ds_} should be Dataset of Dict"
+
             loader_params = {
                 "batch_size": batch_size,
                 "num_workers": num_workers,
                 "pin_memory": torch.cuda.is_available(),
                 "drop_last": drop_last,
             }
+
             if isinstance(ds_, Dataset):
                 loader_params["dataset"] = ds_
-                loader_params["shuffle"] = name.startswith("train")
             elif isinstance(ds_, dict):
                 assert "dataset" in ds_, \
                     "You need to specify dataset for dataloader"
-                loader_params["shuffle"] = (
-                    name.startswith("train")
-                    and ds_.get("sampler") is None)
                 loader_params = merge_dicts(ds_, loader_params)
             else:
                 raise NotImplementedError
+
+            if distributed:
+                sampler = loader_params.get("sampler")
+                if sampler is not None:
+                    assert isinstance(sampler, DistributedSampler)
+                else:
+                    loader_params["sampler"] = DistributedSampler(
+                        dataset=loader_params["dataset"])
+
+            loader_params["shuffle"] = (
+                name.startswith("train")
+                and loader_params.get("sampler") is None)
+
             loaders[name] = DataLoader(**loader_params)
 
         return loaders
