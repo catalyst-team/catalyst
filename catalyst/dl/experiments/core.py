@@ -5,6 +5,7 @@ from collections import OrderedDict
 import torch
 from torch import nn, optim
 from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DistributedSampler
 
 from catalyst.dl.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
@@ -232,11 +233,14 @@ class Runner(ABC):
             assert not any(x.startswith("train") for x in loaders.keys()), \
                 "for inference no train loader should be passed"
 
-        for loader_name in loaders:
+        for loader_name, loader in loaders.items():
             self.state.loader_name = loader_name
-            self.state.loader_len = len(loaders[loader_name])
+            self.state.loader_len = len(loader)
             self.state.need_backward = loader_name.startswith("train")
             self.model.train(self.state.need_backward)
+
+            if isinstance(loader.sampler, DistributedSampler):
+                loader.sampler.set_epoch(self.state.stage_epoch)
 
             self._run_event("loader_start")
             with torch.set_grad_enabled(self.state.need_backward):
