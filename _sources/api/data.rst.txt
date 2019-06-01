@@ -1,5 +1,5 @@
 Data
-============
+================================================
 
 Data subpackage has data preprocessers and dataloader abstractions.
 
@@ -8,7 +8,7 @@ Data subpackage has data preprocessers and dataloader abstractions.
     :undoc-members:
 
 Scripts
----------
+--------------------
 
 You can use scripts typing `catalyst-data` in your terminal.
 For example:
@@ -21,7 +21,7 @@ For example:
     :members:
 
 Reader
---------
+--------------------
 
 Readers are the abstraction for your dataset. They can open an elem from the dataset and transform it to data, needed by your network.
 For example open image by path, or read string and tokenize it.
@@ -56,7 +56,7 @@ For example open image by path, or read string and tokenize it.
 
 
 Dataset
----------
+--------------------
 
 .. automodule:: catalyst.data.dataset
     :show-inheritance:
@@ -64,7 +64,7 @@ Dataset
     :special-members: __getitem__, __len__
 
 Sampler
-------------
+--------------------
 
 .. automodule:: catalyst.data.sampler
     :members:
@@ -82,7 +82,7 @@ Collate Functions
 
 
 Mixins
-----------
+--------------------
 
 .. automodule:: catalyst.data.mixin
     :members:
@@ -90,7 +90,7 @@ Mixins
 
 
 Augmentor
-------------
+--------------------
 
 Legacy classes for augmentations.
 For modern Catalyst use `albumentations`_.

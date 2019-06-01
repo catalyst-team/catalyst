@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contribution &mdash; Catalyst 19.03-rc0 documentation</title>
+  <title>Contribution &mdash; Catalyst 19.06 documentation</title>
   
 
   
@@ -20,21 +20,11 @@
   <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../',
-              VERSION:'19.03-rc0',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script type="text/javascript" src="../_static/jquery.js"></script>
         <script type="text/javascript" src="../_static/underscore.js"></script>
         <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -70,7 +60,7 @@
             
             
               <div class="version">
-                19.03
+                19.06
               </div>
             
           
@@ -197,46 +187,46 @@
 <div class="section" id="new-feature">
 <h4>New feature<a class="headerlink" href="#new-feature" title="Permalink to this headline">¶</a></h4>
 <ol class="arabic simple">
-<li>Make an issue with your feature description;</li>
-<li>We shall discuss the design and its implementation details;</li>
-<li>Once we agree that the plan looks good, go ahead and implement it.</li>
+<li><p>Make an issue with your feature description;</p></li>
+<li><p>We shall discuss the design and its implementation details;</p></li>
+<li><p>Once we agree that the plan looks good, go ahead and implement it.</p></li>
 </ol>
 </div>
 <div class="section" id="bugfix">
 <h4>Bugfix<a class="headerlink" href="#bugfix" title="Permalink to this headline">¶</a></h4>
 <ol class="arabic simple">
-<li>Goto <a class="reference external" href="https://github.com/catalyst-team/catalyst/issues">GitHub issues</a>;</li>
-<li>Pick an issue and comment on the task that you want to work on this
-feature;</li>
-<li>If you need more context on a specific issue, please ask, and we will
-discuss the details.</li>
+<li><p>Goto <a class="reference external" href="https://github.com/catalyst-team/catalyst/issues">GitHub issues</a>;</p></li>
+<li><p>Pick an issue and comment on the task that you want to work on this
+feature;</p></li>
+<li><p>If you need more context on a specific issue, please ask, and we will
+discuss the details.</p></li>
 </ol>
 <p>Once you finish implementing a feature or bugfix, please send a Pull
 Request.</p>
 <p>If you are not familiar with creating a Pull Request, here are some
 guides:</p>
 <ul class="simple">
-<li><a class="reference external" href="http://stackoverflow.com/questions/14680711/how-to-do-a-github-pull-request">http://stackoverflow.com/questions/14680711/how-to-do-a-github-pull-request</a></li>
-<li><a class="reference external" href="https://help.github.com/articles/creating-a-pull-request/">https://help.github.com/articles/creating-a-pull-request/</a></li>
+<li><p><a class="reference external" href="http://stackoverflow.com/questions/14680711/how-to-do-a-github-pull-request">http://stackoverflow.com/questions/14680711/how-to-do-a-github-pull-request</a></p></li>
+<li><p><a class="reference external" href="https://help.github.com/articles/creating-a-pull-request/">https://help.github.com/articles/creating-a-pull-request/</a></p></li>
 </ul>
 </div>
 <div class="section" id="contribution-best-practices">
 <h4>Contribution best practices<a class="headerlink" href="#contribution-best-practices" title="Permalink to this headline">¶</a></h4>
 <ol class="arabic simple">
-<li>Break your work into small, single-purpose updates if possible. It’s
+<li><p>Break your work into small, single-purpose updates if possible. It’s
 much harder to merge in a large change with a lot of disjoint
-features.</li>
-<li>Submit the update as a GitHub pull request against the <code class="docutils literal notranslate"><span class="pre">dev</span></code>
-branch.</li>
-<li>Make sure that your code passes the unit tests.</li>
-<li>Add new unit tests for your code.</li>
+features.</p></li>
+<li><p>Submit the update as a GitHub pull request against the <code class="docutils literal notranslate"><span class="pre">dev</span></code>
+branch.</p></li>
+<li><p>Make sure that your code passes the unit tests.</p></li>
+<li><p>Add new unit tests for your code.</p></li>
 </ol>
 </div>
 </div>
 <div class="section" id="codestyle">
 <h3>Codestyle<a class="headerlink" href="#codestyle" title="Permalink to this headline">¶</a></h3>
 <p>Do not forget to check the codestyle for your PR with</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ bash ./codestyle.sh
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ make check-style
 </pre></div>
 </div>
 </div>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.callbacks.core &mdash; Catalyst 19.03-rc0 documentation</title>
+  <title>catalyst.dl.callbacks.core &mdash; Catalyst 19.06 documentation</title>
   
 
   
@@ -20,21 +20,11 @@
   <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../../../../',
-              VERSION:'19.03-rc0',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
         <script type="text/javascript" src="../../../../_static/jquery.js"></script>
         <script type="text/javascript" src="../../../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -68,7 +58,7 @@
             
             
               <div class="version">
-                19.03
+                19.06
               </div>
             
           
@@ -171,19 +161,19 @@
   <h1>Source code for catalyst.dl.callbacks.core</h1><div class="highlight"><pre>
 <div class="viewcode-block" id="Callback"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.Callback">[docs]</a><span></span><span class="k">class</span> <span class="nc">Callback</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An abstract class that all callback(e.g., Logger) classes extends from.</span>
+<span class="sd">    Abstract class that all callback(e.g., Logger) classes extends from.</span>
 <span class="sd">    Must be extended before usage.</span>
 
 <span class="sd">    usage example:</span>
 
 <span class="sd">    stage start</span>
-<span class="sd">        epoch start (one epoch - one run of every loader)</span>
-<span class="sd">            loader start</span>
-<span class="sd">                batch start</span>
-<span class="sd">                batch handler</span>
-<span class="sd">                batch end</span>
-<span class="sd">            loader end</span>
-<span class="sd">        epoch end</span>
+<span class="sd">    ---epoch start (one epoch - one run of every loader)</span>
+<span class="sd">    ------loader start</span>
+<span class="sd">    ---------batch start</span>
+<span class="sd">    ---------batch handler</span>
+<span class="sd">    ---------batch end</span>
+<span class="sd">    ------loader end</span>
+<span class="sd">    ---epoch end</span>
 <span class="sd">    stage end</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
