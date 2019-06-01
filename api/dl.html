@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>DL &mdash; Catalyst 19.03-rc0 documentation</title>
+  <title>DL &mdash; Catalyst 19.06 documentation</title>
   
 
   
@@ -20,21 +20,11 @@
   <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../',
-              VERSION:'19.03-rc0',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script type="text/javascript" src="../_static/jquery.js"></script>
         <script type="text/javascript" src="../_static/underscore.js"></script>
         <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -70,7 +60,7 @@
             
             
               <div class="version">
-                19.03
+                19.06
               </div>
             
           
@@ -104,19 +94,26 @@
 <p class="caption"><span class="caption-text">API</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">DL</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.dl.state">Runner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.dl.metrics">Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.dl.experiments.runner">Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.dl.experiments.experiment">Experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.dl.metrics">Metric functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#callbacks">Callbacks</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#base">Base</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id1">Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#metrics">Metrics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#multimetrics">MultiMetrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#loggers">Loggers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#formatters">Formatters</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#schedulers">Schedulers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inference">Inference</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-catalyst.dl.callbacks.utils">Utils</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.dl.fp16">Fp16</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.dl.losses">Losses</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-catalyst.dl.initialization">Initialization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id2">Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.dl.utils.trace">Tracing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Utils</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="rl.html">RL</a></li>
@@ -191,11 +188,41 @@
             
   <div class="section" id="module-catalyst.dl">
 <span id="dl"></span><h1>DL<a class="headerlink" href="#module-catalyst.dl" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-catalyst.dl.state">
-<span id="runner"></span><h2>Runner<a class="headerlink" href="#module-catalyst.dl.state" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-catalyst.dl.experiments.runner">
+<span id="runner"></span><h2>Runner<a class="headerlink" href="#module-catalyst.dl.experiments.runner" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
+<dt id="catalyst.dl.experiments.runner.SupervisedRunner">
+<em class="property">class </em><code class="descclassname">catalyst.dl.experiments.runner.</code><code class="descname">SupervisedRunner</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module = None</em>, <em>device=None</em>, <em>input_key: str = 'features'</em>, <em>output_key: str = 'logits'</em>, <em>input_target_key: str = 'targets'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiments/runner.html#SupervisedRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.runner.SupervisedRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.experiments.core.Runner</span></code></p>
+<p>Runner for experiments with supervised model</p>
+<dl class="method">
+<dt id="catalyst.dl.experiments.runner.SupervisedRunner.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module = None</em>, <em>device=None</em>, <em>input_key: str = 'features'</em>, <em>output_key: str = 'logits'</em>, <em>input_target_key: str = 'targets'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiments/runner.html#SupervisedRunner.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.runner.SupervisedRunner.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#64;TODO update docs
+:param input_key: Key in batch dict mapping to model input
+:param output_key: Key in output dict model output will be stored under</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.runner.SupervisedRunner.infer">
+<code class="descname">infer</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module, loaders: OrderedDict[str, DataLoader], callbacks: List[Callback] = None, verbose: bool = False, state_kwargs: Dict = None, fp16: Union[Dict, bool] = None, check: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiments/runner.html#SupervisedRunner.infer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.runner.SupervisedRunner.infer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.runner.SupervisedRunner.predict_batch">
+<code class="descname">predict_batch</code><span class="sig-paren">(</span><em>batch: Mapping[str, Any]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiments/runner.html#SupervisedRunner.predict_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.runner.SupervisedRunner.predict_batch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.runner.SupervisedRunner.train">
+<code class="descname">train</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module, criterion: torch.nn.modules.module.Module, optimizer: torch.optim.optimizer.Optimizer, loaders: OrderedDict[str, DataLoader], logdir: str, callbacks: List[Callback] = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, state_kwargs: Dict = None, checkpoint_data: Dict = None, fp16: Union[Dict, bool] = None, check: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiments/runner.html#SupervisedRunner.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.runner.SupervisedRunner.train" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-catalyst.dl.state"></span><dl class="class">
 <dt id="catalyst.dl.state.RunnerState">
-<em class="property">class </em><code class="descclassname">catalyst.dl.state.</code><code class="descname">RunnerState</code><span class="sig-paren">(</span><em>*</em>, <em>device=None</em>, <em>model=None</em>, <em>criterion=None</em>, <em>optimizer: torch.optim.optimizer.Optimizer = None</em>, <em>scheduler=None</em>, <em>logdir='logs'</em>, <em>stage='infer'</em>, <em>num_epochs=1</em>, <em>main_metric='loss'</em>, <em>minimize_metric=True</em>, <em>valid_loader='valid'</em>, <em>verbose=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/state.html#RunnerState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.state.RunnerState" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">catalyst.dl.state.</code><code class="descname">RunnerState</code><span class="sig-paren">(</span><em>*</em>, <em>device=None</em>, <em>model=None</em>, <em>criterion=None</em>, <em>optimizer: torch.optim.optimizer.Optimizer = None</em>, <em>scheduler=None</em>, <em>logdir=None</em>, <em>stage='infer'</em>, <em>num_epochs=1</em>, <em>main_metric='loss'</em>, <em>minimize_metric=True</em>, <em>valid_loader='valid'</em>, <em>verbose=False</em>, <em>checkpoint_data: Dict = None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/state.html#RunnerState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.state.RunnerState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="utils.html#catalyst.utils.misc.FrozenClass" title="catalyst.utils.misc.FrozenClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.utils.misc.FrozenClass</span></code></a></p>
 <p>An object that is used to pass internal state during train/valid/infer.</p>
 <dl class="method">
@@ -256,99 +283,440 @@
 </dd></dl>
 
 </div>
-<div class="section" id="module-catalyst.dl.metrics">
-<span id="metrics"></span><h2>Metrics<a class="headerlink" href="#module-catalyst.dl.metrics" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="catalyst.dl.metrics.average_precision">
-<code class="descclassname">catalyst.dl.metrics.</code><code class="descname">average_precision</code><span class="sig-paren">(</span><em>outputs</em>, <em>targets</em>, <em>k=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metrics.html#average_precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metrics.average_precision" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the average precision at k.
-This function computes the average precision at k</p>
-<blockquote>
-<div>between two lists of items.</div></blockquote>
-<dl class="docutils">
-<dt>outputs <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
-<dd>A list of predicted elements</dd>
-<dt>targets <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
-<dd>A list of elements that are to be predicted</dd>
-<dt>k <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
-<dd>The maximum number of predicted elements</dd>
+<div class="section" id="module-catalyst.dl.experiments.experiment">
+<span id="experiment"></span><h2>Experiment<a class="headerlink" href="#module-catalyst.dl.experiments.experiment" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.dl.experiments.experiment.Experiment">
+<em class="property">class </em><code class="descclassname">catalyst.dl.experiments.experiment.</code><code class="descname">Experiment</code><a class="reference internal" href="../_modules/catalyst/dl/experiments/core.html#Experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.Experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Object containing all information required to run the experiment</p>
+<p>Abstract, look for implementations</p>
+<dl class="attribute">
+<dt id="catalyst.dl.experiments.experiment.Experiment.distributed_params">
+<code class="descname">distributed_params</code><a class="headerlink" href="#catalyst.dl.experiments.experiment.Experiment.distributed_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.Experiment.get_callbacks">
+<code class="descname">get_callbacks</code><span class="sig-paren">(</span><em>stage: str</em><span class="sig-paren">)</span> &#x2192; List[catalyst.dl.callbacks.core.Callback]<a class="reference internal" href="../_modules/catalyst/dl/experiments/core.html#Experiment.get_callbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.Experiment.get_callbacks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.Experiment.get_criterion">
+<code class="descname">get_criterion</code><span class="sig-paren">(</span><em>stage: str</em><span class="sig-paren">)</span> &#x2192; torch.nn.modules.module.Module<a class="reference internal" href="../_modules/catalyst/dl/experiments/core.html#Experiment.get_criterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.Experiment.get_criterion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.Experiment.get_datasets">
+<code class="descname">get_datasets</code><span class="sig-paren">(</span><em>stage: str</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, Dataset]<a class="reference internal" href="../_modules/catalyst/dl/experiments/core.html#Experiment.get_datasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.Experiment.get_datasets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.Experiment.get_experiment_components">
+<code class="descname">get_experiment_components</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module</em>, <em>stage: str</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.nn.modules.module.Module, torch.optim.optimizer.Optimizer, torch.optim.lr_scheduler._LRScheduler]<a class="reference internal" href="../_modules/catalyst/dl/experiments/core.html#Experiment.get_experiment_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.Experiment.get_experiment_components" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.Experiment.get_loaders">
+<code class="descname">get_loaders</code><span class="sig-paren">(</span><em>stage: str</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, DataLoader]<a class="reference internal" href="../_modules/catalyst/dl/experiments/core.html#Experiment.get_loaders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.Experiment.get_loaders" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.Experiment.get_model">
+<code class="descname">get_model</code><span class="sig-paren">(</span><em>stage: str</em><span class="sig-paren">)</span> &#x2192; torch.nn.modules.module.Module<a class="reference internal" href="../_modules/catalyst/dl/experiments/core.html#Experiment.get_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.Experiment.get_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.Experiment.get_optimizer">
+<code class="descname">get_optimizer</code><span class="sig-paren">(</span><em>stage: str</em>, <em>model: torch.nn.modules.module.Module</em><span class="sig-paren">)</span> &#x2192; torch.optim.optimizer.Optimizer<a class="reference internal" href="../_modules/catalyst/dl/experiments/core.html#Experiment.get_optimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.Experiment.get_optimizer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.Experiment.get_scheduler">
+<code class="descname">get_scheduler</code><span class="sig-paren">(</span><em>stage: str</em>, <em>optimizer</em><span class="sig-paren">)</span> &#x2192; torch.optim.lr_scheduler._LRScheduler<a class="reference internal" href="../_modules/catalyst/dl/experiments/core.html#Experiment.get_scheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.Experiment.get_scheduler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.Experiment.get_state_params">
+<code class="descname">get_state_params</code><span class="sig-paren">(</span><em>stage: str</em><span class="sig-paren">)</span> &#x2192; Mapping[str, Any]<a class="reference internal" href="../_modules/catalyst/dl/experiments/core.html#Experiment.get_state_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.Experiment.get_state_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="catalyst.dl.experiments.experiment.Experiment.get_transforms">
+<em class="property">static </em><code class="descname">get_transforms</code><span class="sig-paren">(</span><em>stage: str = None</em>, <em>mode: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiments/core.html#Experiment.get_transforms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.Experiment.get_transforms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.experiments.experiment.Experiment.logdir">
+<code class="descname">logdir</code><a class="headerlink" href="#catalyst.dl.experiments.experiment.Experiment.logdir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.experiments.experiment.Experiment.stages">
+<code class="descname">stages</code><a class="headerlink" href="#catalyst.dl.experiments.experiment.Experiment.stages" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.experiments.experiment.BaseExperiment">
+<em class="property">class </em><code class="descclassname">catalyst.dl.experiments.experiment.</code><code class="descname">BaseExperiment</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module, loaders: OrderedDict[str, DataLoader], callbacks: List[Callback] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, state_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiments/experiment.html#BaseExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.BaseExperiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.experiments.core.Experiment</span></code></p>
+<dl class="simple">
+<dt>Super-simple one-staged experiment</dt><dd><p>you can use to declare experiment in code</p>
+</dd>
 </dl>
-<dl class="docutils">
-<dt>score <span class="classifier-delimiter">:</span> <span class="classifier">double</span></dt>
-<dd>The average precision at k over the input lists</dd>
+<dl class="attribute">
+<dt id="catalyst.dl.experiments.experiment.BaseExperiment.distributed_params">
+<code class="descname">distributed_params</code><a class="headerlink" href="#catalyst.dl.experiments.experiment.BaseExperiment.distributed_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.BaseExperiment.get_callbacks">
+<code class="descname">get_callbacks</code><span class="sig-paren">(</span><em>stage: str</em><span class="sig-paren">)</span> &#x2192; List[catalyst.dl.callbacks.core.Callback]<a class="reference internal" href="../_modules/catalyst/dl/experiments/experiment.html#BaseExperiment.get_callbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.BaseExperiment.get_callbacks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.BaseExperiment.get_criterion">
+<code class="descname">get_criterion</code><span class="sig-paren">(</span><em>stage: str</em><span class="sig-paren">)</span> &#x2192; torch.nn.modules.module.Module<a class="reference internal" href="../_modules/catalyst/dl/experiments/experiment.html#BaseExperiment.get_criterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.BaseExperiment.get_criterion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.BaseExperiment.get_loaders">
+<code class="descname">get_loaders</code><span class="sig-paren">(</span><em>stage: str</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, DataLoader]<a class="reference internal" href="../_modules/catalyst/dl/experiments/experiment.html#BaseExperiment.get_loaders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.BaseExperiment.get_loaders" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.BaseExperiment.get_model">
+<code class="descname">get_model</code><span class="sig-paren">(</span><em>stage: str</em><span class="sig-paren">)</span> &#x2192; torch.nn.modules.module.Module<a class="reference internal" href="../_modules/catalyst/dl/experiments/experiment.html#BaseExperiment.get_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.BaseExperiment.get_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.BaseExperiment.get_optimizer">
+<code class="descname">get_optimizer</code><span class="sig-paren">(</span><em>stage: str</em>, <em>model: torch.nn.modules.module.Module</em><span class="sig-paren">)</span> &#x2192; torch.optim.optimizer.Optimizer<a class="reference internal" href="../_modules/catalyst/dl/experiments/experiment.html#BaseExperiment.get_optimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.BaseExperiment.get_optimizer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.BaseExperiment.get_scheduler">
+<code class="descname">get_scheduler</code><span class="sig-paren">(</span><em>stage: str</em>, <em>optimizer=None</em><span class="sig-paren">)</span> &#x2192; torch.optim.lr_scheduler._LRScheduler<a class="reference internal" href="../_modules/catalyst/dl/experiments/experiment.html#BaseExperiment.get_scheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.BaseExperiment.get_scheduler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.BaseExperiment.get_state_params">
+<code class="descname">get_state_params</code><span class="sig-paren">(</span><em>stage: str</em><span class="sig-paren">)</span> &#x2192; Mapping[str, Any]<a class="reference internal" href="../_modules/catalyst/dl/experiments/experiment.html#BaseExperiment.get_state_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.BaseExperiment.get_state_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.experiments.experiment.BaseExperiment.logdir">
+<code class="descname">logdir</code><a class="headerlink" href="#catalyst.dl.experiments.experiment.BaseExperiment.logdir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.experiments.experiment.BaseExperiment.stages">
+<code class="descname">stages</code><a class="headerlink" href="#catalyst.dl.experiments.experiment.BaseExperiment.stages" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.experiments.experiment.SupervisedExperiment">
+<em class="property">class </em><code class="descclassname">catalyst.dl.experiments.experiment.</code><code class="descname">SupervisedExperiment</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module, loaders: OrderedDict[str, DataLoader], callbacks: List[Callback] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, state_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiments/experiment.html#SupervisedExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.SupervisedExperiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.experiments.experiment.BaseExperiment" title="catalyst.dl.experiments.experiment.BaseExperiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.experiments.experiment.BaseExperiment</span></code></a></p>
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.SupervisedExperiment.get_callbacks">
+<code class="descname">get_callbacks</code><span class="sig-paren">(</span><em>stage: str</em><span class="sig-paren">)</span> &#x2192; List[catalyst.dl.callbacks.core.Callback]<a class="reference internal" href="../_modules/catalyst/dl/experiments/experiment.html#SupervisedExperiment.get_callbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.SupervisedExperiment.get_callbacks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.experiments.experiment.ConfigExperiment">
+<em class="property">class </em><code class="descclassname">catalyst.dl.experiments.experiment.</code><code class="descname">ConfigExperiment</code><span class="sig-paren">(</span><em>config: Dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiments/experiment.html#ConfigExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.ConfigExperiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.experiments.core.Experiment</span></code></p>
+<dl class="attribute">
+<dt id="catalyst.dl.experiments.experiment.ConfigExperiment.STAGE_KEYWORDS">
+<code class="descname">STAGE_KEYWORDS</code><em class="property"> = ['criterion_params', 'optimizer_params', 'scheduler_params', 'data_params', 'state_params', 'callbacks_params']</em><a class="headerlink" href="#catalyst.dl.experiments.experiment.ConfigExperiment.STAGE_KEYWORDS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.experiments.experiment.ConfigExperiment.distributed_params">
+<code class="descname">distributed_params</code><a class="headerlink" href="#catalyst.dl.experiments.experiment.ConfigExperiment.distributed_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.ConfigExperiment.get_callbacks">
+<code class="descname">get_callbacks</code><span class="sig-paren">(</span><em>stage: str</em><span class="sig-paren">)</span> &#x2192; List[catalyst.dl.callbacks.core.Callback]<a class="reference internal" href="../_modules/catalyst/dl/experiments/experiment.html#ConfigExperiment.get_callbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.ConfigExperiment.get_callbacks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.ConfigExperiment.get_criterion">
+<code class="descname">get_criterion</code><span class="sig-paren">(</span><em>stage: str</em><span class="sig-paren">)</span> &#x2192; torch.nn.modules.module.Module<a class="reference internal" href="../_modules/catalyst/dl/experiments/experiment.html#ConfigExperiment.get_criterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.ConfigExperiment.get_criterion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.ConfigExperiment.get_loaders">
+<code class="descname">get_loaders</code><span class="sig-paren">(</span><em>stage: str</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, DataLoader]<a class="reference internal" href="../_modules/catalyst/dl/experiments/experiment.html#ConfigExperiment.get_loaders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.ConfigExperiment.get_loaders" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.ConfigExperiment.get_model">
+<code class="descname">get_model</code><span class="sig-paren">(</span><em>stage: str</em><span class="sig-paren">)</span> &#x2192; torch.nn.modules.module.Module<a class="reference internal" href="../_modules/catalyst/dl/experiments/experiment.html#ConfigExperiment.get_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.ConfigExperiment.get_model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.ConfigExperiment.get_optimizer">
+<code class="descname">get_optimizer</code><span class="sig-paren">(</span><em>stage: str</em>, <em>model: torch.nn.modules.module.Module</em><span class="sig-paren">)</span> &#x2192; torch.optim.optimizer.Optimizer<a class="reference internal" href="../_modules/catalyst/dl/experiments/experiment.html#ConfigExperiment.get_optimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.ConfigExperiment.get_optimizer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.ConfigExperiment.get_scheduler">
+<code class="descname">get_scheduler</code><span class="sig-paren">(</span><em>stage: str</em>, <em>optimizer</em><span class="sig-paren">)</span> &#x2192; torch.optim.lr_scheduler._LRScheduler<a class="reference internal" href="../_modules/catalyst/dl/experiments/experiment.html#ConfigExperiment.get_scheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.ConfigExperiment.get_scheduler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiments.experiment.ConfigExperiment.get_state_params">
+<code class="descname">get_state_params</code><span class="sig-paren">(</span><em>stage: str</em><span class="sig-paren">)</span> &#x2192; Mapping[str, Any]<a class="reference internal" href="../_modules/catalyst/dl/experiments/experiment.html#ConfigExperiment.get_state_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiments.experiment.ConfigExperiment.get_state_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.experiments.experiment.ConfigExperiment.logdir">
+<code class="descname">logdir</code><a class="headerlink" href="#catalyst.dl.experiments.experiment.ConfigExperiment.logdir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.experiments.experiment.ConfigExperiment.stages">
+<code class="descname">stages</code><a class="headerlink" href="#catalyst.dl.experiments.experiment.ConfigExperiment.stages" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.dl.metrics">
+<span id="metric-functions"></span><h2>Metric functions<a class="headerlink" href="#module-catalyst.dl.metrics" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="catalyst.dl.metrics.accuracy">
+<code class="descclassname">catalyst.dl.metrics.</code><code class="descname">accuracy</code><span class="sig-paren">(</span><em>outputs</em>, <em>targets</em>, <em>topk=(1</em>, <em>)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metrics.html#accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metrics.accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the accuracy&#64;k for the specified values of k</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.dl.metrics.average_accuracy">
+<code class="descclassname">catalyst.dl.metrics.</code><code class="descname">average_accuracy</code><span class="sig-paren">(</span><em>outputs</em>, <em>targets</em>, <em>k=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metrics.html#average_accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metrics.average_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the average accuracy at k.
+This function computes the average
+accuracy at k between two lists of items.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> (<em>list</em>) – A list of predicted elements</p></li>
+<li><p><strong>targets</strong> (<em>list</em>) – A list of elements that are to be predicted</p></li>
+<li><p><strong>k</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum number of predicted elements</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The average accuracy at k over the input lists</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>double</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.dl.metrics.dice">
-<code class="descclassname">catalyst.dl.metrics.</code><code class="descname">dice</code><span class="sig-paren">(</span><em>outputs</em>, <em>targets</em>, <em>eps: float = 1e-07</em>, <em>activation: str = 'sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metrics.html#dice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metrics.dice" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the dice metric
-Parameters
-———-
-outputs : list</p>
-<blockquote>
-<div>A list of predicted elements</div></blockquote>
-<dl class="docutils">
-<dt>targets <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
-<dd>A list of elements that are to be predicted</dd>
-<dt>eps <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd>epsilon</dd>
-<dt>activation: str</dt>
-<dd>An torch.nn activation applied to the outputs.
-Must be one of [‘none’, ‘sigmoid’, ‘softmax2d’]</dd>
+<code class="descclassname">catalyst.dl.metrics.</code><code class="descname">dice</code><span class="sig-paren">(</span><em>outputs: torch.Tensor</em>, <em>targets: torch.Tensor</em>, <em>eps: float = 1e-07</em>, <em>threshold: float = None</em>, <em>activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metrics.html#dice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metrics.dice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the dice metric</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> (<em>list</em>) – A list of predicted elements</p></li>
+<li><p><strong>targets</strong> (<em>list</em>) – A list of elements that are to be predicted</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – epsilon</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
+<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
+Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dice score</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>double</p>
+</dd>
 </dl>
-<dl class="docutils">
-<dt>score <span class="classifier-delimiter">:</span> <span class="classifier">double</span></dt>
-<dd>Dice score</dd>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.dl.metrics.f1_score">
+<code class="descclassname">catalyst.dl.metrics.</code><code class="descname">f1_score</code><span class="sig-paren">(</span><em>outputs: torch.Tensor</em>, <em>targets: torch.Tensor</em>, <em>beta: float = 1.0</em>, <em>eps: float = 1e-07</em>, <em>threshold: float = None</em>, <em>activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metrics.html#f1_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metrics.f1_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source <a class="reference external" href="https://github.com/qubvel/segmentation_models.pytorch">https://github.com/qubvel/segmentation_models.pytorch</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – A list of predicted elements</p></li>
+<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – A list of elements that are to be predicted</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – beta param for f_score</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
+<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
+Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>F_1 score</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.dl.metrics.iou">
+<code class="descclassname">catalyst.dl.metrics.</code><code class="descname">iou</code><span class="sig-paren">(</span><em>outputs: torch.Tensor</em>, <em>targets: torch.Tensor</em>, <em>eps: float = 1e-07</em>, <em>threshold: float = None</em>, <em>activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metrics.html#iou"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metrics.iou" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – A list of predicted elements</p></li>
+<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – A list of elements that are to be predicted</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
+<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
+Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>IoU (Jaccard) score</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.dl.metrics.jaccard">
-<code class="descclassname">catalyst.dl.metrics.</code><code class="descname">jaccard</code><span class="sig-paren">(</span><em>outputs</em>, <em>targets</em>, <em>eps: float = 1e-07</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metrics.html#jaccard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metrics.jaccard" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the jaccard metric.
-Parameters
-———-
-outputs : list</p>
-<blockquote>
-<div>A list of predicted elements</div></blockquote>
-<dl class="docutils">
-<dt>targets <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
-<dd>A list of elements that are to be predicted</dd>
-</dl>
-<p>eps : float
-Returns
-——-
-score : double</p>
-<blockquote>
-<div>Jaccard score</div></blockquote>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.dl.metrics.mean_average_precision">
-<code class="descclassname">catalyst.dl.metrics.</code><code class="descname">mean_average_precision</code><span class="sig-paren">(</span><em>outputs</em>, <em>targets</em>, <em>topk=(1</em>, <em>)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metrics.html#mean_average_precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metrics.mean_average_precision" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the mean average precision at k.
-This function computes the mean average precision at k between two lists</p>
-<blockquote>
-<div>of lists of items.</div></blockquote>
-<dl class="docutils">
-<dt>outputs <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
-<dd>A list of lists of predicted elements</dd>
-<dt>targets <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
-<dd>A list of lists of elements that are to be predicted</dd>
-<dt>topk <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
-<dd>The maximum number of predicted elements</dd>
-</dl>
-<dl class="docutils">
-<dt>score <span class="classifier-delimiter">:</span> <span class="classifier">double</span></dt>
-<dd>The mean average precision at k over the input lists</dd>
+<code class="descclassname">catalyst.dl.metrics.</code><code class="descname">jaccard</code><span class="sig-paren">(</span><em>outputs: torch.Tensor</em>, <em>targets: torch.Tensor</em>, <em>eps: float = 1e-07</em>, <em>threshold: float = None</em>, <em>activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.dl.metrics.jaccard" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – A list of predicted elements</p></li>
+<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – A list of elements that are to be predicted</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
+<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
+Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>IoU (Jaccard) score</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.dl.metrics.precision">
-<code class="descclassname">catalyst.dl.metrics.</code><code class="descname">precision</code><span class="sig-paren">(</span><em>outputs</em>, <em>targets</em>, <em>topk=(1</em>, <em>)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metrics.html#precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metrics.precision" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the precision&#64;k for the specified values of k</p>
+<dt id="catalyst.dl.metrics.mean_average_accuracy">
+<code class="descclassname">catalyst.dl.metrics.</code><code class="descname">mean_average_accuracy</code><span class="sig-paren">(</span><em>outputs</em>, <em>targets</em>, <em>topk=(1</em>, <em>)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metrics.html#mean_average_accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metrics.mean_average_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the mean average accuracy at k.
+This function computes the mean average accuracy at k between two lists
+of lists of items.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> (<em>list</em>) – A list of lists of predicted elements</p></li>
+<li><p><strong>targets</strong> (<em>list</em>) – A list of lists of elements that are to be predicted</p></li>
+<li><p><strong>topk</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum number of predicted elements</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The mean average accuracy at k over the input lists</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>double</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-catalyst.dl.metric_manager"></span><dl class="class">
+<dt id="catalyst.dl.metric_manager.MetricManager">
+<em class="property">class </em><code class="descclassname">catalyst.dl.metric_manager.</code><code class="descname">MetricManager</code><span class="sig-paren">(</span><em>valid_loader: str = 'valid'</em>, <em>main_metric: str = 'loss'</em>, <em>minimize: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metric_manager.html#MetricManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metric_manager.MetricManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="catalyst.dl.metric_manager.MetricManager.add_batch_value">
+<code class="descname">add_batch_value</code><span class="sig-paren">(</span><em>name: str = None</em>, <em>value: Any = None</em>, <em>metrics_dict: Dict[str</em>, <em>Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metric_manager.html#MetricManager.add_batch_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metric_manager.MetricManager.add_batch_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.metric_manager.MetricManager.batch_values">
+<code class="descname">batch_values</code><a class="headerlink" href="#catalyst.dl.metric_manager.MetricManager.batch_values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.metric_manager.MetricManager.begin_batch">
+<code class="descname">begin_batch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metric_manager.html#MetricManager.begin_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metric_manager.MetricManager.begin_batch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.metric_manager.MetricManager.begin_epoch">
+<code class="descname">begin_epoch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metric_manager.html#MetricManager.begin_epoch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metric_manager.MetricManager.begin_epoch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.metric_manager.MetricManager.begin_loader">
+<code class="descname">begin_loader</code><span class="sig-paren">(</span><em>name: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metric_manager.html#MetricManager.begin_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metric_manager.MetricManager.begin_loader" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.metric_manager.MetricManager.end_batch">
+<code class="descname">end_batch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metric_manager.html#MetricManager.end_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metric_manager.MetricManager.end_batch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.metric_manager.MetricManager.end_epoch_train">
+<code class="descname">end_epoch_train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metric_manager.html#MetricManager.end_epoch_train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metric_manager.MetricManager.end_epoch_train" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.metric_manager.MetricManager.end_loader">
+<code class="descname">end_loader</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/metric_manager.html#MetricManager.end_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metric_manager.MetricManager.end_loader" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.metric_manager.MetricManager.main_metric_value">
+<code class="descname">main_metric_value</code><a class="headerlink" href="#catalyst.dl.metric_manager.MetricManager.main_metric_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.metric_manager.TimerManager">
+<em class="property">class </em><code class="descclassname">catalyst.dl.metric_manager.</code><code class="descname">TimerManager</code><a class="reference internal" href="../_modules/catalyst/dl/metric_manager.html#TimerManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metric_manager.TimerManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="catalyst.dl.metric_manager.TimerManager.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/metric_manager.html#TimerManager.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metric_manager.TimerManager.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset all previous timers</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.metric_manager.TimerManager.start">
+<code class="descname">start</code><span class="sig-paren">(</span><em>name: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/metric_manager.html#TimerManager.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metric_manager.TimerManager.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts timer <code class="docutils literal notranslate"><span class="pre">name</span></code>
+:param name: name of a timer
+:type name: str</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.metric_manager.TimerManager.stop">
+<code class="descname">stop</code><span class="sig-paren">(</span><em>name: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/metric_manager.html#TimerManager.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.metric_manager.TimerManager.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops timer <code class="docutils literal notranslate"><span class="pre">name</span></code>
+:param name: name of a timer
+:type name: str</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -360,26 +728,18 @@ This function computes the mean average precision at k between two lists</p>
 <dl class="class">
 <dt id="catalyst.dl.callbacks.Callback">
 <em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">Callback</code><a class="reference internal" href="../_modules/catalyst/dl/callbacks/core.html#Callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.Callback" title="Permalink to this definition">¶</a></dt>
-<dd><p>An abstract class that all callback(e.g., Logger) classes extends from.
+<dd><p>Abstract class that all callback(e.g., Logger) classes extends from.
 Must be extended before usage.</p>
 <p>usage example:</p>
-<dl class="docutils">
-<dt>stage start</dt>
-<dd><dl class="first docutils">
-<dt>epoch start (one epoch - one run of every loader)</dt>
-<dd><dl class="first docutils">
-<dt>loader start</dt>
-<dd>batch start
-batch handler
-batch end</dd>
-</dl>
-<p class="last">loader end</p>
-</dd>
-</dl>
-<p class="last">epoch end</p>
-</dd>
-</dl>
-<p>stage end</p>
+<p>stage start
+—epoch start (one epoch - one run of every loader)
+——loader start
+———batch start
+———batch handler
+———batch end
+——loader end
+—epoch end
+stage end</p>
 <dl class="method">
 <dt id="catalyst.dl.callbacks.Callback.on_batch_end">
 <code class="descname">on_batch_end</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/core.html#Callback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.Callback.on_batch_end" title="Permalink to this definition">¶</a></dt>
@@ -422,9 +782,155 @@ batch end</dd>
 
 </dd></dl>
 
+<dl class="class">
+<dt id="catalyst.dl.callbacks.LossCallback">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">LossCallback</code><span class="sig-paren">(</span><em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>prefix: str = 'loss'</em>, <em>criterion_key: str = None</em>, <em>loss_key: str = None</em>, <em>multiplier: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#LossCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.LossCallback" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="catalyst.dl.callbacks.LossCallback.on_batch_end">
+<code class="descname">on_batch_end</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#LossCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.LossCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.LossCallback.on_stage_start">
+<code class="descname">on_stage_start</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#LossCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.LossCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.callbacks.OptimizerCallback">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">OptimizerCallback</code><span class="sig-paren">(</span><em>grad_clip_params: Dict = None</em>, <em>accumulation_steps: int = 1</em>, <em>optimizer_key: str = None</em>, <em>loss_key: str = None</em>, <em>prefix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#OptimizerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.OptimizerCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Optimizer callback, abstraction over optimizer step.</p>
+<dl class="method">
+<dt id="catalyst.dl.callbacks.OptimizerCallback.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>grad_clip_params: Dict = None</em>, <em>accumulation_steps: int = 1</em>, <em>optimizer_key: str = None</em>, <em>loss_key: str = None</em>, <em>prefix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#OptimizerCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.OptimizerCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#64;TODO: docs</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="catalyst.dl.callbacks.OptimizerCallback.grad_step">
+<em class="property">static </em><code class="descname">grad_step</code><span class="sig-paren">(</span><em>*</em>, <em>optimizer</em>, <em>optimizer_wd=0</em>, <em>grad_clip_fn=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#OptimizerCallback.grad_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.OptimizerCallback.grad_step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.OptimizerCallback.on_batch_end">
+<code class="descname">on_batch_end</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#OptimizerCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.OptimizerCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.OptimizerCallback.on_batch_start">
+<code class="descname">on_batch_start</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#OptimizerCallback.on_batch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.OptimizerCallback.on_batch_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.OptimizerCallback.on_epoch_end">
+<code class="descname">on_epoch_end</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#OptimizerCallback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.OptimizerCallback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.OptimizerCallback.on_epoch_start">
+<code class="descname">on_epoch_start</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#OptimizerCallback.on_epoch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.OptimizerCallback.on_epoch_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.OptimizerCallback.on_stage_start">
+<code class="descname">on_stage_start</code><span class="sig-paren">(</span><em>state: catalyst.dl.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#OptimizerCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.OptimizerCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.callbacks.SchedulerCallback">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">SchedulerCallback</code><span class="sig-paren">(</span><em>scheduler_key: str = None</em>, <em>mode: str = None</em>, <em>reduce_metric: str = 'loss'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#SchedulerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.SchedulerCallback" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="catalyst.dl.callbacks.SchedulerCallback.on_batch_end">
+<code class="descname">on_batch_end</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#SchedulerCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.SchedulerCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.SchedulerCallback.on_epoch_end">
+<code class="descname">on_epoch_end</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#SchedulerCallback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.SchedulerCallback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.SchedulerCallback.on_loader_start">
+<code class="descname">on_loader_start</code><span class="sig-paren">(</span><em>state: catalyst.dl.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#SchedulerCallback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.SchedulerCallback.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.SchedulerCallback.on_stage_start">
+<code class="descname">on_stage_start</code><span class="sig-paren">(</span><em>state: catalyst.dl.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#SchedulerCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.SchedulerCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.SchedulerCallback.step">
+<code class="descname">step</code><span class="sig-paren">(</span><em>state: catalyst.dl.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#SchedulerCallback.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.SchedulerCallback.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.callbacks.CheckpointCallback">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">CheckpointCallback</code><span class="sig-paren">(</span><em>save_n_best: int = 3</em>, <em>resume: str = None</em>, <em>resume_dir: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#CheckpointCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.CheckpointCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checkpoint callback to save/restore your model/criterion/optimizer/metrics.</p>
+<dl class="method">
+<dt id="catalyst.dl.callbacks.CheckpointCallback.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>save_n_best: int = 3</em>, <em>resume: str = None</em>, <em>resume_dir: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#CheckpointCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.CheckpointCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>save_n_best</strong> – number of best checkpoint to keep</p></li>
+<li><p><strong>resume</strong> – path to checkpoint to load and initialize runner state</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="catalyst.dl.callbacks.CheckpointCallback.load_checkpoint">
+<em class="property">static </em><code class="descname">load_checkpoint</code><span class="sig-paren">(</span><em>*</em>, <em>filename</em>, <em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#CheckpointCallback.load_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.CheckpointCallback.load_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.CheckpointCallback.on_epoch_end">
+<code class="descname">on_epoch_end</code><span class="sig-paren">(</span><em>state: catalyst.dl.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#CheckpointCallback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.CheckpointCallback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.CheckpointCallback.on_stage_end">
+<code class="descname">on_stage_end</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#CheckpointCallback.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.CheckpointCallback.on_stage_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.CheckpointCallback.on_stage_start">
+<code class="descname">on_stage_start</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#CheckpointCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.CheckpointCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.CheckpointCallback.pack_checkpoint">
+<code class="descname">pack_checkpoint</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#CheckpointCallback.pack_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.CheckpointCallback.pack_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.CheckpointCallback.save_checkpoint">
+<code class="descname">save_checkpoint</code><span class="sig-paren">(</span><em>logdir</em>, <em>checkpoint</em>, <em>is_best</em>, <em>save_n_best=5</em>, <em>main_metric='loss'</em>, <em>minimize_metric=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#CheckpointCallback.save_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.CheckpointCallback.save_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.callbacks.EarlyStoppingCallback">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">EarlyStoppingCallback</code><span class="sig-paren">(</span><em>patience: int</em>, <em>metric: str = 'loss'</em>, <em>minimize: bool = True</em>, <em>min_delta: float = 1e-06</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#EarlyStoppingCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.EarlyStoppingCallback" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="catalyst.dl.callbacks.EarlyStoppingCallback.on_epoch_end">
+<code class="descname">on_epoch_end</code><span class="sig-paren">(</span><em>state: catalyst.dl.state.RunnerState</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/callbacks/base.html#EarlyStoppingCallback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.EarlyStoppingCallback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="id1">
-<h3>Metrics<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="metrics">
+<h3>Metrics<a class="headerlink" href="#metrics" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.dl.callbacks.MetricCallback">
 <em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">MetricCallback</code><span class="sig-paren">(</span><em>prefix: str</em>, <em>metric_fn: Callable</em>, <em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>**metric_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#MetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.MetricCallback" title="Permalink to this definition">¶</a></dt>
@@ -438,51 +944,115 @@ batch end</dd>
 
 <dl class="class">
 <dt id="catalyst.dl.callbacks.DiceCallback">
-<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">DiceCallback</code><span class="sig-paren">(</span><em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>prefix: str = 'dice'</em>, <em>eps: float = 1e-07</em>, <em>activation: str = 'sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#DiceCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.DiceCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">DiceCallback</code><span class="sig-paren">(</span><em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>prefix: str = 'dice'</em>, <em>eps: float = 1e-07</em>, <em>threshold: float = None</em>, <em>activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#DiceCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.DiceCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dice metric callback.</p>
 <dl class="method">
 <dt id="catalyst.dl.callbacks.DiceCallback.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>prefix: str = 'dice'</em>, <em>eps: float = 1e-07</em>, <em>activation: str = 'sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#DiceCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.DiceCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>input_key</strong> – input key to use for dice calculation;
-specifies our <cite>y_true</cite>.</li>
-<li><strong>output_key</strong> – output key to use for dice calculation;
-specifies our <cite>y_pred</cite>.</li>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>prefix: str = 'dice'</em>, <em>eps: float = 1e-07</em>, <em>threshold: float = None</em>, <em>activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#DiceCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.DiceCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_key</strong> – input key to use for dice calculation;
+specifies our <cite>y_true</cite>.</p></li>
+<li><p><strong>output_key</strong> – output key to use for dice calculation;
+specifies our <cite>y_pred</cite>.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt id="catalyst.dl.callbacks.JaccardCallback">
-<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">JaccardCallback</code><span class="sig-paren">(</span><em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>prefix: str = 'jaccard'</em>, <em>eps: float = 1e-07</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#JaccardCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.JaccardCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Jaccard metric callback.</p>
+<dt id="catalyst.dl.callbacks.IouCallback">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">IouCallback</code><span class="sig-paren">(</span><em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>prefix: str = 'iou'</em>, <em>eps: float = 1e-07</em>, <em>threshold: float = None</em>, <em>activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#IouCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.IouCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>IoU (Jaccard) metric callback.</p>
 <dl class="method">
-<dt id="catalyst.dl.callbacks.JaccardCallback.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>prefix: str = 'jaccard'</em>, <em>eps: float = 1e-07</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#JaccardCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.JaccardCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>input_key</strong> – input key to use for iou calculation;
-specifies our <cite>y_true</cite>.</li>
-<li><strong>output_key</strong> – output key to use for iou calculation;
-specifies our <cite>y_pred</cite></li>
+<dt id="catalyst.dl.callbacks.IouCallback.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>prefix: str = 'iou'</em>, <em>eps: float = 1e-07</em>, <em>threshold: float = None</em>, <em>activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#IouCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.IouCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_key</strong> (<em>str</em>) – input key to use for iou calculation
+specifies our <code class="docutils literal notranslate"><span class="pre">y_true</span></code>.</p></li>
+<li><p><strong>output_key</strong> (<em>str</em>) – output key to use for iou calculation;
+specifies our <code class="docutils literal notranslate"><span class="pre">y_pred</span></code></p></li>
+<li><p><strong>prefix</strong> (<em>str</em>) – key to store in logs</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
+<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
+Must be one of [‘none’, ‘Sigmoid’, ‘Softmax2d’]</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.callbacks.F1ScoreCallback">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">F1ScoreCallback</code><span class="sig-paren">(</span><em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>prefix: str = 'f1_score'</em>, <em>beta: float = 1.0</em>, <em>eps: float = 1e-07</em>, <em>threshold: float = None</em>, <em>activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#F1ScoreCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.F1ScoreCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>F1 score metric callback.</p>
+<dl class="method">
+<dt id="catalyst.dl.callbacks.F1ScoreCallback.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>prefix: str = 'f1_score'</em>, <em>beta: float = 1.0</em>, <em>eps: float = 1e-07</em>, <em>threshold: float = None</em>, <em>activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#F1ScoreCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.F1ScoreCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_key</strong> (<em>str</em>) – input key to use for iou calculation
+specifies our <code class="docutils literal notranslate"><span class="pre">y_true</span></code>.</p></li>
+<li><p><strong>output_key</strong> (<em>str</em>) – output key to use for iou calculation;
+specifies our <code class="docutils literal notranslate"><span class="pre">y_pred</span></code></p></li>
+<li><p><strong>prefix</strong> (<em>str</em>) – key to store in logs</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – beta param for f_score</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
+<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
+Must be one of [‘none’, ‘Sigmoid’, ‘Softmax2d’]</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.callbacks.AUCCallback">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">AUCCallback</code><span class="sig-paren">(</span><em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>prefix: str = 'auc'</em>, <em>class_names: List[str] = None</em>, <em>num_classes: int = 1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#AUCCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.AUCCallback" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="catalyst.dl.callbacks.AUCCallback.on_batch_end">
+<code class="descname">on_batch_end</code><span class="sig-paren">(</span><em>state: catalyst.dl.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#AUCCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.AUCCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.AUCCallback.on_loader_end">
+<code class="descname">on_loader_end</code><span class="sig-paren">(</span><em>state: catalyst.dl.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#AUCCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.AUCCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.AUCCallback.on_loader_start">
+<code class="descname">on_loader_start</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#AUCCallback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.AUCCallback.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.callbacks.ConfusionMatrixCallback">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">ConfusionMatrixCallback</code><span class="sig-paren">(</span><em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>prefix: str = 'confusion_matrix'</em>, <em>version: str = 'tnt'</em>, <em>class_names: List[str] = None</em>, <em>num_classes: int = None</em>, <em>plot_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#ConfusionMatrixCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.ConfusionMatrixCallback" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="catalyst.dl.callbacks.ConfusionMatrixCallback.on_batch_end">
+<code class="descname">on_batch_end</code><span class="sig-paren">(</span><em>state: catalyst.dl.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#ConfusionMatrixCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.ConfusionMatrixCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.ConfusionMatrixCallback.on_loader_end">
+<code class="descname">on_loader_end</code><span class="sig-paren">(</span><em>state: catalyst.dl.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#ConfusionMatrixCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.ConfusionMatrixCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.ConfusionMatrixCallback.on_loader_start">
+<code class="descname">on_loader_start</code><span class="sig-paren">(</span><em>state: catalyst.dl.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#ConfusionMatrixCallback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.ConfusionMatrixCallback.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -495,36 +1065,32 @@ specifies our <cite>y_pred</cite></li>
 <dd><p>A callback that returns multiple metrics on <cite>state.on_batch_end</cite></p>
 <dl class="method">
 <dt id="catalyst.dl.callbacks.MultiMetricCallback.on_batch_end">
-<code class="descname">on_batch_end</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#MultiMetricCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.MultiMetricCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<code class="descname">on_batch_end</code><span class="sig-paren">(</span><em>state: catalyst.dl.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#MultiMetricCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.MultiMetricCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt id="catalyst.dl.callbacks.PrecisionCallback">
-<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">PrecisionCallback</code><span class="sig-paren">(</span><em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>prefix: str = 'precision'</em>, <em>precision_args: List[int] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#PrecisionCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.PrecisionCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Precision metric callback.</p>
+<dt id="catalyst.dl.callbacks.AccuracyCallback">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">AccuracyCallback</code><span class="sig-paren">(</span><em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>prefix: str = 'accuracy'</em>, <em>accuracy_args: List[int] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#AccuracyCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.AccuracyCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accuracy metric callback.</p>
 <dl class="method">
-<dt id="catalyst.dl.callbacks.PrecisionCallback.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>prefix: str = 'precision'</em>, <em>precision_args: List[int] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#PrecisionCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.PrecisionCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>input_key</strong> – input key to use for precision calculation;
-specifies our <cite>y_true</cite>.</li>
-<li><strong>output_key</strong> – output key to use for precision calculation;
-specifies our <cite>y_pred</cite>.</li>
-<li><strong>precision_args</strong> – specifies which precision&#64;K to log.
+<dt id="catalyst.dl.callbacks.AccuracyCallback.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>prefix: str = 'accuracy'</em>, <em>accuracy_args: List[int] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#AccuracyCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.AccuracyCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_key</strong> – input key to use for accuracy calculation;
+specifies our <cite>y_true</cite>.</p></li>
+<li><p><strong>output_key</strong> – output key to use for accuracy calculation;
+specifies our <cite>y_pred</cite>.</p></li>
+<li><p><strong>accuracy_args</strong> – specifies which accuracy&#64;K to log.
 [1] - accuracy
-[1, 3] - accuracy and precision&#64;3
-[1, 3, 5] - precision at 1, 3 and 5</li>
+[1, 3] - accuracy at 1 and 3
+[1, 3, 5] - accuracy at 1, 3 and 5</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -536,80 +1102,165 @@ specifies our <cite>y_pred</cite>.</li>
 <dl class="method">
 <dt id="catalyst.dl.callbacks.MapKCallback.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>input_key: str = 'targets'</em>, <em>output_key: str = 'logits'</em>, <em>prefix: str = 'map'</em>, <em>map_args: List[int] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics.html#MapKCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.MapKCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>input_key</strong> – input key to use for
-calculation mean average precision at k;
-specifies our <cite>y_true</cite>.</li>
-<li><strong>output_key</strong> – output key to use for
-calculation mean average precision at k;
-specifies our <cite>y_pred</cite>.</li>
-<li><strong>map_args</strong> – specifies which map&#64;K to log.
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_key</strong> – input key to use for
+calculation mean average accuracy at k;
+specifies our <cite>y_true</cite>.</p></li>
+<li><p><strong>output_key</strong> – output key to use for
+calculation mean average accuracy at k;
+specifies our <cite>y_pred</cite>.</p></li>
+<li><p><strong>map_args</strong> – specifies which map&#64;K to log.
 [1] - map&#64;1
 [1, 3] - map&#64;1 and map&#64;3
-[1, 3, 5] - map&#64;1, map&#64;3 and map&#64;5</li>
+[1, 3, 5] - map&#64;1, map&#64;3 and map&#64;5</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
 </div>
+<div class="section" id="loggers">
+<h3>Loggers<a class="headerlink" href="#loggers" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.dl.callbacks.TensorboardLogger">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">TensorboardLogger</code><span class="sig-paren">(</span><em>metric_names: List[str] = None</em>, <em>log_on_batch_end: bool = True</em>, <em>log_on_epoch_end: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#TensorboardLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.TensorboardLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logger callback, translates state.metrics to tensorboard</p>
+<dl class="method">
+<dt id="catalyst.dl.callbacks.TensorboardLogger.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>metric_names: List[str] = None</em>, <em>log_on_batch_end: bool = True</em>, <em>log_on_epoch_end: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#TensorboardLogger.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.TensorboardLogger.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metric_names</strong> – List of metric names to log.
+If none - logs everything.</p></li>
+<li><p><strong>log_on_batch_end</strong> – Logs per-batch metrics if set True.</p></li>
+<li><p><strong>log_on_epoch_end</strong> – Logs per-epoch metrics if set True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.TensorboardLogger.on_batch_end">
+<code class="descname">on_batch_end</code><span class="sig-paren">(</span><em>state: catalyst.dl.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#TensorboardLogger.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.TensorboardLogger.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.TensorboardLogger.on_loader_end">
+<code class="descname">on_loader_end</code><span class="sig-paren">(</span><em>state: catalyst.dl.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#TensorboardLogger.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.TensorboardLogger.on_loader_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.TensorboardLogger.on_loader_start">
+<code class="descname">on_loader_start</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#TensorboardLogger.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.TensorboardLogger.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.callbacks.ConsoleLogger">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">ConsoleLogger</code><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#ConsoleLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.ConsoleLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logger callback, translates <code class="docutils literal notranslate"><span class="pre">state.metrics</span></code> to console and text file</p>
+<dl class="method">
+<dt id="catalyst.dl.callbacks.ConsoleLogger.on_epoch_end">
+<code class="descname">on_epoch_end</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#ConsoleLogger.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.ConsoleLogger.on_epoch_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.ConsoleLogger.on_stage_end">
+<code class="descname">on_stage_end</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#ConsoleLogger.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.ConsoleLogger.on_stage_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.ConsoleLogger.on_stage_start">
+<code class="descname">on_stage_start</code><span class="sig-paren">(</span><em>state: catalyst.dl.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#ConsoleLogger.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.ConsoleLogger.on_stage_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.callbacks.VerboseLogger">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">VerboseLogger</code><span class="sig-paren">(</span><em>always_show: List[str] = ['_timers/_fps']</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#VerboseLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.VerboseLogger" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="catalyst.dl.callbacks.VerboseLogger.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>always_show: List[str] = ['_timers/_fps']</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#VerboseLogger.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.VerboseLogger.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log params into console
+:param always_show: list of metrics to always show
+:type always_show: List[str]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.VerboseLogger.on_batch_end">
+<code class="descname">on_batch_end</code><span class="sig-paren">(</span><em>state: catalyst.dl.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#VerboseLogger.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.VerboseLogger.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.VerboseLogger.on_loader_end">
+<code class="descname">on_loader_end</code><span class="sig-paren">(</span><em>state: catalyst.dl.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#VerboseLogger.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.VerboseLogger.on_loader_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.VerboseLogger.on_loader_start">
+<code class="descname">on_loader_start</code><span class="sig-paren">(</span><em>state: catalyst.dl.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#VerboseLogger.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.VerboseLogger.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="section" id="formatters">
+<h4>Formatters<a class="headerlink" href="#formatters" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="catalyst.dl.callbacks.MetricsFormatter">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">MetricsFormatter</code><span class="sig-paren">(</span><em>message_prefix</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#MetricsFormatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.MetricsFormatter" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="catalyst.dl.callbacks.MetricsFormatter.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>message_prefix</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#MetricsFormatter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.MetricsFormatter.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>message_prefix</strong> – logging format string
+that will be prepended to message</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.MetricsFormatter.format">
+<code class="descname">format</code><span class="sig-paren">(</span><em>record: logging.LogRecord</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#MetricsFormatter.format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.MetricsFormatter.format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.callbacks.TxtMetricsFormatter">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">TxtMetricsFormatter</code><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#TxtMetricsFormatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.TxtMetricsFormatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translate batch metrics in human-readable format.</p>
+<p>This class is used by logging.Logger to make a string from record.
+For details refer to official docs for ‘logging’ module.</p>
+<p>Note:</p>
+<p>This is inner class used by Logger callback,
+no need to use it directly!</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.callbacks.JsonMetricsFormatter">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">JsonMetricsFormatter</code><a class="reference internal" href="../_modules/catalyst/dl/callbacks/loggers.html#JsonMetricsFormatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.JsonMetricsFormatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translate batch metrics in json format.</p>
+<p>This class is used by logging.Logger to make a string from record.
+For details refer to official docs for ‘logging’ module.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is inner class used by Logger callback,
+no need to use it directly!</p>
+</div>
+</dd></dl>
+
+</div>
+</div>
 <div class="section" id="schedulers">
 <h3>Schedulers<a class="headerlink" href="#schedulers" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="catalyst.dl.callbacks.LRFinder">
-<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">LRFinder</code><span class="sig-paren">(</span><em>final_lr</em>, <em>scale='log'</em>, <em>n_steps=None</em>, <em>optimizer_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/schedulers.html#LRFinder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.LRFinder" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>Helps you find an optimal learning rate for a model,</dt>
-<dd>as per suggestion of 2015 CLR paper.</dd>
-</dl>
-<p>Learning rate is increased in linear or log scale, depending on user input.</p>
-<p><a class="reference external" href="https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html">https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html</a></p>
-<dl class="method">
-<dt id="catalyst.dl.callbacks.LRFinder.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>final_lr</em>, <em>scale='log'</em>, <em>n_steps=None</em>, <em>optimizer_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/schedulers.html#LRFinder.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.LRFinder.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>final_lr</strong> – final learning rate to try with</li>
-<li><strong>scale</strong> – learning rate increasing scale (“log” or “linear”)</li>
-<li><strong>n_steps</strong> – number of batches to try;
-if None - whole loader would be used.</li>
-<li><strong>optimizer_key</strong> – which optimizer key to use
-for learning rate scheduling</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.dl.callbacks.LRFinder.calc_lr">
-<code class="descname">calc_lr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/schedulers.html#LRFinder.calc_lr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.LRFinder.calc_lr" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.dl.callbacks.LRFinder.on_batch_end">
-<code class="descname">on_batch_end</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/schedulers.html#LRFinder.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.LRFinder.on_batch_end" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.dl.callbacks.LRFinder.on_loader_start">
-<code class="descname">on_loader_start</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/schedulers.html#LRFinder.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.LRFinder.on_loader_start" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
 <dl class="class">
 <dt id="catalyst.dl.callbacks.LRUpdater">
 <em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">LRUpdater</code><span class="sig-paren">(</span><em>optimizer_key: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/schedulers.html#LRUpdater"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.LRUpdater" title="Permalink to this definition">¶</a></dt>
@@ -617,15 +1268,12 @@ for learning rate scheduling</li>
 <dl class="method">
 <dt id="catalyst.dl.callbacks.LRUpdater.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>optimizer_key: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/schedulers.html#LRUpdater.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.LRUpdater.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>optimizer_key</strong> – which optimizer key to use
-for learning rate scheduling</td>
-</tr>
-</tbody>
-</table>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>optimizer_key</strong> – which optimizer key to use
+for learning rate scheduling</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -661,48 +1309,90 @@ for learning rate scheduling</td>
 </dd></dl>
 
 <dl class="class">
-<dt id="catalyst.dl.callbacks.OneCycleLR">
-<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">OneCycleLR</code><span class="sig-paren">(</span><em>cycle_len: int, div_factor: float, increase_fraction: float, momentum_range: Tuple[float, float], optimizer_key: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/schedulers.html#OneCycleLR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.OneCycleLR" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>An learning rate updater</dt>
-<dd>that implements the Circular Learning Rate (CLR) scheme.</dd>
-</dl>
-<p>Learning rate is increased then decreased linearly.</p>
+<dt id="catalyst.dl.callbacks.LRFinder">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">LRFinder</code><span class="sig-paren">(</span><em>final_lr</em>, <em>scale='log'</em>, <em>num_steps=None</em>, <em>optimizer_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/schedulers.html#LRFinder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.LRFinder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helps you find an optimal learning rate for a model,
+as per suggestion of 2015 CLR paper.
+Learning rate is increased in linear or log scale, depending on user input.</p>
+<p><a class="reference external" href="https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html">https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html</a></p>
 <dl class="method">
-<dt id="catalyst.dl.callbacks.OneCycleLR.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>cycle_len: int, div_factor: float, increase_fraction: float, momentum_range: Tuple[float, float], optimizer_key: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/schedulers.html#OneCycleLR.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.OneCycleLR.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>init_lr</strong> – init learning rate for torch optimizer</li>
-<li><strong>cycle_len</strong> – (int) num epochs to apply one cycle policy</li>
-<li><strong>div_factor</strong> – max_lr / init_lr</li>
-<li><strong>increase_fraction</strong> – the part of cycle when learning rate increases</li>
-<li><strong>momentum_range</strong> – (tuple(int, int)) max and min momentum values</li>
-<li><strong>optimizer_key</strong> – which optimizer key to use
-for learning rate scheduling</li>
+<dt id="catalyst.dl.callbacks.LRFinder.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>final_lr</em>, <em>scale='log'</em>, <em>num_steps=None</em>, <em>optimizer_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/schedulers.html#LRFinder.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.LRFinder.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>final_lr</strong> – final learning rate to try with</p></li>
+<li><p><strong>scale</strong> – learning rate increasing scale (“log” or “linear”)</p></li>
+<li><p><strong>num_steps</strong> – number of batches to try;
+if None - whole loader would be used.</p></li>
+<li><p><strong>optimizer_key</strong> – which optimizer key to use
+for learning rate scheduling</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.dl.callbacks.OneCycleLR.calc_lr">
-<code class="descname">calc_lr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/schedulers.html#OneCycleLR.calc_lr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.OneCycleLR.calc_lr" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.dl.callbacks.LRFinder.calc_lr">
+<code class="descname">calc_lr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/schedulers.html#LRFinder.calc_lr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.LRFinder.calc_lr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="catalyst.dl.callbacks.OneCycleLR.calc_momentum">
-<code class="descname">calc_momentum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/schedulers.html#OneCycleLR.calc_momentum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.OneCycleLR.calc_momentum" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.dl.callbacks.LRFinder.on_batch_end">
+<code class="descname">on_batch_end</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/schedulers.html#LRFinder.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.LRFinder.on_batch_end" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="catalyst.dl.callbacks.OneCycleLR.on_loader_start">
-<code class="descname">on_loader_start</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/schedulers.html#OneCycleLR.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.OneCycleLR.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.dl.callbacks.LRFinder.on_loader_start">
+<code class="descname">on_loader_start</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/schedulers.html#LRFinder.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.LRFinder.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="inference">
+<h3>Inference<a class="headerlink" href="#inference" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.dl.callbacks.InferCallback">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">InferCallback</code><span class="sig-paren">(</span><em>out_dir=None</em>, <em>out_prefix=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/inference.html#InferCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.InferCallback" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="catalyst.dl.callbacks.InferCallback.on_batch_end">
+<code class="descname">on_batch_end</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/inference.html#InferCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.InferCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.InferCallback.on_loader_end">
+<code class="descname">on_loader_end</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/inference.html#InferCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.InferCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.InferCallback.on_loader_start">
+<code class="descname">on_loader_start</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/inference.html#InferCallback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.InferCallback.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.InferCallback.on_stage_start">
+<code class="descname">on_stage_start</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/inference.html#InferCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.InferCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.callbacks.InferMaskCallback">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.</code><code class="descname">InferMaskCallback</code><span class="sig-paren">(</span><em>out_dir=None</em>, <em>out_prefix=None</em>, <em>input_key=None</em>, <em>output_key=None</em>, <em>name_key=None</em>, <em>mean=None</em>, <em>std=None</em>, <em>mask_type='soft'</em>, <em>threshold=None</em>, <em>dump_mask=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/inference.html#InferMaskCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.InferMaskCallback" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="catalyst.dl.callbacks.InferMaskCallback.on_batch_end">
+<code class="descname">on_batch_end</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/inference.html#InferMaskCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.InferMaskCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.InferMaskCallback.on_loader_start">
+<code class="descname">on_loader_start</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/inference.html#InferMaskCallback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.InferMaskCallback.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.InferMaskCallback.on_stage_start">
+<code class="descname">on_stage_start</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/inference.html#InferMaskCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.InferMaskCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -711,9 +1401,10 @@ for learning rate scheduling</li>
 <div class="section" id="module-catalyst.dl.callbacks.utils">
 <span id="utils"></span><h3>Utils<a class="headerlink" href="#module-catalyst.dl.callbacks.utils" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
-<dt id="catalyst.dl.callbacks.utils.get_optimizer_momentum">
-<code class="descclassname">catalyst.dl.callbacks.utils.</code><code class="descname">get_optimizer_momentum</code><span class="sig-paren">(</span><em>optimizer</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/utils.html#get_optimizer_momentum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.utils.get_optimizer_momentum" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="catalyst.dl.callbacks.utils.binary_mask_to_overlay_image">
+<code class="descclassname">catalyst.dl.callbacks.utils.</code><code class="descname">binary_mask_to_overlay_image</code><span class="sig-paren">(</span><em>image: numpy.ndarray, masks: List[numpy.ndarray]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/utils.html#binary_mask_to_overlay_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.utils.binary_mask_to_overlay_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws every mask for with some color over image</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="catalyst.dl.callbacks.utils.get_val_from_metric">
@@ -721,13 +1412,25 @@ for learning rate scheduling</li>
 <dd></dd></dl>
 
 <dl class="function">
+<dt id="catalyst.dl.callbacks.utils.plot_confusion_matrix">
+<code class="descclassname">catalyst.dl.callbacks.utils.</code><code class="descname">plot_confusion_matrix</code><span class="sig-paren">(</span><em>cm</em>, <em>class_names=None</em>, <em>normalize=False</em>, <em>title='confusion matrix'</em>, <em>fname=None</em>, <em>show=True</em>, <em>figsize=12</em>, <em>fontsize=32</em>, <em>colormap='Blues'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/utils.html#plot_confusion_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.utils.plot_confusion_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Render the confusion matrix and return matplotlib”s figure with it.
+Normalization can be applied by setting <cite>normalize=True</cite>.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="catalyst.dl.callbacks.utils.process_epoch_metrics">
 <code class="descclassname">catalyst.dl.callbacks.utils.</code><code class="descname">process_epoch_metrics</code><span class="sig-paren">(</span><em>epoch_metrics</em>, <em>best_metrics</em>, <em>valid_loader='valid'</em>, <em>main_metric='loss'</em>, <em>minimize=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/utils.html#process_epoch_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.utils.process_epoch_metrics" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="catalyst.dl.callbacks.utils.scheduler_step">
-<code class="descclassname">catalyst.dl.callbacks.utils.</code><code class="descname">scheduler_step</code><span class="sig-paren">(</span><em>scheduler</em>, <em>valid_metric=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/utils.html#scheduler_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.utils.scheduler_step" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.dl.callbacks.utils.render_figure_to_tensor">
+<code class="descclassname">catalyst.dl.callbacks.utils.</code><code class="descname">render_figure_to_tensor</code><span class="sig-paren">(</span><em>figure</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/utils.html#render_figure_to_tensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.utils.render_figure_to_tensor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.dl.callbacks.utils.tensor_from_rgb_image">
+<code class="descclassname">catalyst.dl.callbacks.utils.</code><code class="descname">tensor_from_rgb_image</code><span class="sig-paren">(</span><em>image: numpy.ndarray</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/dl/callbacks/utils.html#tensor_from_rgb_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.utils.tensor_from_rgb_image" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -737,42 +1440,83 @@ for learning rate scheduling</li>
 
 </div>
 </div>
-<div class="section" id="module-catalyst.dl.fp16">
-<span id="fp16"></span><h2>Fp16<a class="headerlink" href="#module-catalyst.dl.fp16" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-catalyst.dl.losses">
+<span id="losses"></span><h2>Losses<a class="headerlink" href="#module-catalyst.dl.losses" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="catalyst.dl.fp16.BN_convert_float">
-<code class="descclassname">catalyst.dl.fp16.</code><code class="descname">BN_convert_float</code><span class="sig-paren">(</span><em>module</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/fp16.html#BN_convert_float"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.fp16.BN_convert_float" title="Permalink to this definition">¶</a></dt>
-<dd><p>BatchNorm layers to have parameters in single precision.
-Find all layers and convert them back to float. This can’t
-be done with built in .apply as that function will apply
-fn to all modules, parameters, and buffers. Thus we wouldn’t
-be able to guard the float conversion based on the module type.</p>
+<dt id="catalyst.dl.losses.reduced_focal_loss">
+<code class="descclassname">catalyst.dl.losses.</code><code class="descname">reduced_focal_loss</code><span class="sig-paren">(</span><em>outputs: torch.Tensor</em>, <em>targets: torch.Tensor</em>, <em>threshold: float = 0.5</em>, <em>gamma: float = 2.0</em>, <em>reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/losses.html#reduced_focal_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.losses.reduced_focal_loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute reduced focal loss between target and output logits.</p>
+<p>Source <a class="reference external" href="https://github.com/BloodAxe/pytorch-toolbelt">https://github.com/BloodAxe/pytorch-toolbelt</a>
+See <code class="xref py py-class docutils literal notranslate"><span class="pre">losses</span></code> for details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> – Tensor of arbitrary shape</p></li>
+<li><p><strong>targets</strong> – Tensor of the same shape as input</p></li>
+<li><p><strong>reduction</strong> (<em>string</em><em>, </em><em>optional</em>) – <p>Specifies the reduction to apply to the output:
+“none” | “mean” | “sum” | “batchwise_mean”.</p>
+<p>”none”: no reduction will be applied,
+“mean”: the sum of the output will be divided by the number of
+elements in the output,
+“sum”: the output will be summed.</p>
+<p>Note: <code class="xref py py-attr docutils literal notranslate"><span class="pre">size_average</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">reduce</span></code>
+are in the process of being deprecated,
+and in the meantime, specifying either of those two args
+will override <code class="xref py py-attr docutils literal notranslate"><span class="pre">reduction</span></code>.</p>
+<p>”batchwise_mean” computes mean loss per sample in batch.
+Default: “mean”</p>
+</p></li>
+</ul>
+</dd>
+</dl>
+<p>See <a class="reference external" href="https://arxiv.org/abs/1903.01347">https://arxiv.org/abs/1903.01347</a></p>
 </dd></dl>
 
-<dl class="class">
-<dt id="catalyst.dl.fp16.Fp16Wrap">
-<em class="property">class </em><code class="descclassname">catalyst.dl.fp16.</code><code class="descname">Fp16Wrap</code><span class="sig-paren">(</span><em>network</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/fp16.html#Fp16Wrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.fp16.Fp16Wrap" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<dl class="method">
-<dt id="catalyst.dl.fp16.Fp16Wrap.forward">
-<code class="descname">forward</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/fp16.html#Fp16Wrap.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.fp16.Fp16Wrap.forward" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dl class="function">
+<dt id="catalyst.dl.losses.sigmoid_focal_loss">
+<code class="descclassname">catalyst.dl.losses.</code><code class="descname">sigmoid_focal_loss</code><span class="sig-paren">(</span><em>outputs: torch.Tensor</em>, <em>targets: torch.Tensor</em>, <em>gamma: float = 2.0</em>, <em>alpha: float = 0.25</em>, <em>reduction: str = 'mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/losses.html#sigmoid_focal_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.losses.sigmoid_focal_loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute binary focal loss between target and output logits.</p>
+<p>Source <a class="reference external" href="https://github.com/BloodAxe/pytorch-toolbelt">https://github.com/BloodAxe/pytorch-toolbelt</a>
+See <code class="xref py py-class docutils literal notranslate"><span class="pre">losses</span></code> for details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> – Tensor of arbitrary shape</p></li>
+<li><p><strong>targets</strong> – Tensor of the same shape as input</p></li>
+<li><p><strong>reduction</strong> (<em>string</em><em>, </em><em>optional</em>) – Specifies the reduction to apply to the output:
+“none” | “mean” | “sum” | “batchwise_mean”.
+“none”: no reduction will be applied,
+“mean”: the sum of the output will be divided by the number of
+elements in the output,
+“sum”: the output will be summed.</p></li>
+</ul>
+</dd>
+</dl>
+<p>See <a class="reference external" href="https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/loss/losses.py">https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/loss/losses.py</a>  # noqa: E501</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.dl.fp16.copy_grads">
-<code class="descclassname">catalyst.dl.fp16.</code><code class="descname">copy_grads</code><span class="sig-paren">(</span><em>source</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/fp16.html#copy_grads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.fp16.copy_grads" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="catalyst.dl.fp16.copy_params">
-<code class="descclassname">catalyst.dl.fp16.</code><code class="descname">copy_params</code><span class="sig-paren">(</span><em>source</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/fp16.html#copy_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.fp16.copy_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="catalyst.dl.losses.wing_loss">
+<code class="descclassname">catalyst.dl.losses.</code><code class="descname">wing_loss</code><span class="sig-paren">(</span><em>outputs: torch.Tensor</em>, <em>targets: torch.Tensor</em>, <em>width: int = 5</em>, <em>curvature: float = 0.5</em>, <em>reduction: str = 'mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/losses.html#wing_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.losses.wing_loss" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="https://arxiv.org/pdf/1711.06753.pdf">https://arxiv.org/pdf/1711.06753.pdf</a></p>
+<p>Source <a class="reference external" href="https://github.com/BloodAxe/pytorch-toolbelt">https://github.com/BloodAxe/pytorch-toolbelt</a>
+See <code class="xref py py-class docutils literal notranslate"><span class="pre">losses</span></code> for details.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-catalyst.dl.initialization">
 <span id="initialization"></span><h2>Initialization<a class="headerlink" href="#module-catalyst.dl.initialization" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="catalyst.dl.initialization.bias_init_with_prob">
+<code class="descclassname">catalyst.dl.initialization.</code><code class="descname">bias_init_with_prob</code><span class="sig-paren">(</span><em>prior_prob</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/initialization.html#bias_init_with_prob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.initialization.bias_init_with_prob" title="Permalink to this definition">¶</a></dt>
+<dd><p>initialize conv/fc bias value according to giving probablity</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.dl.initialization.constant_init">
+<code class="descclassname">catalyst.dl.initialization.</code><code class="descname">constant_init</code><span class="sig-paren">(</span><em>module</em>, <em>val</em>, <em>bias=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/initialization.html#constant_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.initialization.constant_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="function">
 <dt id="catalyst.dl.initialization.create_optimal_inner_init">
 <code class="descclassname">catalyst.dl.initialization.</code><code class="descname">create_optimal_inner_init</code><span class="sig-paren">(</span><em>nonlinearity: torch.nn.modules.module.Module</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; Callable[torch.nn.modules.module.Module, None]<a class="reference internal" href="../_modules/catalyst/dl/initialization.html#create_optimal_inner_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.initialization.create_optimal_inner_init" title="Permalink to this definition">¶</a></dt>
@@ -781,18 +1525,63 @@ based on their activation function (nonlinearity).</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="catalyst.dl.initialization.kaiming_init">
+<code class="descclassname">catalyst.dl.initialization.</code><code class="descname">kaiming_init</code><span class="sig-paren">(</span><em>module</em>, <em>mode='fan_out'</em>, <em>nonlinearity='relu'</em>, <em>bias=0</em>, <em>distribution='normal'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/initialization.html#kaiming_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.initialization.kaiming_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.dl.initialization.normal_init">
+<code class="descclassname">catalyst.dl.initialization.</code><code class="descname">normal_init</code><span class="sig-paren">(</span><em>module</em>, <em>mean=0</em>, <em>std=1</em>, <em>bias=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/initialization.html#normal_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.initialization.normal_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="catalyst.dl.initialization.outer_init">
 <code class="descclassname">catalyst.dl.initialization.</code><code class="descname">outer_init</code><span class="sig-paren">(</span><em>layer: torch.nn.modules.module.Module</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/initialization.html#outer_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.initialization.outer_init" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialization for output layers of policy and value networks typically
 used in deep reinforcement learning literature.</p>
 </dd></dl>
 
+<dl class="function">
+<dt id="catalyst.dl.initialization.uniform_init">
+<code class="descclassname">catalyst.dl.initialization.</code><code class="descname">uniform_init</code><span class="sig-paren">(</span><em>module</em>, <em>a=0</em>, <em>b=1</em>, <em>bias=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/initialization.html#uniform_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.initialization.uniform_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.dl.initialization.xavier_init">
+<code class="descclassname">catalyst.dl.initialization.</code><code class="descname">xavier_init</code><span class="sig-paren">(</span><em>module</em>, <em>gain=1</em>, <em>bias=0</em>, <em>distribution='normal'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/initialization.html#xavier_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.initialization.xavier_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
-<div class="section" id="id2">
-<h2>Utils<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-catalyst.dl.utils.trace">
+<span id="tracing"></span><h2>Tracing<a class="headerlink" href="#module-catalyst.dl.utils.trace" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="catalyst.dl.utils.trace.trace_model">
+<code class="descclassname">catalyst.dl.utils.trace.</code><code class="descname">trace_model</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module, experiment: catalyst.dl.experiments.core.Experiment, runner_type: Type[catalyst.dl.experiments.core.Runner], method_name: str = 'forward'</em><span class="sig-paren">)</span> &#x2192; torch.jit.ScriptModule<a class="reference internal" href="../_modules/catalyst/dl/utils/trace.html#trace_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.trace.trace_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Traces model using it’s native experiment and runner.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – Model to trace
+NOTICE: will be switched to eval and
+requires_grad=False will be set on all params</p></li>
+<li><p><strong>experiment</strong> – Native experiment that was used to train model</p></li>
+<li><p><strong>runner_type</strong> – Model’s native runner that was used to train model</p></li>
+<li><p><strong>method_name</strong> – Model’s method name that will be
+used as entrypoint during tracing</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Traced model ScriptModule</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="id1">
+<h2>Utils<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-catalyst.dl.utils"></span><dl class="class">
 <dt id="catalyst.dl.utils.UtilsFactory">
-<em class="property">class </em><code class="descclassname">catalyst.dl.utils.</code><code class="descname">UtilsFactory</code><a class="reference internal" href="../_modules/catalyst/dl/utils.html#UtilsFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">catalyst.dl.utils.</code><code class="descname">UtilsFactory</code><a class="reference internal" href="../_modules/catalyst/dl/utils/utils.html#UtilsFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="method">
 <dt id="catalyst.dl.utils.UtilsFactory.assert_fp16_available">
@@ -800,81 +1589,125 @@ used in deep reinforcement learning literature.</p>
 <dd></dd></dl>
 
 <dl class="staticmethod">
-<dt id="catalyst.dl.utils.UtilsFactory.create_loader">
-<em class="property">static </em><code class="descname">create_loader</code><span class="sig-paren">(</span><em>data_source</em>, <em>open_fn</em>, <em>dict_transform=None</em>, <em>dataset_cache_prob=-1</em>, <em>sampler=None</em>, <em>collate_fn=&lt;function default_collate&gt;</em>, <em>batch_size=32</em>, <em>num_workers=4</em>, <em>shuffle=False</em>, <em>drop_last=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils.html#UtilsFactory.create_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.create_loader" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.dl.utils.UtilsFactory.get_device">
+<em class="property">static </em><code class="descname">get_device</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.device<a class="reference internal" href="../_modules/catalyst/dl/utils/utils.html#UtilsFactory.get_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.get_device" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="staticmethod">
-<dt id="catalyst.dl.utils.UtilsFactory.create_loggers">
-<em class="property">static </em><code class="descname">create_loggers</code><span class="sig-paren">(</span><em>logdir: str, loaders: List[str]</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, SummaryWriter]<a class="reference internal" href="../_modules/catalyst/dl/utils.html#UtilsFactory.create_loggers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.create_loggers" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.dl.utils.UtilsFactory.get_loader">
+<em class="property">static </em><code class="descname">get_loader</code><span class="sig-paren">(</span><em>data_source</em>, <em>open_fn</em>, <em>dict_transform=None</em>, <em>dataset_cache_prob=-1</em>, <em>sampler=None</em>, <em>collate_fn=&lt;function default_collate&gt;</em>, <em>batch_size=32</em>, <em>num_workers=4</em>, <em>shuffle=False</em>, <em>drop_last=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils/utils.html#UtilsFactory.get_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.get_loader" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="staticmethod">
-<dt id="catalyst.dl.utils.UtilsFactory.create_tflogger">
-<em class="property">static </em><code class="descname">create_tflogger</code><span class="sig-paren">(</span><em>logdir: str</em>, <em>name: str</em><span class="sig-paren">)</span> &#x2192; tensorboardX.writer.SummaryWriter<a class="reference internal" href="../_modules/catalyst/dl/utils.html#UtilsFactory.create_tflogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.create_tflogger" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.dl.utils.UtilsFactory.get_loggers">
+<em class="property">static </em><code class="descname">get_loggers</code><span class="sig-paren">(</span><em>logdir: str, loaders: List[str]</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, SummaryWriter]<a class="reference internal" href="../_modules/catalyst/dl/utils/utils.html#UtilsFactory.get_loggers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.get_loggers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.utils.UtilsFactory.get_optimizable_params">
+<code class="descname">get_optimizable_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.get_optimizable_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="catalyst.dl.utils.UtilsFactory.get_tflogger">
+<em class="property">static </em><code class="descname">get_tflogger</code><span class="sig-paren">(</span><em>logdir: str</em>, <em>name: str</em><span class="sig-paren">)</span> &#x2192; tensorboardX.writer.SummaryWriter<a class="reference internal" href="../_modules/catalyst/dl/utils/utils.html#UtilsFactory.get_tflogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.get_tflogger" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="staticmethod">
 <dt id="catalyst.dl.utils.UtilsFactory.load_checkpoint">
-<em class="property">static </em><code class="descname">load_checkpoint</code><span class="sig-paren">(</span><em>filepath</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils.html#UtilsFactory.load_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.load_checkpoint" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">load_checkpoint</code><span class="sig-paren">(</span><em>filepath</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils/utils.html#UtilsFactory.load_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.load_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="staticmethod">
 <dt id="catalyst.dl.utils.UtilsFactory.pack_checkpoint">
-<em class="property">static </em><code class="descname">pack_checkpoint</code><span class="sig-paren">(</span><em>model=None</em>, <em>criterion=None</em>, <em>optimizer=None</em>, <em>scheduler=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils.html#UtilsFactory.pack_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.pack_checkpoint" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">pack_checkpoint</code><span class="sig-paren">(</span><em>model=None</em>, <em>criterion=None</em>, <em>optimizer=None</em>, <em>scheduler=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils/utils.html#UtilsFactory.pack_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.pack_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="staticmethod">
 <dt id="catalyst.dl.utils.UtilsFactory.plot_metrics">
-<em class="property">static </em><code class="descname">plot_metrics</code><span class="sig-paren">(</span><em>logdir: Union[str, pathlib.Path], step: Optional[str] = 'epoch', metrics: Optional[List[str]] = None, height: Optional[int] = None, width: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/utils.html#UtilsFactory.plot_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.plot_metrics" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">plot_metrics</code><span class="sig-paren">(</span><em>logdir: Union[str, pathlib.Path], step: Optional[str] = 'epoch', metrics: Optional[List[str]] = None, height: Optional[int] = None, width: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/utils/utils.html#UtilsFactory.plot_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.plot_metrics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots your learning results.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>logdir</strong> – the logdir that was specified during training.</li>
-<li><strong>step</strong> – ‘batch’ or ‘epoch’ - what logs to show: for batches or
-for epochs</li>
-<li><strong>metrics</strong> – list of metrics to plot. The loss should be specified as
-‘loss’, learning rate = ‘base/lr’ and other metrics should be
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logdir</strong> – the logdir that was specified during training.</p></li>
+<li><p><strong>step</strong> – ‘batch’ or ‘epoch’ - what logs to show: for batches or
+for epochs</p></li>
+<li><p><strong>metrics</strong> – list of metrics to plot. The loss should be specified as
+‘loss’, learning rate = ‘_base/lr’ and other metrics should be
 specified as names in metrics dict
-that was specified during training</li>
-<li><strong>height</strong> – the height of the whole resulting plot</li>
-<li><strong>width</strong> – the width of the whole resulting plot</li>
+that was specified during training</p></li>
+<li><p><strong>height</strong> – the height of the whole resulting plot</p></li>
+<li><p><strong>width</strong> – the width of the whole resulting plot</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="staticmethod">
-<dt id="catalyst.dl.utils.UtilsFactory.prepare_device">
-<em class="property">static </em><code class="descname">prepare_device</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.device<a class="reference internal" href="../_modules/catalyst/dl/utils.html#UtilsFactory.prepare_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.prepare_device" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="staticmethod">
-<dt id="catalyst.dl.utils.UtilsFactory.prepare_model">
-<em class="property">static </em><code class="descname">prepare_model</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.nn.modules.module.Module, torch.device]<a class="reference internal" href="../_modules/catalyst/dl/utils.html#UtilsFactory.prepare_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.prepare_model" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.dl.utils.UtilsFactory.prepare_optimizable_params">
-<code class="descname">prepare_optimizable_params</code><span class="sig-paren">(</span><em>fp16=False</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.prepare_optimizable_params" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.dl.utils.UtilsFactory.process_components">
+<em class="property">static </em><code class="descname">process_components</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module</em>, <em>criterion: torch.nn.modules.module.Module = None</em>, <em>optimizer: torch.optim.optimizer.Optimizer = None</em>, <em>scheduler: torch.optim.lr_scheduler._LRScheduler = None</em>, <em>distributed_params: Dict = None</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.nn.modules.module.Module, torch.nn.modules.module.Module, torch.optim.optimizer.Optimizer, torch.optim.lr_scheduler._LRScheduler, torch.device]<a class="reference internal" href="../_modules/catalyst/dl/utils/utils.html#UtilsFactory.process_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.process_components" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="staticmethod">
 <dt id="catalyst.dl.utils.UtilsFactory.save_checkpoint">
-<em class="property">static </em><code class="descname">save_checkpoint</code><span class="sig-paren">(</span><em>logdir</em>, <em>checkpoint</em>, <em>suffix=''</em>, <em>is_best=False</em>, <em>is_last=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils.html#UtilsFactory.save_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.save_checkpoint" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">save_checkpoint</code><span class="sig-paren">(</span><em>logdir</em>, <em>checkpoint</em>, <em>suffix=''</em>, <em>is_best=False</em>, <em>is_last=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils/utils.html#UtilsFactory.save_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.save_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="staticmethod">
 <dt id="catalyst.dl.utils.UtilsFactory.unpack_checkpoint">
-<em class="property">static </em><code class="descname">unpack_checkpoint</code><span class="sig-paren">(</span><em>checkpoint</em>, <em>model=None</em>, <em>criterion=None</em>, <em>optimizer=None</em>, <em>scheduler=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils.html#UtilsFactory.unpack_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.unpack_checkpoint" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">unpack_checkpoint</code><span class="sig-paren">(</span><em>checkpoint</em>, <em>model=None</em>, <em>criterion=None</em>, <em>optimizer=None</em>, <em>scheduler=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils/utils.html#UtilsFactory.unpack_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.UtilsFactory.unpack_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
+
+<dl class="function">
+<dt id="catalyst.dl.utils.get_activation_by_name">
+<code class="descclassname">catalyst.dl.utils.</code><code class="descname">get_activation_by_name</code><span class="sig-paren">(</span><em>activation: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils/utils.html#get_activation_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.get_activation_by_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.dl.utils.set_optimizer_momentum">
+<code class="descclassname">catalyst.dl.utils.</code><code class="descname">set_optimizer_momentum</code><span class="sig-paren">(</span><em>optimizer: torch.optim.optimizer.Optimizer</em>, <em>value: float</em>, <em>index: int = 0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils/utils.html#set_optimizer_momentum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.set_optimizer_momentum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set momentum of <code class="docutils literal notranslate"><span class="pre">index</span></code> ‘th param group of optimizer to <code class="docutils literal notranslate"><span class="pre">value</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>optimizer</strong> – PyTorch optimizer</p></li>
+<li><p><strong>value</strong> (<em>float</em>) – new value of momentum</p></li>
+<li><p><strong>index</strong> (<em>int</em><em>, </em><em>optional</em>) – integer index of optimizer’s param groups,
+default is 0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.dl.utils.get_optimizer_momentum">
+<code class="descclassname">catalyst.dl.utils.</code><code class="descname">get_optimizer_momentum</code><span class="sig-paren">(</span><em>optimizer: torch.optim.optimizer.Optimizer</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/catalyst/dl/utils/utils.html#get_optimizer_momentum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.get_optimizer_momentum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get momentum of current optimizer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>optimizer</strong> – PyTorch optimizer</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>momentum at first param group</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.dl.utils.get_optimizable_params">
+<code class="descclassname">catalyst.dl.utils.</code><code class="descname">get_optimizable_params</code><span class="sig-paren">(</span><em>model_or_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/model.html#get_optimizable_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.get_optimizable_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.dl.utils.assert_fp16_available">
+<code class="descclassname">catalyst.dl.utils.</code><code class="descname">assert_fp16_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/model.html#assert_fp16_available"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.assert_fp16_available" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 </div>

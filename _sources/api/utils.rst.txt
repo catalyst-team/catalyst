@@ -1,11 +1,11 @@
 Utils
-===============
+================================================
 
 .. automodule:: catalyst.utils
     :members:
 
 Config
-----------
+--------------------
 
 .. automodule:: catalyst.utils.config
     :members:
@@ -13,14 +13,14 @@ Config
     :exclude-members: parse_config_args
 
 Data
-----------
+--------------------
 
 .. automodule:: catalyst.utils.data
     :members:
     :undoc-members:
 
 Parse
-----------
+--------------------
 
 .. automodule:: catalyst.utils.parse
     :members:
@@ -28,7 +28,7 @@ Parse
 
 
 Misc
-----------
+--------------------
 
 .. automodule:: catalyst.utils.misc
     :members:
@@ -36,14 +36,14 @@ Misc
     :exclude-members: pairwise
 
 Parallelize
--------------
+--------------------
 
 .. automodule:: catalyst.utils.parallelize
     :members:
     :undoc-members:
 
 Serialization
--------------
+--------------------
 
 .. automodule:: catalyst.utils.serialization
     :members:

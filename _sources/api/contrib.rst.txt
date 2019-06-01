@@ -1,92 +1,107 @@
 Contrib
-================
+================================================
 
-Registry
-----------
-.. currentmodule:: catalyst.contrib.registry
+.. automodule:: catalyst.contrib
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: Registry
+
+Criterion
+--------------------
+
+.. automodule:: catalyst.contrib.criterion.ce
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.criterion.center
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.criterion.contrastive
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.criterion.dice
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.criterion.focal
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.criterion.huber
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.criterion.iou
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.criterion.wing
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. currentmodule:: catalyst.contrib.criterion
+
+.. autoclass:: LovaszLossBinary
     :members:
     :undoc-members:
 
-Criterion
-----------
-.. currentmodule:: catalyst.contrib.criterion
+.. autoclass:: LovaszLossMultiClass
+    :members:
+    :undoc-members:
 
-.. autoclass:: BCESoftmaxLoss
+.. autoclass:: LovaszLossMultiLabel
+    :members:
+    :undoc-members:
+
+
+Schedulers
+--------------------
+
+.. currentmodule:: catalyst.contrib.scheduler
+
+.. autoclass:: BaseScheduler
     :members:
 
-.. autoclass:: NaiveCrossEntropyLoss
+.. autoclass:: OneCycleLR
     :members:
 
-.. autoclass:: CenterLoss
-    :members:
-
-.. autoclass:: ContrastiveDistanceLoss
-    :members:
-
-.. autoclass:: ContrastiveEmbeddingLoss
-    :members:
-
-.. autoclass:: BCEDiceLoss
-    :members:
-
-.. autoclass:: DiceLoss
-    :members:
-
-.. autoclass:: FocalLoss
-    :members:
-
-.. autoclass:: HuberLoss
-    :members:
-
-.. autoclass:: LossBinary
-    :members:
-
-.. autoclass:: LossMulti
-    :members:
 
 Models
----------------------
+--------------------
 .. automodule:: catalyst.contrib.models
     :members:
+    :undoc-members:
+    :show-inheritance:
+
+@TODO: update with new classes
+
 
 Modules
----------------------
-.. currentmodule:: catalyst.contrib.modules
+--------------------
 
-.. autoclass:: Lambda
+.. automodule:: catalyst.contrib.modules.common
     :members:
+    :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: Flatten
+.. automodule:: catalyst.contrib.modules.noisy
     :members:
+    :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: NoisyLinear
+.. automodule:: catalyst.contrib.modules.pooling
     :members:
+    :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: GlobalAvgPool2d
-    :members:
-
-.. autoclass:: GlobalMaxPool2d
-    :members:
-
-.. autoclass:: GlobalConcatPool2d
-    :members:
-
-.. autoclass:: GlobalAttnPool2d
-    :members:
-
-.. autoclass:: GlobalAvgAttnPool2d
-    :members:
-
-.. autoclass:: GlobalMaxAttnPool2d
-    :members:
-
-.. autoclass:: GlobalConcatAttnPool2d
-    :members:
-
-
-Optimizers
----------------------
-.. automodule:: catalyst.contrib.optimizers
-    :members:

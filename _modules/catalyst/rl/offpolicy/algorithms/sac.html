@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.rl.offpolicy.algorithms.sac &mdash; Catalyst 19.03-rc0 documentation</title>
+  <title>catalyst.rl.offpolicy.algorithms.sac &mdash; Catalyst 19.06 documentation</title>
   
 
   
@@ -20,21 +20,11 @@
   <script type="text/javascript" src="../../../../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../../../../../',
-              VERSION:'19.03-rc0',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
         <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
         <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
 
@@ -68,7 +58,7 @@
             
             
               <div class="version">
-                19.03
+                19.06
               </div>
             
           
@@ -169,94 +159,80 @@
            <div itemprop="articleBody">
             
   <h1>Source code for catalyst.rl.offpolicy.algorithms.sac</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">gym.spaces</span> <span class="k">import</span> <span class="n">Box</span>
 <span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.rl.registry</span> <span class="k">import</span> <span class="n">SCHEDULERS</span><span class="p">,</span> <span class="n">OPTIMIZERS</span><span class="p">,</span> <span class="n">AGENTS</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl.registry</span> <span class="k">import</span> <span class="n">AGENTS</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="k">import</span> <span class="n">UtilsFactory</span>
-<span class="kn">from</span> <span class="nn">catalyst.rl.offpolicy.algorithms.core</span> <span class="k">import</span> <span class="n">Algorithm</span>
-<span class="kn">from</span> <span class="nn">catalyst.rl.offpolicy.algorithms.utils</span> <span class="k">import</span> <span class="n">categorical_loss</span><span class="p">,</span> \
-    <span class="n">quantile_loss</span><span class="p">,</span> <span class="n">soft_update</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.model</span> <span class="k">import</span> <span class="n">prepare_optimizable_params</span>
+<span class="kn">from</span> <span class="nn">.core_continuous</span> <span class="k">import</span> <span class="n">AlgorithmContinuous</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">categorical_loss</span><span class="p">,</span> <span class="n">quantile_loss</span><span class="p">,</span> <span class="n">soft_update</span><span class="p">,</span> \
+    <span class="n">get_trainer_components</span>
+<span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">AlgorithmSpec</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl.environments.core</span> <span class="k">import</span> <span class="n">EnvironmentSpec</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl.agents.core</span> <span class="k">import</span> <span class="n">CriticSpec</span>
 
 
-<div class="viewcode-block" id="SAC"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC">[docs]</a><span class="k">class</span> <span class="nc">SAC</span><span class="p">(</span><span class="n">Algorithm</span><span class="p">):</span>
+<div class="viewcode-block" id="SAC"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC">[docs]</a><span class="k">class</span> <span class="nc">SAC</span><span class="p">(</span><span class="n">AlgorithmContinuous</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">critics</span><span class="p">,</span>
-        <span class="n">reward_scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-        <span class="n">values_range</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">),</span>
-        <span class="n">critic_distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span>
+        <span class="n">critics</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">CriticSpec</span><span class="p">],</span>
+        <span class="n">reward_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        reward_scale: float,</span>
-<span class="sd">            THE MOST IMPORTANT HYPERPARAMETER which controls the ratio</span>
-<span class="sd">            between maximizing rewards and acting as randomly as possible</span>
-<span class="sd">        use_regularization: bool,</span>
-<span class="sd">            whether to use l2 regularization on policy network outputs,</span>
-<span class="sd">            regularization can not be used with RealNVPActor</span>
-<span class="sd">        mu_and_sigma_reg: float,</span>
-<span class="sd">            coefficient for l2 regularization on mu and log_sigma</span>
-<span class="sd">        policy_grad_estimator: str,</span>
-<span class="sd">            &quot;reinforce&quot;: may be used with arbitrary explicit policy</span>
-<span class="sd">            &quot;reparametrization_trick&quot;: may be used with reparametrizable</span>
-<span class="sd">            policy, e.g. Gaussian, normalizing flow (Real NVP).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">out_features</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_loss</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">reward_scale</span> <span class="o">=</span> <span class="n">reward_scale</span>
         <span class="c1"># @TODO: policy regularization</span>
 
         <span class="n">critics</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">critics</span><span class="p">]</span>
-        <span class="n">critics_optimizer</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">OPTIMIZERS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span>
-                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">critic_optimizer_params</span><span class="p">,</span>
-                <span class="n">params</span><span class="o">=</span><span class="n">prepare_optimizable_params</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-            <span class="p">)</span>
-            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">critics</span>
-        <span class="p">]</span>
-        <span class="n">critics_scheduler</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">SCHEDULERS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span>
-                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">critic_scheduler_params</span><span class="p">,</span>
-                <span class="n">optimizer</span><span class="o">=</span><span class="n">x</span>
-            <span class="p">)</span>
-            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">critics_optimizer</span>
-        <span class="p">]</span>
         <span class="n">target_critics</span> <span class="o">=</span> <span class="p">[</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">critics</span><span class="p">]</span>
+        <span class="n">critics_optimizer</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">critics_scheduler</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">critic</span> <span class="ow">in</span> <span class="n">critics</span><span class="p">:</span>
+            <span class="n">critic_components</span> <span class="o">=</span> <span class="n">get_trainer_components</span><span class="p">(</span>
+                <span class="n">agent</span><span class="o">=</span><span class="n">critic</span><span class="p">,</span>
+                <span class="n">loss_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_critic_loss_params</span><span class="p">,</span>
+                <span class="n">optimizer_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_critic_optimizer_params</span><span class="p">,</span>
+                <span class="n">scheduler_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_critic_scheduler_params</span><span class="p">,</span>
+                <span class="n">grad_clip_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_critic_grad_clip_params</span>
+            <span class="p">)</span>
+            <span class="n">critics_optimizer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">critic_components</span><span class="p">[</span><span class="s2">&quot;optimizer&quot;</span><span class="p">])</span>
+            <span class="n">critics_scheduler</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">critic_components</span><span class="p">[</span><span class="s2">&quot;scheduler&quot;</span><span class="p">])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">critics</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="p">]</span> <span class="o">+</span> <span class="n">critics</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">critics_optimizer</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">critic_optimizer</span><span class="p">]</span> <span class="o">+</span> <span class="n">critics_optimizer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">critics_scheduler</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">critic_scheduler</span><span class="p">]</span> <span class="o">+</span> <span class="n">critics_scheduler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_critics</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_critic</span><span class="p">]</span> <span class="o">+</span> <span class="n">target_critics</span>
 
-        <span class="k">if</span> <span class="n">critic_distribution</span> <span class="o">==</span> <span class="s2">&quot;quantile&quot;</span><span class="p">:</span>
-            <span class="n">tau_min</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_atoms</span><span class="p">)</span>
-            <span class="n">tau_max</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">tau_min</span>
-            <span class="n">tau</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
-                <span class="n">start</span><span class="o">=</span><span class="n">tau_min</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">tau_max</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_atoms</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_tensor</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quantile_loss</span>
-        <span class="k">elif</span> <span class="n">critic_distribution</span> <span class="o">==</span> <span class="s2">&quot;categorical&quot;</span><span class="p">:</span>
+        <span class="c1"># value distribution approximation</span>
+        <span class="n">critic_distribution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">distribution</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_loss</span>
+        <span class="k">assert</span> <span class="n">critic_distribution</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;categorical&quot;</span><span class="p">,</span> <span class="s2">&quot;quantile&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">critic_distribution</span> <span class="o">==</span> <span class="s2">&quot;categorical&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">num_atoms</span>
+            <span class="n">values_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">values_range</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">v_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_max</span> <span class="o">=</span> <span class="n">values_range</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">delta_z</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_max</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_atoms</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delta_z</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_max</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_min</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">z</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
-                <span class="n">start</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">v_min</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">v_max</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_atoms</span>
+                <span class="n">start</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">v_min</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">v_max</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_tensor</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categorical_loss</span>
+        <span class="k">elif</span> <span class="n">critic_distribution</span> <span class="o">==</span> <span class="s2">&quot;quantile&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">num_atoms</span>
+            <span class="n">tau_min</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">)</span>
+            <span class="n">tau_max</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">tau_min</span>
+            <span class="n">tau</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span>
+                <span class="n">start</span><span class="o">=</span><span class="n">tau_min</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">tau_max</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_tensor</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_loss_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_quantile_loss</span>
 
     <span class="k">def</span> <span class="nf">_base_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states_t</span><span class="p">,</span> <span class="n">actions_t</span><span class="p">,</span> <span class="n">rewards_t</span><span class="p">,</span> <span class="n">states_tp1</span><span class="p">,</span> <span class="n">done_t</span><span class="p">):</span>
 
         <span class="c1"># actor loss</span>
-        <span class="n">actions_tp0</span><span class="p">,</span> <span class="n">log_pi_tp0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="n">with_log_pi</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">actions_tp0</span><span class="p">,</span> <span class="n">log_pi_tp0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="n">logprob</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">log_pi_tp0</span> <span class="o">=</span> <span class="n">log_pi_tp0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_scale</span>
         <span class="n">q_values_tp0</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="n">actions_tp0</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">critics</span><span class="p">]</span>
         <span class="n">q_values_tp0_min</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">q_values_tp0</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -264,7 +240,7 @@
 
         <span class="c1"># critic loss</span>
         <span class="n">actions_tp1</span><span class="p">,</span> <span class="n">log_pi_tp1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span>
-            <span class="n">states_tp1</span><span class="p">,</span> <span class="n">with_log_pi</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">states_tp1</span><span class="p">,</span> <span class="n">logprob</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
         <span class="n">log_pi_tp1</span> <span class="o">=</span> <span class="n">log_pi_tp1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_scale</span>
         <span class="n">q_values_t</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="n">actions_t</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">critics</span><span class="p">]</span>
@@ -286,26 +262,26 @@
     <span class="p">):</span>
 
         <span class="c1"># actor loss</span>
-        <span class="n">actions_tp0</span><span class="p">,</span> <span class="n">log_pi_tp0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="n">with_log_pi</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">actions_tp0</span><span class="p">,</span> <span class="n">log_pi_tp0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="n">logprob</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">log_pi_tp0</span> <span class="o">=</span> <span class="n">log_pi_tp0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_scale</span>
         <span class="n">logits_tp0</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="n">actions_tp0</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">critics</span><span class="p">]</span>
-        <span class="n">probs_tp0</span> <span class="o">=</span> <span class="p">[</span><span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">logits_tp0</span><span class="p">]</span>
+        <span class="n">probs_tp0</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">logits_tp0</span><span class="p">]</span>
         <span class="n">q_values_tp0</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze_</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">probs_tp0</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">probs_tp0</span>
         <span class="p">]</span>
         <span class="n">q_values_tp0_min</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">q_values_tp0</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">policy_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">log_pi_tp0</span> <span class="o">-</span> <span class="n">q_values_tp0_min</span><span class="p">)</span>
 
         <span class="c1"># critic loss (kl-divergence between categorical distributions)</span>
         <span class="n">actions_tp1</span><span class="p">,</span> <span class="n">log_pi_tp1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span>
-            <span class="n">states_tp1</span><span class="p">,</span> <span class="n">with_log_pi</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">states_tp1</span><span class="p">,</span> <span class="n">logprob</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
         <span class="n">log_pi_tp1</span> <span class="o">=</span> <span class="n">log_pi_tp1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_scale</span>
         <span class="n">logits_t</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="n">actions_t</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">critics</span><span class="p">]</span>
         <span class="n">logits_tp1</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">(</span><span class="n">states_tp1</span><span class="p">,</span> <span class="n">actions_tp1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_critics</span><span class="p">]</span>
-        <span class="n">probs_tp1</span> <span class="o">=</span> <span class="p">[</span><span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">logits_tp1</span><span class="p">]</span>
+        <span class="n">probs_tp1</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">logits_tp1</span><span class="p">]</span>
         <span class="n">q_values_tp1</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze_</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">probs_tp1</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">probs_tp1</span>
         <span class="p">]</span>
         <span class="n">probs_ids_tp1_min</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">q_values_tp1</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
@@ -328,7 +304,7 @@
     <span class="p">):</span>
 
         <span class="c1"># actor loss</span>
-        <span class="n">actions_tp0</span><span class="p">,</span> <span class="n">log_pi_tp0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="n">with_log_pi</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">actions_tp0</span><span class="p">,</span> <span class="n">log_pi_tp0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="n">logprob</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">log_pi_tp0</span> <span class="o">=</span> <span class="n">log_pi_tp0</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_scale</span>
         <span class="n">atoms_tp0</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">x</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="n">actions_tp0</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze_</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">critics</span>
@@ -340,7 +316,7 @@
 
         <span class="c1"># critic loss (quantile regression)</span>
         <span class="n">actions_tp1</span><span class="p">,</span> <span class="n">log_pi_tp1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span>
-            <span class="n">states_tp1</span><span class="p">,</span> <span class="n">with_log_pi</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">states_tp1</span><span class="p">,</span> <span class="n">logprob</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
         <span class="n">log_pi_tp1</span> <span class="o">=</span> <span class="n">log_pi_tp1</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_scale</span>
         <span class="n">atoms_t</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="n">actions_t</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">critics</span><span class="p">]</span>
@@ -358,12 +334,63 @@
         <span class="n">atoms_target_t</span> <span class="o">=</span> <span class="n">rewards_t</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">done_t</span><span class="p">)</span> <span class="o">*</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">atoms_tp1</span>
         <span class="n">value_loss</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">quantile_loss</span><span class="p">(</span>
-                <span class="n">x</span><span class="p">,</span> <span class="n">atoms_target_t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_atoms</span><span class="p">,</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">atoms_target_t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">critic_criterion</span>
             <span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">atoms_t</span>
         <span class="p">]</span>
 
         <span class="k">return</span> <span class="n">policy_loss</span><span class="p">,</span> <span class="n">value_loss</span>
+
+<div class="viewcode-block" id="SAC.pack_checkpoint"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.pack_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">pack_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">checkpoint</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;actor&quot;</span><span class="p">,</span> <span class="s2">&quot;critic&quot;</span><span class="p">]:</span>
+            <span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key2</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">]:</span>
+                <span class="n">key2</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">_</span><span class="si">{key2}</span><span class="s2">&quot;</span>
+                <span class="n">value2</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key2</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">value2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{key2}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value2</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+
+        <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;critics&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">critics</span><span class="p">)):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+            <span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}{i}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key2</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">]:</span>
+                <span class="n">key2</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">_</span><span class="si">{key2}</span><span class="s2">&quot;</span>
+                <span class="n">value2</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key2</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">value2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">value2_i</span> <span class="o">=</span> <span class="n">value2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">value2_i</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">value2_i</span> <span class="o">=</span> <span class="n">value2_i</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+                        <span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{key2}{i}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value2_i</span>
+
+        <span class="k">return</span> <span class="n">checkpoint</span></div>
+
+<div class="viewcode-block" id="SAC.unpack_checkpoint"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.unpack_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">unpack_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SAC.save_checkpoint"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.save_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">save_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SAC.load_checkpoint"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.load_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">load_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span> <span class="n">load_optimizer</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">load_optimizer</span><span class="p">)</span>
+
+        <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">UtilsFactory</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;critics&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">critics</span><span class="p">)):</span>
+            <span class="n">value_l</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">value_l</span> <span class="o">=</span> <span class="n">value_l</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">value_l</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">value_l</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">value_r</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}{i}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span>
+                <span class="n">value_l</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">value_r</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">load_optimizer</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">key2</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">]:</span>
+                    <span class="n">key2</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">_</span><span class="si">{key2}</span><span class="s2">&quot;</span>
+                    <span class="n">value_l</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key2</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">value_l</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">value_r</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{key2}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span>
+                        <span class="n">value_l</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">value_r</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SAC.critic_update"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.critic_update">[docs]</a>    <span class="k">def</span> <span class="nf">critic_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
         <span class="n">metrics</span> <span class="o">=</span> <span class="p">{}</span>
@@ -382,7 +409,7 @@
 
 <div class="viewcode-block" id="SAC.target_critic_update"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.target_critic_update">[docs]</a>    <span class="k">def</span> <span class="nf">target_critic_update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">target</span><span class="p">,</span> <span class="n">source</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_critics</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">critics</span><span class="p">):</span>
-            <span class="n">soft_update</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic_tau</span><span class="p">)</span></div>
+            <span class="n">soft_update</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_critic_tau</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SAC.update_step"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.update_step">[docs]</a>    <span class="k">def</span> <span class="nf">update_step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">policy_loss</span><span class="p">,</span> <span class="n">value_loss</span><span class="p">,</span> <span class="n">actor_update</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">critic_update</span><span class="o">=</span><span class="kc">True</span>
@@ -420,132 +447,52 @@
 <div class="viewcode-block" id="SAC.target_actor_update"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.target_actor_update">[docs]</a>    <span class="k">def</span> <span class="nf">target_actor_update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="SAC.prepare_checkpoint"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.prepare_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">prepare_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">checkpoint</span> <span class="o">=</span> <span class="p">{}</span>
-
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;actor&quot;</span><span class="p">,</span> <span class="s2">&quot;critic&quot;</span><span class="p">]:</span>
-            <span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">key2</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">]:</span>
-                <span class="n">key2</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">_</span><span class="si">{key2}</span><span class="s2">&quot;</span>
-                <span class="n">value2</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key2</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">value2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{key2}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value2</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
-
-        <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;critics&quot;</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">critics</span><span class="p">)):</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-            <span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}{i}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">key2</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">]:</span>
-                <span class="n">key2</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">_</span><span class="si">{key2}</span><span class="s2">&quot;</span>
-                <span class="n">value2</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key2</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">value2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">value2_i</span> <span class="o">=</span> <span class="n">value2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="n">value2_i</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">value2_i</span> <span class="o">=</span> <span class="n">value2_i</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
-                        <span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{key2}{i}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value2_i</span>
-
-        <span class="k">return</span> <span class="n">checkpoint</span></div>
-
-<div class="viewcode-block" id="SAC.load_checkpoint"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.load_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">load_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span> <span class="n">load_optimizer</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">load_optimizer</span><span class="p">)</span>
-
-        <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">UtilsFactory</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
-        <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;critics&quot;</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">critics</span><span class="p">)):</span>
-            <span class="n">value_l</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">value_l</span> <span class="o">=</span> <span class="n">value_l</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">value_l</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
-            <span class="k">if</span> <span class="n">value_l</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">value_r</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}{i}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span>
-                <span class="n">value_l</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">value_r</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">load_optimizer</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">key2</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">]:</span>
-                    <span class="n">key2</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">_</span><span class="si">{key2}</span><span class="s2">&quot;</span>
-                    <span class="n">value_l</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key2</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">value_l</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">value_r</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{key2}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span>
-                        <span class="n">value_l</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">value_r</span><span class="p">)</span></div>
-
 <div class="viewcode-block" id="SAC.prepare_for_trainer"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.prepare_for_trainer">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">prepare_for_trainer</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">prepare_for_trainer</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvironmentSpec</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;AlgorithmSpec&quot;</span><span class="p">:</span>
         <span class="n">config_</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">agents_config</span> <span class="o">=</span> <span class="n">config_</span><span class="p">[</span><span class="s2">&quot;agents&quot;</span><span class="p">]</span>
 
-        <span class="n">actor_state_shape</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">config_</span><span class="p">[</span><span class="s2">&quot;shared&quot;</span><span class="p">][</span><span class="s2">&quot;history_len&quot;</span><span class="p">],</span>
-            <span class="n">config_</span><span class="p">[</span><span class="s2">&quot;shared&quot;</span><span class="p">][</span><span class="s2">&quot;observation_size&quot;</span><span class="p">],</span>
-        <span class="p">)</span>
-        <span class="n">actor_action_size</span> <span class="o">=</span> <span class="n">config_</span><span class="p">[</span><span class="s2">&quot;shared&quot;</span><span class="p">][</span><span class="s2">&quot;action_size&quot;</span><span class="p">]</span>
-        <span class="n">n_step</span> <span class="o">=</span> <span class="n">config_</span><span class="p">[</span><span class="s2">&quot;shared&quot;</span><span class="p">][</span><span class="s2">&quot;n_step&quot;</span><span class="p">]</span>
-        <span class="n">gamma</span> <span class="o">=</span> <span class="n">config_</span><span class="p">[</span><span class="s2">&quot;shared&quot;</span><span class="p">][</span><span class="s2">&quot;gamma&quot;</span><span class="p">]</span>
-        <span class="n">history_len</span> <span class="o">=</span> <span class="n">config_</span><span class="p">[</span><span class="s2">&quot;shared&quot;</span><span class="p">][</span><span class="s2">&quot;history_len&quot;</span><span class="p">]</span>
-        <span class="n">trainer_state_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">config_</span><span class="p">[</span><span class="s2">&quot;shared&quot;</span><span class="p">][</span><span class="s2">&quot;observation_size&quot;</span><span class="p">],)</span>
-        <span class="n">trainer_action_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">config_</span><span class="p">[</span><span class="s2">&quot;shared&quot;</span><span class="p">][</span><span class="s2">&quot;action_size&quot;</span><span class="p">],)</span>
-
-        <span class="n">actor_params</span> <span class="o">=</span> <span class="n">config_</span><span class="p">[</span><span class="s2">&quot;actor&quot;</span><span class="p">]</span>
+        <span class="n">actor_params</span> <span class="o">=</span> <span class="n">agents_config</span><span class="p">[</span><span class="s2">&quot;actor&quot;</span><span class="p">]</span>
         <span class="n">actor</span> <span class="o">=</span> <span class="n">AGENTS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span>
             <span class="o">**</span><span class="n">actor_params</span><span class="p">,</span>
-            <span class="n">state_shape</span><span class="o">=</span><span class="n">actor_state_shape</span><span class="p">,</span>
-            <span class="n">action_size</span><span class="o">=</span><span class="n">actor_action_size</span>
+            <span class="n">env_spec</span><span class="o">=</span><span class="n">env_spec</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">critic_params</span> <span class="o">=</span> <span class="n">config_</span><span class="p">[</span><span class="s2">&quot;critic&quot;</span><span class="p">]</span>
+        <span class="n">critic_params</span> <span class="o">=</span> <span class="n">agents_config</span><span class="p">[</span><span class="s2">&quot;critic&quot;</span><span class="p">]</span>
         <span class="n">critic</span> <span class="o">=</span> <span class="n">AGENTS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span>
             <span class="o">**</span><span class="n">critic_params</span><span class="p">,</span>
-            <span class="n">state_shape</span><span class="o">=</span><span class="n">actor_state_shape</span><span class="p">,</span>
-            <span class="n">action_size</span><span class="o">=</span><span class="n">actor_action_size</span>
+            <span class="n">env_spec</span><span class="o">=</span><span class="n">env_spec</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">n_critics</span> <span class="o">=</span> <span class="n">config_</span><span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;n_critics&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">num_critics</span> <span class="o">=</span> <span class="n">config_</span><span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;num_critics&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">critics</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">AGENTS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span>
                 <span class="o">**</span><span class="n">critic_params</span><span class="p">,</span>
-                <span class="n">state_shape</span><span class="o">=</span><span class="n">actor_state_shape</span><span class="p">,</span>
-                <span class="n">action_size</span><span class="o">=</span><span class="n">actor_action_size</span>
+                <span class="n">env_spec</span><span class="o">=</span><span class="n">env_spec</span><span class="p">,</span>
             <span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span>
-            <span class="nb">range</span><span class="p">(</span><span class="n">n_critics</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="nb">range</span><span class="p">(</span><span class="n">num_critics</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="n">action_space</span> <span class="o">=</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">action_space</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action_space</span><span class="p">,</span> <span class="n">Box</span><span class="p">)</span>
+        <span class="n">action_boundaries</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">action_space</span><span class="o">.</span><span class="n">low</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">action_space</span><span class="o">.</span><span class="n">high</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="p">]</span>
 
         <span class="n">algorithm</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="o">**</span><span class="n">config_</span><span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">],</span>
+            <span class="n">action_boundaries</span><span class="o">=</span><span class="n">action_boundaries</span><span class="p">,</span>
             <span class="n">actor</span><span class="o">=</span><span class="n">actor</span><span class="p">,</span>
             <span class="n">critic</span><span class="o">=</span><span class="n">critic</span><span class="p">,</span>
             <span class="n">critics</span><span class="o">=</span><span class="n">critics</span><span class="p">,</span>
-            <span class="n">n_step</span><span class="o">=</span><span class="n">n_step</span><span class="p">,</span>
-            <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span>
         <span class="p">)</span>
 
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;algorithm&quot;</span><span class="p">:</span> <span class="n">algorithm</span><span class="p">,</span>
-            <span class="s2">&quot;state_shape&quot;</span><span class="p">:</span> <span class="n">trainer_state_shape</span><span class="p">,</span>
-            <span class="s2">&quot;action_shape&quot;</span><span class="p">:</span> <span class="n">trainer_action_shape</span><span class="p">,</span>
-            <span class="s2">&quot;n_step&quot;</span><span class="p">:</span> <span class="n">n_step</span><span class="p">,</span>
-            <span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="n">gamma</span><span class="p">,</span>
-            <span class="s2">&quot;history_len&quot;</span><span class="p">:</span> <span class="n">history_len</span>
-        <span class="p">}</span>
-
-        <span class="k">return</span> <span class="n">kwargs</span></div>
-
-<div class="viewcode-block" id="SAC.prepare_for_sampler"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.prepare_for_sampler">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">prepare_for_sampler</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
-        <span class="n">config_</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-        <span class="n">actor_state_shape</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">config_</span><span class="p">[</span><span class="s2">&quot;shared&quot;</span><span class="p">][</span><span class="s2">&quot;history_len&quot;</span><span class="p">],</span>
-            <span class="n">config_</span><span class="p">[</span><span class="s2">&quot;shared&quot;</span><span class="p">][</span><span class="s2">&quot;observation_size&quot;</span><span class="p">],</span>
-        <span class="p">)</span>
-        <span class="n">actor_action_size</span> <span class="o">=</span> <span class="n">config_</span><span class="p">[</span><span class="s2">&quot;shared&quot;</span><span class="p">][</span><span class="s2">&quot;action_size&quot;</span><span class="p">]</span>
-
-        <span class="n">actor_params</span> <span class="o">=</span> <span class="n">config_</span><span class="p">[</span><span class="s2">&quot;actor&quot;</span><span class="p">]</span>
-        <span class="n">actor</span> <span class="o">=</span> <span class="n">AGENTS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span>
-            <span class="o">**</span><span class="n">actor_params</span><span class="p">,</span>
-            <span class="n">state_shape</span><span class="o">=</span><span class="n">actor_state_shape</span><span class="p">,</span>
-            <span class="n">action_size</span><span class="o">=</span><span class="n">actor_action_size</span>
-        <span class="p">)</span>
-
-        <span class="n">history_len</span> <span class="o">=</span> <span class="n">config_</span><span class="p">[</span><span class="s2">&quot;shared&quot;</span><span class="p">][</span><span class="s2">&quot;history_len&quot;</span><span class="p">]</span>
-
-        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;actor&quot;</span><span class="p">:</span> <span class="n">actor</span><span class="p">,</span> <span class="s2">&quot;history_len&quot;</span><span class="p">:</span> <span class="n">history_len</span><span class="p">}</span>
-
-        <span class="k">return</span> <span class="n">kwargs</span></div></div>
+        <span class="k">return</span> <span class="n">algorithm</span></div></div>
 </pre></div>
 
            </div>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.modules.pooling &mdash; Catalyst 19.03-rc0 documentation</title>
+  <title>catalyst.contrib.modules.pooling &mdash; Catalyst 19.06 documentation</title>
   
 
   
@@ -20,21 +20,11 @@
   <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../../../../',
-              VERSION:'19.03-rc0',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
         <script type="text/javascript" src="../../../../_static/jquery.js"></script>
         <script type="text/javascript" src="../../../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -68,7 +58,7 @@
             
             
               <div class="version">
-                19.03
+                19.06
               </div>
             
           
@@ -176,48 +166,48 @@
 <span class="kn">from</span> <span class="nn">catalyst.contrib.registry</span> <span class="k">import</span> <span class="n">MODULES</span>
 
 
-<div class="viewcode-block" id="GlobalAvgPool2d"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.GlobalAvgPool2d">[docs]</a><span class="k">class</span> <span class="nc">GlobalAvgPool2d</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="GlobalAvgPool2d"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalAvgPool2d">[docs]</a><span class="k">class</span> <span class="nc">GlobalAvgPool2d</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="GlobalAvgPool2d.forward"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalAvgPool2d.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">avg_pool2d</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">avg_pool2d</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span></div>
 
-    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="GlobalAvgPool2d.out_features"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalAvgPool2d.out_features">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">out_features</span><span class="p">(</span><span class="n">in_features</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">in_features</span></div>
+        <span class="k">return</span> <span class="n">in_features</span></div></div>
 
 
-<div class="viewcode-block" id="GlobalMaxPool2d"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.GlobalMaxPool2d">[docs]</a><span class="k">class</span> <span class="nc">GlobalMaxPool2d</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="GlobalMaxPool2d"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalMaxPool2d">[docs]</a><span class="k">class</span> <span class="nc">GlobalMaxPool2d</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="GlobalMaxPool2d.forward"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalMaxPool2d.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">max_pool2d</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">max_pool2d</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span></div>
 
-    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="GlobalMaxPool2d.out_features"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalMaxPool2d.out_features">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">out_features</span><span class="p">(</span><span class="n">in_features</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">in_features</span></div>
+        <span class="k">return</span> <span class="n">in_features</span></div></div>
 
 
-<div class="viewcode-block" id="GlobalConcatPool2d"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.GlobalConcatPool2d">[docs]</a><span class="k">class</span> <span class="nc">GlobalConcatPool2d</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="GlobalConcatPool2d"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalConcatPool2d">[docs]</a><span class="k">class</span> <span class="nc">GlobalConcatPool2d</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">avg</span> <span class="o">=</span> <span class="n">GlobalAvgPool2d</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="n">GlobalMaxPool2d</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">)],</span> <span class="mi">1</span><span class="p">)</span>
+<div class="viewcode-block" id="GlobalConcatPool2d.forward"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalConcatPool2d.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">)],</span> <span class="mi">1</span><span class="p">)</span></div>
 
-    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="GlobalConcatPool2d.out_features"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalConcatPool2d.out_features">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">out_features</span><span class="p">(</span><span class="n">in_features</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">in_features</span> <span class="o">*</span> <span class="mi">2</span></div>
+        <span class="k">return</span> <span class="n">in_features</span> <span class="o">*</span> <span class="mi">2</span></div></div>
 
 
-<div class="viewcode-block" id="GlobalAttnPool2d"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.GlobalAttnPool2d">[docs]</a><span class="k">class</span> <span class="nc">GlobalAttnPool2d</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">activation_fn</span><span class="o">=</span><span class="s2">&quot;Tanh&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="GlobalAttnPool2d"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalAttnPool2d">[docs]</a><span class="k">class</span> <span class="nc">GlobalAttnPool2d</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">activation_fn</span><span class="o">=</span><span class="s2">&quot;Sigmoid&quot;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="n">activation_fn</span> <span class="o">=</span> <span class="n">MODULES</span><span class="o">.</span><span class="n">get_if_str</span><span class="p">(</span><span class="n">activation_fn</span><span class="p">)</span>
@@ -227,59 +217,58 @@
             <span class="p">),</span> <span class="n">activation_fn</span><span class="p">()</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+<div class="viewcode-block" id="GlobalAttnPool2d.forward"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalAttnPool2d.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">x_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x_a</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">x</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span></div>
 
-    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="GlobalAttnPool2d.out_features"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalAttnPool2d.out_features">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">out_features</span><span class="p">(</span><span class="n">in_features</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">in_features</span></div>
+        <span class="k">return</span> <span class="n">in_features</span></div></div>
 
 
-<div class="viewcode-block" id="GlobalAvgAttnPool2d"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.GlobalAvgAttnPool2d">[docs]</a><span class="k">class</span> <span class="nc">GlobalAvgAttnPool2d</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">activation_fn</span><span class="o">=</span><span class="s2">&quot;Tanh&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="GlobalAvgAttnPool2d"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalAvgAttnPool2d">[docs]</a><span class="k">class</span> <span class="nc">GlobalAvgAttnPool2d</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">activation_fn</span><span class="o">=</span><span class="s2">&quot;Sigmoid&quot;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">avg</span> <span class="o">=</span> <span class="n">GlobalAvgPool2d</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">attn</span> <span class="o">=</span> <span class="n">GlobalAttnPool2d</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">activation_fn</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attn</span><span class="p">(</span><span class="n">x</span><span class="p">)],</span> <span class="mi">1</span><span class="p">)</span>
+<div class="viewcode-block" id="GlobalAvgAttnPool2d.forward"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalAvgAttnPool2d.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attn</span><span class="p">(</span><span class="n">x</span><span class="p">)],</span> <span class="mi">1</span><span class="p">)</span></div>
 
-    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="GlobalAvgAttnPool2d.out_features"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalAvgAttnPool2d.out_features">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">out_features</span><span class="p">(</span><span class="n">in_features</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">in_features</span> <span class="o">*</span> <span class="mi">2</span></div>
+        <span class="k">return</span> <span class="n">in_features</span> <span class="o">*</span> <span class="mi">2</span></div></div>
 
 
-<div class="viewcode-block" id="GlobalMaxAttnPool2d"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.GlobalMaxAttnPool2d">[docs]</a><span class="k">class</span> <span class="nc">GlobalMaxAttnPool2d</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">activation_fn</span><span class="o">=</span><span class="s2">&quot;Tanh&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="GlobalMaxAttnPool2d"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalMaxAttnPool2d">[docs]</a><span class="k">class</span> <span class="nc">GlobalMaxAttnPool2d</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">activation_fn</span><span class="o">=</span><span class="s2">&quot;Sigmoid&quot;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="n">GlobalMaxPool2d</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">attn</span> <span class="o">=</span> <span class="n">GlobalAttnPool2d</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">activation_fn</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attn</span><span class="p">(</span><span class="n">x</span><span class="p">)],</span> <span class="mi">1</span><span class="p">)</span>
+<div class="viewcode-block" id="GlobalMaxAttnPool2d.forward"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalMaxAttnPool2d.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attn</span><span class="p">(</span><span class="n">x</span><span class="p">)],</span> <span class="mi">1</span><span class="p">)</span></div>
 
-    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="GlobalMaxAttnPool2d.out_features"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalMaxAttnPool2d.out_features">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">out_features</span><span class="p">(</span><span class="n">in_features</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">in_features</span> <span class="o">*</span> <span class="mi">2</span></div>
+        <span class="k">return</span> <span class="n">in_features</span> <span class="o">*</span> <span class="mi">2</span></div></div>
 
 
-<div class="viewcode-block" id="GlobalConcatAttnPool2d"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.GlobalConcatAttnPool2d">[docs]</a><span class="k">class</span> <span class="nc">GlobalConcatAttnPool2d</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">activation_fn</span><span class="o">=</span><span class="s2">&quot;Tanh&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="GlobalConcatAttnPool2d"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalConcatAttnPool2d">[docs]</a><span class="k">class</span> <span class="nc">GlobalConcatAttnPool2d</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">activation_fn</span><span class="o">=</span><span class="s2">&quot;Sigmoid&quot;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">avg</span> <span class="o">=</span> <span class="n">GlobalAvgPool2d</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="n">GlobalMaxPool2d</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">attn</span> <span class="o">=</span> <span class="n">GlobalAttnPool2d</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">activation_fn</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attn</span><span class="p">(</span><span class="n">x</span><span class="p">)],</span> <span class="mi">1</span><span class="p">)</span>
+<div class="viewcode-block" id="GlobalConcatAttnPool2d.forward"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalConcatAttnPool2d.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">attn</span><span class="p">(</span><span class="n">x</span><span class="p">)],</span> <span class="mi">1</span><span class="p">)</span></div>
 
-    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="GlobalConcatAttnPool2d.out_features"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.pooling.GlobalConcatAttnPool2d.out_features">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">out_features</span><span class="p">(</span><span class="n">in_features</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">in_features</span> <span class="o">*</span> <span class="mi">3</span></div>
+        <span class="k">return</span> <span class="n">in_features</span> <span class="o">*</span> <span class="mi">3</span></div></div>
 </pre></div>
 
            </div>

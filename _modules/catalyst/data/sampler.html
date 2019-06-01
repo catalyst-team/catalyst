@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.data.sampler &mdash; Catalyst 19.03-rc0 documentation</title>
+  <title>catalyst.data.sampler &mdash; Catalyst 19.06 documentation</title>
   
 
   
@@ -20,21 +20,11 @@
   <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../../../',
-              VERSION:'19.03-rc0',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
         <script type="text/javascript" src="../../../_static/jquery.js"></script>
         <script type="text/javascript" src="../../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -68,7 +58,7 @@
             
             
               <div class="version">
-                19.03
+                19.06
               </div>
             
           
@@ -235,6 +225,84 @@
 <span class="sd">             length of result sample</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span></div></div>
+
+
+<div class="viewcode-block" id="MiniEpochSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.MiniEpochSampler">[docs]</a><span class="k">class</span> <span class="nc">MiniEpochSampler</span><span class="p">(</span><span class="n">Sampler</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Sampler iterates mini epochs from the dataset</span>
+<span class="sd">        used by ``mini_epoch_len``</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_len (int): Size of the dataset</span>
+<span class="sd">        mini_epoch_len (int): Num samples from the dataset used in one</span>
+<span class="sd">            mini epoch.</span>
+<span class="sd">        drop_last (bool): If ``True``, sampler will drop the last batches if</span>
+<span class="sd">            its size would be less than ``batches_per_epoch``</span>
+<span class="sd">        shuffle (str): one of  ``[&quot;always&quot;, &quot;real_epoch&quot;, None]``.</span>
+<span class="sd">            The sampler will shuffle indices</span>
+<span class="sd">            &gt; &quot;per_mini_epoch&quot; -- every mini epoch (every ``__iter__`` call)</span>
+<span class="sd">            &gt; &quot;per_epoch&quot; -- every real epoch</span>
+<span class="sd">            &gt; None -- don&#39;t shuffle</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; MiniEpochSampler(len(dataset), batches_per_epoch=100)</span>
+<span class="sd">        &gt;&gt;&gt; MiniEpochSampler(len(dataset), batches_per_epoch=100, \</span>
+<span class="sd">            drop_last=True)</span>
+<span class="sd">        &gt;&gt;&gt; MiniEpochSampler(len(dataset), batches_per_epoch=100, \</span>
+<span class="sd">            shuffle=&quot;per_epoch&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">mini_epoch_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">drop_last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">shuffle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_len</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data_len</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mini_epoch_len</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mini_epoch_len</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data_len</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">mini_epoch_len</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_i</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">has_reminder</span> <span class="o">=</span> <span class="n">data_len</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">*</span> <span class="n">mini_epoch_len</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">divider</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">has_reminder</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">drop_last</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">divider</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">divider</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_len</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">shuffle</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">shuffle</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;per_mini_epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;per_epoch&quot;</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="n">f</span><span class="s2">&quot;Shuffle must be one of [&#39;per_mini_epoch&#39;, &#39;per_epoch&#39;]. &quot;</span>
+                <span class="n">f</span><span class="s2">&quot;Got </span><span class="si">{shuffle}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_type</span> <span class="o">=</span> <span class="n">shuffle</span>
+
+<div class="viewcode-block" id="MiniEpochSampler.shuffle"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.MiniEpochSampler.shuffle">[docs]</a>    <span class="k">def</span> <span class="nf">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_type</span> <span class="o">==</span> <span class="s2">&quot;per_mini_epoch&quot;</span> <span class="ow">or</span> \
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shuffle_type</span> <span class="o">==</span> <span class="s2">&quot;per_epoch&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MiniEpochSampler.__iter__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.MiniEpochSampler.__iter__">[docs]</a>    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_i</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">divider</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span><span class="p">()</span>
+
+        <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_i</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mini_epoch_len</span>
+        <span class="n">stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_len</span> <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state_i</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span> \
+            <span class="k">else</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state_i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mini_epoch_len</span>
+
+        <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MiniEpochSampler.__len__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.MiniEpochSampler.__len__">[docs]</a>    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mini_epoch_len</span></div></div>
 </pre></div>
 
            </div>

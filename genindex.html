@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; Catalyst 19.03-rc0 documentation</title>
+  <title>Index &mdash; Catalyst 19.06 documentation</title>
   
 
   
@@ -21,21 +21,11 @@
   <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'./',
-              VERSION:'19.03-rc0',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script type="text/javascript" src="_static/jquery.js"></script>
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -69,7 +59,7 @@
             
             
               <div class="version">
-                19.03
+                19.06
               </div>
             
           
@@ -182,11 +172,13 @@
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#J"><strong>J</strong></a>
+ | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
@@ -197,6 +189,8 @@
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
  | <a href="#V"><strong>V</strong></a>
+ | <a href="#W"><strong>W</strong></a>
+ | <a href="#X"><strong>X</strong></a>
  
 </div>
 <h2 id="_">_</h2>
@@ -222,10 +216,10 @@
         <li><a href="api/data.html#catalyst.data.dataset.MergeDataset.__getitem__">(catalyst.data.dataset.MergeDataset method)</a>
 </li>
       </ul></li>
-      <li><a href="api/contrib.html#catalyst.contrib.models.ResNetUnet.__init__">__init__() (catalyst.contrib.models.ResNetUnet method)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.focal.FocalLossBinary.__init__">__init__() (catalyst.contrib.criterion.focal.FocalLossBinary method)</a>
 
       <ul>
-        <li><a href="api/contrib.html#catalyst.contrib.registry.Registry.__init__">(catalyst.contrib.registry.Registry method)</a>
+        <li><a href="api/contrib.html#catalyst.contrib.scheduler.OneCycleLR.__init__">(catalyst.contrib.scheduler.OneCycleLR method)</a>
 </li>
         <li><a href="api/data.html#catalyst.data.augmentor.Augmentor.__init__">(catalyst.data.augmentor.Augmentor method)</a>
 </li>
@@ -251,9 +245,15 @@
 </li>
         <li><a href="api/data.html#catalyst.data.sampler.BalanceClassSampler.__init__">(catalyst.data.sampler.BalanceClassSampler method)</a>
 </li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.AccuracyCallback.__init__">(catalyst.dl.callbacks.AccuracyCallback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.CheckpointCallback.__init__">(catalyst.dl.callbacks.CheckpointCallback method)</a>
+</li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.DiceCallback.__init__">(catalyst.dl.callbacks.DiceCallback method)</a>
 </li>
-        <li><a href="api/dl.html#catalyst.dl.callbacks.JaccardCallback.__init__">(catalyst.dl.callbacks.JaccardCallback method)</a>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.F1ScoreCallback.__init__">(catalyst.dl.callbacks.F1ScoreCallback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.IouCallback.__init__">(catalyst.dl.callbacks.IouCallback method)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.LRFinder.__init__">(catalyst.dl.callbacks.LRFinder method)</a>
 </li>
@@ -261,23 +261,37 @@
 </li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.MapKCallback.__init__">(catalyst.dl.callbacks.MapKCallback method)</a>
 </li>
-        <li><a href="api/dl.html#catalyst.dl.callbacks.OneCycleLR.__init__">(catalyst.dl.callbacks.OneCycleLR method)</a>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.MetricsFormatter.__init__">(catalyst.dl.callbacks.MetricsFormatter method)</a>
 </li>
-        <li><a href="api/dl.html#catalyst.dl.callbacks.PrecisionCallback.__init__">(catalyst.dl.callbacks.PrecisionCallback method)</a>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.OptimizerCallback.__init__">(catalyst.dl.callbacks.OptimizerCallback method)</a>
 </li>
-        <li><a href="api/rl.html#catalyst.rl.agents.layers.CouplingLayer.__init__">(catalyst.rl.agents.layers.CouplingLayer method)</a>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.TensorboardLogger.__init__">(catalyst.dl.callbacks.TensorboardLogger method)</a>
 </li>
-        <li><a href="api/rl.html#catalyst.rl.agents.layers.SquashingLayer.__init__">(catalyst.rl.agents.layers.SquashingLayer method)</a>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.VerboseLogger.__init__">(catalyst.dl.callbacks.VerboseLogger method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiments.runner.SupervisedRunner.__init__">(catalyst.dl.experiments.runner.SupervisedRunner method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.CouplingLayer.__init__">(catalyst.rl.agents.CouplingLayer method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.SquashingLayer.__init__">(catalyst.rl.agents.SquashingLayer method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.StateNet.__init__">(catalyst.rl.agents.StateNet method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data.html#catalyst.data.sampler.BalanceClassSampler.__iter__">__iter__() (catalyst.data.sampler.BalanceClassSampler method)</a>
+
+      <ul>
+        <li><a href="api/data.html#catalyst.data.sampler.MiniEpochSampler.__iter__">(catalyst.data.sampler.MiniEpochSampler method)</a>
 </li>
+      </ul></li>
       <li><a href="api/data.html#catalyst.data.dataset.ListDataset.__len__">__len__() (catalyst.data.dataset.ListDataset method)</a>
 
       <ul>
         <li><a href="api/data.html#catalyst.data.sampler.BalanceClassSampler.__len__">(catalyst.data.sampler.BalanceClassSampler method)</a>
+</li>
+        <li><a href="api/data.html#catalyst.data.sampler.MiniEpochSampler.__len__">(catalyst.data.sampler.MiniEpochSampler method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -286,33 +300,71 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.sampler.Sampler.act">act() (catalyst.rl.offpolicy.sampler.Sampler method)</a>
+      <li><a href="api/dl.html#catalyst.dl.metrics.accuracy">accuracy() (in module catalyst.dl.metrics)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.AccuracyCallback">AccuracyCallback (class in catalyst.dl.callbacks)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.environments.EnvironmentSpec.action_space">action_space (catalyst.rl.environments.EnvironmentSpec attribute)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.environments.GymWrapper.action_space">(catalyst.rl.environments.GymWrapper attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/rl.html#catalyst.rl.agents.ActionCritic">ActionCritic (class in catalyst.rl.agents)</a>
 </li>
       <li><a href="api/rl.html#catalyst.rl.agents.Actor">Actor (class in catalyst.rl.agents)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.Algorithm.actor_update">actor_update() (catalyst.rl.offpolicy.algorithms.core.Algorithm method)</a>
+      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec.actor_update">actor_update() (catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous.actor_update">(catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous method)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.registry.Registry.add">add() (catalyst.contrib.registry.Registry method)</a>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete.actor_update">(catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete method)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.registry.Registry.add_from_module">add_from_module() (catalyst.contrib.registry.Registry method)</a>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec.actor_update">(catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec method)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.Algorithm">Algorithm (class in catalyst.rl.offpolicy.algorithms.core)</a>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec.actor_update">(catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec.actor_update">(catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec">ActorAlgorithmSpec (class in catalyst.rl.onpolicy.algorithms.actor)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec">ActorCriticAlgorithmSpec (class in catalyst.rl.onpolicy.algorithms.actor_critic)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/rl.html#catalyst.rl.random_process.AnnealedGaussianProcess">AnnealedGaussianProcess (class in catalyst.rl.random_process)</a>
+      <li><a href="api/rl.html#catalyst.rl.agents.ActorSpec">ActorSpec (class in catalyst.rl.agents)</a>
 </li>
+      <li><a href="api/dl.html#catalyst.dl.metric_manager.MetricManager.add_batch_value">add_batch_value() (catalyst.dl.metric_manager.MetricManager method)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous">AlgorithmContinuous (class in catalyst.rl.offpolicy.algorithms.core_continuous)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete">AlgorithmDiscrete (class in catalyst.rl.offpolicy.algorithms.core_discrete)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec">AlgorithmSpec (class in catalyst.rl.offpolicy.algorithms.core)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec">(class in catalyst.rl.onpolicy.algorithms.core)</a>
+</li>
+      </ul></li>
       <li><a href="api/utils.html#catalyst.utils.misc.args_are_not_none">args_are_not_none() (in module catalyst.utils.misc)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.assert_fp16_available">assert_fp16_available() (catalyst.dl.utils.UtilsFactory method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.utils.assert_fp16_available">(in module catalyst.dl.utils)</a>
+</li>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.AUCCallback">AUCCallback (class in catalyst.dl.callbacks)</a>
 </li>
       <li><a href="api/data.html#catalyst.data.augmentor.Augmentor">Augmentor (class in catalyst.data.augmentor)</a>
 </li>
       <li><a href="api/data.html#catalyst.data.augmentor.AugmentorKeys">AugmentorKeys (class in catalyst.data.augmentor)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.agents.layers.LamaPooling.available_poolings">available_poolings (catalyst.rl.agents.layers.LamaPooling attribute)</a>
+      <li><a href="api/rl.html#catalyst.rl.agents.LamaPooling.available_poolings">available_poolings (catalyst.rl.agents.LamaPooling attribute)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.metrics.average_precision">average_precision() (in module catalyst.dl.metrics)</a>
+      <li><a href="api/dl.html#catalyst.dl.metrics.average_accuracy">average_accuracy() (in module catalyst.dl.metrics)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -320,25 +372,39 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.center.CenterLossFunc.backward">backward() (catalyst.contrib.criterion.center.CenterLossFunc static method)</a>
+</li>
       <li><a href="api/utils.html#catalyst.utils.data.balance_classes">balance_classes() (in module catalyst.utils.data)</a>
 </li>
       <li><a href="api/data.html#catalyst.data.sampler.BalanceClassSampler">BalanceClassSampler (class in catalyst.data.sampler)</a>
 </li>
+      <li><a href="api/dl.html#catalyst.dl.experiments.experiment.BaseExperiment">BaseExperiment (class in catalyst.dl.experiments.experiment)</a>
+</li>
       <li><a href="api/data.html#catalyst.data.reader.BaseReader">BaseReader (class in catalyst.data.reader)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.criterion.BCEDiceLoss">BCEDiceLoss (class in catalyst.contrib.criterion)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.scheduler.BaseScheduler">BaseScheduler (class in catalyst.contrib.scheduler)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.metric_manager.MetricManager.batch_values">batch_values (catalyst.dl.metric_manager.MetricManager attribute)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.dice.BCEDiceLoss">BCEDiceLoss (class in catalyst.contrib.criterion.dice)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/contrib.html#catalyst.contrib.criterion.BCESoftmaxLoss">BCESoftmaxLoss (class in catalyst.contrib.criterion)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.iou.BCEIoULoss">BCEIoULoss (class in catalyst.contrib.criterion.iou)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.fp16.BN_convert_float">BN_convert_float() (in module catalyst.dl.fp16)</a>
+      <li><a href="api/dl.html#catalyst.dl.metric_manager.MetricManager.begin_batch">begin_batch() (catalyst.dl.metric_manager.MetricManager method)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.metric_manager.MetricManager.begin_epoch">begin_epoch() (catalyst.dl.metric_manager.MetricManager method)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.metric_manager.MetricManager.begin_loader">begin_loader() (catalyst.dl.metric_manager.MetricManager method)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.initialization.bias_init_with_prob">bias_init_with_prob() (in module catalyst.dl.initialization)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.utils.binary_mask_to_overlay_image">binary_mask_to_overlay_image() (in module catalyst.dl.callbacks.utils)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.exploration.Boltzmann">Boltzmann (class in catalyst.rl.exploration)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.misc.boolean_flag">boolean_flag() (in module catalyst.utils.misc)</a>
-</li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.trainer.BufferDataset">BufferDataset (class in catalyst.rl.offpolicy.trainer)</a>
-</li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.trainer.BufferSampler">BufferSampler (class in catalyst.rl.offpolicy.trainer)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -351,20 +417,36 @@
       <ul>
         <li><a href="api/dl.html#catalyst.dl.callbacks.LRUpdater.calc_lr">(catalyst.dl.callbacks.LRUpdater method)</a>
 </li>
-        <li><a href="api/dl.html#catalyst.dl.callbacks.OneCycleLR.calc_lr">(catalyst.dl.callbacks.OneCycleLR method)</a>
-</li>
       </ul></li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.LRUpdater.calc_momentum">calc_momentum() (catalyst.dl.callbacks.LRUpdater method)</a>
-
-      <ul>
-        <li><a href="api/dl.html#catalyst.dl.callbacks.OneCycleLR.calc_momentum">(catalyst.dl.callbacks.OneCycleLR method)</a>
 </li>
-      </ul></li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.Callback">Callback (class in catalyst.dl.callbacks)</a>
+</li>
+      <li><a href="api/contrib.html#module-catalyst.contrib">catalyst.contrib (module)</a>
+</li>
+      <li><a href="api/contrib.html#module-catalyst.contrib.criterion.ce">catalyst.contrib.criterion.ce (module)</a>
+</li>
+      <li><a href="api/contrib.html#module-catalyst.contrib.criterion.center">catalyst.contrib.criterion.center (module)</a>
+</li>
+      <li><a href="api/contrib.html#module-catalyst.contrib.criterion.contrastive">catalyst.contrib.criterion.contrastive (module)</a>
+</li>
+      <li><a href="api/contrib.html#module-catalyst.contrib.criterion.dice">catalyst.contrib.criterion.dice (module)</a>
+</li>
+      <li><a href="api/contrib.html#module-catalyst.contrib.criterion.focal">catalyst.contrib.criterion.focal (module)</a>
+</li>
+      <li><a href="api/contrib.html#module-catalyst.contrib.criterion.huber">catalyst.contrib.criterion.huber (module)</a>
+</li>
+      <li><a href="api/contrib.html#module-catalyst.contrib.criterion.iou">catalyst.contrib.criterion.iou (module)</a>
+</li>
+      <li><a href="api/contrib.html#module-catalyst.contrib.criterion.wing">catalyst.contrib.criterion.wing (module)</a>
 </li>
       <li><a href="api/contrib.html#module-catalyst.contrib.models">catalyst.contrib.models (module)</a>
 </li>
-      <li><a href="api/contrib.html#module-catalyst.contrib.optimizers">catalyst.contrib.optimizers (module)</a>
+      <li><a href="api/contrib.html#module-catalyst.contrib.modules.common">catalyst.contrib.modules.common (module)</a>
+</li>
+      <li><a href="api/contrib.html#module-catalyst.contrib.modules.noisy">catalyst.contrib.modules.noisy (module)</a>
+</li>
+      <li><a href="api/contrib.html#module-catalyst.contrib.modules.pooling">catalyst.contrib.modules.pooling (module)</a>
 </li>
       <li><a href="api/data.html#module-catalyst.data">catalyst.data (module)</a>
 </li>
@@ -384,9 +466,15 @@
 </li>
       <li><a href="api/dl.html#module-catalyst.dl.callbacks.utils">catalyst.dl.callbacks.utils (module)</a>
 </li>
-      <li><a href="api/dl.html#module-catalyst.dl.fp16">catalyst.dl.fp16 (module)</a>
+      <li><a href="api/dl.html#module-catalyst.dl.experiments.experiment">catalyst.dl.experiments.experiment (module)</a>
+</li>
+      <li><a href="api/dl.html#module-catalyst.dl.experiments.runner">catalyst.dl.experiments.runner (module)</a>
 </li>
       <li><a href="api/dl.html#module-catalyst.dl.initialization">catalyst.dl.initialization (module)</a>
+</li>
+      <li><a href="api/dl.html#module-catalyst.dl.losses">catalyst.dl.losses (module)</a>
+</li>
+      <li><a href="api/dl.html#module-catalyst.dl.metric_manager">catalyst.dl.metric_manager (module)</a>
 </li>
       <li><a href="api/dl.html#module-catalyst.dl.metrics">catalyst.dl.metrics (module)</a>
 </li>
@@ -394,15 +482,19 @@
 </li>
       <li><a href="api/dl.html#module-catalyst.dl.utils">catalyst.dl.utils (module)</a>
 </li>
-      <li><a href="api/rl.html#module-catalyst.rl">catalyst.rl (module)</a>
+      <li><a href="api/dl.html#module-catalyst.dl.utils.trace">catalyst.dl.utils.trace (module)</a>
 </li>
-      <li><a href="api/rl.html#module-catalyst.rl.agents.layers">catalyst.rl.agents.layers (module)</a>
+      <li><a href="api/rl.html#module-catalyst.rl">catalyst.rl (module)</a>
 </li>
       <li><a href="api/rl.html#module-catalyst.rl.agents.utils">catalyst.rl.agents.utils (module)</a>
 </li>
       <li><a href="api/rl.html#module-catalyst.rl.offpolicy.algorithms">catalyst.rl.offpolicy.algorithms (module)</a>
 </li>
       <li><a href="api/rl.html#module-catalyst.rl.offpolicy.algorithms.core">catalyst.rl.offpolicy.algorithms.core (module)</a>
+</li>
+      <li><a href="api/rl.html#module-catalyst.rl.offpolicy.algorithms.core_continuous">catalyst.rl.offpolicy.algorithms.core_continuous (module)</a>
+</li>
+      <li><a href="api/rl.html#module-catalyst.rl.offpolicy.algorithms.core_discrete">catalyst.rl.offpolicy.algorithms.core_discrete (module)</a>
 </li>
       <li><a href="api/rl.html#module-catalyst.rl.offpolicy.algorithms.ddpg">catalyst.rl.offpolicy.algorithms.ddpg (module)</a>
 </li>
@@ -416,7 +508,21 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/rl.html#module-catalyst.rl.offpolicy.trainer">catalyst.rl.offpolicy.trainer (module)</a>
 </li>
-      <li><a href="api/rl.html#module-catalyst.rl.random_process">catalyst.rl.random_process (module)</a>
+      <li><a href="api/rl.html#module-catalyst.rl.onpolicy.algorithms">catalyst.rl.onpolicy.algorithms (module)</a>
+</li>
+      <li><a href="api/rl.html#module-catalyst.rl.onpolicy.algorithms.actor">catalyst.rl.onpolicy.algorithms.actor (module)</a>
+</li>
+      <li><a href="api/rl.html#module-catalyst.rl.onpolicy.algorithms.actor_critic">catalyst.rl.onpolicy.algorithms.actor_critic (module)</a>
+</li>
+      <li><a href="api/rl.html#module-catalyst.rl.onpolicy.algorithms.core">catalyst.rl.onpolicy.algorithms.core (module)</a>
+</li>
+      <li><a href="api/rl.html#module-catalyst.rl.onpolicy.algorithms.ppo">catalyst.rl.onpolicy.algorithms.ppo (module)</a>
+</li>
+      <li><a href="api/rl.html#module-catalyst.rl.onpolicy.algorithms.reinforce">catalyst.rl.onpolicy.algorithms.reinforce (module)</a>
+</li>
+      <li><a href="api/rl.html#module-catalyst.rl.onpolicy.sampler">catalyst.rl.onpolicy.sampler (module)</a>
+</li>
+      <li><a href="api/rl.html#module-catalyst.rl.onpolicy.trainer">catalyst.rl.onpolicy.trainer (module)</a>
 </li>
       <li><a href="api/utils.html#module-catalyst.utils">catalyst.utils (module)</a>
 </li>
@@ -432,56 +538,72 @@
 </li>
       <li><a href="api/utils.html#module-catalyst.utils.serialization">catalyst.utils.serialization (module)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.criterion.CenterLoss">CenterLoss (class in catalyst.contrib.criterion)</a>
+      <li><a href="api/rl.html#catalyst.rl.agents.CategoricalPolicy">CategoricalPolicy (class in catalyst.rl.agents)</a>
 </li>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.center.CenterLoss">CenterLoss (class in catalyst.contrib.criterion.center)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.center.CenterLossFunc">CenterLossFunc (class in catalyst.contrib.criterion.center)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.CheckpointCallback">CheckpointCallback (class in catalyst.dl.callbacks)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.db.DBSpec.clean_trajectories">clean_trajectories() (catalyst.rl.db.DBSpec method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.db.MongoDB.clean_trajectories">(catalyst.rl.db.MongoDB method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.db.RedisDB.clean_trajectories">(catalyst.rl.db.RedisDB method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/rl.html#catalyst.rl.db.DBSpec.clean_weights">clean_weights() (catalyst.rl.db.DBSpec method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.db.MongoDB.clean_weights">(catalyst.rl.db.MongoDB method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.db.RedisDB.clean_weights">(catalyst.rl.db.RedisDB method)</a>
+</li>
+      </ul></li>
       <li><a href="api/utils.html#catalyst.utils.data.column_fold_split">column_fold_split() (in module catalyst.utils.data)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.criterion.ContrastiveDistanceLoss">ContrastiveDistanceLoss (class in catalyst.contrib.criterion)</a>
+      <li><a href="api/dl.html#catalyst.dl.experiments.experiment.ConfigExperiment">ConfigExperiment (class in catalyst.dl.experiments.experiment)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.criterion.ContrastiveEmbeddingLoss">ContrastiveEmbeddingLoss (class in catalyst.contrib.criterion)</a>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.ConfusionMatrixCallback">ConfusionMatrixCallback (class in catalyst.dl.callbacks)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.fp16.copy_grads">copy_grads() (in module catalyst.dl.fp16)</a>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.ConsoleLogger">ConsoleLogger (class in catalyst.dl.callbacks)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.fp16.copy_params">copy_params() (in module catalyst.dl.fp16)</a>
+      <li><a href="api/dl.html#catalyst.dl.initialization.constant_init">constant_init() (in module catalyst.dl.initialization)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.agents.layers.CouplingLayer">CouplingLayer (class in catalyst.rl.agents.layers)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss">ContrastiveDistanceLoss (class in catalyst.contrib.criterion.contrastive)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.contrastive.ContrastiveEmbeddingLoss">ContrastiveEmbeddingLoss (class in catalyst.contrib.criterion.contrastive)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.agents.CouplingLayer">CouplingLayer (class in catalyst.rl.agents)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.data.create_dataframe">create_dataframe() (in module catalyst.utils.data)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.data.create_dataset">create_dataset() (in module catalyst.utils.data)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.agents.Actor.create_from_params">create_from_params() (catalyst.rl.agents.Actor class method)</a>
-
-      <ul>
-        <li><a href="api/rl.html#catalyst.rl.agents.Critic.create_from_params">(catalyst.rl.agents.Critic class method)</a>
-</li>
-        <li><a href="api/rl.html#catalyst.rl.agents.ValueCritic.create_from_params">(catalyst.rl.agents.ValueCritic method)</a>
-</li>
-      </ul></li>
-      <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.create_loader">create_loader() (catalyst.dl.utils.UtilsFactory static method)</a>
-</li>
-      <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.create_loggers">create_loggers() (catalyst.dl.utils.UtilsFactory static method)</a>
-</li>
       <li><a href="api/dl.html#catalyst.dl.initialization.create_optimal_inner_init">create_optimal_inner_init() (in module catalyst.dl.initialization)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.create_tflogger">create_tflogger() (catalyst.dl.utils.UtilsFactory static method)</a>
-</li>
-      <li><a href="api/rl.html#catalyst.rl.agents.Critic">Critic (class in catalyst.rl.agents)</a>
-</li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.Algorithm.critic_update">critic_update() (catalyst.rl.offpolicy.algorithms.core.Algorithm method)</a>
+      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec.critic_update">critic_update() (catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec method)</a>
 
       <ul>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous.critic_update">(catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete.critic_update">(catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete method)</a>
+</li>
         <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.critic_update">(catalyst.rl.offpolicy.algorithms.sac.SAC method)</a>
 </li>
         <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.td3.TD3.critic_update">(catalyst.rl.offpolicy.algorithms.td3.TD3 method)</a>
 </li>
-      </ul></li>
-      <li><a href="api/rl.html#catalyst.rl.random_process.AnnealedGaussianProcess.current_sigma">current_sigma (catalyst.rl.random_process.AnnealedGaussianProcess attribute)</a>
-
-      <ul>
-        <li><a href="api/rl.html#catalyst.rl.random_process.RandomProcess.current_sigma">(catalyst.rl.random_process.RandomProcess attribute)</a>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec.critic_update">(catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec.critic_update">(catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec.critic_update">(catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec method)</a>
 </li>
       </ul></li>
+      <li><a href="api/rl.html#catalyst.rl.agents.CriticSpec">CriticSpec (class in catalyst.rl.agents)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -490,19 +612,75 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/utils.html#catalyst.utils.parse.dataframe_to_list">dataframe_to_list() (in module catalyst.utils.parse)</a>
 </li>
+      <li><a href="api/rl.html#catalyst.rl.db.DBSpec">DBSpec (class in catalyst.rl.db)</a>
+</li>
       <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.ddpg.DDPG">DDPG (class in catalyst.rl.offpolicy.algorithms.ddpg)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.data.default_fold_split">default_fold_split() (in module catalyst.utils.data)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/utils.html#catalyst.utils.serialization.deserialize">deserialize() (in module catalyst.utils.serialization)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.metrics.dice">dice() (in module catalyst.dl.metrics)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.DiceCallback">DiceCallback (class in catalyst.dl.callbacks)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.criterion.DiceLoss">DiceLoss (class in catalyst.contrib.criterion)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.dice.DiceLoss">DiceLoss (class in catalyst.contrib.criterion.dice)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.environments.EnvironmentSpec.discrete_actions">discrete_actions (catalyst.rl.environments.EnvironmentSpec attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/dl.html#catalyst.dl.experiments.experiment.BaseExperiment.distributed_params">distributed_params (catalyst.dl.experiments.experiment.BaseExperiment attribute)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.ConfigExperiment.distributed_params">(catalyst.dl.experiments.experiment.ConfigExperiment attribute)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.Experiment.distributed_params">(catalyst.dl.experiments.experiment.Experiment attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/rl.html#catalyst.rl.agents.CriticSpec.distribution">distribution (catalyst.rl.agents.CriticSpec attribute)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.agents.StateActionCritic.distribution">(catalyst.rl.agents.StateActionCritic attribute)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.StateCritic.distribution">(catalyst.rl.agents.StateCritic attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/utils.html#catalyst.utils.config.dump_config">dump_config() (in module catalyst.utils.config)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.db.DBSpec.dump_weights">dump_weights() (catalyst.rl.db.DBSpec method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.db.MongoDB.dump_weights">(catalyst.rl.db.MongoDB method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.db.RedisDB.dump_weights">(catalyst.rl.db.RedisDB method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.EarlyStoppingCallback">EarlyStoppingCallback (class in catalyst.dl.callbacks)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.metric_manager.MetricManager.end_batch">end_batch() (catalyst.dl.metric_manager.MetricManager method)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.metric_manager.MetricManager.end_epoch_train">end_epoch_train() (catalyst.dl.metric_manager.MetricManager method)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.metric_manager.MetricManager.end_loader">end_loader() (catalyst.dl.metric_manager.MetricManager method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/rl.html#catalyst.rl.environments.EnvironmentSpec">EnvironmentSpec (class in catalyst.rl.environments)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.exploration.EpsilonGreedy">EpsilonGreedy (class in catalyst.rl.exploration)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.experiments.experiment.Experiment">Experiment (class in catalyst.dl.experiments.experiment)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.exploration.ExplorationHandler">ExplorationHandler (class in catalyst.rl.exploration)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.exploration.ExplorationStrategy">ExplorationStrategy (class in catalyst.rl.exploration)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -510,44 +688,116 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.trainer.Trainer.fetch_episodes">fetch_episodes() (catalyst.rl.offpolicy.trainer.Trainer method)</a>
+      <li><a href="api/dl.html#catalyst.dl.metrics.f1_score">f1_score() (in module catalyst.dl.metrics)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.F1ScoreCallback">F1ScoreCallback (class in catalyst.dl.callbacks)</a>
 </li>
       <li><a href="api/data.html#catalyst.data.collate_fn.FilteringCollateFn">FilteringCollateFn (class in catalyst.data.collate_fn)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.modules.Flatten">Flatten (class in catalyst.contrib.modules)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.modules.common.Flatten">Flatten (class in catalyst.contrib.modules.common)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.criterion.FocalLoss">FocalLoss (class in catalyst.contrib.criterion)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.focal.FocalLossBinary">FocalLossBinary (class in catalyst.contrib.criterion.focal)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.focal.FocalLossMultiClass">FocalLossMultiClass (class in catalyst.contrib.criterion.focal)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.focal.FocalLossMultiLabel">FocalLossMultiLabel (class in catalyst.contrib.criterion.focal)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.parse.folds_to_list">folds_to_list() (in module catalyst.utils.parse)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.criterion.ContrastiveEmbeddingLoss.forward">forward() (catalyst.contrib.criterion.ContrastiveEmbeddingLoss method)</a>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.MetricsFormatter.format">format() (catalyst.dl.callbacks.MetricsFormatter method)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.ce.NaiveCrossEntropyLoss.forward">forward() (catalyst.contrib.criterion.ce.NaiveCrossEntropyLoss method)</a>
 
       <ul>
-        <li><a href="api/contrib.html#catalyst.contrib.models.ResNetUnet.forward">(catalyst.contrib.models.ResNetUnet method)</a>
+        <li><a href="api/contrib.html#catalyst.contrib.criterion.LovaszLossBinary.forward">(catalyst.contrib.criterion.LovaszLossBinary method)</a>
 </li>
-        <li><a href="api/dl.html#catalyst.dl.fp16.Fp16Wrap.forward">(catalyst.dl.fp16.Fp16Wrap method)</a>
+        <li><a href="api/contrib.html#catalyst.contrib.criterion.LovaszLossMultiClass.forward">(catalyst.contrib.criterion.LovaszLossMultiClass method)</a>
 </li>
-        <li><a href="api/rl.html#catalyst.rl.agents.layers.CouplingLayer.forward">(catalyst.rl.agents.layers.CouplingLayer method)</a>
+        <li><a href="api/contrib.html#catalyst.contrib.criterion.LovaszLossMultiLabel.forward">(catalyst.contrib.criterion.LovaszLossMultiLabel method)</a>
 </li>
-        <li><a href="api/rl.html#catalyst.rl.agents.layers.GaussPolicy.forward">(catalyst.rl.agents.layers.GaussPolicy method)</a>
+        <li><a href="api/contrib.html#catalyst.contrib.criterion.center.CenterLoss.forward">(catalyst.contrib.criterion.center.CenterLoss method)</a>
 </li>
-        <li><a href="api/rl.html#catalyst.rl.agents.layers.LamaPooling.forward">(catalyst.rl.agents.layers.LamaPooling method)</a>
+        <li><a href="api/contrib.html#catalyst.contrib.criterion.center.CenterLossFunc.forward">(catalyst.contrib.criterion.center.CenterLossFunc static method)</a>
 </li>
-        <li><a href="api/rl.html#catalyst.rl.agents.layers.RealNVPPolicy.forward">(catalyst.rl.agents.layers.RealNVPPolicy method)</a>
+        <li><a href="api/contrib.html#catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss.forward">(catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss method)</a>
 </li>
-        <li><a href="api/rl.html#catalyst.rl.agents.layers.SquashingLayer.forward">(catalyst.rl.agents.layers.SquashingLayer method)</a>
+        <li><a href="api/contrib.html#catalyst.contrib.criterion.contrastive.ContrastiveEmbeddingLoss.forward">(catalyst.contrib.criterion.contrastive.ContrastiveEmbeddingLoss method)</a>
 </li>
-        <li><a href="api/rl.html#catalyst.rl.agents.layers.StateActionNet.forward">(catalyst.rl.agents.layers.StateActionNet method)</a>
+        <li><a href="api/contrib.html#catalyst.contrib.criterion.dice.BCEDiceLoss.forward">(catalyst.contrib.criterion.dice.BCEDiceLoss method)</a>
 </li>
-        <li><a href="api/rl.html#catalyst.rl.agents.layers.StateNet.forward">(catalyst.rl.agents.layers.StateNet method)</a>
+        <li><a href="api/contrib.html#catalyst.contrib.criterion.dice.DiceLoss.forward">(catalyst.contrib.criterion.dice.DiceLoss method)</a>
 </li>
-        <li><a href="api/rl.html#catalyst.rl.agents.layers.TemporalAttentionPooling.forward">(catalyst.rl.agents.layers.TemporalAttentionPooling method)</a>
+        <li><a href="api/contrib.html#catalyst.contrib.criterion.focal.FocalLossBinary.forward">(catalyst.contrib.criterion.focal.FocalLossBinary method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.criterion.focal.FocalLossMultiClass.forward">(catalyst.contrib.criterion.focal.FocalLossMultiClass method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.criterion.focal.FocalLossMultiLabel.forward">(catalyst.contrib.criterion.focal.FocalLossMultiLabel method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.criterion.huber.HuberLoss.forward">(catalyst.contrib.criterion.huber.HuberLoss method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.criterion.iou.BCEIoULoss.forward">(catalyst.contrib.criterion.iou.BCEIoULoss method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.criterion.iou.IoULoss.forward">(catalyst.contrib.criterion.iou.IoULoss method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.criterion.wing.WingLoss.forward">(catalyst.contrib.criterion.wing.WingLoss method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.modules.common.Flatten.forward">(catalyst.contrib.modules.common.Flatten method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.modules.common.Lambda.forward">(catalyst.contrib.modules.common.Lambda method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.modules.noisy.NoisyFactorizedLinear.forward">(catalyst.contrib.modules.noisy.NoisyFactorizedLinear method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.modules.noisy.NoisyLinear.forward">(catalyst.contrib.modules.noisy.NoisyLinear method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalAttnPool2d.forward">(catalyst.contrib.modules.pooling.GlobalAttnPool2d method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalAvgAttnPool2d.forward">(catalyst.contrib.modules.pooling.GlobalAvgAttnPool2d method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalAvgPool2d.forward">(catalyst.contrib.modules.pooling.GlobalAvgPool2d method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalConcatAttnPool2d.forward">(catalyst.contrib.modules.pooling.GlobalConcatAttnPool2d method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalConcatPool2d.forward">(catalyst.contrib.modules.pooling.GlobalConcatPool2d method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalMaxAttnPool2d.forward">(catalyst.contrib.modules.pooling.GlobalMaxAttnPool2d method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalMaxPool2d.forward">(catalyst.contrib.modules.pooling.GlobalMaxPool2d method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.Actor.forward">(catalyst.rl.agents.Actor method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.ActorSpec.forward">(catalyst.rl.agents.ActorSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.CategoricalPolicy.forward">(catalyst.rl.agents.CategoricalPolicy method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.CouplingLayer.forward">(catalyst.rl.agents.CouplingLayer method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.CriticSpec.forward">(catalyst.rl.agents.CriticSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.GaussPolicy.forward">(catalyst.rl.agents.GaussPolicy method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.LamaPooling.forward">(catalyst.rl.agents.LamaPooling method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.PolicyHead.forward">(catalyst.rl.agents.PolicyHead method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.RealNVPPolicy.forward">(catalyst.rl.agents.RealNVPPolicy method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.SquashingLayer.forward">(catalyst.rl.agents.SquashingLayer method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.StateActionCritic.forward">(catalyst.rl.agents.StateActionCritic method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.StateActionNet.forward">(catalyst.rl.agents.StateActionNet method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.StateCritic.forward">(catalyst.rl.agents.StateCritic method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.StateNet.forward">(catalyst.rl.agents.StateNet method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.TemporalAttentionPooling.forward">(catalyst.rl.agents.TemporalAttentionPooling method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.ValueHead.forward">(catalyst.rl.agents.ValueHead method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/dl.html#catalyst.dl.fp16.Fp16Wrap">Fp16Wrap (class in catalyst.dl.fp16)</a>
-</li>
       <li><a href="api/utils.html#catalyst.utils.misc.FrozenClass">FrozenClass (class in catalyst.utils.misc)</a>
 </li>
   </ul></td>
@@ -556,57 +806,211 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/rl.html#catalyst.rl.random_process.GaussianWhiteNoiseProcess">GaussianWhiteNoiseProcess (class in catalyst.rl.random_process)</a>
-</li>
-      <li><a href="api/rl.html#catalyst.rl.agents.layers.GaussPolicy">GaussPolicy (class in catalyst.rl.agents.layers)</a>
-</li>
-      <li><a href="api/contrib.html#catalyst.contrib.registry.Registry.get">get() (catalyst.contrib.registry.Registry method)</a>
-</li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.sampler.SamplerBuffer.get_complete_episode">get_complete_episode() (catalyst.rl.offpolicy.sampler.SamplerBuffer method)</a>
-</li>
-      <li><a href="api/contrib.html#catalyst.contrib.registry.Registry.get_from_params">get_from_params() (catalyst.contrib.registry.Registry method)</a>
-</li>
-      <li><a href="api/contrib.html#catalyst.contrib.registry.Registry.get_if_str">get_if_str() (catalyst.contrib.registry.Registry method)</a>
-</li>
-      <li><a href="api/contrib.html#catalyst.contrib.registry.Registry.get_instance">get_instance() (catalyst.contrib.registry.Registry method)</a>
-</li>
-      <li><a href="api/dl.html#catalyst.dl.state.RunnerState.get_key">get_key() (catalyst.dl.state.RunnerState method)</a>
-</li>
-      <li><a href="api/dl.html#catalyst.dl.callbacks.utils.get_optimizer_momentum">get_optimizer_momentum() (in module catalyst.dl.callbacks.utils)</a>
-</li>
-      <li><a href="api/rl.html#catalyst.rl.agents.utils.get_out_features">get_out_features() (in module catalyst.rl.agents.utils)</a>
-</li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.trainer.Trainer.get_processes">get_processes() (catalyst.rl.offpolicy.trainer.Trainer method)</a>
-</li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.sampler.SamplerBuffer.get_state">get_state() (catalyst.rl.offpolicy.sampler.SamplerBuffer method)</a>
+      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec.gamma">gamma (catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec attribute)</a>
 
       <ul>
-        <li><a href="api/rl.html#catalyst.rl.offpolicy.trainer.BufferDataset.get_state">(catalyst.rl.offpolicy.trainer.BufferDataset method)</a>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous.gamma">(catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous attribute)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete.gamma">(catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete attribute)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec.gamma">(catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec attribute)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec.gamma">(catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec attribute)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec.gamma">(catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/rl.html#catalyst.rl.exploration.GaussNoise">GaussNoise (class in catalyst.rl.exploration)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.agents.GaussPolicy">GaussPolicy (class in catalyst.rl.agents)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.exploration.Boltzmann.get_action">get_action() (catalyst.rl.exploration.Boltzmann method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.exploration.EpsilonGreedy.get_action">(catalyst.rl.exploration.EpsilonGreedy method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.exploration.GaussNoise.get_action">(catalyst.rl.exploration.GaussNoise method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.exploration.Greedy.get_action">(catalyst.rl.exploration.Greedy method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.exploration.NoExploration.get_action">(catalyst.rl.exploration.NoExploration method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.exploration.OrnsteinUhlenbeckProcess.get_action">(catalyst.rl.exploration.OrnsteinUhlenbeckProcess method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.exploration.ParameterSpaceNoise.get_action">(catalyst.rl.exploration.ParameterSpaceNoise method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.utils.get_activation_by_name">get_activation_by_name() (in module catalyst.dl.utils)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.experiments.experiment.BaseExperiment.get_callbacks">get_callbacks() (catalyst.dl.experiments.experiment.BaseExperiment method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.ConfigExperiment.get_callbacks">(catalyst.dl.experiments.experiment.ConfigExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.Experiment.get_callbacks">(catalyst.dl.experiments.experiment.Experiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.SupervisedExperiment.get_callbacks">(catalyst.dl.experiments.experiment.SupervisedExperiment method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.experiments.experiment.BaseExperiment.get_criterion">get_criterion() (catalyst.dl.experiments.experiment.BaseExperiment method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.ConfigExperiment.get_criterion">(catalyst.dl.experiments.experiment.ConfigExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.Experiment.get_criterion">(catalyst.dl.experiments.experiment.Experiment method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.experiments.experiment.Experiment.get_datasets">get_datasets() (catalyst.dl.experiments.experiment.Experiment method)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.get_device">get_device() (catalyst.dl.utils.UtilsFactory static method)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.experiments.experiment.Experiment.get_experiment_components">get_experiment_components() (catalyst.dl.experiments.experiment.Experiment method)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.exploration.ExplorationHandler.get_exploration_strategy">get_exploration_strategy() (catalyst.rl.exploration.ExplorationHandler method)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.agents.ActionCritic.get_from_params">get_from_params() (catalyst.rl.agents.ActionCritic class method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.agents.Actor.get_from_params">(catalyst.rl.agents.Actor class method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.StateActionCritic.get_from_params">(catalyst.rl.agents.StateActionCritic class method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.StateActionNet.get_from_params">(catalyst.rl.agents.StateActionNet class method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.StateCritic.get_from_params">(catalyst.rl.agents.StateCritic class method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.StateNet.get_from_params">(catalyst.rl.agents.StateNet class method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.state.RunnerState.get_key">get_key() (catalyst.dl.state.RunnerState method)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.get_loader">get_loader() (catalyst.dl.utils.UtilsFactory static method)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.experiments.experiment.BaseExperiment.get_loaders">get_loaders() (catalyst.dl.experiments.experiment.BaseExperiment method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.ConfigExperiment.get_loaders">(catalyst.dl.experiments.experiment.ConfigExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.Experiment.get_loaders">(catalyst.dl.experiments.experiment.Experiment method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.get_loggers">get_loggers() (catalyst.dl.utils.UtilsFactory static method)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.scheduler.OneCycleLR.get_lr">get_lr() (catalyst.contrib.scheduler.OneCycleLR method)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.experiments.experiment.BaseExperiment.get_model">get_model() (catalyst.dl.experiments.experiment.BaseExperiment method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.ConfigExperiment.get_model">(catalyst.dl.experiments.experiment.ConfigExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.Experiment.get_model">(catalyst.dl.experiments.experiment.Experiment method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.sampler.SamplerBuffer.get_states_history">get_states_history() (catalyst.rl.offpolicy.sampler.SamplerBuffer method)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.scheduler.BaseScheduler.get_momentum">get_momentum() (catalyst.contrib.scheduler.BaseScheduler method)</a>
+
+      <ul>
+        <li><a href="api/contrib.html#catalyst.contrib.scheduler.OneCycleLR.get_momentum">(catalyst.contrib.scheduler.OneCycleLR method)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.Algorithm.get_td_errors">get_td_errors() (catalyst.rl.offpolicy.algorithms.core.Algorithm method)</a>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.get_optimizable_params">get_optimizable_params() (catalyst.dl.utils.UtilsFactory method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.utils.get_optimizable_params">(in module catalyst.dl.utils)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.trainer.BufferDataset.get_transition_n_step">get_transition_n_step() (catalyst.rl.offpolicy.trainer.BufferDataset method)</a>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.experiments.experiment.BaseExperiment.get_optimizer">get_optimizer() (catalyst.dl.experiments.experiment.BaseExperiment method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.ConfigExperiment.get_optimizer">(catalyst.dl.experiments.experiment.ConfigExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.Experiment.get_optimizer">(catalyst.dl.experiments.experiment.Experiment method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.utils.get_optimizer_momentum">get_optimizer_momentum() (in module catalyst.dl.utils)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.agents.utils.get_out_features">get_out_features() (in module catalyst.rl.agents.utils)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec.get_rollout">get_rollout() (catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.ppo.PPO.get_rollout">(catalyst.rl.onpolicy.algorithms.ppo.PPO method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.reinforce.REINFORCE.get_rollout">(catalyst.rl.onpolicy.algorithms.reinforce.REINFORCE method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec.get_rollout_spec">get_rollout_spec() (catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.ppo.PPO.get_rollout_spec">(catalyst.rl.onpolicy.algorithms.ppo.PPO method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.reinforce.REINFORCE.get_rollout_spec">(catalyst.rl.onpolicy.algorithms.reinforce.REINFORCE method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/rl.html#catalyst.rl.db.DBSpec.get_sample_flag">get_sample_flag() (catalyst.rl.db.DBSpec method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.db.MongoDB.get_sample_flag">(catalyst.rl.db.MongoDB method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.db.RedisDB.get_sample_flag">(catalyst.rl.db.RedisDB method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.experiments.experiment.BaseExperiment.get_scheduler">get_scheduler() (catalyst.dl.experiments.experiment.BaseExperiment method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.ConfigExperiment.get_scheduler">(catalyst.dl.experiments.experiment.ConfigExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.Experiment.get_scheduler">(catalyst.dl.experiments.experiment.Experiment method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.experiments.experiment.BaseExperiment.get_state_params">get_state_params() (catalyst.dl.experiments.experiment.BaseExperiment method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.ConfigExperiment.get_state_params">(catalyst.dl.experiments.experiment.ConfigExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.Experiment.get_state_params">(catalyst.dl.experiments.experiment.Experiment method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous.get_td_errors">get_td_errors() (catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete.get_td_errors">(catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.get_tflogger">get_tflogger() (catalyst.dl.utils.UtilsFactory static method)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.db.DBSpec.get_trajectory">get_trajectory() (catalyst.rl.db.DBSpec method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.db.MongoDB.get_trajectory">(catalyst.rl.db.MongoDB method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.db.RedisDB.get_trajectory">(catalyst.rl.db.RedisDB method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.experiments.experiment.Experiment.get_transforms">get_transforms() (catalyst.dl.experiments.experiment.Experiment static method)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.utils.get_val_from_metric">get_val_from_metric() (in module catalyst.dl.callbacks.utils)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.modules.GlobalAttnPool2d">GlobalAttnPool2d (class in catalyst.contrib.modules)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalAttnPool2d">GlobalAttnPool2d (class in catalyst.contrib.modules.pooling)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.modules.GlobalAvgAttnPool2d">GlobalAvgAttnPool2d (class in catalyst.contrib.modules)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalAvgAttnPool2d">GlobalAvgAttnPool2d (class in catalyst.contrib.modules.pooling)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.modules.GlobalAvgPool2d">GlobalAvgPool2d (class in catalyst.contrib.modules)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalAvgPool2d">GlobalAvgPool2d (class in catalyst.contrib.modules.pooling)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.modules.GlobalConcatAttnPool2d">GlobalConcatAttnPool2d (class in catalyst.contrib.modules)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalConcatAttnPool2d">GlobalConcatAttnPool2d (class in catalyst.contrib.modules.pooling)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.modules.GlobalConcatPool2d">GlobalConcatPool2d (class in catalyst.contrib.modules)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalConcatPool2d">GlobalConcatPool2d (class in catalyst.contrib.modules.pooling)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.modules.GlobalMaxAttnPool2d">GlobalMaxAttnPool2d (class in catalyst.contrib.modules)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalMaxAttnPool2d">GlobalMaxAttnPool2d (class in catalyst.contrib.modules.pooling)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.modules.GlobalMaxPool2d">GlobalMaxPool2d (class in catalyst.contrib.modules)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalMaxPool2d">GlobalMaxPool2d (class in catalyst.contrib.modules.pooling)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.OptimizerCallback.grad_step">grad_step() (catalyst.dl.callbacks.OptimizerCallback static method)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.exploration.Greedy">Greedy (class in catalyst.rl.exploration)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.environments.GymWrapper">GymWrapper (class in catalyst.rl.environments)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -614,7 +1018,15 @@
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/contrib.html#catalyst.contrib.criterion.HuberLoss">HuberLoss (class in catalyst.contrib.criterion)</a>
+      <li><a href="api/rl.html#catalyst.rl.environments.EnvironmentSpec.history_len">history_len (catalyst.rl.environments.EnvironmentSpec attribute)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.environments.GymWrapper.history_len">(catalyst.rl.environments.GymWrapper attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.huber.HuberLoss">HuberLoss (class in catalyst.contrib.criterion.huber)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -626,11 +1038,19 @@
 </li>
       <li><a href="api/data.html#catalyst.data.reader.ImageReader">ImageReader (class in catalyst.data.reader)</a>
 </li>
+      <li><a href="api/dl.html#catalyst.dl.experiments.runner.SupervisedRunner.infer">infer() (catalyst.dl.experiments.runner.SupervisedRunner method)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.InferCallback">InferCallback (class in catalyst.dl.callbacks)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/utils.html#catalyst.utils.misc.import_module">import_module() (in module catalyst.utils.misc)</a>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.InferMaskCallback">InferMaskCallback (class in catalyst.dl.callbacks)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.sampler.SamplerBuffer.init_with_observation">init_with_observation() (catalyst.rl.offpolicy.sampler.SamplerBuffer method)</a>
+      <li><a href="api/dl.html#catalyst.dl.metrics.iou">iou() (in module catalyst.dl.metrics)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.IouCallback">IouCallback (class in catalyst.dl.callbacks)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.iou.IoULoss">IoULoss (class in catalyst.contrib.criterion.iou)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -642,7 +1062,15 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/dl.html#catalyst.dl.callbacks.JaccardCallback">JaccardCallback (class in catalyst.dl.callbacks)</a>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.JsonMetricsFormatter">JsonMetricsFormatter (class in catalyst.dl.callbacks)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/dl.html#catalyst.dl.initialization.kaiming_init">kaiming_init() (in module catalyst.dl.initialization)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -650,37 +1078,69 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/rl.html#catalyst.rl.agents.layers.LamaPooling">LamaPooling (class in catalyst.rl.agents.layers)</a>
+      <li><a href="api/rl.html#catalyst.rl.agents.LamaPooling">LamaPooling (class in catalyst.rl.agents)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.modules.Lambda">Lambda (class in catalyst.contrib.modules)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.modules.common.Lambda">Lambda (class in catalyst.contrib.modules.common)</a>
 </li>
       <li><a href="api/data.html#catalyst.data.reader.LambdaReader">LambdaReader (class in catalyst.data.reader)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.registry.Registry.late_add">late_add() (catalyst.contrib.registry.Registry method)</a>
-</li>
       <li><a href="api/data.html#catalyst.data.dataset.ListDataset">ListDataset (class in catalyst.data.dataset)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.sampler.Sampler.load_actor_weights">load_actor_weights() (catalyst.rl.offpolicy.sampler.Sampler method)</a>
-</li>
-      <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.load_checkpoint">load_checkpoint() (catalyst.dl.utils.UtilsFactory static method)</a>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.CheckpointCallback.load_checkpoint">load_checkpoint() (catalyst.dl.callbacks.CheckpointCallback static method)</a>
 
       <ul>
-        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.Algorithm.load_checkpoint">(catalyst.rl.offpolicy.algorithms.core.Algorithm method)</a>
+        <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.load_checkpoint">(catalyst.dl.utils.UtilsFactory static method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec.load_checkpoint">(catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous.load_checkpoint">(catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete.load_checkpoint">(catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete method)</a>
 </li>
         <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.load_checkpoint">(catalyst.rl.offpolicy.algorithms.sac.SAC method)</a>
 </li>
         <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.td3.TD3.load_checkpoint">(catalyst.rl.offpolicy.algorithms.td3.TD3 method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.sampler.Sampler.load_checkpoint">(catalyst.rl.offpolicy.sampler.Sampler method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec.load_checkpoint">(catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec.load_checkpoint">(catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec.load_checkpoint">(catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.sampler.Sampler.load_checkpoint">(catalyst.rl.onpolicy.sampler.Sampler method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/utils.html#catalyst.utils.config.load_ordered_yaml">load_ordered_yaml() (in module catalyst.utils.config)</a>
 </li>
+      <li><a href="api/rl.html#catalyst.rl.db.DBSpec.load_weights">load_weights() (catalyst.rl.db.DBSpec method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.db.MongoDB.load_weights">(catalyst.rl.db.MongoDB method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.db.RedisDB.load_weights">(catalyst.rl.db.RedisDB method)</a>
+</li>
+      </ul></li>
       <li><a href="api/rl.html#catalyst.rl.agents.utils.log1p_exp">log1p_exp() (in module catalyst.rl.agents.utils)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.criterion.LossBinary">LossBinary (class in catalyst.contrib.criterion)</a>
+      <li><a href="api/dl.html#catalyst.dl.experiments.experiment.BaseExperiment.logdir">logdir (catalyst.dl.experiments.experiment.BaseExperiment attribute)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.ConfigExperiment.logdir">(catalyst.dl.experiments.experiment.ConfigExperiment attribute)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.criterion.LossMulti">LossMulti (class in catalyst.contrib.criterion)</a>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.Experiment.logdir">(catalyst.dl.experiments.experiment.Experiment attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.LossCallback">LossCallback (class in catalyst.dl.callbacks)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.LovaszLossBinary">LovaszLossBinary (class in catalyst.contrib.criterion)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.LovaszLossMultiClass">LovaszLossMultiClass (class in catalyst.contrib.criterion)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.LovaszLossMultiLabel">LovaszLossMultiLabel (class in catalyst.contrib.criterion)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.LRFinder">LRFinder (class in catalyst.dl.callbacks)</a>
 </li>
@@ -692,23 +1152,33 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/dl.html#catalyst.dl.metric_manager.MetricManager.main_metric_value">main_metric_value (catalyst.dl.metric_manager.MetricManager attribute)</a>
+</li>
       <li><a href="api/utils.html#catalyst.utils.parse.map_dataframe">map_dataframe() (in module catalyst.utils.parse)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.MapKCallback">MapKCallback (class in catalyst.dl.callbacks)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.metrics.mean_average_precision">mean_average_precision() (in module catalyst.dl.metrics)</a>
+      <li><a href="api/dl.html#catalyst.dl.metrics.mean_average_accuracy">mean_average_accuracy() (in module catalyst.dl.metrics)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.misc.merge_dicts">merge_dicts() (in module catalyst.utils.misc)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/utils.html#catalyst.utils.parse.merge_multiple_fold_csv">merge_multiple_fold_csv() (in module catalyst.utils.parse)</a>
 </li>
       <li><a href="api/data.html#catalyst.data.dataset.MergeDataset">MergeDataset (class in catalyst.data.dataset)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/dl.html#catalyst.dl.callbacks.MetricCallback">MetricCallback (class in catalyst.dl.callbacks)</a>
 </li>
+      <li><a href="api/dl.html#catalyst.dl.metric_manager.MetricManager">MetricManager (class in catalyst.dl.metric_manager)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.MetricsFormatter">MetricsFormatter (class in catalyst.dl.callbacks)</a>
+</li>
+      <li><a href="api/data.html#catalyst.data.sampler.MiniEpochSampler">MiniEpochSampler (class in catalyst.data.sampler)</a>
+</li>
       <li><a href="api/data.html#catalyst.data.augmentor.MixupAugmentor">MixupAugmentor (class in catalyst.data.augmentor)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.db.MongoDB">MongoDB (class in catalyst.rl.db)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.MultiMetricCallback">MultiMetricCallback (class in catalyst.dl.callbacks)</a>
 </li>
@@ -718,86 +1188,236 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/contrib.html#catalyst.contrib.criterion.NaiveCrossEntropyLoss">NaiveCrossEntropyLoss (class in catalyst.contrib.criterion)</a>
+      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec.n_step">n_step (catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec attribute)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous.n_step">(catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous attribute)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.agents.layers.TemporalAttentionPooling.name2fn">name2fn (catalyst.rl.agents.layers.TemporalAttentionPooling attribute)</a>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete.n_step">(catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete attribute)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec.n_step">(catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec attribute)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec.n_step">(catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec attribute)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec.n_step">(catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.ce.NaiveCrossEntropyLoss">NaiveCrossEntropyLoss (class in catalyst.contrib.criterion.ce)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.agents.TemporalAttentionPooling.name2fn">name2fn (catalyst.rl.agents.TemporalAttentionPooling attribute)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.exploration.NoExploration">NoExploration (class in catalyst.rl.exploration)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.modules.noisy.NoisyFactorizedLinear">NoisyFactorizedLinear (class in catalyst.contrib.modules.noisy)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.modules.noisy.NoisyLinear">NoisyLinear (class in catalyst.contrib.modules.noisy)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/contrib.html#catalyst.contrib.modules.NoisyLinear">NoisyLinear (class in catalyst.contrib.modules)</a>
+      <li><a href="api/dl.html#catalyst.dl.initialization.normal_init">normal_init() (in module catalyst.dl.initialization)</a>
 </li>
       <li><a href="api/rl.html#catalyst.rl.agents.utils.normal_log_prob">normal_log_prob() (in module catalyst.rl.agents.utils)</a>
 </li>
       <li><a href="api/rl.html#catalyst.rl.agents.utils.normal_sample">normal_sample() (in module catalyst.rl.agents.utils)</a>
 </li>
+      <li><a href="api/rl.html#catalyst.rl.agents.CriticSpec.num_atoms">num_atoms (catalyst.rl.agents.CriticSpec attribute)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.agents.StateActionCritic.num_atoms">(catalyst.rl.agents.StateActionCritic attribute)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.StateCritic.num_atoms">(catalyst.rl.agents.StateCritic attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/rl.html#catalyst.rl.agents.CriticSpec.num_outputs">num_outputs (catalyst.rl.agents.CriticSpec attribute)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.agents.StateActionCritic.num_outputs">(catalyst.rl.agents.StateActionCritic attribute)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.StateCritic.num_outputs">(catalyst.rl.agents.StateCritic attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/rl.html#catalyst.rl.db.DBSpec.num_trajectories">num_trajectories (catalyst.rl.db.DBSpec attribute)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.db.MongoDB.num_trajectories">(catalyst.rl.db.MongoDB attribute)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.db.RedisDB.num_trajectories">(catalyst.rl.db.RedisDB attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/dl.html#catalyst.dl.callbacks.Callback.on_batch_end">on_batch_end() (catalyst.dl.callbacks.Callback method)</a>
+      <li><a href="api/rl.html#catalyst.rl.environments.EnvironmentSpec.observation_space">observation_space (catalyst.rl.environments.EnvironmentSpec attribute)</a>
 
       <ul>
+        <li><a href="api/rl.html#catalyst.rl.environments.GymWrapper.observation_space">(catalyst.rl.environments.GymWrapper attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.AUCCallback.on_batch_end">on_batch_end() (catalyst.dl.callbacks.AUCCallback method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.Callback.on_batch_end">(catalyst.dl.callbacks.Callback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.ConfusionMatrixCallback.on_batch_end">(catalyst.dl.callbacks.ConfusionMatrixCallback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.InferCallback.on_batch_end">(catalyst.dl.callbacks.InferCallback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.InferMaskCallback.on_batch_end">(catalyst.dl.callbacks.InferMaskCallback method)</a>
+</li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.LRFinder.on_batch_end">(catalyst.dl.callbacks.LRFinder method)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.LRUpdater.on_batch_end">(catalyst.dl.callbacks.LRUpdater method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.LossCallback.on_batch_end">(catalyst.dl.callbacks.LossCallback method)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.MetricCallback.on_batch_end">(catalyst.dl.callbacks.MetricCallback method)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.MultiMetricCallback.on_batch_end">(catalyst.dl.callbacks.MultiMetricCallback method)</a>
 </li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.OptimizerCallback.on_batch_end">(catalyst.dl.callbacks.OptimizerCallback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.SchedulerCallback.on_batch_end">(catalyst.dl.callbacks.SchedulerCallback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.TensorboardLogger.on_batch_end">(catalyst.dl.callbacks.TensorboardLogger method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.VerboseLogger.on_batch_end">(catalyst.dl.callbacks.VerboseLogger method)</a>
+</li>
       </ul></li>
       <li><a href="api/dl.html#catalyst.dl.state.RunnerState.on_batch_end_post">on_batch_end_post() (catalyst.dl.state.RunnerState method)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.Callback.on_batch_start">on_batch_start() (catalyst.dl.callbacks.Callback method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.OptimizerCallback.on_batch_start">(catalyst.dl.callbacks.OptimizerCallback method)</a>
 </li>
+      </ul></li>
       <li><a href="api/dl.html#catalyst.dl.state.RunnerState.on_batch_start_pre">on_batch_start_pre() (catalyst.dl.state.RunnerState method)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.Callback.on_epoch_end">on_epoch_end() (catalyst.dl.callbacks.Callback method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.CheckpointCallback.on_epoch_end">(catalyst.dl.callbacks.CheckpointCallback method)</a>
 </li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.ConsoleLogger.on_epoch_end">(catalyst.dl.callbacks.ConsoleLogger method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.EarlyStoppingCallback.on_epoch_end">(catalyst.dl.callbacks.EarlyStoppingCallback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.OptimizerCallback.on_epoch_end">(catalyst.dl.callbacks.OptimizerCallback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.SchedulerCallback.on_epoch_end">(catalyst.dl.callbacks.SchedulerCallback method)</a>
+</li>
+      </ul></li>
       <li><a href="api/dl.html#catalyst.dl.state.RunnerState.on_epoch_end_post">on_epoch_end_post() (catalyst.dl.state.RunnerState method)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.state.RunnerState.on_epoch_end_pre">on_epoch_end_pre() (catalyst.dl.state.RunnerState method)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.Callback.on_epoch_start">on_epoch_start() (catalyst.dl.callbacks.Callback method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.OptimizerCallback.on_epoch_start">(catalyst.dl.callbacks.OptimizerCallback method)</a>
 </li>
+      </ul></li>
       <li><a href="api/dl.html#catalyst.dl.state.RunnerState.on_epoch_start_pre">on_epoch_start_pre() (catalyst.dl.state.RunnerState method)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.callbacks.Callback.on_loader_end">on_loader_end() (catalyst.dl.callbacks.Callback method)</a>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.AUCCallback.on_loader_end">on_loader_end() (catalyst.dl.callbacks.AUCCallback method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.Callback.on_loader_end">(catalyst.dl.callbacks.Callback method)</a>
 </li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.ConfusionMatrixCallback.on_loader_end">(catalyst.dl.callbacks.ConfusionMatrixCallback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.InferCallback.on_loader_end">(catalyst.dl.callbacks.InferCallback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.TensorboardLogger.on_loader_end">(catalyst.dl.callbacks.TensorboardLogger method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.VerboseLogger.on_loader_end">(catalyst.dl.callbacks.VerboseLogger method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/dl.html#catalyst.dl.state.RunnerState.on_loader_end_post">on_loader_end_post() (catalyst.dl.state.RunnerState method)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.callbacks.Callback.on_loader_start">on_loader_start() (catalyst.dl.callbacks.Callback method)</a>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.AUCCallback.on_loader_start">on_loader_start() (catalyst.dl.callbacks.AUCCallback method)</a>
 
       <ul>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.Callback.on_loader_start">(catalyst.dl.callbacks.Callback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.ConfusionMatrixCallback.on_loader_start">(catalyst.dl.callbacks.ConfusionMatrixCallback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.InferCallback.on_loader_start">(catalyst.dl.callbacks.InferCallback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.InferMaskCallback.on_loader_start">(catalyst.dl.callbacks.InferMaskCallback method)</a>
+</li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.LRFinder.on_loader_start">(catalyst.dl.callbacks.LRFinder method)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.LRUpdater.on_loader_start">(catalyst.dl.callbacks.LRUpdater method)</a>
 </li>
-        <li><a href="api/dl.html#catalyst.dl.callbacks.OneCycleLR.on_loader_start">(catalyst.dl.callbacks.OneCycleLR method)</a>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.SchedulerCallback.on_loader_start">(catalyst.dl.callbacks.SchedulerCallback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.TensorboardLogger.on_loader_start">(catalyst.dl.callbacks.TensorboardLogger method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.VerboseLogger.on_loader_start">(catalyst.dl.callbacks.VerboseLogger method)</a>
 </li>
       </ul></li>
       <li><a href="api/dl.html#catalyst.dl.state.RunnerState.on_loader_start_pre">on_loader_start_pre() (catalyst.dl.state.RunnerState method)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.Callback.on_stage_end">on_stage_end() (catalyst.dl.callbacks.Callback method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.CheckpointCallback.on_stage_end">(catalyst.dl.callbacks.CheckpointCallback method)</a>
 </li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.ConsoleLogger.on_stage_end">(catalyst.dl.callbacks.ConsoleLogger method)</a>
+</li>
+      </ul></li>
       <li><a href="api/dl.html#catalyst.dl.state.RunnerState.on_stage_end_post">on_stage_end_post() (catalyst.dl.state.RunnerState method)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.Callback.on_stage_start">on_stage_start() (catalyst.dl.callbacks.Callback method)</a>
 
       <ul>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.CheckpointCallback.on_stage_start">(catalyst.dl.callbacks.CheckpointCallback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.ConsoleLogger.on_stage_start">(catalyst.dl.callbacks.ConsoleLogger method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.InferCallback.on_stage_start">(catalyst.dl.callbacks.InferCallback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.InferMaskCallback.on_stage_start">(catalyst.dl.callbacks.InferMaskCallback method)</a>
+</li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.LRUpdater.on_stage_start">(catalyst.dl.callbacks.LRUpdater method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.LossCallback.on_stage_start">(catalyst.dl.callbacks.LossCallback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.OptimizerCallback.on_stage_start">(catalyst.dl.callbacks.OptimizerCallback method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.SchedulerCallback.on_stage_start">(catalyst.dl.callbacks.SchedulerCallback method)</a>
 </li>
       </ul></li>
       <li><a href="api/dl.html#catalyst.dl.state.RunnerState.on_stage_start_pre">on_stage_start_pre() (catalyst.dl.state.RunnerState method)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.callbacks.OneCycleLR">OneCycleLR (class in catalyst.dl.callbacks)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.scheduler.OneCycleLR">OneCycleLR (class in catalyst.contrib.scheduler)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.random_process.OrnsteinUhlenbeckProcess">OrnsteinUhlenbeckProcess (class in catalyst.rl.random_process)</a>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.OptimizerCallback">OptimizerCallback (class in catalyst.dl.callbacks)</a>
 </li>
+      <li><a href="api/rl.html#catalyst.rl.exploration.OrnsteinUhlenbeckProcess">OrnsteinUhlenbeckProcess (class in catalyst.rl.exploration)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalAttnPool2d.out_features">out_features() (catalyst.contrib.modules.pooling.GlobalAttnPool2d static method)</a>
+
+      <ul>
+        <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalAvgAttnPool2d.out_features">(catalyst.contrib.modules.pooling.GlobalAvgAttnPool2d static method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalAvgPool2d.out_features">(catalyst.contrib.modules.pooling.GlobalAvgPool2d static method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalConcatAttnPool2d.out_features">(catalyst.contrib.modules.pooling.GlobalConcatAttnPool2d static method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalConcatPool2d.out_features">(catalyst.contrib.modules.pooling.GlobalConcatPool2d static method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalMaxAttnPool2d.out_features">(catalyst.contrib.modules.pooling.GlobalMaxAttnPool2d static method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.modules.pooling.GlobalMaxPool2d.out_features">(catalyst.contrib.modules.pooling.GlobalMaxPool2d static method)</a>
+</li>
+      </ul></li>
       <li><a href="api/dl.html#catalyst.dl.initialization.outer_init">outer_init() (in module catalyst.dl.initialization)</a>
 </li>
   </ul></td>
@@ -806,90 +1426,152 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.pack_checkpoint">pack_checkpoint() (catalyst.dl.utils.UtilsFactory static method)</a>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.CheckpointCallback.pack_checkpoint">pack_checkpoint() (catalyst.dl.callbacks.CheckpointCallback method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.pack_checkpoint">(catalyst.dl.utils.UtilsFactory static method)</a>
 </li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec.pack_checkpoint">(catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous.pack_checkpoint">(catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete.pack_checkpoint">(catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.pack_checkpoint">(catalyst.rl.offpolicy.algorithms.sac.SAC method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.td3.TD3.pack_checkpoint">(catalyst.rl.offpolicy.algorithms.td3.TD3 method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec.pack_checkpoint">(catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec.pack_checkpoint">(catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec.pack_checkpoint">(catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec method)</a>
+</li>
+      </ul></li>
       <li><a href="api/utils.html#catalyst.utils.parallelize.parallelize">parallelize() (in module catalyst.utils.parallelize)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.exploration.ParameterSpaceNoise">ParameterSpaceNoise (class in catalyst.rl.exploration)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.config.parse_args_uargs">parse_args_uargs() (in module catalyst.utils.config)</a>
 </li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.utils.plot_confusion_matrix">plot_confusion_matrix() (in module catalyst.dl.callbacks.utils)</a>
+</li>
       <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.plot_metrics">plot_metrics() (catalyst.dl.utils.UtilsFactory static method)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.metrics.precision">precision() (in module catalyst.dl.metrics)</a>
-</li>
-      <li><a href="api/dl.html#catalyst.dl.callbacks.PrecisionCallback">PrecisionCallback (class in catalyst.dl.callbacks)</a>
-</li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.Algorithm.prepare_checkpoint">prepare_checkpoint() (catalyst.rl.offpolicy.algorithms.core.Algorithm method)</a>
+      <li><a href="api/rl.html#catalyst.rl.agents.Actor.policy_type">policy_type (catalyst.rl.agents.Actor attribute)</a>
 
       <ul>
-        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.prepare_checkpoint">(catalyst.rl.offpolicy.algorithms.sac.SAC method)</a>
-</li>
-        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.td3.TD3.prepare_checkpoint">(catalyst.rl.offpolicy.algorithms.td3.TD3 method)</a>
+        <li><a href="api/rl.html#catalyst.rl.agents.ActorSpec.policy_type">(catalyst.rl.agents.ActorSpec attribute)</a>
 </li>
       </ul></li>
-      <li><a href="api/utils.html#catalyst.utils.data.prepare_dataset_labeling">prepare_dataset_labeling() (in module catalyst.utils.data)</a>
+      <li><a href="api/rl.html#catalyst.rl.agents.PolicyHead">PolicyHead (class in catalyst.rl.agents)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.prepare_device">prepare_device() (catalyst.dl.utils.UtilsFactory static method)</a>
+      <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec.postprocess_buffer">postprocess_buffer() (catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec.postprocess_buffer">(catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec method)</a>
 </li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.ppo.PPO.postprocess_buffer">(catalyst.rl.onpolicy.algorithms.ppo.PPO method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.Algorithm.prepare_for_sampler">prepare_for_sampler() (catalyst.rl.offpolicy.algorithms.core.Algorithm class method)</a>
+      <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.ppo.PPO">PPO (class in catalyst.rl.onpolicy.algorithms.ppo)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.experiments.runner.SupervisedRunner.predict_batch">predict_batch() (catalyst.dl.experiments.runner.SupervisedRunner method)</a>
+</li>
+      <li><a href="api/utils.html#catalyst.utils.data.prepare_dataset_labeling">prepare_dataset_labeling() (in module catalyst.utils.data)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec.prepare_for_sampler">prepare_for_sampler() (catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec class method)</a>
 
       <ul>
-        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.prepare_for_sampler">(catalyst.rl.offpolicy.algorithms.sac.SAC class method)</a>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous.prepare_for_sampler">(catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous class method)</a>
 </li>
-        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.td3.TD3.prepare_for_sampler">(catalyst.rl.offpolicy.algorithms.td3.TD3 class method)</a>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete.prepare_for_sampler">(catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete class method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec.prepare_for_sampler">(catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec class method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec.prepare_for_sampler">(catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec class method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec.prepare_for_sampler">(catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec class method)</a>
 </li>
       </ul></li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.Algorithm.prepare_for_trainer">prepare_for_trainer() (catalyst.rl.offpolicy.algorithms.core.Algorithm class method)</a>
+      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec.prepare_for_trainer">prepare_for_trainer() (catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec class method)</a>
 
       <ul>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous.prepare_for_trainer">(catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous class method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete.prepare_for_trainer">(catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete class method)</a>
+</li>
         <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.prepare_for_trainer">(catalyst.rl.offpolicy.algorithms.sac.SAC class method)</a>
 </li>
         <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.td3.TD3.prepare_for_trainer">(catalyst.rl.offpolicy.algorithms.td3.TD3 class method)</a>
 </li>
-      </ul></li>
-      <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.prepare_model">prepare_model() (catalyst.dl.utils.UtilsFactory static method)</a>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec.prepare_for_trainer">(catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec class method)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.prepare_optimizable_params">prepare_optimizable_params() (catalyst.dl.utils.UtilsFactory method)</a>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec.prepare_for_trainer">(catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec class method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec.prepare_for_trainer">(catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec class method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.process_components">process_components() (catalyst.dl.utils.UtilsFactory static method)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.utils.process_epoch_metrics">process_epoch_metrics() (in module catalyst.dl.callbacks.utils)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.trainer.BufferDataset.push_episode">push_episode() (catalyst.rl.offpolicy.trainer.BufferDataset method)</a>
+      <li><a href="api/rl.html#catalyst.rl.db.DBSpec.push_trajectory">push_trajectory() (catalyst.rl.db.DBSpec method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.db.MongoDB.push_trajectory">(catalyst.rl.db.MongoDB method)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.sampler.SamplerBuffer.push_transition">push_transition() (catalyst.rl.offpolicy.sampler.SamplerBuffer method)</a>
+        <li><a href="api/rl.html#catalyst.rl.db.RedisDB.push_trajectory">(catalyst.rl.db.RedisDB method)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/rl.html#catalyst.rl.random_process.RandomProcess">RandomProcess (class in catalyst.rl.random_process)</a>
-</li>
       <li><a href="api/utils.html#catalyst.utils.parse.read_csv_data">read_csv_data() (in module catalyst.utils.parse)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.parse.read_multiple_dataframes">read_multiple_dataframes() (in module catalyst.utils.parse)</a>
 </li>
       <li><a href="api/data.html#catalyst.data.reader.ReaderCompose">ReaderCompose (class in catalyst.data.reader)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.agents.layers.RealNVPPolicy">RealNVPPolicy (class in catalyst.rl.agents.layers)</a>
+      <li><a href="api/rl.html#catalyst.rl.agents.RealNVPPolicy">RealNVPPolicy (class in catalyst.rl.agents)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.registry.Registry">Registry (class in catalyst.contrib.registry)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.scheduler.OneCycleLR.recalculate">recalculate() (catalyst.contrib.scheduler.OneCycleLR method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/rl.html#catalyst.rl.random_process.OrnsteinUhlenbeckProcess.reset_states">reset_states() (catalyst.rl.random_process.OrnsteinUhlenbeckProcess method)</a>
+      <li><a href="api/rl.html#catalyst.rl.db.RedisDB">RedisDB (class in catalyst.rl.db)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.losses.reduced_focal_loss">reduced_focal_loss() (in module catalyst.dl.losses)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.reinforce.REINFORCE">REINFORCE (class in catalyst.rl.onpolicy.algorithms.reinforce)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.utils.render_figure_to_tensor">render_figure_to_tensor() (in module catalyst.dl.callbacks.utils)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.metric_manager.TimerManager.reset">reset() (catalyst.dl.metric_manager.TimerManager method)</a>
 
       <ul>
-        <li><a href="api/rl.html#catalyst.rl.random_process.RandomProcess.reset_states">(catalyst.rl.random_process.RandomProcess method)</a>
+        <li><a href="api/rl.html#catalyst.rl.environments.EnvironmentSpec.reset">(catalyst.rl.environments.EnvironmentSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.environments.GymWrapper.reset">(catalyst.rl.environments.GymWrapper method)</a>
 </li>
       </ul></li>
-      <li><a href="api/contrib.html#catalyst.contrib.models.ResNetUnet">ResNetUnet (class in catalyst.contrib.models)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/contrib.html#catalyst.contrib.modules.noisy.NoisyLinear.reset_parameters">reset_parameters() (catalyst.contrib.modules.noisy.NoisyLinear method)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.exploration.OrnsteinUhlenbeckProcess.reset_state">reset_state() (catalyst.rl.exploration.OrnsteinUhlenbeckProcess method)</a>
 </li>
       <li><a href="api/rl.html#catalyst.rl.offpolicy.sampler.Sampler.run">run() (catalyst.rl.offpolicy.sampler.Sampler method)</a>
 
       <ul>
         <li><a href="api/rl.html#catalyst.rl.offpolicy.trainer.Trainer.run">(catalyst.rl.offpolicy.trainer.Trainer method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.sampler.Sampler.run">(catalyst.rl.onpolicy.sampler.Sampler method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.trainer.Trainer.run">(catalyst.rl.onpolicy.trainer.Trainer method)</a>
 </li>
         <li><a href="api/utils.html#catalyst.utils.parallelize.StoppableThread.run">(catalyst.utils.parallelize.StoppableThread method)</a>
 </li>
@@ -904,37 +1586,83 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC">SAC (class in catalyst.rl.offpolicy.algorithms.sac)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.random_process.GaussianWhiteNoiseProcess.sample">sample() (catalyst.rl.random_process.GaussianWhiteNoiseProcess method)</a>
+      <li><a href="api/rl.html#catalyst.rl.offpolicy.sampler.Sampler">Sampler (class in catalyst.rl.offpolicy.sampler)</a>
 
       <ul>
-        <li><a href="api/rl.html#catalyst.rl.random_process.OrnsteinUhlenbeckProcess.sample">(catalyst.rl.random_process.OrnsteinUhlenbeckProcess method)</a>
-</li>
-        <li><a href="api/rl.html#catalyst.rl.random_process.RandomProcess.sample">(catalyst.rl.random_process.RandomProcess method)</a>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.sampler.Sampler">(class in catalyst.rl.onpolicy.sampler)</a>
 </li>
       </ul></li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.sampler.Sampler">Sampler (class in catalyst.rl.offpolicy.sampler)</a>
-</li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.sampler.SamplerBuffer">SamplerBuffer (class in catalyst.rl.offpolicy.sampler)</a>
-</li>
       <li><a href="api/rl.html#catalyst.rl.offpolicy.trainer.Trainer.save">save() (catalyst.rl.offpolicy.trainer.Trainer method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.trainer.Trainer.save">(catalyst.rl.onpolicy.trainer.Trainer method)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.save_checkpoint">save_checkpoint() (catalyst.dl.utils.UtilsFactory static method)</a>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.CheckpointCallback.save_checkpoint">save_checkpoint() (catalyst.dl.callbacks.CheckpointCallback method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.save_checkpoint">(catalyst.dl.utils.UtilsFactory static method)</a>
 </li>
-      <li><a href="api/utils.html#catalyst.utils.config.save_config">save_config() (in module catalyst.utils.config)</a>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec.save_checkpoint">(catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec method)</a>
 </li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous.save_checkpoint">(catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete.save_checkpoint">(catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.save_checkpoint">(catalyst.rl.offpolicy.algorithms.sac.SAC method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.td3.TD3.save_checkpoint">(catalyst.rl.offpolicy.algorithms.td3.TD3 method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec.save_checkpoint">(catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec.save_checkpoint">(catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec.save_checkpoint">(catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec method)</a>
+</li>
+      </ul></li>
       <li><a href="api/data.html#catalyst.data.reader.ScalarReader">ScalarReader (class in catalyst.data.reader)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.callbacks.utils.scheduler_step">scheduler_step() (in module catalyst.dl.callbacks.utils)</a>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.SchedulerCallback">SchedulerCallback (class in catalyst.dl.callbacks)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.data.separate_tags">separate_tags() (in module catalyst.utils.data)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.serialization.serialize">serialize() (in module catalyst.utils.serialization)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/utils.html#catalyst.utils.misc.set_global_seeds">set_global_seeds() (in module catalyst.utils.misc)</a>
+      <li><a href="api/utils.html#catalyst.utils.misc.set_global_seed">set_global_seed() (in module catalyst.utils.misc)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.state.RunnerState.set_key">set_key() (catalyst.dl.state.RunnerState method)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.utils.set_optimizer_momentum">set_optimizer_momentum() (in module catalyst.dl.utils)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.exploration.Boltzmann.set_power">set_power() (catalyst.rl.exploration.Boltzmann method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.exploration.EpsilonGreedy.set_power">(catalyst.rl.exploration.EpsilonGreedy method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.exploration.ExplorationHandler.set_power">(catalyst.rl.exploration.ExplorationHandler method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.exploration.ExplorationStrategy.set_power">(catalyst.rl.exploration.ExplorationStrategy method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.exploration.GaussNoise.set_power">(catalyst.rl.exploration.GaussNoise method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.exploration.OrnsteinUhlenbeckProcess.set_power">(catalyst.rl.exploration.OrnsteinUhlenbeckProcess method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.exploration.ParameterSpaceNoise.set_power">(catalyst.rl.exploration.ParameterSpaceNoise method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/rl.html#catalyst.rl.db.DBSpec.set_sample_flag">set_sample_flag() (catalyst.rl.db.DBSpec method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.db.MongoDB.set_sample_flag">(catalyst.rl.db.MongoDB method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.db.RedisDB.set_sample_flag">(catalyst.rl.db.RedisDB method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/data.html#catalyst.data.sampler.MiniEpochSampler.shuffle">shuffle() (catalyst.data.sampler.MiniEpochSampler method)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.losses.sigmoid_focal_loss">sigmoid_focal_loss() (in module catalyst.dl.losses)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.data.split_dataframe">split_dataframe() (in module catalyst.utils.data)</a>
 
@@ -944,21 +1672,53 @@
       </ul></li>
       <li><a href="api/utils.html#catalyst.utils.data.split_dataset">split_dataset() (in module catalyst.utils.data)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.agents.layers.SquashingLayer">SquashingLayer (class in catalyst.rl.agents.layers)</a>
+      <li><a href="api/rl.html#catalyst.rl.agents.SquashingLayer">SquashingLayer (class in catalyst.rl.agents)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.trainer.Trainer.start_redis_loop">start_redis_loop() (catalyst.rl.offpolicy.trainer.Trainer method)</a>
+      <li><a href="api/dl.html#catalyst.dl.experiments.experiment.ConfigExperiment.STAGE_KEYWORDS">STAGE_KEYWORDS (catalyst.dl.experiments.experiment.ConfigExperiment attribute)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.trainer.Trainer.start_train_loop">start_train_loop() (catalyst.rl.offpolicy.trainer.Trainer method)</a>
+      <li><a href="api/dl.html#catalyst.dl.experiments.experiment.BaseExperiment.stages">stages (catalyst.dl.experiments.experiment.BaseExperiment attribute)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.ConfigExperiment.stages">(catalyst.dl.experiments.experiment.ConfigExperiment attribute)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.agents.layers.StateActionNet">StateActionNet (class in catalyst.rl.agents.layers)</a>
+        <li><a href="api/dl.html#catalyst.dl.experiments.experiment.Experiment.stages">(catalyst.dl.experiments.experiment.Experiment attribute)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.agents.layers.StateNet">StateNet (class in catalyst.rl.agents.layers)</a>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.metric_manager.TimerManager.start">start() (catalyst.dl.metric_manager.TimerManager method)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.environments.EnvironmentSpec.state_space">state_space (catalyst.rl.environments.EnvironmentSpec attribute)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.environments.GymWrapper.state_space">(catalyst.rl.environments.GymWrapper attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/rl.html#catalyst.rl.agents.StateActionCritic">StateActionCritic (class in catalyst.rl.agents)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.agents.StateActionNet">StateActionNet (class in catalyst.rl.agents)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.agents.StateCritic">StateCritic (class in catalyst.rl.agents)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.agents.StateNet">StateNet (class in catalyst.rl.agents)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.scheduler.BaseScheduler.step">step() (catalyst.contrib.scheduler.BaseScheduler method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.SchedulerCallback.step">(catalyst.dl.callbacks.SchedulerCallback method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.environments.EnvironmentSpec.step">(catalyst.rl.environments.EnvironmentSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.environments.GymWrapper.step">(catalyst.rl.environments.GymWrapper method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.metric_manager.TimerManager.stop">stop() (catalyst.dl.metric_manager.TimerManager method)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.parallelize.StoppableThread">StoppableThread (class in catalyst.utils.parallelize)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.sampler.Sampler.store_episode">store_episode() (catalyst.rl.offpolicy.sampler.Sampler method)</a>
-</li>
       <li><a href="api/utils.html#catalyst.utils.data.stratified_fold_split">stratified_fold_split() (in module catalyst.utils.data)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.experiments.experiment.SupervisedExperiment">SupervisedExperiment (class in catalyst.dl.experiments.experiment)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.experiments.runner.SupervisedRunner">SupervisedRunner (class in catalyst.dl.experiments.runner)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -966,15 +1726,23 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.Algorithm.target_actor_update">target_actor_update() (catalyst.rl.offpolicy.algorithms.core.Algorithm method)</a>
+      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec.target_actor_update">target_actor_update() (catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec method)</a>
 
       <ul>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous.target_actor_update">(catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete.target_actor_update">(catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete method)</a>
+</li>
         <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.target_actor_update">(catalyst.rl.offpolicy.algorithms.sac.SAC method)</a>
 </li>
       </ul></li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.Algorithm.target_critic_update">target_critic_update() (catalyst.rl.offpolicy.algorithms.core.Algorithm method)</a>
+      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec.target_critic_update">target_critic_update() (catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec method)</a>
 
       <ul>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous.target_critic_update">(catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete.target_critic_update">(catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete method)</a>
+</li>
         <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.target_critic_update">(catalyst.rl.offpolicy.algorithms.sac.SAC method)</a>
 </li>
         <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.td3.TD3.target_critic_update">(catalyst.rl.offpolicy.algorithms.td3.TD3 method)</a>
@@ -982,21 +1750,43 @@
       </ul></li>
       <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.td3.TD3">TD3 (class in catalyst.rl.offpolicy.algorithms.td3)</a>
 </li>
+      <li><a href="api/rl.html#catalyst.rl.agents.TemporalAttentionPooling">TemporalAttentionPooling (class in catalyst.rl.agents)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.utils.tensor_from_rgb_image">tensor_from_rgb_image() (in module catalyst.dl.callbacks.utils)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.TensorboardLogger">TensorboardLogger (class in catalyst.dl.callbacks)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/rl.html#catalyst.rl.agents.layers.TemporalAttentionPooling">TemporalAttentionPooling (class in catalyst.rl.agents.layers)</a>
+      <li><a href="api/dl.html#catalyst.dl.metric_manager.TimerManager">TimerManager (class in catalyst.dl.metric_manager)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.utils.to_batch_metrics">to_batch_metrics() (in module catalyst.dl.callbacks.utils)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.sampler.Sampler.to_tensor">to_tensor() (catalyst.rl.offpolicy.sampler.Sampler method)</a>
+      <li><a href="api/dl.html#catalyst.dl.utils.trace.trace_model">trace_model() (in module catalyst.dl.utils.trace)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.Algorithm.train">train() (catalyst.rl.offpolicy.algorithms.core.Algorithm method)</a>
+      <li><a href="api/dl.html#catalyst.dl.experiments.runner.SupervisedRunner.train">train() (catalyst.dl.experiments.runner.SupervisedRunner method)</a>
 
       <ul>
-        <li><a href="api/rl.html#catalyst.rl.offpolicy.trainer.Trainer.train">(catalyst.rl.offpolicy.trainer.Trainer method)</a>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec.train">(catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous.train">(catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete.train">(catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec.train">(catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.ppo.PPO.train">(catalyst.rl.onpolicy.algorithms.ppo.PPO method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.reinforce.REINFORCE.train">(catalyst.rl.onpolicy.algorithms.reinforce.REINFORCE method)</a>
 </li>
       </ul></li>
       <li><a href="api/rl.html#catalyst.rl.offpolicy.trainer.Trainer">Trainer (class in catalyst.rl.offpolicy.trainer)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.trainer.Trainer">(class in catalyst.rl.onpolicy.trainer)</a>
+</li>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.TxtMetricsFormatter">TxtMetricsFormatter (class in catalyst.dl.callbacks)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1004,17 +1794,39 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/contrib.html#catalyst.contrib.models.UNet">UNet (class in catalyst.contrib.models)</a>
+      <li><a href="api/dl.html#catalyst.dl.initialization.uniform_init">uniform_init() (in module catalyst.dl.initialization)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory.unpack_checkpoint">unpack_checkpoint() (catalyst.dl.utils.UtilsFactory static method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec.unpack_checkpoint">(catalyst.rl.offpolicy.algorithms.core.AlgorithmSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous.unpack_checkpoint">(catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete.unpack_checkpoint">(catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.unpack_checkpoint">(catalyst.rl.offpolicy.algorithms.sac.SAC method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.td3.TD3.unpack_checkpoint">(catalyst.rl.offpolicy.algorithms.td3.TD3 method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec.unpack_checkpoint">(catalyst.rl.onpolicy.algorithms.actor.ActorAlgorithmSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec.unpack_checkpoint">(catalyst.rl.onpolicy.algorithms.actor_critic.ActorCriticAlgorithmSpec method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec.unpack_checkpoint">(catalyst.rl.onpolicy.algorithms.core.AlgorithmSpec method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/rl.html#catalyst.rl.exploration.ParameterSpaceNoise.update_actor">update_actor() (catalyst.rl.exploration.ParameterSpaceNoise method)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.LRUpdater.update_optimizer">update_optimizer() (catalyst.dl.callbacks.LRUpdater method)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.trainer.Trainer.update_samplers_weights">update_samplers_weights() (catalyst.rl.offpolicy.trainer.Trainer method)</a>
-</li>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core.Algorithm.update_step">update_step() (catalyst.rl.offpolicy.algorithms.core.Algorithm method)</a>
+      <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous.update_step">update_step() (catalyst.rl.offpolicy.algorithms.core_continuous.AlgorithmContinuous method)</a>
 
       <ul>
+        <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete.update_step">(catalyst.rl.offpolicy.algorithms.core_discrete.AlgorithmDiscrete method)</a>
+</li>
         <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.ddpg.DDPG.update_step">(catalyst.rl.offpolicy.algorithms.ddpg.DDPG method)</a>
 </li>
         <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.sac.SAC.update_step">(catalyst.rl.offpolicy.algorithms.sac.SAC method)</a>
@@ -1022,10 +1834,6 @@
         <li><a href="api/rl.html#catalyst.rl.offpolicy.algorithms.td3.TD3.update_step">(catalyst.rl.offpolicy.algorithms.td3.TD3 method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/rl.html#catalyst.rl.offpolicy.trainer.Trainer.update_target_weights">update_target_weights() (catalyst.rl.offpolicy.trainer.Trainer method)</a>
-</li>
       <li><a href="api/dl.html#catalyst.dl.utils.UtilsFactory">UtilsFactory (class in catalyst.dl.utils)</a>
 </li>
   </ul></td>
@@ -1034,7 +1842,39 @@
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/rl.html#catalyst.rl.agents.ValueCritic">ValueCritic (class in catalyst.rl.agents)</a>
+      <li><a href="api/rl.html#catalyst.rl.agents.ValueHead">ValueHead (class in catalyst.rl.agents)</a>
+</li>
+      <li><a href="api/rl.html#catalyst.rl.agents.CriticSpec.values_range">values_range (catalyst.rl.agents.CriticSpec attribute)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.agents.StateActionCritic.values_range">(catalyst.rl.agents.StateActionCritic attribute)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.agents.StateCritic.values_range">(catalyst.rl.agents.StateCritic attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.VerboseLogger">VerboseLogger (class in catalyst.dl.callbacks)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/dl.html#catalyst.dl.losses.wing_loss">wing_loss() (in module catalyst.dl.losses)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/contrib.html#catalyst.contrib.criterion.wing.WingLoss">WingLoss (class in catalyst.contrib.criterion.wing)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="X">X</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/dl.html#catalyst.dl.initialization.xavier_init">xavier_init() (in module catalyst.dl.initialization)</a>
 </li>
   </ul></td>
 </tr></table>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.parse &mdash; Catalyst 19.03-rc0 documentation</title>
+  <title>catalyst.utils.parse &mdash; Catalyst 19.06 documentation</title>
   
 
   
@@ -20,21 +20,11 @@
   <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../../../',
-              VERSION:'19.03-rc0',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
         <script type="text/javascript" src="../../../_static/jquery.js"></script>
         <script type="text/javascript" src="../../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -68,7 +58,7 @@
             
             
               <div class="version">
-                19.03
+                19.06
               </div>
             
           
@@ -183,6 +173,7 @@
 <div class="viewcode-block" id="dataframe_to_list"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.parse.dataframe_to_list">[docs]</a><span class="k">def</span> <span class="nf">dataframe_to_list</span><span class="p">(</span><span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts dataframe to a list of rows (without indexes)</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        dataframe (DataFrame): input dataframe</span>
 <span class="sd">    Returns:</span>
@@ -195,7 +186,8 @@
 <div class="viewcode-block" id="folds_to_list"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.parse.folds_to_list">[docs]</a><span class="k">def</span> <span class="nf">folds_to_list</span><span class="p">(</span><span class="n">folds</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function formats string or either list of numbers</span>
-<span class="sd">        into a list of unique int</span>
+<span class="sd">    into a list of unique int</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        folds (Union[list, str, pd.Series]): Either list of numbers or</span>
 <span class="sd">            one string with numbers separated by commas or</span>
@@ -216,7 +208,7 @@
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">folds</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
         <span class="n">folds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">folds</span><span class="o">.</span><span class="n">unique</span><span class="p">()))</span>
 
-    <span class="k">return</span> <span class="nb">list</span><span class="p">({</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">folds</span><span class="p">})</span></div>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">({</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">folds</span><span class="p">})))</span></div>
 
 
 <div class="viewcode-block" id="map_dataframe"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.parse.map_dataframe">[docs]</a><span class="k">def</span> <span class="nf">map_dataframe</span><span class="p">(</span>
@@ -266,6 +258,7 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Split a Pandas DataFrame into folds.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        dataframe (pd.DataFrame): input dataframe</span>
 <span class="sd">        train_folds (List[int]): train folds</span>
@@ -434,7 +427,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">from_one_df</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">in_csv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="n">from_multiple_df</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> \
-        <span class="n">args_are_not_none</span><span class="p">(</span><span class="n">in_csv_train</span><span class="p">,</span> <span class="n">in_csv_valid</span><span class="p">)</span> \
+        <span class="n">in_csv_train</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> \
+        <span class="ow">or</span> <span class="n">in_csv_valid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> \
         <span class="ow">or</span> <span class="n">in_csv_infer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">from_one_df</span> <span class="o">==</span> <span class="n">from_multiple_df</span><span class="p">:</span>

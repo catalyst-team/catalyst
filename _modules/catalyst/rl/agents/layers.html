@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.rl.agents.layers &mdash; Catalyst 19.03-rc0 documentation</title>
+  <title>catalyst.rl.agents.layers &mdash; Catalyst 19.06 documentation</title>
   
 
   
@@ -20,21 +20,11 @@
   <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../../../../',
-              VERSION:'19.03-rc0',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
         <script type="text/javascript" src="../../../../_static/jquery.js"></script>
         <script type="text/javascript" src="../../../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -68,7 +58,7 @@
             
             
               <div class="version">
-                19.03
+                19.06
               </div>
             
           
@@ -174,17 +164,11 @@
 
 <span class="kn">from</span> <span class="nn">catalyst.contrib.models</span> <span class="k">import</span> <span class="n">SequentialNet</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.initialization</span> <span class="k">import</span> <span class="n">create_optimal_inner_init</span><span class="p">,</span> <span class="n">outer_init</span>
-<span class="kn">from</span> <span class="nn">catalyst.rl.agents.utils</span> <span class="k">import</span> <span class="n">log1p_exp</span><span class="p">,</span> <span class="n">get_out_features</span><span class="p">,</span> \
-    <span class="n">normal_sample</span><span class="p">,</span> <span class="n">normal_log_prob</span>
-
-<span class="c1"># log_sigma of Gaussian policy are capped at (LOG_SIG_MIN, LOG_SIG_MAX)</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl.agents.utils</span> <span class="k">import</span> <span class="n">log1p_exp</span>
 <span class="kn">from</span> <span class="nn">catalyst.rl.registry</span> <span class="k">import</span> <span class="n">MODULES</span>
 
-<span class="n">LOG_SIG_MAX</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">LOG_SIG_MIN</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span>
 
-
-<div class="viewcode-block" id="TemporalAttentionPooling"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.layers.TemporalAttentionPooling">[docs]</a><span class="k">class</span> <span class="nc">TemporalAttentionPooling</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="TemporalAttentionPooling"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.TemporalAttentionPooling">[docs]</a><span class="k">class</span> <span class="nc">TemporalAttentionPooling</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="n">name2fn</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;softmax&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
         <span class="s2">&quot;tanh&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">(),</span>
@@ -206,7 +190,7 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">attention_pooling</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">outer_init</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TemporalAttentionPooling.forward"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.layers.TemporalAttentionPooling.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
+<div class="viewcode-block" id="TemporalAttentionPooling.forward"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.TemporalAttentionPooling.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param features: [batch_size, history_len, feature_size]</span>
 <span class="sd">        :return:</span>
@@ -222,7 +206,7 @@
         <span class="k">return</span> <span class="n">x_attn</span></div></div>
 
 
-<div class="viewcode-block" id="LamaPooling"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.layers.LamaPooling">[docs]</a><span class="k">class</span> <span class="nc">LamaPooling</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="LamaPooling"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.LamaPooling">[docs]</a><span class="k">class</span> <span class="nc">LamaPooling</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="n">available_poolings</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s2">&quot;last&quot;</span><span class="p">,</span> <span class="s2">&quot;avg_all&quot;</span><span class="p">,</span> <span class="s2">&quot;avg&quot;</span><span class="p">,</span> <span class="s2">&quot;max_all&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;softmax_all&quot;</span><span class="p">,</span> <span class="s2">&quot;softmax&quot;</span><span class="p">,</span>
         <span class="s2">&quot;tanh_all&quot;</span><span class="p">,</span> <span class="s2">&quot;tanh&quot;</span><span class="p">,</span> <span class="s2">&quot;sigmoid_all&quot;</span><span class="p">,</span> <span class="s2">&quot;sigmoid&quot;</span>
@@ -235,12 +219,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">features_out</span> <span class="o">=</span> <span class="n">features_in</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">poolings</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">poolings</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">({</span>
-            <span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_for_pooling</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">features_in</span><span class="p">)</span>
+            <span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pooling</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">features_in</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">poolings</span>
         <span class="p">})</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_prepare_for_pooling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">features_in</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_pooling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">features_in</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">x</span> <span class="ow">in</span> <span class="n">key</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;softmax&quot;</span><span class="p">,</span> <span class="s2">&quot;tanh&quot;</span><span class="p">,</span> <span class="s2">&quot;sigmoid&quot;</span><span class="p">]]):</span>
             <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">pooling</span> <span class="o">=</span> <span class="n">TemporalAttentionPooling</span><span class="p">(</span>
@@ -270,7 +254,7 @@
 
         <span class="k">return</span> <span class="n">x_out</span>
 
-<div class="viewcode-block" id="LamaPooling.forward"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.layers.LamaPooling.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
+<div class="viewcode-block" id="LamaPooling.forward"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.LamaPooling.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param features: [batch_size, history_len, feature_size]</span>
 <span class="sd">        :return:</span>
@@ -288,150 +272,16 @@
         <span class="k">return</span> <span class="n">x</span></div></div>
 
 
-<div class="viewcode-block" id="StateNet"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.layers.StateNet">[docs]</a><span class="k">class</span> <span class="nc">StateNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">main_net</span><span class="p">,</span>
-        <span class="n">head_net</span><span class="p">,</span>
-        <span class="n">observation_net</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">aggregation_net</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">policy_net</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span> <span class="o">=</span> <span class="n">observation_net</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">main_net</span> <span class="o">=</span> <span class="n">main_net</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">aggregation_net</span> <span class="o">=</span> <span class="n">aggregation_net</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">head_net</span> <span class="o">=</span> <span class="n">head_net</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">policy_net</span> <span class="o">=</span> <span class="n">policy_net</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span> <span class="o">=</span> <span class="n">get_out_features</span><span class="p">(</span><span class="n">head_net</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">aggregation_net</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_ff</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aggregation_net</span><span class="p">,</span> <span class="n">LamaPooling</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_lama</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_policy_fn</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">policy_net</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_policy_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy_net</span><span class="p">,</span> <span class="n">GaussPolicy</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_policy_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy_net</span><span class="o">.</span><span class="n">forward</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">policy_net</span><span class="p">,</span> <span class="n">RealNVPPolicy</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_policy_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy_net</span><span class="o">.</span><span class="n">forward</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
-    <span class="k">def</span> <span class="nf">_forward_ff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">observation</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">observation</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">x</span>
-
-    <span class="k">def</span> <span class="nf">_forward_lama</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">observation</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">batch_size</span><span class="p">,</span> <span class="n">history_len</span><span class="p">,</span> <span class="n">feature_size</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">feature_size</span><span class="p">)</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">history_len</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregation_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">x</span>
-
-<div class="viewcode-block" id="StateNet.forward"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.layers.StateNet.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">with_log_pi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy_fn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">with_log_pi</span><span class="p">,</span> <span class="n">deterministic</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">x</span></div></div>
-
-
-<div class="viewcode-block" id="StateActionNet"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.layers.StateActionNet">[docs]</a><span class="k">class</span> <span class="nc">StateActionNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">main_net</span><span class="p">,</span>
-        <span class="n">head_net</span><span class="p">,</span>
-        <span class="n">observation_net</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">action_net</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">aggregation_net</span><span class="o">=</span><span class="kc">None</span>
-    <span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span> <span class="o">=</span> <span class="n">observation_net</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">action_net</span> <span class="o">=</span> <span class="n">action_net</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">aggregation_net</span> <span class="o">=</span> <span class="n">aggregation_net</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">main_net</span> <span class="o">=</span> <span class="n">main_net</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">head_net</span> <span class="o">=</span> <span class="n">head_net</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span> <span class="o">=</span> <span class="n">get_out_features</span><span class="p">(</span><span class="n">head_net</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">aggregation_net</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_ff</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aggregation_net</span><span class="p">,</span> <span class="n">LamaPooling</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_lama</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
-    <span class="k">def</span> <span class="nf">_forward_ff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-        <span class="n">obs_</span> <span class="o">=</span> <span class="n">observation</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">observation</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">obs_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span><span class="p">(</span><span class="n">obs_</span><span class="p">)</span>
-
-        <span class="n">act_</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_net</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">act_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_net</span><span class="p">(</span><span class="n">act_</span><span class="p">)</span>
-
-        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">obs_</span><span class="p">,</span> <span class="n">act_</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">x</span>
-
-    <span class="k">def</span> <span class="nf">_forward_lama</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-        <span class="n">obs_</span> <span class="o">=</span> <span class="n">observation</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obs_</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">obs_</span> <span class="o">=</span> <span class="n">obs_</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">batch_size</span><span class="p">,</span> <span class="n">history_len</span><span class="p">,</span> <span class="n">feature_size</span> <span class="o">=</span> <span class="n">obs_</span><span class="o">.</span><span class="n">shape</span>
-            <span class="n">obs_</span> <span class="o">=</span> <span class="n">obs_</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">feature_size</span><span class="p">)</span>
-            <span class="n">obs_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span><span class="p">(</span><span class="n">obs_</span><span class="p">)</span>
-            <span class="n">obs_</span> <span class="o">=</span> <span class="n">obs_</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">history_len</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">obs_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregation_net</span><span class="p">(</span><span class="n">obs_</span><span class="p">)</span>
-
-        <span class="c1"># @TODO: add option to collapse observations based on action</span>
-        <span class="n">act_</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_net</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">act_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_net</span><span class="p">(</span><span class="n">act_</span><span class="p">)</span>
-
-        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">obs_</span><span class="p">,</span> <span class="n">act_</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">x</span>
-
-<div class="viewcode-block" id="StateActionNet.forward"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.layers.StateActionNet.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">value</span></div></div>
-
-
-<div class="viewcode-block" id="SquashingLayer"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.layers.SquashingLayer">[docs]</a><span class="k">class</span> <span class="nc">SquashingLayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<div class="viewcode-block" id="SquashingLayer.__init__"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.layers.SquashingLayer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">squashing_fn</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Layer that squashes samples from some distribution to be bounded.</span>
+<div class="viewcode-block" id="SquashingLayer"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.SquashingLayer">[docs]</a><span class="k">class</span> <span class="nc">SquashingLayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="SquashingLayer.__init__"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.SquashingLayer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">squashing_fn</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Layer that squashes samples from some distribution to be bounded.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">squashing_fn</span> <span class="o">=</span> <span class="n">MODULES</span><span class="o">.</span><span class="n">get_if_str</span><span class="p">(</span><span class="n">squashing_fn</span><span class="p">)()</span></div>
 
-<div class="viewcode-block" id="SquashingLayer.forward"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.layers.SquashingLayer.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">log_pi</span><span class="p">):</span>
+<div class="viewcode-block" id="SquashingLayer.forward"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.SquashingLayer.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">log_pi</span><span class="p">):</span>
         <span class="c1"># compute log det jacobian of squashing transformation</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">squashing_fn</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">):</span>
             <span class="n">log2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
@@ -449,74 +299,8 @@
         <span class="k">return</span> <span class="n">action</span><span class="p">,</span> <span class="n">log_pi</span></div></div>
 
 
-<div class="viewcode-block" id="GaussPolicy"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.layers.GaussPolicy">[docs]</a><span class="k">class</span> <span class="nc">GaussPolicy</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">squashing_fn</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">squashing_layer</span> <span class="o">=</span> <span class="n">SquashingLayer</span><span class="p">(</span><span class="n">squashing_fn</span><span class="p">)</span>
-
-<div class="viewcode-block" id="GaussPolicy.forward"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.layers.GaussPolicy.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">with_log_pi</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="n">action_size</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span>
-        <span class="n">mu</span><span class="p">,</span> <span class="n">log_sigma</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[:,</span> <span class="p">:</span><span class="n">action_size</span><span class="p">],</span> <span class="n">inputs</span><span class="p">[:,</span> <span class="n">action_size</span><span class="p">:]</span>
-        <span class="n">log_sigma</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">log_sigma</span><span class="p">,</span> <span class="n">LOG_SIG_MIN</span><span class="p">,</span> <span class="n">LOG_SIG_MAX</span><span class="p">)</span>
-        <span class="n">sigma</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_sigma</span><span class="p">)</span>
-        <span class="n">z</span> <span class="o">=</span> <span class="n">mu</span> <span class="k">if</span> <span class="n">deterministic</span> <span class="k">else</span> <span class="n">normal_sample</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
-        <span class="n">log_pi</span> <span class="o">=</span> <span class="n">normal_log_prob</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
-        <span class="n">action</span><span class="p">,</span> <span class="n">log_pi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">squashing_layer</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">log_pi</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">with_log_pi</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">action</span><span class="p">,</span> <span class="n">log_pi</span>
-        <span class="k">return</span> <span class="n">action</span></div></div>
-
-
-<div class="viewcode-block" id="RealNVPPolicy"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.layers.RealNVPPolicy">[docs]</a><span class="k">class</span> <span class="nc">RealNVPPolicy</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">action_size</span><span class="p">,</span>
-        <span class="n">layer_fn</span><span class="p">,</span>
-        <span class="n">activation_fn</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">,</span>
-        <span class="n">squashing_fn</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">,</span>
-        <span class="n">norm_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">bias</span><span class="o">=</span><span class="kc">False</span>
-    <span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="n">activation_fn</span> <span class="o">=</span> <span class="n">MODULES</span><span class="o">.</span><span class="n">get_if_str</span><span class="p">(</span><span class="n">activation_fn</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">action_size</span> <span class="o">=</span> <span class="n">action_size</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">coupling1</span> <span class="o">=</span> <span class="n">CouplingLayer</span><span class="p">(</span>
-            <span class="n">action_size</span><span class="o">=</span><span class="n">action_size</span><span class="p">,</span>
-            <span class="n">layer_fn</span><span class="o">=</span><span class="n">layer_fn</span><span class="p">,</span>
-            <span class="n">activation_fn</span><span class="o">=</span><span class="n">activation_fn</span><span class="p">,</span>
-            <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">,</span>
-            <span class="n">parity</span><span class="o">=</span><span class="s2">&quot;odd&quot;</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">coupling2</span> <span class="o">=</span> <span class="n">CouplingLayer</span><span class="p">(</span>
-            <span class="n">action_size</span><span class="o">=</span><span class="n">action_size</span><span class="p">,</span>
-            <span class="n">layer_fn</span><span class="o">=</span><span class="n">layer_fn</span><span class="p">,</span>
-            <span class="n">activation_fn</span><span class="o">=</span><span class="n">activation_fn</span><span class="p">,</span>
-            <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">,</span>
-            <span class="n">parity</span><span class="o">=</span><span class="s2">&quot;even&quot;</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">squashing_layer</span> <span class="o">=</span> <span class="n">SquashingLayer</span><span class="p">(</span><span class="n">squashing_fn</span><span class="p">)</span>
-
-<div class="viewcode-block" id="RealNVPPolicy.forward"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.layers.RealNVPPolicy.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">with_log_pi</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="n">state_embedding</span> <span class="o">=</span> <span class="n">inputs</span>
-        <span class="n">mu</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">state_embedding</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_size</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
-            <span class="n">state_embedding</span><span class="o">.</span><span class="n">device</span>
-        <span class="p">)</span>
-        <span class="n">sigma</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">mu</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-        <span class="n">z</span> <span class="o">=</span> <span class="n">mu</span> <span class="k">if</span> <span class="n">deterministic</span> <span class="k">else</span> <span class="n">normal_sample</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
-        <span class="n">log_pi</span> <span class="o">=</span> <span class="n">normal_log_prob</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
-        <span class="n">z</span><span class="p">,</span> <span class="n">log_pi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coupling1</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">state_embedding</span><span class="p">,</span> <span class="n">log_pi</span><span class="p">)</span>
-        <span class="n">z</span><span class="p">,</span> <span class="n">log_pi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coupling2</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">state_embedding</span><span class="p">,</span> <span class="n">log_pi</span><span class="p">)</span>
-        <span class="n">action</span><span class="p">,</span> <span class="n">log_pi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">squashing_layer</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">log_pi</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">with_log_pi</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">action</span><span class="p">,</span> <span class="n">log_pi</span>
-        <span class="k">return</span> <span class="n">action</span></div></div>
-
-
-<div class="viewcode-block" id="CouplingLayer"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.layers.CouplingLayer">[docs]</a><span class="k">class</span> <span class="nc">CouplingLayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<div class="viewcode-block" id="CouplingLayer.__init__"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.layers.CouplingLayer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="CouplingLayer"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.CouplingLayer">[docs]</a><span class="k">class</span> <span class="nc">CouplingLayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="CouplingLayer.__init__"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.CouplingLayer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">action_size</span><span class="p">,</span>
         <span class="n">layer_fn</span><span class="p">,</span>
@@ -524,7 +308,8 @@
         <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">parity</span><span class="o">=</span><span class="s2">&quot;odd&quot;</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Conditional affine coupling layer used in Real NVP Bijector.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Conditional affine coupling layer used in Real NVP Bijector.</span>
 <span class="sd">        Original paper: https://arxiv.org/abs/1605.08803</span>
 <span class="sd">        Adaptation to RL: https://arxiv.org/abs/1804.02808</span>
 <span class="sd">        Important notes</span>
@@ -582,7 +367,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">translation_prenet</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">inner_init</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">translation_net</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">outer_init</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CouplingLayer.forward"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.layers.CouplingLayer.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">state_embedding</span><span class="p">,</span> <span class="n">log_pi</span><span class="p">):</span>
+<div class="viewcode-block" id="CouplingLayer.forward"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agents.CouplingLayer.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">state_embedding</span><span class="p">,</span> <span class="n">log_pi</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parity</span> <span class="o">==</span> <span class="s2">&quot;odd&quot;</span><span class="p">:</span>
             <span class="n">action_copy</span> <span class="o">=</span> <span class="n">action</span><span class="p">[:,</span> <span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_size</span><span class="p">]</span>
             <span class="n">action_transform</span> <span class="o">=</span> <span class="n">action</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_size</span><span class="p">:]</span>

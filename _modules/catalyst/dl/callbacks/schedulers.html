@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.callbacks.schedulers &mdash; Catalyst 19.03-rc0 documentation</title>
+  <title>catalyst.dl.callbacks.schedulers &mdash; Catalyst 19.06 documentation</title>
   
 
   
@@ -20,21 +20,11 @@
   <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'../../../../',
-              VERSION:'19.03-rc0',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
         <script type="text/javascript" src="../../../../_static/jquery.js"></script>
         <script type="text/javascript" src="../../../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -68,7 +58,7 @@
             
             
               <div class="version">
-                19.03
+                19.06
               </div>
             
           
@@ -169,10 +159,8 @@
            <div itemprop="articleBody">
             
   <h1>Source code for catalyst.dl.callbacks.schedulers</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span>
-
-<span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">Callback</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.callbacks.utils</span> <span class="k">import</span> <span class="n">get_optimizer_momentum</span>
+<span></span><span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">Callback</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="k">import</span> <span class="n">get_optimizer_momentum</span>
 
 
 <div class="viewcode-block" id="LRUpdater"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.LRUpdater">[docs]</a><span class="k">class</span> <span class="nc">LRUpdater</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
@@ -180,8 +168,9 @@
 
 <div class="viewcode-block" id="LRUpdater.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.LRUpdater.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optimizer_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :param optimizer_key: which optimizer key to use</span>
-<span class="sd">            for learning rate scheduling</span>
+<span class="sd">        Args:</span>
+<span class="sd">            optimizer_key: which optimizer key to use</span>
+<span class="sd">                for learning rate scheduling</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_key</span> <span class="o">=</span> <span class="n">optimizer_key</span></div>
@@ -245,86 +234,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">update_optimizer</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="OneCycleLR"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.OneCycleLR">[docs]</a><span class="k">class</span> <span class="nc">OneCycleLR</span><span class="p">(</span><span class="n">LRUpdater</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An learning rate updater</span>
-<span class="sd">        that implements the Circular Learning Rate (CLR) scheme.</span>
-<span class="sd">    Learning rate is increased then decreased linearly.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="OneCycleLR.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.OneCycleLR.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">cycle_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">div_factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">increase_fraction</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-        <span class="n">momentum_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-        <span class="n">optimizer_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">        :param init_lr: init learning rate for torch optimizer</span>
-<span class="sd">        :param cycle_len: (int) num epochs to apply one cycle policy</span>
-<span class="sd">        :param div_factor: max_lr / init_lr</span>
-<span class="sd">        :param increase_fraction:</span>
-<span class="sd">            the part of cycle when learning rate increases</span>
-<span class="sd">        :param momentum_range: (tuple(int, int)) max and min momentum values</span>
-<span class="sd">        :param optimizer_key: which optimizer key to use</span>
-<span class="sd">            for learning rate scheduling</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">optimizer_key</span><span class="o">=</span><span class="n">optimizer_key</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">total_iter</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cycle_len</span> <span class="o">=</span> <span class="n">cycle_len</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">momentum_range</span> <span class="o">=</span> <span class="n">momentum_range</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">div_factor</span> <span class="o">=</span> <span class="n">div_factor</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">increase_fraction</span> <span class="o">=</span> <span class="n">increase_fraction</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">cycle_iter</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cycle_len</span> <span class="o">=</span> <span class="n">cycle_len</span>
-        <span class="c1"># point in iterations for starting lr decreasing</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cut_point</span> <span class="o">=</span> <span class="kc">None</span></div>
-
-<div class="viewcode-block" id="OneCycleLR.on_loader_start"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.OneCycleLR.on_loader_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">need_backward</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">total_iter</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">loader_len</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycle_len</span> <span class="o">-</span> <span class="mi">1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cut_point</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_iter</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">increase_fraction</span><span class="p">)</span>
-
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_loader_start</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="OneCycleLR.calc_lr"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.OneCycleLR.calc_lr">[docs]</a>    <span class="k">def</span> <span class="nf">calc_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># calculate percent for learning rate change</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycle_iter</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cut_point</span><span class="p">:</span>
-            <span class="n">percent_curr</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cycle_iter</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cut_point</span><span class="p">)</span>
-            <span class="n">percent_all</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_iter</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cut_point</span><span class="p">)</span>
-            <span class="n">percent</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">percent_curr</span> <span class="o">/</span> <span class="n">percent_all</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">percent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycle_iter</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">cut_point</span>
-
-        <span class="n">current_mult</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">percent</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">div_factor</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">div_factor</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span> <span class="o">*</span> <span class="n">current_mult</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">cycle_iter</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycle_iter</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_iter</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cycle_iter</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">return</span> <span class="n">res</span></div>
-
-<div class="viewcode-block" id="OneCycleLR.calc_momentum"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.OneCycleLR.calc_momentum">[docs]</a>    <span class="k">def</span> <span class="nf">calc_momentum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycle_iter</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cut_point</span><span class="p">:</span>
-            <span class="n">now_</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cycle_iter</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cut_point</span><span class="p">)</span>
-            <span class="n">all_</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_iter</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cut_point</span><span class="p">)</span>
-            <span class="n">percent</span> <span class="o">=</span> <span class="n">now_</span> <span class="o">/</span> <span class="n">all_</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">percent</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycle_iter</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">cut_point</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">momentum_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span>
-            <span class="n">percent</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">momentum_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">momentum_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">res</span></div></div>
-
-
 <div class="viewcode-block" id="LRFinder"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.LRFinder">[docs]</a><span class="k">class</span> <span class="nc">LRFinder</span><span class="p">(</span><span class="n">LRUpdater</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Helps you find an optimal learning rate for a model,</span>
-<span class="sd">        as per suggestion of 2015 CLR paper.</span>
+<span class="sd">    as per suggestion of 2015 CLR paper.</span>
 <span class="sd">    Learning rate is increased in linear or log scale, depending on user input.</span>
 
 <span class="sd">    https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html</span>
@@ -334,23 +247,23 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">final_lr</span><span class="p">,</span>
         <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
-        <span class="n">n_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">optimizer_key</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">        :param final_lr: final learning rate to try with</span>
-<span class="sd">        :param scale: learning rate increasing scale (&quot;log&quot; or &quot;linear&quot;)</span>
-<span class="sd">        :param n_steps:  number of batches to try;</span>
-<span class="sd">            if None - whole loader would be used.</span>
-<span class="sd">        :param optimizer_key: which optimizer key to use</span>
-<span class="sd">            for learning rate scheduling</span>
+<span class="sd">        Args:</span>
+<span class="sd">            final_lr: final learning rate to try with</span>
+<span class="sd">            scale: learning rate increasing scale (&quot;log&quot; or &quot;linear&quot;)</span>
+<span class="sd">            num_steps:  number of batches to try;</span>
+<span class="sd">                if None - whole loader would be used.</span>
+<span class="sd">            optimizer_key: which optimizer key to use</span>
+<span class="sd">                for learning rate scheduling</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">optimizer_key</span><span class="o">=</span><span class="n">optimizer_key</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">final_lr</span> <span class="o">=</span> <span class="n">final_lr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span> <span class="o">=</span> <span class="n">n_steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span> <span class="o">=</span> <span class="n">num_steps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lr_step</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">find_iter</span> <span class="o">=</span> <span class="mi">0</span>
@@ -377,15 +290,15 @@
 <div class="viewcode-block" id="LRFinder.on_loader_start"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.LRFinder.on_loader_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">need_backward</span><span class="p">:</span>
             <span class="n">lr_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_lr</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span> <span class="ow">or</span> <span class="n">state</span><span class="o">.</span><span class="n">loader_len</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">=</span> <span class="n">lr_</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">lr_step</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">final_lr</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span> <span class="ow">or</span> <span class="n">state</span><span class="o">.</span><span class="n">loader_len</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">=</span> <span class="n">lr_</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lr_step</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">final_lr</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_loader_start</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LRFinder.on_batch_end"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.LRFinder.on_batch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_batch_end</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_iter</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_iter</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;End of LRFinder&quot;</span><span class="p">)</span></div></div>
 </pre></div>
 
