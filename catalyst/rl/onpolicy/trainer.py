@@ -3,6 +3,7 @@ import gc
 import time
 from datetime import datetime
 from tensorboardX import SummaryWriter
+import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
@@ -13,6 +14,7 @@ from catalyst.rl.utils import \
 from catalyst.rl.db.core import DBSpec
 from catalyst.rl.environments.core import EnvironmentSpec
 from catalyst.rl.onpolicy.algorithms.core import AlgorithmSpec
+from catalyst.rl.onpolicy.algorithms.utils import append_dict
 
 
 class Trainer:
@@ -27,6 +29,7 @@ class Trainer:
         num_mini_epochs: int = 10,
         min_num_trajectories: int = 100,
         min_num_transitions: int = 8192,
+        rollout_batch_size: int = None,
         save_period: int = 10,
         online_update_period: int = 1,
         resume: str = None,
@@ -65,6 +68,7 @@ class Trainer:
         self.min_num_trajectories = min_num_trajectories
         self.min_num_transitions = min_num_transitions
         self.max_num_transitions = min_num_transitions * 3
+        self.rollout_batch_size = rollout_batch_size
 
         self.save_period = save_period
 
@@ -132,10 +136,10 @@ class Trainer:
             self._num_trajectories += 1
             self._num_transitions += len(episode[-1])
 
-            observations, actions, rewards, _ = episode
+            observations, actions, rewards, dones = episode
             states = _get_states_from_observations(
                 observations, self.env_spec.history_len)
-            rollout = self.algorithm.get_rollout(states, actions, rewards)
+            rollout = self._get_rollout_in_batches(states, actions, rewards, dones)
             self.replay_buffer.push_rollout(
                 state=states,
                 action=actions,
@@ -150,6 +154,31 @@ class Trainer:
 
         elapsed_time = time.time() - start_time
         self.logger.add_scalar("fetch time", elapsed_time, self.epoch)
+
+
+    def _get_rollout_in_batches(self, states, actions, rewards, dones):
+
+        if self.rollout_batch_size is None:
+            return self.algorithm.get_rollout(states, actions, rewards, dones)
+
+        indices = np.arange(
+            0, len(states) + self.rollout_batch_size - 1, self.rollout_batch_size
+        )
+        rollout = None
+        for i in range(len(indices) - 1):
+            states_batch = states[indices[i]:indices[i+1]+1]
+            actions_batch = actions[indices[i]:indices[i+1]+1]
+            rewards_batch = rewards[indices[i]:indices[i+1]+1]
+            dones_batch = dones[indices[i]:indices[i+1]+1]
+            rollout_batch = self.algorithm.get_rollout(
+                states_batch, actions_batch, rewards_batch, dones_batch
+            )
+            if rollout is not None:
+                rollout = append_dict(rollout, rollout_batch)
+            else:
+                rollout = rollout_batch
+        return rollout
+
 
     def _update_samplers_weights(self):
         mode = self._sampler_weight_mode
