@@ -21,8 +21,8 @@ matrix:
 
 stages:
   - Tests
-  - Deploy
   - Examples
+  - Deploy
 
 before_install: &before_install
   sudo apt install redis-server
