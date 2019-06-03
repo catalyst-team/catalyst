@@ -415,10 +415,7 @@ class PolicyHandler:
     def _get_q_values(self, critic: CriticSpec, state: np.ndarray, device):
         states = torch.Tensor(state).to(device).unsqueeze(0)
         output = critic(states)
-        if critic.num_heads == 1:
-            output = output.unsqueeze(1)
-
-        # If the number of heads > 1, we use the last one to perform actions
+        # We use the last head to perform actions
         # This is the head corresponding to the largest gamma
         if self.value_distribution == "categorical":
             probs = torch.softmax(output[0, -1, :, :], dim=-1)
