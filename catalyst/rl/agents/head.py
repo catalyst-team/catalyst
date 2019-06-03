@@ -71,9 +71,9 @@ class ValueHead(nn.Module):
             # make critic outputs (B, 1) instead of (B, )
             x = [z.unsqueeze_(dim=1) for z in x]
 
-        # B x num_heads x num_outputs x num_atoms
-        # if num_heads == 1, squeeze it out not to crash other algorithms
-        return torch.stack(x, dim=1).squeeze(1)
+        # B x num_heads x num_outputs x num_atoms (discrete)
+        # B x num_heads x num_atoms (continuous)
+        return torch.stack(x, dim=1)
 
 
 class PolicyHead(nn.Module):
