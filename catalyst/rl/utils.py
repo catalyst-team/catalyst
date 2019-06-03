@@ -466,7 +466,7 @@ class PolicyHandler:
         return action
 
 
-class EpisodeRunner:
+class TrajectorySampler:
     def __init__(
         self,
         env: EnvironmentSpec,
@@ -570,7 +570,7 @@ class EpisodeRunner:
         self._init_buffers()
         self._init_with_observation(self.env.reset())
 
-    def run(self, exploration_strategy):
+    def sample(self, exploration_strategy = None):
         episode_reward, num_steps, done = 0, 0, False
 
         while not done:

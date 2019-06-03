@@ -14,17 +14,14 @@ import torch  # noqa E402
 torch.set_num_threads(1)
 
 from catalyst.dl.scripts.utils import import_module  # noqa E402
-from catalyst.utils.config import parse_args_uargs  # noqa E402
-from catalyst.utils.misc import set_global_seed, boolean_flag  # noqa E402
+from catalyst.rl.core import Sampler  # noqa E402
 from catalyst.rl.registry import \
     OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
     ENVIRONMENTS, DATABASES  # noqa E402
 from catalyst.rl.exploration import ExplorationHandler  # noqa E402
-from catalyst.rl.offpolicy.sampler import \
-    Sampler as OffpolicySampler  # noqa E402
-from catalyst.rl.onpolicy.sampler import \
-    Sampler as OnpolicySampler  # noqa E402
 from catalyst.rl.scripts.utils import OFFPOLICY_ALGORITHMS_NAMES  # noqa E402
+from catalyst.utils.config import parse_args_uargs  # noqa E402
+from catalyst.utils.misc import set_global_seed, boolean_flag  # noqa E402
 
 
 STEP_DELAY = 1
@@ -78,7 +75,6 @@ def run_sampler(
     logdir,
     algorithm_fn,
     environment_fn,
-    sampler_fn,
     vis,
     infer,
     seed=42,
@@ -110,7 +106,7 @@ def run_sampler(
     valid_seeds = config_["sampler"].pop("valid_seeds")
     seeds = valid_seeds if infer else None
 
-    sampler = sampler_fn(
+    sampler = Sampler(
         agent=agent,
         env=env,
         db_server=db_server,
@@ -141,11 +137,9 @@ def main(args, unknown_args):
 
     if algorithm_name in OFFPOLICY_ALGORITHMS_NAMES:
         ALGORITHMS = OFFPOLICY_ALGORITHMS
-        sampler_fn = OffpolicySampler
         sync_epoch = False
     else:
         ALGORITHMS = ONPOLICY_ALGORITHMS
-        sampler_fn = OnpolicySampler
         sync_epoch = True
 
     algorithm_fn = ALGORITHMS.get(algorithm_name)
@@ -164,7 +158,6 @@ def main(args, unknown_args):
         logdir=args.logdir,
         algorithm_fn=algorithm_fn,
         environment_fn=environment_fn,
-        sampler_fn=sampler_fn,
         config=config,
         resume=args.resume,
         db=args.db,

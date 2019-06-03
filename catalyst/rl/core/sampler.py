@@ -16,7 +16,7 @@ from tensorboardX import SummaryWriter  # noqa E402
 
 from catalyst.utils.misc import set_global_seed  # noqa E402
 from catalyst.dl.utils import UtilsFactory  # noqa E402
-from catalyst.rl.utils import EpisodeRunner  # noqa E402
+from catalyst.rl.utils import TrajectorySampler  # noqa E402
 from catalyst.rl.exploration import ExplorationHandler  # noqa E402
 from catalyst.rl.environments.core import EnvironmentSpec  # noqa E402
 from catalyst.rl.db.core import DBSpec  # noqa E402
@@ -37,8 +37,10 @@ class Sampler:
         logdir: str = None,
         id: int = 0,
         mode: str = "infer",
+        weights_sync_period: int = 1,
+        weights_sync_mode: str = None,
         seeds: List = None,
-        max_trajectories_to_sample: int = None,
+        trajectory_limit: int = None,
         force_store: bool = False,
         gc_period: int = 10,
     ):
@@ -56,8 +58,8 @@ class Sampler:
         self.env = env
         self.agent = agent
         self.exploration_handler = exploration_handler
-        self.episode_index = 0
-        self.episode_runner = EpisodeRunner(
+        self.trajectory_index = 0
+        self.trajectory_sampler = TrajectorySampler(
             env=self.env,
             agent=self.agent,
             device=self._device,
@@ -66,16 +68,17 @@ class Sampler:
 
         # synchronization configuration
         self.db_server = db_server
-        self.episode_limit = max_trajectories_to_sample or _BIG_NUM
+        self._weights_sync_period = weights_sync_period
+        self._weights_sync_mode = weights_sync_mode
+        self._trajectory_limit = trajectory_limit or _BIG_NUM
         self._force_store = force_store
-        self._sampler_weight_mode = "actor"
         self._gc_period = gc_period
 
     def _prepare_logger(self, logdir, mode):
         if logdir is not None:
-            current_date = datetime.now().strftime("%y-%m-%d-%H-%M-%S-%M-%f")
+            timestamp = datetime.utcnow().strftime("%y%m%d.%H%M%S")
             logpath = f"{logdir}/" \
-                f"sampler-{mode}-{self._sampler_id}-{current_date}"
+                f"sampler.{mode}.{self._sampler_id}.{timestamp}"
             os.makedirs(logpath, exist_ok=True)
             self.logger = SummaryWriter(logpath)
         else:
@@ -92,12 +95,12 @@ class Sampler:
     ):
         if filepath is not None:
             checkpoint = UtilsFactory.load_checkpoint(filepath)
-            weights = checkpoint[f"{self._sampler_weight_mode}_state_dict"]
+            weights = checkpoint[f"{self._weights_sync_mode}_state_dict"]
             self.agent.load_state_dict(weights)
         elif db_server is not None:
             while not db_server.get_sample_flag():
                 time.sleep(1.0)
-            weights = db_server.load_weights(prefix=self._sampler_weight_mode)
+            weights = db_server.load_weights(prefix=self._weights_sync_mode)
             weights = {k: self._to_tensor(v) for k, v in weights.items()}
             self.agent.load_state_dict(weights)
         else:
@@ -112,7 +115,7 @@ class Sampler:
         if not self.db_server.get_sample_flag():
             return
 
-        trajectory = self.episode_runner.get_trajectory()
+        trajectory = self.trajectory_sampler.get_trajectory()
         self.db_server.push_trajectory(trajectory)
 
     def _get_seed(self):
@@ -128,55 +131,58 @@ class Sampler:
     def _log_to_console(
         self,
         *,
-        episode_reward,
+        reward,
         num_steps,
         elapsed_time,
         seed
     ):
         print(
-            f"--- episode {int(self.episode_index):05d}:\t"
+            f"--- episode {int(self.trajectory_index):05d}:\t"
             f"steps: {int(num_steps):05d}\t"
-            f"reward: {episode_reward:9.4f}\t"
+            f"reward: {reward:9.4f}\t"
             f"time: {elapsed_time:9.4f}\t"
             f"seed: {seed}"
         )
 
-    def _log_to_tensorboard(self, *, episode_reward, num_steps, elapsed_time):
+    def _log_to_tensorboard(self, *, reward, num_steps, elapsed_time):
         if self.logger is not None:
             self.logger.add_scalar(
-                "episode/num_steps", num_steps, self.episode_index
+                "trajectory/num_steps", num_steps, self.trajectory_index
             )
             self.logger.add_scalar(
-                "episode/reward", episode_reward, self.episode_index
+                "trajectory/reward", reward, self.trajectory_index
             )
             self.logger.add_scalar(
-                "time/episode per minute", 60. / elapsed_time,
-                self.episode_index
+                "time/trajectory per minute", 60. / elapsed_time,
+                self.trajectory_index
             )
             self.logger.add_scalar(
                 "time/steps per second", num_steps / elapsed_time,
-                self.episode_index
+                self.trajectory_index
             )
             self.logger.add_scalar(
-                "time/episode time (sec)", elapsed_time, self.episode_index
+                "time/trajectory time (sec)",
+                elapsed_time,
+                self.trajectory_index
             )
             self.logger.add_scalar(
                 "time/step time (sec)", elapsed_time / num_steps,
-                self.episode_index
+                self.trajectory_index
             )
 
     def run(self):
         while True:
-            self.load_checkpoint(db_server=self.db_server)
+            if self.trajectory_index % self._weights_sync_period == 0:
+                self.load_checkpoint(db_server=self.db_server)
             seed = self._get_seed()
             exploration_strategy = \
                 self.exploration_handler.get_exploration_strategy() \
                 if self.exploration_handler is not None \
                 else None
-            self.episode_runner.reset(exploration_strategy)
+            self.trajectory_sampler.reset(exploration_strategy)
 
             start_time = time.time()
-            episode_info = self.episode_runner.run(
+            episode_info = self.trajectory_sampler.sample(
                 exploration_strategy=exploration_strategy)
             elapsed_time = time.time() - start_time
 
@@ -192,8 +198,8 @@ class Sampler:
                 **episode_info,
                 elapsed_time=elapsed_time)
 
-            self.episode_index += 1
-            if self.episode_index % self._gc_period == 0:
+            self.trajectory_index += 1
+            if self.trajectory_index % self._gc_period == 0:
                 gc.collect()
-            if self.episode_index >= self.episode_limit:
+            if self.trajectory_index >= self._trajectory_limit:
                 return
