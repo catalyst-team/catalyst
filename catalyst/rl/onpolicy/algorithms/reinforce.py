@@ -20,14 +20,16 @@ class REINFORCE(ActorAlgorithmSpec):
         }
 
     @torch.no_grad()
-    def get_rollout(self, states, actions, rewards):
+    def get_rollout(self, states, actions, rewards, dones):
+        trajectory_len = \
+            rewards.shape[0] if dones[-1] else rewards.shape[0] - 1
+
         states = self._to_tensor(states)
         actions = self._to_tensor(actions)
-        rewards = np.array(rewards)
-        trajectory_len = rewards.shape[0]
+        rewards = np.array(rewards)[:trajectory_len]
 
         _, logprobs = self.actor(states, logprob=actions)
-        logprobs = logprobs.cpu().numpy().reshape(-1)
+        logprobs = logprobs.cpu().numpy().reshape(-1)[:trajectory_len]
 
         returns = geometric_cumsum(self.gamma, rewards)[0]
 
