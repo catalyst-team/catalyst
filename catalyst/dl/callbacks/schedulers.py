@@ -7,8 +7,9 @@ class LRUpdater(Callback):
 
     def __init__(self, optimizer_key: str = None):
         """
-        :param optimizer_key: which optimizer key to use
-            for learning rate scheduling
+        Args:
+            optimizer_key: which optimizer key to use
+                for learning rate scheduling
         """
         self.init_lr = 0
         self.optimizer_key = optimizer_key
@@ -75,7 +76,7 @@ class LRUpdater(Callback):
 class LRFinder(LRUpdater):
     """
     Helps you find an optimal learning rate for a model,
-        as per suggestion of 2015 CLR paper.
+    as per suggestion of 2015 CLR paper.
     Learning rate is increased in linear or log scale, depending on user input.
 
     https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html
@@ -89,13 +90,13 @@ class LRFinder(LRUpdater):
         optimizer_key=None
     ):
         """
-
-        :param final_lr: final learning rate to try with
-        :param scale: learning rate increasing scale ("log" or "linear")
-        :param num_steps:  number of batches to try;
-            if None - whole loader would be used.
-        :param optimizer_key: which optimizer key to use
-            for learning rate scheduling
+        Args:
+            final_lr: final learning rate to try with
+            scale: learning rate increasing scale ("log" or "linear")
+            num_steps:  number of batches to try;
+                if None - whole loader would be used.
+            optimizer_key: which optimizer key to use
+                for learning rate scheduling
         """
         super().__init__(optimizer_key=optimizer_key)
 

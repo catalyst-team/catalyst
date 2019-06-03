@@ -5,7 +5,7 @@ from catalyst.dl.utils import UtilsFactory
 from catalyst.rl.registry import AGENTS
 from catalyst.rl.agents.core import ActorSpec, CriticSpec
 from catalyst.rl.environments.core import EnvironmentSpec
-from catalyst.rl.offpolicy.algorithms.utils import get_agent_stuff_from_params
+from catalyst.rl.offpolicy.algorithms.utils import get_trainer_components
 from .core import AlgorithmSpec
 
 
@@ -26,13 +26,13 @@ class ActorCriticAlgorithmSpec(AlgorithmSpec):
         critic_grad_clip_params: Dict = None,
         **kwargs
     ):
-        self._device = UtilsFactory.prepare_device()
+        self._device = UtilsFactory.get_device()
 
         self.actor = actor.to(self._device)
         self.critic = critic.to(self._device)
 
         # actor preparation
-        actor_stuff = get_agent_stuff_from_params(
+        actor_components = get_trainer_components(
             agent=self.actor,
             loss_params=actor_loss_params,
             optimizer_params=actor_optimizer_params,
@@ -40,20 +40,20 @@ class ActorCriticAlgorithmSpec(AlgorithmSpec):
             grad_clip_params=actor_grad_clip_params
         )
         # criterion
-        self._actor_loss_params = actor_stuff["loss_params"]
-        self.actor_criterion = actor_stuff["criterion"]
+        self._actor_loss_params = actor_components["loss_params"]
+        self.actor_criterion = actor_components["criterion"]
         # optimizer
-        self._actor_optimizer_params = actor_stuff["optimizer_params"]
-        self.actor_optimizer = actor_stuff["optimizer"]
+        self._actor_optimizer_params = actor_components["optimizer_params"]
+        self.actor_optimizer = actor_components["optimizer"]
         # scheduler
-        self._actor_scheduler_params = actor_stuff["scheduler_params"]
-        self.actor_scheduler = actor_stuff["scheduler"]
+        self._actor_scheduler_params = actor_components["scheduler_params"]
+        self.actor_scheduler = actor_components["scheduler"]
         # grad clipping
-        self._actor_grad_clip_params = actor_stuff["grad_clip_params"]
-        self.actor_grad_clip_fn = actor_stuff["grad_clip_fn"]
+        self._actor_grad_clip_params = actor_components["grad_clip_params"]
+        self.actor_grad_clip_fn = actor_components["grad_clip_fn"]
 
         # critic preparation
-        critic_stuff = get_agent_stuff_from_params(
+        critic_components = get_trainer_components(
             agent=self.critic,
             loss_params=critic_loss_params,
             optimizer_params=critic_optimizer_params,
@@ -61,17 +61,17 @@ class ActorCriticAlgorithmSpec(AlgorithmSpec):
             grad_clip_params=critic_grad_clip_params
         )
         # criterion
-        self._critic_loss_params = critic_stuff["loss_params"]
-        self.critic_criterion = critic_stuff["criterion"]
+        self._critic_loss_params = critic_components["loss_params"]
+        self.critic_criterion = critic_components["criterion"]
         # optimizer
-        self._critic_optimizer_params = critic_stuff["optimizer_params"]
-        self.critic_optimizer = critic_stuff["optimizer"]
+        self._critic_optimizer_params = critic_components["optimizer_params"]
+        self.critic_optimizer = critic_components["optimizer"]
         # scheduler
-        self._critic_scheduler_params = critic_stuff["scheduler_params"]
-        self.critic_scheduler = critic_stuff["scheduler"]
+        self._critic_scheduler_params = critic_components["scheduler_params"]
+        self.critic_scheduler = critic_components["scheduler"]
         # grad clipping
-        self._critic_grad_clip_params = critic_stuff["grad_clip_params"]
-        self.critic_grad_clip_fn = critic_stuff["grad_clip_fn"]
+        self._critic_grad_clip_params = critic_components["grad_clip_params"]
+        self.critic_grad_clip_fn = critic_components["grad_clip_fn"]
 
         # other hyperparameters
         assert n_step == 1, "For now, on-policy setup works only with n-step=1"

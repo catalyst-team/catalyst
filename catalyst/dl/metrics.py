@@ -25,20 +25,15 @@ def accuracy(outputs, targets, topk=(1, )):
 def average_accuracy(outputs, targets, k=10):
     """
     Computes the average accuracy at k.
-    This function computes the average accuracy at k
-        between two lists of items.
-    Parameters
-    ----------
-    outputs : list
-        A list of predicted elements
-    targets : list
-        A list of elements that are to be predicted
-    k : int, optional
-        The maximum number of predicted elements
-    Returns
-    -------
-    score : double
-            The average accuracy at k over the input lists
+    This function computes the average
+    accuracy at k between two lists of items.
+
+    Args:
+        outputs (list): A list of predicted elements
+        targets (list):  A list of elements that are to be predicted
+        k (int, optional): The maximum number of predicted elements
+    Returns:
+        double: The average accuracy at k over the input lists
     """
     if len(outputs) > k:
         outputs = outputs[:k]
@@ -61,19 +56,15 @@ def mean_average_accuracy(outputs, targets, topk=(1, )):
     """
     Computes the mean average accuracy at k.
     This function computes the mean average accuracy at k between two lists
-        of lists of items.
-    Parameters
-    ----------
-    outputs : list
-                A list of lists of predicted elements
-    targets : list
-             A list of lists of elements that are to be predicted
-    topk : int, optional
-        The maximum number of predicted elements
-    Returns
-    -------
-    score : double
-            The mean average accuracy at k over the input lists
+    of lists of items.
+
+    Args:
+        outputs (list): A list of lists of predicted elements
+        targets (list): A list of lists of elements that are to be predicted
+        topk (int, optional): The maximum number of predicted elements
+
+    Returns:
+        double: The mean average accuracy at k over the input lists
     """
     max_k = max(topk)
     _, pred = outputs.topk(max_k, 1, True, True)
@@ -103,7 +94,8 @@ def dice(
 ):
     """
     Computes the dice metric
-        Args:
+
+    Args:
         outputs (list):  A list of predicted elements
         targets (list): A list of elements that are to be predicted
         eps (float): epsilon
@@ -171,8 +163,8 @@ def f1_score(
     activation: str = "Sigmoid"
 ):
     """
-    Source:
-        https://github.com/qubvel/segmentation_models.pytorch
+    Source https://github.com/qubvel/segmentation_models.pytorch
+
     Args:
         outputs (torch.Tensor): A list of predicted elements
         targets (torch.Tensor):  A list of elements that are to be predicted
@@ -181,6 +173,7 @@ def f1_score(
         threshold (float): threshold for outputs binarization
         activation (str): An torch.nn activation applied to the outputs.
             Must be one of ["none", "Sigmoid", "Softmax2d"]
+
     Returns:
         float: F_1 score
     """

@@ -19,8 +19,9 @@ class CheckpointCallback(Callback):
         self, save_n_best: int = 3, resume: str = None, resume_dir: str = None
     ):
         """
-        :param save_n_best: number of best checkpoint to keep
-        :param resume: path to checkpoint to load and initialize runner state
+        Args:
+            save_n_best: number of best checkpoint to keep
+            resume: path to checkpoint to load and initialize runner state
         """
         self.save_n_best = save_n_best
         self.resume = resume
@@ -161,6 +162,18 @@ class OptimizerCallback(Callback):
         self._optimizer_wd = 0
         self._accumulation_counter = 0
 
+    @staticmethod
+    def grad_step(*, optimizer, optimizer_wd=0, grad_clip_fn=None):
+        for group in optimizer.param_groups:
+            if optimizer_wd > 0:
+                for param in group["params"]:
+                    param.data = param.data.add(
+                        -optimizer_wd * group["lr"], param.data
+                    )
+            if grad_clip_fn is not None:
+                grad_clip_fn(group["params"])
+        optimizer.step()
+
     def on_stage_start(self, state: RunnerState):
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
@@ -177,18 +190,6 @@ class OptimizerCallback(Callback):
         )
         self._optimizer_wd = optimizer.param_groups[0].get("weight_decay", 0.0)
         optimizer.param_groups[0]["weight_decay"] = 0.0
-
-    @staticmethod
-    def grad_step(*, optimizer, optimizer_wd=0, grad_clip_fn=None):
-        for group in optimizer.param_groups:
-            if optimizer_wd > 0:
-                for param in group["params"]:
-                    param.data = param.data.add(
-                        -optimizer_wd * group["lr"], param.data
-                    )
-            if grad_clip_fn is not None:
-                grad_clip_fn(group["params"])
-        optimizer.step()
 
     def on_batch_start(self, state):
         state.loss = None

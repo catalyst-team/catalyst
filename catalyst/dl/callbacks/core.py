@@ -1,18 +1,18 @@
 class Callback:
     """
-    An abstract class that all callback(e.g., Logger) classes extends from.
+    Abstract class that all callback(e.g., Logger) classes extends from.
     Must be extended before usage.
 
     usage example:
 
     stage start
-        epoch start (one epoch - one run of every loader)
-            loader start
-                batch start
-                batch handler
-                batch end
-            loader end
-        epoch end
+    ---epoch start (one epoch - one run of every loader)
+    ------loader start
+    ---------batch start
+    ---------batch handler
+    ---------batch end
+    ------loader end
+    ---epoch end
     stage end
     """
 

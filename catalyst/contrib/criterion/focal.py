@@ -35,10 +35,9 @@ class FocalLossBinary(_Loss):
 
     def forward(self, logits, targets):
         """
-
-        :param logits: [bs; ...]
-        :param targets: [bs; ...]
-        :return:
+        Args:
+            logits: [bs; ...]
+            targets: [bs; ...]
         """
         targets = targets.view(-1)
         logits = logits.view(-1)
@@ -62,10 +61,9 @@ class FocalLossMultiClass(FocalLossBinary):
 
     def forward(self, logits, targets):
         """
-
-        :param logits: [bs; num_classes; ...]
-        :param targets: [bs; ...]
-        :return:
+        Args:
+            logits: [bs; num_classes; ...]
+            targets: [bs; ...]
         """
         num_classes = logits.size(1)
         loss = 0
@@ -97,10 +95,9 @@ class FocalLossMultiLabel(_Loss):
 
     def forward(self, logits, targets):
         """
-
-        :param logits: [bs; num_classes]
-        :param targets: [bs; num_classes]
-        :return:
+        Args:
+            logits: [bs; num_classes]
+            targets: [bs; num_classes]
         """
         num_classes = logits.size(1)
         loss = 0

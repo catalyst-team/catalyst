@@ -26,3 +26,8 @@ def get_hash(o) -> str:
     hashable_o = make_hashable(o)
     hash = make_hash_sha256(hashable_o)
     return hash
+
+
+def get_short_hash(o) -> str:
+    hash = get_hash(o)[:6]
+    return hash

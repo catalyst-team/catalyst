@@ -62,8 +62,9 @@ class VerboseLogger(Callback):
 class MetricsFormatter(ABC, logging.Formatter):
     def __init__(self, message_prefix):
         """
-        :param message_prefix:
-            logging format string that will be prepended to message
+        Args:
+            message_prefix: logging format string
+                that will be prepended to message
         """
         super().__init__(f"{message_prefix}{{message}}", style="{")
 
@@ -88,8 +89,9 @@ class TxtMetricsFormatter(MetricsFormatter):
     For details refer to official docs for 'logging' module.
 
     Note:
-        This is inner class used by Logger callback,
-        no need to use it directly!
+
+    This is inner class used by Logger callback,
+    no need to use it directly!
     """
 
     def __init__(self):
@@ -145,7 +147,7 @@ class JsonMetricsFormatter(MetricsFormatter):
 
 class ConsoleLogger(Callback):
     """
-    Logger callback, translates state.metrics to console and text file
+    Logger callback, translates ``state.metrics`` to console and text file
     """
 
     def __init__(self):
@@ -196,16 +198,15 @@ class TensorboardLogger(Callback):
     def __init__(
         self,
         metric_names: List[str] = None,
-        log_on_batch_end=True,
-        log_on_epoch_end=True
+        log_on_batch_end: bool = True,
+        log_on_epoch_end: bool = True
     ):
         """
-        :param logdir: directory where logs will be created
-        :param metric_names: List of metric names to log.
-            If none - logs everything.
-        :param log_on_batch_end: Logs per-batch value of metrics,
-            prepends 'batch_' prefix to their names.
-        :param log_on_epoch_end: Logs per-epoch metrics if set True.
+        Args:
+            metric_names: List of metric names to log.
+                If none - logs everything.
+            log_on_batch_end: Logs per-batch metrics if set True.
+            log_on_epoch_end: Logs per-epoch metrics if set True.
         """
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
@@ -219,7 +220,7 @@ class TensorboardLogger(Callback):
     def on_loader_start(self, state):
         lm = state.loader_name
         if lm not in self.loggers:
-            self.loggers[lm] = UtilsFactory.create_tflogger(
+            self.loggers[lm] = UtilsFactory.get_tflogger(
                 logdir=state.logdir, name=lm
             )
 

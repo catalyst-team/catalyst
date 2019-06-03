@@ -5,18 +5,6 @@ from .layers import LamaPooling
 
 
 class StateNet(nn.Module):
-    """
-    Abstract network, that takes some tensor T of shape [bs; history_len; ...]
-    and outputs some representation tensor R of shape [bs; representation_size]
-
-    input_T [bs; history_len; in_features]
-        -> observation_net (aka observation_encoder) ->
-    observations_representations [bs; history_len; obs_features]
-        -> aggregation_net (flatten in simplified case)->
-    aggregated_representation [bs; hid_features]
-        -> main_net ->
-    output_T [bs; representation_size]
-    """
 
     def __init__(
         self,
@@ -24,6 +12,31 @@ class StateNet(nn.Module):
         observation_net: nn.Module = None,
         aggregation_net: nn.Module = None,
     ):
+        """
+        Abstract network, that takes some tensor
+        T of shape [bs; history_len; ...]
+        and outputs some representation tensor R
+        of shape [bs; representation_size]
+
+        input_T [bs; history_len; in_features]
+
+        -> observation_net (aka observation_encoder) ->
+
+        observations_representations [bs; history_len; obs_features]
+
+        -> aggregation_net (flatten in simplified case) ->
+
+        aggregated_representation [bs; hid_features]
+
+        -> main_net ->
+
+        output_T [bs; representation_size]
+
+        Args:
+            main_net:
+            observation_net:
+            aggregation_net:
+        """
         super().__init__()
         self.main_net = main_net
         self.observation_net = observation_net or (lambda x: x)

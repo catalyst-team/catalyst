@@ -42,7 +42,7 @@ class Sampler:
         force_store: bool = False,
         gc_period: int = 10,
     ):
-        self._device = UtilsFactory.prepare_device()
+        self._device = UtilsFactory.get_device()
         self._seed = 42 + id
         self._sampler_id = id
 
@@ -115,7 +115,7 @@ class Sampler:
         trajectory = self.episode_runner.get_trajectory()
         self.db_server.push_trajectory(trajectory)
 
-    def _prepare_seed(self):
+    def _get_seed(self):
         seed = self._seed + random.randrange(_SEED_RANGE)
         set_global_seed(seed)
         if self.seeds is None:
@@ -168,7 +168,7 @@ class Sampler:
     def run(self):
         while True:
             self.load_checkpoint(db_server=self.db_server)
-            seed = self._prepare_seed()
+            seed = self._get_seed()
             exploration_strategy = \
                 self.exploration_handler.get_exploration_strategy() \
                 if self.exploration_handler is not None \

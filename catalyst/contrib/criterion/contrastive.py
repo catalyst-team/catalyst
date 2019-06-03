@@ -15,12 +15,6 @@ class ContrastiveEmbeddingLoss(nn.Module):
         self.reduction = reduction or "none"
 
     def forward(self, x0, x1, y):
-        """
-        :param x0:
-        :param x1:
-        :param y: 0 if same class else 1
-        :return:
-        """
         # euclidian distance
         diff = x0 - x1
         dist = torch.sqrt(torch.sum(torch.pow(diff, 2), 1))

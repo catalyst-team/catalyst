@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from ..abn import ABN, ACT_RELU
+from ..abn import ABN
 from .core import EncoderBlock, DecoderBlock, \
     _get_block, _upsample
 
@@ -14,7 +14,7 @@ class EncoderDownsampleBlock(EncoderBlock):
         out_channels: int,
         in_strides: int = None,
         abn_block: nn.Module = ABN,
-        activation: str = ACT_RELU,
+        activation: str = "ReLU",
         first_stride: int = 2,
         second_stride: int = 1,
         **kwargs
@@ -49,7 +49,7 @@ class EncoderUpsampleBlock(EncoderBlock):
         out_channels: int,
         in_strides: int = None,
         abn_block: nn.Module = ABN,
-        activation: str = ACT_RELU,
+        activation: str = "ReLU",
         first_stride: int = 1,
         second_stride: int = 1,
         pool_first: bool = False,
@@ -111,7 +111,7 @@ class DecoderConcatBlock(DecoderBlock):
         out_channels: int,
         in_strides: int = None,
         abn_block: nn.Module = ABN,
-        activation: str = ACT_RELU,
+        activation: str = "ReLU",
         pre_dropout_rate: float = 0.,
         post_dropout_rate: float = 0.,
         upsample_scale: int = None,
@@ -137,7 +137,7 @@ class DecoderConcatBlock(DecoderBlock):
     def _get_block(
         self,
         abn_block: nn.Module = ABN,
-        activation: str = ACT_RELU,
+        activation: str = "ReLU",
         pre_dropout_rate: float = 0.,
         post_dropout_rate: float = 0.,
         **kwargs

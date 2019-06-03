@@ -1,11 +1,12 @@
 from typing import Tuple
+from functools import partial
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 from .core import _get_block
-from ..abn import ABN_fake, ABN
+from ..abn import ABN
 
 
 class PyramidBlock(nn.Module):
@@ -15,7 +16,7 @@ class PyramidBlock(nn.Module):
         in_channels: int,
         out_channels: int,
         pool_size: int,
-        use_bathcnorm: bool = True,
+        use_batchnorm: bool = True,
         interpolation_mode: str = "bilinear",
         align_corners: bool = True,
         complexity: int = 0
@@ -25,14 +26,14 @@ class PyramidBlock(nn.Module):
         self.align_corners = align_corners
 
         if pool_size == 1:
-            use_bathcnorm = False
+            use_batchnorm = False
 
         self._block = nn.Sequential(
             nn.AdaptiveAvgPool2d(output_size=(pool_size, pool_size)),
             _get_block(
                 in_channels,
                 out_channels,
-                abn_block=ABN if use_bathcnorm else ABN_fake,
+                abn_block=partial(ABN, use_batchnorm=use_batchnorm),
                 complexity=complexity)
         )
 
@@ -52,7 +53,7 @@ class PSPBlock(nn.Module):
         self,
         in_channels: int,
         pool_sizes: Tuple[int] = (1, 2, 3, 6),
-        use_bathcnorm: bool = True
+        use_batchnorm: bool = True
     ):
         super().__init__()
 
@@ -60,7 +61,7 @@ class PSPBlock(nn.Module):
             PyramidBlock(
                 in_channels, in_channels // len(pool_sizes),
                 pool_size,
-                use_bathcnorm=use_bathcnorm)
+                use_batchnorm=use_batchnorm)
             for pool_size in pool_sizes
         ])
 

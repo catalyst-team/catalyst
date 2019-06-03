@@ -4,7 +4,7 @@ import torch
 from torch import nn
 
 
-def prepare_optimizable_params(model_or_params):
+def get_optimizable_params(model_or_params):
     params: Iterable[torch.Tensor] = model_or_params
     if isinstance(model_or_params, nn.Module):
         params = model_or_params.parameters()
@@ -25,4 +25,4 @@ def assert_fp16_available():
             "See https://github.com/NVIDIA/apex."
 
 
-__all__ = ["assert_fp16_available", "prepare_optimizable_params"]
+__all__ = ["assert_fp16_available", "get_optimizable_params"]

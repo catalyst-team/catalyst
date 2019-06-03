@@ -10,11 +10,12 @@ from ...classification.mobilenetv2 import MobileNetV2, InvertedResidual
 
 class MobileUnet(nn.Module):
     def __init__(
-            self,
-            num_classes=1,
-            input_size=224,
-            width_mult=1.,
-            pretrained=None):
+        self,
+        num_classes=1,
+        input_size=224,
+        width_mult=1.,
+        pretrained=None
+    ):
         super().__init__()
 
         self.dconv1 = nn.ConvTranspose2d(1280, 96, 4, padding=1, stride=2)
@@ -93,3 +94,6 @@ class MobileUnet(nn.Module):
         x = self.conv_score(x)
 
         return x
+
+
+__all__ = ["MobileUnet"]
