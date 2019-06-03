@@ -139,7 +139,9 @@ class Trainer:
             observations, actions, rewards, dones = episode
             states = _get_states_from_observations(
                 observations, self.env_spec.history_len)
-            rollout = self._get_rollout_in_batches(states, actions, rewards, dones)
+            rollout = self._get_rollout_in_batches(
+                states, actions, rewards, dones
+            )
             self.replay_buffer.push_rollout(
                 state=states,
                 action=actions,
@@ -155,14 +157,14 @@ class Trainer:
         elapsed_time = time.time() - start_time
         self.logger.add_scalar("fetch time", elapsed_time, self.epoch)
 
-
     def _get_rollout_in_batches(self, states, actions, rewards, dones):
 
         if self.rollout_batch_size is None:
             return self.algorithm.get_rollout(states, actions, rewards, dones)
 
         indices = np.arange(
-            0, len(states) + self.rollout_batch_size - 1, self.rollout_batch_size
+            0, len(states) + self.rollout_batch_size - 1,
+            self.rollout_batch_size
         )
         rollout = None
         for i in range(len(indices) - 1):
@@ -178,7 +180,6 @@ class Trainer:
             else:
                 rollout = rollout_batch
         return rollout
-
 
     def _update_samplers_weights(self):
         mode = self._sampler_weight_mode
