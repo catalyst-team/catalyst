@@ -123,6 +123,8 @@ class UtilsFactory:
             if distributed_rank > -1:
                 from apex.parallel import DistributedDataParallel
                 model = DistributedDataParallel(model)
+            elif torch.cuda.device_count() > 1:
+                model = torch.nn.DataParallel(model)
         elif torch.cuda.device_count() > 1:
             model = torch.nn.DataParallel(model)
 
