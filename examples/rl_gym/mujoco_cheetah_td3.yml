@@ -4,7 +4,7 @@ args:
 
   vis: 0
   infer: 1  #  change me
-  train: 4  #  change me
+  train: 1  #  change me
 
 db:
   port: 12000
@@ -114,10 +114,10 @@ algorithm:
 trainer:
   batch_size: 2048             # transitions
   num_workers: 1
-  epoch_len: 1000              # batches
+  epoch_len: 500               # batches
 
   replay_buffer_size: 1000000  # transitions
-  start_learning: 10000        # transitions
+  min_num_transitions: 10000        # transitions
 
   save_period: 1000            # epochs
   weights_sync_period: 1       # epochs

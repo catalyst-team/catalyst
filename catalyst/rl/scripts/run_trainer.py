@@ -50,21 +50,23 @@ def main(args, unknown_args):
     if args.expdir is not None:
         module = import_module(expdir=args.expdir)  # noqa: F841
 
+    env = ENVIRONMENTS.get_from_params(**config["environment"])
+
     algorithm_name = config["algorithm"].pop("algorithm")
     if algorithm_name in OFFPOLICY_ALGORITHMS_NAMES:
         ALGORITHMS = OFFPOLICY_ALGORITHMS
         trainer_fn = OffpolicyTrainer
         sync_epoch = False
+        weights_sync_mode = "critic" if env.discrete_actions else "actor"
     else:
         ALGORITHMS = ONPOLICY_ALGORITHMS
         trainer_fn = OnpolicyTrainer
         sync_epoch = True
+        weights_sync_mode = "actor"
 
     db_server = DATABASES.get_from_params(
         **config.get("db", {}), sync_epoch=sync_epoch
     )
-
-    env = ENVIRONMENTS.get_from_params(**config["environment"])
 
     algorithm_fn = ALGORITHMS.get(algorithm_name)
     algorithm = algorithm_fn.prepare_for_trainer(env_spec=env, config=config)
@@ -76,8 +78,9 @@ def main(args, unknown_args):
         algorithm=algorithm,
         env_spec=env,
         db_server=db_server,
-        **config["trainer"],
         logdir=args.logdir,
+        weights_sync_mode=weights_sync_mode,
+        **config["trainer"],
     )
 
     trainer.run()

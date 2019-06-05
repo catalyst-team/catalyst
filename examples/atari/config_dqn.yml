@@ -74,7 +74,7 @@ trainer:
 
   replay_buffer_size: 1000000   # transitions
   replay_buffer_mode: memmap    # numpy or memmap
-  start_learning: 50000         # transitions
+  min_num_transitions: 50000         # transitions
 
   save_period: 100              # epochs
   weights_sync_period: 1        # epochs

@@ -1,3 +1,5 @@
+from typing import Dict
+
 import time
 import numpy as np
 
@@ -48,6 +50,15 @@ class Trainer(TrainerSpec):
         return rollout
 
     def _fetch_episodes(self):
+
+        # cleanup trajectories
+        self.db_server.clean_trajectories()
+        self._num_trajectories = 0
+        self._num_transitions = 0
+        del self.replay_buffer
+
+        # start samplers
+        self.db_server.set_sample_flag(sample=True)
 
         rollout_spec = self.algorithm.get_rollout_spec()
         self.replay_buffer = OnpolicyRolloutBuffer(
@@ -110,7 +121,10 @@ class Trainer(TrainerSpec):
         elapsed_time = time.time() - start_time
         self.logger.add_scalar("fetch time", elapsed_time, self.epoch)
 
-    def __run_epoch(self):
+        # stop samplers
+        self.db_server.set_sample_flag(sample=False)
+
+    def _run_epoch(self) -> Dict:
         sampler = OnpolicyRolloutSampler(
             buffer=self.replay_buffer,
             num_mini_epochs=self.num_mini_epochs)
@@ -123,22 +137,16 @@ class Trainer(TrainerSpec):
             sampler=sampler)
 
         metrics = self._run_loader(loader)
+        metrics.update({
+            "num_trajectories": self._num_trajectories,
+            "num_transitions": self._num_transitions,
+            "buffer_size": len(self.replay_buffer)
+        })
         return metrics
 
     def _run_train_loop(self):
         while True:
-            # start samplers
-            self.db_server.set_sample_flag(sample=True)
             # get trajectories
             self._fetch_episodes()
-            # stop samplers
-            self.db_server.set_sample_flag(sample=False)
-
             # train & update
-            self._run_epoch()
-
-            # cleanup trajectories
-            self.db_server.clean_trajectories()
-            self._num_trajectories = 0
-            self._num_transitions = 0
-            del self.replay_buffer
+            self._run_epoch_loop()

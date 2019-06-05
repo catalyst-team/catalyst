@@ -119,11 +119,11 @@ class TrainerSpec:
                 batch,
                 actor_update=(self.step % self.actor_grad_period == 0),
                 critic_update=(self.step % self.critic_grad_period == 0)
-            )
+            ) or {}
             self.step += 1
 
             metrics_: Dict = self._update_target_weights(self.step) or {}
-            metrics = metrics.update(**metrics_)
+            metrics.update(**metrics_)
 
             for key, value in metrics.items():
                 if isinstance(value, (float, int)):
@@ -140,7 +140,7 @@ class TrainerSpec:
 
         return output
 
-    def __run_epoch(self) -> Dict:
+    def _run_epoch(self) -> Dict:
         raise NotImplementedError()
 
     def _log_to_console(
@@ -174,8 +174,8 @@ class TrainerSpec:
             "num_transitions", num_transitions, self.epoch)
         self.logger.add_scalar("buffer_size", buffer_size, self.epoch)
 
-    def _run_epoch(self):
-        metrics: Dict = self.__run_epoch()
+    def _run_epoch_loop(self):
+        metrics: Dict = self._run_epoch()
         self.epoch += 1
         self._save()
         self._log_to_console(**metrics)
@@ -186,7 +186,7 @@ class TrainerSpec:
 
     def _run_train_loop(self):
         while True:
-            self._run_epoch()
+            self._run_epoch_loop()
 
     def _start_train_loop(self):
         self._run_train_loop()

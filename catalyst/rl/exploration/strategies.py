@@ -1,6 +1,8 @@
 import numpy as np
 from .utils import np_softmax, set_params_noise
 
+EPS = 1e-6
+
 
 class ExplorationStrategy:
     """
@@ -34,19 +36,21 @@ class EpsilonGreedy(ExplorationStrategy):
     Random action selection probability eps usually decreases
     from 1 to 0.01-0.05 during the course of training.
     """
-    def __init__(self, eps_init, eps_final, annealing_steps):
+    def __init__(self, eps_init, eps_final, annealing_steps, eps_min=0.01):
         super().__init__()
 
-        self.eps_init = eps_init
-        self.eps_final = eps_final
+        self.eps_init = max(eps_init, eps_min)
+        self.eps_final = max(eps_final, eps_min)
         self.num_steps = annealing_steps
         self.delta_eps = (self.eps_init - self.eps_final) / self.num_steps
         self.eps = eps_init
+        self.eps_min = eps_min
 
     def set_power(self, value):
         super().set_power(value)
         self.eps_init *= self._power
         self.eps_final *= self._power
+        self.eps_final = max(self.eps_final, self.eps_min)
         self.delta_eps = (self.eps_init - self.eps_final) / self.num_steps
         self.eps = self.eps_init
 
@@ -67,24 +71,30 @@ class Boltzmann(ExplorationStrategy):
     training. Importantly, the effective range of t depends on the
     magnitutdes of environment rewards.
     """
-    def __init__(self, temp_init, temp_final, annealing_steps):
+    def __init__(self, temp_init, temp_final, annealing_steps, temp_min=0.01):
         super().__init__()
 
-        self.temp_init = temp_init
-        self.temp_final = temp_final
+        self.temp_init = max(temp_init, temp_min)
+        self.temp_final = max(temp_final, temp_min)
         self.num_steps = annealing_steps
         self.delta_temp = (self.temp_init - self.temp_final) / self.num_steps
         self.temperature = temp_init
+        self.temp_min = temp_min
 
     def set_power(self, value):
         super().set_power(value)
         self.temp_init *= self._power
+        self.temp_init = max(self.temp_init, self.temp_min)
         self.temp_final *= self._power
+        self.temp_final = max(self.temp_final, self.temp_min)
         self.delta_temp = (self.temp_init - self.temp_final) / self.num_steps
         self.temperature = self.temp_init
 
     def get_action(self, q_values):
-        probs = np_softmax(q_values / self.temperature)
+        print(q_values, self.temperature, self.temp_final)
+        probs = np_softmax(q_values + EPS / self.temperature)
+        print(probs)
+        print("-" * 80)
         action = np.random.choice(np.arange(len(probs)), p=probs)
         self.temperature = max(
             self.temp_final, self.temperature - self.delta_temp

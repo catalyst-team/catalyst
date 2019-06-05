@@ -570,7 +570,7 @@ class TrajectorySampler:
         self._init_buffers()
         self._init_with_observation(self.env.reset())
 
-    def sample(self, exploration_strategy = None):
+    def sample(self, exploration_strategy=None):
         reward, num_steps, d_t = 0, 0, False
 
         while not d_t:

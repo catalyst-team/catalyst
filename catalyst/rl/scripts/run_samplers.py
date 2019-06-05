@@ -103,19 +103,25 @@ def run_sampler(
         exploration_handler.set_power(exploration_power)
 
     mode = "infer" if infer else "train"
-    valid_seeds = config_["sampler"].pop("valid_seeds")
+    valid_seeds = config_["sampler"].pop("valid_seeds", None)
     seeds = valid_seeds if infer else None
+
+    if algorithm_fn in OFFPOLICY_ALGORITHMS.values():
+        weights_sync_mode = "critic" if env.discrete_actions else "actor"
+    else:
+        weights_sync_mode = "actor"
 
     sampler = Sampler(
         agent=agent,
         env=env,
         db_server=db_server,
         exploration_handler=exploration_handler,
-        **config_["sampler"],
         logdir=logdir,
         id=id,
         mode=mode,
-        seeds=seeds
+        weights_sync_mode=weights_sync_mode,
+        seeds=seeds,
+        **config_["sampler"],
     )
 
     if resume is not None:

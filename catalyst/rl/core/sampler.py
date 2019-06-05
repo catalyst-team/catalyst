@@ -101,6 +101,11 @@ class Sampler:
             while not db_server.get_sample_flag():
                 time.sleep(1.0)
             weights = db_server.load_weights(prefix=self._weights_sync_mode)
+            while weights is None:
+                time.sleep(1.0)
+                print(self._weights_sync_mode)
+                weights = db_server.load_weights(
+                    prefix=self._weights_sync_mode)
             weights = {k: self._to_tensor(v) for k, v in weights.items()}
             self.agent.load_state_dict(weights)
         else:

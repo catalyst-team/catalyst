@@ -82,9 +82,14 @@ class Trainer(TrainerSpec):
 
         return output
 
-    def __run_epoch(self) -> Dict:
+    def _run_epoch(self) -> Dict:
         self.replay_buffer.recalculate_index()
         metrics = self._run_loader(self.loader)
+        metrics.update({
+            "num_trajectories": self.replay_buffer.num_trajectories.value,
+            "num_transitions": self.replay_buffer.num_transitions.value,
+            "buffer_size": len(self.replay_buffer)
+        })
         return metrics
 
     def _fetch_initial_buffer(self):
@@ -100,12 +105,14 @@ class Trainer(TrainerSpec):
                 "--- "
                 f"trajectories: {num_trajectories:09d}\t"
                 f"transitions: {num_transitions:09d}\t"
-                f"buffer size: {buffer_size:09d}/{self.min_num_transitions:09d}"
+                f"buffer size: "
+                f"{buffer_size:09d}/{self.min_num_transitions:09d}"
             )
 
             time.sleep(1.0)
 
     def _start_train_loop(self):
         self._start_db_loop()
+        self.db_server.set_sample_flag(sample=True)
         self._fetch_initial_buffer()
         self._run_train_loop()
