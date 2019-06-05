@@ -24,7 +24,7 @@ class TrainerSpec:
         logdir: str,
         num_workers: int = 1,
         batch_size: int = 64,
-        min_num_transitions: int = int(1e3),
+        min_num_transitions: int = int(1e4),
         online_update_period: int = 1,
         weights_sync_period: int = 1,
         weights_sync_mode: str = None,

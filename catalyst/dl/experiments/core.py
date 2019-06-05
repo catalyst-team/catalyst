@@ -239,12 +239,13 @@ class Runner(ABC):
             self.state.need_backward = loader_name.startswith("train")
             self.model.train(self.state.need_backward)
 
-            if isinstance(loader.sampler, DistributedSampler):
+            if isinstance(loader.sampler, DistributedSampler) \
+                    and loader_name.startswith("train"):
                 loader.sampler.set_epoch(self.state.stage_epoch)
 
             self._run_event("loader_start")
             with torch.set_grad_enabled(self.state.need_backward):
-                self._run_loader(loaders[loader_name])
+                self._run_loader(loader)
             self._run_event("loader_end")
 
     def _run_stage(self, stage: str):
