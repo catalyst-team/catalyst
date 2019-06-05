@@ -114,11 +114,25 @@ class Runner(ABC):
         # additional
         self._check_run = False
 
+    def _any2device(self, value, device):
+        """
+        Move tensor, list of tensors, list of list of tensors,
+        dict of tensors, tuple of tensors to target device.
+        :param value:
+        :param device: target device ids
+        :return: Save data structure holding tensors on target device
+        """
+        if isinstance(value, dict):
+            return dict((k, self._any2device(v, device)) for k, v
+                        in value.items())
+        if isinstance(value, (tuple, list)):
+            return list(self._any2device(v, device) for v in value)
+        if torch.is_tensor(value):
+            return value.to(device)
+        return value
+
     def _batch2device(self, batch: Mapping[str, Any], device):
-        res = {
-            key: value.to(device) if torch.is_tensor(value) else value
-            for key, value in batch.items()
-        }
+        res = self._any2device(batch, device)
         return res
 
     def _get_experiment_components(
