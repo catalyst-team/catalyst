@@ -571,25 +571,25 @@ class TrajectorySampler:
         self._init_with_observation(self.env.reset())
 
     def sample(self, exploration_strategy = None):
-        episode_reward, num_steps, done = 0, 0, False
+        reward, num_steps, d_t = 0, 0, False
 
-        while not done:
-            state = self.get_state()
-            action = self.policy_handler.action_fn(
+        while not d_t:
+            s_t = self.get_state()
+            a_t = self.policy_handler.action_fn(
                 agent=self.agent,
-                state=state,
+                state=s_t,
                 device=self._device,
                 exploration_strategy=exploration_strategy,
                 deterministic=self.deterministic
             )
 
-            next_observation, reward, done, info = self.env.step(action)
-            episode_reward += reward
+            o_tp1, r_t, d_t, info = self.env.step(a_t)
+            reward += r_t
 
-            transition = [next_observation, action, reward, done]
+            transition = [o_tp1, a_t, r_t, d_t]
             self._put_transition(transition)
             num_steps += 1
 
-        results = {"episode_reward": episode_reward, "num_steps": num_steps}
+        results = {"reward": reward, "num_steps": num_steps}
 
         return results
