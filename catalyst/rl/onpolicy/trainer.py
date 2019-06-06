@@ -53,12 +53,9 @@ class Trainer(TrainerSpec):
 
         # cleanup trajectories
         self.db_server.clean_trajectories()
-        self._num_trajectories = 0
-        self._num_transitions = 0
+        num_trajectories = 0
+        num_transitions = 0
         del self.replay_buffer
-
-        # start samplers
-        self.db_server.set_sample_flag(sample=True)
 
         rollout_spec = self.algorithm.get_rollout_spec()
         self.replay_buffer = OnpolicyRolloutBuffer(
@@ -68,21 +65,24 @@ class Trainer(TrainerSpec):
             **rollout_spec
         )
 
+        # start samplers
+        self.db_server.set_sample_flag(sample=True)
+
         start_time = time.time()
 
-        while self._num_trajectories < self.min_num_trajectories \
-                and self._num_transitions < self.min_num_transitions:
+        while num_trajectories < self.min_num_trajectories \
+                and num_transitions < self.min_num_transitions:
 
             trajectories_percentrage = \
-                100 * self._num_trajectories / self.min_num_trajectories
+                100 * num_trajectories / self.min_num_trajectories
             trajectories_stats = \
-                f"{self._num_trajectories:09d} / " \
+                f"{num_trajectories:09d} / " \
                 f"{self.min_num_trajectories:09d} " \
                 f"({trajectories_percentrage:5.2f}%)"
             transitions_percentrage = \
-                100 * self._num_transitions / self.min_num_transitions
+                100 * num_transitions / self.min_num_transitions
             transitions_stats = \
-                f"{self._num_transitions:09d} / " \
+                f"{num_transitions:09d} / " \
                 f"{self.min_num_transitions:09d} " \
                 f"({transitions_percentrage:5.2f}%)"
             print(
@@ -97,8 +97,8 @@ class Trainer(TrainerSpec):
                 time.sleep(1.0)
                 continue
 
-            self._num_trajectories += 1
-            self._num_transitions += len(trajectory[-1])
+            num_trajectories += 1
+            num_transitions += len(trajectory[-1])
 
             observations, actions, rewards, dones = trajectory
             states = _get_states_from_observations(
@@ -113,6 +113,12 @@ class Trainer(TrainerSpec):
                 **rollout,
             )
 
+        # stop samplers
+        self.db_server.set_sample_flag(sample=False)
+
+        self._num_trajectories += num_trajectories
+        self._num_transitions += num_transitions
+
         # @TODO: refactor
         self.algorithm.postprocess_buffer(
             self.replay_buffer.buffers,
@@ -120,9 +126,6 @@ class Trainer(TrainerSpec):
 
         elapsed_time = time.time() - start_time
         self.logger.add_scalar("fetch time", elapsed_time, self.epoch)
-
-        # stop samplers
-        self.db_server.set_sample_flag(sample=False)
 
     def _run_epoch(self) -> Dict:
         sampler = OnpolicyRolloutSampler(

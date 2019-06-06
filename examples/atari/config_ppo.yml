@@ -8,7 +8,7 @@ args:
 
 db:
   db: RedisDB  # RedisDB or MongoDB
-  port: 12000
+  port: 12001
   prefix: gym-ppo  # TODO: remove
 
 environment:
@@ -62,12 +62,12 @@ agents:
       num_atoms: 1
       out_features: 1
 
-    #      distribution: categorical
-    #      num_atoms: 4
-    #      values_range: [-10.0, 10.0]
+#      distribution: categorical
+#      num_atoms: 51
+#      values_range: [-10.0, 10.0]
 
-    #      distribution: quantile
-    #      num_atoms: 4
+#      distribution: quantile
+#      num_atoms: 51
 
 algorithm:
   algorithm: PPO
@@ -81,27 +81,26 @@ algorithm:
 
   actor_optimizer_params:
     optimizer: Adam
-    lr: 0.0005
+    lr: 0.0003
   critic_optimizer_params:
     optimizer: Adam
-    lr: 0.0005
+    lr: 0.0003
 
   actor_grad_clip_params:
     func: clip_grad_value_
     clip_value: 1.0
 
 trainer:
+  rollout_batch_size: 1024
   batch_size: 2048             # transitions
-  num_workers: 2
+  num_workers: 4
   num_mini_epochs: 10
-  min_num_trajectories: 100
-  min_num_transitions: 50000
+  min_num_trajectories: 200
+  min_num_transitions: 100000
 
-  save_period: 25              # epochs
+  save_period: 50              # epochs
 
 sampler:
-  valid_seeds: [1, 10, 1000, 10000, 42000]
-
   exploration_params:
     - exploration: NoExploration
       probability: 1.0

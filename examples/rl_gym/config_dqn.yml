@@ -75,7 +75,7 @@ trainer:
   epoch_len: 500               # batches
 
   replay_buffer_size: 1000000  # transitions
-  min_num_transitions: 500     # transitions
+  min_num_transitions: 5000    # transitions
 
   save_period: 1000            # epochs
   weights_sync_period: 1       # epochs
@@ -85,17 +85,17 @@ sampler:
   weights_sync_period: 1
 
   exploration_params:
+    - exploration: Boltzmann
+      probability: 0.5
+      temp_init: 1.0
+      temp_final: 0.5
+      annealing_steps: 10000
+
     - exploration: EpsilonGreedy
-      probability: 0.9
+      probability: 0.45
       eps_init: 1.0
-      eps_final: 0.05
-      annealing_steps: 1000
+      eps_final: 0.5
+      annealing_steps: 10000
 
     - exploration: Greedy
       probability: 0.05
-
-    - exploration: Boltzmann
-      probability: 0.05
-      temp_init: 1.0
-      temp_final: 0.05
-      annealing_steps: 1000

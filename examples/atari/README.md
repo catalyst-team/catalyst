@@ -39,7 +39,7 @@ This example shows how to use Catalyst.RL with
 4. Run PPO on PongNoFrameskip-v4
 
     ```bash
-    redis-server --port 12000  # or mongod --config mongod.conf --port 12000
+    redis-server --port 12001  # or mongod --config mongod.conf --port 12001
     # check config.yml for correct db/db specification
  
     export GPUS=""  # like GPUS="0" or GPUS="0,1" for multi-gpu training
