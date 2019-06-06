@@ -6,6 +6,9 @@ os.environ["MKL_NUM_THREADS"] = "1"
 
 import gc  # noqa E402
 import time  # noqa E402
+import threading  # noqa E402
+from ctypes import c_bool  # noqa E402
+import multiprocessing as mp  # noqa E402
 from datetime import datetime  # noqa E402
 import numpy as np  # noqa E402
 
@@ -52,6 +55,7 @@ class Sampler:
 
         # logging
         self._prepare_logger(logdir, mode)
+        self._sample_flag = mp.Value(c_bool, False)
 
         # environment, model, exploration & action handlers
         self.env = env
@@ -62,7 +66,8 @@ class Sampler:
             env=self.env,
             agent=self.agent,
             device=self._device,
-            deterministic=self._infer
+            deterministic=self._infer,
+            sample_flag=self._sample_flag
         )
 
         # synchronization configuration
@@ -72,6 +77,7 @@ class Sampler:
         self._trajectory_limit = trajectory_limit or np.iinfo(np.int32).max
         self._force_store = force_store
         self._gc_period = gc_period
+        self._db_loop_thread = None
 
     def _prepare_logger(self, logdir, mode):
         if logdir is not None:
@@ -82,6 +88,15 @@ class Sampler:
             self.logger = SummaryWriter(logpath)
         else:
             self.logger = None
+
+    def _start_db_loop(self):
+        self._db_loop_thread = threading.Thread(
+            target=_db2sampler_loop,
+            kwargs={
+                "sampler": self,
+            }
+        )
+        self._db_loop_thread.start()
 
     def _to_tensor(self, *args, **kwargs):
         return torch.Tensor(*args, **kwargs).to(self._device)
@@ -97,8 +112,6 @@ class Sampler:
             weights = checkpoint[f"{self._weights_sync_mode}_state_dict"]
             self.agent.load_state_dict(weights)
         elif db_server is not None:
-            while not db_server.get_sample_flag():
-                time.sleep(1.0)
             weights = db_server.load_weights(prefix=self._weights_sync_mode)
             while weights is None:
                 time.sleep(1.0)
@@ -112,13 +125,9 @@ class Sampler:
         self.agent.to(self._device)
         self.agent.eval()
 
-    def _store_trajectory(self):
+    def _store_trajectory(self, trajectory):
         if self.db_server is None:
             return
-        if not self.db_server.get_sample_flag():
-            return
-
-        trajectory = self.trajectory_sampler.get_trajectory()
         self.db_server.push_trajectory(trajectory)
 
     def _get_seed(self):
@@ -144,7 +153,14 @@ class Sampler:
             f"seed: {seed}"
         )
 
-    def _log_to_tensorboard(self, *, reward, num_steps, elapsed_time):
+    def _log_to_tensorboard(
+        self,
+        *,
+        reward,
+        num_steps,
+        elapsed_time,
+        **kwargs
+    ):
         if self.logger is not None:
             self.logger.add_scalar(
                 "trajectory/num_steps", num_steps, self.trajectory_index
@@ -170,12 +186,8 @@ class Sampler:
                 self.trajectory_index
             )
 
-    def _start_db_loop(self):
-        pass
-
+    @torch.no_grad()
     def _run_trajectory_loop(self):
-        if self.trajectory_index % self._weights_sync_period == 0:
-            self.load_checkpoint(db_server=self.db_server)
         seed = self._get_seed()
         exploration_strategy = \
             self.exploration_handler.get_exploration_strategy() \
@@ -184,31 +196,37 @@ class Sampler:
         self.trajectory_sampler.reset(exploration_strategy)
 
         start_time = time.time()
-        metrics = self.trajectory_sampler.sample(
+        trajectory, trajectory_info = self.trajectory_sampler.sample(
             exploration_strategy=exploration_strategy)
         elapsed_time = time.time() - start_time
 
-        if not self._infer or self._force_store:
-            self._store_trajectory()
-
-        self._log_to_console(
-            **metrics,
-            elapsed_time=elapsed_time,
-            seed=seed)
-
-        self._log_to_tensorboard(
-            **metrics,
-            elapsed_time=elapsed_time)
-
-        self.trajectory_index += 1
-        if self.trajectory_index % self._gc_period == 0:
-            gc.collect()
-        if self.trajectory_index >= self._trajectory_limit:
-            return
+        trajectory_info = trajectory_info or {}
+        trajectory_info.update({"elapsed_time": elapsed_time, "seed": seed})
+        return trajectory, trajectory_info
 
     def _run_sample_loop(self):
         while True:
-            self._run_trajectory_loop()
+            while not self._sample_flag.value:
+                time.sleep(5.0)
+
+            if self.trajectory_index % self._weights_sync_period == 0:
+                self.load_checkpoint(db_server=self.db_server)
+
+            trajectory, trajectory_info = self._run_trajectory_loop()
+            if trajectory is None:
+                continue
+
+            if not self._infer or self._force_store:
+                self._store_trajectory(trajectory)
+            self._log_to_console(**trajectory_info)
+            self._log_to_tensorboard(**trajectory_info)
+            self.trajectory_index += 1
+
+            if self.trajectory_index % self._gc_period == 0:
+                gc.collect()
+
+            if self.trajectory_index >= self._trajectory_limit:
+                return
 
     def _start_sample_loop(self):
         self._run_sample_loop()
@@ -216,3 +234,12 @@ class Sampler:
     def run(self):
         self._start_db_loop()
         self._start_sample_loop()
+
+
+def _db2sampler_loop(sampler: Sampler):
+    while True:
+        sampler._sample_flag.value = sampler.db_server.get_sample_flag()
+        time.sleep(5.0)
+
+
+__all__ = ["Sampler"]

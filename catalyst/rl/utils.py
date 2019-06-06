@@ -2,6 +2,7 @@ from typing import Union, Dict
 
 import time
 import numpy as np
+from ctypes import c_bool
 import multiprocessing as mp
 from gym.spaces import Box, Discrete, Space
 
@@ -473,7 +474,8 @@ class TrajectorySampler:
         agent: Union[ActorSpec, CriticSpec],
         device,
         deterministic: bool = False,
-        initial_capacity: int = int(1e3)
+        initial_capacity: int = int(1e3),
+        sample_flag: mp.Value = None
     ):
         self.env = env
         self.agent = agent
@@ -484,6 +486,7 @@ class TrajectorySampler:
             env=self.env, agent=self.agent, device=device
         )
 
+        self._sample_flag = sample_flag or mp.Value(c_bool, True)
         self._init_buffers()
 
     def _init_buffers(self):
@@ -571,25 +574,29 @@ class TrajectorySampler:
         self._init_with_observation(self.env.reset())
 
     def sample(self, exploration_strategy=None):
-        reward, num_steps, d_t = 0, 0, False
+        reward, num_steps, done_t = 0, 0, False
 
-        while not d_t:
-            s_t = self.get_state()
-            a_t = self.policy_handler.action_fn(
+        while not done_t and self._sample_flag.value:
+            state_t = self.get_state()
+            action_t = self.policy_handler.action_fn(
                 agent=self.agent,
-                state=s_t,
+                state=state_t,
                 device=self._device,
                 exploration_strategy=exploration_strategy,
                 deterministic=self.deterministic
             )
 
-            o_tp1, r_t, d_t, info = self.env.step(a_t)
-            reward += r_t
+            observation_tp1, reward_t, done_t, info = self.env.step(action_t)
+            reward += reward_t
 
-            transition = [o_tp1, a_t, r_t, d_t]
+            transition = [observation_tp1, action_t, reward_t, done_t]
             self._put_transition(transition)
             num_steps += 1
 
-        results = {"reward": reward, "num_steps": num_steps}
+        if not self._sample_flag.value:
+            return None, None
 
-        return results
+        trajectory = self.get_trajectory()
+        trajectory_info = {"reward": reward, "num_steps": num_steps}
+
+        return trajectory, trajectory_info

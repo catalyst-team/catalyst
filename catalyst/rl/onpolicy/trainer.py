@@ -94,7 +94,7 @@ class Trainer(TrainerSpec):
                 trajectory = self.db_server.get_trajectory()
                 assert trajectory is not None
             except Exception:
-                time.sleep(0.5)
+                time.sleep(1.0)
                 continue
 
             self._num_trajectories += 1
