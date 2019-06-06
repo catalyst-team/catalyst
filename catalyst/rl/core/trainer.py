@@ -81,7 +81,7 @@ class TrainerSpec:
         else:
             self.logger = None
 
-    def _save(self):
+    def _save_checkpoint(self):
         if self.epoch % self.save_period == 0:
             checkpoint = self.algorithm.pack_checkpoint()
             checkpoint["epoch"] = self.epoch
@@ -177,7 +177,7 @@ class TrainerSpec:
     def _run_epoch_loop(self):
         metrics: Dict = self._run_epoch()
         self.epoch += 1
-        self._save()
+        self._save_checkpoint()
         self._log_to_console(**metrics)
         self._log_to_tensorboard(**metrics)
         self._update_sampler_weights()

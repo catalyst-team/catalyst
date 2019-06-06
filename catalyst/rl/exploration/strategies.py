@@ -91,10 +91,7 @@ class Boltzmann(ExplorationStrategy):
         self.temperature = self.temp_init
 
     def get_action(self, q_values):
-        print(q_values, self.temperature, self.temp_final)
         probs = np_softmax(q_values + EPS / self.temperature)
-        print(probs)
-        print("-" * 80)
         action = np.random.choice(np.arange(len(probs)), p=probs)
         self.temperature = max(
             self.temp_final, self.temperature - self.delta_temp

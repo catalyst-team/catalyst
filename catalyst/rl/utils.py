@@ -82,8 +82,8 @@ def _get_states_from_observations(observations, history_len=1):
     by adding new dimension of size (history_len).
     """
     observations = np.array(observations)
-    episode_size = observations.shape[0]
-    states = np.zeros((episode_size, history_len) + observations.shape[1:])
+    trajectory_size = observations.shape[0]
+    states = np.zeros((trajectory_size, history_len) + observations.shape[1:])
     for i in range(history_len - 1):
         pivot = history_len - i - 1
         states[pivot:, i, :] = observations[:-pivot, :]
@@ -161,28 +161,28 @@ class OffpolicyReplayBuffer(Dataset):
                 logdir=logdir
             )
 
-    def push_episode(self, episode):
+    def push_trajectory(self, trajectory):
         with self._store_lock:
-            observations, actions, rewards, dones = episode
-            episode_len = len(rewards)
+            observations, actions, rewards, dones = trajectory
+            trajectory_len = len(rewards)
             curr_p = self.pointer.value
 
-            if curr_p + episode_len >= self.capacity_limit:
+            if curr_p + trajectory_len >= self.capacity_limit:
                 return False
 
-            self.observations[curr_p:curr_p + episode_len] = \
+            self.observations[curr_p:curr_p + trajectory_len] = \
                 np.array(observations)
-            self.actions[curr_p:curr_p + episode_len] = \
+            self.actions[curr_p:curr_p + trajectory_len] = \
                 np.array(actions)
-            self.rewards[curr_p:curr_p + episode_len] = \
+            self.rewards[curr_p:curr_p + trajectory_len] = \
                 np.array(rewards)
-            self.dones[curr_p:curr_p + episode_len] = \
+            self.dones[curr_p:curr_p + trajectory_len] = \
                 np.array(dones)
 
-            self._trajectories_lens.append(episode_len)
-            self.pointer.value += episode_len
+            self._trajectories_lens.append(trajectory_len)
+            self.pointer.value += trajectory_len
             self.num_trajectories.value += 1
-            self.num_transitions.value += episode_len
+            self.num_transitions.value += trajectory_len
 
         return True
 
@@ -301,7 +301,7 @@ def _db2buffer_loop(db_server: DBSpec, buffer: OffpolicyReplayBuffer):
             trajectory = db_server.get_trajectory()
 
         if trajectory is not None:
-            if buffer.push_episode(trajectory):
+            if buffer.push_trajectory(trajectory):
                 trajectory = None
             else:
                 time.sleep(1.0)
@@ -341,12 +341,12 @@ class OnpolicyRolloutBuffer(Dataset):
             )
 
     def push_rollout(self, **rollout: Dict):
-        episode_len = len(rollout["state"])
-        self.len = min(self.len + episode_len, self.capacity)
+        trajectory_len = len(rollout["state"])
+        self.len = min(self.len + trajectory_len, self.capacity)
         indices = np.arange(
-            self.pointer, self.pointer + episode_len
+            self.pointer, self.pointer + trajectory_len
         ) % self.capacity
-        self.pointer = (self.pointer + episode_len) % self.capacity
+        self.pointer = (self.pointer + trajectory_len) % self.capacity
 
         for key in self.buffers:
             self.buffers[key][indices] = rollout[key]

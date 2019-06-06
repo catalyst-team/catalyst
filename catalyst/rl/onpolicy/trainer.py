@@ -49,7 +49,7 @@ class Trainer(TrainerSpec):
                 rollout = rollout_batch
         return rollout
 
-    def _fetch_episodes(self):
+    def _fetch_trajectories(self):
 
         # cleanup trajectories
         self.db_server.clean_trajectories()
@@ -91,16 +91,16 @@ class Trainer(TrainerSpec):
             )
 
             try:
-                episode = self.db_server.get_trajectory()
-                assert episode is not None
+                trajectory = self.db_server.get_trajectory()
+                assert trajectory is not None
             except Exception:
                 time.sleep(0.5)
                 continue
 
             self._num_trajectories += 1
-            self._num_transitions += len(episode[-1])
+            self._num_transitions += len(trajectory[-1])
 
-            observations, actions, rewards, dones = episode
+            observations, actions, rewards, dones = trajectory
             states = _get_states_from_observations(
                 observations, self.env_spec.history_len)
             rollout = self._get_rollout_in_batches(
@@ -147,6 +147,6 @@ class Trainer(TrainerSpec):
     def _run_train_loop(self):
         while True:
             # get trajectories
-            self._fetch_episodes()
+            self._fetch_trajectories()
             # train & update
             self._run_epoch_loop()

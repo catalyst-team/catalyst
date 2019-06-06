@@ -78,7 +78,6 @@ algorithm:
   gae_lambda: 0.95
   clip_eps: 0.2
   entropy_reg_coefficient: 0.01
-  max_episode_length: &max_episode_length 10000
 
   actor_optimizer_params:
     optimizer: Adam
@@ -101,8 +100,6 @@ trainer:
   save_period: 25              # epochs
 
 sampler:
-  buffer_size: *max_episode_length
-
   valid_seeds: [1, 10, 1000, 10000, 42000]
 
   exploration_params:

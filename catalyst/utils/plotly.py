@@ -1,7 +1,3 @@
-"""
-code modified from https://github.com/belskikh/kekas/blob/master/kekas/utils.py
-"""
-
 from collections import defaultdict
 from pathlib import Path
 from typing import List, Dict, Union, Optional
