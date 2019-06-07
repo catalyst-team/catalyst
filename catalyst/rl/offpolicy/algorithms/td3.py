@@ -60,6 +60,7 @@ class TD3(AlgorithmContinuous):
                 self._hyperbolic_constant,
                 self._num_heads
             )
+        self._gammas = torch.Tensor(self._gammas).to(self._device)
         assert critic_distribution in [None, "categorical", "quantile"]
 
         if critic_distribution == "categorical":
@@ -164,7 +165,7 @@ class TD3(AlgorithmContinuous):
         logits_tp1 = \
             logits_tp1[
             range(len(logits_tp1)), :, probs_ids_tp1_min
-        ].view(-1, self.num_heads, self.num_atoms).detach()
+        ].view(-1, self._num_heads, self.num_atoms).detach()
 
         gammas = self._gammas ** self._n_step
         done_t = done_t[:, None, :]  # B x 1 x 1
