@@ -3,7 +3,7 @@ args:
   expdir: null
 
   vis: 0
-  infer: 1  #  change me
+  infer: 0  #  change me
   train: 1  #  change me
 
 db:
@@ -43,7 +43,7 @@ agents:
       num_atoms: 1
 
 #      distribution: categorical
-#      num_atoms: 65
+#      num_atoms: 64
 #      values_range: [-300.0, 300.0]
 
 #      distribution: quantile
@@ -72,10 +72,10 @@ algorithm:
 trainer:
   batch_size: 256              # transitions
   num_workers: 1
-  epoch_len: 1000              # batches
+  epoch_len: 500               # batches
 
   replay_buffer_size: 1000000  # transitions
-  start_learning: 500          # transitions
+  min_num_transitions: 5000    # transitions
 
   save_period: 1000            # epochs
   weights_sync_period: 1       # epochs
@@ -84,20 +84,18 @@ trainer:
 sampler:
   weights_sync_period: 1
 
-  valid_seeds: [1, 10, 1000, 10000, 42000]
-
   exploration_params:
+    - exploration: Boltzmann
+      probability: 0.5
+      temp_init: 1.0
+      temp_final: 0.5
+      annealing_steps: 10000
+
     - exploration: EpsilonGreedy
-      probability: 0.9
+      probability: 0.45
       eps_init: 1.0
-      eps_final: 0.05
-      annealing_steps: 1000
+      eps_final: 0.5
+      annealing_steps: 10000
 
     - exploration: Greedy
       probability: 0.05
-
-    - exploration: Boltzmann
-      probability: 0.05
-      temp_init: 1.0
-      temp_final: 0.05
-      annealing_steps: 1000
