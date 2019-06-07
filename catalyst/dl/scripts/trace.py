@@ -16,7 +16,7 @@ def trace_model_from_checkpoint(logdir, method_name):
     config_path = logdir / "configs/_config.json"
     checkpoint_path = logdir / "checkpoints/best.pth"
     print("Load config")
-    config: Dict[str, dict] = safitty.load_config(config_path)
+    config: Dict[str, dict] = safitty.load(config_path)
 
     # Get expdir name
     config_expdir = Path(config["args"]["expdir"])
