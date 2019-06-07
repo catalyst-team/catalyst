@@ -7,7 +7,7 @@ from catalyst.rl.registry import AGENTS
 from catalyst.dl.utils import UtilsFactory
 from .core_continuous import AlgorithmContinuous
 from .utils import categorical_loss, quantile_loss, soft_update, \
-    get_trainer_components
+    get_trainer_components, hyperbolic_gammas
 from .core import AlgorithmSpec
 from catalyst.rl.environments.core import EnvironmentSpec
 from catalyst.rl.agents.core import CriticSpec
@@ -46,6 +46,16 @@ class SAC(AlgorithmContinuous):
         # value distribution approximation
         critic_distribution = self.critic.distribution
         self._loss_fn = self._base_loss
+        self._num_heads = self.critic.num_heads
+        self._num_critics = len(self.critics)
+        self._hyperbolic_constant = self.critic.hyperbolic_constant
+        self._gammas = \
+            hyperbolic_gammas(
+                self._gamma,
+                self._hyperbolic_constant,
+                self._num_heads
+            )
+        self._gammas = torch.Tensor(self._gammas).to(self._device)
         assert critic_distribution in [None, "categorical", "quantile"]
 
         if critic_distribution == "categorical":
@@ -75,7 +85,8 @@ class SAC(AlgorithmContinuous):
         log_pi_tp0 = log_pi_tp0 / self.reward_scale
         q_values_tp0 = [x(states_t, actions_tp0) for x in self.critics]
         q_values_tp0_min = torch.cat(q_values_tp0, dim=-1).min(dim=-1)[0]
-        policy_loss = torch.mean(log_pi_tp0 - q_values_tp0_min)
+        # For now we use the same log_pi for each head.
+        policy_loss = torch.mean(log_pi_tp0[:, None] - q_values_tp0_min)
 
         # critic loss
         actions_tp1, log_pi_tp1 = self.actor(
@@ -86,10 +97,21 @@ class SAC(AlgorithmContinuous):
         q_values_tp1 = torch.cat(
             [x(states_tp1, actions_tp1) for x in self.target_critics], dim=-1
         )
+        # B x num_heads x num_critics
+
         q_values_tp1 = q_values_tp1.min(dim=-1)[0]
-        v_target_tp1 = (q_values_tp1 - log_pi_tp1).detach()
-        gamma = self.gamma ** self.n_step
-        q_target_t = rewards_t + (1 - done_t) * gamma * v_target_tp1[:, None]
+        # B x num_heads
+        # Again, we use the same log_pi for each head.
+        v_target_tp1 = (q_values_tp1 - log_pi_tp1[:, None]).detach()
+        # B x num_heads
+
+        gammas = self._gammas ** self._n_step
+
+        done_t = done_t[:, None, :]  # B x 1 x 1
+        rewards_t = rewards_t[:, None, :]  # B x 1 x 1
+        gammas = gammas[None, :, None]  # 1 x num_heads x 1
+        q_target_t = \
+            rewards_t + (1 - done_t) * gammas * v_target_tp1.unsqueeze(-1)
         value_loss = [
             self.critic_criterion(x, q_target_t).mean() for x in q_values_t
         ]
@@ -109,7 +131,9 @@ class SAC(AlgorithmContinuous):
             torch.sum(x * self.z, dim=-1, keepdim=True) for x in probs_tp0
         ]
         q_values_tp0_min = torch.cat(q_values_tp0, dim=-1).min(dim=-1)[0]
-        policy_loss = torch.mean(log_pi_tp0 - q_values_tp0_min)
+        # B x num_heads
+        # For now we use the same actor for each gamma
+        policy_loss = torch.mean(log_pi_tp0[:, None] - q_values_tp0_min)
 
         # critic loss (kl-divergence between categorical distributions)
         actions_tp1, log_pi_tp1 = self.actor(
@@ -122,16 +146,37 @@ class SAC(AlgorithmContinuous):
         q_values_tp1 = [
             torch.sum(x * self.z, dim=-1, keepdim=True) for x in probs_tp1
         ]
-        probs_ids_tp1_min = torch.cat(q_values_tp1, dim=-1).argmin(dim=1)
+        probs_ids_tp1_min = torch.cat(q_values_tp1, dim=-1).argmin(dim=-1)
+        # B x num_heads
 
         logits_tp1 = torch.cat([x.unsqueeze(-1) for x in logits_tp1], dim=-1)
-        logits_tp1 = logits_tp1[range(len(logits_tp1)), :, probs_ids_tp1_min]
-        gamma = self.gamma ** self.n_step
+        # B x num_heads x num_atoms x num_critics
+
+        # @TODO: smarter way to do this (other than reshaping)?
+        logits_tp1 = logits_tp1.view(-1, self.num_atoms, self._num_critics)
+        logits_tp1 = logits_tp1[
+            range(len(logits_tp1)), :,  probs_ids_tp1_min.view(-1)
+        ].view(-1, self._num_heads, self.num_atoms)
+        # B x num_heads x num_atoms
+
+        gammas = self._gammas ** self._n_step
+        done_t = done_t[:, None, :]  # B x 1 x 1
+        rewards_t = rewards_t[:, None, :]  # B x 1 x 1
+        gammas = gammas[None, :, None]  # 1 x num_heads x 1
+
         z_target_tp1 = (self.z[None, :] - log_pi_tp1[:, None]).detach()
-        atoms_target_t = rewards_t + (1 - done_t) * gamma * z_target_tp1
+        # B x num_atoms
+        # Unsqueeze so its the same for each head
+        z_target_tp1 = z_target_tp1.unsqueeze(1)
+
+        atoms_target_t = rewards_t + (1 - done_t) * gammas * z_target_tp1
         value_loss = [
             categorical_loss(
-                x, logits_tp1, atoms_target_t, self.z, self.delta_z,
+                x.view(-1, self.num_atoms),
+                logits_tp1.view(-1, self.num_atoms),
+                atoms_target_t.view(-1, self.num_atoms),
+                self.z,
+                self.delta_z,
                 self.v_min, self.v_max
             ) for x in logits_t
         ]
@@ -150,8 +195,9 @@ class SAC(AlgorithmContinuous):
         ]
         q_values_tp0_min = torch.cat(
             atoms_tp0, dim=-1
-        ).mean(dim=1).min(dim=1)[0]
-        policy_loss = torch.mean(log_pi_tp0 - q_values_tp0_min)
+        ).mean(dim=-2).min(dim=-1)[0]
+        # Again, we use the same actor for each head
+        policy_loss = torch.mean(log_pi_tp0[:, None] - q_values_tp0_min)
 
         # critic loss (quantile regression)
         actions_tp1, log_pi_tp1 = self.actor(
@@ -166,14 +212,30 @@ class SAC(AlgorithmContinuous):
             ],
             dim=-1
         )
-        atoms_ids_tp1_min = atoms_tp1.mean(dim=1).argmin(dim=1)
-        atoms_tp1 = atoms_tp1[range(len(atoms_tp1)), :, atoms_ids_tp1_min]
-        gamma = self.gamma ** self.n_step
-        atoms_tp1 = (atoms_tp1 - log_pi_tp1).detach()
-        atoms_target_t = rewards_t + (1 - done_t) * gamma * atoms_tp1
+        # B x num_heads x num_atoms x num_critics
+        atoms_ids_tp1_min = atoms_tp1.mean(dim=-2).argmin(dim=-1).view(-1)
+        # (B * num_heads,)
+        # @TODO smarter way to do this (other than reshaping)?
+        atoms_tp1 = atoms_tp1.view(-1, self.num_atoms, self._num_critics)
+        atoms_tp1 = atoms_tp1[
+            range(len(atoms_tp1)), :, atoms_ids_tp1_min
+        ].view(-1, self._num_heads, self.num_atoms)
+        # B x num_heads x num_atoms
+
+        gammas = self._gammas ** self._n_step
+        done_t = done_t[:, None, :]  # B x 1 x 1
+        rewards_t = rewards_t[:, None, :]  # B x 1 x 1
+        gammas = gammas[None, :, None]  # 1 x num_heads x 1
+
+        # Same log_pi for each head.
+        atoms_tp1 = (atoms_tp1 - log_pi_tp1.unsqueeze(1)).detach()
+        atoms_target_t = rewards_t + (1 - done_t) * gammas * atoms_tp1
         value_loss = [
             quantile_loss(
-                x, atoms_target_t, self.tau, self.num_atoms,
+                x.view(-1, self.num_atoms),
+                atoms_target_t.view(-1, self.num_atoms),
+                self.tau,
+                self.num_atoms,
                 self.critic_criterion
             ) for x in atoms_t
         ]
