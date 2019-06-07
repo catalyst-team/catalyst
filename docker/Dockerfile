@@ -21,6 +21,6 @@ RUN apt-get update && apt-get install -y \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 CMD mkdir -p /workspace
-RUN pip install catalyst --no-cache-dir
+RUN pip install -U catalyst --no-cache-dir
 
 WORKDIR /workspace
