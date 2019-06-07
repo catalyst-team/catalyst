@@ -8,6 +8,7 @@ import torch
 
 from catalyst.dl.scripts.utils import import_experiment_and_runner
 from catalyst.dl.experiments import Experiment
+from catalyst.dl.utils import UtilsFactory
 from catalyst.dl.utils.trace import trace_model
 
 
@@ -29,7 +30,8 @@ def trace_model_from_checkpoint(logdir, method_name):
 
     print("Load model state from checkpoints/best.pth")
     model = experiment.get_model(next(iter(experiment.stages)))
-    model.load_state_dict(torch.load(checkpoint_path)["model_state_dict"])
+    checkpoint = UtilsFactory.load_checkpoint(checkpoint_path)
+    UtilsFactory.unpack_checkpoint(checkpoint, model=model)
 
     print("Tracing")
     traced = trace_model(model, experiment, RunnerType, method_name)
