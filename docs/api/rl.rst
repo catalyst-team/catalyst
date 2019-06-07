@@ -81,10 +81,77 @@ Agents
     :undoc-members:
 
 
-Agent utils
+Algorithms
+--------------------
+
+Off-policy
 ~~~~~~~~~~~~~~~~
 
-.. automodule:: catalyst.rl.agents.utils
+.. automodule:: catalyst.rl.offpolicy.algorithms
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.offpolicy.algorithms.core
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.offpolicy.algorithms.core_continuous
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.offpolicy.algorithms.core_discrete
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.offpolicy.algorithms.ddpg
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.offpolicy.algorithms.sac
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.offpolicy.algorithms.td3
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+On-policy
+~~~~~~~~~~~~~~~~
+
+.. automodule:: catalyst.rl.onpolicy.algorithms
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.onpolicy.algorithms.actor
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.onpolicy.algorithms.actor_critic
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.onpolicy.algorithms.core
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.onpolicy.algorithms.ppo
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.onpolicy.algorithms.reinforce
     :members:
     :undoc-members:
     :show-inheritance:
@@ -164,123 +231,30 @@ Exploration
     :undoc-members:
 
 
-Offpolicy
+Sampler
 --------------------
 
-.. currentmodule:: catalyst.rl.offpolicy
+.. automodule:: catalyst.rl.core.sampler
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 
 Trainer
-~~~~~~~~~~~~~~~~
+--------------------
+
+.. automodule:: catalyst.rl.core.trainer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 .. automodule:: catalyst.rl.offpolicy.trainer
     :members:
     :undoc-members:
     :show-inheritance:
 
-
-Sampler
-~~~~~~~~~~~~~~~~
-
-.. automodule:: catalyst.rl.offpolicy.sampler
-    :members:
-    :undoc-members:
-    :show-inheritance:
-    :exclude-members: get_actor_weights, set_actor_weights, set_params_noise
-
-Algorithms
-~~~~~~~~~~~~~~~~
-
-.. automodule:: catalyst.rl.offpolicy.algorithms
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.rl.offpolicy.algorithms.core
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.rl.offpolicy.algorithms.core_continuous
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.rl.offpolicy.algorithms.core_discrete
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.rl.offpolicy.algorithms.ddpg
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.rl.offpolicy.algorithms.sac
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.rl.offpolicy.algorithms.td3
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Onpolicy
---------------------
-
-.. currentmodule:: catalyst.rl.onpolicy
-
-
-Trainer
-~~~~~~~~~~~~~~~~
-
 .. automodule:: catalyst.rl.onpolicy.trainer
     :members:
     :undoc-members:
     :show-inheritance:
-
-
-Sampler
-~~~~~~~~~~~~~~~~
-
-.. automodule:: catalyst.rl.onpolicy.sampler
-    :members:
-    :undoc-members:
-    :show-inheritance:
-    :exclude-members: get_actor_weights, set_actor_weights, set_params_noise
-
-Algorithms
-~~~~~~~~~~~~~~~~
-
-.. automodule:: catalyst.rl.onpolicy.algorithms
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.rl.onpolicy.algorithms.actor
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.rl.onpolicy.algorithms.actor_critic
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.rl.onpolicy.algorithms.core
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.rl.onpolicy.algorithms.ppo
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.rl.onpolicy.algorithms.reinforce
-    :members:
-    :undoc-members:
-    :show-inheritance:
-

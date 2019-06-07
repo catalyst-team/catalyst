@@ -4,7 +4,7 @@ args:
 
   vis: 0
   infer: 0  #  change me
-  train: 4  #  change me
+  train: 1  #  change me
 
 db:
   db: RedisDB
@@ -73,8 +73,6 @@ trainer:
   save_period: 100             # epochs
 
 sampler:
-  valid_seeds: [1, 10, 1000, 10000, 42000]
-
   exploration_params:
     - exploration: NoExploration
       probability: 1.0
