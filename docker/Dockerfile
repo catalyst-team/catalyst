@@ -21,8 +21,6 @@ RUN apt-get update && apt-get install -y \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 CMD mkdir -p /workspace
-COPY requirements.txt /workspace/requirements.txt
-
-RUN pip install -r /workspace/requirements.txt --no-cache-dir
+RUN pip install catalyst --no-cache-dir
 
 WORKDIR /workspace
