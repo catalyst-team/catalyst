@@ -153,10 +153,10 @@ class SAC(AlgorithmContinuous):
         # B x num_heads x num_atoms x num_critics
 
         # @TODO: smarter way to do this (other than reshaping)?
+        probs_ids_tp1_min = probs_ids_tp1_min.view(-1)
         logits_tp1 = logits_tp1.view(-1, self.num_atoms, self._num_critics)
-        logits_tp1 = logits_tp1[
-            range(len(logits_tp1)), :,  probs_ids_tp1_min.view(-1)
-        ].view(-1, self._num_heads, self.num_atoms)
+        logits_tp1 = logits_tp1[range(len(logits_tp1)), :, probs_ids_tp1_min].\
+            view(-1, self._num_heads, self.num_atoms)
         # B x num_heads x num_atoms
 
         gammas = self._gammas ** self._n_step
@@ -217,9 +217,8 @@ class SAC(AlgorithmContinuous):
         # (B * num_heads,)
         # @TODO smarter way to do this (other than reshaping)?
         atoms_tp1 = atoms_tp1.view(-1, self.num_atoms, self._num_critics)
-        atoms_tp1 = atoms_tp1[
-            range(len(atoms_tp1)), :, atoms_ids_tp1_min
-        ].view(-1, self._num_heads, self.num_atoms)
+        atoms_tp1 = atoms_tp1[range(len(atoms_tp1)), :, atoms_ids_tp1_min].\
+            view(-1, self._num_heads, self.num_atoms)
         # B x num_heads x num_atoms
 
         gammas = self._gammas ** self._n_step

@@ -113,7 +113,7 @@ class TD3(AlgorithmContinuous):
         q_values_t = [x(states_t, actions_t) for x in self.critics]
         q_values_tp1 = torch.cat(
             [x(states_tp1, actions_tp1) for x in self.target_critics], dim=-1
-        ) # B x num_heads x num_critics
+        )  # B x num_heads x num_critics
         q_values_tp1 = q_values_tp1.min(dim=-1, keepdim=True)[0].detach()
         # B x num_heads x 1
 
@@ -163,9 +163,8 @@ class TD3(AlgorithmContinuous):
         logits_tp1 = logits_tp1.view(-1, self.num_atoms, self._num_critics)
 
         logits_tp1 = \
-            logits_tp1[
-            range(len(logits_tp1)), :, probs_ids_tp1_min
-        ].view(-1, self._num_heads, self.num_atoms).detach()
+            logits_tp1[range(len(logits_tp1)), :, probs_ids_tp1_min].\
+            view(-1, self._num_heads, self.num_atoms).detach()
 
         gammas = self._gammas ** self._n_step
         done_t = done_t[:, None, :]  # B x 1 x 1
@@ -216,9 +215,8 @@ class TD3(AlgorithmContinuous):
         atoms_ids_tp1_min = atoms_tp1.mean(dim=-2).argmin(dim=-1).view(-1)
         atoms_tp1 = atoms_tp1.view(-1, self.num_atoms, self._num_critics)
         atoms_tp1 = \
-            atoms_tp1[
-            range(len(atoms_tp1)), :, atoms_ids_tp1_min
-        ].view(-1, self._num_heads, self.num_atoms).detach()
+            atoms_tp1[range(len(atoms_tp1)), :, atoms_ids_tp1_min].\
+            view(-1, self._num_heads, self.num_atoms).detach()
 
         gammas = self._gammas ** self._n_step
         done_t = done_t[:, None, :]  # B x 1 x 1
