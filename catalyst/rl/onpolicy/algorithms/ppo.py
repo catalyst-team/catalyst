@@ -36,7 +36,7 @@ class PPO(ActorCriticAlgorithmSpec):
         rewards = np.array(rewards)[:trajectory_len]
 
         values = torch.zeros((states.shape[0] + 1, 1)).to(self._device)
-        values[:states.shape[0]] = self.critic(states)
+        values[:states.shape[0]] = self.critic(states).squeeze(1)
         values = values.cpu().numpy().reshape(-1)[:trajectory_len+1]
 
         _, logprobs = self.actor(states, logprob=actions)
