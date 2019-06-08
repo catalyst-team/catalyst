@@ -4,6 +4,7 @@ import torch
 
 from .actor_critic import ActorCriticAlgorithmSpec
 from .utils import geometric_cumsum
+from catalyst.rl.offpolicy.algorithms.utils import hyperbolic_gammas
 
 
 class PPO(ActorCriticAlgorithmSpec):
@@ -16,13 +17,21 @@ class PPO(ActorCriticAlgorithmSpec):
     ):
         self.gae_lambda = gae_lambda
         self.clip_eps = clip_eps
+        self._num_heads = self.critic.num_heads
+        self._hyperbolic_constant = self.critic.hyperbolic_constant
+        self._gammas = \
+            hyperbolic_gammas(
+                self._gamma,
+                self._hyperbolic_constant,
+                self._num_heads
+            )
         self.entropy_reg_coefficient = entropy_reg_coefficient
 
     def get_rollout_spec(self):
         return {
-            "return": {"shape": (), "dtype": np.float32},
-            "value": {"shape": (), "dtype": np.float32},
-            "advantage": {"shape": (), "dtype": np.float32},
+            "return": {"shape": (self._num_heads,), "dtype": np.float32},
+            "value": {"shape": (self._num_heads,), "dtype": np.float32},
+            "advantage": {"shape": (self._num_heads,), "dtype": np.float32},
             "action_logprob": {"shape": (), "dtype": np.float32},
         }
 
@@ -35,16 +44,26 @@ class PPO(ActorCriticAlgorithmSpec):
         actions = self._to_tensor(actions)
         rewards = np.array(rewards)[:trajectory_len]
 
-        values = torch.zeros((states.shape[0] + 1, 1)).to(self._device)
-        values[:states.shape[0]] = self.critic(states).squeeze(1)
-        values = values.cpu().numpy().reshape(-1)[:trajectory_len+1]
-
+        values = torch.zeros((states.shape[0] + 1, self._num_heads)).\
+            to(self._device)
+        values[:states.shape[0], :] = self.critic(states).squeeze(-1)
+        # Each column corresponds to a different gamma
+        values = values.cpu().numpy()[:trajectory_len+1, :]
         _, logprobs = self.actor(states, logprob=actions)
         logprobs = logprobs.cpu().numpy().reshape(-1)[:trajectory_len]
+        deltas = rewards[:, None] + self._gammas * values[1:] - values[:-1]
+        # len x num_heads
 
-        deltas = rewards + self.gamma * values[1:] - values[:-1]
-        advantages = geometric_cumsum(self.gamma, deltas)[0]
-        returns = geometric_cumsum(self.gamma * self.gae_lambda, rewards)[0]
+        # For each gamma in the list of gammas compute the
+        # advantage and returns
+        advantages = np.stack([
+            geometric_cumsum(gamma, deltas[:, i])[0] for i, gamma in
+            enumerate(self._gammas)
+        ], axis=1)  # len x num_heads
+        returns = np.stack([
+            geometric_cumsum(gamma * self.gae_lambda, rewards)[0] for gamma
+            in self._gammas
+        ], axis=1)  # len x num_heads
 
         rollout = {
             "return": returns,
@@ -58,8 +77,8 @@ class PPO(ActorCriticAlgorithmSpec):
     def postprocess_buffer(self, buffers, len):
         adv_centered = \
             buffers["advantage"][:len] \
-            - buffers["advantage"][:len].mean()
-        adv_std = buffers["advantage"][:len].std()
+            - buffers["advantage"][:len].mean(axis=0)
+        adv_std = buffers["advantage"][:len].std(axis=0)
         buffers["advantage"][:len] = adv_centered / (adv_std + 1e-6)
 
     def train(self, batch, actor_update=True, critic_update=True):
@@ -75,7 +94,7 @@ class PPO(ActorCriticAlgorithmSpec):
         old_logprobs = self._to_tensor(action_logprobs)
 
         # critic loss
-        values = self.critic(states).squeeze()
+        values = self.critic(states).squeeze(-1)
 
         values_clip = old_values + torch.clamp(
             values - old_values, -self.clip_eps, self.clip_eps)
@@ -88,9 +107,10 @@ class PPO(ActorCriticAlgorithmSpec):
         _, logprobs = self.actor(states, logprob=actions)
 
         ratio = torch.exp(logprobs - old_logprobs)
-        policy_loss_unclipped = advantages * ratio
+        # The same ratio for each head of the critic
+        policy_loss_unclipped = advantages * ratio[:, None]
         policy_loss_clipped = advantages * torch.clamp(
-            ratio, 1.0 - self.clip_eps, 1.0 + self.clip_eps)
+            ratio[:, None], 1.0 - self.clip_eps, 1.0 + self.clip_eps)
         policy_loss = -torch.min(
             policy_loss_unclipped, policy_loss_clipped).mean()
 
