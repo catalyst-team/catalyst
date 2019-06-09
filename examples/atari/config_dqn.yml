@@ -16,7 +16,7 @@ environment:
   env_id: PongNoFrameskip-v4
 
   history_len: 4
-  frame_skip: 1
+  frame_skip: 4
   reward_scale: 1.0
   step_delay: 0.0
 

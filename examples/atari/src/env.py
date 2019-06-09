@@ -5,14 +5,7 @@ from gym import spaces
 import time
 from catalyst.rl.environments import EnvironmentSpec
 
-from .atari_wrappers import make_atari, wrap_deepmind, TransposeImage
-
-
-def make_env(**params):
-    env = make_atari(**params)
-    env = wrap_deepmind(env)
-    env = TransposeImage(env, op=[2, 0, 1])
-    return env
+from .atari_wrappers import make_atari_env
 
 
 class AtariEnvWrapper(EnvironmentSpec):
@@ -25,7 +18,7 @@ class AtariEnvWrapper(EnvironmentSpec):
         visualize=False,
         **params
     ):
-        self.env = make_env(**params)
+        self.env = make_atari_env(**params)
 
         self._history_len = history_len
         self._frame_skip = frame_skip
