@@ -86,8 +86,8 @@ class Trainer(TrainerSpec):
                 f"{self.min_num_transitions:09d} " \
                 f"({transitions_percentrage:5.2f}%)"
             print(
-                f"trajectories, {trajectories_stats}\t"
-                f"transitions, {transitions_stats}\t"
+                f"trajectories: {trajectories_stats}\t"
+                f"transitions: {transitions_stats}\t"
             )
 
             try:

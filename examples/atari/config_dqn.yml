@@ -16,7 +16,7 @@ environment:
   env_id: PongNoFrameskip-v4
 
   history_len: 4
-  frame_skip: 1
+  frame_skip: 4
   reward_scale: 1.0
   step_delay: 0.0
 
@@ -78,7 +78,7 @@ trainer:
 
   save_period: 50               # epochs
   weights_sync_period: 1        # epochs
-  target_update_period: 500     # batches
+  target_update_period: 250     # batches
 
 sampler:
   weights_sync_period: 1
