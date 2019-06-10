@@ -1,10 +1,10 @@
 args:
-  logdir: ./logs/rl-gym-dqn  #  change me
+  logdir: ./logs/atari-dqn
   expdir: src
 
   vis: 0
-  infer: 1   #  change me
-  train: 8  #  change me
+  infer: 0   #  change me
+  train: 8   #  change me
 
 db:
   db: MongoDB  # RedisDB or MongoDB
@@ -16,7 +16,7 @@ environment:
   env_id: PongNoFrameskip-v4
 
   history_len: 4
-  frame_skip: 1
+  frame_skip: 4
   reward_scale: 1.0
   step_delay: 0.0
 
@@ -43,16 +43,17 @@ agents:
 
       distribution: categorical
       num_atoms: 51
-      values_range: [-10.0, 10.0]
-
+      values_range: [-4.0, 8.0]
       num_heads: 10
+      hyperbolic_constant: 0.01
+
 #      distribution: quantile
 #      num_atoms: 51
 
 algorithm:
   algorithm: DQN
 
-  n_step: 3
+  n_step: 5
   gamma: 0.99
   critic_tau: 1.0
 
@@ -62,36 +63,40 @@ algorithm:
 
   critic_optimizer_params:
     optimizer: Adam
-    lr: 0.0003
+    lr: 0.001
 
   critic_grad_clip_params:
     func: clip_grad_value_
-    clip_value: 1.0
+    clip_value: 5.0
 
 trainer:
-  batch_size: 256              # transitions
+  batch_size: 256               # transitions
   num_workers: 2
-  epoch_len: 1000              # batches
+  epoch_len: 500                # batches
 
-  replay_buffer_size: 1000000  # transitions
-  replay_buffer_mode: memmap   # numpy or memmap
-  start_learning: 50000        # transitions
+  replay_buffer_size: 5000000   # transitions
+  replay_buffer_mode: memmap    # numpy or memmap
+  min_num_transitions: 50000    # transitions
 
-  save_period: 100             # epochs
-  weights_sync_period: 1       # epochs
-  target_update_period: 500    # batches
+  save_period: 50               # epochs
+  weights_sync_period: 1        # epochs
+  target_update_period: 250     # batches
 
 sampler:
   weights_sync_period: 1
-  buffer_size: 10000
-
-  valid_seeds: [1, 10, 1000, 10000, 42000]
 
   exploration_params:
+    - exploration: Boltzmann
+      probability: 0.5
+      temp_init: 1.0
+      temp_final: 0.5
+      annealing_steps: 100000
+
     - exploration: EpsilonGreedy
-      probability: 0.98
+      probability: 0.45
       eps_init: 1.0
       eps_final: 0.5
       annealing_steps: 100000
+
     - exploration: Greedy
-      probability: 0.02
+      probability: 0.05
