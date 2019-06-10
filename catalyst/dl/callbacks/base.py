@@ -135,6 +135,65 @@ class CheckpointCallback(Callback):
         print(top_best_metrics_str)
 
 
+class IterationCheckpointCallback(Callback):
+    """
+    Iteration checkpoint callback to save your model/criterion/optimizer/metrics
+    """
+
+    def __init__(
+        self, n_iters : int = 100, stage_restart : bool = True
+    ):
+        """
+        :param n_iters: save the checkpoint every `n_iters`
+        :param stage_restart: restart counter every stage or not
+        """
+        self.n_iters = n_iters
+        self.stage_restart = stage_restart
+        self._iteration_counter = 0
+
+    def save_checkpoint(
+        self,
+        logdir,
+        checkpoint,
+        is_best,
+    ):
+        suffix = f"{checkpoint['stage']}.epoch.{checkpoint['epoch']}.iter.{self._iteration_counter}"
+        filepath = UtilsFactory.save_checkpoint(
+            logdir=f"{logdir}/checkpoints/",
+            checkpoint=checkpoint,
+            suffix=suffix,
+            is_best=is_best,
+            is_last=True
+        )
+        print(f"\nSaved checkpoint at {filepath}")
+
+    def pack_checkpoint(self, **kwargs):
+        return UtilsFactory.pack_checkpoint(**kwargs)
+
+    def on_batch_end(self, state):
+        self._iteration_counter += 1
+        if self._iteration_counter % self.n_iters == 0:
+            checkpoint = self.pack_checkpoint(
+                model=state.model,
+                criterion=state.criterion,
+                optimizer=state.optimizer,
+                scheduler=state.scheduler,
+                epoch_metrics=None,
+                valid_metrics=None,
+                stage=state.stage,
+                epoch=state.epoch
+            )
+            self.save_checkpoint(
+                logdir=state.logdir,
+                checkpoint=checkpoint,
+                is_best=False
+            )
+
+    def on_stage_start(self, state):
+        if self.stage_restart:
+            self._iteration_counter = 0
+
+
 class OptimizerCallback(Callback):
     """
     Optimizer callback, abstraction over optimizer step.
