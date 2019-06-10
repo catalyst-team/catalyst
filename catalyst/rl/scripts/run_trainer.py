@@ -46,7 +46,7 @@ def main(args, unknown_args):
 
     if args.logdir is not None:
         os.makedirs(args.logdir, exist_ok=True)
-        dump_config(args.configs, args.logdir)
+        dump_config(config, args.logdir, args.configs)
 
     if args.expdir is not None:
         module = import_module(expdir=args.expdir)  # noqa: F841

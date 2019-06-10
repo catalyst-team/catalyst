@@ -71,7 +71,7 @@ def main(args, unknown_args):
     runner = Runner()
 
     if experiment.logdir is not None:
-        dump_config(args.configs, experiment.logdir)
+        dump_config(config, experiment.logdir, args.configs)
         dump_code(args.expdir, experiment.logdir)
 
     runner.run_experiment(

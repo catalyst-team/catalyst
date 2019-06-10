@@ -1,4 +1,5 @@
 from typing import Iterable, Any, Mapping, Dict, List
+from copy import deepcopy
 from collections import OrderedDict
 import datetime
 
@@ -142,15 +143,15 @@ class ConfigExperiment(Experiment):
     ]
 
     def __init__(self, config: Dict):
-        self._config = config.copy()
+        self._config = deepcopy(config)
         self.__prepare_logdir()
 
         self._config["stages"]["state_params"] = merge_dicts(
-            self._config["stages"].get("state_params", {}).copy(),
-            self._config.get("args", {}).copy(),
+            deepcopy(self._config["stages"].get("state_params", {})),
+            deepcopy(self._config.get("args", {})),
             {"logdir": self._logdir}
         )
-        self.stages_config = self._get_stages_config(config["stages"])
+        self.stages_config = self._get_stages_config(self._config["stages"])
 
     def __prepare_logdir(self):
         EXCLUDE_TAG = "none"
@@ -170,7 +171,7 @@ class ConfigExperiment(Experiment):
         stages_defaults = {}
         stages_config_out = OrderedDict()
         for key in self.STAGE_KEYWORDS:
-            stages_defaults[key] = stages_config.get(key, {}).copy()
+            stages_defaults[key] = deepcopy(stages_config.get(key, {}))
         for stage in stages_config:
             if stage in self.STAGE_KEYWORDS \
                     or stages_config.get(stage) is None:
@@ -178,8 +179,8 @@ class ConfigExperiment(Experiment):
             stages_config_out[stage] = {}
             for key in self.STAGE_KEYWORDS:
                 stages_config_out[stage][key] = merge_dicts(
-                    stages_defaults.get(key, {}).copy(),
-                    stages_config[stage].get(key, {}).copy(),
+                    deepcopy(stages_defaults.get(key, {})),
+                    deepcopy(stages_config[stage].get(key, {})),
                 )
 
         return stages_config_out
