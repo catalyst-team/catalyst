@@ -78,7 +78,7 @@ trainer:
 
   save_period: 50               # epochs
   weights_sync_period: 1        # epochs
-  target_update_period: 500     # batches
+  target_update_period: 250     # batches
 
 sampler:
   weights_sync_period: 1
