@@ -226,7 +226,7 @@ class OptimizerCallback(Callback):
         else:
             loss.backward()
 
-        if (self._accumulation_counter + 1) % self.accumulation_steps == 0:
+        if self._accumulation_counter % self.accumulation_steps == 0:
             self.grad_step(
                 optimizer=optimizer,
                 optimizer_wd=self._optimizer_wd,
