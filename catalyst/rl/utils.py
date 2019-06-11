@@ -600,6 +600,18 @@ class TrajectorySampler:
             return None, None
 
         trajectory = self.get_trajectory()
-        trajectory_info = {"reward": reward, "num_steps": num_steps}
+        # if we have an Atari environment, on the episode end the Monitor
+        # wrapper provides the total score (the unclipped reward)
+        # in info['episode']
+        if "episode" in info:
+            score = info["episode"]["r"]
+        else:
+            score = reward
+
+        trajectory_info = {
+            "reward": reward,
+            "num_steps": num_steps,
+            "score": score
+        }
 
         return trajectory, trajectory_info
