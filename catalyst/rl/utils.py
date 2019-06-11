@@ -603,7 +603,8 @@ class TrajectorySampler:
         # if we have an Atari environment, on the episode end the Monitor
         # wrapper provides the total score (the unclipped reward)
         # in info['episode']
-        if "episode" in info:
+
+        if info and "episode" in info:
             score = info["episode"]["r"]
         else:
             score = reward
