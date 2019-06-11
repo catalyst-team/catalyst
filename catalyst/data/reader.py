@@ -2,10 +2,10 @@ import functools
 from typing import Callable, Type, List
 
 import numpy as np
-from catalyst.data.functional import read_image
+from catalyst.utils.data.images import read_image
 
 
-class BaseReader:
+class ReaderSpec:
     """Reader abstraction for all Readers. Applies a function
     to an element of your data.
     For example to a row from csv, or to an image, etc.
@@ -38,7 +38,7 @@ class BaseReader:
         )
 
 
-class ImageReader(BaseReader):
+class ImageReader(ReaderSpec):
     """
     Image reader abstraction. Reads images from a `csv` dataset.
     """
@@ -82,7 +82,7 @@ class ImageReader(BaseReader):
         return result
 
 
-class ScalarReader(BaseReader):
+class ScalarReader(ReaderSpec):
     """
     Numeric data reader abstraction.
     Reads a single float, int, str or other from data
@@ -129,7 +129,7 @@ class ScalarReader(BaseReader):
         return result
 
 
-class LambdaReader(BaseReader):
+class LambdaReader(ReaderSpec):
     """
     Reader abstraction with an lambda encoder.
     Can read an elem from dataset and apply `encode_fn` function to it
@@ -174,10 +174,10 @@ class ReaderCompose(object):
     Abstraction to compose several readers into one open function.
     """
 
-    def __init__(self, readers: List[BaseReader], mixins: [] = None):
+    def __init__(self, readers: List[ReaderSpec], mixins: [] = None):
         """
         Args:
-            readers (List[BaseReader]): list of reader to compose
+            readers (List[ReaderSpec]): list of reader to compose
             mixins: list of mixins to use
         """
         self.readers = readers
