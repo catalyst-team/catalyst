@@ -11,7 +11,7 @@ class DiceLoss(nn.Module):
         threshold: float = None,
         activation: str = "Sigmoid"
     ):
-        super(DiceLoss, self).__init__()
+        super().__init__()
 
         self.loss_fn = partial(
             metrics.dice,

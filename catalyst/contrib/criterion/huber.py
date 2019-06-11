@@ -4,7 +4,7 @@ import torch.nn as nn
 
 class HuberLoss(nn.Module):
     def __init__(self, clip_delta=1.0, reduction="elementwise_mean"):
-        super(HuberLoss, self).__init__()
+        super().__init__()
         self.clip_delta = clip_delta
         self.reduction = reduction or "none"
 
