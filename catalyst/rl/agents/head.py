@@ -3,6 +3,7 @@ import torch.nn as nn
 from catalyst.dl.initialization import outer_init
 from catalyst.contrib.models import SequentialNet
 from .policy import CategoricalPolicy, GaussPolicy, RealNVPPolicy
+from typing import List
 
 
 class ValueHead(nn.Module):
@@ -13,7 +14,9 @@ class ValueHead(nn.Module):
         num_atoms: int = 1,
         bias: bool = False,
         distribution: str = None,
-        values_range: tuple = None
+        values_range: tuple = None,
+        num_heads: int = 1,
+        hyperbolic_constant: float = 1.0
     ):
         super().__init__()
 
@@ -21,6 +24,10 @@ class ValueHead(nn.Module):
         self.num_atoms = num_atoms
         self.distribution = distribution
         self.values_range = values_range
+        self.num_heads = num_heads
+        if self.num_heads == 1:
+            hyperbolic_constant = 1.0
+        self.hyperbolic_constant = hyperbolic_constant
 
         if distribution is None:  # mean case
             assert values_range is None and num_atoms == 1
@@ -30,23 +37,43 @@ class ValueHead(nn.Module):
             assert values_range is None and num_atoms > 1
         else:
             raise NotImplementedError()
+        heads = [
+            self._build_head(
+                in_features,
+                out_features,
+                num_atoms,
+                bias)
+            for _ in range(num_heads)]
+        self.net = nn.ModuleList(heads)
 
-        self.net = nn.Linear(
+        self.apply(outer_init)
+
+    def _build_head(
+        self,
+        in_features,
+        out_features,
+        num_atoms,
+        bias
+    ):
+        return nn.Linear(
             in_features=in_features,
             out_features=out_features * num_atoms,
             bias=bias
         )
-        self.apply(outer_init)
 
     def forward(self, inputs):
-        x: torch.Tensor = \
-            self.net(inputs).view(-1, self.out_features, self.num_atoms)
-        # x = x.squeeze_(dim=-1)
-        x = x.squeeze_(dim=1).squeeze_(dim=-1)
+        x: List[torch.Tensor] = []
+        for net in self.net:
+            x.append(net(inputs).view(-1, self.out_features, self.num_atoms))
+
+        x = [z.squeeze_(dim=1).squeeze_(dim=-1) for z in x]
         if self.num_atoms == 1 and self.out_features == 1:
             # make critic outputs (B, 1) instead of (B, )
-            x = x.unsqueeze_(dim=1)
-        return x
+            x = [z.unsqueeze_(dim=1) for z in x]
+
+        # B x num_heads x num_outputs x num_atoms (discrete)
+        # B x num_heads x num_atoms (continuous)
+        return torch.stack(x, dim=1)
 
 
 class PolicyHead(nn.Module):

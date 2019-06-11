@@ -415,13 +415,16 @@ class PolicyHandler:
     @torch.no_grad()
     def _get_q_values(self, critic: CriticSpec, state: np.ndarray, device):
         states = torch.Tensor(state).to(device).unsqueeze(0)
+        output = critic(states)
+        # We use the last head to perform actions
+        # This is the head corresponding to the largest gamma
         if self.value_distribution == "categorical":
-            probs = torch.softmax(critic(states)[0], dim=-1)
+            probs = torch.softmax(output[0, -1, :, :], dim=-1)
             q_values = torch.sum(probs * self.z, dim=-1)
         elif self.value_distribution == "quantile":
-            q_values = torch.mean(critic(states)[0], dim=-1)
+            q_values = torch.mean(output[0, -1, :, :], dim=-1)
         else:
-            q_values = critic(states)[0]
+            q_values = output[0, -1, :]
         return q_values.cpu().numpy()
 
     @torch.no_grad()
