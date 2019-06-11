@@ -3,10 +3,10 @@ from typing import Dict
 from .encoder import UnetEncoder, ResnetEncoder
 from .decoder import PSPDecoder
 from .head import UnetHead
-from .core import _UnetSpec, _ResnetUnetSpec
+from .core import UnetSpec, ResnetUnetSpec
 
 
-class PSPnet(_UnetSpec):
+class PSPnet(UnetSpec):
 
     def _get_components(
         self,
@@ -34,7 +34,7 @@ class PSPnet(_UnetSpec):
         return encoder, bridge, decoder, head
 
 
-class ResnetPSPnet(_ResnetUnetSpec):
+class ResnetPSPnet(ResnetUnetSpec):
 
     def _get_components(
         self,

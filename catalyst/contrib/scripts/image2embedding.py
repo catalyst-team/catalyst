@@ -115,7 +115,7 @@ def main(args, _=None):
 
     model = ResnetEncoder(arch=args.arch, pooling=args.pooling)
     model = model.eval()
-    model, device = UtilsFactory.process_components(model)
+    model, _, _, _, device = UtilsFactory.process_components(model=model)
 
     images_df = pd.read_csv(args.in_csv)
     images_df = images_df.reset_index().drop("index", axis=1)

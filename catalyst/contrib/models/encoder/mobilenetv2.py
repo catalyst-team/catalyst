@@ -6,7 +6,7 @@ from catalyst.contrib.registry import MODULES
 from ..classification import MobileNetV2
 
 
-class MobileNetEncoder(nn.Module):
+class MobileNetV2Encoder(nn.Module):
     def __init__(
         self,
         input_size=224,

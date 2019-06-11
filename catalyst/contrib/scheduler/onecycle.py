@@ -20,17 +20,17 @@ class OneCycleLR(BatchScheduler):
     Third, optional, lr decay.
     """
     def __init__(
-            self,
-            optimizer: Optimizer,
-            num_steps: int,
-            lr_range=(1.0, 0.005),
-            init_lr: float = None,
-            warmup_steps: int = 0,
-            warmup_fraction: float = None,
-            decay_steps: int = 0,
-            decay_fraction: float = None,
-            momentum_range=(0.8, 0.99, 0.999),
-            init_momentum: float = None,
+        self,
+        optimizer: Optimizer,
+        num_steps: int,
+        lr_range=(1.0, 0.005),
+        init_lr: float = None,
+        warmup_steps: int = 0,
+        warmup_fraction: float = None,
+        decay_steps: int = 0,
+        decay_fraction: float = None,
+        momentum_range=(0.8, 0.99, 0.999),
+        init_momentum: float = None,
     ):
         """
         Args:
@@ -97,10 +97,10 @@ class OneCycleLR(BatchScheduler):
         super().__init__(optimizer)
 
     def _calculate_warmup(
-            self,
-            num_steps: int,
-            warmup_steps: int,
-            warmup_fraction: float
+        self,
+        num_steps: int,
+        warmup_steps: int,
+        warmup_fraction: float
     ):
         if warmup_fraction is not None:
             assert 0.0 <= warmup_fraction < 1.0 and warmup_steps == 0, \
@@ -113,10 +113,10 @@ class OneCycleLR(BatchScheduler):
         return self.warmup_steps
 
     def _calculate_decay(
-            self,
-            num_steps: int,
-            decay_steps: int,
-            decay_fraction: float
+        self,
+        num_steps: int,
+        decay_steps: int,
+        decay_fraction: float
     ):
         if decay_fraction is not None:
             assert 0.0 <= decay_fraction < 1.0 and decay_steps == 0, \
@@ -129,10 +129,10 @@ class OneCycleLR(BatchScheduler):
         return self.decay_steps
 
     def _calculate_lr_momentum(
-            self,
-            warmup_steps: int,
-            lr_annealing_steps: int,
-            decay_steps: int
+        self,
+        warmup_steps: int,
+        lr_annealing_steps: int,
+        decay_steps: int
     ):
         init_lr, max_lr, min_lr, final_lr = self.lr_range
         init_momentum, min_momentum, max_momentum, final_momentum = \
@@ -199,9 +199,9 @@ class OneCycleLR(BatchScheduler):
         self.last_epoch = 0
 
     def recalculate(
-            self,
-            loader_len: int,
-            current_step: int,
+        self,
+        loader_len: int,
+        current_step: int,
     ) -> None:
         """
         Recalculates total num_steps for ``batch`` mode
