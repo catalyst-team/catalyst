@@ -57,11 +57,11 @@ class PPO(ActorCriticAlgorithmSpec):
         # For each gamma in the list of gammas compute the
         # advantage and returns
         advantages = np.stack([
-            geometric_cumsum(gamma, deltas[:, i])[0] 
+            geometric_cumsum(gamma, deltas[:, i])[0]
             for i, gamma in enumerate(self._gammas)
         ], axis=1)  # len x num_heads
         returns = np.stack([
-            geometric_cumsum(gamma * self.gae_lambda, rewards)[0] 
+            geometric_cumsum(gamma * self.gae_lambda, rewards)[0]
             for gamma in self._gammas
         ], axis=1)  # len x num_heads
 
