@@ -313,3 +313,21 @@ def real_module_from_maybe_ddp(model: nn.Module) -> nn.Module:
     if is_wrapped_with_ddp(model):
         model = model.module
     return model
+
+
+def any2device(value, device):
+    """
+    Move tensor, list of tensors, list of list of tensors,
+    dict of tensors, tuple of tensors to target device.
+    :param value: Object to be moved
+    :param device: target device ids
+    :return: Save data structure holding tensors on target device
+    """
+    if isinstance(value, dict):
+        return dict((k, any2device(v, device))
+                    for k, v in value.items())
+    if isinstance(value, (tuple, list)):
+        return list(any2device(v, device) for v in value)
+    if torch.is_tensor(value):
+        return value.to(device, non_blocking=True)
+    return value
