@@ -2,6 +2,7 @@ from typing import Union, Dict
 
 import time
 import numpy as np
+from ctypes import c_bool
 import multiprocessing as mp
 from gym.spaces import Box, Discrete, Space
 
@@ -82,8 +83,8 @@ def _get_states_from_observations(observations, history_len=1):
     by adding new dimension of size (history_len).
     """
     observations = np.array(observations)
-    episode_size = observations.shape[0]
-    states = np.zeros((episode_size, history_len) + observations.shape[1:])
+    trajectory_size = observations.shape[0]
+    states = np.zeros((trajectory_size, history_len) + observations.shape[1:])
     for i in range(history_len - 1):
         pivot = history_len - i - 1
         states[pivot:, i, :] = observations[:-pivot, :]
@@ -161,28 +162,28 @@ class OffpolicyReplayBuffer(Dataset):
                 logdir=logdir
             )
 
-    def push_episode(self, episode):
+    def push_trajectory(self, trajectory):
         with self._store_lock:
-            observations, actions, rewards, dones = episode
-            episode_len = len(rewards)
+            observations, actions, rewards, dones = trajectory
+            trajectory_len = len(rewards)
             curr_p = self.pointer.value
 
-            if curr_p + episode_len >= self.capacity_limit:
+            if curr_p + trajectory_len >= self.capacity_limit:
                 return False
 
-            self.observations[curr_p:curr_p + episode_len] = \
+            self.observations[curr_p:curr_p + trajectory_len] = \
                 np.array(observations)
-            self.actions[curr_p:curr_p + episode_len] = \
+            self.actions[curr_p:curr_p + trajectory_len] = \
                 np.array(actions)
-            self.rewards[curr_p:curr_p + episode_len] = \
+            self.rewards[curr_p:curr_p + trajectory_len] = \
                 np.array(rewards)
-            self.dones[curr_p:curr_p + episode_len] = \
+            self.dones[curr_p:curr_p + trajectory_len] = \
                 np.array(dones)
 
-            self._trajectories_lens.append(episode_len)
-            self.pointer.value += episode_len
+            self._trajectories_lens.append(trajectory_len)
+            self.pointer.value += trajectory_len
             self.num_trajectories.value += 1
-            self.num_transitions.value += episode_len
+            self.num_transitions.value += trajectory_len
 
         return True
 
@@ -301,7 +302,7 @@ def _db2buffer_loop(db_server: DBSpec, buffer: OffpolicyReplayBuffer):
             trajectory = db_server.get_trajectory()
 
         if trajectory is not None:
-            if buffer.push_episode(trajectory):
+            if buffer.push_trajectory(trajectory):
                 trajectory = None
             else:
                 time.sleep(1.0)
@@ -341,12 +342,12 @@ class OnpolicyRolloutBuffer(Dataset):
             )
 
     def push_rollout(self, **rollout: Dict):
-        episode_len = len(rollout["state"])
-        self.len = min(self.len + episode_len, self.capacity)
+        trajectory_len = len(rollout["state"])
+        self.len = min(self.len + trajectory_len, self.capacity)
         indices = np.arange(
-            self.pointer, self.pointer + episode_len
+            self.pointer, self.pointer + trajectory_len
         ) % self.capacity
-        self.pointer = (self.pointer + episode_len) % self.capacity
+        self.pointer = (self.pointer + trajectory_len) % self.capacity
 
         for key in self.buffers:
             self.buffers[key][indices] = rollout[key]
@@ -414,13 +415,16 @@ class PolicyHandler:
     @torch.no_grad()
     def _get_q_values(self, critic: CriticSpec, state: np.ndarray, device):
         states = torch.Tensor(state).to(device).unsqueeze(0)
+        output = critic(states)
+        # We use the last head to perform actions
+        # This is the head corresponding to the largest gamma
         if self.value_distribution == "categorical":
-            probs = torch.softmax(critic(states)[0], dim=-1)
+            probs = torch.softmax(output[0, -1, :, :], dim=-1)
             q_values = torch.sum(probs * self.z, dim=-1)
         elif self.value_distribution == "quantile":
-            q_values = torch.mean(critic(states)[0], dim=-1)
+            q_values = torch.mean(output[0, -1, :, :], dim=-1)
         else:
-            q_values = critic(states)[0]
+            q_values = output[0, -1, :]
         return q_values.cpu().numpy()
 
     @torch.no_grad()
@@ -466,14 +470,15 @@ class PolicyHandler:
         return action
 
 
-class EpisodeRunner:
+class TrajectorySampler:
     def __init__(
         self,
         env: EnvironmentSpec,
         agent: Union[ActorSpec, CriticSpec],
         device,
         deterministic: bool = False,
-        initial_capacity: int = int(1e3)
+        initial_capacity: int = int(1e3),
+        sample_flag: mp.Value = None
     ):
         self.env = env
         self.agent = agent
@@ -484,6 +489,7 @@ class EpisodeRunner:
             env=self.env, agent=self.agent, device=device
         )
 
+        self._sample_flag = sample_flag or mp.Value(c_bool, True)
         self._init_buffers()
 
     def _init_buffers(self):
@@ -570,26 +576,30 @@ class EpisodeRunner:
         self._init_buffers()
         self._init_with_observation(self.env.reset())
 
-    def run(self, exploration_strategy):
-        episode_reward, num_steps, done = 0, 0, False
+    def sample(self, exploration_strategy=None):
+        reward, num_steps, done_t = 0, 0, False
 
-        while not done:
-            state = self.get_state()
-            action = self.policy_handler.action_fn(
+        while not done_t and self._sample_flag.value:
+            state_t = self.get_state()
+            action_t = self.policy_handler.action_fn(
                 agent=self.agent,
-                state=state,
+                state=state_t,
                 device=self._device,
                 exploration_strategy=exploration_strategy,
                 deterministic=self.deterministic
             )
 
-            next_observation, reward, done, info = self.env.step(action)
-            episode_reward += reward
+            observation_tp1, reward_t, done_t, info = self.env.step(action_t)
+            reward += reward_t
 
-            transition = [next_observation, action, reward, done]
+            transition = [observation_tp1, action_t, reward_t, done_t]
             self._put_transition(transition)
             num_steps += 1
 
-        results = {"episode_reward": episode_reward, "num_steps": num_steps}
+        if not self._sample_flag.value:
+            return None, None
 
-        return results
+        trajectory = self.get_trajectory()
+        trajectory_info = {"reward": reward, "num_steps": num_steps}
+
+        return trajectory, trajectory_info

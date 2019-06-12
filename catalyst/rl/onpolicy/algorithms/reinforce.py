@@ -8,7 +8,6 @@ from .utils import geometric_cumsum
 class REINFORCE(ActorAlgorithmSpec):
     def _init(
         self,
-        max_episode_length: int = 1000,
         entropy_reg_coefficient: float = 0.
     ):
         self.entropy_reg_coefficient = entropy_reg_coefficient

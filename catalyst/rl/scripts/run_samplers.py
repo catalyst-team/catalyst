@@ -14,17 +14,15 @@ import torch  # noqa E402
 torch.set_num_threads(1)
 
 from catalyst.dl.scripts.utils import import_module  # noqa E402
-from catalyst.utils.config import parse_args_uargs  # noqa E402
-from catalyst.utils.misc import set_global_seed, boolean_flag  # noqa E402
+from catalyst.rl.core import Sampler  # noqa E402
 from catalyst.rl.registry import \
     OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
     ENVIRONMENTS, DATABASES  # noqa E402
 from catalyst.rl.exploration import ExplorationHandler  # noqa E402
-from catalyst.rl.offpolicy.sampler import \
-    Sampler as OffpolicySampler  # noqa E402
-from catalyst.rl.onpolicy.sampler import \
-    Sampler as OnpolicySampler  # noqa E402
-from catalyst.rl.scripts.utils import OFFPOLICY_ALGORITHMS_NAMES  # noqa E402
+from catalyst.rl.scripts.utils import OFFPOLICY_ALGORITHMS_NAMES, \
+    ONPOLICY_ALGORITHMS_NAMES  # noqa E402
+from catalyst.utils.config import parse_args_uargs  # noqa E402
+from catalyst.utils.misc import set_global_seed, boolean_flag  # noqa E402
 
 
 STEP_DELAY = 1
@@ -78,7 +76,6 @@ def run_sampler(
     logdir,
     algorithm_fn,
     environment_fn,
-    sampler_fn,
     vis,
     infer,
     seed=42,
@@ -107,19 +104,28 @@ def run_sampler(
         exploration_handler.set_power(exploration_power)
 
     mode = "infer" if infer else "train"
-    valid_seeds = config_["sampler"].pop("valid_seeds")
+    valid_seeds = config_["sampler"].pop("valid_seeds", None)
     seeds = valid_seeds if infer else None
 
-    sampler = sampler_fn(
+    if algorithm_fn in OFFPOLICY_ALGORITHMS.values():
+        weights_sync_mode = "critic" if env.discrete_actions else "actor"
+    elif algorithm_fn in ONPOLICY_ALGORITHMS.values():
+        weights_sync_mode = "actor"
+    else:
+        # @TODO: add registry for algorithms, trainers, samplers
+        raise NotImplementedError()
+
+    sampler = Sampler(
         agent=agent,
         env=env,
         db_server=db_server,
         exploration_handler=exploration_handler,
-        **config_["sampler"],
         logdir=logdir,
         id=id,
         mode=mode,
-        seeds=seeds
+        weights_sync_mode=weights_sync_mode,
+        seeds=seeds,
+        **config_["sampler"],
     )
 
     if resume is not None:
@@ -141,12 +147,12 @@ def main(args, unknown_args):
 
     if algorithm_name in OFFPOLICY_ALGORITHMS_NAMES:
         ALGORITHMS = OFFPOLICY_ALGORITHMS
-        sampler_fn = OffpolicySampler
         sync_epoch = False
-    else:
+    elif algorithm_name in ONPOLICY_ALGORITHMS_NAMES:
         ALGORITHMS = ONPOLICY_ALGORITHMS
-        sampler_fn = OnpolicySampler
         sync_epoch = True
+    else:
+        raise NotImplementedError()
 
     algorithm_fn = ALGORITHMS.get(algorithm_name)
 
@@ -164,7 +170,6 @@ def main(args, unknown_args):
         logdir=args.logdir,
         algorithm_fn=algorithm_fn,
         environment_fn=environment_fn,
-        sampler_fn=sampler_fn,
         config=config,
         resume=args.resume,
         db=args.db,

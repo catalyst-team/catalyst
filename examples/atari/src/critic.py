@@ -60,6 +60,14 @@ class ConvCritic(CriticSpec):
     def values_range(self) -> tuple:
         return self.head_net.values_range
 
+    @property
+    def num_heads(self) -> int:
+        return self.head_net.num_heads
+
+    @property
+    def hyperbolic_constant(self) -> float:
+        return self.head_net.hyperbolic_constant
+
     def forward(self, state: torch.Tensor):
         x = state
         if len(x.shape) < 3:
@@ -84,6 +92,7 @@ class ConvCritic(CriticSpec):
         env_spec: EnvironmentSpec,
     ):
         # state_net = StateNet.get_from_params(**state_net_params)
+
         head_net = ValueHead(**value_head_params)
 
         net = cls(

@@ -1,9 +1,10 @@
+from typing import Dict, List
+
 import os
-import json
 import copy
 import shutil
 from collections import OrderedDict
-
+import json
 import yaml
 
 from catalyst.utils.misc import merge_dicts
@@ -37,34 +38,30 @@ def load_ordered_yaml(
     return yaml.load(stream, OrderedLoader)
 
 
-def dump_config(config_path: str, logdir: str) -> None:
+def dump_config(
+    experiment_config: Dict,
+    logdir: str,
+    configs_path: List = None,
+) -> None:
     """
     Saves config into JSON in logdir
 
     Args:
-        config: path(s) to config
+        experiment_config (dict): experiment config
         logdir (str): path to logdir
+        configs_path: path(s) to config
     """
+    configs_path = configs_path or []
     config_dir = f"{logdir}/configs/"
     os.makedirs(config_dir, exist_ok=True)
 
-    config = {}
-    for config_path_in in config_path:
+    with open(f"{config_dir}/_config.json", "w") as fout:
+        json.dump(experiment_config, fout, indent=2, ensure_ascii=False)
+
+    for config_path_in in configs_path:
         config_name = config_path_in.rsplit("/", 1)[-1]
         config_path_out = f"{config_dir}/{config_name}"
         shutil.copyfile(config_path_in, config_path_out)
-
-        with open(config_path_in, "r") as fin:
-            if config_path_in.endswith("json"):
-                config_ = json.load(fin, object_pairs_hook=OrderedDict)
-            elif config_path_in.endswith("yml"):
-                config_ = load_ordered_yaml(fin)
-            else:
-                raise Exception("Unknown file format")
-        config = merge_dicts(config, config_)
-
-    with open(f"{config_dir}/_config.json", "w") as fout:
-        json.dump(config, fout, indent=2, ensure_ascii=False)
 
 
 def parse_config_args(*, config, args, unknown_args):

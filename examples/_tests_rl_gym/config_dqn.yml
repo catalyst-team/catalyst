@@ -75,7 +75,7 @@ trainer:
   epoch_len: 10                # batches
 
   replay_buffer_size: 100000   # transitions
-  start_learning: 32           # transitions
+  min_num_transitions: 32           # transitions
 
   save_period: 1               # epochs
   weights_sync_period: 1       # epochs

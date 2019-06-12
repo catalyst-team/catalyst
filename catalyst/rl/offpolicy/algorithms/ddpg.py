@@ -1,7 +1,7 @@
 import torch
 from .core_continuous import AlgorithmContinuous
 from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
-    quantile_loss
+    quantile_loss, hyperbolic_gammas
 
 
 class DDPG(AlgorithmContinuous):
@@ -13,6 +13,15 @@ class DDPG(AlgorithmContinuous):
         # value distribution approximation
         critic_distribution = self.critic.distribution
         self._loss_fn = self._base_loss
+        self._num_heads = self.critic.num_heads
+        self._hyperbolic_constant = self.critic.hyperbolic_constant
+        self._gammas = \
+            hyperbolic_gammas(
+                self._gamma,
+                self._hyperbolic_constant,
+                self._num_heads
+            )
+        self._gammas = torch.Tensor(self._gammas).to(self._device)
         assert critic_distribution in [None, "categorical", "quantile"]
 
         if critic_distribution == "categorical":
@@ -36,17 +45,22 @@ class DDPG(AlgorithmContinuous):
             self._loss_fn = self._quantile_loss
 
     def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
-        gamma = self.gamma**self.n_step
-
+        gammas = self._gammas ** self._n_step
         # actor loss
+
+        # For now we have the same actor for all heads of the critic
         policy_loss = -torch.mean(self.critic(states_t, self.actor(states_t)))
 
         # critic loss
-        q_values_t = self.critic(states_t, actions_t)
+        q_values_t = self.critic(states_t, actions_t)  # B x num_heads x 1
         q_values_tp1 = self.target_critic(
             states_tp1, self.target_actor(states_tp1)
-        ).detach()
-        q_target_t = rewards_t + (1 - done_t) * gamma * q_values_tp1
+        ).detach()  # B x num_heads x 1
+        done_t = done_t[:, None, :]  # B x 1 x 1
+        rewards_t = rewards_t[:, None, :]  # B x 1 x 1
+        gammas = gammas[None, :, None]   # 1 x num_heads x 1
+
+        q_target_t = rewards_t + (1 - done_t) * gammas * q_values_tp1
 
         value_loss = self.critic_criterion(q_values_t, q_target_t).mean()
 
@@ -55,23 +69,39 @@ class DDPG(AlgorithmContinuous):
     def _categorical_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
-        gamma = self.gamma**self.n_step
+        gammas = self._gammas ** self._n_step
 
         # actor loss
+        # For now we have the same actor for all heads of the critic
         logits_tp0 = self.critic(states_t, self.actor(states_t))
         probs_tp0 = torch.softmax(logits_tp0, dim=-1)
         q_values_tp0 = torch.sum(probs_tp0 * self.z, dim=-1)
         policy_loss = -torch.mean(q_values_tp0)
 
         # critic loss (kl-divergence between categorical distributions)
+
+        done_t = done_t[:, None, :]
+        # B x 1 x 1
+        rewards_t = rewards_t[:, None, :]
+        # B x 1 x 1
+        gammas = gammas[None, :, None]
+        # 1 x num_heads x 1
+
         logits_t = self.critic(states_t, actions_t)
+        # B x num_heads x num_atoms
         logits_tp1 = self.target_critic(
             states_tp1, self.target_actor(states_tp1)
         ).detach()
-        atoms_target_t = rewards_t + (1 - done_t) * gamma * self.z
+        # B x num_heads x num_atoms
+        atoms_target_t = rewards_t + (1 - done_t) * gammas * self.z
+        # B x num_heads x num_atoms
 
         value_loss = categorical_loss(
-            logits_t, logits_tp1, atoms_target_t, self.z, self.delta_z,
+            logits_t.view(-1, self.num_atoms),
+            logits_tp1.view(-1, self.num_atoms),
+            atoms_target_t.view(-1, self.num_atoms),
+            self.z,
+            self.delta_z,
             self.v_min, self.v_max
         )
 
@@ -80,20 +110,32 @@ class DDPG(AlgorithmContinuous):
     def _quantile_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
-        gamma = self.gamma**self.n_step
+        gammas = self._gammas ** self._n_step
 
         # actor loss
         policy_loss = -torch.mean(self.critic(states_t, self.actor(states_t)))
 
         # critic loss (quantile regression)
         atoms_t = self.critic(states_t, actions_t)
+        # B x num_heads x num_atoms
         atoms_tp1 = self.target_critic(
             states_tp1, self.target_actor(states_tp1)
         ).detach()
-        atoms_target_t = rewards_t + (1 - done_t) * gamma * atoms_tp1
+        # B x num_heads x num_atoms
+
+        done_t = done_t[:, None, :]
+        # B x 1 x 1
+        rewards_t = rewards_t[:, None, :]
+        # B x 1 x 1
+        gammas = gammas[None, :, None]
+        # 1 x num_heads x 1
+
+        atoms_target_t = rewards_t + (1 - done_t) * gammas * atoms_tp1
 
         value_loss = quantile_loss(
-            atoms_t, atoms_target_t, self.tau, self.num_atoms,
+            atoms_t.view(-1, self.num_atoms),
+            atoms_target_t.view(-1, self.num_atoms),
+            self.tau, self.num_atoms,
             self.critic_criterion
         )
 

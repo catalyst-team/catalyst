@@ -61,9 +61,10 @@ class RedisDB(DBSpec):
 
     def load_weights(self, prefix):
         weights = self._server.get(f"{self._prefix}_{prefix}_weights")
-        if weights is not None:
-            weights = unpack(weights)
-        self._epoch = weights["epoch"]
+        if weights is None:
+            return None
+        weights = unpack(weights)
+        self._epoch = weights.get("epoch")
         return weights["weights"]
 
     def clean_weights(self, prefix):
