@@ -4,135 +4,67 @@ import torch
 from typing import Dict
 
 from catalyst.contrib.scheduler import OneCycleLR, BatchScheduler
-from catalyst.dl.state import RunnerState
+from catalyst.dl.core.state import RunnerState
 from catalyst.dl.utils import UtilsFactory, get_optimizer_momentum
 from catalyst.rl.registry import GRAD_CLIPPERS
 from .core import Callback
 
 
-class CheckpointCallback(Callback):
-    """
-    Checkpoint callback to save/restore your model/criterion/optimizer/metrics.
-    """
-
+class LossCallback(Callback):
     def __init__(
-        self, save_n_best: int = 3, resume: str = None, resume_dir: str = None
-    ):
-        """
-        Args:
-            save_n_best: number of best checkpoint to keep
-            resume: path to checkpoint to load and initialize runner state
-        """
-        self.save_n_best = save_n_best
-        self.resume = resume
-        self.resume_dir = resume_dir
-        self.top_best_metrics = []
-
-        self._keys_from_state = ["resume", "resume_dir"]
-
-    @staticmethod
-    def load_checkpoint(*, filename, state):
-        if os.path.isfile(filename):
-            print("=> loading checkpoint \"{}\"".format(filename))
-            checkpoint = UtilsFactory.load_checkpoint(filename)
-
-            state.epoch = checkpoint["epoch"]
-
-            UtilsFactory.unpack_checkpoint(
-                checkpoint,
-                model=state.model,
-                criterion=state.criterion,
-                optimizer=state.optimizer,
-                scheduler=state.scheduler
-            )
-
-            print(
-                "loaded checkpoint \"{}\" (epoch {})".format(
-                    filename, checkpoint["epoch"]
-                )
-            )
-        else:
-            raise Exception("no checkpoint found at \"{}\"".format(filename))
-
-    def save_checkpoint(
         self,
-        logdir,
-        checkpoint,
-        is_best,
-        save_n_best=5,
-        main_metric="loss",
-        minimize_metric=True
+        input_key: str = "targets",
+        output_key: str = "logits",
+        prefix: str = "loss",
+        criterion_key: str = None,
+        loss_key: str = None,
+        multiplier: float = 1.0
     ):
-        suffix = f"{checkpoint['stage']}.{checkpoint['epoch']}"
-        filepath = UtilsFactory.save_checkpoint(
-            logdir=f"{logdir}/checkpoints/",
-            checkpoint=checkpoint,
-            suffix=suffix,
-            is_best=is_best,
-            is_last=True
-        )
+        self.input_key = input_key
+        self.output_key = output_key
+        self.prefix = prefix
+        self.criterion_key = criterion_key
+        self.loss_key = loss_key
+        self.multiplier = multiplier
 
-        checkpoint_metric = checkpoint["valid_metrics"][main_metric]
-        self.top_best_metrics.append((filepath, checkpoint_metric))
-        self.top_best_metrics = sorted(
-            self.top_best_metrics,
-            key=lambda x: x[1],
-            reverse=not minimize_metric
-        )
-        if len(self.top_best_metrics) > save_n_best:
-            last_item = self.top_best_metrics.pop(-1)
-            last_filepath = last_item[0]
-            os.remove(last_filepath)
+    def _add_loss_to_state(self, state, loss):
+        if self.loss_key is None:
+            if state.loss is not None:
+                if isinstance(state.loss, list):
+                    state.loss.append(loss)
+                else:
+                    state.loss = [state.loss, loss]
+            else:
+                state.loss = loss
+        else:
+            if state.loss is not None:
+                assert isinstance(state.loss, dict)
+                state.loss[self.loss_key] = loss
+            else:
+                state.loss = {self.loss_key: loss}
 
-    def pack_checkpoint(self, **kwargs):
-        return UtilsFactory.pack_checkpoint(**kwargs)
+    def _compute_loss(self, state, criterion):
+        loss = criterion(
+            state.output[self.output_key],
+            state.input[self.input_key]
+        )
+        return loss
 
     def on_stage_start(self, state):
-        for key in self._keys_from_state:
-            value = getattr(state, key, None)
-            if value is not None:
-                setattr(self, key, value)
+        assert state.criterion is not None
 
-        if self.resume_dir is not None:
-            self.resume = str(self.resume_dir) + "/" + str(self.resume)
-
-        if self.resume is not None:
-            self.load_checkpoint(filename=self.resume, state=state)
-
-    def on_epoch_end(self, state: RunnerState):
-        if state.stage.startswith("infer"):
-            return
-
-        checkpoint = self.pack_checkpoint(
-            model=state.model,
-            criterion=state.criterion,
-            optimizer=state.optimizer,
-            scheduler=state.scheduler,
-            epoch_metrics=dict(state.metrics.epoch_values),
-            valid_metrics=dict(state.metrics.valid_values),
-            stage=state.stage,
-            epoch=state.epoch,
-            checkpoint_data=state.checkpoint_data
-        )
-        self.save_checkpoint(
-            logdir=state.logdir,
-            checkpoint=checkpoint,
-            is_best=state.metrics.is_best,
-            save_n_best=self.save_n_best,
-            main_metric=state.main_metric,
-            minimize_metric=state.minimize_metric
+    def on_batch_end(self, state):
+        criterion = state.get_key(
+            key="criterion", inner_key=self.criterion_key
         )
 
-    def on_stage_end(self, state):
-        print("Top best models:")
-        top_best_metrics_str = "\n".join(
-            [
-                "{filepath}\t{metric:3.4f}".format(
-                    filepath=filepath, metric=metric
-                ) for filepath, metric in self.top_best_metrics
-            ]
-        )
-        print(top_best_metrics_str)
+        loss = self._compute_loss(state, criterion) * self.multiplier
+
+        state.metrics.add_batch_value(metrics_dict={
+            self.prefix: loss.item(),
+        })
+
+        self._add_loss_to_state(state, loss)
 
 
 class OptimizerCallback(Callback):
@@ -319,61 +251,129 @@ class SchedulerCallback(Callback):
         return lr, momentum
 
 
-class LossCallback(Callback):
+class CheckpointCallback(Callback):
+    """
+    Checkpoint callback to save/restore your model/criterion/optimizer/metrics.
+    """
+
     def __init__(
-        self,
-        input_key: str = "targets",
-        output_key: str = "logits",
-        prefix: str = "loss",
-        criterion_key: str = None,
-        loss_key: str = None,
-        multiplier: float = 1.0
+        self, save_n_best: int = 3, resume: str = None, resume_dir: str = None
     ):
-        self.input_key = input_key
-        self.output_key = output_key
-        self.prefix = prefix
-        self.criterion_key = criterion_key
-        self.loss_key = loss_key
-        self.multiplier = multiplier
+        """
+        Args:
+            save_n_best: number of best checkpoint to keep
+            resume: path to checkpoint to load and initialize runner state
+        """
+        self.save_n_best = save_n_best
+        self.resume = resume
+        self.resume_dir = resume_dir
+        self.top_best_metrics = []
 
-    def _add_loss_to_state(self, state, loss):
-        if self.loss_key is None:
-            if state.loss is not None:
-                if isinstance(state.loss, list):
-                    state.loss.append(loss)
-                else:
-                    state.loss = [state.loss, loss]
-            else:
-                state.loss = loss
+        self._keys_from_state = ["resume", "resume_dir"]
+
+    @staticmethod
+    def load_checkpoint(*, filename, state):
+        if os.path.isfile(filename):
+            print("=> loading checkpoint \"{}\"".format(filename))
+            checkpoint = UtilsFactory.load_checkpoint(filename)
+
+            state.epoch = checkpoint["epoch"]
+
+            UtilsFactory.unpack_checkpoint(
+                checkpoint,
+                model=state.model,
+                criterion=state.criterion,
+                optimizer=state.optimizer,
+                scheduler=state.scheduler
+            )
+
+            print(
+                "loaded checkpoint \"{}\" (epoch {})".format(
+                    filename, checkpoint["epoch"]
+                )
+            )
         else:
-            if state.loss is not None:
-                assert isinstance(state.loss, dict)
-                state.loss[self.loss_key] = loss
-            else:
-                state.loss = {self.loss_key: loss}
+            raise Exception("no checkpoint found at \"{}\"".format(filename))
 
-    def _compute_loss(self, state, criterion):
-        loss = criterion(
-            state.output[self.output_key],
-            state.input[self.input_key]
+    def save_checkpoint(
+        self,
+        logdir,
+        checkpoint,
+        is_best,
+        save_n_best=5,
+        main_metric="loss",
+        minimize_metric=True
+    ):
+        suffix = f"{checkpoint['stage']}.{checkpoint['epoch']}"
+        filepath = UtilsFactory.save_checkpoint(
+            logdir=f"{logdir}/checkpoints/",
+            checkpoint=checkpoint,
+            suffix=suffix,
+            is_best=is_best,
+            is_last=True
         )
-        return loss
+
+        checkpoint_metric = checkpoint["valid_metrics"][main_metric]
+        self.top_best_metrics.append((filepath, checkpoint_metric))
+        self.top_best_metrics = sorted(
+            self.top_best_metrics,
+            key=lambda x: x[1],
+            reverse=not minimize_metric
+        )
+        if len(self.top_best_metrics) > save_n_best:
+            last_item = self.top_best_metrics.pop(-1)
+            last_filepath = last_item[0]
+            os.remove(last_filepath)
+
+    def pack_checkpoint(self, **kwargs):
+        return UtilsFactory.pack_checkpoint(**kwargs)
 
     def on_stage_start(self, state):
-        assert state.criterion is not None
+        for key in self._keys_from_state:
+            value = getattr(state, key, None)
+            if value is not None:
+                setattr(self, key, value)
 
-    def on_batch_end(self, state):
-        criterion = state.get_key(
-            key="criterion", inner_key=self.criterion_key
+        if self.resume_dir is not None:
+            self.resume = str(self.resume_dir) + "/" + str(self.resume)
+
+        if self.resume is not None:
+            self.load_checkpoint(filename=self.resume, state=state)
+
+    def on_epoch_end(self, state: RunnerState):
+        if state.stage.startswith("infer"):
+            return
+
+        checkpoint = self.pack_checkpoint(
+            model=state.model,
+            criterion=state.criterion,
+            optimizer=state.optimizer,
+            scheduler=state.scheduler,
+            epoch_metrics=dict(state.metrics.epoch_values),
+            valid_metrics=dict(state.metrics.valid_values),
+            stage=state.stage,
+            epoch=state.epoch,
+            checkpoint_data=state.checkpoint_data
+        )
+        self.save_checkpoint(
+            logdir=state.logdir,
+            checkpoint=checkpoint,
+            is_best=state.metrics.is_best,
+            save_n_best=self.save_n_best,
+            main_metric=state.main_metric,
+            minimize_metric=state.minimize_metric
         )
 
-        loss = self._compute_loss(state, criterion) * self.multiplier
-
-        state.metrics.add_batch_value(metrics_dict={
-            self.prefix: loss.item(),
-        })
-
-        self._add_loss_to_state(state, loss)
+    def on_stage_end(self, state):
+        print("Top best models:")
+        top_best_metrics_str = "\n".join(
+            [
+                "{filepath}\t{metric:3.4f}".format(
+                    filepath=filepath, metric=metric
+                ) for filepath, metric in self.top_best_metrics
+            ]
+        )
+        print(top_best_metrics_str)
 
 
 class EarlyStoppingCallback(Callback):

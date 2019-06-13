@@ -1,4 +1,4 @@
-from .core import Callback
+from catalyst.dl.callbacks.core import Callback
 from catalyst.dl.utils import get_optimizer_momentum
 
 

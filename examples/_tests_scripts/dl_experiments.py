@@ -1,2 +1,2 @@
 # flake8: noqa
-from catalyst.dl.experiments import *
+from catalyst.dl.core import *

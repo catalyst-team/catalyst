@@ -7,8 +7,8 @@ import cv2
 import torch
 import torch.nn.functional as F
 
-from .core import Callback
-from .utils import binary_mask_to_overlay_image
+from catalyst.dl.callbacks.core import Callback
+from catalyst.dl.callbacks.utils import binary_mask_to_overlay_image
 
 
 # @TODO: refactor

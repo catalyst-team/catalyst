@@ -1,7 +1,7 @@
 from functools import partial
 
 from torch.nn.modules.loss import _Loss
-from catalyst.dl.losses import sigmoid_focal_loss, reduced_focal_loss
+from catalyst.dl.criterion import sigmoid_focal_loss, reduced_focal_loss
 
 
 class FocalLossBinary(_Loss):

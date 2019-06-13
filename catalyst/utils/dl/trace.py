@@ -4,14 +4,14 @@ import torch
 from torch import nn
 from torch.jit import ScriptModule
 
-from catalyst.dl.experiments.core import Experiment, Runner
+from catalyst.dl.core.experiment.core import Experiment, Runner
 
 
 class _ForwardOverrideModel(nn.Module):
     """
     Model that calls specified method instead of forward
 
-    (Workaround, sigle method tracing is not supported)
+    (Workaround, single method tracing is not supported)
     """
 
     def __init__(self, model, method_name):

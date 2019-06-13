@@ -1,14 +1,12 @@
-from abc import ABC, abstractmethod
 from typing import List, Dict
 import sys
 import logging
-import json
-from datetime import datetime
 from tqdm import tqdm
 
 from catalyst.dl.callbacks import Callback
-from catalyst.dl.state import RunnerState
+from catalyst.dl.core.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
+from .utils import TxtMetricsFormatter
 
 
 class VerboseLogger(Callback):
@@ -57,92 +55,6 @@ class VerboseLogger(Callback):
         self.tqdm.close()
         self.tqdm = None
         self.step = 0
-
-
-class MetricsFormatter(ABC, logging.Formatter):
-    def __init__(self, message_prefix):
-        """
-        Args:
-            message_prefix: logging format string
-                that will be prepended to message
-        """
-        super().__init__(f"{message_prefix}{{message}}", style="{")
-
-    @abstractmethod
-    def _format_message(self, state: RunnerState):
-        pass
-
-    def format(self, record: logging.LogRecord):
-        # noinspection PyUnresolvedReferences
-        state = record.state
-
-        record.msg = self._format_message(state)
-
-        return super().format(record)
-
-
-class TxtMetricsFormatter(MetricsFormatter):
-    """
-    Translate batch metrics in human-readable format.
-
-    This class is used by logging.Logger to make a string from record.
-    For details refer to official docs for 'logging' module.
-
-    Note:
-
-    This is inner class used by Logger callback,
-    no need to use it directly!
-    """
-
-    def __init__(self):
-        super().__init__("[{asctime}] ")
-
-    def _format_metrics(self, metrics):
-        # metrics : dict[str: dict[str: float]]
-        metrics_formatted = {}
-        for key, value in metrics.items():
-            metrics_formatted_ = [
-                f"{m_name}={m_value:.4f}"
-                for m_name, m_value in sorted(value.items())
-            ]
-            metrics_formatted_ = ' | '.join(metrics_formatted_)
-            metrics_formatted[key] = metrics_formatted_
-
-        return metrics_formatted
-
-    def _format_message(self, state: RunnerState):
-        message = [""]
-        metrics = self._format_metrics(state.metrics.epoch_values)
-        for key, value in metrics.items():
-            message.append(
-                f"{state.stage_epoch}/{state.num_epochs} "
-                f"* Epoch {state.epoch} ({key}): {value}")
-        message = "\n".join(message)
-        return message
-
-
-class JsonMetricsFormatter(MetricsFormatter):
-    """
-    Translate batch metrics in json format.
-
-    This class is used by logging.Logger to make a string from record.
-    For details refer to official docs for 'logging' module.
-
-    Note:
-        This is inner class used by Logger callback,
-        no need to use it directly!
-    """
-
-    def __init__(self):
-        super().__init__("")
-
-    def _format_message(self, state: RunnerState):
-        res = dict(
-            metirics=state.metrics.epoch_values.copy(),
-            epoch=state.epoch,
-            time=datetime.now().isoformat()
-        )
-        return json.dumps(res, indent=True, ensure_ascii=False)
 
 
 class ConsoleLogger(Callback):
@@ -217,13 +129,6 @@ class TensorboardLogger(Callback):
 
         self.loggers = dict()
 
-    def on_loader_start(self, state):
-        lm = state.loader_name
-        if lm not in self.loggers:
-            self.loggers[lm] = UtilsFactory.get_tflogger(
-                logdir=state.logdir, name=lm
-            )
-
     def _log_metrics(
         self, metrics: Dict[str, float], step: int, mode: str, suffix=""
     ):
@@ -237,6 +142,13 @@ class TensorboardLogger(Callback):
                 self.loggers[mode].add_scalar(
                     f"{name}{suffix}", metrics[name], step
                 )
+
+    def on_loader_start(self, state):
+        lm = state.loader_name
+        if lm not in self.loggers:
+            self.loggers[lm] = UtilsFactory.get_tflogger(
+                logdir=state.logdir, name=lm
+            )
 
     def on_batch_end(self, state: RunnerState):
         if self.log_on_batch_end:

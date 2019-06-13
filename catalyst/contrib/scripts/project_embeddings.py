@@ -35,7 +35,6 @@ def build_args(parser):
         default=None,
         help="additional prefix to saved files"
     )
-
     parser.add_argument(
         "--img-col",
         type=str,
@@ -107,7 +106,7 @@ def main(args, _=None):
             [load_image(name, args.img_size)
              for name in image_names],
             axis=0)
-        img_data = img_data.transpose((0, 3, 1, 2)) / 255.0
+        img_data = (img_data.transpose((0, 3, 1, 2)) / 255.0).astype(np.float32)
         img_data = torch.from_numpy(img_data)
     else:
         img_data = None

@@ -1,7 +1,7 @@
 from functools import partial
 
 import torch.nn as nn
-from catalyst.dl import losses
+from catalyst.dl import criterion
 
 
 class WingLoss(nn.Module):
@@ -13,7 +13,7 @@ class WingLoss(nn.Module):
     ):
         super().__init__()
         self.loss_fn = partial(
-            losses.wing_loss,
+            criterion.wing_loss,
             width=width,
             curvature=curvature,
             reduction=reduction)

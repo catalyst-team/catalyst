@@ -22,6 +22,8 @@ IMAGENET_NORM = transforms.Normalize(
 def dict_transformer(sample):
     image = sample["image"]
 
+    # image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    # image = np.concatenate([np.expand_dims(image, -1)] * 3, axis=-1)
     image = cv2.resize(image, IMG_SIZE, interpolation=cv2.INTER_NEAREST)
     image = torch.from_numpy(image.astype(np.float32) / 255.).permute(2, 0, 1)
     image = IMAGENET_NORM(image)
@@ -66,7 +68,7 @@ def build_args(parser):
         "--arch",
         type=str,
         dest="arch",
-        default="resnet101",
+        default="resnet18",
         help="Neural network architecture"
     )
     parser.add_argument(

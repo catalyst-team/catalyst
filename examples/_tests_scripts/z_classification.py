@@ -81,7 +81,7 @@ from catalyst.dl.utils import UtilsFactory
 
 # In[ ]:
 
-from catalyst.dl.experiments import SupervisedRunner
+from catalyst.dl.core import SupervisedRunner
 
 # experiment setup
 num_epochs = 2
@@ -116,7 +116,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.dl.experiments import SupervisedRunner
+from catalyst.dl.core import SupervisedRunner
 
 # experiment setup
 num_epochs = 2
@@ -151,7 +151,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.dl.experiments import SupervisedRunner
+from catalyst.dl.core import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback
 
 # experiment setup
@@ -192,7 +192,7 @@ logs_plot = UtilsFactory.plot_metrics(
 
 # In[ ]:
 
-from catalyst.dl.experiments import SupervisedRunner
+from catalyst.dl.core import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
 
 # experiment setup
@@ -236,7 +236,7 @@ logs_plot = UtilsFactory.plot_metrics(
 
 # In[ ]:
 
-from catalyst.dl.experiments import SupervisedRunner
+from catalyst.dl.core import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
 from catalyst.contrib.scheduler import OneCycleLR
 
@@ -287,7 +287,7 @@ logs_plot = UtilsFactory.plot_metrics(
 
 # In[ ]:
 
-from catalyst.dl.experiments import SupervisedRunner
+from catalyst.dl.core import SupervisedRunner
 
 # experiment setup
 num_epochs = 2
@@ -320,7 +320,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.dl.experiments import SupervisedRunner
+from catalyst.dl.core import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
 
 # experiment setup

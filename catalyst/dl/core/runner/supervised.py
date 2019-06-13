@@ -5,8 +5,8 @@ from torch import nn, optim
 from torch.utils.data import DataLoader  # noqa F401
 
 from catalyst.dl.callbacks import Callback
-from .core import Runner
-from .experiment import SupervisedExperiment
+from catalyst.dl.core.experiment.core import Runner
+from catalyst.dl.core.experiment import SupervisedExperiment
 
 _Model = nn.Module
 _Criterion = nn.Module

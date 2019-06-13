@@ -87,7 +87,7 @@ from catalyst.contrib.models.segmentation import Unet
 
 import torch
 import torch.nn as nn
-from catalyst.dl.experiments import SupervisedRunner
+from catalyst.dl.core import SupervisedRunner
 
 # experiment setup
 num_epochs = 2

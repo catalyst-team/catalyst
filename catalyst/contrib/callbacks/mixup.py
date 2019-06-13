@@ -1,6 +1,6 @@
 from typing import List
 from catalyst.data.functional import compute_mixup_lambda, mixup_torch
-from .core import Callback
+from catalyst.dl.callbacks.core import Callback
 
 
 class MixupCallback(Callback):

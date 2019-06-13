@@ -1,7 +1,8 @@
 from typing import List, Dict, Optional, Tuple, Union
 import pandas as pd
 
-from catalyst.utils.data import default_fold_split, stratified_fold_split
+from catalyst.utils.data.dataset import \
+    default_fold_split, stratified_fold_split
 from catalyst.utils.misc import args_are_not_none
 
 from tqdm import tqdm
