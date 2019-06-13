@@ -8,10 +8,11 @@ from datetime import datetime
 from torch.utils.data import DataLoader
 from tensorboardX import SummaryWriter
 
+from catalyst.utils.misc import set_global_seed, Seeder
 from catalyst.dl.utils import UtilsFactory
 from catalyst.rl.db.core import DBSpec
 from catalyst.rl.environments.core import EnvironmentSpec
-from catalyst.rl.offpolicy.algorithms.core import AlgorithmSpec
+from catalyst.rl.offpolicy.algorithms.core import AlgorithmSpec  # @TODO: fix
 from catalyst.rl.utils import _make_tuple
 
 
@@ -31,6 +32,7 @@ class TrainerSpec:
         save_period: int = 10,
         resume: str = None,
         gc_period: int = 10,
+        seed: int = 42,
         **kwargs,
     ):
         # algorithm & environment
@@ -42,6 +44,7 @@ class TrainerSpec:
         # logging
         self.logdir = logdir
         self._prepare_logger(logdir)
+        self._seeder = Seeder(init_seed=seed)
 
         # updates & counters
         self.batch_size = batch_size
@@ -72,6 +75,9 @@ class TrainerSpec:
         #  special
         self._init(**kwargs)
 
+    def _init(self, **kwargs):
+        assert len(kwargs) == 1
+
     def _prepare_logger(self, logdir):
         if logdir is not None:
             timestamp = datetime.utcnow().strftime("%y%m%d.%H%M%S")
@@ -80,6 +86,41 @@ class TrainerSpec:
             self.logger = SummaryWriter(logpath)
         else:
             self.logger = None
+
+    def _prepare_seed(self):
+        seed = self._seeder()[0]
+        set_global_seed(seed)
+
+    def _log_to_console(
+        self,
+        fps: float,
+        num_trajectories: int,
+        num_transitions: int,
+        buffer_size: int,
+        **kwargs
+    ):
+        print(
+            "--- "
+            f"fps: {fps:5.1f}\t"
+            f"trajectories: {num_trajectories:09d}\t"
+            f"transitions: {num_transitions:09d}\t"
+            f"buffer size: {buffer_size:09d}"
+        )
+
+    def _log_to_tensorboard(
+        self,
+        fps: float,
+        num_trajectories: int,
+        num_transitions: int,
+        buffer_size: int,
+        **kwargs
+    ):
+        self.logger.add_scalar("fps", fps, self.epoch)
+        self.logger.add_scalar(
+            "num_trajectories", num_trajectories, self.epoch)
+        self.logger.add_scalar(
+            "num_transitions", num_transitions, self.epoch)
+        self.logger.add_scalar("buffer_size", buffer_size, self.epoch)
 
     def _save_checkpoint(self):
         if self.epoch % self.save_period == 0:
@@ -143,38 +184,8 @@ class TrainerSpec:
     def _run_epoch(self) -> Dict:
         raise NotImplementedError()
 
-    def _log_to_console(
-        self,
-        fps: float,
-        num_trajectories: int,
-        num_transitions: int,
-        buffer_size: int,
-        **kwargs
-    ):
-        print(
-            "--- "
-            f"fps: {fps:5.1f}\t"
-            f"trajectories: {num_trajectories:09d}\t"
-            f"transitions: {num_transitions:09d}\t"
-            f"buffer size: {buffer_size:09d}"
-        )
-
-    def _log_to_tensorboard(
-        self,
-        fps: float,
-        num_trajectories: int,
-        num_transitions: int,
-        buffer_size: int,
-        **kwargs
-    ):
-        self.logger.add_scalar("fps", fps, self.epoch)
-        self.logger.add_scalar(
-            "num_trajectories", num_trajectories, self.epoch)
-        self.logger.add_scalar(
-            "num_transitions", num_transitions, self.epoch)
-        self.logger.add_scalar("buffer_size", buffer_size, self.epoch)
-
     def _run_epoch_loop(self):
+        self._prepare_seed()
         metrics: Dict = self._run_epoch()
         self.epoch += 1
         self._save_checkpoint()

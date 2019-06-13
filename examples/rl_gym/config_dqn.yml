@@ -72,14 +72,14 @@ algorithm:
 trainer:
   batch_size: 256              # transitions
   num_workers: 1
-  epoch_len: 500               # batches
+  epoch_len: 500               # batches, 128k samples
 
   replay_buffer_size: 1000000  # transitions
   min_num_transitions: 5000    # transitions
 
-  save_period: 1000            # epochs
+  save_period: 100             # epochs
   weights_sync_period: 1       # epochs
-  target_update_period: 500    # batches
+  target_update_period: 250    # batches, 64k updates
 
 sampler:
   weights_sync_period: 1

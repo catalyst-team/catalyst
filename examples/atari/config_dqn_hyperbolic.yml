@@ -44,6 +44,8 @@ agents:
       distribution: categorical
       num_atoms: 51
       values_range: [-4.0, 8.0]
+      num_heads: 10
+      hyperbolic_constant: 0.01
 
 #      distribution: quantile
 #      num_atoms: 51

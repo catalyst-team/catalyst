@@ -169,20 +169,20 @@ class Sampler:
                 "trajectory/reward", reward, self.trajectory_index
             )
             self.logger.add_scalar(
-                "time/trajectory per minute", 60. / elapsed_time,
+                "time/trajectories_per_minute", 60. / elapsed_time,
                 self.trajectory_index
             )
             self.logger.add_scalar(
-                "time/steps per second", num_steps / elapsed_time,
+                "time/steps_per_second", num_steps / elapsed_time,
                 self.trajectory_index
             )
             self.logger.add_scalar(
-                "time/trajectory time (sec)",
+                "time/trajectory_time_sec",
                 elapsed_time,
                 self.trajectory_index
             )
             self.logger.add_scalar(
-                "time/step time (sec)", elapsed_time / num_steps,
+                "time/step_time_sec", elapsed_time / num_steps,
                 self.trajectory_index
             )
 

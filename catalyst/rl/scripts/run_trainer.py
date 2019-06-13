@@ -10,7 +10,8 @@ from catalyst.rl.registry import OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
     ENVIRONMENTS, DATABASES
 from catalyst.rl.offpolicy.trainer import Trainer as OffpolicyTrainer
 from catalyst.rl.onpolicy.trainer import Trainer as OnpolicyTrainer
-from catalyst.rl.scripts.utils import OFFPOLICY_ALGORITHMS_NAMES
+from catalyst.rl.scripts.utils import OFFPOLICY_ALGORITHMS_NAMES, \
+    ONPOLICY_ALGORITHMS_NAMES
 
 
 def build_args(parser):
@@ -45,7 +46,7 @@ def main(args, unknown_args):
 
     if args.logdir is not None:
         os.makedirs(args.logdir, exist_ok=True)
-        dump_config(args.configs, args.logdir)
+        dump_config(config, args.logdir, args.configs)
 
     if args.expdir is not None:
         module = import_module(expdir=args.expdir)  # noqa: F841
@@ -58,11 +59,14 @@ def main(args, unknown_args):
         trainer_fn = OffpolicyTrainer
         sync_epoch = False
         weights_sync_mode = "critic" if env.discrete_actions else "actor"
-    else:
+    elif algorithm_name in ONPOLICY_ALGORITHMS_NAMES:
         ALGORITHMS = ONPOLICY_ALGORITHMS
         trainer_fn = OnpolicyTrainer
         sync_epoch = True
         weights_sync_mode = "actor"
+    else:
+        # @TODO: add registry for algorithms, trainers, samplers
+        raise NotImplementedError()
 
     db_server = DATABASES.get_from_params(
         **config.get("db", {}), sync_epoch=sync_epoch
