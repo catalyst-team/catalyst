@@ -1,0 +1,41 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy = ">=1.16.0"
+torch = ">=0.4.1"
+torchvision = ">=0.2.1"
+"jpeg4py" = "*"
+opencv-python = "*"
+scikit-image = "*"
+tqdm = ">=4.29.1"
+plotly = ">=3.6.1"
+torchnet = "*"
+safitty = ">=0.9.7"
+"crc32c" = ">=1.7"
+matplotlib = "*"
+seaborn = "*"
+pandas = ">=0.22"
+scikit-learn = ">=0.20"
+mock = "*"
+dynarray = "*"
+redis = "*"
+pymongo = "*"
+pyarrow = "*"
+"lz4" = "*"
+gym = "*"
+PyYAML = "*"
+tensorboardX = ">=1.6"
+
+[dev-packages]
+pytest = "==4.1.1"
+releases = {git = "https://github.com/bitprophet/releases/"}
+sphinx-rtd-theme = "*"
+"flake8" = "*"
+yapf = "*"
+Sphinx = "==2.0.1"
+
+[requires]
+python_version = "3.6"
