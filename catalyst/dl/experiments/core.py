@@ -8,7 +8,7 @@ from torch.utils.data import Dataset, DataLoader
 from torch.utils.data import DistributedSampler
 
 from catalyst.dl.state import RunnerState
-from catalyst.dl.utils import UtilsFactory
+from catalyst.dl.utils import UtilsFactory, any2device
 from ..callbacks.core import Callback
 
 _Model = nn.Module
@@ -115,10 +115,7 @@ class Runner(ABC):
         self._check_run = False
 
     def _batch2device(self, batch: Mapping[str, Any], device):
-        res = {
-            key: value.to(device) if torch.is_tensor(value) else value
-            for key, value in batch.items()
-        }
+        res = any2device(batch, device)
         return res
 
     def _get_experiment_components(
