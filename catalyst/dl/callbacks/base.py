@@ -137,11 +137,11 @@ class CheckpointCallback(Callback):
 
 class IterationCheckpointCallback(Callback):
     """
-    Iteration checkpoint callback to save your model/criterion/optimizer/metrics
+    Iteration checkpoint callback to save your model/criterion/optimizer
     """
 
     def __init__(
-        self, num_iters : int = 100, stage_restart : bool = True
+        self, num_iters: int = 100, stage_restart: bool = True
     ):
         """
         :param num_iters: save the checkpoint every `n_iters`
@@ -156,7 +156,10 @@ class IterationCheckpointCallback(Callback):
         logdir,
         checkpoint
     ):
-        suffix = f"{checkpoint['stage']}.epoch.{checkpoint['epoch']}.iter.{self._iteration_counter}"
+        suffix = f"{checkpoint['stage']}." \
+                 f"epoch.{checkpoint['epoch']}." \
+                 f"iter.{self._iteration_counter}"
+
         filepath = UtilsFactory.save_checkpoint(
             logdir=f"{logdir}/checkpoints/",
             checkpoint=checkpoint,
