@@ -72,6 +72,10 @@ Base
     :members:
     :undoc-members:
 
+.. autoclass:: IterationCheckpointCallback
+    :members:
+    :undoc-members:
+
 .. autoclass:: EarlyStoppingCallback
     :members:
     :undoc-members:
