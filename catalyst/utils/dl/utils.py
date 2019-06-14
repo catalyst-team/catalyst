@@ -14,7 +14,7 @@ from tensorboardX import SummaryWriter
 
 import safitty
 from catalyst.data.dataset import ListDataset
-from catalyst.utils.plotly import plot_tensorboard_log
+from catalyst.utils.data.plotly import plot_tensorboard_log
 from catalyst.utils.dl.model import \
     get_optimizable_params, assert_fp16_available
 

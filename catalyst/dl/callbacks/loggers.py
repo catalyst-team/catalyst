@@ -4,7 +4,7 @@ import logging
 from tqdm import tqdm
 
 from catalyst.dl.callbacks import Callback
-from catalyst.dl.core.state import RunnerState
+from catalyst.dl.runner.state import RunnerState
 from catalyst.dl.utils import UtilsFactory
 from .utils import TxtMetricsFormatter
 

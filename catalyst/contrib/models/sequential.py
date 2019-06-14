@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 
 from catalyst.contrib.registry import MODULES
-from catalyst.utils.misc import pairwise
+from catalyst.utils.data.misc import pairwise
 from catalyst.utils.dl.initialization import create_optimal_inner_init
 
 

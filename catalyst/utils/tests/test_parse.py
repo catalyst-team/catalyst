@@ -1,5 +1,5 @@
 import pytest
-from catalyst.utils import parse
+from catalyst.utils.data import parse
 
 
 def test_folds_to_list():

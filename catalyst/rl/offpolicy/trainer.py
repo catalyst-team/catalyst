@@ -6,7 +6,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from catalyst.rl.core import TrainerSpec
-from catalyst.rl.utils import _make_tuple, _db2buffer_loop, \
+from catalyst.utils.rl.utils import _make_tuple, _db2buffer_loop, \
     OffpolicyReplayBuffer, OffpolicyReplaySampler
 
 

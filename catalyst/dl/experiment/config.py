@@ -13,8 +13,8 @@ from catalyst.dl.registry import \
 from catalyst.dl import utils
 from catalyst.dl.callbacks import Callback
 from catalyst.dl.utils import UtilsFactory
-from catalyst.utils.misc import merge_dicts
-from catalyst.utils.hash import get_short_hash
+from catalyst.utils.data.misc import merge_dicts
+from catalyst.utils.data.hash import get_short_hash
 
 from .core import Experiment, _Model, _Criterion, _Optimizer, _Scheduler
 

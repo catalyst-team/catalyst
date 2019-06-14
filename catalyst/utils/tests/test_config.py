@@ -1,8 +1,7 @@
 # flake8: noqa
 import argparse
-import pytest
 
-from .. import config
+from catalyst.utils.data import config
 
 
 def test_parse_config_args():

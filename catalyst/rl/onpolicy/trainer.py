@@ -7,7 +7,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from catalyst.rl.core import TrainerSpec
-from catalyst.rl.utils import \
+from catalyst.utils.rl.utils import \
     OnpolicyRolloutBuffer, OnpolicyRolloutSampler, \
     _get_states_from_observations
 from catalyst.rl.onpolicy.algorithms.utils import append_dict

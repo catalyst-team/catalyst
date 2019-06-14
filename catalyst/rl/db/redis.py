@@ -1,5 +1,5 @@
 from redis import StrictRedis
-from catalyst.utils.compression import pack, unpack
+from catalyst.utils.data.compression import pack, unpack
 from .core import DBSpec
 
 

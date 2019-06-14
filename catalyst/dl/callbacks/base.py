@@ -4,7 +4,7 @@ import torch
 from typing import Dict
 
 from catalyst.contrib.scheduler import OneCycleLR, BatchScheduler
-from catalyst.dl.core.state import RunnerState
+from catalyst.dl.runner.state import RunnerState
 from catalyst.dl.utils import UtilsFactory, get_optimizer_momentum
 from catalyst.rl.registry import GRAD_CLIPPERS
 from .core import Callback

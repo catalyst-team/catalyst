@@ -1,5 +1,5 @@
 from typing import Callable, List
-from catalyst.dl.core.state import RunnerState
+from catalyst.dl.runner.state import RunnerState
 
 
 class Callback:
