@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from catalyst.utils.dl.initialization import outer_init
+from catalyst.dl.utils.initialization import outer_init
 from catalyst.contrib.models import SequentialNet
 from .policy import CategoricalPolicy, GaussPolicy, RealNVPPolicy
 from typing import List

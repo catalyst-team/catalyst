@@ -1,3 +1,7 @@
+from ..core import MetricCallback
+from catalyst.dl.utils import criterion
+
+
 class IouCallback(MetricCallback):
     """
     IoU (Jaccard) metric callback.
@@ -26,7 +30,7 @@ class IouCallback(MetricCallback):
         """
         super().__init__(
             prefix=prefix,
-            metric_fn=metrics.iou,
+            metric_fn=criterion.iou,
             input_key=input_key,
             output_key=output_key,
             eps=eps,

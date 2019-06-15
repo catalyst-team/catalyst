@@ -1,3 +1,9 @@
+from typing import List
+
+from ..core import MultiMetricCallback
+from catalyst.dl.utils import criterion
+
+
 class AccuracyCallback(MultiMetricCallback):
     """
     Accuracy metric callback.
@@ -23,7 +29,7 @@ class AccuracyCallback(MultiMetricCallback):
         """
         super().__init__(
             prefix=prefix,
-            metric_fn=metrics.accuracy,
+            metric_fn=criterion.accuracy,
             list_args=accuracy_args or [1],
             input_key=input_key,
             output_key=output_key
@@ -57,7 +63,7 @@ class MapKCallback(MultiMetricCallback):
         """
         super().__init__(
             prefix=prefix,
-            metric_fn=metrics.mean_average_accuracy,
+            metric_fn=criterion.mean_average_accuracy,
             list_args=map_args or [1],
             input_key=input_key,
             output_key=output_key

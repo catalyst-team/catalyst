@@ -1,18 +1,13 @@
 from typing import Any, Mapping, Dict, List, Union
 from collections import OrderedDict  # noqa F401
 
-from torch import nn, optim
+from torch import nn
 from torch.utils.data import DataLoader  # noqa F401
 
-from catalyst.dl.callbacks import Callback
-from catalyst.dl.experiment import Runner
-from catalyst.dl.experiment import SupervisedExperiment
-
-_Model = nn.Module
-_Criterion = nn.Module
-_Optimizer = optim.Optimizer
-# noinspection PyProtectedMember
-_Scheduler = optim.lr_scheduler._LRScheduler
+from ..callbacks import Callback
+from ..experiment import SupervisedExperiment
+from .core import Runner
+from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
 
 
 class SupervisedRunner(Runner):

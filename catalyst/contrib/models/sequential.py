@@ -5,7 +5,7 @@ import torch.nn as nn
 
 from catalyst.contrib.registry import MODULES
 from catalyst.utils.data.misc import pairwise
-from catalyst.utils.dl.initialization import create_optimal_inner_init
+from catalyst.dl.utils.initialization import create_optimal_inner_init
 
 
 class ResidualWrapper(nn.Module):

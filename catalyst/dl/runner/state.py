@@ -34,7 +34,7 @@ class RunnerState(FrozenClass):
     ):
         # @TODO: refactor
         # hack to prevent cycle imports
-        from .callbacks.loggers import (
+        from ..callbacks import (
             VerboseLogger, ConsoleLogger, TensorboardLogger
         )
 

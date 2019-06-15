@@ -1,3 +1,52 @@
+from typing import List, Dict
+import numpy as np
+from sklearn.metrics import confusion_matrix as confusion_matrix_fn
+from torchnet.meter import ConfusionMeter
+from tensorboardX import SummaryWriter
+
+from .core import Callback
+from .logging import TensorboardLogger
+from catalyst.dl.runner import RunnerState
+from catalyst.dl import utils
+
+
+class EarlyStoppingCallback(Callback):
+    def __init__(
+        self,
+        patience: int,
+        metric: str = "loss",
+        minimize: bool = True,
+        min_delta: float = 1e-6
+    ):
+        self.best_score = None
+        self.metric = metric
+        self.patience = patience
+        self.num_bad_epochs = 0
+        self.is_better = None
+
+        if minimize:
+            self.is_better = lambda score, best: score <= (best - min_delta)
+        else:
+            self.is_better = lambda score, best: score >= (best - min_delta)
+
+    def on_epoch_end(self, state: RunnerState) -> None:
+        if state.stage.startswith("infer"):
+            return
+
+        score = state.metrics.valid_values[self.metric]
+        if self.best_score is None:
+            self.best_score = score
+        if self.is_better(score, self.best_score):
+            self.num_bad_epochs = 0
+            self.best_score = score
+        else:
+            self.num_bad_epochs += 1
+
+        if self.num_bad_epochs >= self.patience:
+            print(f"Early stop at {state.stage_epoch} epoch")
+            state.early_stop = True
+
+
 class ConfusionMatrixCallback(Callback):
     def __init__(
         self,
@@ -61,6 +110,8 @@ class ConfusionMatrixCallback(Callback):
                 y_true=self.targets,
                 y_pred=self.outputs
             )
+        else:
+            raise NotImplementedError()
         return confusion_matrix
 
     def _plot_confusion_matrix(
@@ -70,14 +121,14 @@ class ConfusionMatrixCallback(Callback):
         confusion_matrix,
         class_names=None
     ):
-        fig = plot_confusion_matrix(
+        fig = utils.plot_confusion_matrix(
             confusion_matrix,
             class_names=class_names,
             normalize=True,
             show=False,
             **self._plot_params
         )
-        fig = render_figure_to_tensor(fig)
+        fig = utils.render_figure_to_tensor(fig)
         logger.add_image(f"{self.prefix}/epoch", fig, global_step=epoch)
 
     def on_loader_start(self, state: RunnerState):

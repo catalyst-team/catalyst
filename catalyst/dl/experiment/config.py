@@ -12,10 +12,8 @@ from catalyst.dl.registry import \
     MODELS, CRITERIONS, OPTIMIZERS, SCHEDULERS, CALLBACKS
 from catalyst.dl import utils
 from catalyst.dl.callbacks import Callback
-from catalyst.dl.utils import UtilsFactory
 from catalyst.utils.data.misc import merge_dicts
 from catalyst.utils.data.hash import get_short_hash
-
 from .core import Experiment, _Model, _Criterion, _Optimizer, _Scheduler
 
 
@@ -98,8 +96,8 @@ class ConfigExperiment(Experiment):
         if stage_index > 0:
             checkpoint_path = \
                 f"{self.logdir}/checkpoints/best.pth"
-            checkpoint = UtilsFactory.load_checkpoint(checkpoint_path)
-            UtilsFactory.unpack_checkpoint(checkpoint, model=model)
+            checkpoint = utils.load_checkpoint(checkpoint_path)
+            utils.unpack_checkpoint(checkpoint, model=model)
         return model
 
     def _postprocess_model_for_stage(self, stage: str, model: _Model):
@@ -152,8 +150,8 @@ class ConfigExperiment(Experiment):
             if load_from_previous_stage:
                 checkpoint_path = \
                     f"{self.logdir}/checkpoints/best.pth"
-                checkpoint = UtilsFactory.load_checkpoint(checkpoint_path)
-                UtilsFactory.unpack_checkpoint(checkpoint, optimizer=optimizer)
+                checkpoint = utils.load_checkpoint(checkpoint_path)
+                utils.unpack_checkpoint(checkpoint, optimizer=optimizer)
                 for key, value in params.items():
                     for pg in optimizer.param_groups:
                         pg[key] = value

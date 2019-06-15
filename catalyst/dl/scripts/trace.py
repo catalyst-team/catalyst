@@ -9,7 +9,7 @@ import torch
 from catalyst.dl.scripts.utils import import_experiment_and_runner
 from catalyst.dl.core import Experiment
 from catalyst.dl.utils import UtilsFactory
-from catalyst.utils.dl.trace import trace_model
+from catalyst.dl.utils.trace import trace_model
 
 
 def trace_model_from_checkpoint(logdir, method_name):

@@ -1,12 +1,14 @@
 from typing import List, Dict
+import os
 import sys
 import logging
 from tqdm import tqdm
 
+from tensorboardX import SummaryWriter
+
 from catalyst.dl.callbacks import Callback
-from catalyst.dl.runner.state import RunnerState
-from catalyst.dl.utils import UtilsFactory
-from .utils import TxtMetricsFormatter
+from catalyst.dl.runner import RunnerState
+from catalyst.dl.utils.formatters import TxtMetricsFormatter
 
 
 class VerboseLogger(Callback):
@@ -146,9 +148,8 @@ class TensorboardLogger(Callback):
     def on_loader_start(self, state):
         lm = state.loader_name
         if lm not in self.loggers:
-            self.loggers[lm] = UtilsFactory.get_tflogger(
-                logdir=state.logdir, name=lm
-            )
+            log_dir = os.path.join(state.logdir, f"{lm}_log")
+            self.loggers[lm] = SummaryWriter(log_dir)
 
     def on_batch_end(self, state: RunnerState):
         if self.log_on_batch_end:

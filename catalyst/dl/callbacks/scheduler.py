@@ -1,5 +1,87 @@
-from catalyst.dl.callbacks.core import Callback
+import safitty
+import torch
+
+from .core import Callback
+from catalyst.dl.runner import RunnerState
+from catalyst.contrib.scheduler import OneCycleLR, BatchScheduler
 from catalyst.dl.utils import get_optimizer_momentum
+
+
+class SchedulerCallback(Callback):
+    def __init__(
+        self,
+        scheduler_key: str = None,
+        mode: str = None,
+        reduce_metric: str = "loss"
+    ):
+        self.scheduler_key = scheduler_key
+        self.mode = mode
+        self.reduce_metric = reduce_metric
+
+    def step(self, state: RunnerState):
+        scheduler = state.get_key(
+            key="scheduler", inner_key=self.scheduler_key
+        )
+
+        valid_metric = \
+            safitty.get(state.metrics.valid_values, self.reduce_metric)
+        lr, momentum = self._scheduler_step(
+            scheduler=scheduler,
+            valid_metric=valid_metric
+        )
+
+        state.set_key(lr, key="lr", inner_key=self.scheduler_key)
+        state.set_key(momentum, key="momentum", inner_key=self.scheduler_key)
+
+    def on_stage_start(self, state: RunnerState):
+        scheduler = state.get_key(
+            key="scheduler", inner_key=self.scheduler_key
+        )
+        assert scheduler is not None
+
+        if self.mode is None:
+            if isinstance(scheduler, BatchScheduler):
+                self.mode = "batch"
+            else:
+                self.mode = "epoch"
+
+        if isinstance(scheduler, OneCycleLR) and self.mode == "batch":
+            scheduler.reset()
+
+    def on_loader_start(self, state: RunnerState):
+        scheduler = state.get_key(
+            key="scheduler", inner_key=self.scheduler_key
+        )
+        if state.loader_name.startswith("train") and \
+                isinstance(scheduler, OneCycleLR) and self.mode == "batch":
+            scheduler.recalculate(
+                loader_len=state.loader_len,
+                current_step=state.stage_epoch
+            )
+
+    def on_batch_end(self, state):
+        if self.mode == "batch":
+            self.step(state=state)
+
+    def on_epoch_end(self, state):
+        if self.mode == "epoch":
+            self.step(state=state)
+
+    @staticmethod
+    def _scheduler_step(
+            scheduler,
+            valid_metric=None,
+    ):
+        if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+            scheduler.step(valid_metric)
+            lr = safitty.get(scheduler.optimizer.param_groups, 0, "lr")
+        else:
+            scheduler.step()
+            lr = scheduler.get_lr()[0]
+
+        momentum = get_optimizer_momentum(scheduler.optimizer)
+
+        return lr, momentum
 
 
 class LRUpdater(Callback):

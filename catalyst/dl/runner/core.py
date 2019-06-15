@@ -1,3 +1,15 @@
+from abc import abstractmethod, ABC
+from typing import Tuple, List, Mapping, Any
+
+import torch
+from torch import nn
+from torch.utils.data import DistributedSampler
+
+from ..callbacks import Callback
+from ..experiment import Experiment
+from .state import RunnerState
+from catalyst.dl import utils
+from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
 
 
 class Runner(ABC):
@@ -42,7 +54,7 @@ class Runner(ABC):
             self.experiment.get_experiment_components(model, stage)
 
         model, criterion, optimizer, scheduler, device = \
-            UtilsFactory.process_components(
+            utils.process_components(
                 model=model,
                 criterion=criterion,
                 optimizer=optimizer,

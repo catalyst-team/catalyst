@@ -1,4 +1,10 @@
+from typing import List
+
 from .base import BaseExperiment
+from catalyst.dl.callbacks import \
+    Callback, \
+    CriterionCallback, OptimizerCallback, SchedulerCallback, \
+    CheckpointCallback
 
 
 class SupervisedExperiment(BaseExperiment):
@@ -7,7 +13,7 @@ class SupervisedExperiment(BaseExperiment):
         callbacks = self._callbacks
         if not stage.startswith("infer"):
             default_callbacks = [
-                (self._criterion, LossCallback),
+                (self._criterion, CriterionCallback),
                 (self._optimizer, OptimizerCallback),
                 (self._scheduler, SchedulerCallback),
                 ("_default_saver", CheckpointCallback),

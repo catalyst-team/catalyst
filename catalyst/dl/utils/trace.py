@@ -4,7 +4,8 @@ import torch
 from torch import nn
 from torch.jit import ScriptModule
 
-from catalyst.dl.experiment import Experiment, Runner
+from catalyst.dl.experiment import Experiment
+from catalyst.dl.runner import Runner
 
 
 class _ForwardOverrideModel(nn.Module):

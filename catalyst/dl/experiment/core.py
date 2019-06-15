@@ -2,15 +2,11 @@ from abc import abstractmethod, ABC
 from typing import Iterable, Mapping, Any, List, Tuple, Dict
 from collections import OrderedDict
 
-from torch import nn, optim
+from torch import nn
 from torch.utils.data import Dataset, DataLoader
 from catalyst.dl.callbacks.core import Callback
 
-_Model = nn.Module
-_Criterion = nn.Module
-_Optimizer = optim.Optimizer
-# noinspection PyProtectedMember
-_Scheduler = optim.lr_scheduler._LRScheduler
+from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
 
 
 class Experiment(ABC):
@@ -87,5 +83,3 @@ class Experiment(ABC):
     @staticmethod
     def get_transforms(stage: str = None, mode: str = None):
         raise NotImplementedError
-
-
