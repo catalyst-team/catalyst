@@ -141,20 +141,25 @@ class IterationCheckpointCallback(Callback):
     """
 
     def __init__(
-        self, num_iters: int = 100, stage_restart: bool = True
+        self, save_n_last: int = 3, num_iters: int = 100, stage_restart: bool = True
     ):
+
         """
-        :param num_iters: save the checkpoint every `n_iters`
+        :param save_n_last: number of last checkpoint to keep
+        :param num_iters: save the checkpoint every `num_iters`
         :param stage_restart: restart counter every stage or not
         """
-        self.n_iters = num_iters
+        self.save_n_last = save_n_last
+        self.num_iters = num_iters
         self.stage_restart = stage_restart
         self._iteration_counter = 0
+        self.last_checkpoints = []
 
     def save_checkpoint(
         self,
         logdir,
-        checkpoint
+        checkpoint,
+        save_n_last
     ):
         suffix = f"{checkpoint['stage']}." \
                  f"epoch.{checkpoint['epoch']}." \
@@ -167,6 +172,12 @@ class IterationCheckpointCallback(Callback):
             is_best=False,
             is_last=False
         )
+
+        self.last_checkpoints.append(filepath)
+        if len(self.last_checkpoints) > save_n_last:
+            top_filepath = self.last_checkpoints.pop(0)
+            os.remove(top_filepath)
+
         print(f"\nSaved checkpoint at {filepath}")
 
     def pack_checkpoint(self, **kwargs):
@@ -178,7 +189,7 @@ class IterationCheckpointCallback(Callback):
 
     def on_batch_end(self, state):
         self._iteration_counter += 1
-        if self._iteration_counter % self.n_iters == 0:
+        if self._iteration_counter % self.num_iters == 0:
             checkpoint = self.pack_checkpoint(
                 model=state.model,
                 criterion=state.criterion,
@@ -191,7 +202,8 @@ class IterationCheckpointCallback(Callback):
             )
             self.save_checkpoint(
                 logdir=state.logdir,
-                checkpoint=checkpoint
+                checkpoint=checkpoint,
+                save_n_last=self.save_n_last
             )
 
 
