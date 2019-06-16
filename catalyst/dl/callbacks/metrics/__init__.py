@@ -1,12 +1,7 @@
 # flake8: noqa
 
-from .accuracy import *
-from .auc import *
-from .dice import *
-from .f1_score import *
-from .iou import *
-
-__all__ = [
-    "AccuracyCallback", "MapKCallback", "AUCCallback",
-    "DiceCallback", "F1ScoreCallback", "IouCallback", "JaccardCallback"
-]
+from .accuracy import AccuracyCallback, MapKCallback
+from .auc import AUCCallback
+from .dice import DiceCallback
+from .f1_score import F1ScoreCallback
+from .iou import IouCallback, JaccardCallback
