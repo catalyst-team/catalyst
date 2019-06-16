@@ -184,7 +184,7 @@ runner.train(
 
 # In[ ]:
 
-logs_plot = utils.plot_metrics(logdir=logdir, metrics=["loss", "_base/lr"])
+# logs_plot = utils.plot_metrics(logdir=logdir, metrics=["loss", "_base/lr"])
 
 # # Setup 4 - training with additional metrics
 
@@ -226,9 +226,9 @@ runner.train(
 
 # In[ ]:
 
-logs_plot = utils.plot_metrics(
-    logdir=logdir, metrics=["loss", "accuracy01", "accuracy03", "_base/lr"]
-)
+# logs_plot = utils.plot_metrics(
+#     logdir=logdir, metrics=["loss", "accuracy01", "accuracy03", "_base/lr"]
+# )
 
 # # Setup 5 - training with 1cycle
 
@@ -275,11 +275,11 @@ runner.train(
 
 # In[ ]:
 
-logs_plot = utils.plot_metrics(
-    logdir=logdir,
-    step="batch",
-    metrics=["loss", "accuracy01", "_base/lr", "_base/momentum"]
-)
+# logs_plot = utils.plot_metrics(
+#     logdir=logdir,
+#     step="batch",
+#     metrics=["loss", "accuracy01", "_base/lr", "_base/momentum"]
+# )
 
 # # Setup 6 - pipeline check
 
