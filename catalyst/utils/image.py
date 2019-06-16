@@ -10,15 +10,16 @@ _IMAGENET_STD = (0.229, 0.224, 0.225)
 _IMAGENET_MEAN = (0.485, 0.456, 0.406)
 
 
-def imread(uri, grayscale=False, rootpath=None):
+def imread(uri, grayscale=False, expand_dims=True, rootpath=None):
     """
 
     Args:
         uri: {str, pathlib.Path, bytes, file}
         The resource to load the image from, e.g. a filename, pathlib.Path,
         http address or file object, see the docs for more info.
-        rootpath:
         grayscale:
+        expand_dims:
+        rootpath:
 
     Returns:
 
@@ -29,6 +30,9 @@ def imread(uri, grayscale=False, rootpath=None):
         )
 
     img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB")
+
+    if expand_dims and len(img.shape) < 3:  # grayscale
+        img = np.expand_dims(img, -1)
 
     return img
 
