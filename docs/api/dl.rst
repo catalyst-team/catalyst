@@ -56,7 +56,7 @@ Base
     :members:
     :undoc-members:
 
-.. autoclass:: LossCallback
+.. autoclass:: CriterionCallback
     :members:
     :undoc-members:
 

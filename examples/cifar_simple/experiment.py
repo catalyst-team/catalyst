@@ -1,7 +1,7 @@
 from collections import OrderedDict
 import torchvision
 from torchvision import transforms
-from catalyst.dl.core import ConfigExperiment
+from catalyst.dl import ConfigExperiment
 
 
 class Experiment(ConfigExperiment):
