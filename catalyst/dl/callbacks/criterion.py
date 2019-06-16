@@ -1,5 +1,5 @@
 from .core import Callback
-from catalyst.dl.runner import RunnerState
+from catalyst.dl.runner.state import RunnerState
 
 
 class CriterionCallback(Callback):
@@ -57,3 +57,6 @@ class CriterionCallback(Callback):
         })
 
         self._add_loss_to_state(state, loss)
+
+
+__all__ = ["CriterionCallback"]

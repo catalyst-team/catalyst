@@ -7,7 +7,7 @@ from tqdm import tqdm
 from tensorboardX import SummaryWriter
 
 from catalyst.dl.callbacks import Callback
-from catalyst.dl.runner import RunnerState
+from catalyst.dl.runner.state import RunnerState
 from catalyst.dl.utils.formatters import TxtMetricsFormatter
 
 
@@ -172,3 +172,6 @@ class TensorboardLogger(Callback):
                 mode=mode,
                 suffix="/epoch"
             )
+
+
+__all__ = ["VerboseLogger", "ConsoleLogger", "TensorboardLogger"]

@@ -117,3 +117,6 @@ class SupervisedRunner(Runner):
             distributed_params=fp16
         )
         self.run_experiment(experiment, check=check)
+
+
+__all__ = ["SupervisedRunner"]

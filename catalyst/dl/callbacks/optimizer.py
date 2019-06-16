@@ -3,7 +3,7 @@ import torch
 
 from .core import Callback
 from catalyst.dl.registry import GRAD_CLIPPERS
-from catalyst.dl.runner import RunnerState
+from catalyst.dl.runner.state import RunnerState
 from catalyst.dl.utils import get_optimizer_momentum
 
 
@@ -112,3 +112,6 @@ class OptimizerCallback(Callback):
             key="optimizer", inner_key=self.optimizer_key
         )
         optimizer.param_groups[0]["weight_decay"] = self._optimizer_wd
+
+
+__all__ = ["OptimizerCallback"]

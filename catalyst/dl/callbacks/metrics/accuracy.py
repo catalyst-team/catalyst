@@ -68,3 +68,6 @@ class MapKCallback(MultiMetricCallback):
             input_key=input_key,
             output_key=output_key
         )
+
+
+__all__ = ["AccuracyCallback", "MapKCallback"]

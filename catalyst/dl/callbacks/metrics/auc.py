@@ -5,7 +5,7 @@ from torchnet.meter import AUCMeter
 import torch
 
 from ..core import Callback
-from catalyst.dl.runner import RunnerState
+from catalyst.dl.runner.state import RunnerState
 
 
 class AUCCallback(Callback):
@@ -66,3 +66,6 @@ class AUCCallback(Callback):
         state.metrics.epoch_values[state.loader_name][metric_name] = area
 
         self._reset_stats()
+
+
+__all__ = ["AUCCallback"]

@@ -6,7 +6,7 @@ import cv2
 import torch
 from torchvision import transforms
 
-from catalyst.dl.utils import UtilsFactory
+from catalyst.dl import utils
 from catalyst.data.reader import ImageReader
 from catalyst.contrib.models.encoder import ResnetEncoder
 
@@ -117,7 +117,7 @@ def main(args, _=None):
 
     model = ResnetEncoder(arch=args.arch, pooling=args.pooling)
     model = model.eval()
-    model, _, _, _, device = UtilsFactory.process_components(model=model)
+    model, _, _, _, device = utils.process_components(model=model)
 
     images_df = pd.read_csv(args.in_csv)
     images_df = images_df.reset_index().drop("index", axis=1)
@@ -127,7 +127,7 @@ def main(args, _=None):
         input_key=args.img_col, output_key="image", datapath=args.datapath
     )
 
-    dataloader = UtilsFactory.get_loader(
+    dataloader = utils.get_loader(
         images_df,
         open_fn,
         batch_size=args.batch_size,

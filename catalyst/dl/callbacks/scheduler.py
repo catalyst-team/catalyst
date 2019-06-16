@@ -2,9 +2,9 @@ import safitty
 import torch
 
 from .core import Callback
-from catalyst.dl.runner import RunnerState
+from catalyst.dl.runner.state import RunnerState
 from catalyst.contrib.scheduler import OneCycleLR, BatchScheduler
-from catalyst.dl.utils import get_optimizer_momentum
+from catalyst.utils import get_optimizer_momentum
 
 
 class SchedulerCallback(Callback):
@@ -221,3 +221,6 @@ class LRFinder(LRUpdater):
         super().on_batch_end(state=state)
         if self.find_iter > self.num_steps:
             raise NotImplementedError("End of LRFinder")
+
+
+__all__ = ["SchedulerCallback", "LRUpdater", "LRFinder"]

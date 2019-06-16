@@ -102,3 +102,6 @@ def trace_model(
     runner.predict_batch(batch)
 
     return tracer.tracing_result
+
+
+__all__ = ["trace_model"]

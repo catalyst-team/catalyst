@@ -1,5 +1,5 @@
 from typing import Callable, List
-from catalyst.dl.runner import RunnerState
+from catalyst.dl.runner.state import RunnerState
 
 
 class Callback:
@@ -108,3 +108,6 @@ class MultiMetricCallback(Callback):
                 key = f"{self.prefix}_{arg}"
             batch_metrics[key] = metric
         state.metrics.add_batch_value(metrics_dict=batch_metrics)
+
+
+__all__ = ["Callback", "MetricCallback", "MultiMetricCallback"]

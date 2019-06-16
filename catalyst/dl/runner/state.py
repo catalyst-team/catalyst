@@ -3,7 +3,7 @@ from typing import Dict
 
 from torch.optim.optimizer import Optimizer
 
-from catalyst.utils.misc import FrozenClass
+from catalyst.utils.frozen import FrozenClass
 from .metric_manager import MetricManager, TimerManager
 
 
@@ -160,3 +160,6 @@ class RunnerState(FrozenClass):
         self.metrics.end_batch()
         for logger in self.loggers:
             logger.on_batch_end(self)
+
+
+__all__ = ["RunnerState"]

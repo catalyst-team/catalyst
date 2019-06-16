@@ -2,7 +2,7 @@ import functools
 from typing import Callable, Type, List
 
 import numpy as np
-from catalyst.utils.data.images import imread
+from catalyst.utils.image import imread
 
 
 class ReaderSpec:
@@ -199,3 +199,9 @@ class ReaderCompose(object):
         for fn in self.mixins:
             result = {**result, **fn(result)}
         return result
+
+
+__all__ = [
+    "ReaderSpec", "ImageReader", "ScalarReader", "LambdaReader",
+    "ReaderCompose"
+]

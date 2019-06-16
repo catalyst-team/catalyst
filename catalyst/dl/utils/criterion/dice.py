@@ -1,5 +1,5 @@
 import torch
-from catalyst.dl.utils import get_activation_by_name
+from catalyst.utils import get_activation_fn
 
 
 def dice(
@@ -23,7 +23,7 @@ def dice(
     Returns:
         double:  Dice score
     """
-    activation_fn = get_activation_by_name(activation)
+    activation_fn = get_activation_fn(activation)
     outputs = activation_fn(outputs)
 
     if threshold is not None:
@@ -34,3 +34,6 @@ def dice(
     dice = 2 * intersection / (union + eps)
 
     return dice
+
+
+__all__ = ["dice"]

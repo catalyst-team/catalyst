@@ -1,7 +1,7 @@
 import itertools
 import numpy as np
 
-from catalyst.utils.data.images import tensor_from_rgb_image
+from .image import tensor_from_rgb_image
 
 
 def plot_confusion_matrix(

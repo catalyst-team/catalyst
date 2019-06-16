@@ -40,3 +40,6 @@ class IouCallback(MetricCallback):
 
 
 JaccardCallback = IouCallback
+
+
+__all__ = ["IouCallback", "JaccardCallback"]

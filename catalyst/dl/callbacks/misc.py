@@ -6,7 +6,7 @@ from tensorboardX import SummaryWriter
 
 from .core import Callback
 from .logging import TensorboardLogger
-from catalyst.dl.runner import RunnerState
+from catalyst.dl.runner.state import RunnerState
 from catalyst.dl import utils
 
 
@@ -152,3 +152,6 @@ class ConfusionMatrixCallback(Callback):
             confusion_matrix=confusion_matrix,
             class_names=class_names
         )
+
+
+__all__ = ["EarlyStoppingCallback", "ConfusionMatrixCallback"]

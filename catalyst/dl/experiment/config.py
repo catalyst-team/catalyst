@@ -260,3 +260,6 @@ class ConfigExperiment(Experiment):
             callbacks.append(callback)
 
         return callbacks
+
+
+__all__ = ["ConfigExperiment"]

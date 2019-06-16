@@ -134,3 +134,6 @@ class MetricManager:
             f"{self._main_metric} is not available yet"
 
         return self.epoch_values[self._valid_loader][self._main_metric]
+
+
+__all__ = ["TimerManager", "MetricManager"]

@@ -96,6 +96,7 @@ __all__ = [
     "get_device",
     "get_activation_fn",
     "any2device",
+    "get_loader",
     # visualization
     "plot_confusion_matrix",
     "render_figure_to_tensor"

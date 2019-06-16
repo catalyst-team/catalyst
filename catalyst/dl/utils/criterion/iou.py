@@ -1,5 +1,5 @@
 import torch
-from catalyst.dl.utils import get_activation_by_name
+from catalyst.utils import get_activation_fn
 
 
 def iou(
@@ -21,7 +21,7 @@ def iou(
     Returns:
         float: IoU (Jaccard) score
     """
-    activation_fn = get_activation_by_name(activation)
+    activation_fn = get_activation_fn(activation)
     outputs = activation_fn(outputs)
 
     if threshold is not None:
@@ -35,3 +35,6 @@ def iou(
 
 
 jaccard = iou
+
+
+__all__ = ["iou", "jaccard"]

@@ -8,7 +8,7 @@ import torch
 import torch.nn.functional as F
 
 from catalyst.dl.callbacks.core import Callback
-from catalyst.dl.callbacks.utils import binary_mask_to_overlay_image
+from catalyst.utils import binary_mask_to_overlay_image
 
 
 # @TODO: refactor
@@ -162,3 +162,6 @@ class InferMaskCallback(Callback):
 
             filename = f"{self.out_prefix}/{lm}/{suffix}.jpg"
             cv2.imwrite(filename, shw[:, :, ::-1])
+
+
+__all__ = ["InferCallback", "InferMaskCallback"]

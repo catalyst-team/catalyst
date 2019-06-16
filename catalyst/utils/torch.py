@@ -4,6 +4,7 @@ import safitty
 import torch
 from torch import nn
 from torch.optim import Optimizer
+from torch.utils.data.dataloader import default_collate as default_collate_fn
 
 
 def ce_with_logits(logits, target):
@@ -130,3 +131,36 @@ def any2device(value, device):
     if torch.is_tensor(value):
         return value.to(device, non_blocking=True)
     return value
+
+
+def get_loader(
+    data_source,
+    open_fn,
+    dict_transform=None,
+    dataset_cache_prob=-1,
+    sampler=None,
+    collate_fn=default_collate_fn,
+    batch_size=32,
+    num_workers=4,
+    shuffle=False,
+    drop_last=False
+):
+    from catalyst.data import ListDataset
+
+    dataset = ListDataset(
+        data_source,
+        open_fn=open_fn,
+        dict_transform=dict_transform,
+        cache_prob=dataset_cache_prob
+    )
+    loader = torch.utils.data.DataLoader(
+        dataset=dataset,
+        sampler=sampler,
+        collate_fn=collate_fn,
+        batch_size=batch_size,
+        num_workers=num_workers,
+        shuffle=shuffle,
+        pin_memory=torch.cuda.is_available(),
+        drop_last=drop_last,
+    )
+    return loader

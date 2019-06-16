@@ -1,5 +1,5 @@
 import torch
-from catalyst.dl.utils import get_activation_by_name
+from catalyst.utils import get_activation_fn
 
 
 def f1_score(
@@ -25,7 +25,7 @@ def f1_score(
     Returns:
         float: F_1 score
     """
-    activation_fn = get_activation_by_name(activation)
+    activation_fn = get_activation_fn(activation)
 
     outputs = activation_fn(outputs)
 
@@ -42,3 +42,6 @@ def f1_score(
     score = ((1 + beta**2) * true_positive + eps) / precision_plus_recall
 
     return score
+
+
+__all__ = ["f1_score"]

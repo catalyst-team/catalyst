@@ -25,3 +25,6 @@ class SupervisedExperiment(BaseExperiment):
                 if key is not None and not is_already_present:
                     callbacks.append(value())
         return callbacks
+
+
+__all__ = ["SupervisedExperiment"]

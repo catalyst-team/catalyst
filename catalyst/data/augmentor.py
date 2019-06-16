@@ -57,3 +57,6 @@ class AugmentorKeys:
         }
 
         return {**dict_, **results}
+
+
+__all__ = ["Augmentor", "AugmentorKeys"]

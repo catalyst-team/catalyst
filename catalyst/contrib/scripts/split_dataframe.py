@@ -2,7 +2,7 @@ import argparse
 import json
 import pandas as pd
 
-from catalyst.utils.data.parse import split_dataframe, folds_to_list
+from catalyst.utils.pandas import split_dataframe, folds_to_list
 
 
 def build_args(parser):

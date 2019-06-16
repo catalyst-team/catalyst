@@ -22,14 +22,6 @@ def import_module(expdir: pathlib.Path):
     return m
 
 
-def import_experiment_and_runner(expdir: pathlib.Path):
-    if not isinstance(expdir, pathlib.Path):
-        expdir = pathlib.Path(expdir)
-    m = import_module(expdir)
-    Experiment, Runner = m.Experiment, m.Runner
-    return Experiment, Runner
-
-
 def _tricky_dir_copy(dir_from, dir_to):
     os.makedirs(dir_to, exist_ok=True)
     shutil.rmtree(dir_to)
@@ -41,7 +33,7 @@ def dump_code(expdir, logdir):
     new_src_dir = f"/code/"
 
     # @TODO: hardcoded
-    old_pro_dir = os.path.dirname(os.path.abspath(__file__)) + "/../../"
+    old_pro_dir = os.path.dirname(os.path.abspath(__file__)) + "/../"
     new_pro_dir = logdir + f"/{new_src_dir}/catalyst/"
     _tricky_dir_copy(old_pro_dir, new_pro_dir)
 
@@ -51,24 +43,4 @@ def dump_code(expdir, logdir):
     _tricky_dir_copy(old_expdir, new_expdir)
 
 
-def prepare_modules(expdir, dump_dir=None):
-    expdir = expdir[:-1] if expdir.endswith("/") else expdir
-    expdir_name = expdir.rsplit("/", 1)[-1]
-
-    if dump_dir is not None:
-        dump_code(expdir, dump_dir)
-
-    pyfiles = list(
-        map(lambda x: x.name[:-3],
-            pathlib.Path(expdir).glob("*.py"))
-    )
-
-    modules = {}
-    for name in pyfiles:
-        module_name = f"{expdir_name}.{name}"
-        module_src = expdir + "/" + f"{name}.py"
-
-        module = import_module(module_name, module_src)
-        modules[name] = module
-
-    return modules
+__all__ = ["import_module", "dump_code"]

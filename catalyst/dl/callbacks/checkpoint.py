@@ -2,7 +2,7 @@ from typing import Dict
 import os
 
 from .core import Callback
-from catalyst.dl.runner import RunnerState
+from catalyst.dl.runner.state import RunnerState
 from catalyst.dl import utils
 
 
@@ -129,3 +129,6 @@ class CheckpointCallback(Callback):
             ]
         )
         print(top_best_metrics_str)
+
+
+__all__ = ["CheckpointCallback"]

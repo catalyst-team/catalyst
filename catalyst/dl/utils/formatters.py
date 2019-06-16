@@ -3,7 +3,7 @@ import json
 import logging
 from datetime import datetime
 
-from catalyst.dl.runner import RunnerState
+from catalyst.dl.runner.state import RunnerState
 
 
 class MetricsFormatter(ABC, logging.Formatter):
@@ -91,3 +91,6 @@ class JsonMetricsFormatter(MetricsFormatter):
             time=datetime.now().isoformat()
         )
         return json.dumps(res, indent=True, ensure_ascii=False)
+
+
+__all__ = ["MetricsFormatter", "TxtMetricsFormatter", "JsonMetricsFormatter"]

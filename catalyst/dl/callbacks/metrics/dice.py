@@ -31,3 +31,6 @@ class DiceCallback(MetricCallback):
             threshold=threshold,
             activation=activation
         )
+
+
+__all__ = ["DiceCallback"]

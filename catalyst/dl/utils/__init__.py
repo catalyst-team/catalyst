@@ -3,7 +3,7 @@
 from .criterion import *
 
 from .torch import *
-from .trace import *
+# from .trace import *
 from .visualization import *
 
 from catalyst.utils import *
@@ -16,7 +16,7 @@ __all__= [
     # torch
     "process_components",
     # trace
-    "trace_model",
+    # "trace_model",
     # visualization
     "plot_metrics",
 
@@ -94,6 +94,7 @@ __all__= [
     "get_device",
     "get_activation_fn",
     "any2device",
+    "get_loader",
     # visualization
     "plot_confusion_matrix",
     "render_figure_to_tensor"

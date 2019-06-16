@@ -17,5 +17,5 @@ __all__ = [
     "CriterionCallback", "OptimizerCallback", "SchedulerCallback",
     "CheckpointCallback", "EarlyStoppingCallback", "ConfusionMatrixCallback",
     "AccuracyCallback", "MapKCallback", "AUCCallback",
-    "DiceCallback", "F1ScoreCallback", "IouCallback"
+    "DiceCallback", "F1ScoreCallback", "IouCallback", "JaccardCallback"
 ]

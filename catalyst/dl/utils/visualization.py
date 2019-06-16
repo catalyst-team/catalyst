@@ -29,3 +29,6 @@ def plot_metrics(
         f"Step should be either 'batch' or 'epoch', got '{step}'"
     metrics = metrics or ["loss"]
     plot_tensorboard_log(logdir, step, metrics, height, width)
+
+
+__all__ = ["plot_metrics"]

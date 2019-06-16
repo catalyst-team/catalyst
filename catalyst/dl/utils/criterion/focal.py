@@ -107,3 +107,6 @@ def reduced_focal_loss(
         loss = loss.sum(0)
 
     return loss
+
+
+__all__ = ["sigmoid_focal_loss", "reduced_focal_loss"]

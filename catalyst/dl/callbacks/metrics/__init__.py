@@ -8,5 +8,5 @@ from .iou import *
 
 __all__ = [
     "AccuracyCallback", "MapKCallback", "AUCCallback",
-    "DiceCallback", "F1ScoreCallback", "IouCallback"
+    "DiceCallback", "F1ScoreCallback", "IouCallback", "JaccardCallback"
 ]

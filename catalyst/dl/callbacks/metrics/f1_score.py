@@ -41,3 +41,6 @@ class F1ScoreCallback(MetricCallback):
             threshold=threshold,
             activation=activation
         )
+
+
+__all__ = ["F1ScoreCallback"]
