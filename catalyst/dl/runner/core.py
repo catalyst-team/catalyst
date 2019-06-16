@@ -33,10 +33,7 @@ class Runner(ABC):
         self._check_run = False
 
     def _batch2device(self, batch: Mapping[str, Any], device):
-        res = {
-            key: value.to(device) if torch.is_tensor(value) else value
-            for key, value in batch.items()
-        }
+        res = utils.any2device(batch, device)
         return res
 
     def _get_experiment_components(

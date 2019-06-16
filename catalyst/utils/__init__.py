@@ -95,6 +95,7 @@ __all__ = [
     "assert_fp16_available",
     "get_device",
     "get_activation_fn",
+    "any2device",
     # visualization
     "plot_confusion_matrix",
     "render_figure_to_tensor"
