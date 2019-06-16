@@ -62,42 +62,22 @@ Models
 Segmentation
 ~~~~~~~~~~~~~~~~
 
-.. automodule:: catalyst.contrib.models.segmentation.Unet
+.. automodule:: catalyst.contrib.models.segmentation.unet
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.models.segmentation.Linknet
+.. automodule:: catalyst.contrib.models.segmentation.linknet
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.models.segmentation.FPNUnet
+.. automodule:: catalyst.contrib.models.segmentation.fpn
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.models.segmentation.PSPnet
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.models.segmentation.ResnetUnet
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.models.segmentation.ResnetLinknet
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.models.segmentation.ResnetFPNUnet
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.models.segmentation.ResnetPSPnet
+.. automodule:: catalyst.contrib.models.segmentation.psp
     :members:
     :undoc-members:
     :show-inheritance:
