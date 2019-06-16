@@ -1,4 +1,4 @@
-from typing import Tuple, Dict, Iterable
+from typing import Tuple, Dict
 import os
 import copy
 

@@ -7,7 +7,13 @@ from catalyst.rl.utils import get_network_weights, set_network_weights
 EPS = 1e-6
 
 
-def _set_params_noise(actor, states, noise_delta=0.2, tol=1e-3, max_steps=1000):
+def _set_params_noise(
+    actor,
+    states,
+    noise_delta=0.2,
+    tol=1e-3,
+    max_steps=1000
+):
     """
     Perturbs parameters of the policy represented by the actor network.
     Binary search is employed to find the appropriate magnitude of the noise
