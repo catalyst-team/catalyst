@@ -60,10 +60,6 @@ Utils
     :members:
     :undoc-members:
 
-.. automodule:: catalyst.utils.registry
-    :members:
-    :undoc-members:
-
 .. automodule:: catalyst.utils.scripts
     :members:
     :undoc-members:
