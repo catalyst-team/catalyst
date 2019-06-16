@@ -1,5 +1,5 @@
 import torch
-from catalyst.rl.utils import ce_with_logits
+from catalyst.utils import ce_with_logits
 
 
 def categorical_loss(

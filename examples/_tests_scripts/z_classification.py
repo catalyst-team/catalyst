@@ -110,7 +110,7 @@ runner.train(
 
 # you can use plotly and tensorboard to plot metrics inside jupyter
 # by default it only plots loss
-# logs_plot = UtilsFactory.plot_metrics(logdir=logdir)
+# logs_plot = utils.plot_metrics(logdir=logdir)
 
 # # Setup 2 - training with scheduler
 

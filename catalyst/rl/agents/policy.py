@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from catalyst.rl.registry import MODULES
 from .layers import SquashingLayer, CouplingLayer
-from .utils import normal_sample, normal_logprob
+from catalyst.utils import normal_sample, normal_logprob
 
 
 # log_sigma of Gaussian policy are capped at (LOG_SIG_MIN, LOG_SIG_MAX)
@@ -22,7 +22,7 @@ class CategoricalPolicy(nn.Module):
             not isinstance(logprob, bool) and logprob is not None
         if flag_bool or flag_value:
             # @TODO: refactor
-            log_pi = dist.logprob(logprob)
+            log_pi = dist.log_prob(logprob)
             return action, log_pi
         return action
 

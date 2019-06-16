@@ -1,11 +1,11 @@
 from typing import Union, Dict
 import torch
 
-from catalyst.dl.utils import UtilsFactory
+from catalyst import utils
 from catalyst.rl.registry import AGENTS
 from catalyst.rl.agents.core import ActorSpec, CriticSpec
 from catalyst.rl.environments.core import EnvironmentSpec
-from catalyst.rl.offpolicy.algorithms.utils import get_trainer_components
+from catalyst.rl.utils import get_trainer_components
 from .core import AlgorithmSpec
 
 
@@ -21,7 +21,7 @@ class ActorAlgorithmSpec(AlgorithmSpec):
         actor_grad_clip_params: Dict = None,
         **kwargs
     ):
-        self._device = UtilsFactory.get_device()
+        self._device = utils.get_device()
 
         self.actor = actor.to(self._device)
 
@@ -84,7 +84,7 @@ class ActorAlgorithmSpec(AlgorithmSpec):
         raise NotImplementedError()
 
     def load_checkpoint(self, filepath, load_optimizer=True):
-        checkpoint = UtilsFactory.load_checkpoint(filepath)
+        checkpoint = utils.load_checkpoint(filepath)
         for key in ["actor"]:
             value_l = getattr(self, key, None)
             if value_l is not None:

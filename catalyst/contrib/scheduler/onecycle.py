@@ -3,7 +3,7 @@ from typing import List
 import numpy as np
 from torch.optim import Optimizer
 
-from catalyst.dl.utils import get_optimizer_momentum
+from catalyst.utils import get_optimizer_momentum
 from .base import BatchScheduler
 
 

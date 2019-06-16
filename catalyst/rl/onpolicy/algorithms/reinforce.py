@@ -2,7 +2,7 @@ import numpy as np
 import torch
 
 from .actor import ActorAlgorithmSpec
-from .utils import geometric_cumsum
+from catalyst.rl.utils import geometric_cumsum
 
 
 class REINFORCE(ActorAlgorithmSpec):

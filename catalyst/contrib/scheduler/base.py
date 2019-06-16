@@ -2,7 +2,7 @@ from abc import ABC
 from typing import Optional, List
 
 from torch.optim.lr_scheduler import _LRScheduler
-from catalyst.dl.utils import set_optimizer_momentum
+from catalyst.utils import set_optimizer_momentum
 
 
 class BaseScheduler(_LRScheduler, ABC):

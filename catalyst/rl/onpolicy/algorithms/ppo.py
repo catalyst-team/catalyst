@@ -3,8 +3,7 @@ import torch
 
 
 from .actor_critic import ActorCriticAlgorithmSpec
-from .utils import geometric_cumsum
-from catalyst.rl.offpolicy.algorithms.utils import hyperbolic_gammas
+from catalyst.rl.utils import hyperbolic_gammas, geometric_cumsum
 
 
 class PPO(ActorCriticAlgorithmSpec):

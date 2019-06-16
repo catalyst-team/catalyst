@@ -3,7 +3,7 @@ from copy import deepcopy
 import numpy as np
 from catalyst.rl.registry import EXPLORATION
 from catalyst.rl.environments.core import EnvironmentSpec
-from .strategies import ExplorationStrategy
+from .core import ExplorationStrategy
 
 
 class ExplorationHandler:

@@ -8,12 +8,11 @@ from datetime import datetime
 from torch.utils.data import DataLoader
 from tensorboardX import SummaryWriter
 
-from catalyst.utils.misc import set_global_seed, Seeder
-from catalyst.dl.utils import UtilsFactory
+from catalyst.utils.seed import set_global_seed, Seeder
+from catalyst import utils
 from catalyst.rl.db.core import DBSpec
 from catalyst.rl.environments.core import EnvironmentSpec
 from catalyst.rl.offpolicy.algorithms.core import AlgorithmSpec  # @TODO: fix
-from catalyst.utils.rl.utils import _make_tuple
 
 
 class TrainerSpec:
@@ -57,7 +56,7 @@ class TrainerSpec:
         # updates configuration
         # (actor_period, critic_period)
         self.actor_grad_period, self.critic_grad_period = \
-            _make_tuple(online_update_period)
+            utils.make_tuple(online_update_period)
 
         # synchronization configuration
         self.db_server = db_server
@@ -126,7 +125,7 @@ class TrainerSpec:
         if self.epoch % self.save_period == 0:
             checkpoint = self.algorithm.pack_checkpoint()
             checkpoint["epoch"] = self.epoch
-            filename = UtilsFactory.save_checkpoint(
+            filename = utils.save_checkpoint(
                 logdir=self.logdir,
                 checkpoint=checkpoint,
                 suffix=str(self.epoch)

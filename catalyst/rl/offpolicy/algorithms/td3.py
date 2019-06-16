@@ -4,10 +4,10 @@ from gym.spaces import Box
 import torch
 
 from catalyst.rl.registry import AGENTS
-from catalyst.dl.utils import UtilsFactory
+from catalyst import utils
 from .core_continuous import AlgorithmContinuous
-from .utils import categorical_loss, quantile_loss, soft_update, \
-    get_trainer_components, hyperbolic_gammas
+from catalyst.rl.utils import categorical_loss, quantile_loss, \
+    hyperbolic_gammas, soft_update, get_trainer_components
 from .core import AlgorithmSpec
 from catalyst.rl.environments.core import EnvironmentSpec
 from catalyst.rl.agents.core import CriticSpec
@@ -271,7 +271,7 @@ class TD3(AlgorithmContinuous):
     def load_checkpoint(self, filepath, load_optimizer=True):
         super().load_checkpoint(filepath, load_optimizer)
 
-        checkpoint = UtilsFactory.load_checkpoint(filepath)
+        checkpoint = utils.load_checkpoint(filepath)
         key = "critics"
         for i in range(len(self.critics)):
             value_l = getattr(self, key, None)

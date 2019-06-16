@@ -13,16 +13,16 @@ import multiprocessing as mp  # noqa E402
 import torch  # noqa E402
 torch.set_num_threads(1)
 
-from catalyst.dl.scripts.utils import import_module  # noqa E402
 from catalyst.rl.core import Sampler  # noqa E402
 from catalyst.rl.registry import \
     OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
     ENVIRONMENTS, DATABASES  # noqa E402
 from catalyst.rl.exploration import ExplorationHandler  # noqa E402
-from catalyst.rl.scripts.utils import OFFPOLICY_ALGORITHMS_NAMES, \
+from .misc import OFFPOLICY_ALGORITHMS_NAMES, \
     ONPOLICY_ALGORITHMS_NAMES  # noqa E402
 from catalyst.utils.config import parse_args_uargs  # noqa E402
-from catalyst.utils.misc import set_global_seed, boolean_flag  # noqa E402
+from catalyst.utils import set_global_seed, boolean_flag  # noqa E402
+from catalyst.utils.scripts import import_module  # noqa E402
 
 
 STEP_DELAY = 1

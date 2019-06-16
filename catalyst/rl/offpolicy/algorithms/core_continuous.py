@@ -3,9 +3,9 @@ import copy
 from gym.spaces import Box
 import torch
 
-from catalyst.dl.utils import UtilsFactory
+from catalyst import utils
 from catalyst.rl.registry import AGENTS
-from .utils import soft_update, get_trainer_components
+from catalyst.rl.utils import get_trainer_components
 from .core import AlgorithmSpec
 from catalyst.rl.agents.core import ActorSpec, CriticSpec
 from catalyst.rl.environments.core import EnvironmentSpec
@@ -31,7 +31,7 @@ class AlgorithmContinuous(AlgorithmSpec):
         action_boundaries: tuple = None,
         **kwargs
     ):
-        self._device = UtilsFactory.get_device()
+        self._device = utils.get_device()
 
         self.actor = actor.to(self._device)
         self.critic = critic.to(self._device)
@@ -129,7 +129,7 @@ class AlgorithmContinuous(AlgorithmSpec):
         raise NotImplementedError()
 
     def load_checkpoint(self, filepath, load_optimizer=True):
-        checkpoint = UtilsFactory.load_checkpoint(filepath)
+        checkpoint = utils.load_checkpoint(filepath)
         for key in ["actor", "critic"]:
             value_l = getattr(self, key, None)
             if value_l is not None:
@@ -167,10 +167,10 @@ class AlgorithmContinuous(AlgorithmSpec):
             return {"lr_critic": self.critic_scheduler.get_lr()[0]}
 
     def target_actor_update(self):
-        soft_update(self.target_actor, self.actor, self._actor_tau)
+        utils.soft_update(self.target_actor, self.actor, self._actor_tau)
 
     def target_critic_update(self):
-        soft_update(self.target_critic, self.critic, self._critic_tau)
+        utils.soft_update(self.target_critic, self.critic, self._critic_tau)
 
     def update_step(
         self, policy_loss, value_loss, actor_update=True, critic_update=True

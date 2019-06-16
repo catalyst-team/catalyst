@@ -17,9 +17,9 @@ torch.set_num_threads(1)
 
 from tensorboardX import SummaryWriter  # noqa E402
 
-from catalyst.utils.misc import set_global_seed, Seeder  # noqa E402
-from catalyst.dl.utils import UtilsFactory  # noqa E402
-from catalyst.utils.rl.utils import TrajectorySampler  # noqa E402
+from catalyst.utils.seed import set_global_seed, Seeder  # noqa E402
+from catalyst import utils  # noqa E402
+from .trajectory_sampler import TrajectorySampler  # noqa E402
 from catalyst.rl.exploration import ExplorationHandler  # noqa E402
 from catalyst.rl.environments.core import EnvironmentSpec  # noqa E402
 from catalyst.rl.db.core import DBSpec  # noqa E402
@@ -43,7 +43,7 @@ class Sampler:
         force_store: bool = False,
         gc_period: int = 10,
     ):
-        self._device = UtilsFactory.get_device()
+        self._device = utils.get_device()
         self._sampler_id = id
 
         self._infer = mode == "infer"
@@ -108,7 +108,7 @@ class Sampler:
         db_server: DBSpec = None
     ):
         if filepath is not None:
-            checkpoint = UtilsFactory.load_checkpoint(filepath)
+            checkpoint = utils.load_checkpoint(filepath)
             weights = checkpoint[f"{self._weights_sync_mode}_state_dict"]
             self.agent.load_state_dict(weights)
         elif db_server is not None:

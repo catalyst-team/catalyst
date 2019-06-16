@@ -2,9 +2,9 @@ from typing import Union, Dict
 import copy
 import torch
 
-from catalyst.dl.utils import UtilsFactory
+from catalyst import utils
 from catalyst.rl.registry import AGENTS
-from .utils import soft_update, get_trainer_components
+from catalyst.rl.utils import get_trainer_components
 from .core import AlgorithmSpec
 from catalyst.rl.agents.core import ActorSpec, CriticSpec
 from catalyst.rl.environments.core import EnvironmentSpec
@@ -23,7 +23,7 @@ class AlgorithmDiscrete(AlgorithmSpec):
         critic_tau: float = 1.0,
         **kwargs
     ):
-        self._device = UtilsFactory.get_device()
+        self._device = utils.get_device()
         self.critic = critic.to(self._device)
         self.target_critic = copy.deepcopy(critic).to(self._device)
 
@@ -90,7 +90,7 @@ class AlgorithmDiscrete(AlgorithmSpec):
         raise NotImplementedError()
 
     def load_checkpoint(self, filepath, load_optimizer=True):
-        checkpoint = UtilsFactory.load_checkpoint(filepath)
+        checkpoint = utils.load_checkpoint(filepath)
         for key in ["critic"]:
             value_l = getattr(self, key, None)
             if value_l is not None:
@@ -123,7 +123,7 @@ class AlgorithmDiscrete(AlgorithmSpec):
         raise NotImplementedError()
 
     def target_critic_update(self):
-        soft_update(self.target_critic, self.critic, self.critic_tau)
+        utils.soft_update(self.target_critic, self.critic, self.critic_tau)
 
     def update_step(self, value_loss, critic_update=True):
         "updates parameters of neural networks and returns learning metrics"
