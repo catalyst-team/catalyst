@@ -45,63 +45,141 @@ Criterion
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: catalyst.contrib.criterion.lovasz
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 .. automodule:: catalyst.contrib.criterion.wing
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. currentmodule:: catalyst.contrib.criterion
-
-.. autoclass:: LovaszLossBinary
-    :members:
-    :undoc-members:
-
-.. autoclass:: LovaszLossMultiClass
-    :members:
-    :undoc-members:
-
-.. autoclass:: LovaszLossMultiLabel
-    :members:
-    :undoc-members:
-
-
-Schedulers
---------------------
-
-.. currentmodule:: catalyst.contrib.scheduler
-
-.. autoclass:: BaseScheduler
-    :members:
-
-.. autoclass:: OneCycleLR
-    :members:
-
 
 Models
 --------------------
-.. automodule:: catalyst.contrib.models
+
+Segmentation
+~~~~~~~~~~~~~~~~
+
+.. automodule:: catalyst.contrib.models.segmentation.Unet
     :members:
     :undoc-members:
     :show-inheritance:
 
-@TODO: update with new classes
+.. automodule:: catalyst.contrib.models.segmentation.Linknet
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.models.segmentation.FPNUnet
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.models.segmentation.PSPnet
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.models.segmentation.ResnetUnet
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.models.segmentation.ResnetLinknet
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.models.segmentation.ResnetFPNUnet
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.models.segmentation.ResnetPSPnet
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 
 Modules
 --------------------
 
-.. automodule:: catalyst.contrib.modules.common
+.. automodule:: catalyst.contrib.modules.Lambda
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.modules.noisy
+.. automodule:: catalyst.contrib.modules.Flatten
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.modules.pooling
+.. automodule:: catalyst.contrib.modules.NoisyLinear
     :members:
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: catalyst.contrib.modules.NoisyFactorizedLinear
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.modules.GlobalAvgPool2d
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.modules.GlobalMaxPool2d
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.modules.GlobalConcatPool2d
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.modules.GlobalAttnPool2d
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.modules.GlobalAvgAttnPool2d
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.modules.GlobalMaxAttnPool2d
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.modules.GlobalConcatAttnPool2d
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Optimizers
+--------------------
+
+.. automodule:: catalyst.contrib.optimizers
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Schedulers
+--------------------
+
+.. automodule:: catalyst.contrib.schedulers.base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.schedulers.onecycle
+    :members:
+    :undoc-members:
+    :show-inheritance:

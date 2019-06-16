@@ -9,7 +9,7 @@ from catalyst.rl.registry import OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
     ENVIRONMENTS, DATABASES
 from catalyst.rl.offpolicy.trainer import Trainer as OffpolicyTrainer
 from catalyst.rl.onpolicy.trainer import Trainer as OnpolicyTrainer
-from .misc import OFFPOLICY_ALGORITHMS_NAMES, \
+from catalyst.rl.scripts.misc import OFFPOLICY_ALGORITHMS_NAMES, \
     ONPOLICY_ALGORITHMS_NAMES
 
 

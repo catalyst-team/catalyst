@@ -2,7 +2,7 @@ import safitty
 import torch
 
 from catalyst.dl.core import Callback, RunnerState
-from catalyst.contrib.scheduler import OneCycleLR, BatchScheduler
+from catalyst.contrib.schedulers import OneCycleLR, BatchScheduler
 from catalyst.utils import get_optimizer_momentum
 
 

@@ -4,47 +4,86 @@ Utils
 .. automodule:: catalyst.utils
     :members:
 
-Config
---------------------
+.. automodule:: catalyst.utils.argparse
+    :members:
+    :undoc-members:
+
+.. automodule:: catalyst.utils.checkpoint
+    :members:
+    :undoc-members:
+
+.. automodule:: catalyst.utils.compression
+    :members:
+    :undoc-members:
 
 .. automodule:: catalyst.utils.config
     :members:
     :undoc-members:
-    :exclude-members: parse_config_args
 
-Data
---------------------
-
-.. automodule:: catalyst.utils.data
+.. automodule:: catalyst.utils.dataset
     :members:
     :undoc-members:
 
-Parse
---------------------
-
-.. automodule:: catalyst.utils.parse
+.. automodule:: catalyst.utils.ddp
     :members:
     :undoc-members:
 
+.. automodule:: catalyst.utils.frozen
+    :members:
+    :undoc-members:
 
-Misc
---------------------
+.. automodule:: catalyst.utils.hash
+    :members:
+    :undoc-members:
+
+.. automodule:: catalyst.utils.image
+    :members:
+    :undoc-members:
+
+.. automodule:: catalyst.utils.initialization
+    :members:
+    :undoc-members:
 
 .. automodule:: catalyst.utils.misc
     :members:
     :undoc-members:
-    :exclude-members: pairwise
 
-Parallelize
---------------------
-
-.. automodule:: catalyst.utils.parallelize
+.. automodule:: catalyst.utils.numpy
     :members:
     :undoc-members:
 
-Serialization
---------------------
+.. automodule:: catalyst.utils.pandas
+    :members:
+    :undoc-members:
+
+.. automodule:: catalyst.utils.plotly
+    :members:
+    :undoc-members:
+
+.. automodule:: catalyst.utils.registry
+    :members:
+    :undoc-members:
+
+.. automodule:: catalyst.utils.scripts
+    :members:
+    :undoc-members:
+
+.. automodule:: catalyst.utils.seed
+    :members:
+    :undoc-members:
 
 .. automodule:: catalyst.utils.serialization
+    :members:
+    :undoc-members:
+
+.. automodule:: catalyst.utils.tensorboard
+    :members:
+    :undoc-members:
+
+.. automodule:: catalyst.utils.torch
+    :members:
+    :undoc-members:
+
+.. automodule:: catalyst.utils.visualization
     :members:
     :undoc-members:

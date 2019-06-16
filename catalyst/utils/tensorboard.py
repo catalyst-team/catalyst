@@ -39,7 +39,8 @@ class EventsFileReader(Iterable):
         """
         Initialize an iterator over an events file
 
-        :param events_file: An opened file-like object.
+        Args:
+            events_file: An opened file-like object.
         """
         self._events_file = events_file
 
@@ -47,10 +48,12 @@ class EventsFileReader(Iterable):
         """
         Read exactly next `size` bytes from the current stream.
 
-        :param size: A size in bytes to be read.
-        :return: A `bytes` object with read data or `None` on EOF.
-        :except: NotImplementedError if the stream is in non-blocking mode.
-        :except: EventReadingError on reading error.
+        Args:
+            size: A size in bytes to be read.
+
+        Returns:
+            A `bytes` object with read data or `None` on EOF.
+
         """
         data = self._events_file.read(size)
         if data is None:
@@ -69,10 +72,11 @@ class EventsFileReader(Iterable):
         """
         Read and check data described by a format string.
 
-        :param size: A size in bytes to be read.
-        :return: A decoded number.
-        :except: NotImplementedError if the stream is in non-blocking mode.
-        :except: EventReadingError on reading error.
+        Args:
+            size:  A size in bytes to be read.
+
+        Returns:
+             A decoded number.
         """
         data = self._read(size)
         if data is None:
@@ -92,9 +96,8 @@ class EventsFileReader(Iterable):
         """
         Iterates over events in the current events file
 
-        :return: An Event object
-        :except: NotImplementedError if the stream is in non-blocking mode.
-        :except: EventReadingError on reading error.
+        Returns:
+            An Event object
         """
         while True:
             header_size = struct.calcsize("Q")
@@ -118,8 +121,12 @@ SummaryItem = namedtuple(
 def _get_scalar(value) -> Optional[np.ndarray]:
     """
     Decode an scalar event
-    :param value: A value field of an event
-    :return: Decoded scalar
+
+    Args:
+        value: A value field of an event
+
+    Returns:
+        Decoded scalar
     """
     if value.HasField("simple_value"):
         return value.simple_value
@@ -129,8 +136,12 @@ def _get_scalar(value) -> Optional[np.ndarray]:
 def _get_image(value) -> Optional[np.ndarray]:
     """
     Decode an image event
-    :param value: A value field of an event
-    :return: Decoded image
+
+    Args:
+        value: A value field of an event
+
+    Returns:
+        Decoded image
     """
     if value.HasField("image"):
         encoded_image = value.image.encoded_image_string
@@ -159,9 +170,11 @@ class SummaryReader(Iterable):
     ):
         """
         Initalize new summary reader
-        :param logdir: A directory with Tensorboard summary data
-        :param tag_filter: A list of tags to leave (`None` for all)
-        :param types: A list of types to get.
+
+        Args:
+            logdir: A directory with Tensorboard summary data
+            tag_filter: A list of tags to leave (`None` for all)
+            types: A list of types to get.
             Only "scalar" and "image" types are allowed at the moment.
         """
         self._logdir = Path(logdir)
@@ -181,8 +194,12 @@ class SummaryReader(Iterable):
     def _decode_events(self, events: Iterable) -> Optional[SummaryItem]:
         """
         Convert events to `SummaryItem` instances
-        :param events: An iterable with events objects
-        :return: A generator with decoded events
+
+        Args:
+            events: An iterable with events objects
+
+        Returns:
+            A generator with decoded events
             or `None`s if an event can"t be decoded
         """
 
@@ -210,15 +227,21 @@ class SummaryReader(Iterable):
     def _check_tag(self, tag: str) -> bool:
         """
         Check if a tag matches the current tag filter
-        :param tag: A string with tag
-        :return: A boolean value.
+
+        Args:
+            tag: A string with tag
+
+        Returns:
+            A boolean value.
         """
         return self._tag_filter is None or tag in self._tag_filter
 
     def __iter__(self) -> SummaryItem:
         """
         Iterate over events in all the files in the current logdir
-        :return: A generator with `SummaryItem` objects
+
+        Returns:
+            A generator with `SummaryItem` objects
         """
         log_files = sorted(f for f in self._logdir.glob("*") if f.is_file())
         for file_path in log_files:

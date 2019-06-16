@@ -18,7 +18,7 @@ from catalyst.rl.registry import \
     OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
     ENVIRONMENTS, DATABASES  # noqa E402
 from catalyst.rl.exploration import ExplorationHandler  # noqa E402
-from .misc import OFFPOLICY_ALGORITHMS_NAMES, \
+from catalyst.rl.scripts.misc import OFFPOLICY_ALGORITHMS_NAMES, \
     ONPOLICY_ALGORITHMS_NAMES  # noqa E402
 from catalyst.utils.config import parse_args_uargs  # noqa E402
 from catalyst.utils import set_global_seed, boolean_flag  # noqa E402

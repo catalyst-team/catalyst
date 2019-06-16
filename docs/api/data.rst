@@ -20,6 +20,38 @@ For example:
 .. automodule:: catalyst.data.__main__
     :members:
 
+
+Augmentor
+--------------------
+
+Legacy classes for augmentations.
+For modern Catalyst use `albumentations`_.
+
+.. _albumentations: https://github.com/albu/albumentations
+
+.. automodule:: catalyst.data.augmentor
+    :members:
+    :undoc-members:
+
+
+Collate Functions
+--------------------
+
+.. automodule:: catalyst.data.collate_fn
+    :members:
+    :undoc-members:
+    :special-members: __init__, __call__
+
+
+Dataset
+--------------------
+
+.. automodule:: catalyst.data.dataset
+    :show-inheritance:
+    :members:
+    :special-members: __getitem__, __len__
+
+
 Reader
 --------------------
 
@@ -29,7 +61,7 @@ For example open image by path, or read string and tokenize it.
 
 .. currentmodule:: catalyst.data.reader
 
-.. autoclass:: BaseReader
+.. autoclass:: ReaderSpec
     :members:
     :undoc-members:
     :special-members: __init__, __call__
@@ -55,14 +87,6 @@ For example open image by path, or read string and tokenize it.
     :special-members: __init__, __call__
 
 
-Dataset
---------------------
-
-.. automodule:: catalyst.data.dataset
-    :show-inheritance:
-    :members:
-    :special-members: __getitem__, __len__
-
 Sampler
 --------------------
 
@@ -72,31 +96,6 @@ Sampler
     :special-members: __iter__, __len__
 
 
-Collate Functions
---------------------
-
-.. automodule:: catalyst.data.collate_fn
-    :members:
-    :undoc-members:
-    :special-members: __init__, __call__
 
 
-Mixins
---------------------
 
-.. automodule:: catalyst.data.mixin
-    :members:
-    :undoc-members:
-
-
-Augmentor
---------------------
-
-Legacy classes for augmentations.
-For modern Catalyst use `albumentations`_.
-
-.. _albumentations: https://github.com/albu/albumentations
-
-.. automodule:: catalyst.data.augmentor
-    :members:
-    :undoc-members:

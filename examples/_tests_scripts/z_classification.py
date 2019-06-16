@@ -236,7 +236,7 @@ logs_plot = utils.plot_metrics(
 
 from catalyst.dl.runner import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
-from catalyst.contrib.scheduler import OneCycleLR
+from catalyst.contrib.schedulers import OneCycleLR
 
 # experiment setup
 num_epochs = 2
