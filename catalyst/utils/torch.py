@@ -124,8 +124,7 @@ def any2device(value, device):
     :return: Save data structure holding tensors on target device
     """
     if isinstance(value, dict):
-        return dict((k, any2device(v, device))
-                    for k, v in value.items())
+        return dict((k, any2device(v, device)) for k, v in value.items())
     if isinstance(value, (tuple, list)):
         return list(any2device(v, device) for v in value)
     if torch.is_tensor(value):
