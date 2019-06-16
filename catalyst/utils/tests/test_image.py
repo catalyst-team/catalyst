@@ -2,7 +2,8 @@ import numpy as np
 import torch
 from torchvision.transforms.functional import normalize, to_tensor
 
-from ..images import tensor_to_ndimage, _IMAGENET_MEAN, _IMAGENET_STD
+from catalyst.utils.image import tensor_to_ndimage, \
+    _IMAGENET_MEAN, _IMAGENET_STD
 
 
 def test_tensor_to_ndimage():

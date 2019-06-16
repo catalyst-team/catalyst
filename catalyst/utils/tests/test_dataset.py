@@ -1,5 +1,5 @@
 import pandas as pd
-from catalyst.utils import data
+from catalyst.utils import dataset
 
 
 def _setup_data(num_rows=10):
@@ -15,7 +15,8 @@ def _setup_data(num_rows=10):
 def test_stratified_fold_split():
     df = _setup_data()
 
-    splitted = data.stratified_fold_split(dataframe=df, class_column='class')
+    splitted = dataset.stratified_fold_split(
+        dataframe=df, class_column='class')
 
     assert int == splitted['fold'].dtype
     assert set(range(5)) == set(splitted['fold'].unique())
@@ -27,6 +28,6 @@ def test_stratified_fold_split():
 def test_stratified_fold_split_num_folds():
     df = _setup_data()
 
-    splitted = data.stratified_fold_split(df, 'class', n_folds=2)
+    splitted = dataset.stratified_fold_split(df, 'class', n_folds=2)
 
     assert set(range(2)) == set(splitted['fold'].unique())

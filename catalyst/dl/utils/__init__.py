@@ -1,5 +1,7 @@
 # flake8: noqa
 
+from .criterion import *
+
 from .torch import *
 from .trace import *
 from .visualization import *
@@ -7,6 +9,10 @@ from .visualization import *
 from catalyst.utils import *
 
 __all__= [
+    # criterion
+    "accuracy", "average_accuracy", "mean_average_accuracy",
+    "dice", "f1_score", "sigmoid_focal_loss", "reduced_focal_loss",
+    "iou",
     # torch
     "process_components",
     # trace
