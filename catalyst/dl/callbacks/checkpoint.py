@@ -1,8 +1,7 @@
 from typing import Dict
 import os
 
-from .core import Callback
-from catalyst.dl.runner.state import RunnerState
+from catalyst.dl.core import Callback, RunnerState
 from catalyst.dl import utils
 
 

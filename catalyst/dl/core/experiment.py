@@ -4,8 +4,8 @@ from collections import OrderedDict
 
 from torch import nn
 from torch.utils.data import Dataset, DataLoader
-from catalyst.dl.callbacks.core import Callback
 
+from .callback import Callback
 from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
 
 

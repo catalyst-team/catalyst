@@ -1,5 +1,4 @@
-from .core import Callback
-from catalyst.dl.runner.state import RunnerState
+from catalyst.dl.core import Callback, RunnerState
 
 
 class CriterionCallback(Callback):

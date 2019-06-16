@@ -5,8 +5,8 @@ import torch
 from torch import nn
 from torch.utils.data import DistributedSampler
 
-from ..callbacks import Callback
-from ..experiment import Experiment
+from .callback import Callback
+from .experiment import Experiment
 from .state import RunnerState
 from catalyst.dl import utils
 from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler

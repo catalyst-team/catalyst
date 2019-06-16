@@ -75,13 +75,13 @@ class Net(nn.Module):
 
 # In[ ]:
 
-from catalyst.dl.utils import UtilsFactory
+from catalyst.dl import utils
 
 # # Setup 1 - typical training
 
 # In[ ]:
 
-from catalyst.dl.core import SupervisedRunner
+from catalyst.dl.runner import SupervisedRunner
 
 # experiment setup
 num_epochs = 2
@@ -116,7 +116,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.dl.core import SupervisedRunner
+from catalyst.dl.runner import SupervisedRunner
 
 # experiment setup
 num_epochs = 2
@@ -151,7 +151,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.dl.core import SupervisedRunner
+from catalyst.dl.runner import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback
 
 # experiment setup
@@ -184,15 +184,13 @@ runner.train(
 
 # In[ ]:
 
-logs_plot = UtilsFactory.plot_metrics(
-    logdir=logdir, metrics=["loss", "_base/lr"]
-)
+logs_plot = utils.plot_metrics(logdir=logdir, metrics=["loss", "_base/lr"])
 
 # # Setup 4 - training with additional metrics
 
 # In[ ]:
 
-from catalyst.dl.core import SupervisedRunner
+from catalyst.dl.runner import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
 
 # experiment setup
@@ -228,7 +226,7 @@ runner.train(
 
 # In[ ]:
 
-logs_plot = UtilsFactory.plot_metrics(
+logs_plot = utils.plot_metrics(
     logdir=logdir, metrics=["loss", "accuracy01", "accuracy03", "_base/lr"]
 )
 
@@ -236,7 +234,7 @@ logs_plot = UtilsFactory.plot_metrics(
 
 # In[ ]:
 
-from catalyst.dl.core import SupervisedRunner
+from catalyst.dl.runner import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
 from catalyst.contrib.scheduler import OneCycleLR
 
@@ -277,7 +275,7 @@ runner.train(
 
 # In[ ]:
 
-logs_plot = UtilsFactory.plot_metrics(
+logs_plot = utils.plot_metrics(
     logdir=logdir,
     step="batch",
     metrics=["loss", "accuracy01", "_base/lr", "_base/momentum"]
@@ -287,7 +285,7 @@ logs_plot = UtilsFactory.plot_metrics(
 
 # In[ ]:
 
-from catalyst.dl.core import SupervisedRunner
+from catalyst.dl.runner import SupervisedRunner
 
 # experiment setup
 num_epochs = 2
@@ -320,7 +318,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.dl.core import SupervisedRunner
+from catalyst.dl.runner import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
 
 # experiment setup

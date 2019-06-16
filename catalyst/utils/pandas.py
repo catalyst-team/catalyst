@@ -3,7 +3,7 @@ import pandas as pd
 
 from catalyst.utils.dataset import \
     default_fold_split, stratified_fold_split
-from catalyst.utils.misc import args_are_not_none
+from catalyst.utils import args_are_not_none
 
 from tqdm import tqdm
 

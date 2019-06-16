@@ -1,8 +1,7 @@
 import safitty
 import torch
 
-from .core import Callback
-from catalyst.dl.runner.state import RunnerState
+from catalyst.dl.core import Callback, RunnerState
 from catalyst.contrib.scheduler import OneCycleLR, BatchScheduler
 from catalyst.utils import get_optimizer_momentum
 

@@ -1,9 +1,8 @@
 from typing import Dict
 import torch
 
-from .core import Callback
+from catalyst.dl.core import Callback, RunnerState
 from catalyst.dl.registry import GRAD_CLIPPERS
-from catalyst.dl.runner.state import RunnerState
 from catalyst.dl.utils import get_optimizer_momentum
 
 

@@ -11,10 +11,10 @@ from torch.utils.data import DistributedSampler
 from catalyst.dl.registry import \
     MODELS, CRITERIONS, OPTIMIZERS, SCHEDULERS, CALLBACKS
 from catalyst.dl import utils
-from catalyst.dl.callbacks import Callback
 from catalyst.utils.misc import merge_dicts
 from catalyst.utils.hash import get_short_hash
-from .core import Experiment, _Model, _Criterion, _Optimizer, _Scheduler
+from catalyst.dl.core import Experiment, Callback
+from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
 
 
 class ConfigExperiment(Experiment):

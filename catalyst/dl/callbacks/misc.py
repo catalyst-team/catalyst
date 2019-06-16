@@ -4,10 +4,9 @@ from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 from torchnet.meter import ConfusionMeter
 from tensorboardX import SummaryWriter
 
-from .core import Callback
-from .logging import TensorboardLogger
-from catalyst.dl.runner.state import RunnerState
+from catalyst.dl.core import Callback, RunnerState
 from catalyst.dl import utils
+from .logging import TensorboardLogger
 
 
 class EarlyStoppingCallback(Callback):

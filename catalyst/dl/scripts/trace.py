@@ -7,7 +7,7 @@ import safitty
 import torch
 
 from catalyst.dl.utils.scripts import import_experiment_and_runner
-from catalyst.dl.experiment import Experiment
+from catalyst.dl.core import Experiment
 from catalyst import utils
 from catalyst.dl.utils.trace import trace_model
 

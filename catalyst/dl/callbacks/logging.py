@@ -6,8 +6,7 @@ from tqdm import tqdm
 
 from tensorboardX import SummaryWriter
 
-from catalyst.dl.callbacks import Callback
-from catalyst.dl.runner.state import RunnerState
+from catalyst.dl.core import Callback, RunnerState
 from catalyst.dl.utils.formatters import TxtMetricsFormatter
 
 

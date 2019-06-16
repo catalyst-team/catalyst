@@ -1,6 +1,6 @@
 from typing import List
 
-from ..core import MultiMetricCallback
+from catalyst.dl.core import MultiMetricCallback
 from catalyst.dl.utils import criterion
 
 

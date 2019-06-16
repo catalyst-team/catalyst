@@ -4,8 +4,7 @@ import numpy as np
 from torchnet.meter import AUCMeter
 import torch
 
-from ..core import Callback
-from catalyst.dl.runner.state import RunnerState
+from catalyst.dl.core import Callback, RunnerState
 
 
 class AUCCallback(Callback):

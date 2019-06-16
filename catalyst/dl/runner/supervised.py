@@ -4,9 +4,8 @@ from collections import OrderedDict  # noqa F401
 from torch import nn
 from torch.utils.data import DataLoader  # noqa F401
 
-from ..callbacks import Callback
-from ..experiment import SupervisedExperiment
-from .core import Runner
+from catalyst.dl.core import Runner, Callback
+from catalyst.dl.experiment import SupervisedExperiment
 from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
 
 

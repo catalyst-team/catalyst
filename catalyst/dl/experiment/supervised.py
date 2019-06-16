@@ -1,8 +1,8 @@
 from typing import List
 
+from catalyst.dl.core import Callback
 from .base import BaseExperiment
 from catalyst.dl.callbacks import \
-    Callback, \
     CriterionCallback, OptimizerCallback, SchedulerCallback, \
     CheckpointCallback
 
