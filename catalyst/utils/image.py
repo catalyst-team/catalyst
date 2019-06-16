@@ -1,8 +1,7 @@
 from typing import List, Tuple
 import os
 import numpy as np
-import cv2
-import jpeg4py as jpeg
+import imageio
 from skimage.color import label2rgb
 
 import torch
@@ -11,31 +10,25 @@ _IMAGENET_STD = (0.229, 0.224, 0.225)
 _IMAGENET_MEAN = (0.485, 0.456, 0.406)
 
 
-def read_image(image_name, datapath=None, grayscale=False):
-    if datapath is not None:
-        image_name = (
-            image_name if image_name.startswith(datapath) else
-            os.path.join(datapath, image_name)
+def imread(uri, grayscale=False, rootpath=None):
+    """
+
+    Args:
+        uri: {str, pathlib.Path, bytes, file}
+        The resource to load the image from, e.g. a filename, pathlib.Path,
+        http address or file object, see the docs for more info.
+        rootpath:
+        grayscale:
+
+    Returns:
+
+    """
+    if rootpath is not None:
+        uri = (
+            uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
         )
 
-    img = None
-    try:
-        if image_name.endswith(("jpg", "JPG", "jpeg", "JPEG")):
-            img = jpeg.JPEG(image_name).decode()
-    except Exception:
-        pass
-
-    if img is None:
-        img = cv2.imread(image_name)
-
-        if len(img.shape) == 3:  # BGR -> RGB
-            img = img[:, :, ::-1]
-
-    if len(img.shape) < 3:  # grayscale
-        img = np.expand_dims(img, -1)
-
-    if img.shape[-1] != 3 and not grayscale:
-        img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+    img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB")
 
     return img
 

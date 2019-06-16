@@ -19,8 +19,8 @@ def pack_checkpoint(
         checkpoint["model_state_dict"] = model_.state_dict()
 
     for dict2save, name2save in zip(
-            [criterion, optimizer, scheduler],
-            ["criterion", "optimizer", "scheduler"]
+        [criterion, optimizer, scheduler],
+        ["criterion", "optimizer", "scheduler"]
     ):
         if dict2save is None:
             continue
@@ -47,8 +47,8 @@ def unpack_checkpoint(
         model.load_state_dict(checkpoint["model_state_dict"])
 
     for dict2load, name2load in zip(
-            [criterion, optimizer, scheduler],
-            ["criterion", "optimizer", "scheduler"]
+        [criterion, optimizer, scheduler],
+        ["criterion", "optimizer", "scheduler"]
     ):
         if dict2load is None:
             continue

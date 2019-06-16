@@ -1,10 +1,15 @@
 # flake8: noqa
-from .exploration import *
-from .strategies import *
+
+from .boltzman import *
+from .core import *
+from .gauss import *
+from .greedy import *
+from .handler import *
+from .param_noise import *
 
 __all__ = [
-    "ExplorationHandler", "ExplorationStrategy",
+    "ExplorationHandler", "ExplorationStrategy", "NoExploration",
     "Greedy", "EpsilonGreedy", "Boltzmann",
-    "NoExploration", "GaussNoise", "OrnsteinUhlenbeckProcess",
+    "GaussNoise", "OrnsteinUhlenbeckProcess",
     "ParameterSpaceNoise"
 ]

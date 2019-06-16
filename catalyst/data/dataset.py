@@ -1,7 +1,7 @@
 import random
 from typing import List, Dict, Callable, Any
 from torch.utils.data import Dataset
-from catalyst.utils.data.misc import merge_dicts
+from catalyst.utils.misc import merge_dicts
 
 
 class ListDataset(Dataset):

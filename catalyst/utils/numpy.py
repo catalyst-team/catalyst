@@ -2,6 +2,11 @@ import numpy as np
 from scipy.signal import lfilter
 
 
+def np_softmax(x):
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum(axis=-1)
+
+
 def geometric_cumsum(alpha, x):
     """
     Adapted from https://github.com/zuoxingdong/lagom
@@ -11,12 +16,3 @@ def geometric_cumsum(alpha, x):
         x = np.expand_dims(x, 0)
     assert x.ndim == 2
     return lfilter([1], [1, -alpha], x[:, ::-1], axis=1)[:, ::-1]
-
-
-def append_dict(dict1, dict2):
-    """
-    Appends dict2 with the same keys as dict1 to dict1
-    """
-    for key in dict1.keys():
-        dict1[key] = np.concatenate((dict1[key], dict2[key]))
-    return dict1

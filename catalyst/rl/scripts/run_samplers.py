@@ -21,8 +21,8 @@ from catalyst.rl.registry import \
 from catalyst.rl.exploration import ExplorationHandler  # noqa E402
 from catalyst.rl.scripts.utils import OFFPOLICY_ALGORITHMS_NAMES, \
     ONPOLICY_ALGORITHMS_NAMES  # noqa E402
-from catalyst.utils.data.config import parse_args_uargs  # noqa E402
-from catalyst.utils.data.misc import set_global_seed, boolean_flag  # noqa E402
+from catalyst.utils.config import parse_args_uargs  # noqa E402
+from catalyst.utils.misc import set_global_seed, boolean_flag  # noqa E402
 
 
 STEP_DELAY = 1

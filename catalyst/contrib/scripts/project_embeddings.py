@@ -79,9 +79,7 @@ def parse_args():
 
 def load_image(filename, size):
     image = cv2.imread(filename)[..., ::-1]
-    image = cv2.resize(image,
-                       (size, size),
-                       interpolation=cv2.INTER_NEAREST)
+    image = cv2.resize(image, (size, size), interpolation=cv2.INTER_NEAREST)
     return image
 
 
@@ -102,11 +100,12 @@ def main(args, _=None):
     if args.img_col is not None:
         image_names = [path.join(args.img_datapath, name)
                        for name in df[args.img_col].values]
-        img_data = np.stack(
-            [load_image(name, args.img_size)
-             for name in image_names],
+        img_data = np.stack([
+            load_image(name, args.img_size)
+            for name in image_names],
             axis=0)
-        img_data = (img_data.transpose((0, 3, 1, 2)) / 255.0).astype(np.float32)
+        img_data = (
+            img_data.transpose((0, 3, 1, 2)) / 255.0).astype(np.float32)
         img_data = torch.from_numpy(img_data)
     else:
         img_data = None

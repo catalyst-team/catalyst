@@ -3,7 +3,7 @@ from typing import Dict
 
 from torch.optim.optimizer import Optimizer
 
-from catalyst.utils.data.misc import FrozenClass
+from catalyst.utils.misc import FrozenClass
 from .metric_manager import MetricManager, TimerManager
 
 

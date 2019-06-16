@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from catalyst.rl.registry import MODULES
 from .layers import SquashingLayer, CouplingLayer
-from .utils import normal_sample, normal_log_prob
+from .utils import normal_sample, normal_logprob
 
 
 # log_sigma of Gaussian policy are capped at (LOG_SIG_MIN, LOG_SIG_MAX)
@@ -22,7 +22,7 @@ class CategoricalPolicy(nn.Module):
             not isinstance(logprob, bool) and logprob is not None
         if flag_bool or flag_value:
             # @TODO: refactor
-            log_pi = dist.log_prob(logprob)
+            log_pi = dist.logprob(logprob)
             return action, log_pi
         return action
 
@@ -38,7 +38,7 @@ class GaussPolicy(nn.Module):
         log_sigma = torch.clamp(log_sigma, LOG_SIG_MIN, LOG_SIG_MAX)
         sigma = torch.exp(log_sigma)
         z = mu if deterministic else normal_sample(mu, sigma)
-        log_pi = normal_log_prob(mu, sigma, z)
+        log_pi = normal_logprob(mu, sigma, z)
         action, log_pi = self.squashing_layer.forward(z, log_pi)
 
         if logprob:
@@ -82,7 +82,7 @@ class RealNVPPolicy(nn.Module):
         )
         sigma = torch.ones_like(mu).to(mu.device)
         z = mu if deterministic else normal_sample(mu, sigma)
-        log_pi = normal_log_prob(mu, sigma, z)
+        log_pi = normal_logprob(mu, sigma, z)
         z, log_pi = self.coupling1.forward(z, state_embedding, log_pi)
         z, log_pi = self.coupling2.forward(z, state_embedding, log_pi)
         action, log_pi = self.squashing_layer.forward(z, log_pi)

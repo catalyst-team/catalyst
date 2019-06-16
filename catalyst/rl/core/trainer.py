@@ -8,7 +8,7 @@ from datetime import datetime
 from torch.utils.data import DataLoader
 from tensorboardX import SummaryWriter
 
-from catalyst.utils.data.misc import set_global_seed, Seeder
+from catalyst.utils.misc import set_global_seed, Seeder
 from catalyst.dl.utils import UtilsFactory
 from catalyst.rl.db.core import DBSpec
 from catalyst.rl.environments.core import EnvironmentSpec

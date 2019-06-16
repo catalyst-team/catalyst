@@ -1,7 +1,7 @@
 from typing import Union, Optional, List
 from pathlib import Path
 
-from catalyst.utils.data.plotly import plot_tensorboard_log
+from catalyst.utils.plotly import plot_tensorboard_log
 
 
 def plot_metrics(

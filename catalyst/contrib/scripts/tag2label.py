@@ -2,7 +2,7 @@ import argparse
 import json
 import pandas as pd
 
-from catalyst.utils.data.dataset import create_dataset, create_dataframe, \
+from catalyst.utils.dataset import create_dataset, create_dataframe, \
     prepare_dataset_labeling, separate_tags
 
 

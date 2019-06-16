@@ -4,8 +4,8 @@ import os
 import argparse
 
 from catalyst.dl.scripts.utils import import_module
-from catalyst.utils.data.config import parse_args_uargs, dump_config
-from catalyst.utils.data.misc import set_global_seed
+from catalyst.utils.config import parse_args_uargs, dump_config
+from catalyst.utils.misc import set_global_seed
 from catalyst.rl.registry import OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
     ENVIRONMENTS, DATABASES
 from catalyst.rl.offpolicy.trainer import Trainer as OffpolicyTrainer

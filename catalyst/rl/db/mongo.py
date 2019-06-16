@@ -1,6 +1,6 @@
 import datetime
 import pymongo
-from catalyst.utils.data.compression import pack, unpack
+from catalyst.utils.compression import pack, unpack
 from .core import DBSpec
 
 

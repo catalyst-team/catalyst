@@ -8,7 +8,7 @@ from catalyst.contrib.modules import Flatten
 from catalyst.rl.agents.head import PolicyHead  # , StateNet
 from catalyst.rl.agents import ActorSpec
 from catalyst.rl.environments import EnvironmentSpec
-from catalyst.dl.utils.initialization import create_optimal_inner_init
+from catalyst.utils.initialization import create_optimal_inner_init
 
 
 class ConvActor(ActorSpec):

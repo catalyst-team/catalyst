@@ -2,7 +2,7 @@ import functools
 from typing import Callable, Type, List
 
 import numpy as np
-from catalyst.utils.data.images import read_image
+from catalyst.utils.data.images import imread
 
 
 class ReaderSpec:
@@ -74,8 +74,8 @@ class ImageReader(ReaderSpec):
             np.ndarray: Image
         """
         image_name = str(row[self.input_key])
-        img = read_image(
-            image_name, datapath=self.datapath, grayscale=self.grayscale
+        img = imread(
+            image_name, rootpath=self.datapath, grayscale=self.grayscale
         )
 
         result = {self.output_key: img}
