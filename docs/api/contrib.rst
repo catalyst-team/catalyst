@@ -86,57 +86,17 @@ Segmentation
 Modules
 --------------------
 
-.. automodule:: catalyst.contrib.modules.Lambda
+.. automodule:: catalyst.contrib.modules.common
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.modules.Flatten
+.. automodule:: catalyst.contrib.modules.noisy
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.modules.NoisyLinear
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.modules.NoisyFactorizedLinear
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.modules.GlobalAvgPool2d
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.modules.GlobalMaxPool2d
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.modules.GlobalConcatPool2d
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.modules.GlobalAttnPool2d
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.modules.GlobalAvgAttnPool2d
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.modules.GlobalMaxAttnPool2d
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.modules.GlobalConcatAttnPool2d
+.. automodule:: catalyst.contrib.modules.pooling
     :members:
     :undoc-members:
     :show-inheritance:
