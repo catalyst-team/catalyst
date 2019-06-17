@@ -7,8 +7,6 @@ import torch
 
 from .agent import ActorSpec, CriticSpec
 from .environment import EnvironmentSpec
-from catalyst.rl.exploration import \
-    ParameterSpaceNoise, OrnsteinUhlenbeckProcess
 from .policy_handler import PolicyHandler
 
 
@@ -105,6 +103,9 @@ class TrajectorySampler:
 
     @torch.no_grad()
     def reset(self, exploration_strategy=None):
+
+        from catalyst.rl.exploration import \
+            ParameterSpaceNoise, OrnsteinUhlenbeckProcess
 
         if isinstance(exploration_strategy, OrnsteinUhlenbeckProcess):
             exploration_strategy.reset_state(self.env.action_space.shape[0])
