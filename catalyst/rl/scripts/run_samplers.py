@@ -41,7 +41,7 @@ def build_args(parser):
     )
     parser.add_argument("--expdir", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
-    parser.add_argument("--resume", type=str, default=None)
+    # parser.add_argument("--resume", type=str, default=None)
     parser.add_argument("--seed", type=int, default=42)
 
     parser.add_argument(
@@ -128,8 +128,8 @@ def run_sampler(
         **config_["sampler"],
     )
 
-    if resume is not None:
-        sampler.load_checkpoint(filepath=resume)
+    # if resume is not None:
+    #     sampler.load_checkpoint(filepath=resume)
 
     sampler.run()
 

@@ -9,6 +9,31 @@ RL
 Core
 --------------------
 
+.. automodule:: catalyst.rl.core.agent
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.core.algorithm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.core.db
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.core.environment
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.core.exploration
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 .. automodule:: catalyst.rl.core.policy_handler
     :members:
     :undoc-members:
@@ -30,152 +55,80 @@ Core
     :show-inheritance:
 
 
-Agents
+Agent
 --------------------
 
-.. currentmodule:: catalyst.rl.agents
-
-.. autoclass:: ActorSpec
+.. automodule:: catalyst.rl.agent.actor
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: CriticSpec
+.. automodule:: catalyst.rl.agent.critic
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: Actor
+.. automodule:: catalyst.rl.agent.head
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: StateCritic
+.. automodule:: catalyst.rl.agent.network
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: ActionCritic
+.. automodule:: catalyst.rl.agent.policy
     :members:
     :undoc-members:
-
-.. autoclass:: StateActionCritic
-    :members:
-    :undoc-members:
-
-.. autoclass:: ValueHead
-    :members:
-    :undoc-members:
-
-.. autoclass:: PolicyHead
-    :members:
-    :undoc-members:
-
-.. autoclass:: TemporalAttentionPooling
-    :members:
-    :undoc-members:
-
-.. autoclass:: LamaPooling
-    :members:
-    :undoc-members:
-
-.. autoclass:: CouplingLayer
-    :members:
-    :undoc-members:
-
-.. autoclass:: SquashingLayer
-    :members:
-    :undoc-members:
-
-.. autoclass:: StateNet
-    :members:
-    :undoc-members:
-
-.. autoclass:: StateActionNet
-    :members:
-    :undoc-members:
-
-.. autoclass:: CategoricalPolicy
-    :members:
-    :undoc-members:
-
-.. autoclass:: GaussPolicy
-    :members:
-    :undoc-members:
-
-.. autoclass:: RealNVPPolicy
-    :members:
-    :undoc-members:
+    :show-inheritance:
 
 
 DB
 --------------------
 
-.. currentmodule:: catalyst.rl.db
-
-.. autoclass:: DBSpec
+.. automodule:: catalyst.rl.db.mongo
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: MongoDB
+.. automodule:: catalyst.rl.db.redis
     :members:
     :undoc-members:
-
-.. autoclass:: RedisDB
-    :members:
-    :undoc-members:
+    :show-inheritance:
 
 
 Environments
 --------------------
 
-.. currentmodule:: catalyst.rl.environments
-
-.. autoclass:: EnvironmentSpec
+.. automodule:: catalyst.rl.environment.gym
     :members:
     :undoc-members:
-
-.. autoclass:: GymWrapper
-    :members:
-    :undoc-members:
+    :show-inheritance:
 
 
 Exploration
 --------------------
 
-.. currentmodule:: catalyst.rl.exploration
-
-.. autoclass:: ExplorationHandler
+.. automodule:: catalyst.rl.exploration.boltzman
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: ExplorationStrategy
+.. automodule:: catalyst.rl.exploration.gauss
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: Greedy
+.. automodule:: catalyst.rl.exploration.greedy
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: EpsilonGreedy
+.. automodule:: catalyst.rl.exploration.param_noise
     :members:
     :undoc-members:
-
-.. autoclass:: Boltzmann
-    :members:
-    :undoc-members:
-
-.. autoclass:: NoExploration
-    :members:
-    :undoc-members:
-
-.. autoclass:: GaussNoise
-    :members:
-    :undoc-members:
-
-.. autoclass:: OrnsteinUhlenbeckProcess
-    :members:
-    :undoc-members:
-
-.. autoclass:: ParameterSpaceNoise
-    :members:
-    :undoc-members:
+    :show-inheritance:
 
 
 Off-policy
@@ -186,22 +139,23 @@ Off-policy
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.rl.offpolicy.algorithms
+Discrete
+~~~~~~~~~~~~~~~~
+
+.. automodule:: catalyst.rl.offpolicy.algorithms.critic
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.rl.offpolicy.algorithms.core
+.. automodule:: catalyst.rl.offpolicy.algorithms.dqn
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.rl.offpolicy.algorithms.core_continuous
-    :members:
-    :undoc-members:
-    :show-inheritance:
+Continuous
+~~~~~~~~~~~~~~~~
 
-.. automodule:: catalyst.rl.offpolicy.algorithms.core_discrete
+.. automodule:: catalyst.rl.offpolicy.algorithms.actor_critic
     :members:
     :undoc-members:
     :show-inheritance:
@@ -230,22 +184,12 @@ On-policy
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.rl.onpolicy.algorithms
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 .. automodule:: catalyst.rl.onpolicy.algorithms.actor
     :members:
     :undoc-members:
     :show-inheritance:
 
 .. automodule:: catalyst.rl.onpolicy.algorithms.actor_critic
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.rl.onpolicy.algorithms.core
     :members:
     :undoc-members:
     :show-inheritance:

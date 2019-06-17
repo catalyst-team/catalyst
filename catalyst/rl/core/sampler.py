@@ -20,10 +20,10 @@ from tensorboardX import SummaryWriter  # noqa E402
 from catalyst.utils.seed import set_global_seed, Seeder  # noqa E402
 from catalyst import utils  # noqa E402
 from .trajectory_sampler import TrajectorySampler  # noqa E402
-from catalyst.rl.exploration import ExplorationHandler  # noqa E402
-from catalyst.rl.core.core import EnvironmentSpec  # noqa E402
-from catalyst.rl.core.core import DBSpec  # noqa E402
-from catalyst.rl.core.core import ActorSpec, CriticSpec  # noqa E402
+from .exploration import ExplorationHandler  # noqa E402
+from .environment import EnvironmentSpec  # noqa E402
+from .db import DBSpec  # noqa E402
+from .agent import ActorSpec, CriticSpec  # noqa E402
 
 
 class Sampler:

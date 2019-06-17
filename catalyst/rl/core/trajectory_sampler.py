@@ -5,8 +5,8 @@ import multiprocessing as mp
 from dynarray import DynamicArray
 import torch
 
-from catalyst.rl.core.core import ActorSpec, CriticSpec
-from catalyst.rl.core.core import EnvironmentSpec
+from .agent import ActorSpec, CriticSpec
+from .environment import EnvironmentSpec
 from catalyst.rl.exploration import \
     ParameterSpaceNoise, OrnsteinUhlenbeckProcess
 from .policy_handler import PolicyHandler

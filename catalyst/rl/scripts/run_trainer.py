@@ -26,7 +26,7 @@ def build_args(parser):
     )
     parser.add_argument("--expdir", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
-    parser.add_argument("--resume", type=str, default=None)
+    # parser.add_argument("--resume", type=str, default=None)
     parser.add_argument("--seed", type=int, default=42)
 
     return parser
@@ -74,8 +74,8 @@ def main(args, unknown_args):
     algorithm_fn = ALGORITHMS.get(algorithm_name)
     algorithm = algorithm_fn.prepare_for_trainer(env_spec=env, config=config)
 
-    if args.resume is not None:
-        algorithm.load_checkpoint(filepath=args.resume)
+    # if args.resume is not None:
+    #     algorithm.load_checkpoint(filepath=args.resume)
 
     trainer = trainer_fn(
         algorithm=algorithm,

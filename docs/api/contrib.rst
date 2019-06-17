@@ -91,12 +91,22 @@ Modules
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: catalyst.contrib.modules.lama
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 .. automodule:: catalyst.contrib.modules.noisy
     :members:
     :undoc-members:
     :show-inheritance:
 
 .. automodule:: catalyst.contrib.modules.pooling
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.modules.real_nvp
     :members:
     :undoc-members:
     :show-inheritance:
