@@ -13,11 +13,10 @@ import multiprocessing as mp  # noqa E402
 import torch  # noqa E402
 torch.set_num_threads(1)
 
-from catalyst.rl.core import Sampler  # noqa E402
+from catalyst.rl.core import Sampler, ExplorationHandler  # noqa E402
 from catalyst.rl.registry import \
     OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
     ENVIRONMENTS, DATABASES  # noqa E402
-from catalyst.rl.exploration import ExplorationHandler  # noqa E402
 from catalyst.rl.scripts.misc import OFFPOLICY_ALGORITHMS_NAMES, \
     ONPOLICY_ALGORITHMS_NAMES  # noqa E402
 from catalyst.utils.config import parse_args_uargs  # noqa E402
@@ -80,7 +79,7 @@ def run_sampler(
     infer,
     seed=42,
     id=None,
-    resume=None,
+    # resume=None,
     db=True,
     exploration_power=1.0,
     sync_epoch=False
@@ -171,7 +170,7 @@ def main(args, unknown_args):
         algorithm_fn=algorithm_fn,
         environment_fn=environment_fn,
         config=config,
-        resume=args.resume,
+        # resume=args.resume,
         db=args.db,
         sync_epoch=sync_epoch
     )
