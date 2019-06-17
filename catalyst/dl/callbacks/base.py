@@ -141,7 +141,10 @@ class IterationCheckpointCallback(Callback):
     """
 
     def __init__(
-        self, save_n_last: int = 3, num_iters: int = 100, stage_restart: bool = True
+        self,
+        save_n_last: int = 3,
+        num_iters: int = 100,
+        stage_restart: bool = True
     ):
 
         """
