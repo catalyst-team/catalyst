@@ -135,6 +135,81 @@ class CheckpointCallback(Callback):
         print(top_best_metrics_str)
 
 
+class IterationCheckpointCallback(Callback):
+    """
+    Iteration checkpoint callback to save your model/criterion/optimizer
+    """
+
+    def __init__(
+        self,
+        save_n_last: int = 3,
+        num_iters: int = 100,
+        stage_restart: bool = True
+    ):
+
+        """
+        :param save_n_last: number of last checkpoint to keep
+        :param num_iters: save the checkpoint every `num_iters`
+        :param stage_restart: restart counter every stage or not
+        """
+        self.save_n_last = save_n_last
+        self.num_iters = num_iters
+        self.stage_restart = stage_restart
+        self._iteration_counter = 0
+        self.last_checkpoints = []
+
+    def save_checkpoint(
+        self,
+        logdir,
+        checkpoint,
+        save_n_last
+    ):
+        suffix = f"{checkpoint['stage']}." \
+                 f"epoch.{checkpoint['epoch']}." \
+                 f"iter.{self._iteration_counter}"
+
+        filepath = UtilsFactory.save_checkpoint(
+            logdir=f"{logdir}/checkpoints/",
+            checkpoint=checkpoint,
+            suffix=suffix,
+            is_best=False,
+            is_last=False
+        )
+
+        self.last_checkpoints.append(filepath)
+        if len(self.last_checkpoints) > save_n_last:
+            top_filepath = self.last_checkpoints.pop(0)
+            os.remove(top_filepath)
+
+        print(f"\nSaved checkpoint at {filepath}")
+
+    def pack_checkpoint(self, **kwargs):
+        return UtilsFactory.pack_checkpoint(**kwargs)
+
+    def on_stage_start(self, state):
+        if self.stage_restart:
+            self._iteration_counter = 0
+
+    def on_batch_end(self, state):
+        self._iteration_counter += 1
+        if self._iteration_counter % self.num_iters == 0:
+            checkpoint = self.pack_checkpoint(
+                model=state.model,
+                criterion=state.criterion,
+                optimizer=state.optimizer,
+                scheduler=state.scheduler,
+                epoch_metrics=None,
+                valid_metrics=None,
+                stage=state.stage,
+                epoch=state.epoch
+            )
+            self.save_checkpoint(
+                logdir=state.logdir,
+                checkpoint=checkpoint,
+                save_n_last=self.save_n_last
+            )
+
+
 class OptimizerCallback(Callback):
     """
     Optimizer callback, abstraction over optimizer step.
@@ -226,7 +301,7 @@ class OptimizerCallback(Callback):
         else:
             loss.backward()
 
-        if (self._accumulation_counter + 1) % self.accumulation_steps == 0:
+        if self._accumulation_counter % self.accumulation_steps == 0:
             self.grad_step(
                 optimizer=optimizer,
                 optimizer_wd=self._optimizer_wd,
