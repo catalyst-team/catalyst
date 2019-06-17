@@ -2,12 +2,11 @@ import numpy as np
 import torch
 
 
-from .actor_critic import ActorCriticAlgorithmSpec
-from .utils import geometric_cumsum
-from catalyst.rl.offpolicy.algorithms.utils import hyperbolic_gammas
+from .actor_critic import OnpolicyActorCritic
+from catalyst.rl.utils import hyperbolic_gammas, geometric_cumsum
 
 
-class PPO(ActorCriticAlgorithmSpec):
+class PPO(OnpolicyActorCritic):
 
     def _init(
         self,
@@ -81,7 +80,7 @@ class PPO(ActorCriticAlgorithmSpec):
         adv_std = buffers["advantage"][:len].std(axis=0)
         buffers["advantage"][:len] = adv_centered / (adv_std + 1e-6)
 
-    def train(self, batch, actor_update=True, critic_update=True):
+    def train(self, batch, **kwargs):
         states, actions, returns, values, advantages, action_logprobs = \
             batch["state"], batch["action"], batch["return"], \
             batch["value"], batch["advantage"], batch["action_logprob"]

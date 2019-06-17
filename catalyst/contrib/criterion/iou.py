@@ -1,6 +1,6 @@
 from functools import partial
 import torch.nn as nn
-from catalyst.dl import metrics
+from catalyst.dl.utils import criterion
 
 
 class IoULoss(nn.Module):
@@ -21,7 +21,7 @@ class IoULoss(nn.Module):
     ):
         super().__init__()
         self.metric_fn = partial(
-            metrics.iou,
+            criterion.iou,
             eps=eps,
             threshold=threshold,
             activation=activation)

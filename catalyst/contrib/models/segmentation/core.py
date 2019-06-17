@@ -9,7 +9,7 @@ from .decoder import DecoderSpec
 from .head import HeadSpec
 
 
-class UnetSpec(nn.Module):
+class UnetMetaSpec(nn.Module):
     def __init__(
         self,
         encoder: EncoderSpec,
@@ -31,7 +31,7 @@ class UnetSpec(nn.Module):
         return output
 
 
-class _UnetSpec(UnetSpec):
+class UnetSpec(UnetMetaSpec):
     def __init__(
         self,
         num_classes: int = 1,
@@ -77,7 +77,7 @@ class _UnetSpec(UnetSpec):
         raise NotImplementedError()
 
 
-class _ResnetUnetSpec(UnetSpec):
+class ResnetUnetSpec(UnetMetaSpec):
     def __init__(
         self,
         num_classes: int = 1,

@@ -54,7 +54,7 @@ def conv_1x1_bn(inp, oup):
 
 class InvertedResidual(nn.Module):
     def __init__(self, inp, oup, stride, expand_ratio):
-        super(InvertedResidual, self).__init__()
+        super().__init__()
         assert stride in [1, 2]
 
         hidden_dim = round(inp * expand_ratio)

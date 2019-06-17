@@ -2,7 +2,7 @@ import logging
 import base64
 import numpy as np
 from six import string_types
-from .serialization import serialize, deserialize
+from catalyst.utils.serialization import serialize, deserialize
 
 logger = logging.getLogger(__name__)
 

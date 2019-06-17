@@ -6,103 +6,156 @@ RL
     :undoc-members:
     :show-inheritance:
 
-
-Agents
+Core
 --------------------
 
-.. currentmodule:: catalyst.rl.agents
-
-.. autoclass:: ActorSpec
+.. automodule:: catalyst.rl.core.agent
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: CriticSpec
+.. automodule:: catalyst.rl.core.algorithm
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: Actor
+.. automodule:: catalyst.rl.core.db
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: StateCritic
+.. automodule:: catalyst.rl.core.environment
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: ActionCritic
+.. automodule:: catalyst.rl.core.exploration
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: StateActionCritic
+.. automodule:: catalyst.rl.core.policy_handler
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: ValueHead
+.. automodule:: catalyst.rl.core.sampler
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: PolicyHead
+.. automodule:: catalyst.rl.core.trainer
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: TemporalAttentionPooling
+.. automodule:: catalyst.rl.core.trajectory_sampler
     :members:
     :undoc-members:
-
-.. autoclass:: LamaPooling
-    :members:
-    :undoc-members:
-
-.. autoclass:: CouplingLayer
-    :members:
-    :undoc-members:
-
-.. autoclass:: SquashingLayer
-    :members:
-    :undoc-members:
-
-.. autoclass:: StateNet
-    :members:
-    :undoc-members:
-
-.. autoclass:: StateActionNet
-    :members:
-    :undoc-members:
-
-.. autoclass:: CategoricalPolicy
-    :members:
-    :undoc-members:
-
-.. autoclass:: GaussPolicy
-    :members:
-    :undoc-members:
-
-.. autoclass:: RealNVPPolicy
-    :members:
-    :undoc-members:
+    :show-inheritance:
 
 
-Algorithms
+Agent
 --------------------
+
+.. automodule:: catalyst.rl.agent.actor
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.agent.critic
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.agent.head
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.agent.network
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.agent.policy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+DB
+--------------------
+
+.. automodule:: catalyst.rl.db.mongo
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.db.redis
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Environments
+--------------------
+
+.. automodule:: catalyst.rl.environment.gym
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Exploration
+--------------------
+
+.. automodule:: catalyst.rl.exploration.boltzman
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.exploration.gauss
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.exploration.greedy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.rl.exploration.param_noise
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Off-policy
+--------------------
+
+.. automodule:: catalyst.rl.offpolicy.trainer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Discrete
 ~~~~~~~~~~~~~~~~
 
-.. automodule:: catalyst.rl.offpolicy.algorithms
+.. automodule:: catalyst.rl.offpolicy.algorithms.critic
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.rl.offpolicy.algorithms.core
+.. automodule:: catalyst.rl.offpolicy.algorithms.dqn
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.rl.offpolicy.algorithms.core_continuous
-    :members:
-    :undoc-members:
-    :show-inheritance:
+Continuous
+~~~~~~~~~~~~~~~~
 
-.. automodule:: catalyst.rl.offpolicy.algorithms.core_discrete
+.. automodule:: catalyst.rl.offpolicy.algorithms.actor_critic
     :members:
     :undoc-members:
     :show-inheritance:
@@ -124,9 +177,9 @@ Off-policy
 
 
 On-policy
-~~~~~~~~~~~~~~~~
+--------------------
 
-.. automodule:: catalyst.rl.onpolicy.algorithms
+.. automodule:: catalyst.rl.onpolicy.trainer
     :members:
     :undoc-members:
     :show-inheritance:
@@ -141,120 +194,12 @@ On-policy
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.rl.onpolicy.algorithms.core
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 .. automodule:: catalyst.rl.onpolicy.algorithms.ppo
     :members:
     :undoc-members:
     :show-inheritance:
 
 .. automodule:: catalyst.rl.onpolicy.algorithms.reinforce
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-DB
---------------------
-
-.. currentmodule:: catalyst.rl.db
-
-.. autoclass:: DBSpec
-    :members:
-    :undoc-members:
-
-.. autoclass:: MongoDB
-    :members:
-    :undoc-members:
-
-.. autoclass:: RedisDB
-    :members:
-    :undoc-members:
-
-
-Environments
---------------------
-
-.. currentmodule:: catalyst.rl.environments
-
-.. autoclass:: EnvironmentSpec
-    :members:
-    :undoc-members:
-
-.. autoclass:: GymWrapper
-    :members:
-    :undoc-members:
-
-
-Exploration
---------------------
-
-.. currentmodule:: catalyst.rl.exploration
-
-.. autoclass:: ExplorationHandler
-    :members:
-    :undoc-members:
-
-.. autoclass:: ExplorationStrategy
-    :members:
-    :undoc-members:
-
-.. autoclass:: Greedy
-    :members:
-    :undoc-members:
-
-.. autoclass:: EpsilonGreedy
-    :members:
-    :undoc-members:
-
-.. autoclass:: Boltzmann
-    :members:
-    :undoc-members:
-
-.. autoclass:: NoExploration
-    :members:
-    :undoc-members:
-
-.. autoclass:: GaussNoise
-    :members:
-    :undoc-members:
-
-.. autoclass:: OrnsteinUhlenbeckProcess
-    :members:
-    :undoc-members:
-
-.. autoclass:: ParameterSpaceNoise
-    :members:
-    :undoc-members:
-
-
-Sampler
---------------------
-
-.. automodule:: catalyst.rl.core.sampler
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Trainer
---------------------
-
-.. automodule:: catalyst.rl.core.trainer
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-.. automodule:: catalyst.rl.offpolicy.trainer
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.rl.onpolicy.trainer
     :members:
     :undoc-members:
     :show-inheritance:

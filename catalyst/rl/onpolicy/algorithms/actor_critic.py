@@ -1,15 +1,13 @@
 from typing import Union, Dict
 import torch
 
-from catalyst.dl.utils import UtilsFactory
+from catalyst.rl import utils
 from catalyst.rl.registry import AGENTS
-from catalyst.rl.agents.core import ActorSpec, CriticSpec
-from catalyst.rl.environments.core import EnvironmentSpec
-from catalyst.rl.offpolicy.algorithms.utils import get_trainer_components
-from .core import AlgorithmSpec
+from catalyst.rl.core import AlgorithmSpec, \
+    ActorSpec, CriticSpec, EnvironmentSpec
 
 
-class ActorCriticAlgorithmSpec(AlgorithmSpec):
+class OnpolicyActorCritic(AlgorithmSpec):
     def __init__(
         self,
         actor: ActorSpec,
@@ -26,13 +24,13 @@ class ActorCriticAlgorithmSpec(AlgorithmSpec):
         critic_grad_clip_params: Dict = None,
         **kwargs
     ):
-        self._device = UtilsFactory.get_device()
+        self._device = utils.get_device()
 
         self.actor = actor.to(self._device)
         self.critic = critic.to(self._device)
 
         # actor preparation
-        actor_components = get_trainer_components(
+        actor_components = utils.get_trainer_components(
             agent=self.actor,
             loss_params=actor_loss_params,
             optimizer_params=actor_optimizer_params,
@@ -53,7 +51,7 @@ class ActorCriticAlgorithmSpec(AlgorithmSpec):
         self.actor_grad_clip_fn = actor_components["grad_clip_fn"]
 
         # critic preparation
-        critic_components = get_trainer_components(
+        critic_components = utils.get_trainer_components(
             agent=self.critic,
             loss_params=critic_loss_params,
             optimizer_params=critic_optimizer_params,
@@ -81,9 +79,6 @@ class ActorCriticAlgorithmSpec(AlgorithmSpec):
         # other init
         self._init(**kwargs)
 
-    def _to_tensor(self, *args, **kwargs):
-        return torch.Tensor(*args, **kwargs).to(self._device)
-
     @property
     def n_step(self) -> int:
         return self._n_step
@@ -91,6 +86,9 @@ class ActorCriticAlgorithmSpec(AlgorithmSpec):
     @property
     def gamma(self) -> float:
         return self._gamma
+
+    def _to_tensor(self, *args, **kwargs):
+        return torch.Tensor(*args, **kwargs).to(self._device)
 
     def pack_checkpoint(self):
         checkpoint = {}
@@ -105,21 +103,14 @@ class ActorCriticAlgorithmSpec(AlgorithmSpec):
 
         return checkpoint
 
-    def unpack_checkpoint(self, checkpoint):
-        raise NotImplementedError()
-
-    def save_checkpoint(self, filepath):
-        raise NotImplementedError()
-
-    def load_checkpoint(self, filepath, load_optimizer=True):
-        checkpoint = UtilsFactory.load_checkpoint(filepath)
+    def unpack_checkpoint(self, checkpoint, with_optimizer=True):
         for key in ["actor", "critic"]:
             value_l = getattr(self, key, None)
             if value_l is not None:
                 value_r = checkpoint[f"{key}_state_dict"]
                 value_l.load_state_dict(value_r)
 
-            if load_optimizer:
+            if with_optimizer:
                 for key2 in ["optimizer", "scheduler"]:
                     key2 = f"{key}_{key2}"
                     value_l = getattr(self, key2, None)
@@ -148,6 +139,15 @@ class ActorCriticAlgorithmSpec(AlgorithmSpec):
         if self.critic_scheduler is not None:
             self.critic_scheduler.step()
             return {"lr_critic": self.critic_scheduler.get_lr()[0]}
+
+    def get_rollout_spec(self) -> Dict:
+        raise NotImplementedError()
+
+    def get_rollout(self, states, actions, rewards, dones):
+        raise NotImplementedError()
+
+    def postprocess_buffer(self, buffers, len):
+        raise NotImplementedError()
 
     @classmethod
     def prepare_for_trainer(

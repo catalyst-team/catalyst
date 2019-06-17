@@ -1,7 +1,7 @@
 from functools import partial
 
 from torch.nn.modules.loss import _Loss
-from catalyst.dl.losses import sigmoid_focal_loss, reduced_focal_loss
+from catalyst.dl.utils import criterion
 
 
 class FocalLossBinary(_Loss):
@@ -22,13 +22,13 @@ class FocalLossBinary(_Loss):
 
         if reduced:
             self.loss_fn = partial(
-                reduced_focal_loss,
+                criterion.reduced_focal_loss,
                 gamma=gamma,
                 threshold=threshold,
                 reduction=reduction)
         else:
             self.loss_fn = partial(
-                sigmoid_focal_loss,
+                criterion.sigmoid_focal_loss,
                 gamma=gamma,
                 alpha=alpha,
                 reduction=reduction)
@@ -87,32 +87,33 @@ class FocalLossMultiClass(FocalLossBinary):
         return loss
 
 
-class FocalLossMultiLabel(_Loss):
-    """
-    Compute focal loss for multi-label problem.
-    Ignores targets having -1 label
-    """
+# @TODO: check
+# class FocalLossMultiLabel(_Loss):
+#     """
+#     Compute focal loss for multi-label problem.
+#     Ignores targets having -1 label
+#     """
+#
+#     def forward(self, logits, targets):
+#         """
+#         Args:
+#             logits: [bs; num_classes]
+#             targets: [bs; num_classes]
+#         """
+#         num_classes = logits.size(1)
+#         loss = 0
+#
+#         for cls in range(num_classes):
+#             # Filter anchors with -1 label from loss computation
+#             if cls == self.ignore:
+#                 continue
+#
+#             cls_label_target = targets[..., cls].long()
+#             cls_label_input = logits[..., cls]
+#
+#             loss += self.loss_fn(cls_label_input, cls_label_target)
+#
+#         return loss
 
-    def forward(self, logits, targets):
-        """
-        Args:
-            logits: [bs; num_classes]
-            targets: [bs; num_classes]
-        """
-        num_classes = logits.size(1)
-        loss = 0
 
-        for cls in range(num_classes):
-            # Filter anchors with -1 label from loss computation
-            if cls == self.ignore:
-                continue
-
-            cls_label_target = targets[..., cls].long()
-            cls_label_input = logits[..., cls]
-
-            loss += self.loss_fn(cls_label_input, cls_label_target)
-
-        return loss
-
-
-__all__ = ["FocalLossBinary", "FocalLossMultiClass", "FocalLossMultiLabel"]
+__all__ = ["FocalLossBinary", "FocalLossMultiClass"]

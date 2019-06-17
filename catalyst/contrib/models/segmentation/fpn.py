@@ -5,10 +5,10 @@ from .encoder import UnetEncoder, ResnetEncoder
 from .bridge import UnetBridge
 from .decoder import FPNDecoder
 from .head import FPNHead
-from .core import _UnetSpec, _ResnetUnetSpec
+from .core import UnetSpec, ResnetUnetSpec
 
 
-class FPNUnet(_UnetSpec):
+class FPNUnet(UnetSpec):
 
     def _get_components(
         self,
@@ -42,7 +42,7 @@ class FPNUnet(_UnetSpec):
         return encoder, bridge, decoder, head
 
 
-class ResnetFPNUnet(_ResnetUnetSpec):
+class ResnetFPNUnet(ResnetUnetSpec):
 
     def _get_components(
         self,

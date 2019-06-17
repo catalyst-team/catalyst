@@ -25,7 +25,7 @@ stages:
 
     callbacks_params:
       loss:
-        callback: LossCallback
+        callback: CriterionCallback
       optimizer:
         callback: OptimizerCallback
       finder:

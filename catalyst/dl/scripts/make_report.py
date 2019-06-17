@@ -3,7 +3,7 @@
 import argparse
 from glob import glob
 import pandas as pd
-from catalyst.dl.utils import UtilsFactory
+from catalyst import utils
 
 import matplotlib
 
@@ -39,7 +39,7 @@ def plot_report(report, y_key, filename):
 
 def report_by_dir(folder):
     checkpoint = f"{folder}/best.pth"
-    checkpoint = UtilsFactory.load_checkpoint(checkpoint)
+    checkpoint = utils.load_checkpoint(checkpoint)
     exp_name = folder.rsplit("/", 1)[-1]
     row = {"exp_name": exp_name, "epoch": checkpoint["epoch"]}
     row.update(checkpoint["valid_metrics"])
@@ -85,4 +85,4 @@ def main(args, _):
 
 if __name__ == '__main__':
     args = parse_args()
-    main(args)
+    main(args, None)

@@ -16,7 +16,7 @@ Database = DATABASES.add
 
 
 def _agents_late_add(r: Registry):
-    from . import agents as m
+    from . import agent as m
     r.add_from_module(m)
 
 
@@ -46,7 +46,7 @@ OnpolicyAlgorithm = ONPOLICY_ALGORITHMS.add
 
 
 def _env_late_add(r: Registry):
-    from . import environments as m
+    from . import environment as m
     r.add_from_module(m)
 
 

@@ -13,16 +13,15 @@ import multiprocessing as mp  # noqa E402
 import torch  # noqa E402
 torch.set_num_threads(1)
 
-from catalyst.dl.scripts.utils import import_module  # noqa E402
-from catalyst.rl.core import Sampler  # noqa E402
+from catalyst.rl.core import Sampler, ExplorationHandler  # noqa E402
 from catalyst.rl.registry import \
     OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
     ENVIRONMENTS, DATABASES  # noqa E402
-from catalyst.rl.exploration import ExplorationHandler  # noqa E402
-from catalyst.rl.scripts.utils import OFFPOLICY_ALGORITHMS_NAMES, \
+from catalyst.rl.scripts.misc import OFFPOLICY_ALGORITHMS_NAMES, \
     ONPOLICY_ALGORITHMS_NAMES  # noqa E402
 from catalyst.utils.config import parse_args_uargs  # noqa E402
-from catalyst.utils.misc import set_global_seed, boolean_flag  # noqa E402
+from catalyst.utils import set_global_seed, boolean_flag  # noqa E402
+from catalyst.utils.scripts import import_module  # noqa E402
 
 
 STEP_DELAY = 1
@@ -41,7 +40,7 @@ def build_args(parser):
     )
     parser.add_argument("--expdir", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
-    parser.add_argument("--resume", type=str, default=None)
+    # parser.add_argument("--resume", type=str, default=None)
     parser.add_argument("--seed", type=int, default=42)
 
     parser.add_argument(
@@ -80,7 +79,7 @@ def run_sampler(
     infer,
     seed=42,
     id=None,
-    resume=None,
+    # resume=None,
     db=True,
     exploration_power=1.0,
     sync_epoch=False
@@ -128,8 +127,8 @@ def run_sampler(
         **config_["sampler"],
     )
 
-    if resume is not None:
-        sampler.load_checkpoint(filepath=resume)
+    # if resume is not None:
+    #     sampler.load_checkpoint(filepath=resume)
 
     sampler.run()
 
@@ -171,7 +170,7 @@ def main(args, unknown_args):
         algorithm_fn=algorithm_fn,
         environment_fn=environment_fn,
         config=config,
-        resume=args.resume,
+        # resume=args.resume,
         db=args.db,
         sync_epoch=sync_epoch
     )

@@ -65,7 +65,7 @@ Optimizer = OPTIMIZERS.add
 
 
 def _schedulers_loader(r: Registry):
-    from catalyst.contrib import scheduler as m
+    from catalyst.contrib import schedulers as m
     r.add_from_module(m)
 
 
