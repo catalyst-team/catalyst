@@ -188,7 +188,10 @@ class Runner(ABC):
         self.state.output = self.predict_batch(batch)
 
     def _run_loader(self, loader):
-        self.state.batch_size = loader.batch_size
+        if loader.batch_sampler:
+            self.state.batch_size = loader.batch_sampler.batch_size
+        else:
+            self.state.batch_size = loader.batch_size
         self.state.step = (
             self.state.step
             or self.state.epoch * len(loader) * self.state.batch_size
