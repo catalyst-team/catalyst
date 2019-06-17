@@ -54,7 +54,7 @@ jobs:
         - pip install tifffile
         - wget -P ./data/ https://www.dropbox.com/s/0rvuae4mj6jn922/isbi.tar.gz
         - tar -xf ./data/isbi.tar.gz -C ./data/
-        - set -e; for f in examples/_tests_scripts/*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done
+        - (set -e; for f in examples/_tests_scripts/*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
           python catalyst/dl/scripts/run.py
           --expdir=./examples/_tests_mnist_stages

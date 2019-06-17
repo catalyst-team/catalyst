@@ -38,7 +38,7 @@ class REINFORCE(OnpolicyActor):
         }
         return rollout
 
-    def train(self, batch, actor_update=True, critic_update=True):
+    def train(self, batch, **kwargs):
         states, actions, returns, action_logprobs = \
             batch["state"], batch["action"], batch["return"],\
             batch["action_logprob"]

@@ -6,8 +6,7 @@ import torch.nn as nn
 from catalyst.contrib.modules import Flatten
 
 from catalyst.rl.agent.head import ValueHead  # , StateNet
-from catalyst.rl.agent import CriticSpec
-from catalyst.rl.environment import EnvironmentSpec
+from catalyst.rl.core import CriticSpec, EnvironmentSpec
 from catalyst.utils.initialization import create_optimal_inner_init
 
 

@@ -80,7 +80,7 @@ class PPO(OnpolicyActorCritic):
         adv_std = buffers["advantage"][:len].std(axis=0)
         buffers["advantage"][:len] = adv_centered / (adv_std + 1e-6)
 
-    def train(self, batch, actor_update=True, critic_update=True):
+    def train(self, batch, **kwargs):
         states, actions, returns, values, advantages, action_logprobs = \
             batch["state"], batch["action"], batch["return"], \
             batch["value"], batch["advantage"], batch["action_logprob"]

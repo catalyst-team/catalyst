@@ -6,8 +6,7 @@ import torch.nn as nn
 from catalyst.contrib.modules import Flatten
 
 from catalyst.rl.agent.head import PolicyHead  # , StateNet
-from catalyst.rl.agent import ActorSpec
-from catalyst.rl.environment import EnvironmentSpec
+from catalyst.rl.core import ActorSpec, EnvironmentSpec
 from catalyst.utils.initialization import create_optimal_inner_init
 
 

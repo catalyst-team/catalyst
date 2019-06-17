@@ -79,9 +79,6 @@ class OnpolicyActorCritic(AlgorithmSpec):
         # other init
         self._init(**kwargs)
 
-    def _to_tensor(self, *args, **kwargs):
-        return torch.Tensor(*args, **kwargs).to(self._device)
-
     @property
     def n_step(self) -> int:
         return self._n_step
@@ -89,6 +86,9 @@ class OnpolicyActorCritic(AlgorithmSpec):
     @property
     def gamma(self) -> float:
         return self._gamma
+
+    def _to_tensor(self, *args, **kwargs):
+        return torch.Tensor(*args, **kwargs).to(self._device)
 
     def pack_checkpoint(self):
         checkpoint = {}
