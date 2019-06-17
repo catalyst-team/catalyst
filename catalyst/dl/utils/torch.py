@@ -5,6 +5,7 @@ import copy
 import torch
 from torch import nn, optim
 import torch.backends.cudnn as cudnn
+from torch.utils.data.dataloader import default_collate as default_collate_fn
 from catalyst.dl import utils
 
 _Model = nn.Module
@@ -60,5 +61,40 @@ def process_components(
     return model, criterion, optimizer, scheduler, device
 
 
+def get_loader(
+    data_source,
+    open_fn,
+    dict_transform=None,
+    dataset_cache_prob=-1,
+    sampler=None,
+    collate_fn=default_collate_fn,
+    batch_size=32,
+    num_workers=4,
+    shuffle=False,
+    drop_last=False
+):
+    from catalyst.data import ListDataset
+
+    dataset = ListDataset(
+        data_source,
+        open_fn=open_fn,
+        dict_transform=dict_transform,
+        cache_prob=dataset_cache_prob
+    )
+    loader = torch.utils.data.DataLoader(
+        dataset=dataset,
+        sampler=sampler,
+        collate_fn=collate_fn,
+        batch_size=batch_size,
+        num_workers=num_workers,
+        shuffle=shuffle,
+        pin_memory=torch.cuda.is_available(),
+        drop_last=drop_last,
+    )
+    return loader
+
+
 __all__ = [
-    "process_components", "_Model", "_Criterion", "_Optimizer", "_Scheduler"]
+    "process_components", "get_loader",
+    "_Model", "_Criterion", "_Optimizer", "_Scheduler"
+]
