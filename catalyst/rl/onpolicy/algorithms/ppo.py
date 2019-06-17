@@ -2,11 +2,11 @@ import numpy as np
 import torch
 
 
-from .actor_critic import ActorCriticAlgorithmSpec
+from .actor_critic import OnpolicyActorCritic
 from catalyst.rl.utils import hyperbolic_gammas, geometric_cumsum
 
 
-class PPO(ActorCriticAlgorithmSpec):
+class PPO(OnpolicyActorCritic):
 
     def _init(
         self,

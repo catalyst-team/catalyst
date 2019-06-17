@@ -1,15 +1,13 @@
 from typing import Union, Dict
 import torch
 
-from catalyst import utils
+from catalyst.rl import utils
 from catalyst.rl.registry import AGENTS
-from catalyst.rl.core.core import ActorSpec, CriticSpec
-from catalyst.rl.core.core import EnvironmentSpec
-from catalyst.rl.utils import get_trainer_components
-from .core import AlgorithmSpec
+from catalyst.rl.core import AlgorithmSpec, \
+    ActorSpec, CriticSpec, EnvironmentSpec
 
 
-class ActorAlgorithmSpec(AlgorithmSpec):
+class OnpolicyActor(AlgorithmSpec):
     def __init__(
         self,
         actor: ActorSpec,
@@ -22,11 +20,10 @@ class ActorAlgorithmSpec(AlgorithmSpec):
         **kwargs
     ):
         self._device = utils.get_device()
-
         self.actor = actor.to(self._device)
 
         # actor preparation
-        actor_components = get_trainer_components(
+        actor_components = utils.get_trainer_components(
             agent=self.actor,
             loss_params=actor_loss_params,
             optimizer_params=actor_optimizer_params,
@@ -77,21 +74,14 @@ class ActorAlgorithmSpec(AlgorithmSpec):
 
         return checkpoint
 
-    def unpack_checkpoint(self, checkpoint):
-        raise NotImplementedError()
-
-    def save_checkpoint(self, filepath):
-        raise NotImplementedError()
-
-    def load_checkpoint(self, filepath, load_optimizer=True):
-        checkpoint = utils.load_checkpoint(filepath)
+    def unpack_checkpoint(self, checkpoint, with_optimizer=True):
         for key in ["actor"]:
             value_l = getattr(self, key, None)
             if value_l is not None:
                 value_r = checkpoint[f"{key}_state_dict"]
                 value_l.load_state_dict(value_r)
 
-            if load_optimizer:
+            if with_optimizer:
                 for key2 in ["optimizer", "scheduler"]:
                     key2 = f"{key}_{key2}"
                     value_l = getattr(self, key2, None)
@@ -110,11 +100,14 @@ class ActorAlgorithmSpec(AlgorithmSpec):
             self.actor_scheduler.step()
             return {"lr_actor": self.actor_scheduler.get_lr()[0]}
 
-    def critic_update(self, loss):
-        pass
+    def get_rollout_spec(self) -> Dict:
+        raise NotImplementedError()
+
+    def get_rollout(self, states, actions, rewards, dones):
+        raise NotImplementedError()
 
     def postprocess_buffer(self, buffers, len):
-        pass
+        raise NotImplementedError()
 
     @classmethod
     def prepare_for_trainer(

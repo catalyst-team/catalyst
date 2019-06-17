@@ -10,9 +10,9 @@ from tensorboardX import SummaryWriter
 
 from catalyst.utils.seed import set_global_seed, Seeder
 from catalyst import utils
-from catalyst.rl.core.core import DBSpec
-from catalyst.rl.core.core import EnvironmentSpec
-from catalyst.rl.offpolicy.algorithms.core import AlgorithmSpec  # @TODO: fix
+from .db import DBSpec
+from .environment import EnvironmentSpec
+from .algorithm import AlgorithmSpec
 
 
 class TrainerSpec:
@@ -29,15 +29,12 @@ class TrainerSpec:
         weights_sync_period: int = 1,
         weights_sync_mode: str = None,
         save_period: int = 10,
-        resume: str = None,
         gc_period: int = 10,
         seed: int = 42,
         **kwargs,
     ):
         # algorithm & environment
         self.algorithm = algorithm
-        if resume is not None:
-            self.algorithm.load_checkpoint(resume)
         self.env_spec = env_spec
 
         # logging

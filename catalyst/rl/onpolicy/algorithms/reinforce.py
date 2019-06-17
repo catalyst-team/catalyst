@@ -1,11 +1,11 @@
 import numpy as np
 import torch
 
-from .actor import ActorAlgorithmSpec
+from .actor import OnpolicyActor
 from catalyst.rl.utils import geometric_cumsum
 
 
-class REINFORCE(ActorAlgorithmSpec):
+class REINFORCE(OnpolicyActor):
     def _init(
         self,
         entropy_reg_coefficient: float = 0.

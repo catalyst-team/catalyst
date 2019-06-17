@@ -3,15 +3,14 @@ import copy
 from gym.spaces import Box
 import torch
 
-from catalyst import utils
+from catalyst.rl import utils
 from catalyst.rl.registry import AGENTS
-from catalyst.rl.utils import get_trainer_components
-from .core import AlgorithmSpec
-from catalyst.rl.core.core import ActorSpec, CriticSpec
-from catalyst.rl.core.core import EnvironmentSpec
+
+from catalyst.rl.core import AlgorithmSpec, \
+    ActorSpec, CriticSpec, EnvironmentSpec
 
 
-class AlgorithmContinuous(AlgorithmSpec):
+class OffpolicyActorCritic(AlgorithmSpec):
     def __init__(
         self,
         actor: ActorSpec,
@@ -40,7 +39,7 @@ class AlgorithmContinuous(AlgorithmSpec):
         self.target_critic = copy.deepcopy(critic).to(self._device)
 
         # actor preparation
-        actor_components = get_trainer_components(
+        actor_components = utils.get_trainer_components(
             agent=self.actor,
             loss_params=actor_loss_params,
             optimizer_params=actor_optimizer_params,
@@ -61,7 +60,7 @@ class AlgorithmContinuous(AlgorithmSpec):
         self.actor_grad_clip_fn = actor_components["grad_clip_fn"]
 
         # critic preparation
-        critic_components = get_trainer_components(
+        critic_components = utils.get_trainer_components(
             agent=self.critic,
             loss_params=critic_loss_params,
             optimizer_params=critic_optimizer_params,
@@ -122,21 +121,14 @@ class AlgorithmContinuous(AlgorithmSpec):
 
         return checkpoint
 
-    def unpack_checkpoint(self, checkpoint):
-        raise NotImplementedError()
-
-    def save_checkpoint(self, filepath):
-        raise NotImplementedError()
-
-    def load_checkpoint(self, filepath, load_optimizer=True):
-        checkpoint = utils.load_checkpoint(filepath)
+    def unpack_checkpoint(self, checkpoint, with_optimizer=True):
         for key in ["actor", "critic"]:
             value_l = getattr(self, key, None)
             if value_l is not None:
                 value_r = checkpoint[f"{key}_state_dict"]
                 value_l.load_state_dict(value_r)
 
-            if load_optimizer:
+            if with_optimizer:
                 for key2 in ["optimizer", "scheduler"]:
                     key2 = f"{key}_{key2}"
                     value_l = getattr(self, key2, None)
@@ -175,7 +167,18 @@ class AlgorithmContinuous(AlgorithmSpec):
     def update_step(
         self, policy_loss, value_loss, actor_update=True, critic_update=True
     ):
-        "updates parameters of neural networks and returns learning metrics"
+        """
+        updates parameters of neural networks and returns learning metrics
+
+        Args:
+            policy_loss:
+            value_loss:
+            actor_update:
+            critic_update:
+
+        Returns:
+
+        """
         raise NotImplementedError
 
     def train(self, batch, actor_update=True, critic_update=True):
@@ -209,10 +212,6 @@ class AlgorithmContinuous(AlgorithmSpec):
         )
 
         return metrics
-
-    def get_td_errors(self, batch):
-        # @TODO: for prioritized replay
-        raise NotImplementedError
 
     @classmethod
     def prepare_for_trainer(

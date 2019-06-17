@@ -1,7 +1,7 @@
 from typing import Union, Dict
 from abc import abstractmethod, ABC
-from catalyst.rl.core.core import ActorSpec, CriticSpec
-from catalyst.rl.core.core import EnvironmentSpec
+from .agent import ActorSpec, CriticSpec
+from .environment import EnvironmentSpec
 
 
 class AlgorithmSpec(ABC):
@@ -17,39 +17,19 @@ class AlgorithmSpec(ABC):
         pass
 
     @abstractmethod
+    def _init(self, **kwargs):
+        pass
+
+    @abstractmethod
     def pack_checkpoint(self):
         pass
 
     @abstractmethod
-    def unpack_checkpoint(self, checkpoint):
+    def unpack_checkpoint(self, checkpoint, **kwargs):
         pass
 
     @abstractmethod
-    def save_checkpoint(self, filepath):
-        pass
-
-    @abstractmethod
-    def load_checkpoint(self, filepath):
-        pass
-
-    @abstractmethod
-    def actor_update(self, loss):
-        pass
-
-    @abstractmethod
-    def critic_update(self, loss):
-        pass
-
-    @abstractmethod
-    def target_actor_update(self):
-        pass
-
-    @abstractmethod
-    def target_critic_update(self):
-        pass
-
-    @abstractmethod
-    def train(self, batch, actor_update=True, critic_update=True):
+    def train(self, batch: Dict, **kwargs):
         pass
 
     @classmethod

@@ -1,6 +1,7 @@
 # flake8: noqa
 
 from .agent import ActorSpec, CriticSpec
+from .algorithm import AlgorithmSpec
 from .db import DBSpec
 from .environment import EnvironmentSpec
 from .exploration import ExplorationStrategy, ExplorationHandler

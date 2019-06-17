@@ -5,8 +5,7 @@ import threading
 import torch
 from torch.utils.data import DataLoader
 
-from catalyst.rl.core import TrainerSpec
-from catalyst.rl.db import DBSpec
+from catalyst.rl.core import TrainerSpec, DBSpec
 from catalyst.rl import utils
 
 

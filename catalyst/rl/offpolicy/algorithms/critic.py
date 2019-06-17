@@ -2,15 +2,14 @@ from typing import Union, Dict
 import copy
 import torch
 
-from catalyst import utils
+from catalyst.rl import utils
 from catalyst.rl.registry import AGENTS
-from catalyst.rl.utils import get_trainer_components
-from .core import AlgorithmSpec
-from catalyst.rl.core.core import ActorSpec, CriticSpec
-from catalyst.rl.core.core import EnvironmentSpec
+
+from catalyst.rl.core import AlgorithmSpec, \
+    ActorSpec, CriticSpec, EnvironmentSpec
 
 
-class AlgorithmDiscrete(AlgorithmSpec):
+class OffpolicyCritic(AlgorithmSpec):
     def __init__(
         self,
         critic: CriticSpec,
@@ -28,7 +27,7 @@ class AlgorithmDiscrete(AlgorithmSpec):
         self.target_critic = copy.deepcopy(critic).to(self._device)
 
         # preparation
-        agent_stuff = get_trainer_components(
+        agent_stuff = utils.get_trainer_components(
             agent=self.critic,
             loss_params=critic_loss_params,
             optimizer_params=critic_optimizer_params,
@@ -83,30 +82,20 @@ class AlgorithmDiscrete(AlgorithmSpec):
 
         return checkpoint
 
-    def unpack_checkpoint(self, checkpoint):
-        raise NotImplementedError()
-
-    def save_checkpoint(self, filepath):
-        raise NotImplementedError()
-
-    def load_checkpoint(self, filepath, load_optimizer=True):
-        checkpoint = utils.load_checkpoint(filepath)
+    def unpack_checkpoint(self, checkpoint, with_optimizer=True):
         for key in ["critic"]:
             value_l = getattr(self, key, None)
             if value_l is not None:
                 value_r = checkpoint[f"{key}_state_dict"]
                 value_l.load_state_dict(value_r)
 
-            if load_optimizer:
+            if with_optimizer:
                 for key2 in ["optimizer", "scheduler"]:
                     key2 = f"{key}_{key2}"
                     value_l = getattr(self, key2, None)
                     if value_l is not None:
                         value_r = checkpoint[f"{key2}_state_dict"]
                         value_l.load_state_dict(value_r)
-
-    def actor_update(self, loss):
-        raise NotImplementedError()
 
     def critic_update(self, loss):
         self.critic.zero_grad()
@@ -119,14 +108,20 @@ class AlgorithmDiscrete(AlgorithmSpec):
             self.critic_scheduler.step()
             return {"lr_critic": self.critic_scheduler.get_lr()[0]}
 
-    def target_actor_update(self):
-        raise NotImplementedError()
-
     def target_critic_update(self):
         utils.soft_update(self.target_critic, self.critic, self.critic_tau)
 
     def update_step(self, value_loss, critic_update=True):
-        "updates parameters of neural networks and returns learning metrics"
+        """
+        updates parameters of neural networks and returns learning metrics
+
+        Args:
+            value_loss:
+            critic_update:
+
+        Returns:
+
+        """
         raise NotImplementedError
 
     def train(self, batch, actor_update=False, critic_update=True):
@@ -158,10 +153,6 @@ class AlgorithmDiscrete(AlgorithmSpec):
         )
 
         return metrics
-
-    def get_td_errors(self, batch):
-        # @TODO: for prioritized replay
-        raise NotImplementedError
 
     @classmethod
     def prepare_for_trainer(
