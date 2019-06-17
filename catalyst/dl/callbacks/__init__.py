@@ -3,7 +3,7 @@
 from .metrics import AccuracyCallback, MapKCallback, \
     AUCCallback, DiceCallback, F1ScoreCallback, IouCallback, JaccardCallback
 
-from .checkpoint import CheckpointCallback
+from .checkpoint import CheckpointCallback, IterationCheckpointCallback
 from .criterion import CriterionCallback
 from .inference import InferCallback, InferMaskCallback
 from .logging import VerboseLogger, ConsoleLogger, TensorboardLogger
