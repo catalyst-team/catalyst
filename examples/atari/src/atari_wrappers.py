@@ -9,7 +9,7 @@ cv2.ocl.setUseOpenCL(False)
 
 class TimeLimit(gym.Wrapper):
     def __init__(self, env, max_episode_steps=None):
-        super(TimeLimit, self).__init__(env)
+        super().__init__(env)
         self._max_episode_steps = max_episode_steps
         self._elapsed_steps = 0
 
@@ -31,7 +31,7 @@ class TransposeObs(gym.ObservationWrapper):
         """
         Transpose observation space (base class)
         """
-        super(TransposeObs, self).__init__(env)
+        super().__init__(env)
 
 
 class TransposeImage(TransposeObs):
@@ -39,7 +39,7 @@ class TransposeImage(TransposeObs):
         """
         Transpose observation space for images
         """
-        super(TransposeImage, self).__init__(env)
+        super().__init__(env)
         assert len(op) == 3, f"Error: Operation, {str(op)}, must be dim3"
         self.op = op
         obs_shape = self.observation_space.shape

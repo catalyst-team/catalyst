@@ -1,10 +1,10 @@
 import torch
-from catalyst.rl.offpolicy.algorithms.core_discrete import AlgorithmDiscrete
-from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
-    quantile_loss, hyperbolic_gammas
+from .critic import OffpolicyCritic
+from catalyst.rl.utils import categorical_loss, quantile_loss, \
+    hyperbolic_gammas
 
 
-class DQN(AlgorithmDiscrete):
+class DQN(OffpolicyCritic):
 
     def _init(self):
         # value distribution approximation

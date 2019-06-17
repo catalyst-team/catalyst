@@ -5,10 +5,9 @@ import torch
 import torch.nn as nn
 from catalyst.contrib.modules import Flatten
 
-from catalyst.rl.agents.head import PolicyHead  # , StateNet
-from catalyst.rl.agents import ActorSpec
-from catalyst.rl.environments import EnvironmentSpec
-from catalyst.dl.initialization import create_optimal_inner_init
+from catalyst.rl.agent.head import PolicyHead  # , StateNet
+from catalyst.rl.core import ActorSpec, EnvironmentSpec
+from catalyst.utils.initialization import create_optimal_inner_init
 
 
 class ConvActor(ActorSpec):

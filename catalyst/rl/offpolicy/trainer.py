@@ -5,9 +5,23 @@ import threading
 import torch
 from torch.utils.data import DataLoader
 
-from catalyst.rl.core import TrainerSpec
-from catalyst.rl.utils import _make_tuple, _db2buffer_loop, \
-    OffpolicyReplayBuffer, OffpolicyReplaySampler
+from catalyst.rl.core import TrainerSpec, DBSpec
+from catalyst.rl import utils
+
+
+def _db2buffer_loop(db_server: DBSpec, buffer: utils.OffpolicyReplayBuffer):
+    trajectory = None
+    while True:
+        if trajectory is None:
+            trajectory = db_server.get_trajectory()
+
+        if trajectory is not None:
+            if buffer.push_trajectory(trajectory):
+                trajectory = None
+            else:
+                time.sleep(1.0)
+        else:
+            time.sleep(1.0)
 
 
 class Trainer(TrainerSpec):
@@ -21,14 +35,14 @@ class Trainer(TrainerSpec):
         # updates configuration
         # (actor_period, critic_period)
         self.actor_update_period, self.critic_update_period = \
-            _make_tuple(target_update_period)
+            utils.make_tuple(target_update_period)
         self.actor_updates = 0
         self.critic_updates = 0
 
         #
         self.epoch_len = epoch_len
 
-        self.replay_buffer = OffpolicyReplayBuffer(
+        self.replay_buffer = utils.OffpolicyReplayBuffer(
             observation_space=self.env_spec.observation_space,
             action_space=self.env_spec.action_space,
             capacity=replay_buffer_size,
@@ -39,7 +53,7 @@ class Trainer(TrainerSpec):
             logdir=self.logdir
         )
 
-        self.replay_sampler = OffpolicyReplaySampler(
+        self.replay_sampler = utils.OffpolicyReplaySampler(
             buffer=self.replay_buffer,
             epoch_len=self.epoch_len,
             batch_size=self.batch_size

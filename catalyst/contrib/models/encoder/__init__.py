@@ -1,4 +1,4 @@
 from .resnet import ResnetEncoder
-from .mobilenet import MobileNetEncoder
+from .mobilenetv2 import MobileNetV2Encoder
 
-__all__ = ["ResnetEncoder", "MobileNetEncoder"]
+__all__ = ["ResnetEncoder", "MobileNetV2Encoder"]

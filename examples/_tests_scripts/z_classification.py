@@ -75,13 +75,13 @@ class Net(nn.Module):
 
 # In[ ]:
 
-from catalyst.dl.utils import UtilsFactory
+from catalyst.dl import utils
 
 # # Setup 1 - typical training
 
 # In[ ]:
 
-from catalyst.dl.experiments import SupervisedRunner
+from catalyst.dl.runner import SupervisedRunner
 
 # experiment setup
 num_epochs = 2
@@ -110,13 +110,13 @@ runner.train(
 
 # you can use plotly and tensorboard to plot metrics inside jupyter
 # by default it only plots loss
-# logs_plot = UtilsFactory.plot_metrics(logdir=logdir)
+# logs_plot = utils.plot_metrics(logdir=logdir)
 
 # # Setup 2 - training with scheduler
 
 # In[ ]:
 
-from catalyst.dl.experiments import SupervisedRunner
+from catalyst.dl.runner import SupervisedRunner
 
 # experiment setup
 num_epochs = 2
@@ -151,7 +151,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.dl.experiments import SupervisedRunner
+from catalyst.dl.runner import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback
 
 # experiment setup
@@ -184,15 +184,13 @@ runner.train(
 
 # In[ ]:
 
-logs_plot = UtilsFactory.plot_metrics(
-    logdir=logdir, metrics=["loss", "_base/lr"]
-)
+# logs_plot = utils.plot_metrics(logdir=logdir, metrics=["loss", "_base/lr"])
 
 # # Setup 4 - training with additional metrics
 
 # In[ ]:
 
-from catalyst.dl.experiments import SupervisedRunner
+from catalyst.dl.runner import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
 
 # experiment setup
@@ -228,17 +226,17 @@ runner.train(
 
 # In[ ]:
 
-logs_plot = UtilsFactory.plot_metrics(
-    logdir=logdir, metrics=["loss", "accuracy01", "accuracy03", "_base/lr"]
-)
+# logs_plot = utils.plot_metrics(
+#     logdir=logdir, metrics=["loss", "accuracy01", "accuracy03", "_base/lr"]
+# )
 
 # # Setup 5 - training with 1cycle
 
 # In[ ]:
 
-from catalyst.dl.experiments import SupervisedRunner
+from catalyst.dl.runner import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
-from catalyst.contrib.scheduler import OneCycleLR
+from catalyst.contrib.schedulers import OneCycleLR
 
 # experiment setup
 num_epochs = 2
@@ -277,17 +275,17 @@ runner.train(
 
 # In[ ]:
 
-logs_plot = UtilsFactory.plot_metrics(
-    logdir=logdir,
-    step="batch",
-    metrics=["loss", "accuracy01", "_base/lr", "_base/momentum"]
-)
+# logs_plot = utils.plot_metrics(
+#     logdir=logdir,
+#     step="batch",
+#     metrics=["loss", "accuracy01", "_base/lr", "_base/momentum"]
+# )
 
 # # Setup 6 - pipeline check
 
 # In[ ]:
 
-from catalyst.dl.experiments import SupervisedRunner
+from catalyst.dl.runner import SupervisedRunner
 
 # experiment setup
 num_epochs = 2
@@ -320,7 +318,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.dl.experiments import SupervisedRunner
+from catalyst.dl.runner import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
 
 # experiment setup

@@ -9,8 +9,8 @@ import numpy as np
 from tensorboardX.proto.event_pb2 import Event
 
 import os
-if os.environ.get('CRC32C_SW_MODE', None) is None:
-    os.environ['CRC32C_SW_MODE'] = 'auto'
+if os.environ.get("CRC32C_SW_MODE", None) is None:
+    os.environ["CRC32C_SW_MODE"] = "auto"
 from crc32c import crc32 as crc32c  # noqa: E402
 
 
@@ -39,7 +39,8 @@ class EventsFileReader(Iterable):
         """
         Initialize an iterator over an events file
 
-        :param events_file: An opened file-like object.
+        Args:
+            events_file: An opened file-like object.
         """
         self._events_file = events_file
 
@@ -47,19 +48,21 @@ class EventsFileReader(Iterable):
         """
         Read exactly next `size` bytes from the current stream.
 
-        :param size: A size in bytes to be read.
-        :return: A `bytes` object with read data or `None` on EOF.
-        :except: NotImplementedError if the stream is in non-blocking mode.
-        :except: EventReadingError on reading error.
+        Args:
+            size: A size in bytes to be read.
+
+        Returns:
+            A `bytes` object with read data or `None` on EOF.
+
         """
         data = self._events_file.read(size)
         if data is None:
             raise NotImplementedError(
-                'Reading of a stream in non-blocking mode'
+                "Reading of a stream in non-blocking mode"
             )
         if 0 < len(data) < size:
             raise EventReadingError(
-                'The size of read data is less than requested size'
+                "The size of read data is less than requested size"
             )
         if len(data) == 0:
             return None
@@ -69,20 +72,21 @@ class EventsFileReader(Iterable):
         """
         Read and check data described by a format string.
 
-        :param size: A size in bytes to be read.
-        :return: A decoded number.
-        :except: NotImplementedError if the stream is in non-blocking mode.
-        :except: EventReadingError on reading error.
+        Args:
+            size:  A size in bytes to be read.
+
+        Returns:
+             A decoded number.
         """
         data = self._read(size)
         if data is None:
             return None
-        checksum_size = struct.calcsize('I')
-        checksum = struct.unpack('I', self._read(checksum_size))[0]
+        checksum_size = struct.calcsize("I")
+        checksum = struct.unpack("I", self._read(checksum_size))[0]
         checksum_computed = _masked_crc32c(data)
         if checksum != checksum_computed:
             raise EventReadingError(
-                'Invalid checksum. {checksum} != {crc32}'.format(
+                "Invalid checksum. {checksum} != {crc32}".format(
                     checksum=checksum, crc32=checksum_computed
                 )
             )
@@ -92,36 +96,39 @@ class EventsFileReader(Iterable):
         """
         Iterates over events in the current events file
 
-        :return: An Event object
-        :except: NotImplementedError if the stream is in non-blocking mode.
-        :except: EventReadingError on reading error.
+        Returns:
+            An Event object
         """
         while True:
-            header_size = struct.calcsize('Q')
+            header_size = struct.calcsize("Q")
             header = self._read_and_check(header_size)
             if header is None:
                 break
-            event_size = struct.unpack('Q', header)[0]
+            event_size = struct.unpack("Q", header)[0]
             event_raw = self._read_and_check(event_size)
             if event_raw is None:
-                raise EventReadingError('Unexpected end of events file')
+                raise EventReadingError("Unexpected end of events file")
             event = Event()
             event.ParseFromString(event_raw)
             yield event
 
 
 SummaryItem = namedtuple(
-    'SummaryItem', ['tag', 'step', 'wall_time', 'value', 'type']
+    "SummaryItem", ["tag", "step", "wall_time", "value", "type"]
 )
 
 
 def _get_scalar(value) -> Optional[np.ndarray]:
     """
     Decode an scalar event
-    :param value: A value field of an event
-    :return: Decoded scalar
+
+    Args:
+        value: A value field of an event
+
+    Returns:
+        Decoded scalar
     """
-    if value.HasField('simple_value'):
+    if value.HasField("simple_value"):
         return value.simple_value
     return None
 
@@ -129,10 +136,14 @@ def _get_scalar(value) -> Optional[np.ndarray]:
 def _get_image(value) -> Optional[np.ndarray]:
     """
     Decode an image event
-    :param value: A value field of an event
-    :return: Decoded image
+
+    Args:
+        value: A value field of an event
+
+    Returns:
+        Decoded image
     """
-    if value.HasField('image'):
+    if value.HasField("image"):
         encoded_image = value.image.encoded_image_string
         buf = np.frombuffer(encoded_image, np.uint8)
         data = cv2.imdecode(buf, cv2.IMREAD_COLOR)
@@ -147,22 +158,24 @@ class SummaryReader(Iterable):
     """
 
     _DECODERS = {
-        'scalar': _get_scalar,
-        'image': _get_image,
+        "scalar": _get_scalar,
+        "image": _get_image,
     }
 
     def __init__(
         self,
         logdir: Union[str, Path],
         tag_filter: Optional[Iterable] = None,
-        types: Iterable = ('scalar', )
+        types: Iterable = ("scalar", )
     ):
         """
         Initalize new summary reader
-        :param logdir: A directory with Tensorboard summary data
-        :param tag_filter: A list of tags to leave (`None` for all)
-        :param types: A list of types to get.
-            Only 'scalar' and 'image' types are allowed at the moment.
+
+        Args:
+            logdir: A directory with Tensorboard summary data
+            tag_filter: A list of tags to leave (`None` for all)
+            types: A list of types to get.
+            Only "scalar" and "image" types are allowed at the moment.
         """
         self._logdir = Path(logdir)
 
@@ -176,18 +189,22 @@ class SummaryReader(Iterable):
         if not all(
             type_name in self._DECODERS.keys() for type_name in self._types
         ):
-            raise ValueError('Invalid type name')
+            raise ValueError("Invalid type name")
 
     def _decode_events(self, events: Iterable) -> Optional[SummaryItem]:
         """
         Convert events to `SummaryItem` instances
-        :param events: An iterable with events objects
-        :return: A generator with decoded events
-            or `None`s if an event can't be decoded
+
+        Args:
+            events: An iterable with events objects
+
+        Returns:
+            A generator with decoded events
+            or `None`s if an event can"t be decoded
         """
 
         for event in events:
-            if not event.HasField('summary'):
+            if not event.HasField("summary"):
                 yield None
             step = event.step
             wall_time = event.wall_time
@@ -210,19 +227,25 @@ class SummaryReader(Iterable):
     def _check_tag(self, tag: str) -> bool:
         """
         Check if a tag matches the current tag filter
-        :param tag: A string with tag
-        :return: A boolean value.
+
+        Args:
+            tag: A string with tag
+
+        Returns:
+            A boolean value.
         """
         return self._tag_filter is None or tag in self._tag_filter
 
     def __iter__(self) -> SummaryItem:
         """
         Iterate over events in all the files in the current logdir
-        :return: A generator with `SummaryItem` objects
+
+        Returns:
+            A generator with `SummaryItem` objects
         """
-        log_files = sorted(f for f in self._logdir.glob('*') if f.is_file())
+        log_files = sorted(f for f in self._logdir.glob("*") if f.is_file())
         for file_path in log_files:
-            with open(file_path, 'rb') as f:
+            with open(file_path, "rb") as f:
                 reader = EventsFileReader(f)
                 yield from (
                     item for item in self._decode_events(reader)

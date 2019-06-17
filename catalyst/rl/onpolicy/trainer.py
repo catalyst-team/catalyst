@@ -7,10 +7,23 @@ import torch
 from torch.utils.data import DataLoader
 
 from catalyst.rl.core import TrainerSpec
-from catalyst.rl.utils import \
-    OnpolicyRolloutBuffer, OnpolicyRolloutSampler, \
-    _get_states_from_observations
-from catalyst.rl.onpolicy.algorithms.utils import append_dict
+from catalyst.rl import utils
+
+
+def _get_states_from_observations(observations, history_len=1):
+    """
+    DB stores observations but not states.
+    This function creates states from observations
+    by adding new dimension of size (history_len).
+    """
+    observations = np.array(observations)
+    trajectory_size = observations.shape[0]
+    states = np.zeros((trajectory_size, history_len) + observations.shape[1:])
+    for i in range(history_len - 1):
+        pivot = history_len - i - 1
+        states[pivot:, i, :] = observations[:-pivot, :]
+    states[:, -1, :] = observations
+    return states
 
 
 class Trainer(TrainerSpec):
@@ -44,7 +57,7 @@ class Trainer(TrainerSpec):
                 states_batch, actions_batch, rewards_batch, dones_batch
             )
             if rollout is not None:
-                rollout = append_dict(rollout, rollout_batch)
+                rollout = utils.append_dict(rollout, rollout_batch)
             else:
                 rollout = rollout_batch
         return rollout
@@ -58,7 +71,7 @@ class Trainer(TrainerSpec):
         del self.replay_buffer
 
         rollout_spec = self.algorithm.get_rollout_spec()
-        self.replay_buffer = OnpolicyRolloutBuffer(
+        self.replay_buffer = utils.OnpolicyRolloutBuffer(
             state_space=self.env_spec.state_space,
             action_space=self.env_spec.action_space,
             capacity=self.max_num_transitions,
@@ -128,7 +141,7 @@ class Trainer(TrainerSpec):
         self.logger.add_scalar("fetch time", elapsed_time, self.epoch)
 
     def _run_epoch(self) -> Dict:
-        sampler = OnpolicyRolloutSampler(
+        sampler = utils.OnpolicyRolloutSampler(
             buffer=self.replay_buffer,
             num_mini_epochs=self.num_mini_epochs)
         loader = DataLoader(

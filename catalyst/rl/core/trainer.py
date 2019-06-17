@@ -8,12 +8,11 @@ from datetime import datetime
 from torch.utils.data import DataLoader
 from tensorboardX import SummaryWriter
 
-from catalyst.utils.misc import set_global_seed, Seeder
-from catalyst.dl.utils import UtilsFactory
-from catalyst.rl.db.core import DBSpec
-from catalyst.rl.environments.core import EnvironmentSpec
-from catalyst.rl.offpolicy.algorithms.core import AlgorithmSpec  # @TODO: fix
-from catalyst.rl.utils import _make_tuple
+from catalyst.utils.seed import set_global_seed, Seeder
+from catalyst import utils
+from .db import DBSpec
+from .environment import EnvironmentSpec
+from .algorithm import AlgorithmSpec
 
 
 class TrainerSpec:
@@ -30,15 +29,12 @@ class TrainerSpec:
         weights_sync_period: int = 1,
         weights_sync_mode: str = None,
         save_period: int = 10,
-        resume: str = None,
         gc_period: int = 10,
         seed: int = 42,
         **kwargs,
     ):
         # algorithm & environment
         self.algorithm = algorithm
-        if resume is not None:
-            self.algorithm.load_checkpoint(resume)
         self.env_spec = env_spec
 
         # logging
@@ -57,7 +53,7 @@ class TrainerSpec:
         # updates configuration
         # (actor_period, critic_period)
         self.actor_grad_period, self.critic_grad_period = \
-            _make_tuple(online_update_period)
+            utils.make_tuple(online_update_period)
 
         # synchronization configuration
         self.db_server = db_server
@@ -126,7 +122,7 @@ class TrainerSpec:
         if self.epoch % self.save_period == 0:
             checkpoint = self.algorithm.pack_checkpoint()
             checkpoint["epoch"] = self.epoch
-            filename = UtilsFactory.save_checkpoint(
+            filename = utils.save_checkpoint(
                 logdir=self.logdir,
                 checkpoint=checkpoint,
                 suffix=str(self.epoch)

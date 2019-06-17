@@ -1,6 +1,6 @@
 from redis import StrictRedis
 from catalyst.utils.compression import pack, unpack
-from .core import DBSpec
+from catalyst.rl.core import DBSpec
 
 
 class RedisDB(DBSpec):
@@ -69,3 +69,6 @@ class RedisDB(DBSpec):
 
     def clean_weights(self, prefix):
         self._server.delete(f"{self._prefix}_{prefix}_weights")
+
+
+__all__ = ["RedisDB"]
