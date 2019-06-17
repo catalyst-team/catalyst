@@ -72,7 +72,7 @@ class SupervisedRunner(Runner):
         fp16: Union[Dict, bool] = None,
         check: bool = False,
     ):
-        if isinstance(fp16, bool):
+        if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
         experiment = self._default_experiment(
             stage="train",
@@ -104,7 +104,7 @@ class SupervisedRunner(Runner):
         fp16: Union[Dict, bool] = None,
         check: bool = False,
     ):
-        if isinstance(fp16, bool):
+        if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
         experiment = self._default_experiment(
             stage="infer",
