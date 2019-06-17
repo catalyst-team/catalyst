@@ -21,9 +21,9 @@ from catalyst.utils.seed import set_global_seed, Seeder  # noqa E402
 from catalyst import utils  # noqa E402
 from .trajectory_sampler import TrajectorySampler  # noqa E402
 from catalyst.rl.exploration import ExplorationHandler  # noqa E402
-from catalyst.rl.environments.core import EnvironmentSpec  # noqa E402
-from catalyst.rl.db.core import DBSpec  # noqa E402
-from catalyst.rl.agents.core import ActorSpec, CriticSpec  # noqa E402
+from catalyst.rl.core.core import EnvironmentSpec  # noqa E402
+from catalyst.rl.core.core import DBSpec  # noqa E402
+from catalyst.rl.core.core import ActorSpec, CriticSpec  # noqa E402
 
 
 class Sampler:

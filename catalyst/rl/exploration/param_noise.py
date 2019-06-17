@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from .core import ExplorationStrategy
+from catalyst.rl.core import ExplorationStrategy
 from catalyst.rl.utils import get_network_weights, set_network_weights
 
 
@@ -92,3 +92,6 @@ class ParameterSpaceNoise(ExplorationStrategy):
 
     def get_action(self, action):
         return action
+
+
+__all__ = ["ParameterSpaceNoise"]

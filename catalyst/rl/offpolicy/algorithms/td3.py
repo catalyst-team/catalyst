@@ -9,8 +9,8 @@ from .core_continuous import AlgorithmContinuous
 from catalyst.rl.utils import categorical_loss, quantile_loss, \
     hyperbolic_gammas, soft_update, get_trainer_components
 from .core import AlgorithmSpec
-from catalyst.rl.environments.core import EnvironmentSpec
-from catalyst.rl.agents.core import CriticSpec
+from catalyst.rl.core.core import EnvironmentSpec
+from catalyst.rl.core.core import CriticSpec
 
 
 class TD3(AlgorithmContinuous):

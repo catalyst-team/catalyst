@@ -1,5 +1,5 @@
 import numpy as np
-from .core import ExplorationStrategy
+from catalyst.rl.core import ExplorationStrategy
 from catalyst.utils.numpy import np_softmax
 
 EPS = 1e-6
@@ -39,3 +39,6 @@ class Boltzmann(ExplorationStrategy):
             self.temp_final, self.temperature - self.delta_temp
         )
         return action
+
+
+__all__ = ["Boltzmann"]

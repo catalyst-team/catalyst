@@ -3,8 +3,8 @@ import numpy as np
 from gym.spaces import Box, Discrete
 import torch
 
-from catalyst.rl.agents.core import ActorSpec, CriticSpec
-from catalyst.rl.environments.core import EnvironmentSpec
+from catalyst.rl.core.core import ActorSpec, CriticSpec
+from catalyst.rl.core.core import EnvironmentSpec
 
 
 class PolicyHandler:

@@ -1,5 +1,14 @@
 import numpy as np
-from .core import ExplorationStrategy
+from catalyst.rl.core import ExplorationStrategy
+
+
+class NoExploration(ExplorationStrategy):
+    """
+    For continuous environments only.
+    Returns action produced by the actor network without changes.
+    """
+    def get_action(self, action):
+        return action
 
 
 class GaussNoise(ExplorationStrategy):
@@ -49,3 +58,6 @@ class OrnsteinUhlenbeckProcess(ExplorationStrategy):
         noisy_action = action + x
         self.x_prev = x
         return noisy_action
+
+
+__all__ = ["NoExploration", "GaussNoise", "OrnsteinUhlenbeckProcess"]

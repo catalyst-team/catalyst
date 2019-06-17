@@ -1,7 +1,7 @@
 from typing import Union, Dict
 from abc import abstractmethod, ABC
-from catalyst.rl.agents.core import ActorSpec, CriticSpec
-from catalyst.rl.environments.core import EnvironmentSpec
+from catalyst.rl.core.core import ActorSpec, CriticSpec
+from catalyst.rl.core.core import EnvironmentSpec
 
 
 class AlgorithmSpec(ABC):

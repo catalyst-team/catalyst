@@ -1,5 +1,5 @@
 import numpy as np
-from .core import ExplorationStrategy
+from catalyst.rl.core import ExplorationStrategy
 
 
 class Greedy(ExplorationStrategy):
@@ -45,3 +45,6 @@ class EpsilonGreedy(ExplorationStrategy):
             action = np.argmax(q_values)
         self.eps = max(self.eps_final, self.eps - self.delta_eps)
         return action
+
+
+__all__ = ["Greedy", "EpsilonGreedy"]

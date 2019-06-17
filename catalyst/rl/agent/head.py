@@ -1,9 +1,9 @@
+from typing import List
 import torch
 import torch.nn as nn
-from catalyst.utils.initialization import outer_init
+from catalyst.utils import outer_init
 from catalyst.contrib.models import SequentialNet
 from .policy import CategoricalPolicy, GaussPolicy, RealNVPPolicy
-from typing import List
 
 
 class ValueHead(nn.Module):
@@ -143,3 +143,6 @@ class PolicyHead(nn.Module):
         x = self.head_net(inputs)
         x = self._policy_fn(x, logprob, deterministic)
         return x
+
+
+__all__ = ["ValueHead", "PolicyHead"]

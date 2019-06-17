@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from catalyst.contrib.models import SequentialNet
-from .layers import LamaPooling
+from catalyst.contrib.modules import LamaPooling
 
 
 class StateNet(nn.Module):
@@ -171,3 +171,6 @@ class StateActionNet(nn.Module):
             main_net=main_net
         )
         return net
+
+
+__all__ = ["StateNet", "StateActionNet"]

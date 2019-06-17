@@ -2,8 +2,21 @@ from typing import List
 from copy import deepcopy
 import numpy as np
 from catalyst.rl.registry import EXPLORATION
-from catalyst.rl.environments.core import EnvironmentSpec
-from .core import ExplorationStrategy
+from catalyst.rl.core import EnvironmentSpec
+
+
+class ExplorationStrategy:
+    """
+    Base class for working with various exploration strategies.
+    In discrete case must contain method get_action(q_values).
+    In continuous case must contain method get_action(action).
+    """
+    def __init__(self, power=1.0):
+        self._power = power
+
+    def set_power(self, value):
+        assert 0. <= value <= 1.0
+        self._power = value
 
 
 class ExplorationHandler:
@@ -33,3 +46,6 @@ class ExplorationHandler:
         strategy_idx = np.random.choice(self.num_strategies, p=self.probs)
         strategy = self.exploration_strategies[strategy_idx]
         return strategy
+
+
+__all__ = ["ExplorationStrategy", "ExplorationHandler"]

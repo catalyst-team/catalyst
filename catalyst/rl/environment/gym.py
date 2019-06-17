@@ -4,7 +4,7 @@ import numpy as np
 import gym
 from gym import spaces
 import time
-from .core import EnvironmentSpec
+from catalyst.rl.core import EnvironmentSpec
 
 
 class GymWrapper(EnvironmentSpec):
@@ -79,3 +79,6 @@ class GymWrapper(EnvironmentSpec):
         info["reward_origin"] = reward
         reward *= self._reward_scale
         return observation, reward, done, info
+
+
+__all__ = ["GymWrapper"]

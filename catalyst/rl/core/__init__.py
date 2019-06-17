@@ -1,5 +1,9 @@
 # flake8: noqa
 
+from .agent import ActorSpec, CriticSpec
+from .db import DBSpec
+from .environment import EnvironmentSpec
+from .exploration import ExplorationStrategy, ExplorationHandler
 from .policy_handler import PolicyHandler
 from .sampler import Sampler
 from .trainer import TrainerSpec

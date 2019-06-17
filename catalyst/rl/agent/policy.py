@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-from catalyst.rl.registry import MODULES
-from .layers import SquashingLayer, CouplingLayer
+from catalyst.contrib.registry import MODULES
+from catalyst.contrib.modules import SquashingLayer, CouplingLayer
 from catalyst.utils import normal_sample, normal_logprob
 
 
@@ -90,3 +90,6 @@ class RealNVPPolicy(nn.Module):
         if logprob:
             return action, log_pi
         return action
+
+
+__all__ = ["CategoricalPolicy", "GaussPolicy", "RealNVPPolicy"]

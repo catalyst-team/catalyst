@@ -2,9 +2,8 @@ from typing import Dict
 from functools import reduce
 from gym.spaces import Box, Discrete
 
-from catalyst.rl.environments.core import EnvironmentSpec
-from .core import ActorSpec
-from .net import StateNet
+from catalyst.rl.core import ActorSpec, EnvironmentSpec
+from .network import StateNet
 from .head import PolicyHead
 
 
@@ -65,3 +64,6 @@ class Actor(ActorSpec):
         )
 
         return net
+
+
+__all__ = ["Actor"]

@@ -3,8 +3,8 @@ import torch
 
 from catalyst import utils
 from catalyst.rl.registry import AGENTS
-from catalyst.rl.agents.core import ActorSpec, CriticSpec
-from catalyst.rl.environments.core import EnvironmentSpec
+from catalyst.rl.core.core import ActorSpec, CriticSpec
+from catalyst.rl.core.core import EnvironmentSpec
 from catalyst.rl.utils import get_trainer_components
 from .core import AlgorithmSpec
 

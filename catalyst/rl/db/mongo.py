@@ -1,7 +1,7 @@
 import datetime
 import pymongo
 from catalyst.utils.compression import pack, unpack
-from .core import DBSpec
+from catalyst.rl.core import DBSpec
 
 
 class MongoDB(DBSpec):
@@ -96,3 +96,6 @@ class MongoDB(DBSpec):
 
     def clean_weights(self, prefix):
         self._weights_collection.delete_one({"prefix": prefix})
+
+
+__all__ = ["MongoDB"]

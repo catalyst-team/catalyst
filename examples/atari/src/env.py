@@ -3,7 +3,7 @@
 import numpy as np
 from gym import spaces
 import time
-from catalyst.rl.environments import EnvironmentSpec
+from catalyst.rl.environment import EnvironmentSpec
 
 from .atari_wrappers import make_atari_env
 

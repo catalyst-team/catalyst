@@ -10,8 +10,8 @@ from tensorboardX import SummaryWriter
 
 from catalyst.utils.seed import set_global_seed, Seeder
 from catalyst import utils
-from catalyst.rl.db.core import DBSpec
-from catalyst.rl.environments.core import EnvironmentSpec
+from catalyst.rl.core.core import DBSpec
+from catalyst.rl.core.core import EnvironmentSpec
 from catalyst.rl.offpolicy.algorithms.core import AlgorithmSpec  # @TODO: fix
 
 

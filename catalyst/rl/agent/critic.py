@@ -2,9 +2,8 @@ from typing import Dict
 from functools import reduce
 from gym.spaces import Discrete
 
-from catalyst.rl.environments.core import EnvironmentSpec
-from .core import CriticSpec
-from .net import StateNet, StateActionNet
+from catalyst.rl.core import CriticSpec, EnvironmentSpec
+from .network import StateNet, StateActionNet
 from .head import ValueHead
 
 
@@ -179,3 +178,6 @@ class StateActionCritic(CriticSpec):
         )
 
         return net
+
+
+__all__ = ["StateCritic", "ActionCritic", "StateActionCritic"]
