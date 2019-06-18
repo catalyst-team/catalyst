@@ -1,67 +1,85 @@
-from typing import Dict
+from typing import Dict, Tuple
 
 import numpy as np
 import multiprocessing as mp
-from gym.spaces import Space
+from gym import spaces
 from torch.utils.data import Dataset
 
 
-def _get_buffers(
-    observation_space: Space,
-    action_space: Space,
-    capacity: int,
-    mode: str = "numpy",
-    logdir: str = None
-):
-    assert mode in ["numpy", "memmap"]
-    if mode == "numpy":
-        observations = np.empty(
-            (capacity, ) + tuple(observation_space.shape),
-            dtype=observation_space.dtype
-        )
-        actions = np.empty(
-            (capacity, ) + tuple(action_space.shape), dtype=action_space.dtype
-        )
-        rewards = np.empty((capacity, ), dtype=np.float32)
-        dones = np.empty((capacity, ), dtype=np.bool)
-    elif mode == "memmap":
-        assert logdir is not None
+class BufferWrapper:
+    def __init__(
+        self,
+        capacity: int,
+        space: spaces.Space = None,
+        shape: Tuple[int] = None,
+        dtype = None,
+        name: str = None,
+        mode: str = "numpy",
+        logdir: str = None
+    ):
+        assert mode in ["numpy", "memmap"]
+        assert \
+            (space is None and shape is not None and dtype is not None) \
+            or (space is not None and shape is None and dtype is None)
 
-        observations = np.memmap(
-            f"{logdir}/observations.memmap",
-            mode="w+",
-            shape=(capacity, ) + tuple(observation_space.shape),
-            dtype=observation_space.dtype
-        )
-        actions = np.memmap(
-            f"{logdir}/actions.memmap",
-            mode="w+",
-            shape=(capacity, ) + tuple(action_space.shape),
-            dtype=action_space.dtype
-        )
-        rewards = np.memmap(
-            f"{logdir}/rewards.memmap",
-            mode="w+",
-            shape=(capacity, ),
-            dtype=np.float32
-        )
-        dones = np.memmap(
-            f"{logdir}/dones.memmap",
-            mode="w+",
-            shape=(capacity, ),
-            dtype=np.bool
-        )
-    else:
-        raise NotImplementedError()
+        self.space = space
+        self.capacity = capacity
+        self.name = name
+        self.mode = mode
+        self.logdir = logdir
 
-    return observations, actions, rewards, dones
+        if mode == "numpy":
+            if space is None or not isinstance(space, spaces.Dict):
+                space_shape = shape if space is None else space.shape
+                space_dtype = dtype if space is None else space.dtype
+
+                buffer = np.empty(
+                    (capacity, ) + tuple(space_shape),
+                    dtype=space_dtype
+                )
+            else:
+                assert space is not None
+                buffer = {}
+                for key, value in space.spaces.items():
+                    buffer[key] = np.empty(
+                        (capacity, ) + tuple(value.shape),
+                        dtype=value.dtype
+                    )
+        elif mode == "memmap":
+            assert logdir is not None
+            assert name is not None
+
+            if space is None or not isinstance(space, spaces.Dict):
+                space_shape = shape if space is None else space.shape
+                space_dtype = dtype if space is None else space.dtype
+
+                buffer = np.memmap(
+                    f"{logdir}/{name}.memmap",
+                    mode="w+",
+                    shape=(capacity,) + tuple(space_shape),
+                    dtype=space_dtype
+                )
+            else:
+                assert space is not None
+                buffer = {}
+                for key, value in space.spaces.items():
+                    buffer[key] = np.memmap(
+                        f"{logdir}/{name}.{key}.memmap",
+                        mode="w+",
+                        shape=(capacity,) + tuple(value.shape),
+                        dtype=value.dtype
+                    )
+        else:
+            raise NotImplementedError()
+
+        self.buffer = buffer
 
 
 class OffpolicyReplayBuffer(Dataset):
     def __init__(
         self,
-        observation_space: Space,
-        action_space: Space,
+        observation_space: spaces.Space,
+        action_space: spaces.Space,
         capacity: int = int(1e6),
         capacity_mult: int = 2,
         n_step: int = 1,
@@ -101,14 +119,36 @@ class OffpolicyReplayBuffer(Dataset):
         self.pointer = mp.Value("i", 0)
         self._trajectories_lens = []
 
-        self.observations, self.actions, self.rewards, self.dones = \
-            _get_buffers(
-                capacity=self.capacity_limit,
-                observation_space=observation_space,
-                action_space=action_space,
-                mode=mode,
-                logdir=logdir
-            )
+        self.observations = BufferWrapper(
+            capacity=self.capacity_limit,
+            space=observation_space,
+            name="observations",
+            mode=mode,
+            logdir=logdir
+        )
+        self.actions = BufferWrapper(
+            capacity=self.capacity_limit,
+            space=action_space,
+            name="actions",
+            mode=mode,
+            logdir=logdir
+        )
+        self.rewards = BufferWrapper(
+            capacity=self.capacity_limit,
+            shape=(),
+            dtype=np.float32,
+            name="rewards",
+            mode=mode,
+            logdir=logdir
+        )
+        self.dones = BufferWrapper(
+            capacity=self.capacity_limit,
+            shape=(),
+            dtype=np.bool,
+            name="dones",
+            mode=mode,
+            logdir=logdir
+        )
 
     def push_trajectory(self, trajectory):
         with self._store_lock:
@@ -229,32 +269,33 @@ class OffpolicyReplayBuffer(Dataset):
 class OnpolicyRolloutBuffer(Dataset):
     def __init__(
         self,
-        state_space: Space,
-        action_space: Space,
+        state_space: spaces.Space,
+        action_space: spaces.Space,
         capacity=int(1e6),
         **rollout_spec
     ):
         self.state_space = state_space
         self.action_space = action_space
-
         self.capacity = capacity
-
         self.len = 0
         self.pointer = 0
 
         self.buffers = {
-            "state": np.empty(
-                (capacity, ) + tuple(state_space.shape),
-                dtype=state_space.dtype
+            "state": BufferWrapper(
+                capacity=self.capacity,
+                space=state_space,
             ),
-            "action": np.empty(
-                (capacity, ) + tuple(action_space.shape),
-                dtype=action_space.dtype
+            "action": BufferWrapper(
+                capacity=self.capacity,
+                space=action_space,
             )
         }
+
         for key, value in rollout_spec.items():
-            self.buffers[key] = np.empty(
-                (capacity, ) + tuple(value["shape"]), dtype=value["dtype"]
+            self.buffers[key] = BufferWrapper(
+                capacity=capacity,
+                shape=value["shape"],
+                dtype=value["dtype"]
             )
 
     def push_rollout(self, **rollout: Dict):
