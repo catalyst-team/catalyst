@@ -2,7 +2,6 @@ from typing import List, Tuple
 import os
 import numpy as np
 import imageio
-import jpeg4py as jpeg
 from skimage.color import label2rgb
 
 import torch
@@ -34,6 +33,8 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None):
     try:
         if os.environ.get('FORCE_JPEG_TURBO', False) \
                 and rootpath.endswith(("jpg", "JPG", "jpeg", "JPEG")):
+            import jpeg4py as jpeg
+
             img = jpeg.JPEG(rootpath).decode()
     except Exception:
         pass

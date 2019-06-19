@@ -3,7 +3,6 @@ numpy>=1.16.0
 torch>=0.4.1
 torchvision>=0.2.1
 imageio
-jpeg4py
 opencv-python
 scikit-image
 tqdm>=4.29.1
