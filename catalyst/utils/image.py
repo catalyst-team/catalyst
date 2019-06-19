@@ -2,6 +2,7 @@ from typing import List, Tuple
 import os
 import numpy as np
 import imageio
+import jpeg4py as jpeg
 from skimage.color import label2rgb
 
 import torch
@@ -29,7 +30,16 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None):
             uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
         )
 
-    img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB")
+    img = None
+    try:
+        if os.environ.get('FORCE_JPEG_TURBO', False) \
+                and rootpath.endswith(("jpg", "JPG", "jpeg", "JPEG")):
+            img = jpeg.JPEG(rootpath).decode()
+    except Exception:
+        pass
+
+    if img is None:
+        img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB")
 
     if expand_dims and len(img.shape) < 3:  # grayscale
         img = np.expand_dims(img, -1)
