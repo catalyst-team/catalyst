@@ -20,8 +20,14 @@ class MixupCallback(CriterionCallback):
 
         You may not use them together.
     """
-    def __init__(self, fields: List[str] = ("features",), alpha=1.0,
-                 train_only=True, **kwargs):
+
+    def __init__(
+            self,
+            fields: List[str] = ("features",),
+            alpha=1.0,
+            train_only=True,
+            **kwargs
+    ):
         """
         Args:
             fields (List[str]): list of features which must be affected.
