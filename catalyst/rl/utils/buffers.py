@@ -6,73 +6,70 @@ from gym import spaces
 from torch.utils.data import Dataset
 
 
-class BufferWrapper:
-    def __init__(
-        self,
-        capacity: int,
-        space: spaces.Space = None,
-        shape: Tuple[int] = None,
-        dtype = None,
-        name: str = None,
-        mode: str = "numpy",
-        logdir: str = None
-    ):
-        assert mode in ["numpy", "memmap"]
-        assert \
-            (space is None and shape is not None and dtype is not None) \
-            or (space is not None and shape is None and dtype is None)
+def _get_buffer(
+    capacity: int,
+    space: spaces.Space = None,
+    shape: Tuple = None,
+    dtype = None,
+    name: str = None,
+    mode: str = "numpy",
+    logdir: str = None
+):
+    assert mode in ["numpy", "memmap"]
+    assert \
+        (space is None and shape is not None and dtype is not None) \
+        or (space is not None and shape is None and dtype is None)
 
-        self.space = space
-        self.capacity = capacity
-        self.name = name
-        self.mode = mode
-        self.logdir = logdir
+    if mode == "numpy":
+        if space is None or not isinstance(space, spaces.Dict):
+            space_shape = shape if space is None else space.shape
+            space_dtype = dtype if space is None else space.dtype
 
-        if mode == "numpy":
-            if space is None or not isinstance(space, spaces.Dict):
-                space_shape = shape if space is None else space.shape
-                space_dtype = dtype if space is None else space.dtype
-
-                buffer = np.empty(
-                    (capacity, ) + tuple(space_shape),
-                    dtype=space_dtype
-                )
-            else:
-                assert space is not None
-                buffer = {}
-                for key, value in space.spaces.items():
-                    buffer[key] = np.empty(
-                        (capacity, ) + tuple(value.shape),
-                        dtype=value.dtype
-                    )
-        elif mode == "memmap":
-            assert logdir is not None
-            assert name is not None
-
-            if space is None or not isinstance(space, spaces.Dict):
-                space_shape = shape if space is None else space.shape
-                space_dtype = dtype if space is None else space.dtype
-
-                buffer = np.memmap(
-                    f"{logdir}/{name}.memmap",
-                    mode="w+",
-                    shape=(capacity,) + tuple(space_shape),
-                    dtype=space_dtype
-                )
-            else:
-                assert space is not None
-                buffer = {}
-                for key, value in space.spaces.items():
-                    buffer[key] = np.memmap(
-                        f"{logdir}/{name}.{key}.memmap",
-                        mode="w+",
-                        shape=(capacity,) + tuple(value.shape),
-                        dtype=value.dtype
-                    )
+            buffer_dtype = space_dtype
+            buffer = np.empty(
+                (capacity, ) + tuple(space_shape),
+                dtype=space_dtype
+            )
         else:
-            raise NotImplementedError()
+            assert space is not None
 
-        self.buffer = buffer
+            buffer_dtype = []
+            for key, value in space.spaces.items():
+                buffer_dtype.append((key, value.dtype, value.shape))
+            buffer_dtype = np.dtype(buffer_dtype)
+            buffer = np.empty(capacity, dtype=buffer_dtype)
+    elif mode == "memmap":
+        assert logdir is not None
+        assert name is not None
+
+        if space is None or not isinstance(space, spaces.Dict):
+            space_shape = shape if space is None else space.shape
+            space_dtype = dtype if space is None else space.dtype
+
+            buffer_dtype = space_dtype
+            buffer = np.memmap(
+                f"{logdir}/{name}.memmap",
+                mode="w+",
+                shape=(capacity,) + tuple(space_shape),
+                dtype=space_dtype
+            )
+        else:
+            assert space is not None
+
+            buffer_dtype = []
+            for key, value in space.spaces.items():
+                buffer_dtype.append((key, value.dtype, value.shape))
+            buffer_dtype = np.dtype(buffer_dtype)
+            buffer = np.memmap(
+                f"{logdir}/{name}.memmap",
+                mode="w+",
+                shape=(capacity,),
+                dtype=buffer_dtype
+            )
+    else:
+        raise NotImplementedError()
+
+    return buffer, buffer_dtype
 
 
 class OffpolicyReplayBuffer(Dataset):
@@ -114,26 +111,26 @@ class OffpolicyReplayBuffer(Dataset):
         self.capacity_limit = capacity * capacity_mult
 
         self._store_lock = mp.Lock()
-        self.num_trajectories = mp.Value("i", 0)
-        self.num_transitions = mp.Value("i", 0)
-        self.pointer = mp.Value("i", 0)
+        self.num_trajectories = 0
+        self.num_transitions = 0
+        self.pointer = 0
         self._trajectories_lens = []
 
-        self.observations = BufferWrapper(
+        self.observations, self.observations_dtype = _get_buffer(
             capacity=self.capacity_limit,
-            space=observation_space,
+            space=self.observation_space,
             name="observations",
             mode=mode,
             logdir=logdir
         )
-        self.actions = BufferWrapper(
+        self.actions, self.actions_dtype = _get_buffer(
             capacity=self.capacity_limit,
-            space=action_space,
+            space=self.action_space,
             name="actions",
             mode=mode,
             logdir=logdir
         )
-        self.rewards = BufferWrapper(
+        self.rewards, self.rewards_dtype = _get_buffer(
             capacity=self.capacity_limit,
             shape=(),
             dtype=np.float32,
@@ -141,7 +138,7 @@ class OffpolicyReplayBuffer(Dataset):
             mode=mode,
             logdir=logdir
         )
-        self.dones = BufferWrapper(
+        self.dones, self.dones_dtype = _get_buffer(
             capacity=self.capacity_limit,
             shape=(),
             dtype=np.bool,
@@ -154,30 +151,43 @@ class OffpolicyReplayBuffer(Dataset):
         with self._store_lock:
             observations, actions, rewards, dones = trajectory
             trajectory_len = len(rewards)
-            curr_p = self.pointer.value
 
-            if curr_p + trajectory_len >= self.capacity_limit:
+            if self.pointer + trajectory_len >= self.capacity_limit:
                 return False
 
-            self.observations[curr_p:curr_p + trajectory_len] = \
-                np.array(observations)
-            self.actions[curr_p:curr_p + trajectory_len] = \
-                np.array(actions)
-            self.rewards[curr_p:curr_p + trajectory_len] = \
+            if isinstance(self.observations_dtype, np.dtype):
+                observations_ = np.zeros(1, dtype=self.observations_dtype)
+                for key in observations:
+                    observations_[key] = observations[key]
+            else:
+                observations_ = np.array(observations)
+            self.observations[self.pointer:self.pointer + trajectory_len] = \
+                observations_
+
+            if isinstance(self.actions_dtype, np.dtype):
+                actions_ = np.zeros(1, dtype=self.actions_dtype)
+                for key in actions:
+                    actions_[key] = actions[key]
+            else:
+                actions_ = np.array(actions)
+            self.actions[self.pointer:self.pointer + trajectory_len] = \
+                actions_
+
+            self.rewards[self.pointer:self.pointer + trajectory_len] = \
                 np.array(rewards)
-            self.dones[curr_p:curr_p + trajectory_len] = \
+            self.dones[self.pointer:self.pointer + trajectory_len] = \
                 np.array(dones)
 
             self._trajectories_lens.append(trajectory_len)
-            self.pointer.value += trajectory_len
-            self.num_trajectories.value += 1
-            self.num_transitions.value += trajectory_len
+            self.pointer += trajectory_len
+            self.num_trajectories += 1
+            self.num_transitions += trajectory_len
 
         return True
 
     def recalculate_index(self):
         with self._store_lock:
-            curr_p = self.pointer.value
+            curr_p = self.pointer
             if curr_p > self.capacity:
                 diff = curr_p - self.capacity
 
@@ -204,7 +214,7 @@ class OffpolicyReplayBuffer(Dataset):
                     self.dones[i_start:i_end] = \
                         self.dones[offset + i_start:offset + i_end]
 
-                self.pointer.value = curr_p
+                self.pointer = curr_p
             self.length = curr_p
 
     def get_state(self, idx, history_len=1):
@@ -214,10 +224,16 @@ class OffpolicyReplayBuffer(Dataset):
         start_idx = idx - history_len + 1
 
         if start_idx < 0 or np.any(self.dones[start_idx:idx + 1]):
-            state = np.zeros(
-                (history_len, ) + self.observation_space.shape,
-                dtype=self.observation_space.dtype
-            )
+            if isinstance(self.observations_dtype, np.dtype):
+                state = np.zeros(
+                    (history_len,),
+                    dtype=self.observations_dtype
+                )
+            else:
+                state = np.zeros(
+                    (history_len, ) + self.observation_space.shape,
+                    dtype=self.observation_space.dtype
+                )
             indices = [idx]
             for i in range(history_len - 1):
                 next_idx = (idx - i - 1) % self.capacity
