@@ -6,7 +6,10 @@ import torch
 
 
 class MixupCallback(CriterionCallback):
-    def __init__(self, fields: List[str] = ('features',), alpha=1.0, train_only=True, **kwargs):
+    def __init__(self, fields: List[str] = ('features',), alpha=1.0,
+                 train_only=True, **kwargs):
+        assert len(
+            fields) > 0, 'At least one field for MixupCallback is required'
         assert alpha >= 0, 'alpha must be>=0'
 
         super(MixupCallback, self).__init__(**kwargs)
@@ -30,7 +33,8 @@ class MixupCallback(CriterionCallback):
             self.index = self.index.cuda()
 
         for f in self.fields:
-            state.input[f] = self.lam * state.input[f] + (1 - self.lam) * state.input[f][self.index]
+            state.input[f] = self.lam * state.input[f] + (1 - self.lam) * \
+                             state.input[f][self.index]
 
     def _compute_loss(self, state: RunnerState, criterion):
         if self.train_only and state.loader_name != 'train':
@@ -39,7 +43,8 @@ class MixupCallback(CriterionCallback):
         y_a = state.input[self.input_key]
         y_b = state.input[self.input_key][self.index]
 
-        return self.lam * criterion(pred, y_a) + (1 - self.lam) * criterion(pred, y_b)
+        return self.lam * criterion(pred, y_a) + (1 - self.lam) * criterion(
+            pred, y_b)
 
 
 __all__ = ['MixupCallback']
