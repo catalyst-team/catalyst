@@ -33,7 +33,7 @@ class MixupCallback(CriterionCallback):
             fields (List[str]): list of features which must be affected.
             alpha (float): beta distribution a=b parameters.
                 Must be >=0. The more alpha closer to zero
-                the less effect of the mixup
+                the less effect of the mixup.
             train_only (bool): Apply to train only.
                 As the mixup use the proxy inputs, the targets are also proxy.
                 We are not interested in them, are we?
