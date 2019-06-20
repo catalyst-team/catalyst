@@ -10,7 +10,7 @@ def _get_buffer(
     capacity: int,
     space: spaces.Space = None,
     shape: Tuple = None,
-    dtype = None,
+    dtype=None,
     name: str = None,
     mode: str = "numpy",
     logdir: str = None
@@ -72,6 +72,78 @@ def _get_buffer(
     return buffer, buffer_dtype
 
 
+class BufferWrapper:
+    def __init__(
+        self,
+        capacity: int,
+        space: spaces.Space = None,
+        shape: Tuple = None,
+        dtype=None,
+        name: str = None,
+        mode: str = "numpy",
+        logdir: str = None
+    ):
+        self._capacity = capacity
+        self._space = space
+        self._shape = shape
+        self._dtype = dtype
+        self._name = name
+        self._mode = mode
+        self._logdir = logdir
+
+        self._data, self._data_dtype = _get_buffer(
+            capacity=self._capacity,
+            space=self._space,
+            shape=self._shape,
+            dtype=self._dtype,
+            name=self._name,
+            mode=self._mode,
+            logdir=self._logdir
+        )
+
+    def __getitem__(self, idx):
+        return self._data[idx]
+
+    def __setitem__(self, idx, value):
+
+        if isinstance(value, np.ndarray) and value.dtype == self._data_dtype:
+            value_ = value
+        elif isinstance(value, dict) \
+                and isinstance(self._data_dtype, np.dtype):
+            value_ = np.zeros(1, dtype=self._data_dtype)
+            for key in value:
+                value_[key] = value[key]
+        else:
+            value_ = np.array(value, dtype=self._data_dtype)
+
+        self._data[idx] = value_
+
+    @property
+    def shape(self):
+        return self._data.shape
+
+    @property
+    def capacity(self):
+        return self._capacity
+
+    @property
+    def dtype(self):
+        return self._data_dtype
+
+    def __len__(self):
+        return len(self._data)
+
+    def __repr__(self):
+        return (
+            self._data.__repr__()
+            .replace(
+                "array",
+                f"BufferWrapper("
+                f"capacity={self._capacity}, "
+                f"data_dtype={self._data_dtype}), ")
+        )
+
+
 class OffpolicyReplayBuffer(Dataset):
     def __init__(
         self,
@@ -116,21 +188,21 @@ class OffpolicyReplayBuffer(Dataset):
         self.pointer = 0
         self._trajectories_lens = []
 
-        self.observations, self.observations_dtype = _get_buffer(
+        self.observations = BufferWrapper(
             capacity=self.capacity_limit,
             space=self.observation_space,
             name="observations",
             mode=mode,
             logdir=logdir
         )
-        self.actions, self.actions_dtype = _get_buffer(
+        self.actions = BufferWrapper(
             capacity=self.capacity_limit,
             space=self.action_space,
             name="actions",
             mode=mode,
             logdir=logdir
         )
-        self.rewards, self.rewards_dtype = _get_buffer(
+        self.rewards = BufferWrapper(
             capacity=self.capacity_limit,
             shape=(),
             dtype=np.float32,
@@ -138,7 +210,7 @@ class OffpolicyReplayBuffer(Dataset):
             mode=mode,
             logdir=logdir
         )
-        self.dones, self.dones_dtype = _get_buffer(
+        self.dones = BufferWrapper(
             capacity=self.capacity_limit,
             shape=(),
             dtype=np.bool,
@@ -155,28 +227,11 @@ class OffpolicyReplayBuffer(Dataset):
             if self.pointer + trajectory_len >= self.capacity_limit:
                 return False
 
-            if isinstance(self.observations_dtype, np.dtype):
-                observations_ = np.zeros(1, dtype=self.observations_dtype)
-                for key in observations:
-                    observations_[key] = observations[key]
-            else:
-                observations_ = np.array(observations)
             self.observations[self.pointer:self.pointer + trajectory_len] = \
-                observations_
-
-            if isinstance(self.actions_dtype, np.dtype):
-                actions_ = np.zeros(1, dtype=self.actions_dtype)
-                for key in actions:
-                    actions_[key] = actions[key]
-            else:
-                actions_ = np.array(actions)
-            self.actions[self.pointer:self.pointer + trajectory_len] = \
-                actions_
-
-            self.rewards[self.pointer:self.pointer + trajectory_len] = \
-                np.array(rewards)
-            self.dones[self.pointer:self.pointer + trajectory_len] = \
-                np.array(dones)
+                observations
+            self.actions[self.pointer:self.pointer + trajectory_len] = actions
+            self.rewards[self.pointer:self.pointer + trajectory_len] = rewards
+            self.dones[self.pointer:self.pointer + trajectory_len] = dones
 
             self._trajectories_lens.append(trajectory_len)
             self.pointer += trajectory_len
@@ -224,16 +279,10 @@ class OffpolicyReplayBuffer(Dataset):
         start_idx = idx - history_len + 1
 
         if start_idx < 0 or np.any(self.dones[start_idx:idx + 1]):
-            if isinstance(self.observations_dtype, np.dtype):
-                state = np.zeros(
-                    (history_len,),
-                    dtype=self.observations_dtype
-                )
-            else:
-                state = np.zeros(
-                    (history_len, ) + self.observation_space.shape,
-                    dtype=self.observation_space.dtype
-                )
+            state = np.zeros(
+                (history_len,) + tuple(self.observations.shape[1:]),
+                dtype=self.observations.dtype
+            )
             indices = [idx]
             for i in range(history_len - 1):
                 next_idx = (idx - i - 1) % self.capacity
@@ -258,7 +307,8 @@ class OffpolicyReplayBuffer(Dataset):
             done = self.dones[i]
             if done:
                 break
-        return state, self.actions[idx], cum_reward, next_state, done
+        action = self.actions[idx]
+        return state, action, cum_reward, next_state, done
 
     def __getitem__(self, index):
         state, action, reward, next_state, done = \
@@ -269,10 +319,10 @@ class OffpolicyReplayBuffer(Dataset):
                 gamma=self.gamma)
 
         dct = {
-            "state": np.array(state).astype(np.float32),
-            "action": np.array(action).astype(np.float32),
+            "state": state,
+            "action": action,
             "reward": np.array(reward).astype(np.float32),
-            "next_state": np.array(next_state).astype(np.float32),
+            "next_state": next_state,
             "done": np.array(done).astype(np.float32)
         }
 
