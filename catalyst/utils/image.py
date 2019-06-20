@@ -14,13 +14,13 @@ _IMAGENET_MEAN = (0.485, 0.456, 0.406)
 logger = logging.getLogger(__name__)
 
 JPEG4PY_ENABLED = False
-if os.environ.get('FORCE_JPEG_TURBO', False):
+if os.environ.get("FORCE_JPEG_TURBO", False):
     try:
         import jpeg4py as jpeg
 
         # check libjpeg-turbo availability through image reading
-        img = np.zeros((1, 1, 3))
-        with tempfile.NamedTemporaryFile(suffix='.jpg') as fp:
+        img = np.zeros((1, 1, 3), dtype=np.uint8)
+        with tempfile.NamedTemporaryFile(suffix=".jpg") as fp:
             imageio.imwrite(fp.name, img)
             img = jpeg.JPEG(fp.name).decode()
 
@@ -32,8 +32,8 @@ if os.environ.get('FORCE_JPEG_TURBO', False):
         )
     except OSError:
         logger.warning(
-            "jpeg4py not available. "
-            "To install libjpeg-turbo, see `http://bfy.tw/OC7m`."
+            "libjpeg-turbo not available. "
+            "To install libjpeg-turbo, run `apt-get install libturbojpeg`."
         )
 
 
@@ -56,8 +56,8 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None):
             uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
         )
 
-    if JPEG4PY_ENABLED and rootpath.endswith(("jpg", "JPG", "jpeg", "JPEG")):
-        img = jpeg.JPEG(rootpath).decode()
+    if JPEG4PY_ENABLED and uri.endswith(("jpg", "JPG", "jpeg", "JPEG")):
+        img = jpeg.JPEG(uri).decode()
     else:
         img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB")
 
