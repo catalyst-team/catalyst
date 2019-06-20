@@ -143,6 +143,7 @@ class TrajectorySampler:
             return None, None
 
         trajectory = self.get_trajectory()
+
         # if we have an Atari environment, on the episode end the Monitor
         # wrapper provides the total score (the unclipped reward)
         # in info['episode']
@@ -157,5 +158,4 @@ class TrajectorySampler:
             "num_steps": num_steps,
             "original_reward": original_reward
         }
-
         return trajectory, trajectory_info
