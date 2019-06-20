@@ -141,7 +141,7 @@ class Sampler:
         self,
         *,
         reward,
-        score,
+        original_reward,
         num_steps,
         elapsed_time,
         seed
@@ -150,7 +150,7 @@ class Sampler:
             f"--- trajectory {int(self.trajectory_index):05d}:\t"
             f"steps: {int(num_steps):05d}\t"
             f"reward: {reward:9.4f}\t"
-            f"score: {score:9.4f}\t"
+            f"original_reward: {original_reward:9.4f}\t"
             f"time: {elapsed_time:9.4f}\t"
             f"seed: {seed}"
         )
@@ -159,7 +159,7 @@ class Sampler:
         self,
         *,
         reward,
-        score,
+        original_reward,
         num_steps,
         elapsed_time,
         **kwargs
@@ -172,7 +172,8 @@ class Sampler:
                 "trajectory/reward", reward, self.trajectory_index
             )
             self.logger.add_scalar(
-                "trajectory/score", score, self.trajectory_index
+                "trajectory/original_reward", original_reward,
+                self.trajectory_index
             )
             self.logger.add_scalar(
                 "time/trajectories_per_minute", 60. / elapsed_time,

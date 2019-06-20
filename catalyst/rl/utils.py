@@ -605,14 +605,14 @@ class TrajectorySampler:
         # in info['episode']
 
         if info and "episode" in info:
-            score = info["episode"]["r"]
+            original_reward = info["episode"]["r"]
         else:
-            score = reward
+            original_reward = reward
 
         trajectory_info = {
             "reward": reward,
             "num_steps": num_steps,
-            "score": score
+            "original_reward": original_reward
         }
 
         return trajectory, trajectory_info
