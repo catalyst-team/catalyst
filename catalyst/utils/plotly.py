@@ -8,7 +8,7 @@ from plotly.offline import init_notebook_mode, iplot
 from catalyst.utils.tensorboard import SummaryReader, SummaryItem
 
 
-def get_tensorboard_scalars(
+def _get_tensorboard_scalars(
     logdir: Union[str, Path], metrics: Optional[List[str]], step: str
 ) -> Dict[str, List]:
     summary_reader = SummaryReader(logdir, types=['scalar'])
@@ -22,7 +22,7 @@ def get_tensorboard_scalars(
     return items
 
 
-def get_scatter(scalars: List[SummaryItem], name: str) -> go.Scatter:
+def _get_scatter(scalars: List[SummaryItem], name: str) -> go.Scatter:
     xs = [s.step for s in scalars]
     ys = [s.value for s in scalars]
     return go.Scatter(x=xs, y=ys, name=name)
@@ -44,7 +44,7 @@ def plot_tensorboard_log(
     }
 
     scalars_per_loader = {
-        key: get_tensorboard_scalars(inner_logdir, metrics, step)
+        key: _get_tensorboard_scalars(inner_logdir, metrics, step)
         for key, inner_logdir in logdirs.items()
     }
 
@@ -57,7 +57,7 @@ def plot_tensorboard_log(
         metric_data = []
         for key, value in metric_logs.items():
             try:
-                data_ = get_scatter(value, f"{key}/{metric_name}")
+                data_ = _get_scatter(value, f"{key}/{metric_name}")
                 metric_data.append(data_)
             except:  # noqa: E722
                 pass
@@ -69,3 +69,6 @@ def plot_tensorboard_log(
             yaxis=dict(hoverformat=".5f")
         )
         iplot(go.Figure(data=metric_data, layout=layout))
+
+
+__all__ = ["plot_tensorboard_log"]

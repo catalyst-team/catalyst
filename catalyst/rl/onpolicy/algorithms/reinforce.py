@@ -1,11 +1,11 @@
 import numpy as np
 import torch
 
-from .actor import ActorAlgorithmSpec
-from .utils import geometric_cumsum
+from .actor import OnpolicyActor
+from catalyst.rl.utils import geometric_cumsum
 
 
-class REINFORCE(ActorAlgorithmSpec):
+class REINFORCE(OnpolicyActor):
     def _init(
         self,
         entropy_reg_coefficient: float = 0.
@@ -38,7 +38,7 @@ class REINFORCE(ActorAlgorithmSpec):
         }
         return rollout
 
-    def train(self, batch, actor_update=True, critic_update=True):
+    def train(self, batch, **kwargs):
         states, actions, returns, action_logprobs = \
             batch["state"], batch["action"], batch["return"],\
             batch["action_logprob"]

@@ -7,10 +7,10 @@ from .encoder import UnetEncoder, ResnetEncoder
 from .bridge import UnetBridge
 from .decoder import UNetDecoder
 from .head import UnetHead
-from .core import _UnetSpec, _ResnetUnetSpec
+from .core import UnetSpec, ResnetUnetSpec
 
 
-class Linknet(_UnetSpec):
+class Linknet(UnetSpec):
 
     def _get_components(
         self,
@@ -43,7 +43,7 @@ class Linknet(_UnetSpec):
         return encoder, bridge, decoder, head
 
 
-class ResnetLinknet(_ResnetUnetSpec):
+class ResnetLinknet(ResnetUnetSpec):
 
     def _get_components(
         self,

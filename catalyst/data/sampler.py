@@ -83,10 +83,10 @@ class MiniEpochSampler(Sampler):
             > None -- don't shuffle
 
     Example:
-        >>> MiniEpochSampler(len(dataset), batches_per_epoch=100)
-        >>> MiniEpochSampler(len(dataset), batches_per_epoch=100, \
+        >>> MiniEpochSampler(len(dataset), mini_epoch_len=100)
+        >>> MiniEpochSampler(len(dataset), mini_epoch_len=100, \
             drop_last=True)
-        >>> MiniEpochSampler(len(dataset), batches_per_epoch=100, \
+        >>> MiniEpochSampler(len(dataset), mini_epoch_len=100, \
             shuffle="per_epoch")
     """
 
@@ -113,7 +113,9 @@ class MiniEpochSampler(Sampler):
         else:
             self.divider = self.steps
 
-        self.indices = np.arange(self.data_len)
+        self._indices = np.arange(self.data_len)
+        self.indices = self._indices
+        self.end_pointer = max(self.data_len, self.mini_epoch_len)
 
         if not (shuffle is None or shuffle in ["per_mini_epoch", "per_epoch"]):
             raise ValueError(
@@ -125,16 +127,22 @@ class MiniEpochSampler(Sampler):
     def shuffle(self):
         if self.shuffle_type == "per_mini_epoch" or \
                 (self.shuffle_type == "per_epoch" and self.state_i == 0):
-            np.random.shuffle(self.indices)
+            if self.data_len >= self.mini_epoch_len:
+                self.indices = self._indices
+                np.random.shuffle(self.indices)
+            else:
+                self.indices = np.random.choice(
+                    self._indices, self.mini_epoch_len, replace=True
+                )
 
     def __iter__(self) -> Iterator[int]:
         self.state_i = self.state_i % self.divider
         self.shuffle()
 
         start = self.state_i * self.mini_epoch_len
-        stop = self.data_len if (self.state_i == self.steps) \
+        stop = self.end_pointer \
+            if (self.state_i == self.steps) \
             else (self.state_i + 1) * self.mini_epoch_len
-
         indices = self.indices[start:stop].tolist()
 
         self.state_i += 1
@@ -142,3 +150,6 @@ class MiniEpochSampler(Sampler):
 
     def __len__(self) -> int:
         return self.mini_epoch_len
+
+
+__all__ = ["BalanceClassSampler", "MiniEpochSampler"]

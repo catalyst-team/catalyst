@@ -95,8 +95,8 @@ trainer:
   batch_size: 256              # transitions
   num_workers: 1
   num_mini_epochs: 10
-  min_num_trajectories: 100
-  min_num_transitions: 5000
+  min_num_trajectories: 1000
+  min_num_transitions: 10000
 
   save_period: 100             # epochs
 

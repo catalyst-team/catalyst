@@ -29,7 +29,7 @@ import torch
 import torchvision
 import torchvision.transforms as transforms
 from catalyst.data.augmentor import Augmentor
-from catalyst.dl.utils import UtilsFactory
+from catalyst.dl import utils
 
 bs = 1
 num_workers = 0
@@ -54,7 +54,7 @@ open_fn = lambda x: {"features": x[0], "targets": x[1]}
 
 loaders = collections.OrderedDict()
 
-train_loader = UtilsFactory.get_loader(
+train_loader = utils.get_loader(
     train_data,
     open_fn=open_fn,
     dict_transform=data_transform,
@@ -63,7 +63,7 @@ train_loader = UtilsFactory.get_loader(
     shuffle=True
 )
 
-valid_loader = UtilsFactory.get_loader(
+valid_loader = utils.get_loader(
     valid_data,
     open_fn=open_fn,
     dict_transform=data_transform,
@@ -87,7 +87,7 @@ from catalyst.contrib.models.segmentation import Unet
 
 import torch
 import torch.nn as nn
-from catalyst.dl.experiments import SupervisedRunner
+from catalyst.dl.runner import SupervisedRunner
 
 # experiment setup
 num_epochs = 2

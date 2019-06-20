@@ -1,6 +1,5 @@
 # flake8: noqa
-# from .core import *
-# from .core_discrete import *
+
 from .dqn import DQN
 
 from .ddpg import DDPG

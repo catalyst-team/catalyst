@@ -6,7 +6,7 @@ import cv2
 import torch
 from torchvision import transforms
 
-from catalyst.dl.utils import UtilsFactory
+from catalyst.dl import utils
 from catalyst.data.reader import ImageReader
 from catalyst.contrib.models.encoder import ResnetEncoder
 
@@ -22,6 +22,8 @@ IMAGENET_NORM = transforms.Normalize(
 def dict_transformer(sample):
     image = sample["image"]
 
+    # image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+    # image = np.concatenate([np.expand_dims(image, -1)] * 3, axis=-1)
     image = cv2.resize(image, IMG_SIZE, interpolation=cv2.INTER_NEAREST)
     image = torch.from_numpy(image.astype(np.float32) / 255.).permute(2, 0, 1)
     image = IMAGENET_NORM(image)
@@ -66,7 +68,7 @@ def build_args(parser):
         "--arch",
         type=str,
         dest="arch",
-        default="resnet101",
+        default="resnet18",
         help="Neural network architecture"
     )
     parser.add_argument(
@@ -115,7 +117,7 @@ def main(args, _=None):
 
     model = ResnetEncoder(arch=args.arch, pooling=args.pooling)
     model = model.eval()
-    model, device = UtilsFactory.process_components(model)
+    model, _, _, _, device = utils.process_components(model=model)
 
     images_df = pd.read_csv(args.in_csv)
     images_df = images_df.reset_index().drop("index", axis=1)
@@ -125,7 +127,7 @@ def main(args, _=None):
         input_key=args.img_col, output_key="image", datapath=args.datapath
     )
 
-    dataloader = UtilsFactory.get_loader(
+    dataloader = utils.get_loader(
         images_df,
         open_fn,
         batch_size=args.batch_size,

@@ -1,10 +1,10 @@
 import torch
-from .core_continuous import AlgorithmContinuous
-from catalyst.rl.offpolicy.algorithms.utils import categorical_loss, \
-    quantile_loss, hyperbolic_gammas
+from .actor_critic import OffpolicyActorCritic
+from catalyst.rl.utils import categorical_loss, quantile_loss, \
+    hyperbolic_gammas
 
 
-class DDPG(AlgorithmContinuous):
+class DDPG(OffpolicyActorCritic):
     """
     Swiss Army knife DDPG algorithm.
     """

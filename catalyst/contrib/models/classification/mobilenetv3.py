@@ -31,7 +31,7 @@ def _make_divisible(v, divisor, min_value=None):
 
 class h_sigmoid(nn.Module):
     def __init__(self, inplace=True):
-        super(h_sigmoid, self).__init__()
+        super().__init__()
         self.relu = nn.ReLU6(inplace=inplace)
 
     def forward(self, x):
@@ -40,7 +40,7 @@ class h_sigmoid(nn.Module):
 
 class h_swish(nn.Module):
     def __init__(self, inplace=True):
-        super(h_swish, self).__init__()
+        super().__init__()
         self.sigmoid = h_sigmoid(inplace=inplace)
 
     def forward(self, x):
@@ -49,7 +49,7 @@ class h_swish(nn.Module):
 
 class SELayer(nn.Module):
     def __init__(self, channel, reduction=4):
-        super(SELayer, self).__init__()
+        super().__init__()
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.fc = nn.Sequential(
             nn.Linear(channel, channel // reduction),

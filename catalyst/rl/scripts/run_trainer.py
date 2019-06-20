@@ -3,14 +3,13 @@
 import os
 import argparse
 
-from catalyst.dl.scripts.utils import import_module
-from catalyst.utils.config import parse_args_uargs, dump_config
-from catalyst.utils.misc import set_global_seed
+from catalyst.utils.scripts import import_module
+from catalyst.utils import parse_args_uargs, dump_config, set_global_seed
 from catalyst.rl.registry import OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
     ENVIRONMENTS, DATABASES
 from catalyst.rl.offpolicy.trainer import Trainer as OffpolicyTrainer
 from catalyst.rl.onpolicy.trainer import Trainer as OnpolicyTrainer
-from catalyst.rl.scripts.utils import OFFPOLICY_ALGORITHMS_NAMES, \
+from catalyst.rl.scripts.misc import OFFPOLICY_ALGORITHMS_NAMES, \
     ONPOLICY_ALGORITHMS_NAMES
 
 
@@ -27,7 +26,7 @@ def build_args(parser):
     )
     parser.add_argument("--expdir", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
-    parser.add_argument("--resume", type=str, default=None)
+    # parser.add_argument("--resume", type=str, default=None)
     parser.add_argument("--seed", type=int, default=42)
 
     return parser
@@ -75,8 +74,8 @@ def main(args, unknown_args):
     algorithm_fn = ALGORITHMS.get(algorithm_name)
     algorithm = algorithm_fn.prepare_for_trainer(env_spec=env, config=config)
 
-    if args.resume is not None:
-        algorithm.load_checkpoint(filepath=args.resume)
+    # if args.resume is not None:
+    #     algorithm.load_checkpoint(filepath=args.resume)
 
     trainer = trainer_fn(
         algorithm=algorithm,

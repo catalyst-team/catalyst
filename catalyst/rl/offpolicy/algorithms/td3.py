@@ -4,16 +4,13 @@ from gym.spaces import Box
 import torch
 
 from catalyst.rl.registry import AGENTS
-from catalyst.dl.utils import UtilsFactory
-from .core_continuous import AlgorithmContinuous
-from .utils import categorical_loss, quantile_loss, soft_update, \
-    get_trainer_components, hyperbolic_gammas
-from .core import AlgorithmSpec
-from catalyst.rl.environments.core import EnvironmentSpec
-from catalyst.rl.agents.core import CriticSpec
+from .actor_critic import OffpolicyActorCritic
+from catalyst.rl.core import AlgorithmSpec, CriticSpec, EnvironmentSpec
+from catalyst.rl.utils import categorical_loss, quantile_loss, \
+    hyperbolic_gammas, soft_update, get_trainer_components
 
 
-class TD3(AlgorithmContinuous):
+class TD3(OffpolicyActorCritic):
     """
     Swiss Army knife TD3 algorithm.
     """
@@ -262,16 +259,9 @@ class TD3(AlgorithmContinuous):
 
         return checkpoint
 
-    def unpack_checkpoint(self, checkpoint):
-        raise NotImplementedError()
+    def unpack_checkpoint(self, checkpoint, with_optimizer=True):
+        super().unpack_checkpoint(checkpoint, with_optimizer)
 
-    def save_checkpoint(self, filepath):
-        raise NotImplementedError()
-
-    def load_checkpoint(self, filepath, load_optimizer=True):
-        super().load_checkpoint(filepath, load_optimizer)
-
-        checkpoint = UtilsFactory.load_checkpoint(filepath)
         key = "critics"
         for i in range(len(self.critics)):
             value_l = getattr(self, key, None)
@@ -279,7 +269,7 @@ class TD3(AlgorithmContinuous):
             if value_l is not None:
                 value_r = checkpoint[f"{key}{i}_state_dict"]
                 value_l.load_state_dict(value_r)
-            if load_optimizer:
+            if with_optimizer:
                 for key2 in ["optimizer", "scheduler"]:
                     key2 = f"{key}_{key2}"
                     value_l = getattr(self, key2, None)

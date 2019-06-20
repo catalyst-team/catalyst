@@ -37,3 +37,6 @@ class FilteringCollateFn:
             return result
         else:
             return default_collate(batch)
+
+
+__all__ = ["FilteringCollateFn"]
