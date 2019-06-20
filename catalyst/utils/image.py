@@ -1,5 +1,7 @@
 from typing import List, Tuple
+import logging
 import os
+import tempfile
 import numpy as np
 import imageio
 from skimage.color import label2rgb
@@ -8,6 +10,31 @@ import torch
 
 _IMAGENET_STD = (0.229, 0.224, 0.225)
 _IMAGENET_MEAN = (0.485, 0.456, 0.406)
+
+logger = logging.getLogger(__name__)
+
+JPEG4PY_ENABLED = False
+if os.environ.get('FORCE_JPEG_TURBO', False):
+    try:
+        import jpeg4py as jpeg
+
+        # check libjpeg-turbo availability through image reading
+        img = np.zeros((1, 1, 3))
+        with tempfile.NamedTemporaryFile(suffix='.jpg') as fp:
+            imageio.imwrite(fp.name, img)
+            img = jpeg.JPEG(fp.name).decode()
+
+        JPEG4PY_ENABLED = True
+    except ImportError:
+        logger.warning(
+            "jpeg4py not available. "
+            "To install jpeg4py, run `pip install jpeg4py`."
+        )
+    except OSError:
+        logger.warning(
+            "jpeg4py not available. "
+            "To install libjpeg-turbo, see `http://bfy.tw/OC7m`."
+        )
 
 
 def imread(uri, grayscale=False, expand_dims=True, rootpath=None):
@@ -29,17 +56,9 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None):
             uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
         )
 
-    img = None
-    try:
-        if os.environ.get('FORCE_JPEG_TURBO', False) \
-                and rootpath.endswith(("jpg", "JPG", "jpeg", "JPEG")):
-            import jpeg4py as jpeg
-
-            img = jpeg.JPEG(rootpath).decode()
-    except Exception:
-        pass
-
-    if img is None:
+    if JPEG4PY_ENABLED and rootpath.endswith(("jpg", "JPG", "jpeg", "JPEG")):
+        img = jpeg.JPEG(rootpath).decode()
+    else:
         img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB")
 
     if expand_dims and len(img.shape) < 3:  # grayscale
