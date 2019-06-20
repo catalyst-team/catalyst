@@ -103,7 +103,14 @@ class Runner(ABC):
         self.state.step += self.state.batch_size
         batch = self._batch2device(batch, self.device)
         self.state.input = batch
+        self.state.timer.stop("_timers/data_time")
+
+        self._run_event("batch_start")
+        self.state.timer.start("_timers/model_time")
         self.state.output = self.predict_batch(batch)
+        self.state.timer.stop("_timers/model_time")
+        self.state.timer.stop("_timers/batch_time")
+        self._run_event("batch_end")
 
     def _run_loader(self, loader):
         self.state.batch_size = (
@@ -121,20 +128,9 @@ class Runner(ABC):
         self.state.timer.start("_timers/data_time")
 
         for i, batch in enumerate(loader):
-            batch = self._batch2device(batch, self.device)
-            self.state.timer.stop("_timers/data_time")
-
-            self._run_event("batch_start")
-
-            self.state.timer.start("_timers/model_time")
             self._run_batch(batch)
-            self.state.timer.stop("_timers/model_time")
-
-            self.state.timer.stop("_timers/batch_time")
-            self._run_event("batch_end")
 
             self.state.timer.reset()
-
             if self._check_run and i >= 3:
                 break
 

@@ -94,6 +94,12 @@ jobs:
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
           python catalyst/dl/scripts/run.py
           --expdir=./examples/_tests_mnist_stages2
+          --config=./examples/_tests_mnist_stages2/config3.yml
+          --logdir=./examples/logs/_tests_mnist_stages2
+          --check
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/dl/scripts/run.py
+          --expdir=./examples/_tests_mnist_stages2
           --config=./examples/_tests_mnist_stages2/config2.yml
           --logdir=./examples/logs/_tests_mnist_stages2
           --check
