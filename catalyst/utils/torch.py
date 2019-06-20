@@ -125,8 +125,8 @@ def any2device(value, device):
     """
     if isinstance(value, dict):
         return dict((k, any2device(v, device)) for k, v in value.items())
-    if isinstance(value, (tuple, list)):
+    elif isinstance(value, (tuple, list)):
         return list(any2device(v, device) for v in value)
-    if torch.is_tensor(value):
+    elif torch.is_tensor(value):
         return value.to(device, non_blocking=True)
     return value

@@ -6,16 +6,16 @@ from gym import spaces
 from torch.utils.data import Dataset
 
 
-def _get_buffer(
+def get_buffer(
     capacity: int,
     space: spaces.Space = None,
     shape: Tuple = None,
     dtype=None,
-    name: str = None,
     mode: str = "numpy",
+    name: str = None,
     logdir: str = None
 ):
-    assert mode in ["numpy", "memmap"]
+    assert mode in ["numpy", "memmap", "dynamic"]
     assert \
         (space is None and shape is not None and dtype is not None) \
         or (space is not None and shape is None and dtype is None)
@@ -66,6 +66,8 @@ def _get_buffer(
                 shape=(capacity,),
                 dtype=buffer_dtype
             )
+    elif mode == "dynamic":
+        raise NotImplementedError()
     else:
         raise NotImplementedError()
 
@@ -86,36 +88,38 @@ class BufferWrapper:
         self._capacity = capacity
         self._space = space
         self._shape = shape
-        self._dtype = dtype
         self._name = name
         self._mode = mode
         self._logdir = logdir
 
-        self._data, self._data_dtype = _get_buffer(
+        self._data, self._dtype = get_buffer(
             capacity=self._capacity,
             space=self._space,
             shape=self._shape,
-            dtype=self._dtype,
+            dtype=dtype,
             name=self._name,
             mode=self._mode,
             logdir=self._logdir
         )
 
+    def _as_dtype(self, value):
+        if isinstance(value, np.ndarray) and value.dtype == self._dtype:
+            value_ = value
+        elif isinstance(value, dict) \
+                and isinstance(self._dtype, np.dtype):
+            value_ = np.zeros(1, dtype=self._dtype)
+            for key in self._dtype.fields.keys():
+                value_[key] = value[key]
+        else:
+            value_ = np.array(value, dtype=self._dtype)
+
+        return value_
+
     def __getitem__(self, idx):
         return self._data[idx]
 
     def __setitem__(self, idx, value):
-
-        if isinstance(value, np.ndarray) and value.dtype == self._data_dtype:
-            value_ = value
-        elif isinstance(value, dict) \
-                and isinstance(self._data_dtype, np.dtype):
-            value_ = np.zeros(1, dtype=self._data_dtype)
-            for key in value:
-                value_[key] = value[key]
-        else:
-            value_ = np.array(value, dtype=self._data_dtype)
-
+        value_ = self._as_dtype(value)
         self._data[idx] = value_
 
     @property
@@ -128,7 +132,7 @@ class BufferWrapper:
 
     @property
     def dtype(self):
-        return self._data_dtype
+        return self._dtype
 
     def __len__(self):
         return len(self._data)
@@ -140,7 +144,7 @@ class BufferWrapper:
                 "array",
                 f"BufferWrapper("
                 f"capacity={self._capacity}, "
-                f"data_dtype={self._data_dtype}), ")
+                f"data_dtype={self._dtype}), ")
         )
 
 

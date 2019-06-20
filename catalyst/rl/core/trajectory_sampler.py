@@ -2,9 +2,10 @@ from typing import Union
 import numpy as np
 from ctypes import c_bool
 import multiprocessing as mp
-from dynarray import DynamicArray
 import torch
 
+from catalyst.rl.utils.buffers import get_buffer
+from catalyst.rl.utils.dynamic_array import DynamicArray
 from .agent import ActorSpec, CriticSpec
 from .environment import EnvironmentSpec
 from .policy_handler import PolicyHandler
@@ -33,14 +34,22 @@ class TrajectorySampler:
         self._init_buffers()
 
     def _init_buffers(self):
+        observations_, _ = get_buffer(
+            capacity=int(self.initial_capacity),
+            space=self.env.observation_space,
+            mode="numpy"
+        )
         self.observations = DynamicArray(
-            array_or_shape=(None, ) + tuple(self.env.observation_space.shape),
-            dtype=self.env.observation_space.dtype,
+            array_or_shape=observations_,
             capacity=int(self.initial_capacity)
         )
+        actions_, _ = get_buffer(
+            capacity=int(self.initial_capacity),
+            space=self.env.action_space,
+            mode="numpy"
+        )
         self.actions = DynamicArray(
-            array_or_shape=(None, ) + tuple(self.env.action_space.shape),
-            dtype=self.env.action_space.dtype,
+            array_or_shape=actions_,
             capacity=int(self.initial_capacity)
         )
         self.rewards = DynamicArray(
@@ -86,8 +95,8 @@ class TrajectorySampler:
             else self.env.history_len
 
         state = np.zeros(
-            (history_len, ) + self.env.observation_space.shape,
-            dtype=self.env.observation_space.dtype
+            (history_len,) + tuple(self.observations.shape[1:]),
+            dtype=self.observations.dtype
         )
 
         indices = np.arange(max(0, index - history_len + 1), index + 1)
