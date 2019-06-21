@@ -54,6 +54,7 @@ def merge_dicts(*dicts: dict) -> dict:
     dict_ = copy.deepcopy(dicts[0])
 
     for merge_dict in dicts[1:]:
+        merge_dict = merge_dict or {}
         for k, v in merge_dict.items():
             if (
                 k in dict_ and isinstance(dict_[k], dict)
