@@ -5,19 +5,21 @@ import torch
 
 from .agent import ActorSpec, CriticSpec
 from .environment import EnvironmentSpec
+from catalyst.rl import utils
 
 
-def _states2device(states, device):
-    # structured numpy array
-    if hasattr(states.dtype, "fields"):
-        states = {
-            key: torch.Tensor(states[key]).to(device).unsqueeze(0)
-            for key in states.dtype.fields.keys()
+def _state2device(array: np.ndarray, device):
+    array = utils.any2device(array, device)
+
+    if isinstance(array, dict):
+        array = {
+            key: value.unsqueeze(0)
+            for key, value in array.items()
         }
-    # simple numpy array
     else:
-        states = torch.Tensor(states).to(device).unsqueeze(0)
-    return states
+        array = array.unsqueeze(0)
+
+    return array
 
 
 class PolicyHandler:
@@ -49,7 +51,7 @@ class PolicyHandler:
 
     @torch.no_grad()
     def _get_q_values(self, critic: CriticSpec, state: np.ndarray, device):
-        states = _states2device(state, device)
+        states = _state2device(state, device)
         output = critic(states)
         # We use the last head to perform actions
         # This is the head corresponding to the largest gamma
@@ -70,7 +72,7 @@ class PolicyHandler:
         device,
         deterministic: bool = False
     ):
-        states = _states2device(state, device)
+        states = _state2device(state, device)
         action = actor(states, deterministic=deterministic)
         action = action[0].cpu().numpy()
 

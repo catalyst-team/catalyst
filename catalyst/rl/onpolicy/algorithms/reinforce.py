@@ -2,7 +2,7 @@ import numpy as np
 import torch
 
 from .actor import OnpolicyActor
-from catalyst.rl.utils import geometric_cumsum
+from catalyst.rl import utils
 
 
 class REINFORCE(OnpolicyActor):
@@ -23,14 +23,14 @@ class REINFORCE(OnpolicyActor):
         trajectory_len = \
             rewards.shape[0] if dones[-1] else rewards.shape[0] - 1
 
-        states = self._to_tensor(states)
-        actions = self._to_tensor(actions)
+        states = utils.any2device(states, device=self._device)
+        actions = utils.any2device(actions, device=self._device)
         rewards = np.array(rewards)[:trajectory_len]
 
         _, logprobs = self.actor(states, logprob=actions)
         logprobs = logprobs.cpu().numpy().reshape(-1)[:trajectory_len]
 
-        returns = geometric_cumsum(self.gamma, rewards)[0]
+        returns = utils.geometric_cumsum(self.gamma, rewards)[0]
 
         rollout = {
             "return": returns,
@@ -43,10 +43,10 @@ class REINFORCE(OnpolicyActor):
             batch["state"], batch["action"], batch["return"],\
             batch["action_logprob"]
 
-        states = self._to_tensor(states)
-        actions = self._to_tensor(actions)
-        returns = self._to_tensor(returns)
-        old_logprobs = self._to_tensor(action_logprobs)
+        states = utils.any2device(states, device=self._device)
+        actions = utils.any2device(actions, device=self._device)
+        returns = utils.any2device(returns, device=self._device)
+        old_logprobs = utils.any2device(action_logprobs, device=self._device)
 
         # actor loss
         _, logprobs = self.actor(states, logprob=actions)

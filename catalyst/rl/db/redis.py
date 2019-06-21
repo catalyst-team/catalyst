@@ -1,5 +1,5 @@
 from redis import StrictRedis
-from catalyst.utils.compression import pack, unpack
+from catalyst.rl import utils
 from catalyst.rl.core import DBSpec
 
 
@@ -25,11 +25,12 @@ class RedisDB(DBSpec):
         return flag
 
     def push_trajectory(self, trajectory):
+        trajectory = utils.preprocess_db_trajectory(trajectory)
         trajectory = {
             "trajectory": trajectory,
             "epoch": self._epoch
         }
-        trajectory = pack(trajectory)
+        trajectory = utils.pack(trajectory)
         self._server.rpush("trajectories", trajectory)
 
     def get_trajectory(self, index=None):
@@ -38,11 +39,13 @@ class RedisDB(DBSpec):
         if trajectory is not None:
             self._index = index + 1
 
-            trajectory = unpack(trajectory)
+            trajectory = utils.unpack(trajectory)
             trajectory, trajectory_epoch = \
                 trajectory["trajectory"], trajectory["epoch"]
             if self._sync_epoch and self._epoch != trajectory_epoch:
                 trajectory = None
+            else:
+                trajectory = utils.postprocdess_db_trajectory(trajectory)
 
         return trajectory
 
@@ -56,14 +59,14 @@ class RedisDB(DBSpec):
             "weights": weights,
             "epoch": self._epoch
         }
-        weights = pack(weights)
+        weights = utils.pack(weights)
         self._server.set(f"{self._prefix}_{prefix}_weights", weights)
 
     def load_weights(self, prefix):
         weights = self._server.get(f"{self._prefix}_{prefix}_weights")
         if weights is None:
             return None
-        weights = unpack(weights)
+        weights = utils.unpack(weights)
         self._epoch = weights.get("epoch")
         return weights["weights"]
 

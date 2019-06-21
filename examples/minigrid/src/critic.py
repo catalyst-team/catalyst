@@ -68,12 +68,12 @@ class ConvCritic(CriticSpec):
         return self.head_net.hyperbolic_constant
 
     def forward(self, state: torch.Tensor):
-        x = state
+        x = state["image"]
         if len(x.shape) < 3:
             x = x.unsqueeze(1)
         x = x / 255.
-        batch_size, history_len, *feature_size = x.shape
-        x = x.view(-1, history_len, *feature_size).squeeze_(2)
+        batch_size, *inner, h, w = x.shape
+        x = x.view(batch_size, -1, h, w).squeeze_(2)
         # x = x.permute([0, 3, 1, 2])
         x = self.observation_net(x)
         # x = x.view(batch_size, history_len, -1)

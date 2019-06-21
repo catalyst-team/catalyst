@@ -10,19 +10,19 @@ from catalyst.rl.core import TrainerSpec
 from catalyst.rl import utils
 
 
-def _get_states_from_observations(observations, history_len=1):
+def _get_states_from_observations(observations: np.ndarray, history_len=1):
     """
     DB stores observations but not states.
     This function creates states from observations
     by adding new dimension of size (history_len).
     """
-    observations = np.array(observations)
-    trajectory_size = observations.shape[0]
-    states = np.zeros((trajectory_size, history_len) + observations.shape[1:])
+    states = np.concatenate(
+        [np.expand_dims(np.empty_like(observations), 1)] * history_len,
+        axis=1)
     for i in range(history_len - 1):
         pivot = history_len - i - 1
-        states[pivot:, i, :] = observations[:-pivot, :]
-    states[:, -1, :] = observations
+        states[pivot:, i, ...] = observations[:-pivot, ...]
+    states[:, -1, ...] = observations
     return states
 
 
@@ -106,7 +106,7 @@ class Trainer(TrainerSpec):
             try:
                 trajectory = self.db_server.get_trajectory()
                 assert trajectory is not None
-            except Exception:
+            except AssertionError:
                 time.sleep(1.0)
                 continue
 

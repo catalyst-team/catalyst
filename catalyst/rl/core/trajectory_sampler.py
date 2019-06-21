@@ -4,6 +4,7 @@ from ctypes import c_bool
 import multiprocessing as mp
 import torch
 
+from catalyst.rl import utils
 from catalyst.rl.utils.buffers import get_buffer
 from catalyst.rl.utils.dynamic_array import DynamicArray
 from .agent import ActorSpec, CriticSpec
@@ -63,9 +64,6 @@ class TrajectorySampler:
             capacity=int(self.initial_capacity)
         )
 
-    def _to_tensor(self, *args, **kwargs):
-        return torch.Tensor(*args, **kwargs).to(self._device)
-
     def _init_with_observation(self, observation):
         self.observations.append(observation)
 
@@ -122,7 +120,7 @@ class TrajectorySampler:
         if isinstance(exploration_strategy, ParameterSpaceNoise) \
                 and len(self.observations) > 1:
             states = self._get_states_history()
-            states = self._to_tensor(states)
+            states = utils.any2device(states, device=self._device)
             exploration_strategy.update_actor(self.agent, states)
 
         self._init_buffers()

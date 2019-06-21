@@ -369,7 +369,7 @@ class OnpolicyRolloutBuffer(Dataset):
             )
 
     def push_rollout(self, **rollout: Dict):
-        trajectory_len = len(rollout["state"])
+        trajectory_len = len(rollout["rewards"])
         self.len = min(self.len + trajectory_len, self.capacity)
         indices = np.arange(
             self.pointer, self.pointer + trajectory_len

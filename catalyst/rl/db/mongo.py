@@ -1,6 +1,6 @@
 import datetime
 import pymongo
-from catalyst.utils.compression import pack, unpack
+from catalyst.rl import utils
 from catalyst.rl.core import DBSpec
 
 
@@ -43,7 +43,8 @@ class MongoDB(DBSpec):
         return flag
 
     def push_trajectory(self, trajectory):
-        trajectory = pack(trajectory)
+        trajectory = utils.preprocess_db_trajectory(trajectory)
+        trajectory = utils.pack(trajectory)
         self._trajectory_collection.insert_one({
             "trajectory": trajectory,
             "date": datetime.datetime.utcnow(),
@@ -60,9 +61,12 @@ class MongoDB(DBSpec):
             self._last_datetime = trajectory_obj["date"]
 
             trajectory, trajectory_epoch = \
-                unpack(trajectory_obj["trajectory"]), trajectory_obj["epoch"]
+                utils.unpack(
+                    trajectory_obj["trajectory"]), trajectory_obj["epoch"]
             if self._sync_epoch and self._epoch != trajectory_epoch:
                 trajectory = None
+            else:
+                trajectory = utils.postprocdess_db_trajectory(trajectory)
         else:
             trajectory = None
 
@@ -74,7 +78,7 @@ class MongoDB(DBSpec):
     def dump_weights(self, weights, prefix, epoch):
         self._epoch = epoch
 
-        weights = pack(weights)
+        weights = utils.pack(weights)
         self._weights_collection.replace_one(
             {"prefix": prefix},
             {
@@ -91,7 +95,7 @@ class MongoDB(DBSpec):
         if weights is None:
             return None
         self._epoch = weights_obj["epoch"]
-        weights = unpack(weights)
+        weights = utils.unpack(weights)
         return weights
 
     def clean_weights(self, prefix):

@@ -129,4 +129,10 @@ def any2device(value, device):
         return list(any2device(v, device) for v in value)
     elif torch.is_tensor(value):
         return value.to(device, non_blocking=True)
+    elif isinstance(value, np.ndarray) and value.dtype.fields is not None:
+        return dict(
+            (k, any2device(value[k], device))
+            for k in value.dtype.fields.keys())
+    elif isinstance(value, np.ndarray):
+        return torch.Tensor(value).to(device)
     return value
