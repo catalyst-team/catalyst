@@ -4,7 +4,7 @@ import os
 import tempfile
 import numpy as np
 import imageio
-from skimage.color import label2rgb
+from skimage.color import label2rgb, rgb2gray
 
 import torch
 
@@ -58,6 +58,8 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None):
 
     if JPEG4PY_ENABLED and uri.endswith(("jpg", "JPG", "jpeg", "JPEG")):
         img = jpeg.JPEG(uri).decode()
+        if grayscale:
+            img = rgb2gray(img)
     else:
         img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB")
 
