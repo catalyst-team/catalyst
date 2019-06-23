@@ -127,7 +127,7 @@ def binary_mask_to_overlay_image(image: np.ndarray, masks: List[np.ndarray]):
     for idx, mask in enumerate(masks):
         labels[mask > 0] = idx + 1
 
-    image_with_overlay = label2rgb(labels, image)
+    image_with_overlay = label2rgb(labels, image, bg_label=0)
 
     image_with_overlay = (image_with_overlay * 255).round().astype(np.uint8)
     return image_with_overlay
