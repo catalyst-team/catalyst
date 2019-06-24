@@ -23,6 +23,21 @@ def _get_states_from_observations(observations: np.ndarray, history_len=1):
         pivot = history_len - i - 1
         states[pivot:, i, ...] = observations[:-pivot, ...]
     states[:, -1, ...] = observations
+
+    # structed numpy array
+    if observations.dtype.fields is not None:
+        states_dtype = []
+        for key, value in observations.dtype.fields.items():
+            states_dtype.append(
+                (key, value[0].base, (history_len,) + tuple(value[0].shape)))
+        states_dtype = np.dtype(states_dtype)
+        states_ = np.empty(len(observations), dtype=states_dtype)
+
+        for key in observations.dtype.fields.keys():
+            states_[key] = states[key]
+
+        states = states_
+
     return states
 
 

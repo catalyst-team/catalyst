@@ -6,6 +6,16 @@ from gym import spaces
 from torch.utils.data import Dataset
 
 
+def _handle_array(value: np.ndarray):
+    if isinstance(value, (np.ndarray, np.void)) \
+            and value.dtype.fields is not None:
+        return dict(
+            (k, _handle_array(value[k]))
+            for k in value.dtype.fields.keys()
+        )
+    return np.array(value).astype(np.float32)
+
+
 def get_buffer(
     capacity: int,
     space: spaces.Space = None,
@@ -369,7 +379,7 @@ class OnpolicyRolloutBuffer(Dataset):
             )
 
     def push_rollout(self, **rollout: Dict):
-        trajectory_len = len(rollout["state"])
+        trajectory_len = len(rollout["reward"])
         self.len = min(self.len + trajectory_len, self.capacity)
         indices = np.arange(
             self.pointer, self.pointer + trajectory_len
@@ -381,7 +391,7 @@ class OnpolicyRolloutBuffer(Dataset):
 
     def __getitem__(self, index):
         dct = {
-            key: np.array(value[index]).astype(np.float32)
+            key: _handle_array(value[index])
             for key, value in self.buffers.items()
         }
         return dct
