@@ -34,7 +34,7 @@ def dump_code(expdir, logdir):
 
     # @TODO: hardcoded
     old_pro_dir = os.path.dirname(os.path.abspath(__file__)) + "/../"
-    new_pro_dir = os.path.join(logdir, new_src_dir, 'catalyst')
+    new_pro_dir = os.path.join(logdir, new_src_dir, "catalyst")
     _tricky_dir_copy(old_pro_dir, new_pro_dir)
 
     old_expdir = os.path.abspath(expdir)
