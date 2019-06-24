@@ -1,5 +1,4 @@
 from typing import Union, Dict
-import torch
 
 from catalyst.rl import utils
 from catalyst.rl.registry import AGENTS

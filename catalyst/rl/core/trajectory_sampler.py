@@ -35,24 +35,35 @@ class TrajectorySampler:
         self._init_buffers()
 
     def _init_buffers(self):
-        observations_, _ = get_buffer(
-            capacity=int(self.initial_capacity),
+        sample_size = 3
+        observations_, observations_dtype = get_buffer(
+            capacity=sample_size,
             space=self.env.observation_space,
             mode="numpy"
         )
+        observations_shape = (None, ) \
+            if observations_.dtype.fields is not None \
+            else (None,) + tuple(self.env.observation_space.shape)
         self.observations = DynamicArray(
-            array_or_shape=observations_,
-            capacity=int(self.initial_capacity)
-        )
-        actions_, _ = get_buffer(
+            array_or_shape=observations_shape,
             capacity=int(self.initial_capacity),
+            dtype=observations_dtype
+        )
+
+        actions_, actions_dtype = get_buffer(
+            capacity=sample_size,
             space=self.env.action_space,
             mode="numpy"
         )
+        actions_shape = (None,) \
+            if actions_.dtype.fields is not None \
+            else (None,) + tuple(self.env.action_space.shape)
         self.actions = DynamicArray(
-            array_or_shape=actions_,
-            capacity=int(self.initial_capacity)
+            array_or_shape=actions_shape,
+            capacity=int(self.initial_capacity),
+            dtype=actions_dtype
         )
+
         self.rewards = DynamicArray(
             array_or_shape=(None, ),
             dtype=np.float32,
@@ -87,7 +98,7 @@ class TrajectorySampler:
         return states
 
     def get_state(self, index=None, history_len=None):
-        index = index if index is not None else len(self.observations) - 1
+        index = index if index is not None else len(self.dones)
         history_len = history_len \
             if history_len is not None \
             else self.env.history_len
@@ -103,8 +114,10 @@ class TrajectorySampler:
 
     def get_trajectory(self):
         trajectory = (
-            np.array(self.observations[:-1]), np.array(self.actions),
-            np.array(self.rewards), np.array(self.dones)
+            np.array(self.observations[:-1]),
+            np.array(self.actions),
+            np.array(self.rewards),
+            np.array(self.dones)
         )
         return trajectory
 
@@ -151,5 +164,5 @@ class TrajectorySampler:
 
         trajectory = self.get_trajectory()
         trajectory_info = {"reward": reward, "num_steps": num_steps}
-
+        assert all([len(x) == num_steps]for x in trajectory)
         return trajectory, trajectory_info

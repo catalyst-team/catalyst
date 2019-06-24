@@ -13,11 +13,11 @@ def _state2device(array: np.ndarray, device):
 
     if isinstance(array, dict):
         array = {
-            key: value.unsqueeze(0)
+            key: value.to(device).unsqueeze(0)
             for key, value in array.items()
         }
     else:
-        array = array.unsqueeze(0)
+        array = array.to(device).unsqueeze(0)
 
     return array
 

@@ -132,7 +132,8 @@ def any2device(value, device):
     elif isinstance(value, np.ndarray) and value.dtype.fields is not None:
         return dict(
             (k, any2device(value[k], device))
-            for k in value.dtype.fields.keys())
+            for k in value.dtype.fields.keys()
+        )
     elif isinstance(value, np.ndarray):
         return torch.Tensor(value).to(device)
     return value

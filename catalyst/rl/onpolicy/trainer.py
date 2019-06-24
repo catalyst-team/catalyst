@@ -17,7 +17,7 @@ def _get_states_from_observations(observations: np.ndarray, history_len=1):
     by adding new dimension of size (history_len).
     """
     states = np.concatenate(
-        [np.expand_dims(np.empty_like(observations), 1)] * history_len,
+        [np.expand_dims(np.zeros_like(observations), 1)] * history_len,
         axis=1)
     for i in range(history_len - 1):
         pivot = history_len - i - 1
