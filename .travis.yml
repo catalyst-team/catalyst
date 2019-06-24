@@ -46,7 +46,12 @@ jobs:
           --docstring-quotes "double"
           --show-source --statistics
         # exit-zero treats all errors as warnings.
-        - flake8 . --count --exit-zero --max-complexity=10 --statistics
+        - flake8 . --count --exit-zero
+          --max-complexity=10
+          --inline-quotes "double"
+          --multiline-quotes "double"
+          --docstring-quotes "double"
+          --statistics
         # test to make sure the code is yapf compliant
         - ./yapf.sh --all
         - pytest
