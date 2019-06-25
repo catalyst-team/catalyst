@@ -98,9 +98,6 @@ class Sampler:
         )
         self._db_loop_thread.start()
 
-    def _to_tensor(self, *args, **kwargs):
-        return torch.Tensor(*args, **kwargs).to(self._device)
-
     def load_checkpoint(
         self,
         *,
@@ -117,7 +114,9 @@ class Sampler:
                 time.sleep(1.0)
                 weights = db_server.load_weights(
                     prefix=self._weights_sync_mode)
-            weights = {k: self._to_tensor(v) for k, v in weights.items()}
+            weights = {
+                k: utils.any2device(v, device=self._device)
+                for k, v in weights.items()}
             self.agent.load_state_dict(weights)
         else:
             raise NotImplementedError

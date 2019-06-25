@@ -1,7 +1,6 @@
 from typing import Union, Dict
 import copy
 from gym.spaces import Box
-import torch
 
 from catalyst.rl import utils
 from catalyst.rl.registry import AGENTS
@@ -105,9 +104,6 @@ class OffpolicyActorCritic(AlgorithmSpec):
     def gamma(self) -> float:
         return self._gamma
 
-    def _to_tensor(self, *args, **kwargs):
-        return torch.Tensor(*args, **kwargs).to(self._device)
-
     def pack_checkpoint(self):
         checkpoint = {}
 
@@ -186,11 +182,12 @@ class OffpolicyActorCritic(AlgorithmSpec):
             batch["state"], batch["action"], batch["reward"], \
             batch["next_state"], batch["done"]
 
-        states_t = self._to_tensor(states_t)
-        actions_t = self._to_tensor(actions_t)
-        rewards_t = self._to_tensor(rewards_t).unsqueeze(1)
-        states_tp1 = self._to_tensor(states_tp1)
-        done_t = self._to_tensor(done_t).unsqueeze(1)
+        states_t = utils.any2device(states_t, device=self._device)
+        actions_t = utils.any2device(actions_t, device=self._device)
+        rewards_t = utils.any2device(
+            rewards_t, device=self._device).unsqueeze(1)
+        states_tp1 = utils.any2device(states_tp1, device=self._device)
+        done_t = utils.any2device(done_t, device=self._device).unsqueeze(1)
 
         """
         states_t: [bs; history_len; observation_len]

@@ -2,6 +2,7 @@ from typing import Dict
 from functools import reduce
 from gym.spaces import Box, Discrete
 
+import torch
 from catalyst.rl.core import ActorSpec, EnvironmentSpec
 from .network import StateNet
 from .head import PolicyHead
@@ -21,7 +22,12 @@ class Actor(ActorSpec):
         self.state_net = state_net
         self.head_net = head_net
 
-    def forward(self, state, logprob=False, deterministic=False):
+    def forward(
+        self,
+        state: torch.Tensor,
+        logprob=False,
+        deterministic=False
+    ):
         x = self.state_net(state)
         x = self.head_net(x, logprob, deterministic)
         return x

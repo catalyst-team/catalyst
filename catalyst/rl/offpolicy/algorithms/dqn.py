@@ -1,7 +1,6 @@
 import torch
 from .critic import OffpolicyCritic
-from catalyst.rl.utils import categorical_loss, quantile_loss, \
-    hyperbolic_gammas
+from catalyst.rl import utils
 
 
 class DQN(OffpolicyCritic):
@@ -13,12 +12,12 @@ class DQN(OffpolicyCritic):
         self._num_heads = self.critic.num_heads
         self._hyperbolic_constant = self.critic.hyperbolic_constant
         self._gammas = \
-            hyperbolic_gammas(
+            utils.hyperbolic_gammas(
                 self._gamma,
                 self._hyperbolic_constant,
                 self._num_heads
             )
-        self._gammas = torch.Tensor(self._gammas).to(self._device)
+        self._gammas = utils.any2device(self._gammas, device=self._device)
         assert critic_distribution in [None, "categorical", "quantile"]
 
         if critic_distribution == "categorical":
@@ -29,7 +28,7 @@ class DQN(OffpolicyCritic):
             z = torch.linspace(
                 start=self.v_min, end=self.v_max, steps=self.num_atoms
             )
-            self.z = self._to_tensor(z)
+            self.z = utils.any2device(z, device=self._device)
             self._loss_fn = self._categorical_loss
         elif critic_distribution == "quantile":
             self.num_atoms = self.critic.num_atoms
@@ -38,8 +37,10 @@ class DQN(OffpolicyCritic):
             tau = torch.linspace(
                 start=tau_min, end=tau_max, steps=self.num_atoms
             )
-            self.tau = self._to_tensor(tau)
+            self.tau = utils.any2device(tau, device=self._device)
             self._loss_fn = self._quantile_loss
+        else:
+            assert self.critic_criterion is not None
 
     def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
 
@@ -107,7 +108,7 @@ class DQN(OffpolicyCritic):
         # B x num_heads x num_atoms
         atoms_target_t = rewards_t + (1 - done_t) * gammas * self.z
 
-        value_loss = categorical_loss(
+        value_loss = utils.categorical_loss(
             logits_t.view(-1, self.num_atoms),
             logits_tp1.view(-1, self.num_atoms),
             atoms_target_t.view(-1, self.num_atoms), self.z,
@@ -150,7 +151,7 @@ class DQN(OffpolicyCritic):
         # B x num_heads x num_atoms
         atoms_target_t = rewards_t + (1 - done_t) * gammas * atoms_tp1
 
-        value_loss = quantile_loss(
+        value_loss = utils.quantile_loss(
             atoms_t.view(-1, self.num_atoms),
             atoms_target_t.view(-1, self.num_atoms),
             self.tau, self.num_atoms,

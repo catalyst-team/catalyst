@@ -100,8 +100,8 @@ class Trainer(TrainerSpec):
         self.replay_buffer.recalculate_index()
         metrics = self._run_loader(self.loader)
         metrics.update({
-            "num_trajectories": self.replay_buffer.num_trajectories.value,
-            "num_transitions": self.replay_buffer.num_transitions.value,
+            "num_trajectories": self.replay_buffer.num_trajectories,
+            "num_transitions": self.replay_buffer.num_transitions,
             "buffer_size": len(self.replay_buffer)
         })
         return metrics
@@ -111,8 +111,8 @@ class Trainer(TrainerSpec):
         while buffer_size < self.min_num_transitions:
             self.replay_buffer.recalculate_index()
 
-            num_trajectories = self.replay_buffer.num_trajectories.value
-            num_transitions = self.replay_buffer.num_transitions.value
+            num_trajectories = self.replay_buffer.num_trajectories
+            num_transitions = self.replay_buffer.num_transitions
             buffer_size = len(self.replay_buffer)
 
             print(
