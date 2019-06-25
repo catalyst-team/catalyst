@@ -8,7 +8,7 @@ from catalyst.utils.dataset import create_dataset, create_dataframe, \
 
 def prepare_df_from_dirs(in_dirs, tag_column_name):
     dfs = []
-    splitted_dirs = in_dirs.strip(',').split(',')
+    splitted_dirs = in_dirs.strip(",").split(",")
 
     def process_fn(x):
         if len(splitted_dirs) == 1:

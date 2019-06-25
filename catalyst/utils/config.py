@@ -67,7 +67,7 @@ def dump_config(
 def parse_config_args(*, config, args, unknown_args):
     for arg in unknown_args:
         arg_name, value = arg.split("=")
-        arg_name = arg_name.lstrip("-").strip('/')
+        arg_name = arg_name.lstrip("-").strip("/")
 
         value_content, value_type = value.rsplit(":", 1)
 
