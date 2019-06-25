@@ -78,6 +78,8 @@ class TD3(OffpolicyActorCritic):
             )
             self.tau = utils.any2device(tau, device=self._device)
             self._loss_fn = self._quantile_loss
+        else:
+            assert self.critic_criterion is not None
 
     def _add_noise_to_actions(self, actions):
         action_noise = torch.normal(

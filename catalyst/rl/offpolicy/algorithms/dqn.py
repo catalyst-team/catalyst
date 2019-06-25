@@ -39,6 +39,8 @@ class DQN(OffpolicyCritic):
             )
             self.tau = utils.any2device(tau, device=self._device)
             self._loss_fn = self._quantile_loss
+        else:
+            assert self.critic_criterion is not None
 
     def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
 

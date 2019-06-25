@@ -16,10 +16,8 @@ def _handle_array(array: np.ndarray):
             (key, np.array(value).astype(np.float32))
             for key, value in array.items()
         )
-    elif isinstance(array, np.ndarray):
-        output = np.array(array).astype(np.float32)
     else:
-        raise NotImplementedError()
+        output = np.array(array).astype(np.float32)
 
     return output
 
