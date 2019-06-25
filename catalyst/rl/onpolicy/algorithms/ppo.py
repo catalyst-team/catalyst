@@ -3,7 +3,7 @@ import torch
 
 
 from .actor_critic import OnpolicyActorCritic
-from catalyst.rl.utils import hyperbolic_gammas, geometric_cumsum
+from catalyst.rl import utils
 
 
 class PPO(OnpolicyActorCritic):
@@ -19,7 +19,7 @@ class PPO(OnpolicyActorCritic):
         self._num_heads = self.critic.num_heads
         self._hyperbolic_constant = self.critic.hyperbolic_constant
         self._gammas = \
-            hyperbolic_gammas(
+            utils.hyperbolic_gammas(
                 self._gamma,
                 self._hyperbolic_constant,
                 self._num_heads
@@ -38,14 +38,14 @@ class PPO(OnpolicyActorCritic):
     def get_rollout(self, states, actions, rewards, dones):
         trajectory_len = \
             rewards.shape[0] if dones[-1] else rewards.shape[0] - 1
+        states_len = states.shape[0]
 
-        states = self._to_tensor(states)
-        actions = self._to_tensor(actions)
+        states = utils.any2device(states, device=self._device)
+        actions = utils.any2device(actions, device=self._device)
         rewards = np.array(rewards)[:trajectory_len]
-
-        values = torch.zeros((states.shape[0] + 1, self._num_heads)).\
+        values = torch.zeros((states_len + 1, self._num_heads)).\
             to(self._device)
-        values[:states.shape[0], :] = self.critic(states).squeeze(-1)
+        values[:states_len, :] = self.critic(states).squeeze(-1)
         # Each column corresponds to a different gamma
         values = values.cpu().numpy()[:trajectory_len+1, :]
         _, logprobs = self.actor(states, logprob=actions)
@@ -56,11 +56,11 @@ class PPO(OnpolicyActorCritic):
         # For each gamma in the list of gammas compute the
         # advantage and returns
         advantages = np.stack([
-            geometric_cumsum(gamma, deltas[:, i])[0]
+            utils.geometric_cumsum(gamma, deltas[:, i])[0]
             for i, gamma in enumerate(self._gammas)
         ], axis=1)  # len x num_heads
         returns = np.stack([
-            geometric_cumsum(gamma * self.gae_lambda, rewards)[0]
+            utils.geometric_cumsum(gamma * self.gae_lambda, rewards)[0]
             for gamma in self._gammas
         ], axis=1)  # len x num_heads
 
@@ -85,12 +85,12 @@ class PPO(OnpolicyActorCritic):
             batch["state"], batch["action"], batch["return"], \
             batch["value"], batch["advantage"], batch["action_logprob"]
 
-        states = self._to_tensor(states)
-        actions = self._to_tensor(actions)
-        returns = self._to_tensor(returns)
-        old_values = self._to_tensor(values)
-        advantages = self._to_tensor(advantages)
-        old_logprobs = self._to_tensor(action_logprobs)
+        states = utils.any2device(states, device=self._device)
+        actions = utils.any2device(actions, device=self._device)
+        returns = utils.any2device(returns, device=self._device)
+        old_values = utils.any2device(values, device=self._device)
+        advantages = utils.any2device(advantages, device=self._device)
+        old_logprobs = utils.any2device(action_logprobs, device=self._device)
 
         # critic loss
         values = self.critic(states).squeeze(-1)

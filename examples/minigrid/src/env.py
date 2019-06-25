@@ -1,29 +1,27 @@
 #!/usr/bin/env python
 
-import gym
 from gym import spaces
 import time
 from catalyst.rl.core import EnvironmentSpec
 from catalyst.rl.utils import extend_space
 
+from .minigrid_wrappers import make_minigrid_env
 
-class GymWrapper(EnvironmentSpec):
+
+class MiniGridEnvWrapper(EnvironmentSpec):
     def __init__(
         self,
-        env_name="LunarLander-v2",  # "LunarLanderContinuous-v2",
-        # env_wrappers=None,
         history_len=1,
         frame_skip=1,
-        visualize=False,
         reward_scale=1,
-        step_delay=0.0
+        step_delay=0.0,
+        visualize=False,
+        **params
     ):
-        self.env = gym.make(env_name)
-        # @TODO: add logic with registry and env_wrappers
+        self.env = make_minigrid_env(**params)
 
         self._history_len = history_len
         self._frame_skip = frame_skip
-        self._visualize = visualize
         self._reward_scale = reward_scale
         self._step_delay = step_delay
 
@@ -53,21 +51,17 @@ class GymWrapper(EnvironmentSpec):
             self._observation_space, self._history_len)
 
     def reset(self):
-        return self.env.reset()
+        observation = self.env.reset()
+        return observation
 
     def step(self, action):
         time.sleep(self._step_delay)
         reward = 0
         for i in range(self._frame_skip):
             observation, r, done, info = self.env.step(action)
-            if self._visualize:
-                self.env.render()
             reward += r
             if done:
                 break
         info["reward_origin"] = reward
         reward *= self._reward_scale
         return observation, reward, done, info
-
-
-__all__ = ["GymWrapper"]

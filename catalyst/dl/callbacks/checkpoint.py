@@ -28,7 +28,7 @@ class CheckpointCallback(Callback):
     @staticmethod
     def load_checkpoint(*, filename, state: RunnerState):
         if os.path.isfile(filename):
-            print("=> loading checkpoint \"{}\"".format(filename))
+            print(f"=> loading checkpoint {filename}")
             checkpoint = utils.load_checkpoint(filename)
 
             state.epoch = checkpoint["epoch"]
@@ -42,12 +42,9 @@ class CheckpointCallback(Callback):
             )
 
             print(
-                "loaded checkpoint \"{}\" (epoch {})".format(
-                    filename, checkpoint["epoch"]
-                )
-            )
+                f"loaded checkpoint {filename} (epoch {checkpoint['epoch']})")
         else:
-            raise Exception("no checkpoint found at \"{}\"".format(filename))
+            raise Exception("no checkpoint found at {filename}")
 
     def save_checkpoint(
         self,

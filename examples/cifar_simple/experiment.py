@@ -18,13 +18,13 @@ class Experiment(ConfigExperiment):
         datasets = OrderedDict()
 
         trainset = torchvision.datasets.CIFAR10(
-            root='./data',
+            root="./data",
             train=True,
             download=True,
             transform=Experiment.get_transforms(stage=stage, mode="train")
         )
         testset = torchvision.datasets.CIFAR10(
-            root='./data',
+            root="./data",
             train=False,
             download=True,
             transform=Experiment.get_transforms(stage=stage, mode="valid")

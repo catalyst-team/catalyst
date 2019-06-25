@@ -1,4 +1,5 @@
 from copy import deepcopy
+
 import torch
 from catalyst.rl import utils
 from catalyst.rl.registry import \

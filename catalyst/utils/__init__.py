@@ -17,7 +17,7 @@ from .initialization import create_optimal_inner_init, outer_init, \
     constant_init, uniform_init, normal_init, xavier_init, kaiming_init, \
     bias_init_with_prob
 from .misc import pairwise, make_tuple, merge_dicts, append_dict
-from .numpy import np_softmax, geometric_cumsum
+from .numpy import np_softmax, geometric_cumsum, structed2dict, dict2structed
 # from .pandas import *
 from .plotly import plot_tensorboard_log
 # from .registry import *

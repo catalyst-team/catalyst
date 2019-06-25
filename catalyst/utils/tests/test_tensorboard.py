@@ -1,3 +1,5 @@
+# flake8: noqa
+
 from io import BytesIO
 from pathlib import Path
 
@@ -22,42 +24,43 @@ def _get_test_data():
 
     The first event is empty with wall_time = 1557489465
 
-    log.add_scalar('x', 1.0, global_step=1)
-    log.add_scalar('y', -1.0, global_step=1)
-    log.add_scalar('x', 2.0, global_step=2)
-    log.add_image('z', np.zeros((2, 2, 1)), global_step=1)
+    log.add_scalar("x", 1.0, global_step=1)
+    log.add_scalar("y", -1.0, global_step=1)
+    log.add_scalar("x", 2.0, global_step=2)
+    log.add_image("z", np.zeros((2, 2, 1)), global_step=1)
     """
 
     data_raw = [
         None,
         {
-            'tag': 'x',
-            'value': 1.0,
-            'step': 1,
-            'type': 'scalar'
+            "tag": "x",
+            "value": 1.0,
+            "step": 1,
+            "type": "scalar"
         },
         {
-            'tag': 'y',
-            'value': -1.0,
-            'step': 1,
-            'type': 'scalar'
+            "tag": "y",
+            "value": -1.0,
+            "step": 1,
+            "type": "scalar"
         },
         {
-            'tag': 'x',
-            'value': 2.0,
-            'step': 2,
-            'type': 'scalar'
+            "tag": "x",
+            "value": 2.0,
+            "step": 2,
+            "type": "scalar"
         },
         {
-            'tag': 'z',
-            'value': np.zeros((2, 2, 3)),
-            'height': 2,
-            'width': 2,
-            'channels': 3,
-            'step': 1,
-            'type': 'image'
+            "tag": "z",
+            "value": np.zeros((2, 2, 3)),
+            "height": 2,
+            "width": 2,
+            "channels": 3,
+            "step": 1,
+            "type": "image"
         },
     ]
+    # noqa: Q000
     data = b'\t\x00\x00\x00\x00\x00\x00\x007\xf9q9\t\xc9\xebE\x18`5' \
            b'\xd7A\x04A\xf4n\x17\x00\x00\x00\x00\x00\x00\x00\xe7\xce' \
            b'\xf8\x1e\t=\x82{\x19`5\xd7A\x10\x01*\n\n\x08\n\x01x\x15' \
@@ -77,7 +80,7 @@ def _get_test_data():
 def _compare_image_data(png, data):
     png_buf = np.frombuffer(png, np.uint8)
     png_decoded = cv2.imdecode(png_buf, cv2.IMREAD_COLOR)
-    assert np.all(png_decoded == data), 'Corrupted image data'
+    assert np.all(png_decoded == data), "Corrupted image data"
 
 
 def test_events_reader_successful():
@@ -85,27 +88,27 @@ def test_events_reader_successful():
     reader = EventsFileReader(BytesIO(data))
     for event, event_raw in zip(reader, data_raw):
         if event_raw is not None:
-            assert event.step == event_raw['step']
-            assert event.HasField('summary')
+            assert event.step == event_raw["step"]
+            assert event.HasField("summary")
             assert len(event.summary.value) == 1
-            if event_raw['type'] == 'scalar':
-                assert event.summary.value[0].HasField('simple_value')
-                assert event.summary.value[0].tag == event_raw['tag']
-                assert event.summary.value[0].simple_value == event_raw['value'
+            if event_raw["type"] == "scalar":
+                assert event.summary.value[0].HasField("simple_value")
+                assert event.summary.value[0].tag == event_raw["tag"]
+                assert event.summary.value[0].simple_value == event_raw["value"
                                                                         ]
-            elif event_raw['type'] == 'image':
-                assert event.summary.value[0].HasField('image')
+            elif event_raw["type"] == "image":
+                assert event.summary.value[0].HasField("image")
                 assert event.summary.value[0].image.height == 2
                 assert event.summary.value[0].image.width == 2
                 assert event.summary.value[0].image.colorspace == 3
                 _compare_image_data(
                     event.summary.value[0].image.encoded_image_string,
-                    event_raw['value']
+                    event_raw["value"]
                 )
 
 
 def test_events_reader_empty():
-    data = BytesIO(b'')
+    data = BytesIO(b"")
     reader = EventsFileReader(data)
     assert len(list(reader)) == 0
 
@@ -138,11 +141,11 @@ def _open(path, mode):
     return BytesIO(data)
 
 
-@patch('pathlib.Path.glob', lambda s, p: [Path('1'), Path('2')])
-@patch('pathlib.Path.is_file', lambda s: True)
-@patch('builtins.open', _open)
+@patch("pathlib.Path.glob", lambda s, p: [Path("1"), Path("2")])
+@patch("pathlib.Path.is_file", lambda s: True)
+@patch("builtins.open", _open)
 def test_summary_reader_iterate():
-    reader = SummaryReader('logs', types=['scalar', 'image'])
+    reader = SummaryReader("logs", types=["scalar", "image"])
     _, data_raw = _get_test_data()
     data_raw2 = 2 * [d for d in data_raw if d is not None]
     items = list(reader)
@@ -150,52 +153,52 @@ def test_summary_reader_iterate():
     assert len(items) == len(data_raw2)
 
     for item, event_raw in zip(items, data_raw2):
-        assert item.step == event_raw['step']
-        assert item.tag == event_raw['tag']
-        assert item.type == event_raw['type']
-        assert np.all(item.value == event_raw['value'])
+        assert item.step == event_raw["step"]
+        assert item.tag == event_raw["tag"]
+        assert item.type == event_raw["type"]
+        assert np.all(item.value == event_raw["value"])
 
 
-@patch('pathlib.Path.glob', lambda s, p: [Path('1'), Path('2')])
-@patch('pathlib.Path.is_file', lambda s: True)
-@patch('builtins.open', _open)
+@patch("pathlib.Path.glob", lambda s, p: [Path("1"), Path("2")])
+@patch("pathlib.Path.is_file", lambda s: True)
+@patch("builtins.open", _open)
 def test_summary_reader_filter():
-    tags = ['x', 'z']
-    reader = SummaryReader('logs', tag_filter=tags, types=['scalar', 'image'])
+    tags = ["x", "z"]
+    reader = SummaryReader("logs", tag_filter=tags, types=["scalar", "image"])
     _, data_raw = _get_test_data()
-    data_raw2 = 2 * [d for d in data_raw if d is not None and d['tag'] in tags]
+    data_raw2 = 2 * [d for d in data_raw if d is not None and d["tag"] in tags]
     items = list(reader)
 
     assert len(items) == len(data_raw2)
 
     for item, event_raw in zip(items, data_raw2):
-        assert item.step == event_raw['step']
-        assert item.tag == event_raw['tag']
-        assert item.type == event_raw['type']
+        assert item.step == event_raw["step"]
+        assert item.tag == event_raw["tag"]
+        assert item.type == event_raw["type"]
         assert item.tag in tags
-        assert np.all(item.value == event_raw['value'])
+        assert np.all(item.value == event_raw["value"])
 
 
-@patch('pathlib.Path.glob', lambda s, p: [Path('1'), Path('2')])
-@patch('pathlib.Path.is_file', lambda s: True)
-@patch('builtins.open', _open)
+@patch("pathlib.Path.glob", lambda s, p: [Path("1"), Path("2")])
+@patch("pathlib.Path.is_file", lambda s: True)
+@patch("builtins.open", _open)
 def test_summary_reader_filter_scalars():
-    types = ['scalar']
-    reader = SummaryReader('logs', types=types)
+    types = ["scalar"]
+    reader = SummaryReader("logs", types=types)
     _, data_raw = _get_test_data()
     data_raw2 = 2 * [d for d in data_raw
-                     if d is not None and d['type'] in types]
+                     if d is not None and d["type"] in types]
     items = list(reader)
 
     assert len(items) == len(data_raw2)
 
     for item, event_raw in zip(items, data_raw2):
-        assert item.step == event_raw['step']
-        assert item.tag == event_raw['tag']
-        assert item.type == 'scalar'
-        assert np.all(item.value == event_raw['value'])
+        assert item.step == event_raw["step"]
+        assert item.tag == event_raw["tag"]
+        assert item.type == "scalar"
+        assert np.all(item.value == event_raw["value"])
 
 
 def test_summary_reader_invalid_type():
     with pytest.raises(ValueError):
-        SummaryReader('.', types=['unknown-type'])
+        SummaryReader(".", types=["unknown-type"])

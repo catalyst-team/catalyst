@@ -42,8 +42,10 @@ def trace_model_from_checkpoint(logdir, method_name):
 
 def build_args(parser: ArgumentParser):
     parser.add_argument("logdir", type=Path)
-    parser.add_argument("--method", "-m", default="forward",
-                        help="Model method to trace")
+    parser.add_argument(
+        "--method", "-m",
+        default="forward",
+        help="Model method to trace")
 
     return parser
 
@@ -63,5 +65,5 @@ def main(args, _):
     torch.jit.save(traced, str(logdir / "traced.pth"))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main(parse_args(), None)

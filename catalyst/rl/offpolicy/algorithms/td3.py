@@ -6,8 +6,7 @@ import torch
 from catalyst.rl.registry import AGENTS
 from .actor_critic import OffpolicyActorCritic
 from catalyst.rl.core import AlgorithmSpec, CriticSpec, EnvironmentSpec
-from catalyst.rl.utils import categorical_loss, quantile_loss, \
-    hyperbolic_gammas, soft_update, get_trainer_components
+from catalyst.rl import utils
 
 
 class TD3(OffpolicyActorCritic):
@@ -30,7 +29,7 @@ class TD3(OffpolicyActorCritic):
         critics_scheduler = []
 
         for critic in critics:
-            critic_components = get_trainer_components(
+            critic_components = utils.get_trainer_components(
                 agent=critic,
                 loss_params=self._critic_loss_params,
                 optimizer_params=self._critic_optimizer_params,
@@ -52,12 +51,12 @@ class TD3(OffpolicyActorCritic):
         self._num_critics = len(self.critics)
         self._hyperbolic_constant = self.critic.hyperbolic_constant
         self._gammas = \
-            hyperbolic_gammas(
+            utils.hyperbolic_gammas(
                 self._gamma,
                 self._hyperbolic_constant,
                 self._num_heads
             )
-        self._gammas = torch.Tensor(self._gammas).to(self._device)
+        self._gammas = utils.any2device(self._gammas, device=self._device)
         assert critic_distribution in [None, "categorical", "quantile"]
 
         if critic_distribution == "categorical":
@@ -68,7 +67,7 @@ class TD3(OffpolicyActorCritic):
             z = torch.linspace(
                 start=self.v_min, end=self.v_max, steps=self.num_atoms
             )
-            self.z = self._to_tensor(z)
+            self.z = utils.any2device(z, device=self._device)
             self._loss_fn = self._categorical_loss
         elif critic_distribution == "quantile":
             self.num_atoms = self.critic.num_atoms
@@ -77,8 +76,10 @@ class TD3(OffpolicyActorCritic):
             tau = torch.linspace(
                 start=tau_min, end=tau_max, steps=self.num_atoms
             )
-            self.tau = self._to_tensor(tau)
+            self.tau = utils.any2device(tau, device=self._device)
             self._loss_fn = self._quantile_loss
+        else:
+            assert self.critic_criterion is not None
 
     def _add_noise_to_actions(self, actions):
         action_noise = torch.normal(
@@ -170,7 +171,7 @@ class TD3(OffpolicyActorCritic):
 
         atoms_target_t = rewards_t + (1 - done_t) * gammas * self.z
         value_loss = [
-            categorical_loss(
+            utils.categorical_loss(
                 x.view(-1, self.num_atoms),
                 logits_tp1.view(-1, self.num_atoms),
                 atoms_target_t.view(-1, self.num_atoms),
@@ -222,7 +223,7 @@ class TD3(OffpolicyActorCritic):
 
         atoms_target_t = rewards_t + (1 - done_t) * gammas * atoms_tp1
         value_loss = [
-            quantile_loss(
+            utils.quantile_loss(
                 x.view(-1, self.num_atoms),
                 atoms_target_t.view(-1, self.num_atoms),
                 self.tau,
@@ -294,7 +295,7 @@ class TD3(OffpolicyActorCritic):
 
     def target_critic_update(self):
         for target, source in zip(self.target_critics, self.critics):
-            soft_update(target, source, self._critic_tau)
+            utils.soft_update(target, source, self._critic_tau)
 
     def update_step(
         self, policy_loss, value_loss, actor_update=True, critic_update=True

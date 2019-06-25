@@ -96,7 +96,7 @@ def assert_fp16_available():
         "fp16 mode requires cudnn backend to be enabled."
 
     try:
-        __import__('apex')
+        __import__("apex")
     except ImportError:
         assert False, \
             "NVidia Apex package must be installed. " \
@@ -125,8 +125,16 @@ def any2device(value, device):
     """
     if isinstance(value, dict):
         return dict((k, any2device(v, device)) for k, v in value.items())
-    if isinstance(value, (tuple, list)):
+    elif isinstance(value, (tuple, list)):
         return list(any2device(v, device) for v in value)
-    if torch.is_tensor(value):
+    elif torch.is_tensor(value):
         return value.to(device, non_blocking=True)
+    elif isinstance(value, (np.ndarray, np.void)) \
+            and value.dtype.fields is not None:
+        return dict(
+            (k, any2device(value[k], device))
+            for k in value.dtype.fields.keys()
+        )
+    elif isinstance(value, np.ndarray):
+        return torch.Tensor(value).to(device)
     return value

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-import numpy as np
 from gym import spaces
 import time
 from catalyst.rl.core import EnvironmentSpec
+from catalyst.rl.utils import extend_space
 
 from .atari_wrappers import make_atari_env
 
@@ -47,19 +47,8 @@ class AtariEnvWrapper(EnvironmentSpec):
         self._observation_space = self.env.observation_space
         self._action_space = self.env.action_space
 
-        def _expand_to_history_len(np_array):
-            return np.concatenate(
-                self._history_len * [np.expand_dims(np_array, 0)], axis=0)
-
-        if isinstance(self._observation_space, spaces.Box):
-            self._state_space = spaces.Box(
-                low=_expand_to_history_len(self._observation_space.low),
-                high=_expand_to_history_len(self._observation_space.high),
-                # shape=(self._history_len,) + self._observation_space.shape,
-                dtype=self._observation_space.dtype
-            )
-        else:
-            raise NotImplementedError("not yet implemented")
+        self._state_space = extend_space(
+            self._observation_space, self._history_len)
 
     def reset(self):
         observation = self.env.reset()

@@ -1,6 +1,8 @@
 from typing import List
+
 import torch
 import torch.nn as nn
+
 from catalyst.utils import outer_init
 from catalyst.contrib.models import SequentialNet
 from .policy import CategoricalPolicy, GaussPolicy, RealNVPPolicy

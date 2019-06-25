@@ -7,7 +7,7 @@ from catalyst import utils
 
 import matplotlib
 
-matplotlib.use('Agg')
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
 plt.style.use("ggplot")
@@ -34,7 +34,7 @@ def plot_report(report, y_key, filename):
         fontsize=20
     )
     plt.tight_layout()
-    plt.savefig(filename, format='png', dpi=300)
+    plt.savefig(filename, format="png", dpi=300)
 
 
 def report_by_dir(folder):
@@ -83,6 +83,6 @@ def main(args, _):
         plot_report(report, y_key=y_key, filename=filename)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = parse_args()
     main(args, None)

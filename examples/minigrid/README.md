@@ -1,12 +1,9 @@
-## Catalyst.RL – Atari example
+## Catalyst.RL – MiniGrid example
 
 This example shows how to use Catalyst.RL with
-- your custom environment, like Atari with a bunch of wrappers,
+- your custom environment, like [GymMiniGrid](https://github.com/maximecb/gym-minigrid) with Dict observations,
 - and custom agent, like CNN-based actor/critic,
 - MongoDB and memmap replay buffer for efficient resource management.
-
-
-![logs](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/atari_logs.jpeg)
 
 
 1. System requirements – Mongo/Redis
@@ -15,16 +12,16 @@ This example shows how to use Catalyst.RL with
     - Redis installation: 
         `sudo apt install redis-server`
 
-2. Python requirements – OpenAI Gym Atari
+2. Python requirements – [GymMiniGrid](https://github.com/maximecb/gym-minigrid)
 
     ```bash
-    pip install gym['atari']
+    pip install gym-minigrid
     ```
 
-3. Run DQN on PongNoFrameskip-v4
+3. Run DQN on MiniGrid-Empty-8x8-v0
 
     ```bash
-    mongod --config mongod.conf --port 12000  # or redis-server --port 12000
+    redis-server --port 12000  # or mongod --config mongod.conf --port 12000
     # check config.yml for correct db/db specification
 
     export GPUS=""  # like GPUS="0" or GPUS="0,1" for multi-gpu training
@@ -36,7 +33,7 @@ This example shows how to use Catalyst.RL with
     CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs
     ```
 
-4. Run PPO on PongNoFrameskip-v4
+4. Run PPO on MiniGrid-Empty-8x8-v0
 
     ```bash
     redis-server --port 12001  # or mongod --config mongod.conf --port 12001

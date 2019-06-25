@@ -1,5 +1,4 @@
 from typing import Union, Dict
-import torch
 
 from catalyst.rl import utils
 from catalyst.rl.registry import AGENTS
@@ -57,9 +56,6 @@ class OnpolicyActor(AlgorithmSpec):
     @property
     def gamma(self) -> float:
         return self._gamma
-
-    def _to_tensor(self, *args, **kwargs):
-        return torch.Tensor(*args, **kwargs).to(self._device)
 
     def pack_checkpoint(self):
         checkpoint = {}
