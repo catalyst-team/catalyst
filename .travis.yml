@@ -35,14 +35,23 @@ jobs:
     - stage: Tests
       install:
         - *requirements
-        - pip install flake8 yapf
+        - pip install flake8 flake8-quotes yapf
         - pip install -U pytest
       script:
         # stop the build if there are any unexpected flake8 issues
-        - flake8 . --count --ignore=E126,E226,E704,E731,W503,W504 --max-complexity=16
+        - flake8 . --count --ignore=E126,E226,E704,E731,W503,W504
+          --max-complexity=16
+          --inline-quotes "double"
+          --multiline-quotes "double"
+          --docstring-quotes "double"
           --show-source --statistics
         # exit-zero treats all errors as warnings.
-        - flake8 . --count --exit-zero --max-complexity=10 --statistics
+        - flake8 . --count --exit-zero
+          --max-complexity=10
+          --inline-quotes "double"
+          --multiline-quotes "double"
+          --docstring-quotes "double"
+          --statistics
         # test to make sure the code is yapf compliant
         - ./yapf.sh --all
         - pytest
@@ -89,6 +98,12 @@ jobs:
           python catalyst/dl/scripts/run.py
           --expdir=./examples/_tests_mnist_stages2
           --config=./examples/_tests_mnist_stages2/config1.yml
+          --logdir=./examples/logs/_tests_mnist_stages2
+          --check
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/dl/scripts/run.py
+          --expdir=./examples/_tests_mnist_stages2
+          --config=./examples/_tests_mnist_stages2/config3.yml
           --logdir=./examples/logs/_tests_mnist_stages2
           --check
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}

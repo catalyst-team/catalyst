@@ -11,7 +11,7 @@ from catalyst.utils.tensorboard import SummaryReader, SummaryItem
 def _get_tensorboard_scalars(
     logdir: Union[str, Path], metrics: Optional[List[str]], step: str
 ) -> Dict[str, List]:
-    summary_reader = SummaryReader(logdir, types=['scalar'])
+    summary_reader = SummaryReader(logdir, types=["scalar"])
 
     items = defaultdict(list)
     for item in summary_reader:

@@ -96,7 +96,7 @@ def assert_fp16_available():
         "fp16 mode requires cudnn backend to be enabled."
 
     try:
-        __import__('apex')
+        __import__("apex")
     except ImportError:
         assert False, \
             "NVidia Apex package must be installed. " \

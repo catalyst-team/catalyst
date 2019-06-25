@@ -52,7 +52,7 @@ class TxtMetricsFormatter(MetricsFormatter):
                 f"{m_name}={m_value:.4f}"
                 for m_name, m_value in sorted(value.items())
             ]
-            metrics_formatted_ = ' | '.join(metrics_formatted_)
+            metrics_formatted_ = " | ".join(metrics_formatted_)
             metrics_formatted[key] = metrics_formatted_
 
         return metrics_formatted

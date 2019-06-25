@@ -1,13 +1,40 @@
 from typing import List, Tuple
+import logging
 import os
+import tempfile
 import numpy as np
 import imageio
-from skimage.color import label2rgb
+from skimage.color import label2rgb, rgb2gray
 
 import torch
 
 _IMAGENET_STD = (0.229, 0.224, 0.225)
 _IMAGENET_MEAN = (0.485, 0.456, 0.406)
+
+logger = logging.getLogger(__name__)
+
+JPEG4PY_ENABLED = False
+if os.environ.get("FORCE_JPEG_TURBO", False):
+    try:
+        import jpeg4py as jpeg
+
+        # check libjpeg-turbo availability through image reading
+        img = np.zeros((1, 1, 3), dtype=np.uint8)
+        with tempfile.NamedTemporaryFile(suffix=".jpg") as fp:
+            imageio.imwrite(fp.name, img)
+            img = jpeg.JPEG(fp.name).decode()
+
+        JPEG4PY_ENABLED = True
+    except ImportError:
+        logger.warning(
+            "jpeg4py not available. "
+            "To install jpeg4py, run `pip install jpeg4py`."
+        )
+    except OSError:
+        logger.warning(
+            "libjpeg-turbo not available. "
+            "To install libjpeg-turbo, run `apt-get install libturbojpeg`."
+        )
 
 
 def imread(uri, grayscale=False, expand_dims=True, rootpath=None):
@@ -29,7 +56,12 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None):
             uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
         )
 
-    img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB")
+    if JPEG4PY_ENABLED and uri.endswith(("jpg", "JPG", "jpeg", "JPEG")):
+        img = jpeg.JPEG(uri).decode()
+        if grayscale:
+            img = rgb2gray(img)
+    else:
+        img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB")
 
     if expand_dims and len(img.shape) < 3:  # grayscale
         img = np.expand_dims(img, -1)
@@ -95,7 +127,7 @@ def binary_mask_to_overlay_image(image: np.ndarray, masks: List[np.ndarray]):
     for idx, mask in enumerate(masks):
         labels[mask > 0] = idx + 1
 
-    image_with_overlay = label2rgb(labels, image)
+    image_with_overlay = label2rgb(labels, image, bg_label=0)
 
     image_with_overlay = (image_with_overlay * 255).round().astype(np.uint8)
     return image_with_overlay

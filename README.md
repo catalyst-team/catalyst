@@ -67,7 +67,7 @@ and other features without the boilerplate.
 
 ```python
 import torch
-from catalyst.dl.experiments import SupervisedRunner
+from catalyst.dl import SupervisedRunner
 
 # experiment setup
 logdir = "./logdir"

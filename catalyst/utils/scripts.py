@@ -30,16 +30,16 @@ def _tricky_dir_copy(dir_from, dir_to):
 
 def dump_code(expdir, logdir):
     expdir = expdir[:-1] if expdir.endswith("/") else expdir
-    new_src_dir = f"/code/"
+    new_src_dir = f"code"
 
     # @TODO: hardcoded
     old_pro_dir = os.path.dirname(os.path.abspath(__file__)) + "/../"
-    new_pro_dir = logdir + f"/{new_src_dir}/catalyst/"
+    new_pro_dir = os.path.join(logdir, new_src_dir, "catalyst")
     _tricky_dir_copy(old_pro_dir, new_pro_dir)
 
     old_expdir = os.path.abspath(expdir)
-    expdir_ = expdir.rsplit("/", 1)[-1]
-    new_expdir = logdir + f"/{new_src_dir}/{expdir_}/"
+    expdir_ = os.path.basename(os.path.dirname(expdir))
+    new_expdir = os.path.join(logdir, new_src_dir, expdir_)
     _tricky_dir_copy(old_expdir, new_expdir)
 
 

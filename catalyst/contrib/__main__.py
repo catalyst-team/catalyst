@@ -17,7 +17,7 @@ def build_parser() -> ArgumentParser:
     parser = ArgumentParser(
         "catalyst-contrib", formatter_class=RawTextHelpFormatter
     )
-    all_commands = ', \n'.join(map(lambda x: f"    {x}", COMMANDS.keys()))
+    all_commands = ", \n".join(map(lambda x: f"    {x}", COMMANDS.keys()))
 
     subparsers = parser.add_subparsers(
         metavar="{command}",
