@@ -5,7 +5,7 @@ import multiprocessing as mp
 import torch
 
 from catalyst.rl import utils
-from catalyst.rl.utils.buffers import get_buffer
+from catalyst.rl.utils.buffer import get_buffer
 from catalyst.rl.utils.dynamic_array import DynamicArray
 from .agent import ActorSpec, CriticSpec
 from .environment import EnvironmentSpec
@@ -164,5 +164,5 @@ class TrajectorySampler:
 
         trajectory = self.get_trajectory()
         trajectory_info = {"reward": reward, "num_steps": num_steps}
-        assert all([len(x) == num_steps]for x in trajectory)
+        assert all(len(x) == num_steps for x in trajectory)
         return trajectory, trajectory_info

@@ -2,7 +2,7 @@
 
 This example shows how to use Catalyst.RL with
 - your custom environment, like Atari with a bunch of wrappers,
-- and custom agent, like CNN-based critic,
+- and custom agent, like CNN-based actor/critic,
 - MongoDB and memmap replay buffer for efficient resource management.
 
 
@@ -15,7 +15,7 @@ This example shows how to use Catalyst.RL with
     - Redis installation: 
         `sudo apt install redis-server`
 
-2. Python requirements – OpenAI Gym  Atari
+2. Python requirements – OpenAI Gym Atari
 
     ```bash
     pip install gym['atari']

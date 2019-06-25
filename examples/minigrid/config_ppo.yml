@@ -9,7 +9,7 @@ args:
 db:
   db: RedisDB  # RedisDB or MongoDB
   port: 12001
-  prefix: gym-ppo  # TODO: remove
+  prefix: minigrid-ppo  # TODO: remove
 
 environment:
   environment: MiniGridEnvWrapper

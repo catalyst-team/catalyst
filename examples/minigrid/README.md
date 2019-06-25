@@ -2,7 +2,7 @@
 
 This example shows how to use Catalyst.RL with
 - your custom environment, like [GymMiniGrid](https://github.com/maximecb/gym-minigrid) with Dict observations,
-- and custom agent, like CNN-based critic,
+- and custom agent, like CNN-based actor/critic,
 - MongoDB and memmap replay buffer for efficient resource management.
 
 
@@ -21,7 +21,7 @@ This example shows how to use Catalyst.RL with
 3. Run DQN on MiniGrid-Empty-8x8-v0
 
     ```bash
-    mongod --config mongod.conf --port 12000  # or redis-server --port 12000
+    redis-server --port 12000  # or mongod --config mongod.conf --port 12000
     # check config.yml for correct db/db specification
 
     export GPUS=""  # like GPUS="0" or GPUS="0,1" for multi-gpu training

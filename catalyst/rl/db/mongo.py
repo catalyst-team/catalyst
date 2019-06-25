@@ -43,7 +43,7 @@ class MongoDB(DBSpec):
         return flag
 
     def push_trajectory(self, trajectory):
-        trajectory = utils.preprocess_db_trajectory(trajectory)
+        trajectory = utils.structed2dict_trajectory(trajectory)
         trajectory = utils.pack(trajectory)
         self._trajectory_collection.insert_one({
             "trajectory": trajectory,
@@ -66,7 +66,7 @@ class MongoDB(DBSpec):
             if self._sync_epoch and self._epoch != trajectory_epoch:
                 trajectory = None
             else:
-                trajectory = utils.postprocdess_db_trajectory(trajectory)
+                trajectory = utils.dict2structed_trajectory(trajectory)
         else:
             trajectory = None
 

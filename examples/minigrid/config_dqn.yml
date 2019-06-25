@@ -1,22 +1,22 @@
 args:
-  logdir: ./logs/atari-dqn
+  logdir: ./logs/minigrid-dqn
   expdir: src
 
   vis: 0
   infer: 0   #  change me
-  train: 8   #  change me
+  train: 1   #  change me
 
 db:
-  db: MongoDB  # RedisDB or MongoDB
+  db: RedisDB  # RedisDB or MongoDB
   port: 12000
-  prefix: gym-dqn  # TODO: remove
+  prefix: minigrid-dqn  # TODO: remove
 
 environment:
-  environment: AtariEnvWrapper
-  env_id: PongNoFrameskip-v4
+  environment: MiniGridEnvWrapper
+  env_id: MiniGrid-Empty-8x8-v0
 
   history_len: 4
-  frame_skip: 4
+  frame_skip: 1
   reward_scale: 1.0
   step_delay: 0.0
 
@@ -72,9 +72,9 @@ trainer:
   num_workers: 2
   epoch_len: 500                # batches
 
-  replay_buffer_size: 5000000   # transitions
-  replay_buffer_mode: memmap    # numpy or memmap
-  min_num_transitions: 50000    # transitions
+  replay_buffer_size: 500000    # transitions
+  replay_buffer_mode: numpy     # numpy or memmap
+  min_num_transitions: 5000     # transitions
 
   save_period: 50               # epochs
   weights_sync_period: 1        # epochs

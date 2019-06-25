@@ -9,7 +9,7 @@ args:
 db:
   db: MongoDB  # RedisDB or MongoDB
   port: 12000
-  prefix: gym-dqn  # TODO: remove
+  prefix: atari-dqn  # TODO: remove
 
 environment:
   environment: AtariEnvWrapper

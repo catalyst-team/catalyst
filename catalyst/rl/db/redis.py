@@ -25,7 +25,7 @@ class RedisDB(DBSpec):
         return flag
 
     def push_trajectory(self, trajectory):
-        trajectory = utils.preprocess_db_trajectory(trajectory)
+        trajectory = utils.structed2dict_trajectory(trajectory)
         trajectory = {
             "trajectory": trajectory,
             "epoch": self._epoch
@@ -45,7 +45,7 @@ class RedisDB(DBSpec):
             if self._sync_epoch and self._epoch != trajectory_epoch:
                 trajectory = None
             else:
-                trajectory = utils.postprocdess_db_trajectory(trajectory)
+                trajectory = utils.dict2structed_trajectory(trajectory)
 
         return trajectory
 

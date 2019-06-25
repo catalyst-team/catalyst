@@ -5,15 +5,23 @@ import multiprocessing as mp
 from gym import spaces
 from torch.utils.data import Dataset
 
+from catalyst import utils
 
-def _handle_array(value: np.ndarray):
-    if isinstance(value, (np.ndarray, np.void)) \
-            and value.dtype.fields is not None:
-        return dict(
-            (k, _handle_array(value[k]))
-            for k in value.dtype.fields.keys()
+
+def _handle_array(array: np.ndarray):
+    array = utils.structed2dict(array)
+
+    if isinstance(array, dict):
+        output = dict(
+            (key, np.array(value).astype(np.float32))
+            for key, value in array.items()
         )
-    return np.array(value).astype(np.float32)
+    elif isinstance(array, np.ndarray):
+        output = np.array(array).astype(np.float32)
+    else:
+        raise NotImplementedError()
+
+    return output
 
 
 def get_buffer(
@@ -333,11 +341,11 @@ class OffpolicyReplayBuffer(Dataset):
                 gamma=self.gamma)
 
         dct = {
-            "state": state,
-            "action": action,
-            "reward": np.array(reward).astype(np.float32),
-            "next_state": next_state,
-            "done": np.array(done).astype(np.float32)
+            "state": _handle_array(state),
+            "action": _handle_array(action),
+            "reward": _handle_array(reward),
+            "next_state": _handle_array(next_state),
+            "done": _handle_array(done)
         }
 
         return dct
