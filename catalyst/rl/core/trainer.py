@@ -46,7 +46,8 @@ class TrainerSpec:
         self.batch_size = batch_size
         self.num_workers = num_workers
         self.epoch = 0
-        self.step = 0
+        self.update_step = 0
+        self.num_updates = 0
         self._num_trajectories = 0
         self._num_transitions = 0
 
@@ -90,28 +91,34 @@ class TrainerSpec:
     def _log_to_console(
         self,
         fps: float,
+        updates_per_sample: float,
         num_trajectories: int,
         num_transitions: int,
         buffer_size: int,
         **kwargs
     ):
-        print(
-            "--- "
-            f"fps: {fps:5.1f}\t"
-            f"trajectories: {num_trajectories:09d}\t"
-            f"transitions: {num_transitions:09d}\t"
-            f"buffer size: {buffer_size:09d}"
-        )
+        metrics = [
+            f"fps: {fps:7.1f}",
+            f"updates per sample: {updates_per_sample:7.1f}",
+            f"trajectories: {num_trajectories:09d}",
+            f"transitions: {num_transitions:09d}",
+            f"buffer size: {buffer_size:09d}",
+        ]
+        metrics = " | ".join(metrics)
+        print(f"--- {metrics}")
 
     def _log_to_tensorboard(
         self,
         fps: float,
+        updates_per_sample: float,
         num_trajectories: int,
         num_transitions: int,
         buffer_size: int,
         **kwargs
     ):
         self.logger.add_scalar("fps", fps, self.epoch)
+        self.logger.add_scalar(
+            "updates_per_sample", updates_per_sample, self.epoch)
         self.logger.add_scalar(
             "num_trajectories", num_trajectories, self.epoch)
         self.logger.add_scalar(
@@ -143,32 +150,32 @@ class TrainerSpec:
                 epoch=self.epoch
             )
 
-    def _update_target_weights(self, step):
+    def _update_target_weights(self, update_step) -> Dict:
         pass
 
     def _run_loader(self, loader: DataLoader) -> Dict:
         start_time = time.time()
-        start_step = self.step
 
         # @TODO: add average meters
         for batch in loader:
             metrics: Dict = self.algorithm.train(
                 batch,
-                actor_update=(self.step % self.actor_grad_period == 0),
-                critic_update=(self.step % self.critic_grad_period == 0)
+                actor_update=(self.update_step % self.actor_grad_period == 0),
+                critic_update=(self.update_step % self.critic_grad_period == 0)
             ) or {}
-            self.step += 1
+            self.update_step += 1
 
-            metrics_: Dict = self._update_target_weights(self.step) or {}
+            metrics_ = self._update_target_weights(self.update_step) or {}
             metrics.update(**metrics_)
 
             for key, value in metrics.items():
                 if isinstance(value, (float, int)):
-                    self.logger.add_scalar(key, value, self.step)
+                    self.logger.add_scalar(key, value, self.update_step)
 
         elapsed_time = time.time() - start_time
-        elapsed_step = self.step - start_step
-        fps = loader.batch_size * elapsed_step / elapsed_time
+        elapsed_num_updates = len(loader) * loader.batch_size
+        self.num_updates += elapsed_num_updates
+        fps = elapsed_num_updates / elapsed_time
 
         output = {
             "elapsed_time": elapsed_time,

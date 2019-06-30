@@ -1,6 +1,7 @@
 from typing import Dict
 import time
 import threading
+import numpy as np
 
 import torch
 from torch.utils.data import DataLoader
@@ -31,6 +32,7 @@ class Trainer(TrainerSpec):
         replay_buffer_size: int = int(1e6),
         replay_buffer_mode: str = "numpy",
         epoch_len: int = int(1e2),
+        max_updates_per_sample: int = None
     ):
         # updates configuration
         # (actor_period, critic_period)
@@ -41,6 +43,7 @@ class Trainer(TrainerSpec):
 
         #
         self.epoch_len = epoch_len
+        self.max_updates_per_sample = max_updates_per_sample or np.inf
 
         self.replay_buffer = utils.OffpolicyReplayBuffer(
             observation_space=self.env_spec.observation_space,
@@ -80,16 +83,16 @@ class Trainer(TrainerSpec):
         )
         self._db_loop_thread.start()
 
-    def _update_target_weights(self, step):
+    def _update_target_weights(self, update_step) -> Dict:
         output = {}
 
         if not self.env_spec.discrete_actions:
-            if step % self.actor_update_period == 0:
+            if update_step % self.actor_update_period == 0:
                 self.algorithm.target_actor_update()
                 self.actor_updates += 1
                 output["num_actor_updates"] = self.actor_updates
 
-        if step % self.critic_update_period == 0:
+        if update_step % self.critic_update_period == 0:
             self.algorithm.target_critic_update()
             self.critic_updates += 1
             output["num_critic_updates"] = self.critic_updates
@@ -98,11 +101,28 @@ class Trainer(TrainerSpec):
 
     def _run_epoch(self) -> Dict:
         self.replay_buffer.recalculate_index()
+
+        expected_num_updates = (
+            self.num_updates + len(self.loader) * self.loader.batch_size)
+        expected_updates_per_sample = (
+                expected_num_updates / self.replay_buffer.num_transitions)
+        while expected_updates_per_sample > self.max_updates_per_sample:
+            time.sleep(1.0)
+            self.replay_buffer.recalculate_index()
+            expected_num_updates = (
+                self.num_updates + len(self.loader) * self.loader.batch_size)
+            expected_updates_per_sample = (
+                    expected_num_updates / self.replay_buffer.num_transitions)
+
         metrics = self._run_loader(self.loader)
+
+        updates_per_sample = (
+            self.num_updates / self.replay_buffer.num_transitions)
         metrics.update({
             "num_trajectories": self.replay_buffer.num_trajectories,
             "num_transitions": self.replay_buffer.num_transitions,
-            "buffer_size": len(self.replay_buffer)
+            "buffer_size": len(self.replay_buffer),
+            "updates_per_sample": updates_per_sample
         })
         return metrics
 
@@ -115,13 +135,16 @@ class Trainer(TrainerSpec):
             num_transitions = self.replay_buffer.num_transitions
             buffer_size = len(self.replay_buffer)
 
-            print(
-                "--- "
-                f"trajectories: {num_trajectories:09d}\t"
-                f"transitions: {num_transitions:09d}\t"
+            metrics = [
+                f"fps: {0:7.1f}",
+                f"updates per sample: {0:7.1f}",
+                f"trajectories: {num_trajectories:09d}",
+                f"transitions: {num_transitions:09d}",
                 f"buffer size: "
-                f"{buffer_size:09d}/{self.min_num_transitions:09d}"
-            )
+                f"{buffer_size:09d}/{self.min_num_transitions:09d}",
+            ]
+            metrics = " | ".join(metrics)
+            print(f"--- {metrics}")
 
             time.sleep(1.0)
 
