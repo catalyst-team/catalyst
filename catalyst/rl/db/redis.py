@@ -31,10 +31,8 @@ class RedisDB(DBSpec):
             "epoch": self._epoch
         }
         trajectory = utils.pack(trajectory)
-        if raw:
-            self._server.rpush("trajectories", trajectory)
-        else:
-            self._server.rpush("raw_trajectories", trajectory)
+        name = "raw_trajectories" if raw else "trajectories"
+        self._server.rpush(name, trajectory)
 
     def get_trajectory(self, index=None):
         index = index if index is not None else self._index

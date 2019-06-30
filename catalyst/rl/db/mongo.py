@@ -46,18 +46,14 @@ class MongoDB(DBSpec):
     def push_trajectory(self, trajectory, raw=False):
         trajectory = utils.structed2dict_trajectory(trajectory)
         trajectory = utils.pack(trajectory)
-        if raw:
-            self._raw_trajectory_collection.insert_one({
+        collection = self._raw_trajectory_collection if raw else \
+            self._trajectory_collection
+
+        collection.insert_one({
                 "trajectory": trajectory,
                 "date": datetime.datetime.utcnow(),
                 "epoch": self._epoch
-            })
-        else:
-            self._trajectory_collection.insert_one({
-                "trajectory": trajectory,
-                "date": datetime.datetime.utcnow(),
-                "epoch": self._epoch
-            })
+        })
 
     def get_trajectory(self, index=None):
         assert index is None
