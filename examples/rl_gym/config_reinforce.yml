@@ -19,7 +19,6 @@ environment:
 
   frame_skip: 2
   reward_scale: 1.0
-  step_delay: 0.01
 
 agents:
   actor:
