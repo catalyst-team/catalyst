@@ -17,7 +17,7 @@ class DBSpec(ABC):
         pass
 
     @abstractmethod
-    def push_trajectory(self, trajectory):
+    def push_trajectory(self, trajectory, raw: bool):
         pass
 
     @abstractmethod

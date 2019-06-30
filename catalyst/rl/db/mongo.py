@@ -13,6 +13,7 @@ class MongoDB(DBSpec):
         self._agent_db = self._server[f"agent_{self._prefix}"]
 
         self._trajectory_collection = self._shared_db["trajectories"]
+        self._raw_trajectory_collection = self._shared_db["raw_trajectories"]
         self._weights_collection = self._agent_db["weights"]
         self._flag_collection = self._agent_db["flag"]
         self._last_datetime = datetime.datetime.min
@@ -42,14 +43,21 @@ class MongoDB(DBSpec):
         flag = int(flag_obj.get("sample_flag") or -1) == int(1)
         return flag
 
-    def push_trajectory(self, trajectory):
+    def push_trajectory(self, trajectory, raw=False):
         trajectory = utils.structed2dict_trajectory(trajectory)
         trajectory = utils.pack(trajectory)
-        self._trajectory_collection.insert_one({
-            "trajectory": trajectory,
-            "date": datetime.datetime.utcnow(),
-            "epoch": self._epoch
-        })
+        if raw:
+            self._raw_trajectory_collection.insert_one({
+                "trajectory": trajectory,
+                "date": datetime.datetime.utcnow(),
+                "epoch": self._epoch
+            })
+        else:
+            self._trajectory_collection.insert_one({
+                "trajectory": trajectory,
+                "date": datetime.datetime.utcnow(),
+                "epoch": self._epoch
+            })
 
     def get_trajectory(self, index=None):
         assert index is None

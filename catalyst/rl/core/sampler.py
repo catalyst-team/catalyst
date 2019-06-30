@@ -124,10 +124,10 @@ class Sampler:
         self.agent.to(self._device)
         self.agent.eval()
 
-    def _store_trajectory(self, trajectory):
+    def _store_trajectory(self, trajectory, raw=False):
         if self.db_server is None:
             return
-        self.db_server.push_trajectory(trajectory)
+        self.db_server.push_trajectory(trajectory, raw=raw)
 
     def _get_seed(self):
         seed = self._seeder()[0]
@@ -140,6 +140,7 @@ class Sampler:
         self,
         *,
         reward,
+        raw_reward,
         num_steps,
         elapsed_time,
         seed
@@ -148,6 +149,7 @@ class Sampler:
             f"trajectory {int(self.trajectory_index):05d}",
             f"steps: {int(num_steps):05d}",
             f"reward: {reward:9.3f}",
+            f"raw_reward: {raw_reward:9.3f}",
             f"time: {elapsed_time:9.3f}",
             f"seed: {seed:010d}",
         ]
@@ -158,6 +160,7 @@ class Sampler:
         self,
         *,
         reward,
+        raw_reward,
         num_steps,
         elapsed_time,
         **kwargs
@@ -168,6 +171,9 @@ class Sampler:
             )
             self.logger.add_scalar(
                 "trajectory/reward", reward, self.trajectory_index
+            )
+            self.logger.add_scalar(
+                "trajectory/raw_reward", raw_reward, self.trajectory_index
             )
             self.logger.add_scalar(
                 "time/trajectories_per_minute", 60. / elapsed_time,
@@ -219,6 +225,12 @@ class Sampler:
 
             if not self._infer or self._force_store:
                 self._store_trajectory(trajectory)
+                if "raw_trajectory" in trajectory_info:
+                    self._store_trajectory(
+                        trajectory_info["raw_trajectory"],
+                        raw=True
+                    )
+                    trajectory_info.pop("raw_trajectory")
             self._log_to_console(**trajectory_info)
             self._log_to_tensorboard(**trajectory_info)
             self.trajectory_index += 1
