@@ -19,7 +19,6 @@ environment:
 
   frame_skip: 2
   reward_scale: 1.0
-  step_delay: 0.01
 
 agents:
   critic:
@@ -80,6 +79,8 @@ trainer:
   save_period: 100             # epochs
   weights_sync_period: 1       # epochs
   target_update_period: 250    # batches, 64k updates
+
+  max_updates_per_sample: 32
 
 sampler:
   weights_sync_period: 1

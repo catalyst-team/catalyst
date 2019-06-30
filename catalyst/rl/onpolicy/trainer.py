@@ -168,10 +168,13 @@ class Trainer(TrainerSpec):
             sampler=sampler)
 
         metrics = self._run_loader(loader)
+
+        updates_per_sample = self.num_updates / self._num_transitions
         metrics.update({
             "num_trajectories": self._num_trajectories,
             "num_transitions": self._num_transitions,
-            "buffer_size": len(self.replay_buffer)
+            "buffer_size": len(self.replay_buffer),
+            "updates_per_sample": updates_per_sample
         })
         return metrics
 

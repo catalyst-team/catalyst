@@ -144,13 +144,15 @@ class Sampler:
         elapsed_time,
         seed
     ):
-        print(
-            f"--- trajectory {int(self.trajectory_index):05d}:\t"
-            f"steps: {int(num_steps):05d}\t"
-            f"reward: {reward:9.4f}\t"
-            f"time: {elapsed_time:9.4f}\t"
-            f"seed: {seed}"
-        )
+        metrics = [
+            f"trajectory {int(self.trajectory_index):05d}",
+            f"steps: {int(num_steps):05d}",
+            f"reward: {reward:9.3f}",
+            f"time: {elapsed_time:9.3f}",
+            f"seed: {seed:010d}",
+        ]
+        metrics = " | ".join(metrics)
+        print(f"--- {metrics}")
 
     def _log_to_tensorboard(
         self,
