@@ -305,7 +305,7 @@ class LazyFrames(object):
         return self._force()[..., i]
 
 
-class RawObservationWrapper(Wrapper):
+class RawTrajectoryWrapper(Wrapper):
     def __init__(
             self,
             env,
@@ -313,7 +313,7 @@ class RawObservationWrapper(Wrapper):
             reset_keywords=(),
             info_keywords=()
     ):
-        Wrapper.__init__(self, env=env)
+        super().__init__(env)
         self.reset_keywords = reset_keywords
         self.info_keywords = info_keywords
         self.allow_early_resets = allow_early_resets
@@ -337,7 +337,7 @@ class RawObservationWrapper(Wrapper):
         self.actions = []
         self.rewards = []
         self.dones = []
-        return self.env.reset(**kwargs)
+        return initial_state
 
     def reset_state(self):
         if not self.allow_early_resets and not self.needs_reset:
@@ -351,7 +351,7 @@ class RawObservationWrapper(Wrapper):
         if self.needs_reset:
             raise RuntimeError("Tried to step environment that needs reset")
         ob, rew, done, info = self.env.step(action)
-        self.update(ob, rew, done, action, info)
+        info = self.update(ob, rew, done, action, info)
         return (ob, rew, done, info)
 
     def update(self, ob, rew, done, action, info):
@@ -368,18 +368,7 @@ class RawObservationWrapper(Wrapper):
                 np.array(self.rewards),
                 np.array(self.dones)
             )
-
-    def get_total_steps(self):
-        return self.total_steps
-
-    def get_episode_rewards(self):
-        return self.episode_rewards
-
-    def get_episode_lengths(self):
-        return self.episode_lengths
-
-    def get_episode_times(self):
-        return self.episode_times
+        return info
 
 
 def make_atari(env_id, max_episode_steps=None):

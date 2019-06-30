@@ -46,8 +46,8 @@ class MongoDB(DBSpec):
     def push_trajectory(self, trajectory, raw=False):
         trajectory = utils.structed2dict_trajectory(trajectory)
         trajectory = utils.pack(trajectory)
-        collection = self._raw_trajectory_collection if raw else \
-            self._trajectory_collection
+        collection = self._raw_trajectory_collection if raw \
+            else self._trajectory_collection
 
         collection.insert_one({
                 "trajectory": trajectory,
