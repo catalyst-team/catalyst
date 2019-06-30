@@ -362,7 +362,7 @@ class RawObservationWrapper(Wrapper):
         assert isinstance(info, dict)
         if done:
             self.needs_reset = True
-            info['raw_trajectory'] = (
+            info["raw_trajectory"] = (
                 np.array(self.observations)[:-1],
                 np.array(self.actions),
                 np.array(self.rewards),
