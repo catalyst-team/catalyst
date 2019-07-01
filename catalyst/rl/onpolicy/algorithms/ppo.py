@@ -35,7 +35,7 @@ class PPO(OnpolicyActorCritic):
         }
 
     @torch.no_grad()
-    def get_rollout(self, states, actions, rewards, dones):
+    def get_rollout(self, states, actions, rewards, dones, recurrent=False):
         trajectory_len = \
             rewards.shape[0] if dones[-1] else rewards.shape[0] - 1
         states_len = states.shape[0]
@@ -45,10 +45,19 @@ class PPO(OnpolicyActorCritic):
         rewards = np.array(rewards)[:trajectory_len]
         values = torch.zeros((states_len + 1, self._num_heads)).\
             to(self._device)
-        values[:states_len, :] = self.critic(states).squeeze(-1)
+
+        if recurrent:
+            values[:states_len, :] = self.critic(
+                states.unsqueeze(0)).squeeze(0).squeeze(-1)
+            _, logprobs = self.actor(
+                states.unsqueeze(0), logprob=actions.unsqueeze(0))
+            logprobs = logporbs.squeeze(0)
+        else:
+            values[:states_len, :] = self.critic(states).squeeze(-1)
+            _, logprobs = self.actor(states, logprob=actions)
+
         # Each column corresponds to a different gamma
         values = values.cpu().numpy()[:trajectory_len+1, :]
-        _, logprobs = self.actor(states, logprob=actions)
         logprobs = logprobs.cpu().numpy().reshape(-1)[:trajectory_len]
         deltas = rewards[:, None] + self._gammas * values[1:] - values[:-1]
         # len x num_heads

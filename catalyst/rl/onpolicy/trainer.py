@@ -46,17 +46,24 @@ class Trainer(TrainerSpec):
         self,
         num_mini_epochs: int = 10,
         min_num_trajectories: int = 100,
-        rollout_batch_size: int = None
+        rollout_batch_size: int = None,
+        recurrent: bool = False,
+        segment_length: int = None
     ):
         self.num_mini_epochs = num_mini_epochs
         self.min_num_trajectories = min_num_trajectories
         self.max_num_transitions = self.min_num_transitions * 3
         self.rollout_batch_size = rollout_batch_size
+        self.recurrent = recurrent
 
-    def _get_rollout_in_batches(self, states, actions, rewards, dones):
+    def _get_rollout_in_batches(
+        self, states, actions, rewards, dones
+    ):
 
         if self.rollout_batch_size is None:
-            return self.algorithm.get_rollout(states, actions, rewards, dones)
+            return self.algorithm.get_rollout(
+                states, actions, rewards, dones, self.recurrent
+            )
 
         indices = np.arange(
             0, len(states) + self.rollout_batch_size - 1,
@@ -69,7 +76,8 @@ class Trainer(TrainerSpec):
             rewards_batch = rewards[indices[i]:indices[i+1]+1]
             dones_batch = dones[indices[i]:indices[i+1]+1]
             rollout_batch = self.algorithm.get_rollout(
-                states_batch, actions_batch, rewards_batch, dones_batch
+                states_batch, actions_batch, rewards_batch,
+                dones_batch, self.recurrent
             )
             if rollout is not None:
                 rollout = utils.append_dict(rollout, rollout_batch)
@@ -86,12 +94,21 @@ class Trainer(TrainerSpec):
         del self.replay_buffer
 
         rollout_spec = self.algorithm.get_rollout_spec()
-        self.replay_buffer = utils.OnpolicyRolloutBuffer(
-            state_space=self.env_spec.state_space,
-            action_space=self.env_spec.action_space,
-            capacity=self.max_num_transitions,
-            **rollout_spec
-        )
+        if self.recurrent:
+            self.replay_buffer = utils.OnpolicySegmentBuffer(
+                state_space=self.env_spec.state_space,
+                action_space=self.env_spec.action_space,
+                segment_length=self.segment_length,
+                capacity=self.max_num_transitions,
+                **rollout_spec
+            )
+        else:
+            self.replay_buffer = utils.OnpolicyRolloutBuffer(
+                state_space=self.env_spec.state_space,
+                action_space=self.env_spec.action_space,
+                capacity=self.max_num_transitions,
+                **rollout_spec
+            )
 
         # start samplers
         self.db_server.set_sample_flag(sample=True)

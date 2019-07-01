@@ -404,3 +404,53 @@ class OnpolicyRolloutBuffer(Dataset):
 
     def __len__(self):
         return self.len
+
+
+class OnpolicySegmentBuffer(OnpolicyRolloutBuffer):
+
+    def __init__(
+        self,
+        state_space: spaces.Space,
+        action_space: spaces.Space,
+        segment_length: int,
+        capacity=int(1e6),
+        **rollout_spec
+    ):
+        self.segment_length = segment_length
+        self.batch_to_indices = {}
+        super(OnpolicySegmentBuffer, self).__init__(
+            state_space, action_space, capacity, **rollout_spec
+        )
+
+    def update_batch_to_indices(self, trajectory_len):
+        num_segments = 1 + (trajectory_len - 1) // self.segment_length
+        segment_ids = np.arange(
+            0, num_segments * self.segment_length + 1, self.segment_length)
+        segment_ids[-1] = trajectory_len
+        segment_ids_pairs = list(zip(segment_ids[:-1], segment_ids[1:]))
+        traj_to_indices = {
+            len(self.batch_to_indices) + i:
+            segment_ids_pairs[i] for i in range(len(segment_ids_pairs))
+        }
+        self.batch_to_indices = {**self.batch_to_indices, **traj_to_indices}
+        self.len = min(self.len + num_segments, self.capacity)
+
+    def push_rollout(self, **rollout: Dict):
+        trajectory_len = len(rollout["reward"])
+        self.update_batch_to_indices(trajectory_len)
+
+        indices = np.arange(
+            self.pointer, self.pointer + trajectory_len
+        ) % self.capacity
+        self.pointer = (self.pointer + trajectory_len) % self.capacity
+
+        for key in self.buffers:
+            self.buffers[key][indices] = rollout[key]
+
+    def __getitem__(self, index):
+        start_idx, end_idx = self.batch_to_indices[index]
+        dct = {
+            key: _handle_array(value[start_idx:end_idx])
+            for key, value in self.buffers.items()
+        }
+        return dct
