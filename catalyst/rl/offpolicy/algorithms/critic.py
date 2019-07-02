@@ -65,20 +65,21 @@ class OffpolicyCritic(AlgorithmSpec):
     def gamma(self) -> float:
         return self._gamma
 
-    def pack_checkpoint(self):
+    def pack_checkpoint(self, with_optimizer: bool = True):
         checkpoint = {}
 
         for key in ["critic"]:
             checkpoint[f"{key}_state_dict"] = getattr(self, key).state_dict()
-            for key2 in ["optimizer", "scheduler"]:
-                key2 = f"{key}_{key2}"
-                value2 = getattr(self, key2, None)
-                if value2 is not None:
-                    checkpoint[f"{key2}_state_dict"] = value2.state_dict()
+            if with_optimizer:
+                for key2 in ["optimizer", "scheduler"]:
+                    key2 = f"{key}_{key2}"
+                    value2 = getattr(self, key2, None)
+                    if value2 is not None:
+                        checkpoint[f"{key2}_state_dict"] = value2.state_dict()
 
         return checkpoint
 
-    def unpack_checkpoint(self, checkpoint, with_optimizer=True):
+    def unpack_checkpoint(self, checkpoint, with_optimizer: bool = True):
         for key in ["critic"]:
             value_l = getattr(self, key, None)
             if value_l is not None:

@@ -13,7 +13,8 @@ import multiprocessing as mp  # noqa E402
 import torch  # noqa E402
 torch.set_num_threads(1)
 
-from catalyst.rl.core import Sampler, ExplorationHandler  # noqa E402
+from catalyst.rl.core import Sampler, ValidSampler, \
+    ExplorationHandler  # noqa E402
 from catalyst.rl.registry import \
     OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
     ENVIRONMENTS, DATABASES  # noqa E402
@@ -44,7 +45,11 @@ def build_args(parser):
     parser.add_argument("--seed", type=int, default=42)
 
     parser.add_argument(
-        "--vis",
+        "--train",
+        type=int,
+        default=None)
+    parser.add_argument(
+        "--valid",
         type=int,
         default=None)
     parser.add_argument(
@@ -52,7 +57,7 @@ def build_args(parser):
         type=int,
         default=None)
     parser.add_argument(
-        "--train",
+        "--vis",
         type=int,
         default=None)
 
@@ -75,8 +80,8 @@ def run_sampler(
     logdir,
     algorithm_fn,
     environment_fn,
-    vis,
-    infer,
+    visualize,
+    mode,
     seed=42,
     id=None,
     # resume=None,
@@ -92,7 +97,7 @@ def run_sampler(
         **config.get("db", {}), sync_epoch=sync_epoch
     ) if db else None
 
-    env = environment_fn(**config_["environment"], visualize=vis)
+    env = environment_fn(**config_["environment"], visualize=visualize)
     agent = algorithm_fn.prepare_for_sampler(env_spec=env, config=config_)
 
     exploration_params = config_["sampler"].pop("exploration_params", None)
@@ -102,9 +107,10 @@ def run_sampler(
     if exploration_handler is not None:
         exploration_handler.set_power(exploration_power)
 
-    mode = "infer" if infer else "train"
-    valid_seeds = config_["sampler"].pop("valid_seeds", None)
-    seeds = valid_seeds if infer else None
+    seeds = dict(
+        (k, config_["sampler"].pop(f"{k}_seeds", None))
+        for k in ["train", "valid", "infer"])
+    seeds = seeds[mode]
 
     if algorithm_fn in OFFPOLICY_ALGORITHMS.values():
         weights_sync_mode = "critic" if env.discrete_actions else "actor"
@@ -114,7 +120,12 @@ def run_sampler(
         # @TODO: add registry for algorithms, trainers, samplers
         raise NotImplementedError()
 
-    sampler = Sampler(
+    if mode in ["valid"]:
+        sampler_fn = ValidSampler
+    else:
+        sampler_fn = Sampler
+
+    sampler = sampler_fn(
         agent=agent,
         env=env,
         db_server=db_server,
@@ -135,6 +146,11 @@ def run_sampler(
 
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
+
+    args.vis = args.vis or 0
+    args.infer = args.infer or 0
+    args.valid = args.valid or 0
+    args.train = args.train or 0
 
     if args.expdir is not None:
         module = import_module(expdir=args.expdir)  # noqa: F841
@@ -176,17 +192,20 @@ def main(args, unknown_args):
     )
 
     if args.check:
+        mode = "train"
+        mode = "valid" if (args.valid is not None and args.valid > 0) else mode
+        mode = "infer" if (args.infer is not None and args.infer > 0) else mode
         params_ = dict(
-            vis=(args.vis is not None and args.vis > 0),
-            infer=(args.infer is not None and args.infer > 0),
+            visualize=(args.vis is not None and args.vis > 0),
+            mode=mode,
             id=sampler_id
         )
         run_sampler(**params, **params_)
 
     for i in range(args.vis):
         params_ = dict(
-            vis=True,
-            infer=True,
+            visualize=True,
+            mode="infer",
             id=sampler_id,
             exploration_power=0.0
         )
@@ -198,8 +217,21 @@ def main(args, unknown_args):
 
     for i in range(args.infer):
         params_ = dict(
-            vis=False,
-            infer=True,
+            visualize=False,
+            mode="infer",
+            id=sampler_id,
+            exploration_power=0.0
+        )
+        p = mp.Process(target=run_sampler, kwargs=dict(**params, **params_))
+        p.start()
+        processes.append(p)
+        sampler_id += 1
+        time.sleep(STEP_DELAY)
+
+    for i in range(args.valid):
+        params_ = dict(
+            visualize=False,
+            mode="valid",
             id=sampler_id,
             exploration_power=0.0
         )
@@ -212,8 +244,8 @@ def main(args, unknown_args):
     for i in range(1, args.train + 1):
         exploration_power = i / args.train
         params_ = dict(
-            vis=False,
-            infer=False,
+            visualize=False,
+            mode="train",
             id=sampler_id,
             exploration_power=exploration_power
         )

@@ -13,6 +13,10 @@ class RedisDB(DBSpec):
         self._sync_epoch = sync_epoch
 
     @property
+    def epoch(self) -> int:
+        return self._epoch
+
+    @property
     def num_trajectories(self) -> int:
         num_trajectories = self._server.llen("trajectories") - 1
         return num_trajectories
@@ -53,25 +57,25 @@ class RedisDB(DBSpec):
         self._server.delete("trajectories")
         self._index = 0
 
-    def dump_weights(self, weights, prefix, epoch):
+    def save_checkpoint(self, checkpoint, epoch):
         self._epoch = epoch
-        weights = {
-            "weights": weights,
+        checkpoint = {
+            "checkpoint": checkpoint,
             "epoch": self._epoch
         }
-        weights = utils.pack(weights)
-        self._server.set(f"{self._prefix}_{prefix}_weights", weights)
+        checkpoint = utils.pack(checkpoint)
+        self._server.set(f"{self._prefix}_checkpoint", checkpoint)
 
-    def load_weights(self, prefix):
-        weights = self._server.get(f"{self._prefix}_{prefix}_weights")
-        if weights is None:
+    def load_checkpoint(self):
+        checkpoint = self._server.get(f"{self._prefix}_checkpoint")
+        if checkpoint is None:
             return None
-        weights = utils.unpack(weights)
-        self._epoch = weights.get("epoch")
-        return weights["weights"]
+        checkpoint = utils.unpack(checkpoint)
+        self._epoch = checkpoint.get("epoch")
+        return checkpoint["checkpoint"]
 
-    def clean_weights(self, prefix):
-        self._server.delete(f"{self._prefix}_{prefix}_weights")
+    def clean_checkpoint(self):
+        self._server.delete(f"{self._prefix}_weights")
 
 
 __all__ = ["RedisDB"]

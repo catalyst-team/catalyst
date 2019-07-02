@@ -4,6 +4,7 @@ args:
 
   vis: 0
   infer: 0  #  change me
+  valid: 1  #  change me
   train: 1  #  change me
 
 db:
@@ -101,8 +102,14 @@ trainer:
   save_period: 1              # epochs
 
 sampler:
-  valid_seeds: [1, 10, 1000, 10000, 42000]
-
   exploration_params:
     - exploration: NoExploration
       probability: 1.0
+
+  valid_seeds: [
+    1608637542,
+    1273642419,
+    1935803228,
+    787846414,
+    996406378,
+  ]

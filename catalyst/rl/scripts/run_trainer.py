@@ -57,12 +57,10 @@ def main(args, unknown_args):
         ALGORITHMS = OFFPOLICY_ALGORITHMS
         trainer_fn = OffpolicyTrainer
         sync_epoch = False
-        weights_sync_mode = "critic" if env.discrete_actions else "actor"
     elif algorithm_name in ONPOLICY_ALGORITHMS_NAMES:
         ALGORITHMS = ONPOLICY_ALGORITHMS
         trainer_fn = OnpolicyTrainer
         sync_epoch = True
-        weights_sync_mode = "actor"
     else:
         # @TODO: add registry for algorithms, trainers, samplers
         raise NotImplementedError()
@@ -82,7 +80,6 @@ def main(args, unknown_args):
         env_spec=env,
         db_server=db_server,
         logdir=args.logdir,
-        weights_sync_mode=weights_sync_mode,
         **config["trainer"],
     )
 

@@ -27,7 +27,6 @@ class TrainerSpec:
         min_num_transitions: int = int(1e4),
         online_update_period: int = 1,
         weights_sync_period: int = 1,
-        weights_sync_mode: str = None,
         save_period: int = 10,
         gc_period: int = 10,
         seed: int = 42,
@@ -62,7 +61,6 @@ class TrainerSpec:
         self.save_period = save_period
         self.weights_sync_period = weights_sync_period
 
-        self._weights_sync_mode = weights_sync_mode
         self._gc_period = gc_period
 
         self.replay_buffer = None
@@ -73,7 +71,7 @@ class TrainerSpec:
         self._init(**kwargs)
 
     def _init(self, **kwargs):
-        assert len(kwargs) == 1
+        assert len(kwargs) == 0
 
     def _prepare_logger(self, logdir):
         if logdir is not None:
@@ -138,15 +136,15 @@ class TrainerSpec:
 
     def _update_sampler_weights(self):
         if self.epoch % self.weights_sync_period == 0:
-            state_dict = self.algorithm.__dict__[
-                self._weights_sync_mode].state_dict()
-            state_dict = {
-                k: v.detach().cpu().numpy()
-                for k, v in state_dict.items()
-            }
-            self.db_server.dump_weights(
-                weights=state_dict,
-                prefix=self._weights_sync_mode,
+            checkpoint = self.algorithm.pack_checkpoint(with_optimizer=False)
+            for key in checkpoint:
+                checkpoint[key] = {
+                    k: v.detach().cpu().numpy()
+                    for k, v in checkpoint[key].items()
+                }
+
+            self.db_server.save_checkpoint(
+                checkpoint=checkpoint,
                 epoch=self.epoch
             )
 
@@ -191,9 +189,9 @@ class TrainerSpec:
         self._prepare_seed()
         metrics: Dict = self._run_epoch()
         self.epoch += 1
-        self._save_checkpoint()
         self._log_to_console(**metrics)
         self._log_to_tensorboard(**metrics)
+        self._save_checkpoint()
         self._update_sampler_weights()
         if self.epoch % self._gc_period == 0:
             gc.collect()
