@@ -42,16 +42,14 @@ class Sampler:
         trajectory_limit: int = None,
         force_store: bool = False,
         gc_period: int = 10,
+        **kwargs
     ):
         self._device = utils.get_device()
         self._sampler_id = id
 
-        self._infer = mode == "infer"
+        self._is_infer = mode in ["valid", "infer"]
         self.seeds = seeds
-        self._seeder = Seeder(
-            init_seed=42 + id,
-            max_seed=len(seeds) if seeds is not None else None
-        )
+        self._seeder = Seeder(init_seed=42 + id)
 
         # logging
         self._prepare_logger(logdir, mode)
@@ -66,7 +64,7 @@ class Sampler:
             env=self.env,
             agent=self.agent,
             device=self._device,
-            deterministic=self._infer,
+            deterministic=self._is_infer,
             sample_flag=self._sample_flag
         )
 
@@ -78,6 +76,12 @@ class Sampler:
         self._force_store = force_store
         self._gc_period = gc_period
         self._db_loop_thread = None
+
+        #  special
+        self._init(**kwargs)
+
+    def _init(self, **kwargs):
+        assert len(kwargs) == 0
 
     def _prepare_logger(self, logdir, mode):
         if logdir is not None:
@@ -106,21 +110,19 @@ class Sampler:
     ):
         if filepath is not None:
             checkpoint = utils.load_checkpoint(filepath)
-            weights = checkpoint[f"{self._weights_sync_mode}_state_dict"]
-            self.agent.load_state_dict(weights)
         elif db_server is not None:
-            weights = db_server.load_weights(prefix=self._weights_sync_mode)
-            while weights is None:
+            checkpoint = db_server.load_checkpoint()
+            while checkpoint is None:
                 time.sleep(1.0)
-                weights = db_server.load_weights(
-                    prefix=self._weights_sync_mode)
-            weights = {
-                k: utils.any2device(v, device=self._device)
-                for k, v in weights.items()}
-            self.agent.load_state_dict(weights)
+                checkpoint = db_server.load_checkpoint()
         else:
             raise NotImplementedError
 
+        weights = checkpoint[f"{self._weights_sync_mode}_state_dict"]
+        weights = {
+            k: utils.any2device(v, device=self._device)
+            for k, v in weights.items()}
+        self.agent.load_state_dict(weights)
         self.agent.to(self._device)
         self.agent.eval()
 
@@ -130,9 +132,10 @@ class Sampler:
         self.db_server.push_trajectory(trajectory)
 
     def _get_seed(self):
-        seed = self._seeder()[0]
         if self.seeds is not None:
-            seed = self.seeds[seed]
+            seed = self.seeds[self.trajectory_index % len(self.seeds)]
+        else:
+            seed = self._seeder()[0]
         set_global_seed(seed)
         return seed
 
@@ -217,7 +220,7 @@ class Sampler:
             if trajectory is None:
                 continue
 
-            if not self._infer or self._force_store:
+            if not self._is_infer or self._force_store:
                 self._store_trajectory(trajectory)
             self._log_to_console(**trajectory_info)
             self._log_to_tensorboard(**trajectory_info)
@@ -237,10 +240,42 @@ class Sampler:
         self._start_sample_loop()
 
 
+class ValidSampler(Sampler):
+
+    def _init(self, **kwargs):
+        assert len(kwargs) == 0
+        self.top_best_agents = []
+        self._sample_flag.value = True
+
+    def _run_sample_loop(self):
+        assert self.seeds is not None
+
+        while True:
+            self.load_checkpoint(db_server=self.db_server)
+            trajectories_rewards = []
+
+            for i in range(len(self.seeds)):
+                trajectory, trajectory_info = self._run_trajectory_loop()
+                trajectories_rewards.append(trajectory_info["reward"])
+
+                self._log_to_console(**trajectory_info)
+                self._log_to_tensorboard(**trajectory_info)
+                self.trajectory_index += 1
+
+                if self.trajectory_index % self._gc_period == 0:
+                    gc.collect()
+
+            self.compare_checkpoints()
+
+
+    def run(self):
+        self._start_sample_loop()
+
+
 def _db2sampler_loop(sampler: Sampler):
     while True:
         sampler._sample_flag.value = sampler.db_server.get_sample_flag()
         time.sleep(5.0)
 
 
-__all__ = ["Sampler"]
+__all__ = ["Sampler", "ValidSampler"]

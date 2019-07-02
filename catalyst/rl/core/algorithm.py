@@ -21,11 +21,16 @@ class AlgorithmSpec(ABC):
         pass
 
     @abstractmethod
-    def pack_checkpoint(self):
+    def pack_checkpoint(self, with_optimizer: bool = True, **kwargs):
         pass
 
     @abstractmethod
-    def unpack_checkpoint(self, checkpoint, **kwargs):
+    def unpack_checkpoint(
+        self,
+        checkpoint,
+        with_optimizer: bool = True,
+        **kwargs
+    ):
         pass
 
     @abstractmethod

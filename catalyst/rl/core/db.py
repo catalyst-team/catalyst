@@ -29,13 +29,13 @@ class DBSpec(ABC):
         pass
 
     @abstractmethod
-    def dump_weights(self, weights, prefix, epoch):
+    def save_checkpoint(self, checkpoint, epoch):
         pass
 
     @abstractmethod
-    def load_weights(self, prefix):
+    def load_checkpoint(self):
         pass
 
     @abstractmethod
-    def clean_weights(self, prefix):
+    def clean_checkpoint(self):
         pass

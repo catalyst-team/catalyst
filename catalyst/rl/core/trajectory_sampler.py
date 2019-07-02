@@ -6,7 +6,7 @@ import torch
 
 from catalyst.rl import utils
 from catalyst.rl.utils.buffer import get_buffer
-from catalyst.rl.utils.dynamic_array import DynamicArray
+from catalyst.utils.dynamic_array import DynamicArray
 from .agent import ActorSpec, CriticSpec
 from .environment import EnvironmentSpec
 from .policy_handler import PolicyHandler
