@@ -85,10 +85,12 @@ class InferMaskCallback(Callback):
             if value is not None:
                 setattr(self, key, value)
         # assert self.out_prefix is not None
+        self.out_prefix = self.out_prefix \
+            if self.out_prefix is not None \
+            else ""
         if self.out_dir is not None:
             self.out_prefix = str(self.out_dir) + "/" + str(self.out_prefix)
-        if self.out_prefix is not None:
-            os.makedirs(os.path.dirname(self.out_prefix), exist_ok=True)
+        os.makedirs(os.path.dirname(self.out_prefix), exist_ok=True)
 
     def on_loader_start(self, state: RunnerState):
         lm = state.loader_name
