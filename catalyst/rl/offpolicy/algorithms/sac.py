@@ -239,33 +239,35 @@ class SAC(OffpolicyActorCritic):
 
         return policy_loss, value_loss
 
-    def pack_checkpoint(self):
+    def pack_checkpoint(self, with_optimizer: bool = True):
         checkpoint = {}
 
         for key in ["actor", "critic"]:
             checkpoint[f"{key}_state_dict"] = getattr(self, key).state_dict()
-            for key2 in ["optimizer", "scheduler"]:
-                key2 = f"{key}_{key2}"
-                value2 = getattr(self, key2, None)
-                if value2 is not None:
-                    checkpoint[f"{key2}_state_dict"] = value2.state_dict()
+            if with_optimizer:
+                for key2 in ["optimizer", "scheduler"]:
+                    key2 = f"{key}_{key2}"
+                    value2 = getattr(self, key2, None)
+                    if value2 is not None:
+                        checkpoint[f"{key2}_state_dict"] = value2.state_dict()
 
         key = "critics"
         for i in range(len(self.critics)):
             value = getattr(self, key)
             checkpoint[f"{key}{i}_state_dict"] = value[i].state_dict()
-            for key2 in ["optimizer", "scheduler"]:
-                key2 = f"{key}_{key2}"
-                value2 = getattr(self, key2, None)
-                if value2 is not None:
-                    value2_i = value2[i]
-                    if value2_i is not None:
-                        value2_i = value2_i.state_dict()
-                        checkpoint[f"{key2}{i}_state_dict"] = value2_i
+            if with_optimizer:
+                for key2 in ["optimizer", "scheduler"]:
+                    key2 = f"{key}_{key2}"
+                    value2 = getattr(self, key2, None)
+                    if value2 is not None:
+                        value2_i = value2[i]
+                        if value2_i is not None:
+                            value2_i = value2_i.state_dict()
+                            checkpoint[f"{key2}{i}_state_dict"] = value2_i
 
         return checkpoint
 
-    def unpack_checkpoint(self, checkpoint, with_optimizer=True):
+    def unpack_checkpoint(self, checkpoint, with_optimizer: bool = True):
         super().unpack_checkpoint(checkpoint, with_optimizer)
 
         key = "critics"

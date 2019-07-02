@@ -14,12 +14,16 @@ class MongoDB(DBSpec):
 
         self._trajectory_collection = self._shared_db["trajectories"]
         self._raw_trajectory_collection = self._shared_db["raw_trajectories"]
-        self._weights_collection = self._agent_db["weights"]
+        self._checkpoints_collection = self._agent_db["checkpoints"]
         self._flag_collection = self._agent_db["flag"]
         self._last_datetime = datetime.datetime.min
 
         self._epoch = 0
         self._sync_epoch = sync_epoch
+
+    @property
+    def epoch(self) -> int:
+        return self._epoch
 
     @property
     def num_trajectories(self) -> int:
@@ -79,31 +83,32 @@ class MongoDB(DBSpec):
     def clean_trajectories(self):
         self._trajectory_collection.drop()
 
-    def dump_weights(self, weights, prefix, epoch):
+    def save_checkpoint(self, checkpoint, epoch):
         self._epoch = epoch
 
-        weights = utils.pack(weights)
-        self._weights_collection.replace_one(
-            {"prefix": prefix},
+        checkpoint = utils.pack(checkpoint)
+        self._checkpoints_collection.replace_one(
+            {"prefix": "checkpoint"},
             {
-                "weights": weights,
-                "prefix": prefix,
+                "checkpoint": checkpoint,
+                "prefix": "checkpoint",
                 "epoch": self._epoch
             },
             upsert=True
         )
 
-    def load_weights(self, prefix):
-        weights_obj = self._weights_collection.find_one({"prefix": prefix})
-        weights = weights_obj.get("weights")
-        if weights is None:
+    def load_checkpoint(self):
+        checkpoint_obj = self._checkpoints_collection.find_one(
+            {"prefix": "checkpoint"})
+        checkpoint = checkpoint_obj.get("checkpoint")
+        if checkpoint is None:
             return None
-        self._epoch = weights_obj["epoch"]
-        weights = utils.unpack(weights)
-        return weights
+        self._epoch = checkpoint_obj["epoch"]
+        checkpoint = utils.unpack(checkpoint)
+        return checkpoint
 
-    def clean_weights(self, prefix):
-        self._weights_collection.delete_one({"prefix": prefix})
+    def clean_checkpoint(self):
+        self._checkpoints_collection.delete_one({"prefix": "checkpoint"})
 
 
 __all__ = ["MongoDB"]
