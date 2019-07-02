@@ -60,7 +60,7 @@ class InferMaskCallback(Callback):
         name_key=None,
         mean=None,
         std=None,
-        threshold=None,
+        threshold: float = 0.5,
         mask_strength: float = 0.5,
         mask_type: str = "soft"
     ):
@@ -109,17 +109,17 @@ class InferMaskCallback(Callback):
             else logits
 
         if self.mask_type == "soft":
-            probs = F.sigmoid(logits)
+            probabilities = torch.sigmoid(logits)
         else:
-            probs = F.softmax(logits, dim=1)
-        probs = probs.detach().cpu()
+            probabilities = F.softmax(logits, dim=1)
+        probabilities = probabilities.detach().cpu().numpy()
 
         masks = []
-        for observation in probs:
-            result = np.zeros_like(observation[0], dtype=np.int32)
-            for i, ch in enumerate(observation):
-                result[ch >= self.threshold] = i + 1
-            masks.append(result)
+        for probability in probabilities:
+            mask = np.zeros_like(probability[0], dtype=np.int32)
+            for i, ch in enumerate(probability):
+                mask[ch >= self.threshold] = i + 1
+            masks.append(mask)
 
         for i, (image, mask) in enumerate(zip(images, masks)):
             try:
