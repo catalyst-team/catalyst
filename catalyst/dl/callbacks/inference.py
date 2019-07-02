@@ -8,7 +8,7 @@ import torch
 import torch.nn.functional as F
 
 from catalyst.dl.core import Callback, RunnerState
-from catalyst.utils import binary_mask_to_overlay_image, tensor_to_ndimage
+from catalyst.utils import tensor_to_ndimage
 
 
 # @TODO: refactor
@@ -98,7 +98,7 @@ class InferMaskCallback(Callback):
         lm = state.loader_name
         names = state.input.get(self.name_key, [])
 
-        features = state.input[self.input_key]
+        features = state.input[self.input_key].detach().cpu()
         images = tensor_to_ndimage(features)
 
         logits = state.output[self.output_key]
@@ -110,6 +110,7 @@ class InferMaskCallback(Callback):
             probs = F.sigmoid(logits)
         else:
             probs = F.softmax(logits, dim=1)
+        probs = probs.detach().cpu()
 
         masks = []
         for observation in probs:
