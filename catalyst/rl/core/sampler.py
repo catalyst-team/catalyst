@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import Union, List, Dict
 
 import os
 os.environ["OMP_NUM_THREADS"] = "1"
@@ -76,6 +76,7 @@ class Sampler:
         self._force_store = force_store
         self._gc_period = gc_period
         self._db_loop_thread = None
+        self.checkpoint = None
 
         #  special
         self._init(**kwargs)
@@ -89,8 +90,10 @@ class Sampler:
             logpath = f"{logdir}/" \
                 f"sampler.{mode}.{self._sampler_id}.{timestamp}"
             os.makedirs(logpath, exist_ok=True)
+            self.logdir = logpath
             self.logger = SummaryWriter(logpath)
         else:
+            self.logdir = None
             self.logger = None
 
     def _start_db_loop(self):
@@ -113,12 +116,13 @@ class Sampler:
         elif db_server is not None:
             checkpoint = db_server.load_checkpoint()
             while checkpoint is None:
-                time.sleep(1.0)
+                time.sleep(3.0)
                 checkpoint = db_server.load_checkpoint()
         else:
             raise NotImplementedError
 
-        weights = checkpoint[f"{self._weights_sync_mode}_state_dict"]
+        self.checkpoint = checkpoint
+        weights = self.checkpoint[f"{self._weights_sync_mode}_state_dict"]
         weights = {
             k: utils.any2device(v, device=self._device)
             for k, v in weights.items()}
@@ -242,10 +246,73 @@ class Sampler:
 
 class ValidSampler(Sampler):
 
-    def _init(self, **kwargs):
+    def _init(self, save_n_best: int = 3, **kwargs):
         assert len(kwargs) == 0
-        self.top_best_agents = []
+        self.save_n_best = save_n_best
+        self.best_agents = []
         self._sample_flag.value = True
+
+    def load_checkpoint(
+        self,
+        *,
+        filepath: str = None,
+        db_server: DBSpec = None
+    ):
+        if filepath is not None:
+            checkpoint = utils.load_checkpoint(filepath)
+        elif db_server is not None:
+            current_epoch = db_server.epoch
+            checkpoint = db_server.load_checkpoint()
+            while checkpoint is None or db_server.epoch <= current_epoch:
+                time.sleep(3.0)
+                checkpoint = db_server.load_checkpoint()
+        else:
+            raise NotImplementedError
+
+        self.checkpoint = checkpoint
+        weights = self.checkpoint[f"{self._weights_sync_mode}_state_dict"]
+        weights = {
+            k: utils.any2device(v, device=self._device)
+            for k, v in weights.items()}
+        self.agent.load_state_dict(weights)
+        self.agent.to(self._device)
+        self.agent.eval()
+
+    @staticmethod
+    def rewards2metric(rewards):
+        return np.mean(rewards)  # - np.std(rewards)
+
+    def save_checkpoint(
+        self,
+        logdir: str,
+        checkpoint: Dict,
+        save_n_best: int = 5,
+        minimize_metric: bool = False
+    ):
+        agent_rewards = checkpoint["rewards"]
+        agent_metric = self.rewards2metric(agent_rewards)
+
+        is_best = len(self.best_agents) == 0 or \
+            agent_metric > self.rewards2metric(self.best_agents[0][1])
+        suffix = f"{checkpoint['epoch']}"
+        filepath = utils.save_checkpoint(
+            logdir=f"{logdir}/checkpoints/",
+            checkpoint=checkpoint,
+            suffix=suffix,
+            is_best=is_best,
+            is_last=True
+        )
+
+        self.best_agents.append((filepath, agent_rewards))
+        self.best_agents = sorted(
+            self.best_agents,
+            key=lambda x: x[1],
+            reverse=not minimize_metric
+        )
+        if len(self.best_agents) > save_n_best:
+            last_item = self.best_agents.pop(-1)
+            last_filepath = last_item[0]
+            os.remove(last_filepath)
 
     def _run_sample_loop(self):
         assert self.seeds is not None
@@ -265,8 +332,13 @@ class ValidSampler(Sampler):
                 if self.trajectory_index % self._gc_period == 0:
                     gc.collect()
 
-            self.compare_checkpoints()
-
+            self.checkpoint["rewards"] = trajectories_rewards
+            self.checkpoint["epoch"] = self.db_server.epoch
+            self.save_checkpoint(
+                logdir=self.logdir,
+                checkpoint=self.checkpoint,
+                save_n_best=self.save_n_best
+            )
 
     def run(self):
         self._start_sample_loop()

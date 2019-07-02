@@ -5,6 +5,11 @@ class DBSpec(ABC):
 
     @property
     @abstractmethod
+    def epoch(self) -> int:
+        pass
+
+    @property
+    @abstractmethod
     def num_trajectories(self) -> int:
         pass
 

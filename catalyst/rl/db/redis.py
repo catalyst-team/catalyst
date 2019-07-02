@@ -13,6 +13,10 @@ class RedisDB(DBSpec):
         self._sync_epoch = sync_epoch
 
     @property
+    def epoch(self) -> int:
+        return self._epoch
+
+    @property
     def num_trajectories(self) -> int:
         num_trajectories = self._server.llen("trajectories") - 1
         return num_trajectories

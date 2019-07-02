@@ -13,7 +13,8 @@ import multiprocessing as mp  # noqa E402
 import torch  # noqa E402
 torch.set_num_threads(1)
 
-from catalyst.rl.core import Sampler, ExplorationHandler  # noqa E402
+from catalyst.rl.core import Sampler, ValidSampler, \
+    ExplorationHandler  # noqa E402
 from catalyst.rl.registry import \
     OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
     ENVIRONMENTS, DATABASES  # noqa E402
@@ -106,7 +107,10 @@ def run_sampler(
     if exploration_handler is not None:
         exploration_handler.set_power(exploration_power)
 
-    seeds = config_["sampler"].pop(f"{mode}_seeds", None)
+    seeds = dict(
+        (k, config_["sampler"].pop(f"{k}_seeds", None))
+        for k in ["train", "valid", "infer"])
+    seeds = seeds[mode]
 
     if algorithm_fn in OFFPOLICY_ALGORITHMS.values():
         weights_sync_mode = "critic" if env.discrete_actions else "actor"
@@ -116,7 +120,12 @@ def run_sampler(
         # @TODO: add registry for algorithms, trainers, samplers
         raise NotImplementedError()
 
-    sampler = Sampler(
+    if mode in ["valid"]:
+        sampler_fn = ValidSampler
+    else:
+        sampler_fn = Sampler
+
+    sampler = sampler_fn(
         agent=agent,
         env=env,
         db_server=db_server,
