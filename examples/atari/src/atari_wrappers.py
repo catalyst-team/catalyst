@@ -5,7 +5,7 @@ from gym import spaces
 from gym.core import Wrapper
 import cv2
 from catalyst.rl.utils.buffer import get_buffer
-from catalyst.rl.utils.dynamic_array import DynamicArray
+from catalyst.utils.dynamic_array import DynamicArray
 
 cv2.ocl.setUseOpenCL(False)
 
