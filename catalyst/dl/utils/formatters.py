@@ -45,10 +45,10 @@ class TxtMetricsFormatter(MetricsFormatter):
         super().__init__("[{asctime}] ")
 
     def _format_metric(self, name, value):
-        if name in {"_base/lr"}:
+        if value < 1e-4:
             # Print LR in scientific format since
             # 4 decimal chars is not enough for LR
-            # lower than 1e-5
+            # lower than 1e-4
             return f"{name}={value:E}"
 
         return f"{name}={value:.4f}"
