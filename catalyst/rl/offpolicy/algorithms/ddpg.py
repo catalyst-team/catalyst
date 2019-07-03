@@ -53,10 +53,11 @@ class DDPG(OffpolicyActorCritic):
         policy_loss = -torch.mean(self.critic(states_t, self.actor(states_t)))
 
         # critic loss
-        q_values_t = self.critic(states_t, actions_t)  # B x num_heads x 1
+        q_values_t = self.critic(
+            states_t, actions_t).squeeze_(dim=2)  # B x num_heads x 1
         q_values_tp1 = self.target_critic(
             states_tp1, self.target_actor(states_tp1)
-        ).detach()  # B x num_heads x 1
+        ).squeeze_(dim=2).detach()  # B x num_heads x 1
         done_t = done_t[:, None, :]  # B x 1 x 1
         rewards_t = rewards_t[:, None, :]  # B x 1 x 1
         gammas = gammas[None, :, None]   # 1 x num_heads x 1
@@ -88,11 +89,11 @@ class DDPG(OffpolicyActorCritic):
         gammas = gammas[None, :, None]
         # 1 x num_heads x 1
 
-        logits_t = self.critic(states_t, actions_t)
+        logits_t = self.critic(states_t, actions_t).squeeze_(dim=2)
         # B x num_heads x num_atoms
         logits_tp1 = self.target_critic(
             states_tp1, self.target_actor(states_tp1)
-        ).detach()
+        ).squeeze_(dim=2).detach()
         # B x num_heads x num_atoms
         atoms_target_t = rewards_t + (1 - done_t) * gammas * self.z
         # B x num_heads x num_atoms
@@ -117,11 +118,11 @@ class DDPG(OffpolicyActorCritic):
         policy_loss = -torch.mean(self.critic(states_t, self.actor(states_t)))
 
         # critic loss (quantile regression)
-        atoms_t = self.critic(states_t, actions_t)
+        atoms_t = self.critic(states_t, actions_t).squeeze_(dim=2)
         # B x num_heads x num_atoms
         atoms_tp1 = self.target_critic(
             states_tp1, self.target_actor(states_tp1)
-        ).detach()
+        ).squeeze_(dim=2).detach()
         # B x num_heads x num_atoms
 
         done_t = done_t[:, None, :]

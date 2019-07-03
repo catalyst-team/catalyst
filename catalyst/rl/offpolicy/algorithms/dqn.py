@@ -46,8 +46,6 @@ class DQN(OffpolicyCritic):
 
         # Array of size [num_heads,]
         gammas = self._gammas ** self._n_step
-        critic = self.critic
-        target_critic = self.target_critic
 
         # We use the same done_t, rewards_t, actions_t for each head
         done_t = done_t[:, None, :]
@@ -62,11 +60,11 @@ class DQN(OffpolicyCritic):
         gammas = gammas[None, :, None]
         # 1 x num_heads x 1
 
-        q_values_t = critic(states_t).squeeze(-1).gather(-1, actions_t)
+        q_values_t = self.critic(states_t).squeeze(-1).gather(-1, actions_t)
         # B x num_heads x 1
 
         q_values_tp1 = \
-            target_critic(states_tp1).squeeze(-1).max(-1, keepdim=True)[0]
+            self.target_critic(states_tp1).squeeze(-1).max(-1, keepdim=True)[0]
         # B x num_heads x 1
         q_target_t = rewards_t + (1 - done_t) * gammas * q_values_tp1.detach()
         value_loss = self.critic_criterion(q_values_t, q_target_t).mean()
@@ -77,8 +75,6 @@ class DQN(OffpolicyCritic):
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
 
-        critic = self.critic
-        target_critic = self.target_critic
         gammas = (self._gammas ** self._n_step)[None, :, None]
         # 1 x num_heads x 1
 
@@ -88,10 +84,10 @@ class DQN(OffpolicyCritic):
         indices_t = actions_t.repeat(1, self._num_heads, 1, self.num_atoms)
         # B x num_heads x 1 x num_atoms
 
-        logits_t = critic(states_t).gather(-2, indices_t).squeeze(-2)
+        logits_t = self.critic(states_t).gather(-2, indices_t).squeeze(-2)
         # B x num_heads x num_atoms
 
-        all_logits_tp1 = target_critic(states_tp1).detach()
+        all_logits_tp1 = self.target_critic(states_tp1).detach()
         # B x num_heads x num_actions x num_atoms
 
         q_values_tp1 = torch.sum(
@@ -122,8 +118,6 @@ class DQN(OffpolicyCritic):
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
 
-        critic = self.critic
-        target_critic = self.target_critic
         gammas = (self._gammas ** self._n_step)[None, :, None]
         # 1 x num_heads x 1
 
@@ -135,10 +129,10 @@ class DQN(OffpolicyCritic):
 
         # critic loss (quantile regression)
 
-        atoms_t = critic(states_t).gather(-2, indices_t).squeeze(-2)
+        atoms_t = self.critic(states_t).gather(-2, indices_t).squeeze(-2)
         # B x num_heads x num_atoms
 
-        all_atoms_tp1 = target_critic(states_tp1).detach()
+        all_atoms_tp1 = self.target_critic(states_tp1).detach()
         # B x num_heads x num_actions x num_atoms
 
         q_values_tp1 = all_atoms_tp1.mean(dim=-1)

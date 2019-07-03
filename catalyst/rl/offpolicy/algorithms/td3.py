@@ -97,21 +97,27 @@ class TD3(OffpolicyActorCritic):
         return actions
 
     def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
-
         # actor loss
         actions_tp0 = self.actor(states_t)
         # For now we use the same actions for each head
-        q_values_tp0 = [x(states_t, actions_tp0) for x in self.critics]
+        q_values_tp0 = [
+            x(states_t, actions_tp0).squeeze_(dim=3).squeeze_(dim=2)
+            for x in self.critics
+        ]
         q_values_tp0_min = torch.cat(q_values_tp0, dim=-1).min(dim=-1)[0]
         policy_loss = -torch.mean(q_values_tp0_min)
 
         # critic loss
         actions_tp1 = self.target_actor(states_tp1).detach()
         actions_tp1 = self._add_noise_to_actions(actions_tp1)
-        q_values_t = [x(states_t, actions_t) for x in self.critics]
-        q_values_tp1 = torch.cat(
-            [x(states_tp1, actions_tp1) for x in self.target_critics], dim=-1
-        )  # B x num_heads x num_critics
+        q_values_t = [
+            x(states_t, actions_t).squeeze_(dim=3).squeeze_(dim=2)
+            for x in self.critics
+        ]
+        q_values_tp1 = torch.cat([
+            x(states_tp1, actions_tp1).squeeze_(dim=3).squeeze_(dim=2)
+            for x in self.target_critics
+        ], dim=-1)  # B x num_heads x num_critics
         q_values_tp1 = q_values_tp1.min(dim=-1, keepdim=True)[0].detach()
         # B x num_heads x 1
 
@@ -130,11 +136,12 @@ class TD3(OffpolicyActorCritic):
     def _categorical_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
-
         # actor loss
         actions_tp0 = self.actor(states_t)
         # Again, we use the same actor for each critic
-        logits_tp0 = [x(states_t, actions_tp0) for x in self.critics]
+        logits_tp0 = [
+            x(states_t, actions_tp0).squeeze_(dim=2) for x in self.critics
+        ]
         probs_tp0 = [torch.softmax(x, dim=-1) for x in logits_tp0]
         q_values_tp0 = [
             torch.sum(x * self.z, dim=-1, keepdim=True) for x in probs_tp0
@@ -145,8 +152,13 @@ class TD3(OffpolicyActorCritic):
         # critic loss (kl-divergence between categorical distributions)
         actions_tp1 = self.target_actor(states_tp1).detach()
         actions_tp1 = self._add_noise_to_actions(actions_tp1)
-        logits_t = [x(states_t, actions_t) for x in self.critics]
-        logits_tp1 = [x(states_tp1, actions_tp1) for x in self.target_critics]
+        logits_t = [
+            x(states_t, actions_t).squeeze_(dim=2) for x in self.critics
+        ]
+        logits_tp1 = [
+            x(states_tp1, actions_tp1).squeeze_(dim=2)
+            for x in self.target_critics
+        ]
         probs_tp1 = [torch.softmax(x, dim=-1) for x in logits_tp1]
         q_values_tp1 = [
             torch.sum(x * self.z, dim=-1, keepdim=True) for x in probs_tp1
@@ -186,11 +198,10 @@ class TD3(OffpolicyActorCritic):
     def _quantile_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
-
         # actor loss
         actions_tp0 = self.actor(states_t)
         atoms_tp0 = [
-            x(states_t, actions_tp0).unsqueeze_(-1) for x in self.critics
+            x(states_t, actions_tp0).squeeze_(dim=2) for x in self.critics
         ]
         q_values_tp0_min = torch.cat(
             atoms_tp0, dim=-1
@@ -200,14 +211,14 @@ class TD3(OffpolicyActorCritic):
         # critic loss (quantile regression)
         actions_tp1 = self.target_actor(states_tp1).detach()
         actions_tp1 = self._add_noise_to_actions(actions_tp1)
-        atoms_t = [x(states_t, actions_t) for x in self.critics]
-        atoms_tp1 = torch.cat(
-            [
-                x(states_tp1, actions_tp1).unsqueeze_(-1)
-                for x in self.target_critics
-            ],
-            dim=-1
-        )
+        atoms_t = [
+            x(states_t, actions_t).squeeze_(dim=2).unsqueeze_(-1)
+            for x in self.critics
+        ]
+        atoms_tp1 = torch.cat([
+            x(states_tp1, actions_tp1).squeeze_(dim=2).unsqueeze_(-1)
+            for x in self.target_critics
+        ], dim=-1)
         # B x num_heads x num_atoms x num_critics
         # @TODO: smarter way to do this (other than reshaping)?
         atoms_ids_tp1_min = atoms_tp1.mean(dim=-2).argmin(dim=-1).view(-1)
