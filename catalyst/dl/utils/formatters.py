@@ -44,12 +44,21 @@ class TxtMetricsFormatter(MetricsFormatter):
     def __init__(self):
         super().__init__("[{asctime}] ")
 
+    def _format_metric(self, name, value):
+        if value < 1e-4:
+            # Print LR in scientific format since
+            # 4 decimal chars is not enough for LR
+            # lower than 1e-4
+            return f"{name}={value:E}"
+
+        return f"{name}={value:.4f}"
+
     def _format_metrics(self, metrics):
         # metrics : dict[str: dict[str: float]]
         metrics_formatted = {}
         for key, value in metrics.items():
             metrics_formatted_ = [
-                f"{m_name}={m_value:.4f}"
+                self._format_metric(m_name, m_value)
                 for m_name, m_value in sorted(value.items())
             ]
             metrics_formatted_ = " | ".join(metrics_formatted_)
