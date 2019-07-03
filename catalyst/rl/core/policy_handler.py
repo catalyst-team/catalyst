@@ -61,7 +61,7 @@ class PolicyHandler:
         elif self.value_distribution == "quantile":
             q_values = torch.mean(output[0, -1, :, :], dim=-1)
         else:
-            q_values = output[0, -1, :]
+            q_values = output[0, -1, :, 0]
         return q_values.cpu().numpy()
 
     @torch.no_grad()

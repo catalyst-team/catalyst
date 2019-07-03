@@ -67,15 +67,9 @@ class ValueHead(nn.Module):
         x: List[torch.Tensor] = []
         for net in self.net:
             x.append(net(inputs).view(-1, self.out_features, self.num_atoms))
-
-        x = [z.squeeze_(dim=1).squeeze_(dim=-1) for z in x]
-        if self.num_atoms == 1 and self.out_features == 1:
-            # make critic outputs (B, 1) instead of (B, )
-            x = [z.unsqueeze_(dim=1) for z in x]
-
-        # B x num_heads x num_outputs x num_atoms (discrete)
-        # B x num_heads x num_atoms (continuous)
-        return torch.stack(x, dim=1)
+        # batch_size(0) x num_heads(1) x num_outputs(2) x num_atoms(3)
+        x = torch.stack(x, dim=1)
+        return x
 
 
 class PolicyHead(nn.Module):

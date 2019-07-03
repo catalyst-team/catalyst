@@ -71,7 +71,7 @@ agents:
       num_atoms: 1
 
 #      distribution: categorical
-#      num_atoms: 65
+#      num_atoms: 64
 #      values_range: [-300.0, 300.0]
 
 #      distribution: quantile
