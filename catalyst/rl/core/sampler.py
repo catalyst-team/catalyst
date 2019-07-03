@@ -229,14 +229,11 @@ class Sampler:
             trajectory, trajectory_info = self._run_trajectory_loop()
             if trajectory is None:
                 continue
-
-            raw = "raw_trajectory" in trajectory_info
+            raw_trajectory = trajectory_info.pop("raw_trajectory", None)
             # Do it firsthand, so the loggers don't crush
-            if raw:
-                raw_trajectory = trajectory_info.pop("raw_trajectory")
             if not self._is_infer or self._force_store:
                 self._store_trajectory(trajectory)
-                if raw:
+                if raw_trajectory is not None:
                     self._store_trajectory(raw_trajectory, raw=True)
             self._log_to_console(**trajectory_info)
             self._log_to_tensorboard(**trajectory_info)
