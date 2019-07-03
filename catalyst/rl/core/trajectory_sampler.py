@@ -162,8 +162,6 @@ class TrajectorySampler:
         if not self._sample_flag.value:
             return None, None
 
-        print(num_steps)
-
         trajectory = self.get_trajectory()
         trajectory_info = {"reward": reward, "num_steps": num_steps}
         if info and "raw_trajectory" in info:
