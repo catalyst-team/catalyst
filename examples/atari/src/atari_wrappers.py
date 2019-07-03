@@ -400,7 +400,7 @@ class RawTrajectoryWrapper(Wrapper):
         if not self.allow_early_resets and not self.needs_reset:
             raise RuntimeError(
                 "Wrap your env with "
-                "RawTransitionWrapper(env, allow_early_resets=True)"
+                "RawTrajectoryWrapper(env, allow_early_resets=True)"
             )
         self.needs_reset = False
 
