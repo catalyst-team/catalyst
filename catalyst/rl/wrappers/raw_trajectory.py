@@ -6,18 +6,16 @@ import numpy as np
 
 class RawTrajectoryWrapper(Wrapper):
     def __init__(
-            self,
-            env,
-            allow_early_resets=False,
-            initial_capacity=1e3,
-            reset_keywords=()
+        self,
+        env,
+        allow_early_resets=False,
+        initial_capacity=1e3,
     ):
         """
         Wrapper which saves the raw trajectories of the environment
         into the info dict, which are then pushed to the database.
         """
         super().__init__(env)
-        self.reset_keywords = reset_keywords
         self.allow_early_resets = allow_early_resets
         self.needs_reset = True
         self.num_steps = 0
@@ -65,6 +63,14 @@ class RawTrajectoryWrapper(Wrapper):
             capacity=int(self.initial_capacity)
         )
 
+    def _reset_state(self):
+        if not self.allow_early_resets and not self.needs_reset:
+            raise RuntimeError(
+                "Wrap your env with "
+                "RawTrajectoryWrapper(env, allow_early_resets=True)"
+            )
+        self.needs_reset = False
+
     def _init_with_observation(self, observation):
         self.observations.append(observation)
 
@@ -78,35 +84,7 @@ class RawTrajectoryWrapper(Wrapper):
         self.rewards.append(r_t)
         self.dones.append(d_t)
 
-    def reset(self, **kwargs):
-        self.reset_state()
-        for k in self.reset_keywords:
-            v = kwargs.get(k)
-            if v is None:
-                raise ValueError(
-                    "Expected you to pass kwarg %s into reset" % k
-                )
-        initial_state = self.env.reset(**kwargs)
-        self._init_buffers()
-        self._init_with_observation(initial_state)
-        return initial_state
-
-    def reset_state(self):
-        if not self.allow_early_resets and not self.needs_reset:
-            raise RuntimeError(
-                "Wrap your env with "
-                "RawTrajectoryWrapper(env, allow_early_resets=True)"
-            )
-        self.needs_reset = False
-
-    def step(self, action):
-        if self.needs_reset:
-            raise RuntimeError("Tried to step environment that needs reset")
-        ob, rew, done, info = self.env.step(action)
-        info = self.update(ob, rew, done, action, info)
-        return (ob, rew, done, info)
-
-    def update(self, ob, rew, done, action, info):
+    def _update(self, ob, rew, done, action, info):
         self._put_transition((ob, action, rew, done))
         assert isinstance(info, dict)
         if done:
@@ -118,3 +96,17 @@ class RawTrajectoryWrapper(Wrapper):
                 np.array(self.dones)
             )
         return info
+
+    def reset(self, **kwargs):
+        self._reset_state()
+        initial_state = self.env.reset(**kwargs)
+        self._init_buffers()
+        self._init_with_observation(initial_state)
+        return initial_state
+
+    def step(self, action):
+        if self.needs_reset:
+            raise RuntimeError("Tried to step environment that needs reset")
+        ob, rew, done, info = self.env.step(action)
+        info = self._update(ob, rew, done, action, info)
+        return (ob, rew, done, info)
