@@ -10,7 +10,6 @@ class RawTrajectoryWrapper(Wrapper):
             env,
             allow_early_resets=False,
             initial_capacity=1e3,
-            reset_keywords=(),
             info_keywords=()
     ):
         """
@@ -19,7 +18,6 @@ class RawTrajectoryWrapper(Wrapper):
         """
         super().__init__(env)
         self.reset_keywords = reset_keywords
-        self.info_keywords = info_keywords
         self.allow_early_resets = allow_early_resets
         self.needs_reset = True
         self.num_steps = 0
