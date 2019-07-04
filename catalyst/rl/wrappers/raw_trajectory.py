@@ -10,7 +10,7 @@ class RawTrajectoryWrapper(Wrapper):
             env,
             allow_early_resets=False,
             initial_capacity=1e3,
-            info_keywords=()
+            reset_keywords=()
     ):
         """
         Wrapper which saves the raw trajectories of the environment
