@@ -71,6 +71,9 @@ jobs:
           --logdir=./examples/logs/_tests_mnist_stages1
           --check
         - python -c "data = open('./examples/logs/_tests_mnist_stages1/metrics.txt', 'r').readlines(); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < float(data[1].rsplit('loss=', 1)[-1][:6]); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < 2.0"
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/dl/scripts/trace.py
+          ./examples/logs/_tests_mnist_stages1
         - rm -rf ./examples/logs/_tests_mnist_stages1
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
           python catalyst/dl/scripts/run.py
