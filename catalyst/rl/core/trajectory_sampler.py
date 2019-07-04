@@ -164,5 +164,16 @@ class TrajectorySampler:
 
         trajectory = self.get_trajectory()
         trajectory_info = {"reward": reward, "num_steps": num_steps}
+        if info and "raw_trajectory" in info:
+            raw_trajectory = info["raw_trajectory"]
+            trajectory_info["raw_trajectory"] = raw_trajectory
+            reward = np.sum(raw_trajectory[2])
+            # This may be different from num_steps in case
+            # we use the frame skip wrapper
+            raw_num_steps = len(raw_trajectory[0])
+            assert all(len(x) == raw_num_steps for x in raw_trajectory)
+
+        trajectory_info["raw_reward"] = reward
         assert all(len(x) == num_steps for x in trajectory)
+
         return trajectory, trajectory_info

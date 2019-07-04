@@ -34,14 +34,15 @@ class RedisDB(DBSpec):
         flag = int(self._server.get("sample_flag") or -1) == int(1)
         return flag
 
-    def push_trajectory(self, trajectory):
+    def push_trajectory(self, trajectory, raw=False):
         trajectory = utils.structed2dict_trajectory(trajectory)
         trajectory = {
             "trajectory": trajectory,
             "epoch": self._epoch
         }
         trajectory = utils.pack(trajectory)
-        self._server.rpush("trajectories", trajectory)
+        name = "raw_trajectories" if raw else "trajectories"
+        self._server.rpush(name, trajectory)
 
     def get_trajectory(self, index=None):
         index = index if index is not None else self._index

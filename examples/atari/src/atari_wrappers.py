@@ -351,7 +351,6 @@ def make_atari_env(
     # env = MaxAndSkipEnv(env, skip=4)
     if max_episode_steps is not None:
         env = TimeLimit(env, max_episode_steps=max_episode_steps)
-
     if episode_life:
         env = EpisodicLifeEnv(env)
     if "FIRE" in env.unwrapped.get_action_meanings():
