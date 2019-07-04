@@ -38,7 +38,7 @@ def dump_code(expdir, logdir):
     _tricky_dir_copy(old_pro_dir, new_pro_dir)
 
     old_expdir = os.path.abspath(expdir)
-    expdir_ = os.path.basename(os.path.dirname(expdir))
+    expdir_ = os.path.basename(old_expdir)
     new_expdir = os.path.join(logdir, new_src_dir, expdir_)
     _tricky_dir_copy(old_expdir, new_expdir)
 
