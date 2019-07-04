@@ -1,11 +1,17 @@
-from redis import StrictRedis
+from redis import Redis
 from catalyst.rl import utils
 from catalyst.rl.core import DBSpec
 
 
 class RedisDB(DBSpec):
-    def __init__(self, port=12000, prefix=None, sync_epoch=False):
-        self._server = StrictRedis(port=port)
+    def __init__(
+        self,
+        host="127.0.0.1",
+        port=12000,
+        prefix=None,
+        sync_epoch=False
+    ):
+        self._server = Redis(host=host, port=port)
         self._prefix = "" if prefix is None else prefix
 
         self._index = 0
