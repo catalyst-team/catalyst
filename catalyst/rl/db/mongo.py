@@ -5,8 +5,14 @@ from catalyst.rl.core import DBSpec
 
 
 class MongoDB(DBSpec):
-    def __init__(self, port=12000, prefix=None, sync_epoch=False):
-        self._server = pymongo.MongoClient(host="127.0.0.1", port=port)
+    def __init__(
+        self,
+        host="127.0.0.1",
+        port=12000,
+        prefix=None,
+        sync_epoch=False
+    ):
+        self._server = pymongo.MongoClient(host=host, port=port)
         self._prefix = "" if prefix is None else prefix
 
         self._shared_db = self._server["shared"]
