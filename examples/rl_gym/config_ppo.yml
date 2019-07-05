@@ -1,5 +1,5 @@
 args:
-  logdir: ./logs/rl-gym-ppo  #  change me
+  logdir: ./logs/rl-gym-ppo-catagorical  #  change me
   expdir: null
 
   vis: 0
@@ -27,19 +27,19 @@ agents:
 
     state_net_params:  # state -> hidden representation
       observation_net_params:
-        hiddens: [32]  # first hidden would be taken from state_shape
+        hiddens: [128]  # first hidden would be taken from state_shape
         layer_fn: Linear
         norm_fn: LayerNorm
         activation_fn: ReLU
         bias: false
       main_net_params:
-        hiddens: [32, 32]
+        hiddens: [128, 128]
         layer_fn: Linear
         norm_fn: LayerNorm
         activation_fn: ReLU
         bias: false
     policy_head_params:  # hidden representation -> ~policy
-      in_features: 32  # out features would be taken from action_shape
+      in_features: 128  # out features would be taken from action_shape
       policy_type: categorical
 
   critic:
@@ -47,28 +47,28 @@ agents:
 
     state_net_params:  # state -> hidden representation
       observation_net_params:
-        hiddens: [32]  # first hidden would be taken from state_shape
+        hiddens: [128]  # first hidden would be taken from state_shape
         layer_fn: Linear
         norm_fn: LayerNorm
         activation_fn: ReLU
         bias: false
       main_net_params:
-        hiddens: [32, 32]
+        hiddens: [128, 128]
         layer_fn: Linear
         norm_fn: LayerNorm
         activation_fn: ReLU
         bias: false
     value_head_params:  # hidden representation -> ~policy
       num_heads: 1
-      in_features: 32  # out features would be taken from action_shape
+      in_features: 128  # out features would be taken from action_shape
       out_features: 1
 
 #      distribution: categorical
-#      num_atoms: 4
-#      values_range: [-10.0, 10.0]
+#      num_atoms: 51
+#      values_range: [-300.0, 300.0]
 
 #      distribution: quantile
-#      num_atoms: 4
+#      num_atoms: 51
 
 algorithm:
   algorithm: PPO

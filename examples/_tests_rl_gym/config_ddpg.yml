@@ -71,11 +71,11 @@ agents:
       in_features: 8  # out features would be taken from action_shape
 
 #      distribution: categorical
-#      num_atoms: 4
+#      num_atoms: 51
 #      values_range: [-10.0, 10.0]
 
 #      distribution: quantile
-#      num_atoms: 4
+#      num_atoms: 51
 
 algorithm:
   algorithm: DDPG

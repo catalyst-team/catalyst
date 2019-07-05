@@ -64,11 +64,11 @@ agents:
       out_features: 1
 
 #      distribution: categorical
-#      num_atoms: 4
+#      num_atoms: 51
 #      values_range: [-10.0, 10.0]
 
 #      distribution: quantile
-#      num_atoms: 4
+#      num_atoms: 51
 
 algorithm:
   algorithm: PPO

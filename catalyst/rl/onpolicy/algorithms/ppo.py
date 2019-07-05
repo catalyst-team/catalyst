@@ -29,9 +29,13 @@ class PPO(OnpolicyActorCritic):
                 self._hyperbolic_constant,
                 self._num_heads
             )
+        # self._gammas = utils.any2device(self._gammas, device=self._device)
         self.entropy_reg_coefficient = entropy_reg_coefficient
 
         if critic_distribution == "categorical":
+            raise NotImplementedError()
+
+            self.num_atoms = self.critic.num_atoms
             values_range = self.critic.values_range
             self.v_min, self.v_max = values_range
             self.delta_z = (self.v_max - self.v_min) / (self._num_atoms - 1)
@@ -41,6 +45,9 @@ class PPO(OnpolicyActorCritic):
             self.z = utils.any2device(z, device=self._device)
             self._value_loss_fn = self._categorical_value_loss
         elif critic_distribution == "quantile":
+            raise NotImplementedError()
+
+            self.num_atoms = self.critic.num_atoms
             tau_min = 1 / (2 * self._num_atoms)
             tau_max = 1 - tau_min
             tau = torch.linspace(
@@ -61,46 +68,85 @@ class PPO(OnpolicyActorCritic):
             value_loss = 0.5 * torch.max(
                 value_loss_unclipped, value_loss_clipped).mean()
         else:
-            value_loss = self.critic_criterion(
-                values[:, None], returns[:, None]).mean()
+            value_loss = self.critic_criterion(values, returns).mean()
 
         return value_loss
 
-    def _base_value_loss(self, states, returns, old_values):
-        values = self.critic(states).squeeze_(dim=2)
+    def _base_value_loss(
+        self,
+        states_t,
+        states_tp1,
+        returns_t,
+        old_values_t
+    ):
+        values_t = self.critic(states_t).squeeze_(dim=2)
         value_loss = self._value_loss(
-            values.squeeze_(-1),
-            returns,
-            old_values.squeeze_(-1))
+            values_t,
+            returns_t,
+            old_values_t)
         return value_loss
 
-    def _categorical_value_loss(self, states, returns, old_logits):
+    def _categorical_value_loss(
+        self,
+        states_t,
+        states_tp1,
+        returns_t,
+        old_logits_t
+    ):
         # @TODO: WIP, no guaranties
-        logits = self.critic(states).squeeze_(dim=2)
-        probs = torch.softmax(logits, dim=-1)
-        values = torch.sum(probs * self.z, dim=-1)
 
-        old_probs = torch.softmax(old_logits, dim=-1)
-        old_values = torch.sum(old_probs * self.z, dim=-1)
+        logits_t = self.critic(states_t).squeeze_(dim=2)
+        probs_t = torch.softmax(logits_t, dim=-1)
+        values_t = torch.sum(probs_t * self.z, dim=-1)
 
-        value_loss = self._value_loss(values, returns, old_values)
+        old_probs_t = torch.softmax(old_logits_t, dim=-1)
+        old_values_t = torch.sum(old_probs_t * self.z, dim=-1)
+
+        value_loss = self._value_loss(values_t, returns_t, old_values_t)
+
+        logits_tp1 = self.critic(states_tp1).squeeze_(dim=2).detach()
+        value_loss += utils.categorical_loss(
+            logits_t.view(-1, self.num_atoms),
+            logits_tp1.view(-1, self.num_atoms),
+            returns_t.view(-1, self.num_atoms),
+            self.z,
+            self.delta_z,
+            self.v_min, self.v_max
+        )
+
         return value_loss
 
-    def _quantile_value_loss(self, states, returns, old_atoms):
+    def _quantile_value_loss(
+        self,
+        states_t,
+        states_tp1,
+        returns_t,
+        old_atoms_t
+    ):
         # @TODO: WIP, no guaranties
-        # how to propagate atoms loss correctly?
-        atoms = self.critic(states).squeeze_(dim=2)
-        values = torch.mean(atoms, dim=-1)
 
-        old_values = torch.mean(old_atoms, dim=-1)
+        atoms_t = self.critic(states_t).squeeze_(dim=2)
+        values_t = torch.mean(atoms_t, dim=-1)
 
-        value_loss = self._value_loss(values, returns, old_values)
+        old_values = torch.mean(old_atoms_t, dim=-1)
+
+        value_loss = self._value_loss(values_t, returns_t, old_values)
+
+        atoms_tp1 = self.critic(states_tp1).squeeze_(dim=2).detach()
+        value_loss += utils.quantile_loss(
+            atoms_t.view(-1, self.num_atoms),
+            returns_t.view(-1, self.num_atoms),
+            self.tau,
+            self.num_atoms,
+            self.critic_criterion
+        )
+
         return value_loss
 
     def get_rollout_spec(self):
         return {
             "return": {
-                "shape": (self._num_heads, ),
+                "shape": (self._num_heads, self._num_atoms),
                 "dtype": np.float32
             },
             "value": {
@@ -143,11 +189,18 @@ class PPO(OnpolicyActorCritic):
             utils.geometric_cumsum(gamma, deltas[:, i])
             for i, gamma in enumerate(self._gammas)
         ], axis=1)
-        # len x num_heads x 1
+        # len x num_heads x num_atoms
         returns = np.stack([
             utils.geometric_cumsum(gamma * self.gae_lambda, rewards)[0]
             for gamma in self._gammas
         ], axis=1)
+        returns = np.expand_dims(returns, -1)
+
+        if self.critic.distribution == "categorical":
+            returns = np.repeat(returns, self.num_atoms, -1)
+            returns[:-1] += self._gammas[:, None] * self.z.cpu().numpy()
+        if self.critic.distribution == "quantile":
+            raise NotImplementedError()
 
         # final rollout
         rollout = {
@@ -167,19 +220,24 @@ class PPO(OnpolicyActorCritic):
         buffers["advantage"][:len] = adv_centered / (adv_std + 1e-6)
 
     def train(self, batch, **kwargs):
-        states, actions, returns, values, advantages, action_logprobs = \
-            batch["state"], batch["action"], batch["return"], \
-            batch["value"], batch["advantage"], batch["action_logprob"]
+        (states, actions, returns, states_tp1,
+         values, advantages, action_logprobs) = (
+            batch["state"], batch["action"],
+            batch["return"], batch["state_tp1"],
+            batch["value"], batch["advantage"], batch["action_logprob"])
 
         states = utils.any2device(states, device=self._device)
         actions = utils.any2device(actions, device=self._device)
         returns = utils.any2device(returns, device=self._device)
+        states_tp1 = utils.any2device(states_tp1, device=self._device)
+
         old_values = utils.any2device(values, device=self._device)
         advantages = utils.any2device(advantages, device=self._device)
         old_logprobs = utils.any2device(action_logprobs, device=self._device)
 
         # critic loss
-        value_loss = self._value_loss_fn(states, returns, old_values)
+        value_loss = self._value_loss_fn(
+            states, states_tp1, returns, old_values)
 
         # actor loss
         _, logprobs = self.actor(states, logprob=actions)
