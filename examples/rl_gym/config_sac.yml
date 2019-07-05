@@ -68,14 +68,13 @@ agents:
 
     value_head_params:  # hidden representation -> value
       in_features: 128  # out features would be taken from action_shape
-      num_atoms: 1
 
 #      distribution: categorical
-#      num_atoms: 64
+#      num_atoms: 51
 #      values_range: [-300.0, 300.0]
 
 #      distribution: quantile
-#      num_atoms: 64
+#      num_atoms: 51
 
 algorithm:
   algorithm: SAC

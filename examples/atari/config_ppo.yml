@@ -60,7 +60,6 @@ agents:
 #        bias: false
     value_head_params:  # hidden representation -> value
       in_features: 512
-      num_atoms: 1
       out_features: 1
 
 #      distribution: categorical

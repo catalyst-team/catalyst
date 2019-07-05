@@ -137,7 +137,8 @@ class DDPG(OffpolicyActorCritic):
         value_loss = utils.quantile_loss(
             atoms_t.view(-1, self.num_atoms),
             atoms_target_t.view(-1, self.num_atoms),
-            self.tau, self.num_atoms,
+            self.tau,
+            self.num_atoms,
             self.critic_criterion
         )
 
