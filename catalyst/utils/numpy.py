@@ -11,13 +11,37 @@ def np_softmax(x):
 
 def geometric_cumsum(alpha, x):
     """
-    Adapted from https://github.com/zuoxingdong/lagom
+    Calculate future accumulated sums for each element
+    in a list with an exponential factor.
+
+    Given input data :math:`x_1, \dots, x_n`
+    and exponential factor :math:`\alpha\in [0, 1]`,
+    it returns an array :math:`y`
+    with the same length and each element is calculated as following
+
+    .. math::
+        y_i = x_i + \alpha x_{i+1} + \alpha^2 x_{i+2} + \dots + \alpha^{n-i-1}x_{n-1} + \alpha^{n-i}x_{n}  # noqa: E501
+
+    .. note::
+        To gain the optimal runtime speed, we use ``scipy.signal.lfilter``
+
+    Example:
+        >>> geometric_cumsum(0.1, [[1, 1], [2, 2], [3, 3], [4, 4]])
+        array([[1.234, 1.234], [2.34 , 2.34 ], [3.4  , 3.4  ], [4.   , 4.   ]])
+
+    Args:
+        alpha (float): exponential factor between zero and one.
+        x (np.ndarray): input data, [trajectory_len, num_atoms]
+
+    Returns:
+        out (np.ndarray): calculated data
+
+    source: https://github.com/zuoxingdong/lagom
+
     """
     x = np.asarray(x)
-    if x.ndim == 1:
-        x = np.expand_dims(x, 0)
     assert x.ndim == 2
-    return lfilter([1], [1, -alpha], x[:, ::-1], axis=1)[:, ::-1]
+    return lfilter([1], [1, -alpha], x[::-1, :], axis=0)[::-1, :]
 
 
 def structed2dict(array: np.ndarray):
