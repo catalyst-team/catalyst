@@ -400,6 +400,10 @@ class OnpolicyRolloutBuffer(Dataset):
             key: _handle_array(value[index])
             for key, value in self.buffers.items()
         }
+        try:
+            dct["state_tp1"] = _handle_array(self.buffers["state"][index+1])
+        except Exception:
+            dct["state_tp1"] = _handle_array(self.buffers["state"][index])
         return dct
 
     def __len__(self):

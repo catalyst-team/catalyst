@@ -27,19 +27,19 @@ agents:
 
     state_net_params:  # state -> hidden representation
       observation_net_params:
-        hiddens: [32]  # first hidden would be taken from state_shape
+        hiddens: [128]  # first hidden would be taken from state_shape
         layer_fn: Linear
         norm_fn: LayerNorm
         activation_fn: ReLU
         bias: false
       main_net_params:
-        hiddens: [32, 32]
+        hiddens: [128, 128]
         layer_fn: Linear
         norm_fn: LayerNorm
         activation_fn: ReLU
         bias: false
     policy_head_params:  # hidden representation -> ~policy
-      in_features: 32  # out features would be taken from action_shape
+      in_features: 128  # out features would be taken from action_shape
       policy_type: categorical
 
 algorithm:

@@ -82,13 +82,14 @@ class DDPG(OffpolicyActorCritic):
 
         # critic loss (kl-divergence between categorical distributions)
 
+        # B x 1 x 1
         done_t = done_t[:, None, :]
         # B x 1 x 1
         rewards_t = rewards_t[:, None, :]
-        # B x 1 x 1
-        gammas = gammas[None, :, None]
         # 1 x num_heads x 1
+        gammas = gammas[None, :, None]
 
+        # B x num_heads x num_atoms
         logits_t = self.critic(states_t, actions_t).squeeze_(dim=2)
         # B x num_heads x num_atoms
         logits_tp1 = self.target_critic(
@@ -96,7 +97,6 @@ class DDPG(OffpolicyActorCritic):
         ).squeeze_(dim=2).detach()
         # B x num_heads x num_atoms
         atoms_target_t = rewards_t + (1 - done_t) * gammas * self.z
-        # B x num_heads x num_atoms
 
         value_loss = utils.categorical_loss(
             logits_t.view(-1, self.num_atoms),
@@ -118,26 +118,27 @@ class DDPG(OffpolicyActorCritic):
         policy_loss = -torch.mean(self.critic(states_t, self.actor(states_t)))
 
         # critic loss (quantile regression)
+        # B x num_heads x num_atoms
         atoms_t = self.critic(states_t, actions_t).squeeze_(dim=2)
         # B x num_heads x num_atoms
         atoms_tp1 = self.target_critic(
             states_tp1, self.target_actor(states_tp1)
         ).squeeze_(dim=2).detach()
-        # B x num_heads x num_atoms
 
+        # B x 1 x 1
         done_t = done_t[:, None, :]
         # B x 1 x 1
         rewards_t = rewards_t[:, None, :]
-        # B x 1 x 1
-        gammas = gammas[None, :, None]
         # 1 x num_heads x 1
+        gammas = gammas[None, :, None]
 
         atoms_target_t = rewards_t + (1 - done_t) * gammas * atoms_tp1
 
         value_loss = utils.quantile_loss(
             atoms_t.view(-1, self.num_atoms),
             atoms_target_t.view(-1, self.num_atoms),
-            self.tau, self.num_atoms,
+            self.tau,
+            self.num_atoms,
             self.critic_criterion
         )
 

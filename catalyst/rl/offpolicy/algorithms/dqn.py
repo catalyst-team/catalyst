@@ -107,7 +107,8 @@ class DQN(OffpolicyCritic):
         value_loss = utils.categorical_loss(
             logits_t.view(-1, self.num_atoms),
             logits_tp1.view(-1, self.num_atoms),
-            atoms_target_t.view(-1, self.num_atoms), self.z,
+            atoms_target_t.view(-1, self.num_atoms),
+            self.z,
             self.delta_z,
             self.v_min, self.v_max
         )
@@ -148,7 +149,8 @@ class DQN(OffpolicyCritic):
         value_loss = utils.quantile_loss(
             atoms_t.view(-1, self.num_atoms),
             atoms_target_t.view(-1, self.num_atoms),
-            self.tau, self.num_atoms,
+            self.tau,
+            self.num_atoms,
             self.critic_criterion
         )
 
