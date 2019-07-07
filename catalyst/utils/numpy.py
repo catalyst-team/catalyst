@@ -10,7 +10,7 @@ def np_softmax(x):
 
 
 def geometric_cumsum(alpha, x):
-    r"""
+    """
     Calculate future accumulated sums for each element
     in a list with an exponential factor.
 
@@ -26,18 +26,15 @@ def geometric_cumsum(alpha, x):
         To gain the optimal runtime speed, we use ``scipy.signal.lfilter``
 
     Example:
-
         >>> geometric_cumsum(0.1, [[1, 1], [2, 2], [3, 3], [4, 4]])
         array([[1.234, 1.234], [2.34 , 2.34 ], [3.4  , 3.4  ], [4.   , 4.   ]])
 
     Args:
         alpha (float): exponential factor between zero and one.
-        x (np.array): input data, [trajectory_len, num_atoms]
+        x (np.ndarray): input data, [trajectory_len, num_atoms]
 
-    Returns
-    -------
-    out : ndarray
-        calculated data
+    Returns:
+        out (np.ndarray): calculated data
 
     source: https://github.com/zuoxingdong/lagom
 
