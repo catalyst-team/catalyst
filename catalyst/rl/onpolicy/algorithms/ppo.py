@@ -29,8 +29,9 @@ class PPO(OnpolicyActorCritic):
                 self._hyperbolic_constant,
                 self._num_heads
             )
+        # 1 x num_heads x 1
         self._gammas_torch = utils.any2device(
-            self._gammas, device=self._device)
+            self._gammas, device=self._device)[None, :, None]
         self.entropy_reg_coefficient = entropy_reg_coefficient
 
         if critic_distribution == "categorical":
@@ -101,17 +102,10 @@ class PPO(OnpolicyActorCritic):
 
         value_loss = 0.5 * self._value_loss(values_tp0, values_t, returns_t)
 
-        # B x 1 x 1
-        done_t = done_t.unsqueeze(1)
-        # B x num_heads x 1
-        returns_t = returns_t.unsqueeze(1)
-        # 1 x num_heads x 1
-        gammas = self._gammas_torch[None, :, None]
-
         # B x num_heads x num_atoms
         logits_tp1 = self.critic(states_tp1).squeeze_(dim=2).detach()
         # B x num_heads x num_atoms
-        atoms_target_t = returns_t + (1 - done_t) * gammas * self.z
+        atoms_target_t = returns_t + (1 - done_t) * self._gammas_torch * self.z
 
         value_loss += 0.5 * utils.categorical_loss(
             logits_tp0.view(-1, self.num_atoms),
@@ -134,23 +128,17 @@ class PPO(OnpolicyActorCritic):
     ):
         # @TODO: WIP, no guaranties
         atoms_tp0 = self.critic(states_t).squeeze_(dim=2)
-        values_tp0 = torch.mean(atoms_tp0, dim=-1)
+        values_tp0 = torch.mean(atoms_tp0, dim=-1, keepdim=True)
 
-        values_t = torch.mean(atoms_t, dim=-1)
+        values_t = torch.mean(atoms_t, dim=-1, keepdim=True)
 
         value_loss = 0.5 * self._value_loss(values_tp0, values_t, returns_t)
-
-        # B x 1 x 1
-        done_t = done_t.unsqueeze(1)
-        # B x num_heads x 1
-        returns_t = returns_t.unsqueeze(1)
-        # 1 x num_heads x 1
-        gammas = self._gammas_torch[None, :, None]
 
         # B x num_heads x num_atoms
         atoms_tp1 = self.critic(states_tp1).squeeze_(dim=2).detach()
         # B x num_heads x num_atoms
-        atoms_target_t = returns_t + (1 - done_t) * gammas * atoms_tp1
+        atoms_target_t = returns_t \
+            + (1 - done_t) * self._gammas_torch * atoms_tp1
 
         value_loss += 0.5 * utils.quantile_loss(
             atoms_tp0.view(-1, self.num_atoms),
@@ -194,7 +182,7 @@ class PPO(OnpolicyActorCritic):
         values = torch.zeros(
             (states_len + 1, self._num_heads, self._num_atoms)).\
             to(self._device)
-        values[:states_len, :] = self.critic(states).squeeze_(dim=2)
+        values[:states_len, ...] = self.critic(states).squeeze_(dim=2)
         # Each column corresponds to a different gamma
         values = values.cpu().numpy()[:trajectory_len+1, ...]
         _, logprobs = self.actor(states, logprob=actions)
@@ -207,12 +195,13 @@ class PPO(OnpolicyActorCritic):
         # advantage and returns
         # len x num_heads x num_atoms
         advantages = np.stack([
-            utils.geometric_cumsum(gamma, deltas[:, i])
+            utils.geometric_cumsum(gamma * self.gae_lambda, deltas[:, i])
             for i, gamma in enumerate(self._gammas)
         ], axis=1)
+
         # len x num_heads
         returns = np.stack([
-            utils.geometric_cumsum(gamma * self.gae_lambda, rewards)[0]
+            utils.geometric_cumsum(gamma, rewards[:, None])[:, 0]
             for gamma in self._gammas
         ], axis=1)
 
@@ -228,11 +217,9 @@ class PPO(OnpolicyActorCritic):
         return rollout
 
     def postprocess_buffer(self, buffers, len):
-        adv_centered = \
-            buffers["advantage"][:len] \
-            - buffers["advantage"][:len].mean(axis=0)
-        adv_std = buffers["advantage"][:len].std(axis=0)
-        buffers["advantage"][:len] = adv_centered / (adv_std + 1e-6)
+        adv = buffers["advantage"][:len]
+        adv = (adv - adv.mean(axis=0)) / (adv.std(axis=0) + 1e-8)
+        buffers["advantage"][:len] = adv
 
     def train(self, batch, **kwargs):
         (states_t, actions_t, returns_t, states_tp1, done_t,
@@ -243,9 +230,10 @@ class PPO(OnpolicyActorCritic):
 
         states_t = utils.any2device(states_t, device=self._device)
         actions_t = utils.any2device(actions_t, device=self._device)
-        returns_t = utils.any2device(returns_t, device=self._device)
+        returns_t = utils.any2device(
+            returns_t, device=self._device).unsqueeze_(-1)
         states_tp1 = utils.any2device(states_tp1, device=self._device)
-        done_t = utils.any2device(done_t, device=self._device).unsqueeze(1)
+        done_t = utils.any2device(done_t, device=self._device)[:, None, None]
 
         values_t = utils.any2device(values_t, device=self._device)
         advantages_t = utils.any2device(advantages_t, device=self._device)
@@ -260,10 +248,11 @@ class PPO(OnpolicyActorCritic):
         _, action_logprobs_tp0 = self.actor(states_t, logprob=actions_t)
 
         ratio = torch.exp(action_logprobs_tp0 - action_logprobs_t)
+        ratio = ratio[:, None, None]
         # The same ratio for each head of the critic
-        policy_loss_unclipped = advantages_t * ratio[:, None, None]
+        policy_loss_unclipped = advantages_t * ratio
         policy_loss_clipped = advantages_t * torch.clamp(
-            ratio[:, None, None], 1.0 - self.clip_eps, 1.0 + self.clip_eps)
+            ratio, 1.0 - self.clip_eps, 1.0 + self.clip_eps)
         policy_loss = -torch.min(
             policy_loss_unclipped, policy_loss_clipped).mean()
 
