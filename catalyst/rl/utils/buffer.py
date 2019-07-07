@@ -402,7 +402,7 @@ class OnpolicyRolloutBuffer(Dataset):
         }
         try:
             dct["state_tp1"] = _handle_array(self.buffers["state"][index+1])
-        except:
+        except Exception:
             dct["state_tp1"] = _handle_array(self.buffers["state"][index])
         return dct
 

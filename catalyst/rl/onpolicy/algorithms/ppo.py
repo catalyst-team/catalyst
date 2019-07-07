@@ -267,7 +267,8 @@ class PPO(OnpolicyActorCritic):
         policy_loss = -torch.min(
             policy_loss_unclipped, policy_loss_clipped).mean()
 
-        entropy = -(torch.exp(action_logprobs_tp0) * action_logprobs_tp0).mean()
+        entropy = -(
+            torch.exp(action_logprobs_tp0) * action_logprobs_tp0).mean()
         entropy_loss = self.entropy_reg_coefficient * entropy
         policy_loss = policy_loss + entropy_loss
 
