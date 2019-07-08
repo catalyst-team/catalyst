@@ -17,7 +17,7 @@ This example is needed for CI test of Catalyst.RL.
 3. Select config
     ```bash
     # DQN        – off-policy algorithm on discrete action space LunarLander environment
-    export CONFIG=./_tests_rl_gym/config_dqn.yml
+    export CONFIG=./_tests_rl_gym/config_dqn_base.yml
 
     # DDPG       – off-policy algorithm on continuous action space environment LunarLander environment
     export CONFIG=./_tests_rl_gym/config_ddpg.yml
@@ -33,7 +33,7 @@ This example is needed for CI test of Catalyst.RL.
     export CONFIG=./_tests_rl_gym/config_reinforce.yml
 
     # PPO        – on-policy algorithm on discrete action space LunarLander environment
-    export CONFIG=./_tests_rl_gym/config_ppo.yml
+    export CONFIG=./_tests_rl_gym/config_ppo_base.yml
     ```
 
 4. Run trainer

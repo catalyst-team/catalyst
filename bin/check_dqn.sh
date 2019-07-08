@@ -31,14 +31,6 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     --logdir=./examples/logs/_tests_rl_gym_dqn_quantile &
 sleep 300
 
-#kill %1
-#kill %2
-#kill %3
-#kill %4
-#kill %5
-#kill %6
-#kill %7
-
 killall -9 python
 sleep 3
 killall -9 catalyst-rl
@@ -78,7 +70,3 @@ checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
 print(np.mean(checkpoint['rewards']))
 assert np.mean(checkpoint['rewards']) > 3.0
 """
-
-killall -9 python
-killall -9 catalyst-rl
-killall -9 redis-server
