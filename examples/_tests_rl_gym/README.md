@@ -4,20 +4,47 @@ This example is needed for CI test of Catalyst.RL.
 
 #### How to run
 
-##### Examples RL – Discrete
-```bash
-redis-server --port 12000
+1. System requirements – redis
 
-catalyst-rl run-trainer --config=./examples/_tests_rl_gym/config_dqn.yml
+    `sudo apt install redis-server`
 
-catalyst-rl run-samplers --config=./examples/_tests_rl_gym/config_dqn.yml
-```
+2. Start DB service
 
-##### Examples RL – Continuous
-```bash
-redis-server --port 12000
+    ```bash
+    redis-server --port 12000
+    ```
 
-catalyst-rl run-trainer --config=./examples/_tests_rl_gym/config_sac.yml
+3. Select config
+    ```bash
+    # DQN        – off-policy algorithm on discrete action space LunarLander environment
+    export CONFIG=./_tests_rl_gym/config_dqn.yml
 
-catalyst-rl run-samplers --config=./examples/_tests_rl_gym/config_sac.yml
-```
+    # DDPG       – off-policy algorithm on continuous action space environment LunarLander environment
+    export CONFIG=./_tests_rl_gym/config_ddpg.yml
+
+    # SAC        – off-policy algorithm on continuous action space environment LunarLander environment
+    export CONFIG=./_tests_rl_gym/config_sac.yml
+
+    # TD3        – off-policy algorithm on continuous action space environment LunarLander environment
+    export CONFIG=./_tests_rl_gym/config_td3.yml
+
+
+    # REINFORCE  – on-policy algorithm on discrete action space LunarLander environment
+    export CONFIG=./_tests_rl_gym/config_reinforce.yml
+
+    # PPO        – on-policy algorithm on discrete action space LunarLander environment
+    export CONFIG=./_tests_rl_gym/config_ppo.yml
+    ```
+
+4. Run trainer
+
+    ```bash
+    export GPUS=""  # like GPUS="0" or GPUS="0,1" for multi-gpu training
+    CUDA_VISIBLE_DEVICES="$GPUS" catalyst-rl run-trainer --config="$CONFIG"
+    ```
+
+5. Run samplers
+
+    ```bash
+    CUDA_VISIBLE_DEVICES="" catalyst-rl run-samplers --config="$CONFIG"
+    ```

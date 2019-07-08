@@ -14,7 +14,7 @@ db:
 
 environment:
   environment: GymWrapper
-  env_name: MountainCar-v0
+  env_name: CartPole-v1
 
   history_len: 3
 
@@ -64,11 +64,11 @@ agents:
       out_features: 1
 
 #      distribution: categorical
-#      num_atoms: 51
+#      num_atoms: 9
 #      values_range: [-10.0, 10.0]
 
 #      distribution: quantile
-#      num_atoms: 51
+#      num_atoms: 9
 
 algorithm:
   algorithm: PPO

@@ -63,11 +63,6 @@ algorithm:
     optimizer: Adam
     lr: 0.0003
 
-  critic_scheduler_params:
-    scheduler: MultiStepLR
-    milestones: [2000000]  # batches
-    gamma: 1.0
-
 trainer:
   batch_size: 256              # transitions
   num_workers: 1

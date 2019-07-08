@@ -14,7 +14,7 @@ db:
 
 environment:
   environment: GymWrapper
-  env_name: MountainCar-v0
+  env_name: CartPole-v1
 
   history_len: 3
 
@@ -43,11 +43,11 @@ agents:
       in_features: 8  # out features would be taken from action_shape
 
 #      distribution: categorical
-#      num_atoms: 51
+#      num_atoms: 9
 #      values_range: [-10.0, 10.0]
 
 #      distribution: quantile
-#      num_atoms: 51
+#      num_atoms: 9
 
 algorithm:
   algorithm: DQN
@@ -64,20 +64,15 @@ algorithm:
     optimizer: Adam
     lr: 0.0003
 
-  critic_scheduler_params:
-    scheduler: MultiStepLR
-    milestones: [2000000]  # batches
-    gamma: 1.0
-
 trainer:
-  batch_size: 16               # transitions
+  batch_size: 32               # transitions
   num_workers: 1
-  epoch_len: 10                # batches
+  epoch_len: 100               # batches
 
   replay_buffer_size: 100000   # transitions
   min_num_transitions: 32           # transitions
 
-  save_period: 1               # epochs
+  save_period: 50              # epochs
   weights_sync_period: 1       # epochs
   target_update_period: 1      # batches
 
