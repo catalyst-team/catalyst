@@ -166,8 +166,9 @@ jobs:
         - kill %3
         - kill %2
         - kill %1
-        - rm ./examples/logs/_tests_rl_gym_dqn/1.pth
-        - rm ./examples/logs/_tests_rl_gym_dqn/2.pth
+        - # check that mean_rewards  > 3
+        - rm ./examples/logs/_tests_rl_gym_dqn/50.pth
+        - rm ./examples/logs/_tests_rl_gym_dqn/100.pth
 
     - stage: Examples
       name: "Examples off-policy RL – Continuous"

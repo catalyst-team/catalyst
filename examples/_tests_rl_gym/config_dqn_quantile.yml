@@ -1,5 +1,5 @@
 args:
-  logdir: ./logs/_tests_rl_gym_ppo  #  change me
+  logdir: ./logs/_tests_rl_gym_dqn-quantile  #  change me
   expdir: null
 
   vis: 0
@@ -10,7 +10,7 @@ args:
 db:
   db: RedisDB
   port: 12000
-  prefix: gym-ppo  # TODO: remove
+  prefix: gym-dqn-quantile  # TODO: remove
 
 environment:
   environment: GymWrapper
@@ -18,90 +18,74 @@ environment:
 
   history_len: 4
   frame_skip: 2
-  reward_scale: 1.0
+  reward_scale: 0.01
 
 agents:
-  actor:
-    agent: Actor
-
-    state_net_params:  # state -> hidden representation
-      observation_net_params:
-        hiddens: [8]  # first hidden would be taken from state_shape
-        layer_fn: Linear
-        norm_fn: LayerNorm
-        activation_fn: ReLU
-        bias: false
-      main_net_params:
-        hiddens: [8, 8]
-        layer_fn: Linear
-        norm_fn: LayerNorm
-        activation_fn: ReLU
-        bias: false
-    policy_head_params:  # hidden representation -> ~policy
-      in_features: 8  # out features would be taken from action_shape
-      policy_type: categorical
-
   critic:
-    agent: StateCritic
+    agent: ActionCritic
 
     state_net_params:  # state -> hidden representation
       observation_net_params:
-        hiddens: [8]  # first hidden would be taken from state_shape
+        hiddens: [32]  # first hidden would be taken from state_shape
         layer_fn: Linear
         norm_fn: LayerNorm
         activation_fn: ReLU
         bias: false
       main_net_params:
-        hiddens: [8, 8]
+        hiddens: [32, 32]
         layer_fn: Linear
         norm_fn: LayerNorm
         activation_fn: ReLU
         bias: false
     value_head_params:  # hidden representation -> ~policy
-      in_features: 8  # out features would be taken from action_shape
-      out_features: 1
+      in_features: 32  # out features would be taken from action_shape
 
 #      distribution: categorical
 #      num_atoms: 11
-#      values_range: [-10.0, 10.0]
+#      values_range: [0, 10]
 
-#      distribution: quantile
-#      num_atoms: 11
+      distribution: quantile
+      num_atoms: 11
 
 algorithm:
-  algorithm: PPO
+  algorithm: DQN
 
   n_step: 1
   gamma: 0.99
+  critic_tau: 0.01
 
-  gae_lambda: 0.95
-  clip_eps: 0.2
-  entropy_reg_coefficient: 0.01
+  critic_loss_params:
+    criterion: HuberLoss
+    clip_delta: 1.0
 
-  actor_optimizer_params:
-    optimizer: Adam
-    lr: 0.0005
   critic_optimizer_params:
     optimizer: Adam
-    lr: 0.0005
-
-  actor_grad_clip_params:
-    func: clip_grad_value_
-    clip_value: 1.0
+    lr: 0.0003
 
 trainer:
-  batch_size: 16              # transitions
+  batch_size: 32               # transitions
   num_workers: 1
-  num_mini_epochs: 1
-  min_num_trajectories: 10
-  min_num_transitions: 1000
+  epoch_len: 100               # batches
 
-  save_period: 1              # epochs
+  replay_buffer_size: 100000   # transitions
+  min_num_transitions: 320     # transitions
+
+  save_period: 50              # epochs
+  weights_sync_period: 1       # epochs
+  target_update_period: 1      # batches
 
 sampler:
+  weights_sync_period: 1
+
   exploration_params:
-    - exploration: NoExploration
-      probability: 1.0
+    - exploration: EpsilonGreedy
+      probability: 0.98
+      eps_init: 1.0
+      eps_final: 0.05
+      annealing_steps: 20000
+
+    - exploration: Greedy
+      probability: 0.02
 
   valid_seeds: [
     1608637542,

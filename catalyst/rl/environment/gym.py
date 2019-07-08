@@ -65,7 +65,7 @@ class GymWrapper(EnvironmentSpec):
             reward += r
             if done:
                 break
-        info["reward_origin"] = reward
+        info["raw_reward"] = reward
         reward *= self._reward_scale
         return observation, reward, done, info
 

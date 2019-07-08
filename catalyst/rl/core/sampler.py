@@ -341,6 +341,13 @@ class ValidSampler(Sampler):
                 if self.trajectory_index % self._gc_period == 0:
                     gc.collect()
 
+            if self.logger is not None:
+                self.logger.add_scalar(
+                    "trajectory/_mean_valid_reward",
+                    np.mean(trajectories_rewards),
+                    self.trajectory_index
+                )
+
             self.checkpoint["rewards"] = trajectories_rewards
             self.checkpoint["epoch"] = self.db_server.epoch
             self.save_checkpoint(
