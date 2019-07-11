@@ -1,0 +1,143 @@
+args:
+  logdir: ./logs/_tests_rl_gym_ddpg-categorical  #  change me
+  expdir: null
+
+  vis: 0
+  infer: 0  #  change me
+  valid: 1  #  change me
+  train: 0  #  change me
+
+db:
+  db: RedisDB
+  port: 12000
+  prefix: gym-ddpg-categorical  # TODO: remove
+
+environment:
+  environment: GymWrapper
+  env_name: CartPole-v1
+
+  history_len: 1
+  frame_skip: 4
+  reward_scale: 0.1
+
+  action_mean: [0.0, 0.0]
+  action_std: [0.1, 0.1]
+
+agents:
+  actor:
+    agent: Actor
+
+    state_net_params:  # state -> hidden representation
+      observation_net_params:
+        hiddens: [128]  # first hidden would be taken from state_shape
+        layer_fn: Linear
+        norm_fn: LayerNorm
+        activation_fn: ReLU
+        bias: false
+      main_net_params:
+        hiddens: [128, 128]
+        layer_fn: Linear
+        norm_fn: LayerNorm
+        activation_fn: ReLU
+        bias: false
+    policy_head_params:  # hidden representation -> ~policy
+      in_features: 128    # out features would be taken from action_shape
+      policy_type: null
+      out_activation: Tanh
+
+  critic:
+    agent: StateActionCritic
+
+    state_action_net_params:  # state -> hidden representation
+      observation_net_params:
+        hiddens: [128, 64]   # first hidden would be taken from state_shape
+        layer_fn: Linear
+        norm_fn: LayerNorm
+        activation_fn: ReLU
+        bias: false
+      action_net_params:
+        hiddens: [128, 64]   # first hidden would be taken from action_shape
+        layer_fn: Linear
+        norm_fn: LayerNorm
+        activation_fn: ReLU
+        bias: false
+      main_net_params:
+        hiddens: [128, 128]
+        layer_fn: Linear
+        norm_fn: LayerNorm
+        activation_fn: ReLU
+        bias: false
+
+    value_head_params:  # hidden representation -> value
+      in_features: 128  # out features would be taken from action_shape
+      out_features: 1
+
+      distribution: categorical
+      num_atoms: 51
+      values_range: [-10.0, 0.0]
+
+#      distribution: quantile
+#      num_atoms: 11
+
+algorithm:
+  algorithm: DDPG
+
+  n_step: 1
+  gamma: 0.99
+  actor_tau: 0.01
+  critic_tau: 0.01
+
+#  critic_loss_params:
+#    criterion: HuberLoss
+#    clip_delta: 10.0
+
+  actor_optimizer_params:
+    optimizer: Adam
+    lr: 0.0003
+  critic_optimizer_params:
+    optimizer: Adam
+    lr: 0.0003
+
+  actor_grad_clip_params:
+    func: clip_grad_value_
+    clip_value: 1.0
+
+trainer:
+  batch_size: 64               # transitions
+  num_workers: 1
+  epoch_len: 100               # batches
+
+  replay_buffer_size: 100000   # transitions
+  min_num_transitions: 1600    # transitions
+
+  save_period: 50              # epochs
+  weights_sync_period: 1       # epochs
+  target_update_period: 1      # batches
+
+sampler:
+  weights_sync_period: 1
+
+  exploration_params:
+    - exploration: GaussNoise
+      probability: 0.6
+      sigma: 0.2
+
+    - exploration: ParameterSpaceNoise
+      probability: 0.2
+      target_sigma: 0.2
+
+    - exploration: NoExploration
+      probability: 0.2
+
+  valid_seeds: [
+    1608637542,
+    1273642419,
+    1935803228,
+    787846414,
+    996406378,
+    1201263687,
+    423734972,
+    415968276,
+    670094950,
+    1914837113
+  ]
