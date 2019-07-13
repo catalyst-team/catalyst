@@ -5,7 +5,6 @@ from .environment import EnvironmentSpec
 
 
 class AlgorithmSpec(ABC):
-
     @property
     @abstractmethod
     def n_step(self) -> int:
@@ -26,10 +25,7 @@ class AlgorithmSpec(ABC):
 
     @abstractmethod
     def unpack_checkpoint(
-        self,
-        checkpoint,
-        with_optimizer: bool = True,
-        **kwargs
+        self, checkpoint, with_optimizer: bool = True, **kwargs
     ):
         pass
 
@@ -45,8 +41,6 @@ class AlgorithmSpec(ABC):
     @classmethod
     @abstractmethod
     def prepare_for_sampler(
-        cls,
-        env_spec: EnvironmentSpec,
-        config: Dict
+        cls, env_spec: EnvironmentSpec, config: Dict
     ) -> Union[ActorSpec, CriticSpec]:
         pass

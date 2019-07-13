@@ -11,6 +11,7 @@ class ExplorationStrategy:
     In discrete case must contain method get_action(q_values).
     In continuous case must contain method get_action(action).
     """
+
     def __init__(self, power=1.0):
         self._power = power
 

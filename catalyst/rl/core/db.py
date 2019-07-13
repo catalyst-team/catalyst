@@ -2,7 +2,6 @@ from abc import abstractmethod, ABC
 
 
 class DBSpec(ABC):
-
     @property
     @abstractmethod
     def epoch(self) -> int:

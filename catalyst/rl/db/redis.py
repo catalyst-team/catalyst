@@ -5,11 +5,7 @@ from catalyst.rl.core import DBSpec
 
 class RedisDB(DBSpec):
     def __init__(
-        self,
-        host="127.0.0.1",
-        port=12000,
-        prefix=None,
-        sync_epoch=False
+        self, host="127.0.0.1", port=12000, prefix=None, sync_epoch=False
     ):
         self._server = Redis(host=host, port=port)
         self._prefix = "" if prefix is None else prefix
@@ -36,10 +32,7 @@ class RedisDB(DBSpec):
 
     def push_trajectory(self, trajectory, raw=False):
         trajectory = utils.structed2dict_trajectory(trajectory)
-        trajectory = {
-            "trajectory": trajectory,
-            "epoch": self._epoch
-        }
+        trajectory = {"trajectory": trajectory, "epoch": self._epoch}
         trajectory = utils.pack(trajectory)
         name = "raw_trajectories" if raw else "trajectories"
         self._server.rpush(name, trajectory)
@@ -66,10 +59,7 @@ class RedisDB(DBSpec):
 
     def save_checkpoint(self, checkpoint, epoch):
         self._epoch = epoch
-        checkpoint = {
-            "checkpoint": checkpoint,
-            "epoch": self._epoch
-        }
+        checkpoint = {"checkpoint": checkpoint, "epoch": self._epoch}
         checkpoint = utils.pack(checkpoint)
         self._server.set(f"{self._prefix}_checkpoint", checkpoint)
 

@@ -51,19 +51,16 @@ def get_trainer_components(
         criterion = criterion.cuda()
 
     # optimizer
-    agent_params = utils.get_optimizable_params(
-        agent.parameters())
+    agent_params = utils.get_optimizable_params(agent.parameters())
     optimizer_params = _copy_params(optimizer_params)
     optimizer = OPTIMIZERS.get_from_params(
-        **optimizer_params,
-        params=agent_params
+        **optimizer_params, params=agent_params
     )
 
     # scheduler
     scheduler_params = _copy_params(scheduler_params)
     scheduler = SCHEDULERS.get_from_params(
-        **scheduler_params,
-        optimizer=optimizer
+        **scheduler_params, optimizer=optimizer
     )
 
     # grad clipping

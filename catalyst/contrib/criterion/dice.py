@@ -17,7 +17,8 @@ class DiceLoss(nn.Module):
             criterion.dice,
             eps=eps,
             threshold=threshold,
-            activation=activation)
+            activation=activation
+        )
 
     def forward(self, logits, targets):
         dice = self.loss_fn(logits, targets)
@@ -34,9 +35,7 @@ class BCEDiceLoss(nn.Module):
         super().__init__()
         self.bce_loss = nn.BCEWithLogitsLoss()
         self.dice_loss = DiceLoss(
-            eps=eps,
-            threshold=threshold,
-            activation=activation
+            eps=eps, threshold=threshold, activation=activation
         )
 
     def forward(self, outputs, targets):

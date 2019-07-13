@@ -98,18 +98,14 @@ class Sampler:
 
     def _start_db_loop(self):
         self._db_loop_thread = threading.Thread(
-            target=_db2sampler_loop,
-            kwargs={
+            target=_db2sampler_loop, kwargs={
                 "sampler": self,
             }
         )
         self._db_loop_thread.start()
 
     def load_checkpoint(
-        self,
-        *,
-        filepath: str = None,
-        db_server: DBSpec = None
+        self, *, filepath: str = None, db_server: DBSpec = None
     ):
         if filepath is not None:
             checkpoint = utils.load_checkpoint(filepath)
@@ -125,7 +121,8 @@ class Sampler:
         weights = self.checkpoint[f"{self._weights_sync_mode}_state_dict"]
         weights = {
             k: utils.any2device(v, device=self._device)
-            for k, v in weights.items()}
+            for k, v in weights.items()
+        }
         self.agent.load_state_dict(weights)
         self.agent.to(self._device)
         self.agent.eval()
@@ -144,13 +141,7 @@ class Sampler:
         return seed
 
     def _log_to_console(
-        self,
-        *,
-        reward,
-        raw_reward,
-        num_steps,
-        elapsed_time,
-        seed
+        self, *, reward, raw_reward, num_steps, elapsed_time, seed
     ):
         metrics = [
             f"trajectory {int(self.trajectory_index):05d}",
@@ -164,13 +155,7 @@ class Sampler:
         print(f"--- {metrics}")
 
     def _log_to_tensorboard(
-        self,
-        *,
-        reward,
-        raw_reward,
-        num_steps,
-        elapsed_time,
-        **kwargs
+        self, *, reward, raw_reward, num_steps, elapsed_time, **kwargs
     ):
         if self.logger is not None:
             self.logger.add_scalar(
@@ -191,9 +176,7 @@ class Sampler:
                 self.trajectory_index
             )
             self.logger.add_scalar(
-                "time/trajectory_time_sec",
-                elapsed_time,
-                self.trajectory_index
+                "time/trajectory_time_sec", elapsed_time, self.trajectory_index
             )
             self.logger.add_scalar(
                 "time/step_time_sec", elapsed_time / num_steps,
@@ -211,7 +194,8 @@ class Sampler:
 
         start_time = time.time()
         trajectory, trajectory_info = self.trajectory_sampler.sample(
-            exploration_strategy=exploration_strategy)
+            exploration_strategy=exploration_strategy
+        )
         elapsed_time = time.time() - start_time
 
         trajectory_info = trajectory_info or {}
@@ -254,7 +238,6 @@ class Sampler:
 
 
 class ValidSampler(Sampler):
-
     def _init(self, save_n_best: int = 3, **kwargs):
         assert len(kwargs) == 0
         self.save_n_best = save_n_best
@@ -262,10 +245,7 @@ class ValidSampler(Sampler):
         self._sample_flag.value = True
 
     def load_checkpoint(
-        self,
-        *,
-        filepath: str = None,
-        db_server: DBSpec = None
+        self, *, filepath: str = None, db_server: DBSpec = None
     ):
         if filepath is not None:
             checkpoint = utils.load_checkpoint(filepath)
@@ -282,7 +262,8 @@ class ValidSampler(Sampler):
         weights = self.checkpoint[f"{self._weights_sync_mode}_state_dict"]
         weights = {
             k: utils.any2device(v, device=self._device)
-            for k, v in weights.items()}
+            for k, v in weights.items()
+        }
         self.agent.load_state_dict(weights)
         self.agent.to(self._device)
         self.agent.eval()
@@ -314,9 +295,7 @@ class ValidSampler(Sampler):
 
         self.best_agents.append((filepath, agent_rewards))
         self.best_agents = sorted(
-            self.best_agents,
-            key=lambda x: x[1],
-            reverse=not minimize_metric
+            self.best_agents, key=lambda x: x[1], reverse=not minimize_metric
         )
         if len(self.best_agents) > save_n_best:
             last_item = self.best_agents.pop(-1)
@@ -344,8 +323,7 @@ class ValidSampler(Sampler):
             if self.logger is not None:
                 self.logger.add_scalar(
                     "trajectory/_mean_valid_reward",
-                    np.mean(trajectories_rewards),
-                    self.trajectory_index
+                    np.mean(trajectories_rewards), self.trajectory_index
                 )
 
             self.checkpoint["rewards"] = trajectories_rewards

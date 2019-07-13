@@ -74,10 +74,7 @@ class BaseExperiment(Experiment):
             minimize_metric=self._minimize_metric,
             checkpoint_data=self.checkpoint_data
         )
-        state_params = {
-            **self._additional_state_kwargs,
-            **default_params
-        }
+        state_params = {**self._additional_state_kwargs, **default_params}
         return state_params
 
     def get_model(self, stage: str) -> _Model:
@@ -86,11 +83,7 @@ class BaseExperiment(Experiment):
     def get_criterion(self, stage: str) -> _Criterion:
         return self._criterion
 
-    def get_optimizer(
-        self,
-        stage: str,
-        model: nn.Module
-    ) -> _Optimizer:
+    def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
 
         return self._optimizer
 

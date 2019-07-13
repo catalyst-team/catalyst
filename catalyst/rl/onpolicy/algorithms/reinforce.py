@@ -6,16 +6,19 @@ from catalyst.rl import utils
 
 
 class REINFORCE(OnpolicyActor):
-    def _init(
-        self,
-        entropy_reg_coefficient: float = 0.
-    ):
+    def _init(self, entropy_reg_coefficient: float = 0.):
         self.entropy_reg_coefficient = entropy_reg_coefficient
 
     def get_rollout_spec(self):
         return {
-            "return": {"shape": (), "dtype": np.float32},
-            "action_logprob": {"shape": (), "dtype": np.float32},
+            "return": {
+                "shape": (),
+                "dtype": np.float32
+            },
+            "action_logprob": {
+                "shape": (),
+                "dtype": np.float32
+            },
         }
 
     @torch.no_grad()
@@ -32,10 +35,7 @@ class REINFORCE(OnpolicyActor):
 
         returns = utils.geometric_cumsum(self.gamma, rewards)[0]
 
-        rollout = {
-            "return": returns,
-            "action_logprob": logprobs
-        }
+        rollout = {"return": returns, "action_logprob": logprobs}
         return rollout
 
     def train(self, batch, **kwargs):

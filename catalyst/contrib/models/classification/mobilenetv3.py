@@ -52,10 +52,8 @@ class SELayer(nn.Module):
         super().__init__()
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.fc = nn.Sequential(
-            nn.Linear(channel, channel // reduction),
-            nn.ReLU(inplace=True),
-            nn.Linear(channel // reduction, channel),
-            h_sigmoid()
+            nn.Linear(channel, channel // reduction), nn.ReLU(inplace=True),
+            nn.Linear(channel // reduction, channel), h_sigmoid()
         )
 
     def forward(self, x):
@@ -67,30 +65,21 @@ class SELayer(nn.Module):
 
 def conv_3x3_bn(inp, oup, stride):
     return nn.Sequential(
-        nn.Conv2d(inp, oup, 3, stride, 1, bias=False),
-        nn.BatchNorm2d(oup),
+        nn.Conv2d(inp, oup, 3, stride, 1, bias=False), nn.BatchNorm2d(oup),
         h_swish()
     )
 
 
 def conv_1x1_bn(inp, oup):
     return nn.Sequential(
-        nn.Conv2d(inp, oup, 1, 1, 0, bias=False),
-        nn.BatchNorm2d(oup),
+        nn.Conv2d(inp, oup, 1, 1, 0, bias=False), nn.BatchNorm2d(oup),
         h_swish()
     )
 
 
 class InvertedResidual(nn.Module):
     def __init__(
-            self,
-            inp,
-            hidden_dim,
-            oup,
-            kernel_size,
-            stride,
-            use_se,
-            use_hs
+        self, inp, hidden_dim, oup, kernel_size, stride, use_se, use_hs
     ):
         super(InvertedResidual, self).__init__()
         assert stride in [1, 2]
@@ -104,10 +93,10 @@ class InvertedResidual(nn.Module):
                     hidden_dim,
                     hidden_dim,
                     kernel_size,
-                    stride,
-                    (kernel_size - 1) // 2,
+                    stride, (kernel_size - 1) // 2,
                     groups=hidden_dim,
-                    bias=False),
+                    bias=False
+                ),
                 nn.BatchNorm2d(hidden_dim),
                 h_swish() if use_hs else nn.ReLU(inplace=True),
                 # Squeeze-and-Excite
@@ -127,10 +116,10 @@ class InvertedResidual(nn.Module):
                     hidden_dim,
                     hidden_dim,
                     kernel_size,
-                    stride,
-                    (kernel_size - 1) // 2,
+                    stride, (kernel_size - 1) // 2,
                     groups=hidden_dim,
-                    bias=False),
+                    bias=False
+                ),
                 nn.BatchNorm2d(hidden_dim),
                 # Squeeze-and-Excite
                 SELayer(hidden_dim) if use_se else nn.Sequential(),
@@ -149,11 +138,11 @@ class InvertedResidual(nn.Module):
 
 class MobileNetV3(nn.Module):
     def __init__(
-            self,
-            inverted_residual_settings,
-            mode,
-            num_classes=1000,
-            width_mult=1.
+        self,
+        inverted_residual_settings,
+        mode,
+        num_classes=1000,
+        width_mult=1.
     ):
         super(MobileNetV3, self).__init__()
         assert mode in ["large", "small"]
@@ -168,25 +157,22 @@ class MobileNetV3(nn.Module):
         block = InvertedResidual
         for k, exp_size, c, use_se, use_hs, s in inverted_residual_settings:
             output_channel = _make_divisible(c * width_mult, 8)
-            layers.append(block(
-                input_channel,
-                exp_size,
-                output_channel,
-                k,
-                s,
-                use_se,
-                use_hs))
+            layers.append(
+                block(
+                    input_channel, exp_size, output_channel, k, s, use_se,
+                    use_hs
+                )
+            )
             input_channel = output_channel
 
         # building last several layers
         last_conv = nn.Sequential(
             conv_1x1_bn(
-                input_channel,
-                _make_divisible(exp_size * width_mult, 8)
-            ),
-            (SELayer(_make_divisible(exp_size * width_mult, 8))
-             if mode == "small"
-             else nn.Sequential())
+                input_channel, _make_divisible(exp_size * width_mult, 8)
+            ), (
+                SELayer(_make_divisible(exp_size * width_mult, 8))
+                if mode == "small" else nn.Sequential()
+            )
         )
         layers.append(last_conv)
         self.output_channel = _make_divisible(1280 * width_mult, 8) \
@@ -195,23 +181,18 @@ class MobileNetV3(nn.Module):
 
         self.layers = layers
         self.encoder = nn.Sequential(*layers)
-        self.avgpool = nn.Sequential(
-            nn.AdaptiveAvgPool2d((1, 1)),
-            h_swish()
-        )
+        self.avgpool = nn.Sequential(nn.AdaptiveAvgPool2d((1, 1)), h_swish())
 
         self.classifier = nn.Sequential(
             nn.Linear(
-                _make_divisible(exp_size * width_mult, 8),
-                self.output_channel),
-            (nn.BatchNorm1d(self.output_channel)
-             if mode == "small"
-             else nn.Sequential()),
-            h_swish(),
-            nn.Linear(self.output_channel, num_classes),
-            (nn.BatchNorm1d(num_classes)
-             if mode == "small"
-             else nn.Sequential()),
+                _make_divisible(exp_size * width_mult, 8), self.output_channel
+            ), (
+                nn.BatchNorm1d(self.output_channel)
+                if mode == "small" else nn.Sequential()
+            ), h_swish(), nn.Linear(self.output_channel, num_classes), (
+                nn.BatchNorm1d(num_classes)
+                if mode == "small" else nn.Sequential()
+            ),
             h_swish() if mode == "small" else nn.Sequential()
         )
 
@@ -262,7 +243,8 @@ class MobileNetV3Small(MobileNetV3):
         super().__init__(
             inverted_residual_settings=inverted_residual_settings,
             mode="small",
-            **kwargs)
+            **kwargs
+        )
 
 
 class MobileNetV3Large(MobileNetV3):
@@ -291,7 +273,8 @@ class MobileNetV3Large(MobileNetV3):
         super().__init__(
             inverted_residual_settings=inverted_residual_settings,
             mode="large",
-            **kwargs)
+            **kwargs
+        )
 
 
 __all__ = ["MobileNetV3", "MobileNetV3Small", "MobileNetV3Large"]

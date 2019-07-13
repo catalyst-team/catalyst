@@ -19,6 +19,7 @@ class OneCycleLR(BatchScheduler):
 
     Third, optional, lr decay.
     """
+
     def __init__(
         self,
         optimizer: Optimizer,
@@ -88,19 +89,14 @@ class OneCycleLR(BatchScheduler):
             init_momentum, min_momentum, max_momentum, final_momentum
 
         self._calculate_lr_momentum(
-            warmup_steps,
-            lr_annealing_steps,
-            decay_steps
+            warmup_steps, lr_annealing_steps, decay_steps
         )
 
         self.total_groups = len(optimizer.param_groups)
         super().__init__(optimizer)
 
     def _calculate_warmup(
-        self,
-        num_steps: int,
-        warmup_steps: int,
-        warmup_fraction: float
+        self, num_steps: int, warmup_steps: int, warmup_fraction: float
     ):
         if warmup_fraction is not None:
             assert 0.0 <= warmup_fraction < 1.0 and warmup_steps == 0, \
@@ -113,10 +109,7 @@ class OneCycleLR(BatchScheduler):
         return self.warmup_steps
 
     def _calculate_decay(
-        self,
-        num_steps: int,
-        decay_steps: int,
-        decay_fraction: float
+        self, num_steps: int, decay_steps: int, decay_fraction: float
     ):
         if decay_fraction is not None:
             assert 0.0 <= decay_fraction < 1.0 and decay_steps == 0, \
@@ -129,10 +122,7 @@ class OneCycleLR(BatchScheduler):
         return self.decay_steps
 
     def _calculate_lr_momentum(
-        self,
-        warmup_steps: int,
-        lr_annealing_steps: int,
-        decay_steps: int
+        self, warmup_steps: int, lr_annealing_steps: int, decay_steps: int
     ):
         init_lr, max_lr, min_lr, final_lr = self.lr_range
         init_momentum, min_momentum, max_momentum, final_momentum = \
@@ -146,16 +136,17 @@ class OneCycleLR(BatchScheduler):
             (lr_warmup, lr_annealing, lr_decay)
         )
 
-        momentum_decay = np.linspace(
-            init_momentum, min_momentum, warmup_steps)
+        momentum_decay = np.linspace(init_momentum, min_momentum, warmup_steps)
         momentum_annealing = np.linspace(
-            min_momentum, max_momentum, lr_annealing_steps)
+            min_momentum, max_momentum, lr_annealing_steps
+        )
         momentum_warmup = np.linspace(
-            max_momentum, final_momentum, decay_steps)
+            max_momentum, final_momentum, decay_steps
+        )
 
-        self.momentums = np.concatenate((
-            momentum_decay, momentum_annealing, momentum_warmup
-        ))
+        self.momentums = np.concatenate(
+            (momentum_decay, momentum_annealing, momentum_warmup)
+        )
 
     def _get_steps_lr_momentum(self, step_num: int):
         if step_num < len(self.learning_rates):
@@ -192,9 +183,7 @@ class OneCycleLR(BatchScheduler):
 
     def reset(self):
         self._calculate_lr_momentum(
-            self.warmup_steps,
-            self.lr_annealing_steps,
-            self.decay_steps
+            self.warmup_steps, self.lr_annealing_steps, self.decay_steps
         )
         self.last_epoch = 0
 
@@ -215,8 +204,6 @@ class OneCycleLR(BatchScheduler):
         decay_steps = self.decay_steps * loader_len
 
         self._calculate_lr_momentum(
-            warmup_steps,
-            lr_annealing_steps,
-            decay_steps
+            warmup_steps, lr_annealing_steps, decay_steps
         )
         self.last_epoch = current_step * loader_len

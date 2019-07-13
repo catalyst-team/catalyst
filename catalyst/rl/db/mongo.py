@@ -6,11 +6,7 @@ from catalyst.rl.core import DBSpec
 
 class MongoDB(DBSpec):
     def __init__(
-        self,
-        host="127.0.0.1",
-        port=12000,
-        prefix=None,
-        sync_epoch=False
+        self, host="127.0.0.1", port=12000, prefix=None, sync_epoch=False
     ):
         self._server = pymongo.MongoClient(host=host, port=port)
         self._prefix = "" if prefix is None else prefix
@@ -38,8 +34,7 @@ class MongoDB(DBSpec):
 
     def set_sample_flag(self, sample: bool):
         self._flag_collection.replace_one(
-            {"prefix": "sample_flag"},
-            {
+            {"prefix": "sample_flag"}, {
                 "sample_flag": sample,
                 "prefix": "sample_flag"
             },
@@ -48,7 +43,9 @@ class MongoDB(DBSpec):
 
     def get_sample_flag(self) -> bool:
         flag_obj = self._flag_collection.find_one(
-            {"prefix": {"$eq": "sample_flag"}}
+            {"prefix": {
+                "$eq": "sample_flag"
+            }}
         )
         flag = int(flag_obj.get("sample_flag") or -1) == int(1)
         return flag
@@ -59,17 +56,21 @@ class MongoDB(DBSpec):
         collection = self._raw_trajectory_collection if raw \
             else self._trajectory_collection
 
-        collection.insert_one({
+        collection.insert_one(
+            {
                 "trajectory": trajectory,
                 "date": datetime.datetime.utcnow(),
                 "epoch": self._epoch
-        })
+            }
+        )
 
     def get_trajectory(self, index=None):
         assert index is None
 
         trajectory_obj = self._trajectory_collection.find_one(
-            {"date": {"$gt": self._last_datetime}}
+            {"date": {
+                "$gt": self._last_datetime
+            }}
         )
         if trajectory_obj is not None:
             self._last_datetime = trajectory_obj["date"]
@@ -94,8 +95,7 @@ class MongoDB(DBSpec):
 
         checkpoint = utils.pack(checkpoint)
         self._checkpoints_collection.replace_one(
-            {"prefix": "checkpoint"},
-            {
+            {"prefix": "checkpoint"}, {
                 "checkpoint": checkpoint,
                 "prefix": "checkpoint",
                 "epoch": self._epoch
@@ -105,7 +105,8 @@ class MongoDB(DBSpec):
 
     def load_checkpoint(self):
         checkpoint_obj = self._checkpoints_collection.find_one(
-            {"prefix": "checkpoint"})
+            {"prefix": "checkpoint"}
+        )
         checkpoint = checkpoint_obj.get("checkpoint")
         if checkpoint is None:
             return None

@@ -10,7 +10,6 @@ from ..abn import ABN
 
 
 class PyramidBlock(nn.Module):
-
     def __init__(
         self,
         in_channels: int,
@@ -34,7 +33,8 @@ class PyramidBlock(nn.Module):
                 in_channels,
                 out_channels,
                 abn_block=partial(ABN, use_batchnorm=use_batchnorm),
-                complexity=complexity)
+                complexity=complexity
+            )
         )
 
     def forward(self, x: torch.Tensor):
@@ -44,7 +44,8 @@ class PyramidBlock(nn.Module):
             x,
             size=(h, w),
             mode=self.interpolation_mode,
-            align_corners=self.align_corners)
+            align_corners=self.align_corners
+        )
         return x
 
 
@@ -57,13 +58,16 @@ class PSPBlock(nn.Module):
     ):
         super().__init__()
 
-        self.stages = nn.ModuleList([
-            PyramidBlock(
-                in_channels, in_channels // len(pool_sizes),
-                pool_size,
-                use_batchnorm=use_batchnorm)
-            for pool_size in pool_sizes
-        ])
+        self.stages = nn.ModuleList(
+            [
+                PyramidBlock(
+                    in_channels,
+                    in_channels // len(pool_sizes),
+                    pool_size,
+                    use_batchnorm=use_batchnorm
+                ) for pool_size in pool_sizes
+            ]
+        )
 
     def forward(self, x):
         xs = [stage(x) for stage in self.stages] + [x]

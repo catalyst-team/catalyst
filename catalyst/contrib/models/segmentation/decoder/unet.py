@@ -33,7 +33,9 @@ class UNetDecoder(DecoderSpec):
                     enc_channels=encoder_channels,
                     out_channels=out_channels_[-1],
                     in_strides=out_strides_[-1],
-                    **kwargs))
+                    **kwargs
+                )
+            )
             out_strides_.append(blocks[-1].out_strides)
 
         self.blocks = nn.ModuleList(blocks)
@@ -57,6 +59,7 @@ class UNetDecoder(DecoderSpec):
         for i, (decoder_block, encoder_output) \
                 in enumerate(zip(self.blocks, reversed_features)):
             decoder_outputs.append(
-                decoder_block(decoder_outputs[-1], encoder_output))
+                decoder_block(decoder_outputs[-1], encoder_output)
+            )
 
         return decoder_outputs

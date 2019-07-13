@@ -46,21 +46,22 @@ class DDPG(OffpolicyActorCritic):
             assert self.critic_criterion is not None
 
     def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
-        gammas = self._gammas ** self._n_step
+        gammas = self._gammas**self._n_step
         # actor loss
 
         # For now we have the same actor for all heads of the critic
         policy_loss = -torch.mean(self.critic(states_t, self.actor(states_t)))
 
         # critic loss
-        q_values_t = self.critic(
-            states_t, actions_t).squeeze_(dim=2)  # B x num_heads x 1
+        q_values_t = self.critic(states_t, actions_t).squeeze_(
+            dim=2
+        )  # B x num_heads x 1
         q_values_tp1 = self.target_critic(
             states_tp1, self.target_actor(states_tp1)
         ).squeeze_(dim=2).detach()  # B x num_heads x 1
         done_t = done_t[:, None, :]  # B x 1 x 1
         rewards_t = rewards_t[:, None, :]  # B x 1 x 1
-        gammas = gammas[None, :, None]   # 1 x num_heads x 1
+        gammas = gammas[None, :, None]  # 1 x num_heads x 1
 
         q_target_t = rewards_t + (1 - done_t) * gammas * q_values_tp1
 
@@ -71,7 +72,7 @@ class DDPG(OffpolicyActorCritic):
     def _categorical_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
-        gammas = self._gammas ** self._n_step
+        gammas = self._gammas**self._n_step
 
         # actor loss
         # For now we have the same actor for all heads of the critic
@@ -101,9 +102,7 @@ class DDPG(OffpolicyActorCritic):
         value_loss = utils.categorical_loss(
             logits_t.view(-1, self.num_atoms),
             logits_tp1.view(-1, self.num_atoms),
-            atoms_target_t.view(-1, self.num_atoms),
-            self.z,
-            self.delta_z,
+            atoms_target_t.view(-1, self.num_atoms), self.z, self.delta_z,
             self.v_min, self.v_max
         )
 
@@ -112,7 +111,7 @@ class DDPG(OffpolicyActorCritic):
     def _quantile_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
-        gammas = self._gammas ** self._n_step
+        gammas = self._gammas**self._n_step
 
         # actor loss
         policy_loss = -torch.mean(self.critic(states_t, self.actor(states_t)))
@@ -136,9 +135,7 @@ class DDPG(OffpolicyActorCritic):
 
         value_loss = utils.quantile_loss(
             atoms_t.view(-1, self.num_atoms),
-            atoms_target_t.view(-1, self.num_atoms),
-            self.tau,
-            self.num_atoms,
+            atoms_target_t.view(-1, self.num_atoms), self.tau, self.num_atoms,
             self.critic_criterion
         )
 

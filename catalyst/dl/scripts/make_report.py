@@ -49,9 +49,7 @@ def report_by_dir(folder):
 def build_args(parser):
     parser.add_argument("--in-logdir", type=str, required=True)
     parser.add_argument("--out-logdir", type=str, required=True)
-    parser.add_argument(
-        "--keys", type=str, default="loss,_timers/fps,epoch"
-    )
+    parser.add_argument("--keys", type=str, default="loss,_timers/fps,epoch")
 
     return parser
 

@@ -25,8 +25,7 @@ class SchedulerCallback(Callback):
         valid_metric = \
             safitty.get(state.metrics.valid_values, self.reduce_metric)
         lr, momentum = self._scheduler_step(
-            scheduler=scheduler,
-            valid_metric=valid_metric
+            scheduler=scheduler, valid_metric=valid_metric
         )
 
         state.set_key(lr, key="lr", inner_key=self.scheduler_key)
@@ -54,8 +53,7 @@ class SchedulerCallback(Callback):
         if state.loader_name.startswith("train") and \
                 isinstance(scheduler, OneCycleLR) and self.mode == "batch":
             scheduler.recalculate(
-                loader_len=state.loader_len,
-                current_step=state.stage_epoch
+                loader_len=state.loader_len, current_step=state.stage_epoch
             )
 
     def on_batch_end(self, state):
@@ -68,8 +66,8 @@ class SchedulerCallback(Callback):
 
     @staticmethod
     def _scheduler_step(
-            scheduler,
-            valid_metric=None,
+        scheduler,
+        valid_metric=None,
     ):
         if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
             scheduler.step(valid_metric)
@@ -164,11 +162,7 @@ class LRFinder(LRUpdater):
     """
 
     def __init__(
-        self,
-        final_lr,
-        scale="log",
-        num_steps=None,
-        optimizer_key=None
+        self, final_lr, scale="log", num_steps=None, optimizer_key=None
     ):
         """
         Args:

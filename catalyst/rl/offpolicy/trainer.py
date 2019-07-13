@@ -103,27 +103,34 @@ class Trainer(TrainerSpec):
         self.replay_buffer.recalculate_index()
 
         expected_num_updates = (
-            self.num_updates + len(self.loader) * self.loader.batch_size)
+            self.num_updates + len(self.loader) * self.loader.batch_size
+        )
         expected_updates_per_sample = (
-                expected_num_updates / self.replay_buffer.num_transitions)
+            expected_num_updates / self.replay_buffer.num_transitions
+        )
         while expected_updates_per_sample > self.max_updates_per_sample:
             time.sleep(1.0)
             self.replay_buffer.recalculate_index()
             expected_num_updates = (
-                self.num_updates + len(self.loader) * self.loader.batch_size)
+                self.num_updates + len(self.loader) * self.loader.batch_size
+            )
             expected_updates_per_sample = (
-                    expected_num_updates / self.replay_buffer.num_transitions)
+                expected_num_updates / self.replay_buffer.num_transitions
+            )
 
         metrics = self._run_loader(self.loader)
 
         updates_per_sample = (
-            self.num_updates / self.replay_buffer.num_transitions)
-        metrics.update({
-            "num_trajectories": self.replay_buffer.num_trajectories,
-            "num_transitions": self.replay_buffer.num_transitions,
-            "buffer_size": len(self.replay_buffer),
-            "updates_per_sample": updates_per_sample
-        })
+            self.num_updates / self.replay_buffer.num_transitions
+        )
+        metrics.update(
+            {
+                "num_trajectories": self.replay_buffer.num_trajectories,
+                "num_transitions": self.replay_buffer.num_transitions,
+                "buffer_size": len(self.replay_buffer),
+                "updates_per_sample": updates_per_sample
+            }
+        )
         return metrics
 
     def _fetch_initial_buffer(self):

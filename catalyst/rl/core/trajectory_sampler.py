@@ -51,9 +51,7 @@ class TrajectorySampler:
         )
 
         actions_, actions_dtype = get_buffer(
-            capacity=sample_size,
-            space=self.env.action_space,
-            mode="numpy"
+            capacity=sample_size, space=self.env.action_space, mode="numpy"
         )
         actions_shape = (None,) \
             if actions_.dtype.fields is not None \
@@ -104,7 +102,7 @@ class TrajectorySampler:
             else self.env.history_len
 
         state = np.zeros(
-            (history_len,) + tuple(self.observations.shape[1:]),
+            (history_len, ) + tuple(self.observations.shape[1:]),
             dtype=self.observations.dtype
         )
 
@@ -114,10 +112,8 @@ class TrajectorySampler:
 
     def get_trajectory(self):
         trajectory = (
-            np.array(self.observations[:-1]),
-            np.array(self.actions),
-            np.array(self.rewards),
-            np.array(self.dones)
+            np.array(self.observations[:-1]), np.array(self.actions),
+            np.array(self.rewards), np.array(self.dones)
         )
         return trajectory
 

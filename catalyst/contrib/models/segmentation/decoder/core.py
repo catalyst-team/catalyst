@@ -6,12 +6,7 @@ import torch.nn as nn
 
 
 class DecoderSpec(ABC, nn.Module):
-
-    def __init__(
-        self,
-        in_channels: List[int],
-        in_strides: List[int]
-    ):
+    def __init__(self, in_channels: List[int], in_strides: List[int]):
         super().__init__()
         self.in_channels = in_channels
         self.in_strides = in_strides

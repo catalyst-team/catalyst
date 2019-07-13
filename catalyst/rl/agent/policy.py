@@ -4,14 +4,12 @@ from catalyst.contrib.registry import MODULES
 from catalyst.contrib.modules import SquashingLayer, CouplingLayer
 from catalyst.utils import normal_sample, normal_logprob
 
-
 # log_sigma of Gaussian policy are capped at (LOG_SIG_MIN, LOG_SIG_MAX)
 LOG_SIG_MAX = 2
 LOG_SIG_MIN = -10
 
 
 class CategoricalPolicy(nn.Module):
-
     def forward(self, inputs, logprob=False, deterministic=False):
         dist = torch.distributions.Categorical(logits=inputs)
         action = torch.argmax(inputs, dim=1) \

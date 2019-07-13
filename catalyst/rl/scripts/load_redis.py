@@ -5,18 +5,9 @@ from redis import Redis
 
 
 def build_args(parser):
-    parser.add_argument(
-        "--host",
-        type=str,
-        default="127.0.0.1")
-    parser.add_argument(
-        "--port",
-        type=int,
-        default=12000)
-    parser.add_argument(
-        "--in-pkl",
-        type=str,
-        required=True)
+    parser.add_argument("--host", type=str, default="127.0.0.1")
+    parser.add_argument("--port", type=int, default=12000)
+    parser.add_argument("--in-pkl", type=str, required=True)
 
     return parser
 

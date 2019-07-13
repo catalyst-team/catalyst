@@ -6,7 +6,6 @@ import torch.nn as nn
 
 
 class HeadSpec(ABC, nn.Module):
-
     def __init__(
         self,
         in_channels: List[int],

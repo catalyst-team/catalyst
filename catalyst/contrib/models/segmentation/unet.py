@@ -12,7 +12,6 @@ from .core import UnetSpec, ResnetUnetSpec
 
 
 class Unet(UnetSpec):
-
     def _get_components(
         self,
         encoder: UnetEncoder,
@@ -46,7 +45,6 @@ class Unet(UnetSpec):
 
 
 class ResnetUnet(ResnetUnetSpec):
-
     def _get_components(
         self,
         encoder: ResnetEncoder,
@@ -66,9 +64,8 @@ class ResnetUnet(ResnetUnetSpec):
             in_channels=bridge.out_channels,
             in_strides=bridge.out_strides,
             block_fn=partial(
-                DecoderConcatBlock,
-                aggregate_first=True,
-                upsample_scale=2),
+                DecoderConcatBlock, aggregate_first=True, upsample_scale=2
+            ),
             **decoder_params
         )
         head = UnetHead(

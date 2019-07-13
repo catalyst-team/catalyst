@@ -13,7 +13,6 @@ from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
 
 
 class Runner(ABC):
-
     def __init__(
         self,
         model: nn.Module = None,
@@ -37,8 +36,7 @@ class Runner(ABC):
         return res
 
     def _get_experiment_components(
-        self,
-        stage: str = None
+        self, stage: str = None
     ) -> Tuple[_Model, _Criterion, _Optimizer, _Scheduler, torch.device]:
         """
         Inner method for children's classes for model specific initialization.
@@ -64,10 +62,12 @@ class Runner(ABC):
     def _prepare_state(self, stage: str):
         migrating_params = {}
         if self.state is not None:
-            migrating_params.update({
-                "step": self.state.step,
-                "epoch": self.state.epoch + 1
-            })
+            migrating_params.update(
+                {
+                    "step": self.state.step,
+                    "epoch": self.state.epoch + 1
+                }
+            )
 
         self.model, criterion, optimizer, scheduler, self.device = \
             self._get_experiment_components(stage)
@@ -115,8 +115,8 @@ class Runner(ABC):
     def _run_loader(self, loader):
         self.state.batch_size = (
             loader.batch_sampler.batch_size
-            if loader.batch_sampler is not None
-            else loader.batch_size)
+            if loader.batch_sampler is not None else loader.batch_size
+        )
         self.state.step = (
             self.state.step
             or self.state.epoch * len(loader) * self.state.batch_size
@@ -184,11 +184,7 @@ class Runner(ABC):
             self.state.epoch += 1
         self._run_event("stage_end")
 
-    def run_experiment(
-        self,
-        experiment: Experiment,
-        check: bool = False
-    ):
+    def run_experiment(self, experiment: Experiment, check: bool = False):
         self._check_run = check
 
         self.experiment = experiment

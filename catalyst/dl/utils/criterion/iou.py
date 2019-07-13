@@ -36,5 +36,4 @@ def iou(
 
 jaccard = iou
 
-
 __all__ = ["iou", "jaccard"]

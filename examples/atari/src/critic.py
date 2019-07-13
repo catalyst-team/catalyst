@@ -109,10 +109,10 @@ class ConvQCritic(ConvCritic):
 
     @classmethod
     def get_from_params(
-            cls,
-            # state_net_params: Dict,
-            value_head_params: Dict,
-            env_spec: EnvironmentSpec,
+        cls,
+        # state_net_params: Dict,
+        value_head_params: Dict,
+        env_spec: EnvironmentSpec,
     ):
         action_space = env_spec.action_space
         assert isinstance(action_space, Discrete)

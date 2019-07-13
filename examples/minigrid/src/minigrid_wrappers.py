@@ -24,15 +24,19 @@ class TransposeImage(TransposeObs):
         self.op = op
         img_space: spaces.Box = self.observation_space.spaces["image"]
 
-        self.observation_space = spaces.Dict({
-            "image": gym.spaces.Box(
-                img_space.low[0, 0, 0],
-                img_space.high[0, 0, 0], [
-                    img_space.shape[self.op[0]], img_space.shape[self.op[1]],
-                    img_space.shape[self.op[2]]
-                ],
-                dtype=self.observation_space.dtype)
-        })
+        self.observation_space = spaces.Dict(
+            {
+                "image": gym.spaces.Box(
+                    img_space.low[0, 0, 0],
+                    img_space.high[0, 0, 0], [
+                        img_space.shape[self.op[0]],
+                        img_space.shape[self.op[1]], img_space.shape[self.op[2]
+                                                                     ]
+                    ],
+                    dtype=self.observation_space.dtype
+                )
+            }
+        )
 
     def observation(self, ob):
         ob = {

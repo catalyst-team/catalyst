@@ -186,8 +186,9 @@ def test_summary_reader_filter_scalars():
     types = ["scalar"]
     reader = SummaryReader("logs", types=types)
     _, data_raw = _get_test_data()
-    data_raw2 = 2 * [d for d in data_raw
-                     if d is not None and d["type"] in types]
+    data_raw2 = 2 * [
+        d for d in data_raw if d is not None and d["type"] in types
+    ]
     items = list(reader)
 
     assert len(items) == len(data_raw2)

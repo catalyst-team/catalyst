@@ -39,9 +39,7 @@ class RawTrajectoryWrapper(Wrapper):
         )
 
         actions_, actions_dtype = get_buffer(
-            capacity=sample_size,
-            space=self.env.action_space,
-            mode="numpy"
+            capacity=sample_size, space=self.env.action_space, mode="numpy"
         )
         actions_shape = (None,) \
             if actions_.dtype.fields is not None \
@@ -53,12 +51,12 @@ class RawTrajectoryWrapper(Wrapper):
         )
 
         self.rewards = DynamicArray(
-            array_or_shape=(None,),
+            array_or_shape=(None, ),
             dtype=np.float32,
             capacity=int(self.initial_capacity)
         )
         self.dones = DynamicArray(
-            array_or_shape=(None,),
+            array_or_shape=(None, ),
             dtype=np.bool,
             capacity=int(self.initial_capacity)
         )
@@ -90,10 +88,8 @@ class RawTrajectoryWrapper(Wrapper):
         if done:
             self.needs_reset = True
             info["raw_trajectory"] = (
-                np.array(self.observations[:-1]),
-                np.array(self.actions),
-                np.array(self.rewards),
-                np.array(self.dones)
+                np.array(self.observations[:-1]), np.array(self.actions),
+                np.array(self.rewards), np.array(self.dones)
             )
         return info
 

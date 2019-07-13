@@ -17,8 +17,8 @@ def _get_states_from_observations(observations: np.ndarray, history_len=1):
     by adding new dimension of size (history_len).
     """
     states = np.concatenate(
-        [np.expand_dims(np.zeros_like(observations), 1)] * history_len,
-        axis=1)
+        [np.expand_dims(np.zeros_like(observations), 1)] * history_len, axis=1
+    )
     for i in range(history_len - 1):
         pivot = history_len - i - 1
         states[pivot:, i, ...] = observations[:-pivot, ...]
@@ -29,7 +29,8 @@ def _get_states_from_observations(observations: np.ndarray, history_len=1):
         states_dtype = []
         for key, value in observations.dtype.fields.items():
             states_dtype.append(
-                (key, value[0].base, (history_len,) + tuple(value[0].shape)))
+                (key, value[0].base, (history_len, ) + tuple(value[0].shape))
+            )
         states_dtype = np.dtype(states_dtype)
         states_ = np.empty(len(observations), dtype=states_dtype)
 
@@ -59,15 +60,15 @@ class Trainer(TrainerSpec):
             return self.algorithm.get_rollout(states, actions, rewards, dones)
 
         indices = np.arange(
-            0, len(states) + self.rollout_batch_size - 1,
-            self.rollout_batch_size
+            0,
+            len(states) + self.rollout_batch_size - 1, self.rollout_batch_size
         )
         rollout = None
         for i in range(len(indices) - 1):
-            states_batch = states[indices[i]:indices[i+1]+1]
-            actions_batch = actions[indices[i]:indices[i+1]+1]
-            rewards_batch = rewards[indices[i]:indices[i+1]+1]
-            dones_batch = dones[indices[i]:indices[i+1]+1]
+            states_batch = states[indices[i]:indices[i + 1] + 1]
+            actions_batch = actions[indices[i]:indices[i + 1] + 1]
+            rewards_batch = rewards[indices[i]:indices[i + 1] + 1]
+            dones_batch = dones[indices[i]:indices[i + 1] + 1]
             rollout_batch = self.algorithm.get_rollout(
                 states_batch, actions_batch, rewards_batch, dones_batch
             )
@@ -130,7 +131,8 @@ class Trainer(TrainerSpec):
 
             observations, actions, rewards, dones = trajectory
             states = _get_states_from_observations(
-                observations, self.env_spec.history_len)
+                observations, self.env_spec.history_len
+            )
             rollout = self._get_rollout_in_batches(
                 states, actions, rewards, dones
             )
@@ -149,33 +151,36 @@ class Trainer(TrainerSpec):
 
         # @TODO: refactor
         self.algorithm.postprocess_buffer(
-            self.replay_buffer.buffers,
-            len(self.replay_buffer))
+            self.replay_buffer.buffers, len(self.replay_buffer)
+        )
 
         elapsed_time = time.time() - start_time
         self.logger.add_scalar("fetch time", elapsed_time, self.epoch)
 
     def _run_epoch(self) -> Dict:
         sampler = utils.OnpolicyRolloutSampler(
-            buffer=self.replay_buffer,
-            num_mini_epochs=self.num_mini_epochs)
+            buffer=self.replay_buffer, num_mini_epochs=self.num_mini_epochs
+        )
         loader = DataLoader(
             dataset=self.replay_buffer,
             batch_size=self.batch_size,
             shuffle=False,
             num_workers=self.num_workers,
             pin_memory=torch.cuda.is_available(),
-            sampler=sampler)
+            sampler=sampler
+        )
 
         metrics = self._run_loader(loader)
 
         updates_per_sample = self.num_updates / self._num_transitions
-        metrics.update({
-            "num_trajectories": self._num_trajectories,
-            "num_transitions": self._num_transitions,
-            "buffer_size": len(self.replay_buffer),
-            "updates_per_sample": updates_per_sample
-        })
+        metrics.update(
+            {
+                "num_trajectories": self._num_trajectories,
+                "num_transitions": self._num_transitions,
+                "buffer_size": len(self.replay_buffer),
+                "updates_per_sample": updates_per_sample
+            }
+        )
         return metrics
 
     def _run_train_loop(self):

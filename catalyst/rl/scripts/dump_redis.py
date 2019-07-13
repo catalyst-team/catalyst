@@ -6,26 +6,11 @@ from redis import Redis
 
 
 def build_args(parser):
-    parser.add_argument(
-        "--host",
-        type=str,
-        default="127.0.0.1")
-    parser.add_argument(
-        "--port",
-        type=int,
-        default=12000)
-    parser.add_argument(
-        "--out-pkl",
-        type=str,
-        required=True)
-    parser.add_argument(
-        "--chunk-size",
-        type=int,
-        default=10000)
-    parser.add_argument(
-        "--start-from",
-        type=int,
-        default=0)
+    parser.add_argument("--host", type=str, default="127.0.0.1")
+    parser.add_argument("--port", type=int, default=12000)
+    parser.add_argument("--out-pkl", type=str, required=True)
+    parser.add_argument("--chunk-size", type=int, default=10000)
+    parser.add_argument("--start-from", type=int, default=0)
 
     return parser
 

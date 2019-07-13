@@ -36,8 +36,7 @@ class CriterionCallback(Callback):
 
     def _compute_loss(self, state: RunnerState, criterion):
         loss = criterion(
-            state.output[self.output_key],
-            state.input[self.input_key]
+            state.output[self.output_key], state.input[self.input_key]
         )
         return loss
 
@@ -51,9 +50,11 @@ class CriterionCallback(Callback):
 
         loss = self._compute_loss(state, criterion) * self.multiplier
 
-        state.metrics.add_batch_value(metrics_dict={
-            self.prefix: loss.item(),
-        })
+        state.metrics.add_batch_value(
+            metrics_dict={
+                self.prefix: loss.item(),
+            }
+        )
 
         self._add_loss_to_state(state, loss)
 
