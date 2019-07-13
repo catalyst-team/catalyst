@@ -29,6 +29,6 @@ from catalyst import utils
 
 folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_ppo_continuous/').glob('sampler.valid*'))[0]
 checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
-print(np.mean(checkpoint['rewards']))
+print('mean reward', np.mean(checkpoint['rewards']))
 assert np.mean(checkpoint['rewards']) > -8.0
 """

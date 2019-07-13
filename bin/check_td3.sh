@@ -27,6 +27,11 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     --logdir=./examples/logs/_tests_rl_gym_td3_quantile &
 sleep 480
 
+killall -9 python
+sleep 3
+killall -9 catalyst-rl
+sleep 3
+
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_samplers.py \
@@ -60,19 +65,20 @@ python -c """
 import pathlib
 import numpy as np
 from catalyst import utils
+reward_goal = -8.0
 
 folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_td3_base/').glob('sampler.valid*'))[0]
 checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
-print(np.mean(checkpoint['rewards']))
-assert np.mean(checkpoint['rewards']) > -8.0
+print('mean reward', np.mean(checkpoint['rewards']))
+assert np.mean(checkpoint['rewards']) > reward_goal
 
 folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_td3_categorical/').glob('sampler.valid*'))[0]
 checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
-print(np.mean(checkpoint['rewards']))
-assert np.mean(checkpoint['rewards']) > -8.0
+print('mean reward', np.mean(checkpoint['rewards']))
+assert np.mean(checkpoint['rewards']) > reward_goal
 
 folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_td3_quantile/').glob('sampler.valid*'))[0]
 checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
-print(np.mean(checkpoint['rewards']))
-assert np.mean(checkpoint['rewards']) > -8.0
+print('mean reward', np.mean(checkpoint['rewards']))
+assert np.mean(checkpoint['rewards']) > reward_goal
 """

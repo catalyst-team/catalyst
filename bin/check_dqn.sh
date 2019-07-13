@@ -42,19 +42,20 @@ python -c """
 import pathlib
 import numpy as np
 from catalyst import utils
+reward_goal = 2.0
 
 folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_dqn_base/').glob('sampler.valid*'))[0]
 checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
-print(np.mean(checkpoint['rewards']))
-assert np.mean(checkpoint['rewards']) > 3.0
+print('mean reward', np.mean(checkpoint['rewards']))
+assert np.mean(checkpoint['rewards']) > reward_goal
 
 folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_dqn_categorical/').glob('sampler.valid*'))[0]
 checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
-print(np.mean(checkpoint['rewards']))
-assert np.mean(checkpoint['rewards']) > 3.0
+print('mean reward', np.mean(checkpoint['rewards']))
+assert np.mean(checkpoint['rewards']) > reward_goal
 
 folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_dqn_quantile/').glob('sampler.valid*'))[0]
 checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
-print(np.mean(checkpoint['rewards']))
-assert np.mean(checkpoint['rewards']) > 3.0
+print('mean reward', np.mean(checkpoint['rewards']))
+assert np.mean(checkpoint['rewards']) > reward_goal
 """
