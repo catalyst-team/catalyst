@@ -93,7 +93,7 @@ algorithm:
 
   critic_loss_params:
     criterion: HuberLoss
-    clip_delta: 10.0
+    clip_delta: 15.0
 
   actor_optimizer_params:
     optimizer: Adam
