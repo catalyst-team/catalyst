@@ -124,6 +124,20 @@ jobs:
 #        - kill %1
 
     - stage: Examples
+      name: "Examples off-policy RL – SAC - base"
+      before_install: *before_install
+      install: *requirements
+      script:
+        - bash ./bin/check_sac_base.sh
+
+    - stage: Examples
+      name: "Examples off-policy RL – TD3 - base"
+      before_install: *before_install
+      install: *requirements
+      script:
+        - bash ./bin/check_td3_base.sh
+
+    - stage: Examples
       name: "Examples off-policy RL – SAC"
       before_install: *before_install
       install: *requirements

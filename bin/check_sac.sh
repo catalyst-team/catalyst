@@ -10,11 +10,11 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     python catalyst/rl/scripts/load_redis.py \
     --in-pkl=./db.dump.pointenv.pkl
 
-OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
-    PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-    python catalyst/rl/scripts/run_trainer.py \
-    --config=./examples/_tests_rl_gym/config_sac_base.yml \
-    --logdir=./examples/logs/_tests_rl_gym_sac_base &
+#OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
+#    PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+#    python catalyst/rl/scripts/run_trainer.py \
+#    --config=./examples/_tests_rl_gym/config_sac_base.yml \
+#    --logdir=./examples/logs/_tests_rl_gym_sac_base &
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_trainer.py \
@@ -32,11 +32,11 @@ sleep 3
 killall -9 catalyst-rl
 sleep 3
 
-OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
-    PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-    python catalyst/rl/scripts/run_samplers.py \
-    --config=./examples/_tests_rl_gym/config_sac_base.yml \
-    --logdir=./examples/logs/_tests_rl_gym_sac_base &
+#OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
+#    PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+#    python catalyst/rl/scripts/run_samplers.py \
+#    --config=./examples/_tests_rl_gym/config_sac_base.yml \
+#    --logdir=./examples/logs/_tests_rl_gym_sac_base &
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_samplers.py \
@@ -67,10 +67,10 @@ import numpy as np
 from catalyst import utils
 reward_goal = -8.0
 
-folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_sac_base/').glob('sampler.valid*'))[0]
-checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
-print('mean reward', np.mean(checkpoint['rewards']))
-assert np.mean(checkpoint['rewards']) > reward_goal
+#folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_sac_base/').glob('sampler.valid*'))[0]
+#checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
+#print('mean reward', np.mean(checkpoint['rewards']))
+#assert np.mean(checkpoint['rewards']) > reward_goal
 
 folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_sac_categorical/').glob('sampler.valid*'))[0]
 checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
