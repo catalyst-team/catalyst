@@ -124,6 +124,27 @@ jobs:
         - kill %1
 
     - stage: Examples
+      name: "Examples on-policy RL – PPO discrete"
+      before_install: *before_install
+      install: *requirements
+      script:
+        - bash ./bin/check_ppo_discrete.sh
+
+    - stage: Examples
+      name: "Examples off-policy RL – DQN"
+      before_install: *before_install
+      install: *requirements
+      script:
+        - bash ./bin/check_dqn.sh
+
+    - stage: Examples
+      name: "Examples off-policy RL – DDPG"
+      before_install: *before_install
+      install: *requirements
+      script:
+        - bash ./bin/check_ddpg.sh
+
+    - stage: Examples
       name: "Examples off-policy RL – SAC - base"
       before_install: *before_install
       install: *requirements
@@ -150,27 +171,6 @@ jobs:
       install: *requirements
       script:
         - bash ./bin/check_td3.sh
-
-    - stage: Examples
-      name: "Examples off-policy RL – DDPG"
-      before_install: *before_install
-      install: *requirements
-      script:
-        - bash ./bin/check_ddpg.sh
-
-    - stage: Examples
-      name: "Examples on-policy RL – PPO discrete"
-      before_install: *before_install
-      install: *requirements
-      script:
-        - bash ./bin/check_ppo_discrete.sh
-
-    - stage: Examples
-      name: "Examples off-policy RL – DQN"
-      before_install: *before_install
-      install: *requirements
-      script:
-        - bash ./bin/check_dqn.sh
 
 # speed up for now
 #    - stage: Deploy
