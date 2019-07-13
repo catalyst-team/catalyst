@@ -1,10 +1,14 @@
 import argparse
 import pickle
 from tqdm import tqdm
-from redis import StrictRedis
+from redis import Redis
 
 
 def build_args(parser):
+    parser.add_argument(
+        "--host",
+        type=str,
+        default="127.0.0.1")
     parser.add_argument(
         "--port",
         type=int,
@@ -25,12 +29,12 @@ def parse_args():
 
 
 def main(args, _=None):
-    redis = StrictRedis(port=args.port)
+    db = Redis(host=args.host, port=args.port)
 
-    episodes = pickle.load(open(args.in_pkl, "rb"))
+    trajectories = pickle.load(open(args.in_pkl, "rb"))
 
-    for i in tqdm(range(len(episodes))):
-        redis.rpush("trajectories", episodes[i])
+    for i in tqdm(range(len(trajectories))):
+        db.rpush("trajectories", trajectories[i])
 
 
 if __name__ == "__main__":

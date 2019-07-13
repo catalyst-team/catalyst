@@ -1,5 +1,5 @@
 args:
-  logdir: ./logs/_tests_rl_gym_ddpg-base  #  change me
+  logdir: ./logs/_tests_rl_gym_td3-quantile  #  change me
   expdir: ./examples/_tests_rl_gym
 
   vis: 0
@@ -10,7 +10,7 @@ args:
 db:
   db: RedisDB
   port: 12000
-  prefix: gym-ddpg-base  # TODO: remove
+  prefix: gym-td3-quantile  # TODO: remove
 
 environment:
   environment: GymWrapper
@@ -76,20 +76,24 @@ agents:
 #      num_atoms: 11
 #      values_range: [-10.0, 10.0]
 
-#      distribution: quantile
-#      num_atoms: 11
+      distribution: quantile
+      num_atoms: 21
 
 algorithm:
-  algorithm: DDPG
+  algorithm: TD3
 
   n_step: 1
   gamma: 0.99
   actor_tau: 0.01
   critic_tau: 0.01
 
+  num_critics: 2
+  action_noise_std: 0.1
+  action_noise_clip: 0.5
+
   critic_loss_params:
     criterion: HuberLoss
-    clip_delta: 15.0
+    clip_delta: 1.0
 
   actor_optimizer_params:
     optimizer: Adam

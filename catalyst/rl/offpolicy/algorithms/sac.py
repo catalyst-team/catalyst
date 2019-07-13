@@ -377,12 +377,14 @@ class SAC(OffpolicyActorCritic):
             range(num_critics - 1)
         ]
 
-        action_space = env_spec.action_space
-        assert isinstance(action_space, Box)
-        action_boundaries = [
-            action_space.low[0],
-            action_space.high[0]
-        ]
+        action_boundaries = config_["algorithm"].pop("action_boundaries", None)
+        if action_boundaries is None:
+            action_space = env_spec.action_space
+            assert isinstance(action_space, Box)
+            action_boundaries = [
+                action_space.low[0],
+                action_space.high[0]
+            ]
 
         algorithm = cls(
             **config_["algorithm"],

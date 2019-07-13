@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 redis-server --port 12000 &
-sleep 5
+sleep 3
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_trainer.py \
@@ -47,23 +47,11 @@ folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_dqn_base/').glob('samp
 checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
 print(np.mean(checkpoint['rewards']))
 assert np.mean(checkpoint['rewards']) > 3.0
-"""
-
-python -c """
-import pathlib
-import numpy as np
-from catalyst import utils
 
 folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_dqn_categorical/').glob('sampler.valid*'))[0]
 checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
 print(np.mean(checkpoint['rewards']))
 assert np.mean(checkpoint['rewards']) > 3.0
-"""
-
-python -c """
-import pathlib
-import numpy as np
-from catalyst import utils
 
 folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_dqn_quantile/').glob('sampler.valid*'))[0]
 checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')

@@ -14,13 +14,13 @@ def geometric_cumsum(alpha, x):
     Calculate future accumulated sums for each element
     in a list with an exponential factor.
 
-    Given input data :math:`x_1, \dots, x_n`
-    and exponential factor :math:`\alpha\in [0, 1]`,
+    Given input data :math:`x_1, \dots, x_n`  # noqa: E501, W605
+    and exponential factor :math:`\alpha\in [0, 1]`,  # noqa: E501, W605
     it returns an array :math:`y`
     with the same length and each element is calculated as following
 
     .. math::
-        y_i = x_i + \alpha x_{i+1} + \alpha^2 x_{i+2} + \dots + \alpha^{n-i-1}x_{n-1} + \alpha^{n-i}x_{n}  # noqa: E501
+        y_i = x_i + \alpha x_{i+1} + \alpha^2 x_{i+2} + \dots + \alpha^{n-i-1}x_{n-1} + \alpha^{n-i}x_{n}  # noqa: E501, W605
 
     .. note::
         To gain the optimal runtime speed, we use ``scipy.signal.lfilter``

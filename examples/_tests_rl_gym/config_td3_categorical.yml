@@ -1,5 +1,5 @@
 args:
-  logdir: ./logs/_tests_rl_gym_ddpg-base  #  change me
+  logdir: ./logs/_tests_rl_gym_td3-categorical  #  change me
   expdir: ./examples/_tests_rl_gym
 
   vis: 0
@@ -10,7 +10,7 @@ args:
 db:
   db: RedisDB
   port: 12000
-  prefix: gym-ddpg-base  # TODO: remove
+  prefix: gym-td3-categorical  # TODO: remove
 
 environment:
   environment: GymWrapper
@@ -72,24 +72,24 @@ agents:
       in_features: 32  # out features would be taken from action_shape
       out_features: 1
 
-#      distribution: categorical
-#      num_atoms: 11
-#      values_range: [-10.0, 10.0]
+      distribution: categorical
+      num_atoms: 21
+      values_range: [-10.0, 0.0]
 
 #      distribution: quantile
 #      num_atoms: 11
 
 algorithm:
-  algorithm: DDPG
+  algorithm: TD3
 
   n_step: 1
   gamma: 0.99
   actor_tau: 0.01
   critic_tau: 0.01
 
-  critic_loss_params:
-    criterion: HuberLoss
-    clip_delta: 15.0
+  num_critics: 2
+  action_noise_std: 0.1
+  action_noise_clip: 0.5
 
   actor_optimizer_params:
     optimizer: Adam
