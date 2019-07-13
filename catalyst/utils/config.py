@@ -24,7 +24,6 @@ def load_ordered_yaml(
     Returns:
         dict: configuration
     """
-
     class OrderedLoader(Loader):
         pass
 

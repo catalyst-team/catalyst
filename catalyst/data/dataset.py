@@ -8,7 +8,6 @@ class ListDataset(Dataset):
     """
     General purpose dataset class with several data sources `list_data`
     """
-
     def __init__(
         self,
         list_data: List[Dict],
@@ -87,7 +86,6 @@ class MergeDataset(Dataset):
     """
     Abstraction to merge several datasets into one dataset.
     """
-
     def __init__(self, *datasets: Dataset):
         """
         Args:

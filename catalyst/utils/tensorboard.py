@@ -34,7 +34,6 @@ class EventsFileReader(Iterable):
     """
     An iterator over a Tensorboard events file
     """
-
     def __init__(self, events_file: BinaryIO):
         """
         Initialize an iterator over an events file
