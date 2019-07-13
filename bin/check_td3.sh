@@ -25,7 +25,7 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     python catalyst/rl/scripts/run_trainer.py \
     --config=./examples/_tests_rl_gym/config_td3_quantile.yml \
     --logdir=./examples/logs/_tests_rl_gym_td3_quantile &
-sleep 480
+sleep 900
 
 killall -9 python
 sleep 3
