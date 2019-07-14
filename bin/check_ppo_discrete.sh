@@ -13,7 +13,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_samplers.py \
     --config=./examples/_tests_rl_gym/config_ppo_discrete.yml \
     --logdir=./examples/logs/_tests_rl_gym_ppo_discrete &
-sleep 300
+sleep 600
 
 killall -9 python
 sleep 3

@@ -29,7 +29,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_samplers.py \
     --config=./examples/_tests_rl_gym/config_dqn_quantile.yml \
     --logdir=./examples/logs/_tests_rl_gym_dqn_quantile &
-sleep 300
+sleep 600
 
 killall -9 python
 sleep 3
