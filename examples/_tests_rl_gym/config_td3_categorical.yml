@@ -5,7 +5,7 @@ args:
   vis: 0
   infer: 0  #  change me
   valid: 1  #  change me
-  train: 0  #  change me
+  train: 1  #  change me
 
 db:
   db: RedisDB
@@ -89,7 +89,7 @@ algorithm:
 
   num_critics: 2
   action_noise_std: 0.1
-  action_noise_clip: 0.5
+  action_noise_clip: 0.2
 
   actor_optimizer_params:
     optimizer: Adam
@@ -103,12 +103,12 @@ algorithm:
     clip_value: 1.0
 
 trainer:
-  batch_size: 64               # transitions
+  batch_size: 256              # transitions
   num_workers: 1
   epoch_len: 100               # batches
 
-  replay_buffer_size: 1000000  # transitions
-  min_num_transitions: 1600    # transitions
+  replay_buffer_size: 2000000  # transitions
+  min_num_transitions: 2560    # transitions
 
   save_period: 50              # epochs
   weights_sync_period: 1       # epochs

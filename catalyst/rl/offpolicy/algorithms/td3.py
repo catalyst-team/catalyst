@@ -99,7 +99,7 @@ class TD3(OffpolicyActorCritic):
         actions_tp0 = self.actor(states_t)
         # For now we use the same actions for each head
         q_values_tp0 = [
-            x(states_t, actions_tp0).squeeze_(dim=3).squeeze_(dim=2)
+            x(states_t, actions_tp0).squeeze_(dim=3)
             for x in self.critics
         ]
         q_values_tp0_min = torch.cat(q_values_tp0, dim=-1).min(dim=-1)[0]
@@ -109,24 +109,23 @@ class TD3(OffpolicyActorCritic):
         actions_tp1 = self.target_actor(states_tp1).detach()
         actions_tp1 = self._add_noise_to_actions(actions_tp1)
         q_values_t = [
-            x(states_t, actions_t).squeeze_(dim=3).squeeze_(dim=2)
+            x(states_t, actions_t).squeeze_(dim=3)
             for x in self.critics
         ]
-        q_values_tp1 = torch.cat(
-            [
-                x(states_tp1, actions_tp1).squeeze_(dim=3).squeeze_(dim=2)
-                for x in self.target_critics
-            ],
-            dim=-1
-        )  # B x num_heads x num_critics
-        q_values_tp1 = q_values_tp1.min(dim=-1, keepdim=True)[0].detach()
+        # B x num_heads x num_critics
+        q_values_tp1 = torch.cat([
+            x(states_tp1, actions_tp1).squeeze_(dim=3)
+            for x in self.target_critics
+        ], dim=-1)
         # B x num_heads x 1
+        q_values_tp1 = q_values_tp1.min(dim=-1, keepdim=True)[0].detach()
 
         gammas = self._gammas**self._n_step
         done_t = done_t[:, None, :]  # B x 1 x 1
         rewards_t = rewards_t[:, None, :]  # B x 1 x 1
         gammas = gammas[None, :, None]  # 1 x num_heads x 1
 
+        # B x num_heads x 1
         q_target_t = rewards_t + (1 - done_t) * gammas * q_values_tp1
         value_loss = [
             self.critic_criterion(x, q_target_t).mean() for x in q_values_t
@@ -185,10 +184,13 @@ class TD3(OffpolicyActorCritic):
         atoms_target_t = rewards_t + (1 - done_t) * gammas * self.z
         value_loss = [
             utils.categorical_loss(
-                x.view(-1,
-                       self.num_atoms), logits_tp1.view(-1, self.num_atoms),
-                atoms_target_t.view(-1, self.num_atoms), self.z, self.delta_z,
-                self.v_min, self.v_max
+                x.view(-1, self.num_atoms),
+                logits_tp1.view(-1, self.num_atoms),
+                atoms_target_t.view(-1, self.num_atoms),
+                self.z,
+                self.delta_z,
+                self.v_min,
+                self.v_max
             ) for x in logits_t
         ]
 
@@ -214,13 +216,10 @@ class TD3(OffpolicyActorCritic):
             x(states_t, actions_t).squeeze_(dim=2).unsqueeze_(-1)
             for x in self.critics
         ]
-        atoms_tp1 = torch.cat(
-            [
-                x(states_tp1, actions_tp1).squeeze_(dim=2).unsqueeze_(-1)
-                for x in self.target_critics
-            ],
-            dim=-1
-        )
+        atoms_tp1 = torch.cat([
+            x(states_tp1, actions_tp1).squeeze_(dim=2).unsqueeze_(-1)
+            for x in self.target_critics
+        ], dim=-1)
         # B x num_heads x num_atoms x num_critics
         # @TODO: smarter way to do this (other than reshaping)?
         atoms_ids_tp1_min = atoms_tp1.mean(dim=-2).argmin(dim=-1).view(-1)
@@ -234,12 +233,15 @@ class TD3(OffpolicyActorCritic):
         rewards_t = rewards_t[:, None, :]  # B x 1 x 1
         gammas = gammas[None, :, None]  # 1 x num_heads x 1
 
+        # B x num_heads x num_atoms
         atoms_target_t = rewards_t + (1 - done_t) * gammas * atoms_tp1
         value_loss = [
             utils.quantile_loss(
                 x.view(-1, self.num_atoms),
-                atoms_target_t.view(-1, self.num_atoms), self.tau,
-                self.num_atoms, self.critic_criterion
+                atoms_target_t.view(-1, self.num_atoms),
+                self.tau,
+                self.num_atoms,
+                self.critic_criterion
             ) for x in atoms_t
         ]
 

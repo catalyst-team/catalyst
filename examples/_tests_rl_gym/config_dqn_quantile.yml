@@ -63,12 +63,12 @@ algorithm:
     lr: 0.0003
 
 trainer:
-  batch_size: 32               # transitions
+  batch_size: 256              # transitions
   num_workers: 1
   epoch_len: 100               # batches
 
-  replay_buffer_size: 100000   # transitions
-  min_num_transitions: 320     # transitions
+  replay_buffer_size: 1000000  # transitions
+  min_num_transitions: 2560    # transitions
 
   save_period: 50              # epochs
   weights_sync_period: 1       # epochs
