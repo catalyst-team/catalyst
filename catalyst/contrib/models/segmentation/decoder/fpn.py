@@ -19,9 +19,8 @@ class FPNDecoder(DecoderSpec):
         out_strides_ = [in_strides[-1]]
 
         self.center_conv = nn.Conv2d(
-            in_channels[-1],
-            pyramid_channels,
-            kernel_size=1)
+            in_channels[-1], pyramid_channels, kernel_size=1
+        )
 
         # features from encoder blocks
         reversed_features = list(reversed(in_channels[:-1]))
@@ -35,7 +34,8 @@ class FPNDecoder(DecoderSpec):
                     out_channels=pyramid_channels,
                     in_strides=out_strides_[-1],
                     **kwargs
-                ))
+                )
+            )
             out_strides_.append(blocks[-1].out_strides)
         self.blocks = nn.ModuleList(blocks)
         self._out_channels = [pyramid_channels] * len(in_channels)
@@ -57,7 +57,6 @@ class FPNDecoder(DecoderSpec):
 
         for i, (fpn_block, encoder_output) \
                 in enumerate(zip(self.blocks, reversed_features)):
-            fpn_features.append(
-                fpn_block(fpn_features[-1], encoder_output))
+            fpn_features.append(fpn_block(fpn_features[-1], encoder_output))
 
         return fpn_features

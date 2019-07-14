@@ -21,23 +21,27 @@ def _get_block(
 ):
     layers = [
         nn.Conv2d(
-            in_channels, out_channels,
+            in_channels,
+            out_channels,
             kernel_size=kernel_size,
             padding=padding,
             stride=first_stride,
             bias=False,
-            **kwargs),
+            **kwargs
+        ),
         abn_block(out_channels, activation=activation),
     ]
     if complexity > 0:
         layers_ = [
             nn.Conv2d(
-                out_channels, out_channels,
+                out_channels,
+                out_channels,
                 kernel_size=kernel_size,
                 padding=padding,
                 stride=second_stride,
                 bias=False,
-                **kwargs),
+                **kwargs
+            ),
             abn_block(out_channels, activation=activation)
         ] * complexity
         layers = layers + layers_
@@ -54,26 +58,21 @@ def _upsample(
 ) -> torch.Tensor:
     if scale is None:
         x = F.interpolate(
-            x,
-            size=size,
-            mode=interpolation_mode,
-            align_corners=align_corners)
+            x, size=size, mode=interpolation_mode, align_corners=align_corners
+        )
     else:
         x = F.interpolate(
             x,
             scale_factor=scale,
             mode=interpolation_mode,
-            align_corners=align_corners)
+            align_corners=align_corners
+        )
     return x
 
 
 class EncoderBlock(ABC, nn.Module):
-
     def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        in_strides: int = None
+        self, in_channels: int, out_channels: int, in_strides: int = None
     ):
         super().__init__()
         self.in_channels = in_channels
@@ -95,7 +94,6 @@ class EncoderBlock(ABC, nn.Module):
 
 
 class DecoderBlock(ABC, nn.Module):
-
     def __init__(
         self,
         in_channels: int,
@@ -123,8 +121,6 @@ class DecoderBlock(ABC, nn.Module):
 
     @abstractmethod
     def forward(
-        self,
-        bottom: torch.Tensor,
-        left: torch.Tensor
+        self, bottom: torch.Tensor, left: torch.Tensor
     ) -> torch.Tensor:
         pass

@@ -87,13 +87,8 @@ class TrainerSpec:
         set_global_seed(seed)
 
     def _log_to_console(
-        self,
-        fps: float,
-        updates_per_sample: float,
-        num_trajectories: int,
-        num_transitions: int,
-        buffer_size: int,
-        **kwargs
+        self, fps: float, updates_per_sample: float, num_trajectories: int,
+        num_transitions: int, buffer_size: int, **kwargs
     ):
         metrics = [
             f"fps: {fps:7.1f}",
@@ -106,21 +101,17 @@ class TrainerSpec:
         print(f"--- {metrics}")
 
     def _log_to_tensorboard(
-        self,
-        fps: float,
-        updates_per_sample: float,
-        num_trajectories: int,
-        num_transitions: int,
-        buffer_size: int,
-        **kwargs
+        self, fps: float, updates_per_sample: float, num_trajectories: int,
+        num_transitions: int, buffer_size: int, **kwargs
     ):
         self.logger.add_scalar("fps", fps, self.epoch)
         self.logger.add_scalar(
-            "updates_per_sample", updates_per_sample, self.epoch)
+            "updates_per_sample", updates_per_sample, self.epoch
+        )
         self.logger.add_scalar(
-            "num_trajectories", num_trajectories, self.epoch)
-        self.logger.add_scalar(
-            "num_transitions", num_transitions, self.epoch)
+            "num_trajectories", num_trajectories, self.epoch
+        )
+        self.logger.add_scalar("num_transitions", num_transitions, self.epoch)
         self.logger.add_scalar("buffer_size", buffer_size, self.epoch)
 
     def _save_checkpoint(self):
@@ -144,8 +135,7 @@ class TrainerSpec:
                 }
 
             self.db_server.save_checkpoint(
-                checkpoint=checkpoint,
-                epoch=self.epoch
+                checkpoint=checkpoint, epoch=self.epoch
             )
 
     def _update_target_weights(self, update_step) -> Dict:
@@ -159,7 +149,9 @@ class TrainerSpec:
             metrics: Dict = self.algorithm.train(
                 batch,
                 actor_update=(self.update_step % self.actor_grad_period == 0),
-                critic_update=(self.update_step % self.critic_grad_period == 0)
+                critic_update=(
+                    self.update_step % self.critic_grad_period == 0
+                )
             ) or {}
             self.update_step += 1
 
@@ -175,10 +167,7 @@ class TrainerSpec:
         self.num_updates += elapsed_num_updates
         fps = elapsed_num_updates / elapsed_time
 
-        output = {
-            "elapsed_time": elapsed_time,
-            "fps": fps
-        }
+        output = {"elapsed_time": elapsed_time, "fps": fps}
 
         return output
 

@@ -12,7 +12,6 @@ class ReaderSpec:
 
     All inherited classes have to implement `__call__`.
     """
-
     def __init__(self, input_key: str, output_key: str):
         """
         Args:
@@ -42,7 +41,6 @@ class ImageReader(ReaderSpec):
     """
     Image reader abstraction. Reads images from a `csv` dataset.
     """
-
     def __init__(
         self,
         input_key: str,
@@ -87,7 +85,6 @@ class ScalarReader(ReaderSpec):
     Numeric data reader abstraction.
     Reads a single float, int, str or other from data
     """
-
     def __init__(
         self,
         input_key: str,
@@ -134,7 +131,6 @@ class LambdaReader(ReaderSpec):
     Reader abstraction with an lambda encoder.
     Can read an elem from dataset and apply `encode_fn` function to it
     """
-
     def __init__(
         self,
         input_key: str,
@@ -173,7 +169,6 @@ class ReaderCompose(object):
     """
     Abstraction to compose several readers into one open function.
     """
-
     def __init__(self, readers: List[ReaderSpec], mixins: [] = None):
         """
         Args:

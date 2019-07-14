@@ -24,7 +24,6 @@ from catalyst.utils.config import parse_args_uargs  # noqa E402
 from catalyst.utils import set_global_seed, boolean_flag  # noqa E402
 from catalyst.utils.scripts import import_module  # noqa E402
 
-
 STEP_DELAY = 1
 
 
@@ -44,22 +43,10 @@ def build_args(parser):
     # parser.add_argument("--resume", type=str, default=None)
     parser.add_argument("--seed", type=int, default=42)
 
-    parser.add_argument(
-        "--train",
-        type=int,
-        default=None)
-    parser.add_argument(
-        "--valid",
-        type=int,
-        default=None)
-    parser.add_argument(
-        "--infer",
-        type=int,
-        default=None)
-    parser.add_argument(
-        "--vis",
-        type=int,
-        default=None)
+    parser.add_argument("--train", type=int, default=None)
+    parser.add_argument("--valid", type=int, default=None)
+    parser.add_argument("--infer", type=int, default=None)
+    parser.add_argument("--vis", type=int, default=None)
 
     boolean_flag(parser, "check", default=False)
     boolean_flag(parser, "db", default=True)
@@ -109,7 +96,8 @@ def run_sampler(
 
     seeds = dict(
         (k, config_["sampler"].pop(f"{k}_seeds", None))
-        for k in ["train", "valid", "infer"])
+        for k in ["train", "valid", "infer"]
+    )
     seeds = seeds[mode]
 
     if algorithm_fn in OFFPOLICY_ALGORITHMS.values():
@@ -204,10 +192,7 @@ def main(args, unknown_args):
 
     for i in range(args.vis):
         params_ = dict(
-            visualize=True,
-            mode="infer",
-            id=sampler_id,
-            exploration_power=0.0
+            visualize=True, mode="infer", id=sampler_id, exploration_power=0.0
         )
         p = mp.Process(target=run_sampler, kwargs=dict(**params, **params_))
         p.start()

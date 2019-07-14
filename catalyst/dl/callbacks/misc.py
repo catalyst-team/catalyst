@@ -80,7 +80,8 @@ class ConfusionMatrixCallback(Callback):
             if isinstance(logger, TensorboardLogger):
                 return logger.loggers[state.loader_name]
         raise RuntimeError(
-            f"Cannot find Tensorboard logger for loader {state.loader_name}")
+            f"Cannot find Tensorboard logger for loader {state.loader_name}"
+        )
 
     def _reset_stats(self):
         if self._version == "tnt":
@@ -106,19 +107,14 @@ class ConfusionMatrixCallback(Callback):
             confusion_matrix = self.confusion_matrix.value()
         elif self._version == "sklearn":
             confusion_matrix = confusion_matrix_fn(
-                y_true=self.targets,
-                y_pred=self.outputs
+                y_true=self.targets, y_pred=self.outputs
             )
         else:
             raise NotImplementedError()
         return confusion_matrix
 
     def _plot_confusion_matrix(
-        self,
-        logger,
-        epoch,
-        confusion_matrix,
-        class_names=None
+        self, logger, epoch, confusion_matrix, class_names=None
     ):
         fig = utils.plot_confusion_matrix(
             confusion_matrix,

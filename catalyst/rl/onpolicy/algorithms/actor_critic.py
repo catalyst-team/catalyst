@@ -148,9 +148,7 @@ class OnpolicyActorCritic(AlgorithmSpec):
 
     @classmethod
     def prepare_for_trainer(
-        cls,
-        env_spec: EnvironmentSpec,
-        config: Dict
+        cls, env_spec: EnvironmentSpec, config: Dict
     ) -> "AlgorithmSpec":
         config_ = config.copy()
         agents_config = config_["agents"]
@@ -177,9 +175,7 @@ class OnpolicyActorCritic(AlgorithmSpec):
 
     @classmethod
     def prepare_for_sampler(
-        cls,
-        env_spec: EnvironmentSpec,
-        config: Dict
+        cls, env_spec: EnvironmentSpec, config: Dict
     ) -> Union[ActorSpec, CriticSpec]:
         config_ = config.copy()
         agents_config = config_["agents"]

@@ -73,9 +73,11 @@ class OptimizerCallback(Callback):
             loss = torch.mean(torch.stack(loss))
 
         if self.prefix is not None:
-            state.metrics.add_batch_value(metrics_dict={
-                self.prefix: loss.item(),
-            })
+            state.metrics.add_batch_value(
+                metrics_dict={
+                    self.prefix: loss.item(),
+                }
+            )
 
         if not state.need_backward:
             return

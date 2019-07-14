@@ -117,3 +117,5 @@ data/
 examples/data/
 examples/logs/
 notebooks/
+
+_nogit*

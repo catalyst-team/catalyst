@@ -35,11 +35,7 @@ def build_args(parser: ArgumentParser):
         "-b", "--batch-size", default=None, type=int, help="mini-batch size"
     )
     parser.add_argument(
-        "-e",
-        "--num-epochs",
-        default=None,
-        type=int,
-        help="number of epochs"
+        "-e", "--num-epochs", default=None, type=int, help="number of epochs"
     )
     parser.add_argument(
         "--resume",
@@ -75,10 +71,7 @@ def main(args, unknown_args):
         dump_config(config, experiment.logdir, args.configs)
         dump_code(args.expdir, experiment.logdir)
 
-    runner.run_experiment(
-        experiment,
-        check=args.check
-    )
+    runner.run_experiment(experiment, check=args.check)
 
 
 if __name__ == "__main__":

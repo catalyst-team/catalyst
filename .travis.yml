@@ -124,97 +124,39 @@ jobs:
         - kill %1
 
     - stage: Examples
-      name: "Examples on-policy RL – PPO"
+      name: "Examples on-policy RL – PPO discrete"
       before_install: *before_install
       install: *requirements
       script:
-        - redis-server --port 12000 &
-        - sleep 5
-        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/rl/scripts/run_trainer.py
-          --config=./examples/_tests_rl_gym/config_ppo.yml
-          --logdir=./examples/logs/_tests_rl_gym_ppo &
-        - sleep 10
-        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/rl/scripts/run_samplers.py
-          --config=./examples/_tests_rl_gym/config_ppo.yml
-          --logdir=./examples/logs/_tests_rl_gym_ppo &
-        - sleep 120
-        - kill %3
-        - kill %2
-        - kill %1
-        - rm ./examples/logs/_tests_rl_gym_ppo/1.pth
-        - rm ./examples/logs/_tests_rl_gym_ppo/2.pth
+        - bash ./bin/check_ppo_discrete.sh
 
     - stage: Examples
-      name: "Examples off-policy RL – Discrete"
+      name: "Examples off-policy RL – DQN"
       before_install: *before_install
       install: *requirements
       script:
-        - redis-server --port 12000 &
-        - sleep 5
-        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/rl/scripts/run_trainer.py
-          --config=./examples/_tests_rl_gym/config_dqn.yml
-          --logdir=./examples/logs/_tests_rl_gym_dqn &
-        - sleep 10
-        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/rl/scripts/run_samplers.py
-          --config=./examples/_tests_rl_gym/config_dqn.yml
-          --logdir=./examples/logs/_tests_rl_gym_dqn &
-        - sleep 60
-        - kill %3
-        - kill %2
-        - kill %1
-        - rm ./examples/logs/_tests_rl_gym_dqn/1.pth
-        - rm ./examples/logs/_tests_rl_gym_dqn/2.pth
+        - bash ./bin/check_dqn.sh
 
     - stage: Examples
-      name: "Examples off-policy RL – Continuous"
+      name: "Examples off-policy RL – DDPG"
       before_install: *before_install
       install: *requirements
       script:
-        - redis-server --port 12000 &
-        - sleep 5
-        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/rl/scripts/run_trainer.py
-          --config=./examples/_tests_rl_gym/config_ddpg.yml
-          --logdir=./examples/logs/_tests_rl_gym_ddpg &
-        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/rl/scripts/run_trainer.py
-          --config=./examples/_tests_rl_gym/config_td3.yml
-          --logdir=./examples/logs/_tests_rl_gym_td3 &
-        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/rl/scripts/run_trainer.py
-          --config=./examples/_tests_rl_gym/config_sac.yml
-          --logdir=./examples/logs/_tests_rl_gym_sac &
-        - sleep 10
-        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/rl/scripts/run_samplers.py
-          --config=./examples/_tests_rl_gym/config_ddpg.yml
-          --logdir=./examples/logs/_tests_rl_gym_ddpg &
-        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/rl/scripts/run_samplers.py
-          --config=./examples/_tests_rl_gym/config_td3.yml
-          --logdir=./examples/logs/_tests_rl_gym_td3 &
-        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-          python catalyst/rl/scripts/run_samplers.py
-          --config=./examples/_tests_rl_gym/config_sac.yml
-          --logdir=./examples/logs/_tests_rl_gym_sac &
-        - sleep 180
-        - kill %7
-        - kill %6
-        - kill %5
-        - kill %4
-        - kill %3
-        - kill %2
-        - kill %1
-        - rm ./examples/logs/_tests_rl_gym_ddpg/1.pth
-        - rm ./examples/logs/_tests_rl_gym_ddpg/2.pth
-        - rm ./examples/logs/_tests_rl_gym_td3/1.pth
-        - rm ./examples/logs/_tests_rl_gym_td3/2.pth
-        - rm ./examples/logs/_tests_rl_gym_sac/1.pth
-        - rm ./examples/logs/_tests_rl_gym_sac/2.pth
+        - bash ./bin/check_ddpg.sh
+
+    - stage: Examples
+      name: "Examples off-policy RL – SAC"
+      before_install: *before_install
+      install: *requirements
+      script:
+        - bash ./bin/check_sac.sh
+
+    - stage: Examples
+      name: "Examples off-policy RL – TD3"
+      before_install: *before_install
+      install: *requirements
+      script:
+        - bash ./bin/check_td3.sh
 
 # speed up for now
 #    - stage: Deploy

@@ -186,10 +186,10 @@ class OffpolicyActorCritic(AlgorithmSpec):
         states_t = utils.any2device(states_t, device=self._device)
         actions_t = utils.any2device(actions_t, device=self._device)
         rewards_t = utils.any2device(
-            rewards_t, device=self._device).unsqueeze(1)
+            rewards_t, device=self._device
+        ).unsqueeze(1)
         states_tp1 = utils.any2device(states_tp1, device=self._device)
         done_t = utils.any2device(done_t, device=self._device).unsqueeze(1)
-
         """
         states_t: [bs; history_len; observation_len]
         actions_t: [bs; action_len]
@@ -213,9 +213,7 @@ class OffpolicyActorCritic(AlgorithmSpec):
 
     @classmethod
     def prepare_for_trainer(
-        cls,
-        env_spec: EnvironmentSpec,
-        config: Dict
+        cls, env_spec: EnvironmentSpec, config: Dict
     ) -> "AlgorithmSpec":
         config_ = config.copy()
         agents_config = config_["agents"]
@@ -232,12 +230,11 @@ class OffpolicyActorCritic(AlgorithmSpec):
             env_spec=env_spec,
         )
 
-        action_space = env_spec.action_space
-        assert isinstance(action_space, Box)
-        action_boundaries = [
-            action_space.low[0],
-            action_space.high[0]
-        ]
+        action_boundaries = config_["algorithm"].pop("action_boundaries", None)
+        if action_boundaries is None:
+            action_space = env_spec.action_space
+            assert isinstance(action_space, Box)
+            action_boundaries = [action_space.low[0], action_space.high[0]]
 
         algorithm = cls(
             **config_["algorithm"],
@@ -250,9 +247,7 @@ class OffpolicyActorCritic(AlgorithmSpec):
 
     @classmethod
     def prepare_for_sampler(
-        cls,
-        env_spec: EnvironmentSpec,
-        config: Dict
+        cls, env_spec: EnvironmentSpec, config: Dict
     ) -> Union[ActorSpec, CriticSpec]:
         config_ = config.copy()
         agents_config = config_["agents"]

@@ -19,8 +19,12 @@ from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
 
 class ConfigExperiment(Experiment):
     STAGE_KEYWORDS = [
-        "criterion_params", "optimizer_params", "scheduler_params",
-        "data_params", "state_params", "callbacks_params",
+        "criterion_params",
+        "optimizer_params",
+        "scheduler_params",
+        "data_params",
+        "state_params",
+        "callbacks_params",
     ]
 
     def __init__(self, config: Dict):
@@ -29,8 +33,7 @@ class ConfigExperiment(Experiment):
 
         self._config["stages"]["state_params"] = merge_dicts(
             deepcopy(self._config["stages"].get("state_params", {})),
-            deepcopy(self._config.get("args", {})),
-            {"logdir": self._logdir}
+            deepcopy(self._config.get("args", {})), {"logdir": self._logdir}
         )
         self.stages_config = self._get_stages_config(self._config["stages"])
 
@@ -138,13 +141,13 @@ class ConfigExperiment(Experiment):
             optimizer = {}
             for key, params_ in params.items():
                 optimizer[key] = self._get_optimizer(
-                    model_params=model_params, **params_)
+                    model_params=model_params, **params_
+                )
         else:
             load_from_previous_stage = \
                 params.pop("load_from_previous_stage", False)
             optimizer = OPTIMIZERS.get_from_params(
-                **params,
-                params=model_params
+                **params, params=model_params
             )
 
             if load_from_previous_stage:
@@ -158,18 +161,15 @@ class ConfigExperiment(Experiment):
 
         return optimizer
 
-    def get_optimizer(
-        self,
-        stage: str,
-        model: nn.Module
-    ) -> _Optimizer:
+    def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
 
         model_params = utils.get_optimizable_params(model.parameters())
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
 
         optimizer = self._get_optimizer(
-            model_params=model_params, **optimizer_params)
+            model_params=model_params, **optimizer_params
+        )
 
         return optimizer
 
@@ -181,11 +181,11 @@ class ConfigExperiment(Experiment):
             scheduler = {}
             for key, params_ in params.items():
                 scheduler[key] = ConfigExperiment._get_scheduler(
-                    optimizer=optimizer, **params_)
+                    optimizer=optimizer, **params_
+                )
         else:
             scheduler = SCHEDULERS.get_from_params(
-                **params,
-                optimizer=optimizer
+                **params, optimizer=optimizer
             )
         return scheduler
 
@@ -193,7 +193,8 @@ class ConfigExperiment(Experiment):
         scheduler_params = \
             self.stages_config[stage].get("scheduler_params", {})
         scheduler = self._get_scheduler(
-            optimizer=optimizer, **scheduler_params)
+            optimizer=optimizer, **scheduler_params
+        )
         return scheduler
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
@@ -240,11 +241,13 @@ class ConfigExperiment(Experiment):
                     assert isinstance(sampler, DistributedSampler)
                 else:
                     loader_params["sampler"] = DistributedSampler(
-                        dataset=loader_params["dataset"])
+                        dataset=loader_params["dataset"]
+                    )
 
             loader_params["shuffle"] = (
                 name.startswith("train")
-                and loader_params.get("sampler") is None)
+                and loader_params.get("sampler") is None
+            )
 
             loaders[name] = DataLoader(**loader_params)
 
@@ -252,7 +255,8 @@ class ConfigExperiment(Experiment):
 
     def get_callbacks(self, stage: str) -> "List[Callback]":
         callbacks_params = (
-            self.stages_config[stage].get("callbacks_params", {}))
+            self.stages_config[stage].get("callbacks_params", {})
+        )
 
         callbacks = []
         for key, callback_params in callbacks_params.items():

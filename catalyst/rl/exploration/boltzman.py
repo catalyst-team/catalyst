@@ -13,6 +13,7 @@ class Boltzmann(ExplorationStrategy):
     training. Importantly, the effective range of t depends on the
     magnitutdes of environment rewards.
     """
+
     def __init__(self, temp_init, temp_final, annealing_steps, temp_min=0.01):
         super().__init__()
 

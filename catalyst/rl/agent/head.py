@@ -40,23 +40,14 @@ class ValueHead(nn.Module):
         else:
             raise NotImplementedError()
         heads = [
-            self._build_head(
-                in_features,
-                out_features,
-                num_atoms,
-                bias)
-            for _ in range(num_heads)]
+            self._build_head(in_features, out_features, num_atoms, bias)
+            for _ in range(num_heads)
+        ]
         self.net = nn.ModuleList(heads)
 
         self.apply(outer_init)
 
-    def _build_head(
-        self,
-        in_features,
-        out_features,
-        num_atoms,
-        bias
-    ):
+    def _build_head(self, in_features, out_features, num_atoms, bias):
         return nn.Linear(
             in_features=in_features,
             out_features=out_features * num_atoms,
@@ -82,8 +73,7 @@ class PolicyHead(nn.Module):
     ):
         super().__init__()
         assert policy_type in [
-            "categorical", "gauss", "real_nvp",
-            "logits", None
+            "categorical", "gauss", "real_nvp", "logits", None
         ]
 
         # @TODO: refactor
@@ -129,8 +119,8 @@ class PolicyHead(nn.Module):
         if policy_net is None:
             self._policy_fn = lambda *args: args[0]
         elif isinstance(
-                policy_net,
-                (CategoricalPolicy, GaussPolicy, RealNVPPolicy)):
+            policy_net, (CategoricalPolicy, GaussPolicy, RealNVPPolicy)
+        ):
             self._policy_fn = policy_net.forward
         else:
             raise NotImplementedError

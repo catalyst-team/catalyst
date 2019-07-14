@@ -37,9 +37,7 @@ class _TracingModelWrapper(nn.Module):
         self.tracing_result: ScriptModule
 
     def __call__(self, *args, **kwargs):
-        method_model = _ForwardOverrideModel(
-            self.model, self.method_name
-        )
+        method_model = _ForwardOverrideModel(self.model, self.method_name)
 
         self.tracing_result = \
             torch.jit.trace(
@@ -48,9 +46,7 @@ class _TracingModelWrapper(nn.Module):
             )
 
 
-def _get_native_batch(
-    experiment: Experiment, stage: str
-):
+def _get_native_batch(experiment: Experiment, stage: str):
     """Returns dataset from first loader provided by experiment"""
     loaders = experiment.get_loaders(stage)
     assert loaders, \

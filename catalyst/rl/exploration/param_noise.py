@@ -3,16 +3,11 @@ import torch
 from catalyst.rl.core import ExplorationStrategy
 from catalyst.rl.utils import get_network_weights, set_network_weights
 
-
 EPS = 1e-6
 
 
 def _set_params_noise(
-    actor,
-    states,
-    noise_delta=0.2,
-    tol=1e-3,
-    max_steps=1000
+    actor, states, noise_delta=0.2, tol=1e-3, max_steps=1000
 ):
     """
     Perturbs parameters of the policy represented by the actor network.
@@ -74,6 +69,7 @@ class ParameterSpaceNoise(ExplorationStrategy):
     forcing it to produce more diverse actions.
     Paper: https://arxiv.org/abs/1706.01905
     """
+
     def __init__(self, target_sigma, tolerance=1e-3, max_steps=1000):
         super().__init__()
 

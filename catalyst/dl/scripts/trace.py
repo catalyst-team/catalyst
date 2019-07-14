@@ -43,9 +43,8 @@ def trace_model_from_checkpoint(logdir, method_name):
 def build_args(parser: ArgumentParser):
     parser.add_argument("logdir", type=Path)
     parser.add_argument(
-        "--method", "-m",
-        default="forward",
-        help="Model method to trace")
+        "--method", "-m", default="forward", help="Model method to trace"
+    )
 
     return parser
 

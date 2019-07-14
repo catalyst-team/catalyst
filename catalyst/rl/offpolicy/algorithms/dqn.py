@@ -4,7 +4,6 @@ from catalyst.rl import utils
 
 
 class DQN(OffpolicyCritic):
-
     def _init(self):
         # value distribution approximation
         critic_distribution = self.critic.distribution
@@ -45,7 +44,7 @@ class DQN(OffpolicyCritic):
     def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
 
         # Array of size [num_heads,]
-        gammas = self._gammas ** self._n_step
+        gammas = self._gammas**self._n_step
 
         # We use the same done_t, rewards_t, actions_t for each head
         done_t = done_t[:, None, :]
@@ -75,7 +74,7 @@ class DQN(OffpolicyCritic):
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
 
-        gammas = (self._gammas ** self._n_step)[None, :, None]
+        gammas = (self._gammas**self._n_step)[None, :, None]
         # 1 x num_heads x 1
 
         done_t = done_t[:, None, :]  # B x 1 x 1
@@ -107,9 +106,7 @@ class DQN(OffpolicyCritic):
         value_loss = utils.categorical_loss(
             logits_t.view(-1, self.num_atoms),
             logits_tp1.view(-1, self.num_atoms),
-            atoms_target_t.view(-1, self.num_atoms),
-            self.z,
-            self.delta_z,
+            atoms_target_t.view(-1, self.num_atoms), self.z, self.delta_z,
             self.v_min, self.v_max
         )
 
@@ -119,7 +116,7 @@ class DQN(OffpolicyCritic):
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
 
-        gammas = (self._gammas ** self._n_step)[None, :, None]
+        gammas = (self._gammas**self._n_step)[None, :, None]
         # 1 x num_heads x 1
 
         done_t = done_t[:, None, :]  # B x 1 x 1
@@ -148,9 +145,7 @@ class DQN(OffpolicyCritic):
 
         value_loss = utils.quantile_loss(
             atoms_t.view(-1, self.num_atoms),
-            atoms_target_t.view(-1, self.num_atoms),
-            self.tau,
-            self.num_atoms,
+            atoms_target_t.view(-1, self.num_atoms), self.tau, self.num_atoms,
             self.critic_criterion
         )
 
@@ -163,10 +158,7 @@ class DQN(OffpolicyCritic):
             critic_update_metrics = self.critic_update(value_loss) or {}
 
         loss = value_loss
-        metrics = {
-            "loss": loss.item(),
-            "loss_critic": value_loss.item()
-        }
+        metrics = {"loss": loss.item(), "loss_critic": value_loss.item()}
         metrics = {**metrics, **critic_update_metrics}
 
         return metrics

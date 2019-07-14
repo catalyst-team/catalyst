@@ -84,12 +84,9 @@ class ResNetUnet(nn.Module):
     with a ResNet encoder as proposed by Alexander Buslaev.
     Also known as AlbuNet
     """
+
     def __init__(
-        self,
-        num_classes=1,
-        num_channels=32,
-        arch="resnet18",
-        pretrained=True
+        self, num_classes=1, num_channels=32, arch="resnet18", pretrained=True
     ):
         """
         Creates an `UNet` instance for semantic segmentation.

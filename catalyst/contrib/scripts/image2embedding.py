@@ -34,10 +34,7 @@ def dict_transformer(sample):
 
 def build_args(parser):
     parser.add_argument(
-        "--in-csv",
-        type=str,
-        dest="in_csv",
-        help="Path to csv with photos"
+        "--in-csv", type=str, dest="in_csv", help="Path to csv with photos"
     )
     parser.add_argument(
         "--img-datapath",
@@ -60,7 +57,8 @@ def build_args(parser):
     )
     parser.add_argument(
         "--out-npy",
-        type=str, dest="out_npy",
+        type=str,
+        dest="out_npy",
         required=True,
         help="Path to output `.npy` file with embedded features"
     )

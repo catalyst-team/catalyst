@@ -5,7 +5,6 @@ from catalyst.contrib.modules import LamaPooling
 
 
 class StateNet(nn.Module):
-
     def __init__(
         self,
         main_net: nn.Module,

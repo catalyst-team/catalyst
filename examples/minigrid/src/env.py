@@ -48,7 +48,8 @@ class MiniGridEnvWrapper(EnvironmentSpec):
         self._action_space = self.env.action_space
 
         self._state_space = extend_space(
-            self._observation_space, self._history_len)
+            self._observation_space, self._history_len
+        )
 
     def reset(self):
         observation = self.env.reset()

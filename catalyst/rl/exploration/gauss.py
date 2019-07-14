@@ -7,6 +7,7 @@ class NoExploration(ExplorationStrategy):
     For continuous environments only.
     Returns action produced by the actor network without changes.
     """
+
     def get_action(self, action):
         return action
 
@@ -16,6 +17,7 @@ class GaussNoise(ExplorationStrategy):
     For continuous environments only.
     Adds spherical Gaussian noise to the action produced by actor.
     """
+
     def __init__(self, sigma):
         super().__init__()
 
@@ -37,6 +39,7 @@ class OrnsteinUhlenbeckProcess(ExplorationStrategy):
     Ornstein-Uhlenbeck process.
     Paper: https://arxiv.org/abs/1509.02971
     """
+
     def __init__(self, sigma, theta, dt=1e-2):
         super().__init__()
 

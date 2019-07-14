@@ -43,10 +43,12 @@ def process_components(
         if distributed_rank > -1:
             torch.cuda.set_device(distributed_rank)
             torch.distributed.init_process_group(
-                backend="nccl", init_method="env://")
+                backend="nccl", init_method="env://"
+            )
 
         model, optimizer = amp.initialize(
-            model, optimizer, **distributed_params)
+            model, optimizer, **distributed_params
+        )
 
         if distributed_rank > -1:
             from apex.parallel import DistributedDataParallel
@@ -95,6 +97,6 @@ def get_loader(
 
 
 __all__ = [
-    "process_components", "get_loader",
-    "_Model", "_Criterion", "_Optimizer", "_Scheduler"
+    "process_components", "get_loader", "_Model", "_Criterion", "_Optimizer",
+    "_Scheduler"
 ]

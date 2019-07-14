@@ -48,7 +48,8 @@ class SupervisedRunner(Runner):
         elif isinstance(output, (list, tuple)) \
                 and isinstance(self.output_key, list):
             output = dict(
-                (key, value) for key, value in zip(self.output_key, output))
+                (key, value) for key, value in zip(self.output_key, output)
+            )
         else:
             output = {self.output_key: output}
         return output

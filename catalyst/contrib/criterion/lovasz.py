@@ -10,7 +10,6 @@ import torch
 import torch.nn.functional as F
 from torch.nn.modules.loss import _Loss
 
-
 # --------------------------- HELPER FUNCTIONS ---------------------------
 
 
@@ -110,13 +109,14 @@ def _lovasz_hinge(logits, targets, per_image=True, ignore=None):
         loss = mean(
             _lovasz_hinge_flat(
                 *_flatten_binary_scores(
-                    logit.unsqueeze(0),
-                    target.unsqueeze(0),
-                    ignore))
-            for logit, target in zip(logits, targets))
+                    logit.unsqueeze(0), target.unsqueeze(0), ignore
+                )
+            ) for logit, target in zip(logits, targets)
+        )
     else:
         loss = _lovasz_hinge_flat(
-            *_flatten_binary_scores(logits, targets, ignore))
+            *_flatten_binary_scores(logits, targets, ignore)
+        )
     return loss
 
 
@@ -180,11 +180,7 @@ def _lovasz_softmax_flat(probabilities, targets, classes="present"):
 
 
 def _lovasz_softmax(
-    probabilities,
-    targets,
-    classes="present",
-    per_image=False,
-    ignore=None
+    probabilities, targets, classes="present", per_image=False, ignore=None
 ):
     """
     Multi-class Lovasz-Softmax loss
@@ -205,15 +201,16 @@ def _lovasz_softmax(
         loss = mean(
             _lovasz_softmax_flat(
                 *_flatten_probabilities(
-                    prob.unsqueeze(0),
-                    lab.unsqueeze(0),
-                    ignore),
-                classes=classes)
-            for prob, lab in zip(probabilities, targets))
+                    prob.unsqueeze(0), lab.unsqueeze(0), ignore
+                ),
+                classes=classes
+            ) for prob, lab in zip(probabilities, targets)
+        )
     else:
         loss = _lovasz_softmax_flat(
             *_flatten_probabilities(probabilities, targets, ignore),
-            classes=classes)
+            classes=classes
+        )
     return loss
 
 
@@ -233,10 +230,8 @@ class LovaszLossBinary(_Loss):
             targets: [bs; ...]
         """
         loss = _lovasz_hinge(
-            logits,
-            targets,
-            per_image=self.per_image,
-            ignore=self.ignore)
+            logits, targets, per_image=self.per_image, ignore=self.ignore
+        )
         return loss
 
 
@@ -253,10 +248,8 @@ class LovaszLossMultiClass(_Loss):
             targets: [bs; ...]
         """
         loss = _lovasz_softmax(
-            logits,
-            targets,
-            per_image=self.per_image,
-            ignore=self.ignore)
+            logits, targets, per_image=self.per_image, ignore=self.ignore
+        )
         return loss
 
 
@@ -277,8 +270,8 @@ class LovaszLossMultiLabel(_Loss):
                 logits[:, i, ...],
                 targets[:, i, ...],
                 per_image=self.per_image,
-                ignore=self.ignore)
-            for i in range(logits.shape[1])
+                ignore=self.ignore
+            ) for i in range(logits.shape[1])
         ]
         loss = torch.mean(torch.stack(losses))
         return loss

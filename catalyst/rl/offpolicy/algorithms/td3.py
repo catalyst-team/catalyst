@@ -86,13 +86,11 @@ class TD3(OffpolicyActorCritic):
             mean=torch.zeros_like(actions), std=self.action_noise_std
         )
         action_noise = action_noise.clamp(
-            min=-self.action_noise_clip,
-            max=self.action_noise_clip
+            min=-self.action_noise_clip, max=self.action_noise_clip
         )
         actions = actions + action_noise
         actions = actions.clamp(
-            min=self._action_boundaries[0],
-            max=self._action_boundaries[1]
+            min=self._action_boundaries[0], max=self._action_boundaries[1]
         )
         return actions
 
@@ -101,7 +99,7 @@ class TD3(OffpolicyActorCritic):
         actions_tp0 = self.actor(states_t)
         # For now we use the same actions for each head
         q_values_tp0 = [
-            x(states_t, actions_tp0).squeeze_(dim=3).squeeze_(dim=2)
+            x(states_t, actions_tp0).squeeze_(dim=3)
             for x in self.critics
         ]
         q_values_tp0_min = torch.cat(q_values_tp0, dim=-1).min(dim=-1)[0]
@@ -111,21 +109,23 @@ class TD3(OffpolicyActorCritic):
         actions_tp1 = self.target_actor(states_tp1).detach()
         actions_tp1 = self._add_noise_to_actions(actions_tp1)
         q_values_t = [
-            x(states_t, actions_t).squeeze_(dim=3).squeeze_(dim=2)
+            x(states_t, actions_t).squeeze_(dim=3)
             for x in self.critics
         ]
+        # B x num_heads x num_critics
         q_values_tp1 = torch.cat([
-            x(states_tp1, actions_tp1).squeeze_(dim=3).squeeze_(dim=2)
+            x(states_tp1, actions_tp1).squeeze_(dim=3)
             for x in self.target_critics
-        ], dim=-1)  # B x num_heads x num_critics
-        q_values_tp1 = q_values_tp1.min(dim=-1, keepdim=True)[0].detach()
+        ], dim=-1)
         # B x num_heads x 1
+        q_values_tp1 = q_values_tp1.min(dim=-1, keepdim=True)[0].detach()
 
-        gammas = self._gammas ** self._n_step
+        gammas = self._gammas**self._n_step
         done_t = done_t[:, None, :]  # B x 1 x 1
         rewards_t = rewards_t[:, None, :]  # B x 1 x 1
         gammas = gammas[None, :, None]  # 1 x num_heads x 1
 
+        # B x num_heads x 1
         q_target_t = rewards_t + (1 - done_t) * gammas * q_values_tp1
         value_loss = [
             self.critic_criterion(x, q_target_t).mean() for x in q_values_t
@@ -176,7 +176,7 @@ class TD3(OffpolicyActorCritic):
             logits_tp1[range(len(logits_tp1)), :, probs_ids_tp1_min].\
             view(-1, self._num_heads, self.num_atoms).detach()
 
-        gammas = self._gammas ** self._n_step
+        gammas = self._gammas**self._n_step
         done_t = done_t[:, None, :]  # B x 1 x 1
         rewards_t = rewards_t[:, None, :]  # B x 1 x 1
         gammas = gammas[None, :, None]  # 1 x num_heads x 1
@@ -189,7 +189,8 @@ class TD3(OffpolicyActorCritic):
                 atoms_target_t.view(-1, self.num_atoms),
                 self.z,
                 self.delta_z,
-                self.v_min, self.v_max
+                self.v_min,
+                self.v_max
             ) for x in logits_t
         ]
 
@@ -227,11 +228,12 @@ class TD3(OffpolicyActorCritic):
             atoms_tp1[range(len(atoms_tp1)), :, atoms_ids_tp1_min].\
             view(-1, self._num_heads, self.num_atoms).detach()
 
-        gammas = self._gammas ** self._n_step
+        gammas = self._gammas**self._n_step
         done_t = done_t[:, None, :]  # B x 1 x 1
         rewards_t = rewards_t[:, None, :]  # B x 1 x 1
         gammas = gammas[None, :, None]  # 1 x num_heads x 1
 
+        # B x num_heads x num_atoms
         atoms_target_t = rewards_t + (1 - done_t) * gammas * atoms_tp1
         value_loss = [
             utils.quantile_loss(
@@ -345,9 +347,7 @@ class TD3(OffpolicyActorCritic):
 
     @classmethod
     def prepare_for_trainer(
-            cls,
-            env_spec: EnvironmentSpec,
-            config: Dict
+        cls, env_spec: EnvironmentSpec, config: Dict
     ) -> "AlgorithmSpec":
         config_ = config.copy()
         agents_config = config_["agents"]
@@ -369,16 +369,14 @@ class TD3(OffpolicyActorCritic):
             AGENTS.get_from_params(
                 **critic_params,
                 env_spec=env_spec,
-            ) for _ in
-            range(num_critics - 1)
+            ) for _ in range(num_critics - 1)
         ]
 
-        action_space = env_spec.action_space
-        assert isinstance(action_space, Box)
-        action_boundaries = [
-            action_space.low[0],
-            action_space.high[0]
-        ]
+        action_boundaries = config_["algorithm"].pop("action_boundaries", None)
+        if action_boundaries is None:
+            action_space = env_spec.action_space
+            assert isinstance(action_space, Box)
+            action_boundaries = [action_space.low[0], action_space.high[0]]
 
         algorithm = cls(
             **config_["algorithm"],

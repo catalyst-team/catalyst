@@ -44,11 +44,7 @@ class Experiment(ABC):
         pass
 
     @abstractmethod
-    def get_optimizer(
-        self,
-        stage: str,
-        model: nn.Module
-    ) -> _Optimizer:
+    def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
         pass
 
     @abstractmethod
@@ -56,9 +52,7 @@ class Experiment(ABC):
         pass
 
     def get_experiment_components(
-        self,
-        model: nn.Module,
-        stage: str
+        self, model: nn.Module, stage: str
     ) -> Tuple[_Criterion, _Optimizer, _Scheduler]:
         criterion = self.get_criterion(stage)
         optimizer = self.get_optimizer(stage, model)

@@ -10,11 +10,7 @@ from ...classification.mobilenetv2 import MobileNetV2, InvertedResidual
 
 class MobileUnet(nn.Module):
     def __init__(
-        self,
-        num_classes=1,
-        input_size=224,
-        width_mult=1.,
-        pretrained=None
+        self, num_classes=1, input_size=224, width_mult=1., pretrained=None
     ):
         super().__init__()
 
@@ -38,7 +34,8 @@ class MobileUnet(nn.Module):
         self.backbone_encoder = MobileNetV2(
             input_size=input_size,
             width_mult=width_mult,
-            pretrained=pretrained).encoder
+            pretrained=pretrained
+        ).encoder
 
     def _init_weights(self):
         for m in self.modules():
@@ -89,7 +86,8 @@ class MobileUnet(nn.Module):
 
         x = up4
         x = interpolate(
-            x, scale_factor=2, mode="bilinear", align_corners=False)
+            x, scale_factor=2, mode="bilinear", align_corners=False
+        )
         x = self.conv_last(x)
         x = self.conv_score(x)
 
