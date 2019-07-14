@@ -65,13 +65,6 @@ agents:
       in_features: 32  # out features would be taken from action_shape
       out_features: 1
 
-#      distribution: categorical
-#      num_atoms: 11
-#      values_range: [0, 10]
-
-#      distribution: quantile
-#      num_atoms: 11
-
 algorithm:
   algorithm: PPO
 

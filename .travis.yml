@@ -20,7 +20,7 @@ matrix:
 #      sudo: required  # required for Python 3.7 (travis-ci/travis-ci#9069)
 
 stages:
-#  - Tests
+  - Tests
   - Examples
   - Deploy
 
@@ -32,117 +32,117 @@ install: &requirements
 
 jobs:
   include:
-#    - stage: Tests
-#      install:
-#        - *requirements
-#        - pip install flake8 flake8-quotes yapf
-#        - pip install -U pytest
-#      script:
-#        # stop the build if there are any unexpected flake8 issues
-#        - flake8 . --count --ignore=E126,E226,E704,E731,W503,W504
-#          --max-complexity=16
-#          --inline-quotes "double"
-#          --multiline-quotes "double"
-#          --docstring-quotes "double"
-#          --show-source --statistics
-#        # exit-zero treats all errors as warnings.
-#        - flake8 . --count --exit-zero
-#          --max-complexity=10
-#          --inline-quotes "double"
-#          --multiline-quotes "double"
-#          --docstring-quotes "double"
-#          --statistics
-#        # test to make sure the code is yapf compliant
-#        - ./yapf.sh --all
-#        - pytest
-#
-#    - stage: Examples
-#      name: "Examples DL"
-#      install: *requirements
-#      script:
-#        - pip install tifffile
-#        - wget -P ./data/ https://www.dropbox.com/s/0rvuae4mj6jn922/isbi.tar.gz
-#        - tar -xf ./data/isbi.tar.gz -C ./data/
-#        - (set -e; for f in examples/_tests_scripts/*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
-#        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-#          python catalyst/dl/scripts/run.py
-#          --expdir=./examples/_tests_mnist_stages
-#          --config=./examples/_tests_mnist_stages/config1.yml
-#          --logdir=./examples/logs/_tests_mnist_stages1
-#          --check
-#        - python -c "data = open('./examples/logs/_tests_mnist_stages1/metrics.txt', 'r').readlines(); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < float(data[1].rsplit('loss=', 1)[-1][:6]); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < 2.0"
-#        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-#          python catalyst/dl/scripts/trace.py
-#          ./examples/logs/_tests_mnist_stages1
-#        - rm -rf ./examples/logs/_tests_mnist_stages1
-#        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-#          python catalyst/dl/scripts/run.py
-#          --expdir=./examples/_tests_mnist_stages
-#          --config=./examples/_tests_mnist_stages/config2.yml
-#          --logdir=./examples/logs/_tests_mnist_stages1
-#          --check
-#        - python -c "data = open('./examples/logs/_tests_mnist_stages1/metrics.txt', 'r').readlines(); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < float(data[1].rsplit('loss=', 1)[-1][:6]); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < 2.0"
-#        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-#          python catalyst/dl/scripts/run.py
-#          --expdir=./examples/_tests_mnist_stages
-#          --config=./examples/_tests_mnist_stages/config3.yml
-#          --resume=./examples/logs/_tests_mnist_stages1/checkpoints/best.pth
-#          --out_dir=./examples/logs/_tests_mnist_stages1/:str
-#          --out_prefix="/predictions/":str
-#        - python -c "import numpy as np; data = np.load('examples/logs/_tests_mnist_stages1/predictions/infer.logits.npy'); assert data.shape == (10000, 10)"
-#        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-#          python catalyst/dl/scripts/run.py
-#          --expdir=./examples/_tests_mnist_stages
-#          --config=./examples/_tests_mnist_stages/config_finder.yml
-#          --logdir=./examples/logs/_tests_mnist_stages_finder &
-#        - sleep 30
-#        - kill %1
-#        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-#          python catalyst/dl/scripts/run.py
-#          --expdir=./examples/_tests_mnist_stages2
-#          --config=./examples/_tests_mnist_stages2/config1.yml
-#          --logdir=./examples/logs/_tests_mnist_stages2
-#          --check
-#        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-#          python catalyst/dl/scripts/run.py
-#          --expdir=./examples/_tests_mnist_stages2
-#          --config=./examples/_tests_mnist_stages2/config3.yml
-#          --logdir=./examples/logs/_tests_mnist_stages2
-#          --check
-#        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-#          python catalyst/dl/scripts/run.py
-#          --expdir=./examples/_tests_mnist_stages2
-#          --config=./examples/_tests_mnist_stages2/config2.yml
-#          --logdir=./examples/logs/_tests_mnist_stages2
-#          --check
-#        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
-#          python catalyst/dl/scripts/run.py
-#          --expdir=./examples/_tests_mnist_stages2
-#          --config=./examples/_tests_mnist_stages2/config_finder.yml
-#          --logdir=./examples/logs/_tests_mnist_stages_finder &
-#        - sleep 30
-#        - kill %1
+    - stage: Tests
+      install:
+        - *requirements
+        - pip install flake8 flake8-quotes yapf
+        - pip install -U pytest
+      script:
+        # stop the build if there are any unexpected flake8 issues
+        - flake8 . --count --ignore=E126,E226,E704,E731,W503,W504
+          --max-complexity=16
+          --inline-quotes "double"
+          --multiline-quotes "double"
+          --docstring-quotes "double"
+          --show-source --statistics
+        # exit-zero treats all errors as warnings.
+        - flake8 . --count --exit-zero
+          --max-complexity=10
+          --inline-quotes "double"
+          --multiline-quotes "double"
+          --docstring-quotes "double"
+          --statistics
+        # test to make sure the code is yapf compliant
+        - ./yapf.sh --all
+        - pytest
 
-#    - stage: Examples
-#      name: "Examples on-policy RL – PPO discrete"
-#      before_install: *before_install
-#      install: *requirements
-#      script:
-#        - bash ./bin/check_ppo_discrete.sh
-#
-#    - stage: Examples
-#      name: "Examples off-policy RL – DQN"
-#      before_install: *before_install
-#      install: *requirements
-#      script:
-#        - bash ./bin/check_dqn.sh
-#
-#    - stage: Examples
-#      name: "Examples off-policy RL – DDPG"
-#      before_install: *before_install
-#      install: *requirements
-#      script:
-#        - bash ./bin/check_ddpg.sh
+    - stage: Examples
+      name: "Examples DL"
+      install: *requirements
+      script:
+        - pip install tifffile
+        - wget -P ./data/ https://www.dropbox.com/s/0rvuae4mj6jn922/isbi.tar.gz
+        - tar -xf ./data/isbi.tar.gz -C ./data/
+        - (set -e; for f in examples/_tests_scripts/*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/dl/scripts/run.py
+          --expdir=./examples/_tests_mnist_stages
+          --config=./examples/_tests_mnist_stages/config1.yml
+          --logdir=./examples/logs/_tests_mnist_stages1
+          --check
+        - python -c "data = open('./examples/logs/_tests_mnist_stages1/metrics.txt', 'r').readlines(); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < float(data[1].rsplit('loss=', 1)[-1][:6]); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < 2.0"
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/dl/scripts/trace.py
+          ./examples/logs/_tests_mnist_stages1
+        - rm -rf ./examples/logs/_tests_mnist_stages1
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/dl/scripts/run.py
+          --expdir=./examples/_tests_mnist_stages
+          --config=./examples/_tests_mnist_stages/config2.yml
+          --logdir=./examples/logs/_tests_mnist_stages1
+          --check
+        - python -c "data = open('./examples/logs/_tests_mnist_stages1/metrics.txt', 'r').readlines(); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < float(data[1].rsplit('loss=', 1)[-1][:6]); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < 2.0"
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/dl/scripts/run.py
+          --expdir=./examples/_tests_mnist_stages
+          --config=./examples/_tests_mnist_stages/config3.yml
+          --resume=./examples/logs/_tests_mnist_stages1/checkpoints/best.pth
+          --out_dir=./examples/logs/_tests_mnist_stages1/:str
+          --out_prefix="/predictions/":str
+        - python -c "import numpy as np; data = np.load('examples/logs/_tests_mnist_stages1/predictions/infer.logits.npy'); assert data.shape == (10000, 10)"
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/dl/scripts/run.py
+          --expdir=./examples/_tests_mnist_stages
+          --config=./examples/_tests_mnist_stages/config_finder.yml
+          --logdir=./examples/logs/_tests_mnist_stages_finder &
+        - sleep 30
+        - kill %1
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/dl/scripts/run.py
+          --expdir=./examples/_tests_mnist_stages2
+          --config=./examples/_tests_mnist_stages2/config1.yml
+          --logdir=./examples/logs/_tests_mnist_stages2
+          --check
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/dl/scripts/run.py
+          --expdir=./examples/_tests_mnist_stages2
+          --config=./examples/_tests_mnist_stages2/config3.yml
+          --logdir=./examples/logs/_tests_mnist_stages2
+          --check
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/dl/scripts/run.py
+          --expdir=./examples/_tests_mnist_stages2
+          --config=./examples/_tests_mnist_stages2/config2.yml
+          --logdir=./examples/logs/_tests_mnist_stages2
+          --check
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/dl/scripts/run.py
+          --expdir=./examples/_tests_mnist_stages2
+          --config=./examples/_tests_mnist_stages2/config_finder.yml
+          --logdir=./examples/logs/_tests_mnist_stages_finder &
+        - sleep 30
+        - kill %1
+
+    - stage: Examples
+      name: "Examples on-policy RL – PPO discrete"
+      before_install: *before_install
+      install: *requirements
+      script:
+        - bash ./bin/check_ppo_discrete.sh
+
+    - stage: Examples
+      name: "Examples off-policy RL – DQN"
+      before_install: *before_install
+      install: *requirements
+      script:
+        - bash ./bin/check_dqn.sh
+
+    - stage: Examples
+      name: "Examples off-policy RL – DDPG"
+      before_install: *before_install
+      install: *requirements
+      script:
+        - bash ./bin/check_ddpg.sh
 
     - stage: Examples
       name: "Examples off-policy RL – SAC"

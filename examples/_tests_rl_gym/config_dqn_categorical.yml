@@ -44,19 +44,12 @@ agents:
       num_atoms: 11
       values_range: [0, 10]
 
-#      distribution: quantile
-#      num_atoms: 11
-
 algorithm:
   algorithm: DQN
 
   n_step: 1
   gamma: 0.99
   critic_tau: 0.01
-
-#  critic_loss_params:
-#    criterion: HuberLoss
-#    clip_delta: 10.0
 
   critic_optimizer_params:
     optimizer: Adam

@@ -76,9 +76,6 @@ agents:
       num_atoms: 21
       values_range: [-10.0, 0.0]
 
-#      distribution: quantile
-#      num_atoms: 11
-
 algorithm:
   algorithm: DDPG
 
@@ -86,10 +83,6 @@ algorithm:
   gamma: 0.99
   actor_tau: 0.01
   critic_tau: 0.01
-
-#  critic_loss_params:
-#    criterion: HuberLoss
-#    clip_delta: 10.0
 
   actor_optimizer_params:
     optimizer: Adam

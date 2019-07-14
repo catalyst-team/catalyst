@@ -76,9 +76,6 @@ agents:
       num_atoms: 21
       values_range: [-10.0, 0.0]
 
-#      distribution: quantile
-#      num_atoms: 11
-
 algorithm:
   algorithm: TD3
 

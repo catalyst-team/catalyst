@@ -45,10 +45,6 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     --logdir=./examples/logs/_tests_rl_gym_sac_quantile &
 sleep 600
 
-#OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
-#    PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-#    python catalyst/rl/scripts/dump_redis.py \
-#    --out-pkl=./db.dump.pointenv.pkl
 
 killall -9 python
 sleep 3
