@@ -58,8 +58,6 @@ algorithm:
     func: clip_grad_value_
     clip_value: 1.0
 
-
-
 trainer:
   batch_size: 256              # transitions
   num_workers: 1
