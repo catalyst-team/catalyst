@@ -5,7 +5,7 @@ args:
   vis: 0
   infer: 0  #  change me
   valid: 1  #  change me
-  train: 1  #  change me
+  train: 2  #  change me
 
 db:
   db: RedisDB

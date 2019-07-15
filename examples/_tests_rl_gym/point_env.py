@@ -53,8 +53,10 @@ class PointEnv(gym.Env):
         return gym.spaces.Box(low=-1., high=1., shape=(2, ), dtype=np.float32)
 
     def reset(self):
-        self._point = np.random.uniform(
-            low=-self._max_x, high=self._max_x, size=self._point.shape
+        self._point = np.sign(
+            np.random.uniform(
+                low=-self._max_x, high=self._max_x, size=self._point.shape
+            )
         )
         self._step = 0
         return np.copy(self._point)
