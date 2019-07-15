@@ -33,10 +33,13 @@ class REINFORCE(OnpolicyActor):
         _, logprobs = self.actor(states, logprob=actions)
         logprobs = logprobs.cpu().numpy().reshape(-1)[:trajectory_len]
 
-        returns = utils.geometric_cumsum(self.gamma, rewards)[0]
+        returns = utils.geometric_cumsum(self.gamma, rewards[:, None])[:, 0]
 
         rollout = {"return": returns, "action_logprob": logprobs}
         return rollout
+
+    def postprocess_buffer(self, buffers, len):
+        pass
 
     def train(self, batch, **kwargs):
         states, actions, returns, action_logprobs = \
