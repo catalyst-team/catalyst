@@ -312,7 +312,7 @@ class ValidSampler(Sampler):
             for i in range(len(self.seeds)):
                 trajectory, trajectory_info = self._run_trajectory_loop()
                 trajectories_rewards.append(trajectory_info["reward"])
-
+                trajectory_info.pop("raw_trajectory", None)
                 self._log_to_console(**trajectory_info)
                 self._log_to_tensorboard(**trajectory_info)
                 self.trajectory_index += 1
