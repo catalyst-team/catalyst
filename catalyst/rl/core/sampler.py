@@ -36,6 +36,7 @@ class Sampler:
         logdir: str = None,
         id: int = 0,
         mode: str = "infer",  # train/valid/infer
+        deterministic: bool = None,
         weights_sync_period: int = 1,
         weights_sync_mode: str = None,
         seeds: List = None,
@@ -47,7 +48,9 @@ class Sampler:
         self._device = utils.get_device()
         self._sampler_id = id
 
-        self._is_infer = mode in ["valid", "infer"]
+        self._deterministic = deterministic \
+            if deterministic is not None \
+            else mode in ["valid", "infer"]
         self.seeds = seeds
         self._seeder = Seeder(init_seed=42 + id)
 
@@ -64,7 +67,7 @@ class Sampler:
             env=self.env,
             agent=self.agent,
             device=self._device,
-            deterministic=self._is_infer,
+            deterministic=self._deterministic,
             sample_flag=self._sample_flag
         )
 
@@ -215,7 +218,7 @@ class Sampler:
                 continue
             raw_trajectory = trajectory_info.pop("raw_trajectory", None)
             # Do it firsthand, so the loggers don't crush
-            if not self._is_infer or self._force_store:
+            if not self._deterministic or self._force_store:
                 self._store_trajectory(trajectory)
                 if raw_trajectory is not None:
                     self._store_trajectory(raw_trajectory, raw=True)

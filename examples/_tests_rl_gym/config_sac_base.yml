@@ -5,7 +5,7 @@ args:
   vis: 0
   infer: 0  #  change me
   valid: 1  #  change me
-  train: 1  #  change me
+  train: 0  #  change me
 
 db:
   db: RedisDB
@@ -103,8 +103,8 @@ trainer:
   num_workers: 1
   epoch_len: 100               # batches
 
-  replay_buffer_size: 2000000  # transitions
-  min_num_transitions: 2560    # transitions
+  replay_buffer_size: 1400000  # transitions
+  min_num_transitions: 1332440 # transitions
 
   save_period: 50              # epochs
   weights_sync_period: 1       # epochs

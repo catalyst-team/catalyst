@@ -3,7 +3,7 @@
 redis-server --port 12000 &
 sleep 3
 
-wget https://www.dropbox.com/s/25tr70u9zw2zvi2/db.dump.pointenv.pkl
+wget https://www.dropbox.com/s/5ryokxeksvmbu1u/db.dump.pointenv.pkl
 
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
@@ -25,7 +25,7 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     python catalyst/rl/scripts/run_trainer.py \
     --config=./examples/_tests_rl_gym/config_td3_quantile.yml \
     --logdir=./examples/logs/_tests_rl_gym_td3_quantile &
-sleep 1200
+sleep 600
 
 
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \

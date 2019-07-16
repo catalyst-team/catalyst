@@ -25,9 +25,9 @@ class TrajectorySampler:
         self.env = env
         self.agent = agent
         self._device = device
-        self.deterministic = deterministic
-        self.initial_capacity = initial_capacity
-        self.policy_handler = PolicyHandler(
+        self._deterministic = deterministic
+        self._initial_capacity = initial_capacity
+        self._policy_handler = PolicyHandler(
             env=self.env, agent=self.agent, device=device
         )
 
@@ -46,7 +46,7 @@ class TrajectorySampler:
             else (None,) + tuple(self.env.observation_space.shape)
         self.observations = DynamicArray(
             array_or_shape=observations_shape,
-            capacity=int(self.initial_capacity),
+            capacity=int(self._initial_capacity),
             dtype=observations_dtype
         )
 
@@ -58,19 +58,19 @@ class TrajectorySampler:
             else (None,) + tuple(self.env.action_space.shape)
         self.actions = DynamicArray(
             array_or_shape=actions_shape,
-            capacity=int(self.initial_capacity),
+            capacity=int(self._initial_capacity),
             dtype=actions_dtype
         )
 
         self.rewards = DynamicArray(
             array_or_shape=(None, ),
             dtype=np.float32,
-            capacity=int(self.initial_capacity)
+            capacity=int(self._initial_capacity)
         )
         self.dones = DynamicArray(
             array_or_shape=(None, ),
             dtype=np.bool,
-            capacity=int(self.initial_capacity)
+            capacity=int(self._initial_capacity)
         )
 
     def _init_with_observation(self, observation):
@@ -120,17 +120,19 @@ class TrajectorySampler:
     @torch.no_grad()
     def reset(self, exploration_strategy=None):
 
-        from catalyst.rl.exploration import \
-            ParameterSpaceNoise, OrnsteinUhlenbeckProcess
+        if not self._deterministic:
+            from catalyst.rl.exploration import \
+                ParameterSpaceNoise, OrnsteinUhlenbeckProcess
 
-        if isinstance(exploration_strategy, OrnsteinUhlenbeckProcess):
-            exploration_strategy.reset_state(self.env.action_space.shape[0])
+            if isinstance(exploration_strategy, OrnsteinUhlenbeckProcess):
+                exploration_strategy.reset_state(
+                    self.env.action_space.shape[0])
 
-        if isinstance(exploration_strategy, ParameterSpaceNoise) \
-                and len(self.observations) > 1:
-            states = self._get_states_history()
-            states = utils.any2device(states, device=self._device)
-            exploration_strategy.update_actor(self.agent, states)
+            if isinstance(exploration_strategy, ParameterSpaceNoise) \
+                    and len(self.observations) > 1:
+                states = self._get_states_history()
+                states = utils.any2device(states, device=self._device)
+                exploration_strategy.update_actor(self.agent, states)
 
         self._init_buffers()
         self._init_with_observation(self.env.reset())
@@ -140,12 +142,12 @@ class TrajectorySampler:
 
         while not done_t and self._sample_flag.value:
             state_t = self.get_state()
-            action_t = self.policy_handler.action_fn(
+            action_t = self._policy_handler.action_fn(
                 agent=self.agent,
                 state=state_t,
                 device=self._device,
                 exploration_strategy=exploration_strategy,
-                deterministic=self.deterministic
+                deterministic=self._deterministic
             )
 
             observation_tp1, reward_t, done_t, info = self.env.step(action_t)
