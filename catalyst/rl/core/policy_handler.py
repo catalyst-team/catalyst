@@ -29,7 +29,7 @@ class PolicyHandler:
         self.action_fn = None
         self.discrete_actions = isinstance(env.action_space, Discrete)
 
-        # DQN, PPO
+        # PPO, REINFORCE, DQN
         if self.discrete_actions:
             if isinstance(agent, ActorSpec):
                 self.action_clip = None
@@ -42,7 +42,9 @@ class PolicyHandler:
                     self.z = torch.linspace(
                         start=v_min, end=v_max, steps=agent.num_atoms
                     ).to(device)
-        # DDPG, SAC, TD3
+            else:
+                raise NotImplementedError()
+        # PPO, DDPG, SAC, TD3
         else:
             assert isinstance(agent, ActorSpec)
             action_space: Box = env.action_space
@@ -61,7 +63,7 @@ class PolicyHandler:
         elif self.value_distribution == "quantile":
             q_values = torch.mean(output[0, -1, :, :], dim=-1)
         else:
-            q_values = output[0, -1, :]
+            q_values = output[0, -1, :, 0]
         return q_values.cpu().numpy()
 
     @torch.no_grad()
@@ -91,7 +93,10 @@ class PolicyHandler:
         exploration_strategy=None
     ):
         q_values = self._get_q_values(agent, state, device)
-        action = exploration_strategy.get_action(q_values)
+        if not deterministic and exploration_strategy is not None:
+            action = exploration_strategy.get_action(q_values)
+        else:
+            action = np.argmax(q_values)
         return action
 
     def _actor_handler(
@@ -103,5 +108,6 @@ class PolicyHandler:
         exploration_strategy=None
     ):
         action = self._sample_from_actor(agent, state, device, deterministic)
-        action = exploration_strategy.get_action(action)
+        if not deterministic and exploration_strategy is not None:
+            action = exploration_strategy.get_action(action)
         return action

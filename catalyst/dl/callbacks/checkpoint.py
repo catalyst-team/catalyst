@@ -42,7 +42,8 @@ class CheckpointCallback(Callback):
             )
 
             print(
-                f"loaded checkpoint {filename} (epoch {checkpoint['epoch']})")
+                f"loaded checkpoint {filename} (epoch {checkpoint['epoch']})"
+            )
         else:
             raise Exception("no checkpoint found at {filename}")
 
@@ -150,12 +151,7 @@ class IterationCheckpointCallback(Callback):
         self._iteration_counter = 0
         self.last_checkpoints = []
 
-    def save_checkpoint(
-        self,
-        logdir,
-        checkpoint,
-        save_n_last
-    ):
+    def save_checkpoint(self, logdir, checkpoint, save_n_last):
         suffix = f"{checkpoint['stage']}." \
                  f"epoch.{checkpoint['epoch']}." \
                  f"iter.{self._iteration_counter}"

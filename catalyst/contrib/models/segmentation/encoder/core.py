@@ -9,7 +9,6 @@ def _take(elements, indexes):
 
 
 class EncoderSpec(ABC, nn.Module):
-
     @property
     @abstractmethod
     def out_channels(self) -> List[int]:

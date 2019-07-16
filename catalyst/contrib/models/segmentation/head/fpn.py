@@ -36,7 +36,9 @@ class FPNHead(HeadSpec):
                 SegmentationBlock(
                     in_channels=in_channels_,
                     out_channels=hid_channel,
-                    num_upsamples=int(i)))
+                    num_upsamples=int(i)
+                )
+            )
         self.segmentation_blocks = nn.ModuleList(segmentation_blocks)
 
         additional_layers = [
@@ -45,15 +47,16 @@ class FPNHead(HeadSpec):
         if dropout > 0:
             additional_layers.append(nn.Dropout2d(p=dropout, inplace=True))
         self.head = nn.Sequential(
-            *additional_layers,
-            nn.Conv2d(hid_channel, out_channels, 1)
+            *additional_layers, nn.Conv2d(hid_channel, out_channels, 1)
         )
 
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
-        x = list(map(
-            lambda block, features: block(features),
-            self.segmentation_blocks,
-            x))
+        x = list(
+            map(
+                lambda block, features: block(features),
+                self.segmentation_blocks, x
+            )
+        )
         x = sum(x)
         x = self.head(x)
         if self.upsample_scale > 1:
@@ -61,5 +64,6 @@ class FPNHead(HeadSpec):
                 x,
                 scale_factor=self.upsample_scale,
                 mode=self.interpolation_mode,
-                align_corners=self.align_corners)
+                align_corners=self.align_corners
+            )
         return x

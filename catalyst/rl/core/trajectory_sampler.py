@@ -6,7 +6,7 @@ import torch
 
 from catalyst.rl import utils
 from catalyst.rl.utils.buffer import get_buffer
-from catalyst.rl.utils.dynamic_array import DynamicArray
+from catalyst.utils.dynamic_array import DynamicArray
 from .agent import ActorSpec, CriticSpec
 from .environment import EnvironmentSpec
 from .policy_handler import PolicyHandler
@@ -25,9 +25,9 @@ class TrajectorySampler:
         self.env = env
         self.agent = agent
         self._device = device
-        self.deterministic = deterministic
-        self.initial_capacity = initial_capacity
-        self.policy_handler = PolicyHandler(
+        self._deterministic = deterministic
+        self._initial_capacity = initial_capacity
+        self._policy_handler = PolicyHandler(
             env=self.env, agent=self.agent, device=device
         )
 
@@ -46,33 +46,31 @@ class TrajectorySampler:
             else (None,) + tuple(self.env.observation_space.shape)
         self.observations = DynamicArray(
             array_or_shape=observations_shape,
-            capacity=int(self.initial_capacity),
+            capacity=int(self._initial_capacity),
             dtype=observations_dtype
         )
 
         actions_, actions_dtype = get_buffer(
-            capacity=sample_size,
-            space=self.env.action_space,
-            mode="numpy"
+            capacity=sample_size, space=self.env.action_space, mode="numpy"
         )
         actions_shape = (None,) \
             if actions_.dtype.fields is not None \
             else (None,) + tuple(self.env.action_space.shape)
         self.actions = DynamicArray(
             array_or_shape=actions_shape,
-            capacity=int(self.initial_capacity),
+            capacity=int(self._initial_capacity),
             dtype=actions_dtype
         )
 
         self.rewards = DynamicArray(
             array_or_shape=(None, ),
             dtype=np.float32,
-            capacity=int(self.initial_capacity)
+            capacity=int(self._initial_capacity)
         )
         self.dones = DynamicArray(
             array_or_shape=(None, ),
             dtype=np.bool,
-            capacity=int(self.initial_capacity)
+            capacity=int(self._initial_capacity)
         )
 
     def _init_with_observation(self, observation):
@@ -104,7 +102,7 @@ class TrajectorySampler:
             else self.env.history_len
 
         state = np.zeros(
-            (history_len,) + tuple(self.observations.shape[1:]),
+            (history_len, ) + tuple(self.observations.shape[1:]),
             dtype=self.observations.dtype
         )
 
@@ -114,27 +112,27 @@ class TrajectorySampler:
 
     def get_trajectory(self):
         trajectory = (
-            np.array(self.observations[:-1]),
-            np.array(self.actions),
-            np.array(self.rewards),
-            np.array(self.dones)
+            np.array(self.observations[:-1]), np.array(self.actions),
+            np.array(self.rewards), np.array(self.dones)
         )
         return trajectory
 
     @torch.no_grad()
     def reset(self, exploration_strategy=None):
 
-        from catalyst.rl.exploration import \
-            ParameterSpaceNoise, OrnsteinUhlenbeckProcess
+        if not self._deterministic:
+            from catalyst.rl.exploration import \
+                ParameterSpaceNoise, OrnsteinUhlenbeckProcess
 
-        if isinstance(exploration_strategy, OrnsteinUhlenbeckProcess):
-            exploration_strategy.reset_state(self.env.action_space.shape[0])
+            if isinstance(exploration_strategy, OrnsteinUhlenbeckProcess):
+                exploration_strategy.reset_state(
+                    self.env.action_space.shape[0])
 
-        if isinstance(exploration_strategy, ParameterSpaceNoise) \
-                and len(self.observations) > 1:
-            states = self._get_states_history()
-            states = utils.any2device(states, device=self._device)
-            exploration_strategy.update_actor(self.agent, states)
+            if isinstance(exploration_strategy, ParameterSpaceNoise) \
+                    and len(self.observations) > 1:
+                states = self._get_states_history()
+                states = utils.any2device(states, device=self._device)
+                exploration_strategy.update_actor(self.agent, states)
 
         self._init_buffers()
         self._init_with_observation(self.env.reset())
@@ -144,12 +142,12 @@ class TrajectorySampler:
 
         while not done_t and self._sample_flag.value:
             state_t = self.get_state()
-            action_t = self.policy_handler.action_fn(
+            action_t = self._policy_handler.action_fn(
                 agent=self.agent,
                 state=state_t,
                 device=self._device,
                 exploration_strategy=exploration_strategy,
-                deterministic=self.deterministic
+                deterministic=self._deterministic
             )
 
             observation_tp1, reward_t, done_t, info = self.env.step(action_t)
@@ -164,5 +162,16 @@ class TrajectorySampler:
 
         trajectory = self.get_trajectory()
         trajectory_info = {"reward": reward, "num_steps": num_steps}
+        if info and "raw_trajectory" in info:
+            raw_trajectory = info["raw_trajectory"]
+            trajectory_info["raw_trajectory"] = raw_trajectory
+            reward = np.sum(raw_trajectory[2])
+            # This may be different from num_steps in case
+            # we use the frame skip wrapper
+            raw_num_steps = len(raw_trajectory[0])
+            assert all(len(x) == raw_num_steps for x in raw_trajectory)
+
+        trajectory_info["raw_reward"] = reward
         assert all(len(x) == num_steps for x in trajectory)
+
         return trajectory, trajectory_info

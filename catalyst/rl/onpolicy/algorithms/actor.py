@@ -57,20 +57,21 @@ class OnpolicyActor(AlgorithmSpec):
     def gamma(self) -> float:
         return self._gamma
 
-    def pack_checkpoint(self):
+    def pack_checkpoint(self, with_optimizer: bool = True):
         checkpoint = {}
 
         for key in ["actor"]:
             checkpoint[f"{key}_state_dict"] = getattr(self, key).state_dict()
-            for key2 in ["optimizer", "scheduler"]:
-                key2 = f"{key}_{key2}"
-                value2 = getattr(self, key2, None)
-                if value2 is not None:
-                    checkpoint[f"{key2}_state_dict"] = value2.state_dict()
+            if with_optimizer:
+                for key2 in ["optimizer", "scheduler"]:
+                    key2 = f"{key}_{key2}"
+                    value2 = getattr(self, key2, None)
+                    if value2 is not None:
+                        checkpoint[f"{key2}_state_dict"] = value2.state_dict()
 
         return checkpoint
 
-    def unpack_checkpoint(self, checkpoint, with_optimizer=True):
+    def unpack_checkpoint(self, checkpoint, with_optimizer: bool = True):
         for key in ["actor"]:
             value_l = getattr(self, key, None)
             if value_l is not None:
@@ -107,9 +108,7 @@ class OnpolicyActor(AlgorithmSpec):
 
     @classmethod
     def prepare_for_trainer(
-        cls,
-        env_spec: EnvironmentSpec,
-        config: Dict
+        cls, env_spec: EnvironmentSpec, config: Dict
     ) -> "AlgorithmSpec":
         config_ = config.copy()
         agents_config = config_["agents"]
@@ -129,9 +128,7 @@ class OnpolicyActor(AlgorithmSpec):
 
     @classmethod
     def prepare_for_sampler(
-        cls,
-        env_spec: EnvironmentSpec,
-        config: Dict
+        cls, env_spec: EnvironmentSpec, config: Dict
     ) -> Union[ActorSpec, CriticSpec]:
         config_ = config.copy()
         agents_config = config_["agents"]

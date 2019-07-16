@@ -11,10 +11,7 @@ from catalyst.dl.utils.formatters import TxtMetricsFormatter
 
 
 class VerboseLogger(Callback):
-    def __init__(
-        self,
-        always_show: List[str] = ["_timers/_fps"]
-    ):
+    def __init__(self, always_show: List[str] = ["_timers/_fps"]):
         """
         Log params into console
         Args:
@@ -45,8 +42,7 @@ class VerboseLogger(Callback):
         self.tqdm.set_postfix(
             **{
                 k: "{:3.3f}".format(v)
-                for k, v in
-                sorted(state.metrics.batch_values.items())
+                for k, v in sorted(state.metrics.batch_values.items())
                 if self._need_show(k)
             }
         )
@@ -155,10 +151,7 @@ class TensorboardLogger(Callback):
             mode = state.loader_name
             metrics_ = state.metrics.batch_values
             self._log_metrics(
-                metrics=metrics_,
-                step=state.step,
-                mode=mode,
-                suffix="/batch"
+                metrics=metrics_, step=state.step, mode=mode, suffix="/batch"
             )
 
     def on_loader_end(self, state: RunnerState):
@@ -166,10 +159,7 @@ class TensorboardLogger(Callback):
             mode = state.loader_name
             metrics_ = state.metrics.epoch_values[mode]
             self._log_metrics(
-                metrics=metrics_,
-                step=state.epoch,
-                mode=mode,
-                suffix="/epoch"
+                metrics=metrics_, step=state.epoch, mode=mode, suffix="/epoch"
             )
 
 

@@ -60,10 +60,7 @@ class UnetSpec(UnetMetaSpec):
         )
 
         super().__init__(
-            encoder=encoder,
-            bridge=bridge,
-            decoder=decoder,
-            head=head
+            encoder=encoder, bridge=bridge, decoder=decoder, head=head
         )
 
     def _get_components(
@@ -94,9 +91,7 @@ class ResnetUnetSpec(UnetMetaSpec):
         head_params = head_params or {}
 
         encoder = ResnetEncoder(
-            arch=arch,
-            pretrained=pretrained,
-            **encoder_params
+            arch=arch, pretrained=pretrained, **encoder_params
         )
 
         encoder, bridge, decoder, head = self._get_components(
@@ -104,10 +99,7 @@ class ResnetUnetSpec(UnetMetaSpec):
         )
 
         super().__init__(
-            encoder=encoder,
-            bridge=bridge,
-            decoder=decoder,
-            head=head
+            encoder=encoder, bridge=bridge, decoder=decoder, head=head
         )
 
     def _get_components(

@@ -2,6 +2,10 @@ from abc import abstractmethod, ABC
 
 
 class DBSpec(ABC):
+    @property
+    @abstractmethod
+    def epoch(self) -> int:
+        pass
 
     @property
     @abstractmethod
@@ -17,7 +21,7 @@ class DBSpec(ABC):
         pass
 
     @abstractmethod
-    def push_trajectory(self, trajectory):
+    def push_trajectory(self, trajectory, raw: bool):
         pass
 
     @abstractmethod
@@ -29,13 +33,13 @@ class DBSpec(ABC):
         pass
 
     @abstractmethod
-    def dump_weights(self, weights, prefix, epoch):
+    def save_checkpoint(self, checkpoint, epoch):
         pass
 
     @abstractmethod
-    def load_weights(self, prefix):
+    def load_checkpoint(self):
         pass
 
     @abstractmethod
-    def clean_weights(self, prefix):
+    def clean_checkpoint(self):
         pass

@@ -17,10 +17,7 @@ def build_args(parser):
         required=True
     )
     parser.add_argument(
-        "--in-csv",
-        type=str,
-        help="path to csv with photos",
-        required=True
+        "--in-csv", type=str, help="path to csv with photos", required=True
     )
     parser.add_argument(
         "--out-dir",
@@ -42,23 +39,21 @@ def build_args(parser):
         help="column in the table that contains image paths"
     )
     parser.add_argument(
-        "--img-datapath",
-        type=str,
-        help="path to photos directory"
+        "--img-datapath", type=str, help="path to photos directory"
     )
     parser.add_argument(
         "--img-size",
         type=int,
         default=16,
         help="if --img-col is defined, "
-             "then images will be resized to (img-size, img-size, 3)"
+        "then images will be resized to (img-size, img-size, 3)"
     )
     parser.add_argument(
         "--n-rows",
         type=int,
         default=None,
         help="count of rows to use in csv "
-             "(if not defined then it will use whole data)"
+        "(if not defined then it will use whole data)"
     )
     parser.add_argument(
         "--meta-cols",
@@ -98,14 +93,16 @@ def main(args, _=None):
         df = df.sample(n=args.n_rows)
 
     if args.img_col is not None:
-        image_names = [path.join(args.img_datapath, name)
-                       for name in df[args.img_col].values]
-        img_data = np.stack([
-            load_image(name, args.img_size)
-            for name in image_names],
-            axis=0)
-        img_data = (
-            img_data.transpose((0, 3, 1, 2)) / 255.0).astype(np.float32)
+        image_names = [
+            path.join(args.img_datapath, name)
+            for name in df[args.img_col].values
+        ]
+        img_data = np.stack(
+            [load_image(name, args.img_size) for name in image_names], axis=0
+        )
+        img_data = (img_data.transpose((0, 3, 1, 2)) / 255.0).astype(
+            np.float32
+        )
         img_data = torch.from_numpy(img_data)
     else:
         img_data = None

@@ -43,8 +43,7 @@ def get_buffer(
 
             buffer_dtype = space_dtype
             buffer = np.empty(
-                (capacity, ) + tuple(space_shape),
-                dtype=space_dtype
+                (capacity, ) + tuple(space_shape), dtype=space_dtype
             )
         else:
             assert space is not None
@@ -66,7 +65,7 @@ def get_buffer(
             buffer = np.memmap(
                 f"{logdir}/{name}.memmap",
                 mode="w+",
-                shape=(capacity,) + tuple(space_shape),
+                shape=(capacity, ) + tuple(space_shape),
                 dtype=space_dtype
             )
         else:
@@ -79,7 +78,7 @@ def get_buffer(
             buffer = np.memmap(
                 f"{logdir}/{name}.memmap",
                 mode="w+",
-                shape=(capacity,),
+                shape=(capacity, ),
                 dtype=buffer_dtype
             )
     elif mode == "dynamic":
@@ -155,12 +154,11 @@ class BufferWrapper:
 
     def __repr__(self):
         return (
-            self._data.__repr__()
-            .replace(
-                "array",
-                f"BufferWrapper("
+            self._data.__repr__().replace(
+                "array", f"BufferWrapper("
                 f"capacity={self._capacity}, "
-                f"data_dtype={self._dtype}), ")
+                f"data_dtype={self._dtype}), "
+            )
         )
 
 
@@ -300,7 +298,7 @@ class OffpolicyReplayBuffer(Dataset):
 
         if start_idx < 0 or np.any(self.dones[start_idx:idx + 1]):
             state = np.zeros(
-                (history_len,) + tuple(self.observations.shape[1:]),
+                (history_len, ) + tuple(self.observations.shape[1:]),
                 dtype=self.observations.dtype
             )
             indices = [idx]
@@ -379,9 +377,7 @@ class OnpolicyRolloutBuffer(Dataset):
 
         for key, value in rollout_spec.items():
             self.buffers[key] = BufferWrapper(
-                capacity=capacity,
-                shape=value["shape"],
-                dtype=value["dtype"]
+                capacity=capacity, shape=value["shape"], dtype=value["dtype"]
             )
 
     def push_rollout(self, **rollout: Dict):
@@ -400,6 +396,10 @@ class OnpolicyRolloutBuffer(Dataset):
             key: _handle_array(value[index])
             for key, value in self.buffers.items()
         }
+        try:
+            dct["state_tp1"] = _handle_array(self.buffers["state"][index + 1])
+        except Exception:
+            dct["state_tp1"] = _handle_array(self.buffers["state"][index])
         return dct
 
     def __len__(self):

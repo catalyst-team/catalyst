@@ -32,8 +32,7 @@ class UnetHead(HeadSpec):
         if dropout > 0:
             additional_layers.append(nn.Dropout2d(p=dropout, inplace=True))
         self.head = nn.Sequential(
-            *additional_layers,
-            nn.Conv2d(in_channels_, out_channels, 1)
+            *additional_layers, nn.Conv2d(in_channels_, out_channels, 1)
         )
 
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
@@ -44,5 +43,6 @@ class UnetHead(HeadSpec):
                 x,
                 scale_factor=self.upsample_scale,
                 mode=self.interpolation_mode,
-                align_corners=self.align_corners)
+                align_corners=self.align_corners
+            )
         return x

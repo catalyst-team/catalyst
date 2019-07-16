@@ -22,12 +22,7 @@ class Actor(ActorSpec):
         self.state_net = state_net
         self.head_net = head_net
 
-    def forward(
-        self,
-        state: torch.Tensor,
-        logprob=False,
-        deterministic=False
-    ):
+    def forward(self, state: torch.Tensor, logprob=False, deterministic=False):
         x = self.state_net(state)
         x = self.head_net(x, logprob, deterministic)
         return x
@@ -45,11 +40,12 @@ class Actor(ActorSpec):
     ):
         # @TODO: refactor
         observation_size = reduce(
-            lambda x, y: x * y,
-            env_spec.state_space.shape)
+            lambda x, y: x * y, env_spec.state_space.shape
+        )
 
         state_net_params["observation_net_params"]["hiddens"].insert(
-            0, observation_size)
+            0, observation_size
+        )
 
         # @TODO: any better solution?
         action_space = env_spec.action_space
@@ -64,10 +60,7 @@ class Actor(ActorSpec):
         state_net = StateNet.get_from_params(**state_net_params)
         head_net = PolicyHead(**policy_head_params)
 
-        net = cls(
-            state_net=state_net,
-            head_net=head_net
-        )
+        net = cls(state_net=state_net, head_net=head_net)
 
         return net
 

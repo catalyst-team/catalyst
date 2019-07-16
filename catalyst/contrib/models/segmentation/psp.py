@@ -7,7 +7,6 @@ from .core import UnetSpec, ResnetUnetSpec
 
 
 class PSPnet(UnetSpec):
-
     def _get_components(
         self,
         encoder: UnetEncoder,
@@ -35,7 +34,6 @@ class PSPnet(UnetSpec):
 
 
 class ResnetPSPnet(ResnetUnetSpec):
-
     def _get_components(
         self,
         encoder: ResnetEncoder,

@@ -3,7 +3,6 @@ from gym.spaces import Space, Discrete
 
 
 class EnvironmentSpec(ABC):
-
     @property
     def discrete_actions(self) -> int:
         return isinstance(self.action_space, Discrete)

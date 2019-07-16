@@ -40,23 +40,14 @@ class ValueHead(nn.Module):
         else:
             raise NotImplementedError()
         heads = [
-            self._build_head(
-                in_features,
-                out_features,
-                num_atoms,
-                bias)
-            for _ in range(num_heads)]
+            self._build_head(in_features, out_features, num_atoms, bias)
+            for _ in range(num_heads)
+        ]
         self.net = nn.ModuleList(heads)
 
         self.apply(outer_init)
 
-    def _build_head(
-        self,
-        in_features,
-        out_features,
-        num_atoms,
-        bias
-    ):
+    def _build_head(self, in_features, out_features, num_atoms, bias):
         return nn.Linear(
             in_features=in_features,
             out_features=out_features * num_atoms,
@@ -67,15 +58,9 @@ class ValueHead(nn.Module):
         x: List[torch.Tensor] = []
         for net in self.net:
             x.append(net(inputs).view(-1, self.out_features, self.num_atoms))
-
-        x = [z.squeeze_(dim=1).squeeze_(dim=-1) for z in x]
-        if self.num_atoms == 1 and self.out_features == 1:
-            # make critic outputs (B, 1) instead of (B, )
-            x = [z.unsqueeze_(dim=1) for z in x]
-
-        # B x num_heads x num_outputs x num_atoms (discrete)
-        # B x num_heads x num_atoms (continuous)
-        return torch.stack(x, dim=1)
+        # batch_size(0) x num_heads(1) x num_outputs(2) x num_atoms(3)
+        x = torch.stack(x, dim=1)
+        return x
 
 
 class PolicyHead(nn.Module):
@@ -88,8 +73,7 @@ class PolicyHead(nn.Module):
     ):
         super().__init__()
         assert policy_type in [
-            "categorical", "gauss", "real_nvp",
-            "logits", None
+            "categorical", "gauss", "real_nvp", "logits", None
         ]
 
         # @TODO: refactor
@@ -135,8 +119,8 @@ class PolicyHead(nn.Module):
         if policy_net is None:
             self._policy_fn = lambda *args: args[0]
         elif isinstance(
-                policy_net,
-                (CategoricalPolicy, GaussPolicy, RealNVPPolicy)):
+            policy_net, (CategoricalPolicy, GaussPolicy, RealNVPPolicy)
+        ):
             self._policy_fn = policy_net.forward
         else:
             raise NotImplementedError

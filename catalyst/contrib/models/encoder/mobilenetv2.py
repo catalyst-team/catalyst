@@ -20,7 +20,8 @@ class MobileNetV2Encoder(nn.Module):
         net = MobileNetV2(
             input_size=input_size,
             width_mult=width_mult,
-            pretrained=pretrained)
+            pretrained=pretrained
+        )
         self.encoder = list(net.encoder.children())
 
         if pooling is not None:

@@ -3,7 +3,6 @@ import torch.nn as nn
 
 
 class ActorSpec(ABC, nn.Module):
-
     @property
     @abstractmethod
     def policy_type(self) -> str:
@@ -15,7 +14,6 @@ class ActorSpec(ABC, nn.Module):
 
 
 class CriticSpec(ABC, nn.Module):
-
     @property
     @abstractmethod
     def num_outputs(self) -> int:

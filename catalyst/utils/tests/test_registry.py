@@ -49,6 +49,7 @@ def test_fail_double_add_different():
     r.add(foo)
 
     with pytest.raises(RegistryException):
+
         def bar():
             pass
 

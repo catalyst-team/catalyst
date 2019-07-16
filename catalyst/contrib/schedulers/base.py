@@ -9,6 +9,7 @@ class BaseScheduler(_LRScheduler, ABC):
     """
     Base class for all schedulers with momentum update
     """
+
     def get_momentum(self) -> List[float]:
         """
         Function that returns the new momentum for optimizer

@@ -16,8 +16,7 @@ from .psp import *
 from .unet import *
 
 __all__ = [
-    "UnetMetaSpec", "UnetSpec", "ResnetUnetSpec",
-    "Unet", "Linknet", "FPNUnet", "PSPnet",
-    "ResnetUnet", "ResnetLinknet", "ResnetFPNUnet", "ResnetPSPnet",
+    "UnetMetaSpec", "UnetSpec", "ResnetUnetSpec", "Unet", "Linknet", "FPNUnet",
+    "PSPnet", "ResnetUnet", "ResnetLinknet", "ResnetFPNUnet", "ResnetPSPnet",
     "MobileUnet", "ResNetUnet", "ResNetLinknet"
 ]

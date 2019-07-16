@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import Union, List, Dict
 
 import os
 os.environ["OMP_NUM_THREADS"] = "1"
@@ -36,22 +36,23 @@ class Sampler:
         logdir: str = None,
         id: int = 0,
         mode: str = "infer",  # train/valid/infer
+        deterministic: bool = None,
         weights_sync_period: int = 1,
         weights_sync_mode: str = None,
         seeds: List = None,
         trajectory_limit: int = None,
         force_store: bool = False,
         gc_period: int = 10,
+        **kwargs
     ):
         self._device = utils.get_device()
         self._sampler_id = id
 
-        self._infer = mode == "infer"
+        self._deterministic = deterministic \
+            if deterministic is not None \
+            else mode in ["valid", "infer"]
         self.seeds = seeds
-        self._seeder = Seeder(
-            init_seed=42 + id,
-            max_seed=len(seeds) if seeds is not None else None
-        )
+        self._seeder = Seeder(init_seed=42 + id)
 
         # logging
         self._prepare_logger(logdir, mode)
@@ -66,7 +67,7 @@ class Sampler:
             env=self.env,
             agent=self.agent,
             device=self._device,
-            deterministic=self._infer,
+            deterministic=self._deterministic,
             sample_flag=self._sample_flag
         )
 
@@ -78,6 +79,13 @@ class Sampler:
         self._force_store = force_store
         self._gc_period = gc_period
         self._db_loop_thread = None
+        self.checkpoint = None
+
+        #  special
+        self._init(**kwargs)
+
+    def _init(self, **kwargs):
+        assert len(kwargs) == 0
 
     def _prepare_logger(self, logdir, mode):
         if logdir is not None:
@@ -85,69 +93,64 @@ class Sampler:
             logpath = f"{logdir}/" \
                 f"sampler.{mode}.{self._sampler_id}.{timestamp}"
             os.makedirs(logpath, exist_ok=True)
+            self.logdir = logpath
             self.logger = SummaryWriter(logpath)
         else:
+            self.logdir = None
             self.logger = None
 
     def _start_db_loop(self):
         self._db_loop_thread = threading.Thread(
-            target=_db2sampler_loop,
-            kwargs={
+            target=_db2sampler_loop, kwargs={
                 "sampler": self,
             }
         )
         self._db_loop_thread.start()
 
     def load_checkpoint(
-        self,
-        *,
-        filepath: str = None,
-        db_server: DBSpec = None
+        self, *, filepath: str = None, db_server: DBSpec = None
     ):
         if filepath is not None:
             checkpoint = utils.load_checkpoint(filepath)
-            weights = checkpoint[f"{self._weights_sync_mode}_state_dict"]
-            self.agent.load_state_dict(weights)
         elif db_server is not None:
-            weights = db_server.load_weights(prefix=self._weights_sync_mode)
-            while weights is None:
-                time.sleep(1.0)
-                weights = db_server.load_weights(
-                    prefix=self._weights_sync_mode)
-            weights = {
-                k: utils.any2device(v, device=self._device)
-                for k, v in weights.items()}
-            self.agent.load_state_dict(weights)
+            checkpoint = db_server.load_checkpoint()
+            while checkpoint is None:
+                time.sleep(3.0)
+                checkpoint = db_server.load_checkpoint()
         else:
             raise NotImplementedError
 
+        self.checkpoint = checkpoint
+        weights = self.checkpoint[f"{self._weights_sync_mode}_state_dict"]
+        weights = {
+            k: utils.any2device(v, device=self._device)
+            for k, v in weights.items()
+        }
+        self.agent.load_state_dict(weights)
         self.agent.to(self._device)
         self.agent.eval()
 
-    def _store_trajectory(self, trajectory):
+    def _store_trajectory(self, trajectory, raw=False):
         if self.db_server is None:
             return
-        self.db_server.push_trajectory(trajectory)
+        self.db_server.push_trajectory(trajectory, raw=raw)
 
     def _get_seed(self):
-        seed = self._seeder()[0]
         if self.seeds is not None:
-            seed = self.seeds[seed]
+            seed = self.seeds[self.trajectory_index % len(self.seeds)]
+        else:
+            seed = self._seeder()[0]
         set_global_seed(seed)
         return seed
 
     def _log_to_console(
-        self,
-        *,
-        reward,
-        num_steps,
-        elapsed_time,
-        seed
+        self, *, reward, raw_reward, num_steps, elapsed_time, seed
     ):
         metrics = [
             f"trajectory {int(self.trajectory_index):05d}",
             f"steps: {int(num_steps):05d}",
             f"reward: {reward:9.3f}",
+            f"raw_reward: {raw_reward:9.3f}",
             f"time: {elapsed_time:9.3f}",
             f"seed: {seed:010d}",
         ]
@@ -155,12 +158,7 @@ class Sampler:
         print(f"--- {metrics}")
 
     def _log_to_tensorboard(
-        self,
-        *,
-        reward,
-        num_steps,
-        elapsed_time,
-        **kwargs
+        self, *, reward, raw_reward, num_steps, elapsed_time, **kwargs
     ):
         if self.logger is not None:
             self.logger.add_scalar(
@@ -168,6 +166,9 @@ class Sampler:
             )
             self.logger.add_scalar(
                 "trajectory/reward", reward, self.trajectory_index
+            )
+            self.logger.add_scalar(
+                "trajectory/raw_reward", raw_reward, self.trajectory_index
             )
             self.logger.add_scalar(
                 "time/trajectories_per_minute", 60. / elapsed_time,
@@ -178,9 +179,7 @@ class Sampler:
                 self.trajectory_index
             )
             self.logger.add_scalar(
-                "time/trajectory_time_sec",
-                elapsed_time,
-                self.trajectory_index
+                "time/trajectory_time_sec", elapsed_time, self.trajectory_index
             )
             self.logger.add_scalar(
                 "time/step_time_sec", elapsed_time / num_steps,
@@ -198,7 +197,8 @@ class Sampler:
 
         start_time = time.time()
         trajectory, trajectory_info = self.trajectory_sampler.sample(
-            exploration_strategy=exploration_strategy)
+            exploration_strategy=exploration_strategy
+        )
         elapsed_time = time.time() - start_time
 
         trajectory_info = trajectory_info or {}
@@ -216,9 +216,12 @@ class Sampler:
             trajectory, trajectory_info = self._run_trajectory_loop()
             if trajectory is None:
                 continue
-
-            if not self._infer or self._force_store:
+            raw_trajectory = trajectory_info.pop("raw_trajectory", None)
+            # Do it firsthand, so the loggers don't crush
+            if not self._deterministic or self._force_store:
                 self._store_trajectory(trajectory)
+                if raw_trajectory is not None:
+                    self._store_trajectory(raw_trajectory, raw=True)
             self._log_to_console(**trajectory_info)
             self._log_to_tensorboard(**trajectory_info)
             self.trajectory_index += 1
@@ -237,10 +240,111 @@ class Sampler:
         self._start_sample_loop()
 
 
+class ValidSampler(Sampler):
+    def _init(self, save_n_best: int = 3, **kwargs):
+        assert len(kwargs) == 0
+        self.save_n_best = save_n_best
+        self.best_agents = []
+        self._sample_flag.value = True
+
+    def load_checkpoint(
+        self, *, filepath: str = None, db_server: DBSpec = None
+    ):
+        if filepath is not None:
+            checkpoint = utils.load_checkpoint(filepath)
+        elif db_server is not None:
+            current_epoch = db_server.epoch
+            checkpoint = db_server.load_checkpoint()
+            while checkpoint is None or db_server.epoch <= current_epoch:
+                time.sleep(3.0)
+                checkpoint = db_server.load_checkpoint()
+        else:
+            raise NotImplementedError
+
+        self.checkpoint = checkpoint
+        weights = self.checkpoint[f"{self._weights_sync_mode}_state_dict"]
+        weights = {
+            k: utils.any2device(v, device=self._device)
+            for k, v in weights.items()
+        }
+        self.agent.load_state_dict(weights)
+        self.agent.to(self._device)
+        self.agent.eval()
+
+    @staticmethod
+    def rewards2metric(rewards):
+        return np.mean(rewards)  # - np.std(rewards)
+
+    def save_checkpoint(
+        self,
+        logdir: str,
+        checkpoint: Dict,
+        save_n_best: int = 5,
+        minimize_metric: bool = False
+    ):
+        agent_rewards = checkpoint["rewards"]
+        agent_metric = self.rewards2metric(agent_rewards)
+
+        is_best = len(self.best_agents) == 0 or \
+            agent_metric > self.rewards2metric(self.best_agents[0][1])
+        suffix = f"{checkpoint['epoch']}"
+        filepath = utils.save_checkpoint(
+            logdir=f"{logdir}/checkpoints/",
+            checkpoint=checkpoint,
+            suffix=suffix,
+            is_best=is_best,
+            is_last=True
+        )
+
+        self.best_agents.append((filepath, agent_rewards))
+        self.best_agents = sorted(
+            self.best_agents, key=lambda x: x[1], reverse=not minimize_metric
+        )
+        if len(self.best_agents) > save_n_best:
+            last_item = self.best_agents.pop(-1)
+            last_filepath = last_item[0]
+            os.remove(last_filepath)
+
+    def _run_sample_loop(self):
+        assert self.seeds is not None
+
+        while True:
+            self.load_checkpoint(db_server=self.db_server)
+            trajectories_rewards = []
+
+            for i in range(len(self.seeds)):
+                trajectory, trajectory_info = self._run_trajectory_loop()
+                trajectories_rewards.append(trajectory_info["reward"])
+                trajectory_info.pop("raw_trajectory", None)
+                self._log_to_console(**trajectory_info)
+                self._log_to_tensorboard(**trajectory_info)
+                self.trajectory_index += 1
+
+                if self.trajectory_index % self._gc_period == 0:
+                    gc.collect()
+
+            if self.logger is not None:
+                self.logger.add_scalar(
+                    "trajectory/_mean_valid_reward",
+                    np.mean(trajectories_rewards), self.trajectory_index
+                )
+
+            self.checkpoint["rewards"] = trajectories_rewards
+            self.checkpoint["epoch"] = self.db_server.epoch
+            self.save_checkpoint(
+                logdir=self.logdir,
+                checkpoint=self.checkpoint,
+                save_n_best=self.save_n_best
+            )
+
+    def run(self):
+        self._start_sample_loop()
+
+
 def _db2sampler_loop(sampler: Sampler):
     while True:
         sampler._sample_flag.value = sampler.db_server.get_sample_flag()
         time.sleep(5.0)
 
 
-__all__ = ["Sampler"]
+__all__ = ["Sampler", "ValidSampler"]

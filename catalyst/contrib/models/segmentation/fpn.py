@@ -9,7 +9,6 @@ from .core import UnetSpec, ResnetUnetSpec
 
 
 class FPNUnet(UnetSpec):
-
     def _get_components(
         self,
         encoder: UnetEncoder,
@@ -43,7 +42,6 @@ class FPNUnet(UnetSpec):
 
 
 class ResnetFPNUnet(ResnetUnetSpec):
-
     def _get_components(
         self,
         encoder: ResnetEncoder,

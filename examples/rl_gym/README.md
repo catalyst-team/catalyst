@@ -24,11 +24,11 @@
     # DDPG       – off-policy algorithm on continuous action space environment LunarLander environment
     export CONFIG=./rl_gym/config_ddpg.yml
  
-    # TD3        – off-policy algorithm on continuous action space environment LunarLander environment
-    export CONFIG=./rl_gym/config_td3.yml
- 
     # SAC        – off-policy algorithm on continuous action space environment LunarLander environment
     export CONFIG=./rl_gym/config_sac.yml
+ 
+    # TD3        – off-policy algorithm on continuous action space environment LunarLander environment
+    export CONFIG=./rl_gym/config_td3.yml
 
 
     # REINFORCE  – on-policy algorithm on discrete action space LunarLander environment

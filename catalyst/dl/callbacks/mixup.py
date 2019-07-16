@@ -23,7 +23,7 @@ class MixupCallback(CriterionCallback):
 
     def __init__(
         self,
-        fields: List[str] = ("features",),
+        fields: List[str] = ("features", ),
         alpha=1.0,
         on_train_only=True,
         **kwargs
