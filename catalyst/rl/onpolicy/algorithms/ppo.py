@@ -158,6 +158,8 @@ class PPO(OnpolicyActorCritic):
 
     @torch.no_grad()
     def get_rollout(self, states, actions, rewards, dones):
+        assert len(states) == len(actions) == len(rewards) == len(dones)
+
         trajectory_len = \
             rewards.shape[0] if dones[-1] else rewards.shape[0] - 1
         states_len = states.shape[0]
@@ -198,12 +200,16 @@ class PPO(OnpolicyActorCritic):
         )
 
         # final rollout
+        dones = dones[:trajectory_len]
+        values = values[:trajectory_len]
+        assert len(logprobs) == len(advantages) \
+            == len(dones) == len(returns) == len(values)
         rollout = {
             "action_logprob": logprobs,
             "advantage": advantages,
             "done": dones,
             "return": returns,
-            "value": values[:trajectory_len],
+            "value": values,
         }
 
         return rollout
@@ -252,11 +258,11 @@ class PPO(OnpolicyActorCritic):
         policy_loss_clipped = advantages_t * torch.clamp(
             ratio, 1.0 - self.clip_eps, 1.0 + self.clip_eps
         )
-        policy_loss = -torch.min(policy_loss_unclipped,
-                                 policy_loss_clipped).mean()
+        policy_loss = -torch.min(
+            policy_loss_unclipped, policy_loss_clipped).mean()
 
-        entropy = -(torch.exp(action_logprobs_tp0) *
-                    action_logprobs_tp0).mean()
+        entropy = -(
+            torch.exp(action_logprobs_tp0) * action_logprobs_tp0).mean()
         entropy_loss = self.entropy_reg_coefficient * entropy
         policy_loss = policy_loss + entropy_loss
 

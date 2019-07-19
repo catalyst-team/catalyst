@@ -23,6 +23,8 @@ class REINFORCE(OnpolicyActor):
 
     @torch.no_grad()
     def get_rollout(self, states, actions, rewards, dones):
+        assert len(states) == len(actions) == len(rewards) == len(dones)
+
         trajectory_len = \
             rewards.shape[0] if dones[-1] else rewards.shape[0] - 1
 
@@ -35,6 +37,7 @@ class REINFORCE(OnpolicyActor):
 
         returns = utils.geometric_cumsum(self.gamma, rewards[:, None])[:, 0]
 
+        assert len(returns) == len(logprobs)
         rollout = {"return": returns, "action_logprob": logprobs}
         return rollout
 

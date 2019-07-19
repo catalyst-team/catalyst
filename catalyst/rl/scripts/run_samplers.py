@@ -84,7 +84,11 @@ def run_sampler(
         **config.get("db", {}), sync_epoch=sync_epoch
     ) if db else None
 
-    env = environment_fn(**config_["environment"], visualize=visualize)
+    env = environment_fn(
+        **config_["environment"],
+        visualize=visualize,
+        mode=mode
+    )
     agent = algorithm_fn.prepare_for_sampler(env_spec=env, config=config_)
 
     exploration_params = config_["sampler"].pop("exploration_params", None)

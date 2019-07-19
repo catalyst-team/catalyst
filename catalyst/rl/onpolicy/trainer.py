@@ -64,18 +64,19 @@ class Trainer(TrainerSpec):
             len(states) + self.rollout_batch_size - 1, self.rollout_batch_size
         )
         rollout = None
-        for i in range(len(indices) - 1):
-            states_batch = states[indices[i]:indices[i + 1] + 1]
-            actions_batch = actions[indices[i]:indices[i + 1] + 1]
-            rewards_batch = rewards[indices[i]:indices[i + 1] + 1]
-            dones_batch = dones[indices[i]:indices[i + 1] + 1]
+        for i_from, i_to in utils.pairwise(indices):
+            states_batch = states[i_from:i_to + 1]
+            actions_batch = actions[i_from:i_to + 1]
+            rewards_batch = rewards[i_from:i_to + 1]
+            dones_batch = dones[i_from:i_to + 1]
+
             rollout_batch = self.algorithm.get_rollout(
                 states_batch, actions_batch, rewards_batch, dones_batch
             )
-            if rollout is not None:
-                rollout = utils.append_dict(rollout, rollout_batch)
-            else:
-                rollout = rollout_batch
+            rollout = rollout_batch \
+                if rollout is None \
+                else utils.append_dict(rollout, rollout_batch)
+
         return rollout
 
     def _fetch_trajectories(self):

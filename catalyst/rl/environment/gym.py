@@ -15,14 +15,17 @@ class GymWrapper(EnvironmentSpec):
         # env_wrappers=None,
         history_len=1,
         frame_skip=1,
-        visualize=False,
         reward_scale=1,
         step_delay=0.0,
         observation_mean=None,
         observation_std=None,
         action_mean=None,
-        action_std=None
+        action_std=None,
+        visualize=False,
+        mode="train",
     ):
+        super().__init__(visualize=visualize, mode=mode)
+
         self.env = gym.make(env_name)
         # @TODO: add logic with registry and env_wrappers
 
