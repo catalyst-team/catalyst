@@ -22,6 +22,8 @@ def _db2buffer_loop(db_server: DBSpec, buffer: utils.OffpolicyReplayBuffer):
             else:
                 time.sleep(1.0)
         else:
+            if not db_server.training_enabled:
+                return
             time.sleep(1.0)
 
 
@@ -157,6 +159,7 @@ class Trainer(TrainerSpec):
 
     def _start_train_loop(self):
         self._start_db_loop()
-        self.db_server.set_sample_flag(sample=True)
+        self.db_server.push_message(self.db_server.Message.ENABLE_TRAINING)
+        self.db_server.push_message(self.db_server.Message.ENABLE_SAMPLING)
         self._fetch_initial_buffer()
         self._run_train_loop()

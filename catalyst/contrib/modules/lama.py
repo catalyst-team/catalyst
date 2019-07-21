@@ -21,7 +21,8 @@ class TemporalAttentionPooling(nn.Module):
                 out_channels=1,
                 kernel_size=1,
                 bias=True
-            ), TemporalAttentionPooling.name2fn[pooling]
+            ),
+            TemporalAttentionPooling.name2fn[pooling]
         )
         self.attention_pooling.apply(outer_init)
 
@@ -53,10 +54,10 @@ class LamaPooling(nn.Module):
         self.poolings = poolings or ["last", "avg", "max", "softmax"]
         self.features_out = features_in * len(self.poolings)
 
-        self.poolings = nn.ModuleDict(
-            {k: self._get_pooling(k, self.features_in)
-             for k in self.poolings}
-        )
+        self.poolings = nn.ModuleDict({
+            k: self._get_pooling(k, self.features_in)
+            for k in self.poolings
+        })
 
     @staticmethod
     def _get_pooling(key, features_in):

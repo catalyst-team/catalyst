@@ -24,8 +24,6 @@ from catalyst.utils.config import parse_args_uargs  # noqa E402
 from catalyst.utils import set_global_seed, boolean_flag  # noqa E402
 from catalyst.utils.scripts import import_module  # noqa E402
 
-STEP_DELAY = 1
-
 
 def build_args(parser):
     parser.add_argument(
@@ -50,6 +48,9 @@ def build_args(parser):
 
     boolean_flag(parser, "check", default=False)
     boolean_flag(parser, "db", default=True)
+
+    parser.add_argument("--run-delay", type=int, default=1)
+    boolean_flag(parser, "daemon", default=True)
 
     return parser
 
@@ -78,13 +79,18 @@ def run_sampler(
 ):
     config_ = copy.deepcopy(config)
     id = 0 if id is None else id
-    set_global_seed(seed + id)
+    seed = seed + id
+    set_global_seed(seed)
 
     db_server = DATABASES.get_from_params(
         **config.get("db", {}), sync_epoch=sync_epoch
     ) if db else None
 
-    env = environment_fn(**config_["environment"], visualize=visualize)
+    env = environment_fn(
+        **config_["environment"],
+        visualize=visualize,
+        mode=mode
+    )
     agent = algorithm_fn.prepare_for_sampler(env_spec=env, config=config_)
 
     exploration_params = config_["sampler"].pop("exploration_params", None)
@@ -194,11 +200,15 @@ def main(args, unknown_args):
         params_ = dict(
             visualize=True, mode="infer", id=sampler_id, exploration_power=0.0
         )
-        p = mp.Process(target=run_sampler, kwargs=dict(**params, **params_))
+        p = mp.Process(
+            target=run_sampler,
+            kwargs=dict(**params, **params_),
+            daemon=args.daemon,
+        )
         p.start()
         processes.append(p)
         sampler_id += 1
-        time.sleep(STEP_DELAY)
+        time.sleep(args.run_delay)
 
     for i in range(args.infer):
         params_ = dict(
@@ -207,11 +217,15 @@ def main(args, unknown_args):
             id=sampler_id,
             exploration_power=0.0
         )
-        p = mp.Process(target=run_sampler, kwargs=dict(**params, **params_))
+        p = mp.Process(
+            target=run_sampler,
+            kwargs=dict(**params, **params_),
+            daemon=args.daemon,
+        )
         p.start()
         processes.append(p)
         sampler_id += 1
-        time.sleep(STEP_DELAY)
+        time.sleep(args.run_delay)
 
     for i in range(args.valid):
         params_ = dict(
@@ -220,11 +234,15 @@ def main(args, unknown_args):
             id=sampler_id,
             exploration_power=0.0
         )
-        p = mp.Process(target=run_sampler, kwargs=dict(**params, **params_))
+        p = mp.Process(
+            target=run_sampler,
+            kwargs=dict(**params, **params_),
+            daemon=args.daemon,
+        )
         p.start()
         processes.append(p)
         sampler_id += 1
-        time.sleep(STEP_DELAY)
+        time.sleep(args.run_delay)
 
     for i in range(1, args.train + 1):
         exploration_power = i / args.train
@@ -234,11 +252,15 @@ def main(args, unknown_args):
             id=sampler_id,
             exploration_power=exploration_power
         )
-        p = mp.Process(target=run_sampler, kwargs=dict(**params, **params_))
+        p = mp.Process(
+            target=run_sampler,
+            kwargs=dict(**params, **params_),
+            daemon=args.daemon,
+        )
         p.start()
         processes.append(p)
         sampler_id += 1
-        time.sleep(STEP_DELAY)
+        time.sleep(args.run_delay)
 
     for p in processes:
         p.join()

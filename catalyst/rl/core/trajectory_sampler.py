@@ -20,7 +20,7 @@ class TrajectorySampler:
         device,
         deterministic: bool = False,
         initial_capacity: int = int(1e3),
-        sample_flag: mp.Value = None
+        sampling_flag: mp.Value = None
     ):
         self.env = env
         self.agent = agent
@@ -31,7 +31,7 @@ class TrajectorySampler:
             env=self.env, agent=self.agent, device=device
         )
 
-        self._sample_flag = sample_flag or mp.Value(c_bool, True)
+        self._sampling_flag = sampling_flag or mp.Value(c_bool, True)
         self._init_buffers()
 
     def _init_buffers(self):
@@ -134,13 +134,14 @@ class TrajectorySampler:
                 states = utils.any2device(states, device=self._device)
                 exploration_strategy.update_actor(self.agent, states)
 
+        observation = self.env.reset()
         self._init_buffers()
-        self._init_with_observation(self.env.reset())
+        self._init_with_observation(observation)
 
     def sample(self, exploration_strategy=None):
         reward, num_steps, done_t = 0, 0, False
 
-        while not done_t and self._sample_flag.value:
+        while not done_t and self._sampling_flag.value:
             state_t = self.get_state()
             action_t = self._policy_handler.action_fn(
                 agent=self.agent,
@@ -149,7 +150,6 @@ class TrajectorySampler:
                 exploration_strategy=exploration_strategy,
                 deterministic=self._deterministic
             )
-
             observation_tp1, reward_t, done_t, info = self.env.step(action_t)
             reward += reward_t
 
@@ -157,7 +157,7 @@ class TrajectorySampler:
             self._put_transition(transition)
             num_steps += 1
 
-        if not self._sample_flag.value:
+        if not self._sampling_flag.value:
             return None, None
 
         trajectory = self.get_trajectory()

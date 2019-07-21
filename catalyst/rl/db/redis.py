@@ -15,6 +15,20 @@ class RedisDB(DBSpec):
         self._sync_epoch = sync_epoch
 
     @property
+    def training_enabled(self) -> bool:
+        flag = self._server.get("training_flag")
+        flag = flag if flag is not None else 1  # enabled by default
+        flag = int(flag) == int(1)
+        return flag
+
+    @property
+    def sampling_enabled(self) -> bool:
+        flag = self._server.get("sampling_flag")
+        flag = flag if flag is not None else -1  # disabled by default
+        flag = int(flag) == int(1)
+        return flag
+
+    @property
     def epoch(self) -> int:
         return self._epoch
 
@@ -23,12 +37,18 @@ class RedisDB(DBSpec):
         num_trajectories = self._server.llen("trajectories") - 1
         return num_trajectories
 
-    def set_sample_flag(self, sample: bool):
-        self._server.set("sample_flag", int(sample))
-
-    def get_sample_flag(self) -> bool:
-        flag = int(self._server.get("sample_flag") or -1) == int(1)
-        return flag
+    def push_message(self, message: DBSpec.Message):
+        if message == DBSpec.Message.ENABLE_SAMPLING:
+            self._server.set("sampling_flag", 1)
+        elif message == DBSpec.Message.DISABLE_SAMPLING:
+            self._server.set("sampling_flag", 0)
+        elif message == DBSpec.Message.DISABLE_TRAINING:
+            self._server.set("sampling_flag", 0)
+            self._server.set("training_flag", 0)
+        elif message == DBSpec.Message.ENABLE_TRAINING:
+            self._server.set("training_flag", 1)
+        else:
+            raise NotImplementedError("unknown message", message)
 
     def push_trajectory(self, trajectory, raw=False):
         trajectory = utils.structed2dict_trajectory(trajectory)

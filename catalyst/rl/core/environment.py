@@ -3,6 +3,11 @@ from gym.spaces import Space, Discrete
 
 
 class EnvironmentSpec(ABC):
+
+    def __init__(self, visualize=False, mode="train"):
+        self._visualize = visualize
+        self._mode = mode
+
     @property
     def discrete_actions(self) -> int:
         return isinstance(self.action_space, Discrete)

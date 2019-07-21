@@ -64,18 +64,19 @@ class Trainer(TrainerSpec):
             len(states) + self.rollout_batch_size - 1, self.rollout_batch_size
         )
         rollout = None
-        for i in range(len(indices) - 1):
-            states_batch = states[indices[i]:indices[i + 1] + 1]
-            actions_batch = actions[indices[i]:indices[i + 1] + 1]
-            rewards_batch = rewards[indices[i]:indices[i + 1] + 1]
-            dones_batch = dones[indices[i]:indices[i + 1] + 1]
+        for i_from, i_to in utils.pairwise(indices):
+            states_batch = states[i_from:i_to + 1]
+            actions_batch = actions[i_from:i_to + 1]
+            rewards_batch = rewards[i_from:i_to + 1]
+            dones_batch = dones[i_from:i_to + 1]
+
             rollout_batch = self.algorithm.get_rollout(
                 states_batch, actions_batch, rewards_batch, dones_batch
             )
-            if rollout is not None:
-                rollout = utils.append_dict(rollout, rollout_batch)
-            else:
-                rollout = rollout_batch
+            rollout = rollout_batch \
+                if rollout is None \
+                else utils.append_dict(rollout, rollout_batch)
+
         return rollout
 
     def _fetch_trajectories(self):
@@ -95,7 +96,7 @@ class Trainer(TrainerSpec):
         )
 
         # start samplers
-        self.db_server.set_sample_flag(sample=True)
+        self.db_server.push_message(self.db_server.Message.ENABLE_SAMPLING)
 
         start_time = time.time()
 
@@ -144,7 +145,7 @@ class Trainer(TrainerSpec):
             )
 
         # stop samplers
-        self.db_server.set_sample_flag(sample=False)
+        self.db_server.push_message(self.db_server.Message.DISABLE_SAMPLING)
 
         self._num_trajectories += num_trajectories
         self._num_transitions += num_transitions
@@ -184,8 +185,16 @@ class Trainer(TrainerSpec):
         return metrics
 
     def _run_train_loop(self):
-        while True:
-            # get trajectories
-            self._fetch_trajectories()
-            # train & update
-            self._run_epoch_loop()
+        self.db_server.push_message(self.db_server.Message.ENABLE_TRAINING)
+        epoch_limit = self._epoch_limit or np.iinfo(np.int32).max
+        while self.epoch < epoch_limit:
+            try:
+                # get trajectories
+                self._fetch_trajectories()
+                # train & update
+                self._run_epoch_loop()
+            except Exception as ex:
+                self.db_server.push_message(
+                    self.db_server.Message.DISABLE_TRAINING)
+                raise ex
+        self.db_server.push_message(self.db_server.Message.DISABLE_TRAINING)
