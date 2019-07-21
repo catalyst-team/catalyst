@@ -24,6 +24,30 @@ class MongoDB(DBSpec):
         self._sync_epoch = sync_epoch
 
     @property
+    def training_enabled(self) -> bool:
+        flag_obj = self._flag_collection.find_one(
+            {"prefix": {
+                "$eq": "training_flag"
+            }}
+        )
+        flag = flag_obj.get("training_flag")
+        flag = flag if flag is not None else 1  # enabled by default
+        flag = int(flag) == int(1)
+        return flag
+
+    @property
+    def sampling_enabled(self) -> bool:
+        flag_obj = self._flag_collection.find_one(
+            {"prefix": {
+                "$eq": "sampling_flag"
+            }}
+        )
+        flag = flag_obj.get("sampling_flag")
+        flag = flag if flag is not None else -1  # disabled by default
+        flag = int(flag) == int(1)
+        return flag
+
+    @property
     def epoch(self) -> int:
         return self._epoch
 
@@ -32,23 +56,41 @@ class MongoDB(DBSpec):
         num_trajectories = self._trajectory_collection.count() - 1
         return num_trajectories
 
-    def set_sample_flag(self, sample: bool):
-        self._flag_collection.replace_one(
-            {"prefix": "sample_flag"}, {
-                "sample_flag": sample,
-                "prefix": "sample_flag"
-            },
-            upsert=True
-        )
-
-    def get_sample_flag(self) -> bool:
-        flag_obj = self._flag_collection.find_one(
-            {"prefix": {
-                "$eq": "sample_flag"
-            }}
-        )
-        flag = int(flag_obj.get("sample_flag") or -1) == int(1)
-        return flag
+    def push_message(self, message: DBSpec.Message):
+        if message in [
+            DBSpec.Message.ENABLE_SAMPLING,
+            DBSpec.Message.DISABLE_SAMPLING
+        ]:
+            flag = message == DBSpec.Message.ENABLE_SAMPLING
+            self._flag_collection.replace_one(
+                {"prefix": "sampling_flag"}, {
+                    "sampling_flag": flag,
+                    "prefix": "sampling_flag"
+                },
+                upsert=True
+            )
+        elif message in [
+            DBSpec.Message.ENABLE_TRAINING,
+            DBSpec.Message.DISABLE_TRAINING
+        ]:
+            flag = message == DBSpec.Message.ENABLE_TRAINING
+            if not flag:
+                self._flag_collection.replace_one(
+                    {"prefix": "sampling_flag"}, {
+                        "sampling_flag": 0,
+                        "prefix": "sampling_flag"
+                    },
+                    upsert=True
+                )
+            self._flag_collection.replace_one(
+                {"prefix": "training_flag"}, {
+                    "training_flag": flag,
+                    "prefix": "training_flag"
+                },
+                upsert=True
+            )
+        else:
+            raise NotImplementedError("unknown message", message)
 
     def push_trajectory(self, trajectory, raw=False):
         trajectory = utils.structed2dict_trajectory(trajectory)

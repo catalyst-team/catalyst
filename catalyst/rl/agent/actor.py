@@ -22,14 +22,14 @@ class Actor(ActorSpec):
         self.state_net = state_net
         self.head_net = head_net
 
+    @property
+    def policy_type(self) -> str:
+        return self.head_net.policy_type
+
     def forward(self, state: torch.Tensor, logprob=False, deterministic=False):
         x = self.state_net(state)
         x = self.head_net(x, logprob, deterministic)
         return x
-
-    @property
-    def policy_type(self) -> str:
-        return self.head_net.policy_type
 
     @classmethod
     def get_from_params(

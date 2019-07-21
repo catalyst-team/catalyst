@@ -4,6 +4,7 @@ import os
 import gc
 import time
 from datetime import datetime
+import numpy as np
 
 from torch.utils.data import DataLoader
 from tensorboardX import SummaryWriter
@@ -30,6 +31,7 @@ class TrainerSpec:
         save_period: int = 10,
         gc_period: int = 10,
         seed: int = 42,
+        epoch_limit: int = None,
         **kwargs,
     ):
         # algorithm & environment
@@ -66,6 +68,7 @@ class TrainerSpec:
         self.replay_buffer = None
         self.replay_sampler = None
         self.loader = None
+        self._epoch_limit = epoch_limit
 
         #  special
         self._init(**kwargs)
@@ -90,7 +93,11 @@ class TrainerSpec:
         self, fps: float, updates_per_sample: float, num_trajectories: int,
         num_transitions: int, buffer_size: int, **kwargs
     ):
+        prefix = f"--- Epoch {self.epoch:09d}/{self._epoch_limit:09d}" \
+            if self._epoch_limit is not None \
+            else f"--- Epoch {self.epoch:09d}"
         metrics = [
+            prefix,
             f"fps: {fps:7.1f}",
             f"updates per sample: {updates_per_sample:7.1f}",
             f"trajectories: {num_trajectories:09d}",
@@ -98,7 +105,7 @@ class TrainerSpec:
             f"buffer size: {buffer_size:09d}",
         ]
         metrics = " | ".join(metrics)
-        print(f"--- {metrics}")
+        print(metrics)
 
     def _log_to_tensorboard(
         self, fps: float, updates_per_sample: float, num_trajectories: int,
@@ -186,8 +193,16 @@ class TrainerSpec:
             gc.collect()
 
     def _run_train_loop(self):
-        while True:
-            self._run_epoch_loop()
+        self.db_server.push_message(self.db_server.Message.ENABLE_TRAINING)
+        epoch_limit = self._epoch_limit or np.iinfo(np.int32).max
+        while self.epoch < epoch_limit:
+            try:
+                self._run_epoch_loop()
+            except Exception as ex:
+                self.db_server.push_message(
+                    self.db_server.Message.DISABLE_TRAINING)
+                raise ex
+        self.db_server.push_message(self.db_server.Message.DISABLE_TRAINING)
 
     def _start_train_loop(self):
         self._run_train_loop()
