@@ -45,7 +45,7 @@ def _get_states_from_observations(observations: np.ndarray, history_len=1):
 class Trainer(TrainerSpec):
     def _init(
         self,
-        num_mini_epochs: int = 10,
+        num_mini_epochs: int = 1,
         min_num_trajectories: int = 100,
         rollout_batch_size: int = None
     ):

@@ -5,7 +5,8 @@ import torch.nn as nn
 
 from catalyst.utils import outer_init
 from catalyst.contrib.models import SequentialNet
-from .policy import CategoricalPolicy, GaussPolicy, RealNVPPolicy
+from .policy import CategoricalPolicy, BernoulliPolicy, DiagonalGaussPolicy, \
+    SquashingGaussPolicy, RealNVPPolicy
 
 
 class ValueHead(nn.Module):
@@ -54,10 +55,10 @@ class ValueHead(nn.Module):
             bias=bias
         )
 
-    def forward(self, inputs):
+    def forward(self, state: torch.Tensor):
         x: List[torch.Tensor] = []
         for net in self.net:
-            x.append(net(inputs).view(-1, self.out_features, self.num_atoms))
+            x.append(net(state).view(-1, self.out_features, self.num_atoms))
         # batch_size(0) x num_heads(1) x num_outputs(2) x num_atoms(3)
         x = torch.stack(x, dim=1)
         return x
@@ -73,22 +74,34 @@ class PolicyHead(nn.Module):
     ):
         super().__init__()
         assert policy_type in [
-            "categorical", "gauss", "real_nvp", "logits", None
+            "categorical", "bernoulli", "diagonal-gauss",
+            "squashing-gauss", "real_nvp",
+            "logits", None
         ]
 
         # @TODO: refactor
         layer_fn = nn.Linear
         activation_fn = nn.ReLU
-        squashing_fn = nn.Tanh
+        squashing_fn = out_activation
         bias = True
 
         if policy_type == "categorical":
+            assert out_activation is None
             head_size = out_features
             policy_net = CategoricalPolicy()
-        elif policy_type == "gauss":
+        elif policy_type == "bernoulli":
+            assert out_activation is None
+            head_size = out_features
+            policy_net = BernoulliPolicy()
+        elif policy_type == "diagonal-gauss":
             head_size = out_features * 2
-            policy_net = GaussPolicy(squashing_fn)
+            policy_net = DiagonalGaussPolicy()
+        elif policy_type == "squashing-gauss":
+            out_activation = None
+            head_size = out_features * 2
+            policy_net = SquashingGaussPolicy(squashing_fn)
         elif policy_type == "real_nvp":
+            out_activation = None
             head_size = out_features * 2
             policy_net = RealNVPPolicy(
                 action_size=out_features,
@@ -116,17 +129,13 @@ class PolicyHead(nn.Module):
 
         self.policy_net = policy_net
         self._policy_fn = None
-        if policy_net is None:
-            self._policy_fn = lambda *args: args[0]
-        elif isinstance(
-            policy_net, (CategoricalPolicy, GaussPolicy, RealNVPPolicy)
-        ):
+        if policy_net is not None:
             self._policy_fn = policy_net.forward
         else:
-            raise NotImplementedError
+            self._policy_fn = lambda *args: args[0]
 
-    def forward(self, inputs, logprob=False, deterministic=False):
-        x = self.head_net(inputs)
+    def forward(self, state: torch.Tensor, logprob=None, deterministic=False):
+        x = self.head_net(state)
         x = self._policy_fn(x, logprob, deterministic)
         return x
 

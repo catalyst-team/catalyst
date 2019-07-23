@@ -14,17 +14,23 @@ class RedisDB(DBSpec):
         self._epoch = 0
         self._sync_epoch = sync_epoch
 
+    def _set_flag(self, key, value):
+        self._server.set(f"{self._prefix}_{key}", value)
+
+    def _get_flag(self, key, default=None):
+        flag = self._server.get(f"{self._prefix}_{key}")
+        flag = flag if flag is not None else default
+        return flag
+
     @property
     def training_enabled(self) -> bool:
-        flag = self._server.get("training_flag")
-        flag = flag if flag is not None else 1  # enabled by default
+        flag = self._get_flag("training_flag", 1)  # enabled by default
         flag = int(flag) == int(1)
         return flag
 
     @property
     def sampling_enabled(self) -> bool:
-        flag = self._server.get("sampling_flag")
-        flag = flag if flag is not None else -1  # disabled by default
+        flag = self._get_flag("sampling_flag", -1)  # disabled by default
         flag = int(flag) == int(1)
         return flag
 
@@ -39,14 +45,14 @@ class RedisDB(DBSpec):
 
     def push_message(self, message: DBSpec.Message):
         if message == DBSpec.Message.ENABLE_SAMPLING:
-            self._server.set("sampling_flag", 1)
+            self._set_flag("sampling_flag", 1)
         elif message == DBSpec.Message.DISABLE_SAMPLING:
-            self._server.set("sampling_flag", 0)
+            self._set_flag("sampling_flag", 0)
         elif message == DBSpec.Message.DISABLE_TRAINING:
-            self._server.set("sampling_flag", 0)
-            self._server.set("training_flag", 0)
+            self._set_flag("sampling_flag", 0)
+            self._set_flag("training_flag", 0)
         elif message == DBSpec.Message.ENABLE_TRAINING:
-            self._server.set("training_flag", 1)
+            self._set_flag("training_flag", 1)
         else:
             raise NotImplementedError("unknown message", message)
 

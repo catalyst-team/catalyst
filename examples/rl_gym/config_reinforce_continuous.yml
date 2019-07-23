@@ -1,5 +1,5 @@
 args:
-  logdir: ./logs/rl-gym-ppo  #  change me
+  logdir: ./logs/rl-gym-reinforce-continuous  #  change me
   expdir: null
 
   vis: 0
@@ -10,11 +10,11 @@ args:
 db:
   db: RedisDB
   port: 12000
-  prefix: gym-ppo  # TODO: remove
+  prefix: gym-reinforce-continuous  # TODO: remove
 
 environment:
   environment: GymWrapper
-  env_name: LunarLander-v2
+  env_name: LunarLanderContinuous-v2
 
   history_len: 3
 
@@ -40,65 +40,29 @@ agents:
         bias: false
     policy_head_params:  # hidden representation -> ~policy
       in_features: 128  # out features would be taken from action_shape
-      policy_type: categorical
-
-  critic:
-    agent: StateCritic
-
-    state_net_params:  # state -> hidden representation
-      observation_net_params:
-        hiddens: [128]  # first hidden would be taken from state_shape
-        layer_fn: Linear
-        norm_fn: LayerNorm
-        activation_fn: ReLU
-        bias: false
-      main_net_params:
-        hiddens: [128, 128]
-        layer_fn: Linear
-        norm_fn: LayerNorm
-        activation_fn: ReLU
-        bias: false
-    value_head_params:  # hidden representation -> ~policy
-      num_heads: 1
-      in_features: 128  # out features would be taken from action_shape
-      out_features: 1
-
-#      distribution: categorical
-#      num_atoms: 51
-#      values_range: [-300.0, 300.0]
-
-#      distribution: quantile
-#      num_atoms: 51
+      policy_type: diagonal-gauss
+#      out_activation: Tanh
 
 algorithm:
-  algorithm: PPO
+  algorithm: REINFORCE
 
   n_step: 1
   gamma: 0.99
 
-  gae_lambda: 0.95
-  clip_eps: 0.2
   entropy_reg_coefficient: 0.01
-
-#  critic_loss_params:
-#    criterion: HuberLoss
-#    clip_delta: 1.0
 
   actor_optimizer_params:
     optimizer: Adam
     lr: 0.0003
-  critic_optimizer_params:
-    optimizer: Adam
-    lr: 0.0003
 
   actor_grad_clip_params:
-    func: clip_grad_value_
-    clip_value: 1.0
+    func: clip_grad_norm_
+    max_norm: 0.5
 
 trainer:
   batch_size: 256              # transitions
   num_workers: 1
-  num_mini_epochs: 10
+  num_mini_epochs: 1
   min_num_trajectories: 1000
   min_num_transitions: 10000
 
