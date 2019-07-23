@@ -1,10 +1,10 @@
 .PHONY: check-style check-docs docker docker-dev clean
 
 check-style:
-	bash ./bin/codestyle.sh
+	bash ./bin/_check_codestyle.sh
 
 check-docs:
-	bash ./bin/docs.sh
+	bash ./bin/_check_docs.sh
 
 docker: requirements.txt
 	docker build -t catalyst-base:latest . -f ./docker/Dockerfile

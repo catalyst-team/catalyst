@@ -17,33 +17,34 @@ class MongoDB(DBSpec):
         self._trajectory_collection = self._shared_db["trajectories"]
         self._raw_trajectory_collection = self._shared_db["raw_trajectories"]
         self._checkpoints_collection = self._agent_db["checkpoints"]
-        self._flag_collection = self._agent_db["flag"]
+        self._messages_collection = self._agent_db["messages"]
         self._last_datetime = datetime.datetime.min
 
         self._epoch = 0
         self._sync_epoch = sync_epoch
 
+    def _set_flag(self, key, value):
+        self._messages_collection.replace_one(
+            {"key": key},
+            {"key": key, "value": value},
+            upsert=True
+        )
+
+    def _get_flag(self, key, default=None):
+        flag_obj = self._messages_collection.find_one({"key": {"$eq": key}})
+        flag = flag_obj.get("value")
+        flag = flag if flag is not None else default
+        return flag
+
     @property
     def training_enabled(self) -> bool:
-        flag_obj = self._flag_collection.find_one(
-            {"prefix": {
-                "$eq": "training_flag"
-            }}
-        )
-        flag = flag_obj.get("training_flag")
-        flag = flag if flag is not None else 1  # enabled by default
+        flag = self._get_flag("training_flag", 1)  # enabled by default
         flag = int(flag) == int(1)
         return flag
 
     @property
     def sampling_enabled(self) -> bool:
-        flag_obj = self._flag_collection.find_one(
-            {"prefix": {
-                "$eq": "sampling_flag"
-            }}
-        )
-        flag = flag_obj.get("sampling_flag")
-        flag = flag if flag is not None else -1  # disabled by default
+        flag = self._get_flag("sampling_flag", -1)  # disabled by default
         flag = int(flag) == int(1)
         return flag
 
@@ -57,38 +58,15 @@ class MongoDB(DBSpec):
         return num_trajectories
 
     def push_message(self, message: DBSpec.Message):
-        if message in [
-            DBSpec.Message.ENABLE_SAMPLING,
-            DBSpec.Message.DISABLE_SAMPLING
-        ]:
-            flag = message == DBSpec.Message.ENABLE_SAMPLING
-            self._flag_collection.replace_one(
-                {"prefix": "sampling_flag"}, {
-                    "sampling_flag": flag,
-                    "prefix": "sampling_flag"
-                },
-                upsert=True
-            )
-        elif message in [
-            DBSpec.Message.ENABLE_TRAINING,
-            DBSpec.Message.DISABLE_TRAINING
-        ]:
-            flag = message == DBSpec.Message.ENABLE_TRAINING
-            if not flag:
-                self._flag_collection.replace_one(
-                    {"prefix": "sampling_flag"}, {
-                        "sampling_flag": 0,
-                        "prefix": "sampling_flag"
-                    },
-                    upsert=True
-                )
-            self._flag_collection.replace_one(
-                {"prefix": "training_flag"}, {
-                    "training_flag": flag,
-                    "prefix": "training_flag"
-                },
-                upsert=True
-            )
+        if message == DBSpec.Message.ENABLE_SAMPLING:
+            self._set_flag("sampling_flag", 1)
+        elif message == DBSpec.Message.DISABLE_SAMPLING:
+            self._set_flag("sampling_flag", 0)
+        elif message == DBSpec.Message.DISABLE_TRAINING:
+            self._set_flag("sampling_flag", 0)
+            self._set_flag("training_flag", 0)
+        elif message == DBSpec.Message.ENABLE_TRAINING:
+            self._set_flag("training_flag", 1)
         else:
             raise NotImplementedError("unknown message", message)
 
