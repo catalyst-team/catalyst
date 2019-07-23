@@ -36,30 +36,32 @@ def _set_params_noise(
     sigma = sigma_max
 
     for step in range(max_steps):
-        dist = torch.distributions.normal.Normal(0, sigma)
+        noise_dist = torch.distributions.normal.Normal(0, sigma)
         weights = {
-            key: w.clone() + dist.sample(w.shape)
+            key: w.clone() + noise_dist.sample(w.shape)
             for key, w in orig_weights.items()
         }
         set_network_weights(actor, weights, strict=not exclude_norm)
 
         new_actions = actor(states)
-        dist = (new_actions - orig_actions).pow(2).sum(1).sqrt().mean().item()
+        distance = \
+            (new_actions - orig_actions).pow(2).sum(1).sqrt().mean().item()
 
-        dist_mismatch = dist - noise_delta
+        distance_mismatch = distance - noise_delta
 
-        # the difference between current dist and desired dist is too small
-        if np.abs(dist_mismatch) < tol:
+        # the difference between current distance
+        # and desired distance is too small
+        if np.abs(distance_mismatch) < tol:
             break
         # too big sigma
-        if dist_mismatch > 0:
+        if distance_mismatch > 0:
             sigma_max = sigma
         # too small sigma
         else:
             sigma_min = sigma
         sigma = sigma_min + (sigma_max - sigma_min) / 2
 
-    return dist
+    return distance
 
 
 class ParameterSpaceNoise(ExplorationStrategy):

@@ -56,7 +56,8 @@ class Sampler:
 
         # logging
         self._prepare_logger(logdir, mode)
-        self._sample_flag = mp.Value(c_bool, False)
+        self._sampling_flag = mp.Value(c_bool, False)
+        self._training_flag = mp.Value(c_bool, True)
 
         # environment, model, exploration & action handlers
         self.env = env
@@ -68,7 +69,7 @@ class Sampler:
             agent=self.agent,
             device=self._device,
             deterministic=self._deterministic,
-            sample_flag=self._sample_flag
+            sampling_flag=self._sampling_flag
         )
 
         # synchronization configuration
@@ -206,8 +207,10 @@ class Sampler:
         return trajectory, trajectory_info
 
     def _run_sample_loop(self):
-        while True:
-            while not self._sample_flag.value:
+        while self._training_flag.value:
+            while not self._sampling_flag.value:
+                if not self._training_flag.value:
+                    return
                 time.sleep(5.0)
 
             if self.trajectory_index % self._weights_sync_period == 0:
@@ -229,7 +232,8 @@ class Sampler:
             if self.trajectory_index % self._gc_period == 0:
                 gc.collect()
 
-            if self.trajectory_index >= self._trajectory_limit:
+            if not self._training_flag.value \
+                    or self.trajectory_index >= self._trajectory_limit:
                 return
 
     def _start_sample_loop(self):
@@ -245,21 +249,29 @@ class ValidSampler(Sampler):
         assert len(kwargs) == 0
         self.save_n_best = save_n_best
         self.best_agents = []
-        self._sample_flag.value = True
+        self._sampling_flag.value = True
 
     def load_checkpoint(
         self, *, filepath: str = None, db_server: DBSpec = None
-    ):
+    ) -> bool:
         if filepath is not None:
             checkpoint = utils.load_checkpoint(filepath)
         elif db_server is not None:
             current_epoch = db_server.epoch
             checkpoint = db_server.load_checkpoint()
+            if not db_server.training_enabled \
+                    and db_server.epoch == current_epoch:
+                return False
+
             while checkpoint is None or db_server.epoch <= current_epoch:
                 time.sleep(3.0)
                 checkpoint = db_server.load_checkpoint()
+
+                if not db_server.training_enabled \
+                        and db_server.epoch == current_epoch:
+                    return False
         else:
-            raise NotImplementedError
+            return False
 
         self.checkpoint = checkpoint
         weights = self.checkpoint[f"{self._weights_sync_mode}_state_dict"]
@@ -270,6 +282,8 @@ class ValidSampler(Sampler):
         self.agent.load_state_dict(weights)
         self.agent.to(self._device)
         self.agent.eval()
+
+        return True
 
     @staticmethod
     def rewards2metric(rewards):
@@ -309,7 +323,10 @@ class ValidSampler(Sampler):
         assert self.seeds is not None
 
         while True:
-            self.load_checkpoint(db_server=self.db_server)
+            ok = self.load_checkpoint(db_server=self.db_server)
+            if not ok:
+                return
+
             trajectories_rewards = []
 
             for i in range(len(self.seeds)):
@@ -326,7 +343,8 @@ class ValidSampler(Sampler):
             if self.logger is not None:
                 self.logger.add_scalar(
                     "trajectory/_mean_valid_reward",
-                    np.mean(trajectories_rewards), self.trajectory_index
+                    np.mean(trajectories_rewards),
+                    self.db_server.epoch
                 )
 
             self.checkpoint["rewards"] = trajectories_rewards
@@ -343,7 +361,11 @@ class ValidSampler(Sampler):
 
 def _db2sampler_loop(sampler: Sampler):
     while True:
-        sampler._sample_flag.value = sampler.db_server.get_sample_flag()
+        flag = sampler.db_server.sampling_enabled
+        sampler._sampling_flag.value = flag
+        if not flag and not sampler.db_server.training_enabled:
+            sampler._training_flag.value = False
+            return
         time.sleep(5.0)
 
 

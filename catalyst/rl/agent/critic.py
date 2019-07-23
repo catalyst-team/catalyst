@@ -33,11 +33,6 @@ class StateCritic(CriticSpec):
     def values_range(self) -> tuple:
         return self.head_net.values_range
 
-    def forward(self, state):
-        x = self.state_net(state)
-        x = self.head_net(x)
-        return x
-
     @property
     def num_heads(self) -> int:
         return self.head_net.num_heads
@@ -45,6 +40,11 @@ class StateCritic(CriticSpec):
     @property
     def hyperbolic_constant(self) -> float:
         return self.head_net.hyperbolic_constant
+
+    def forward(self, state):
+        x = self.state_net(state)
+        x = self.head_net(x)
+        return x
 
     @classmethod
     def get_from_params(

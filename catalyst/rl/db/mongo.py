@@ -17,11 +17,36 @@ class MongoDB(DBSpec):
         self._trajectory_collection = self._shared_db["trajectories"]
         self._raw_trajectory_collection = self._shared_db["raw_trajectories"]
         self._checkpoints_collection = self._agent_db["checkpoints"]
-        self._flag_collection = self._agent_db["flag"]
+        self._messages_collection = self._agent_db["messages"]
         self._last_datetime = datetime.datetime.min
 
         self._epoch = 0
         self._sync_epoch = sync_epoch
+
+    def _set_flag(self, key, value):
+        self._messages_collection.replace_one(
+            {"key": key},
+            {"key": key, "value": value},
+            upsert=True
+        )
+
+    def _get_flag(self, key, default=None):
+        flag_obj = self._messages_collection.find_one({"key": {"$eq": key}})
+        flag = flag_obj.get("value")
+        flag = flag if flag is not None else default
+        return flag
+
+    @property
+    def training_enabled(self) -> bool:
+        flag = self._get_flag("training_flag", 1)  # enabled by default
+        flag = int(flag) == int(1)
+        return flag
+
+    @property
+    def sampling_enabled(self) -> bool:
+        flag = self._get_flag("sampling_flag", -1)  # disabled by default
+        flag = int(flag) == int(1)
+        return flag
 
     @property
     def epoch(self) -> int:
@@ -32,23 +57,18 @@ class MongoDB(DBSpec):
         num_trajectories = self._trajectory_collection.count() - 1
         return num_trajectories
 
-    def set_sample_flag(self, sample: bool):
-        self._flag_collection.replace_one(
-            {"prefix": "sample_flag"}, {
-                "sample_flag": sample,
-                "prefix": "sample_flag"
-            },
-            upsert=True
-        )
-
-    def get_sample_flag(self) -> bool:
-        flag_obj = self._flag_collection.find_one(
-            {"prefix": {
-                "$eq": "sample_flag"
-            }}
-        )
-        flag = int(flag_obj.get("sample_flag") or -1) == int(1)
-        return flag
+    def push_message(self, message: DBSpec.Message):
+        if message == DBSpec.Message.ENABLE_SAMPLING:
+            self._set_flag("sampling_flag", 1)
+        elif message == DBSpec.Message.DISABLE_SAMPLING:
+            self._set_flag("sampling_flag", 0)
+        elif message == DBSpec.Message.DISABLE_TRAINING:
+            self._set_flag("sampling_flag", 0)
+            self._set_flag("training_flag", 0)
+        elif message == DBSpec.Message.ENABLE_TRAINING:
+            self._set_flag("training_flag", 1)
+        else:
+            raise NotImplementedError("unknown message", message)
 
     def push_trajectory(self, trajectory, raw=False):
         trajectory = utils.structed2dict_trajectory(trajectory)

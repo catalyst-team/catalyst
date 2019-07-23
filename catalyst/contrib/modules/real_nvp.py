@@ -15,7 +15,7 @@ class SquashingLayer(nn.Module):
 
         self.squashing_fn = MODULES.get_if_str(squashing_fn)()
 
-    def forward(self, action, log_pi):
+    def forward(self, action, action_logprob):
         # compute log det jacobian of squashing transformation
         if isinstance(self.squashing_fn, nn.Tanh):
             log2 = torch.log(torch.tensor(2.0).to(action.device))
@@ -24,13 +24,13 @@ class SquashingLayer(nn.Module):
         elif isinstance(self.squashing_fn, nn.Sigmoid):
             log_det_jacobian = -action - 2 * log1p_exp(-action)
             log_det_jacobian = torch.sum(log_det_jacobian, dim=-1)
-        elif isinstance(self.squashing_fn, None):
-            return action, log_pi
+        elif self.squashing_fn is None:
+            return action, action_logprob
         else:
             raise NotImplementedError
         action = self.squashing_fn.forward(action)
-        log_pi = log_pi - log_det_jacobian
-        return action, log_pi
+        action_logprob = action_logprob - log_det_jacobian
+        return action, action_logprob
 
 
 class CouplingLayer(nn.Module):
@@ -101,7 +101,7 @@ class CouplingLayer(nn.Module):
         self.translation_prenet.apply(inner_init)
         self.translation_net.apply(outer_init)
 
-    def forward(self, action, state_embedding, log_pi):
+    def forward(self, action, state_embedding, action_logprob):
         if self.parity == "odd":
             action_copy = action[:, :self.copy_size]
             action_transform = action[:, self.copy_size:]
@@ -125,9 +125,9 @@ class CouplingLayer(nn.Module):
             action = torch.cat((out_transform, action_copy), dim=1)
 
         log_det_jacobian = s.sum(dim=1)
-        log_pi = log_pi - log_det_jacobian
+        action_logprob = action_logprob - log_det_jacobian
 
-        return action, log_pi
+        return action, action_logprob
 
 
 __all__ = ["SquashingLayer", "CouplingLayer"]

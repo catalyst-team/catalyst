@@ -124,18 +124,18 @@ jobs:
         - kill %1
 
     - stage: Examples
-      name: "Examples on-policy RL – REINFORCE discrete"
+      name: "Examples on-policy RL – REINFORCE"
       before_install: *before_install
       install: *requirements
       script:
-        - bash ./bin/check_reinforce_discrete.sh
+        - bash ./bin/check_reinforce.sh
 
     - stage: Examples
-      name: "Examples on-policy RL – PPO discrete"
+      name: "Examples on-policy RL – PPO"
       before_install: *before_install
       install: *requirements
       script:
-        - bash ./bin/check_ppo_discrete.sh
+        - bash ./bin/check_ppo.sh
 
     - stage: Examples
       name: "Examples off-policy RL – DQN"

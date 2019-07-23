@@ -1,5 +1,5 @@
 args:
-  logdir: ./logs/_tests_rl_gym_reinforce  #  change me
+  logdir: ./logs/_tests_rl_gym_reinforce-discrete  #  change me
   expdir: null
 
   vis: 0
@@ -10,7 +10,7 @@ args:
 db:
   db: RedisDB
   port: 12000
-  prefix: gym-reinforce  # TODO: remove
+  prefix: gym-reinforce-discrete  # TODO: remove
 
 environment:
   environment: GymWrapper
@@ -54,13 +54,13 @@ algorithm:
     lr: 0.0003
 
   actor_grad_clip_params:
-    func: clip_grad_value_
-    clip_value: 1.0
+    func: clip_grad_norm_
+    max_norm: 0.5
 
 trainer:
   batch_size: 256              # transitions
   num_workers: 1
-  num_mini_epochs: 10
+  num_mini_epochs: 1
   min_num_trajectories: 1000
   min_num_transitions: 10000
 
