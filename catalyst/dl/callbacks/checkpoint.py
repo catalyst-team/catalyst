@@ -45,7 +45,7 @@ class CheckpointCallback(Callback):
                 f"loaded checkpoint {filename} (epoch {checkpoint['epoch']})"
             )
         else:
-            raise Exception("no checkpoint found at {filename}")
+            raise Exception(f"No checkpoint found at {filename}")
 
     def save_checkpoint(
         self,
@@ -77,9 +77,6 @@ class CheckpointCallback(Callback):
             last_filepath = last_item[0]
             os.remove(last_filepath)
 
-    def pack_checkpoint(self, **kwargs):
-        return utils.pack_checkpoint(**kwargs)
-
     def on_stage_start(self, state: RunnerState):
         for key in self._keys_from_state:
             value = getattr(state, key, None)
@@ -96,13 +93,15 @@ class CheckpointCallback(Callback):
         if state.stage.startswith("infer"):
             return
 
-        checkpoint = self.pack_checkpoint(
+        valid_metrics = dict(state.metrics.valid_values)
+
+        checkpoint = utils.pack_checkpoint(
             model=state.model,
             criterion=state.criterion,
             optimizer=state.optimizer,
             scheduler=state.scheduler,
             epoch_metrics=dict(state.metrics.epoch_values),
-            valid_metrics=dict(state.metrics.valid_values),
+            valid_metrics=valid_metrics,
             stage=state.stage,
             epoch=state.epoch,
             checkpoint_data=state.checkpoint_data
