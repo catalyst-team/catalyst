@@ -72,7 +72,19 @@ class SAC(OffpolicyActorCritic):
         else:
             assert self.critic_criterion is not None
 
+    def _process_components(self, done_t, rewards_t):
+        # Array of size [num_heads,]
+        gammas = self._gammas ** self._n_step
+        gammas = gammas[None, :, None]  # 1 x num_heads x 1
+        # We use the same done_t, rewards_t, actions_t for each head
+        done_t = done_t[:, None, :]  # B x 1 x 1
+        rewards_t = rewards_t[:, None, :]  # B x 1 x 1
+
+        return gammas, done_t, rewards_t
+
     def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
+        gammas, done_t, rewards_t = self._process_components(done_t, rewards_t)
+
         # actor loss
         actions_tp0, logprob_tp0 = self.actor(states_t, logprob=True)
         logprob_tp0 = logprob_tp0 / self.reward_scale
@@ -105,11 +117,6 @@ class SAC(OffpolicyActorCritic):
         # B x num_heads x 1
         v_target_tp1 = (q_values_tp1 - logprob_tp1).detach()
 
-        gammas = self._gammas**self._n_step
-        done_t = done_t[:, None, :]  # B x 1 x 1
-        rewards_t = rewards_t[:, None, :]  # B x 1 x 1
-        gammas = gammas[None, :, None]  # 1 x num_heads x 1
-
         # B x num_heads x 1
         q_target_t = rewards_t + (1 - done_t) * gammas * v_target_tp1
         value_loss = [
@@ -121,6 +128,8 @@ class SAC(OffpolicyActorCritic):
     def _categorical_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
+        gammas, done_t, rewards_t = self._process_components(done_t, rewards_t)
+
         # actor loss
         actions_tp0, logprob_tp0 = self.actor(states_t, logprob=True)
         logprob_tp0 = logprob_tp0 / self.reward_scale
@@ -163,11 +172,6 @@ class SAC(OffpolicyActorCritic):
             view(-1, self._num_heads, self.num_atoms)
         # B x num_heads x num_atoms
 
-        gammas = self._gammas**self._n_step
-        done_t = done_t[:, None, :]  # B x 1 x 1
-        rewards_t = rewards_t[:, None, :]  # B x 1 x 1
-        gammas = gammas[None, :, None]  # 1 x num_heads x 1
-
         z_target_tp1 = (self.z[None, :] - logprob_tp1[:, None]).detach()
         # B x num_atoms
         # Unsqueeze so its the same for each head
@@ -191,6 +195,8 @@ class SAC(OffpolicyActorCritic):
     def _quantile_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
+        gammas, done_t, rewards_t = self._process_components(done_t, rewards_t)
+
         # actor loss
         actions_tp0, logprob_tp0 = self.actor(states_t, logprob=True)
         logprob_tp0 = logprob_tp0[:, None] / self.reward_scale
@@ -222,11 +228,6 @@ class SAC(OffpolicyActorCritic):
         atoms_tp1 = atoms_tp1[range(len(atoms_tp1)), :, atoms_ids_tp1_min].\
             view(-1, self._num_heads, self.num_atoms)
         # B x num_heads x num_atoms
-
-        gammas = self._gammas**self._n_step
-        done_t = done_t[:, None, :]  # B x 1 x 1
-        rewards_t = rewards_t[:, None, :]  # B x 1 x 1
-        gammas = gammas[None, :, None]  # 1 x num_heads x 1
 
         # Same log_pi for each head.
         atoms_tp1 = (atoms_tp1 - logprob_tp1.unsqueeze(1)).detach()

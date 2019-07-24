@@ -4,6 +4,10 @@ from catalyst.rl import utils
 
 
 class DQN(OffpolicyCritic):
+    """
+    Swiss Army knife DQN algorithm.
+    """
+
     def _init(self):
         # value distribution approximation
         critic_distribution = self.critic.distribution

@@ -45,10 +45,20 @@ class DDPG(OffpolicyActorCritic):
         else:
             assert self.critic_criterion is not None
 
-    def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
-        gammas = self._gammas**self._n_step
-        # actor loss
+    def _process_components(self, done_t, rewards_t):
+        # Array of size [num_heads,]
+        gammas = self._gammas ** self._n_step
+        gammas = gammas[None, :, None]  # 1 x num_heads x 1
+        # We use the same done_t, rewards_t, actions_t for each head
+        done_t = done_t[:, None, :]  # B x 1 x 1
+        rewards_t = rewards_t[:, None, :]  # B x 1 x 1
 
+        return gammas, done_t, rewards_t
+
+    def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
+        gammas, done_t, rewards_t = self._process_components(done_t, rewards_t)
+
+        # actor loss
         # For now we have the same actor for all heads of the critic
         policy_loss = -torch.mean(self.critic(states_t, self.actor(states_t)))
 
@@ -60,12 +70,7 @@ class DDPG(OffpolicyActorCritic):
             states_tp1, self.target_actor(states_tp1)
         ).squeeze_(dim=2).detach()
 
-        done_t = done_t[:, None, :]  # B x 1 x 1
-        rewards_t = rewards_t[:, None, :]  # B x 1 x 1
-        gammas = gammas[None, :, None]  # 1 x num_heads x 1
-
         q_target_t = rewards_t + (1 - done_t) * gammas * q_values_tp1
-
         value_loss = self.critic_criterion(q_values_t, q_target_t).mean()
 
         return policy_loss, value_loss
@@ -73,7 +78,7 @@ class DDPG(OffpolicyActorCritic):
     def _categorical_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
-        gammas = self._gammas**self._n_step
+        gammas, done_t, rewards_t = self._process_components(done_t, rewards_t)
 
         # actor loss
         # For now we have the same actor for all heads of the critic
@@ -83,27 +88,20 @@ class DDPG(OffpolicyActorCritic):
         policy_loss = -torch.mean(q_values_tp0)
 
         # critic loss (kl-divergence between categorical distributions)
-
-        # B x 1 x 1
-        done_t = done_t[:, None, :]
-        # B x 1 x 1
-        rewards_t = rewards_t[:, None, :]
-        # 1 x num_heads x 1
-        gammas = gammas[None, :, None]
-
         # B x num_heads x num_atoms
         logits_t = self.critic(states_t, actions_t).squeeze_(dim=2)
         # B x num_heads x num_atoms
         logits_tp1 = self.target_critic(
             states_tp1, self.target_actor(states_tp1)
         ).squeeze_(dim=2).detach()
+
         # B x num_heads x num_atoms
         atoms_target_t = rewards_t + (1 - done_t) * gammas * self.z
-
         value_loss = utils.categorical_loss(
             logits_t.view(-1, self.num_atoms),
             logits_tp1.view(-1, self.num_atoms),
-            atoms_target_t.view(-1, self.num_atoms), self.z, self.delta_z,
+            atoms_target_t.view(-1, self.num_atoms),
+            self.z, self.delta_z,
             self.v_min, self.v_max
         )
 
@@ -112,7 +110,7 @@ class DDPG(OffpolicyActorCritic):
     def _quantile_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
-        gammas = self._gammas**self._n_step
+        gammas, done_t, rewards_t = self._process_components(done_t, rewards_t)
 
         # actor loss
         policy_loss = -torch.mean(self.critic(states_t, self.actor(states_t)))
@@ -125,18 +123,12 @@ class DDPG(OffpolicyActorCritic):
             states_tp1, self.target_actor(states_tp1)
         ).squeeze_(dim=2).detach()
 
-        # B x 1 x 1
-        done_t = done_t[:, None, :]
-        # B x 1 x 1
-        rewards_t = rewards_t[:, None, :]
-        # 1 x num_heads x 1
-        gammas = gammas[None, :, None]
-
         atoms_target_t = rewards_t + (1 - done_t) * gammas * atoms_tp1
-
         value_loss = utils.quantile_loss(
             atoms_t.view(-1, self.num_atoms),
-            atoms_target_t.view(-1, self.num_atoms), self.tau, self.num_atoms,
+            atoms_target_t.view(-1, self.num_atoms),
+            self.tau,
+            self.num_atoms,
             self.critic_criterion
         )
 
