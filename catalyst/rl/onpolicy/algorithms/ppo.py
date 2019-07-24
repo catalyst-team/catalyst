@@ -11,11 +11,13 @@ class PPO(OnpolicyActorCritic):
         use_value_clipping: bool = True,
         gae_lambda: float = 0.95,
         clip_eps: float = 0.2,
-        entropy_reg_coefficient: float = 0.
+        entropy_regularization: float = None
     ):
         self.use_value_clipping = use_value_clipping
         self.gae_lambda = gae_lambda
         self.clip_eps = clip_eps
+        self.entropy_regularization = entropy_regularization
+
         critic_distribution = self.critic.distribution
         self._value_loss_fn = self._base_value_loss
         self._num_atoms = self.critic.num_atoms
@@ -31,7 +33,6 @@ class PPO(OnpolicyActorCritic):
         self._gammas_torch = utils.any2device(
             self._gammas, device=self._device
         )[None, :, None]
-        self.entropy_reg_coefficient = entropy_reg_coefficient
 
         if critic_distribution == "categorical":
             self.num_atoms = self.critic.num_atoms
@@ -261,10 +262,11 @@ class PPO(OnpolicyActorCritic):
         policy_loss = -torch.min(
             policy_loss_unclipped, policy_loss_clipped).mean()
 
-        entropy = -(
-            torch.exp(action_logprobs_tp0) * action_logprobs_tp0).mean()
-        entropy_loss = self.entropy_reg_coefficient * entropy
-        policy_loss = policy_loss + entropy_loss
+        if self.entropy_regularization is not None:
+            entropy = -(
+                torch.exp(action_logprobs_tp0) * action_logprobs_tp0).mean()
+            entropy_loss = self.entropy_regularization * entropy
+            policy_loss = policy_loss + entropy_loss
 
         # actor update
         actor_update_metrics = self.actor_update(policy_loss) or {}

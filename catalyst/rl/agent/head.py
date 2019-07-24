@@ -14,8 +14,9 @@ class ValueHead(nn.Module):
         self,
         in_features: int,
         out_features: int,
-        num_atoms: int = 1,
         bias: bool = False,
+        num_atoms: int = 1,
+        use_state_value_head: bool = False,
         distribution: str = None,
         values_range: tuple = None,
         num_heads: int = 1,
@@ -23,10 +24,15 @@ class ValueHead(nn.Module):
     ):
         super().__init__()
 
+        self.in_features = in_features
         self.out_features = out_features
+        self.bias = bias
         self.num_atoms = num_atoms
+        self.use_state_value_head = use_state_value_head
+
         self.distribution = distribution
         self.values_range = values_range
+
         self.num_heads = num_heads
         if self.num_heads == 1:
             hyperbolic_constant = 1.0
@@ -40,11 +46,20 @@ class ValueHead(nn.Module):
             assert values_range is None and num_atoms > 1
         else:
             raise NotImplementedError()
-        heads = [
+
+        value_heads = [
             self._build_head(in_features, out_features, num_atoms, bias)
             for _ in range(num_heads)
         ]
-        self.net = nn.ModuleList(heads)
+        self.value_heads = nn.ModuleList(value_heads)
+
+        if self.use_state_value_head:
+            assert self.out_features > 1, "Not implemented behaviour"
+            state_value_heads = [
+                self._build_head(in_features, 1, num_atoms, bias)
+                for _ in range(num_heads)
+            ]
+            self.state_value_heads = nn.ModuleList(state_value_heads)
 
         self.apply(outer_init)
 
@@ -57,10 +72,22 @@ class ValueHead(nn.Module):
 
     def forward(self, state: torch.Tensor):
         x: List[torch.Tensor] = []
-        for net in self.net:
+        for net in self.value_heads:
             x.append(net(state).view(-1, self.out_features, self.num_atoms))
         # batch_size(0) x num_heads(1) x num_outputs(2) x num_atoms(3)
         x = torch.stack(x, dim=1)
+
+        if self.use_state_value_head:
+            state_value: List[torch.Tensor] = []
+            for net in self.state_value_heads:
+                state_value.append(net(state).view(-1, 1, self.num_atoms))
+            # batch_size(0) x num_heads(1) x num_outputs(2) x num_atoms(3)
+            state_value = torch.stack(state_value, dim=1)
+
+            x_mean = x.mean(2, keepdim=True)
+            x = x - x_mean + state_value
+
+        # batch_size(0) x num_heads(1) x num_outputs(2) x num_atoms(3)
         return x
 
 
@@ -75,7 +102,7 @@ class PolicyHead(nn.Module):
         super().__init__()
         assert policy_type in [
             "categorical", "bernoulli", "diagonal-gauss",
-            "squashing-gauss", "real_nvp",
+            "squashing-gauss", "real-nvp",
             "logits", None
         ]
 
@@ -100,7 +127,7 @@ class PolicyHead(nn.Module):
             out_activation = None
             head_size = out_features * 2
             policy_net = SquashingGaussPolicy(squashing_fn)
-        elif policy_type == "real_nvp":
+        elif policy_type == "real-nvp":
             out_activation = None
             head_size = out_features * 2
             policy_net = RealNVPPolicy(
