@@ -75,7 +75,7 @@ class PolicyHead(nn.Module):
         super().__init__()
         assert policy_type in [
             "categorical", "bernoulli", "diagonal-gauss",
-            "squashing-gauss", "real_nvp",
+            "squashing-gauss", "real-nvp",
             "logits", None
         ]
 
@@ -100,7 +100,7 @@ class PolicyHead(nn.Module):
             out_activation = None
             head_size = out_features * 2
             policy_net = SquashingGaussPolicy(squashing_fn)
-        elif policy_type == "real_nvp":
+        elif policy_type == "real-nvp":
             out_activation = None
             head_size = out_features * 2
             policy_net = RealNVPPolicy(
