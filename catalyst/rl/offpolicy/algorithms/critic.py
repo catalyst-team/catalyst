@@ -26,7 +26,7 @@ class OffpolicyCritic(AlgorithmSpec):
         self.target_critic = copy.deepcopy(critic).to(self._device)
 
         # preparation
-        agent_stuff = utils.get_trainer_components(
+        critic_components = utils.get_trainer_components(
             agent=self.critic,
             loss_params=critic_loss_params,
             optimizer_params=critic_optimizer_params,
@@ -34,17 +34,17 @@ class OffpolicyCritic(AlgorithmSpec):
             grad_clip_params=critic_grad_clip_params
         )
         # criterion
-        self._critic_loss_params = agent_stuff["loss_params"]
-        self.critic_criterion = agent_stuff["criterion"]
+        self._critic_loss_params = critic_components["loss_params"]
+        self.critic_criterion = critic_components["criterion"]
         # optimizer
-        self._critic_optimizer_params = agent_stuff["optimizer_params"]
-        self.critic_optimizer = agent_stuff["optimizer"]
+        self._critic_optimizer_params = critic_components["optimizer_params"]
+        self.critic_optimizer = critic_components["optimizer"]
         # scheduler
-        self._critic_scheduler_params = agent_stuff["scheduler_params"]
-        self.critic_scheduler = agent_stuff["scheduler"]
+        self._critic_scheduler_params = critic_components["scheduler_params"]
+        self.critic_scheduler = critic_components["scheduler"]
         # grad clipping
-        self._critic_grad_clip_params = agent_stuff["grad_clip_params"]
-        self.critic_grad_clip_fn = agent_stuff["grad_clip_fn"]
+        self._critic_grad_clip_params = critic_components["grad_clip_params"]
+        self.critic_grad_clip_fn = critic_components["grad_clip_fn"]
 
         # other hyperparameters
         self._n_step = n_step

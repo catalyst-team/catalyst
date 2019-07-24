@@ -6,8 +6,8 @@ from catalyst.rl import utils
 
 
 class REINFORCE(OnpolicyActor):
-    def _init(self, entropy_reg_coefficient: float = 0.):
-        self.entropy_reg_coefficient = entropy_reg_coefficient
+    def _init(self, entropy_regularization: float = None):
+        self.entropy_regularization = entropy_regularization
 
     def get_rollout_spec(self):
         return {
@@ -60,9 +60,10 @@ class REINFORCE(OnpolicyActor):
         # REINFORCE objective function
         policy_loss = -torch.mean(logprobs * returns)
 
-        entropy = -(torch.exp(logprobs) * logprobs).mean()
-        entropy_loss = self.entropy_reg_coefficient * entropy
-        policy_loss = policy_loss + entropy_loss
+        if self.entropy_regularization is not None:
+            entropy = -(torch.exp(logprobs) * logprobs).mean()
+            entropy_loss = self.entropy_regularization * entropy
+            policy_loss = policy_loss + entropy_loss
 
         # actor update
         actor_update_metrics = self.actor_update(policy_loss) or {}

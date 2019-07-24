@@ -81,6 +81,16 @@ class TD3(OffpolicyActorCritic):
         else:
             assert self.critic_criterion is not None
 
+    def _process_components(self, done_t, rewards_t):
+        # Array of size [num_heads,]
+        gammas = self._gammas ** self._n_step
+        gammas = gammas[None, :, None]  # 1 x num_heads x 1
+        # We use the same done_t, rewards_t, actions_t for each head
+        done_t = done_t[:, None, :]  # B x 1 x 1
+        rewards_t = rewards_t[:, None, :]  # B x 1 x 1
+
+        return gammas, done_t, rewards_t
+
     def _add_noise_to_actions(self, actions):
         action_noise = torch.normal(
             mean=torch.zeros_like(actions), std=self.action_noise_std
@@ -95,6 +105,8 @@ class TD3(OffpolicyActorCritic):
         return actions
 
     def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
+        gammas, done_t, rewards_t = self._process_components(done_t, rewards_t)
+
         # actor loss
         actions_tp0 = self.actor(states_t)
         # For now we use the same actions for each head
@@ -120,11 +132,6 @@ class TD3(OffpolicyActorCritic):
         # B x num_heads x 1
         q_values_tp1 = q_values_tp1.min(dim=-1, keepdim=True)[0].detach()
 
-        gammas = self._gammas**self._n_step
-        done_t = done_t[:, None, :]  # B x 1 x 1
-        rewards_t = rewards_t[:, None, :]  # B x 1 x 1
-        gammas = gammas[None, :, None]  # 1 x num_heads x 1
-
         # B x num_heads x 1
         q_target_t = rewards_t + (1 - done_t) * gammas * q_values_tp1
         value_loss = [
@@ -136,6 +143,8 @@ class TD3(OffpolicyActorCritic):
     def _categorical_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
+        gammas, done_t, rewards_t = self._process_components(done_t, rewards_t)
+
         # actor loss
         actions_tp0 = self.actor(states_t)
         # Again, we use the same actor for each critic
@@ -176,11 +185,6 @@ class TD3(OffpolicyActorCritic):
             logits_tp1[range(len(logits_tp1)), :, probs_ids_tp1_min].\
             view(-1, self._num_heads, self.num_atoms).detach()
 
-        gammas = self._gammas**self._n_step
-        done_t = done_t[:, None, :]  # B x 1 x 1
-        rewards_t = rewards_t[:, None, :]  # B x 1 x 1
-        gammas = gammas[None, :, None]  # 1 x num_heads x 1
-
         atoms_target_t = rewards_t + (1 - done_t) * gammas * self.z
         value_loss = [
             utils.categorical_loss(
@@ -199,6 +203,8 @@ class TD3(OffpolicyActorCritic):
     def _quantile_loss(
         self, states_t, actions_t, rewards_t, states_tp1, done_t
     ):
+        gammas, done_t, rewards_t = self._process_components(done_t, rewards_t)
+
         # actor loss
         actions_tp0 = self.actor(states_t)
         atoms_tp0 = [
@@ -227,11 +233,6 @@ class TD3(OffpolicyActorCritic):
         atoms_tp1 = \
             atoms_tp1[range(len(atoms_tp1)), :, atoms_ids_tp1_min].\
             view(-1, self._num_heads, self.num_atoms).detach()
-
-        gammas = self._gammas**self._n_step
-        done_t = done_t[:, None, :]  # B x 1 x 1
-        rewards_t = rewards_t[:, None, :]  # B x 1 x 1
-        gammas = gammas[None, :, None]  # 1 x num_heads x 1
 
         # B x num_heads x num_atoms
         atoms_target_t = rewards_t + (1 - done_t) * gammas * atoms_tp1
