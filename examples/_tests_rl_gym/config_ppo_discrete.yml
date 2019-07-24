@@ -69,7 +69,7 @@ algorithm:
 
   gae_lambda: 0.95
   clip_eps: 0.2
-  entropy_reg_coefficient: 0.01
+  entropy_regularization: 0.01
 
   actor_optimizer_params:
     optimizer: Adam

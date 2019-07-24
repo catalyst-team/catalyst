@@ -87,6 +87,7 @@ class ValueHead(nn.Module):
             x_mean = x.mean(2, keepdim=True)
             x = x - x_mean + state_value
 
+        # batch_size(0) x num_heads(1) x num_outputs(2) x num_atoms(3)
         return x
 
 
