@@ -1,5 +1,8 @@
 import datetime
+
 import pymongo
+import safitty
+
 from catalyst.rl import utils
 from catalyst.rl.core import DBSpec
 
@@ -32,8 +35,7 @@ class MongoDB(DBSpec):
 
     def _get_flag(self, key, default=None):
         flag_obj = self._messages_collection.find_one({"key": {"$eq": key}})
-        flag = flag_obj.get("value") if flag_obj is not None else None
-        flag = flag if flag is not None else default
+        flag = safitty.get(flag_obj, "value", default=default)
         return flag
 
     @property
