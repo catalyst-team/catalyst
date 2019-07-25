@@ -1,9 +1,10 @@
 import datetime
+
 import pymongo
+import safitty
+
 from catalyst.rl import utils
 from catalyst.rl.core import DBSpec
-
-import safitty
 
 
 class MongoDB(DBSpec):
