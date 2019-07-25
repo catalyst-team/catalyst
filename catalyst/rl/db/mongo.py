@@ -32,7 +32,7 @@ class MongoDB(DBSpec):
 
     def _get_flag(self, key, default=None):
         flag_obj = self._messages_collection.find_one({"key": {"$eq": key}})
-        flag = flag_obj.get("value")
+        flag = flag_obj.get("value") if flag_obj is not None else None
         flag = flag if flag is not None else default
         return flag
 
