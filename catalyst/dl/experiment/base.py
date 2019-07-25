@@ -74,7 +74,7 @@ class BaseExperiment(Experiment):
             minimize_metric=self._minimize_metric,
             checkpoint_data=self.checkpoint_data
         )
-        state_params = {**self._additional_state_kwargs, **default_params}
+        state_params = {**default_params, **self._additional_state_kwargs}
         return state_params
 
     def get_model(self, stage: str) -> _Model:
