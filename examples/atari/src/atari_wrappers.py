@@ -341,7 +341,7 @@ def make_atari_env(
     env_id,
     max_episode_steps=None,
     episode_life=True,
-    clip_rewards=True,
+    clip_rewards=False,
     frame_stack=False,
     scale=False
 ):
