@@ -34,7 +34,8 @@ class Trainer(TrainerSpec):
         replay_buffer_size: int = int(1e6),
         replay_buffer_mode: str = "numpy",
         epoch_len: int = int(1e2),
-        max_updates_per_sample: int = None
+        max_updates_per_sample: int = None,
+        min_transitions_per_epoch: int = None,
     ):
         # updates configuration
         # (actor_period, critic_period)
@@ -46,6 +47,8 @@ class Trainer(TrainerSpec):
         #
         self.epoch_len = epoch_len
         self.max_updates_per_sample = max_updates_per_sample or np.inf
+        self.min_transitions_per_epoch = min_transitions_per_epoch or -np.inf
+        self.last_epoch_transitions = 0
 
         self.replay_buffer = utils.OffpolicyReplayBuffer(
             observation_space=self.env_spec.observation_space,
@@ -110,8 +113,11 @@ class Trainer(TrainerSpec):
         expected_updates_per_sample = (
             expected_num_updates / self.replay_buffer.num_transitions
         )
-        while expected_updates_per_sample > self.max_updates_per_sample:
-            time.sleep(1.0)
+        min_epoch_transitions = \
+            self.last_epoch_transitions + self.min_transitions_per_epoch
+        while expected_updates_per_sample > self.max_updates_per_sample \
+                or self.replay_buffer.num_transitions < min_epoch_transitions:
+            time.sleep(5.0)
             self.replay_buffer.recalculate_index()
             expected_num_updates = (
                 self.num_updates + len(self.loader) * self.loader.batch_size
@@ -121,6 +127,7 @@ class Trainer(TrainerSpec):
             )
 
         metrics = self._run_loader(self.loader)
+        self.last_epoch_transitions = self.replay_buffer.num_transitions
 
         updates_per_sample = (
             self.num_updates / self.replay_buffer.num_transitions
