@@ -78,7 +78,8 @@ trainer:
 
   save_period: 50               # epochs
   weights_sync_period: 1        # epochs
-  target_update_period: 250     # batches
+  target_update_period: 125     # batches, update each 64k samples
+  max_updates_per_sample: 32
 
 sampler:
   weights_sync_period: 1
