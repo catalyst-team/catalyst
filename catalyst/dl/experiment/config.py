@@ -200,7 +200,7 @@ class ConfigExperiment(Experiment):
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         data_params = dict(self.stages_config[stage]["data_params"])
 
-        batch_size = data_params.pop("batch_size")
+        batch_size = data_params.pop("batch_size", 1)
         num_workers = data_params.pop("num_workers")
         drop_last = data_params.pop("drop_last", False)
         per_gpu_scaling = data_params.pop("per_gpu_scaling", False)
@@ -248,6 +248,14 @@ class ConfigExperiment(Experiment):
                 name.startswith("train")
                 and loader_params.get("sampler") is None
             )
+
+            if "batch_sampler" in loader_params:
+                if distributed:
+                    raise ValueError("batch_sampler option is mutually "
+                                     "exclusive with distributed")
+
+                for k in ("batch_size", "shuffle", "sampler", "drop_last"):
+                    loader_params.pop(k, None)
 
             loaders[name] = DataLoader(**loader_params)
 
