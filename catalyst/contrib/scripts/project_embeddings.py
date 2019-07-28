@@ -110,7 +110,7 @@ def main(args, _=None):
     summary_writer = SummaryWriter(args.out_dir)
     summary_writer.add_embedding(
         features,
-        metadata=df.values,
+        metadata=metadata=df[meta_header].astype(str).values,
         label_img=img_data,
         metadata_header=meta_header
     )
