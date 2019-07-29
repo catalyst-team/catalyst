@@ -85,7 +85,7 @@ def main(args, _=None):
     if args.meta_cols is not None:
         meta_header = args.meta_cols.split(",")
     else:
-        raise ValueError("A list of columns names to label embeddings must not be empty")
+        raise ValueError("meta-cols must not be None")
 
     features = np.load(args.in_npy, mmap_mode="r")
 
