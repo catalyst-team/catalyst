@@ -162,8 +162,7 @@ class ConfigExperiment(Experiment):
         return optimizer
 
     def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
-
-        model_params = utils.get_optimizable_params(model.parameters())
+        model_params = model.parameters()
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
 
