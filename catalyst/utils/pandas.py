@@ -5,7 +5,7 @@ from catalyst.utils.dataset import \
     default_fold_split, stratified_fold_split
 from catalyst.utils import args_are_not_none
 
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 tqdm.pandas()
 

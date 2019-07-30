@@ -9,19 +9,43 @@ from catalyst.dl import utils
 from catalyst.dl.core import Callback, RunnerState
 
 
-class CheckpointCallback(Callback):
+class BaseCheckpointCallback(Callback):
+    """
+    Base class for all checkpoint callbacks
+    """
+    def __init__(
+        self,
+        metric_filename: str
+    ):
+        self.metric_filename = metric_filename
+
+    def get_metrics(self, **kwargs) -> Dict:
+        pass
+
+    def remove_checkpoints(self, **kwargs) -> None:
+        pass
+
+    def save_metric_file(self, logdir: str, metrics: Dict) -> None:
+        safitty.save(metrics, f"{logdir}/checkpoints/{self.metric_filename}")
+
+
+class CheckpointCallback(BaseCheckpointCallback):
     """
     Checkpoint callback to save/restore your model/criterion/optimizer/metrics.
     """
 
     def __init__(
-        self, save_n_best: int = 3, resume: str = None, resume_dir: str = None
+        self,
+        save_n_best: int = 3,
+        resume: str = None,
+        resume_dir: str = None
     ):
         """
         Args:
             save_n_best: number of best checkpoint to keep
             resume: path to checkpoint to load and initialize runner state
         """
+        super().__init__(metric_filename="_metrics.json")
         self.save_n_best = save_n_best
         self.resume = resume
         self.resume_dir = resume_dir
@@ -51,12 +75,36 @@ class CheckpointCallback(Callback):
         else:
             raise Exception(f"No checkpoint found at {filename}")
 
+    def get_metrics(self, last_valid_metrics) -> Dict:
+        checkpoints = [
+            (Path(filepath).stem, valid_metric)
+            for (filepath, _, valid_metric) in self.top_best_metrics
+        ]
+        best_valid_metrics = checkpoints[0][1]
+        metrics = OrderedDict(
+            [("best", best_valid_metrics)] +
+            checkpoints +
+            [("last", last_valid_metrics)]
+        )
+
+        return metrics
+
+    def remove_checkpoints(self, minimize_metric: bool) -> None:
+        self.top_best_metrics = sorted(
+            self.top_best_metrics,
+            key=lambda x: x[1],
+            reverse=not minimize_metric
+        )
+        if len(self.top_best_metrics) > self.save_n_best:
+            last_item = self.top_best_metrics.pop(-1)
+            last_filepath = last_item[0]
+            os.remove(last_filepath)
+
     def save_checkpoint(
         self,
         logdir: str,
         checkpoint: Dict,
         is_best: bool,
-        save_n_best: int = 5,
         main_metric: str = "loss",
         minimize_metric: bool = True
     ):
@@ -74,27 +122,10 @@ class CheckpointCallback(Callback):
         self.top_best_metrics.append(
             (filepath, checkpoint_metric, valid_metrics)
         )
-        self.top_best_metrics = sorted(
-            self.top_best_metrics,
-            key=lambda x: x[1],
-            reverse=not minimize_metric
-        )
-        if len(self.top_best_metrics) > save_n_best:
-            last_item = self.top_best_metrics.pop(-1)
-            last_filepath = last_item[0]
-            os.remove(last_filepath)
+        self.remove_checkpoints(minimize_metric=minimize_metric)
 
-        checkpoints = [
-            (Path(filepath).stem, valid_metric)
-            for (filepath, _, valid_metric) in self.top_best_metrics
-        ]
-        best_valid_metrics = checkpoints[0][1]
-        metrics = OrderedDict(
-            [("best", best_valid_metrics)] +
-            checkpoints +
-            [("last", valid_metrics)]
-        )
-        safitty.save(metrics, f"{logdir}/checkpoints/_metrics.json")
+        metrics = self.get_metrics(valid_metrics)
+        self.save_metric_file(logdir, metrics)
 
     def on_stage_start(self, state: RunnerState):
         for key in self._keys_from_state:
@@ -130,7 +161,6 @@ class CheckpointCallback(Callback):
             logdir=state.logdir,
             checkpoint=checkpoint,
             is_best=state.metrics.is_best,
-            save_n_best=self.save_n_best,
             main_metric=state.main_metric,
             minimize_metric=state.minimize_metric
         )
@@ -147,7 +177,7 @@ class CheckpointCallback(Callback):
         print(top_best_metrics_str)
 
 
-class IterationCheckpointCallback(Callback):
+class IterationCheckpointCallback(BaseCheckpointCallback):
     """
     Iteration checkpoint callback to save your model/criterion/optimizer
     """
@@ -164,13 +194,34 @@ class IterationCheckpointCallback(Callback):
             num_iters: save the checkpoint every `num_iters`
             stage_restart: restart counter every stage or not
         """
+        super().__init__(metric_filename="_metrics_iter.json")
         self.save_n_last = save_n_last
         self.num_iters = num_iters
         self.stage_restart = stage_restart
         self._iteration_counter = 0
         self.last_checkpoints = []
 
-    def save_checkpoint(self, logdir, checkpoint, save_n_last):
+    def remove_checkpoints(self, **kwargs) -> None:
+        if len(self.last_checkpoints) > self.save_n_last:
+            item = self.last_checkpoints.pop(0)
+            top_filepath = item[0]
+            os.remove(top_filepath)
+
+    def get_metrics(self, **kwargs) -> Dict:
+        checkpoints = [
+            (Path(filepath).stem, batch_values)
+            for (filepath, batch_values) in self.last_checkpoints
+        ]
+
+        metrics = OrderedDict(checkpoints)
+        return metrics
+
+    def save_checkpoint(
+        self,
+        logdir: str,
+        checkpoint: Dict,
+        batch_values: Dict[str, float]
+    ):
         suffix = f"{checkpoint['stage']}." \
                  f"epoch.{checkpoint['epoch']}." \
                  f"iter.{self._iteration_counter}"
@@ -183,15 +234,12 @@ class IterationCheckpointCallback(Callback):
             is_last=False
         )
 
-        self.last_checkpoints.append(filepath)
-        if len(self.last_checkpoints) > save_n_last:
-            top_filepath = self.last_checkpoints.pop(0)
-            os.remove(top_filepath)
+        self.last_checkpoints.append((filepath, batch_values))
+        self.remove_checkpoints()
 
+        metrics = self.get_metrics()
+        self.save_metric_file(logdir, metrics)
         print(f"\nSaved checkpoint at {filepath}")
-
-    def pack_checkpoint(self, **kwargs):
-        return utils.pack_checkpoint(**kwargs)
 
     def on_stage_start(self, state):
         if self.stage_restart:
@@ -200,7 +248,7 @@ class IterationCheckpointCallback(Callback):
     def on_batch_end(self, state):
         self._iteration_counter += 1
         if self._iteration_counter % self.num_iters == 0:
-            checkpoint = self.pack_checkpoint(
+            checkpoint = utils.pack_checkpoint(
                 model=state.model,
                 criterion=state.criterion,
                 optimizer=state.optimizer,
@@ -213,7 +261,7 @@ class IterationCheckpointCallback(Callback):
             self.save_checkpoint(
                 logdir=state.logdir,
                 checkpoint=checkpoint,
-                save_n_last=self.save_n_last
+                batch_values=state.metrics.batch_values
             )
 
 
