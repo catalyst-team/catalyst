@@ -85,10 +85,15 @@ class CheckpointCallback(Callback):
             os.remove(last_filepath)
 
         checkpoints = [
-            (Path(filepath).stem, metric)
-            for (filepath, _, metric) in self.top_best_metrics
+            (Path(filepath).stem, valid_metric)
+            for (filepath, _, valid_metric) in self.top_best_metrics
         ]
-        metrics = OrderedDict(checkpoints + [("last", valid_metrics)])
+        best_valid_metrics = checkpoints[0][1]
+        metrics = OrderedDict(
+            [("best", best_valid_metrics)] +
+            checkpoints +
+            [("last", valid_metrics)]
+        )
         safitty.save(metrics, f"{logdir}/checkpoints/_metrics.json")
 
     def on_stage_start(self, state: RunnerState):
@@ -108,13 +113,14 @@ class CheckpointCallback(Callback):
             return
 
         valid_metrics = dict(state.metrics.valid_values)
+        epoch_metrics = dict(state.metrics.epoch_values)
 
         checkpoint = utils.pack_checkpoint(
             model=state.model,
             criterion=state.criterion,
             optimizer=state.optimizer,
             scheduler=state.scheduler,
-            epoch_metrics=dict(state.metrics.epoch_values),
+            epoch_metrics=epoch_metrics,
             valid_metrics=valid_metrics,
             stage=state.stage,
             epoch=state.epoch,
@@ -134,8 +140,8 @@ class CheckpointCallback(Callback):
         top_best_metrics_str = "\n".join(
             [
                 "{filepath}\t{metric:3.4f}".format(
-                    filepath=filepath, metric=metric
-                ) for filepath, metric, _ in self.top_best_metrics
+                    filepath=filepath, metric=checkpoint_metric
+                ) for filepath, checkpoint_metric, _ in self.top_best_metrics
             ]
         )
         print(top_best_metrics_str)
