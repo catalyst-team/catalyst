@@ -49,7 +49,7 @@ class TxtMetricsFormatter(MetricsFormatter):
             # Print LR in scientific format since
             # 4 decimal chars is not enough for LR
             # lower than 1e-4
-            return f"{name}={value:E}"
+            return f"{name}={value:1.3e}"
 
         return f"{name}={value:.4f}"
 
