@@ -1,8 +1,12 @@
-from typing import Dict
 import os
+from typing import Dict
+from collections import OrderedDict
 
-from catalyst.dl.core import Callback, RunnerState
+from pathlib import Path
+import safitty
+
 from catalyst.dl import utils
+from catalyst.dl.core import Callback, RunnerState
 
 
 class CheckpointCallback(Callback):
@@ -45,7 +49,7 @@ class CheckpointCallback(Callback):
                 f"loaded checkpoint {filename} (epoch {checkpoint['epoch']})"
             )
         else:
-            raise Exception("no checkpoint found at {filename}")
+            raise Exception(f"No checkpoint found at {filename}")
 
     def save_checkpoint(
         self,
@@ -65,8 +69,11 @@ class CheckpointCallback(Callback):
             is_last=True
         )
 
-        checkpoint_metric = checkpoint["valid_metrics"][main_metric]
-        self.top_best_metrics.append((filepath, checkpoint_metric))
+        valid_metrics = checkpoint["valid_metrics"]
+        checkpoint_metric = valid_metrics[main_metric]
+        self.top_best_metrics.append(
+            (filepath, checkpoint_metric, valid_metrics)
+        )
         self.top_best_metrics = sorted(
             self.top_best_metrics,
             key=lambda x: x[1],
@@ -77,8 +84,17 @@ class CheckpointCallback(Callback):
             last_filepath = last_item[0]
             os.remove(last_filepath)
 
-    def pack_checkpoint(self, **kwargs):
-        return utils.pack_checkpoint(**kwargs)
+        checkpoints = [
+            (Path(filepath).stem, valid_metric)
+            for (filepath, _, valid_metric) in self.top_best_metrics
+        ]
+        best_valid_metrics = checkpoints[0][1]
+        metrics = OrderedDict(
+            [("best", best_valid_metrics)] +
+            checkpoints +
+            [("last", valid_metrics)]
+        )
+        safitty.save(metrics, f"{logdir}/checkpoints/_metrics.json")
 
     def on_stage_start(self, state: RunnerState):
         for key in self._keys_from_state:
@@ -96,13 +112,16 @@ class CheckpointCallback(Callback):
         if state.stage.startswith("infer"):
             return
 
-        checkpoint = self.pack_checkpoint(
+        valid_metrics = dict(state.metrics.valid_values)
+        epoch_metrics = dict(state.metrics.epoch_values)
+
+        checkpoint = utils.pack_checkpoint(
             model=state.model,
             criterion=state.criterion,
             optimizer=state.optimizer,
             scheduler=state.scheduler,
-            epoch_metrics=dict(state.metrics.epoch_values),
-            valid_metrics=dict(state.metrics.valid_values),
+            epoch_metrics=epoch_metrics,
+            valid_metrics=valid_metrics,
             stage=state.stage,
             epoch=state.epoch,
             checkpoint_data=state.checkpoint_data
@@ -121,8 +140,8 @@ class CheckpointCallback(Callback):
         top_best_metrics_str = "\n".join(
             [
                 "{filepath}\t{metric:3.4f}".format(
-                    filepath=filepath, metric=metric
-                ) for filepath, metric in self.top_best_metrics
+                    filepath=filepath, metric=checkpoint_metric
+                ) for filepath, checkpoint_metric, _ in self.top_best_metrics
             ]
         )
         print(top_best_metrics_str)
