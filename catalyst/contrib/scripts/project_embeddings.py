@@ -85,7 +85,7 @@ def main(args, _=None):
     if args.meta_cols is not None:
         meta_header = args.meta_cols.split(",")
     else:
-        meta_header = None
+        raise ValueError("meta-cols must not be None")
 
     features = np.load(args.in_npy, mmap_mode="r")
 
@@ -110,7 +110,7 @@ def main(args, _=None):
     summary_writer = SummaryWriter(args.out_dir)
     summary_writer.add_embedding(
         features,
-        metadata=df.values,
+        metadata=df[meta_header].astype(str).values,
         label_img=img_data,
         metadata_header=meta_header
     )

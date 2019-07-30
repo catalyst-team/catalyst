@@ -16,7 +16,7 @@ environment:
   environment: AtariEnvWrapper
   env_id: PongNoFrameskip-v4
 
-  history_len: 4
+  history_len: &history_len 4
   frame_skip: 4
   reward_scale: 1.0
   step_delay: 0.0
@@ -25,25 +25,25 @@ agents:
   critic:
     agent: ConvQCritic
 
-#    state_net_params:  # state -> hidden representation
-#      observation_net_params:
-#        hiddens: [32]  # first hidden would be taken from state_shape
-#        layer_fn: Linear
-#        norm_fn: LayerNorm
-#        activation_fn: ReLU
-#        bias: false
-#      main_net_params:
-#        hiddens: [32, 32]
-#        layer_fn: Linear
-#        norm_fn: LayerNorm
-#        activation_fn: ReLU
-#        bias: false
+    state_net_params:  # state -> hidden representation
+      observation_net_params:
+        history_len: *history_len
+        conv1_size: 32
+        conv2_size: 64
+        conv3_size: 32
+      main_net_params:
+        out_features: &embedding_size 512
     value_head_params:  # hidden representation -> ~policy
-      in_features: 512  # out features would be taken from action_shape
+      in_features: *embedding_size
+      # out features would be taken from action_shape
 
-      distribution: categorical
-      num_atoms: 51
-      values_range: [-4.0, 8.0]
+      use_state_value_head: True
+#      num_heads: 10
+#      hyperbolic_constant: 0.01
+
+#      distribution: categorical
+#      num_atoms: 51
+#      values_range: [-4.0, 8.0]
 
 #      distribution: quantile
 #      num_atoms: 51
@@ -55,30 +55,31 @@ algorithm:
   gamma: 0.99
   critic_tau: 1.0
 
-#  critic_loss_params:
-#    criterion: HuberLoss
-#    clip_delta: 1.0
+  critic_loss_params:
+    criterion: HuberLoss
+    clip_delta: 15.0
 
   critic_optimizer_params:
     optimizer: Adam
-    lr: 0.001
+    lr: 0.0003
 
   critic_grad_clip_params:
     func: clip_grad_value_
     clip_value: 5.0
 
 trainer:
-  batch_size: 256               # transitions
-  num_workers: 2
+  batch_size: 512               # transitions
+  num_workers: 4
   epoch_len: 500                # batches
 
   replay_buffer_size: 5000000   # transitions
   replay_buffer_mode: memmap    # numpy or memmap
-  min_num_transitions: 50000    # transitions
+  min_num_transitions: 64000    # transitions
 
   save_period: 50               # epochs
   weights_sync_period: 1        # epochs
-  target_update_period: 250     # batches
+  target_update_period: 125     # batches, update each 64k samples
+  max_updates_per_sample: 32
 
 sampler:
   weights_sync_period: 1
@@ -91,13 +92,13 @@ sampler:
       annealing_steps: 100000
 
     - exploration: EpsilonGreedy
-      probability: 0.45
+      probability: 0.4
       eps_init: 1.0
       eps_final: 0.5
       annealing_steps: 100000
 
     - exploration: Greedy
-      probability: 0.05
+      probability: 0.1
 
   valid_seeds: [
     1608637542,
