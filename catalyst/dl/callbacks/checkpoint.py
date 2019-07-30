@@ -1,8 +1,12 @@
-from typing import Dict
 import os
+from typing import Dict
+from collections import OrderedDict
 
-from catalyst.dl.core import Callback, RunnerState
+from pathlib import Path
+import safitty
+
 from catalyst.dl import utils
+from catalyst.dl.core import Callback, RunnerState
 
 
 class CheckpointCallback(Callback):
@@ -65,8 +69,11 @@ class CheckpointCallback(Callback):
             is_last=True
         )
 
-        checkpoint_metric = checkpoint["valid_metrics"][main_metric]
-        self.top_best_metrics.append((filepath, checkpoint_metric))
+        valid_metrics = checkpoint["valid_metrics"]
+        checkpoint_metric = valid_metrics[main_metric]
+        self.top_best_metrics.append(
+            (filepath, checkpoint_metric, valid_metrics)
+        )
         self.top_best_metrics = sorted(
             self.top_best_metrics,
             key=lambda x: x[1],
@@ -76,6 +83,13 @@ class CheckpointCallback(Callback):
             last_item = self.top_best_metrics.pop(-1)
             last_filepath = last_item[0]
             os.remove(last_filepath)
+
+        checkpoints = [
+            (Path(filepath).stem, metric)
+            for (filepath, _, metric) in self.top_best_metrics
+        ]
+        metrics = OrderedDict(checkpoints + [("last", valid_metrics)])
+        safitty.save(metrics, f"{logdir}/checkpoints/_metrics.json")
 
     def on_stage_start(self, state: RunnerState):
         for key in self._keys_from_state:
@@ -121,7 +135,7 @@ class CheckpointCallback(Callback):
             [
                 "{filepath}\t{metric:3.4f}".format(
                     filepath=filepath, metric=metric
-                ) for filepath, metric in self.top_best_metrics
+                ) for filepath, metric, _ in self.top_best_metrics
             ]
         )
         print(top_best_metrics_str)
