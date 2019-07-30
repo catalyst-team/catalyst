@@ -166,6 +166,22 @@ class ConfigExperiment(Experiment):
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
 
+        # Linear scaling rule from https://arxiv.org/pdf/1706.02677.pdf
+        lr_scaling_params = optimizer_params.pop("lr_linear_scaling", None)
+        if lr_scaling_params:
+            data_params = dict(self.stages_config[stage]["data_params"])
+            batch_size = data_params.get("batch_size")
+            per_gpu_scaling = data_params.get("per_gpu_scaling", False)
+            distributed_rank = self.distributed_params.get("rank", -1)
+            distributed = distributed_rank > -1
+            if per_gpu_scaling and not distributed:
+                num_gpus = max(1, torch.cuda.device_count())
+                batch_size *= num_gpus
+
+            base_lr = lr_scaling_params.get("lr")
+            base_batch_size = lr_scaling_params.get("base_batch_size", 256)
+            optimizer_params["lr"] = base_lr * batch_size / base_batch_size
+
         optimizer = self._get_optimizer(
             model_params=model_params, **optimizer_params
         )
