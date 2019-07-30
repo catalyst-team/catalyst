@@ -4,7 +4,7 @@ from catalyst.dl.core import MultiMetricCallback
 from catalyst.dl.utils import criterion
 
 
-def _get_list_args(num_classes: int) -> List[int]:
+def _get_default_accuracy_args(num_classes: int) -> List[int]:
     """
     Calculate list params for Accuracy@k and mAP@k
     Args:
@@ -50,7 +50,7 @@ class AccuracyCallback(MultiMetricCallback):
             num_classes (int): number of classes to calculate ``accuracy_args``
                 if ``accuracy_args`` is None
         """
-        list_args = accuracy_args or _get_list_args(num_classes)
+        list_args = accuracy_args or _get_default_accuracy_args(num_classes)
 
         super().__init__(
             prefix=prefix,
@@ -90,7 +90,7 @@ class MapKCallback(MultiMetricCallback):
             num_classes (int): number of classes to calculate ``map_args``
                 if ``map_args`` is None
         """
-        list_args = map_args or _get_list_args(num_classes)
+        list_args = map_args or _get_default_accuracy_args(num_classes)
 
         super().__init__(
             prefix=prefix,
