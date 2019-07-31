@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader  # noqa F401
 
 from catalyst.dl.core import Runner, Callback
 from catalyst.dl.experiment import SupervisedExperiment
+from catalyst.dl.callbacks import InferCallback, CheckpointCallback
 from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
 
 
@@ -42,11 +43,21 @@ class SupervisedRunner(Runner):
         return batch
 
     def predict_batch(self, batch: Mapping[str, Any]):
-        output = self.model(batch[self.input_key])
+        if isinstance(self.input_key, str):
+            output = self.model(batch[self.input_key])
+        else:
+            if isinstance(self.input_key, (list, tuple)):
+                input = dict(
+                    (key, value) for key, value in zip(self.input_key, batch)
+                )
+            else:
+                input = batch
+            output = self.model(**input)
+
         if isinstance(output, dict):
             pass
         elif isinstance(output, (list, tuple)) \
-                and isinstance(self.output_key, list):
+                and isinstance(self.output_key, (list, tuple)):
             output = dict(
                 (key, value) for key, value in zip(self.output_key, output)
             )
@@ -61,7 +72,7 @@ class SupervisedRunner(Runner):
         optimizer: _Optimizer,
         loaders: "OrderedDict[str, DataLoader]",
         logdir: str,
-        callbacks: "List[Callback]" = None,
+        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
         scheduler: _Scheduler = None,
         num_epochs: int = 1,
         valid_loader: str = "valid",
@@ -99,7 +110,7 @@ class SupervisedRunner(Runner):
         self,
         model: _Model,
         loaders: "OrderedDict[str, DataLoader]",
-        callbacks: "List[Callback]" = None,
+        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
         verbose: bool = False,
         state_kwargs: Dict = None,
         fp16: Union[Dict, bool] = None,
@@ -117,6 +128,35 @@ class SupervisedRunner(Runner):
             distributed_params=fp16
         )
         self.run_experiment(experiment, check=check)
+
+    def predict_loader(
+        self,
+        loader: DataLoader,
+        resume: str = None,
+        verbose: bool = False,
+        state_kwargs: Dict = None,
+        fp16: Union[Dict, bool] = None,
+        check: bool = False,
+    ):
+        loaders = OrderedDict([("infer", loader)])
+
+        callbacks = OrderedDict([("inference", InferCallback())])
+        if resume is not None:
+            callbacks["loader"] = CheckpointCallback(resume=resume)
+
+        self.infer(
+            model=self.model,
+            loaders=loaders,
+            callbacks=callbacks,
+            verbose=verbose,
+            state_kwargs=state_kwargs,
+            fp16=fp16,
+            check=check
+        )
+
+        output = callbacks["inference"].predictions[self.output_key]
+
+        return output
 
 
 __all__ = ["SupervisedRunner"]

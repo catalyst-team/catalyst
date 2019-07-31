@@ -60,7 +60,7 @@ class Experiment(ABC):
         return criterion, optimizer, scheduler
 
     @abstractmethod
-    def get_callbacks(self, stage: str) -> "List[Callback]":
+    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         pass
 
     def get_datasets(
