@@ -90,6 +90,20 @@ jobs:
           --out_dir=./examples/logs/_tests_mnist_stages1/:str
           --out_prefix="/predictions/":str
         - python -c "import numpy as np; data = np.load('examples/logs/_tests_mnist_stages1/predictions/infer.logits.npy'); assert data.shape == (10000, 10)"
+        - rm -rf ./examples/logs/_tests_mnist_stages1
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/dl/scripts/run.py
+          --expdir=./examples/_tests_mnist_stages
+          --config=./examples/_tests_mnist_stages/config4.yml
+          --logdir=./examples/logs/_tests_mnist_stages1
+          --check
+        - rm -rf ./examples/logs/_tests_mnist_stages1
+        - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
+          python catalyst/dl/scripts/run.py
+          --expdir=./examples/_tests_mnist_stages
+          --config=./examples/_tests_mnist_stages/config5.yml
+          --logdir=./examples/logs/_tests_mnist_stages1
+          --check
         - PYTHONPATH=./examples:./catalyst:${PYTHONPATH}
           python catalyst/dl/scripts/run.py
           --expdir=./examples/_tests_mnist_stages
