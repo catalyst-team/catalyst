@@ -5,6 +5,7 @@ import argparse
 
 from catalyst.utils.scripts import import_module
 from catalyst.utils import parse_args_uargs, dump_config, set_global_seed
+from catalyst.utils.scripts import dump_code
 from catalyst.rl.registry import OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
     ENVIRONMENTS, DATABASES
 from catalyst.rl.offpolicy.trainer import Trainer as OffpolicyTrainer
@@ -49,6 +50,8 @@ def main(args, unknown_args):
 
     if args.expdir is not None:
         module = import_module(expdir=args.expdir)  # noqa: F841
+        if args.logdir is not None:
+            dump_code(args.expdir, args.logdir)
 
     env = ENVIRONMENTS.get_from_params(**config["environment"])
 
