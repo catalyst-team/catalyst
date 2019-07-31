@@ -87,31 +87,6 @@ class CheckpointCallback(BaseCheckpointCallback):
         else:
             raise Exception(f"No checkpoint found at {filename}")
 
-    def get_metric(self, last_valid_metrics) -> Dict:
-        checkpoints = [
-            (Path(filepath).stem, valid_metric)
-            for (filepath, _, valid_metric) in self.top_best_metrics
-        ]
-        best_valid_metrics = checkpoints[0][1]
-        metrics = OrderedDict(
-            [("best", best_valid_metrics)] +
-            checkpoints +
-            [("last", last_valid_metrics)]
-        )
-
-        return metrics
-
-    def remove_checkpoint(self, minimize_metric: bool) -> None:
-        self.top_best_metrics = sorted(
-            self.top_best_metrics,
-            key=lambda x: x[1],
-            reverse=not minimize_metric
-        )
-        if len(self.top_best_metrics) > self.save_n_best:
-            last_item = self.top_best_metrics.pop(-1)
-            last_filepath = last_item[0]
-            os.remove(last_filepath)
-
     def save_checkpoint(
         self,
         logdir: str,
@@ -138,6 +113,31 @@ class CheckpointCallback(BaseCheckpointCallback):
 
         metrics = self.get_metric(valid_metrics)
         self.save_metric(logdir, metrics)
+
+    def remove_checkpoint(self, minimize_metric: bool) -> None:
+        self.top_best_metrics = sorted(
+            self.top_best_metrics,
+            key=lambda x: x[1],
+            reverse=not minimize_metric
+        )
+        if len(self.top_best_metrics) > self.save_n_best:
+            last_item = self.top_best_metrics.pop(-1)
+            last_filepath = last_item[0]
+            os.remove(last_filepath)
+
+    def get_metric(self, last_valid_metrics) -> Dict:
+        checkpoints = [
+            (Path(filepath).stem, valid_metric)
+            for (filepath, _, valid_metric) in self.top_best_metrics
+        ]
+        best_valid_metrics = checkpoints[0][1]
+        metrics = OrderedDict(
+            [("best", best_valid_metrics)] +
+            checkpoints +
+            [("last", last_valid_metrics)]
+        )
+
+        return metrics
 
     def on_stage_start(self, state: RunnerState):
         for key in self._keys_from_state:
@@ -216,21 +216,6 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         self._iteration_counter = 0
         self.last_checkpoints = []
 
-    def remove_checkpoint(self, **kwargs) -> None:
-        if len(self.last_checkpoints) > self.save_n_last:
-            item = self.last_checkpoints.pop(0)
-            top_filepath = item[0]
-            os.remove(top_filepath)
-
-    def get_metric(self, **kwargs) -> Dict:
-        checkpoints = [
-            (Path(filepath).stem, batch_values)
-            for (filepath, batch_values) in self.last_checkpoints
-        ]
-
-        metrics = OrderedDict(checkpoints)
-        return metrics
-
     def save_checkpoint(
         self,
         logdir: str,
@@ -255,6 +240,21 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         metrics = self.get_metric()
         self.save_metric(logdir, metrics)
         print(f"\nSaved checkpoint at {filepath}")
+
+    def remove_checkpoint(self, **kwargs) -> None:
+        if len(self.last_checkpoints) > self.save_n_last:
+            item = self.last_checkpoints.pop(0)
+            top_filepath = item[0]
+            os.remove(top_filepath)
+
+    def get_metric(self, **kwargs) -> Dict:
+        checkpoints = [
+            (Path(filepath).stem, batch_values)
+            for (filepath, batch_values) in self.last_checkpoints
+        ]
+
+        metrics = OrderedDict(checkpoints)
+        return metrics
 
     def on_stage_start(self, state):
         if self.stage_restart:
