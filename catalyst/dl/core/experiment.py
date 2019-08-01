@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from typing import Iterable, Mapping, Any, List, Tuple, Dict
+from typing import Iterable, Mapping, Any, Tuple, Dict
 from collections import OrderedDict
 
 from torch import nn

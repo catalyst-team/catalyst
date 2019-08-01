@@ -77,6 +77,10 @@ class Net(nn.Module):
 
 from catalyst.dl import utils
 
+# In[ ]:
+
+NUM_EPOCHS = 2
+
 # # Setup 1 - typical training
 
 # In[ ]:
@@ -84,7 +88,7 @@ from catalyst.dl import utils
 from catalyst.dl.runner import SupervisedRunner
 
 # experiment setup
-num_epochs = 2
+num_epochs = NUM_EPOCHS
 logdir = "./logs/cifar_simple_notebook_1"
 
 # model, criterion, optimizer
@@ -110,7 +114,7 @@ runner.train(
 
 # you can use plotly and tensorboard to plot metrics inside jupyter
 # by default it only plots loss
-# logs_plot = utils.plot_metrics(logdir=logdir)
+# utils.plot_metrics(logdir=logdir)
 
 # # Setup 2 - training with scheduler
 
@@ -119,7 +123,7 @@ runner.train(
 from catalyst.dl.runner import SupervisedRunner
 
 # experiment setup
-num_epochs = 2
+num_epochs = NUM_EPOCHS
 logdir = "./logs/cifar_simple_notebook_2"
 
 # model, criterion, optimizer
@@ -128,6 +132,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters())
 
 # any Pytorch scheduler supported
+# scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[3, 8], gamma=0.3)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
     optimizer, factor=0.5, patience=2
 )
@@ -155,7 +160,7 @@ from catalyst.dl.runner import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback
 
 # experiment setup
-num_epochs = 2
+num_epochs = NUM_EPOCHS
 logdir = "./logs/cifar_simple_notebook_3"
 
 # model, criterion, optimizer, scheduler
@@ -184,7 +189,7 @@ runner.train(
 
 # In[ ]:
 
-# logs_plot = utils.plot_metrics(logdir=logdir, metrics=["loss", "_base/lr"])
+# utils.plot_metrics(logdir=logdir, metrics=["loss", "_base/lr"])
 
 # # Setup 4 - training with additional metrics
 
@@ -194,7 +199,7 @@ from catalyst.dl.runner import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
 
 # experiment setup
-num_epochs = 2
+num_epochs = NUM_EPOCHS
 logdir = "./logs/cifar_simple_notebook_4"
 
 # model, criterion, optimizer, scheduler
@@ -226,9 +231,9 @@ runner.train(
 
 # In[ ]:
 
-# logs_plot = utils.plot_metrics(
-#     logdir=logdir, metrics=["loss", "accuracy01", "accuracy03", "_base/lr"]
-# )
+# utils.plot_metrics(
+#     logdir=logdir,
+#     metrics=["loss", "accuracy01", "accuracy03", "_base/lr"])
 
 # # Setup 5 - training with 1cycle
 
@@ -239,7 +244,7 @@ from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
 from catalyst.contrib.schedulers import OneCycleLR
 
 # experiment setup
-num_epochs = 2
+num_epochs = NUM_EPOCHS
 logdir = "./logs/cifar_simple_notebook_5"
 
 # model, criterion, optimizer, scheduler
@@ -275,21 +280,62 @@ runner.train(
 
 # In[ ]:
 
-# logs_plot = utils.plot_metrics(
+# utils.plot_metrics(
 #     logdir=logdir,
 #     step="batch",
-#     metrics=["loss", "accuracy01", "_base/lr", "_base/momentum"]
-# )
+#     metrics=["loss", "accuracy01", "_base/lr", "_base/momentum"])
 
-# # Setup 6 - pipeline check
+# # Setup 6 - training without validation
+
+# In[ ]:
+
+from catalyst.dl.runner import SupervisedRunner
+from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
+
+# experiment setup
+num_epochs = NUM_EPOCHS
+logdir = "./logs/cifar_simple_notebook_6"
+
+# model, criterion, optimizer, scheduler
+model = Net()
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters())
+scheduler = torch.optim.lr_scheduler.MultiStepLR(
+    optimizer, milestones=[3, 8], gamma=0.3
+)
+
+# model runner
+runner = SupervisedRunner()
+
+# model training
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    scheduler=scheduler,
+    loaders={"train": loaders["train"]},
+    valid_loader="train",
+    callbacks=[
+        AccuracyCallback(accuracy_args=[1, 3, 5]),
+    ],
+    logdir=logdir,
+    num_epochs=num_epochs,
+    check=True
+)
+
+# In[ ]:
+
+# utils.plot_metrics(logdir=logdir, step="epoch", metrics=["loss", "accuracy01"])
+
+# # Setup 7 - pipeline check
 
 # In[ ]:
 
 from catalyst.dl.runner import SupervisedRunner
 
 # experiment setup
-num_epochs = 2
-logdir = "./logs/cifar_simple_notebook_6"
+num_epochs = NUM_EPOCHS
+logdir = "./logs/cifar_simple_notebook_7"
 
 # model, criterion, optimizer, scheduler
 model = Net()
@@ -314,7 +360,7 @@ runner.train(
     check=True  # here is the trick
 )
 
-# # Setup 7 - multi-stage training
+# # Setup 8 - multi-stage training
 
 # In[ ]:
 
@@ -322,8 +368,8 @@ from catalyst.dl.runner import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
 
 # experiment setup
-num_epochs = 2
-logdir = "./logs/cifar_simple_notebook_7"
+num_epochs = NUM_EPOCHS
+logdir = "./logs/cifar_simple_notebook_8"
 
 # model, criterion, optimizer, scheduler
 model = Net()
@@ -353,7 +399,7 @@ runner.train(
 )
 
 # model training - 2
-num_epochs = 2
+num_epochs = NUM_EPOCHS
 logdir = "./logs/cifar_simple_notebook_8"
 optimizer = torch.optim.SGD(model.parameters(), lr=0.05)
 
@@ -363,29 +409,26 @@ runner.train(
     optimizer=optimizer,
     loaders=loaders,
     logdir=logdir,
-    num_epochs=num_epochs,
-    check=True
+    num_epochs=num_epochs
 )
 
-# # Setup 8 - loader inference
+# # Setup 9 - predict_loader
 
 # In[ ]:
 
-from catalyst.dl.callbacks import InferCallback
-loaders = collections.OrderedDict([("infer", loaders["train"])])
-runner.infer(
-    model=model, loaders=loaders, callbacks=[InferCallback()], check=True
+runner_out = runner.predict_loader(
+    loaders["valid"], resume=f"{logdir}/checkpoints/best.pth"
 )
 
 # In[ ]:
 
-runner.callbacks[0].predictions["logits"].shape
+runner_out.shape
 
-# # Setup 9 - batch inference
+# # Setup 10 - predict batch
 
 # In[ ]:
 
-features, targets = next(iter(loaders["infer"]))
+features, targets = next(iter(loaders["valid"]))
 
 # In[ ]:
 
@@ -398,6 +441,6 @@ runner_out = runner.predict_batch(runner_in)
 
 # In[ ]:
 
-runner_out["logits"].shape
+runner_out[runner.output_key].shape
 
 # In[ ]:

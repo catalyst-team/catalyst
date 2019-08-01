@@ -12,13 +12,13 @@ class SupervisedExperiment(BaseExperiment):
         callbacks = self._callbacks
         if not stage.startswith("infer"):
             default_callbacks = [
-                (self._criterion, CriterionCallback, "_criterion"),
-                (self._optimizer, OptimizerCallback, "_optimizer"),
-                (self._scheduler, SchedulerCallback, "_scheduler"),
-                ("_default_saver", CheckpointCallback, "_saver"),
+                (self._criterion, "_criterion", CriterionCallback),
+                (self._optimizer, "_optimizer", OptimizerCallback),
+                (self._scheduler, "_scheduler", SchedulerCallback),
+                ("_default_saver", "_saver", CheckpointCallback),
             ]
 
-            for component, callback_fn, callback_name in default_callbacks:
+            for component, callback_name, callback_fn in default_callbacks:
                 is_already_present = any(
                     isinstance(x, callback_fn) for x in callbacks.values()
                 )
