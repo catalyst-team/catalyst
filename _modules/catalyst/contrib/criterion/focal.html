@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.criterion.focal &mdash; Catalyst 19.06 documentation</title>
+  <title>catalyst.contrib.criterion.focal &mdash; Catalyst 19.08 documentation</title>
   
 
   
@@ -25,6 +25,7 @@
         <script type="text/javascript" src="../../../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../../../_static/doctools.js"></script>
         <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -58,7 +59,7 @@
             
             
               <div class="version">
-                19.06
+                19.08
               </div>
             
           
@@ -162,7 +163,7 @@
 <span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
 
 <span class="kn">from</span> <span class="nn">torch.nn.modules.loss</span> <span class="k">import</span> <span class="n">_Loss</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.losses</span> <span class="k">import</span> <span class="n">sigmoid_focal_loss</span><span class="p">,</span> <span class="n">reduced_focal_loss</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="k">import</span> <span class="n">criterion</span>
 
 
 <div class="viewcode-block" id="FocalLossBinary"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.focal.FocalLossBinary">[docs]</a><span class="k">class</span> <span class="nc">FocalLossBinary</span><span class="p">(</span><span class="n">_Loss</span><span class="p">):</span>
@@ -183,16 +184,18 @@
 
         <span class="k">if</span> <span class="n">reduced</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">loss_fn</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
-                <span class="n">reduced_focal_loss</span><span class="p">,</span>
+                <span class="n">criterion</span><span class="o">.</span><span class="n">reduced_focal_loss</span><span class="p">,</span>
                 <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
                 <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
-                <span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span><span class="p">)</span>
+                <span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">loss_fn</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
-                <span class="n">sigmoid_focal_loss</span><span class="p">,</span>
+                <span class="n">criterion</span><span class="o">.</span><span class="n">sigmoid_focal_loss</span><span class="p">,</span>
                 <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
                 <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
-                <span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span><span class="p">)</span></div>
+                <span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span>
+            <span class="p">)</span></div>
 
 <div class="viewcode-block" id="FocalLossBinary.forward"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.focal.FocalLossBinary.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -248,35 +251,35 @@
         <span class="k">return</span> <span class="n">loss</span></div></div>
 
 
-<div class="viewcode-block" id="FocalLossMultiLabel"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.focal.FocalLossMultiLabel">[docs]</a><span class="k">class</span> <span class="nc">FocalLossMultiLabel</span><span class="p">(</span><span class="n">_Loss</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Compute focal loss for multi-label problem.</span>
-<span class="sd">    Ignores targets having -1 label</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="c1"># @TODO: check</span>
+<span class="c1"># class FocalLossMultiLabel(_Loss):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Compute focal loss for multi-label problem.</span>
+<span class="c1">#     Ignores targets having -1 label</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     def forward(self, logits, targets):</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         Args:</span>
+<span class="c1">#             logits: [bs; num_classes]</span>
+<span class="c1">#             targets: [bs; num_classes]</span>
+<span class="c1">#         &quot;&quot;&quot;</span>
+<span class="c1">#         num_classes = logits.size(1)</span>
+<span class="c1">#         loss = 0</span>
+<span class="c1">#</span>
+<span class="c1">#         for cls in range(num_classes):</span>
+<span class="c1">#             # Filter anchors with -1 label from loss computation</span>
+<span class="c1">#             if cls == self.ignore:</span>
+<span class="c1">#                 continue</span>
+<span class="c1">#</span>
+<span class="c1">#             cls_label_target = targets[..., cls].long()</span>
+<span class="c1">#             cls_label_input = logits[..., cls]</span>
+<span class="c1">#</span>
+<span class="c1">#             loss += self.loss_fn(cls_label_input, cls_label_target)</span>
+<span class="c1">#</span>
+<span class="c1">#         return loss</span>
 
-<div class="viewcode-block" id="FocalLossMultiLabel.forward"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.focal.FocalLossMultiLabel.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Args:</span>
-<span class="sd">            logits: [bs; num_classes]</span>
-<span class="sd">            targets: [bs; num_classes]</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">num_classes</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_classes</span><span class="p">):</span>
-            <span class="c1"># Filter anchors with -1 label from loss computation</span>
-            <span class="k">if</span> <span class="bp">cls</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="n">cls_label_target</span> <span class="o">=</span> <span class="n">targets</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="bp">cls</span><span class="p">]</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
-            <span class="n">cls_label_input</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="bp">cls</span><span class="p">]</span>
-
-            <span class="n">loss</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_fn</span><span class="p">(</span><span class="n">cls_label_input</span><span class="p">,</span> <span class="n">cls_label_target</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">loss</span></div></div>
-
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FocalLossBinary&quot;</span><span class="p">,</span> <span class="s2">&quot;FocalLossMultiClass&quot;</span><span class="p">,</span> <span class="s2">&quot;FocalLossMultiLabel&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FocalLossBinary&quot;</span><span class="p">,</span> <span class="s2">&quot;FocalLossMultiClass&quot;</span><span class="p">]</span>
 </pre></div>
 
            </div>

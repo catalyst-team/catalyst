@@ -6,38 +6,30 @@ DL
     :undoc-members:
     :show-inheritance:
 
-
-Runner
+Core
 --------------------
 
-.. automodule:: catalyst.dl.experiments.runner
+.. automodule:: catalyst.dl.core.callback
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.dl.state
+.. automodule:: catalyst.dl.core.experiment
     :members:
     :undoc-members:
     :show-inheritance:
 
-Experiment
---------------------
-
-.. automodule:: catalyst.dl.experiments.experiment
+.. automodule:: catalyst.dl.core.metric_manager
     :members:
     :undoc-members:
     :show-inheritance:
 
-
-Metric functions
---------------------
-
-.. automodule:: catalyst.dl.metrics
+.. automodule:: catalyst.dl.core.runner
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.dl.metric_manager
+.. automodule:: catalyst.dl.core.state
     :members:
     :undoc-members:
     :show-inheritance:
@@ -45,173 +37,158 @@ Metric functions
 
 Callbacks
 --------------------
-Callbacks are the main idea for reproducible pipeline
 
-.. currentmodule:: catalyst.dl.callbacks
-
-Base
-~~~~~~~~~~~~~~~~
-
-.. autoclass:: Callback
+.. automodule:: catalyst.dl.callbacks.checkpoint
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: LossCallback
+.. automodule:: catalyst.dl.callbacks.criterion
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: OptimizerCallback
+.. automodule:: catalyst.dl.callbacks.inference
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: SchedulerCallback
+.. automodule:: catalyst.dl.callbacks.logging
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: CheckpointCallback
+.. automodule:: catalyst.dl.callbacks.misc
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: EarlyStoppingCallback
+.. automodule:: catalyst.dl.callbacks.mixup
     :members:
     :undoc-members:
+    :show-inheritance:
 
+.. automodule:: catalyst.dl.callbacks.optimizer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.dl.callbacks.scheduler
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Metrics
 ~~~~~~~~~~~~~~~~
 
-.. autoclass:: MetricCallback
+.. automodule:: catalyst.dl.callbacks.metrics.accuracy
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: DiceCallback
+.. automodule:: catalyst.dl.callbacks.metrics.auc
     :members:
     :undoc-members:
+    :show-inheritance:
 
-
-.. autoclass:: IouCallback
+.. automodule:: catalyst.dl.callbacks.metrics.dice
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: F1ScoreCallback
+.. automodule:: catalyst.dl.callbacks.metrics.f1_score
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: AUCCallback
+.. automodule:: catalyst.dl.callbacks.metrics.iou
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: ConfusionMatrixCallback
+
+Experiment
+--------------------
+
+.. automodule:: catalyst.dl.experiment.base
     :members:
     :undoc-members:
+    :show-inheritance:
 
-
-MultiMetrics
-~~~~~~~~~~~~~~~~
-
-.. autoclass:: MultiMetricCallback
+.. automodule:: catalyst.dl.experiment.config
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: AccuracyCallback
+.. automodule:: catalyst.dl.experiment.supervised
     :members:
     :undoc-members:
+    :show-inheritance:
 
-.. autoclass:: MapKCallback
+
+Runner
+--------------------
+
+.. automodule:: catalyst.dl.runner.supervised
     :members:
     :undoc-members:
+    :show-inheritance:
 
 
-Loggers
-~~~~~~~~~~~~~~~~
-
-.. autoclass:: TensorboardLogger
-    :members:
-    :undoc-members:
-
-.. autoclass:: ConsoleLogger
-    :members:
-    :undoc-members:
-
-.. autoclass:: VerboseLogger
-    :members:
-    :undoc-members:
-
-Formatters
-""""""""""""""""
-
-.. autoclass:: MetricsFormatter
-    :members:
-    :undoc-members:
-
-.. autoclass:: TxtMetricsFormatter
-    :members:
-    :undoc-members:
-
-.. autoclass:: JsonMetricsFormatter
-    :members:
-    :undoc-members:
-
-
-Schedulers
-~~~~~~~~~~~~~~~~
-
-.. autoclass:: LRUpdater
-    :members:
-    :undoc-members:
-
-.. autoclass:: LRFinder
-    :members:
-    :undoc-members:
-
-
-Inference
-~~~~~~~~~~~~~~~~
-
-.. autoclass:: InferCallback
-    :members:
-    :undoc-members:
-
-.. autoclass:: InferMaskCallback
-    :members:
-    :undoc-members:
 
 
 Utils
-~~~~~~~~~~~~~~~~
-
-.. automodule:: catalyst.dl.callbacks.utils
-    :members:
-    :undoc-members:
-
-Losses
 --------------------
 
-.. automodule:: catalyst.dl.losses
+.. automodule:: catalyst.dl.utils.formatters
     :members:
     :undoc-members:
     :show-inheritance:
 
-Initialization
---------------------
-
-.. automodule:: catalyst.dl.initialization
+.. automodule:: catalyst.dl.utils.scripts
     :members:
     :undoc-members:
     :show-inheritance:
 
-Tracing
---------------------
+.. automodule:: catalyst.dl.utils.torch
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 .. automodule:: catalyst.dl.utils.trace
     :members:
     :undoc-members:
     :show-inheritance:
 
-Utils
---------------------
+.. automodule:: catalyst.dl.utils.visualization
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
-.. automodule:: catalyst.dl.utils
+Criterion
+~~~~~~~~~~~~~~~~
+
+.. automodule:: catalyst.dl.utils.criterion.accuracy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.dl.utils.criterion.dice
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.dl.utils.criterion.f1_score
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.dl.utils.criterion.focal
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.dl.utils.criterion.iou
     :members:
     :undoc-members:
     :show-inheritance:

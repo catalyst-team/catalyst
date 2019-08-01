@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.config &mdash; Catalyst 19.06 documentation</title>
+  <title>catalyst.utils.config &mdash; Catalyst 19.08 documentation</title>
   
 
   
@@ -25,6 +25,7 @@
         <script type="text/javascript" src="../../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../../_static/doctools.js"></script>
         <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -58,7 +59,7 @@
             
             
               <div class="version">
-                19.06
+                19.08
               </div>
             
           
@@ -159,12 +160,13 @@
            <div itemprop="articleBody">
             
   <h1>Source code for catalyst.utils.config</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">json</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
-
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="k">import</span> <span class="n">merge_dicts</span>
@@ -184,7 +186,6 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: configuration</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">class</span> <span class="nc">OrderedLoader</span><span class="p">(</span><span class="n">Loader</span><span class="p">):</span>
         <span class="k">pass</span>
 
@@ -198,40 +199,36 @@
     <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">OrderedLoader</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="dump_config"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.config.dump_config">[docs]</a><span class="k">def</span> <span class="nf">dump_config</span><span class="p">(</span><span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="dump_config"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.config.dump_config">[docs]</a><span class="k">def</span> <span class="nf">dump_config</span><span class="p">(</span>
+    <span class="n">experiment_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+    <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">configs_path</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Saves config into JSON in logdir</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        config: path(s) to config</span>
+<span class="sd">        experiment_config (dict): experiment config</span>
 <span class="sd">        logdir (str): path to logdir</span>
+<span class="sd">        configs_path: path(s) to config</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">configs_path</span> <span class="o">=</span> <span class="n">configs_path</span> <span class="ow">or</span> <span class="p">[]</span>
     <span class="n">config_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/configs/&quot;</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">config_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="n">config</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">config_path_in</span> <span class="ow">in</span> <span class="n">config_path</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{config_dir}</span><span class="s2">/_config.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">experiment_config</span><span class="p">,</span> <span class="n">fout</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">config_path_in</span> <span class="ow">in</span> <span class="n">configs_path</span><span class="p">:</span>
         <span class="n">config_name</span> <span class="o">=</span> <span class="n">config_path_in</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">config_path_out</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{config_dir}</span><span class="s2">/</span><span class="si">{config_name}</span><span class="s2">&quot;</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">config_path_in</span><span class="p">,</span> <span class="n">config_path_out</span><span class="p">)</span>
-
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_path_in</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">config_path_in</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;json&quot;</span><span class="p">):</span>
-                <span class="n">config_</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fin</span><span class="p">,</span> <span class="n">object_pairs_hook</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">config_path_in</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;yml&quot;</span><span class="p">):</span>
-                <span class="n">config_</span> <span class="o">=</span> <span class="n">load_ordered_yaml</span><span class="p">(</span><span class="n">fin</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown file format&quot;</span><span class="p">)</span>
-        <span class="n">config</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">config_</span><span class="p">)</span>
-
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{config_dir}</span><span class="s2">/_config.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
-        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">fout</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">config_path_in</span><span class="p">,</span> <span class="n">config_path_out</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">parse_config_args</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">unknown_args</span><span class="p">):</span>
+<div class="viewcode-block" id="parse_config_args"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.config.parse_config_args">[docs]</a><span class="k">def</span> <span class="nf">parse_config_args</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">unknown_args</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">unknown_args</span><span class="p">:</span>
         <span class="n">arg_name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
-        <span class="n">arg_name</span> <span class="o">=</span> <span class="n">arg_name</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">arg_name</span> <span class="o">=</span> <span class="n">arg_name</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
 
         <span class="n">value_content</span><span class="p">,</span> <span class="n">value_type</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
@@ -270,7 +267,7 @@
                 <span class="k">continue</span>
             <span class="n">config</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="k">return</span> <span class="n">config</span><span class="p">,</span> <span class="n">args</span>
+    <span class="k">return</span> <span class="n">config</span><span class="p">,</span> <span class="n">args</span></div>
 
 
 <div class="viewcode-block" id="parse_args_uargs"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.config.parse_args_uargs">[docs]</a><span class="k">def</span> <span class="nf">parse_args_uargs</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">unknown_args</span><span class="p">):</span>
