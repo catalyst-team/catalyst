@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.rl.db.redis &mdash; Catalyst 19.06 documentation</title>
+  <title>catalyst.rl.db.redis &mdash; Catalyst 19.08 documentation</title>
   
 
   
@@ -25,6 +25,7 @@
         <script type="text/javascript" src="../../../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../../../_static/doctools.js"></script>
         <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -58,7 +59,7 @@
             
             
               <div class="version">
-                19.06
+                19.08
               </div>
             
           
@@ -159,76 +160,110 @@
            <div itemprop="articleBody">
             
   <h1>Source code for catalyst.rl.db.redis</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">redis</span> <span class="k">import</span> <span class="n">StrictRedis</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.compression</span> <span class="k">import</span> <span class="n">pack</span><span class="p">,</span> <span class="n">unpack</span>
-<span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">DBSpec</span>
+<span></span><span class="kn">from</span> <span class="nn">redis</span> <span class="k">import</span> <span class="n">Redis</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="k">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl.core</span> <span class="k">import</span> <span class="n">DBSpec</span>
 
 
-<div class="viewcode-block" id="RedisDB"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.RedisDB">[docs]</a><span class="k">class</span> <span class="nc">RedisDB</span><span class="p">(</span><span class="n">DBSpec</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">12000</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sync_epoch</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_server</span> <span class="o">=</span> <span class="n">StrictRedis</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">)</span>
+<div class="viewcode-block" id="RedisDB"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.redis.RedisDB">[docs]</a><span class="k">class</span> <span class="nc">RedisDB</span><span class="p">(</span><span class="n">DBSpec</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">12000</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sync_epoch</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_server</span> <span class="o">=</span> <span class="n">Redis</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">prefix</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sync_epoch</span> <span class="o">=</span> <span class="n">sync_epoch</span>
 
+    <span class="k">def</span> <span class="nf">_set_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{self._prefix}</span><span class="s2">_</span><span class="si">{key}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{self._prefix}</span><span class="s2">_</span><span class="si">{key}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="n">flag</span> <span class="k">if</span> <span class="n">flag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">default</span>
+        <span class="k">return</span> <span class="n">flag</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">training_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_flag</span><span class="p">(</span><span class="s2">&quot;training_flag&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># enabled by default</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">flag</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sampling_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_flag</span><span class="p">(</span><span class="s2">&quot;sampling_flag&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># disabled by default</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">flag</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">num_trajectories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="n">num_trajectories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">llen</span><span class="p">(</span><span class="s2">&quot;trajectories&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">num_trajectories</span>
 
-<div class="viewcode-block" id="RedisDB.set_sample_flag"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.RedisDB.set_sample_flag">[docs]</a>    <span class="k">def</span> <span class="nf">set_sample_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;sample_flag&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">sample</span><span class="p">))</span></div>
+<div class="viewcode-block" id="RedisDB.push_message"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.redis.RedisDB.push_message">[docs]</a>    <span class="k">def</span> <span class="nf">push_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="n">DBSpec</span><span class="o">.</span><span class="n">Message</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">message</span> <span class="o">==</span> <span class="n">DBSpec</span><span class="o">.</span><span class="n">Message</span><span class="o">.</span><span class="n">ENABLE_SAMPLING</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_flag</span><span class="p">(</span><span class="s2">&quot;sampling_flag&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">message</span> <span class="o">==</span> <span class="n">DBSpec</span><span class="o">.</span><span class="n">Message</span><span class="o">.</span><span class="n">DISABLE_SAMPLING</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_flag</span><span class="p">(</span><span class="s2">&quot;sampling_flag&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">message</span> <span class="o">==</span> <span class="n">DBSpec</span><span class="o">.</span><span class="n">Message</span><span class="o">.</span><span class="n">DISABLE_TRAINING</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_flag</span><span class="p">(</span><span class="s2">&quot;sampling_flag&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_flag</span><span class="p">(</span><span class="s2">&quot;training_flag&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">message</span> <span class="o">==</span> <span class="n">DBSpec</span><span class="o">.</span><span class="n">Message</span><span class="o">.</span><span class="n">ENABLE_TRAINING</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_flag</span><span class="p">(</span><span class="s2">&quot;training_flag&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;unknown message&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="RedisDB.get_sample_flag"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.RedisDB.get_sample_flag">[docs]</a>    <span class="k">def</span> <span class="nf">get_sample_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="n">flag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sample_flag&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">flag</span></div>
+<div class="viewcode-block" id="RedisDB.push_trajectory"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.redis.RedisDB.push_trajectory">[docs]</a>    <span class="k">def</span> <span class="nf">push_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">trajectory</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">structed2dict_trajectory</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span>
+        <span class="n">trajectory</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;trajectory&quot;</span><span class="p">:</span> <span class="n">trajectory</span><span class="p">,</span> <span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">}</span>
+        <span class="n">trajectory</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;raw_trajectories&quot;</span> <span class="k">if</span> <span class="n">raw</span> <span class="k">else</span> <span class="s2">&quot;trajectories&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">rpush</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="RedisDB.push_trajectory"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.RedisDB.push_trajectory">[docs]</a>    <span class="k">def</span> <span class="nf">push_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">):</span>
-        <span class="n">trajectory</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;trajectory&quot;</span><span class="p">:</span> <span class="n">trajectory</span><span class="p">,</span>
-            <span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span>
-        <span class="p">}</span>
-        <span class="n">trajectory</span> <span class="o">=</span> <span class="n">pack</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">rpush</span><span class="p">(</span><span class="s2">&quot;trajectories&quot;</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="RedisDB.get_trajectory"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.RedisDB.get_trajectory">[docs]</a>    <span class="k">def</span> <span class="nf">get_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="RedisDB.get_trajectory"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.redis.RedisDB.get_trajectory">[docs]</a>    <span class="k">def</span> <span class="nf">get_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">index</span> <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_index</span>
         <span class="n">trajectory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">lindex</span><span class="p">(</span><span class="s2">&quot;trajectories&quot;</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">trajectory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">1</span>
 
-            <span class="n">trajectory</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span>
+            <span class="n">trajectory</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span>
             <span class="n">trajectory</span><span class="p">,</span> <span class="n">trajectory_epoch</span> <span class="o">=</span> \
                 <span class="n">trajectory</span><span class="p">[</span><span class="s2">&quot;trajectory&quot;</span><span class="p">],</span> <span class="n">trajectory</span><span class="p">[</span><span class="s2">&quot;epoch&quot;</span><span class="p">]</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sync_epoch</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span> <span class="o">!=</span> <span class="n">trajectory_epoch</span><span class="p">:</span>
                 <span class="n">trajectory</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">trajectory</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">dict2structed_trajectory</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">trajectory</span></div>
 
-<div class="viewcode-block" id="RedisDB.clean_trajectories"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.RedisDB.clean_trajectories">[docs]</a>    <span class="k">def</span> <span class="nf">clean_trajectories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="RedisDB.clean_trajectories"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.redis.RedisDB.clean_trajectories">[docs]</a>    <span class="k">def</span> <span class="nf">clean_trajectories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;trajectories&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="mi">0</span></div>
 
-<div class="viewcode-block" id="RedisDB.dump_weights"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.RedisDB.dump_weights">[docs]</a>    <span class="k">def</span> <span class="nf">dump_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
+<div class="viewcode-block" id="RedisDB.save_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.redis.RedisDB.save_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">save_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span> <span class="o">=</span> <span class="n">epoch</span>
-        <span class="n">weights</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;weights&quot;</span><span class="p">:</span> <span class="n">weights</span><span class="p">,</span>
-            <span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span>
-        <span class="p">}</span>
-        <span class="n">weights</span> <span class="o">=</span> <span class="n">pack</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{self._prefix}</span><span class="s2">_</span><span class="si">{prefix}</span><span class="s2">_weights&quot;</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span></div>
+        <span class="n">checkpoint</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;checkpoint&quot;</span><span class="p">:</span> <span class="n">checkpoint</span><span class="p">,</span> <span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">}</span>
+        <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{self._prefix}</span><span class="s2">_checkpoint&quot;</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="RedisDB.load_weights"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.RedisDB.load_weights">[docs]</a>    <span class="k">def</span> <span class="nf">load_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
-        <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{self._prefix}</span><span class="s2">_</span><span class="si">{prefix}</span><span class="s2">_weights&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">weights</span> <span class="o">=</span> <span class="n">unpack</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[</span><span class="s2">&quot;epoch&quot;</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">weights</span><span class="p">[</span><span class="s2">&quot;weights&quot;</span><span class="p">]</span></div>
+<div class="viewcode-block" id="RedisDB.load_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.redis.RedisDB.load_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">load_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">checkpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{self._prefix}</span><span class="s2">_checkpoint&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">checkpoint</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;epoch&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;checkpoint&quot;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="RedisDB.clean_weights"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.RedisDB.clean_weights">[docs]</a>    <span class="k">def</span> <span class="nf">clean_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{self._prefix}</span><span class="s2">_</span><span class="si">{prefix}</span><span class="s2">_weights&quot;</span><span class="p">)</span></div></div>
+<div class="viewcode-block" id="RedisDB.clean_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.redis.RedisDB.clean_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">clean_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{self._prefix}</span><span class="s2">_weights&quot;</span><span class="p">)</span></div></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;RedisDB&quot;</span><span class="p">]</span>
 </pre></div>
 
            </div>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.criterion.center &mdash; Catalyst 19.06 documentation</title>
+  <title>catalyst.contrib.criterion.center &mdash; Catalyst 19.08 documentation</title>
   
 
   
@@ -25,6 +25,7 @@
         <script type="text/javascript" src="../../../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../../../_static/doctools.js"></script>
         <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -58,7 +59,7 @@
             
             
               <div class="version">
-                19.06
+                19.08
               </div>
             
           
@@ -178,8 +179,8 @@
         <span class="c1"># To check the dim of centers and features</span>
         <span class="k">if</span> <span class="n">feature</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_dim</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Center</span><span class="se">\&quot;</span><span class="s2">s dim: </span><span class="si">{0}</span><span class="s2"> &quot;</span>
-                <span class="s2">&quot;should be equal to input feature</span><span class="se">\&quot;</span><span class="s2">s dim: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="s2">&quot;Center&#39;s dim: </span><span class="si">{0}</span><span class="s2"> &quot;</span>
+                <span class="s2">&quot;should be equal to input feature&#39;s dim: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">feature_dim</span><span class="p">,</span> <span class="n">feature</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
                 <span class="p">)</span>
             <span class="p">)</span>

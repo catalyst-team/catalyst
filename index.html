@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Catalyst &mdash; Catalyst 19.06 documentation</title>
+  <title>Catalyst &mdash; Catalyst 19.08 documentation</title>
   
 
   
@@ -25,6 +25,7 @@
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
         <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -59,7 +60,7 @@
             
             
               <div class="version">
-                19.06
+                19.08
               </div>
             
           
@@ -269,51 +270,41 @@ with distributed training support.</p></li>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api/dl.html">DL</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/dl.html#module-catalyst.dl.experiments.runner">Runner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/dl.html#module-catalyst.dl.experiments.experiment">Experiment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/dl.html#module-catalyst.dl.metrics">Metric functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/dl.html#callbacks">Callbacks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/dl.html#module-catalyst.dl.losses">Losses</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/dl.html#module-catalyst.dl.initialization">Initialization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/dl.html#module-catalyst.dl.utils.trace">Tracing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/dl.html#id1">Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/dl.html#module-catalyst.dl.core.callback">Core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/dl.html#module-catalyst.dl.callbacks.checkpoint">Callbacks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/dl.html#module-catalyst.dl.experiment.base">Experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/dl.html#module-catalyst.dl.runner.supervised">Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/dl.html#module-catalyst.dl.utils.formatters">Utils</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/rl.html">RL</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/rl.html#agents">Agents</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/rl.html#db">DB</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/rl.html#environments">Environments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/rl.html#exploration">Exploration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/rl.html#offpolicy">Offpolicy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/rl.html#onpolicy">Onpolicy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/rl.html#module-catalyst.rl.core.agent">Core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/rl.html#module-catalyst.rl.agent.actor">Agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/rl.html#module-catalyst.rl.db.mongo">DB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/rl.html#module-catalyst.rl.environment.gym">Environments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/rl.html#module-catalyst.rl.exploration.boltzman">Exploration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/rl.html#module-catalyst.rl.offpolicy.trainer">Off-policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/rl.html#module-catalyst.rl.onpolicy.trainer">On-policy</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contrib</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.criterion.ce">Criterion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#schedulers">Schedulers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.models">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#models">Models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.modules.common">Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.optimizers">Optimizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.schedulers.base">Schedulers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/data.html">Data</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/data.html#scripts">Scripts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data.html#reader">Reader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.dataset">Dataset</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.sampler">Sampler</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.collate_fn">Collate Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.mixin">Mixins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/data.html#augmentor">Augmentor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.collate_fn">Collate Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.dataset">Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#reader">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.sampler">Sampler</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="api/utils.html">Utils</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.config">Config</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.data">Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.parse">Parse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.misc">Misc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.parallelize">Parallelize</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.utils.serialization">Serialization</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="api/utils.html">Utils</a></li>
 </ul>
 </div>
 </div>

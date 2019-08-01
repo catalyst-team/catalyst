@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utils &mdash; Catalyst 19.06 documentation</title>
+  <title>Utils &mdash; Catalyst 19.08 documentation</title>
   
 
   
@@ -25,6 +25,7 @@
         <script type="text/javascript" src="../_static/underscore.js"></script>
         <script type="text/javascript" src="../_static/doctools.js"></script>
         <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -59,7 +60,7 @@
             
             
               <div class="version">
-                19.06
+                19.08
               </div>
             
           
@@ -96,15 +97,7 @@
 <li class="toctree-l1"><a class="reference internal" href="rl.html">RL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contrib.html">Contrib</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Utils</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.utils.config">Config</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.utils.data">Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.utils.parse">Parse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.utils.misc">Misc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.utils.parallelize">Parallelize</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.utils.serialization">Serialization</a></li>
-</ul>
-</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Utils</a></li>
 </ul>
 
             
@@ -173,17 +166,104 @@
             
   <div class="section" id="module-catalyst.utils">
 <span id="utils"></span><h1>Utils<a class="headerlink" href="#module-catalyst.utils" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-catalyst.utils.config">
-<span id="config"></span><h2>Config<a class="headerlink" href="#module-catalyst.utils.config" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-catalyst.utils.argparse"></span><dl class="function">
+<dt id="catalyst.utils.argparse.args_are_not_none">
+<code class="descclassname">catalyst.utils.argparse.</code><code class="descname">args_are_not_none</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/argparse.html#args_are_not_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.argparse.args_are_not_none" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that all arguments are not None
+:param *args: values
+:type *args: Any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if all value were not None, False otherwise</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="function">
+<dt id="catalyst.utils.argparse.boolean_flag">
+<code class="descclassname">catalyst.utils.argparse.</code><code class="descname">boolean_flag</code><span class="sig-paren">(</span><em>parser</em>, <em>name: str</em>, <em>default: bool = False</em>, <em>help: str = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/argparse.html#boolean_flag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.argparse.boolean_flag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a boolean flag to argparse parser.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parser</strong> (<em>argparse.Parser</em>) – parser to add the flag to</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – –&lt;name&gt; will enable the flag,
+while –no-&lt;name&gt; will disable it</p></li>
+<li><p><strong>default</strong> (<em>bool</em><em>, </em><em>optional</em>) – default value of the flag</p></li>
+<li><p><strong>help</strong> (<em>str</em>) – help string for the flag</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-catalyst.utils.checkpoint"></span><dl class="function">
+<dt id="catalyst.utils.checkpoint.load_checkpoint">
+<code class="descclassname">catalyst.utils.checkpoint.</code><code class="descname">load_checkpoint</code><span class="sig-paren">(</span><em>filepath</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/checkpoint.html#load_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.checkpoint.load_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.checkpoint.pack_checkpoint">
+<code class="descclassname">catalyst.utils.checkpoint.</code><code class="descname">pack_checkpoint</code><span class="sig-paren">(</span><em>model=None</em>, <em>criterion=None</em>, <em>optimizer=None</em>, <em>scheduler=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/checkpoint.html#pack_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.checkpoint.pack_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.checkpoint.save_checkpoint">
+<code class="descclassname">catalyst.utils.checkpoint.</code><code class="descname">save_checkpoint</code><span class="sig-paren">(</span><em>logdir</em>, <em>checkpoint</em>, <em>suffix=''</em>, <em>is_best=False</em>, <em>is_last=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/checkpoint.html#save_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.checkpoint.save_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.checkpoint.unpack_checkpoint">
+<code class="descclassname">catalyst.utils.checkpoint.</code><code class="descname">unpack_checkpoint</code><span class="sig-paren">(</span><em>checkpoint</em>, <em>model=None</em>, <em>criterion=None</em>, <em>optimizer=None</em>, <em>scheduler=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/checkpoint.html#unpack_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.checkpoint.unpack_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-catalyst.utils.compression"></span><dl class="function">
+<dt id="catalyst.utils.compression.compress">
+<code class="descclassname">catalyst.utils.compression.</code><code class="descname">compress</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/compression.html#compress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.compression.compress" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.compression.compress_if_needed">
+<code class="descclassname">catalyst.utils.compression.</code><code class="descname">compress_if_needed</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/compression.html#compress_if_needed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.compression.compress_if_needed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.compression.decompress">
+<code class="descclassname">catalyst.utils.compression.</code><code class="descname">decompress</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/compression.html#decompress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.compression.decompress" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.compression.decompress_if_needed">
+<code class="descclassname">catalyst.utils.compression.</code><code class="descname">decompress_if_needed</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/compression.html#decompress_if_needed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.compression.decompress_if_needed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.compression.is_compressed">
+<code class="descclassname">catalyst.utils.compression.</code><code class="descname">is_compressed</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/compression.html#is_compressed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.compression.is_compressed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.compression.pack">
+<code class="descclassname">catalyst.utils.compression.</code><code class="descname">pack</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.compression.pack" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.compression.unpack">
+<code class="descclassname">catalyst.utils.compression.</code><code class="descname">unpack</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.compression.unpack" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-catalyst.utils.config"></span><dl class="function">
 <dt id="catalyst.utils.config.dump_config">
-<code class="descclassname">catalyst.utils.config.</code><code class="descname">dump_config</code><span class="sig-paren">(</span><em>config_path: str</em>, <em>logdir: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/config.html#dump_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.dump_config" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">catalyst.utils.config.</code><code class="descname">dump_config</code><span class="sig-paren">(</span><em>experiment_config: Dict</em>, <em>logdir: str</em>, <em>configs_path: List = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/config.html#dump_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.dump_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves config into JSON in logdir</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>config</strong> – path(s) to config</p></li>
+<li><p><strong>experiment_config</strong> (<em>dict</em>) – experiment config</p></li>
 <li><p><strong>logdir</strong> (<em>str</em>) – path to logdir</p></li>
+<li><p><strong>configs_path</strong> – path(s) to config</p></li>
 </ul>
 </dd>
 </dl>
@@ -230,12 +310,14 @@
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-catalyst.utils.data">
-<span id="data"></span><h2>Data<a class="headerlink" href="#module-catalyst.utils.data" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="catalyst.utils.data.balance_classes">
-<code class="descclassname">catalyst.utils.data.</code><code class="descname">balance_classes</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>class_column: str = 'label'</em>, <em>random_state: int = 42</em>, <em>how: str = 'downsampling'</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/data.html#balance_classes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.balance_classes" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.config.parse_config_args">
+<code class="descclassname">catalyst.utils.config.</code><code class="descname">parse_config_args</code><span class="sig-paren">(</span><em>*</em>, <em>config</em>, <em>args</em>, <em>unknown_args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/config.html#parse_config_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.parse_config_args" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-catalyst.utils.dataset"></span><dl class="function">
+<dt id="catalyst.utils.dataset.balance_classes">
+<code class="descclassname">catalyst.utils.dataset.</code><code class="descname">balance_classes</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>class_column: str = 'label'</em>, <em>random_state: int = 42</em>, <em>how: str = 'downsampling'</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/dataset.html#balance_classes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.dataset.balance_classes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Balance classes in dataframe by <code class="docutils literal notranslate"><span class="pre">class_column</span></code></p>
 <p>See also <a class="reference internal" href="data.html#catalyst.data.sampler.BalanceClassSampler" title="catalyst.data.sampler.BalanceClassSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.data.sampler.BalanceClassSampler</span></code></a></p>
 <dl class="field-list simple">
@@ -258,8 +340,8 @@ must be one on [“downsampling”, “upsampling”]</p></li>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.data.column_fold_split">
-<code class="descclassname">catalyst.utils.data.</code><code class="descname">column_fold_split</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>column: str</em>, <em>random_state: int = 42</em>, <em>n_folds: int = 5</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/data.html#column_fold_split"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.column_fold_split" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.dataset.column_fold_split">
+<code class="descclassname">catalyst.utils.dataset.</code><code class="descname">column_fold_split</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>column: str</em>, <em>random_state: int = 42</em>, <em>n_folds: int = 5</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/dataset.html#column_fold_split"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.dataset.column_fold_split" title="Permalink to this definition">¶</a></dt>
 <dd><p>Splits DataFrame into <cite>N</cite> folds.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -280,8 +362,8 @@ must be one on [“downsampling”, “upsampling”]</p></li>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.data.create_dataframe">
-<code class="descclassname">catalyst.utils.data.</code><code class="descname">create_dataframe</code><span class="sig-paren">(</span><em>dataset: pandas.core.frame.DataFrame</em>, <em>**dataframe_args</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/data.html#create_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.create_dataframe" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.dataset.create_dataframe">
+<code class="descclassname">catalyst.utils.dataset.</code><code class="descname">create_dataframe</code><span class="sig-paren">(</span><em>dataset: Dict[str, object], **dataframe_args</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/dataset.html#create_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.dataset.create_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create pd.DataFrame from dict like <cite>{key: [values]}</cite></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -311,8 +393,8 @@ np.arange(n) if no column labels are provided</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.data.create_dataset">
-<code class="descclassname">catalyst.utils.data.</code><code class="descname">create_dataset</code><span class="sig-paren">(</span><em>dirs: str</em>, <em>extension: str = None</em>, <em>process_fn: Callable[str</em>, <em>object] = None</em><span class="sig-paren">)</span> &#x2192; Dict[str, object]<a class="reference internal" href="../_modules/catalyst/utils/data.html#create_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.create_dataset" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.dataset.create_dataset">
+<code class="descclassname">catalyst.utils.dataset.</code><code class="descname">create_dataset</code><span class="sig-paren">(</span><em>dirs: str</em>, <em>extension: str = None</em>, <em>process_fn: Callable[str</em>, <em>object] = None</em><span class="sig-paren">)</span> &#x2192; Dict[str, object]<a class="reference internal" href="../_modules/catalyst/utils/dataset.html#create_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.dataset.create_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create dataset (dict like <cite>{key: [values]}</cite>) from vctk-like dataset:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">/</span>
     <span class="n">cat</span><span class="o">/</span>
@@ -340,8 +422,8 @@ process function for found files, by default</p></li>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.data.default_fold_split">
-<code class="descclassname">catalyst.utils.data.</code><code class="descname">default_fold_split</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>random_state: int = 42</em>, <em>n_folds: int = 5</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/data.html#default_fold_split"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.default_fold_split" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.dataset.default_fold_split">
+<code class="descclassname">catalyst.utils.dataset.</code><code class="descname">default_fold_split</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>random_state: int = 42</em>, <em>n_folds: int = 5</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/dataset.html#default_fold_split"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.dataset.default_fold_split" title="Permalink to this definition">¶</a></dt>
 <dd><p>Splits DataFrame into <cite>N</cite> folds.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -361,8 +443,8 @@ process function for found files, by default</p></li>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.data.prepare_dataset_labeling">
-<code class="descclassname">catalyst.utils.data.</code><code class="descname">prepare_dataset_labeling</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>class_column: str</em><span class="sig-paren">)</span> &#x2192; Dict[str, int]<a class="reference internal" href="../_modules/catalyst/utils/data.html#prepare_dataset_labeling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.prepare_dataset_labeling" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.dataset.prepare_dataset_labeling">
+<code class="descclassname">catalyst.utils.dataset.</code><code class="descname">prepare_dataset_labeling</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>class_column: str</em><span class="sig-paren">)</span> &#x2192; Dict[str, int]<a class="reference internal" href="../_modules/catalyst/utils/dataset.html#prepare_dataset_labeling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.dataset.prepare_dataset_labeling" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prepares a mapping using unique values from <code class="docutils literal notranslate"><span class="pre">class_column</span></code></p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;class_name_0&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
@@ -389,8 +471,8 @@ process function for found files, by default</p></li>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.data.separate_tags">
-<code class="descclassname">catalyst.utils.data.</code><code class="descname">separate_tags</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>tag_column: str = 'label'</em>, <em>tag_delim: str = '-'</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/data.html#separate_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.separate_tags" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.dataset.separate_tags">
+<code class="descclassname">catalyst.utils.dataset.</code><code class="descname">separate_tags</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>tag_column: str = 'label'</em>, <em>tag_delim: str = '-'</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/dataset.html#separate_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.dataset.separate_tags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Separates values in <code class="docutils literal notranslate"><span class="pre">class_column</span></code> column</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -405,8 +487,8 @@ process function for found files, by default</p></li>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.data.split_dataframe">
-<code class="descclassname">catalyst.utils.data.</code><code class="descname">split_dataframe</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>**train_test_split_args</em><span class="sig-paren">)</span> &#x2192; Tuple[pandas.core.frame.DataFrame, pandas.core.frame.DataFrame]<a class="reference internal" href="../_modules/catalyst/utils/data.html#split_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.split_dataframe" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.dataset.split_dataframe">
+<code class="descclassname">catalyst.utils.dataset.</code><code class="descname">split_dataframe</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>**train_test_split_args</em><span class="sig-paren">)</span> &#x2192; Tuple[pandas.core.frame.DataFrame, pandas.core.frame.DataFrame]<a class="reference internal" href="../_modules/catalyst/utils/dataset.html#split_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.dataset.split_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Split dataframe in train and test part.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -443,8 +525,8 @@ using this as the class labels.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.data.split_dataset">
-<code class="descclassname">catalyst.utils.data.</code><code class="descname">split_dataset</code><span class="sig-paren">(</span><em>dataset: pandas.core.frame.DataFrame</em>, <em>**train_test_split_args</em><span class="sig-paren">)</span> &#x2192; Tuple[Dict[str, object], Dict[str, object]]<a class="reference internal" href="../_modules/catalyst/utils/data.html#split_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.split_dataset" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.dataset.split_dataset">
+<code class="descclassname">catalyst.utils.dataset.</code><code class="descname">split_dataset</code><span class="sig-paren">(</span><em>dataset: pandas.core.frame.DataFrame</em>, <em>**train_test_split_args</em><span class="sig-paren">)</span> &#x2192; Tuple[Dict[str, object], Dict[str, object]]<a class="reference internal" href="../_modules/catalyst/utils/dataset.html#split_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.dataset.split_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Split dataset in train and test parts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -480,8 +562,8 @@ using this as the class labels.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.data.stratified_fold_split">
-<code class="descclassname">catalyst.utils.data.</code><code class="descname">stratified_fold_split</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>class_column: str</em>, <em>random_state: int = 42</em>, <em>n_folds: int = 5</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/data.html#stratified_fold_split"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.stratified_fold_split" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.dataset.stratified_fold_split">
+<code class="descclassname">catalyst.utils.dataset.</code><code class="descname">stratified_fold_split</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em>, <em>class_column: str</em>, <em>random_state: int = 42</em>, <em>n_folds: int = 5</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/dataset.html#stratified_fold_split"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.dataset.stratified_fold_split" title="Permalink to this definition">¶</a></dt>
 <dd><p>Splits DataFrame into <cite>N</cite> stratified folds.</p>
 <p>Also see <a class="reference internal" href="data.html#catalyst.data.sampler.BalanceClassSampler" title="catalyst.data.sampler.BalanceClassSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.data.sampler.BalanceClassSampler</span></code></a></p>
 <dl class="field-list simple">
@@ -502,12 +584,263 @@ using this as the class labels.</p>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-catalyst.utils.parse">
-<span id="parse"></span><h2>Parse<a class="headerlink" href="#module-catalyst.utils.parse" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-catalyst.utils.ddp"></span><dl class="function">
+<dt id="catalyst.utils.ddp.get_real_module">
+<code class="descclassname">catalyst.utils.ddp.</code><code class="descname">get_real_module</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module</em><span class="sig-paren">)</span> &#x2192; torch.nn.modules.module.Module<a class="reference internal" href="../_modules/catalyst/utils/ddp.html#get_real_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.ddp.get_real_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a real model from a torch.nn.DataParallel,
+torch.nn.parallel.DistributedDataParallel, or
+apex.parallel.DistributedDataParallel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>model</strong> – A model, or DataParallel wrapper.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A model</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="function">
-<dt id="catalyst.utils.parse.dataframe_to_list">
-<code class="descclassname">catalyst.utils.parse.</code><code class="descname">dataframe_to_list</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; List[dict]<a class="reference internal" href="../_modules/catalyst/utils/parse.html#dataframe_to_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parse.dataframe_to_list" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.ddp.is_wrapped_with_ddp">
+<code class="descclassname">catalyst.utils.ddp.</code><code class="descname">is_wrapped_with_ddp</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/ddp.html#is_wrapped_with_ddp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.ddp.is_wrapped_with_ddp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether model is wrapped with DataParallel/DistributedDataParallel.</p>
+</dd></dl>
+
+<span class="target" id="module-catalyst.utils.frozen"></span><dl class="class">
+<dt id="catalyst.utils.frozen.FrozenClass">
+<em class="property">class </em><code class="descclassname">catalyst.utils.frozen.</code><code class="descname">FrozenClass</code><a class="reference internal" href="../_modules/catalyst/utils/frozen.html#FrozenClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.frozen.FrozenClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class which prohibit <code class="docutils literal notranslate"><span class="pre">__setattr__</span></code> on existing attributes</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">RunnerState</span><span class="p">(</span><span class="n">FrozenClass</span><span class="p">):</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<span class="target" id="module-catalyst.utils.hash"></span><dl class="function">
+<dt id="catalyst.utils.hash.get_hash">
+<code class="descclassname">catalyst.utils.hash.</code><code class="descname">get_hash</code><span class="sig-paren">(</span><em>obj: Any</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/catalyst/utils/hash.html#get_hash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.hash.get_hash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates unique hash from object following way:
+- Represent obj as sting recursively
+- Hash this string with sha256 hash function
+- encode hash with url-safe base64 encoding</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>obj</strong> – object to hash</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>base64-encoded string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.hash.get_short_hash">
+<code class="descclassname">catalyst.utils.hash.</code><code class="descname">get_short_hash</code><span class="sig-paren">(</span><em>o</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/catalyst/utils/hash.html#get_short_hash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.hash.get_short_hash" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-catalyst.utils.image"></span><dl class="function">
+<dt id="catalyst.utils.image.binary_mask_to_overlay_image">
+<code class="descclassname">catalyst.utils.image.</code><code class="descname">binary_mask_to_overlay_image</code><span class="sig-paren">(</span><em>image: numpy.ndarray, masks: List[numpy.ndarray]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/image.html#binary_mask_to_overlay_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.image.binary_mask_to_overlay_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws every mask for with some color over image</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.image.imread">
+<code class="descclassname">catalyst.utils.image.</code><code class="descname">imread</code><span class="sig-paren">(</span><em>uri</em>, <em>grayscale=False</em>, <em>expand_dims=True</em>, <em>rootpath=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/image.html#imread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.image.imread" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uri</strong> – {str, pathlib.Path, bytes, file}</p></li>
+<li><p><strong>resource to load the image from</strong><strong>, </strong><strong>e.g. a filename</strong><strong>, </strong><strong>pathlib.Path</strong><strong>,</strong> (<em>The</em>) – </p></li>
+<li><p><strong>address</strong><strong> or </strong><strong>file object</strong><strong>, </strong><strong>see the docs for more info.</strong> (<em>http</em>) – </p></li>
+<li><p><strong>grayscale</strong> – </p></li>
+<li><p><strong>expand_dims</strong> – </p></li>
+<li><p><strong>rootpath</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.image.tensor_from_rgb_image">
+<code class="descclassname">catalyst.utils.image.</code><code class="descname">tensor_from_rgb_image</code><span class="sig-paren">(</span><em>image: numpy.ndarray</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/utils/image.html#tensor_from_rgb_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.image.tensor_from_rgb_image" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.image.tensor_to_ndimage">
+<code class="descclassname">catalyst.utils.image.</code><code class="descname">tensor_to_ndimage</code><span class="sig-paren">(</span><em>images: torch.Tensor</em>, <em>mean: Tuple[float</em>, <em>float</em>, <em>float] = (0.485</em>, <em>0.456</em>, <em>0.406)</em>, <em>std: Tuple[float</em>, <em>float</em>, <em>float] = (0.229</em>, <em>0.224</em>, <em>0.225)</em>, <em>dtype=&lt;class 'numpy.float32'&gt;</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="../_modules/catalyst/utils/image.html#tensor_to_ndimage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.image.tensor_to_ndimage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert float image(s) with standard normalization to
+np.ndarray with [0..1] when dtype is np.float32 and [0..255]
+when dtype is <cite>np.uint8</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>images</strong> – [B]xCxHxW float tensor</p></li>
+<li><p><strong>mean</strong> – mean to add</p></li>
+<li><p><strong>std</strong> – std to multiply</p></li>
+<li><p><strong>dtype</strong> – result ndarray dtype. Only float32 and uint8 are supported.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>[B]xHxWxC np.ndarray of dtype</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-catalyst.utils.initialization"></span><dl class="function">
+<dt id="catalyst.utils.initialization.bias_init_with_prob">
+<code class="descclassname">catalyst.utils.initialization.</code><code class="descname">bias_init_with_prob</code><span class="sig-paren">(</span><em>prior_prob</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/initialization.html#bias_init_with_prob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.bias_init_with_prob" title="Permalink to this definition">¶</a></dt>
+<dd><p>initialize conv/fc bias value according to giving probablity</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.initialization.constant_init">
+<code class="descclassname">catalyst.utils.initialization.</code><code class="descname">constant_init</code><span class="sig-paren">(</span><em>module</em>, <em>val</em>, <em>bias=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/initialization.html#constant_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.constant_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.initialization.create_optimal_inner_init">
+<code class="descclassname">catalyst.utils.initialization.</code><code class="descname">create_optimal_inner_init</code><span class="sig-paren">(</span><em>nonlinearity: torch.nn.modules.module.Module</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; Callable[torch.nn.modules.module.Module, None]<a class="reference internal" href="../_modules/catalyst/utils/initialization.html#create_optimal_inner_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.create_optimal_inner_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create initializer for inner layers
+based on their activation function (nonlinearity).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.initialization.kaiming_init">
+<code class="descclassname">catalyst.utils.initialization.</code><code class="descname">kaiming_init</code><span class="sig-paren">(</span><em>module</em>, <em>mode='fan_out'</em>, <em>nonlinearity='relu'</em>, <em>bias=0</em>, <em>distribution='normal'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/initialization.html#kaiming_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.kaiming_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.initialization.normal_init">
+<code class="descclassname">catalyst.utils.initialization.</code><code class="descname">normal_init</code><span class="sig-paren">(</span><em>module</em>, <em>mean=0</em>, <em>std=1</em>, <em>bias=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/initialization.html#normal_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.normal_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.initialization.outer_init">
+<code class="descclassname">catalyst.utils.initialization.</code><code class="descname">outer_init</code><span class="sig-paren">(</span><em>layer: torch.nn.modules.module.Module</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/initialization.html#outer_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.outer_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialization for output layers of policy and value networks typically
+used in deep reinforcement learning literature.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.initialization.uniform_init">
+<code class="descclassname">catalyst.utils.initialization.</code><code class="descname">uniform_init</code><span class="sig-paren">(</span><em>module</em>, <em>a=0</em>, <em>b=1</em>, <em>bias=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/initialization.html#uniform_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.uniform_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.initialization.xavier_init">
+<code class="descclassname">catalyst.utils.initialization.</code><code class="descname">xavier_init</code><span class="sig-paren">(</span><em>module</em>, <em>gain=1</em>, <em>bias=0</em>, <em>distribution='normal'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/initialization.html#xavier_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.xavier_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-catalyst.utils.misc"></span><dl class="function">
+<dt id="catalyst.utils.misc.append_dict">
+<code class="descclassname">catalyst.utils.misc.</code><code class="descname">append_dict</code><span class="sig-paren">(</span><em>dict1</em>, <em>dict2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#append_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.append_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends dict2 with the same keys as dict1 to dict1</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.misc.make_tuple">
+<code class="descclassname">catalyst.utils.misc.</code><code class="descname">make_tuple</code><span class="sig-paren">(</span><em>tuple_like</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#make_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.make_tuple" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.misc.merge_dicts">
+<code class="descclassname">catalyst.utils.misc.</code><code class="descname">merge_dicts</code><span class="sig-paren">(</span><em>*dicts</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="../_modules/catalyst/utils/misc.html#merge_dicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.merge_dicts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursive dict merge.
+Instead of updating only top-level keys,
+<code class="docutils literal notranslate"><span class="pre">merge_dicts</span></code> recurses down into dicts nested
+to an arbitrary depth, updating keys.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>*dicts</strong> – several dictionaries to merge</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>deep-merged dictionary</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.misc.pairwise">
+<code class="descclassname">catalyst.utils.misc.</code><code class="descname">pairwise</code><span class="sig-paren">(</span><em>iterable: Iterable[Any]</em><span class="sig-paren">)</span> &#x2192; Iterable[Any]<a class="reference internal" href="../_modules/catalyst/utils/misc.html#pairwise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.pairwise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate sequences by pairs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>iterable</strong> – Any iterable sequence</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>pairwise iterator</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pairwise</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">]):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="go">(1, 2)</span>
+<span class="go">(2, 5)</span>
+<span class="go">(5, -3)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<span class="target" id="module-catalyst.utils.numpy"></span><dl class="function">
+<dt id="catalyst.utils.numpy.dict2structed">
+<code class="descclassname">catalyst.utils.numpy.</code><code class="descname">dict2structed</code><span class="sig-paren">(</span><em>array: Dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/numpy.html#dict2structed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.numpy.dict2structed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.numpy.geometric_cumsum">
+<code class="descclassname">catalyst.utils.numpy.</code><code class="descname">geometric_cumsum</code><span class="sig-paren">(</span><em>alpha</em>, <em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/numpy.html#geometric_cumsum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.numpy.geometric_cumsum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate future accumulated sums for each element
+in a list with an exponential factor.</p>
+<p>Given input data <span class="math notranslate nohighlight">\(x_1, \dots, x_n\)</span>  # noqa: E501, W605
+and exponential factor <span class="math notranslate nohighlight">\(lpha\in [0, 1]\)</span>,  # noqa: E501, W605
+it returns an array <span class="math notranslate nohighlight">\(y\)</span>
+with the same length and each element is calculated as following</p>
+<div class="math notranslate nohighlight">
+\[y_i = x_i + lpha x_{i+1} + lpha^2 x_{i+2} + \dots + lpha^{n-i-1}x_{n-1} + lpha^{n-i}x_{n}  # noqa: E501, W605\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To gain the optimal runtime speed, we use <code class="docutils literal notranslate"><span class="pre">scipy.signal.lfilter</span></code></p>
+</div>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">geometric_cumsum</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">]])</span>
+<span class="go">array([[1.234, 1.234], [2.34 , 2.34 ], [3.4  , 3.4  ], [4.   , 4.   ]])</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> (<em>float</em>) – exponential factor between zero and one.</p></li>
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – input data, [trajectory_len, num_atoms]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>calculated data</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>out (np.ndarray)</p>
+</dd>
+</dl>
+<p>source: <a class="reference external" href="https://github.com/zuoxingdong/lagom">https://github.com/zuoxingdong/lagom</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.numpy.np_softmax">
+<code class="descclassname">catalyst.utils.numpy.</code><code class="descname">np_softmax</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/numpy.html#np_softmax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.numpy.np_softmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.numpy.structed2dict">
+<code class="descclassname">catalyst.utils.numpy.</code><code class="descname">structed2dict</code><span class="sig-paren">(</span><em>array: numpy.ndarray</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/numpy.html#structed2dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.numpy.structed2dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-catalyst.utils.pandas"></span><dl class="function">
+<dt id="catalyst.utils.pandas.dataframe_to_list">
+<code class="descclassname">catalyst.utils.pandas.</code><code class="descname">dataframe_to_list</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; List[dict]<a class="reference internal" href="../_modules/catalyst/utils/pandas.html#dataframe_to_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.pandas.dataframe_to_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts dataframe to a list of rows (without indexes)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -523,8 +856,8 @@ using this as the class labels.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.parse.folds_to_list">
-<code class="descclassname">catalyst.utils.parse.</code><code class="descname">folds_to_list</code><span class="sig-paren">(</span><em>folds: Union[list, str, pandas.core.series.Series]</em><span class="sig-paren">)</span> &#x2192; List[int]<a class="reference internal" href="../_modules/catalyst/utils/parse.html#folds_to_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parse.folds_to_list" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.pandas.folds_to_list">
+<code class="descclassname">catalyst.utils.pandas.</code><code class="descname">folds_to_list</code><span class="sig-paren">(</span><em>folds: Union[list, str, pandas.core.series.Series]</em><span class="sig-paren">)</span> &#x2192; List[int]<a class="reference internal" href="../_modules/catalyst/utils/pandas.html#folds_to_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.pandas.folds_to_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function formats string or either list of numbers
 into a list of unique int</p>
 <dl class="field-list simple">
@@ -555,8 +888,8 @@ pandas series</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.parse.map_dataframe">
-<code class="descclassname">catalyst.utils.parse.</code><code class="descname">map_dataframe</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame, tag_column: str, class_column: str, tag2class: Dict[str, int], verbose: bool = False</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/parse.html#map_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parse.map_dataframe" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.pandas.map_dataframe">
+<code class="descclassname">catalyst.utils.pandas.</code><code class="descname">map_dataframe</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame, tag_column: str, class_column: str, tag2class: Dict[str, int], verbose: bool = False</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/pandas.html#map_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.pandas.map_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function maps tags from <code class="docutils literal notranslate"><span class="pre">tag_column</span></code> to ints into <code class="docutils literal notranslate"><span class="pre">class_column</span></code>
 Using <code class="docutils literal notranslate"><span class="pre">tag2class</span></code> dictionary</p>
 <dl class="field-list simple">
@@ -579,8 +912,8 @@ Using <code class="docutils literal notranslate"><span class="pre">tag2class</sp
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.parse.merge_multiple_fold_csv">
-<code class="descclassname">catalyst.utils.parse.</code><code class="descname">merge_multiple_fold_csv</code><span class="sig-paren">(</span><em>fold_name: str, paths: Optional[str]</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/parse.html#merge_multiple_fold_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parse.merge_multiple_fold_csv" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.pandas.merge_multiple_fold_csv">
+<code class="descclassname">catalyst.utils.pandas.</code><code class="descname">merge_multiple_fold_csv</code><span class="sig-paren">(</span><em>fold_name: str, paths: Optional[str]</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/pandas.html#merge_multiple_fold_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.pandas.merge_multiple_fold_csv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads csv into one DataFrame with column <code class="docutils literal notranslate"><span class="pre">fold</span></code>
 :param fold_name: current fold name
 :type fold_name: str
@@ -597,8 +930,8 @@ Using <code class="docutils literal notranslate"><span class="pre">tag2class</sp
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.parse.read_csv_data">
-<code class="descclassname">catalyst.utils.parse.</code><code class="descname">read_csv_data</code><span class="sig-paren">(</span><em>in_csv: str = None</em>, <em>train_folds: Optional[List[int]] = None</em>, <em>valid_folds: Optional[List[int]] = None</em>, <em>infer_folds: Optional[List[int]] = None</em>, <em>seed: int = 42</em>, <em>n_folds: int = 5</em>, <em>in_csv_train: str = None</em>, <em>in_csv_valid: str = None</em>, <em>in_csv_infer: str = None</em>, <em>tag2class: Optional[Dict[str</em>, <em>int]] = None</em>, <em>class_column: str = None</em>, <em>tag_column: str = None</em><span class="sig-paren">)</span> &#x2192; Tuple[pandas.core.frame.DataFrame, List[dict], List[dict], List[dict]]<a class="reference internal" href="../_modules/catalyst/utils/parse.html#read_csv_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parse.read_csv_data" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.pandas.read_csv_data">
+<code class="descclassname">catalyst.utils.pandas.</code><code class="descname">read_csv_data</code><span class="sig-paren">(</span><em>in_csv: str = None</em>, <em>train_folds: Optional[List[int]] = None</em>, <em>valid_folds: Optional[List[int]] = None</em>, <em>infer_folds: Optional[List[int]] = None</em>, <em>seed: int = 42</em>, <em>n_folds: int = 5</em>, <em>in_csv_train: str = None</em>, <em>in_csv_valid: str = None</em>, <em>in_csv_infer: str = None</em>, <em>tag2class: Optional[Dict[str</em>, <em>int]] = None</em>, <em>class_column: str = None</em>, <em>tag_column: str = None</em><span class="sig-paren">)</span> &#x2192; Tuple[pandas.core.frame.DataFrame, List[dict], List[dict], List[dict]]<a class="reference internal" href="../_modules/catalyst/utils/pandas.html#read_csv_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.pandas.read_csv_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>From giving path <code class="docutils literal notranslate"><span class="pre">in_csv</span></code> reads a dataframe
 and split it to train/valid/infer folds
 or from several paths <code class="docutils literal notranslate"><span class="pre">in_csv_train</span></code>, <code class="docutils literal notranslate"><span class="pre">in_csv_valid</span></code>, <code class="docutils literal notranslate"><span class="pre">in_csv_infer</span></code>
@@ -651,8 +984,8 @@ and list with infer data)</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.parse.read_multiple_dataframes">
-<code class="descclassname">catalyst.utils.parse.</code><code class="descname">read_multiple_dataframes</code><span class="sig-paren">(</span><em>in_csv_train: str = None</em>, <em>in_csv_valid: str = None</em>, <em>in_csv_infer: str = None</em>, <em>tag2class: Optional[Dict[str</em>, <em>int]] = None</em>, <em>class_column: str = None</em>, <em>tag_column: str = None</em><span class="sig-paren">)</span> &#x2192; Tuple[pandas.core.frame.DataFrame, pandas.core.frame.DataFrame, pandas.core.frame.DataFrame, pandas.core.frame.DataFrame]<a class="reference internal" href="../_modules/catalyst/utils/parse.html#read_multiple_dataframes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parse.read_multiple_dataframes" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.pandas.read_multiple_dataframes">
+<code class="descclassname">catalyst.utils.pandas.</code><code class="descname">read_multiple_dataframes</code><span class="sig-paren">(</span><em>in_csv_train: str = None</em>, <em>in_csv_valid: str = None</em>, <em>in_csv_infer: str = None</em>, <em>tag2class: Optional[Dict[str</em>, <em>int]] = None</em>, <em>class_column: str = None</em>, <em>tag_column: str = None</em><span class="sig-paren">)</span> &#x2192; Tuple[pandas.core.frame.DataFrame, pandas.core.frame.DataFrame, pandas.core.frame.DataFrame, pandas.core.frame.DataFrame]<a class="reference internal" href="../_modules/catalyst/utils/pandas.html#read_multiple_dataframes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.pandas.read_multiple_dataframes" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function reads train/valid/infer dataframes from giving paths
 :param in_csv_train: paths to train csv separated by commas
 :type in_csv_train: str
@@ -681,8 +1014,8 @@ and list with infer data)</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.parse.split_dataframe">
-<code class="descclassname">catalyst.utils.parse.</code><code class="descname">split_dataframe</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame, train_folds: List[int], valid_folds: Optional[List[int]] = None, infer_folds: Optional[List[int]] = None, tag2class: Optional[Dict[str, int]] = None, tag_column: str = None, class_column: str = None, seed: int = 42, n_folds: int = 5</em><span class="sig-paren">)</span> &#x2192; Tuple[pandas.core.frame.DataFrame, pandas.core.frame.DataFrame, pandas.core.frame.DataFrame, pandas.core.frame.DataFrame]<a class="reference internal" href="../_modules/catalyst/utils/parse.html#split_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parse.split_dataframe" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.pandas.split_dataframe">
+<code class="descclassname">catalyst.utils.pandas.</code><code class="descname">split_dataframe</code><span class="sig-paren">(</span><em>dataframe: pandas.core.frame.DataFrame, train_folds: List[int], valid_folds: Optional[List[int]] = None, infer_folds: Optional[List[int]] = None, tag2class: Optional[Dict[str, int]] = None, tag_column: str = None, class_column: str = None, seed: int = 42, n_folds: int = 5</em><span class="sig-paren">)</span> &#x2192; Tuple[pandas.core.frame.DataFrame, pandas.core.frame.DataFrame, pandas.core.frame.DataFrame, pandas.core.frame.DataFrame]<a class="reference internal" href="../_modules/catalyst/utils/pandas.html#split_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.pandas.split_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Split a Pandas DataFrame into folds.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -714,75 +1047,57 @@ and <code class="docutils literal notranslate"><span class="pre">valid_folds</sp
 </dl>
 </dd></dl>
 
+<span class="target" id="module-catalyst.utils.plotly"></span><dl class="function">
+<dt id="catalyst.utils.plotly.plot_tensorboard_log">
+<code class="descclassname">catalyst.utils.plotly.</code><code class="descname">plot_tensorboard_log</code><span class="sig-paren">(</span><em>logdir: Union[str, pathlib.Path], step: Optional[str] = 'batch', metrics: Optional[List[str]] = None, height: Optional[int] = None, width: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/plotly.html#plot_tensorboard_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.plotly.plot_tensorboard_log" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-catalyst.utils.scripts"></span><dl class="function">
+<dt id="catalyst.utils.scripts.import_module">
+<code class="descclassname">catalyst.utils.scripts.</code><code class="descname">import_module</code><span class="sig-paren">(</span><em>expdir: pathlib.Path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/scripts.html#import_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.scripts.import_module" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.scripts.dump_code">
+<code class="descclassname">catalyst.utils.scripts.</code><code class="descname">dump_code</code><span class="sig-paren">(</span><em>expdir</em>, <em>logdir</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/scripts.html#dump_code"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.scripts.dump_code" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-catalyst.utils.seed"></span><dl class="class">
+<dt id="catalyst.utils.seed.Seeder">
+<em class="property">class </em><code class="descclassname">catalyst.utils.seed.</code><code class="descname">Seeder</code><span class="sig-paren">(</span><em>init_seed: int = 0</em>, <em>max_seed: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/seed.html#Seeder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.seed.Seeder" title="Permalink to this definition">¶</a></dt>
+<dd><p>A random seed generator.</p>
+<p>Given an initial seed,
+the seeder can be called continuously to sample a single
+or a batch of random seeds.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The seeder creates an independent RandomState to generate random
+numbers. It does not affect the RandomState in <code class="docutils literal notranslate"><span class="pre">np.random</span></code>.</p>
 </div>
-<div class="section" id="module-catalyst.utils.misc">
-<span id="misc"></span><h2>Misc<a class="headerlink" href="#module-catalyst.utils.misc" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="catalyst.utils.misc.FrozenClass">
-<em class="property">class </em><code class="descclassname">catalyst.utils.misc.</code><code class="descname">FrozenClass</code><a class="reference internal" href="../_modules/catalyst/utils/misc.html#FrozenClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.FrozenClass" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class which prohibit <code class="docutils literal notranslate"><span class="pre">__setattr__</span></code> on existing attributes</p>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">RunnerState</span><span class="p">(</span><span class="n">FrozenClass</span><span class="p">):</span>
+<dl>
+<dt>Example::</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="n">init_seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">seeder</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">[209652396, 398764591, 924231285, 1478610112, 441365315]</span>
 </pre></div>
 </div>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.utils.misc.args_are_not_none">
-<code class="descclassname">catalyst.utils.misc.</code><code class="descname">args_are_not_none</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/misc.html#args_are_not_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.args_are_not_none" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check that all arguments are not None
-:param *args: values
-:type *args: Any</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>True if all value were not None, False otherwise</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>bool</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.utils.misc.boolean_flag">
-<code class="descclassname">catalyst.utils.misc.</code><code class="descname">boolean_flag</code><span class="sig-paren">(</span><em>parser</em>, <em>name: str</em>, <em>default: bool = False</em>, <em>help: str = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/misc.html#boolean_flag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.boolean_flag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a boolean flag to argparse parser.</p>
+<dl class="method">
+<dt id="catalyst.utils.seed.Seeder.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>init_seed: int = 0</em>, <em>max_seed: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/seed.html#Seeder.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.seed.Seeder.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the seeder.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>parser</strong> (<em>argparse.Parser</em>) – parser to add the flag to</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – –&lt;name&gt; will enable the flag,
-while –no-&lt;name&gt; will disable it</p></li>
-<li><p><strong>default</strong> (<em>bool</em><em>, </em><em>optional</em>) – default value of the flag</p></li>
-<li><p><strong>help</strong> (<em>str</em>) – help string for the flag</p></li>
-</ul>
+<dd class="field-odd"><p><strong>init_seed</strong> (<em>int</em><em>, </em><em>optional</em>) – Initial seed for generating random seeds. Default: <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="catalyst.utils.misc.merge_dicts">
-<code class="descclassname">catalyst.utils.misc.</code><code class="descname">merge_dicts</code><span class="sig-paren">(</span><em>*dicts</em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="../_modules/catalyst/utils/misc.html#merge_dicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.merge_dicts" title="Permalink to this definition">¶</a></dt>
-<dd><p>Recursive dict merge.
-Instead of updating only top-level keys,
-<code class="docutils literal notranslate"><span class="pre">merge_dicts</span></code> recurses down into dicts nested
-to an arbitrary depth, updating keys.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>*dicts</strong> – several dictionaries to merge</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>deep-merged dictionary</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.misc.set_global_seed">
-<code class="descclassname">catalyst.utils.misc.</code><code class="descname">set_global_seed</code><span class="sig-paren">(</span><em>seed: int</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/misc.html#set_global_seed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.set_global_seed" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.seed.set_global_seed">
+<code class="descclassname">catalyst.utils.seed.</code><code class="descname">set_global_seed</code><span class="sig-paren">(</span><em>seed: int</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/seed.html#set_global_seed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.seed.set_global_seed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets random seed into PyTorch, TensorFlow, Numpy and Random</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -791,53 +1106,7 @@ to an arbitrary depth, updating keys.</p>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-catalyst.utils.parallelize">
-<span id="parallelize"></span><h2>Parallelize<a class="headerlink" href="#module-catalyst.utils.parallelize" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="catalyst.utils.parallelize.StoppableThread">
-<em class="property">class </em><code class="descclassname">catalyst.utils.parallelize.</code><code class="descname">StoppableThread</code><span class="sig-paren">(</span><em>func: Callable</em>, <em>items: Iterable</em>, <em>callback: Callable = None</em>, <em>callback_each: int = 1</em>, <em>continue_on_exception: bool = False</em>, <em>exception_impute=None</em>, <em>exception_callback: Callable = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/parallelize.html#StoppableThread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parallelize.StoppableThread" title="Permalink to this definition">¶</a></dt>
-<dd><p>Thread that can be stopped</p>
-<ul class="simple">
-<li><p>code modified from <a class="reference external" href="https://github.com/rampeer/py-parallelize">https://github.com/rampeer/py-parallelize</a></p></li>
-</ul>
-<dl class="method">
-<dt id="catalyst.utils.parallelize.StoppableThread.run">
-<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/parallelize.html#StoppableThread.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parallelize.StoppableThread.run" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.utils.parallelize.parallelize">
-<code class="descclassname">catalyst.utils.parallelize.</code><code class="descname">parallelize</code><span class="sig-paren">(</span><em>items: Iterable</em>, <em>func: Callable</em>, <em>thread_count: int = None</em>, <em>progressbar: bool = False</em>, <em>progressbar_tick: int = 1</em>, <em>continue_on_exception: bool = False</em>, <em>exception_impute=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/parallelize.html#parallelize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.parallelize.parallelize" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function iterates (in multithreaded fashion)
-over <cite>items</cite> and calls <cite>fun</cite> for each item.</p>
-<ul class="simple">
-<li><p>code modified from <a class="reference external" href="https://github.com/rampeer/py-parallelize">https://github.com/rampeer/py-parallelize</a></p></li>
-</ul>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>items</strong> – items to process.</p></li>
-<li><p><strong>func</strong> – function to apply to each <cite>items</cite> element.</p></li>
-<li><p><strong>progressbar</strong> – should progressbar be displayed?</p></li>
-<li><p><strong>progressbar_tick</strong> – how often should we update progressbar?</p></li>
-<li><p><strong>thread_count</strong> – how many threads should be allocated?
-If None, this parameter will be chosen automatically.</p></li>
-<li><p><strong>continue_on_exception</strong> – if True, it will print warning
-if <cite>func</cite> fails on some element, instead of halting</p></li>
-<li><p><strong>exception_impute</strong> – which value should be put into output
-if <cite>func</cite> throws an exception?</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="module-catalyst.utils.serialization">
-<span id="serialization"></span><h2>Serialization<a class="headerlink" href="#module-catalyst.utils.serialization" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
+<span class="target" id="module-catalyst.utils.serialization"></span><dl class="function">
 <dt id="catalyst.utils.serialization.deserialize">
 <code class="descclassname">catalyst.utils.serialization.</code><code class="descname">deserialize</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/serialization.html#deserialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.serialization.deserialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deserialize bytes into an object using pyarrow</p>
@@ -865,7 +1134,192 @@ if <cite>func</cite> throws an exception?</p></li>
 </dl>
 </dd></dl>
 
-</div>
+<span class="target" id="module-catalyst.utils.tensorboard"></span><dl class="exception">
+<dt id="catalyst.utils.tensorboard.EventReadingError">
+<em class="property">exception </em><code class="descclassname">catalyst.utils.tensorboard.</code><code class="descname">EventReadingError</code><a class="reference internal" href="../_modules/catalyst/utils/tensorboard.html#EventReadingError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tensorboard.EventReadingError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An exception that correspond to an event file reading error</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.utils.tensorboard.EventsFileReader">
+<em class="property">class </em><code class="descclassname">catalyst.utils.tensorboard.</code><code class="descname">EventsFileReader</code><span class="sig-paren">(</span><em>events_file: BinaryIO</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tensorboard.html#EventsFileReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tensorboard.EventsFileReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>An iterator over a Tensorboard events file</p>
+<dl class="method">
+<dt id="catalyst.utils.tensorboard.EventsFileReader.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>events_file: BinaryIO</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tensorboard.html#EventsFileReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tensorboard.EventsFileReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize an iterator over an events file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>events_file</strong> – An opened file-like object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.utils.tensorboard.SummaryItem">
+<em class="property">class </em><code class="descclassname">catalyst.utils.tensorboard.</code><code class="descname">SummaryItem</code><span class="sig-paren">(</span><em>tag</em>, <em>step</em>, <em>wall_time</em>, <em>value</em>, <em>type</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.tensorboard.SummaryItem" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="catalyst.utils.tensorboard.SummaryItem.step">
+<code class="descname">step</code><a class="headerlink" href="#catalyst.utils.tensorboard.SummaryItem.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.utils.tensorboard.SummaryItem.tag">
+<code class="descname">tag</code><a class="headerlink" href="#catalyst.utils.tensorboard.SummaryItem.tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.utils.tensorboard.SummaryItem.type">
+<code class="descname">type</code><a class="headerlink" href="#catalyst.utils.tensorboard.SummaryItem.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.utils.tensorboard.SummaryItem.value">
+<code class="descname">value</code><a class="headerlink" href="#catalyst.utils.tensorboard.SummaryItem.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.utils.tensorboard.SummaryItem.wall_time">
+<code class="descname">wall_time</code><a class="headerlink" href="#catalyst.utils.tensorboard.SummaryItem.wall_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.utils.tensorboard.SummaryReader">
+<em class="property">class </em><code class="descclassname">catalyst.utils.tensorboard.</code><code class="descname">SummaryReader</code><span class="sig-paren">(</span><em>logdir: Union[str, pathlib.Path], tag_filter: Optional[collections.abc.Iterable] = None, types: collections.abc.Iterable = ('scalar',)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tensorboard.html#SummaryReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tensorboard.SummaryReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterates over events in all the files in the current logdir.
+Only scalars and images are supported at the moment.</p>
+<dl class="method">
+<dt id="catalyst.utils.tensorboard.SummaryReader.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>logdir: Union[str, pathlib.Path], tag_filter: Optional[collections.abc.Iterable] = None, types: collections.abc.Iterable = ('scalar',)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tensorboard.html#SummaryReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tensorboard.SummaryReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initalize new summary reader</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logdir</strong> – A directory with Tensorboard summary data</p></li>
+<li><p><strong>tag_filter</strong> – A list of tags to leave (<cite>None</cite> for all)</p></li>
+<li><p><strong>types</strong> – A list of types to get.</p></li>
+<li><p><strong>&quot;scalar&quot; and &quot;image&quot; types are allowed at the moment.</strong> (<em>Only</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-catalyst.utils.torch"></span><dl class="function">
+<dt id="catalyst.utils.torch.any2device">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">any2device</code><span class="sig-paren">(</span><em>value</em>, <em>device</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#any2device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.any2device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move tensor, list of tensors, list of list of tensors,
+dict of tensors, tuple of tensors to target device.
+:param value: Object to be moved
+:param device: target device ids
+:return: Save data structure holding tensors on target device</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.assert_fp16_available">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">assert_fp16_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#assert_fp16_available"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.assert_fp16_available" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.ce_with_logits">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">ce_with_logits</code><span class="sig-paren">(</span><em>logits</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#ce_with_logits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.ce_with_logits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.get_activation_fn">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">get_activation_fn</code><span class="sig-paren">(</span><em>activation: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_activation_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_activation_fn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.get_device">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">get_device</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.device<a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_device" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.get_optimizable_params">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">get_optimizable_params</code><span class="sig-paren">(</span><em>model_or_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_optimizable_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_optimizable_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.get_optimizer_momentum">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">get_optimizer_momentum</code><span class="sig-paren">(</span><em>optimizer: torch.optim.optimizer.Optimizer</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_optimizer_momentum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_optimizer_momentum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get momentum of current optimizer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>optimizer</strong> – PyTorch optimizer</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>momentum at first param group</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.log1p_exp">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">log1p_exp</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#log1p_exp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.log1p_exp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computationally stable function for computing log(1+exp(x)).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.normal_logprob">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">normal_logprob</code><span class="sig-paren">(</span><em>mu</em>, <em>sigma</em>, <em>z</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#normal_logprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.normal_logprob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Probability density function of multivariate Gaussian distribution
+N(z|mu,sigma).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.normal_sample">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">normal_sample</code><span class="sig-paren">(</span><em>mu</em>, <em>sigma</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#normal_sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.normal_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample from multivariate Gaussian distribution z ~ N(z|mu,sigma)
+while supporting backpropagation through its mean and variance.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.set_optimizer_momentum">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">set_optimizer_momentum</code><span class="sig-paren">(</span><em>optimizer: torch.optim.optimizer.Optimizer</em>, <em>value: float</em>, <em>index: int = 0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#set_optimizer_momentum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.set_optimizer_momentum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set momentum of <code class="docutils literal notranslate"><span class="pre">index</span></code> ‘th param group of optimizer to <code class="docutils literal notranslate"><span class="pre">value</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>optimizer</strong> – PyTorch optimizer</p></li>
+<li><p><strong>value</strong> (<em>float</em>) – new value of momentum</p></li>
+<li><p><strong>index</strong> (<em>int</em><em>, </em><em>optional</em>) – integer index of optimizer’s param groups,
+default is 0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.soft_update">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">soft_update</code><span class="sig-paren">(</span><em>target</em>, <em>source</em>, <em>tau</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#soft_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.soft_update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-catalyst.utils.visualization"></span><dl class="function">
+<dt id="catalyst.utils.visualization.plot_confusion_matrix">
+<code class="descclassname">catalyst.utils.visualization.</code><code class="descname">plot_confusion_matrix</code><span class="sig-paren">(</span><em>cm</em>, <em>class_names=None</em>, <em>normalize=False</em>, <em>title='confusion matrix'</em>, <em>fname=None</em>, <em>show=True</em>, <em>figsize=12</em>, <em>fontsize=32</em>, <em>colormap='Blues'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/visualization.html#plot_confusion_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.visualization.plot_confusion_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Render the confusion matrix and return matplotlib”s figure with it.
+Normalization can be applied by setting <cite>normalize=True</cite>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.visualization.render_figure_to_tensor">
+<code class="descclassname">catalyst.utils.visualization.</code><code class="descname">render_figure_to_tensor</code><span class="sig-paren">(</span><em>figure</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/visualization.html#render_figure_to_tensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.visualization.render_figure_to_tensor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 
 

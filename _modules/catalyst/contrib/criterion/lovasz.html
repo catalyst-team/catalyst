@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.criterion.lovasz &mdash; Catalyst 19.06 documentation</title>
+  <title>catalyst.contrib.criterion.lovasz &mdash; Catalyst 19.08 documentation</title>
   
 
   
@@ -25,6 +25,7 @@
         <script type="text/javascript" src="../../../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../../../_static/doctools.js"></script>
         <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -58,7 +59,7 @@
             
             
               <div class="version">
-                19.06
+                19.08
               </div>
             
           
@@ -171,7 +172,6 @@
 <span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
 <span class="kn">from</span> <span class="nn">torch.nn.modules.loss</span> <span class="k">import</span> <span class="n">_Loss</span>
 
-
 <span class="c1"># --------------------------- HELPER FUNCTIONS ---------------------------</span>
 
 
@@ -271,13 +271,14 @@
         <span class="n">loss</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span>
             <span class="n">_lovasz_hinge_flat</span><span class="p">(</span>
                 <span class="o">*</span><span class="n">_flatten_binary_scores</span><span class="p">(</span>
-                    <span class="n">logit</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-                    <span class="n">target</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-                    <span class="n">ignore</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">logit</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">))</span>
+                    <span class="n">logit</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">target</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">ignore</span>
+                <span class="p">)</span>
+            <span class="p">)</span> <span class="k">for</span> <span class="n">logit</span><span class="p">,</span> <span class="n">target</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+        <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">_lovasz_hinge_flat</span><span class="p">(</span>
-            <span class="o">*</span><span class="n">_flatten_binary_scores</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">ignore</span><span class="p">))</span>
+            <span class="o">*</span><span class="n">_flatten_binary_scores</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">ignore</span><span class="p">)</span>
+        <span class="p">)</span>
     <span class="k">return</span> <span class="n">loss</span>
 
 
@@ -341,11 +342,7 @@
 
 
 <span class="k">def</span> <span class="nf">_lovasz_softmax</span><span class="p">(</span>
-    <span class="n">probabilities</span><span class="p">,</span>
-    <span class="n">targets</span><span class="p">,</span>
-    <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;present&quot;</span><span class="p">,</span>
-    <span class="n">per_image</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">ignore</span><span class="o">=</span><span class="kc">None</span>
+    <span class="n">probabilities</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;present&quot;</span><span class="p">,</span> <span class="n">per_image</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Multi-class Lovasz-Softmax loss</span>
@@ -366,68 +363,65 @@
         <span class="n">loss</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span>
             <span class="n">_lovasz_softmax_flat</span><span class="p">(</span>
                 <span class="o">*</span><span class="n">_flatten_probabilities</span><span class="p">(</span>
-                    <span class="n">prob</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-                    <span class="n">lab</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-                    <span class="n">ignore</span><span class="p">),</span>
-                <span class="n">classes</span><span class="o">=</span><span class="n">classes</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">prob</span><span class="p">,</span> <span class="n">lab</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">targets</span><span class="p">))</span>
+                    <span class="n">prob</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">lab</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">ignore</span>
+                <span class="p">),</span>
+                <span class="n">classes</span><span class="o">=</span><span class="n">classes</span>
+            <span class="p">)</span> <span class="k">for</span> <span class="n">prob</span><span class="p">,</span> <span class="n">lab</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+        <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">_lovasz_softmax_flat</span><span class="p">(</span>
             <span class="o">*</span><span class="n">_flatten_probabilities</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">ignore</span><span class="p">),</span>
-            <span class="n">classes</span><span class="o">=</span><span class="n">classes</span><span class="p">)</span>
+            <span class="n">classes</span><span class="o">=</span><span class="n">classes</span>
+        <span class="p">)</span>
     <span class="k">return</span> <span class="n">loss</span>
 
 
 <span class="c1"># ------------------------------ CRITERION -------------------------------</span>
 
 
-<div class="viewcode-block" id="LovaszLossBinary"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.LovaszLossBinary">[docs]</a><span class="k">class</span> <span class="nc">LovaszLossBinary</span><span class="p">(</span><span class="n">_Loss</span><span class="p">):</span>
+<div class="viewcode-block" id="LovaszLossBinary"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.lovasz.LovaszLossBinary">[docs]</a><span class="k">class</span> <span class="nc">LovaszLossBinary</span><span class="p">(</span><span class="n">_Loss</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">per_image</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ignore</span> <span class="o">=</span> <span class="n">ignore</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">per_image</span> <span class="o">=</span> <span class="n">per_image</span>
 
-<div class="viewcode-block" id="LovaszLossBinary.forward"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.LovaszLossBinary.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+<div class="viewcode-block" id="LovaszLossBinary.forward"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.lovasz.LovaszLossBinary.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            logits: [bs; ...]</span>
 <span class="sd">            targets: [bs; ...]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">_lovasz_hinge</span><span class="p">(</span>
-            <span class="n">logits</span><span class="p">,</span>
-            <span class="n">targets</span><span class="p">,</span>
-            <span class="n">per_image</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">per_image</span><span class="p">,</span>
-            <span class="n">ignore</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ignore</span><span class="p">)</span>
+            <span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">per_image</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">per_image</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ignore</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">loss</span></div></div>
 
 
-<div class="viewcode-block" id="LovaszLossMultiClass"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.LovaszLossMultiClass">[docs]</a><span class="k">class</span> <span class="nc">LovaszLossMultiClass</span><span class="p">(</span><span class="n">_Loss</span><span class="p">):</span>
+<div class="viewcode-block" id="LovaszLossMultiClass"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.lovasz.LovaszLossMultiClass">[docs]</a><span class="k">class</span> <span class="nc">LovaszLossMultiClass</span><span class="p">(</span><span class="n">_Loss</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">per_image</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ignore</span> <span class="o">=</span> <span class="n">ignore</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">per_image</span> <span class="o">=</span> <span class="n">per_image</span>
 
-<div class="viewcode-block" id="LovaszLossMultiClass.forward"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.LovaszLossMultiClass.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+<div class="viewcode-block" id="LovaszLossMultiClass.forward"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.lovasz.LovaszLossMultiClass.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            logits: [bs; num_classes; ...]</span>
 <span class="sd">            targets: [bs; ...]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">_lovasz_softmax</span><span class="p">(</span>
-            <span class="n">logits</span><span class="p">,</span>
-            <span class="n">targets</span><span class="p">,</span>
-            <span class="n">per_image</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">per_image</span><span class="p">,</span>
-            <span class="n">ignore</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ignore</span><span class="p">)</span>
+            <span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">per_image</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">per_image</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ignore</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">loss</span></div></div>
 
 
-<div class="viewcode-block" id="LovaszLossMultiLabel"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.LovaszLossMultiLabel">[docs]</a><span class="k">class</span> <span class="nc">LovaszLossMultiLabel</span><span class="p">(</span><span class="n">_Loss</span><span class="p">):</span>
+<div class="viewcode-block" id="LovaszLossMultiLabel"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.lovasz.LovaszLossMultiLabel">[docs]</a><span class="k">class</span> <span class="nc">LovaszLossMultiLabel</span><span class="p">(</span><span class="n">_Loss</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">per_image</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ignore</span> <span class="o">=</span> <span class="n">ignore</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">per_image</span> <span class="o">=</span> <span class="n">per_image</span>
 
-<div class="viewcode-block" id="LovaszLossMultiLabel.forward"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.LovaszLossMultiLabel.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+<div class="viewcode-block" id="LovaszLossMultiLabel.forward"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.lovasz.LovaszLossMultiLabel.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            logits: [bs; num_classes; ...]</span>
@@ -438,8 +432,8 @@
                 <span class="n">logits</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
                 <span class="n">targets</span><span class="p">[:,</span> <span class="n">i</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
                 <span class="n">per_image</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">per_image</span><span class="p">,</span>
-                <span class="n">ignore</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ignore</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">logits</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">ignore</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ignore</span>
+            <span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">logits</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="p">]</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">losses</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">loss</span></div></div>

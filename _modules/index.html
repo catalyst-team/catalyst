@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Overview: module code &mdash; Catalyst 19.06 documentation</title>
+  <title>Overview: module code &mdash; Catalyst 19.08 documentation</title>
   
 
   
@@ -25,6 +25,7 @@
         <script type="text/javascript" src="../_static/underscore.js"></script>
         <script type="text/javascript" src="../_static/doctools.js"></script>
         <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -58,7 +59,7 @@
             
             
               <div class="version">
-                19.06
+                19.08
               </div>
             
           
@@ -166,71 +167,107 @@
 <li><a href="catalyst/contrib/criterion/iou.html">catalyst.contrib.criterion.iou</a></li>
 <li><a href="catalyst/contrib/criterion/lovasz.html">catalyst.contrib.criterion.lovasz</a></li>
 <li><a href="catalyst/contrib/criterion/wing.html">catalyst.contrib.criterion.wing</a></li>
+<li><a href="catalyst/contrib/models/segmentation/fpn.html">catalyst.contrib.models.segmentation.fpn</a></li>
+<li><a href="catalyst/contrib/models/segmentation/linknet.html">catalyst.contrib.models.segmentation.linknet</a></li>
+<li><a href="catalyst/contrib/models/segmentation/psp.html">catalyst.contrib.models.segmentation.psp</a></li>
+<li><a href="catalyst/contrib/models/segmentation/unet.html">catalyst.contrib.models.segmentation.unet</a></li>
 <li><a href="catalyst/contrib/modules/common.html">catalyst.contrib.modules.common</a></li>
+<li><a href="catalyst/contrib/modules/lama.html">catalyst.contrib.modules.lama</a></li>
 <li><a href="catalyst/contrib/modules/noisy.html">catalyst.contrib.modules.noisy</a></li>
 <li><a href="catalyst/contrib/modules/pooling.html">catalyst.contrib.modules.pooling</a></li>
-<li><a href="catalyst/contrib/scheduler/base.html">catalyst.contrib.scheduler.base</a></li>
-<li><a href="catalyst/contrib/scheduler/onecycle.html">catalyst.contrib.scheduler.onecycle</a></li>
+<li><a href="catalyst/contrib/modules/real_nvp.html">catalyst.contrib.modules.real_nvp</a></li>
+<li><a href="catalyst/contrib/schedulers/base.html">catalyst.contrib.schedulers.base</a></li>
+<li><a href="catalyst/contrib/schedulers/onecycle.html">catalyst.contrib.schedulers.onecycle</a></li>
 <li><a href="catalyst/data/augmentor.html">catalyst.data.augmentor</a></li>
 <li><a href="catalyst/data/collate_fn.html">catalyst.data.collate_fn</a></li>
 <li><a href="catalyst/data/dataset.html">catalyst.data.dataset</a></li>
-<li><a href="catalyst/data/mixin.html">catalyst.data.mixin</a></li>
 <li><a href="catalyst/data/reader.html">catalyst.data.reader</a></li>
 <li><a href="catalyst/data/sampler.html">catalyst.data.sampler</a></li>
-<li><a href="catalyst/dl/callbacks/base.html">catalyst.dl.callbacks.base</a></li>
-<li><a href="catalyst/dl/callbacks/core.html">catalyst.dl.callbacks.core</a></li>
+<li><a href="catalyst/dl/callbacks/checkpoint.html">catalyst.dl.callbacks.checkpoint</a></li>
+<li><a href="catalyst/dl/callbacks/criterion.html">catalyst.dl.callbacks.criterion</a></li>
 <li><a href="catalyst/dl/callbacks/inference.html">catalyst.dl.callbacks.inference</a></li>
-<li><a href="catalyst/dl/callbacks/loggers.html">catalyst.dl.callbacks.loggers</a></li>
-<li><a href="catalyst/dl/callbacks/metrics.html">catalyst.dl.callbacks.metrics</a></li>
-<li><a href="catalyst/dl/callbacks/schedulers.html">catalyst.dl.callbacks.schedulers</a></li>
-<li><a href="catalyst/dl/callbacks/utils.html">catalyst.dl.callbacks.utils</a></li>
-<li><a href="catalyst/dl/experiments/core.html">catalyst.dl.experiments.core</a></li>
-<li><a href="catalyst/dl/experiments/experiment.html">catalyst.dl.experiments.experiment</a></li>
-<li><a href="catalyst/dl/experiments/runner.html">catalyst.dl.experiments.runner</a></li>
-<li><a href="catalyst/dl/initialization.html">catalyst.dl.initialization</a></li>
-<li><a href="catalyst/dl/losses.html">catalyst.dl.losses</a></li>
-<li><a href="catalyst/dl/metric_manager.html">catalyst.dl.metric_manager</a></li>
-<li><a href="catalyst/dl/metrics.html">catalyst.dl.metrics</a></li>
-<li><a href="catalyst/dl/state.html">catalyst.dl.state</a></li>
+<li><a href="catalyst/dl/callbacks/logging.html">catalyst.dl.callbacks.logging</a></li>
+<li><a href="catalyst/dl/callbacks/metrics/accuracy.html">catalyst.dl.callbacks.metrics.accuracy</a></li>
+<li><a href="catalyst/dl/callbacks/metrics/auc.html">catalyst.dl.callbacks.metrics.auc</a></li>
+<li><a href="catalyst/dl/callbacks/metrics/dice.html">catalyst.dl.callbacks.metrics.dice</a></li>
+<li><a href="catalyst/dl/callbacks/metrics/f1_score.html">catalyst.dl.callbacks.metrics.f1_score</a></li>
+<li><a href="catalyst/dl/callbacks/metrics/iou.html">catalyst.dl.callbacks.metrics.iou</a></li>
+<li><a href="catalyst/dl/callbacks/misc.html">catalyst.dl.callbacks.misc</a></li>
+<li><a href="catalyst/dl/callbacks/mixup.html">catalyst.dl.callbacks.mixup</a></li>
+<li><a href="catalyst/dl/callbacks/optimizer.html">catalyst.dl.callbacks.optimizer</a></li>
+<li><a href="catalyst/dl/callbacks/scheduler.html">catalyst.dl.callbacks.scheduler</a></li>
+<li><a href="catalyst/dl/core/callback.html">catalyst.dl.core.callback</a></li>
+<li><a href="catalyst/dl/core/experiment.html">catalyst.dl.core.experiment</a></li>
+<li><a href="catalyst/dl/core/metric_manager.html">catalyst.dl.core.metric_manager</a></li>
+<li><a href="catalyst/dl/core/runner.html">catalyst.dl.core.runner</a></li>
+<li><a href="catalyst/dl/core/state.html">catalyst.dl.core.state</a></li>
+<li><a href="catalyst/dl/experiment/base.html">catalyst.dl.experiment.base</a></li>
+<li><a href="catalyst/dl/experiment/config.html">catalyst.dl.experiment.config</a></li>
+<li><a href="catalyst/dl/experiment/supervised.html">catalyst.dl.experiment.supervised</a></li>
+<li><a href="catalyst/dl/runner/supervised.html">catalyst.dl.runner.supervised</a></li>
+<li><a href="catalyst/dl/utils/criterion/accuracy.html">catalyst.dl.utils.criterion.accuracy</a></li>
+<li><a href="catalyst/dl/utils/criterion/dice.html">catalyst.dl.utils.criterion.dice</a></li>
+<li><a href="catalyst/dl/utils/criterion/f1_score.html">catalyst.dl.utils.criterion.f1_score</a></li>
+<li><a href="catalyst/dl/utils/criterion/focal.html">catalyst.dl.utils.criterion.focal</a></li>
+<li><a href="catalyst/dl/utils/criterion/iou.html">catalyst.dl.utils.criterion.iou</a></li>
+<li><a href="catalyst/dl/utils/formatters.html">catalyst.dl.utils.formatters</a></li>
+<li><a href="catalyst/dl/utils/scripts.html">catalyst.dl.utils.scripts</a></li>
+<li><a href="catalyst/dl/utils/torch.html">catalyst.dl.utils.torch</a></li>
 <li><a href="catalyst/dl/utils/trace.html">catalyst.dl.utils.trace</a></li>
-<li><a href="catalyst/dl/utils/utils.html">catalyst.dl.utils.utils</a></li>
-<li><a href="catalyst/rl/agents/actor.html">catalyst.rl.agents.actor</a></li>
-<li><a href="catalyst/rl/agents/core.html">catalyst.rl.agents.core</a></li>
-<li><a href="catalyst/rl/agents/critic.html">catalyst.rl.agents.critic</a></li>
-<li><a href="catalyst/rl/agents/head.html">catalyst.rl.agents.head</a></li>
-<li><a href="catalyst/rl/agents/layers.html">catalyst.rl.agents.layers</a></li>
-<li><a href="catalyst/rl/agents/net.html">catalyst.rl.agents.net</a></li>
-<li><a href="catalyst/rl/agents/policy.html">catalyst.rl.agents.policy</a></li>
-<li><a href="catalyst/rl/agents/utils.html">catalyst.rl.agents.utils</a></li>
-<li><a href="catalyst/rl/db/core.html">catalyst.rl.db.core</a></li>
+<li><a href="catalyst/dl/utils/visualization.html">catalyst.dl.utils.visualization</a></li>
+<li><a href="catalyst/rl/agent/actor.html">catalyst.rl.agent.actor</a></li>
+<li><a href="catalyst/rl/agent/critic.html">catalyst.rl.agent.critic</a></li>
+<li><a href="catalyst/rl/agent/head.html">catalyst.rl.agent.head</a></li>
+<li><a href="catalyst/rl/agent/network.html">catalyst.rl.agent.network</a></li>
+<li><a href="catalyst/rl/agent/policy.html">catalyst.rl.agent.policy</a></li>
+<li><a href="catalyst/rl/core/agent.html">catalyst.rl.core.agent</a></li>
+<li><a href="catalyst/rl/core/algorithm.html">catalyst.rl.core.algorithm</a></li>
+<li><a href="catalyst/rl/core/db.html">catalyst.rl.core.db</a></li>
+<li><a href="catalyst/rl/core/environment.html">catalyst.rl.core.environment</a></li>
+<li><a href="catalyst/rl/core/exploration.html">catalyst.rl.core.exploration</a></li>
+<li><a href="catalyst/rl/core/policy_handler.html">catalyst.rl.core.policy_handler</a></li>
+<li><a href="catalyst/rl/core/sampler.html">catalyst.rl.core.sampler</a></li>
+<li><a href="catalyst/rl/core/trainer.html">catalyst.rl.core.trainer</a></li>
+<li><a href="catalyst/rl/core/trajectory_sampler.html">catalyst.rl.core.trajectory_sampler</a></li>
 <li><a href="catalyst/rl/db/mongo.html">catalyst.rl.db.mongo</a></li>
 <li><a href="catalyst/rl/db/redis.html">catalyst.rl.db.redis</a></li>
-<li><a href="catalyst/rl/environments/core.html">catalyst.rl.environments.core</a></li>
-<li><a href="catalyst/rl/environments/gym.html">catalyst.rl.environments.gym</a></li>
-<li><a href="catalyst/rl/exploration/exploration.html">catalyst.rl.exploration.exploration</a></li>
-<li><a href="catalyst/rl/exploration/strategies.html">catalyst.rl.exploration.strategies</a></li>
-<li><a href="catalyst/rl/offpolicy/algorithms/core.html">catalyst.rl.offpolicy.algorithms.core</a></li>
-<li><a href="catalyst/rl/offpolicy/algorithms/core_continuous.html">catalyst.rl.offpolicy.algorithms.core_continuous</a></li>
-<li><a href="catalyst/rl/offpolicy/algorithms/core_discrete.html">catalyst.rl.offpolicy.algorithms.core_discrete</a></li>
+<li><a href="catalyst/rl/environment/gym.html">catalyst.rl.environment.gym</a></li>
+<li><a href="catalyst/rl/exploration/boltzman.html">catalyst.rl.exploration.boltzman</a></li>
+<li><a href="catalyst/rl/exploration/gauss.html">catalyst.rl.exploration.gauss</a></li>
+<li><a href="catalyst/rl/exploration/greedy.html">catalyst.rl.exploration.greedy</a></li>
+<li><a href="catalyst/rl/exploration/param_noise.html">catalyst.rl.exploration.param_noise</a></li>
+<li><a href="catalyst/rl/offpolicy/algorithms/actor_critic.html">catalyst.rl.offpolicy.algorithms.actor_critic</a></li>
+<li><a href="catalyst/rl/offpolicy/algorithms/critic.html">catalyst.rl.offpolicy.algorithms.critic</a></li>
 <li><a href="catalyst/rl/offpolicy/algorithms/ddpg.html">catalyst.rl.offpolicy.algorithms.ddpg</a></li>
+<li><a href="catalyst/rl/offpolicy/algorithms/dqn.html">catalyst.rl.offpolicy.algorithms.dqn</a></li>
 <li><a href="catalyst/rl/offpolicy/algorithms/sac.html">catalyst.rl.offpolicy.algorithms.sac</a></li>
 <li><a href="catalyst/rl/offpolicy/algorithms/td3.html">catalyst.rl.offpolicy.algorithms.td3</a></li>
-<li><a href="catalyst/rl/offpolicy/sampler.html">catalyst.rl.offpolicy.sampler</a></li>
 <li><a href="catalyst/rl/offpolicy/trainer.html">catalyst.rl.offpolicy.trainer</a></li>
 <li><a href="catalyst/rl/onpolicy/algorithms/actor.html">catalyst.rl.onpolicy.algorithms.actor</a></li>
 <li><a href="catalyst/rl/onpolicy/algorithms/actor_critic.html">catalyst.rl.onpolicy.algorithms.actor_critic</a></li>
-<li><a href="catalyst/rl/onpolicy/algorithms/core.html">catalyst.rl.onpolicy.algorithms.core</a></li>
 <li><a href="catalyst/rl/onpolicy/algorithms/ppo.html">catalyst.rl.onpolicy.algorithms.ppo</a></li>
 <li><a href="catalyst/rl/onpolicy/algorithms/reinforce.html">catalyst.rl.onpolicy.algorithms.reinforce</a></li>
-<li><a href="catalyst/rl/onpolicy/sampler.html">catalyst.rl.onpolicy.sampler</a></li>
 <li><a href="catalyst/rl/onpolicy/trainer.html">catalyst.rl.onpolicy.trainer</a></li>
+<li><a href="catalyst/utils/argparse.html">catalyst.utils.argparse</a></li>
+<li><a href="catalyst/utils/checkpoint.html">catalyst.utils.checkpoint</a></li>
+<li><a href="catalyst/utils/compression.html">catalyst.utils.compression</a></li>
 <li><a href="catalyst/utils/config.html">catalyst.utils.config</a></li>
-<li><a href="catalyst/utils/data.html">catalyst.utils.data</a></li>
+<li><a href="catalyst/utils/dataset.html">catalyst.utils.dataset</a></li>
+<li><a href="catalyst/utils/ddp.html">catalyst.utils.ddp</a></li>
+<li><a href="catalyst/utils/frozen.html">catalyst.utils.frozen</a></li>
+<li><a href="catalyst/utils/hash.html">catalyst.utils.hash</a></li>
+<li><a href="catalyst/utils/image.html">catalyst.utils.image</a></li>
+<li><a href="catalyst/utils/initialization.html">catalyst.utils.initialization</a></li>
 <li><a href="catalyst/utils/misc.html">catalyst.utils.misc</a></li>
-<li><a href="catalyst/utils/model.html">catalyst.utils.model</a></li>
-<li><a href="catalyst/utils/parallelize.html">catalyst.utils.parallelize</a></li>
-<li><a href="catalyst/utils/parse.html">catalyst.utils.parse</a></li>
+<li><a href="catalyst/utils/numpy.html">catalyst.utils.numpy</a></li>
+<li><a href="catalyst/utils/pandas.html">catalyst.utils.pandas</a></li>
+<li><a href="catalyst/utils/plotly.html">catalyst.utils.plotly</a></li>
+<li><a href="catalyst/utils/scripts.html">catalyst.utils.scripts</a></li>
+<li><a href="catalyst/utils/seed.html">catalyst.utils.seed</a></li>
 <li><a href="catalyst/utils/serialization.html">catalyst.utils.serialization</a></li>
+<li><a href="catalyst/utils/tensorboard.html">catalyst.utils.tensorboard</a></li>
+<li><a href="catalyst/utils/torch.html">catalyst.utils.torch</a></li>
+<li><a href="catalyst/utils/visualization.html">catalyst.utils.visualization</a></li>
 </ul>
 
            </div>

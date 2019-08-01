@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.data.reader &mdash; Catalyst 19.06 documentation</title>
+  <title>catalyst.data.reader &mdash; Catalyst 19.08 documentation</title>
   
 
   
@@ -25,6 +25,7 @@
         <script type="text/javascript" src="../../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../../_static/doctools.js"></script>
         <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -58,7 +59,7 @@
             
             
               <div class="version">
-                19.06
+                19.08
               </div>
             
           
@@ -163,18 +164,17 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">catalyst.data.functional</span> <span class="k">import</span> <span class="n">read_image</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.image</span> <span class="k">import</span> <span class="n">imread</span>
 
 
-<div class="viewcode-block" id="BaseReader"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.BaseReader">[docs]</a><span class="k">class</span> <span class="nc">BaseReader</span><span class="p">:</span>
+<div class="viewcode-block" id="ReaderSpec"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ReaderSpec">[docs]</a><span class="k">class</span> <span class="nc">ReaderSpec</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Reader abstraction for all Readers. Applies a function</span>
 <span class="sd">    to an element of your data.</span>
 <span class="sd">    For example to a row from csv, or to an image, etc.</span>
 
 <span class="sd">    All inherited classes have to implement `__call__`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="BaseReader.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.BaseReader.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="ReaderSpec.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ReaderSpec.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            input_key (str): input key to use from annotation dict</span>
@@ -183,7 +183,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span> <span class="o">=</span> <span class="n">input_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="o">=</span> <span class="n">output_key</span></div>
 
-<div class="viewcode-block" id="BaseReader.__call__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.BaseReader.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+<div class="viewcode-block" id="ReaderSpec.__call__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ReaderSpec.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reads a row from your annotations dict and</span>
 <span class="sd">        transfer it to data, needed by your network</span>
 <span class="sd">        for example open image by path, or read string and tokenize it.</span>
@@ -199,11 +199,10 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="ImageReader"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ImageReader">[docs]</a><span class="k">class</span> <span class="nc">ImageReader</span><span class="p">(</span><span class="n">BaseReader</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageReader"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ImageReader">[docs]</a><span class="k">class</span> <span class="nc">ImageReader</span><span class="p">(</span><span class="n">ReaderSpec</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Image reader abstraction. Reads images from a `csv` dataset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
 <div class="viewcode-block" id="ImageReader.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ImageReader.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -235,20 +234,19 @@
 <span class="sd">            np.ndarray: Image</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">image_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">])</span>
-        <span class="n">img</span> <span class="o">=</span> <span class="n">read_image</span><span class="p">(</span>
-            <span class="n">image_name</span><span class="p">,</span> <span class="n">datapath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">datapath</span><span class="p">,</span> <span class="n">grayscale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grayscale</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span>
+            <span class="n">image_name</span><span class="p">,</span> <span class="n">rootpath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">datapath</span><span class="p">,</span> <span class="n">grayscale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grayscale</span>
         <span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">:</span> <span class="n">img</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">result</span></div></div>
 
 
-<div class="viewcode-block" id="ScalarReader"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ScalarReader">[docs]</a><span class="k">class</span> <span class="nc">ScalarReader</span><span class="p">(</span><span class="n">BaseReader</span><span class="p">):</span>
+<div class="viewcode-block" id="ScalarReader"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ScalarReader">[docs]</a><span class="k">class</span> <span class="nc">ScalarReader</span><span class="p">(</span><span class="n">ReaderSpec</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Numeric data reader abstraction.</span>
 <span class="sd">    Reads a single float, int, str or other from data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
 <div class="viewcode-block" id="ScalarReader.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ScalarReader.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -290,12 +288,11 @@
         <span class="k">return</span> <span class="n">result</span></div></div>
 
 
-<div class="viewcode-block" id="LambdaReader"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.LambdaReader">[docs]</a><span class="k">class</span> <span class="nc">LambdaReader</span><span class="p">(</span><span class="n">BaseReader</span><span class="p">):</span>
+<div class="viewcode-block" id="LambdaReader"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.LambdaReader">[docs]</a><span class="k">class</span> <span class="nc">LambdaReader</span><span class="p">(</span><span class="n">ReaderSpec</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reader abstraction with an lambda encoder.</span>
 <span class="sd">    Can read an elem from dataset and apply `encode_fn` function to it</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
 <div class="viewcode-block" id="LambdaReader.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.LambdaReader.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -334,11 +331,10 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstraction to compose several readers into one open function.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="ReaderCompose.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ReaderCompose.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">readers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">BaseReader</span><span class="p">],</span> <span class="n">mixins</span><span class="p">:</span> <span class="p">[]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ReaderCompose.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ReaderCompose.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">readers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ReaderSpec</span><span class="p">],</span> <span class="n">mixins</span><span class="p">:</span> <span class="p">[]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            readers (List[BaseReader]): list of reader to compose</span>
+<span class="sd">            readers (List[ReaderSpec]): list of reader to compose</span>
 <span class="sd">            mixins: list of mixins to use</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">readers</span> <span class="o">=</span> <span class="n">readers</span>
@@ -360,6 +356,12 @@
         <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mixins</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">result</span><span class="p">,</span> <span class="o">**</span><span class="n">fn</span><span class="p">(</span><span class="n">result</span><span class="p">)}</span>
         <span class="k">return</span> <span class="n">result</span></div></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;ReaderSpec&quot;</span><span class="p">,</span> <span class="s2">&quot;ImageReader&quot;</span><span class="p">,</span> <span class="s2">&quot;ScalarReader&quot;</span><span class="p">,</span> <span class="s2">&quot;LambdaReader&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ReaderCompose&quot;</span>
+<span class="p">]</span>
 </pre></div>
 
            </div>

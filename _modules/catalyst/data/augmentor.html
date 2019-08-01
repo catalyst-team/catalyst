@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.data.augmentor &mdash; Catalyst 19.06 documentation</title>
+  <title>catalyst.data.augmentor &mdash; Catalyst 19.08 documentation</title>
   
 
   
@@ -25,6 +25,7 @@
         <script type="text/javascript" src="../../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../../_static/doctools.js"></script>
         <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -58,7 +59,7 @@
             
             
               <div class="version">
-                19.06
+                19.08
               </div>
             
           
@@ -160,14 +161,12 @@
             
   <h1>Source code for catalyst.data.augmentor</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Callable</span>
-<span class="kn">from</span> <span class="nn">catalyst.data.functional</span> <span class="k">import</span> <span class="n">compute_mixup_lambda</span><span class="p">,</span> <span class="n">mixup</span>
 
 
 <div class="viewcode-block" id="Augmentor"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.augmentor.Augmentor">[docs]</a><span class="k">class</span> <span class="nc">Augmentor</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Augmentation abstraction to use with data dictionaries.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
 <div class="viewcode-block" id="Augmentor.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.augmentor.Augmentor.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">dict_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">augment_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">default_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">):</span>
@@ -189,7 +188,6 @@
 
 <div class="viewcode-block" id="AugmentorKeys"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.augmentor.AugmentorKeys">[docs]</a><span class="k">class</span> <span class="nc">AugmentorKeys</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Augmentation abstraction to match input and augmentations keys&quot;&quot;&quot;</span>
-
 <div class="viewcode-block" id="AugmentorKeys.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.augmentor.AugmentorKeys.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict2fn_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">augment_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param dict2fn_dict: keys matching dict {input_key: augment_fn_key}</span>
@@ -221,21 +219,7 @@
         <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">dict_</span><span class="p">,</span> <span class="o">**</span><span class="n">results</span><span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="MixupAugmentor"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.augmentor.MixupAugmentor">[docs]</a><span class="k">class</span> <span class="nc">MixupAugmentor</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">share_lambda</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">share_lambda</span> <span class="o">=</span> <span class="n">share_lambda</span>
-
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_</span><span class="p">):</span>
-        <span class="n">bs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dict_</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">dict_</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]])</span>
-        <span class="n">lambda_</span> <span class="o">=</span> <span class="n">compute_mixup_lambda</span><span class="p">(</span><span class="n">bs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">share_lambda</span><span class="p">)</span>
-
-        <span class="n">dict_</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">key</span><span class="p">:</span> <span class="n">mixup</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">lambda_</span><span class="o">=</span><span class="n">lambda_</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dict_</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-        <span class="p">}</span>
-
-        <span class="k">return</span> <span class="n">dict_</span></div>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Augmentor&quot;</span><span class="p">,</span> <span class="s2">&quot;AugmentorKeys&quot;</span><span class="p">]</span>
 </pre></div>
 
            </div>

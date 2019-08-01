@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.criterion.wing &mdash; Catalyst 19.06 documentation</title>
+  <title>catalyst.contrib.criterion.wing &mdash; Catalyst 19.08 documentation</title>
   
 
   
@@ -25,6 +25,7 @@
         <script type="text/javascript" src="../../../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../../../_static/doctools.js"></script>
         <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -58,7 +59,7 @@
             
             
               <div class="version">
-                19.06
+                19.08
               </div>
             
           
@@ -160,24 +161,53 @@
             
   <h1>Source code for catalyst.contrib.criterion.wing</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+<span class="kn">import</span> <span class="nn">math</span>
 
+<span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="k">import</span> <span class="n">losses</span>
+
+
+<div class="viewcode-block" id="wing_loss"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.wing.wing_loss">[docs]</a><span class="k">def</span> <span class="nf">wing_loss</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="n">curvature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">reduction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    https://arxiv.org/pdf/1711.06753.pdf</span>
+
+<span class="sd">    Source https://github.com/BloodAxe/pytorch-toolbelt</span>
+<span class="sd">    See :class:`~pytorch_toolbelt.losses` for details.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">diff_abs</span> <span class="o">=</span> <span class="p">(</span><span class="n">targets</span> <span class="o">-</span> <span class="n">outputs</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">diff_abs</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+
+    <span class="n">idx_smaller</span> <span class="o">=</span> <span class="n">diff_abs</span> <span class="o">&lt;</span> <span class="n">width</span>
+    <span class="n">idx_bigger</span> <span class="o">=</span> <span class="n">diff_abs</span> <span class="o">&gt;=</span> <span class="n">width</span>
+
+    <span class="n">loss</span><span class="p">[</span><span class="n">idx_smaller</span><span class="p">]</span> <span class="o">=</span> \
+        <span class="n">width</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">diff_abs</span><span class="p">[</span><span class="n">idx_smaller</span><span class="p">]</span> <span class="o">/</span> <span class="n">curvature</span><span class="p">)</span>
+
+    <span class="n">C</span> <span class="o">=</span> <span class="n">width</span> <span class="o">-</span> <span class="n">width</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">width</span> <span class="o">/</span> <span class="n">curvature</span><span class="p">)</span>
+    <span class="n">loss</span><span class="p">[</span><span class="n">idx_bigger</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss</span><span class="p">[</span><span class="n">idx_bigger</span><span class="p">]</span> <span class="o">-</span> <span class="n">C</span>
+
+    <span class="k">if</span> <span class="n">reduction</span> <span class="o">==</span> <span class="s2">&quot;sum&quot;</span><span class="p">:</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">reduction</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">loss</span></div>
 
 
 <div class="viewcode-block" id="WingLoss"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.wing.WingLoss">[docs]</a><span class="k">class</span> <span class="nc">WingLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
-        <span class="n">curvature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-        <span class="n">reduction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">curvature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">reduction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loss_fn</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
-            <span class="n">losses</span><span class="o">.</span><span class="n">wing_loss</span><span class="p">,</span>
-            <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
-            <span class="n">curvature</span><span class="o">=</span><span class="n">curvature</span><span class="p">,</span>
-            <span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span><span class="p">)</span>
+            <span class="n">wing_loss</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">curvature</span><span class="o">=</span><span class="n">curvature</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="WingLoss.forward"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.wing.WingLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_fn</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>

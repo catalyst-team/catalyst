@@ -45,52 +45,53 @@ Criterion
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: catalyst.contrib.criterion.lovasz
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 .. automodule:: catalyst.contrib.criterion.wing
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. currentmodule:: catalyst.contrib.criterion
-
-.. autoclass:: LovaszLossBinary
-    :members:
-    :undoc-members:
-
-.. autoclass:: LovaszLossMultiClass
-    :members:
-    :undoc-members:
-
-.. autoclass:: LovaszLossMultiLabel
-    :members:
-    :undoc-members:
-
-
-Schedulers
---------------------
-
-.. currentmodule:: catalyst.contrib.scheduler
-
-.. autoclass:: BaseScheduler
-    :members:
-
-.. autoclass:: OneCycleLR
-    :members:
-
 
 Models
 --------------------
-.. automodule:: catalyst.contrib.models
+
+Segmentation
+~~~~~~~~~~~~~~~~
+
+.. automodule:: catalyst.contrib.models.segmentation.unet
     :members:
     :undoc-members:
     :show-inheritance:
 
-@TODO: update with new classes
+.. automodule:: catalyst.contrib.models.segmentation.linknet
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.models.segmentation.fpn
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.models.segmentation.psp
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 
 Modules
 --------------------
 
 .. automodule:: catalyst.contrib.modules.common
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.modules.lama
     :members:
     :undoc-members:
     :show-inheritance:
@@ -105,3 +106,30 @@ Modules
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: catalyst.contrib.modules.real_nvp
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Optimizers
+--------------------
+
+.. automodule:: catalyst.contrib.optimizers
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Schedulers
+--------------------
+
+.. automodule:: catalyst.contrib.schedulers.base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.schedulers.onecycle
+    :members:
+    :undoc-members:
+    :show-inheritance:

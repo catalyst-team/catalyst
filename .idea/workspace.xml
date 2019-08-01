@@ -1,0 +1,745 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="ad1b0216-21c5-4f5d-afeb-40e00ce32c06" name="Default Changelist" comment="final renaming and final rearranging" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+        <option value="Jupyter Notebook" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <favorite-branches>
+      <branch-storage>
+        <map>
+          <entry type="REMOTE">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="origin/gh-pages" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </favorite-branches>
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="Tezikov Roman &lt;tez.romach@gmail.com&gt;" />
+      </list>
+    </option>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="gh-pages" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1OUxaEa6o3bdcxnc5W53V0wt5v0" />
+  <component name="PropertiesComponent">
+    <property name="Git.Branch.Popup.ShowAllRemotes" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="add_unversioned_files" value="$PROJECT_DIR$/examples/cifar_simple/__init__.py&#10;/Users/romach/Documents/aiml/catalyst/examples/notebook-example.ipynb" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/checks" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python tests.pytest for scripts.tests.djd.test_prepare_df_from_dirs_multi">
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <module name="catalyst" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for catalyst.contrib.scripts.tests.djd.test_prepare_df_from_dirs_one" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="catalyst" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/catalyst/contrib" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;catalyst.contrib.scripts.tests.djd.test_prepare_df_from_dirs_one&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for scripts.tests.djd.test_prepare_df_from_dirs_multi" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="catalyst" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/catalyst/contrib" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;scripts.tests.djd.test_prepare_df_from_dirs_multi&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for scripts.tests.djd.test_prepare_df_from_dirs_one" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="catalyst" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/catalyst/contrib" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;scripts.tests.djd.test_prepare_df_from_dirs_one&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for test_data.test_stratified_fold_split" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="catalyst" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/catalyst/utils/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_data.test_stratified_fold_split&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for test_data.test_stratified_fold_split_num_folds" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="catalyst" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/catalyst/utils/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_data.test_stratified_fold_split_num_folds&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python tests.pytest for test_data.test_stratified_fold_split_num_folds" />
+        <item itemvalue="Python tests.pytest for test_data.test_stratified_fold_split" />
+        <item itemvalue="Python tests.pytest for scripts.tests.djd.test_prepare_df_from_dirs_one" />
+        <item itemvalue="Python tests.pytest for scripts.tests.djd.test_prepare_df_from_dirs_multi" />
+        <item itemvalue="Python tests.pytest for catalyst.contrib.scripts.tests.djd.test_prepare_df_from_dirs_one" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ad1b0216-21c5-4f5d-afeb-40e00ce32c06" name="Default Changelist" comment="" />
+      <created>1553100051736</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1553100051736</updated>
+      <workItem from="1553100055404" duration="1956000" />
+      <workItem from="1553328448953" duration="794000" />
+      <workItem from="1553499928381" duration="60000" />
+      <workItem from="1553500006448" duration="402000" />
+      <workItem from="1553500915777" duration="423000" />
+      <workItem from="1553535342453" duration="2403000" />
+      <workItem from="1553605690275" duration="386000" />
+      <workItem from="1553704380584" duration="2319000" />
+      <workItem from="1554137748769" duration="1492000" />
+      <workItem from="1554186404418" duration="653000" />
+      <workItem from="1554522963981" duration="7295000" />
+      <workItem from="1554714715112" duration="2047000" />
+      <workItem from="1554803461450" duration="5228000" />
+      <workItem from="1554890015093" duration="8257000" />
+      <workItem from="1554971879985" duration="5601000" />
+      <workItem from="1555141974465" duration="17671000" />
+      <workItem from="1555492361343" duration="284000" />
+      <workItem from="1555582671508" duration="6465000" />
+      <workItem from="1555598930853" duration="1308000" />
+      <workItem from="1555660603696" duration="16144000" />
+      <workItem from="1555935556941" duration="9810000" />
+      <workItem from="1556291820163" duration="1071000" />
+      <workItem from="1556370017603" duration="30951000" />
+      <workItem from="1556785550427" duration="404000" />
+      <workItem from="1556787477767" duration="6789000" />
+      <workItem from="1556867587445" duration="13176000" />
+      <workItem from="1557126515971" duration="1127000" />
+      <workItem from="1557213747223" duration="2780000" />
+      <workItem from="1557489355077" duration="2238000" />
+      <workItem from="1557519155072" duration="3303000" />
+      <workItem from="1557529473630" duration="376000" />
+      <workItem from="1557555179149" duration="1098000" />
+      <workItem from="1557746424285" duration="383000" />
+      <workItem from="1557827173373" duration="155000" />
+      <workItem from="1557905072421" duration="2763000" />
+      <workItem from="1558004713280" duration="8046000" />
+      <workItem from="1558073476327" duration="6826000" />
+      <workItem from="1558261935109" duration="1735000" />
+      <workItem from="1558293992693" duration="200000" />
+      <workItem from="1558337247896" duration="601000" />
+      <workItem from="1558426494723" duration="217000" />
+      <workItem from="1558793279970" duration="3718000" />
+      <workItem from="1559073511779" duration="9380000" />
+      <workItem from="1559150326277" duration="13000" />
+      <workItem from="1559199711402" duration="2560000" />
+      <workItem from="1559246437322" duration="6390000" />
+      <workItem from="1559292630630" duration="2386000" />
+      <workItem from="1559295703997" duration="2009000" />
+      <workItem from="1559409131762" duration="9000" />
+      <workItem from="1559409158122" duration="707000" />
+      <workItem from="1559411373921" duration="1084000" />
+      <workItem from="1559503301703" duration="366000" />
+      <workItem from="1559547710836" duration="219000" />
+      <workItem from="1559633667923" duration="448000" />
+      <workItem from="1559823736878" duration="166000" />
+      <workItem from="1559892860126" duration="3337000" />
+      <workItem from="1559902459206" duration="285000" />
+      <workItem from="1559925687703" duration="809000" />
+      <workItem from="1559994110225" duration="631000" />
+      <workItem from="1559995913433" duration="1187000" />
+      <workItem from="1560438938654" duration="284000" />
+      <workItem from="1560513543713" duration="375000" />
+      <workItem from="1560723652544" duration="2915000" />
+      <workItem from="1560771029084" duration="1477000" />
+      <workItem from="1560856817726" duration="1698000" />
+      <workItem from="1561040639365" duration="744000" />
+      <workItem from="1561194282989" duration="690000" />
+      <workItem from="1561230504385" duration="1853000" />
+      <workItem from="1561368821229" duration="1088000" />
+      <workItem from="1561471122367" duration="1544000" />
+      <workItem from="1561645856932" duration="383000" />
+      <workItem from="1561838512488" duration="7296000" />
+      <workItem from="1561932083059" duration="2387000" />
+      <workItem from="1563301360362" duration="1513000" />
+      <workItem from="1563559815611" duration="672000" />
+      <workItem from="1563879137181" duration="4515000" />
+      <workItem from="1563957012562" duration="3932000" />
+      <workItem from="1564046041601" duration="3347000" />
+      <workItem from="1564133925361" duration="1792000" />
+      <workItem from="1564416764163" duration="24889000" />
+      <workItem from="1564601226142" duration="7996000" />
+    </task>
+    <task id="LOCAL-00017" summary="Merge branch 'master' of https://github.com/catalyst-team/catalyst into new_metrics&#10;&#10;# Conflicts:&#10;#&#9;catalyst/dl/callbacks/metrics.py">
+      <created>1556107029375</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1556107029375</updated>
+    </task>
+    <task id="LOCAL-00018" summary="flake8">
+      <created>1556109134144</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1556109134144</updated>
+    </task>
+    <task id="LOCAL-00019" summary="onecycle scheduler">
+      <created>1556483662247</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1556483662247</updated>
+    </task>
+    <task id="LOCAL-00020" summary="BaseScheduler with momentum and docs">
+      <created>1556614775212</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1556614775212</updated>
+    </task>
+    <task id="LOCAL-00021" summary="update docs">
+      <created>1556615110623</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1556615110623</updated>
+    </task>
+    <task id="LOCAL-00022" summary="froze dependencies">
+      <created>1556615260675</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1556615260675</updated>
+    </task>
+    <task id="LOCAL-00023" summary="codestyle">
+      <created>1556615707295</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1556615707295</updated>
+    </task>
+    <task id="LOCAL-00024" summary="fix">
+      <created>1556711707781</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1556711707781</updated>
+    </task>
+    <task id="LOCAL-00025" summary="epochs -&gt; steps">
+      <created>1556719611105</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1556719611105</updated>
+    </task>
+    <task id="LOCAL-00026" summary="group timers in tensorboard">
+      <created>1556795019295</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1556795019295</updated>
+    </task>
+    <task id="LOCAL-00027" summary="add fps">
+      <created>1556814843397</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1556814843397</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Merge branch 'master' of github.com:catalyst-team/catalyst into onecycle&#10;&#10;# Conflicts:&#10;#&#9;examples/notebook-example.ipynb">
+      <created>1556832587508</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1556832587508</updated>
+    </task>
+    <task id="LOCAL-00029" summary="onecycle for batches">
+      <created>1556873203706</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1556873203706</updated>
+    </task>
+    <task id="LOCAL-00030" summary="onecycle for batches">
+      <created>1557217414664</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1557217414664</updated>
+    </task>
+    <task id="LOCAL-00031" summary="WIP on correct hadling dor several dataloaders">
+      <created>1557649306650</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1557649306650</updated>
+    </task>
+    <task id="LOCAL-00032" summary="several dataloaders finished">
+      <created>1558026572959</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1558026572959</updated>
+    </task>
+    <task id="LOCAL-00033" summary="epochs -&gt; steps">
+      <created>1558026849826</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1558026849826</updated>
+    </task>
+    <task id="LOCAL-00034" summary="SchedulerCallback with batch for OneCycle">
+      <created>1558034198144</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1558034198144</updated>
+    </task>
+    <task id="LOCAL-00035" summary="BatchScheduler">
+      <created>1558036982983</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1558036982983</updated>
+    </task>
+    <task id="LOCAL-00036" summary="remove residual loaders">
+      <created>1558073994662</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1558073994662</updated>
+    </task>
+    <task id="LOCAL-00037" summary="add `--version`, thanks to @hexfaker">
+      <created>1558106037914</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1558106037914</updated>
+    </task>
+    <task id="LOCAL-00038" summary="codestyle">
+      <created>1558107219465</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1558107219465</updated>
+    </task>
+    <task id="LOCAL-00039" summary="-v">
+      <created>1558109014786</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1558109014786</updated>
+    </task>
+    <task id="LOCAL-00040" summary="update docs for catalyst-data">
+      <created>1558947469948</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1558947469948</updated>
+    </task>
+    <task id="LOCAL-00041" summary="checks for docs &amp;&amp; new docker">
+      <created>1559081902536</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1559081902536</updated>
+    </task>
+    <task id="LOCAL-00042" summary="update contributing.md">
+      <created>1559112242861</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1559112242861</updated>
+    </task>
+    <task id="LOCAL-00043" summary="add TODOs">
+      <created>1559119382960</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1559119382960</updated>
+    </task>
+    <task id="LOCAL-00044" summary="fix imports for DL and contrib">
+      <created>1559252253740</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1559252253740</updated>
+    </task>
+    <task id="LOCAL-00045" summary="add Metric functions">
+      <created>1559292778015</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1559292778015</updated>
+    </task>
+    <task id="LOCAL-00046" summary="fix Registry">
+      <created>1559293378789</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1559293378789</updated>
+    </task>
+    <task id="LOCAL-00047" summary="fix deploy">
+      <created>1559294364782</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1559294364782</updated>
+    </task>
+    <task id="LOCAL-00048" summary="fix deploy">
+      <created>1559294681800</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1559294681800</updated>
+    </task>
+    <task id="LOCAL-00049" summary="fix deploy">
+      <created>1559295254545</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1559295254545</updated>
+    </task>
+    <task id="LOCAL-00050" summary="docs 19.06">
+      <created>1559409995268</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1559409995269</updated>
+    </task>
+    <task id="LOCAL-00051" summary="fix `catalyst-base` docker">
+      <created>1559897291608</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1559897291609</updated>
+    </task>
+    <task id="LOCAL-00052" summary="fix `catalyst-base` docker">
+      <created>1559897358948</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1559897358948</updated>
+    </task>
+    <task id="LOCAL-00053" summary="change deprecated method">
+      <created>1559925897876</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1559925897876</updated>
+    </task>
+    <task id="LOCAL-00054" summary="change deprecated method">
+      <created>1563967379537</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1563967379537</updated>
+    </task>
+    <task id="LOCAL-00055" summary="get values with safitty">
+      <created>1564047942958</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1564047942958</updated>
+    </task>
+    <task id="LOCAL-00056" summary="rearrange imports">
+      <created>1564048430936</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1564048430937</updated>
+    </task>
+    <task id="LOCAL-00057" summary="add _get_list_args to AccuracyCallback and MapKCallback">
+      <created>1564481312173</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1564481312173</updated>
+    </task>
+    <task id="LOCAL-00058" summary="add _metrics with checkpoint logs">
+      <created>1564485854651</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1564485854651</updated>
+    </task>
+    <task id="LOCAL-00059" summary="add `best` metric">
+      <created>1564489932254</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1564489932255</updated>
+    </task>
+    <task id="LOCAL-00060" summary="rename">
+      <created>1564491041808</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1564491041808</updated>
+    </task>
+    <task id="LOCAL-00061" summary="BaseCheckpointCallback">
+      <created>1564520547172</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1564520547173</updated>
+    </task>
+    <task id="LOCAL-00062" summary="some renaming">
+      <created>1564602651000</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1564602651001</updated>
+    </task>
+    <task id="LOCAL-00063" summary="rearrange">
+      <created>1564603743121</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1564603743121</updated>
+    </task>
+    <task id="LOCAL-00064" summary="final renaming and final rearranging">
+      <created>1564650375078</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1564650375078</updated>
+    </task>
+    <task id="LOCAL-00065" summary="flake8">
+      <created>1564653007841</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1564653007841</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
+    <servers />
+  </component>
+  <component name="TestHistory">
+    <history-entry file="pytest_for_test_data_test_stratified_fold_split - 2019.04.27 at 16h 03m 28s.xml">
+      <configuration name="pytest for test_data.test_stratified_fold_split" configurationId="tests" />
+    </history-entry>
+    <history-entry file="pytest_for_test_data_test_stratified_fold_split - 2019.04.27 at 16h 04m 00s.xml">
+      <configuration name="pytest for test_data.test_stratified_fold_split" configurationId="tests" />
+    </history-entry>
+    <history-entry file="pytest_for_test_data_test_stratified_fold_split_num_folds - 2019.04.27 at 16h 04m 07s.xml">
+      <configuration name="pytest for test_data.test_stratified_fold_split_num_folds" configurationId="tests" />
+    </history-entry>
+    <history-entry file="pytest_for_scripts_tests_djd_test_prepare_df_from_dirs_one - 2019.04.28 at 20h 00m 49s.xml">
+      <configuration name="pytest for scripts.tests.djd.test_prepare_df_from_dirs_one" configurationId="tests" />
+    </history-entry>
+    <history-entry file="pytest_for_scripts_tests_djd_test_prepare_df_from_dirs_multi - 2019.04.28 at 20h 00m 58s.xml">
+      <configuration name="pytest for scripts.tests.djd.test_prepare_df_from_dirs_multi" configurationId="tests" />
+    </history-entry>
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ORDER">
+      <list>
+        <option value="0" />
+        <option value="2" />
+        <option value="3" />
+        <option value="1" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="add `--version`, thanks to @hexfaker" />
+    <MESSAGE value="codestyle" />
+    <MESSAGE value="-v" />
+    <MESSAGE value="update docs for catalyst-data" />
+    <MESSAGE value="checks for docs &amp;&amp; new docker" />
+    <MESSAGE value="update contributing.md" />
+    <MESSAGE value="add TODOs" />
+    <MESSAGE value="fix imports for DL and contrib" />
+    <MESSAGE value="add Metric functions" />
+    <MESSAGE value="fix Registry" />
+    <MESSAGE value="fix deploy" />
+    <MESSAGE value="docs 19.06" />
+    <MESSAGE value="fix `catalyst-base` docker" />
+    <MESSAGE value="change deprecated method" />
+    <MESSAGE value="get values with safitty" />
+    <MESSAGE value="rearrange imports" />
+    <MESSAGE value="add _get_list_args to AccuracyCallback and MapKCallback" />
+    <MESSAGE value="add _metrics with checkpoint logs" />
+    <MESSAGE value="add `best` metric" />
+    <MESSAGE value="rename" />
+    <MESSAGE value="BaseCheckpointCallback" />
+    <MESSAGE value="some renaming" />
+    <MESSAGE value="rearrange" />
+    <MESSAGE value="final renaming and final rearranging" />
+    <MESSAGE value="flake8" />
+    <option name="LAST_COMMIT_MESSAGE" value="flake8" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/catalyst$pytest_for_scripts_tests_djd_test_prepare_df_from_dirs_multi.coverage" NAME="pytest for scripts.tests.djd.test_prepare_df_from_dirs_multi Coverage Results" MODIFIED="1556470856442" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/catalyst/contrib" />
+    <SUITE FILE_PATH="coverage/catalyst$pytest_for_test_data_test_stratified_fold_split.coverage" NAME="pytest for test_data.test_stratified_fold_split Coverage Results" MODIFIED="1556370235804" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/catalyst/utils/tests" />
+    <SUITE FILE_PATH="coverage/catalyst$pytest_for_scripts_tests_djd_test_prepare_df_from_dirs_one.coverage" NAME="pytest for scripts.tests.djd.test_prepare_df_from_dirs_one Coverage Results" MODIFIED="1556470846998" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/catalyst/contrib" />
+    <SUITE FILE_PATH="coverage/catalyst$pytest_for_test_data_test_stratified_fold_split_num_folds.coverage" NAME="pytest for test_data.test_stratified_fold_split_num_folds Coverage Results" MODIFIED="1556370244023" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/catalyst/utils/tests" />
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2724595" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>
