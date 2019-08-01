@@ -35,6 +35,20 @@ class SupervisedRunner(Runner):
         self.output_key = output_key
         self.target_key = input_target_key
 
+        if isinstance(self.input_key, str):
+            self._process_input = self._process_input_str
+        elif isinstance(self.input_key, (list, tuple)):
+            self._process_input = self._process_input_list
+        else:
+            self._process_input = self._process_input_none
+
+        if isinstance(output_key, str):
+            self._process_output = self._process_output_str
+        elif isinstance(output_key, (list, tuple)):
+            self._process_output = self._process_output_list
+        else:
+            self._process_output = self._process_output_none
+
     def _batch2device(self, batch: Mapping[str, Any], device):
         if isinstance(batch, (tuple, list)):
             assert len(batch) == 2
@@ -42,27 +56,35 @@ class SupervisedRunner(Runner):
         batch = super()._batch2device(batch, device)
         return batch
 
-    def predict_batch(self, batch: Mapping[str, Any]):
-        if isinstance(self.input_key, str):
-            output = self.model(batch[self.input_key])
-        else:
-            if isinstance(self.input_key, (list, tuple)):
-                input = dict(
-                    (key, value) for key, value in zip(self.input_key, batch)
-                )
-            else:
-                input = batch
-            output = self.model(**input)
+    def _process_input_str(self, batch: Mapping[str, Any]):
+        output = self.model(batch[self.input_key])
+        return output
 
-        if isinstance(output, dict):
-            pass
-        elif isinstance(output, (list, tuple)) \
-                and isinstance(self.output_key, (list, tuple)):
-            output = dict(
-                (key, value) for key, value in zip(self.output_key, output)
-            )
-        else:
-            output = {self.output_key: output}
+    def _process_input_list(self, batch: Mapping[str, Any]):
+        input = dict((key, batch[key]) for key in self.input_key)
+        output = self.model(**input)
+        return output
+
+    def _process_input_none(self, batch: Mapping[str, Any]):
+        output = self.model(**batch)
+        return output
+
+    def _process_output_str(self, output: Mapping[str, Any]):
+        output = {self.output_key: output}
+        return output
+
+    def _process_output_list(self, output: Mapping[str, Any]):
+        output = dict(
+            (key, value) for key, value in zip(self.output_key, output)
+        )
+        return output
+
+    def _process_output_none(self, output: Mapping[str, Any]):
+        return output
+
+    def predict_batch(self, batch: Mapping[str, Any]):
+        output = self._process_input(batch)
+        output = self._process_output(output)
         return output
 
     def train(
@@ -154,7 +176,9 @@ class SupervisedRunner(Runner):
             check=check
         )
 
-        output = callbacks["inference"].predictions[self.output_key]
+        output = callbacks["inference"].predictions
+        if isinstance(self.output_key, str):
+            output = output[self.output_key]
 
         return output
 
