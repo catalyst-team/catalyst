@@ -135,29 +135,17 @@ class ConfigExperiment(Experiment):
         return criterion
 
     def _get_optimizer(self, *, model_params, **params):
-        key_value_flag = params.pop("_key_value", False)
+        load_from_previous_stage = \
+            params.pop("load_from_previous_stage", False)
+        optimizer = OPTIMIZERS.get_from_params(**params, params=model_params)
 
-        if key_value_flag:
-            optimizer = {}
-            for key, params_ in params.items():
-                optimizer[key] = self._get_optimizer(
-                    model_params=model_params, **params_
-                )
-        else:
-            load_from_previous_stage = \
-                params.pop("load_from_previous_stage", False)
-            optimizer = OPTIMIZERS.get_from_params(
-                **params, params=model_params
-            )
-
-            if load_from_previous_stage:
-                checkpoint_path = \
-                    f"{self.logdir}/checkpoints/best.pth"
-                checkpoint = utils.load_checkpoint(checkpoint_path)
-                utils.unpack_checkpoint(checkpoint, optimizer=optimizer)
-                for key, value in params.items():
-                    for pg in optimizer.param_groups:
-                        pg[key] = value
+        if load_from_previous_stage:
+            checkpoint_path = f"{self.logdir}/checkpoints/best.pth"
+            checkpoint = utils.load_checkpoint(checkpoint_path)
+            utils.unpack_checkpoint(checkpoint, optimizer=optimizer)
+            for key, value in params.items():
+                for pg in optimizer.param_groups:
+                    pg[key] = value
 
         return optimizer
 
