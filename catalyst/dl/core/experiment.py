@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from typing import Iterable, Mapping, Any, List, Tuple, Dict
+from typing import Iterable, Mapping, Any, Tuple, Dict
 from collections import OrderedDict
 
 from torch import nn
@@ -60,7 +60,7 @@ class Experiment(ABC):
         return criterion, optimizer, scheduler
 
     @abstractmethod
-    def get_callbacks(self, stage: str) -> "List[Callback]":
+    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         pass
 
     def get_datasets(

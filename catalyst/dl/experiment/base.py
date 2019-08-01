@@ -1,4 +1,4 @@
-from typing import Dict, List, Iterable, Mapping, Any
+from typing import Dict, List, Iterable, Mapping, Any, Union
 from collections import OrderedDict
 
 from torch import nn
@@ -18,7 +18,7 @@ class BaseExperiment(Experiment):
         self,
         model: _Model,
         loaders: "OrderedDict[str, DataLoader]",
-        callbacks: "List[Callback]" = None,
+        callbacks: "Union[OrderedDict[str, Callback], List[Callback]]" = None,
         logdir: str = None,
         stage: str = "train",
         criterion: _Criterion = None,
@@ -35,7 +35,15 @@ class BaseExperiment(Experiment):
     ):
         self._model = model
         self._loaders = loaders
-        self._callbacks = callbacks or []
+
+        if callbacks is None:
+            callbacks = OrderedDict()
+        elif isinstance(callbacks, List):
+            callbacks = OrderedDict([
+                (i, value)
+                for i, value in enumerate(callbacks)
+            ])
+        self._callbacks = callbacks
 
         self._criterion = criterion
         self._optimizer = optimizer
@@ -90,7 +98,7 @@ class BaseExperiment(Experiment):
     def get_scheduler(self, stage: str, optimizer=None) -> _Scheduler:
         return self._scheduler
 
-    def get_callbacks(self, stage: str) -> "List[Callback]":
+    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         return self._callbacks
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":

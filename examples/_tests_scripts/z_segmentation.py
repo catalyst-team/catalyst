@@ -11,6 +11,10 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 plt.ioff()
 
+# ! pip install tifffile
+
+# In[ ]:
+
 import tifffile as tiff
 
 images = tiff.imread('./data/isbi/train-volume.tif')
@@ -28,7 +32,7 @@ import numpy as np
 import torch
 import torchvision
 import torchvision.transforms as transforms
-from catalyst.data.augmentor import Augmentor
+from catalyst.data import Augmentor
 from catalyst.dl import utils
 
 bs = 1
@@ -42,8 +46,8 @@ data_transform = transforms.Compose([
     Augmentor(
         dict_key="features",
         augment_fn=transforms.Normalize(
-            (0.5, ),
-            (0.5, ))),
+            (0.5,),
+            (0.5,))),
     Augmentor(
         dict_key="targets",
         augment_fn=lambda x: \
@@ -119,15 +123,8 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.dl.callbacks import InferCallback, CheckpointCallback
-loaders = collections.OrderedDict([("infer", loaders["valid"])])
-runner.infer(
-    model=model,
-    loaders=loaders,
-    callbacks=[
-        CheckpointCallback(resume=f"{logdir}/checkpoints/best.pth"),
-        InferCallback()
-    ],
+runner_out = runner.predict_loader(
+    loaders["valid"], resume=f"{logdir}/checkpoints/best.pth"
 )
 
 # # Predictions visualization
@@ -141,9 +138,7 @@ plt.style.use("ggplot")
 
 sigmoid = lambda x: 1 / (1 + np.exp(-x))
 
-for i, (input, output) in enumerate(
-    zip(valid_data, runner.callbacks[1].predictions["logits"])
-):
+for i, (input, output) in enumerate(zip(valid_data, runner_out)):
     image, mask = input
 
     threshold = 0.5
@@ -162,5 +157,3 @@ for i, (input, output) in enumerate(
     plt.imshow(mask, 'gray')
 
     plt.show()
-
-# In[ ]:

@@ -276,15 +276,15 @@ class ConfigExperiment(Experiment):
 
         return loaders
 
-    def get_callbacks(self, stage: str) -> "List[Callback]":
+    def get_callbacks(self, stage: str) -> "OrderedDict[Callback]":
         callbacks_params = (
             self.stages_config[stage].get("callbacks_params", {})
         )
 
-        callbacks = []
+        callbacks = OrderedDict()
         for key, callback_params in callbacks_params.items():
             callback = CALLBACKS.get_from_params(**callback_params)
-            callbacks.append(callback)
+            callbacks[key] = callback
 
         return callbacks
 
