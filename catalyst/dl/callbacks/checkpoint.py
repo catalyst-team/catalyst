@@ -41,7 +41,6 @@ class CheckpointCallback(BaseCheckpointCallback):
     """
     Checkpoint callback to save/restore your model/criterion/optimizer/metrics.
     """
-
     def __init__(
         self,
         save_n_best: int = 3,
@@ -193,7 +192,6 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
     """
     Iteration checkpoint callback to save your model/criterion/optimizer
     """
-
     def __init__(
         self,
         save_n_last: int = 3,
@@ -255,7 +253,6 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         metrics = self.get_metric()
         self.save_metric(logdir, metrics)
         print(f"\nSaved checkpoint at {filepath}")
-
 
     def on_stage_start(self, state):
         if self.stage_restart:
