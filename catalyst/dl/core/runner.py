@@ -187,10 +187,17 @@ class Runner(ABC):
 
     def run_experiment(self, experiment: Experiment, check: bool = False):
         self._check_run = check
-
         self.experiment = experiment
-        for stage in self.experiment.stages:
-            self._run_stage(stage)
+
+        try:
+            for stage in self.experiment.stages:
+                self._run_stage(stage)
+        except Exception as ex:
+            if self.state.verbose:
+                print("Early exiting")
+
+            self.state.exception = ex
+            self._run_event("exception")
         return self
 
 

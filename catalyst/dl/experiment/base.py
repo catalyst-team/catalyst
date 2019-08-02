@@ -92,7 +92,6 @@ class BaseExperiment(Experiment):
         return self._criterion
 
     def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
-
         return self._optimizer
 
     def get_scheduler(self, stage: str, optimizer=None) -> _Scheduler:

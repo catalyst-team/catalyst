@@ -18,6 +18,8 @@ class Callback:
     ------loader end
     ---epoch end
     stage end
+
+    exception – if an Exception was raised
     """
 
     def on_stage_start(self, state: RunnerState):
@@ -42,6 +44,9 @@ class Callback:
         pass
 
     def on_batch_end(self, state: RunnerState):
+        pass
+
+    def on_exception(self, state: RunnerState):
         pass
 
 
