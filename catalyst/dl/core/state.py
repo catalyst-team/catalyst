@@ -164,5 +164,9 @@ class RunnerState(FrozenClass):
         for logger in self.loggers:
             logger.on_batch_end(self)
 
+    def on_exception_post(self):
+        for logger in self.loggers:
+            logger.on_exception(self)
+
 
 __all__ = ["RunnerState"]

@@ -53,6 +53,16 @@ class VerboseLogger(Callback):
         self.tqdm = None
         self.step = 0
 
+    def on_exception(self, state: RunnerState):
+        exception = state.exception
+        if exception is None:
+            return
+
+        if isinstance(exception, KeyboardInterrupt):
+            self.tqdm.write("Early exiting")
+        else:
+            raise exception
+
 
 class ConsoleLogger(Callback):
     """
