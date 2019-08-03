@@ -183,4 +183,7 @@ class RaiseExceptionCallback(Callback):
             raise exception
 
 
-__all__ = ["VerboseLogger", "ConsoleLogger", "TensorboardLogger", "RaiseExceptionCallback"]
+__all__ = [
+    "VerboseLogger", "ConsoleLogger",
+    "TensorboardLogger", "RaiseExceptionCallback"
+]
