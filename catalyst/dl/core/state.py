@@ -35,7 +35,8 @@ class RunnerState(FrozenClass):
         # @TODO: refactor
         # hack to prevent cycle imports
         from ..callbacks import (
-            VerboseLogger, ConsoleLogger, TensorboardLogger
+            VerboseLogger, ConsoleLogger,
+            TensorboardLogger, RaiseExceptionCallback
         )
 
         self.logdir = Path(logdir) if logdir is not None else None
@@ -77,6 +78,7 @@ class RunnerState(FrozenClass):
         if not stage.startswith("infer"):
             self.loggers.extend([ConsoleLogger(), TensorboardLogger()])
 
+        self.loggers.append(RaiseExceptionCallback())
         self.timer = TimerManager()
 
         # base metrics
@@ -94,6 +96,7 @@ class RunnerState(FrozenClass):
             setattr(self, k, v)
 
         self.exception: Optional[Exception] = None
+        self.need_reraise_exception: bool = True
 
         self._freeze()
 

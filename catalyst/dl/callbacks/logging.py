@@ -60,8 +60,7 @@ class VerboseLogger(Callback):
 
         if isinstance(exception, KeyboardInterrupt):
             self.tqdm.write("Early exiting")
-        else:
-            raise exception
+            state.need_reraise_exception = False
 
 
 class ConsoleLogger(Callback):
@@ -173,4 +172,14 @@ class TensorboardLogger(Callback):
             )
 
 
-__all__ = ["VerboseLogger", "ConsoleLogger", "TensorboardLogger"]
+class RaiseExceptionCallback(Callback):
+    def on_exception(self, state: RunnerState):
+        exception = state.exception
+        if exception is None:
+            return
+
+        if state.need_reraise_exception:
+            raise exception
+
+
+__all__ = ["VerboseLogger", "ConsoleLogger", "TensorboardLogger", "RaiseExceptionCallback"]
