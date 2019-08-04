@@ -108,12 +108,6 @@ class ConsoleLogger(Callback):
     def on_epoch_end(self, state):
         self.logger.info("", extra={"state": state})
 
-    def on_exception(self, state: RunnerState):
-        if not is_exception(state.exception):
-            return
-
-        self.logger.exception(state.exception, extra={"state": state})
-
 
 class TensorboardLogger(Callback):
     """
@@ -179,7 +173,7 @@ class TensorboardLogger(Callback):
             )
 
 
-class RaiseExceptionCallback(Callback):
+class RaiseExceptionLogger(Callback):
     def on_exception(self, state: RunnerState):
         exception = state.exception
         if not is_exception(exception):
@@ -191,5 +185,5 @@ class RaiseExceptionCallback(Callback):
 
 __all__ = [
     "VerboseLogger", "ConsoleLogger",
-    "TensorboardLogger", "RaiseExceptionCallback"
+    "TensorboardLogger", "RaiseExceptionLogger"
 ]
