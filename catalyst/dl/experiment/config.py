@@ -2,6 +2,7 @@ from typing import Any, Mapping, Dict, List
 from copy import deepcopy
 from collections import OrderedDict
 import datetime
+import re
 
 import torch
 from torch import nn
@@ -150,7 +151,6 @@ class ConfigExperiment(Experiment):
         return optimizer
 
     def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
-        model_params = model.parameters()
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
 
@@ -168,7 +168,27 @@ class ConfigExperiment(Experiment):
 
             base_lr = lr_scaling_params.get("lr")
             base_batch_size = lr_scaling_params.get("base_batch_size", 256)
-            optimizer_params["lr"] = base_lr * batch_size / base_batch_size
+            lr_scaling = batch_size / base_batch_size
+            optimizer_params["lr"] = base_lr * lr_scaling  # default lr
+
+        model_params = []
+        per_parameter_options = \
+            optimizer_params.pop("_key_value", OrderedDict())
+        for name, parameters in model.named_parameters():
+            # > all new LR rules write on top of the old ones
+            # so search for last matching pattern
+            for pattern, options in reversed(per_parameter_options.items()):
+                if re.match(pattern, name) is not None:
+                    break
+            else:
+                options = {}
+
+            # linear scaling of layer-wise lr
+            if lr_scaling_params and "lr" in options:
+                # hack to prevent `options` dict modification
+                options = {**options, "lr": options["lr"] * lr_scaling}
+
+            model_params.append({"params": parameters, **options})
 
         optimizer = self._get_optimizer(
             model_params=model_params, **optimizer_params

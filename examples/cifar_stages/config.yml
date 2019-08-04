@@ -43,6 +43,12 @@ stages:
   stage1:
 
     optimizer_params:
+      _key_value:
+        conv.*:
+          lr: 0.0001
+        fc3.*:
+          lr: 0.01
+
       optimizer: Adam
       lr_linear_scaling:
         lr: 0.001
