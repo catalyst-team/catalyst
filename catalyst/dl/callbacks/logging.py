@@ -74,10 +74,10 @@ class ConsoleLogger(Callback):
 
     @staticmethod
     def _get_logger(logdir):
-        logger = logging.getLogger("metrics")
+        logger = logging.getLogger("metrics_logger")
         logger.setLevel(logging.INFO)
 
-        fh = logging.FileHandler(f"{logdir}/metrics.txt")
+        fh = logging.FileHandler(f"{logdir}/log.txt")
         fh.setLevel(logging.INFO)
         ch = logging.StreamHandler(sys.stdout)
         ch.setLevel(logging.INFO)
@@ -107,6 +107,12 @@ class ConsoleLogger(Callback):
 
     def on_epoch_end(self, state):
         self.logger.info("", extra={"state": state})
+
+    def on_exception(self, state: RunnerState):
+        if not is_exception(state.exception):
+            return
+
+        self.logger.exception(state.exception, extra={"state": state})
 
 
 class TensorboardLogger(Callback):
