@@ -8,6 +8,7 @@ from tensorboardX import SummaryWriter
 
 from catalyst.dl.core import Callback, RunnerState
 from catalyst.dl.utils.formatters import TxtMetricsFormatter
+from catalyst.utils import is_exception
 
 
 class VerboseLogger(Callback):
@@ -53,6 +54,15 @@ class VerboseLogger(Callback):
         self.tqdm = None
         self.step = 0
 
+    def on_exception(self, state: RunnerState):
+        exception = state.exception
+        if not is_exception(exception):
+            return
+
+        if isinstance(exception, KeyboardInterrupt):
+            self.tqdm.write("Early exiting")
+            state.need_reraise_exception = False
+
 
 class ConsoleLogger(Callback):
     """
@@ -64,10 +74,10 @@ class ConsoleLogger(Callback):
 
     @staticmethod
     def _get_logger(logdir):
-        logger = logging.getLogger("metrics")
+        logger = logging.getLogger("metrics_logger")
         logger.setLevel(logging.INFO)
 
-        fh = logging.FileHandler(f"{logdir}/metrics.txt")
+        fh = logging.FileHandler(f"{logdir}/log.txt")
         fh.setLevel(logging.INFO)
         ch = logging.StreamHandler(sys.stdout)
         ch.setLevel(logging.INFO)
@@ -163,4 +173,17 @@ class TensorboardLogger(Callback):
             )
 
 
-__all__ = ["VerboseLogger", "ConsoleLogger", "TensorboardLogger"]
+class RaiseExceptionLogger(Callback):
+    def on_exception(self, state: RunnerState):
+        exception = state.exception
+        if not is_exception(exception):
+            return
+
+        if state.need_reraise_exception:
+            raise exception
+
+
+__all__ = [
+    "VerboseLogger", "ConsoleLogger",
+    "TensorboardLogger", "RaiseExceptionLogger"
+]

@@ -85,7 +85,6 @@ class Runner(ABC):
         )
 
     def _run_event(self, event: str):
-
         if self.state is not None and hasattr(self.state, f"on_{event}_pre"):
             getattr(self.state, f"on_{event}_pre")()
 
@@ -187,10 +186,15 @@ class Runner(ABC):
 
     def run_experiment(self, experiment: Experiment, check: bool = False):
         self._check_run = check
-
         self.experiment = experiment
-        for stage in self.experiment.stages:
-            self._run_stage(stage)
+
+        try:
+            for stage in self.experiment.stages:
+                self._run_stage(stage)
+        except (Exception, KeyboardInterrupt) as ex:
+            self.state.exception = ex
+            self._run_event("exception")
+
         return self
 
 

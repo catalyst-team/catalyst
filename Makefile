@@ -12,6 +12,9 @@ docker: requirements.txt
 docker-dev: requirements.txt requirements-dev.txt
 	docker build -t catalyst-dev:latest . -f ./docker/Dockerfile-dev
 
+install-from-source:
+	pip uninstall catalyst -y && pip install -e ./
+
 clean:
 	rm -rf build/
 	docker rmi -f catalyst-base:latest
