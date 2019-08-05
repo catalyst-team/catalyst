@@ -81,7 +81,7 @@ class LamaActor(nn.Module):
                 out_channels=1,
                 kernel_size=1,
                 bias=True),
-            nn.Softmax(dim=1))
+            nn.Softmax(dim=2))
         self.feature_net2 = SequentialNet(
             hiddens=[hiddens[-1] * 4, hiddens[-1]],
             layer_fn=layer_fn,
