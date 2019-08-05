@@ -13,7 +13,14 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --config=./examples/_tests_mnist_stages/config1.yml \
   --logdir=./examples/logs/_tests_mnist_stages1 \
   --check
-python -c "data = open('./examples/logs/_tests_mnist_stages1/metrics.txt', 'r').readlines(); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < float(data[1].rsplit('loss=', 1)[-1][:6]); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < 2.0"
+
+LOGFILE=./examples/logs/_tests_mnist_stages1/log.txt
+
+if [[ -z "$LOGFILE" || ! (-r "$LOGFILE")  ]]; then
+    echo "File $LOGFILE does not exist"
+    exit -1
+fi
+python -c "data = open('$LOGFILE', 'r').readlines(); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < float(data[1].rsplit('loss=', 1)[-1][:6]); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < 2.0"
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/trace.py \
   ./examples/logs/_tests_mnist_stages1
@@ -25,7 +32,12 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --config=./examples/_tests_mnist_stages/config2.yml \
   --logdir=./examples/logs/_tests_mnist_stages1 \
   --check
-python -c "data = open('./examples/logs/_tests_mnist_stages1/metrics.txt', 'r').readlines(); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < float(data[1].rsplit('loss=', 1)[-1][:6]); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < 2.0"
+
+if [[ -z "$LOGFILE" || ! (-r "$LOGFILE")  ]]; then
+    echo "File $LOGFILE does not exist"
+    exit -1
+fi
+python -c "data = open('$LOGFILE', 'r').readlines(); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < float(data[1].rsplit('loss=', 1)[-1][:6]); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < 2.0"
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=./examples/_tests_mnist_stages \
