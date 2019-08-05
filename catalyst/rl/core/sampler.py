@@ -243,6 +243,9 @@ class Sampler:
         self._start_db_loop()
         self._start_sample_loop()
 
+        if self.logger is not None:
+            self.logger.close()
+
 
 class ValidSampler(Sampler):
     def _init(self, save_n_best: int = 3, **kwargs):
@@ -357,6 +360,9 @@ class ValidSampler(Sampler):
 
     def run(self):
         self._start_sample_loop()
+
+        if self.logger is not None:
+            self.logger.close()
 
 
 def _db2sampler_loop(sampler: Sampler):

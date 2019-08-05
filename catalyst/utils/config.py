@@ -6,7 +6,7 @@ import shutil
 from collections import OrderedDict
 import json
 import yaml
-
+from tensorboardX import SummaryWriter
 from catalyst.utils.misc import merge_dicts
 
 
@@ -61,6 +61,12 @@ def dump_config(
         config_name = config_path_in.rsplit("/", 1)[-1]
         config_path_out = f"{config_dir}/{config_name}"
         shutil.copyfile(config_path_in, config_path_out)
+
+    writer = SummaryWriter(config_dir)
+    config_str = json.dumps(experiment_config, indent=2)
+    config_str = config_str.replace("\n", "\n\n")
+    writer.add_text("config", config_str, 0)
+    writer.close()
 
 
 def parse_config_args(*, config, args, unknown_args):
