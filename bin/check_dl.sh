@@ -16,7 +16,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 
 LOGFILE=./examples/logs/_tests_mnist_stages1/log.txt
 
-if [[ -z "$LOGFILE" || ! (-r "$LOGFILE")  ]]; then
+if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     echo "File $LOGFILE does not exist"
     exit -1
 fi
@@ -33,7 +33,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --logdir=./examples/logs/_tests_mnist_stages1 \
   --check
 
-if [[ -z "$LOGFILE" || ! (-r "$LOGFILE")  ]]; then
+if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     echo "File $LOGFILE does not exist"
     exit -1
 fi
