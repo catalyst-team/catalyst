@@ -210,3 +210,6 @@ class TrainerSpec:
     def run(self):
         self._update_sampler_weights()
         self._start_train_loop()
+
+        if self.logger is not None:
+            self.logger.close()
