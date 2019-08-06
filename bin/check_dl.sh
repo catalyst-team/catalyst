@@ -14,13 +14,14 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --logdir=./examples/logs/_tests_mnist_stages1 \
   --check
 
-LOGFILE=./examples/logs/_tests_mnist_stages1/log.txt
+LOGFILE=./examples/logs/_tests_mnist_stages1/checkpoints/_metrics.json
 
 if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     echo "File $LOGFILE does not exist"
     exit -1
 fi
-python -c "data = open('$LOGFILE', 'r').readlines(); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < float(data[1].rsplit('loss=', 1)[-1][:6]); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < 2.0"
+python -c "from safitty import Safict; metrics=Safict.load('$LOGFILE'); assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.0', 'loss'); assert metrics.get('stage1.2', 'loss') < 2.0"
+
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/trace.py \
   ./examples/logs/_tests_mnist_stages1
@@ -37,7 +38,8 @@ if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     echo "File $LOGFILE does not exist"
     exit -1
 fi
-python -c "data = open('$LOGFILE', 'r').readlines(); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < float(data[1].rsplit('loss=', 1)[-1][:6]); assert float(data[8].rsplit('loss=', 1)[-1][:6]) < 2.0"
+python -c "from safitty import Safict; metrics=Safict.load('$LOGFILE'); assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.0', 'loss'); assert metrics.get('stage1.2', 'loss') < 2.0"
+
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=./examples/_tests_mnist_stages \
