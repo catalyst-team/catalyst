@@ -1,4 +1,6 @@
 import argparse
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
@@ -77,6 +79,13 @@ def build_args(parser):
         help="Type of pooling to use"
     )
     parser.add_argument(
+        "--traced-model",
+        type=Path,
+        dest="traced_model",
+        default=None,
+        help="Path to pytorch traced model"
+    )
+    parser.add_argument(
         "--num-workers",
         type=int,
         dest="num_workers",
@@ -113,9 +122,13 @@ def main(args, _=None):
 
     IMG_SIZE = (args.img_size, args.img_size)
 
-    model = ResnetEncoder(arch=args.arch, pooling=args.pooling)
-    model = model.eval()
-    model, _, _, _, device = utils.process_components(model=model)
+    if args.traced_model is not None:
+        device = utils.get_device()
+        model = torch.jit.load(str(args.traced_model), map_location=device)
+    else:
+        model = ResnetEncoder(arch=args.arch, pooling=args.pooling)
+        model = model.eval()
+        model, _, _, _, device = utils.process_components(model=model)
 
     images_df = pd.read_csv(args.in_csv)
     images_df = images_df.reset_index().drop("index", axis=1)
