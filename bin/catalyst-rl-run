@@ -1,0 +1,168 @@
+#!/usr/bin/env bash
+#title           :catalyst-rl-run
+#description     :catalyst.rl script for full RL experiment run
+#author          :Sergey Kolesnikov
+#author_email    :scitator@gmail.com
+#date            :20190807
+#version         :19.08.1
+#==============================================================================
+
+set -e
+
+# usage:
+# CUDA_VISIBLE_DEVICES=0 \
+# DB_SPEC="mongo" \  # "mongo"/"redis"/"none"
+# EXP_CONFIG=.../config1.yml .../config2.yml .../config3.yml \
+# DB_CONFIG=.../mongod.conf \
+# LOGDIR=..../logdir \
+# PORT=12000 \
+# catalyst-rl-run other-run-args
+
+# example:
+# EXP_CONFIG="./configs/_exp_common.yml ./configs/_dpg_common.yml ./configs/ddpg.yml" \
+# DB_CONFIG=./configs/mongod.conf \
+# LOGDIR=/Users/scitator/Documents/tmp/190000-l2m \
+# PORT=12001 \
+# catalyst-rl-run --trainer/epoch_limit=3:int
+
+
+if [[ -z "$DB_SPEC" ]]; then
+    DB_SPEC="mongo"
+fi
+
+if [[ -z "$EXP_CONFIG" ]]; then
+    echo "Set EXP_CONFIG variable to experiment config path"
+    exit 1
+fi
+if [[ "$DB_SPEC" == "mongo" && (-z "$DB_CONFIG" || ! (-r "$DB_CONFIG")) ]]; then
+    echo "Set DB_CONFIG variable to mongo config path"
+    exit 1
+fi
+if [[ -z "$LOGDIR" || ! (-r "$LOGDIR") ]]; then
+    echo "Set LOGDIR to readable dir"
+    exit 1
+fi
+if [[ -z "$PORT" ]]; then
+    echo "Set PORT variable for DB usage"
+    exit 1
+fi
+
+# logdirs preparation
+RUN_LOGDIR="${LOGDIR}/run-logs"
+mkdir -p $RUN_LOGDIR
+if [[ "$DB_SPEC" == "mongo" ]]; then
+    DB_LOGDIR="${LOGDIR}/db-logs"
+    mkdir -p $DB_LOGDIR
+fi
+
+date=$(date +%y%m%d-%H%M%S-%3N)
+CURR_RUN_LOGDIR="${RUN_LOGDIR}/${date}-agent"
+mkdir -p $CURR_RUN_LOGDIR
+if [[ "$DB_SPEC" == "mongo" ]]; then
+    CURR_DB_LOGDIR="${DB_LOGDIR}/${date}-mongodb"
+    CURR_DB_LOGFILE="${DB_LOGDIR}/${date}-mongo.log"
+    mkdir -p $CURR_DB_LOGDIR
+fi
+
+# configs preparation
+if [[ "$DB_SPEC" == "mongo" ]]; then
+    cp $DB_CONFIG $CURR_DB_LOGDIR/mongod.conf
+fi
+declare -a CONFIGS_ARRAY
+read -a EXP_CONFIG_ARRAY <<< "$EXP_CONFIG"
+for config_path in "${EXP_CONFIG_ARRAY[@]}"; do
+    config_name=$(basename ${config_path})
+    cp $config_path "${CURR_RUN_LOGDIR}/${config_name}"
+    CONFIGS_ARRAY+=("${CURR_RUN_LOGDIR}/${config_name}")
+done
+
+if [[ "$(uname)" == "Darwin" ]]; then
+    if [[ "$DB_SPEC" == "mongo" ]]; then
+        sed -i ".bak" "s/dbPath: .*/dbPath: ${CURR_DB_LOGDIR//\//\\/}/g" ${CURR_DB_LOGDIR}/mongod.conf
+        sed -i ".bak" "s/path: .*/path: ${CURR_DB_LOGFILE//\//\\/}/g" ${CURR_DB_LOGDIR}/mongod.conf
+    fi
+
+    for config_path in $CURR_RUN_LOGDIR/*.yml; do
+        sed -i ".bak" "s/logdir: .*/logdir: ${CURR_RUN_LOGDIR//\//\\/}/g" $config_path
+    done
+elif [[ "$(expr substr $(uname -s) 1 5)" == "Linux" ]]; then
+    if [[ "$DB_SPEC" == "mongo" ]]; then
+        sed -i "s/dbPath: .*/dbPath: ${CURR_DB_LOGDIR//\//\\/}/g" ${CURR_DB_LOGDIR}/mongod.conf
+        sed -i "s/path: .*/path: ${CURR_DB_LOGFILE//\//\\/}/g" ${CURR_DB_LOGDIR}/mongod.conf
+    fi
+
+    for config_path in $CURR_RUN_LOGDIR/*.yml; do
+        sed -i "s/logdir: .*/logdir: ${CURR_RUN_LOGDIR//\//\\/}/g" $config_path
+    done
+fi
+
+# db node start
+if [[ "$DB_SPEC" == "mongo" ]]; then
+    mongod --config ${CURR_DB_LOGDIR}/mongod.conf --port $PORT &
+    DB_PID=$!
+    if [[ $? -ne 0 ]]; then
+        kill -9 $DB_PID
+        wait $!
+        exit 1
+    fi
+    echo "MONGO_PID", $DB_PID
+    sleep 10
+elif [[ "$DB_SPEC" == "redis" ]]; then
+    redis-server --port $PORT &
+    DB_PID=$!
+    if [[ $? -ne 0 ]]; then
+        kill -9 $DB_PID
+        wait $!
+        exit 1
+    fi
+    echo "REDIS_PID", $DB_PID
+    sleep 10
+fi
+
+# trainer node start
+catalyst-rl run-trainer \
+    --config "${CONFIGS_ARRAY[@]}" $* --db/port="$PORT":int &
+TRAINER_PID=$!
+if [[ $? -ne 0 ]]; then
+    if [[ ! ("$DB_SPEC" == "none") ]]; then
+        kill -9 $DB_PID
+        wait $!
+    fi
+    kill -9 $TRAINER_PID
+    wait $!
+    exit 1
+fi
+echo "TRAINER_PID", $TRAINER_PID
+sleep 20
+
+# sampler node start
+CUDA_VISIBLE_DEVICES="" catalyst-rl run-samplers \
+    --config "${CONFIGS_ARRAY[@]}" $* --db/port="$PORT":int &
+SAMPLER_PID=$!
+if [[ $? -ne 0 ]]; then
+    if [[ ! ("$DB_SPEC" == "none") ]]; then
+        kill -9 $DB_PID
+        wait $!
+    fi
+    kill -9 $TRAINER_PID
+    wait $!
+    kill -9 $SAMPLER_PID
+    wait $!
+    exit 1
+fi
+echo "SAMPLER_PID", $SAMPLER_PID
+
+# wait until trainer node stop working
+while ps -p $TRAINER_PID > /dev/null ; do
+    sleep 30
+done
+
+# cleanup
+if [[ ! ("$DB_SPEC" == "none") ]]; then
+    kill -9 $DB_PID
+    wait $!
+fi
+kill -9 $TRAINER_PID
+wait $!
+kill -9 $SAMPLER_PID
+wait $!
