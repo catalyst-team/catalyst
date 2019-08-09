@@ -38,7 +38,7 @@ def build_args(parser):
     )
     parser.add_argument("--expdir", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
-    # parser.add_argument("--resume", type=str, default=None)
+    parser.add_argument("--resume", type=str, default=None)
     parser.add_argument("--seed", type=int, default=42)
 
     parser.add_argument("--train", type=int, default=None)
@@ -51,6 +51,7 @@ def build_args(parser):
 
     parser.add_argument("--run-delay", type=int, default=1)
     boolean_flag(parser, "daemon", default=True)
+    parser.add_argument("--sampler-id", type=int, default=0)
 
     return parser
 
@@ -72,7 +73,7 @@ def run_sampler(
     mode,
     seed=42,
     id=None,
-    # resume=None,
+    resume=None,
     db=True,
     exploration_power=1.0,
     sync_epoch=False
@@ -89,7 +90,8 @@ def run_sampler(
     env = environment_fn(
         **config_["environment"],
         visualize=visualize,
-        mode=mode
+        mode=mode,
+        sampler_id=id,
     )
     agent = algorithm_fn.prepare_for_sampler(env_spec=env, config=config_)
 
@@ -132,8 +134,8 @@ def run_sampler(
         **config_["sampler"],
     )
 
-    # if resume is not None:
-    #     sampler.load_checkpoint(filepath=resume)
+    if resume is not None:
+        sampler.load_checkpoint(filepath=resume)
 
     sampler.run()
 
@@ -166,7 +168,7 @@ def main(args, unknown_args):
     algorithm_fn = ALGORITHMS.get(algorithm_name)
 
     processes = []
-    sampler_id = 0
+    sampler_id = args.sampler_id
 
     def on_exit():
         for p in processes:
@@ -180,7 +182,7 @@ def main(args, unknown_args):
         algorithm_fn=algorithm_fn,
         environment_fn=environment_fn,
         config=config,
-        # resume=args.resume,
+        resume=args.resume,
         db=args.db,
         sync_epoch=sync_epoch
     )

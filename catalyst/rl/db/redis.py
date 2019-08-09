@@ -56,7 +56,7 @@ class RedisDB(DBSpec):
         else:
             raise NotImplementedError("unknown message", message)
 
-    def push_trajectory(self, trajectory, raw=False):
+    def put_trajectory(self, trajectory, raw=False):
         trajectory = utils.structed2dict_trajectory(trajectory)
         trajectory = {"trajectory": trajectory, "epoch": self._epoch}
         trajectory = utils.pack(trajectory)
@@ -79,17 +79,17 @@ class RedisDB(DBSpec):
 
         return trajectory
 
-    def clean_trajectories(self):
+    def del_trajectory(self):
         self._server.delete("trajectories")
         self._index = 0
 
-    def save_checkpoint(self, checkpoint, epoch):
+    def put_checkpoint(self, checkpoint, epoch):
         self._epoch = epoch
         checkpoint = {"checkpoint": checkpoint, "epoch": self._epoch}
         checkpoint = utils.pack(checkpoint)
         self._server.set(f"{self._prefix}_checkpoint", checkpoint)
 
-    def load_checkpoint(self):
+    def get_checkpoint(self):
         checkpoint = self._server.get(f"{self._prefix}_checkpoint")
         if checkpoint is None:
             return None
@@ -97,7 +97,7 @@ class RedisDB(DBSpec):
         self._epoch = checkpoint.get("epoch")
         return checkpoint["checkpoint"]
 
-    def clean_checkpoint(self):
+    def del_checkpoint(self):
         self._server.delete(f"{self._prefix}_weights")
 
 

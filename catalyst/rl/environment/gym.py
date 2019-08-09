@@ -23,8 +23,9 @@ class GymWrapper(EnvironmentSpec):
         action_std=None,
         visualize=False,
         mode="train",
+        sampler_id=None,
     ):
-        super().__init__(visualize=visualize, mode=mode)
+        super().__init__(visualize=visualize, mode=mode, sampler_id=sampler_id)
 
         self.env = gym.make(env_name)
         # @TODO: add logic with registry and env_wrappers

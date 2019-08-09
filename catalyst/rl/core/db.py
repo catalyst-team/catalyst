@@ -35,7 +35,7 @@ class DBSpec(ABC):
         pass
 
     @abstractmethod
-    def push_trajectory(self, trajectory, raw: bool):
+    def put_trajectory(self, trajectory, raw: bool):
         pass
 
     @abstractmethod
@@ -43,17 +43,17 @@ class DBSpec(ABC):
         pass
 
     @abstractmethod
-    def clean_trajectories(self):
+    def del_trajectory(self):
         pass
 
     @abstractmethod
-    def save_checkpoint(self, checkpoint, epoch):
+    def put_checkpoint(self, checkpoint, epoch):
         pass
 
     @abstractmethod
-    def load_checkpoint(self):
+    def get_checkpoint(self):
         pass
 
     @abstractmethod
-    def clean_checkpoint(self):
+    def del_checkpoint(self):
         pass

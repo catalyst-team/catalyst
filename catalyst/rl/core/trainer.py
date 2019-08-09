@@ -141,7 +141,7 @@ class TrainerSpec:
                     for k, v in checkpoint[key].items()
                 }
 
-            self.db_server.save_checkpoint(
+            self.db_server.put_checkpoint(
                 checkpoint=checkpoint, epoch=self.epoch
             )
 
