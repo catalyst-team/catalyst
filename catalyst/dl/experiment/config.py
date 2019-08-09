@@ -179,8 +179,8 @@ class ConfigExperiment(Experiment):
                 if not name.endswith("bias")
             ]
             params = [
-                {"params": biases, "weight_decay": 0.0},
                 {"params": model_params, "weight_decay": weight_decay},
+                {"params": biases, "weight_decay": 0.0},
             ]
 
         else:
