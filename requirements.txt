@@ -19,9 +19,5 @@ seaborn
 pandas>=0.22,<0.25
 scikit-learn>=0.20
 
-# For RL
+# For tests
 mock
-redis
-pymongo
-pyarrow
-gym>=0.13.0
