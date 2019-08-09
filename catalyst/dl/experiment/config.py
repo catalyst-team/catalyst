@@ -162,9 +162,28 @@ class ConfigExperiment(Experiment):
         return optimizer
 
     def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
-        model_params = model.parameters()
+        model_params = list(model.named_parameters())
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
+
+        weight_decay = optimizer_params.get("weight_decay", 0.0)
+        remove_bias_decay = optimizer_params.pop("remove_bias_decay", True)
+        if remove_bias_decay and (weight_decay > 0.0):
+            biases = [
+                p for (name, p) in model_params
+                if name.endswith("bias")
+            ]
+            model_params = [
+                p for (name, p) in model_params
+                if not name.endswith("bias")
+            ]
+            params = [
+                {"params": biases, "weight_decay": 0.0},
+                {"params": model_params, "weight_decay": weight_decay},
+            ]
+
+        else:
+            params = [p for (name, p) in model_params]
 
         # Linear scaling rule from https://arxiv.org/pdf/1706.02677.pdf
         lr_scaling_params = optimizer_params.pop("lr_linear_scaling", None)
@@ -183,7 +202,7 @@ class ConfigExperiment(Experiment):
             optimizer_params["lr"] = base_lr * batch_size / base_batch_size
 
         optimizer = self._get_optimizer(
-            model_params=model_params, **optimizer_params
+            model_params=params, **optimizer_params
         )
 
         return optimizer
