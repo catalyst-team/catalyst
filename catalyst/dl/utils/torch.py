@@ -1,4 +1,4 @@
-from typing import Tuple, Dict, List
+from typing import Tuple, Dict, List, Union
 import os
 import copy
 
@@ -100,7 +100,7 @@ def process_model_params(
     model: _Model,
     weight_decay: float = 0.0,
     remove_bias_decay: bool = True
-) -> List[torch.nn.Parameter]:
+) -> List[Union[torch.nn.Parameter, dict]]:
     """
     Gains model parameters for ``torch.Optimizer``.
     Args:
@@ -115,26 +115,23 @@ def process_model_params(
         >>> params = process_model_params(model, weight_decay=0.2)
         >>> optimizer = optim.Adam(params, lr=0.0003)
     """
-    model_params = list(model.named_parameters())
+    params = list(model.named_parameters())
 
-    if remove_bias_decay and (weight_decay > 0.0):
-        # no bias decay rule from https://arxiv.org/pdf/1812.01187.pdf
-        biases = [
-            p for (name, p) in model_params
-            if name.endswith("bias")
-        ]
-        model_params = [
-            p for (name, p) in model_params
-            if not name.endswith("bias")
-        ]
-        params = [
-            {"params": model_params, "weight_decay": weight_decay},
-            {"params": biases, "weight_decay": 0.0},
-        ]
+    if not remove_bias_decay or (weight_decay == 0.0):
+        return [param for (name, param) in params]
 
-        return params
+    # no bias decay from https://arxiv.org/pdf/1812.01187.pdf
+    biases = [param for (name, param) in params if name.endswith("bias")]
+    main_params = [
+        param for (name, param) in params if not name.endswith("bias")
+    ]
 
-    return [p for (name, p) in model_params]
+    result = [
+        {"params": main_params, "weight_decay": weight_decay},
+        {"params": biases, "weight_decay": 0.0},
+    ]
+
+    return result
 
 
 __all__ = [
