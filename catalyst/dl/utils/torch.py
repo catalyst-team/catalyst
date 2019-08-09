@@ -1,4 +1,4 @@
-from typing import Tuple, Dict
+from typing import Tuple, Dict, List
 import os
 import copy
 
@@ -96,7 +96,48 @@ def get_loader(
     return loader
 
 
+def process_model_params(
+    model: _Model,
+    weight_decay: float = 0.0,
+    remove_bias_decay: bool = True
+) -> List[torch.nn.Parameter]:
+    """
+    Gains model parameters for ``torch.Optimizer``.
+    Args:
+        model (torch.nn.Module): Model to process
+        weight_decay (float): Optional weight decay
+        remove_bias_decay (bool): If true, removes weight_decay
+            for all `bias` parameters in the model
+    Returns:
+        parameters for an optimizer
+    Examples:
+        >>> model = ResnetUnet()
+        >>> params = process_model_params(model, weight_decay=0.2)
+        >>> optimizer = optim.Adam(params, lr=0.0003)
+    """
+    model_params = list(model.named_parameters())
+
+    if remove_bias_decay and (weight_decay > 0.0):
+        # no bias decay rule from https://arxiv.org/pdf/1812.01187.pdf
+        biases = [
+            p for (name, p) in model_params
+            if name.endswith("bias")
+        ]
+        model_params = [
+            p for (name, p) in model_params
+            if not name.endswith("bias")
+        ]
+        params = [
+            {"params": model_params, "weight_decay": weight_decay},
+            {"params": biases, "weight_decay": 0.0},
+        ]
+
+        return params
+
+    return [p for (name, p) in model_params]
+
+
 __all__ = [
-    "process_components", "get_loader", "_Model", "_Criterion", "_Optimizer",
-    "_Scheduler"
+    "process_components", "get_loader", "process_model_params",
+    "_Model", "_Criterion", "_Optimizer", "_Scheduler"
 ]
