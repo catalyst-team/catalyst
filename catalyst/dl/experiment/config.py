@@ -166,6 +166,7 @@ class ConfigExperiment(Experiment):
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
 
+        # no bias decay rule from https://arxiv.org/pdf/1812.01187.pdf
         weight_decay = optimizer_params.get("weight_decay", 0.0)
         remove_bias_decay = optimizer_params.pop("remove_bias_decay", True)
         if remove_bias_decay and (weight_decay > 0.0):
