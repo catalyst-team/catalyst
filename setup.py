@@ -81,8 +81,8 @@ class UploadCommand(Command):
 
 # Specific dependencies.
 extras = {
-    "rl": load_requirements("rl_requirements.txt"),
-    "contrib": load_requirements("contrib_requirements.txt")
+    "contrib": load_requirements("requirements/requirements-contrib.txt"),
+    "rl": load_requirements("requirements/requirements-rl.txt"),
 }
 
 
@@ -124,7 +124,7 @@ setup(
         "bin/catalyst-parallel-run",
         "bin/catalyst-rl-run",
     ],
-    install_requires=load_requirements("requirements.txt"),
+    install_requires=load_requirements("requirements/requirements.txt"),
     extras_require=extras,
     include_package_data=True,
     license="MIT",
