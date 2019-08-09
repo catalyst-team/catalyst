@@ -1,5 +1,7 @@
-from typing import List
+from typing import List, Union
 from collections import OrderedDict
+
+from pathlib import Path
 
 import torch
 import torch.nn as nn
@@ -38,7 +40,7 @@ class ResnetEncoder(EncoderSpec):
         pretrained: bool = True,
         requires_grad: bool = None,
         layers_indices: List[int] = None,
-        state_dict: dict = None,
+        state_dict: Union[dict, str, Path] = None,
     ):
         """
         Specifies an encoder for segmentation network
@@ -50,12 +52,13 @@ class ResnetEncoder(EncoderSpec):
                 If None, calculates as ``not requires_grad``
             layers_indices (List[int]): layers of encoder used for segmentation
                 If None, calculates as ``[1, 2, 3, 4]``
-            state_dict (dict): a dict containing parameters and
-                persistent buffers.
+            state_dict (Union[dict, str, Path]): Path to ``torch.Model``
+                or a dict containing parameters and persistent buffers.
         Examples:
-            >>> state_dict = torch.load("/model/path/resnet18-5c106cde.pth")
             >>> encoder = ResnetEncoder(
-            >>>    arch="resnet18", pretrained=False, state_dict=state_dict
+            >>>    arch="resnet18",
+            >>>    pretrained=False,
+            >>>    state_dict="/model/path/resnet18-5c106cde.pth"
             >>> )
         """
         super().__init__()
@@ -63,6 +66,8 @@ class ResnetEncoder(EncoderSpec):
         resnet = torchvision.models.__dict__[arch](pretrained=pretrained)
         resnet_params = RESNET_PARAMS[arch]
         if state_dict is not None:
+            if isinstance(state_dict, (Path, str)):
+                state_dict = torch.load(str(state_dict))
             resnet.load_state_dict(state_dict)
         self._layers_indices = layers_indices or [1, 2, 3, 4]
         self._channels, self._strides = \
