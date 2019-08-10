@@ -60,7 +60,7 @@ algorithm:
 
 trainer:
   batch_size: 256              # transitions
-  num_workers: 1
+  num_workers: 0
   epoch_len: 100               # batches
 
   replay_buffer_size: 1000000  # transitions

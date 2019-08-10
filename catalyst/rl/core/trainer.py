@@ -71,6 +71,7 @@ class TrainerSpec:
         self._epoch_limit = epoch_limit
 
         #  special
+        self._prepare_seed()
         self._init(**kwargs)
 
     def _init(self, **kwargs):
