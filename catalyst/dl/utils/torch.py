@@ -108,7 +108,7 @@ def process_model_params(
         model (torch.nn.Module): Model to process
         weight_decay (float): Optional weight decay
         remove_bias_decay (bool): If true, removes weight_decay
-            for all `bias` parameters in the model
+            for all ``bias`` parameters in the model
 
     Returns:
         iterable: parameters for an optimizer
