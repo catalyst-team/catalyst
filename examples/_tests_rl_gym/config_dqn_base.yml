@@ -53,7 +53,7 @@ algorithm:
 
   critic_optimizer_params:
     optimizer: Adam
-    lr: 0.0003
+    lr: 0.001
 
 trainer:
   batch_size: 256              # transitions

@@ -89,10 +89,10 @@ algorithm:
 
   actor_optimizer_params:
     optimizer: Adam
-    lr: 0.0003
+    lr: 0.001
   critic_optimizer_params:
     optimizer: Adam
-    lr: 0.0003
+    lr: 0.001
 
   actor_grad_clip_params:
     func: clip_grad_value_
