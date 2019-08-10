@@ -102,18 +102,21 @@ def process_model_params(
     remove_bias_decay: bool = True
 ) -> List[Union[torch.nn.Parameter, dict]]:
     """
-    Gains model parameters for ``torch.Optimizer``.
+    Gains model parameters for ``torch.optim.Optimizer``
+
     Args:
         model (torch.nn.Module): Model to process
         weight_decay (float): Optional weight decay
         remove_bias_decay (bool): If true, removes weight_decay
             for all `bias` parameters in the model
+
     Returns:
-        parameters for an optimizer
+        iterable: parameters for an optimizer
+
     Examples:
         >>> model = ResnetUnet()
         >>> params = process_model_params(model, weight_decay=0.2)
-        >>> optimizer = optim.Adam(params, lr=0.0003)
+        >>> optimizer = torch.optim.Adam(params, lr=0.0003)
     """
     params = list(model.named_parameters())
 
