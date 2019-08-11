@@ -51,7 +51,7 @@ algorithm:
 
   actor_optimizer_params:
     optimizer: Adam
-    lr: 0.001
+    lr: 0.0003
 
   actor_grad_clip_params:
     func: clip_grad_norm_
