@@ -25,7 +25,7 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     python catalyst/rl/scripts/run_trainer.py \
     --config=./examples/_tests_rl_gym/config_ddpg_quantile.yml \
     --logdir=./examples/logs/_tests_rl_gym_ddpg_quantile &
-sleep 600
+sleep 900
 
 
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
@@ -43,7 +43,7 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     python catalyst/rl/scripts/run_samplers.py \
     --config=./examples/_tests_rl_gym/config_ddpg_quantile.yml \
     --logdir=./examples/logs/_tests_rl_gym_ddpg_quantile &
-sleep 600
+sleep 300
 
 
 killall -9 python
