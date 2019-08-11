@@ -63,7 +63,7 @@ algorithm:
 
 trainer:
   batch_size: 2048             # transitions
-  num_workers: 1
+  num_workers: 0
   num_mini_epochs: 1
   min_num_trajectories: 100000
   min_num_transitions: 20000

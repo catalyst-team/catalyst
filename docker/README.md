@@ -9,7 +9,7 @@ make docker
 
 ### Developer version
 
-The developer version contains [packages](/requirements-dev.txt) for building docs, for checking the code style.
+The developer version contains [packages](/requirements/requirements-dev.txt) for building docs, for checking the code style.
 And does not contain Catalyst itself.
 ```bash
 make docker-dev

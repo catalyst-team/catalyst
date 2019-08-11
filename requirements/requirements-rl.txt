@@ -1,0 +1,5 @@
+redis
+pymongo
+pyarrow
+lz4
+gym>=0.13.0
