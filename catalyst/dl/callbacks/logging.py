@@ -171,6 +171,12 @@ class TensorboardLogger(Callback):
             self._log_metrics(
                 metrics=metrics_, step=state.epoch, mode=mode, suffix="/epoch"
             )
+        for logger in self.loggers.values():
+            logger.flush()
+
+    def on_stage_end(self, state: RunnerState):
+        for logger in self.loggers.values():
+            logger.close()
 
 
 class RaiseExceptionLogger(Callback):

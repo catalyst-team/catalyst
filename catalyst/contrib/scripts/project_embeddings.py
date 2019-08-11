@@ -114,6 +114,7 @@ def main(args, _=None):
         label_img=img_data,
         metadata_header=meta_header
     )
+    summary_writer.close()
 
     print(
         f"Done. Run `tensorboard --logdir={args.out_dir}` "
