@@ -24,7 +24,7 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 def load_requirements(filename):
     with open(os.path.join(PROJECT_ROOT, filename), "r") as f:
-        return f.read()
+        return f.read().splitlines()
 
 
 def load_readme():
