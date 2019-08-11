@@ -71,6 +71,7 @@ class TrainerSpec:
         self._epoch_limit = epoch_limit
 
         #  special
+        self._prepare_seed()
         self._init(**kwargs)
 
     def _init(self, **kwargs):
@@ -141,7 +142,7 @@ class TrainerSpec:
                     for k, v in checkpoint[key].items()
                 }
 
-            self.db_server.save_checkpoint(
+            self.db_server.put_checkpoint(
                 checkpoint=checkpoint, epoch=self.epoch
             )
 

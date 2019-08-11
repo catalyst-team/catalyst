@@ -114,10 +114,10 @@ class Sampler:
         if filepath is not None:
             checkpoint = utils.load_checkpoint(filepath)
         elif db_server is not None:
-            checkpoint = db_server.load_checkpoint()
+            checkpoint = db_server.get_checkpoint()
             while checkpoint is None:
                 time.sleep(3.0)
-                checkpoint = db_server.load_checkpoint()
+                checkpoint = db_server.get_checkpoint()
         else:
             raise NotImplementedError
 
@@ -134,7 +134,7 @@ class Sampler:
     def _store_trajectory(self, trajectory, raw=False):
         if self.db_server is None:
             return
-        self.db_server.push_trajectory(trajectory, raw=raw)
+        self.db_server.put_trajectory(trajectory, raw=raw)
 
     def _get_seed(self):
         if self.seeds is not None:
@@ -261,14 +261,14 @@ class ValidSampler(Sampler):
             checkpoint = utils.load_checkpoint(filepath)
         elif db_server is not None:
             current_epoch = db_server.epoch
-            checkpoint = db_server.load_checkpoint()
+            checkpoint = db_server.get_checkpoint()
             if not db_server.training_enabled \
                     and db_server.epoch == current_epoch:
                 return False
 
             while checkpoint is None or db_server.epoch <= current_epoch:
                 time.sleep(3.0)
-                checkpoint = db_server.load_checkpoint()
+                checkpoint = db_server.get_checkpoint()
 
                 if not db_server.training_enabled \
                         and db_server.epoch == current_epoch:
