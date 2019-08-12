@@ -62,3 +62,4 @@ stages:
         lr: 0.0001
         base_batch_size: 64
       weight_decay: 0.0001
+      remove_bias_decay: False # leaves `weight_decay` for all model's biases
