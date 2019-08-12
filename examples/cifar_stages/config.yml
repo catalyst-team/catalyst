@@ -48,7 +48,7 @@ stages:
         lr: 0.001
         base_batch_size: 64
       weight_decay: 0.0001
-      remove_bias_decay: True # removes `weight_decay` for all model's biases
+      no_bias_weight_decay: True # removes `weight_decay` for model's biases
 
   # tune
   stage2:
@@ -62,4 +62,4 @@ stages:
         lr: 0.0001
         base_batch_size: 64
       weight_decay: 0.0001
-      remove_bias_decay: True
+      no_bias_weight_decay: True

@@ -15,7 +15,7 @@ from catalyst.utils.misc import merge_dicts
 from catalyst.utils.hash import get_short_hash
 from catalyst.dl.core import Experiment, Callback
 from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, \
-    _Scheduler, process_model_params
+    _Scheduler, get_model_params
 
 
 class ConfigExperiment(Experiment):
@@ -167,9 +167,9 @@ class ConfigExperiment(Experiment):
             self.stages_config[stage].get("optimizer_params", {})
 
         weight_decay: float = optimizer_params.get("weight_decay", 0.0)
-        remove_bias_decay = optimizer_params.pop("remove_bias_decay", True)
-        model_params = process_model_params(
-            model, weight_decay, remove_bias_decay
+        no_bias_weight_decay = optimizer_params.pop("no_bias_weight_decay", True)
+        model_params = get_model_params(
+            model, weight_decay, no_bias_weight_decay
         )
         # Linear scaling rule from https://arxiv.org/pdf/1706.02677.pdf
         lr_scaling_params = optimizer_params.pop("lr_linear_scaling", None)
