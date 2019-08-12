@@ -19,9 +19,9 @@ stages:
       criterion: CrossEntropyLoss
 
   optimizer_params:
-      optimizer: Adam
-      lr: 0.001
-      weight_decay: 0.0001
+    optimizer: Adam
+    lr: 0.001
+    weight_decay: 0.0001
 
   stage1:
     state_params:

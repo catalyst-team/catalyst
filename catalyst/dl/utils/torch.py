@@ -1,11 +1,14 @@
-from typing import Tuple, Dict
+from typing import Tuple, Dict, List, Union
 import os
 import copy
+
+import numpy as np
 
 import torch
 from torch import nn, optim
 import torch.backends.cudnn as cudnn
 from torch.utils.data.dataloader import default_collate as default_collate_fn
+
 from catalyst.dl import utils
 
 _Model = nn.Module
@@ -96,7 +99,48 @@ def get_loader(
     return loader
 
 
+def get_model_params(
+    model: _Model,
+    weight_decay: float = 0.0,
+    no_bias_weight_decay: bool = True
+) -> List[Union[torch.nn.Parameter, dict]]:
+    """
+    Gains model parameters for ``torch.optim.Optimizer``
+
+    Args:
+        model (torch.nn.Module): Model to process
+        weight_decay (float): Optional weight decay
+        no_bias_weight_decay (bool): If true, removes weight_decay
+            for all ``bias`` parameters in the model
+
+    Returns:
+        iterable: parameters for an optimizer
+
+    Examples:
+        >>> model = ResnetUnet()
+        >>> params = get_model_params(model, weight_decay=0.00001)
+        >>> optimizer = torch.optim.Adam(params, lr=0.0003)
+    """
+    params = list(model.named_parameters())
+
+    if not no_bias_weight_decay or np.isclose(weight_decay, 0.0):
+        return [param for (name, param) in params]
+
+    # no bias decay from https://arxiv.org/abs/1812.01187
+    biases = [param for (name, param) in params if name.endswith("bias")]
+    main_params = [
+        param for (name, param) in params if not name.endswith("bias")
+    ]
+
+    result = [
+        {"params": main_params, "weight_decay": weight_decay},
+        {"params": biases, "weight_decay": 0.0},
+    ]
+
+    return result
+
+
 __all__ = [
-    "process_components", "get_loader", "_Model", "_Criterion", "_Optimizer",
-    "_Scheduler"
+    "process_components", "get_loader", "get_model_params",
+    "_Model", "_Criterion", "_Optimizer", "_Scheduler"
 ]
