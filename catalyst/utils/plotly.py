@@ -35,7 +35,7 @@ def plot_tensorboard_log(
     height: Optional[int] = None,
     width: Optional[int] = None
 ) -> None:
-    init_notebook_mode(connected=True)
+    init_notebook_mode()
     logdir = Path(logdir)
 
     logdirs = {
