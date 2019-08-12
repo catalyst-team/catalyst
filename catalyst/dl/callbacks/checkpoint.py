@@ -7,6 +7,7 @@ import safitty
 
 from catalyst.dl import utils
 from catalyst.dl.core import Callback, RunnerState
+from catalyst.utils import is_exception
 
 
 class BaseCheckpointCallback(Callback):
@@ -23,9 +24,10 @@ class BaseCheckpointCallback(Callback):
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
         """
         self.metric_filename = metric_filename
+        self.metrics: dict = {}
 
     def get_metric(self, **kwargs) -> Dict:
-        pass
+        return self.metrics
 
     def save_metric(self, logdir: str, metrics: Dict) -> None:
         safitty.save(metrics, f"{logdir}/checkpoints/{self.metric_filename}")
@@ -35,6 +37,42 @@ class BaseCheckpointCallback(Callback):
 
     def process_checkpoint(self, **kwargs) -> None:
         pass
+
+    def get_checkpoint_suffix(self, checkpoint: dict) -> str:
+        pass
+
+    def on_exception(self, state: RunnerState):
+        exception = state.exception
+        if not is_exception(exception):
+            return
+
+        valid_metrics = state.metrics.valid_values
+        epoch_metrics = state.metrics.epoch_values
+
+        checkpoint = utils.pack_checkpoint(
+            model=state.model,
+            criterion=state.criterion,
+            optimizer=state.optimizer,
+            scheduler=state.scheduler,
+            epoch_metrics=epoch_metrics,
+            valid_metrics=valid_metrics,
+            stage=state.stage,
+            epoch=state.epoch,
+            checkpoint_data=state.checkpoint_data
+        )
+
+        suffix = self.get_checkpoint_suffix(checkpoint)
+        suffix = f"{suffix}.exception_{exception.__class__.__name__}"
+        filepath = utils.save_checkpoint(
+            logdir=f"{state.logdir}/checkpoints/",
+            checkpoint=checkpoint,
+            suffix=suffix,
+            is_best=False,
+            is_last=False
+        )
+        metrics = self.metrics
+        metrics[suffix] = valid_metrics
+        self.save_metric(state.logdir, metrics)
 
 
 class CheckpointCallback(BaseCheckpointCallback):
@@ -63,6 +101,10 @@ class CheckpointCallback(BaseCheckpointCallback):
         self.top_best_metrics = []
 
         self._keys_from_state = ["resume", "resume_dir"]
+
+    def get_checkpoint_suffix(self, checkpoint: dict) -> str:
+        result = f"{checkpoint['stage']}.{checkpoint['epoch']}"
+        return result
 
     @staticmethod
     def load_checkpoint(*, filename, state: RunnerState):
@@ -98,7 +140,8 @@ class CheckpointCallback(BaseCheckpointCallback):
             [("last", last_valid_metrics)]
         )
 
-        return metrics
+        self.metrics = metrics
+        return self.metrics
 
     def truncate_checkpoints(self, minimize_metric: bool) -> None:
         self.top_best_metrics = sorted(
@@ -119,11 +162,10 @@ class CheckpointCallback(BaseCheckpointCallback):
         main_metric: str = "loss",
         minimize_metric: bool = True
     ):
-        suffix = f"{checkpoint['stage']}.{checkpoint['epoch']}"
         filepath = utils.save_checkpoint(
             logdir=f"{logdir}/checkpoints/",
             checkpoint=checkpoint,
-            suffix=suffix,
+            suffix=self.get_checkpoint_suffix(checkpoint),
             is_best=is_best,
             is_last=True
         )
@@ -214,14 +256,21 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         self._iteration_counter = 0
         self.last_checkpoints = []
 
+    def get_checkpoint_suffix(self, checkpoint: dict) -> str:
+        result = f"{checkpoint['stage']}." \
+                 f"epoch.{checkpoint['epoch']}." \
+                 f"iter.{self._iteration_counter}"
+
+        return result
+
     def get_metric(self, **kwargs) -> Dict:
         checkpoints = [
             (Path(filepath).stem, batch_values)
             for (filepath, batch_values) in self.last_checkpoints
         ]
 
-        metrics = OrderedDict(checkpoints)
-        return metrics
+        self.metrics = OrderedDict(checkpoints)
+        return self.metrics
 
     def truncate_checkpoints(self, **kwargs) -> None:
         if len(self.last_checkpoints) > self.save_n_last:
@@ -235,14 +284,10 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         checkpoint: Dict,
         batch_values: Dict[str, float]
     ):
-        suffix = f"{checkpoint['stage']}." \
-                 f"epoch.{checkpoint['epoch']}." \
-                 f"iter.{self._iteration_counter}"
-
         filepath = utils.save_checkpoint(
             logdir=f"{logdir}/checkpoints/",
             checkpoint=checkpoint,
-            suffix=suffix,
+            suffix=self.get_checkpoint_suffix(checkpoint),
             is_best=False,
             is_last=False
         )
