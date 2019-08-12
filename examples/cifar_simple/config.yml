@@ -49,4 +49,4 @@ stages:
       optimizer: Adam
       lr: 0.001
       weight_decay: 0.0001
-      remove_bias_decay: True # removes `weight_decay` for all model's biases
+      remove_bias_decay: False # leaves `weight_decay` for all model's biases
