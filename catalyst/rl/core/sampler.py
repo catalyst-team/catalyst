@@ -187,6 +187,8 @@ class Sampler:
                 self.trajectory_index
             )
 
+            self.logger.flush()
+
     @torch.no_grad()
     def _run_trajectory_loop(self):
         seed = self._get_seed()
