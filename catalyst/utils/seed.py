@@ -2,13 +2,17 @@ import random
 import numpy as np
 
 
-def set_global_seed(seed: int) -> None:
+def set_global_seed(seed: int, deterministic: bool = None) -> None:
     """
-    Sets random seed into PyTorch, TensorFlow, Numpy and Random
+    Sets random seed into PyTorch, TensorFlow, Numpy and Random.
+    Additionally sets CuDNN to deterministic or non-deterministic mode
 
     Args:
         seed: random seed
+        deterministic: deterministic mode if running in CuDNN backend.
+            Setting it to ``True`` may slow down your training.
     """
+
     try:
         import torch
     except ImportError:
@@ -16,6 +20,12 @@ def set_global_seed(seed: int) -> None:
     else:
         torch.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
+        if deterministic is not None:
+            # CuDNN reproducibility
+            # https://pytorch.org/docs/stable/notes/randomness.html#cudnn
+            torch.backends.cudnn.deterministic = deterministic
+            # https://discuss.pytorch.org/t/how-should-i-disable-using-cudnn-in-my-code/38053/4
+            torch.backends.cudnn.benchmark = not deterministic
     try:
         import tensorflow as tf
     except ImportError:

@@ -1,7 +1,7 @@
 .PHONY: check-style check-docs docker docker-dev clean
 
 check-style:
-	bash ./bin/_check_codestyle.sh
+	bash ./bin/_check_codestyle.sh -s
 
 check-docs:
 	bash ./bin/_check_docs.sh
