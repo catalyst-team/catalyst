@@ -18,8 +18,12 @@ Break the cycle - use the Catalyst!
 
 Catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+.
 
-API documentation and an overview of the library can be found 
-[here](https://catalyst-team.github.io/catalyst/index.html).
+#### Docs and examples
+- Detailed [classification tutorial](./examples/notebooks/classification-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb)
+- Comprehensive [classification pipeline](https://github.com/catalyst-team/classification).
+
+API documentation and an overview of the library can be found here
+[![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html).
 
 In the [examples folder](examples) 
 of the repository, you can find advanced tutorials and Catalyst best practices.

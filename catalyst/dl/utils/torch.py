@@ -99,7 +99,7 @@ def get_loader(
     return loader
 
 
-def get_model_params(
+def process_model_params(
     model: _Model,
     weight_decay: float = 0.0,
     no_bias_weight_decay: bool = True
@@ -118,7 +118,7 @@ def get_model_params(
 
     Examples:
         >>> model = ResnetUnet()
-        >>> params = get_model_params(model, weight_decay=0.00001)
+        >>> params = process_model_params(model, weight_decay=0.00001)
         >>> optimizer = torch.optim.Adam(params, lr=0.0003)
     """
     params = list(model.named_parameters())
@@ -141,6 +141,6 @@ def get_model_params(
 
 
 __all__ = [
-    "process_components", "get_loader", "get_model_params",
+    "process_components", "get_loader", "process_model_params",
     "_Model", "_Criterion", "_Optimizer", "_Scheduler"
 ]

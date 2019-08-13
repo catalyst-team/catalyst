@@ -9,15 +9,24 @@ def _get_default_accuracy_args(num_classes: int) -> List[int]:
     Calculate list params for Accuracy@k and mAP@k
     Args:
         num_classes (int): number of classes
+
+    Returns:
+        iterable: array of accuracy arguments
+
+    Examples:
+        >>> _get_default_accuracy_args(num_classes=4)
+        >>> [1, 3]
+        >>> _get_default_accuracy_args(num_classes=8)
+        >>> [1, 3, 5]
     """
     result = [1]
 
     if num_classes is None:
         return result
 
-    if num_classes >= 3:
+    if num_classes > 3:
         result.append(3)
-    if num_classes >= 5:
+    if num_classes > 5:
         result.append(5)
 
     return result
