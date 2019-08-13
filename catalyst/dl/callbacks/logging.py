@@ -42,7 +42,7 @@ class VerboseLogger(Callback):
     def on_batch_end(self, state: RunnerState):
         self.tqdm.set_postfix(
             **{
-                k: "{:3.3f}".format(v)
+                k: "{:3.3f}".format(v) if v > 1e-3 else "{:1.3e}".format(v)
                 for k, v in sorted(state.metrics.batch_values.items())
                 if self._need_show(k)
             }
