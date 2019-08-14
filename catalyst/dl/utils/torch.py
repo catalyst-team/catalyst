@@ -18,6 +18,22 @@ _Optimizer = optim.Optimizer
 _Scheduler = optim.lr_scheduler._LRScheduler
 
 
+def prepare_cudnn() -> None:
+    """
+    Prepares CuDNN benchmark and sets CuDNN
+    to be deterministic/non-deterministic mode
+    """
+    if torch.cuda.is_available():
+        # https://discuss.pytorch.org/t/how-should-i-disable-using-cudnn-in-my-code/38053/4
+        benchmark = os.environ.get("CUDNN_BENCHMARK", "True") == "True"
+        cudnn.benchmark = benchmark
+
+        # CuDNN reproducibility
+        # https://pytorch.org/docs/stable/notes/randomness.html#cudnn
+        deterministic = os.environ.get("CUDNN_DETERMINISTIC", "True") == "True"
+        cudnn.deterministic = deterministic
+
+
 def process_components(
     model: _Model,
     criterion: _Criterion = None,
@@ -28,10 +44,7 @@ def process_components(
     distributed_params = distributed_params or {}
     distributed_params = copy.deepcopy(distributed_params)
     device = utils.get_device()
-
-    if torch.cuda.is_available():
-        benchmark = os.environ.get("CUDNN_BENCHMARK", "True") == "True"
-        cudnn.benchmark = benchmark
+    prepare_cudnn()
 
     model = model.to(device)
 
@@ -141,6 +154,7 @@ def process_model_params(
 
 
 __all__ = [
+    "prepare_cudnn",
     "process_components", "get_loader", "process_model_params",
     "_Model", "_Criterion", "_Optimizer", "_Scheduler"
 ]

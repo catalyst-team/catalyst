@@ -45,10 +45,6 @@ def build_args(parser: ArgumentParser):
         help="path to latest checkpoint"
     )
     parser.add_argument("--seed", type=int, default=42)
-    boolean_flag(
-        parser, "deterministic", default=None,
-        help="deterministic mode if running in CuDNN backend"
-    )
     boolean_flag(parser, "verbose", default=False)
     boolean_flag(parser, "check", default=False)
 
@@ -64,7 +60,7 @@ def parse_args():
 
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
-    set_global_seed(args.seed, args.deterministic)
+    set_global_seed(args.seed)
 
     Experiment, Runner = import_experiment_and_runner(Path(args.expdir))
 
