@@ -167,7 +167,8 @@ class ConfigExperiment(Experiment):
             self.stages_config[stage].get("optimizer_params", {})
 
         weight_decay: float = optimizer_params.get("weight_decay", 0.0)
-        no_bias_weight_decay = optimizer_params.pop("no_bias_weight_decay", True)
+        no_bias_weight_decay = \
+            optimizer_params.pop("no_bias_weight_decay", True)
         model_params = process_model_params(
             model, weight_decay, no_bias_weight_decay
         )

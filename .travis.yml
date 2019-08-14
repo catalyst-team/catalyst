@@ -41,7 +41,7 @@ jobs:
         - pip install flake8 flake8-quotes yapf
         - pip install -U pytest
       script:
-        - bash ./bin/_check_codestyle.sh -s
+        - make check-style
 
     - stage: Examples
       name: "Examples DL"
