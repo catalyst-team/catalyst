@@ -1,3 +1,4 @@
+import argparse
 from typing import Any, Optional
 
 
@@ -22,14 +23,18 @@ def args_are_not_none(*args: Optional[Any]) -> bool:
 
 
 def boolean_flag(
-    parser, name: str, default: bool = False, help: str = None
+    parser: argparse.ArgumentParser,
+    name: str,
+    default: Optional[bool] = False,
+    help: str = None
 ) -> None:
     """
     Add a boolean flag to argparse parser.
 
     Args:
         parser (argparse.Parser): parser to add the flag to
-        name (str): --<name> will enable the flag,
+        name (str): argument name
+            --<name> will enable the flag,
             while --no-<name> will disable it
         default (bool, optional): default value of the flag
         help (str): help string for the flag

@@ -40,19 +40,8 @@ It's much harder to merge in a large change with a lot of disjoint features.
 
 Do not forget to check the codestyle for your PR with
 
-- flake
-    ```bash
-    flake8 . --count --ignore=E126,E226,E704,E731,W503,W504 --max-complexity=16 --show-source --statistics
-    ```
-- yapf
-    ```bash
-    ./yapf.sh --all-in-place
-    ```
-
-or with
-
 ```bash
-$ make check-style
+$ make codestyle
 ```
 
 ## Documentation
