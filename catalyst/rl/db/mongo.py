@@ -72,7 +72,7 @@ class MongoDB(DBSpec):
         else:
             raise NotImplementedError("unknown message", message)
 
-    def push_trajectory(self, trajectory, raw=False):
+    def put_trajectory(self, trajectory, raw=False):
         trajectory = utils.structed2dict_trajectory(trajectory)
         trajectory = utils.pack(trajectory)
         collection = self._raw_trajectory_collection if raw \
@@ -109,10 +109,10 @@ class MongoDB(DBSpec):
 
         return trajectory
 
-    def clean_trajectories(self):
+    def del_trajectory(self):
         self._trajectory_collection.drop()
 
-    def save_checkpoint(self, checkpoint, epoch):
+    def put_checkpoint(self, checkpoint, epoch):
         self._epoch = epoch
 
         checkpoint = utils.pack(checkpoint)
@@ -125,7 +125,7 @@ class MongoDB(DBSpec):
             upsert=True
         )
 
-    def load_checkpoint(self):
+    def get_checkpoint(self):
         checkpoint_obj = self._checkpoints_collection.find_one(
             {"prefix": "checkpoint"}
         )
@@ -136,7 +136,7 @@ class MongoDB(DBSpec):
         checkpoint = utils.unpack(checkpoint)
         return checkpoint
 
-    def clean_checkpoint(self):
+    def del_checkpoint(self):
         self._checkpoints_collection.delete_one({"prefix": "checkpoint"})
 
 

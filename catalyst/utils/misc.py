@@ -74,3 +74,8 @@ def append_dict(dict1, dict2):
     for key in dict1.keys():
         dict1[key] = np.concatenate((dict1[key], dict2[key]))
     return dict1
+
+
+def is_exception(ex: Any) -> bool:
+    result = (ex is not None) and isinstance(ex, BaseException)
+    return result

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
 from torch.optim.optimizer import Optimizer
 
@@ -35,7 +35,8 @@ class RunnerState(FrozenClass):
         # @TODO: refactor
         # hack to prevent cycle imports
         from ..callbacks import (
-            VerboseLogger, ConsoleLogger, TensorboardLogger
+            VerboseLogger, ConsoleLogger,
+            TensorboardLogger, RaiseExceptionLogger
         )
 
         self.logdir = Path(logdir) if logdir is not None else None
@@ -70,12 +71,14 @@ class RunnerState(FrozenClass):
             main_metric=main_metric,
             minimize=minimize_metric
         )
+        self.verbose: bool = verbose
         self.loggers = []
-        if verbose:
+        if self.verbose:
             self.loggers.insert(0, VerboseLogger())
         if not stage.startswith("infer"):
             self.loggers.extend([ConsoleLogger(), TensorboardLogger()])
 
+        self.loggers.append(RaiseExceptionLogger())
         self.timer = TimerManager()
 
         # base metrics
@@ -91,6 +94,9 @@ class RunnerState(FrozenClass):
         self.early_stop = False
         for k, v in kwargs.items():
             setattr(self, k, v)
+
+        self.exception: Optional[Exception] = None
+        self.need_reraise_exception: bool = True
 
         self._freeze()
 
@@ -160,6 +166,10 @@ class RunnerState(FrozenClass):
         self.metrics.end_batch()
         for logger in self.loggers:
             logger.on_batch_end(self)
+
+    def on_exception_post(self):
+        for logger in self.loggers:
+            logger.on_exception(self)
 
 
 __all__ = ["RunnerState"]

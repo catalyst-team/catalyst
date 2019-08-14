@@ -8,9 +8,9 @@ scikit-image>=0.14.2
 tqdm>=4.29.1
 PyYAML
 tensorboardX>=1.6
-plotly>=3.6.1
+plotly>=4.1.0
 torchnet
-safitty>=0.9.7
+safitty>=1.2.3
 crc32c>=1.7
 
 # Used in scripts
@@ -19,10 +19,5 @@ seaborn
 pandas>=0.22,<0.25
 scikit-learn>=0.20
 
-# For RL
+# For tests
 mock
-redis
-pymongo
-pyarrow
-lz4
-gym>=0.13.0

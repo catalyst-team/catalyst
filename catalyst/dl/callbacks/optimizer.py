@@ -1,9 +1,11 @@
-from typing import Dict
+from typing import Dict, List, Callable
 import torch
+import safitty
 
 from catalyst.dl.core import Callback, RunnerState
 from catalyst.dl.registry import GRAD_CLIPPERS
 from catalyst.dl.utils import get_optimizer_momentum
+from catalyst.dl.utils.torch import _Optimizer
 
 
 class OptimizerCallback(Callback):
@@ -23,23 +25,28 @@ class OptimizerCallback(Callback):
         @TODO: docs
         """
 
-        grad_clip_params = grad_clip_params or {}
+        grad_clip_params: dict = grad_clip_params or {}
         self.grad_clip_fn = GRAD_CLIPPERS.get_from_params(**grad_clip_params)
 
-        self.accumulation_steps = accumulation_steps
-        self.optimizer_key = optimizer_key
-        self.loss_key = loss_key
-        self.prefix = prefix
-        self._optimizer_wd = 0
-        self._accumulation_counter = 0
+        self.accumulation_steps: int = accumulation_steps
+        self.optimizer_key: str = optimizer_key
+        self.loss_key: str = loss_key
+        self.prefix: str = prefix
+        self._optimizer_wd: List[float] = [0.0]
+        self._accumulation_counter: int = 0
 
     @staticmethod
-    def grad_step(*, optimizer, optimizer_wd=0, grad_clip_fn=None):
-        for group in optimizer.param_groups:
-            if optimizer_wd > 0:
+    def grad_step(
+        *,
+        optimizer: _Optimizer,
+        optimizer_wds: List[float] = 0,
+        grad_clip_fn: Callable = None
+    ):
+        for group, wd in zip(optimizer.param_groups, optimizer_wds):
+            if wd > 0:
                 for param in group["params"]:
                     param.data = param.data.add(
-                        -optimizer_wd * group["lr"], param.data
+                        -wd * group["lr"], param.data
                     )
             if grad_clip_fn is not None:
                 grad_clip_fn(group["params"])
@@ -59,8 +66,12 @@ class OptimizerCallback(Callback):
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
         )
-        self._optimizer_wd = optimizer.param_groups[0].get("weight_decay", 0.0)
-        optimizer.param_groups[0]["weight_decay"] = 0.0
+        self._optimizer_wd = [
+            group.get("weight_decay", 0.0)
+            for group in optimizer.param_groups
+        ]
+        for i in range(len(optimizer.param_groups)):
+            safitty.set(optimizer.param_groups, i, "weight_decay", value=0.0)
 
     def on_batch_start(self, state):
         state.loss = None
@@ -102,7 +113,7 @@ class OptimizerCallback(Callback):
         if (self._accumulation_counter + 1) % self.accumulation_steps == 0:
             self.grad_step(
                 optimizer=optimizer,
-                optimizer_wd=self._optimizer_wd,
+                optimizer_wds=self._optimizer_wd,
                 grad_clip_fn=self.grad_clip_fn
             )
             model.zero_grad()
@@ -112,7 +123,8 @@ class OptimizerCallback(Callback):
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
         )
-        optimizer.param_groups[0]["weight_decay"] = self._optimizer_wd
+        for i, wd in enumerate(self._optimizer_wd):
+            safitty.set(optimizer.param_groups, i, "weight_decay", value=wd)
 
 
 __all__ = ["OptimizerCallback"]

@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader  # noqa F401
 
 from catalyst.dl.core import Runner, Callback
 from catalyst.dl.experiment import SupervisedExperiment
+from catalyst.dl.callbacks import InferCallback, CheckpointCallback
 from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
 
 
@@ -34,6 +35,20 @@ class SupervisedRunner(Runner):
         self.output_key = output_key
         self.target_key = input_target_key
 
+        if isinstance(self.input_key, str):
+            self._process_input = self._process_input_str
+        elif isinstance(self.input_key, (list, tuple)):
+            self._process_input = self._process_input_list
+        else:
+            self._process_input = self._process_input_none
+
+        if isinstance(output_key, str):
+            self._process_output = self._process_output_str
+        elif isinstance(output_key, (list, tuple)):
+            self._process_output = self._process_output_list
+        else:
+            self._process_output = self._process_output_none
+
     def _batch2device(self, batch: Mapping[str, Any], device):
         if isinstance(batch, (tuple, list)):
             assert len(batch) == 2
@@ -41,17 +56,35 @@ class SupervisedRunner(Runner):
         batch = super()._batch2device(batch, device)
         return batch
 
-    def predict_batch(self, batch: Mapping[str, Any]):
+    def _process_input_str(self, batch: Mapping[str, Any]):
         output = self.model(batch[self.input_key])
-        if isinstance(output, dict):
-            pass
-        elif isinstance(output, (list, tuple)) \
-                and isinstance(self.output_key, list):
-            output = dict(
-                (key, value) for key, value in zip(self.output_key, output)
-            )
-        else:
-            output = {self.output_key: output}
+        return output
+
+    def _process_input_list(self, batch: Mapping[str, Any]):
+        input = dict((key, batch[key]) for key in self.input_key)
+        output = self.model(**input)
+        return output
+
+    def _process_input_none(self, batch: Mapping[str, Any]):
+        output = self.model(**batch)
+        return output
+
+    def _process_output_str(self, output: Mapping[str, Any]):
+        output = {self.output_key: output}
+        return output
+
+    def _process_output_list(self, output: Mapping[str, Any]):
+        output = dict(
+            (key, value) for key, value in zip(self.output_key, output)
+        )
+        return output
+
+    def _process_output_none(self, output: Mapping[str, Any]):
+        return output
+
+    def predict_batch(self, batch: Mapping[str, Any]):
+        output = self._process_input(batch)
+        output = self._process_output(output)
         return output
 
     def train(
@@ -61,7 +94,7 @@ class SupervisedRunner(Runner):
         optimizer: _Optimizer,
         loaders: "OrderedDict[str, DataLoader]",
         logdir: str,
-        callbacks: "List[Callback]" = None,
+        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
         scheduler: _Scheduler = None,
         num_epochs: int = 1,
         valid_loader: str = "valid",
@@ -99,7 +132,7 @@ class SupervisedRunner(Runner):
         self,
         model: _Model,
         loaders: "OrderedDict[str, DataLoader]",
-        callbacks: "List[Callback]" = None,
+        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
         verbose: bool = False,
         state_kwargs: Dict = None,
         fp16: Union[Dict, bool] = None,
@@ -117,6 +150,37 @@ class SupervisedRunner(Runner):
             distributed_params=fp16
         )
         self.run_experiment(experiment, check=check)
+
+    def predict_loader(
+        self,
+        loader: DataLoader,
+        resume: str = None,
+        verbose: bool = False,
+        state_kwargs: Dict = None,
+        fp16: Union[Dict, bool] = None,
+        check: bool = False,
+    ):
+        loaders = OrderedDict([("infer", loader)])
+
+        callbacks = OrderedDict([("inference", InferCallback())])
+        if resume is not None:
+            callbacks["loader"] = CheckpointCallback(resume=resume)
+
+        self.infer(
+            model=self.model,
+            loaders=loaders,
+            callbacks=callbacks,
+            verbose=verbose,
+            state_kwargs=state_kwargs,
+            fp16=fp16,
+            check=check
+        )
+
+        output = callbacks["inference"].predictions
+        if isinstance(self.output_key, str):
+            output = output[self.output_key]
+
+        return output
 
 
 __all__ = ["SupervisedRunner"]

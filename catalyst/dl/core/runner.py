@@ -1,5 +1,6 @@
 from abc import abstractmethod, ABC
-from typing import Tuple, List, Mapping, Any
+from typing import Tuple, Mapping, Any
+from collections import OrderedDict
 
 import torch
 from torch import nn
@@ -26,7 +27,7 @@ class Runner(ABC):
         self.device = device
         self.experiment: Experiment = None
         self.state: RunnerState = None
-        self.callbacks: List[Callback] = None
+        self.callbacks: OrderedDict[str, Callback] = None
 
         # additional
         self._check_run = False
@@ -84,12 +85,11 @@ class Runner(ABC):
         )
 
     def _run_event(self, event: str):
-
         if self.state is not None and hasattr(self.state, f"on_{event}_pre"):
             getattr(self.state, f"on_{event}_pre")()
 
         if self.callbacks is not None:
-            for callback in self.callbacks:
+            for callback in self.callbacks.values():
                 getattr(callback, f"on_{event}")(self.state)
 
         if self.state is not None and hasattr(self.state, f"on_{event}_post"):
@@ -186,10 +186,15 @@ class Runner(ABC):
 
     def run_experiment(self, experiment: Experiment, check: bool = False):
         self._check_run = check
-
         self.experiment = experiment
-        for stage in self.experiment.stages:
-            self._run_stage(stage)
+
+        try:
+            for stage in self.experiment.stages:
+                self._run_stage(stage)
+        except (Exception, KeyboardInterrupt) as ex:
+            self.state.exception = ex
+            self._run_event("exception")
+
         return self
 
 

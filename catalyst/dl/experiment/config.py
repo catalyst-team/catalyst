@@ -15,7 +15,8 @@ from catalyst.dl import utils
 from catalyst.utils.misc import merge_dicts
 from catalyst.utils.hash import get_short_hash
 from catalyst.dl.core import Experiment, Callback
-from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
+from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, \
+    _Scheduler, process_model_params
 
 
 class ConfigExperiment(Experiment):
@@ -154,6 +155,11 @@ class ConfigExperiment(Experiment):
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
 
+        weight_decay: float = optimizer_params.get("weight_decay", 0.0)
+        no_bias_weight_decay = optimizer_params.pop("no_bias_weight_decay", True)
+        model_params = process_model_params(
+            model, weight_decay, no_bias_weight_decay
+        )
         # Linear scaling rule from https://arxiv.org/pdf/1706.02677.pdf
         lr_scaling_params = optimizer_params.pop("lr_linear_scaling", None)
         if lr_scaling_params:
@@ -284,15 +290,15 @@ class ConfigExperiment(Experiment):
 
         return loaders
 
-    def get_callbacks(self, stage: str) -> "List[Callback]":
+    def get_callbacks(self, stage: str) -> "OrderedDict[Callback]":
         callbacks_params = (
             self.stages_config[stage].get("callbacks_params", {})
         )
 
-        callbacks = []
+        callbacks = OrderedDict()
         for key, callback_params in callbacks_params.items():
             callback = CALLBACKS.get_from_params(**callback_params)
-            callbacks.append(callback)
+            callbacks[key] = callback
 
         return callbacks
 

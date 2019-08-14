@@ -71,19 +71,17 @@ class TrainerSpec:
         self._epoch_limit = epoch_limit
 
         #  special
+        self._prepare_seed()
         self._init(**kwargs)
 
     def _init(self, **kwargs):
         assert len(kwargs) == 0
 
     def _prepare_logger(self, logdir):
-        if logdir is not None:
-            timestamp = datetime.utcnow().strftime("%y%m%d.%H%M%S")
-            logpath = f"{logdir}/trainer.{timestamp}"
-            os.makedirs(logpath, exist_ok=True)
-            self.logger = SummaryWriter(logpath)
-        else:
-            self.logger = None
+        timestamp = datetime.utcnow().strftime("%y%m%d.%H%M%S")
+        logpath = f"{logdir}/trainer.{timestamp}"
+        os.makedirs(logpath, exist_ok=True)
+        self.logger = SummaryWriter(logpath)
 
     def _prepare_seed(self):
         seed = self._seeder()[0]
@@ -120,6 +118,7 @@ class TrainerSpec:
         )
         self.logger.add_scalar("num_transitions", num_transitions, self.epoch)
         self.logger.add_scalar("buffer_size", buffer_size, self.epoch)
+        self.logger.flush()
 
     def _save_checkpoint(self):
         if self.epoch % self.save_period == 0:
@@ -141,7 +140,7 @@ class TrainerSpec:
                     for k, v in checkpoint[key].items()
                 }
 
-            self.db_server.save_checkpoint(
+            self.db_server.put_checkpoint(
                 checkpoint=checkpoint, epoch=self.epoch
             )
 
@@ -210,3 +209,4 @@ class TrainerSpec:
     def run(self):
         self._update_sampler_weights()
         self._start_train_loop()
+        self.logger.close()

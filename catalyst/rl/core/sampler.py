@@ -114,10 +114,10 @@ class Sampler:
         if filepath is not None:
             checkpoint = utils.load_checkpoint(filepath)
         elif db_server is not None:
-            checkpoint = db_server.load_checkpoint()
+            checkpoint = db_server.get_checkpoint()
             while checkpoint is None:
                 time.sleep(3.0)
-                checkpoint = db_server.load_checkpoint()
+                checkpoint = db_server.get_checkpoint()
         else:
             raise NotImplementedError
 
@@ -134,7 +134,7 @@ class Sampler:
     def _store_trajectory(self, trajectory, raw=False):
         if self.db_server is None:
             return
-        self.db_server.push_trajectory(trajectory, raw=raw)
+        self.db_server.put_trajectory(trajectory, raw=raw)
 
     def _get_seed(self):
         if self.seeds is not None:
@@ -186,6 +186,8 @@ class Sampler:
                 "time/step_time_sec", elapsed_time / num_steps,
                 self.trajectory_index
             )
+
+            self.logger.flush()
 
     @torch.no_grad()
     def _run_trajectory_loop(self):
@@ -243,6 +245,9 @@ class Sampler:
         self._start_db_loop()
         self._start_sample_loop()
 
+        if self.logger is not None:
+            self.logger.close()
+
 
 class ValidSampler(Sampler):
     def _init(self, save_n_best: int = 3, **kwargs):
@@ -258,14 +263,14 @@ class ValidSampler(Sampler):
             checkpoint = utils.load_checkpoint(filepath)
         elif db_server is not None:
             current_epoch = db_server.epoch
-            checkpoint = db_server.load_checkpoint()
+            checkpoint = db_server.get_checkpoint()
             if not db_server.training_enabled \
                     and db_server.epoch == current_epoch:
                 return False
 
             while checkpoint is None or db_server.epoch <= current_epoch:
                 time.sleep(3.0)
-                checkpoint = db_server.load_checkpoint()
+                checkpoint = db_server.get_checkpoint()
 
                 if not db_server.training_enabled \
                         and db_server.epoch == current_epoch:
@@ -357,6 +362,9 @@ class ValidSampler(Sampler):
 
     def run(self):
         self._start_sample_loop()
+
+        if self.logger is not None:
+            self.logger.close()
 
 
 def _db2sampler_loop(sampler: Sampler):
