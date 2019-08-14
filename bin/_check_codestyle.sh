@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+set -e
 
 # Parse -s flag which tells us that we should skip inplace yapf
 skip_inplace=""
