@@ -1,4 +1,5 @@
 from typing import Iterable
+import os
 import numpy as np
 import safitty
 import torch
@@ -105,6 +106,43 @@ def assert_fp16_available():
 
 def get_device() -> torch.device:
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+def get_available_gpus():
+    """
+    Array of available GPU ids
+    Returns:
+        iterable: available GPU ids
+    Examples:
+        >>> os.environ["CUDA_VISIBLE_DEVICES"] = "0,2"
+        >>> get_available_gpus()
+        >>> [0, 2]
+
+        >>> os.environ["CUDA_VISIBLE_DEVICES"] = "0,-1,1"
+        >>> get_available_gpus()
+        >>> [0]
+
+        >>> os.environ["CUDA_VISIBLE_DEVICES"] = ""
+        >>> get_available_gpus()
+        >>> []
+
+        >>> os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+        >>> get_available_gpus()
+        >>> []
+    """
+    if "CUDA_VISIBLE_DEVICES" in os.environ:
+        result = os.environ["CUDA_VISIBLE_DEVICES"].split(",")
+        result = [int(id_) for id_ in result if id_ != ""]
+        # invisible GPUs
+        # https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#env-vars
+        if -1 in result:
+            index = result.index(-1)
+            result = result[:index]
+    elif torch.cuda.is_available():
+        result = list(range(torch.cuda.device_count()))
+    else:
+        result = []
+    return result
 
 
 def get_activation_fn(activation: str = None):
