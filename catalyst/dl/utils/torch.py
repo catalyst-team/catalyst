@@ -25,6 +25,7 @@ def prepare_cudnn(
     """
     Prepares CuDNN benchmark and sets CuDNN
     to be deterministic/non-deterministic mode
+
     Args:
         deterministic (bool): deterministic mode if running in CuDNN backend.
         benchmark (bool): If ``True`` use CuDNN heuristics to figure out
