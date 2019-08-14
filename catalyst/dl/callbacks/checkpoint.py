@@ -63,7 +63,7 @@ class BaseCheckpointCallback(Callback):
 
         suffix = self.get_checkpoint_suffix(checkpoint)
         suffix = f"{suffix}.exception_{exception.__class__.__name__}"
-        filepath = utils.save_checkpoint(
+        utils.save_checkpoint(
             logdir=f"{state.logdir}/checkpoints/",
             checkpoint=checkpoint,
             suffix=suffix,
