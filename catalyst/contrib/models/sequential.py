@@ -1,3 +1,4 @@
+from typing import Union
 from collections import OrderedDict
 
 import torch
@@ -22,21 +23,25 @@ class SequentialNet(nn.Module):
         self,
         hiddens,
         layer_fn=nn.Linear,
-        bias=True,
         norm_fn=None,
-        activation_fn=nn.ReLU,
+        activation_fn=None,
+        bias=True,
         dropout=None,
         layer_order=None,
-        residual=False
+        residual: Union[bool, str] = False,
     ):
+
         super().__init__()
         assert len(hiddens) > 1, "No sequence found"
 
         layer_fn = MODULES.get_if_str(layer_fn)
-        activation_fn = MODULES.get_if_str(activation_fn)
         norm_fn = MODULES.get_if_str(norm_fn)
         dropout = MODULES.get_if_str(dropout)
+        activation_fn = MODULES.get_if_str(activation_fn)
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)
+
+        if isinstance(residual, bool) and residual:
+            residual = "hard"
 
         layer_order = layer_order or ["layer", "norm", "drop", "act"]
 
@@ -65,7 +70,6 @@ class SequentialNet(nn.Module):
         }
 
         net = []
-
         for i, (f_in, f_out) in enumerate(pairwise(hiddens)):
             block = []
             for key in layer_order:
@@ -73,7 +77,7 @@ class SequentialNet(nn.Module):
                 if fn is not None:
                     block.append((f"{key}", fn))
             block = torch.nn.Sequential(OrderedDict(block))
-            if residual:
+            if residual == "hard" or (residual == "soft" and f_in == f_out):
                 block = ResidualWrapper(net=block)
             net.append((f"block_{i}", block))
 
