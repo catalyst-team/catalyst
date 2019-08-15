@@ -63,5 +63,7 @@
     - code for paper
 3. [NeurIPS 2019: Learn to Move - Walk Around](https://github.com/Scitator/learning-to-move-starter-kit)
     - starter kit
-4. [NeurIPS 2019: Animal-AI Olympics ](https://github.com/Scitator/animal-olympics-starter-kit)
+4. [NeurIPS 2019: Animal-AI Olympics](https://github.com/Scitator/animal-olympics-starter-kit)
     - starter kit
+5. [ID R&D Anti-spoofing Challenge](https://github.com/bagxi/idrnd-anti-spoofing-challenge-solution)
+    - 14th place solution
