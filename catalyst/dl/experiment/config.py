@@ -2,7 +2,6 @@ from typing import Any, Mapping, Dict, List
 from copy import deepcopy
 from collections import OrderedDict
 import datetime
-import re
 
 import torch
 from torch import nn
@@ -155,12 +154,11 @@ class ConfigExperiment(Experiment):
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
 
-        weight_decay: float = optimizer_params.get("weight_decay", 0.0)
-        no_bias_weight_decay = optimizer_params.pop("no_bias_weight_decay", True)
-        model_params = process_model_params(
-            model, weight_decay, no_bias_weight_decay
-        )
-        # Linear scaling rule from https://arxiv.org/pdf/1706.02677.pdf
+        layerwise_params = optimizer_params.pop("_key_value", OrderedDict())
+        no_bias_weight_decay = \
+            optimizer_params.pop("no_bias_weight_decay", True)
+
+        # linear scaling rule from https://arxiv.org/pdf/1706.02677.pdf
         lr_scaling_params = optimizer_params.pop("lr_linear_scaling", None)
         if lr_scaling_params:
             data_params = dict(self.stages_config[stage]["data_params"])
@@ -175,26 +173,13 @@ class ConfigExperiment(Experiment):
             base_lr = lr_scaling_params.get("lr")
             base_batch_size = lr_scaling_params.get("base_batch_size", 256)
             lr_scaling = batch_size / base_batch_size
-            optimizer_params["lr"] = base_lr * lr_scaling  # default lr
+            optimizer_params["lr"] = base_lr * lr_scaling  # scale default lr
+        else:
+            lr_scaling = 1.0
 
-        model_params = []
-        per_parameter_options = \
-            optimizer_params.pop("_key_value", OrderedDict())
-        for name, parameters in model.named_parameters():
-            # > all new LR rules write on top of the old ones
-            # so search for last matching pattern
-            for pattern, options in reversed(per_parameter_options.items()):
-                if re.match(pattern, name) is not None:
-                    break
-            else:
-                options = {}
-
-            # linear scaling of layer-wise lr
-            if lr_scaling_params and "lr" in options:
-                # hack to prevent `options` dict modification
-                options = {**options, "lr": options["lr"] * lr_scaling}
-
-            model_params.append({"params": parameters, **options})
+        model_params = process_model_params(
+            model, layerwise_params, no_bias_weight_decay, lr_scaling
+        )
 
         optimizer = self._get_optimizer(
             model_params=model_params, **optimizer_params
