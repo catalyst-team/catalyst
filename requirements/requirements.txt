@@ -9,15 +9,11 @@ tqdm>=4.29.1
 PyYAML
 tensorboardX>=1.6
 plotly>=4.1.0
-torchnet
 safitty>=1.2.3
 crc32c>=1.7
 
 # Used in scripts
 matplotlib
 seaborn
-pandas>=0.22,<0.25
+pandas>=0.22
 scikit-learn>=0.20
-
-# For tests
-mock

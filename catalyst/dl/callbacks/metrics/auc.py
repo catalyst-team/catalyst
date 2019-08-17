@@ -1,9 +1,9 @@
 from typing import List
+
+import torch
 import numpy as np
 
-from torchnet.meter import AUCMeter
-import torch
-
+from catalyst.dl.meters import AUCMeter
 from catalyst.dl.core import Callback, RunnerState
 
 

@@ -5,3 +5,4 @@ sphinx_rtd_theme
 flake8
 flake8-quotes
 yapf
+mock

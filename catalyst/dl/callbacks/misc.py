@@ -1,9 +1,9 @@
 from typing import List, Dict
 import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
-from torchnet.meter import ConfusionMeter
 from tensorboardX import SummaryWriter
 
+from catalyst.dl.meters import ConfusionMeter
 from catalyst.dl.core import Callback, RunnerState
 from catalyst.dl import utils
 from .logging import TensorboardLogger
