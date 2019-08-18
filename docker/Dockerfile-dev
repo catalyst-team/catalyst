@@ -22,10 +22,10 @@ RUN apt-get update && apt-get install -y \
 
 CMD mkdir -p /workspace
 
-COPY requirements.txt /workspace/requirements.txt
-RUN pip install -r /workspace/requirements.txt --no-cache-dir
-
-COPY requirements-dev.txt /workspace/requirements-dev.txt
-RUN pip install -r /workspace/requirements-dev.txt --no-cache-dir
+COPY requirements/ /workspace/
+RUN pip install -r /workspace/requirements.txt --no-cache-dir \
+    && pip install -r /workspace/requirements-rl.txt --no-cache-dir \
+    && pip install -r /workspace/requirements-contrib.txt --no-cache-dir \
+    && pip install -r /workspace/requirements-dev.txt --no-cache-dir
 
 WORKDIR /workspace
