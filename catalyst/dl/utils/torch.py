@@ -91,6 +91,61 @@ def get_loader(
     return loader
 
 
+def process_model_params(
+    model: _Model,
+    layerwise_params: Dict[str, Dict] = None,
+    no_bias_weight_decay: bool = True,
+    lr_scaling: float = 1.0
+) -> List[Union[torch.nn.Parameter, dict]]:
+    """
+    Gains model parameters for ``torch.optim.Optimizer``
+
+    Args:
+        model (torch.nn.Module): Model to process
+        layerwise_params (Dict): Order-sensitive dict where
+            each key is regex pattern and values are layer-wise options
+            for layers matching with a pattern
+        no_bias_weight_decay (bool): If true, removes weight_decay
+            for all ``bias`` parameters in the model
+        lr_scaling (float): layer-wise learning rate scaling,
+            if 1.0, learning rates will not be scaled
+
+    Returns:
+        iterable: parameters for an optimizer
+
+    Examples:
+        >>> model = catalyst.contrib.models.segmentation.ResnetUnet()
+        >>> layerwise_params = collections.OrderedDict([
+        >>>     ("conv1.*", dict(lr=0.001, weight_decay=0.0003)),
+        >>>     ("conv.*", dict(lr=0.002))
+        >>> ])
+        >>> params = process_model_params(model, layerwise_params)
+        >>> optimizer = torch.optim.Adam(params, lr=0.0003)
+    """
+    params = list(model.named_parameters())
+    layerwise_params = layerwise_params or collections.OrderedDict()
+
+    model_params = []
+    for name, parameters in params:
+        options = {}
+        for pattern, options_ in layerwise_params.items():
+            if re.match(pattern, name) is not None:
+                # all new LR rules write on top of the old ones
+                options = utils.merge_dicts(options, options_)
+
+        # no bias decay from https://arxiv.org/abs/1812.01187
+        if no_bias_weight_decay and name.endswith("bias"):
+            options["weight_decay"] = 0.0
+
+        # lr linear scaling from https://arxiv.org/pdf/1706.02677.pdf
+        if "lr" in options:
+            options["lr"] *= lr_scaling
+
+        model_params.append({"params": parameters, **options})
+
+    return model_params
+
+
 __all__ = [
     "process_components", "get_loader",
     "_Model", "_Criterion", "_Optimizer", "_Scheduler"
