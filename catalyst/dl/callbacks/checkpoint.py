@@ -46,33 +46,34 @@ class BaseCheckpointCallback(Callback):
         if not is_exception(exception):
             return
 
-        valid_metrics = state.metrics.valid_values
-        epoch_metrics = state.metrics.epoch_values
-
-        checkpoint = utils.pack_checkpoint(
-            model=state.model,
-            criterion=state.criterion,
-            optimizer=state.optimizer,
-            scheduler=state.scheduler,
-            epoch_metrics=epoch_metrics,
-            valid_metrics=valid_metrics,
-            stage=state.stage,
-            epoch=state.epoch,
-            checkpoint_data=state.checkpoint_data
-        )
-
-        suffix = self.get_checkpoint_suffix(checkpoint)
-        suffix = f"{suffix}.exception_{exception.__class__.__name__}"
-        utils.save_checkpoint(
-            logdir=f"{state.logdir}/checkpoints/",
-            checkpoint=checkpoint,
-            suffix=suffix,
-            is_best=False,
-            is_last=False
-        )
-        metrics = self.metrics
-        metrics[suffix] = valid_metrics
-        self.save_metric(state.logdir, metrics)
+        try:
+            valid_metrics = state.metrics.valid_values
+            epoch_metrics = state.metrics.epoch_values
+            checkpoint = utils.pack_checkpoint(
+                model=state.model,
+                criterion=state.criterion,
+                optimizer=state.optimizer,
+                scheduler=state.scheduler,
+                epoch_metrics=epoch_metrics,
+                valid_metrics=valid_metrics,
+                stage=state.stage,
+                epoch=state.epoch,
+                checkpoint_data=state.checkpoint_data
+            )
+            suffix = self.get_checkpoint_suffix(checkpoint)
+            suffix = f"{suffix}.exception_{exception.__class__.__name__}"
+            utils.save_checkpoint(
+                logdir=f"{state.logdir}/checkpoints/",
+                checkpoint=checkpoint,
+                suffix=suffix,
+                is_best=False,
+                is_last=False
+            )
+            metrics = self.metrics
+            metrics[suffix] = valid_metrics
+            self.save_metric(state.logdir, metrics)
+        except Exception:
+            pass
 
 
 class CheckpointCallback(BaseCheckpointCallback):

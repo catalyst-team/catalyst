@@ -148,8 +148,12 @@ def process_model_params(
         iterable: parameters for an optimizer
 
     Examples:
-        >>> model = ResnetUnet()
-        >>> params = process_model_params(model)
+        >>> model = catalyst.contrib.models.segmentation.ResnetUnet()
+        >>> layerwise_params = collections.OrderedDict([
+        >>>     ("conv1.*", dict(lr=0.001, weight_decay=0.0003)),
+        >>>     ("conv.*", dict(lr=0.002))
+        >>> ])
+        >>> params = process_model_params(model, layerwise_params)
         >>> optimizer = torch.optim.Adam(params, lr=0.0003)
     """
     params = list(model.named_parameters())

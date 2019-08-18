@@ -63,6 +63,43 @@ Catalyst uses `Google style`_ for formatting `docstrings`_. Length of line
 inside docstrings block must be limited to 80 characters to fit into
 Jupyter documentation popups.
 
+Check that you have written working docs
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: bash
+
+    make check-docs
+
+The command requires Sphinx and some sphinx-specific libraries.
+If you don't want to install them, you may make a catalyst-dev container
+
+.. code-block:: bash
+
+    make docker-dev
+    docker run \\
+        -v `pwd`/:/workspace/ \\
+        catalyst-dev:latest \\
+        bash -c "make check-docs"
+
+To build docs add environment variable REMOVE_BUILDS=0
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: bash
+
+    REMOVE_BUILDS=0 make check-docs
+
+or through docker
+
+.. code-block:: bash
+
+    docker run \\
+        -v `pwd`/:/workspace/ \\
+        catalyst-dev:latest \\
+        bash -c "REMOVE_BUILDS=0 make check-docs"
+
+The docs will be stored in `builds/` folder.
+
+
 .. _GitHub issues: https://github.com/catalyst-team/catalyst/issues
 .. _Google style: http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html
 .. _docstrings: https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings
