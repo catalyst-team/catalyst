@@ -27,5 +27,6 @@ from .serialization import serialize, deserialize
 from .torch import ce_with_logits, log1p_exp, normal_sample, normal_logprob, \
     soft_update, get_optimizable_params, \
     get_optimizer_momentum, set_optimizer_momentum, assert_fp16_available, \
-    get_device, get_activation_fn, any2device, get_available_gpus
+    get_device, get_activation_fn, any2device, get_available_gpus, \
+    prepare_cudnn, process_model_params
 from .visualization import plot_confusion_matrix, render_figure_to_tensor

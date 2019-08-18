@@ -22,7 +22,10 @@ def set_global_seed(seed: int) -> None:
     except ImportError:
         pass
     else:
-        tf.set_random_seed(seed)
+        if tf.__version__ < "2.0.0-beta1":
+            tf.set_random_seed(seed)
+        else:
+            tf.random.set_seed(seed)
     random.seed(seed)
     np.random.seed(seed)
 

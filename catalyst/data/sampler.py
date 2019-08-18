@@ -66,8 +66,9 @@ class BalanceClassSampler(Sampler):
 
 
 class MiniEpochSampler(Sampler):
-    r"""Sampler iterates mini epochs from the dataset
-        used by ``mini_epoch_len``
+    """
+    Sampler iterates mini epochs from the dataset
+    used by ``mini_epoch_len``
 
     Args:
         data_len (int): Size of the dataset
@@ -83,10 +84,10 @@ class MiniEpochSampler(Sampler):
 
     Example:
         >>> MiniEpochSampler(len(dataset), mini_epoch_len=100)
-        >>> MiniEpochSampler(len(dataset), mini_epoch_len=100, \
-            drop_last=True)
-        >>> MiniEpochSampler(len(dataset), mini_epoch_len=100, \
-            shuffle="per_epoch")
+        >>> MiniEpochSampler(len(dataset), mini_epoch_len=100,
+        >>>     drop_last=True)
+        >>> MiniEpochSampler(len(dataset), mini_epoch_len=100,
+        >>>     shuffle="per_epoch")
     """
     def __init__(
         self,
