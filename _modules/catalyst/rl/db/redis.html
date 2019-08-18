@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.rl.db.redis &mdash; Catalyst 19.08 documentation</title>
+  <title>catalyst.rl.db.redis &mdash; Catalyst 19.08.4 documentation</title>
   
 
   
@@ -218,7 +218,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;unknown message&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="RedisDB.push_trajectory"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.redis.RedisDB.push_trajectory">[docs]</a>    <span class="k">def</span> <span class="nf">push_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="RedisDB.put_trajectory"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.redis.RedisDB.put_trajectory">[docs]</a>    <span class="k">def</span> <span class="nf">put_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">trajectory</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">structed2dict_trajectory</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span>
         <span class="n">trajectory</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;trajectory&quot;</span><span class="p">:</span> <span class="n">trajectory</span><span class="p">,</span> <span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">}</span>
         <span class="n">trajectory</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span>
@@ -241,17 +241,17 @@
 
         <span class="k">return</span> <span class="n">trajectory</span></div>
 
-<div class="viewcode-block" id="RedisDB.clean_trajectories"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.redis.RedisDB.clean_trajectories">[docs]</a>    <span class="k">def</span> <span class="nf">clean_trajectories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="RedisDB.del_trajectory"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.redis.RedisDB.del_trajectory">[docs]</a>    <span class="k">def</span> <span class="nf">del_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;trajectories&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="mi">0</span></div>
 
-<div class="viewcode-block" id="RedisDB.save_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.redis.RedisDB.save_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">save_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
+<div class="viewcode-block" id="RedisDB.put_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.redis.RedisDB.put_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">put_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span> <span class="o">=</span> <span class="n">epoch</span>
         <span class="n">checkpoint</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;checkpoint&quot;</span><span class="p">:</span> <span class="n">checkpoint</span><span class="p">,</span> <span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span><span class="p">}</span>
         <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{self._prefix}</span><span class="s2">_checkpoint&quot;</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="RedisDB.load_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.redis.RedisDB.load_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">load_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="RedisDB.get_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.redis.RedisDB.get_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">get_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">checkpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{self._prefix}</span><span class="s2">_checkpoint&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">checkpoint</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -259,7 +259,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;epoch&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;checkpoint&quot;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="RedisDB.clean_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.redis.RedisDB.clean_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">clean_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="RedisDB.del_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.redis.RedisDB.del_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">del_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{self._prefix}</span><span class="s2">_weights&quot;</span><span class="p">)</span></div></div>
 
 

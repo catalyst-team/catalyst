@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.callbacks.checkpoint &mdash; Catalyst 19.08 documentation</title>
+  <title>catalyst.dl.callbacks.checkpoint &mdash; Catalyst 19.08.4 documentation</title>
   
 
   
@@ -169,6 +169,7 @@
 
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="k">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">RunnerState</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="k">import</span> <span class="n">is_exception</span>
 
 
 <span class="k">class</span> <span class="nc">BaseCheckpointCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
@@ -185,9 +186,10 @@
 <span class="sd">                in checkpoint folder. Must ends on ``.json`` or ``.yml``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metric_filename</span> <span class="o">=</span> <span class="n">metric_filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">def</span> <span class="nf">get_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-        <span class="k">pass</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span>
 
     <span class="k">def</span> <span class="nf">save_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">safitty</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/checkpoints/</span><span class="si">{self.metric_filename}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -197,6 +199,42 @@
 
     <span class="k">def</span> <span class="nf">process_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">get_checkpoint_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">on_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
+        <span class="n">exception</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">exception</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_exception</span><span class="p">(</span><span class="n">exception</span><span class="p">):</span>
+            <span class="k">return</span>
+
+        <span class="n">valid_metrics</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">valid_values</span>
+        <span class="n">epoch_metrics</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">epoch_values</span>
+
+        <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">pack_checkpoint</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">criterion</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">criterion</span><span class="p">,</span>
+            <span class="n">optimizer</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span>
+            <span class="n">scheduler</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">scheduler</span><span class="p">,</span>
+            <span class="n">epoch_metrics</span><span class="o">=</span><span class="n">epoch_metrics</span><span class="p">,</span>
+            <span class="n">valid_metrics</span><span class="o">=</span><span class="n">valid_metrics</span><span class="p">,</span>
+            <span class="n">stage</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">stage</span><span class="p">,</span>
+            <span class="n">epoch</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span>
+            <span class="n">checkpoint_data</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">checkpoint_data</span>
+        <span class="p">)</span>
+
+        <span class="n">suffix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_checkpoint_suffix</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{suffix}</span><span class="s2">.exception_</span><span class="si">{exception.__class__.__name__}</span><span class="s2">&quot;</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span>
+            <span class="n">logdir</span><span class="o">=</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{state.logdir}</span><span class="s2">/checkpoints/&quot;</span><span class="p">,</span>
+            <span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span>
+            <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
+            <span class="n">is_best</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">is_last</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span>
+        <span class="n">metrics</span><span class="p">[</span><span class="n">suffix</span><span class="p">]</span> <span class="o">=</span> <span class="n">valid_metrics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_metric</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="CheckpointCallback"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.checkpoint.CheckpointCallback">[docs]</a><span class="k">class</span> <span class="nc">CheckpointCallback</span><span class="p">(</span><span class="n">BaseCheckpointCallback</span><span class="p">):</span>
@@ -225,6 +263,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">top_best_metrics</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_keys_from_state</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;resume&quot;</span><span class="p">,</span> <span class="s2">&quot;resume_dir&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="CheckpointCallback.get_checkpoint_suffix"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.checkpoint.CheckpointCallback.get_checkpoint_suffix">[docs]</a>    <span class="k">def</span> <span class="nf">get_checkpoint_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{checkpoint[&#39;stage&#39;]}</span><span class="s2">.</span><span class="si">{checkpoint[&#39;epoch&#39;]}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">result</span></div>
 
 <div class="viewcode-block" id="CheckpointCallback.load_checkpoint"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.checkpoint.CheckpointCallback.load_checkpoint">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">load_checkpoint</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
@@ -260,7 +302,8 @@
             <span class="p">[(</span><span class="s2">&quot;last&quot;</span><span class="p">,</span> <span class="n">last_valid_metrics</span><span class="p">)]</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">metrics</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="n">metrics</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span></div>
 
 <div class="viewcode-block" id="CheckpointCallback.truncate_checkpoints"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.checkpoint.CheckpointCallback.truncate_checkpoints">[docs]</a>    <span class="k">def</span> <span class="nf">truncate_checkpoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimize_metric</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">top_best_metrics</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
@@ -281,11 +324,10 @@
         <span class="n">main_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
         <span class="n">minimize_metric</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="p">):</span>
-        <span class="n">suffix</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{checkpoint[&#39;stage&#39;]}</span><span class="s2">.</span><span class="si">{checkpoint[&#39;epoch&#39;]}</span><span class="s2">&quot;</span>
         <span class="n">filepath</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span>
             <span class="n">logdir</span><span class="o">=</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/checkpoints/&quot;</span><span class="p">,</span>
             <span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span>
-            <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
+            <span class="n">suffix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_checkpoint_suffix</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">),</span>
             <span class="n">is_best</span><span class="o">=</span><span class="n">is_best</span><span class="p">,</span>
             <span class="n">is_last</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
@@ -376,14 +418,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_counter</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_checkpoints</span> <span class="o">=</span> <span class="p">[]</span></div>
 
+<div class="viewcode-block" id="IterationCheckpointCallback.get_checkpoint_suffix"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.checkpoint.IterationCheckpointCallback.get_checkpoint_suffix">[docs]</a>    <span class="k">def</span> <span class="nf">get_checkpoint_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{checkpoint[&#39;stage&#39;]}</span><span class="s2">.&quot;</span> \
+                 <span class="n">f</span><span class="s2">&quot;epoch.</span><span class="si">{checkpoint[&#39;epoch&#39;]}</span><span class="s2">.&quot;</span> \
+                 <span class="n">f</span><span class="s2">&quot;iter.</span><span class="si">{self._iteration_counter}</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
 <div class="viewcode-block" id="IterationCheckpointCallback.get_metric"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.checkpoint.IterationCheckpointCallback.get_metric">[docs]</a>    <span class="k">def</span> <span class="nf">get_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
         <span class="n">checkpoints</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="p">,</span> <span class="n">batch_values</span><span class="p">)</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">batch_values</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_checkpoints</span>
         <span class="p">]</span>
 
-        <span class="n">metrics</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">checkpoints</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">metrics</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">checkpoints</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span></div>
 
 <div class="viewcode-block" id="IterationCheckpointCallback.truncate_checkpoints"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.checkpoint.IterationCheckpointCallback.truncate_checkpoints">[docs]</a>    <span class="k">def</span> <span class="nf">truncate_checkpoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_checkpoints</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_n_last</span><span class="p">:</span>
@@ -397,14 +446,10 @@
         <span class="n">checkpoint</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
         <span class="n">batch_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
     <span class="p">):</span>
-        <span class="n">suffix</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{checkpoint[&#39;stage&#39;]}</span><span class="s2">.&quot;</span> \
-                 <span class="n">f</span><span class="s2">&quot;epoch.</span><span class="si">{checkpoint[&#39;epoch&#39;]}</span><span class="s2">.&quot;</span> \
-                 <span class="n">f</span><span class="s2">&quot;iter.</span><span class="si">{self._iteration_counter}</span><span class="s2">&quot;</span>
-
         <span class="n">filepath</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span>
             <span class="n">logdir</span><span class="o">=</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/checkpoints/&quot;</span><span class="p">,</span>
             <span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span>
-            <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
+            <span class="n">suffix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_checkpoint_suffix</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">),</span>
             <span class="n">is_best</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">is_last</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>

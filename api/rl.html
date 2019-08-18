@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>RL &mdash; Catalyst 19.08 documentation</title>
+  <title>RL &mdash; Catalyst 19.08.4 documentation</title>
   
 
   
@@ -302,13 +302,13 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.rl.core.db.DBSpec.clean_checkpoint">
-<code class="descname">clean_checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/db.html#DBSpec.clean_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.db.DBSpec.clean_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.rl.core.db.DBSpec.del_checkpoint">
+<code class="descname">del_checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/db.html#DBSpec.del_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.db.DBSpec.del_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="catalyst.rl.core.db.DBSpec.clean_trajectories">
-<code class="descname">clean_trajectories</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/db.html#DBSpec.clean_trajectories"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.db.DBSpec.clean_trajectories" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.rl.core.db.DBSpec.del_trajectory">
+<code class="descname">del_trajectory</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/db.html#DBSpec.del_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.db.DBSpec.del_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -317,13 +317,13 @@
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="catalyst.rl.core.db.DBSpec.get_trajectory">
-<code class="descname">get_trajectory</code><span class="sig-paren">(</span><em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/db.html#DBSpec.get_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.db.DBSpec.get_trajectory" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.rl.core.db.DBSpec.get_checkpoint">
+<code class="descname">get_checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/db.html#DBSpec.get_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.db.DBSpec.get_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="catalyst.rl.core.db.DBSpec.load_checkpoint">
-<code class="descname">load_checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/db.html#DBSpec.load_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.db.DBSpec.load_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.rl.core.db.DBSpec.get_trajectory">
+<code class="descname">get_trajectory</code><span class="sig-paren">(</span><em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/db.html#DBSpec.get_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.db.DBSpec.get_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -337,18 +337,18 @@
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="catalyst.rl.core.db.DBSpec.push_trajectory">
-<code class="descname">push_trajectory</code><span class="sig-paren">(</span><em>trajectory</em>, <em>raw: bool</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/db.html#DBSpec.push_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.db.DBSpec.push_trajectory" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.rl.core.db.DBSpec.put_checkpoint">
+<code class="descname">put_checkpoint</code><span class="sig-paren">(</span><em>checkpoint</em>, <em>epoch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/db.html#DBSpec.put_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.db.DBSpec.put_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.core.db.DBSpec.put_trajectory">
+<code class="descname">put_trajectory</code><span class="sig-paren">(</span><em>trajectory</em>, <em>raw: bool</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/db.html#DBSpec.put_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.db.DBSpec.put_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="catalyst.rl.core.db.DBSpec.sampling_enabled">
 <code class="descname">sampling_enabled</code><a class="headerlink" href="#catalyst.rl.core.db.DBSpec.sampling_enabled" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.rl.core.db.DBSpec.save_checkpoint">
-<code class="descname">save_checkpoint</code><span class="sig-paren">(</span><em>checkpoint</em>, <em>epoch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/db.html#DBSpec.save_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.db.DBSpec.save_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -360,7 +360,7 @@
 
 <span class="target" id="module-catalyst.rl.core.environment"></span><dl class="class">
 <dt id="catalyst.rl.core.environment.EnvironmentSpec">
-<em class="property">class </em><code class="descclassname">catalyst.rl.core.environment.</code><code class="descname">EnvironmentSpec</code><span class="sig-paren">(</span><em>visualize=False</em>, <em>mode='train'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/environment.html#EnvironmentSpec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.environment.EnvironmentSpec" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">catalyst.rl.core.environment.</code><code class="descname">EnvironmentSpec</code><span class="sig-paren">(</span><em>visualize=False</em>, <em>mode='train'</em>, <em>sampler_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/environment.html#EnvironmentSpec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.environment.EnvironmentSpec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <dl class="attribute">
 <dt id="catalyst.rl.core.environment.EnvironmentSpec.action_space">
@@ -765,13 +765,13 @@ of shape [bs; representation_size]</p>
 <em class="property">class </em><code class="descclassname">catalyst.rl.db.mongo.</code><code class="descname">MongoDB</code><span class="sig-paren">(</span><em>host='127.0.0.1'</em>, <em>port=12000</em>, <em>prefix=None</em>, <em>sync_epoch=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/mongo.html#MongoDB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.mongo.MongoDB" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.rl.core.db.DBSpec" title="catalyst.rl.core.db.DBSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.rl.core.db.DBSpec</span></code></a></p>
 <dl class="method">
-<dt id="catalyst.rl.db.mongo.MongoDB.clean_checkpoint">
-<code class="descname">clean_checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/mongo.html#MongoDB.clean_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.mongo.MongoDB.clean_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.rl.db.mongo.MongoDB.del_checkpoint">
+<code class="descname">del_checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/mongo.html#MongoDB.del_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.mongo.MongoDB.del_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="catalyst.rl.db.mongo.MongoDB.clean_trajectories">
-<code class="descname">clean_trajectories</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/mongo.html#MongoDB.clean_trajectories"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.mongo.MongoDB.clean_trajectories" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.rl.db.mongo.MongoDB.del_trajectory">
+<code class="descname">del_trajectory</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/mongo.html#MongoDB.del_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.mongo.MongoDB.del_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -780,13 +780,13 @@ of shape [bs; representation_size]</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="catalyst.rl.db.mongo.MongoDB.get_trajectory">
-<code class="descname">get_trajectory</code><span class="sig-paren">(</span><em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/mongo.html#MongoDB.get_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.mongo.MongoDB.get_trajectory" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.rl.db.mongo.MongoDB.get_checkpoint">
+<code class="descname">get_checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/mongo.html#MongoDB.get_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.mongo.MongoDB.get_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="catalyst.rl.db.mongo.MongoDB.load_checkpoint">
-<code class="descname">load_checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/mongo.html#MongoDB.load_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.mongo.MongoDB.load_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.rl.db.mongo.MongoDB.get_trajectory">
+<code class="descname">get_trajectory</code><span class="sig-paren">(</span><em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/mongo.html#MongoDB.get_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.mongo.MongoDB.get_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -800,18 +800,18 @@ of shape [bs; representation_size]</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="catalyst.rl.db.mongo.MongoDB.push_trajectory">
-<code class="descname">push_trajectory</code><span class="sig-paren">(</span><em>trajectory</em>, <em>raw=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/mongo.html#MongoDB.push_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.mongo.MongoDB.push_trajectory" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.rl.db.mongo.MongoDB.put_checkpoint">
+<code class="descname">put_checkpoint</code><span class="sig-paren">(</span><em>checkpoint</em>, <em>epoch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/mongo.html#MongoDB.put_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.mongo.MongoDB.put_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.db.mongo.MongoDB.put_trajectory">
+<code class="descname">put_trajectory</code><span class="sig-paren">(</span><em>trajectory</em>, <em>raw=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/mongo.html#MongoDB.put_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.mongo.MongoDB.put_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="catalyst.rl.db.mongo.MongoDB.sampling_enabled">
 <code class="descname">sampling_enabled</code><a class="headerlink" href="#catalyst.rl.db.mongo.MongoDB.sampling_enabled" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.rl.db.mongo.MongoDB.save_checkpoint">
-<code class="descname">save_checkpoint</code><span class="sig-paren">(</span><em>checkpoint</em>, <em>epoch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/mongo.html#MongoDB.save_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.mongo.MongoDB.save_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -826,13 +826,13 @@ of shape [bs; representation_size]</p>
 <em class="property">class </em><code class="descclassname">catalyst.rl.db.redis.</code><code class="descname">RedisDB</code><span class="sig-paren">(</span><em>host='127.0.0.1'</em>, <em>port=12000</em>, <em>prefix=None</em>, <em>sync_epoch=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/redis.html#RedisDB"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.redis.RedisDB" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.rl.core.db.DBSpec" title="catalyst.rl.core.db.DBSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.rl.core.db.DBSpec</span></code></a></p>
 <dl class="method">
-<dt id="catalyst.rl.db.redis.RedisDB.clean_checkpoint">
-<code class="descname">clean_checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/redis.html#RedisDB.clean_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.redis.RedisDB.clean_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.rl.db.redis.RedisDB.del_checkpoint">
+<code class="descname">del_checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/redis.html#RedisDB.del_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.redis.RedisDB.del_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="catalyst.rl.db.redis.RedisDB.clean_trajectories">
-<code class="descname">clean_trajectories</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/redis.html#RedisDB.clean_trajectories"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.redis.RedisDB.clean_trajectories" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.rl.db.redis.RedisDB.del_trajectory">
+<code class="descname">del_trajectory</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/redis.html#RedisDB.del_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.redis.RedisDB.del_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -841,13 +841,13 @@ of shape [bs; representation_size]</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="catalyst.rl.db.redis.RedisDB.get_trajectory">
-<code class="descname">get_trajectory</code><span class="sig-paren">(</span><em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/redis.html#RedisDB.get_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.redis.RedisDB.get_trajectory" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.rl.db.redis.RedisDB.get_checkpoint">
+<code class="descname">get_checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/redis.html#RedisDB.get_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.redis.RedisDB.get_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="catalyst.rl.db.redis.RedisDB.load_checkpoint">
-<code class="descname">load_checkpoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/redis.html#RedisDB.load_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.redis.RedisDB.load_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.rl.db.redis.RedisDB.get_trajectory">
+<code class="descname">get_trajectory</code><span class="sig-paren">(</span><em>index=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/redis.html#RedisDB.get_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.redis.RedisDB.get_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -861,18 +861,18 @@ of shape [bs; representation_size]</p>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="catalyst.rl.db.redis.RedisDB.push_trajectory">
-<code class="descname">push_trajectory</code><span class="sig-paren">(</span><em>trajectory</em>, <em>raw=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/redis.html#RedisDB.push_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.redis.RedisDB.push_trajectory" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.rl.db.redis.RedisDB.put_checkpoint">
+<code class="descname">put_checkpoint</code><span class="sig-paren">(</span><em>checkpoint</em>, <em>epoch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/redis.html#RedisDB.put_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.redis.RedisDB.put_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.rl.db.redis.RedisDB.put_trajectory">
+<code class="descname">put_trajectory</code><span class="sig-paren">(</span><em>trajectory</em>, <em>raw=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/redis.html#RedisDB.put_trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.redis.RedisDB.put_trajectory" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="catalyst.rl.db.redis.RedisDB.sampling_enabled">
 <code class="descname">sampling_enabled</code><a class="headerlink" href="#catalyst.rl.db.redis.RedisDB.sampling_enabled" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.rl.db.redis.RedisDB.save_checkpoint">
-<code class="descname">save_checkpoint</code><span class="sig-paren">(</span><em>checkpoint</em>, <em>epoch</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/db/redis.html#RedisDB.save_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.db.redis.RedisDB.save_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -887,7 +887,7 @@ of shape [bs; representation_size]</p>
 <span id="environments"></span><h2>Environments<a class="headerlink" href="#module-catalyst.rl.environment.gym" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.rl.environment.gym.GymWrapper">
-<em class="property">class </em><code class="descclassname">catalyst.rl.environment.gym.</code><code class="descname">GymWrapper</code><span class="sig-paren">(</span><em>env_name</em>, <em>history_len=1</em>, <em>frame_skip=1</em>, <em>reward_scale=1</em>, <em>step_delay=0.0</em>, <em>observation_mean=None</em>, <em>observation_std=None</em>, <em>action_mean=None</em>, <em>action_std=None</em>, <em>visualize=False</em>, <em>mode='train'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/environment/gym.html#GymWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.environment.gym.GymWrapper" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">catalyst.rl.environment.gym.</code><code class="descname">GymWrapper</code><span class="sig-paren">(</span><em>env_name</em>, <em>history_len=1</em>, <em>frame_skip=1</em>, <em>reward_scale=1</em>, <em>step_delay=0.0</em>, <em>observation_mean=None</em>, <em>observation_std=None</em>, <em>action_mean=None</em>, <em>action_std=None</em>, <em>visualize=False</em>, <em>mode='train'</em>, <em>sampler_id=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/environment/gym.html#GymWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.environment.gym.GymWrapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.rl.core.environment.EnvironmentSpec" title="catalyst.rl.core.environment.EnvironmentSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.rl.core.environment.EnvironmentSpec</span></code></a></p>
 <dl class="attribute">
 <dt id="catalyst.rl.environment.gym.GymWrapper.action_space">

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utils &mdash; Catalyst 19.08 documentation</title>
+  <title>Utils &mdash; Catalyst 19.08.4 documentation</title>
   
 
   
@@ -184,13 +184,14 @@
 
 <dl class="function">
 <dt id="catalyst.utils.argparse.boolean_flag">
-<code class="descclassname">catalyst.utils.argparse.</code><code class="descname">boolean_flag</code><span class="sig-paren">(</span><em>parser</em>, <em>name: str</em>, <em>default: bool = False</em>, <em>help: str = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/argparse.html#boolean_flag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.argparse.boolean_flag" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">catalyst.utils.argparse.</code><code class="descname">boolean_flag</code><span class="sig-paren">(</span><em>parser: argparse.ArgumentParser</em>, <em>name: str</em>, <em>default: Optional[bool] = False</em>, <em>help: str = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/argparse.html#boolean_flag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.argparse.boolean_flag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a boolean flag to argparse parser.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>parser</strong> (<em>argparse.Parser</em>) – parser to add the flag to</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – –&lt;name&gt; will enable the flag,
+<li><p><strong>name</strong> (<em>str</em>) – argument name
+–&lt;name&gt; will enable the flag,
 while –no-&lt;name&gt; will disable it</p></li>
 <li><p><strong>default</strong> (<em>bool</em><em>, </em><em>optional</em>) – default value of the flag</p></li>
 <li><p><strong>help</strong> (<em>str</em>) – help string for the flag</p></li>
@@ -740,6 +741,11 @@ used in deep reinforcement learning literature.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="catalyst.utils.misc.is_exception">
+<code class="descclassname">catalyst.utils.misc.</code><code class="descname">is_exception</code><span class="sig-paren">(</span><em>ex: Any</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/misc.html#is_exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.is_exception" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="catalyst.utils.misc.make_tuple">
 <code class="descclassname">catalyst.utils.misc.</code><code class="descname">make_tuple</code><span class="sig-paren">(</span><em>tuple_like</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#make_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.make_tuple" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1098,7 +1104,7 @@ numbers. It does not affect the RandomState in <code class="docutils literal not
 <dl class="function">
 <dt id="catalyst.utils.seed.set_global_seed">
 <code class="descclassname">catalyst.utils.seed.</code><code class="descname">set_global_seed</code><span class="sig-paren">(</span><em>seed: int</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/seed.html#set_global_seed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.seed.set_global_seed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets random seed into PyTorch, TensorFlow, Numpy and Random</p>
+<dd><p>Sets random seed into PyTorch, TensorFlow, Numpy and Random.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>seed</strong> – random seed</p>
@@ -1108,7 +1114,7 @@ numbers. It does not affect the RandomState in <code class="docutils literal not
 
 <span class="target" id="module-catalyst.utils.serialization"></span><dl class="function">
 <dt id="catalyst.utils.serialization.deserialize">
-<code class="descclassname">catalyst.utils.serialization.</code><code class="descname">deserialize</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/serialization.html#deserialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.serialization.deserialize" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">catalyst.utils.serialization.</code><code class="descname">deserialize</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.serialization.deserialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deserialize bytes into an object using pyarrow</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1121,8 +1127,64 @@ numbers. It does not affect the RandomState in <code class="docutils literal not
 </dd></dl>
 
 <dl class="function">
+<dt id="catalyst.utils.serialization.pickle_deserialize">
+<code class="descclassname">catalyst.utils.serialization.</code><code class="descname">pickle_deserialize</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/serialization.html#pickle_deserialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.serialization.pickle_deserialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize bytes into an object using pickle</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>bytes</strong> – a bytes object containing serialized with pickle data.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns a value deserialized from the bytes-like object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.serialization.pickle_serialize">
+<code class="descclassname">catalyst.utils.serialization.</code><code class="descname">pickle_serialize</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/serialization.html#pickle_serialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.serialization.pickle_serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize the data into bytes using pickle</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – a value</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns a bytes object serialized with pickle data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.serialization.pyarrow_deserialize">
+<code class="descclassname">catalyst.utils.serialization.</code><code class="descname">pyarrow_deserialize</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/serialization.html#pyarrow_deserialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.serialization.pyarrow_deserialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize bytes into an object using pyarrow</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>bytes</strong> – a bytes object containing serialized with pyarrow data.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns a value deserialized from the bytes-like object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.serialization.pyarrow_serialize">
+<code class="descclassname">catalyst.utils.serialization.</code><code class="descname">pyarrow_serialize</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/serialization.html#pyarrow_serialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.serialization.pyarrow_serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize the data into bytes using pyarrow</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – a value</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns a bytes object serialized with pyarrow data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="catalyst.utils.serialization.serialize">
-<code class="descclassname">catalyst.utils.serialization.</code><code class="descname">serialize</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/serialization.html#serialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.serialization.serialize" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">catalyst.utils.serialization.</code><code class="descname">serialize</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.serialization.serialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Serialize the data into bytes using pyarrow</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1239,6 +1301,35 @@ dict of tensors, tuple of tensors to target device.
 <dt id="catalyst.utils.torch.get_activation_fn">
 <code class="descclassname">catalyst.utils.torch.</code><code class="descname">get_activation_fn</code><span class="sig-paren">(</span><em>activation: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_activation_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_activation_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.get_available_gpus">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">get_available_gpus</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_available_gpus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_available_gpus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Array of available GPU ids
+:returns: available GPU ids
+:rtype: iterable</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CUDA_VISIBLE_DEVICES&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0,2&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_available_gpus</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CUDA_VISIBLE_DEVICES&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0,-1,1&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_available_gpus</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CUDA_VISIBLE_DEVICES&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_available_gpus</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CUDA_VISIBLE_DEVICES&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;-1&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_available_gpus</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[]</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.torch.get_device">

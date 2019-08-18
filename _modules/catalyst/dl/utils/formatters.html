@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.utils.formatters &mdash; Catalyst 19.08 documentation</title>
+  <title>catalyst.dl.utils.formatters &mdash; Catalyst 19.08.4 documentation</title>
   
 
   
@@ -211,7 +211,7 @@
             <span class="c1"># Print LR in scientific format since</span>
             <span class="c1"># 4 decimal chars is not enough for LR</span>
             <span class="c1"># lower than 1e-4</span>
-            <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{name}</span><span class="s2">=</span><span class="si">{value:E}</span><span class="s2">&quot;</span>
+            <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{name}</span><span class="s2">=</span><span class="si">{value:1.3e}</span><span class="s2">&quot;</span>
 
         <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{name}</span><span class="s2">=</span><span class="si">{value:.4f}</span><span class="s2">&quot;</span>
 

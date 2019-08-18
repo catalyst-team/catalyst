@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.rl.core.sampler &mdash; Catalyst 19.08 documentation</title>
+  <title>catalyst.rl.core.sampler &mdash; Catalyst 19.08.4 documentation</title>
   
 
   
@@ -276,10 +276,10 @@
         <span class="k">if</span> <span class="n">filepath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">db_server</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">db_server</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">()</span>
+            <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">db_server</span><span class="o">.</span><span class="n">get_checkpoint</span><span class="p">()</span>
             <span class="k">while</span> <span class="n">checkpoint</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
-                <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">db_server</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">()</span>
+                <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">db_server</span><span class="o">.</span><span class="n">get_checkpoint</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
@@ -296,7 +296,7 @@
     <span class="k">def</span> <span class="nf">_store_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_server</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">db_server</span><span class="o">.</span><span class="n">push_trajectory</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="n">raw</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db_server</span><span class="o">.</span><span class="n">put_trajectory</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="n">raw</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -348,6 +348,8 @@
                 <span class="s2">&quot;time/step_time_sec&quot;</span><span class="p">,</span> <span class="n">elapsed_time</span> <span class="o">/</span> <span class="n">num_steps</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_index</span>
             <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 
     <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">_run_trajectory_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -403,7 +405,10 @@
 
 <div class="viewcode-block" id="Sampler.run"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.sampler.Sampler.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_start_db_loop</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_start_sample_loop</span><span class="p">()</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_sample_loop</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
 
 
 <div class="viewcode-block" id="ValidSampler"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.sampler.ValidSampler">[docs]</a><span class="k">class</span> <span class="nc">ValidSampler</span><span class="p">(</span><span class="n">Sampler</span><span class="p">):</span>
@@ -420,14 +425,14 @@
             <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">db_server</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">current_epoch</span> <span class="o">=</span> <span class="n">db_server</span><span class="o">.</span><span class="n">epoch</span>
-            <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">db_server</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">()</span>
+            <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">db_server</span><span class="o">.</span><span class="n">get_checkpoint</span><span class="p">()</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">db_server</span><span class="o">.</span><span class="n">training_enabled</span> \
                     <span class="ow">and</span> <span class="n">db_server</span><span class="o">.</span><span class="n">epoch</span> <span class="o">==</span> <span class="n">current_epoch</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
 
             <span class="k">while</span> <span class="n">checkpoint</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">db_server</span><span class="o">.</span><span class="n">epoch</span> <span class="o">&lt;=</span> <span class="n">current_epoch</span><span class="p">:</span>
                 <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
-                <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">db_server</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">()</span>
+                <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">db_server</span><span class="o">.</span><span class="n">get_checkpoint</span><span class="p">()</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">db_server</span><span class="o">.</span><span class="n">training_enabled</span> \
                         <span class="ow">and</span> <span class="n">db_server</span><span class="o">.</span><span class="n">epoch</span> <span class="o">==</span> <span class="n">current_epoch</span><span class="p">:</span>
@@ -518,7 +523,10 @@
             <span class="p">)</span>
 
 <div class="viewcode-block" id="ValidSampler.run"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.sampler.ValidSampler.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_start_sample_loop</span><span class="p">()</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_sample_loop</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
 
 
 <span class="k">def</span> <span class="nf">_db2sampler_loop</span><span class="p">(</span><span class="n">sampler</span><span class="p">:</span> <span class="n">Sampler</span><span class="p">):</span>

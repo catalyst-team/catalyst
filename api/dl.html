@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>DL &mdash; Catalyst 19.08 documentation</title>
+  <title>DL &mdash; Catalyst 19.08.4 documentation</title>
   
 
   
@@ -198,6 +198,7 @@ Must be extended before usage.</p>
 ——loader end
 —epoch end
 stage end</p>
+<p>exception – if an Exception was raised</p>
 <dl class="method">
 <dt id="catalyst.dl.core.callback.Callback.on_batch_end">
 <code class="descname">on_batch_end</code><span class="sig-paren">(</span><em>state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/core/callback.html#Callback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.core.callback.Callback.on_batch_end" title="Permalink to this definition">¶</a></dt>
@@ -216,6 +217,11 @@ stage end</p>
 <dl class="method">
 <dt id="catalyst.dl.core.callback.Callback.on_epoch_start">
 <code class="descname">on_epoch_start</code><span class="sig-paren">(</span><em>state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/core/callback.html#Callback.on_epoch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.core.callback.Callback.on_epoch_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.core.callback.Callback.on_exception">
+<code class="descname">on_exception</code><span class="sig-paren">(</span><em>state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/core/callback.html#Callback.on_exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.core.callback.Callback.on_exception" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -474,6 +480,11 @@ stage end</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="catalyst.dl.core.state.RunnerState.on_exception_post">
+<code class="descname">on_exception_post</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/core/state.html#RunnerState.on_exception_post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.core.state.RunnerState.on_exception_post" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="catalyst.dl.core.state.RunnerState.on_loader_end_post">
 <code class="descname">on_loader_end_post</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/core/state.html#RunnerState.on_loader_end_post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.core.state.RunnerState.on_loader_end_post" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -523,6 +534,11 @@ in checkpoint folder. Must ends on <code class="docutils literal notranslate"><s
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.checkpoint.CheckpointCallback.get_checkpoint_suffix">
+<code class="descname">get_checkpoint_suffix</code><span class="sig-paren">(</span><em>checkpoint: dict</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/catalyst/dl/callbacks/checkpoint.html#CheckpointCallback.get_checkpoint_suffix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.checkpoint.CheckpointCallback.get_checkpoint_suffix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="catalyst.dl.callbacks.checkpoint.CheckpointCallback.get_metric">
@@ -581,6 +597,11 @@ in checkpoint folder. Must ends on <code class="docutils literal notranslate"><s
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.checkpoint.IterationCheckpointCallback.get_checkpoint_suffix">
+<code class="descname">get_checkpoint_suffix</code><span class="sig-paren">(</span><em>checkpoint: dict</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/catalyst/dl/callbacks/checkpoint.html#IterationCheckpointCallback.get_checkpoint_suffix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.checkpoint.IterationCheckpointCallback.get_checkpoint_suffix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="catalyst.dl.callbacks.checkpoint.IterationCheckpointCallback.get_metric">
@@ -690,6 +711,11 @@ in checkpoint folder. Must ends on <code class="docutils literal notranslate"><s
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="catalyst.dl.callbacks.logging.VerboseLogger.on_exception">
+<code class="descname">on_exception</code><span class="sig-paren">(</span><em>state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#VerboseLogger.on_exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.VerboseLogger.on_exception" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="catalyst.dl.callbacks.logging.VerboseLogger.on_loader_end">
 <code class="descname">on_loader_end</code><span class="sig-paren">(</span><em>state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#VerboseLogger.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.VerboseLogger.on_loader_end" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -756,6 +782,22 @@ If none - logs everything.</p></li>
 <dl class="method">
 <dt id="catalyst.dl.callbacks.logging.TensorboardLogger.on_loader_start">
 <code class="descname">on_loader_start</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#TensorboardLogger.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.TensorboardLogger.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.logging.TensorboardLogger.on_stage_end">
+<code class="descname">on_stage_end</code><span class="sig-paren">(</span><em>state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#TensorboardLogger.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.TensorboardLogger.on_stage_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.callbacks.logging.RaiseExceptionLogger">
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.logging.</code><code class="descname">RaiseExceptionLogger</code><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#RaiseExceptionLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.RaiseExceptionLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.core.callback.Callback" title="catalyst.dl.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.core.callback.Callback</span></code></a></p>
+<dl class="method">
+<dt id="catalyst.dl.callbacks.logging.RaiseExceptionLogger.on_exception">
+<code class="descname">on_exception</code><span class="sig-paren">(</span><em>state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#RaiseExceptionLogger.on_exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.RaiseExceptionLogger.on_exception" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -849,7 +891,7 @@ for validation.</p></li>
 
 <dl class="staticmethod">
 <dt id="catalyst.dl.callbacks.optimizer.OptimizerCallback.grad_step">
-<em class="property">static </em><code class="descname">grad_step</code><span class="sig-paren">(</span><em>*</em>, <em>optimizer</em>, <em>optimizer_wd=0</em>, <em>grad_clip_fn=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/optimizer.html#OptimizerCallback.grad_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.optimizer.OptimizerCallback.grad_step" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">grad_step</code><span class="sig-paren">(</span><em>*</em>, <em>optimizer: torch.optim.optimizer.Optimizer</em>, <em>optimizer_wds: List[float] = 0</em>, <em>grad_clip_fn: Callable = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/optimizer.html#OptimizerCallback.grad_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.optimizer.OptimizerCallback.grad_step" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1397,6 +1439,24 @@ no need to use it directly!</p>
 <dd></dd></dl>
 
 <span class="target" id="module-catalyst.dl.utils.torch"></span><dl class="function">
+<dt id="catalyst.dl.utils.torch.prepare_cudnn">
+<code class="descclassname">catalyst.dl.utils.torch.</code><code class="descname">prepare_cudnn</code><span class="sig-paren">(</span><em>deterministic: bool = None</em>, <em>benchmark: bool = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/utils/torch.html#prepare_cudnn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.torch.prepare_cudnn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares CuDNN benchmark and sets CuDNN
+to be deterministic/non-deterministic mode</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>deterministic</strong> (<em>bool</em>) – deterministic mode if running in CuDNN backend.</p></li>
+<li><p><strong>benchmark</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> use CuDNN heuristics to figure out
+which algorithm will be most performant
+for your model architecture and input.
+Setting it to <code class="docutils literal notranslate"><span class="pre">False</span></code> may slow down your training.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="catalyst.dl.utils.torch.process_components">
 <code class="descclassname">catalyst.dl.utils.torch.</code><code class="descname">process_components</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module</em>, <em>criterion: torch.nn.modules.module.Module = None</em>, <em>optimizer: torch.optim.optimizer.Optimizer = None</em>, <em>scheduler: torch.optim.lr_scheduler._LRScheduler = None</em>, <em>distributed_params: Dict = None</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.nn.modules.module.Module, torch.nn.modules.module.Module, torch.optim.optimizer.Optimizer, torch.optim.lr_scheduler._LRScheduler, torch.device]<a class="reference internal" href="../_modules/catalyst/dl/utils/torch.html#process_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.torch.process_components" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1405,6 +1465,34 @@ no need to use it directly!</p>
 <dt id="catalyst.dl.utils.torch.get_loader">
 <code class="descclassname">catalyst.dl.utils.torch.</code><code class="descname">get_loader</code><span class="sig-paren">(</span><em>data_source</em>, <em>open_fn</em>, <em>dict_transform=None</em>, <em>dataset_cache_prob=-1</em>, <em>sampler=None</em>, <em>collate_fn=&lt;function default_collate&gt;</em>, <em>batch_size=32</em>, <em>num_workers=4</em>, <em>shuffle=False</em>, <em>drop_last=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils/torch.html#get_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.torch.get_loader" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.dl.utils.torch.process_model_params">
+<code class="descclassname">catalyst.dl.utils.torch.</code><code class="descname">process_model_params</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module</em>, <em>weight_decay: float = 0.0</em>, <em>no_bias_weight_decay: bool = True</em><span class="sig-paren">)</span> &#x2192; List[Union[torch.nn.parameter.Parameter, dict]]<a class="reference internal" href="../_modules/catalyst/dl/utils/torch.html#process_model_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.torch.process_model_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gains model parameters for <code class="docutils literal notranslate"><span class="pre">torch.optim.Optimizer</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – Model to process</p></li>
+<li><p><strong>weight_decay</strong> (<em>float</em>) – Optional weight decay</p></li>
+<li><p><strong>no_bias_weight_decay</strong> (<em>bool</em>) – If true, removes weight_decay
+for all <code class="docutils literal notranslate"><span class="pre">bias</span></code> parameters in the model</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>parameters for an optimizer</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>iterable</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ResnetUnet</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="n">process_model_params</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.0003</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <span class="target" id="module-catalyst.dl.utils.trace"></span><dl class="function">
 <dt id="catalyst.dl.utils.trace.trace_model">
