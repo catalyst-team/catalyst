@@ -7,6 +7,7 @@ from pathlib import Path
 from catalyst.utils.config import parse_args_uargs, dump_config
 from catalyst.utils import set_global_seed, boolean_flag
 from catalyst.utils.scripts import dump_code
+from catalyst.dl.utils import prepare_cudnn
 from catalyst.dl.utils.scripts import import_experiment_and_runner
 
 
@@ -47,6 +48,16 @@ def build_args(parser: ArgumentParser):
     parser.add_argument("--seed", type=int, default=42)
     boolean_flag(parser, "verbose", default=False)
     boolean_flag(parser, "check", default=False)
+    boolean_flag(
+        parser, "deterministic",
+        default=False,
+        help="Deterministic mode if running in CuDNN backend"
+    )
+    boolean_flag(
+        parser, "benchmark",
+        default=True,
+        help="Use CuDNN benchmark"
+    )
 
     return parser
 
@@ -61,6 +72,7 @@ def parse_args():
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
     set_global_seed(args.seed)
+    prepare_cudnn(args.deterministic, args.benchmark)
 
     Experiment, Runner = import_experiment_and_runner(Path(args.expdir))
 

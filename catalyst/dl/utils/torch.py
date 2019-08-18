@@ -57,7 +57,6 @@ def process_components(
     distributed_params = distributed_params or {}
     distributed_params = copy.deepcopy(distributed_params)
     device = utils.get_device()
-    prepare_cudnn()
 
     model = model.to(device)
 
