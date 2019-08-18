@@ -36,7 +36,7 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="License" href="license.html" />
+    <link rel="next" title="Apache License" href="license.html" />
     <link rel="prev" title="Examples" href="examples.html" /> 
 </head>
 
@@ -100,10 +100,14 @@
 <li class="toctree-l3"><a class="reference internal" href="#codestyle">Codestyle</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#check-that-you-have-written-working-docs">Check that you have written working docs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#to-build-docs-add-environment-variable-remove-builds-0">To build docs add environment variable REMOVE_BUILDS=0</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">Apache License</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
@@ -237,6 +241,35 @@ branch.</p></li>
 <p>Catalyst uses <a class="reference external" href="http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html">Google style</a> for formatting <a class="reference external" href="https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings">docstrings</a>. Length of line
 inside docstrings block must be limited to 80 characters to fit into
 Jupyter documentation popups.</p>
+<div class="section" id="check-that-you-have-written-working-docs">
+<h3>Check that you have written working docs<a class="headerlink" href="#check-that-you-have-written-working-docs" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make check-docs
+</pre></div>
+</div>
+<p>The command requires Sphinx and some sphinx-specific libraries.
+If you don’t want to install them, you may make a catalyst-dev container</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make docker-dev
+docker run <span class="se">\\</span>
+    -v <span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/:/workspace/ <span class="se">\\</span>
+    catalyst-dev:latest <span class="se">\\</span>
+    bash -c <span class="s2">&quot;make check-docs&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="to-build-docs-add-environment-variable-remove-builds-0">
+<h3>To build docs add environment variable REMOVE_BUILDS=0<a class="headerlink" href="#to-build-docs-add-environment-variable-remove-builds-0" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">REMOVE_BUILDS</span><span class="o">=</span><span class="m">0</span> make check-docs
+</pre></div>
+</div>
+<p>or through docker</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run <span class="se">\\</span>
+    -v <span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/:/workspace/ <span class="se">\\</span>
+    catalyst-dev:latest <span class="se">\\</span>
+    bash -c <span class="s2">&quot;REMOVE_BUILDS=0 make check-docs&quot;</span>
+</pre></div>
+</div>
+<p>The docs will be stored in <cite>builds/</cite> folder.</p>
+</div>
 </div>
 </div>
 
@@ -248,7 +281,7 @@ Jupyter documentation popups.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="license.html" class="btn btn-neutral float-right" title="License" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="license.html" class="btn btn-neutral float-right" title="Apache License" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="examples.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

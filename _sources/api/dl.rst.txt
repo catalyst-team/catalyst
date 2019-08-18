@@ -192,3 +192,54 @@ Criterion
     :members:
     :undoc-members:
     :show-inheritance:
+
+
+Meters
+--------------------
+
+The meters from torchnet.meters
+
+.. automodule:: catalyst.dl.meters.meter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.dl.meters.apmeter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.dl.meters.aucmeter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.dl.meters.averagevaluemeter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.dl.meters.classerrormeter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.dl.meters.confusionmeter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.dl.meters.mapmeter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.dl.meters.movingaveragevaluemeter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.dl.meters.msemeter
+    :members:
+    :undoc-members:
+    :show-inheritance:
