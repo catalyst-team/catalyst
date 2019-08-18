@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.callbacks.logging &mdash; Catalyst 19.08 documentation</title>
+  <title>catalyst.dl.callbacks.logging &mdash; Catalyst 19.08.4 documentation</title>
   
 
   
@@ -170,6 +170,7 @@
 
 <span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">RunnerState</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.utils.formatters</span> <span class="k">import</span> <span class="n">TxtMetricsFormatter</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="k">import</span> <span class="n">is_exception</span>
 
 
 <div class="viewcode-block" id="VerboseLogger"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.VerboseLogger">[docs]</a><span class="k">class</span> <span class="nc">VerboseLogger</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
@@ -203,7 +204,7 @@
 <div class="viewcode-block" id="VerboseLogger.on_batch_end"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.VerboseLogger.on_batch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">(</span>
             <span class="o">**</span><span class="p">{</span>
-                <span class="n">k</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:3.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="n">k</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:3.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mf">1e-3</span> <span class="k">else</span> <span class="s2">&quot;</span><span class="si">{:1.3e}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">batch_values</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_show</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
             <span class="p">}</span>
@@ -213,7 +214,16 @@
 <div class="viewcode-block" id="VerboseLogger.on_loader_end"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.VerboseLogger.on_loader_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="mi">0</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="VerboseLogger.on_exception"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.VerboseLogger.on_exception">[docs]</a>    <span class="k">def</span> <span class="nf">on_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
+        <span class="n">exception</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">exception</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_exception</span><span class="p">(</span><span class="n">exception</span><span class="p">):</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exception</span><span class="p">,</span> <span class="ne">KeyboardInterrupt</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;Early exiting&quot;</span><span class="p">)</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">need_reraise_exception</span> <span class="o">=</span> <span class="kc">False</span></div></div>
 
 
 <div class="viewcode-block" id="ConsoleLogger"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.ConsoleLogger">[docs]</a><span class="k">class</span> <span class="nc">ConsoleLogger</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
@@ -226,10 +236,10 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_logger</span><span class="p">(</span><span class="n">logdir</span><span class="p">):</span>
-        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;metrics&quot;</span><span class="p">)</span>
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;metrics_logger&quot;</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 
-        <span class="n">fh</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/metrics.txt&quot;</span><span class="p">)</span>
+        <span class="n">fh</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/log.txt&quot;</span><span class="p">)</span>
         <span class="n">fh</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
         <span class="n">ch</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
         <span class="n">ch</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
@@ -322,10 +332,29 @@
             <span class="n">metrics_</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">epoch_values</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_log_metrics</span><span class="p">(</span>
                 <span class="n">metrics</span><span class="o">=</span><span class="n">metrics_</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;/epoch&quot;</span>
-            <span class="p">)</span></div></div>
+            <span class="p">)</span>
+        <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="TensorboardLogger.on_stage_end"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.TensorboardLogger.on_stage_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;VerboseLogger&quot;</span><span class="p">,</span> <span class="s2">&quot;ConsoleLogger&quot;</span><span class="p">,</span> <span class="s2">&quot;TensorboardLogger&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="RaiseExceptionLogger"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.RaiseExceptionLogger">[docs]</a><span class="k">class</span> <span class="nc">RaiseExceptionLogger</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+<div class="viewcode-block" id="RaiseExceptionLogger.on_exception"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.RaiseExceptionLogger.on_exception">[docs]</a>    <span class="k">def</span> <span class="nf">on_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
+        <span class="n">exception</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">exception</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_exception</span><span class="p">(</span><span class="n">exception</span><span class="p">):</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">need_reraise_exception</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exception</span></div></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;VerboseLogger&quot;</span><span class="p">,</span> <span class="s2">&quot;ConsoleLogger&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TensorboardLogger&quot;</span><span class="p">,</span> <span class="s2">&quot;RaiseExceptionLogger&quot;</span>
+<span class="p">]</span>
 </pre></div>
 
            </div>

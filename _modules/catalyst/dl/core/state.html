@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.core.state &mdash; Catalyst 19.08 documentation</title>
+  <title>catalyst.dl.core.state &mdash; Catalyst 19.08.4 documentation</title>
   
 
   
@@ -161,7 +161,7 @@
             
   <h1>Source code for catalyst.dl.core.state</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">from</span> <span class="nn">torch.optim.optimizer</span> <span class="k">import</span> <span class="n">Optimizer</span>
 
@@ -197,7 +197,8 @@
         <span class="c1"># @TODO: refactor</span>
         <span class="c1"># hack to prevent cycle imports</span>
         <span class="kn">from</span> <span class="nn">..callbacks</span> <span class="k">import</span> <span class="p">(</span>
-            <span class="n">VerboseLogger</span><span class="p">,</span> <span class="n">ConsoleLogger</span><span class="p">,</span> <span class="n">TensorboardLogger</span>
+            <span class="n">VerboseLogger</span><span class="p">,</span> <span class="n">ConsoleLogger</span><span class="p">,</span>
+            <span class="n">TensorboardLogger</span><span class="p">,</span> <span class="n">RaiseExceptionLogger</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">logdir</span><span class="p">)</span> <span class="k">if</span> <span class="n">logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
@@ -232,12 +233,14 @@
             <span class="n">main_metric</span><span class="o">=</span><span class="n">main_metric</span><span class="p">,</span>
             <span class="n">minimize</span><span class="o">=</span><span class="n">minimize_metric</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">verbose</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">VerboseLogger</span><span class="p">())</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">stage</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">ConsoleLogger</span><span class="p">(),</span> <span class="n">TensorboardLogger</span><span class="p">()])</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">RaiseExceptionLogger</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="n">TimerManager</span><span class="p">()</span>
 
         <span class="c1"># base metrics</span>
@@ -253,6 +256,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">early_stop</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">exception</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">need_reraise_exception</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_freeze</span><span class="p">()</span>
 
@@ -321,7 +327,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_handle_runner_metrics</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">end_batch</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div></div>
+            <span class="n">logger</span><span class="o">.</span><span class="n">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RunnerState.on_exception_post"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_exception_post">[docs]</a>    <span class="k">def</span> <span class="nf">on_exception_post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">on_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;RunnerState&quot;</span><span class="p">]</span>

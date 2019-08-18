@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.rl.environment.gym &mdash; Catalyst 19.08 documentation</title>
+  <title>catalyst.rl.environment.gym &mdash; Catalyst 19.08.4 documentation</title>
   
 
   
@@ -185,8 +185,9 @@
         <span class="n">action_std</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">visualize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span>
+        <span class="n">sampler_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">visualize</span><span class="o">=</span><span class="n">visualize</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">visualize</span><span class="o">=</span><span class="n">visualize</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">sampler_id</span><span class="o">=</span><span class="n">sampler_id</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">env_name</span><span class="p">)</span>
         <span class="c1"># @TODO: add logic with registry and env_wrappers</span>

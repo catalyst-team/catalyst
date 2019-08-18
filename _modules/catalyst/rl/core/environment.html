@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.rl.core.environment &mdash; Catalyst 19.08 documentation</title>
+  <title>catalyst.rl.core.environment &mdash; Catalyst 19.08.4 documentation</title>
   
 
   
@@ -166,9 +166,10 @@
 
 <div class="viewcode-block" id="EnvironmentSpec"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.environment.EnvironmentSpec">[docs]</a><span class="k">class</span> <span class="nc">EnvironmentSpec</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visualize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visualize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="n">sampler_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_visualize</span> <span class="o">=</span> <span class="n">visualize</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_id</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">sampler_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">sampler_id</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">discrete_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>

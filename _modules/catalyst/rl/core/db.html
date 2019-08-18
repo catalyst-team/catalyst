@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.rl.core.db &mdash; Catalyst 19.08 documentation</title>
+  <title>catalyst.rl.core.db &mdash; Catalyst 19.08.4 documentation</title>
   
 
   
@@ -196,28 +196,28 @@
     <span class="k">def</span> <span class="nf">push_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="n">Message</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="DBSpec.push_trajectory"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.db.DBSpec.push_trajectory">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">push_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<div class="viewcode-block" id="DBSpec.put_trajectory"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.db.DBSpec.put_trajectory">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">put_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="DBSpec.get_trajectory"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.db.DBSpec.get_trajectory">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="DBSpec.clean_trajectories"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.db.DBSpec.clean_trajectories">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">clean_trajectories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DBSpec.del_trajectory"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.db.DBSpec.del_trajectory">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">del_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="DBSpec.save_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.db.DBSpec.save_checkpoint">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">save_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
+<div class="viewcode-block" id="DBSpec.put_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.db.DBSpec.put_checkpoint">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">put_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="DBSpec.load_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.db.DBSpec.load_checkpoint">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">load_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DBSpec.get_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.db.DBSpec.get_checkpoint">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="DBSpec.clean_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.db.DBSpec.clean_checkpoint">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">clean_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DBSpec.del_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.db.DBSpec.del_checkpoint">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">del_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span></div></div>
 </pre></div>
 

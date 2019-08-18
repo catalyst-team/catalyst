@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; Catalyst 19.08 documentation</title>
+  <title>Index &mdash; Catalyst 19.08.4 documentation</title>
   
 
   
@@ -551,14 +551,14 @@
 </li>
       <li><a href="api/rl.html#module-catalyst.rl.core.agent">catalyst.rl.core.agent (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/rl.html#module-catalyst.rl.core.algorithm">catalyst.rl.core.algorithm (module)</a>
 </li>
       <li><a href="api/rl.html#module-catalyst.rl.core.db">catalyst.rl.core.db (module)</a>
 </li>
       <li><a href="api/rl.html#module-catalyst.rl.core.environment">catalyst.rl.core.environment (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/rl.html#module-catalyst.rl.core.exploration">catalyst.rl.core.exploration (module)</a>
 </li>
       <li><a href="api/rl.html#module-catalyst.rl.core.policy_handler">catalyst.rl.core.policy_handler (module)</a>
@@ -659,22 +659,6 @@
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.checkpoint.CheckpointCallback">CheckpointCallback (class in catalyst.dl.callbacks.checkpoint)</a>
 </li>
-      <li><a href="api/rl.html#catalyst.rl.core.db.DBSpec.clean_checkpoint">clean_checkpoint() (catalyst.rl.core.db.DBSpec method)</a>
-
-      <ul>
-        <li><a href="api/rl.html#catalyst.rl.db.mongo.MongoDB.clean_checkpoint">(catalyst.rl.db.mongo.MongoDB method)</a>
-</li>
-        <li><a href="api/rl.html#catalyst.rl.db.redis.RedisDB.clean_checkpoint">(catalyst.rl.db.redis.RedisDB method)</a>
-</li>
-      </ul></li>
-      <li><a href="api/rl.html#catalyst.rl.core.db.DBSpec.clean_trajectories">clean_trajectories() (catalyst.rl.core.db.DBSpec method)</a>
-
-      <ul>
-        <li><a href="api/rl.html#catalyst.rl.db.mongo.MongoDB.clean_trajectories">(catalyst.rl.db.mongo.MongoDB method)</a>
-</li>
-        <li><a href="api/rl.html#catalyst.rl.db.redis.RedisDB.clean_trajectories">(catalyst.rl.db.redis.RedisDB method)</a>
-</li>
-      </ul></li>
       <li><a href="api/utils.html#catalyst.utils.dataset.column_fold_split">column_fold_split() (in module catalyst.utils.dataset)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.compression.compress">compress() (in module catalyst.utils.compression)</a>
@@ -737,18 +721,34 @@
 </li>
       <li><a href="api/utils.html#catalyst.utils.dataset.default_fold_split">default_fold_split() (in module catalyst.utils.dataset)</a>
 </li>
+      <li><a href="api/rl.html#catalyst.rl.core.db.DBSpec.del_checkpoint">del_checkpoint() (catalyst.rl.core.db.DBSpec method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.db.mongo.MongoDB.del_checkpoint">(catalyst.rl.db.mongo.MongoDB method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.db.redis.RedisDB.del_checkpoint">(catalyst.rl.db.redis.RedisDB method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/rl.html#catalyst.rl.core.db.DBSpec.del_trajectory">del_trajectory() (catalyst.rl.core.db.DBSpec method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.db.mongo.MongoDB.del_trajectory">(catalyst.rl.db.mongo.MongoDB method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.db.redis.RedisDB.del_trajectory">(catalyst.rl.db.redis.RedisDB method)</a>
+</li>
+      </ul></li>
       <li><a href="api/utils.html#catalyst.utils.serialization.deserialize">deserialize() (in module catalyst.utils.serialization)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.utils.criterion.dice.dice">dice() (in module catalyst.dl.utils.criterion.dice)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.dice.DiceCallback">DiceCallback (class in catalyst.dl.callbacks.metrics.dice)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.criterion.dice.DiceLoss">DiceLoss (class in catalyst.contrib.criterion.dice)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.numpy.dict2structed">dict2structed() (in module catalyst.utils.numpy)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/rl.html#catalyst.rl.core.db.DBSpec.Message.DISABLE_SAMPLING">DISABLE_SAMPLING (catalyst.rl.core.db.DBSpec.Message attribute)</a>
 </li>
       <li><a href="api/rl.html#catalyst.rl.core.db.DBSpec.Message.DISABLE_TRAINING">DISABLE_TRAINING (catalyst.rl.core.db.DBSpec.Message attribute)</a>
@@ -975,6 +975,8 @@
       </ul></li>
       <li><a href="api/utils.html#catalyst.utils.torch.get_activation_fn">get_activation_fn() (in module catalyst.utils.torch)</a>
 </li>
+      <li><a href="api/utils.html#catalyst.utils.torch.get_available_gpus">get_available_gpus() (in module catalyst.utils.torch)</a>
+</li>
       <li><a href="api/dl.html#catalyst.dl.core.experiment.Experiment.get_callbacks">get_callbacks() (catalyst.dl.core.experiment.Experiment method)</a>
 
       <ul>
@@ -983,6 +985,20 @@
         <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_callbacks">(catalyst.dl.experiment.config.ConfigExperiment method)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.experiment.supervised.SupervisedExperiment.get_callbacks">(catalyst.dl.experiment.supervised.SupervisedExperiment method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/rl.html#catalyst.rl.core.db.DBSpec.get_checkpoint">get_checkpoint() (catalyst.rl.core.db.DBSpec method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.db.mongo.MongoDB.get_checkpoint">(catalyst.rl.db.mongo.MongoDB method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.db.redis.RedisDB.get_checkpoint">(catalyst.rl.db.redis.RedisDB method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.checkpoint.CheckpointCallback.get_checkpoint_suffix">get_checkpoint_suffix() (catalyst.dl.callbacks.checkpoint.CheckpointCallback method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.checkpoint.IterationCheckpointCallback.get_checkpoint_suffix">(catalyst.dl.callbacks.checkpoint.IterationCheckpointCallback method)</a>
 </li>
       </ul></li>
       <li><a href="api/dl.html#catalyst.dl.core.experiment.Experiment.get_criterion">get_criterion() (catalyst.dl.core.experiment.Experiment method)</a>
@@ -1029,6 +1045,8 @@
         <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_loaders">(catalyst.dl.experiment.config.ConfigExperiment method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/contrib.html#catalyst.contrib.schedulers.onecycle.OneCycleLR.get_lr">get_lr() (catalyst.contrib.schedulers.onecycle.OneCycleLR method)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.checkpoint.CheckpointCallback.get_metric">get_metric() (catalyst.dl.callbacks.checkpoint.CheckpointCallback method)</a>
@@ -1037,8 +1055,6 @@
         <li><a href="api/dl.html#catalyst.dl.callbacks.checkpoint.IterationCheckpointCallback.get_metric">(catalyst.dl.callbacks.checkpoint.IterationCheckpointCallback method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/dl.html#catalyst.dl.core.experiment.Experiment.get_model">get_model() (catalyst.dl.core.experiment.Experiment method)</a>
 
       <ul>
@@ -1179,10 +1195,10 @@
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.inference.InferCallback">InferCallback (class in catalyst.dl.callbacks.inference)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/dl.html#catalyst.dl.callbacks.inference.InferMaskCallback">InferMaskCallback (class in catalyst.dl.callbacks.inference)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/dl.html#catalyst.dl.utils.criterion.iou.iou">iou() (in module catalyst.dl.utils.criterion.iou)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.iou.IouCallback">IouCallback (class in catalyst.dl.callbacks.metrics.iou)</a>
@@ -1190,6 +1206,8 @@
       <li><a href="api/contrib.html#catalyst.contrib.criterion.iou.IoULoss">IoULoss (class in catalyst.contrib.criterion.iou)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.compression.is_compressed">is_compressed() (in module catalyst.utils.compression)</a>
+</li>
+      <li><a href="api/utils.html#catalyst.utils.misc.is_exception">is_exception() (in module catalyst.utils.misc)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.ddp.is_wrapped_with_ddp">is_wrapped_with_ddp() (in module catalyst.utils.ddp)</a>
 </li>
@@ -1236,15 +1254,9 @@
       <li><a href="api/dl.html#catalyst.dl.callbacks.checkpoint.CheckpointCallback.load_checkpoint">load_checkpoint() (catalyst.dl.callbacks.checkpoint.CheckpointCallback static method)</a>
 
       <ul>
-        <li><a href="api/rl.html#catalyst.rl.core.db.DBSpec.load_checkpoint">(catalyst.rl.core.db.DBSpec method)</a>
-</li>
         <li><a href="api/rl.html#catalyst.rl.core.sampler.Sampler.load_checkpoint">(catalyst.rl.core.sampler.Sampler method)</a>
 </li>
         <li><a href="api/rl.html#catalyst.rl.core.sampler.ValidSampler.load_checkpoint">(catalyst.rl.core.sampler.ValidSampler method)</a>
-</li>
-        <li><a href="api/rl.html#catalyst.rl.db.mongo.MongoDB.load_checkpoint">(catalyst.rl.db.mongo.MongoDB method)</a>
-</li>
-        <li><a href="api/rl.html#catalyst.rl.db.redis.RedisDB.load_checkpoint">(catalyst.rl.db.redis.RedisDB method)</a>
 </li>
         <li><a href="api/utils.html#catalyst.utils.checkpoint.load_checkpoint">(in module catalyst.utils.checkpoint)</a>
 </li>
@@ -1465,6 +1477,16 @@
       </ul></li>
       <li><a href="api/dl.html#catalyst.dl.core.state.RunnerState.on_epoch_start_pre">on_epoch_start_pre() (catalyst.dl.core.state.RunnerState method)</a>
 </li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.logging.RaiseExceptionLogger.on_exception">on_exception() (catalyst.dl.callbacks.logging.RaiseExceptionLogger method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.logging.VerboseLogger.on_exception">(catalyst.dl.callbacks.logging.VerboseLogger method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.core.callback.Callback.on_exception">(catalyst.dl.core.callback.Callback method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.core.state.RunnerState.on_exception_post">on_exception_post() (catalyst.dl.core.state.RunnerState method)</a>
+</li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.inference.InferCallback.on_loader_end">on_loader_end() (catalyst.dl.callbacks.inference.InferCallback method)</a>
 
       <ul>
@@ -1513,6 +1535,8 @@
 
       <ul>
         <li><a href="api/dl.html#catalyst.dl.callbacks.logging.ConsoleLogger.on_stage_end">(catalyst.dl.callbacks.logging.ConsoleLogger method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.logging.TensorboardLogger.on_stage_end">(catalyst.dl.callbacks.logging.TensorboardLogger method)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.core.callback.Callback.on_stage_end">(catalyst.dl.core.callback.Callback method)</a>
 </li>
@@ -1605,6 +1629,10 @@
 </li>
       <li><a href="api/utils.html#catalyst.utils.config.parse_config_args">parse_config_args() (in module catalyst.utils.config)</a>
 </li>
+      <li><a href="api/utils.html#catalyst.utils.serialization.pickle_deserialize">pickle_deserialize() (in module catalyst.utils.serialization)</a>
+</li>
+      <li><a href="api/utils.html#catalyst.utils.serialization.pickle_serialize">pickle_serialize() (in module catalyst.utils.serialization)</a>
+</li>
       <li><a href="api/utils.html#catalyst.utils.visualization.plot_confusion_matrix">plot_confusion_matrix() (in module catalyst.utils.visualization)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.utils.visualization.plot_metrics">plot_metrics() (in module catalyst.dl.utils.visualization)</a>
@@ -1633,8 +1661,6 @@
       </ul></li>
       <li><a href="api/rl.html#catalyst.rl.onpolicy.algorithms.ppo.PPO">PPO (class in catalyst.rl.onpolicy.algorithms.ppo)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/dl.html#catalyst.dl.core.runner.Runner.predict_batch">predict_batch() (catalyst.dl.core.runner.Runner method)</a>
 
       <ul>
@@ -1642,6 +1668,10 @@
 </li>
       </ul></li>
       <li><a href="api/dl.html#catalyst.dl.runner.supervised.SupervisedRunner.predict_loader">predict_loader() (catalyst.dl.runner.supervised.SupervisedRunner method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/dl.html#catalyst.dl.utils.torch.prepare_cudnn">prepare_cudnn() (in module catalyst.dl.utils.torch)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.dataset.prepare_dataset_labeling">prepare_dataset_labeling() (in module catalyst.utils.dataset)</a>
 </li>
@@ -1681,6 +1711,8 @@
       </ul></li>
       <li><a href="api/dl.html#catalyst.dl.utils.torch.process_components">process_components() (in module catalyst.dl.utils.torch)</a>
 </li>
+      <li><a href="api/dl.html#catalyst.dl.utils.torch.process_model_params">process_model_params() (in module catalyst.dl.utils.torch)</a>
+</li>
       <li><a href="api/contrib.html#catalyst.contrib.models.segmentation.psp.PSPnet">PSPnet (class in catalyst.contrib.models.segmentation.psp)</a>
 </li>
       <li><a href="api/rl.html#catalyst.rl.core.db.DBSpec.push_message">push_message() (catalyst.rl.core.db.DBSpec method)</a>
@@ -1691,20 +1723,34 @@
         <li><a href="api/rl.html#catalyst.rl.db.redis.RedisDB.push_message">(catalyst.rl.db.redis.RedisDB method)</a>
 </li>
       </ul></li>
-      <li><a href="api/rl.html#catalyst.rl.core.db.DBSpec.push_trajectory">push_trajectory() (catalyst.rl.core.db.DBSpec method)</a>
+      <li><a href="api/rl.html#catalyst.rl.core.db.DBSpec.put_checkpoint">put_checkpoint() (catalyst.rl.core.db.DBSpec method)</a>
 
       <ul>
-        <li><a href="api/rl.html#catalyst.rl.db.mongo.MongoDB.push_trajectory">(catalyst.rl.db.mongo.MongoDB method)</a>
+        <li><a href="api/rl.html#catalyst.rl.db.mongo.MongoDB.put_checkpoint">(catalyst.rl.db.mongo.MongoDB method)</a>
 </li>
-        <li><a href="api/rl.html#catalyst.rl.db.redis.RedisDB.push_trajectory">(catalyst.rl.db.redis.RedisDB method)</a>
+        <li><a href="api/rl.html#catalyst.rl.db.redis.RedisDB.put_checkpoint">(catalyst.rl.db.redis.RedisDB method)</a>
 </li>
       </ul></li>
+      <li><a href="api/rl.html#catalyst.rl.core.db.DBSpec.put_trajectory">put_trajectory() (catalyst.rl.core.db.DBSpec method)</a>
+
+      <ul>
+        <li><a href="api/rl.html#catalyst.rl.db.mongo.MongoDB.put_trajectory">(catalyst.rl.db.mongo.MongoDB method)</a>
+</li>
+        <li><a href="api/rl.html#catalyst.rl.db.redis.RedisDB.put_trajectory">(catalyst.rl.db.redis.RedisDB method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/utils.html#catalyst.utils.serialization.pyarrow_deserialize">pyarrow_deserialize() (in module catalyst.utils.serialization)</a>
+</li>
+      <li><a href="api/utils.html#catalyst.utils.serialization.pyarrow_serialize">pyarrow_serialize() (in module catalyst.utils.serialization)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.logging.RaiseExceptionLogger">RaiseExceptionLogger (class in catalyst.dl.callbacks.logging)</a>
+</li>
       <li><a href="api/utils.html#catalyst.utils.pandas.read_csv_data">read_csv_data() (in module catalyst.utils.pandas)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.pandas.read_multiple_dataframes">read_multiple_dataframes() (in module catalyst.utils.pandas)</a>
@@ -1787,15 +1833,9 @@
         <li><a href="api/rl.html#catalyst.rl.db.redis.RedisDB.sampling_enabled">(catalyst.rl.db.redis.RedisDB attribute)</a>
 </li>
       </ul></li>
-      <li><a href="api/rl.html#catalyst.rl.core.db.DBSpec.save_checkpoint">save_checkpoint() (catalyst.rl.core.db.DBSpec method)</a>
+      <li><a href="api/rl.html#catalyst.rl.core.sampler.ValidSampler.save_checkpoint">save_checkpoint() (catalyst.rl.core.sampler.ValidSampler method)</a>
 
       <ul>
-        <li><a href="api/rl.html#catalyst.rl.core.sampler.ValidSampler.save_checkpoint">(catalyst.rl.core.sampler.ValidSampler method)</a>
-</li>
-        <li><a href="api/rl.html#catalyst.rl.db.mongo.MongoDB.save_checkpoint">(catalyst.rl.db.mongo.MongoDB method)</a>
-</li>
-        <li><a href="api/rl.html#catalyst.rl.db.redis.RedisDB.save_checkpoint">(catalyst.rl.db.redis.RedisDB method)</a>
-</li>
         <li><a href="api/utils.html#catalyst.utils.checkpoint.save_checkpoint">(in module catalyst.utils.checkpoint)</a>
 </li>
       </ul></li>
@@ -1835,8 +1875,6 @@
 </li>
       <li><a href="api/dl.html#catalyst.dl.utils.criterion.focal.sigmoid_focal_loss">sigmoid_focal_loss() (in module catalyst.dl.utils.criterion.focal)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/utils.html#catalyst.utils.torch.soft_update">soft_update() (in module catalyst.utils.torch)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.dataset.split_dataframe">split_dataframe() (in module catalyst.utils.dataset)</a>
@@ -1845,6 +1883,8 @@
         <li><a href="api/utils.html#catalyst.utils.pandas.split_dataframe">(in module catalyst.utils.pandas)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/utils.html#catalyst.utils.dataset.split_dataset">split_dataset() (in module catalyst.utils.dataset)</a>
 </li>
       <li><a href="api/rl.html#catalyst.rl.agent.policy.SquashingGaussPolicy">SquashingGaussPolicy (class in catalyst.rl.agent.policy)</a>

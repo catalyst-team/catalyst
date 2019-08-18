@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.torch &mdash; Catalyst 19.08 documentation</title>
+  <title>catalyst.utils.torch &mdash; Catalyst 19.08.4 documentation</title>
   
 
   
@@ -161,6 +161,7 @@
             
   <h1>Source code for catalyst.utils.torch</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Iterable</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">safitty</span>
 <span class="kn">import</span> <span class="nn">torch</span>
@@ -267,6 +268,43 @@
 
 <div class="viewcode-block" id="get_device"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_device">[docs]</a><span class="k">def</span> <span class="nf">get_device</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_available_gpus"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_available_gpus">[docs]</a><span class="k">def</span> <span class="nf">get_available_gpus</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Array of available GPU ids</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        iterable: available GPU ids</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;0,2&quot;</span>
+<span class="sd">        &gt;&gt;&gt; get_available_gpus()</span>
+<span class="sd">        &gt;&gt;&gt; [0, 2]</span>
+
+<span class="sd">        &gt;&gt;&gt; os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;0,-1,1&quot;</span>
+<span class="sd">        &gt;&gt;&gt; get_available_gpus()</span>
+<span class="sd">        &gt;&gt;&gt; [0]</span>
+
+<span class="sd">        &gt;&gt;&gt; os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; get_available_gpus()</span>
+<span class="sd">        &gt;&gt;&gt; []</span>
+
+<span class="sd">        &gt;&gt;&gt; os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;-1&quot;</span>
+<span class="sd">        &gt;&gt;&gt; get_available_gpus()</span>
+<span class="sd">        &gt;&gt;&gt; []</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;CUDA_VISIBLE_DEVICES&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CUDA_VISIBLE_DEVICES&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">id_</span><span class="p">)</span> <span class="k">for</span> <span class="n">id_</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">if</span> <span class="n">id_</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+        <span class="c1"># invisible GPUs</span>
+        <span class="c1"># https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#env-vars</span>
+        <span class="k">if</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">return</span> <span class="n">result</span></div>
 
 
 <div class="viewcode-block" id="get_activation_fn"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_activation_fn">[docs]</a><span class="k">def</span> <span class="nf">get_activation_fn</span><span class="p">(</span><span class="n">activation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>

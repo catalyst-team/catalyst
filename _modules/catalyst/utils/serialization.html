@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.serialization &mdash; Catalyst 19.08 documentation</title>
+  <title>catalyst.utils.serialization &mdash; Catalyst 19.08.4 documentation</title>
   
 
   
@@ -160,10 +160,23 @@
            <div itemprop="articleBody">
             
   <h1>Source code for catalyst.utils.serialization</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pyarrow</span>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pyarrow</span>
+    <span class="n">PYARROW_ENABLED</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+        <span class="s2">&quot;pyarrow not available, switching to pickle. &quot;</span>
+        <span class="s2">&quot;To install pyarrow, run `pip install pyarrow`.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">PYARROW_ENABLED</span> <span class="o">=</span> <span class="kc">False</span>
 
 
-<div class="viewcode-block" id="serialize"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.serialization.serialize">[docs]</a><span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="pyarrow_serialize"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.serialization.pyarrow_serialize">[docs]</a><span class="k">def</span> <span class="nf">pyarrow_serialize</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Serialize the data into bytes using pyarrow</span>
 
@@ -176,7 +189,7 @@
     <span class="k">return</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">to_buffer</span><span class="p">()</span><span class="o">.</span><span class="n">to_pybytes</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="deserialize"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.serialization.deserialize">[docs]</a><span class="k">def</span> <span class="nf">deserialize</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="pyarrow_deserialize"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.serialization.pyarrow_deserialize">[docs]</a><span class="k">def</span> <span class="nf">pyarrow_deserialize</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Deserialize bytes into an object using pyarrow</span>
 
@@ -187,6 +200,40 @@
 <span class="sd">        Returns a value deserialized from the bytes-like object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="pickle_serialize"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.serialization.pickle_serialize">[docs]</a><span class="k">def</span> <span class="nf">pickle_serialize</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serialize the data into bytes using pickle</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data: a value</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Returns a bytes object serialized with pickle data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="pickle_deserialize"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.serialization.pickle_deserialize">[docs]</a><span class="k">def</span> <span class="nf">pickle_deserialize</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Deserialize bytes into an object using pickle</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bytes: a bytes object containing serialized with pickle data.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Returns a value deserialized from the bytes-like object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="n">PYARROW_ENABLED</span><span class="p">:</span>
+    <span class="n">serialize</span> <span class="o">=</span> <span class="n">pyarrow_serialize</span>
+    <span class="n">deserialize</span> <span class="o">=</span> <span class="n">pyarrow_deserialize</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">serialize</span> <span class="o">=</span> <span class="n">pickle_serialize</span>
+    <span class="n">deserialize</span> <span class="o">=</span> <span class="n">pickle_deserialize</span>
 </pre></div>
 
            </div>

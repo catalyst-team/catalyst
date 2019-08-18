@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.experiment.config &mdash; Catalyst 19.08 documentation</title>
+  <title>catalyst.dl.experiment.config &mdash; Catalyst 19.08.4 documentation</title>
   
 
   
@@ -176,7 +176,8 @@
 <span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="k">import</span> <span class="n">merge_dicts</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.hash</span> <span class="k">import</span> <span class="n">get_short_hash</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">Callback</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.utils.torch</span> <span class="k">import</span> <span class="n">_Model</span><span class="p">,</span> <span class="n">_Criterion</span><span class="p">,</span> <span class="n">_Optimizer</span><span class="p">,</span> <span class="n">_Scheduler</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.utils.torch</span> <span class="k">import</span> <span class="n">_Model</span><span class="p">,</span> <span class="n">_Criterion</span><span class="p">,</span> <span class="n">_Optimizer</span><span class="p">,</span> \
+    <span class="n">_Scheduler</span><span class="p">,</span> <span class="n">process_model_params</span>
 
 
 <div class="viewcode-block" id="ConfigExperiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment">[docs]</a><span class="k">class</span> <span class="nc">ConfigExperiment</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
@@ -324,10 +325,15 @@
         <span class="k">return</span> <span class="n">optimizer</span>
 
 <div class="viewcode-block" id="ConfigExperiment.get_optimizer"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_optimizer">[docs]</a>    <span class="k">def</span> <span class="nf">get_optimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Optimizer</span><span class="p">:</span>
-        <span class="n">model_params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
         <span class="n">optimizer_params</span> <span class="o">=</span> \
             <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;optimizer_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
 
+        <span class="n">weight_decay</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">optimizer_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;weight_decay&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">no_bias_weight_decay</span> <span class="o">=</span> \
+            <span class="n">optimizer_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;no_bias_weight_decay&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">model_params</span> <span class="o">=</span> <span class="n">process_model_params</span><span class="p">(</span>
+            <span class="n">model</span><span class="p">,</span> <span class="n">weight_decay</span><span class="p">,</span> <span class="n">no_bias_weight_decay</span>
+        <span class="p">)</span>
         <span class="c1"># Linear scaling rule from https://arxiv.org/pdf/1706.02677.pdf</span>
         <span class="n">lr_scaling_params</span> <span class="o">=</span> <span class="n">optimizer_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;lr_linear_scaling&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">lr_scaling_params</span><span class="p">:</span>

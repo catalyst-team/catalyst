@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.config &mdash; Catalyst 19.08 documentation</title>
+  <title>catalyst.utils.config &mdash; Catalyst 19.08.4 documentation</title>
   
 
   
@@ -168,7 +168,7 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
-
+<span class="kn">from</span> <span class="nn">tensorboardX</span> <span class="k">import</span> <span class="n">SummaryWriter</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="k">import</span> <span class="n">merge_dicts</span>
 
 
@@ -222,7 +222,13 @@
     <span class="k">for</span> <span class="n">config_path_in</span> <span class="ow">in</span> <span class="n">configs_path</span><span class="p">:</span>
         <span class="n">config_name</span> <span class="o">=</span> <span class="n">config_path_in</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">config_path_out</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{config_dir}</span><span class="s2">/</span><span class="si">{config_name}</span><span class="s2">&quot;</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">config_path_in</span><span class="p">,</span> <span class="n">config_path_out</span><span class="p">)</span></div>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">config_path_in</span><span class="p">,</span> <span class="n">config_path_out</span><span class="p">)</span>
+
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">config_dir</span><span class="p">)</span>
+    <span class="n">config_str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">experiment_config</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">config_str</span> <span class="o">=</span> <span class="n">config_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="n">config_str</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="parse_config_args"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.config.parse_config_args">[docs]</a><span class="k">def</span> <span class="nf">parse_config_args</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">unknown_args</span><span class="p">):</span>
