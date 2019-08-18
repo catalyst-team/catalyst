@@ -3,7 +3,7 @@ from time import time
 from numbers import Number
 from typing import Any, Dict
 
-from torchnet.meter import AverageValueMeter
+from catalyst.dl.meters import AverageValueMeter
 
 
 class TimerManager:
