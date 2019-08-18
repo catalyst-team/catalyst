@@ -49,12 +49,12 @@ def build_args(parser: ArgumentParser):
     boolean_flag(parser, "check", default=False)
     boolean_flag(
         parser, "deterministic",
-        default=False,
+        default=None,
         help="Deterministic mode if running in CuDNN backend"
     )
     boolean_flag(
         parser, "benchmark",
-        default=True,
+        default=None,
         help="Use CuDNN benchmark"
     )
 
