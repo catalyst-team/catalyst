@@ -5,9 +5,8 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 from catalyst.utils.config import parse_args_uargs, dump_config
-from catalyst.utils import set_global_seed, boolean_flag
+from catalyst.utils import set_global_seed, boolean_flag, prepare_cudnn
 from catalyst.utils.scripts import dump_code
-from catalyst.dl.utils import prepare_cudnn
 from catalyst.dl.utils.scripts import import_experiment_and_runner
 
 

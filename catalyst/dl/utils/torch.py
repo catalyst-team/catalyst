@@ -1,12 +1,8 @@
-from typing import Tuple, Dict, List, Union
-import os
+from typing import Tuple, Dict
 import copy
-import collections
-import re
 
 import torch
 from torch import nn, optim
-import torch.backends.cudnn as cudnn
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
 from catalyst.dl import utils
@@ -16,35 +12,6 @@ _Criterion = nn.Module
 _Optimizer = optim.Optimizer
 # noinspection PyProtectedMember
 _Scheduler = optim.lr_scheduler._LRScheduler
-
-
-def prepare_cudnn(
-    deterministic: bool = None,
-    benchmark: bool = None
-) -> None:
-    """
-    Prepares CuDNN benchmark and sets CuDNN
-    to be deterministic/non-deterministic mode
-
-    Args:
-        deterministic (bool): deterministic mode if running in CuDNN backend.
-        benchmark (bool): If ``True`` use CuDNN heuristics to figure out
-            which algorithm will be most performant
-            for your model architecture and input.
-            Setting it to ``False`` may slow down your training.
-    """
-    if torch.cuda.is_available():
-        # CuDNN reproducibility
-        # https://pytorch.org/docs/stable/notes/randomness.html#cudnn
-        if deterministic is None:
-            deterministic = \
-                os.environ.get("CUDNN_DETERMINISTIC", "False") == "True"
-        cudnn.deterministic = deterministic
-
-        # https://discuss.pytorch.org/t/how-should-i-disable-using-cudnn-in-my-code/38053/4
-        if benchmark is None:
-            benchmark = os.environ.get("CUDNN_BENCHMARK", "True") == "True"
-        cudnn.benchmark = benchmark
 
 
 def process_components(
@@ -124,59 +91,7 @@ def get_loader(
     return loader
 
 
-def process_model_params(
-    model: _Model,
-    layerwise_params: Dict[str, Dict] = None,
-    no_bias_weight_decay: bool = True,
-    lr_scaling: float = 1.0
-) -> List[Union[torch.nn.Parameter, dict]]:
-    """
-    Gains model parameters for ``torch.optim.Optimizer``
-
-    Args:
-        model (torch.nn.Module): Model to process
-        layerwise_params (Dict): Order-sensitive dict where
-            each key is regex pattern and values are layer-wise options
-            for layers matching with a pattern
-        no_bias_weight_decay (bool): If true, removes weight_decay
-            for all ``bias`` parameters in the model
-        lr_scaling (float): layer-wise learning rate scaling,
-            if 1.0, learning rates will not be scaled
-
-    Returns:
-        iterable: parameters for an optimizer
-
-    Examples:
-        >>> model = ResnetUnet()
-        >>> params = process_model_params(model)
-        >>> optimizer = torch.optim.Adam(params, lr=0.0003)
-    """
-    params = list(model.named_parameters())
-    layerwise_params = layerwise_params or collections.OrderedDict()
-
-    model_params = []
-    for name, parameters in params:
-        options = {}
-        for pattern, options_ in layerwise_params.items():
-            if re.match(pattern, name) is not None:
-                # all new LR rules write on top of the old ones
-                options = utils.merge_dicts(options, options_)
-
-        # no bias decay from https://arxiv.org/abs/1812.01187
-        if no_bias_weight_decay and name.endswith("bias"):
-            options["weight_decay"] = 0.0
-
-        # lr linear scaling from https://arxiv.org/pdf/1706.02677.pdf
-        if "lr" in options:
-            options["lr"] *= lr_scaling
-
-        model_params.append({"params": parameters, **options})
-
-    return model_params
-
-
 __all__ = [
-    "prepare_cudnn",
-    "process_components", "get_loader", "process_model_params",
+    "process_components", "get_loader",
     "_Model", "_Criterion", "_Optimizer", "_Scheduler"
 ]
