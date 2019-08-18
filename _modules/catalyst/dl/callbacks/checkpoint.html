@@ -88,7 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../info/examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../info/contributing.html">Contribution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../info/license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/license.html">Apache License</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
@@ -208,33 +208,34 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_exception</span><span class="p">(</span><span class="n">exception</span><span class="p">):</span>
             <span class="k">return</span>
 
-        <span class="n">valid_metrics</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">valid_values</span>
-        <span class="n">epoch_metrics</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">epoch_values</span>
-
-        <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">pack_checkpoint</span><span class="p">(</span>
-            <span class="n">model</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
-            <span class="n">criterion</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">criterion</span><span class="p">,</span>
-            <span class="n">optimizer</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span>
-            <span class="n">scheduler</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">scheduler</span><span class="p">,</span>
-            <span class="n">epoch_metrics</span><span class="o">=</span><span class="n">epoch_metrics</span><span class="p">,</span>
-            <span class="n">valid_metrics</span><span class="o">=</span><span class="n">valid_metrics</span><span class="p">,</span>
-            <span class="n">stage</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">stage</span><span class="p">,</span>
-            <span class="n">epoch</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span>
-            <span class="n">checkpoint_data</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">checkpoint_data</span>
-        <span class="p">)</span>
-
-        <span class="n">suffix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_checkpoint_suffix</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span>
-        <span class="n">suffix</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{suffix}</span><span class="s2">.exception_</span><span class="si">{exception.__class__.__name__}</span><span class="s2">&quot;</span>
-        <span class="n">utils</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span>
-            <span class="n">logdir</span><span class="o">=</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{state.logdir}</span><span class="s2">/checkpoints/&quot;</span><span class="p">,</span>
-            <span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span>
-            <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
-            <span class="n">is_best</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">is_last</span><span class="o">=</span><span class="kc">False</span>
-        <span class="p">)</span>
-        <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span>
-        <span class="n">metrics</span><span class="p">[</span><span class="n">suffix</span><span class="p">]</span> <span class="o">=</span> <span class="n">valid_metrics</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">save_metric</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">valid_metrics</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">valid_values</span>
+            <span class="n">epoch_metrics</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">epoch_values</span>
+            <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">pack_checkpoint</span><span class="p">(</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+                <span class="n">criterion</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">criterion</span><span class="p">,</span>
+                <span class="n">optimizer</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span>
+                <span class="n">scheduler</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">scheduler</span><span class="p">,</span>
+                <span class="n">epoch_metrics</span><span class="o">=</span><span class="n">epoch_metrics</span><span class="p">,</span>
+                <span class="n">valid_metrics</span><span class="o">=</span><span class="n">valid_metrics</span><span class="p">,</span>
+                <span class="n">stage</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">stage</span><span class="p">,</span>
+                <span class="n">epoch</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span>
+                <span class="n">checkpoint_data</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">checkpoint_data</span>
+            <span class="p">)</span>
+            <span class="n">suffix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_checkpoint_suffix</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span>
+            <span class="n">suffix</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{suffix}</span><span class="s2">.exception_</span><span class="si">{exception.__class__.__name__}</span><span class="s2">&quot;</span>
+            <span class="n">utils</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span>
+                <span class="n">logdir</span><span class="o">=</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{state.logdir}</span><span class="s2">/checkpoints/&quot;</span><span class="p">,</span>
+                <span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
+                <span class="n">is_best</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">is_last</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+            <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span>
+            <span class="n">metrics</span><span class="p">[</span><span class="n">suffix</span><span class="p">]</span> <span class="o">=</span> <span class="n">valid_metrics</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_metric</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
 
 
 <div class="viewcode-block" id="CheckpointCallback"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.checkpoint.CheckpointCallback">[docs]</a><span class="k">class</span> <span class="nc">CheckpointCallback</span><span class="p">(</span><span class="n">BaseCheckpointCallback</span><span class="p">):</span>

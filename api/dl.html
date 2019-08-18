@@ -37,7 +37,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="RL" href="rl.html" />
-    <link rel="prev" title="License" href="../info/license.html" /> 
+    <link rel="prev" title="Apache License" href="../info/license.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -90,7 +90,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../info/examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../info/contributing.html">Contribution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../info/license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../info/license.html">Apache License</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul class="current">
@@ -106,6 +106,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-catalyst.dl.utils.criterion.accuracy">Criterion</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#meters">Meters</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="rl.html">RL</a></li>
@@ -1468,15 +1469,19 @@ Setting it to <code class="docutils literal notranslate"><span class="pre">False
 
 <dl class="function">
 <dt id="catalyst.dl.utils.torch.process_model_params">
-<code class="descclassname">catalyst.dl.utils.torch.</code><code class="descname">process_model_params</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module</em>, <em>weight_decay: float = 0.0</em>, <em>no_bias_weight_decay: bool = True</em><span class="sig-paren">)</span> &#x2192; List[Union[torch.nn.parameter.Parameter, dict]]<a class="reference internal" href="../_modules/catalyst/dl/utils/torch.html#process_model_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.torch.process_model_params" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">catalyst.dl.utils.torch.</code><code class="descname">process_model_params</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module</em>, <em>layerwise_params: Dict[str</em>, <em>Dict] = None</em>, <em>no_bias_weight_decay: bool = True</em>, <em>lr_scaling: float = 1.0</em><span class="sig-paren">)</span> &#x2192; List[Union[torch.nn.parameter.Parameter, dict]]<a class="reference internal" href="../_modules/catalyst/dl/utils/torch.html#process_model_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.torch.process_model_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gains model parameters for <code class="docutils literal notranslate"><span class="pre">torch.optim.Optimizer</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<em>torch.nn.Module</em>) – Model to process</p></li>
-<li><p><strong>weight_decay</strong> (<em>float</em>) – Optional weight decay</p></li>
+<li><p><strong>layerwise_params</strong> (<em>Dict</em>) – Order-sensitive dict where
+each key is regex pattern and values are layer-wise options
+for layers matching with a pattern</p></li>
 <li><p><strong>no_bias_weight_decay</strong> (<em>bool</em>) – If true, removes weight_decay
 for all <code class="docutils literal notranslate"><span class="pre">bias</span></code> parameters in the model</p></li>
+<li><p><strong>lr_scaling</strong> (<em>float</em>) – layer-wise learning rate scaling,
+if 1.0, learning rates will not be scaled</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1487,8 +1492,12 @@ for all <code class="docutils literal notranslate"><span class="pre">bias</span>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ResnetUnet</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="n">process_model_params</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">catalyst</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">segmentation</span><span class="o">.</span><span class="n">ResnetUnet</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">layerwise_params</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s2">&quot;conv1.*&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mf">0.0003</span><span class="p">)),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s2">&quot;conv.*&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">0.002</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="n">process_model_params</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">layerwise_params</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.0003</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1741,6 +1750,298 @@ Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
 
 </div>
 </div>
+<div class="section" id="meters">
+<h2>Meters<a class="headerlink" href="#meters" title="Permalink to this headline">¶</a></h2>
+<p>The meters from torchnet.meters</p>
+<span class="target" id="module-catalyst.dl.meters.meter"></span><dl class="class">
+<dt id="catalyst.dl.meters.meter.Meter">
+<em class="property">class </em><code class="descclassname">catalyst.dl.meters.meter.</code><code class="descname">Meter</code><a class="reference internal" href="../_modules/catalyst/dl/meters/meter.html#Meter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.meter.Meter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Meters provide a way to keep track of important statistics in an online
+manner.</p>
+<p>This class is abstract, but provides a standard interface for all meters to
+follow.</p>
+<dl class="method">
+<dt id="catalyst.dl.meters.meter.Meter.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/meter.html#Meter.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.meter.Meter.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log a new value to the meter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – Next restult to include.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.meters.meter.Meter.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/meter.html#Meter.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.meter.Meter.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the meter to default settings.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.meters.meter.Meter.value">
+<code class="descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/meter.html#Meter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.meter.Meter.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of the meter in the current state.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-catalyst.dl.meters.apmeter"></span><dl class="class">
+<dt id="catalyst.dl.meters.apmeter.APMeter">
+<em class="property">class </em><code class="descclassname">catalyst.dl.meters.apmeter.</code><code class="descname">APMeter</code><a class="reference internal" href="../_modules/catalyst/dl/meters/apmeter.html#APMeter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.apmeter.APMeter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.meters.meter.Meter" title="catalyst.dl.meters.meter.Meter"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.meters.meter.Meter</span></code></a></p>
+<p>The APMeter measures the average precision per class.</p>
+<p>The APMeter is designed to operate on <cite>NxK</cite> Tensors <cite>output</cite> and
+<cite>target</cite>, and optionally a <cite>Nx1</cite> Tensor weight where (1) the <cite>output</cite>
+contains model output scores for <cite>N</cite> examples and <cite>K</cite> classes that ought to
+be higher when the model is more convinced that the example should be
+positively labeled, and smaller when the model believes the example should
+be negatively labeled (for instance, the output of a sigmoid function); (2)
+the <cite>target</cite> contains only values 0 (for negative examples) and 1
+(for positive examples); and (3) the <cite>weight</cite> ( &gt; 0) represents weight for
+each sample.</p>
+<dl class="method">
+<dt id="catalyst.dl.meters.apmeter.APMeter.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>output</em>, <em>target</em>, <em>weight=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/apmeter.html#APMeter.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.apmeter.APMeter.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new observation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output</strong> (<em>Tensor</em>) – NxK tensor that for each of the N examples
+indicates the probability of the example belonging to each of
+the K classes, according to the model. The probabilities should
+sum to one over all classes</p></li>
+<li><p><strong>target</strong> (<em>Tensor</em>) – binary NxK tensort that encodes which of the K
+classes are associated with the N-th input
+(eg: a row [0, 1, 0, 1] indicates that the example is
+associated with classes 2 and 4)</p></li>
+<li><p><strong>weight</strong> (<em>optional</em><em>, </em><em>Tensor</em>) – Nx1 tensor representing the weight for
+each example (each weight &gt; 0)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.meters.apmeter.APMeter.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/apmeter.html#APMeter.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.apmeter.APMeter.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the meter with empty member variables</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.meters.apmeter.APMeter.value">
+<code class="descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/apmeter.html#APMeter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.apmeter.APMeter.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the model”s average precision for each class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>1xK tensor, with avg precision for each class k</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>ap (FloatTensor)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-catalyst.dl.meters.aucmeter"></span><dl class="class">
+<dt id="catalyst.dl.meters.aucmeter.AUCMeter">
+<em class="property">class </em><code class="descclassname">catalyst.dl.meters.aucmeter.</code><code class="descname">AUCMeter</code><a class="reference internal" href="../_modules/catalyst/dl/meters/aucmeter.html#AUCMeter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.aucmeter.AUCMeter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.meters.meter.Meter" title="catalyst.dl.meters.meter.Meter"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.meters.meter.Meter</span></code></a></p>
+<p>The AUCMeter measures the area under the receiver-operating characteristic
+(ROC) curve for binary classification problems. The area under the curve
+(AUC) can be interpreted as the probability that, given a randomly selected
+positive     example and a randomly selected negative example, the positive
+example is assigned a higher score by the classification model than the
+negative example.</p>
+<p>The AUCMeter is designed to operate on one-dimensional Tensors <cite>output</cite>
+and <cite>target</cite>, where (1) the <cite>output</cite> contains model output scores that
+ought to be higher when the model is more convinced that the example
+should be positively labeled, and smaller when the model believes the
+example should be negatively labeled (for instance, the output of a
+signoid function); and (2) the <cite>target</cite> contains only values 0 (for
+negative examples) and 1 (for positive examples).</p>
+<dl class="method">
+<dt id="catalyst.dl.meters.aucmeter.AUCMeter.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>output</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/aucmeter.html#AUCMeter.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.aucmeter.AUCMeter.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.meters.aucmeter.AUCMeter.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/aucmeter.html#AUCMeter.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.aucmeter.AUCMeter.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.meters.aucmeter.AUCMeter.value">
+<code class="descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/aucmeter.html#AUCMeter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.aucmeter.AUCMeter.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-catalyst.dl.meters.averagevaluemeter"></span><dl class="class">
+<dt id="catalyst.dl.meters.averagevaluemeter.AverageValueMeter">
+<em class="property">class </em><code class="descclassname">catalyst.dl.meters.averagevaluemeter.</code><code class="descname">AverageValueMeter</code><a class="reference internal" href="../_modules/catalyst/dl/meters/averagevaluemeter.html#AverageValueMeter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.averagevaluemeter.AverageValueMeter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.meters.meter.Meter" title="catalyst.dl.meters.meter.Meter"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.meters.meter.Meter</span></code></a></p>
+<dl class="method">
+<dt id="catalyst.dl.meters.averagevaluemeter.AverageValueMeter.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>value</em>, <em>n=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/averagevaluemeter.html#AverageValueMeter.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.averagevaluemeter.AverageValueMeter.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.meters.averagevaluemeter.AverageValueMeter.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/averagevaluemeter.html#AverageValueMeter.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.averagevaluemeter.AverageValueMeter.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.meters.averagevaluemeter.AverageValueMeter.value">
+<code class="descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/averagevaluemeter.html#AverageValueMeter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.averagevaluemeter.AverageValueMeter.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-catalyst.dl.meters.classerrormeter"></span><dl class="class">
+<dt id="catalyst.dl.meters.classerrormeter.ClassErrorMeter">
+<em class="property">class </em><code class="descclassname">catalyst.dl.meters.classerrormeter.</code><code class="descname">ClassErrorMeter</code><span class="sig-paren">(</span><em>topk=[1], accuracy=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/classerrormeter.html#ClassErrorMeter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.classerrormeter.ClassErrorMeter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.meters.meter.Meter" title="catalyst.dl.meters.meter.Meter"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.meters.meter.Meter</span></code></a></p>
+<dl class="method">
+<dt id="catalyst.dl.meters.classerrormeter.ClassErrorMeter.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>output</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/classerrormeter.html#ClassErrorMeter.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.classerrormeter.ClassErrorMeter.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.meters.classerrormeter.ClassErrorMeter.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/classerrormeter.html#ClassErrorMeter.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.classerrormeter.ClassErrorMeter.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.meters.classerrormeter.ClassErrorMeter.value">
+<code class="descname">value</code><span class="sig-paren">(</span><em>k=-1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/classerrormeter.html#ClassErrorMeter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.classerrormeter.ClassErrorMeter.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-catalyst.dl.meters.confusionmeter"></span><dl class="class">
+<dt id="catalyst.dl.meters.confusionmeter.ConfusionMeter">
+<em class="property">class </em><code class="descclassname">catalyst.dl.meters.confusionmeter.</code><code class="descname">ConfusionMeter</code><span class="sig-paren">(</span><em>k</em>, <em>normalized=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/confusionmeter.html#ConfusionMeter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.confusionmeter.ConfusionMeter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.meters.meter.Meter" title="catalyst.dl.meters.meter.Meter"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.meters.meter.Meter</span></code></a></p>
+<p>Maintains a confusion matrix for a given calssification problem.</p>
+<p>The ConfusionMeter constructs a confusion matrix for a multi-class
+classification problems. It does not support multi-label, multi-class
+problems: for such problems, please use MultiLabelConfusionMeter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>int</em>) – number of classes in the classification problem</p></li>
+<li><p><strong>normalized</strong> (<em>boolean</em>) – Determines whether or not the confusion matrix
+is normalized or not</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="catalyst.dl.meters.confusionmeter.ConfusionMeter.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>predicted</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/confusionmeter.html#ConfusionMeter.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.confusionmeter.ConfusionMeter.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the confusion matrix of K x K size where K is no of classes</p>
+<p>Args: predicted (tensor): Can be an N x K tensor of predicted scores
+obtained from the model for N examples and K classes or an N-tensor
+of integer values between 0 and K-1. target (tensor): Can be a
+N-tensor of integer values assumed to be integer values between 0 and
+K-1 or N x K tensor, where targets are assumed to be provided as
+one-hot vectors</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.meters.confusionmeter.ConfusionMeter.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/confusionmeter.html#ConfusionMeter.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.confusionmeter.ConfusionMeter.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.meters.confusionmeter.ConfusionMeter.value">
+<code class="descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/confusionmeter.html#ConfusionMeter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.confusionmeter.ConfusionMeter.value" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Confustion matrix of K rows and K columns, where rows corresponds
+to ground-truth targets and columns corresponds to predicted
+targets.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-catalyst.dl.meters.mapmeter"></span><dl class="class">
+<dt id="catalyst.dl.meters.mapmeter.mAPMeter">
+<em class="property">class </em><code class="descclassname">catalyst.dl.meters.mapmeter.</code><code class="descname">mAPMeter</code><a class="reference internal" href="../_modules/catalyst/dl/meters/mapmeter.html#mAPMeter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.mapmeter.mAPMeter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.meters.meter.Meter" title="catalyst.dl.meters.meter.Meter"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.meters.meter.Meter</span></code></a></p>
+<p>The mAPMeter measures the mean average precision over all classes.</p>
+<p>The mAPMeter is designed to operate on <cite>NxK</cite> Tensors <cite>output</cite> and
+<cite>target</cite>, and optionally a <cite>Nx1</cite> Tensor weight where (1) the <cite>output</cite>
+contains model output scores for <cite>N</cite> examples and <cite>K</cite> classes that ought to
+be higher when the model is more convinced that the example should be
+positively labeled, and smaller when the model believes the example should
+be negatively labeled (for instance, the output of a sigmoid function); (2)
+the <cite>target</cite> contains only values 0 (for negative examples) and 1
+(for positive examples); and (3) the <cite>weight</cite> ( &gt; 0) represents weight for
+each sample.</p>
+<dl class="method">
+<dt id="catalyst.dl.meters.mapmeter.mAPMeter.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>output</em>, <em>target</em>, <em>weight=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/mapmeter.html#mAPMeter.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.mapmeter.mAPMeter.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.meters.mapmeter.mAPMeter.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/mapmeter.html#mAPMeter.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.mapmeter.mAPMeter.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.meters.mapmeter.mAPMeter.value">
+<code class="descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/mapmeter.html#mAPMeter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.mapmeter.mAPMeter.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-catalyst.dl.meters.movingaveragevaluemeter"></span><dl class="class">
+<dt id="catalyst.dl.meters.movingaveragevaluemeter.MovingAverageValueMeter">
+<em class="property">class </em><code class="descclassname">catalyst.dl.meters.movingaveragevaluemeter.</code><code class="descname">MovingAverageValueMeter</code><span class="sig-paren">(</span><em>windowsize</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/movingaveragevaluemeter.html#MovingAverageValueMeter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.movingaveragevaluemeter.MovingAverageValueMeter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.meters.meter.Meter" title="catalyst.dl.meters.meter.Meter"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.meters.meter.Meter</span></code></a></p>
+<dl class="method">
+<dt id="catalyst.dl.meters.movingaveragevaluemeter.MovingAverageValueMeter.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/movingaveragevaluemeter.html#MovingAverageValueMeter.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.movingaveragevaluemeter.MovingAverageValueMeter.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.meters.movingaveragevaluemeter.MovingAverageValueMeter.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/movingaveragevaluemeter.html#MovingAverageValueMeter.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.movingaveragevaluemeter.MovingAverageValueMeter.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.meters.movingaveragevaluemeter.MovingAverageValueMeter.value">
+<code class="descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/movingaveragevaluemeter.html#MovingAverageValueMeter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.movingaveragevaluemeter.MovingAverageValueMeter.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-catalyst.dl.meters.msemeter"></span><dl class="class">
+<dt id="catalyst.dl.meters.msemeter.MSEMeter">
+<em class="property">class </em><code class="descclassname">catalyst.dl.meters.msemeter.</code><code class="descname">MSEMeter</code><span class="sig-paren">(</span><em>root=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/msemeter.html#MSEMeter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.msemeter.MSEMeter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.meters.meter.Meter" title="catalyst.dl.meters.meter.Meter"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.meters.meter.Meter</span></code></a></p>
+<dl class="method">
+<dt id="catalyst.dl.meters.msemeter.MSEMeter.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>output</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/msemeter.html#MSEMeter.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.msemeter.MSEMeter.add" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.meters.msemeter.MSEMeter.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/msemeter.html#MSEMeter.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.msemeter.MSEMeter.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.meters.msemeter.MSEMeter.value">
+<code class="descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/meters/msemeter.html#MSEMeter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.meters.msemeter.MSEMeter.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -1754,7 +2055,7 @@ Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
         <a href="rl.html" class="btn btn-neutral float-right" title="RL" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../info/license.html" class="btn btn-neutral float-left" title="License" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../info/license.html" class="btn btn-neutral float-left" title="Apache License" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
