@@ -136,29 +136,17 @@ class ConfigExperiment(Experiment):
         return criterion
 
     def _get_optimizer(self, *, model_params, **params):
-        key_value_flag = params.pop("_key_value", False)
+        load_from_previous_stage = \
+            params.pop("load_from_previous_stage", False)
+        optimizer = OPTIMIZERS.get_from_params(**params, params=model_params)
 
-        if key_value_flag:
-            optimizer = {}
-            for key, params_ in params.items():
-                optimizer[key] = self._get_optimizer(
-                    model_params=model_params, **params_
-                )
-        else:
-            load_from_previous_stage = \
-                params.pop("load_from_previous_stage", False)
-            optimizer = OPTIMIZERS.get_from_params(
-                **params, params=model_params
-            )
-
-            if load_from_previous_stage:
-                checkpoint_path = \
-                    f"{self.logdir}/checkpoints/best.pth"
-                checkpoint = utils.load_checkpoint(checkpoint_path)
-                utils.unpack_checkpoint(checkpoint, optimizer=optimizer)
-                for key, value in params.items():
-                    for pg in optimizer.param_groups:
-                        pg[key] = value
+        if load_from_previous_stage:
+            checkpoint_path = f"{self.logdir}/checkpoints/best.pth"
+            checkpoint = utils.load_checkpoint(checkpoint_path)
+            utils.unpack_checkpoint(checkpoint, optimizer=optimizer)
+            for key, value in params.items():
+                for pg in optimizer.param_groups:
+                    pg[key] = value
 
         return optimizer
 
@@ -166,13 +154,11 @@ class ConfigExperiment(Experiment):
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
 
-        weight_decay: float = optimizer_params.get("weight_decay", 0.0)
+        layerwise_params = optimizer_params.pop("_key_value", OrderedDict())
         no_bias_weight_decay = \
             optimizer_params.pop("no_bias_weight_decay", True)
-        model_params = process_model_params(
-            model, weight_decay, no_bias_weight_decay
-        )
-        # Linear scaling rule from https://arxiv.org/pdf/1706.02677.pdf
+
+        # linear scaling rule from https://arxiv.org/pdf/1706.02677.pdf
         lr_scaling_params = optimizer_params.pop("lr_linear_scaling", None)
         if lr_scaling_params:
             data_params = dict(self.stages_config[stage]["data_params"])
@@ -186,7 +172,14 @@ class ConfigExperiment(Experiment):
 
             base_lr = lr_scaling_params.get("lr")
             base_batch_size = lr_scaling_params.get("base_batch_size", 256)
-            optimizer_params["lr"] = base_lr * batch_size / base_batch_size
+            lr_scaling = batch_size / base_batch_size
+            optimizer_params["lr"] = base_lr * lr_scaling  # scale default lr
+        else:
+            lr_scaling = 1.0
+
+        model_params = process_model_params(
+            model, layerwise_params, no_bias_weight_decay, lr_scaling
+        )
 
         optimizer = self._get_optimizer(
             model_params=model_params, **optimizer_params

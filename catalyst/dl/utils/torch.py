@@ -1,8 +1,8 @@
 from typing import Tuple, Dict, List, Union
 import os
 import copy
-
-import numpy as np
+import collections
+import re
 
 import torch
 from torch import nn, optim
@@ -127,43 +127,53 @@ def get_loader(
 
 def process_model_params(
     model: _Model,
-    weight_decay: float = 0.0,
-    no_bias_weight_decay: bool = True
+    layerwise_params: Dict[str, Dict] = None,
+    no_bias_weight_decay: bool = True,
+    lr_scaling: float = 1.0
 ) -> List[Union[torch.nn.Parameter, dict]]:
     """
     Gains model parameters for ``torch.optim.Optimizer``
 
     Args:
         model (torch.nn.Module): Model to process
-        weight_decay (float): Optional weight decay
+        layerwise_params (Dict): Order-sensitive dict where
+            each key is regex pattern and values are layer-wise options
+            for layers matching with a pattern
         no_bias_weight_decay (bool): If true, removes weight_decay
             for all ``bias`` parameters in the model
+        lr_scaling (float): layer-wise learning rate scaling,
+            if 1.0, learning rates will not be scaled
 
     Returns:
         iterable: parameters for an optimizer
 
     Examples:
         >>> model = ResnetUnet()
-        >>> params = process_model_params(model, weight_decay=0.00001)
+        >>> params = process_model_params(model)
         >>> optimizer = torch.optim.Adam(params, lr=0.0003)
     """
     params = list(model.named_parameters())
+    layerwise_params = layerwise_params or collections.OrderedDict()
 
-    if not no_bias_weight_decay or np.isclose(weight_decay, 0.0):
-        return [param for (name, param) in params]
+    model_params = []
+    for name, parameters in params:
+        options = {}
+        for pattern, options_ in layerwise_params.items():
+            if re.match(pattern, name) is not None:
+                # all new LR rules write on top of the old ones
+                options = utils.merge_dicts(options, options_)
 
-    # no bias decay from https://arxiv.org/abs/1812.01187
-    biases = [param for (name, param) in params if name.endswith("bias")]
-    main_params = [
-        param for (name, param) in params if not name.endswith("bias")
-    ]
+        # no bias decay from https://arxiv.org/abs/1812.01187
+        if no_bias_weight_decay and name.endswith("bias"):
+            options["weight_decay"] = 0.0
 
-    result = [
-        {"params": main_params, "weight_decay": weight_decay},
-        {"params": biases, "weight_decay": 0.0},
-    ]
+        # lr linear scaling from https://arxiv.org/pdf/1706.02677.pdf
+        if "lr" in options:
+            options["lr"] *= lr_scaling
 
-    return result
+        model_params.append({"params": parameters, **options})
+
+    return model_params
 
 
 __all__ = [
