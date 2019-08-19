@@ -3,6 +3,7 @@
 [![License](https://img.shields.io/github/license/catalyst-team/catalyst.svg)](LICENSE)
 [![Pipi version](https://img.shields.io/pypi/v/catalyst.svg)](https://pypi.org/project/catalyst/)
 [![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html)
+[![Donate](https://ucde0995747f356870f615ffb990.previews.dropboxusercontent.com/p/thumb/AAju2yA3zKEEfV1Rbe1hdCK94o5cVH5blrqQCBfy1BFudg8VfehnZrvBCpKEKUjZ0yce8rVWsXDlxCV2tmXL1f18h9VMod21hbQ-E7_X_Qbomca3PLeTe0pTgcfqs1gGef9JBs4y36-raLf2Qrkf_AJGdvUWscUd9OScOHYI8FyrjmF6pqVaMRnJGv8hmfg1QiT1ZjF2I1KqFMiDNxY3CvVltWNYnCltOk0mLG95yUBNlzJIOROCujlKRV1nAsoL6u7f_ynoVJBVmLsnTZeJ4izf10zCdGc5vmxxMRBTxxwZV4OPDuA7jlTfxB2983Ho5h0CzRGa3k6HwWsLmVUfU2Prno8-6UT99q2x3Lq2RXWaT8CbJe7FNg1LbI1WQWq-6_9oQA4JAOXjP_mbWXk721kz/p.png?fv_content=true&size_mode=5)](https://www.patreon.com/catalyst_team)
 
 ![Catalyst logo](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png)
 
@@ -120,6 +121,7 @@ please first open an issue and discuss the feature with us.
 Please see the [contribution guide](CONTRIBUTING.md) 
 for more information.
 
+[![Donate](https://c5.patreon.com/external/logo/become_a_patron_button.png)](https://www.patreon.com/catalyst_team)
 
 ## Citation
 
