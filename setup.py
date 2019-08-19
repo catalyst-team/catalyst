@@ -127,9 +127,9 @@ setup(
     install_requires=load_requirements("requirements/requirements.txt"),
     extras_require=extras,
     include_package_data=True,
-    license="MIT",
+    license="Apache License 2.0",
     classifiers=[
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: Apache Software License",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
         "Programming Language :: Python",
