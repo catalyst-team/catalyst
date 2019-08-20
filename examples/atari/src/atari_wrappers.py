@@ -343,7 +343,8 @@ def make_atari_env(
     episode_life=True,
     clip_rewards=False,
     frame_stack=False,
-    scale=False
+    scale=False,
+    sampler_id=None
 ):
     env = gym.make(env_id)
     assert "NoFrameskip" in env.spec.id
