@@ -5,8 +5,7 @@ from .checkpoint import pack_checkpoint, unpack_checkpoint, \
     save_checkpoint, load_checkpoint
 from .compression import compress, compress_if_needed, \
     decompress, decompress_if_needed, pack, unpack
-from .config import load_ordered_yaml, dump_config, \
-    parse_args_uargs, parse_config_args
+from .config import *
 # from .dataset import *
 from .ddp import is_wrapped_with_ddp, get_real_module
 # from .frozen import *
@@ -30,4 +29,3 @@ from .torch import ce_with_logits, log1p_exp, normal_sample, normal_logprob, \
     get_device, get_activation_fn, any2device, get_available_gpus, \
     prepare_cudnn, process_model_params
 from .visualization import plot_confusion_matrix, render_figure_to_tensor
-from .environment import *
