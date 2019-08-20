@@ -4,7 +4,7 @@ import os
 import argparse
 
 from catalyst.utils.scripts import import_module
-from catalyst.utils import parse_args_uargs, dump_config, set_global_seed
+from catalyst.utils import parse_args_uargs, dump_environment, set_global_seed
 from catalyst.utils.scripts import dump_code
 from catalyst.rl.registry import OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
     ENVIRONMENTS, DATABASES
@@ -46,7 +46,7 @@ def main(args, unknown_args):
 
     if args.logdir is not None:
         os.makedirs(args.logdir, exist_ok=True)
-        dump_config(config, args.logdir, args.configs)
+        dump_environment(config, args.logdir, args.configs)
 
     if args.expdir is not None:
         module = import_module(expdir=args.expdir)  # noqa: F841

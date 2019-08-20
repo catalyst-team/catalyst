@@ -7,14 +7,16 @@ import copy
 import shutil
 import time
 from collections import OrderedDict
+import json
+from logging import getLogger
 
-import pip
 import safitty
 import yaml
-import json
 from tensorboardX import SummaryWriter
 
 from catalyst.utils.misc import merge_dicts
+
+LOG = getLogger(__name__)
 
 
 def load_ordered_yaml(
@@ -70,7 +72,6 @@ def get_environment_vars() -> Dict[str, Any]:
     result = {
         "python_version": sys.version,
         "conda_environment": os.environ.get("CONDA_DEFAULT_ENV", ""),
-        "pip": pip.__version__,
         "creation_time": time.strftime("%y%m%d.%H:%M:%S"),
         "sysname": os.uname()[0],
         "nodename": os.uname()[1],
@@ -106,13 +107,40 @@ def get_environment_vars() -> Dict[str, Any]:
     return result
 
 
-def dump_config(
+def list_pip_packages() -> str:
+    with open(os.devnull, "w") as devnull:
+        try:
+            return subprocess.check_output(
+                "pip freeze".split(), stderr=devnull
+            ).strip().decode("UTF-8")
+        except subprocess.CalledProcessError as e:
+            raise Exception("Failed to list packages") from e
+
+
+def list_conda_packages() -> str:
+    conda_meta_path = Path(sys.prefix) / "conda-meta"
+    if conda_meta_path.exists():
+        # We are currently in conda venv
+        with open(os.devnull, "w") as devnull:
+            try:
+                return subprocess.check_output(
+                    "conda list --export".split(), stderr=devnull
+                ).strip().decode("UTF-8")
+            except subprocess.CalledProcessError as e:
+                raise Exception(
+                    "Running from conda env, but failed to list conda packages"
+                ) from e
+    else:
+        return ""
+
+
+def dump_environment(
     experiment_config: Dict,
     logdir: str,
     configs_path: List[str] = None,
 ) -> None:
     """
-    Saves config and environment in JSON into logdir
+    Saves config, environment variables and package list in JSON into logdir
 
     Args:
         experiment_config (dict): experiment config
@@ -131,6 +159,12 @@ def dump_config(
     safitty.save(experiment_config, config_dir / "_config.json")
     safitty.save(environment, config_dir / "_environment.json")
 
+    pip_pkg = list_pip_packages()
+    (config_dir / "pip-packages.txt").write_text(pip_pkg)
+    conda_pkg = list_conda_packages()
+    if conda_pkg:
+        (config_dir / "conda-packages.txt").write_text(conda_pkg)
+
     for path in configs_path:
         name: str = path.name
         outpath = config_dir / name
@@ -143,6 +177,9 @@ def dump_config(
     with SummaryWriter(config_dir) as writer:
         writer.add_text("config", config_str, 0)
         writer.add_text("environment", environment_str, 0)
+        writer.add_text("pip-packages", pip_pkg, 0)
+        if conda_pkg:
+            writer.add_text("conda-packages", conda_pkg, 0)
 
 
 def parse_config_args(*, config, args, unknown_args):
@@ -224,8 +261,8 @@ def parse_args_uargs(args, unknown_args):
     if config_args is not None:
         for key, value in config_args.items():
             arg_value = getattr(args_, key, None)
-            if arg_value is None \
-                    or (key in ["logdir", "baselogdir"] and arg_value == ""):
+            if arg_value is None or \
+                    (key in ["logdir", "baselogdir"] and arg_value == ""):
                 arg_value = value
             setattr(args_, key, arg_value)
 
@@ -233,6 +270,6 @@ def parse_args_uargs(args, unknown_args):
 
 
 __all__ = [
-    "load_ordered_yaml", "get_environment_vars", "dump_config",
+    "load_ordered_yaml", "get_environment_vars", "dump_environment",
     "parse_config_args", "parse_args_uargs"
 ]
