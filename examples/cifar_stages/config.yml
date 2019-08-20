@@ -45,7 +45,7 @@ stages:
     optimizer_params:
       optimizer: Adam
 
-      _key_value:
+      layerwise_params:
         conv1.*:
           lr: 0.001
           weight_decay: 0.0003

@@ -153,7 +153,8 @@ class ConfigExperiment(Experiment):
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
 
-        layerwise_params = optimizer_params.pop("_key_value", OrderedDict())
+        layerwise_params = \
+            optimizer_params.pop("layerwise_params", OrderedDict())
         no_bias_weight_decay = \
             optimizer_params.pop("no_bias_weight_decay", True)
 
