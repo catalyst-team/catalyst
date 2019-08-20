@@ -71,7 +71,7 @@ def get_environment_vars() -> Dict[str, Any]:
         "python_version": sys.version,
         "conda_environment": os.environ.get("CONDA_DEFAULT_ENV", ""),
         "pip": pip.__version__,
-        "creation_time": time.strftime("%y-%m-%d-%H-%M-%S"),
+        "creation_time": time.strftime("%y%m%d.%H:%M:%S"),
         "sysname": os.uname()[0],
         "nodename": os.uname()[1],
         "release": os.uname()[2],
