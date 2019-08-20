@@ -1,11 +1,12 @@
+from pathlib import Path
 from typing import Dict, List
 
-import os
 import copy
 import shutil
 from collections import OrderedDict
 import json
 import yaml
+import safitty
 from tensorboardX import SummaryWriter
 from catalyst.utils.misc import merge_dicts
 
@@ -40,10 +41,10 @@ def load_ordered_yaml(
 def dump_config(
     experiment_config: Dict,
     logdir: str,
-    configs_path: List = None,
+    configs_path: List[str] = None,
 ) -> None:
     """
-    Saves config into JSON in logdir
+    Saves config in JSON into logdir
 
     Args:
         experiment_config (dict): experiment config
@@ -51,22 +52,23 @@ def dump_config(
         configs_path: path(s) to config
     """
     configs_path = configs_path or []
-    config_dir = f"{logdir}/configs/"
-    os.makedirs(config_dir, exist_ok=True)
+    configs_path = [
+        Path(path) for path in configs_path if isinstance(path, str)
+    ]
+    config_dir = Path(logdir) / "configs"
+    config_dir.mkdir(exist_ok=True, parents=True)
 
-    with open(f"{config_dir}/_config.json", "w") as fout:
-        json.dump(experiment_config, fout, indent=2, ensure_ascii=False)
+    safitty.save(experiment_config, config_dir / "_config.json")
 
-    for config_path_in in configs_path:
-        config_name = config_path_in.rsplit("/", 1)[-1]
-        config_path_out = f"{config_dir}/{config_name}"
-        shutil.copyfile(config_path_in, config_path_out)
+    for path in configs_path:
+        name: str = path.name
+        outpath = config_dir / name
+        shutil.copyfile(path, outpath)
 
-    writer = SummaryWriter(config_dir)
     config_str = json.dumps(experiment_config, indent=2)
     config_str = config_str.replace("\n", "\n\n")
-    writer.add_text("config", config_str, 0)
-    writer.close()
+    with SummaryWriter(config_dir) as writer:
+        writer.add_text("config", config_str, 0)
 
 
 def parse_config_args(*, config, args, unknown_args):

@@ -4,8 +4,11 @@ import argparse
 from argparse import ArgumentParser
 from pathlib import Path
 
-from catalyst.utils.config import parse_args_uargs, dump_config
 from catalyst.utils import set_global_seed, boolean_flag, prepare_cudnn
+from catalyst.utils.config import parse_args_uargs, dump_config
+from catalyst.utils.environment import get_environment_vars, \
+    dump_environment_vars
+
 from catalyst.utils.scripts import dump_code
 from catalyst.dl.utils.scripts import import_experiment_and_runner
 
@@ -80,6 +83,8 @@ def main(args, unknown_args):
 
     if experiment.logdir is not None:
         dump_config(config, experiment.logdir, args.configs)
+        environment = get_environment_vars()
+        dump_environment_vars(environment, experiment.logdir)
         dump_code(args.expdir, experiment.logdir)
 
     runner.run_experiment(experiment, check=args.check)
