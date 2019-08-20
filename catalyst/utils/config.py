@@ -1,12 +1,19 @@
-from typing import Dict, List
-
+from typing import List, Any, Dict, Union
+from pathlib import Path
 import os
+import sys
+import subprocess
 import copy
 import shutil
+import time
 from collections import OrderedDict
-import json
+
+import pip
+import safitty
 import yaml
+import json
 from tensorboardX import SummaryWriter
+
 from catalyst.utils.misc import merge_dicts
 
 
@@ -37,13 +44,75 @@ def load_ordered_yaml(
     return yaml.load(stream, OrderedLoader)
 
 
+def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
+    """
+    Decode bytes values in the dictionary to UTF-8
+    Args:
+        dictionary: a dict
+
+    Returns:
+        dict: decoded dict
+    """
+    result = {
+        k: v.decode("UTF-8") if type(v) == bytes else v
+        for k, v in dictionary.items()
+    }
+    return result
+
+
+def get_environment_vars() -> Dict[str, Any]:
+    """
+    Creates a dictionary with environment variables
+
+    Returns:
+        dict: environment variables
+    """
+    result = {
+        "python_version": sys.version,
+        "conda_environment": os.environ.get("CONDA_DEFAULT_ENV", ""),
+        "pip": pip.__version__,
+        "creation_time": time.strftime("%y%m%d.%H:%M:%S"),
+        "sysname": os.uname()[0],
+        "nodename": os.uname()[1],
+        "release": os.uname()[2],
+        "version": os.uname()[3],
+        "architecture": os.uname()[4],
+        "user": os.environ.get("USER", ""),
+        "path": os.environ.get("PWD", ""),
+    }
+
+    with open(os.devnull, "w") as devnull:
+        try:
+            git_branch = subprocess.check_output(
+                "git rev-parse --abbrev-ref HEAD".split(), stderr=devnull
+            ).strip().decode("UTF-8")
+            git_local_commit = subprocess.check_output(
+                "git rev-parse HEAD".split(), stderr=devnull
+            )
+            git_origin_commit = subprocess.check_output(
+                f"git rev-parse origin/{git_branch}".split(), stderr=devnull
+            )
+
+            git = dict(
+                branch=git_branch,
+                local_commit=git_local_commit,
+                origin_commit=git_origin_commit
+            )
+            result["git"] = _decode_dict(git)
+        except subprocess.CalledProcessError:
+            pass
+
+    result = _decode_dict(result)
+    return result
+
+
 def dump_config(
     experiment_config: Dict,
     logdir: str,
-    configs_path: List = None,
+    configs_path: List[str] = None,
 ) -> None:
     """
-    Saves config into JSON in logdir
+    Saves config and environment in JSON into logdir
 
     Args:
         experiment_config (dict): experiment config
@@ -51,22 +120,29 @@ def dump_config(
         configs_path: path(s) to config
     """
     configs_path = configs_path or []
-    config_dir = f"{logdir}/configs/"
-    os.makedirs(config_dir, exist_ok=True)
+    configs_path = [
+        Path(path) for path in configs_path if isinstance(path, str)
+    ]
+    config_dir = Path(logdir) / "configs"
+    config_dir.mkdir(exist_ok=True, parents=True)
 
-    with open(f"{config_dir}/_config.json", "w") as fout:
-        json.dump(experiment_config, fout, indent=2, ensure_ascii=False)
+    environment = get_environment_vars()
 
-    for config_path_in in configs_path:
-        config_name = config_path_in.rsplit("/", 1)[-1]
-        config_path_out = f"{config_dir}/{config_name}"
-        shutil.copyfile(config_path_in, config_path_out)
+    safitty.save(experiment_config, config_dir / "_config.json")
+    safitty.save(environment, config_dir / "_environment.json")
 
-    writer = SummaryWriter(config_dir)
+    for path in configs_path:
+        name: str = path.name
+        outpath = config_dir / name
+        shutil.copyfile(path, outpath)
+
     config_str = json.dumps(experiment_config, indent=2)
     config_str = config_str.replace("\n", "\n\n")
-    writer.add_text("config", config_str, 0)
-    writer.close()
+    environment_str = json.dumps(environment, indent=2)
+    environment_str = environment_str.replace("\n", "\n\n")
+    with SummaryWriter(config_dir) as writer:
+        writer.add_text("config", config_str, 0)
+        writer.add_text("environment", environment_str, 0)
 
 
 def parse_config_args(*, config, args, unknown_args):
@@ -154,3 +230,9 @@ def parse_args_uargs(args, unknown_args):
             setattr(args_, key, arg_value)
 
     return args_, config
+
+
+__all__ = [
+    "load_ordered_yaml", "get_environment_vars", "dump_config",
+    "parse_config_args", "parse_args_uargs"
+]
