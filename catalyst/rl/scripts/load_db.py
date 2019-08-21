@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+# usage:
+# catalyst-rl load-db --db=redis --in-pkl ./my_db_0.pkl ./my_db_1.pkl
+
 import argparse
 import pickle
 from tqdm import tqdm
@@ -40,7 +43,7 @@ def main(args, _=None):
             trajectories = pickle.load(fin)
 
         for trajectory in tqdm(trajectories):
-            trajectory = utils.unpack(trajectory)
+            trajectory = utils.unpack_if_needed(trajectory)
             db.put_trajectory(trajectory)
 
 

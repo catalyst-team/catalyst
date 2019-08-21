@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+# usage:
+# catalyst-rl dump-db --db=redis --out-pkl="./my_db_{suffix}.pkl"
+
 import argparse
 import pickle
 from tqdm import tqdm
