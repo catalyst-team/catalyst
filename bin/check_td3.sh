@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
+set -e
 
 redis-server --port 12000 &
 sleep 3
 
-wget https://www.dropbox.com/s/5ryokxeksvmbu1u/db.dump.pointenv.pkl
+wget https://www.dropbox.com/s/rslmj170ss6a544/db.dump.pointenv.190821.pkl
 
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-    python catalyst/rl/scripts/load_redis.py \
-    --in-pkl=./db.dump.pointenv.pkl
+    python catalyst/rl/scripts/load_db.py \
+    --db="redis" \
+    --in-pkl=./db.dump.pointenv.190821.pkl
 
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \

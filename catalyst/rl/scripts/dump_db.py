@@ -45,8 +45,6 @@ def main(args, _=None):
             # mongo does not support indexing yet
             trajectory = db.get_trajectory()
 
-        trajectory = utils.unpack(trajectory)
-
         if args.min_reward is not None \
                 and sum(trajectory["trajectory"][-2]) < args.min_reward:
             continue
