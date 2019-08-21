@@ -2,15 +2,15 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
 
 from catalyst.__version__ import __version__
-from .scripts import dump_redis, load_redis, \
+from .scripts import dump_db, load_db, \
     run_samplers, run_trainer
 
 COMMANDS = OrderedDict(
     [
         ("run-trainer", run_trainer),
         ("run-samplers", run_samplers),
-        ("dump-redis", dump_redis),
-        ("load-redis", load_redis),
+        ("dump-db", dump_db),
+        ("load-db", load_db),
     ]
 )
 

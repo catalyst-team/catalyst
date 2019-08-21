@@ -2,9 +2,10 @@
 import argparse
 import pickle
 from tqdm import tqdm
-from redis import Redis
 
 from catalyst import utils
+from catalyst.rl.db import RedisDB, MongoDB
+from catalyst.rl.utils import structed2dict_trajectory
 
 
 def build_args(parser):
@@ -14,6 +15,9 @@ def build_args(parser):
     parser.add_argument("--chunk-size", type=int, default=None)
     parser.add_argument("--start-from", type=int, default=0)
     parser.add_argument("--min-reward", type=int, default=None)
+    parser.add_argument(
+        "--db", type=str, choices=["redis", "mongo"],
+        default=None, required=True)
 
     return parser
 
@@ -26,20 +30,27 @@ def parse_args():
 
 
 def main(args, _=None):
-    db = Redis(host=args.host, port=args.port)
-    redis_len = db.llen("trajectories") - 1
+    db_fn = RedisDB if args.db == "redis" else MongoDB
+    db = db_fn(host=args.host, port=args.port)
+    db_len = db.num_trajectories
     trajectories = []
 
-    for i in tqdm(range(args.start_from, redis_len)):
-        trajectory = db.lindex("trajectories", i)
-
-        if args.min_reward is not None:
-            trajectory = utils.unpack(trajectory)
-            if sum(trajectory["trajectory"][-2]) > args.min_reward:
-                trajectory = utils.pack(trajectory)
-                trajectories.append(trajectory)
+    for i in tqdm(range(args.start_from, db_len)):
+        if args.db == "redis":
+            trajectory = db.get_trajectory(i)
         else:
-            trajectories.append(trajectory)
+            # mongo does not support indexing yet
+            trajectory = db.get_trajectory()
+
+        trajectory = utils.unpack(trajectory)
+
+        if args.min_reward is not None \
+                and sum(trajectory["trajectory"][-2]) < args.min_reward:
+            continue
+
+        trajectory = structed2dict_trajectory(trajectory)
+        trajectory = utils.pack(trajectory)
+        trajectories.append(trajectory)
 
         if args.chunk_size is not None \
                 and (i - args.start_from) % args.chunk_size == 0:
