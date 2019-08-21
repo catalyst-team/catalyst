@@ -60,3 +60,10 @@ checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
 print('mean reward', np.mean(checkpoint['rewards']))
 assert np.mean(checkpoint['rewards']) > reward_goal
 """
+
+OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
+    PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+    python catalyst/rl/scripts/dump_db.py \
+    --db="redis" \
+    --min-reward=2 \
+    --out-pkl=./db.dump.out.pkl
