@@ -12,9 +12,13 @@ from catalyst import utils
 from catalyst.dl.utils.trace import trace_model
 
 
-def trace_model_from_checkpoint(logdir, method_name):
+def trace_model_from_checkpoint(
+    logdir: Path,
+    method_name: str,
+    checkpoint_name: str
+):
     config_path = logdir / "configs/_config.json"
-    checkpoint_path = logdir / "checkpoints/best.pth"
+    checkpoint_path = logdir / f"checkpoints/{checkpoint_name}.pth"
     print("Load config")
     config: Dict[str, dict] = safitty.load(config_path)
 
@@ -28,7 +32,7 @@ def trace_model_from_checkpoint(logdir, method_name):
         import_experiment_and_runner(expdir_from_logs)
     experiment: Experiment = ExperimentType(config)
 
-    print("Load model state from checkpoints/best.pth")
+    print(f"Load model state from checkpoints/{checkpoint_name}.pth")
     model = experiment.get_model(next(iter(experiment.stages)))
     checkpoint = utils.load_checkpoint(checkpoint_path)
     utils.unpack_checkpoint(checkpoint, model=model)
@@ -41,9 +45,26 @@ def trace_model_from_checkpoint(logdir, method_name):
 
 
 def build_args(parser: ArgumentParser):
-    parser.add_argument("logdir", type=Path)
     parser.add_argument(
-        "--method", "-m", default="forward", help="Model method to trace"
+        "logdir",
+        type=Path,
+        help="Path to model logdir"
+    )
+    parser.add_argument(
+        "--method", "-m",
+        default="forward",
+        help="Model method to trace"
+    )
+    parser.add_argument(
+        "--checkpoint", "-c",
+        default="best",
+        help="Checkpoint's name to trace"
+    )
+    parser.add_argument(
+        "--out-dir",
+        type=Path,
+        default=None,
+        help="Output directory to save traced model"
     )
 
     return parser
@@ -59,9 +80,14 @@ def parse_args():
 def main(args, _):
     logdir = args.logdir
     method_name = args.method
+    checkpoint_name = args.checkpoint
 
-    traced = trace_model_from_checkpoint(logdir, method_name)
-    torch.jit.save(traced, str(logdir / "traced.pth"))
+    traced = trace_model_from_checkpoint(logdir, method_name, checkpoint_name)
+    output: Path = args.out_dir
+    if output is None:
+        output: Path = logdir / "trace"
+    output.mkdir(exist_ok=True, parents=True)
+    torch.jit.save(traced, str(output / f"traced-{checkpoint_name}.pth"))
 
 
 if __name__ == "__main__":
