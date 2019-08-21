@@ -4,7 +4,7 @@ from .argparse import args_are_not_none, boolean_flag
 from .checkpoint import pack_checkpoint, unpack_checkpoint, \
     save_checkpoint, load_checkpoint
 from .compression import pack, pack_if_needed, unpack, unpack_if_needed
-from .config import load_ordered_yaml, get_environment_vars, dump_config, \
+from .config import load_ordered_yaml, get_environment_vars, dump_environment, \
     parse_config_args, parse_args_uargs
 # from .dataset import *
 from .ddp import is_wrapped_with_ddp, get_real_module
