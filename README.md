@@ -28,6 +28,12 @@ Break the cycle - use the Catalyst!
 
 ---
 
+#### Installation
+
+```bash
+pip install catalyst
+```
+
 Catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+.
 
 #### Docs and examples
@@ -39,14 +45,6 @@ API documentation and an overview of the library can be found here
 
 In the [examples folder](examples) 
 of the repository, you can find advanced tutorials and Catalyst best practices.
-
-
-## Installation
-
-```bash
-pip install catalyst
-```
-
 
 ## Overview
 
