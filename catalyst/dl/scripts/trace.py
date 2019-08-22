@@ -15,21 +15,22 @@ from catalyst.dl.utils.trace import trace_model
 def trace_model_from_checkpoint(
     logdir: Path,
     method_name: str,
-    checkpoint_name: str
+    checkpoint_name: str,
+    mode: str = "eval",
+    requires_grad: bool = False,
 ):
-    config_path = logdir / "configs/_config.json"
-    checkpoint_path = logdir / f"checkpoints/{checkpoint_name}.pth"
+    config_path = logdir / "configs" / "_config.json"
+    checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
     print("Load config")
     config: Dict[str, dict] = safitty.load(config_path)
 
     # Get expdir name
-    config_expdir = Path(config["args"]["expdir"])
+    config_expdir = safitty.get(config, "args", "expdir", apply=Path)
     # We will use copy of expdir from logs for reproducibility
-    expdir_from_logs = Path(logdir) / "code" / config_expdir.name
+    expdir = Path(logdir) / "code" / config_expdir.name
 
     print("Import experiment and runner from logdir")
-    ExperimentType, RunnerType = \
-        import_experiment_and_runner(expdir_from_logs)
+    ExperimentType, RunnerType = import_experiment_and_runner(expdir)
     experiment: Experiment = ExperimentType(config)
 
     print(f"Load model state from checkpoints/{checkpoint_name}.pth")
@@ -38,7 +39,12 @@ def trace_model_from_checkpoint(
     utils.unpack_checkpoint(checkpoint, model=model)
 
     print("Tracing")
-    traced = trace_model(model, experiment, RunnerType, method_name)
+    traced = trace_model(
+        model, experiment, RunnerType,
+        method_name=method_name,
+        mode=mode,
+        requires_grad=requires_grad,
+    )
 
     print("Done")
     return traced
@@ -66,6 +72,19 @@ def build_args(parser: ArgumentParser):
         default=None,
         help="Output directory to save traced model"
     )
+    parser.add_argument(
+        "--mode",
+        type=str,
+        choices=["eval", "train"],
+        default="eval",
+        help="Model's mode 'eval' or 'train'"
+    )
+    parser.add_argument(
+        "--with-grad",
+        action="store_true",
+        default=False,
+        help="If true, model will be traced with `requires_grad_(True)`"
+    )
 
     return parser
 
@@ -78,16 +97,32 @@ def parse_args():
 
 
 def main(args, _):
-    logdir = args.logdir
-    method_name = args.method
-    checkpoint_name = args.checkpoint
+    logdir: Path = args.logdir
+    method_name: str = args.method
+    checkpoint_name: str = args.checkpoint
+    mode: str = args.mode
+    requires_grad: bool = args.with_grad
 
-    traced = trace_model_from_checkpoint(logdir, method_name, checkpoint_name)
+    traced = trace_model_from_checkpoint(
+        logdir, method_name,
+        checkpoint_name=checkpoint_name,
+        mode=mode,
+        requires_grad=requires_grad,
+    )
+
+    file_name = f"traced-{checkpoint_name}-{method_name}"
+    if mode == "train":
+        file_name += "-in_train"
+
+    if requires_grad:
+        file_name += f"-with_grad"
+    file_name += ".pth"
+
     output: Path = args.out_dir
     if output is None:
         output: Path = logdir / "trace"
     output.mkdir(exist_ok=True, parents=True)
-    torch.jit.save(traced, str(output / f"traced-{checkpoint_name}.pth"))
+    torch.jit.save(traced, str(output / file_name))
 
 
 if __name__ == "__main__":
