@@ -1,11 +1,22 @@
-# Catalyst
-[![Build Status](https://travis-ci.com/catalyst-team/catalyst.svg?branch=master)](https://travis-ci.com/catalyst-team/catalyst) 
-[![License](https://img.shields.io/github/license/catalyst-team/catalyst.svg)](LICENSE)
-[![Pipi version](https://img.shields.io/pypi/v/catalyst.svg)](https://pypi.org/project/catalyst/)
-[![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html)
-[![Donate](https://ucde0995747f356870f615ffb990.previews.dropboxusercontent.com/p/thumb/AAju2yA3zKEEfV1Rbe1hdCK94o5cVH5blrqQCBfy1BFudg8VfehnZrvBCpKEKUjZ0yce8rVWsXDlxCV2tmXL1f18h9VMod21hbQ-E7_X_Qbomca3PLeTe0pTgcfqs1gGef9JBs4y36-raLf2Qrkf_AJGdvUWscUd9OScOHYI8FyrjmF6pqVaMRnJGv8hmfg1QiT1ZjF2I1KqFMiDNxY3CvVltWNYnCltOk0mLG95yUBNlzJIOROCujlKRV1nAsoL6u7f_ynoVJBVmLsnTZeJ4izf10zCdGc5vmxxMRBTxxwZV4OPDuA7jlTfxB2983Ho5h0CzRGa3k6HwWsLmVUfU2Prno8-6UT99q2x3Lq2RXWaT8CbJe7FNg1LbI1WQWq-6_9oQA4JAOXjP_mbWXk721kz/p.png?fv_content=true&size_mode=5)](https://www.patreon.com/catalyst_team)
+<div align="center">
 
 ![Catalyst logo](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png)
+
+**Reproducible and fast DL & RL**
+ 
+[![Pipi version](https://img.shields.io/pypi/v/catalyst.svg)](https://pypi.org/project/catalyst/)
+[![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html)
+[![PyPI Status](https://pepy.tech/badge/catalyst)](https://pepy.tech/project/catalyst)
+[![License](https://img.shields.io/github/license/catalyst-team/catalyst.svg)](LICENSE)
+
+[![Build Status](https://travis-ci.com/catalyst-team/catalyst.svg?branch=master)](https://travis-ci.com/catalyst-team/catalyst)
+[![Telegram](./pics/telegram.svg)](https://t.me/catalyst_team)
+[![Gitter](https://badges.gitter.im/catalyst-team/community.svg)](https://gitter.im/catalyst-team/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Slack](./pics/slack.svg)](https://opendatascience.slack.com/messages/CGK4KQBHD)
+[![Donate](https://ucde0995747f356870f615ffb990.previews.dropboxusercontent.com/p/thumb/AAju2yA3zKEEfV1Rbe1hdCK94o5cVH5blrqQCBfy1BFudg8VfehnZrvBCpKEKUjZ0yce8rVWsXDlxCV2tmXL1f18h9VMod21hbQ-E7_X_Qbomca3PLeTe0pTgcfqs1gGef9JBs4y36-raLf2Qrkf_AJGdvUWscUd9OScOHYI8FyrjmF6pqVaMRnJGv8hmfg1QiT1ZjF2I1KqFMiDNxY3CvVltWNYnCltOk0mLG95yUBNlzJIOROCujlKRV1nAsoL6u7f_ynoVJBVmLsnTZeJ4izf10zCdGc5vmxxMRBTxxwZV4OPDuA7jlTfxB2983Ho5h0CzRGa3k6HwWsLmVUfU2Prno8-6UT99q2x3Lq2RXWaT8CbJe7FNg1LbI1WQWq-6_9oQA4JAOXjP_mbWXk721kz/p.png?fv_content=true&size_mode=5)](https://www.patreon.com/catalyst_team)
+
+
+</div>
 
 High-level utils for PyTorch DL & RL research.
 It was developed with a focus on reproducibility, 
@@ -16,6 +27,12 @@ rather then write another regular train loop.
 Break the cycle - use the Catalyst!
 
 ---
+
+#### Installation
+
+```bash
+pip install catalyst
+```
 
 Catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+.
 
@@ -29,14 +46,6 @@ API documentation and an overview of the library can be found here
 In the [examples folder](examples) 
 of the repository, you can find advanced tutorials and Catalyst best practices.
 
-
-## Installation
-
-```bash
-pip install catalyst
-```
-
-
 ## Overview
 
 Catalyst helps you write compact
@@ -48,7 +57,7 @@ and other features without the boilerplate.
 
 - Universal train/inference loop.
 - Configuration files for model/data hyperparameters.
-- Reproducibility – even source code will be saved.
+- Reproducibility – all source code and environment variables will be saved.
 - Callbacks – reusable train/inference pipeline parts.
 - Training stages support.
 - Easy customization.
