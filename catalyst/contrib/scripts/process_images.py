@@ -1,10 +1,10 @@
 import os
 import argparse
 from pathlib import Path
+from functools import wraps
 
 import cv2
 import numpy as np
-from albumentations.augmentations.functional import longest_max_size
 
 from catalyst.utils import boolean_flag, imread, imwrite, \
     Pool, tqdm_parallel_imap, get_pool
@@ -35,6 +35,47 @@ def parse_args():
     build_args(parser)
     args = parser.parse_args()
     return args
+
+
+# <--- taken from albumentations - https://github.com/albu/albumentations --->
+
+def py3round(number):
+    """Unified rounding in all python versions."""
+    if abs(round(number) - number) == 0.5:
+        return int(2.0 * round(number / 2.0))
+
+    return int(round(number))
+
+
+def preserve_channel_dim(func):
+    """Preserve dummy channel dim."""
+    @wraps(func)
+    def wrapped_function(img, *args, **kwargs):
+        shape = img.shape
+        result = func(img, *args, **kwargs)
+        if len(shape) == 3 and shape[-1] == 1 and len(result.shape) == 2:
+            result = np.expand_dims(result, axis=-1)
+        return result
+
+    return wrapped_function
+
+
+def _func_max_size(img, max_size, interpolation, func):
+    height, width = img.shape[:2]
+
+    scale = max_size / float(func(width, height))
+
+    if scale != 1.0:
+        out_size = tuple(py3round(dim * scale) for dim in (width, height))
+        img = cv2.resize(img, out_size, interpolation=interpolation)
+    return img
+
+
+@preserve_channel_dim
+def longest_max_size(img, max_size, interpolation):
+    return _func_max_size(img, max_size, interpolation, max)
+
+# <--- taken from albumentations - https://github.com/albu/albumentations --->
 
 
 class Preprocessor:
