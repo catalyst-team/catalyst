@@ -172,11 +172,15 @@ def dump_environment(
 
     config_str = json.dumps(experiment_config, indent=2)
     config_str = config_str.replace("\n", "\n\n")
+
     environment_str = json.dumps(environment, indent=2)
     environment_str = environment_str.replace("\n", "\n\n")
+
+    pip_pkg = pip_pkg.replace("\n", "\n\n")
+    conda_pkg = conda_pkg.replace("\n", "\n\n")
     with SummaryWriter(config_dir) as writer:
-        writer.add_text("config", config_str, 0)
-        writer.add_text("environment", environment_str, 0)
+        writer.add_text("_config", config_str, 0)
+        writer.add_text("_environment", environment_str, 0)
         writer.add_text("pip-packages", pip_pkg, 0)
         if conda_pkg:
             writer.add_text("conda-packages", conda_pkg, 0)
