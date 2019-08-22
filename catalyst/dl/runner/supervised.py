@@ -87,7 +87,7 @@ class SupervisedRunner(Runner):
         return output
 
     def predict_batch(self, batch: Mapping[str, Any]):
-        output = self._process_input(batch)
+        output = self._process_input(self._batch2device(batch, self.device))
         output = self._process_output(output)
         return output
 
