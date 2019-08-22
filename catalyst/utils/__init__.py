@@ -3,8 +3,7 @@
 from .argparse import args_are_not_none, boolean_flag
 from .checkpoint import pack_checkpoint, unpack_checkpoint, \
     save_checkpoint, load_checkpoint
-from .compression import compress, compress_if_needed, \
-    decompress, decompress_if_needed, pack, unpack
+from .compression import pack, pack_if_needed, unpack, unpack_if_needed
 from .config import load_ordered_yaml, get_environment_vars, dump_environment, \
     parse_config_args, parse_args_uargs
 # from .dataset import *

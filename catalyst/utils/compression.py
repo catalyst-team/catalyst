@@ -51,7 +51,11 @@ def decompress_if_needed(data):
 
 if LZ4_ENABLED:
     pack = compress
+    pack_if_needed = compress_if_needed
     unpack = decompress
+    unpack_if_needed = decompress_if_needed
 else:
     pack = serialize
+    pack_if_needed = serialize
     unpack = deserialize
+    unpack_if_needed = deserialize
