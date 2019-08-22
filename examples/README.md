@@ -55,6 +55,10 @@
 
 ----
 
+### Catalyst-info
+[Link](https://github.com/catalyst-team/catalyst-info)
+
+
 ### Contributions
 
 1. [NeurIPS 2018: AI for Prosthetics Challenge](https://github.com/Scitator/neurips-18-prosthetics-challenge)
