@@ -1,14 +1,3 @@
-# !/usr/bin/env python
-# title           :process_images
-# description     :script to check, resize and clear images exif in parallel
-# author          :Sergey Kolesnikov, Vsevolod Poletaev, Roman Tezikov
-# author_email    :scitator@gmail.com, poletaev.va@gmail.com, tez.romach@gmail.com
-# date            :20190822
-# version         :19.08.7
-# * equal contribution
-# ==============================================================================
-
-
 import os
 import argparse
 from pathlib import Path
@@ -70,15 +59,14 @@ class Preprocessor:
         self.interpolation = interpolation
 
     def preprocess(self, image_path: Path):
-
         try:
             image = np.array(
                 imread(
                     uri=image_path,
                     grayscale=self.grayscale,
                     expand_dims=self.expand_dims,
-                    exifrotate=self.clear_exif))
-        except:
+                    exifrotate=not self.clear_exif))
+        except Exception:
             return
 
         if self.max_side is not None:
