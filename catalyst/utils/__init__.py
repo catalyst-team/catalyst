@@ -18,6 +18,8 @@ from .initialization import create_optimal_inner_init, outer_init, \
 from .misc import pairwise, make_tuple, merge_dicts, append_dict, is_exception
 from .numpy import np_softmax, geometric_cumsum, structed2dict, dict2structed
 # from .pandas import *
+from .parallel import Pool, DumbPool, get_pool, \
+    parallel_imap, tqdm_parallel_imap
 from .plotly import plot_tensorboard_log
 # from .registry import *
 from .seed import set_global_seed, Seeder

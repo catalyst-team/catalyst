@@ -61,13 +61,14 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
 
 from catalyst.__version__ import __version__
-from catalyst.contrib.scripts import check_images, \
+from catalyst.contrib.scripts import check_images, resize_images, \
     image2embedding, tag2label, split_dataframe
 
 COMMANDS = OrderedDict(
     [
         ("tag2label", tag2label),
         ("check-images", check_images),
+        ("resize-images", resize_images),
         ("split-dataframe", split_dataframe),
         ("image2embedding", image2embedding),
     ]
