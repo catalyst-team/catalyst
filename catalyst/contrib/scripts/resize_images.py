@@ -57,7 +57,7 @@ if __name__ == "__main__":
     parser.add_argument("source", type=Path)
     parser.add_argument("target", type=Path)
 
-    parser.add_argument("--max-side", default=1024, type=int)
+    parser.add_argument("--max-side", default=224, type=int)
     parser.add_argument("--num-workers", "-j", type=int, default=4)
 
     args = parser.parse_args().__dict__
