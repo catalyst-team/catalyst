@@ -37,7 +37,7 @@ if os.environ.get("FORCE_JPEG_TURBO", False):
         )
 
 
-def imread(uri, grayscale=False, expand_dims=True, rootpath=None):
+def imread(uri, grayscale=False, expand_dims=True, rootpath=None, **kwargs):
     """
 
     Args:
@@ -61,12 +61,23 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None):
         if grayscale:
             img = rgb2gray(img)
     else:
-        img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB")
+        img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB", **kwargs)
 
     if expand_dims and len(img.shape) < 3:  # grayscale
         img = np.expand_dims(img, -1)
 
     return img
+
+
+imwrite = imageio.imwrite
+
+
+def mimwrite_with_meta(uri, ims, meta, **kwargs):
+    writer = imageio.get_writer(uri, mode="I", **kwargs)
+    writer.set_meta_data(meta)
+    with writer:
+        for i in ims:
+            writer.append_data(i)
 
 
 def tensor_from_rgb_image(image: np.ndarray) -> torch.Tensor:

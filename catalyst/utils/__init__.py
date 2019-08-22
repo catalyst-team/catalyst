@@ -10,7 +10,8 @@ from .config import load_ordered_yaml, get_environment_vars, dump_environment, \
 from .ddp import is_wrapped_with_ddp, get_real_module
 # from .frozen import *
 from .hash import get_hash, get_short_hash
-from .image import imread, tensor_from_rgb_image, tensor_to_ndimage, \
+from .image import imread, imwrite, mimwrite_with_meta, \
+    tensor_from_rgb_image, tensor_to_ndimage, \
     binary_mask_to_overlay_image
 from .initialization import create_optimal_inner_init, outer_init, \
     constant_init, uniform_init, normal_init, xavier_init, kaiming_init, \
@@ -18,6 +19,8 @@ from .initialization import create_optimal_inner_init, outer_init, \
 from .misc import pairwise, make_tuple, merge_dicts, append_dict, is_exception
 from .numpy import np_softmax, geometric_cumsum, structed2dict, dict2structed
 # from .pandas import *
+from .parallel import Pool, DumbPool, get_pool, \
+    parallel_imap, tqdm_parallel_imap
 from .plotly import plot_tensorboard_log
 # from .registry import *
 from .seed import set_global_seed, Seeder
