@@ -112,6 +112,8 @@ runner.train(
 )
 ```
 
+For Catalyst.RL introduction, please follow [OpenAI Gym example](https://github.com/catalyst-team/catalyst/tree/master/examples/rl_gym).
+
 
 ## Docker
 
