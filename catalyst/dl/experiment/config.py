@@ -148,10 +148,10 @@ class ConfigExperiment(Experiment):
             # move optimizer to device
             device = get_device()
             for param in model_params:
-                param = param['params'][0]
+                param = param["params"][0]
                 state = optimizer.state[param]
-                for k, v in state.items():
-                    state[k] = any2device(v, device)
+                for key, value in state.items():
+                    state[key] = any2device(value, device)
 
             # update optimizer params
             for key, value in params.items():
