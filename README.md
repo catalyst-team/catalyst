@@ -46,6 +46,8 @@ API documentation and an overview of the library can be found here
 In the [examples folder](examples) 
 of the repository, you can find advanced tutorials and Catalyst best practices.
 
+To learn more about Catalyst internals and to be aware of the most important features, you can read [Catalyst-info](https://github.com/catalyst-team/catalyst-info), our blog where we regularly write facts about the framework.
+
 ## Overview
 
 Catalyst helps you write compact
