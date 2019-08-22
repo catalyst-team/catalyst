@@ -37,7 +37,7 @@ if os.environ.get("FORCE_JPEG_TURBO", False):
         )
 
 
-def imread(uri, grayscale=False, expand_dims=True, rootpath=None):
+def imread(uri, grayscale=False, expand_dims=True, rootpath=None, **kwargs):
     """
 
     Args:
@@ -61,7 +61,7 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None):
         if grayscale:
             img = rgb2gray(img)
     else:
-        img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB")
+        img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB", **kwargs)
 
     if expand_dims and len(img.shape) < 3:  # grayscale
         img = np.expand_dims(img, -1)
