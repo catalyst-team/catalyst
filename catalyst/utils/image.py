@@ -69,6 +69,17 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None):
     return img
 
 
+imwrite = imageio.imwrite
+
+
+def mimwrite_with_meta(uri, ims, meta, **kwargs):
+    writer = imageio.get_writer(uri, mode="I", **kwargs)
+    writer.set_meta_data(meta)
+    with writer:
+        for i in ims:
+            writer.append_data(i)
+
+
 def tensor_from_rgb_image(image: np.ndarray) -> torch.Tensor:
     image = np.moveaxis(image, -1, 0)
     image = np.ascontiguousarray(image)
