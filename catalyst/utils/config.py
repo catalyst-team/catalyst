@@ -6,6 +6,7 @@ import subprocess
 import copy
 import shutil
 import time
+import platform
 from collections import OrderedDict
 import json
 from logging import getLogger
@@ -73,11 +74,11 @@ def get_environment_vars() -> Dict[str, Any]:
         "python_version": sys.version,
         "conda_environment": os.environ.get("CONDA_DEFAULT_ENV", ""),
         "creation_time": time.strftime("%y%m%d.%H:%M:%S"),
-        "sysname": os.uname()[0],
-        "nodename": os.uname()[1],
-        "release": os.uname()[2],
-        "version": os.uname()[3],
-        "architecture": os.uname()[4],
+        "sysname": platform.uname()[0],
+        "nodename": platform.uname()[1],
+        "release": platform.uname()[2],
+        "version": platform.uname()[3],
+        "architecture": platform.uname()[4],
         "user": os.environ.get("USER", ""),
         "path": os.environ.get("PWD", ""),
     }
@@ -85,13 +86,13 @@ def get_environment_vars() -> Dict[str, Any]:
     with open(os.devnull, "w") as devnull:
         try:
             git_branch = subprocess.check_output(
-                "git rev-parse --abbrev-ref HEAD".split(), stderr=devnull
+                "git rev-parse --abbrev-ref HEAD".split(), shell=True, stderr=devnull
             ).strip().decode("UTF-8")
             git_local_commit = subprocess.check_output(
-                "git rev-parse HEAD".split(), stderr=devnull
+                "git rev-parse HEAD".split(), shell=True, stderr=devnull
             )
             git_origin_commit = subprocess.check_output(
-                f"git rev-parse origin/{git_branch}".split(), stderr=devnull
+                f"git rev-parse origin/{git_branch}".split(), shell=True, stderr=devnull
             )
 
             git = dict(
