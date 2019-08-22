@@ -64,13 +64,20 @@ def build_args(parser: ArgumentParser):
     parser.add_argument(
         "--checkpoint", "-c",
         default="best",
-        help="Checkpoint's name to trace"
+        help="Checkpoint's name to trace",
+        metavar="CHECKPOINT_NAME"
     )
     parser.add_argument(
         "--out-dir",
         type=Path,
         default=None,
         help="Output directory to save traced model"
+    )
+    parser.add_argument(
+        "--out-model",
+        type=Path,
+        default=None,
+        help="Output path to save traced model (overrides --out-dir)"
     )
     parser.add_argument(
         "--mode",
@@ -110,19 +117,25 @@ def main(args, _):
         requires_grad=requires_grad,
     )
 
-    file_name = f"traced-{checkpoint_name}-{method_name}"
-    if mode == "train":
-        file_name += "-in_train"
+    if args.out_model is None:
+        file_name = f"traced-{checkpoint_name}-{method_name}"
+        if mode == "train":
+            file_name += "-in_train"
 
-    if requires_grad:
-        file_name += f"-with_grad"
-    file_name += ".pth"
+        if requires_grad:
+            file_name += f"-with_grad"
+        file_name += ".pth"
 
-    output: Path = args.out_dir
-    if output is None:
-        output: Path = logdir / "trace"
-    output.mkdir(exist_ok=True, parents=True)
-    torch.jit.save(traced, str(output / file_name))
+        output: Path = args.out_dir
+        if output is None:
+            output: Path = logdir / "trace"
+        output.mkdir(exist_ok=True, parents=True)
+
+        out_model = str(output / file_name)
+    else:
+        out_model = str(args.out_model)
+
+    torch.jit.save(traced, out_model)
 
 
 if __name__ == "__main__":
