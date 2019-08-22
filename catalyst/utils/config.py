@@ -86,13 +86,17 @@ def get_environment_vars() -> Dict[str, Any]:
     with open(os.devnull, "w") as devnull:
         try:
             git_branch = subprocess.check_output(
-                "git rev-parse --abbrev-ref HEAD".split(), shell=True, stderr=devnull
+                "git rev-parse --abbrev-ref HEAD".split(),
+                shell=True,
+                stderr=devnull
             ).strip().decode("UTF-8")
             git_local_commit = subprocess.check_output(
                 "git rev-parse HEAD".split(), shell=True, stderr=devnull
             )
             git_origin_commit = subprocess.check_output(
-                f"git rev-parse origin/{git_branch}".split(), shell=True, stderr=devnull
+                f"git rev-parse origin/{git_branch}".split(),
+                shell=True,
+                stderr=devnull
             )
 
             git = dict(
