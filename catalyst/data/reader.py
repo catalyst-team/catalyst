@@ -2,7 +2,7 @@ import functools
 from typing import Callable, Type, List
 
 import numpy as np
-from catalyst.utils.image import imread
+from catalyst.utils import imread, get_one_hot
 
 
 class ReaderSpec:
@@ -117,11 +117,8 @@ class ScalarReader(ReaderSpec):
             dtype: Scalar value
         """
         scalar = self.dtype(row.get(self.input_key, self.default_value))
-        if self.one_hot_classes is not None \
-                and scalar is not None and scalar >= 0:
-            one_hot = np.zeros(self.one_hot_classes, dtype=np.float32)
-            one_hot[scalar] = 1.0
-            scalar = one_hot
+        if self.one_hot_classes is not None:
+            scalar = get_one_hot(scalar, self.one_hot_classes)
         result = {self.output_key: scalar}
         return result
 

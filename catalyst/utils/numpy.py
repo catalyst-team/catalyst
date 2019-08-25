@@ -66,3 +66,26 @@ def dict2structed(array: Dict):
         array = array_
 
     return array
+
+
+def get_one_hot(label: int, num_classes: int) -> np.ndarray:
+    """
+    Applies OneHot vectorization to a giving scalar
+
+    Args:
+        label (int): scalar value to be vectorized
+        num_classes (int): total number of classes
+
+    Returns:
+        np.ndarray: a one-hot vector with shape ``(num_classes,)``
+    """
+    assert num_classes is not None and num_classes > 0, \
+        f"Expect num_classes to be > 0, got {num_classes}"
+
+    assert label is not None and 0 <= label < num_classes, \
+        f"Expect label to be in [0; {num_classes}), got {label}"
+
+    one_hot = np.zeros(num_classes, dtype=np.float32)
+    one_hot[label] = 1.0
+
+    return one_hot
