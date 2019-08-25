@@ -68,13 +68,19 @@ def dict2structed(array: Dict):
     return array
 
 
-def get_one_hot(label: int, num_classes: int) -> np.ndarray:
+def get_one_hot(
+    label: int, num_classes: int, smoothing: float = None
+) -> np.ndarray:
     """
-    Applies OneHot vectorization to a giving scalar
+    Applies OneHot vectorization to a giving scalar, optional with
+    label smoothing from https://arxiv.org/abs/1812.01187
 
     Args:
         label (int): scalar value to be vectorized
         num_classes (int): total number of classes
+        smoothing (float, optional): if specified applies label smoothing
+            from ``Bag of Tricks for Image Classification
+            with Convolutional Neural Networks`` paper
 
     Returns:
         np.ndarray: a one-hot vector with shape ``(num_classes,)``
@@ -85,7 +91,17 @@ def get_one_hot(label: int, num_classes: int) -> np.ndarray:
     assert label is not None and 0 <= label < num_classes, \
         f"Expect label to be in [0; {num_classes}), got {label}"
 
-    one_hot = np.zeros(num_classes, dtype=np.float32)
-    one_hot[label] = 1.0
+    if smoothing is not None:
+        assert 0.0 < smoothing < 1.0, \
+            f"If smoothing is specified it must be in (0; 1), got {smoothing}"
 
-    return one_hot
+        smoothed = smoothing / float(num_classes - 1)
+        result = np.full((num_classes, ), smoothed, dtype=np.float32)
+        result[label] = 1.0 - smoothing
+
+        return result
+
+    result = np.zeros(num_classes, dtype=np.float32)
+    result[label] = 1.0
+
+    return result
