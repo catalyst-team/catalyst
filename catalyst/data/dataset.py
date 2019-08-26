@@ -112,4 +112,28 @@ class MergeDataset(Dataset):
         return self.len
 
 
-__all__ = ["ListDataset", "MergeDataset"]
+class PathsDataset(ListDataset):
+    """
+    Dataset that derives features and targets from samples filesystem paths.
+    """
+    def __init__(
+        self,
+        filenames: List[Dict],
+        open_fn: Callable,
+        get_label_fn: Callable,
+        **list_dataset_params
+    ):
+        list_data = [
+            {'features': filename, 
+             'targets': get_label_fn(filename)}
+            for filename in filenames]
+        
+        super().__init__(
+            list_data=list_data,
+            open_fn=open_fn,
+            **list_dataset_params
+        )
+
+
+__all__ = ["ListDataset", "MergeDataset", "PathsDataset"]
+
