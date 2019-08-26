@@ -55,6 +55,7 @@ class CouplingLayer(nn.Module):
         is being copied and which is being transformed.
         """
         super().__init__()
+        assert parity in ["odd", "even"]
 
         layer_fn = MODULES.get_if_str(layer_fn)
         activation_fn = MODULES.get_if_str(activation_fn)
