@@ -70,6 +70,7 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None, **kwargs):
 
 
 imwrite = imageio.imwrite
+imsave = imageio.imsave
 
 
 def mimwrite_with_meta(uri, ims, meta, **kwargs):
