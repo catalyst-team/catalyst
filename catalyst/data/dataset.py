@@ -117,10 +117,7 @@ class PathsDataset(ListDataset):
     Dataset that derives features and targets from samples filesystem paths.
     """
     def __init__(
-        self,
-        filenames: List[Dict],
-        open_fn: Callable,
-        get_label_fn: Callable,
+        self, filenames: List[Dict], open_fn: Callable, get_label_fn: Callable,
         **list_dataset_params
     ):
         """
@@ -146,9 +143,7 @@ class PathsDataset(ListDataset):
         ]
 
         super().__init__(
-            list_data=list_data,
-            open_fn=open_fn,
-            **list_dataset_params
+            list_data=list_data, open_fn=open_fn, **list_dataset_params
         )
 
 
