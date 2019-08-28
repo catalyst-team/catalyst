@@ -1,5 +1,6 @@
-from pathlib import Path
 from typing import Dict, Optional
+from pathlib import Path
+from collections import OrderedDict
 
 from torch.optim.optimizer import Optimizer
 
@@ -36,7 +37,7 @@ class RunnerState(FrozenClass):
         # hack to prevent cycle imports
         from ..callbacks import (
             VerboseLogger, ConsoleLogger,
-            TensorboardLogger, RaiseExceptionLogger
+            TensorboardLogger, RaiseExceptionLogger,
         )
 
         self.logdir = Path(logdir) if logdir is not None else None
@@ -72,13 +73,13 @@ class RunnerState(FrozenClass):
             minimize=minimize_metric
         )
         self.verbose: bool = verbose
-        self.loggers = []
+        self.loggers = OrderedDict()
         if self.verbose:
-            self.loggers.insert(0, VerboseLogger())
+            self.loggers["verbose"] = VerboseLogger()
         if not stage.startswith("infer"):
-            self.loggers.extend([ConsoleLogger(), TensorboardLogger()])
-
-        self.loggers.append(RaiseExceptionLogger())
+            self.loggers["console"] = ConsoleLogger()
+            self.loggers["tensorboard"] = TensorboardLogger()
+        self.loggers["exception"] = RaiseExceptionLogger()
         self.timer = TimerManager()
 
         # base metrics
@@ -128,16 +129,16 @@ class RunnerState(FrozenClass):
         self.metrics.add_batch_value(metrics_dict=values)
 
     def on_stage_start_pre(self):
-        for logger in self.loggers:
+        for logger in self.loggers.values():
             logger.on_stage_start(self)
 
     def on_stage_end_post(self):
-        for logger in self.loggers:
+        for logger in self.loggers.values():
             logger.on_stage_end(self)
 
     def on_epoch_start_pre(self):
         self.metrics.begin_epoch()
-        for logger in self.loggers:
+        for logger in self.loggers.values():
             logger.on_epoch_start(self)
 
     def on_epoch_end_pre(self):
@@ -145,17 +146,17 @@ class RunnerState(FrozenClass):
             self.metrics.end_epoch_train()
 
     def on_epoch_end_post(self):
-        for logger in self.loggers:
+        for logger in self.loggers.values():
             logger.on_epoch_end(self)
 
     def on_loader_start_pre(self):
         self.metrics.begin_loader(self.loader_name)
-        for logger in self.loggers:
+        for logger in self.loggers.values():
             logger.on_loader_start(self)
 
     def on_loader_end_post(self):
         self.metrics.end_loader()
-        for logger in self.loggers:
+        for logger in self.loggers.values():
             logger.on_loader_end(self)
 
     def on_batch_start_pre(self):
@@ -164,11 +165,11 @@ class RunnerState(FrozenClass):
     def on_batch_end_post(self):
         self._handle_runner_metrics()
         self.metrics.end_batch()
-        for logger in self.loggers:
+        for logger in self.loggers.values():
             logger.on_batch_end(self)
 
     def on_exception_post(self):
-        for logger in self.loggers:
+        for logger in self.loggers.values():
             logger.on_exception(self)
 
 

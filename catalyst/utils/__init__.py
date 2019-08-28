@@ -16,7 +16,8 @@ from .image import imread, imwrite, mimwrite_with_meta, \
 from .initialization import create_optimal_inner_init, outer_init, \
     constant_init, uniform_init, normal_init, xavier_init, kaiming_init, \
     bias_init_with_prob
-from .misc import pairwise, make_tuple, merge_dicts, append_dict, is_exception
+from .misc import pairwise, make_tuple, \
+    merge_dicts, append_dict, flatten_dict, is_exception
 from .numpy import np_softmax, geometric_cumsum, structed2dict, \
     dict2structed, get_one_hot
 # from .pandas import *

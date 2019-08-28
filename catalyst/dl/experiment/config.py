@@ -69,10 +69,6 @@ class ConfigExperiment(Experiment):
 
         return stages_config_out
 
-    @property
-    def logdir(self):
-        return self._logdir
-
     def _get_logdir(self, config: Dict) -> str:
         timestamp = datetime.datetime.utcnow().strftime("%y%m%d.%H%M%S")
         config_hash = get_short_hash(config)
@@ -83,6 +79,10 @@ class ConfigExperiment(Experiment):
         return logdir
 
     @property
+    def logdir(self):
+        return self._logdir
+
+    @property
     def stages(self) -> List[str]:
         stages_keys = list(self.stages_config.keys())
         return stages_keys
@@ -90,6 +90,10 @@ class ConfigExperiment(Experiment):
     @property
     def distributed_params(self) -> Dict:
         return self._config.get("distributed_params", {})
+
+    @property
+    def monitoring_params(self) -> Dict:
+        return self._config.get("monitoring_params", {})
 
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
         return self.stages_config[stage].get("state_params", {})

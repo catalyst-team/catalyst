@@ -82,7 +82,7 @@ class CheckpointCallback(BaseCheckpointCallback):
     """
     def __init__(
         self,
-        save_n_best: int = 3,
+        save_n_best: int = 1,
         resume: str = None,
         resume_dir: str = None,
         metric_filename: str = "_metrics.json"
@@ -152,8 +152,11 @@ class CheckpointCallback(BaseCheckpointCallback):
         )
         if len(self.top_best_metrics) > self.save_n_best:
             last_item = self.top_best_metrics.pop(-1)
-            last_filepath = last_item[0]
-            os.remove(last_filepath)
+            last_filepath = Path(last_item[0])
+            last_filepaths = last_filepath.parent.glob(
+                last_filepath.name.replace(".pth", "*"))
+            for filepath in last_filepaths:
+                os.remove(filepath)
 
     def process_checkpoint(
         self,
@@ -163,10 +166,26 @@ class CheckpointCallback(BaseCheckpointCallback):
         main_metric: str = "loss",
         minimize_metric: bool = True
     ):
-        filepath = utils.save_checkpoint(
+        suffix = self.get_checkpoint_suffix(checkpoint)
+        utils.save_checkpoint(
             logdir=f"{logdir}/checkpoints/",
             checkpoint=checkpoint,
-            suffix=self.get_checkpoint_suffix(checkpoint),
+            suffix=f"{suffix}_full",
+            is_best=is_best,
+            is_last=True,
+            special_suffix="_full"
+        )
+
+        exclude = ["criterion", "optimizer", "scheduler"]
+        checkpoint = {
+            key: value
+            for key, value in checkpoint.items()
+            if all(z not in key for z in exclude)
+        }
+        filepath = utils.save_checkpoint(
+            checkpoint=checkpoint,
+            logdir=f"{logdir}/checkpoints/",
+            suffix=suffix,
             is_best=is_best,
             is_last=True
         )
