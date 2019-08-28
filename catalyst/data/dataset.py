@@ -137,14 +137,14 @@ class PathsDataset(ListDataset):
                 (for example, your sample could be an image file like
                 /path/to/your/image_1.png where the targer is encoded as
                 a part of file path.
-            list_dataset_params (dict): base class initialization 
+            list_dataset_params (dict): base class initialization
                 parameters.
         """
         list_data = [
             dict(features=filename, targets=get_label_fn(filename))
             for filename in filenames
         ]
-        
+
         super().__init__(
             list_data=list_data,
             open_fn=open_fn,
@@ -153,4 +153,3 @@ class PathsDataset(ListDataset):
 
 
 __all__ = ["ListDataset", "MergeDataset", "PathsDataset"]
-
