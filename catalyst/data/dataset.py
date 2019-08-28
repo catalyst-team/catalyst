@@ -112,4 +112,44 @@ class MergeDataset(Dataset):
         return self.len
 
 
-__all__ = ["ListDataset", "MergeDataset"]
+class PathsDataset(ListDataset):
+    """
+    Dataset that derives features and targets from samples filesystem paths.
+    """
+    def __init__(
+        self,
+        filenames: List[Dict],
+        open_fn: Callable,
+        get_label_fn: Callable,
+        **list_dataset_params
+    ):
+        """
+         Args:
+            filenames (List[Dict]): list of files that store information
+                about your dataset samples; it could be images, texts or
+                any other files in general.
+            open_fn (callable): function, that can open your
+                annotations dict and
+                transfer it to data, needed by your network
+                (for example open image by path, or tokenize read string.)
+            get_label_fn (callable): function, that can extract target
+                value from sample path
+                (for example, your sample could be an image file like
+                /path/to/your/image_1.png where the targer is encoded as
+                a part of file path.
+            list_dataset_params (dict): base class initialization
+                parameters.
+        """
+        list_data = [
+            dict(features=filename, targets=get_label_fn(filename))
+            for filename in filenames
+        ]
+
+        super().__init__(
+            list_data=list_data,
+            open_fn=open_fn,
+            **list_dataset_params
+        )
+
+
+__all__ = ["ListDataset", "MergeDataset", "PathsDataset"]
