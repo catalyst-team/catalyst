@@ -17,6 +17,7 @@
     ```
     
 4. Select config
+
     ```bash
     # DQN        – off-policy algorithm on discrete action space LunarLander environment
     export CONFIG=./rl_gym/config_dqn.yml

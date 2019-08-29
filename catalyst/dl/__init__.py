@@ -9,4 +9,4 @@ from .core import Experiment, Runner, RunnerState, \
 from .experiment import BaseExperiment, SupervisedExperiment, ConfigExperiment
 from .meters import AverageValueMeter, ClassErrorMeter, ConfusionMeter, \
     MSEMeter, MovingAverageValueMeter, AUCMeter, APMeter, mAPMeter
-from .runner import SupervisedRunner
+from .runner import *
