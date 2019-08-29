@@ -105,7 +105,7 @@ def get_environment_vars() -> Dict[str, Any]:
                 origin_commit=git_origin_commit
             )
             result["git"] = _decode_dict(git)
-        except subprocess.CalledProcessError:
+        except (subprocess.CalledProcessError, FileNotFoundError):
             pass
 
     result = _decode_dict(result)
