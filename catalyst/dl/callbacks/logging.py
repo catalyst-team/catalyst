@@ -8,7 +8,7 @@ from tensorboardX import SummaryWriter
 
 from catalyst.dl.core import Callback, RunnerState
 from catalyst.dl.utils.formatters import TxtMetricsFormatter
-from catalyst.utils import is_exception
+from catalyst.dl import utils
 
 
 class VerboseLogger(Callback):
@@ -56,7 +56,7 @@ class VerboseLogger(Callback):
 
     def on_exception(self, state: RunnerState):
         exception = state.exception
-        if not is_exception(exception):
+        if not utils.is_exception(exception):
             return
 
         if isinstance(exception, KeyboardInterrupt):
@@ -182,7 +182,7 @@ class TensorboardLogger(Callback):
 class RaiseExceptionLogger(Callback):
     def on_exception(self, state: RunnerState):
         exception = state.exception
-        if not is_exception(exception):
+        if not utils.is_exception(exception):
             return
 
         if state.need_reraise_exception:

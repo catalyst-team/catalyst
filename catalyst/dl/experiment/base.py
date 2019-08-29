@@ -31,7 +31,8 @@ class BaseExperiment(Experiment):
         verbose: bool = False,
         state_kwargs: Dict = None,
         checkpoint_data: Dict = None,
-        distributed_params: Dict = None
+        distributed_params: Dict = None,
+        monitoring_params: Dict = None
     ):
         self._model = model
         self._loaders = loaders
@@ -59,6 +60,7 @@ class BaseExperiment(Experiment):
         self._additional_state_kwargs = state_kwargs or {}
         self.checkpoint_data = checkpoint_data or {}
         self._distributed_params = distributed_params or {}
+        self._monitoring_params = monitoring_params or {}
 
     @property
     def logdir(self):
@@ -71,6 +73,10 @@ class BaseExperiment(Experiment):
     @property
     def distributed_params(self) -> Dict:
         return self._distributed_params
+
+    @property
+    def monitoring_params(self) -> Dict:
+        return self._monitoring_params
 
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
         default_params = dict(

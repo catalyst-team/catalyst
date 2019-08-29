@@ -31,6 +31,11 @@ class Experiment(ABC):
     def distributed_params(self) -> Dict:
         pass
 
+    @property
+    @abstractmethod
+    def monitoring_params(self) -> Dict:
+        pass
+
     @abstractmethod
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
         pass

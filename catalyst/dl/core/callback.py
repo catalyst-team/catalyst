@@ -9,15 +9,15 @@ class Callback:
 
     usage example:
 
-    stage start
-    ---epoch start (one epoch - one run of every loader)
+    --stage start
+    ----epoch start (one epoch - one run of every loader)
     ------loader start
-    ---------batch start
-    ---------batch handler
-    ---------batch end
+    --------batch start
+    --------batch handler
+    --------batch end
     ------loader end
-    ---epoch end
-    stage end
+    ----epoch end
+    --stage end
 
     exception – if an Exception was raised
     """

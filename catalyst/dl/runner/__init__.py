@@ -6,7 +6,7 @@ from .supervised import SupervisedRunner
 
 try:
     import wandb
-    from .wandb import WandbRunner
+    from .wandb import WandbRunner, SupervisedWandbRunner
 except ImportError:
     logger.warning(
         "wandb not available, switching to pickle. "

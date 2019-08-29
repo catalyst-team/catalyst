@@ -104,6 +104,7 @@ class SupervisedRunner(Runner):
         state_kwargs: Dict = None,
         checkpoint_data: Dict = None,
         fp16: Union[Dict, bool] = None,
+        monitoring_params: Dict = None,
         check: bool = False,
     ):
         if isinstance(fp16, bool) and fp16:
@@ -124,7 +125,8 @@ class SupervisedRunner(Runner):
             verbose=verbose,
             state_kwargs=state_kwargs,
             checkpoint_data=checkpoint_data,
-            distributed_params=fp16
+            distributed_params=fp16,
+            monitoring_params=monitoring_params
         )
         self.run_experiment(experiment, check=check)
 
