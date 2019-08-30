@@ -17,7 +17,7 @@ class WandbRunner(Runner):
     @staticmethod
     def _log_metrics(metrics: Dict, mode: str, suffix: str = ""):
         metrics = {
-            f"{mode}/{key}{suffix}": value
+            f"{key}/{mode}{suffix}": value
             for key, value in metrics.items()
         }
         wandb.log(metrics)
@@ -37,8 +37,8 @@ class WandbRunner(Runner):
             self.batch_log_suffix = ""
             self.epoch_log_suffix = ""
         else:
-            self.batch_log_suffix = "/batch"
-            self.epoch_log_suffix = "/epoch"
+            self.batch_log_suffix = "_batch"
+            self.epoch_log_suffix = "_epoch"
 
     def _pre_experiment_hook(self, experiment: Experiment):
         monitoring_params = experiment.monitoring_params
@@ -63,7 +63,7 @@ class WandbRunner(Runner):
 
     def _post_experiment_hook(self, experiment: Experiment):
         logdir_src = Path(experiment.logdir)
-        logidr_dst = wandb.run.dir
+        logdir_dst = wandb.run.dir
 
         exclude = ["wandb", "checkpoints"]
         logdir_files = list(logdir_src.glob("*"))
@@ -73,15 +73,15 @@ class WandbRunner(Runner):
 
         for subdir in logdir_files:
             if subdir.is_dir():
-                os.makedirs(f"{logidr_dst}/{subdir.name}", exist_ok=True)
-                shutil.rmtree(f"{logidr_dst}/{subdir.name}")
+                os.makedirs(f"{logdir_dst}/{subdir.name}", exist_ok=True)
+                shutil.rmtree(f"{logdir_dst}/{subdir.name}")
                 shutil.copytree(
                     f"{str(subdir.absolute())}",
-                    f"{logidr_dst}/{subdir.name}")
+                    f"{logdir_dst}/{subdir.name}")
             else:
                 shutil.copy2(
                     f"{str(subdir.absolute())}",
-                    f"{logidr_dst}/{subdir.name}")
+                    f"{logdir_dst}/{subdir.name}")
 
         checkpoints_src = logdir_src.joinpath("checkpoints")
         checkpoints_dst = Path(wandb.run.dir).joinpath("checkpoints")
