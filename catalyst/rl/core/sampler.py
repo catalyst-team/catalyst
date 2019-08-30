@@ -6,6 +6,8 @@ os.environ["MKL_NUM_THREADS"] = "1"
 
 import gc  # noqa E402
 import time  # noqa E402
+import shutil  # noqa E402
+from pathlib import Path  # noqa E402
 import threading  # noqa E402
 from ctypes import c_bool  # noqa E402
 import multiprocessing as mp  # noqa E402
@@ -104,10 +106,14 @@ class Sampler:
         assert len(kwargs) == 0
         if WANDB_ENABLED:
             if self.monitoring_params is not None:
+                self.checkpoints_glob: List[str] = \
+                    self.monitoring_params.pop(
+                        "checkpoints_glob", ["best.pth", "last.pth"])
+
                 wandb.init(**self.monitoring_params)
-                self.wandb_mode = "sampler"
             else:
                 WANDB_ENABLED = False
+        self.wandb_mode = "sampler"
 
     def _prepare_logger(self, logdir, mode):
         if logdir is not None:
@@ -229,6 +235,19 @@ class Sampler:
             self._log_wandb_metrics(
                 metrics, step=step, mode=self.wandb_mode, suffix=suffix)
 
+    def _save_wandb(self):
+        if WANDB_ENABLED:
+            logdir_src = Path(self.logdir)
+            logdir_dst = Path(wandb.run.dir)
+
+            events_src = list(logdir_src.glob("events.out.tfevents*"))
+            if len(events_src) > 0:
+                events_src = events_src[0]
+                os.makedirs(f"{logdir_dst}/{logdir_src.name}", exist_ok=True)
+                shutil.copy2(
+                    f"{str(events_src.absolute())}",
+                    f"{logdir_dst}/{logdir_src.name}/{events_src.name}")
+
     @torch.no_grad()
     def _run_trajectory_loop(self):
         seed = self._get_seed()
@@ -257,6 +276,7 @@ class Sampler:
 
             if self.trajectory_index % self._weights_sync_period == 0:
                 self.load_checkpoint(db_server=self.db_server)
+                self._save_wandb()
 
             trajectory, trajectory_info = self._run_trajectory_loop()
             if trajectory is None:
@@ -291,15 +311,14 @@ class Sampler:
 
 
 class ValidSampler(Sampler):
+    @staticmethod
+    def rewards2metric(rewards):
+        return np.mean(rewards)  # - np.std(rewards)
+
     def _init(self, save_n_best: int = 3, **kwargs):
-        global WANDB_ENABLED
         assert len(kwargs) == 0
-        if WANDB_ENABLED:
-            if self.monitoring_params is not None:
-                wandb.init(**self.monitoring_params)
-                self.wandb_mode = "valid_sampler"
-            else:
-                WANDB_ENABLED = False
+        super()._init()
+        self.wandb_mode = "valid_sampler"
 
         self.save_n_best = save_n_best
         self.best_agents = []
@@ -339,9 +358,23 @@ class ValidSampler(Sampler):
 
         return True
 
-    @staticmethod
-    def rewards2metric(rewards):
-        return np.mean(rewards)  # - np.std(rewards)
+    def _save_wandb(self):
+        super()._save_wandb()
+        if WANDB_ENABLED:
+            logdir_src = Path(self.logdir)
+            logdir_dst = Path(wandb.run.dir)
+            checkpoints_src = logdir_src.joinpath("checkpoints")
+            checkpoints_dst = logdir_dst.joinpath("checkpoints")
+            os.makedirs(checkpoints_dst, exist_ok=True)
+
+            checkpoint_paths = []
+            for glob in self.checkpoints_glob:
+                checkpoint_paths.extend(list(checkpoints_src.glob(glob)))
+            checkpoint_paths = list(set(checkpoint_paths))
+            for checkpoint_path in checkpoint_paths:
+                shutil.copy2(
+                    f"{str(checkpoint_path.absolute())}",
+                    f"{checkpoints_dst}/{checkpoint_path.name}")
 
     def save_checkpoint(
         self,
@@ -416,6 +449,7 @@ class ValidSampler(Sampler):
                 checkpoint=self.checkpoint,
                 save_n_best=self.save_n_best
             )
+            self._save_wandb()
 
     def run(self):
         self._start_sample_loop()

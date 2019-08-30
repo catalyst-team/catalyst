@@ -1,8 +1,10 @@
-from typing import Dict
+from typing import List, Dict
 
 import os
 import gc
 import time
+import shutil
+from pathlib import Path
 from datetime import datetime
 import numpy as np
 import logging
@@ -93,10 +95,24 @@ class TrainerSpec:
         assert len(kwargs) == 0
         if WANDB_ENABLED:
             if self.monitoring_params is not None:
+                self.checkpoints_glob: List[str] = \
+                    self.monitoring_params.pop(
+                        "checkpoints_glob", ["best.pth", "last.pth"])
+
                 wandb.init(**self.monitoring_params)
-                self.wandb_mode = "trainer"
+
+                logdir_src = Path(self.logdir)
+                logdir_dst = Path(wandb.run.dir)
+
+                configs_src = logdir_src.joinpath("configs")
+                os.makedirs(f"{logdir_dst}/{configs_src.name}", exist_ok=True)
+                shutil.rmtree(f"{logdir_dst}/{configs_src.name}")
+                shutil.copytree(
+                    f"{str(configs_src.absolute())}",
+                    f"{logdir_dst}/{configs_src.name}")
             else:
                 WANDB_ENABLED = False
+        self.wandb_mode = "trainer"
 
     def _prepare_logger(self, logdir):
         timestamp = datetime.utcnow().strftime("%y%m%d.%H%M%S")
@@ -159,6 +175,19 @@ class TrainerSpec:
         if WANDB_ENABLED:
             self._log_wandb_metrics(
                 metrics, step=step, mode=self.wandb_mode, suffix=suffix)
+
+    def _save_wandb(self):
+        if WANDB_ENABLED:
+            logdir_src = Path(self.logdir)
+            logdir_dst = Path(wandb.run.dir)
+
+            events_src = list(logdir_src.glob("events.out.tfevents*"))
+            if len(events_src) > 0:
+                events_src = events_src[0]
+                os.makedirs(f"{logdir_dst}/{logdir_src.name}", exist_ok=True)
+                shutil.copy2(
+                    f"{str(events_src.absolute())}",
+                    f"{logdir_dst}/{logdir_src.name}/{events_src.name}")
 
     def _save_checkpoint(self):
         if self.epoch % self.save_period == 0:
@@ -235,6 +264,7 @@ class TrainerSpec:
         self._log_to_tensorboard(**metrics)
         self._log_to_wandb(step=self.epoch, suffix="_epoch", **metrics)
         self._save_checkpoint()
+        self._save_wandb()
         self._update_sampler_weights()
         if self.epoch % self._gc_period == 0:
             gc.collect()
