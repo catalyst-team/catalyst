@@ -9,7 +9,7 @@ from catalyst.dl.callbacks import \
 
 class SupervisedExperiment(BaseExperiment):
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
-        callbacks = self._callbacks
+        callbacks = OrderedDict(())
         if not stage.startswith("infer"):
             default_callbacks = [
                 (self._criterion, "_criterion", CriterionCallback),
@@ -19,10 +19,17 @@ class SupervisedExperiment(BaseExperiment):
             ]
 
             for component, callback_name, callback_fn in default_callbacks:
-                is_already_present = any(
-                    isinstance(x, callback_fn) for x in callbacks.values()
-                )
-                if component is not None and not is_already_present:
+                if component is None:
+                    continue
+
+                present_callbacks = [(key, val) for key, val in
+                                     callbacks.items() if
+                                     isinstance(val, callback_fn)]
+
+                if present_callbacks:
+                    for key, val in present_callbacks:
+                        callbacks[key] = val
+                else:
                     callbacks[callback_name] = callback_fn()
         return callbacks
 
