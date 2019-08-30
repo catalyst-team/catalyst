@@ -1,7 +1,11 @@
 import random
-from typing import List, Dict, Callable, Any
-from torch.utils.data import Dataset
+from pathlib import Path
+from typing import List, Dict, Callable, Any, Union
+
 from catalyst.utils.misc import merge_dicts
+from torch.utils.data import Dataset
+
+_Path = Union[str, Path]
 
 
 class ListDataset(Dataset):
@@ -117,8 +121,8 @@ class PathsDataset(ListDataset):
     Dataset that derives features and targets from samples filesystem paths.
     """
     def __init__(
-        self, filenames: List[str], open_fn: Callable[[dict], dict],
-        get_label_fn: Callable[[str], Any], **list_dataset_params
+        self, filenames: List[_Path], open_fn: Callable[[dict], dict],
+        label_fn: Callable[[_Path], Any], **list_dataset_params
     ):
         """
          Args:
@@ -129,7 +133,7 @@ class PathsDataset(ListDataset):
                 annotations dict and
                 transfer it to data, needed by your network
                 (for example open image by path, or tokenize read string)
-            get_label_fn (callable): function, that can extract target
+            label_fn (callable): function, that can extract target
                 value from sample path
                 (for example, your sample could be an image file like
                 ``/path/to/your/image_1.png`` where the target is encoded as
@@ -138,15 +142,15 @@ class PathsDataset(ListDataset):
                 parameters.
 
         Examples:
-            >>> get_label_fn = lambda x: x.split("_")[0]
+            >>> label_fn = lambda x: x.split("_")[0]
             >>> dataset = PathsDataset(
             >>>     filenames=Path("/path/to/images/").glob("*.jpg"),
-            >>>     get_label_fn=get_label_fn,
+            >>>     label_fn=label_fn,
             >>>     open_fn=open_fn,
             >>> )
         """
         list_data = [
-            dict(features=filename, targets=get_label_fn(filename))
+            dict(features=filename, targets=label_fn(filename))
             for filename in filenames
         ]
 
@@ -155,4 +159,4 @@ class PathsDataset(ListDataset):
         )
 
 
-__all__ = ["ListDataset", "MergeDataset", "PathsDataset"]
+__all__ = ["_Path", "ListDataset", "MergeDataset", "PathsDataset"]
