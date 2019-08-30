@@ -5,6 +5,7 @@ import gc
 import time
 from datetime import datetime
 import numpy as np
+import logging
 
 from torch.utils.data import DataLoader
 from tensorboardX import SummaryWriter
@@ -14,6 +15,17 @@ from catalyst import utils
 from .db import DBSpec
 from .environment import EnvironmentSpec
 from .algorithm import AlgorithmSpec
+
+logger = logging.getLogger(__name__)
+try:
+    import wandb
+    WANDB_ENABLED = True
+except ImportError:
+    logger.warning(
+        "wandb not available, switching to pickle. "
+        "To install wandb, run `pip install wandb`."
+    )
+    WANDB_ENABLED = False
 
 
 class TrainerSpec:
@@ -32,6 +44,7 @@ class TrainerSpec:
         gc_period: int = 10,
         seed: int = 42,
         epoch_limit: int = None,
+        monitoring_params: Dict = None,
         **kwargs,
     ):
         # algorithm & environment
@@ -71,11 +84,19 @@ class TrainerSpec:
         self._epoch_limit = epoch_limit
 
         #  special
+        self.monitoring_params = monitoring_params
         self._prepare_seed()
         self._init(**kwargs)
 
     def _init(self, **kwargs):
+        global WANDB_ENABLED
         assert len(kwargs) == 0
+        if WANDB_ENABLED:
+            if self.monitoring_params is not None:
+                wandb.init(**self.monitoring_params)
+                self.wandb_mode = "trainer"
+            else:
+                WANDB_ENABLED = False
 
     def _prepare_logger(self, logdir):
         timestamp = datetime.utcnow().strftime("%y%m%d.%H%M%S")
@@ -119,6 +140,25 @@ class TrainerSpec:
         self.logger.add_scalar("num_transitions", num_transitions, self.epoch)
         self.logger.add_scalar("buffer_size", buffer_size, self.epoch)
         self.logger.flush()
+
+    @staticmethod
+    def _log_wandb_metrics(
+        metrics: Dict,
+        step: int,
+        mode: str,
+        suffix: str = ""
+    ):
+        metrics = {
+            f"{mode}/{key}{suffix}": value
+            for key, value in metrics.items()
+        }
+        step = None  # @TODO: fix, wandb issue
+        wandb.log(metrics, step=step)
+
+    def _log_to_wandb(self, *, step, suffix="", **metrics):
+        if WANDB_ENABLED:
+            self._log_wandb_metrics(
+                metrics, step=step, mode=self.wandb_mode, suffix=suffix)
 
     def _save_checkpoint(self):
         if self.epoch % self.save_period == 0:
@@ -164,9 +204,16 @@ class TrainerSpec:
             metrics_ = self._update_target_weights(self.update_step) or {}
             metrics.update(**metrics_)
 
+            metrics = dict(
+                (key, value)
+                for key, value in metrics.items()
+                if isinstance(value, (float, int))
+            )
+
             for key, value in metrics.items():
-                if isinstance(value, (float, int)):
-                    self.logger.add_scalar(key, value, self.update_step)
+                self.logger.add_scalar(key, value, self.update_step)
+            self._log_to_wandb(
+                step=self.update_step, suffix="_batch", **metrics)
 
         elapsed_time = time.time() - start_time
         elapsed_num_updates = len(loader) * loader.batch_size
@@ -186,6 +233,7 @@ class TrainerSpec:
         self.epoch += 1
         self._log_to_console(**metrics)
         self._log_to_tensorboard(**metrics)
+        self._log_to_wandb(step=self.epoch, suffix="_epoch", **metrics)
         self._save_checkpoint()
         self._update_sampler_weights()
         if self.epoch % self._gc_period == 0:

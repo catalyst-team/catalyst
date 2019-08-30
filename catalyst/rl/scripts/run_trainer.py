@@ -78,11 +78,14 @@ def main(args, unknown_args):
     # if args.resume is not None:
     #     algorithm.load_checkpoint(filepath=args.resume)
 
+    monitoring_params = config.get("monitoring_params", None)
+
     trainer = trainer_fn(
         algorithm=algorithm,
         env_spec=env,
         db_server=db_server,
         logdir=args.logdir,
+        monitoring_params=monitoring_params,
         **config["trainer"],
     )
 

@@ -11,6 +11,7 @@ from ctypes import c_bool  # noqa E402
 import multiprocessing as mp  # noqa E402
 from datetime import datetime  # noqa E402
 import numpy as np  # noqa E402
+import logging  # noqa E402
 
 import torch  # noqa E402
 torch.set_num_threads(1)
@@ -24,6 +25,17 @@ from .exploration import ExplorationHandler  # noqa E402
 from .environment import EnvironmentSpec  # noqa E402
 from .db import DBSpec  # noqa E402
 from .agent import ActorSpec, CriticSpec  # noqa E402
+
+logger = logging.getLogger(__name__)
+try:
+    import wandb
+    WANDB_ENABLED = True
+except ImportError:
+    logger.warning(
+        "wandb not available, switching to pickle. "
+        "To install wandb, run `pip install wandb`."
+    )
+    WANDB_ENABLED = False
 
 
 class Sampler:
@@ -43,6 +55,7 @@ class Sampler:
         trajectory_limit: int = None,
         force_store: bool = False,
         gc_period: int = 10,
+        monitoring_params: Dict = None,
         **kwargs
     ):
         self._device = utils.get_device()
@@ -83,10 +96,18 @@ class Sampler:
         self.checkpoint = None
 
         #  special
+        self.monitoring_params = monitoring_params
         self._init(**kwargs)
 
     def _init(self, **kwargs):
+        global WANDB_ENABLED
         assert len(kwargs) == 0
+        if WANDB_ENABLED:
+            if self.monitoring_params is not None:
+                wandb.init(**self.monitoring_params)
+                self.wandb_mode = "sampler"
+            else:
+                WANDB_ENABLED = False
 
     def _prepare_logger(self, logdir, mode):
         if logdir is not None:
@@ -189,6 +210,25 @@ class Sampler:
 
             self.logger.flush()
 
+    @staticmethod
+    def _log_wandb_metrics(
+        metrics: Dict,
+        step: int,
+        mode: str,
+        suffix: str = ""
+    ):
+        metrics = {
+            f"{mode}/{key}{suffix}": value
+            for key, value in metrics.items()
+        }
+        step = None  # @TODO: fix, wandb issue
+        wandb.log(metrics, step=step)
+
+    def _log_to_wandb(self, *, step, suffix="", **metrics):
+        if WANDB_ENABLED:
+            self._log_wandb_metrics(
+                metrics, step=step, mode=self.wandb_mode, suffix=suffix)
+
     @torch.no_grad()
     def _run_trajectory_loop(self):
         seed = self._get_seed()
@@ -229,6 +269,7 @@ class Sampler:
                     self._store_trajectory(raw_trajectory, raw=True)
             self._log_to_console(**trajectory_info)
             self._log_to_tensorboard(**trajectory_info)
+            self._log_to_wandb(step=self.trajectory_index, **trajectory_info)
             self.trajectory_index += 1
 
             if self.trajectory_index % self._gc_period == 0:
@@ -251,7 +292,15 @@ class Sampler:
 
 class ValidSampler(Sampler):
     def _init(self, save_n_best: int = 3, **kwargs):
+        global WANDB_ENABLED
         assert len(kwargs) == 0
+        if WANDB_ENABLED:
+            if self.monitoring_params is not None:
+                wandb.init(**self.monitoring_params)
+                self.wandb_mode = "valid_sampler"
+            else:
+                WANDB_ENABLED = False
+
         self.save_n_best = save_n_best
         self.best_agents = []
         self._sampling_flag.value = True
@@ -298,7 +347,7 @@ class ValidSampler(Sampler):
         self,
         logdir: str,
         checkpoint: Dict,
-        save_n_best: int = 5,
+        save_n_best: int = 3,
         minimize_metric: bool = False
     ):
         agent_rewards = checkpoint["rewards"]
@@ -340,6 +389,8 @@ class ValidSampler(Sampler):
                 trajectory_info.pop("raw_trajectory", None)
                 self._log_to_console(**trajectory_info)
                 self._log_to_tensorboard(**trajectory_info)
+                self._log_to_wandb(
+                    step=self.trajectory_index, **trajectory_info)
                 self.trajectory_index += 1
 
                 if self.trajectory_index % self._gc_period == 0:
@@ -351,6 +402,12 @@ class ValidSampler(Sampler):
                     np.mean(trajectories_rewards),
                     self.db_server.epoch
                 )
+            self._log_to_wandb(
+                step=self.db_server.epoch, **{
+                    "trajectory/_mean_valid_reward":
+                        np.mean(trajectories_rewards)
+                }
+            )
 
             self.checkpoint["rewards"] = trajectories_rewards
             self.checkpoint["epoch"] = self.db_server.epoch
