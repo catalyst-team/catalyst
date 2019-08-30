@@ -23,7 +23,7 @@ class SupervisedExperiment(BaseExperiment):
                     continue
 
                 present_callbacks = [(key, val) for key, val in
-                                     callbacks.items() if
+                                     self._callbacks.items() if
                                      isinstance(val, callback_fn)]
 
                 if present_callbacks:
