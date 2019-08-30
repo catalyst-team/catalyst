@@ -10,7 +10,7 @@ def accuracy(outputs, targets, topk=(1, )):
 
     _, pred = outputs.topk(max_k, 1, True, True)
     pred = pred.t()
-    correct = pred.eq(targets.view(1, -1).expand_as(pred))
+    correct = pred.eq(targets.long().view(1, -1).expand_as(pred))
 
     res = []
     for k in topk:
