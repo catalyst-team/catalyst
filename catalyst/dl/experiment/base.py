@@ -39,7 +39,12 @@ class BaseExperiment(Experiment):
 
         if callbacks is None:
             callbacks = OrderedDict()
-        elif isinstance(callbacks, List):
+        elif isinstance(callbacks, OrderedDict):
+            _callbacks = [(k, v) for k, v in callbacks.items()]
+            callbacks = sorted(_callbacks, key=lambda x: x[1].ordering)
+            callbacks = OrderedDict(callbacks)
+        elif isinstance(callbacks, list):
+            callbacks = sorted(callbacks, key=lambda x: x.ordering)
             callbacks = OrderedDict([
                 (i, value)
                 for i, value in enumerate(callbacks)

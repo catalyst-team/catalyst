@@ -1,4 +1,4 @@
-from catalyst.dl.core import Callback, RunnerState
+from catalyst.dl.core import Callback, RunnerState, CallbackOrdering
 
 
 class CriterionCallback(Callback):
@@ -11,6 +11,7 @@ class CriterionCallback(Callback):
         loss_key: str = None,
         multiplier: float = 1.0
     ):
+        super().__init__(CallbackOrdering.Criterion)
         self.input_key = input_key
         self.output_key = output_key
         self.prefix = prefix

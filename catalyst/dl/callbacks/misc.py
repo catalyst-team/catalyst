@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 
 from catalyst.dl.meters import ConfusionMeter
-from catalyst.dl.core import Callback, RunnerState
+from catalyst.dl.core import Callback, RunnerState, CallbackOrdering
 from catalyst.dl import utils
 
 
@@ -15,6 +15,7 @@ class EarlyStoppingCallback(Callback):
         minimize: bool = True,
         min_delta: float = 1e-6
     ):
+        super().__init__(CallbackOrdering.Logger)
         self.best_score = None
         self.metric = metric
         self.patience = patience
@@ -55,6 +56,7 @@ class ConfusionMatrixCallback(Callback):
         num_classes: int = None,
         plot_params: Dict = None
     ):
+        super().__init__(CallbackOrdering.Metric)
         self.prefix = prefix
         self.output_key = output_key
         self.input_key = input_key

@@ -1,10 +1,23 @@
+from enum import IntFlag
 from typing import Callable, List
+
 from .state import RunnerState
+
+
+class CallbackOrdering(IntFlag):
+    Unknown = -1
+    Internal = 0
+    Criterion = 10
+    Optimizer = 100
+    Scheduler = 200
+    Metric = 300
+    Logger = 400
+    Other = 2000
 
 
 class Callback:
     """
-    Abstract class that all callback(e.g., Logger) classes extends from.
+    Abstract class that all callback (e.g., Logger) classes extends from.
     Must be extended before usage.
 
     usage example:
@@ -20,7 +33,15 @@ class Callback:
     --stage end
 
     exception – if an Exception was raised
+
+    All callbacks has ordering ``order`` one of the values in
+    ``CallbackOrdering``
     """
+    def __init__(self, ordering: int):
+        """
+        For ordering see ``CallbackOrdering`` class
+        """
+        self.ordering = ordering
 
     def on_stage_start(self, state: RunnerState):
         pass
@@ -54,7 +75,6 @@ class MetricCallback(Callback):
     """
     A callback that returns single metric on `state.on_batch_end`
     """
-
     def __init__(
         self,
         prefix: str,
@@ -63,6 +83,7 @@ class MetricCallback(Callback):
         output_key: str = "logits",
         **metric_params
     ):
+        super().__init__(CallbackOrdering.Metric)
         self.prefix = prefix
         self.metric_fn = metric_fn
         self.input_key = input_key
@@ -90,6 +111,7 @@ class MultiMetricCallback(Callback):
         output_key: str = "logits",
         **metric_params
     ):
+        super().__init__(CallbackOrdering.Metric)
         self.prefix = prefix
         self.metric_fn = metric_fn
         self.list_args = list_args
@@ -115,4 +137,9 @@ class MultiMetricCallback(Callback):
         state.metrics.add_batch_value(metrics_dict=batch_metrics)
 
 
-__all__ = ["Callback", "MetricCallback", "MultiMetricCallback"]
+__all__ = [
+    "CallbackOrdering",
+    "Callback",
+    "MetricCallback",
+    "MultiMetricCallback",
+]
