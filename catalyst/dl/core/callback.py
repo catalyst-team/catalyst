@@ -22,17 +22,19 @@ class Callback:
 
     usage example:
 
-    --stage start
-    ----epoch start (one epoch - one run of every loader)
-    ------loader start
-    --------batch start
-    --------batch handler
-    --------batch end
-    ------loader end
-    ----epoch end
-    --stage end
+    .. code:: bash
 
-    exception – if an Exception was raised
+        --stage start
+        ----epoch start (one epoch - one run of every loader)
+        ------loader start
+        --------batch start
+        --------batch handler
+        --------batch end
+        ------loader end
+        ----epoch end
+        --stage end
+
+        exception – if an Exception was raised
 
     All callbacks has ordering ``order`` one of the values in
     ``CallbackOrdering``

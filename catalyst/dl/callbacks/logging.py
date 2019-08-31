@@ -183,7 +183,7 @@ class TensorboardLogger(Callback):
 
 class RaiseExceptionLogger(Callback):
     def __init__(self):
-        super().__init__(CallbackOrdering.Logger)
+        super().__init__(CallbackOrdering.Other + 1)
 
     def on_exception(self, state: RunnerState):
         exception = state.exception
