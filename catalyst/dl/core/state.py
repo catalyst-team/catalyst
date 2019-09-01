@@ -1,10 +1,12 @@
-from typing import Dict, Optional
-from pathlib import Path
 from collections import OrderedDict
+from pathlib import Path
+from typing import Dict, Optional
 
 from torch.optim.optimizer import Optimizer
 
+from catalyst.dl.utils import process_callback
 from catalyst.utils.frozen import FrozenClass
+
 from .metric_manager import MetricManager, TimerManager
 
 
@@ -73,13 +75,15 @@ class RunnerState(FrozenClass):
             minimize=minimize_metric
         )
         self.verbose: bool = verbose
-        self.loggers = OrderedDict()
+        loggers = OrderedDict()
         if self.verbose:
-            self.loggers["verbose"] = VerboseLogger()
+            loggers["verbose"] = VerboseLogger()
         if not stage.startswith("infer"):
-            self.loggers["console"] = ConsoleLogger()
-            self.loggers["tensorboard"] = TensorboardLogger()
-        self.loggers["exception"] = RaiseExceptionLogger()
+            loggers["console"] = ConsoleLogger()
+            loggers["tensorboard"] = TensorboardLogger()
+        loggers["exception"] = RaiseExceptionLogger()
+        self.loggers = process_callback(loggers)
+
         self.timer = TimerManager()
 
         # base metrics
