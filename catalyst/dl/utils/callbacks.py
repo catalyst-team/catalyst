@@ -11,16 +11,16 @@ def process_callback(
         callbacks: either list of callbacks or ordered dict
 
     Returns:
-        sequence of callbacks sorted by ``callback ordering``
+        sequence of callbacks sorted by ``callback order``
     """
     if callbacks is None:
         result = OrderedDict()
     elif isinstance(callbacks, OrderedDict):
         result = [(k, v) for k, v in callbacks.items()]
-        result = sorted(result, key=lambda x: x[1].ordering)
+        result = sorted(result, key=lambda x: x[1].order)
         result = OrderedDict(result)
     elif isinstance(callbacks, list):
-        result = sorted(callbacks, key=lambda x: x.ordering)
+        result = sorted(callbacks, key=lambda x: x.order)
         result = OrderedDict([
             (i, value)
             for i, value in enumerate(result)
