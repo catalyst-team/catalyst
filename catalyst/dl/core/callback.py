@@ -1,5 +1,5 @@
-from enum import IntFlag
 from typing import Callable, List
+from enum import IntFlag
 
 from .state import RunnerState
 
