@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 from tensorboardX import SummaryWriter
 
-from catalyst.dl.core import Callback, RunnerState, CallbackOrdering
+from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 from catalyst.dl.utils.formatters import TxtMetricsFormatter
 from catalyst.dl import utils
 
@@ -18,7 +18,7 @@ class VerboseLogger(Callback):
         Args:
             always_show (List[str]): list of metrics to always show
         """
-        super().__init__(CallbackOrdering.Logger)
+        super().__init__(CallbackOrder.Logger)
         self.tqdm: tqdm = None
         self.step = 0
         self.always_show = always_show
@@ -70,7 +70,7 @@ class ConsoleLogger(Callback):
     Logger callback, translates ``state.metrics`` to console and text file
     """
     def __init__(self):
-        super().__init__(CallbackOrdering.Logger)
+        super().__init__(CallbackOrder.Logger)
         self.logger = None
 
     @staticmethod
@@ -128,7 +128,7 @@ class TensorboardLogger(Callback):
             log_on_batch_end: Logs per-batch metrics if set True.
             log_on_epoch_end: Logs per-epoch metrics if set True.
         """
-        super().__init__(CallbackOrdering.Logger)
+        super().__init__(CallbackOrder.Logger)
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
@@ -183,7 +183,7 @@ class TensorboardLogger(Callback):
 
 class RaiseExceptionLogger(Callback):
     def __init__(self):
-        super().__init__(CallbackOrdering.Other + 1)
+        super().__init__(CallbackOrder.Other + 1)
 
     def on_exception(self, state: RunnerState):
         exception = state.exception

@@ -4,7 +4,7 @@ from enum import IntFlag
 from .state import RunnerState
 
 
-class CallbackOrdering(IntFlag):
+class CallbackOrder(IntFlag):
     Unknown = -100
     Internal = 0
     Criterion = 20
@@ -85,7 +85,7 @@ class MetricCallback(Callback):
         output_key: str = "logits",
         **metric_params
     ):
-        super().__init__(CallbackOrdering.Metric)
+        super().__init__(CallbackOrder.Metric)
         self.prefix = prefix
         self.metric_fn = metric_fn
         self.input_key = input_key
@@ -113,7 +113,7 @@ class MultiMetricCallback(Callback):
         output_key: str = "logits",
         **metric_params
     ):
-        super().__init__(CallbackOrdering.Metric)
+        super().__init__(CallbackOrder.Metric)
         self.prefix = prefix
         self.metric_fn = metric_fn
         self.list_args = list_args
@@ -140,7 +140,7 @@ class MultiMetricCallback(Callback):
 
 
 __all__ = [
-    "CallbackOrdering",
+    "CallbackOrder",
     "Callback",
     "MetricCallback",
     "MultiMetricCallback",

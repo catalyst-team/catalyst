@@ -4,7 +4,7 @@ import numpy as np
 import torch
 
 from catalyst.dl.meters import AUCMeter
-from catalyst.dl.core import Callback, RunnerState, CallbackOrdering
+from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 
 
 class AUCCallback(Callback):
@@ -16,7 +16,7 @@ class AUCCallback(Callback):
         class_names: List[str] = None,
         num_classes: int = 1
     ):
-        super().__init__(CallbackOrdering.Metric)
+        super().__init__(CallbackOrder.Metric)
         self.prefix = prefix
         self.input_key = input_key
         self.output_key = output_key

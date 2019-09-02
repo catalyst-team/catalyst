@@ -1,7 +1,7 @@
 import safitty
 import torch
 
-from catalyst.dl.core import Callback, RunnerState, CallbackOrdering
+from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 from catalyst.contrib.schedulers import OneCycleLR, BatchScheduler
 from catalyst.utils import get_optimizer_momentum
 
@@ -13,7 +13,7 @@ class SchedulerCallback(Callback):
         mode: str = None,
         reduce_metric: str = "loss"
     ):
-        super().__init__(CallbackOrdering.Scheduler)
+        super().__init__(CallbackOrder.Scheduler)
         self.scheduler_key = scheduler_key
         self.mode = mode
         self.reduce_metric = reduce_metric
@@ -91,7 +91,7 @@ class LRUpdater(Callback):
             optimizer_key: which optimizer key to use
                 for learning rate scheduling
         """
-        super().__init__(CallbackOrdering.Scheduler)
+        super().__init__(CallbackOrder.Scheduler)
         self.init_lr = 0
         self.optimizer_key = optimizer_key
 
