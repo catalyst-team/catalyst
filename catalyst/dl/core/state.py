@@ -1,6 +1,6 @@
+from typing import Dict, Optional
 from collections import OrderedDict
 from pathlib import Path
-from typing import Dict, Optional
 
 from torch.optim.optimizer import Optimizer
 
