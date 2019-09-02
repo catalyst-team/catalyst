@@ -129,11 +129,12 @@ class MongoDB(DBSpec):
         checkpoint_obj = self._checkpoints_collection.find_one(
             {"prefix": "checkpoint"}
         )
-        checkpoint = checkpoint_obj.get("checkpoint")
-        if checkpoint is None:
-            return None
-        self._epoch = checkpoint_obj["epoch"]
-        checkpoint = utils.unpack(checkpoint)
+        if checkpoint_obj is not None:
+            checkpoint = checkpoint_obj.get("checkpoint")
+            self._epoch = checkpoint_obj["epoch"]
+            checkpoint = utils.unpack(checkpoint)
+        else:
+            checkpoint = None
         return checkpoint
 
     def del_checkpoint(self):
