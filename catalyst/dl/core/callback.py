@@ -7,12 +7,12 @@ from .state import RunnerState
 class CallbackOrdering(IntFlag):
     Unknown = -1
     Internal = 0
-    Criterion = 10
-    Optimizer = 100
-    Scheduler = 200
-    Metric = 300
-    Logger = 400
-    Other = 2000
+    Criterion = 20
+    Optimizer = 40
+    Scheduler = 60
+    Metric = 80
+    Logger = 100
+    Other = 101
 
 
 class Callback:
