@@ -2,7 +2,7 @@ from typing import Dict, List, Callable
 import torch
 import safitty
 
-from catalyst.dl.core import Callback, RunnerState
+from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 from catalyst.dl.registry import GRAD_CLIPPERS
 from catalyst.dl.utils import get_optimizer_momentum
 from catalyst.dl.utils.torch import _Optimizer
@@ -24,7 +24,7 @@ class OptimizerCallback(Callback):
         """
         @TODO: docs
         """
-
+        super().__init__(CallbackOrder.Optimizer)
         grad_clip_params: dict = grad_clip_params or {}
         self.grad_clip_fn = GRAD_CLIPPERS.get_from_params(**grad_clip_params)
 

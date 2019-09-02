@@ -175,10 +175,10 @@ def dump_environment(
         outpath = config_dir / name
         shutil.copyfile(path, outpath)
 
-    config_str = json.dumps(experiment_config, indent=2)
+    config_str = json.dumps(experiment_config, indent=2, ensure_ascii=False)
     config_str = config_str.replace("\n", "\n\n")
 
-    environment_str = json.dumps(environment, indent=2)
+    environment_str = json.dumps(environment, indent=2, ensure_ascii=False)
     environment_str = environment_str.replace("\n", "\n\n")
 
     pip_pkg = pip_pkg.replace("\n", "\n\n")
