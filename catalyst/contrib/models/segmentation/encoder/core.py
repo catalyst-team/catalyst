@@ -20,5 +20,6 @@ class EncoderSpec(ABC, nn.Module):
         pass
 
     def set_requires_grad(self, requires_grad):
+        requires_grad = bool(requires_grad)
         for param in self.parameters():
-            param.requires_grad = bool(requires_grad)
+            param.requires_grad = requires_grad

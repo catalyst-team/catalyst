@@ -38,7 +38,7 @@ class ResnetEncoder(EncoderSpec):
         self,
         arch: str = "resnet18",
         pretrained: bool = True,
-        requires_grad: bool = None,
+        requires_grad: bool = True,
         layers_indices: List[int] = None,
         state_dict: Union[dict, str, Path] = None,
     ):
