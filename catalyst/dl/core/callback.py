@@ -5,14 +5,14 @@ from .state import RunnerState
 
 
 class CallbackOrdering(IntFlag):
-    Unknown = -1
+    Unknown = -100
     Internal = 0
     Criterion = 20
     Optimizer = 40
     Scheduler = 60
     Metric = 80
     Logger = 100
-    Other = 101
+    Other = 200
 
 
 class Callback:
