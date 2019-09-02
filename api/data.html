@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Data &mdash; Catalyst 19.08.4 documentation</title>
+  <title>Data &mdash; Catalyst 19.09 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                19.08
+                19.09
               </div>
             
           
@@ -409,6 +409,48 @@ to cache sample after transformations to RAM</p></li>
 
 </dd></dl>
 
+<dl class="class">
+<dt id="catalyst.data.dataset.PathsDataset">
+<em class="property">class </em><code class="descclassname">catalyst.data.dataset.</code><code class="descname">PathsDataset</code><span class="sig-paren">(</span><em>filenames: List[Union[str, pathlib.Path]], open_fn: Callable[dict, dict], label_fn: Callable[Union[str, pathlib.Path], Any], **list_dataset_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#PathsDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.PathsDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.data.dataset.ListDataset" title="catalyst.data.dataset.ListDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.data.dataset.ListDataset</span></code></a></p>
+<p>Dataset that derives features and targets from samples filesystem paths.</p>
+<dl class="method">
+<dt id="catalyst.data.dataset.PathsDataset.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>filenames: List[Union[str, pathlib.Path]], open_fn: Callable[dict, dict], label_fn: Callable[Union[str, pathlib.Path], Any], **list_dataset_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#PathsDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.PathsDataset.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>filenames (List[str]): list of file paths that store information</dt><dd><p>about your dataset samples; it could be images, texts or
+any other files in general.</p>
+</dd>
+<dt>open_fn (callable): function, that can open your</dt><dd><p>annotations dict and
+transfer it to data, needed by your network
+(for example open image by path, or tokenize read string)</p>
+</dd>
+<dt>label_fn (callable): function, that can extract target</dt><dd><p>value from sample path
+(for example, your sample could be an image file like
+<code class="docutils literal notranslate"><span class="pre">/path/to/your/image_1.png</span></code> where the target is encoded as
+a part of file path)</p>
+</dd>
+<dt>list_dataset_params (dict): base class initialization</dt><dd><p>parameters.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">label_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span> <span class="o">=</span> <span class="n">PathsDataset</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">filenames</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;/path/to/images/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.jpg&quot;</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">label_fn</span><span class="o">=</span><span class="n">label_fn</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">open_fn</span><span class="o">=</span><span class="n">open_fn</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="reader">
 <h2>Reader<a class="headerlink" href="#reader" title="Permalink to this headline">¶</a></h2>
@@ -492,7 +534,7 @@ and applies <cite>encode_fn</cite> function</p>
 
 <dl class="class">
 <dt id="catalyst.data.reader.ScalarReader">
-<em class="property">class </em><code class="descclassname">catalyst.data.reader.</code><code class="descname">ScalarReader</code><span class="sig-paren">(</span><em>input_key: str</em>, <em>output_key: str</em>, <em>dtype: Type = &lt;class 'numpy.float32'&gt;</em>, <em>default_value: float = None</em>, <em>one_hot_classes: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ScalarReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ScalarReader" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">catalyst.data.reader.</code><code class="descname">ScalarReader</code><span class="sig-paren">(</span><em>input_key: str</em>, <em>output_key: str</em>, <em>dtype: Type = &lt;class 'numpy.float32'&gt;</em>, <em>default_value: float = None</em>, <em>one_hot_classes: int = None</em>, <em>smoothing: float = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ScalarReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ScalarReader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Numeric data reader abstraction.
 Reads a single float, int, str or other from data</p>
 <dl class="method">
@@ -515,7 +557,7 @@ transfer it to a single value</p>
 
 <dl class="method">
 <dt id="catalyst.data.reader.ScalarReader.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>input_key: str</em>, <em>output_key: str</em>, <em>dtype: Type = &lt;class 'numpy.float32'&gt;</em>, <em>default_value: float = None</em>, <em>one_hot_classes: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ScalarReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ScalarReader.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>input_key: str</em>, <em>output_key: str</em>, <em>dtype: Type = &lt;class 'numpy.float32'&gt;</em>, <em>default_value: float = None</em>, <em>one_hot_classes: int = None</em>, <em>smoothing: float = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ScalarReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ScalarReader.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -524,6 +566,8 @@ transfer it to a single value</p>
 <li><p><strong>dtype</strong> (<em>type</em>) – datatype of scalar values to use</p></li>
 <li><p><strong>default_value</strong> – default value to use if something goes wrong</p></li>
 <li><p><strong>one_hot_classes</strong> (<em>int</em>) – number of one-hot classes</p></li>
+<li><p><strong>smoothing</strong> (<em>float</em><em>, </em><em>optional</em>) – if specified applies label smoothing
+to one_hot classes</p></li>
 </ul>
 </dd>
 </dl>
@@ -654,10 +698,8 @@ Must be one of [downsampling, upsampling]</p></li>
 <dl class="class">
 <dt id="catalyst.data.sampler.MiniEpochSampler">
 <em class="property">class </em><code class="descclassname">catalyst.data.sampler.</code><code class="descname">MiniEpochSampler</code><span class="sig-paren">(</span><em>data_len: int</em>, <em>mini_epoch_len: int</em>, <em>drop_last: bool = False</em>, <em>shuffle: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#MiniEpochSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.MiniEpochSampler" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Sampler iterates mini epochs from the dataset</dt><dd><p>used by <code class="docutils literal notranslate"><span class="pre">mini_epoch_len</span></code></p>
-</dd>
-</dl>
+<dd><p>Sampler iterates mini epochs from the dataset
+used by <code class="docutils literal notranslate"><span class="pre">mini_epoch_len</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -676,10 +718,10 @@ The sampler will shuffle indices
 </dl>
 <p class="rubric">Example</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MiniEpochSampler</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">mini_epoch_len</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">MiniEpochSampler</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">mini_epoch_len</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> \
-<span class="go">    drop_last=True)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">MiniEpochSampler</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">mini_epoch_len</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> \
-<span class="go">    shuffle=&quot;per_epoch&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MiniEpochSampler</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">mini_epoch_len</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MiniEpochSampler</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">mini_epoch_len</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">shuffle</span><span class="o">=</span><span class="s2">&quot;per_epoch&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="method">

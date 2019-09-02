@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.callbacks.logging &mdash; Catalyst 19.08.4 documentation</title>
+  <title>catalyst.dl.callbacks.logging &mdash; Catalyst 19.09 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                19.08
+                19.09
               </div>
             
           
@@ -168,9 +168,9 @@
 
 <span class="kn">from</span> <span class="nn">tensorboardX</span> <span class="k">import</span> <span class="n">SummaryWriter</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">RunnerState</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">RunnerState</span><span class="p">,</span> <span class="n">CallbackOrder</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.utils.formatters</span> <span class="k">import</span> <span class="n">TxtMetricsFormatter</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="k">import</span> <span class="n">is_exception</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="k">import</span> <span class="n">utils</span>
 
 
 <div class="viewcode-block" id="VerboseLogger"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.VerboseLogger">[docs]</a><span class="k">class</span> <span class="nc">VerboseLogger</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
@@ -180,6 +180,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            always_show (List[str]): list of metrics to always show</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Logger</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span><span class="p">:</span> <span class="n">tqdm</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">always_show</span> <span class="o">=</span> <span class="n">always_show</span></div>
@@ -218,7 +219,7 @@
 
 <div class="viewcode-block" id="VerboseLogger.on_exception"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.VerboseLogger.on_exception">[docs]</a>    <span class="k">def</span> <span class="nf">on_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
         <span class="n">exception</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">exception</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_exception</span><span class="p">(</span><span class="n">exception</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">is_exception</span><span class="p">(</span><span class="n">exception</span><span class="p">):</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exception</span><span class="p">,</span> <span class="ne">KeyboardInterrupt</span><span class="p">):</span>
@@ -230,8 +231,8 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Logger callback, translates ``state.metrics`` to console and text file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Logger</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@staticmethod</span>
@@ -289,6 +290,7 @@
 <span class="sd">            log_on_batch_end: Logs per-batch metrics if set True.</span>
 <span class="sd">            log_on_epoch_end: Logs per-epoch metrics if set True.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Logger</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics_to_log</span> <span class="o">=</span> <span class="n">metric_names</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_on_batch_end</span> <span class="o">=</span> <span class="n">log_on_batch_end</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_on_epoch_end</span> <span class="o">=</span> <span class="n">log_on_epoch_end</span>
@@ -342,9 +344,12 @@
 
 
 <div class="viewcode-block" id="RaiseExceptionLogger"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.RaiseExceptionLogger">[docs]</a><span class="k">class</span> <span class="nc">RaiseExceptionLogger</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Other</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
 <div class="viewcode-block" id="RaiseExceptionLogger.on_exception"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.RaiseExceptionLogger.on_exception">[docs]</a>    <span class="k">def</span> <span class="nf">on_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
         <span class="n">exception</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">exception</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_exception</span><span class="p">(</span><span class="n">exception</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">is_exception</span><span class="p">(</span><span class="n">exception</span><span class="p">):</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">need_reraise_exception</span><span class="p">:</span>

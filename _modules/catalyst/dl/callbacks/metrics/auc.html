@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.callbacks.metrics.auc &mdash; Catalyst 19.08.4 documentation</title>
+  <title>catalyst.dl.callbacks.metrics.auc &mdash; Catalyst 19.09 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                19.08
+                19.09
               </div>
             
           
@@ -166,7 +166,7 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.dl.meters</span> <span class="k">import</span> <span class="n">AUCMeter</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">RunnerState</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">RunnerState</span><span class="p">,</span> <span class="n">CallbackOrder</span>
 
 
 <div class="viewcode-block" id="AUCCallback"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.auc.AUCCallback">[docs]</a><span class="k">class</span> <span class="nc">AUCCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
@@ -178,6 +178,7 @@
         <span class="n">class_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Metric</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span> <span class="o">=</span> <span class="n">input_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="o">=</span> <span class="n">output_key</span>

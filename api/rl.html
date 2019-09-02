@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>RL &mdash; Catalyst 19.08.4 documentation</title>
+  <title>RL &mdash; Catalyst 19.09 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                19.08
+                19.09
               </div>
             
           
@@ -437,7 +437,7 @@ In continuous case must contain method get_action(action).</p>
 
 <span class="target" id="module-catalyst.rl.core.sampler"></span><dl class="class">
 <dt id="catalyst.rl.core.sampler.Sampler">
-<em class="property">class </em><code class="descclassname">catalyst.rl.core.sampler.</code><code class="descname">Sampler</code><span class="sig-paren">(</span><em>agent: Union[catalyst.rl.core.agent.ActorSpec, catalyst.rl.core.agent.CriticSpec], env: catalyst.rl.core.environment.EnvironmentSpec, db_server: catalyst.rl.core.db.DBSpec = None, exploration_handler: catalyst.rl.core.exploration.ExplorationHandler = None, logdir: str = None, id: int = 0, mode: str = 'infer', deterministic: bool = None, weights_sync_period: int = 1, weights_sync_mode: str = None, seeds: List = None, trajectory_limit: int = None, force_store: bool = False, gc_period: int = 10, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/sampler.html#Sampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.sampler.Sampler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">catalyst.rl.core.sampler.</code><code class="descname">Sampler</code><span class="sig-paren">(</span><em>agent: Union[catalyst.rl.core.agent.ActorSpec, catalyst.rl.core.agent.CriticSpec], env: catalyst.rl.core.environment.EnvironmentSpec, db_server: catalyst.rl.core.db.DBSpec = None, exploration_handler: catalyst.rl.core.exploration.ExplorationHandler = None, logdir: str = None, id: int = 0, mode: str = 'infer', deterministic: bool = None, weights_sync_period: int = 1, weights_sync_mode: str = None, seeds: List = None, trajectory_limit: int = None, force_store: bool = False, gc_period: int = 10, monitoring_params: Dict = None, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/sampler.html#Sampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.sampler.Sampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="method">
 <dt id="catalyst.rl.core.sampler.Sampler.load_checkpoint">
@@ -453,7 +453,7 @@ In continuous case must contain method get_action(action).</p>
 
 <dl class="class">
 <dt id="catalyst.rl.core.sampler.ValidSampler">
-<em class="property">class </em><code class="descclassname">catalyst.rl.core.sampler.</code><code class="descname">ValidSampler</code><span class="sig-paren">(</span><em>agent: Union[catalyst.rl.core.agent.ActorSpec, catalyst.rl.core.agent.CriticSpec], env: catalyst.rl.core.environment.EnvironmentSpec, db_server: catalyst.rl.core.db.DBSpec = None, exploration_handler: catalyst.rl.core.exploration.ExplorationHandler = None, logdir: str = None, id: int = 0, mode: str = 'infer', deterministic: bool = None, weights_sync_period: int = 1, weights_sync_mode: str = None, seeds: List = None, trajectory_limit: int = None, force_store: bool = False, gc_period: int = 10, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/sampler.html#ValidSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.sampler.ValidSampler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">catalyst.rl.core.sampler.</code><code class="descname">ValidSampler</code><span class="sig-paren">(</span><em>agent: Union[catalyst.rl.core.agent.ActorSpec, catalyst.rl.core.agent.CriticSpec], env: catalyst.rl.core.environment.EnvironmentSpec, db_server: catalyst.rl.core.db.DBSpec = None, exploration_handler: catalyst.rl.core.exploration.ExplorationHandler = None, logdir: str = None, id: int = 0, mode: str = 'infer', deterministic: bool = None, weights_sync_period: int = 1, weights_sync_mode: str = None, seeds: List = None, trajectory_limit: int = None, force_store: bool = False, gc_period: int = 10, monitoring_params: Dict = None, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/sampler.html#ValidSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.sampler.ValidSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.rl.core.sampler.Sampler" title="catalyst.rl.core.sampler.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.rl.core.sampler.Sampler</span></code></a></p>
 <dl class="method">
 <dt id="catalyst.rl.core.sampler.ValidSampler.load_checkpoint">
@@ -472,14 +472,14 @@ In continuous case must contain method get_action(action).</p>
 
 <dl class="method">
 <dt id="catalyst.rl.core.sampler.ValidSampler.save_checkpoint">
-<code class="descname">save_checkpoint</code><span class="sig-paren">(</span><em>logdir: str</em>, <em>checkpoint: Dict</em>, <em>save_n_best: int = 5</em>, <em>minimize_metric: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/sampler.html#ValidSampler.save_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.sampler.ValidSampler.save_checkpoint" title="Permalink to this definition">¶</a></dt>
+<code class="descname">save_checkpoint</code><span class="sig-paren">(</span><em>logdir: str</em>, <em>checkpoint: Dict</em>, <em>save_n_best: int = 3</em>, <em>minimize_metric: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/sampler.html#ValidSampler.save_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.sampler.ValidSampler.save_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <span class="target" id="module-catalyst.rl.core.trainer"></span><dl class="class">
 <dt id="catalyst.rl.core.trainer.TrainerSpec">
-<em class="property">class </em><code class="descclassname">catalyst.rl.core.trainer.</code><code class="descname">TrainerSpec</code><span class="sig-paren">(</span><em>algorithm: catalyst.rl.core.algorithm.AlgorithmSpec</em>, <em>env_spec: catalyst.rl.core.environment.EnvironmentSpec</em>, <em>db_server: catalyst.rl.core.db.DBSpec</em>, <em>logdir: str</em>, <em>num_workers: int = 1</em>, <em>batch_size: int = 64</em>, <em>min_num_transitions: int = 10000</em>, <em>online_update_period: int = 1</em>, <em>weights_sync_period: int = 1</em>, <em>save_period: int = 10</em>, <em>gc_period: int = 10</em>, <em>seed: int = 42</em>, <em>epoch_limit: int = None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/trainer.html#TrainerSpec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.trainer.TrainerSpec" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">catalyst.rl.core.trainer.</code><code class="descname">TrainerSpec</code><span class="sig-paren">(</span><em>algorithm: catalyst.rl.core.algorithm.AlgorithmSpec</em>, <em>env_spec: catalyst.rl.core.environment.EnvironmentSpec</em>, <em>db_server: catalyst.rl.core.db.DBSpec</em>, <em>logdir: str</em>, <em>num_workers: int = 1</em>, <em>batch_size: int = 64</em>, <em>min_num_transitions: int = 10000</em>, <em>online_update_period: int = 1</em>, <em>weights_sync_period: int = 1</em>, <em>save_period: int = 10</em>, <em>gc_period: int = 10</em>, <em>seed: int = 42</em>, <em>epoch_limit: int = None</em>, <em>monitoring_params: Dict = None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/core/trainer.html#TrainerSpec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.core.trainer.TrainerSpec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="method">
 <dt id="catalyst.rl.core.trainer.TrainerSpec.run">
@@ -1065,7 +1065,7 @@ Paper: <a class="reference external" href="https://arxiv.org/abs/1706.01905">htt
 <span id="off-policy"></span><h2>Off-policy<a class="headerlink" href="#module-catalyst.rl.offpolicy.trainer" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.rl.offpolicy.trainer.Trainer">
-<em class="property">class </em><code class="descclassname">catalyst.rl.offpolicy.trainer.</code><code class="descname">Trainer</code><span class="sig-paren">(</span><em>algorithm: catalyst.rl.core.algorithm.AlgorithmSpec</em>, <em>env_spec: catalyst.rl.core.environment.EnvironmentSpec</em>, <em>db_server: catalyst.rl.core.db.DBSpec</em>, <em>logdir: str</em>, <em>num_workers: int = 1</em>, <em>batch_size: int = 64</em>, <em>min_num_transitions: int = 10000</em>, <em>online_update_period: int = 1</em>, <em>weights_sync_period: int = 1</em>, <em>save_period: int = 10</em>, <em>gc_period: int = 10</em>, <em>seed: int = 42</em>, <em>epoch_limit: int = None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/trainer.html#Trainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.trainer.Trainer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">catalyst.rl.offpolicy.trainer.</code><code class="descname">Trainer</code><span class="sig-paren">(</span><em>algorithm: catalyst.rl.core.algorithm.AlgorithmSpec</em>, <em>env_spec: catalyst.rl.core.environment.EnvironmentSpec</em>, <em>db_server: catalyst.rl.core.db.DBSpec</em>, <em>logdir: str</em>, <em>num_workers: int = 1</em>, <em>batch_size: int = 64</em>, <em>min_num_transitions: int = 10000</em>, <em>online_update_period: int = 1</em>, <em>weights_sync_period: int = 1</em>, <em>save_period: int = 10</em>, <em>gc_period: int = 10</em>, <em>seed: int = 42</em>, <em>epoch_limit: int = None</em>, <em>monitoring_params: Dict = None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/trainer.html#Trainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.trainer.Trainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.rl.core.trainer.TrainerSpec" title="catalyst.rl.core.trainer.TrainerSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.rl.core.trainer.TrainerSpec</span></code></a></p>
 </dd></dl>
 
@@ -1326,7 +1326,7 @@ Paper: <a class="reference external" href="https://arxiv.org/abs/1706.01905">htt
 <span id="on-policy"></span><h2>On-policy<a class="headerlink" href="#module-catalyst.rl.onpolicy.trainer" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.rl.onpolicy.trainer.Trainer">
-<em class="property">class </em><code class="descclassname">catalyst.rl.onpolicy.trainer.</code><code class="descname">Trainer</code><span class="sig-paren">(</span><em>algorithm: catalyst.rl.core.algorithm.AlgorithmSpec</em>, <em>env_spec: catalyst.rl.core.environment.EnvironmentSpec</em>, <em>db_server: catalyst.rl.core.db.DBSpec</em>, <em>logdir: str</em>, <em>num_workers: int = 1</em>, <em>batch_size: int = 64</em>, <em>min_num_transitions: int = 10000</em>, <em>online_update_period: int = 1</em>, <em>weights_sync_period: int = 1</em>, <em>save_period: int = 10</em>, <em>gc_period: int = 10</em>, <em>seed: int = 42</em>, <em>epoch_limit: int = None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/onpolicy/trainer.html#Trainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.onpolicy.trainer.Trainer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">catalyst.rl.onpolicy.trainer.</code><code class="descname">Trainer</code><span class="sig-paren">(</span><em>algorithm: catalyst.rl.core.algorithm.AlgorithmSpec</em>, <em>env_spec: catalyst.rl.core.environment.EnvironmentSpec</em>, <em>db_server: catalyst.rl.core.db.DBSpec</em>, <em>logdir: str</em>, <em>num_workers: int = 1</em>, <em>batch_size: int = 64</em>, <em>min_num_transitions: int = 10000</em>, <em>online_update_period: int = 1</em>, <em>weights_sync_period: int = 1</em>, <em>save_period: int = 10</em>, <em>gc_period: int = 10</em>, <em>seed: int = 42</em>, <em>epoch_limit: int = None</em>, <em>monitoring_params: Dict = None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/onpolicy/trainer.html#Trainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.onpolicy.trainer.Trainer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.rl.core.trainer.TrainerSpec" title="catalyst.rl.core.trainer.TrainerSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.rl.core.trainer.TrainerSpec</span></code></a></p>
 </dd></dl>
 

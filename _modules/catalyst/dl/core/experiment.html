@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.core.experiment &mdash; Catalyst 19.08.4 documentation</title>
+  <title>catalyst.dl.core.experiment &mdash; Catalyst 19.09 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                19.08
+                19.09
               </div>
             
           
@@ -191,6 +191,11 @@
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">distributed_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">monitoring_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
         <span class="k">pass</span>
 
 <div class="viewcode-block" id="Experiment.get_state_params"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.experiment.Experiment.get_state_params">[docs]</a>    <span class="nd">@abstractmethod</span>

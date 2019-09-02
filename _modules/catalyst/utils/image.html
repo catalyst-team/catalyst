@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.image &mdash; Catalyst 19.08.4 documentation</title>
+  <title>catalyst.utils.image &mdash; Catalyst 19.09 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                19.08
+                19.09
               </div>
             
           
@@ -199,7 +199,7 @@
         <span class="p">)</span>
 
 
-<div class="viewcode-block" id="imread"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.image.imread">[docs]</a><span class="k">def</span> <span class="nf">imread</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">grayscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">expand_dims</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rootpath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="imread"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.image.imread">[docs]</a><span class="k">def</span> <span class="nf">imread</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">grayscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">expand_dims</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rootpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Args:</span>
@@ -223,12 +223,24 @@
         <span class="k">if</span> <span class="n">grayscale</span><span class="p">:</span>
             <span class="n">img</span> <span class="o">=</span> <span class="n">rgb2gray</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">img</span> <span class="o">=</span> <span class="n">imageio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">as_gray</span><span class="o">=</span><span class="n">grayscale</span><span class="p">,</span> <span class="n">pilmode</span><span class="o">=</span><span class="s2">&quot;RGB&quot;</span><span class="p">)</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">imageio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">as_gray</span><span class="o">=</span><span class="n">grayscale</span><span class="p">,</span> <span class="n">pilmode</span><span class="o">=</span><span class="s2">&quot;RGB&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">expand_dims</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>  <span class="c1"># grayscale</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">img</span></div>
+
+
+<span class="n">imwrite</span> <span class="o">=</span> <span class="n">imageio</span><span class="o">.</span><span class="n">imwrite</span>
+<span class="n">imsave</span> <span class="o">=</span> <span class="n">imageio</span><span class="o">.</span><span class="n">imsave</span>
+
+
+<div class="viewcode-block" id="mimwrite_with_meta"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.image.mimwrite_with_meta">[docs]</a><span class="k">def</span> <span class="nf">mimwrite_with_meta</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">ims</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">imageio</span><span class="o">.</span><span class="n">get_writer</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">set_meta_data</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">writer</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ims</span><span class="p">:</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">append_data</span><span class="p">(</span><span class="n">i</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="tensor_from_rgb_image"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.image.tensor_from_rgb_image">[docs]</a><span class="k">def</span> <span class="nf">tensor_from_rgb_image</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>

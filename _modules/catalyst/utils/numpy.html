@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.numpy &mdash; Catalyst 19.08.4 documentation</title>
+  <title>catalyst.utils.numpy &mdash; Catalyst 19.09 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                19.08
+                19.09
               </div>
             
           
@@ -228,6 +228,45 @@
         <span class="n">array</span> <span class="o">=</span> <span class="n">array_</span>
 
     <span class="k">return</span> <span class="n">array</span></div>
+
+
+<div class="viewcode-block" id="get_one_hot"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.numpy.get_one_hot">[docs]</a><span class="k">def</span> <span class="nf">get_one_hot</span><span class="p">(</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">smoothing</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Applies OneHot vectorization to a giving scalar, optional with</span>
+<span class="sd">    label smoothing from https://arxiv.org/abs/1812.01187</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        label (int): scalar value to be vectorized</span>
+<span class="sd">        num_classes (int): total number of classes</span>
+<span class="sd">        smoothing (float, optional): if specified applies label smoothing</span>
+<span class="sd">            from ``Bag of Tricks for Image Classification</span>
+<span class="sd">            with Convolutional Neural Networks`` paper</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: a one-hot vector with shape ``(num_classes,)``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">num_classes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_classes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> \
+        <span class="n">f</span><span class="s2">&quot;Expect num_classes to be &gt; 0, got </span><span class="si">{num_classes}</span><span class="s2">&quot;</span>
+
+    <span class="k">assert</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">label</span> <span class="o">&lt;</span> <span class="n">num_classes</span><span class="p">,</span> \
+        <span class="n">f</span><span class="s2">&quot;Expect label to be in [0; </span><span class="si">{num_classes}</span><span class="s2">), got </span><span class="si">{label}</span><span class="s2">&quot;</span>
+
+    <span class="k">if</span> <span class="n">smoothing</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">smoothing</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">,</span> \
+            <span class="n">f</span><span class="s2">&quot;If smoothing is specified it must be in (0; 1), got </span><span class="si">{smoothing}</span><span class="s2">&quot;</span>
+
+        <span class="n">smoothed</span> <span class="o">=</span> <span class="n">smoothing</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">num_classes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">num_classes</span><span class="p">,</span> <span class="p">),</span> <span class="n">smoothed</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">smoothing</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">result</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
 </pre></div>
 
            </div>

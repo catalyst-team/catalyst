@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.checkpoint &mdash; Catalyst 19.08.4 documentation</title>
+  <title>catalyst.utils.checkpoint &mdash; Catalyst 19.09 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                19.08
+                19.09
               </div>
             
           
@@ -160,7 +160,8 @@
            <div itemprop="articleBody">
             
   <h1>Source code for catalyst.utils.checkpoint</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 
@@ -201,6 +202,24 @@
     <span class="k">return</span> <span class="n">checkpoint</span></div>
 
 
+<div class="viewcode-block" id="save_checkpoint"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.checkpoint.save_checkpoint">[docs]</a><span class="k">def</span> <span class="nf">save_checkpoint</span><span class="p">(</span>
+    <span class="n">checkpoint</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+    <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">is_best</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">is_last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">special_suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/</span><span class="si">{suffix}</span><span class="s2">.pth&quot;</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">is_best</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/best</span><span class="si">{special_suffix}</span><span class="s2">.pth&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">is_last</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/last</span><span class="si">{special_suffix}</span><span class="s2">.pth&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">filename</span></div>
+
+
 <div class="viewcode-block" id="unpack_checkpoint"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.checkpoint.unpack_checkpoint">[docs]</a><span class="k">def</span> <span class="nf">unpack_checkpoint</span><span class="p">(</span>
     <span class="n">checkpoint</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
@@ -223,19 +242,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">name2load</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{name2load}</span><span class="s2">_state_dict&quot;</span>
             <span class="n">dict2load</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">[</span><span class="n">name2load</span><span class="p">])</span></div>
-
-
-<div class="viewcode-block" id="save_checkpoint"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.checkpoint.save_checkpoint">[docs]</a><span class="k">def</span> <span class="nf">save_checkpoint</span><span class="p">(</span>
-    <span class="n">logdir</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">is_best</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">is_last</span><span class="o">=</span><span class="kc">False</span>
-<span class="p">):</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">filename</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/</span><span class="si">{suffix}</span><span class="s2">.pth&quot;</span>
-    <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">is_best</span><span class="p">:</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/best.pth&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">is_last</span><span class="p">:</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/last.pth&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">filename</span></div>
 
 
 <div class="viewcode-block" id="load_checkpoint"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.checkpoint.load_checkpoint">[docs]</a><span class="k">def</span> <span class="nf">load_checkpoint</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>

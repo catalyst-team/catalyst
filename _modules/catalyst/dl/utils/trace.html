@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.utils.trace &mdash; Catalyst 19.08.4 documentation</title>
+  <title>catalyst.dl.utils.trace &mdash; Catalyst 19.09 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                19.08
+                19.09
               </div>
             
           
@@ -167,6 +167,7 @@
 <span class="kn">from</span> <span class="nn">torch.jit</span> <span class="k">import</span> <span class="n">ScriptModule</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">Runner</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="k">import</span> <span class="n">utils</span>
 
 
 <span class="k">class</span> <span class="nc">_ForwardOverrideModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -227,32 +228,36 @@
     <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
     <span class="n">experiment</span><span class="p">:</span> <span class="n">Experiment</span><span class="p">,</span>
     <span class="n">runner_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Runner</span><span class="p">],</span>
-    <span class="n">method_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;forward&quot;</span>
+    <span class="n">method_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;forward&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;eval&quot;</span><span class="p">,</span>
+    <span class="n">requires_grad</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ScriptModule</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Traces model using it&#39;s native experiment and runner.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">          model: Model to trace</span>
-<span class="sd">            NOTICE: will be switched to eval and</span>
-<span class="sd">            requires_grad=False will be set on all params</span>
-<span class="sd">          experiment: Native experiment that was used to train model</span>
-<span class="sd">          runner_type: Model&#39;s native runner that was used to train model</span>
-<span class="sd">          method_name: Model&#39;s method name that will be</span>
+<span class="sd">        model: Model to trace</span>
+<span class="sd">        experiment: Native experiment that was used to train model</span>
+<span class="sd">        runner_type: Model&#39;s native runner that was used to train model</span>
+<span class="sd">        method_name (str): Model&#39;s method name that will be</span>
 <span class="sd">            used as entrypoint during tracing</span>
+<span class="sd">        mode (str): Mode for model to trace (``train`` or ``eval``)</span>
+<span class="sd">        requires_grad (bool): Flag to use grads</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">          Traced model ScriptModule</span>
+<span class="sd">        Traced model ScriptModule</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">stage</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">experiment</span><span class="o">.</span><span class="n">stages</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
-        <span class="n">p</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;eval&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Unknown mode &#39;</span><span class="si">{mode}</span><span class="s2">&#39;. Must be &#39;eval&#39; or &#39;train&#39;&quot;</span><span class="p">)</span>
+
+    <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">mode</span><span class="p">)()</span>
+    <span class="n">utils</span><span class="o">.</span><span class="n">set_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">)</span>
 
     <span class="n">tracer</span> <span class="o">=</span> <span class="n">_TracingModelWrapper</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">method_name</span><span class="p">)</span>
     <span class="n">runner</span><span class="p">:</span> <span class="n">Runner</span> <span class="o">=</span> <span class="n">runner_type</span><span class="p">(</span><span class="n">tracer</span><span class="o">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">))</span>
 
+    <span class="n">stage</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">experiment</span><span class="o">.</span><span class="n">stages</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">batch</span> <span class="o">=</span> <span class="n">_get_native_batch</span><span class="p">(</span><span class="n">experiment</span><span class="p">,</span> <span class="n">stage</span><span class="p">)</span>
     <span class="n">batch</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">_batch2device</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 

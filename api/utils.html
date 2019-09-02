@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utils &mdash; Catalyst 19.08.4 documentation</title>
+  <title>Utils &mdash; Catalyst 19.09 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                19.08
+                19.09
               </div>
             
           
@@ -212,7 +212,7 @@ while –no-&lt;name&gt; will disable it</p></li>
 
 <dl class="function">
 <dt id="catalyst.utils.checkpoint.save_checkpoint">
-<code class="descclassname">catalyst.utils.checkpoint.</code><code class="descname">save_checkpoint</code><span class="sig-paren">(</span><em>logdir</em>, <em>checkpoint</em>, <em>suffix=''</em>, <em>is_best=False</em>, <em>is_last=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/checkpoint.html#save_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.checkpoint.save_checkpoint" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">catalyst.utils.checkpoint.</code><code class="descname">save_checkpoint</code><span class="sig-paren">(</span><em>checkpoint: Dict</em>, <em>logdir: str</em>, <em>suffix: str</em>, <em>is_best: bool = False</em>, <em>is_last: bool = False</em>, <em>special_suffix: str = ''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/checkpoint.html#save_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.checkpoint.save_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -251,26 +251,21 @@ while –no-&lt;name&gt; will disable it</p></li>
 <dd></dd></dl>
 
 <dl class="function">
+<dt id="catalyst.utils.compression.pack_if_needed">
+<code class="descclassname">catalyst.utils.compression.</code><code class="descname">pack_if_needed</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.compression.pack_if_needed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="catalyst.utils.compression.unpack">
 <code class="descclassname">catalyst.utils.compression.</code><code class="descname">unpack</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.compression.unpack" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<span class="target" id="module-catalyst.utils.config"></span><dl class="function">
-<dt id="catalyst.utils.config.dump_config">
-<code class="descclassname">catalyst.utils.config.</code><code class="descname">dump_config</code><span class="sig-paren">(</span><em>experiment_config: Dict</em>, <em>logdir: str</em>, <em>configs_path: List = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/config.html#dump_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.dump_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves config into JSON in logdir</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>experiment_config</strong> (<em>dict</em>) – experiment config</p></li>
-<li><p><strong>logdir</strong> (<em>str</em>) – path to logdir</p></li>
-<li><p><strong>configs_path</strong> – path(s) to config</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="function">
+<dt id="catalyst.utils.compression.unpack_if_needed">
+<code class="descclassname">catalyst.utils.compression.</code><code class="descname">unpack_if_needed</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.compression.unpack_if_needed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-catalyst.utils.config"></span><dl class="function">
 <dt id="catalyst.utils.config.load_ordered_yaml">
 <code class="descclassname">catalyst.utils.config.</code><code class="descname">load_ordered_yaml</code><span class="sig-paren">(</span><em>stream</em>, <em>Loader=&lt;class 'yaml.loader.Loader'&gt;</em>, <em>object_pairs_hook=&lt;class 'collections.OrderedDict'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/config.html#load_ordered_yaml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.load_ordered_yaml" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads <cite>yaml</cite> config into OrderedDict</p>
@@ -292,6 +287,40 @@ while –no-&lt;name&gt; will disable it</p></li>
 </dd></dl>
 
 <dl class="function">
+<dt id="catalyst.utils.config.get_environment_vars">
+<code class="descclassname">catalyst.utils.config.</code><code class="descname">get_environment_vars</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="reference internal" href="../_modules/catalyst/utils/config.html#get_environment_vars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.get_environment_vars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a dictionary with environment variables</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>environment variables</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.config.dump_environment">
+<code class="descclassname">catalyst.utils.config.</code><code class="descname">dump_environment</code><span class="sig-paren">(</span><em>experiment_config: Dict</em>, <em>logdir: str</em>, <em>configs_path: List[str] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/config.html#dump_environment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.dump_environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves config, environment variables and package list in JSON into logdir</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>experiment_config</strong> (<em>dict</em>) – experiment config</p></li>
+<li><p><strong>logdir</strong> (<em>str</em>) – path to logdir</p></li>
+<li><p><strong>configs_path</strong> – path(s) to config</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.config.parse_config_args">
+<code class="descclassname">catalyst.utils.config.</code><code class="descname">parse_config_args</code><span class="sig-paren">(</span><em>*</em>, <em>config</em>, <em>args</em>, <em>unknown_args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/config.html#parse_config_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.parse_config_args" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="catalyst.utils.config.parse_args_uargs">
 <code class="descclassname">catalyst.utils.config.</code><code class="descname">parse_args_uargs</code><span class="sig-paren">(</span><em>args</em>, <em>unknown_args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/config.html#parse_args_uargs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.parse_args_uargs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function for parsing configuration files</p>
@@ -310,11 +339,6 @@ while –no-&lt;name&gt; will disable it</p></li>
 </dd>
 </dl>
 </dd></dl>
-
-<dl class="function">
-<dt id="catalyst.utils.config.parse_config_args">
-<code class="descclassname">catalyst.utils.config.</code><code class="descname">parse_config_args</code><span class="sig-paren">(</span><em>*</em>, <em>config</em>, <em>args</em>, <em>unknown_args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/config.html#parse_config_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.parse_config_args" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <span class="target" id="module-catalyst.utils.dataset"></span><dl class="function">
 <dt id="catalyst.utils.dataset.balance_classes">
@@ -647,7 +671,7 @@ apex.parallel.DistributedDataParallel.</p>
 
 <dl class="function">
 <dt id="catalyst.utils.image.imread">
-<code class="descclassname">catalyst.utils.image.</code><code class="descname">imread</code><span class="sig-paren">(</span><em>uri</em>, <em>grayscale=False</em>, <em>expand_dims=True</em>, <em>rootpath=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/image.html#imread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.image.imread" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">catalyst.utils.image.</code><code class="descname">imread</code><span class="sig-paren">(</span><em>uri</em>, <em>grayscale=False</em>, <em>expand_dims=True</em>, <em>rootpath=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/image.html#imread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.image.imread" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -662,6 +686,11 @@ apex.parallel.DistributedDataParallel.</p>
 </dl>
 <p>Returns:</p>
 </dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.image.mimwrite_with_meta">
+<code class="descclassname">catalyst.utils.image.</code><code class="descname">mimwrite_with_meta</code><span class="sig-paren">(</span><em>uri</em>, <em>ims</em>, <em>meta</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/image.html#mimwrite_with_meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.image.mimwrite_with_meta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.image.tensor_from_rgb_image">
@@ -739,6 +768,11 @@ used in deep reinforcement learning literature.</p>
 <code class="descclassname">catalyst.utils.misc.</code><code class="descname">append_dict</code><span class="sig-paren">(</span><em>dict1</em>, <em>dict2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#append_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.append_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Appends dict2 with the same keys as dict1 to dict1</p>
 </dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.misc.flatten_dict">
+<code class="descclassname">catalyst.utils.misc.</code><code class="descname">flatten_dict</code><span class="sig-paren">(</span><em>d</em>, <em>parent_key=''</em>, <em>sep='/'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#flatten_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.flatten_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.misc.is_exception">
@@ -832,6 +866,30 @@ with the same length and each element is calculated as following</p>
 </dd>
 </dl>
 <p>source: <a class="reference external" href="https://github.com/zuoxingdong/lagom">https://github.com/zuoxingdong/lagom</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.numpy.get_one_hot">
+<code class="descclassname">catalyst.utils.numpy.</code><code class="descname">get_one_hot</code><span class="sig-paren">(</span><em>label: int</em>, <em>num_classes: int</em>, <em>smoothing: float = None</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="../_modules/catalyst/utils/numpy.html#get_one_hot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.numpy.get_one_hot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies OneHot vectorization to a giving scalar, optional with
+label smoothing from <a class="reference external" href="https://arxiv.org/abs/1812.01187">https://arxiv.org/abs/1812.01187</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>label</strong> (<em>int</em>) – scalar value to be vectorized</p></li>
+<li><p><strong>num_classes</strong> (<em>int</em>) – total number of classes</p></li>
+<li><p><strong>smoothing</strong> (<em>float</em><em>, </em><em>optional</em>) – if specified applies label smoothing
+from <code class="docutils literal notranslate"><span class="pre">Bag</span> <span class="pre">of</span> <span class="pre">Tricks</span> <span class="pre">for</span> <span class="pre">Image</span> <span class="pre">Classification</span>
+<span class="pre">with</span> <span class="pre">Convolutional</span> <span class="pre">Neural</span> <span class="pre">Networks</span></code> paper</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a one-hot vector with shape <code class="docutils literal notranslate"><span class="pre">(num_classes,)</span></code></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -1278,13 +1336,71 @@ Only scalars and images are supported at the moment.</p>
 </dd></dl>
 
 <span class="target" id="module-catalyst.utils.torch"></span><dl class="function">
-<dt id="catalyst.utils.torch.any2device">
-<code class="descclassname">catalyst.utils.torch.</code><code class="descname">any2device</code><span class="sig-paren">(</span><em>value</em>, <em>device</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#any2device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.any2device" title="Permalink to this definition">¶</a></dt>
-<dd><p>Move tensor, list of tensors, list of list of tensors,
-dict of tensors, tuple of tensors to target device.
-:param value: Object to be moved
-:param device: target device ids
-:return: Save data structure holding tensors on target device</p>
+<dt id="catalyst.utils.torch.ce_with_logits">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">ce_with_logits</code><span class="sig-paren">(</span><em>logits</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#ce_with_logits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.ce_with_logits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.log1p_exp">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">log1p_exp</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#log1p_exp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.log1p_exp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computationally stable function for computing log(1+exp(x)).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.normal_sample">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">normal_sample</code><span class="sig-paren">(</span><em>mu</em>, <em>sigma</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#normal_sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.normal_sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample from multivariate Gaussian distribution z ~ N(z|mu,sigma)
+while supporting backpropagation through its mean and variance.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.normal_logprob">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">normal_logprob</code><span class="sig-paren">(</span><em>mu</em>, <em>sigma</em>, <em>z</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#normal_logprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.normal_logprob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Probability density function of multivariate Gaussian distribution
+N(z|mu,sigma).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.soft_update">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">soft_update</code><span class="sig-paren">(</span><em>target</em>, <em>source</em>, <em>tau</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#soft_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.soft_update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.get_optimizable_params">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">get_optimizable_params</code><span class="sig-paren">(</span><em>model_or_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_optimizable_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_optimizable_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.get_optimizer_momentum">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">get_optimizer_momentum</code><span class="sig-paren">(</span><em>optimizer: torch.optim.optimizer.Optimizer</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_optimizer_momentum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_optimizer_momentum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get momentum of current optimizer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>optimizer</strong> – PyTorch optimizer</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>momentum at first param group</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.set_optimizer_momentum">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">set_optimizer_momentum</code><span class="sig-paren">(</span><em>optimizer: torch.optim.optimizer.Optimizer</em>, <em>value: float</em>, <em>index: int = 0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#set_optimizer_momentum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.set_optimizer_momentum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set momentum of <code class="docutils literal notranslate"><span class="pre">index</span></code> ‘th param group of optimizer to <code class="docutils literal notranslate"><span class="pre">value</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>optimizer</strong> – PyTorch optimizer</p></li>
+<li><p><strong>value</strong> (<em>float</em>) – new value of momentum</p></li>
+<li><p><strong>index</strong> (<em>int</em><em>, </em><em>optional</em>) – integer index of optimizer’s param groups,
+default is 0</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -1293,13 +1409,8 @@ dict of tensors, tuple of tensors to target device.
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.torch.ce_with_logits">
-<code class="descclassname">catalyst.utils.torch.</code><code class="descname">ce_with_logits</code><span class="sig-paren">(</span><em>logits</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#ce_with_logits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.ce_with_logits" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="catalyst.utils.torch.get_activation_fn">
-<code class="descclassname">catalyst.utils.torch.</code><code class="descname">get_activation_fn</code><span class="sig-paren">(</span><em>activation: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_activation_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_activation_fn" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.torch.get_device">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">get_device</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.device<a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_device" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -1332,72 +1443,92 @@ dict of tensors, tuple of tensors to target device.
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.torch.get_device">
-<code class="descclassname">catalyst.utils.torch.</code><code class="descname">get_device</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.device<a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_device" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.torch.get_activation_fn">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">get_activation_fn</code><span class="sig-paren">(</span><em>activation: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_activation_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_activation_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.torch.get_optimizable_params">
-<code class="descclassname">catalyst.utils.torch.</code><code class="descname">get_optimizable_params</code><span class="sig-paren">(</span><em>model_or_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_optimizable_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_optimizable_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="catalyst.utils.torch.get_optimizer_momentum">
-<code class="descclassname">catalyst.utils.torch.</code><code class="descname">get_optimizer_momentum</code><span class="sig-paren">(</span><em>optimizer: torch.optim.optimizer.Optimizer</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_optimizer_momentum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_optimizer_momentum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get momentum of current optimizer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>optimizer</strong> – PyTorch optimizer</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>momentum at first param group</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
+<dt id="catalyst.utils.torch.any2device">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">any2device</code><span class="sig-paren">(</span><em>value</em>, <em>device</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#any2device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.any2device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move tensor, list of tensors, list of list of tensors,
+dict of tensors, tuple of tensors to target device.
+:param value: Object to be moved
+:param device: target device ids
+:return: Save data structure holding tensors on target device</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.torch.log1p_exp">
-<code class="descclassname">catalyst.utils.torch.</code><code class="descname">log1p_exp</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#log1p_exp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.log1p_exp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computationally stable function for computing log(1+exp(x)).</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.utils.torch.normal_logprob">
-<code class="descclassname">catalyst.utils.torch.</code><code class="descname">normal_logprob</code><span class="sig-paren">(</span><em>mu</em>, <em>sigma</em>, <em>z</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#normal_logprob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.normal_logprob" title="Permalink to this definition">¶</a></dt>
-<dd><p>Probability density function of multivariate Gaussian distribution
-N(z|mu,sigma).</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.utils.torch.normal_sample">
-<code class="descclassname">catalyst.utils.torch.</code><code class="descname">normal_sample</code><span class="sig-paren">(</span><em>mu</em>, <em>sigma</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#normal_sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.normal_sample" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sample from multivariate Gaussian distribution z ~ N(z|mu,sigma)
-while supporting backpropagation through its mean and variance.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.utils.torch.set_optimizer_momentum">
-<code class="descclassname">catalyst.utils.torch.</code><code class="descname">set_optimizer_momentum</code><span class="sig-paren">(</span><em>optimizer: torch.optim.optimizer.Optimizer</em>, <em>value: float</em>, <em>index: int = 0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#set_optimizer_momentum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.set_optimizer_momentum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set momentum of <code class="docutils literal notranslate"><span class="pre">index</span></code> ‘th param group of optimizer to <code class="docutils literal notranslate"><span class="pre">value</span></code></p>
+<dt id="catalyst.utils.torch.prepare_cudnn">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">prepare_cudnn</code><span class="sig-paren">(</span><em>deterministic: bool = None</em>, <em>benchmark: bool = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/torch.html#prepare_cudnn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.prepare_cudnn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares CuDNN benchmark and sets CuDNN
+to be deterministic/non-deterministic mode</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>optimizer</strong> – PyTorch optimizer</p></li>
-<li><p><strong>value</strong> (<em>float</em>) – new value of momentum</p></li>
-<li><p><strong>index</strong> (<em>int</em><em>, </em><em>optional</em>) – integer index of optimizer’s param groups,
-default is 0</p></li>
+<li><p><strong>deterministic</strong> (<em>bool</em>) – deterministic mode if running in CuDNN backend.</p></li>
+<li><p><strong>benchmark</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> use CuDNN heuristics to figure out
+which algorithm will be most performant
+for your model architecture and input.
+Setting it to <code class="docutils literal notranslate"><span class="pre">False</span></code> may slow down your training.</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.torch.soft_update">
-<code class="descclassname">catalyst.utils.torch.</code><code class="descname">soft_update</code><span class="sig-paren">(</span><em>target</em>, <em>source</em>, <em>tau</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#soft_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.soft_update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="catalyst.utils.torch.process_model_params">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">process_model_params</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module</em>, <em>layerwise_params: Dict[str</em>, <em>dict] = None</em>, <em>no_bias_weight_decay: bool = True</em>, <em>lr_scaling: float = 1.0</em><span class="sig-paren">)</span> &#x2192; List[Union[torch.nn.parameter.Parameter, dict]]<a class="reference internal" href="../_modules/catalyst/utils/torch.html#process_model_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.process_model_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gains model parameters for <code class="docutils literal notranslate"><span class="pre">torch.optim.Optimizer</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – Model to process</p></li>
+<li><p><strong>layerwise_params</strong> (<em>Dict</em>) – Order-sensitive dict where
+each key is regex pattern and values are layer-wise options
+for layers matching with a pattern</p></li>
+<li><p><strong>no_bias_weight_decay</strong> (<em>bool</em>) – If true, removes weight_decay
+for all <code class="docutils literal notranslate"><span class="pre">bias</span></code> parameters in the model</p></li>
+<li><p><strong>lr_scaling</strong> (<em>float</em>) – layer-wise learning rate scaling,
+if 1.0, learning rates will not be scaled</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>parameters for an optimizer</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>iterable</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">catalyst</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">segmentation</span><span class="o">.</span><span class="n">ResnetUnet</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">layerwise_params</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s2">&quot;conv1.*&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mf">0.0003</span><span class="p">)),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s2">&quot;conv.*&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">0.002</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="n">process_model_params</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">layerwise_params</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.0003</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.set_requires_grad">
+<code class="descclassname">catalyst.utils.torch.</code><code class="descname">set_requires_grad</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module</em>, <em>requires_grad: bool</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#set_requires_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.set_requires_grad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the <code class="docutils literal notranslate"><span class="pre">requires_grad</span></code> value for all model parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – Model</p></li>
+<li><p><strong>requires_grad</strong> (<em>bool</em>) – value</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">SimpleModel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">set_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <span class="target" id="module-catalyst.utils.visualization"></span><dl class="function">
 <dt id="catalyst.utils.visualization.plot_confusion_matrix">

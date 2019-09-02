@@ -1,138 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ad1b0216-21c5-4f5d-afeb-40e00ce32c06" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/ce.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/ce.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/center.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/center.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/contrastive.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/contrastive.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/dice.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/dice.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/focal.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/focal.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/huber.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/huber.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/iou.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/iou.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/lovasz.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/lovasz.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/wing.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/wing.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/models/segmentation/fpn.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/models/segmentation/fpn.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/models/segmentation/linknet.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/models/segmentation/linknet.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/models/segmentation/psp.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/models/segmentation/psp.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/models/segmentation/unet.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/models/segmentation/unet.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/modules/common.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/modules/common.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/modules/lama.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/modules/lama.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/modules/noisy.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/modules/noisy.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/modules/pooling.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/modules/pooling.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/modules/real_nvp.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/modules/real_nvp.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/schedulers/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/schedulers/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/schedulers/onecycle.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/schedulers/onecycle.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/data/augmentor.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/data/augmentor.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/data/collate_fn.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/data/collate_fn.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/data/dataset.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/data/dataset.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/data/reader.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/data/reader.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/data/sampler.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/data/sampler.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/checkpoint.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/checkpoint.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/criterion.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/criterion.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/inference.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/inference.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/logging.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/logging.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/metrics/accuracy.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/metrics/accuracy.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/metrics/auc.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/metrics/auc.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/metrics/dice.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/metrics/dice.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/metrics/f1_score.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/metrics/f1_score.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/metrics/iou.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/metrics/iou.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/misc.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/misc.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/mixup.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/mixup.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/optimizer.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/optimizer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/scheduler.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/callbacks/scheduler.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/core/callback.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/core/callback.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/core/experiment.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/core/experiment.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/core/metric_manager.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/core/metric_manager.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/core/runner.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/core/runner.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/core/state.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/core/state.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/experiment/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/experiment/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/experiment/config.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/experiment/config.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/experiment/supervised.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/experiment/supervised.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/runner/supervised.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/runner/supervised.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/utils/criterion/accuracy.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/utils/criterion/accuracy.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/utils/criterion/dice.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/utils/criterion/dice.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/utils/criterion/f1_score.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/utils/criterion/f1_score.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/utils/criterion/focal.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/utils/criterion/focal.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/utils/criterion/iou.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/utils/criterion/iou.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/utils/formatters.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/utils/formatters.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/utils/scripts.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/utils/scripts.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/utils/torch.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/utils/torch.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/utils/trace.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/utils/trace.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/dl/utils/visualization.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/dl/utils/visualization.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/agent/actor.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/agent/actor.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/agent/critic.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/agent/critic.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/agent/head.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/agent/head.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/agent/network.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/agent/network.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/agent/policy.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/agent/policy.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/core/agent.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/core/agent.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/core/algorithm.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/core/algorithm.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/core/db.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/core/db.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/core/environment.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/core/environment.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/core/exploration.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/core/exploration.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/core/policy_handler.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/core/policy_handler.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/core/sampler.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/core/sampler.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/core/trainer.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/core/trainer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/core/trajectory_sampler.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/core/trajectory_sampler.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/db/mongo.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/db/mongo.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/db/redis.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/db/redis.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/environment/gym.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/environment/gym.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/exploration/boltzman.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/exploration/boltzman.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/exploration/gauss.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/exploration/gauss.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/exploration/greedy.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/exploration/greedy.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/exploration/param_noise.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/exploration/param_noise.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/offpolicy/algorithms/actor_critic.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/offpolicy/algorithms/actor_critic.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/offpolicy/algorithms/critic.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/offpolicy/algorithms/critic.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/offpolicy/algorithms/ddpg.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/offpolicy/algorithms/ddpg.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/offpolicy/algorithms/dqn.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/offpolicy/algorithms/dqn.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/offpolicy/algorithms/sac.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/offpolicy/algorithms/sac.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/offpolicy/algorithms/td3.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/offpolicy/algorithms/td3.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/offpolicy/trainer.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/offpolicy/trainer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/onpolicy/algorithms/actor.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/onpolicy/algorithms/actor.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/onpolicy/algorithms/actor_critic.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/onpolicy/algorithms/actor_critic.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/onpolicy/algorithms/ppo.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/onpolicy/algorithms/ppo.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/onpolicy/algorithms/reinforce.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/onpolicy/algorithms/reinforce.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/rl/onpolicy/trainer.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/rl/onpolicy/trainer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/argparse.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/argparse.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/checkpoint.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/checkpoint.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/compression.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/compression.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/config.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/config.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/dataset.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/dataset.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/ddp.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/ddp.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/frozen.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/frozen.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/hash.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/hash.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/image.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/image.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/initialization.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/initialization.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/misc.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/misc.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/numpy.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/numpy.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/pandas.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/pandas.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/plotly.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/plotly.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/scripts.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/scripts.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/seed.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/seed.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/serialization.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/serialization.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/tensorboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/tensorboard.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/torch.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/torch.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/visualization.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/visualization.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_modules/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_sources/api/dl.rst.txt" beforeDir="false" afterPath="$PROJECT_DIR$/_sources/api/dl.rst.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_sources/info/contributing.rst.txt" beforeDir="false" afterPath="$PROJECT_DIR$/_sources/info/contributing.rst.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_sources/info/license.rst.txt" beforeDir="false" afterPath="$PROJECT_DIR$/_sources/info/license.rst.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/contrib.html" beforeDir="false" afterPath="$PROJECT_DIR$/api/contrib.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/data.html" beforeDir="false" afterPath="$PROJECT_DIR$/api/data.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/dl.html" beforeDir="false" afterPath="$PROJECT_DIR$/api/dl.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/rl.html" beforeDir="false" afterPath="$PROJECT_DIR$/api/rl.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/utils.html" beforeDir="false" afterPath="$PROJECT_DIR$/api/utils.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/changelog.html" beforeDir="false" afterPath="$PROJECT_DIR$/changelog.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/genindex.html" beforeDir="false" afterPath="$PROJECT_DIR$/genindex.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/info/contributing.html" beforeDir="false" afterPath="$PROJECT_DIR$/info/contributing.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/info/examples.html" beforeDir="false" afterPath="$PROJECT_DIR$/info/examples.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/info/license.html" beforeDir="false" afterPath="$PROJECT_DIR$/info/license.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/objects.inv" beforeDir="false" afterPath="$PROJECT_DIR$/objects.inv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/py-modindex.html" beforeDir="false" afterPath="$PROJECT_DIR$/py-modindex.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/search.html" beforeDir="false" afterPath="$PROJECT_DIR$/search.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/searchindex.js" beforeDir="false" afterPath="$PROJECT_DIR$/searchindex.js" afterDir="false" />
-    </list>
+    <list default="true" id="ad1b0216-21c5-4f5d-afeb-40e00ce32c06" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -412,13 +281,7 @@
       <workItem from="1564416764163" duration="24889000" />
       <workItem from="1564601226142" duration="7996000" />
       <workItem from="1566126292016" duration="252000" />
-    </task>
-    <task id="LOCAL-00017" summary="Merge branch 'master' of https://github.com/catalyst-team/catalyst into new_metrics&#10;&#10;# Conflicts:&#10;#&#9;catalyst/dl/callbacks/metrics.py">
-      <created>1556107029375</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1556107029375</updated>
+      <workItem from="1567446809099" duration="1090000" />
     </task>
     <task id="LOCAL-00018" summary="flake8">
       <created>1556109134144</created>
@@ -756,7 +619,14 @@
       <option name="project" value="LOCAL" />
       <updated>1564653007841</updated>
     </task>
-    <option name="localTasksCounter" value="66" />
+    <task id="LOCAL-00066" summary="docs/19.09">
+      <created>1567448283226</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1567448283226</updated>
+    </task>
+    <option name="localTasksCounter" value="67" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -826,7 +696,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="codestyle" />
     <MESSAGE value="-v" />
     <MESSAGE value="update docs for catalyst-data" />
     <MESSAGE value="checks for docs &amp;&amp; new docker" />
@@ -851,7 +720,8 @@
     <MESSAGE value="final renaming and final rearranging" />
     <MESSAGE value="flake8" />
     <MESSAGE value="fix licence" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix licence" />
+    <MESSAGE value="docs/19.09" />
+    <option name="LAST_COMMIT_MESSAGE" value="docs/19.09" />
   </component>
   <component name="masterDetails">
     <states>

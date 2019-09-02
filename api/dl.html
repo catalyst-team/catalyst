@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>DL &mdash; Catalyst 19.08.4 documentation</title>
+  <title>DL &mdash; Catalyst 19.09 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                19.08
+                19.09
               </div>
             
           
@@ -184,22 +184,79 @@
 <div class="section" id="module-catalyst.dl.core.callback">
 <span id="core"></span><h2>Core<a class="headerlink" href="#module-catalyst.dl.core.callback" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
+<dt id="catalyst.dl.core.callback.CallbackOrder">
+<em class="property">class </em><code class="descclassname">catalyst.dl.core.callback.</code><code class="descname">CallbackOrder</code><a class="reference internal" href="../_modules/catalyst/dl/core/callback.html#CallbackOrder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.core.callback.CallbackOrder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.IntFlag</span></code></p>
+<p>An enumeration.</p>
+<dl class="attribute">
+<dt id="catalyst.dl.core.callback.CallbackOrder.Criterion">
+<code class="descname">Criterion</code><em class="property"> = 20</em><a class="headerlink" href="#catalyst.dl.core.callback.CallbackOrder.Criterion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.core.callback.CallbackOrder.Internal">
+<code class="descname">Internal</code><em class="property"> = 0</em><a class="headerlink" href="#catalyst.dl.core.callback.CallbackOrder.Internal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.core.callback.CallbackOrder.Logger">
+<code class="descname">Logger</code><em class="property"> = 100</em><a class="headerlink" href="#catalyst.dl.core.callback.CallbackOrder.Logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.core.callback.CallbackOrder.Metric">
+<code class="descname">Metric</code><em class="property"> = 80</em><a class="headerlink" href="#catalyst.dl.core.callback.CallbackOrder.Metric" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.core.callback.CallbackOrder.Optimizer">
+<code class="descname">Optimizer</code><em class="property"> = 40</em><a class="headerlink" href="#catalyst.dl.core.callback.CallbackOrder.Optimizer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.core.callback.CallbackOrder.Other">
+<code class="descname">Other</code><em class="property"> = 200</em><a class="headerlink" href="#catalyst.dl.core.callback.CallbackOrder.Other" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.core.callback.CallbackOrder.Scheduler">
+<code class="descname">Scheduler</code><em class="property"> = 60</em><a class="headerlink" href="#catalyst.dl.core.callback.CallbackOrder.Scheduler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.core.callback.CallbackOrder.Unknown">
+<code class="descname">Unknown</code><em class="property"> = -100</em><a class="headerlink" href="#catalyst.dl.core.callback.CallbackOrder.Unknown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="catalyst.dl.core.callback.Callback">
-<em class="property">class </em><code class="descclassname">catalyst.dl.core.callback.</code><code class="descname">Callback</code><a class="reference internal" href="../_modules/catalyst/dl/core/callback.html#Callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.core.callback.Callback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">catalyst.dl.core.callback.</code><code class="descname">Callback</code><span class="sig-paren">(</span><em>order: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/core/callback.html#Callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.core.callback.Callback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Abstract class that all callback(e.g., Logger) classes extends from.
+<p>Abstract class that all callback (e.g., Logger) classes extends from.
 Must be extended before usage.</p>
 <p>usage example:</p>
-<p>stage start
-—epoch start (one epoch - one run of every loader)
-——loader start
-———batch start
-———batch handler
-———batch end
-——loader end
-—epoch end
-stage end</p>
-<p>exception – if an Exception was raised</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>--stage start
+----epoch start <span class="o">(</span>one epoch - one run of every loader<span class="o">)</span>
+------loader start
+--------batch start
+--------batch handler
+--------batch end
+------loader end
+----epoch end
+--stage end
+
+exception – <span class="k">if</span> an Exception was raised
+</pre></div>
+</div>
+<p>All callbacks has <code class="docutils literal notranslate"><span class="pre">order</span></code> one of the values in <code class="docutils literal notranslate"><span class="pre">CallbackOrder</span></code></p>
+<dl class="method">
+<dt id="catalyst.dl.core.callback.Callback.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>order: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/core/callback.html#Callback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.core.callback.Callback.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>For order see <code class="docutils literal notranslate"><span class="pre">CallbackOrder</span></code> class</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="catalyst.dl.core.callback.Callback.on_batch_end">
 <code class="descname">on_batch_end</code><span class="sig-paren">(</span><em>state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/core/callback.html#Callback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.core.callback.Callback.on_batch_end" title="Permalink to this definition">¶</a></dt>
@@ -335,6 +392,11 @@ stage end</p>
 <dl class="attribute">
 <dt id="catalyst.dl.core.experiment.Experiment.logdir">
 <code class="descname">logdir</code><a class="headerlink" href="#catalyst.dl.core.experiment.Experiment.logdir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.core.experiment.Experiment.monitoring_params">
+<code class="descname">monitoring_params</code><a class="headerlink" href="#catalyst.dl.core.experiment.Experiment.monitoring_params" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -517,12 +579,12 @@ stage end</p>
 <span id="callbacks"></span><h2>Callbacks<a class="headerlink" href="#module-catalyst.dl.callbacks.checkpoint" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.dl.callbacks.checkpoint.CheckpointCallback">
-<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.checkpoint.</code><code class="descname">CheckpointCallback</code><span class="sig-paren">(</span><em>save_n_best: int = 3</em>, <em>resume: str = None</em>, <em>resume_dir: str = None</em>, <em>metric_filename: str = '_metrics.json'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/checkpoint.html#CheckpointCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.checkpoint.CheckpointCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">catalyst.dl.callbacks.checkpoint.</code><code class="descname">CheckpointCallback</code><span class="sig-paren">(</span><em>save_n_best: int = 1</em>, <em>resume: str = None</em>, <em>resume_dir: str = None</em>, <em>metric_filename: str = '_metrics.json'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/checkpoint.html#CheckpointCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.checkpoint.CheckpointCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.callbacks.checkpoint.BaseCheckpointCallback</span></code></p>
 <p>Checkpoint callback to save/restore your model/criterion/optimizer/metrics.</p>
 <dl class="method">
 <dt id="catalyst.dl.callbacks.checkpoint.CheckpointCallback.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>save_n_best: int = 3</em>, <em>resume: str = None</em>, <em>resume_dir: str = None</em>, <em>metric_filename: str = '_metrics.json'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/checkpoint.html#CheckpointCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.checkpoint.CheckpointCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>save_n_best: int = 1</em>, <em>resume: str = None</em>, <em>resume_dir: str = None</em>, <em>metric_filename: str = '_metrics.json'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/checkpoint.html#CheckpointCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.checkpoint.CheckpointCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1215,7 +1277,7 @@ Must be one of [‘none’, ‘Sigmoid’, ‘Softmax2d’]</p></li>
 <span id="experiment"></span><h2>Experiment<a class="headerlink" href="#module-catalyst.dl.experiment.base" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.dl.experiment.base.BaseExperiment">
-<em class="property">class </em><code class="descclassname">catalyst.dl.experiment.base.</code><code class="descname">BaseExperiment</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module, loaders: OrderedDict[str, DataLoader], callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, state_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/base.html#BaseExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.base.BaseExperiment" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">catalyst.dl.experiment.base.</code><code class="descname">BaseExperiment</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module, loaders: OrderedDict[str, DataLoader], callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, state_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, monitoring_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/base.html#BaseExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.base.BaseExperiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.dl.core.experiment.Experiment" title="catalyst.dl.core.experiment.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.core.experiment.Experiment</span></code></a></p>
 <dl class="simple">
 <dt>Super-simple one-staged experiment</dt><dd><p>you can use to declare experiment in code</p>
@@ -1264,6 +1326,11 @@ Must be one of [‘none’, ‘Sigmoid’, ‘Softmax2d’]</p></li>
 <dl class="attribute">
 <dt id="catalyst.dl.experiment.base.BaseExperiment.logdir">
 <code class="descname">logdir</code><a class="headerlink" href="#catalyst.dl.experiment.base.BaseExperiment.logdir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.experiment.base.BaseExperiment.monitoring_params">
+<code class="descname">monitoring_params</code><a class="headerlink" href="#catalyst.dl.experiment.base.BaseExperiment.monitoring_params" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -1328,6 +1395,11 @@ Must be one of [‘none’, ‘Sigmoid’, ‘Softmax2d’]</p></li>
 <dd></dd></dl>
 
 <dl class="attribute">
+<dt id="catalyst.dl.experiment.config.ConfigExperiment.monitoring_params">
+<code class="descname">monitoring_params</code><a class="headerlink" href="#catalyst.dl.experiment.config.ConfigExperiment.monitoring_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="catalyst.dl.experiment.config.ConfigExperiment.stages">
 <code class="descname">stages</code><a class="headerlink" href="#catalyst.dl.experiment.config.ConfigExperiment.stages" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1336,7 +1408,7 @@ Must be one of [‘none’, ‘Sigmoid’, ‘Softmax2d’]</p></li>
 
 <span class="target" id="module-catalyst.dl.experiment.supervised"></span><dl class="class">
 <dt id="catalyst.dl.experiment.supervised.SupervisedExperiment">
-<em class="property">class </em><code class="descclassname">catalyst.dl.experiment.supervised.</code><code class="descname">SupervisedExperiment</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module, loaders: OrderedDict[str, DataLoader], callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, state_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/supervised.html#SupervisedExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.supervised.SupervisedExperiment" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">catalyst.dl.experiment.supervised.</code><code class="descname">SupervisedExperiment</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module, loaders: OrderedDict[str, DataLoader], callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, state_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, monitoring_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/supervised.html#SupervisedExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.supervised.SupervisedExperiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.dl.experiment.base.BaseExperiment" title="catalyst.dl.experiment.base.BaseExperiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.experiment.base.BaseExperiment</span></code></a></p>
 <dl class="method">
 <dt id="catalyst.dl.experiment.supervised.SupervisedExperiment.get_callbacks">
@@ -1378,7 +1450,7 @@ Must be one of [‘none’, ‘Sigmoid’, ‘Softmax2d’]</p></li>
 
 <dl class="method">
 <dt id="catalyst.dl.runner.supervised.SupervisedRunner.train">
-<code class="descname">train</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module, criterion: torch.nn.modules.module.Module, optimizer: torch.optim.optimizer.Optimizer, loaders: OrderedDict[str, DataLoader], logdir: str, callbacks: Union[List[Callback], OrderedDict[str, Callback]] = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, state_kwargs: Dict = None, checkpoint_data: Dict = None, fp16: Union[Dict, bool] = None, check: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/runner/supervised.html#SupervisedRunner.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.supervised.SupervisedRunner.train" title="Permalink to this definition">¶</a></dt>
+<code class="descname">train</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module, criterion: torch.nn.modules.module.Module, optimizer: torch.optim.optimizer.Optimizer, loaders: OrderedDict[str, DataLoader], logdir: str, callbacks: Union[List[Callback], OrderedDict[str, Callback]] = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, state_kwargs: Dict = None, checkpoint_data: Dict = None, fp16: Union[Dict, bool] = None, monitoring_params: Dict = None, check: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/runner/supervised.html#SupervisedRunner.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.supervised.SupervisedRunner.train" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1440,24 +1512,6 @@ no need to use it directly!</p>
 <dd></dd></dl>
 
 <span class="target" id="module-catalyst.dl.utils.torch"></span><dl class="function">
-<dt id="catalyst.dl.utils.torch.prepare_cudnn">
-<code class="descclassname">catalyst.dl.utils.torch.</code><code class="descname">prepare_cudnn</code><span class="sig-paren">(</span><em>deterministic: bool = None</em>, <em>benchmark: bool = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/utils/torch.html#prepare_cudnn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.torch.prepare_cudnn" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prepares CuDNN benchmark and sets CuDNN
-to be deterministic/non-deterministic mode</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>deterministic</strong> (<em>bool</em>) – deterministic mode if running in CuDNN backend.</p></li>
-<li><p><strong>benchmark</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> use CuDNN heuristics to figure out
-which algorithm will be most performant
-for your model architecture and input.
-Setting it to <code class="docutils literal notranslate"><span class="pre">False</span></code> may slow down your training.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
 <dt id="catalyst.dl.utils.torch.process_components">
 <code class="descclassname">catalyst.dl.utils.torch.</code><code class="descname">process_components</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module</em>, <em>criterion: torch.nn.modules.module.Module = None</em>, <em>optimizer: torch.optim.optimizer.Optimizer = None</em>, <em>scheduler: torch.optim.lr_scheduler._LRScheduler = None</em>, <em>distributed_params: Dict = None</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.nn.modules.module.Module, torch.nn.modules.module.Module, torch.optim.optimizer.Optimizer, torch.optim.lr_scheduler._LRScheduler, torch.device]<a class="reference internal" href="../_modules/catalyst/dl/utils/torch.html#process_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.torch.process_components" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1467,56 +1521,20 @@ Setting it to <code class="docutils literal notranslate"><span class="pre">False
 <code class="descclassname">catalyst.dl.utils.torch.</code><code class="descname">get_loader</code><span class="sig-paren">(</span><em>data_source</em>, <em>open_fn</em>, <em>dict_transform=None</em>, <em>dataset_cache_prob=-1</em>, <em>sampler=None</em>, <em>collate_fn=&lt;function default_collate&gt;</em>, <em>batch_size=32</em>, <em>num_workers=4</em>, <em>shuffle=False</em>, <em>drop_last=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils/torch.html#get_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.torch.get_loader" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="function">
-<dt id="catalyst.dl.utils.torch.process_model_params">
-<code class="descclassname">catalyst.dl.utils.torch.</code><code class="descname">process_model_params</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module</em>, <em>layerwise_params: Dict[str</em>, <em>Dict] = None</em>, <em>no_bias_weight_decay: bool = True</em>, <em>lr_scaling: float = 1.0</em><span class="sig-paren">)</span> &#x2192; List[Union[torch.nn.parameter.Parameter, dict]]<a class="reference internal" href="../_modules/catalyst/dl/utils/torch.html#process_model_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.torch.process_model_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gains model parameters for <code class="docutils literal notranslate"><span class="pre">torch.optim.Optimizer</span></code></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – Model to process</p></li>
-<li><p><strong>layerwise_params</strong> (<em>Dict</em>) – Order-sensitive dict where
-each key is regex pattern and values are layer-wise options
-for layers matching with a pattern</p></li>
-<li><p><strong>no_bias_weight_decay</strong> (<em>bool</em>) – If true, removes weight_decay
-for all <code class="docutils literal notranslate"><span class="pre">bias</span></code> parameters in the model</p></li>
-<li><p><strong>lr_scaling</strong> (<em>float</em>) – layer-wise learning rate scaling,
-if 1.0, learning rates will not be scaled</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>parameters for an optimizer</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>iterable</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">catalyst</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">segmentation</span><span class="o">.</span><span class="n">ResnetUnet</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">layerwise_params</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s2">&quot;conv1.*&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mf">0.0003</span><span class="p">)),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s2">&quot;conv.*&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">0.002</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="n">process_model_params</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">layerwise_params</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.0003</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
 <span class="target" id="module-catalyst.dl.utils.trace"></span><dl class="function">
 <dt id="catalyst.dl.utils.trace.trace_model">
-<code class="descclassname">catalyst.dl.utils.trace.</code><code class="descname">trace_model</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module, experiment: catalyst.dl.core.experiment.Experiment, runner_type: Type[catalyst.dl.core.runner.Runner], method_name: str = 'forward'</em><span class="sig-paren">)</span> &#x2192; torch.jit.ScriptModule<a class="reference internal" href="../_modules/catalyst/dl/utils/trace.html#trace_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.trace.trace_model" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">catalyst.dl.utils.trace.</code><code class="descname">trace_model</code><span class="sig-paren">(</span><em>model: torch.nn.modules.module.Module, experiment: catalyst.dl.core.experiment.Experiment, runner_type: Type[catalyst.dl.core.runner.Runner], method_name: str = 'forward', mode: str = 'eval', requires_grad: bool = False</em><span class="sig-paren">)</span> &#x2192; torch.jit.ScriptModule<a class="reference internal" href="../_modules/catalyst/dl/utils/trace.html#trace_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.trace.trace_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Traces model using it’s native experiment and runner.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> – Model to trace
-NOTICE: will be switched to eval and
-requires_grad=False will be set on all params</p></li>
+<li><p><strong>model</strong> – Model to trace</p></li>
 <li><p><strong>experiment</strong> – Native experiment that was used to train model</p></li>
 <li><p><strong>runner_type</strong> – Model’s native runner that was used to train model</p></li>
-<li><p><strong>method_name</strong> – Model’s method name that will be
+<li><p><strong>method_name</strong> (<em>str</em>) – Model’s method name that will be
 used as entrypoint during tracing</p></li>
+<li><p><strong>mode</strong> (<em>str</em>) – Mode for model to trace (<code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code>)</p></li>
+<li><p><strong>requires_grad</strong> (<em>bool</em>) – Flag to use grads</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
