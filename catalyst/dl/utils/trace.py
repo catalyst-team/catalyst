@@ -5,6 +5,7 @@ from torch import nn
 from torch.jit import ScriptModule
 
 from catalyst.dl.core import Experiment, Runner
+from catalyst import utils
 
 
 class _ForwardOverrideModel(nn.Module):
@@ -89,8 +90,7 @@ def trace_model(
         raise ValueError(f"Unknown mode '{mode}'. Must be 'eval' or 'train'")
 
     getattr(model, mode)()
-    for p in model.parameters():
-        p.requires_grad_(requires_grad)
+    utils.set_requires_grad(model, requires_grad=requires_grad)
 
     tracer = _TracingModelWrapper(model, method_name)
     runner: Runner = runner_type(tracer.cpu(), torch.device("cpu"))

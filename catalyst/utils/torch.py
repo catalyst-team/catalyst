@@ -263,3 +263,29 @@ def process_model_params(
         model_params.append({"params": parameters, **options})
 
     return model_params
+
+
+def set_requires_grad(model: nn.Module, requires_grad: bool):
+    """
+    Sets the ``requires_grad`` value for all model parameters.
+
+    Args:
+        model (torch.nn.Module): Model
+        requires_grad (bool): value
+
+    Examples:
+        >>> model = SimpleModel()
+        >>> set_requires_grad(model, requires_grad=True)
+    """
+    requires_grad = bool(requires_grad)
+    for param in model.parameters():
+        param.requires_grad = requires_grad
+
+
+__all__ = [
+    "ce_with_logits", "log1p_exp", "normal_sample", "normal_logprob",
+    "soft_update", "get_optimizable_params", "get_optimizer_momentum",
+    "set_optimizer_momentum", "assert_fp16_available", "get_device",
+    "get_available_gpus", "get_activation_fn", "any2device", "prepare_cudnn",
+    "process_model_params", "set_requires_grad"
+]
