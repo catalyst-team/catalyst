@@ -8,6 +8,7 @@ import torch.nn as nn
 import torchvision
 
 from .core import EncoderSpec, _take
+from catalyst import utils
 
 RESNET_PARAMS = {
     "resnet18": {
@@ -94,7 +95,7 @@ class ResnetEncoder(EncoderSpec):
         if requires_grad is None:
             requires_grad = not pretrained
 
-        self.set_requires_grad(requires_grad)
+        utils.set_requires_grad(self, requires_grad)
 
     @property
     def out_channels(self) -> List[int]:

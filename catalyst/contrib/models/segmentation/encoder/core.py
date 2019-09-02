@@ -18,8 +18,3 @@ class EncoderSpec(ABC, nn.Module):
     @abstractmethod
     def out_strides(self) -> List[int]:
         pass
-
-    def set_requires_grad(self, requires_grad):
-        requires_grad = bool(requires_grad)
-        for param in self.parameters():
-            param.requires_grad = requires_grad
