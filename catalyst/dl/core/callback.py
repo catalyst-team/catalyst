@@ -36,14 +36,13 @@ class Callback:
 
         exception – if an Exception was raised
 
-    All callbacks has ordering ``order`` one of the values in
-    ``CallbackOrdering``
+    All callbacks has ``order`` one of the values in ``CallbackOrder``
     """
-    def __init__(self, ordering: int):
+    def __init__(self, order: int):
         """
-        For ordering see ``CallbackOrdering`` class
+        For order see ``CallbackOrder`` class
         """
-        self.ordering = ordering
+        self.order = order
 
     def on_stage_start(self, state: RunnerState):
         pass
