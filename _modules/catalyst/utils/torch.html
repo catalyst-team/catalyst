@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.torch &mdash; Catalyst 19.08.4 documentation</title>
+  <title>catalyst.utils.torch &mdash; Catalyst 19.08.7 documentation</title>
   
 
   
@@ -160,13 +160,19 @@
            <div itemprop="articleBody">
             
   <h1>Source code for catalyst.utils.torch</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Iterable</span>
+<span></span><span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">safitty</span>
+
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="k">import</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">torch.optim</span> <span class="k">import</span> <span class="n">Optimizer</span>
+<span class="kn">import</span> <span class="nn">torch.backends.cudnn</span> <span class="k">as</span> <span class="nn">cudnn</span>
+
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="k">import</span> <span class="n">utils</span>
 
 
 <div class="viewcode-block" id="ce_with_logits"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.ce_with_logits">[docs]</a><span class="k">def</span> <span class="nf">ce_with_logits</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
@@ -338,6 +344,113 @@
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="prepare_cudnn"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.prepare_cudnn">[docs]</a><span class="k">def</span> <span class="nf">prepare_cudnn</span><span class="p">(</span><span class="n">deterministic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">benchmark</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prepares CuDNN benchmark and sets CuDNN</span>
+<span class="sd">    to be deterministic/non-deterministic mode</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        deterministic (bool): deterministic mode if running in CuDNN backend.</span>
+<span class="sd">        benchmark (bool): If ``True`` use CuDNN heuristics to figure out</span>
+<span class="sd">            which algorithm will be most performant</span>
+<span class="sd">            for your model architecture and input.</span>
+<span class="sd">            Setting it to ``False`` may slow down your training.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+        <span class="c1"># CuDNN reproducibility</span>
+        <span class="c1"># https://pytorch.org/docs/stable/notes/randomness.html#cudnn</span>
+        <span class="k">if</span> <span class="n">deterministic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">deterministic</span> <span class="o">=</span> \
+                <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CUDNN_DETERMINISTIC&quot;</span><span class="p">,</span> <span class="s2">&quot;False&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span>
+        <span class="n">cudnn</span><span class="o">.</span><span class="n">deterministic</span> <span class="o">=</span> <span class="n">deterministic</span>
+
+        <span class="c1"># https://discuss.pytorch.org/t/how-should-i-disable-using-cudnn-in-my-code/38053/4</span>
+        <span class="k">if</span> <span class="n">benchmark</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">benchmark</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CUDNN_BENCHMARK&quot;</span><span class="p">,</span> <span class="s2">&quot;True&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span>
+        <span class="n">cudnn</span><span class="o">.</span><span class="n">benchmark</span> <span class="o">=</span> <span class="n">benchmark</span></div>
+
+
+<div class="viewcode-block" id="process_model_params"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.process_model_params">[docs]</a><span class="k">def</span> <span class="nf">process_model_params</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
+    <span class="n">layerwise_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">no_bias_weight_decay</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">lr_scaling</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gains model parameters for ``torch.optim.Optimizer``</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (torch.nn.Module): Model to process</span>
+<span class="sd">        layerwise_params (Dict): Order-sensitive dict where</span>
+<span class="sd">            each key is regex pattern and values are layer-wise options</span>
+<span class="sd">            for layers matching with a pattern</span>
+<span class="sd">        no_bias_weight_decay (bool): If true, removes weight_decay</span>
+<span class="sd">            for all ``bias`` parameters in the model</span>
+<span class="sd">        lr_scaling (float): layer-wise learning rate scaling,</span>
+<span class="sd">            if 1.0, learning rates will not be scaled</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        iterable: parameters for an optimizer</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; model = catalyst.contrib.models.segmentation.ResnetUnet()</span>
+<span class="sd">        &gt;&gt;&gt; layerwise_params = collections.OrderedDict([</span>
+<span class="sd">        &gt;&gt;&gt;     (&quot;conv1.*&quot;, dict(lr=0.001, weight_decay=0.0003)),</span>
+<span class="sd">        &gt;&gt;&gt;     (&quot;conv.*&quot;, dict(lr=0.002))</span>
+<span class="sd">        &gt;&gt;&gt; ])</span>
+<span class="sd">        &gt;&gt;&gt; params = process_model_params(model, layerwise_params)</span>
+<span class="sd">        &gt;&gt;&gt; optimizer = torch.optim.Adam(params, lr=0.0003)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">())</span>
+    <span class="n">layerwise_params</span> <span class="o">=</span> <span class="n">layerwise_params</span> <span class="ow">or</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="n">model_params</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">parameters</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">options_</span> <span class="ow">in</span> <span class="n">layerwise_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># all new LR rules write on top of the old ones</span>
+                <span class="n">options</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge_dicts</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">options_</span><span class="p">)</span>
+
+        <span class="c1"># no bias decay from https://arxiv.org/abs/1812.01187</span>
+        <span class="k">if</span> <span class="n">no_bias_weight_decay</span> <span class="ow">and</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;bias&quot;</span><span class="p">):</span>
+            <span class="n">options</span><span class="p">[</span><span class="s2">&quot;weight_decay&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># lr linear scaling from https://arxiv.org/pdf/1706.02677.pdf</span>
+        <span class="k">if</span> <span class="s2">&quot;lr&quot;</span> <span class="ow">in</span> <span class="n">options</span><span class="p">:</span>
+            <span class="n">options</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]</span> <span class="o">*=</span> <span class="n">lr_scaling</span>
+
+        <span class="n">model_params</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="n">parameters</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">model_params</span></div>
+
+
+<div class="viewcode-block" id="set_requires_grad"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.set_requires_grad">[docs]</a><span class="k">def</span> <span class="nf">set_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">requires_grad</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets the ``requires_grad`` value for all model parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (torch.nn.Module): Model</span>
+<span class="sd">        requires_grad (bool): value</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; model = SimpleModel()</span>
+<span class="sd">        &gt;&gt;&gt; set_requires_grad(model, requires_grad=True)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">requires_grad</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">requires_grad</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+        <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="n">requires_grad</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;ce_with_logits&quot;</span><span class="p">,</span> <span class="s2">&quot;log1p_exp&quot;</span><span class="p">,</span> <span class="s2">&quot;normal_sample&quot;</span><span class="p">,</span> <span class="s2">&quot;normal_logprob&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;soft_update&quot;</span><span class="p">,</span> <span class="s2">&quot;get_optimizable_params&quot;</span><span class="p">,</span> <span class="s2">&quot;get_optimizer_momentum&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;set_optimizer_momentum&quot;</span><span class="p">,</span> <span class="s2">&quot;assert_fp16_available&quot;</span><span class="p">,</span> <span class="s2">&quot;get_device&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_available_gpus&quot;</span><span class="p">,</span> <span class="s2">&quot;get_activation_fn&quot;</span><span class="p">,</span> <span class="s2">&quot;any2device&quot;</span><span class="p">,</span> <span class="s2">&quot;prepare_cudnn&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;process_model_params&quot;</span><span class="p">,</span> <span class="s2">&quot;set_requires_grad&quot;</span>
+<span class="p">]</span>
 </pre></div>
 
            </div>

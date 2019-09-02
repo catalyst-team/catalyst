@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.callbacks.scheduler &mdash; Catalyst 19.08.4 documentation</title>
+  <title>catalyst.dl.callbacks.scheduler &mdash; Catalyst 19.08.7 documentation</title>
   
 
   
@@ -163,7 +163,7 @@
 <span></span><span class="kn">import</span> <span class="nn">safitty</span>
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">RunnerState</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">RunnerState</span><span class="p">,</span> <span class="n">CallbackOrder</span>
 <span class="kn">from</span> <span class="nn">catalyst.contrib.schedulers</span> <span class="k">import</span> <span class="n">OneCycleLR</span><span class="p">,</span> <span class="n">BatchScheduler</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="k">import</span> <span class="n">get_optimizer_momentum</span>
 
@@ -175,6 +175,7 @@
         <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">reduce_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span>
     <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Scheduler</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_key</span> <span class="o">=</span> <span class="n">scheduler_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reduce_metric</span> <span class="o">=</span> <span class="n">reduce_metric</span>
@@ -252,6 +253,7 @@
 <span class="sd">            optimizer_key: which optimizer key to use</span>
 <span class="sd">                for learning rate scheduling</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Scheduler</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_key</span> <span class="o">=</span> <span class="n">optimizer_key</span></div>
 

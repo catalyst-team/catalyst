@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.modules.real_nvp &mdash; Catalyst 19.08.4 documentation</title>
+  <title>catalyst.contrib.modules.real_nvp &mdash; Catalyst 19.08.7 documentation</title>
   
 
   
@@ -217,6 +217,7 @@
 <span class="sd">        is being copied and which is being transformed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">parity</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;odd&quot;</span><span class="p">,</span> <span class="s2">&quot;even&quot;</span><span class="p">]</span>
 
         <span class="n">layer_fn</span> <span class="o">=</span> <span class="n">MODULES</span><span class="o">.</span><span class="n">get_if_str</span><span class="p">(</span><span class="n">layer_fn</span><span class="p">)</span>
         <span class="n">activation_fn</span> <span class="o">=</span> <span class="n">MODULES</span><span class="o">.</span><span class="n">get_if_str</span><span class="p">(</span><span class="n">activation_fn</span><span class="p">)</span>

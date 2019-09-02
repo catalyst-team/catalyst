@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.data.sampler &mdash; Catalyst 19.08.4 documentation</title>
+  <title>catalyst.data.sampler &mdash; Catalyst 19.08.7 documentation</title>
   
 
   
@@ -228,8 +228,9 @@
 
 
 <div class="viewcode-block" id="MiniEpochSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.MiniEpochSampler">[docs]</a><span class="k">class</span> <span class="nc">MiniEpochSampler</span><span class="p">(</span><span class="n">Sampler</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Sampler iterates mini epochs from the dataset</span>
-<span class="sd">        used by ``mini_epoch_len``</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sampler iterates mini epochs from the dataset</span>
+<span class="sd">    used by ``mini_epoch_len``</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data_len (int): Size of the dataset</span>
@@ -245,10 +246,10 @@
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; MiniEpochSampler(len(dataset), mini_epoch_len=100)</span>
-<span class="sd">        &gt;&gt;&gt; MiniEpochSampler(len(dataset), mini_epoch_len=100, \</span>
-<span class="sd">            drop_last=True)</span>
-<span class="sd">        &gt;&gt;&gt; MiniEpochSampler(len(dataset), mini_epoch_len=100, \</span>
-<span class="sd">            shuffle=&quot;per_epoch&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; MiniEpochSampler(len(dataset), mini_epoch_len=100,</span>
+<span class="sd">        &gt;&gt;&gt;     drop_last=True)</span>
+<span class="sd">        &gt;&gt;&gt; MiniEpochSampler(len(dataset), mini_epoch_len=100,</span>
+<span class="sd">        &gt;&gt;&gt;     shuffle=&quot;per_epoch&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>

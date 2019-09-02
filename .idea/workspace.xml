@@ -2,6 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ad1b0216-21c5-4f5d-afeb-40e00ce32c06" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.buildinfo" beforeDir="false" afterPath="$PROJECT_DIR$/.buildinfo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.doctrees/api/contrib.doctree" beforeDir="false" afterPath="$PROJECT_DIR$/.doctrees/api/contrib.doctree" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.doctrees/api/data.doctree" beforeDir="false" afterPath="$PROJECT_DIR$/.doctrees/api/data.doctree" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.doctrees/api/dl.doctree" beforeDir="false" afterPath="$PROJECT_DIR$/.doctrees/api/dl.doctree" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.doctrees/api/rl.doctree" beforeDir="false" afterPath="$PROJECT_DIR$/.doctrees/api/rl.doctree" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.doctrees/api/utils.doctree" beforeDir="false" afterPath="$PROJECT_DIR$/.doctrees/api/utils.doctree" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.doctrees/environment.pickle" beforeDir="false" afterPath="$PROJECT_DIR$/.doctrees/environment.pickle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.doctrees/index.doctree" beforeDir="false" afterPath="$PROJECT_DIR$/.doctrees/index.doctree" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.doctrees/info/contributing.doctree" beforeDir="false" afterPath="$PROJECT_DIR$/.doctrees/info/contributing.doctree" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.doctrees/info/examples.doctree" beforeDir="false" afterPath="$PROJECT_DIR$/.doctrees/info/examples.doctree" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.doctrees/info/license.doctree" beforeDir="false" afterPath="$PROJECT_DIR$/.doctrees/info/license.doctree" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/ce.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/ce.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/center.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/contrib/criterion/center.html" afterDir="false" />
@@ -114,9 +125,8 @@
       <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/torch.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/torch.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_modules/catalyst/utils/visualization.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/catalyst/utils/visualization.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_modules/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/_modules/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_sources/api/dl.rst.txt" beforeDir="false" afterPath="$PROJECT_DIR$/_sources/api/dl.rst.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_sources/info/contributing.rst.txt" beforeDir="false" afterPath="$PROJECT_DIR$/_sources/info/contributing.rst.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_sources/info/license.rst.txt" beforeDir="false" afterPath="$PROJECT_DIR$/_sources/info/license.rst.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_sources/index.rst.txt" beforeDir="false" afterPath="$PROJECT_DIR$/_sources/index.rst.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_static/documentation_options.js" beforeDir="false" afterPath="$PROJECT_DIR$/_static/documentation_options.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/contrib.html" beforeDir="false" afterPath="$PROJECT_DIR$/api/contrib.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/data.html" beforeDir="false" afterPath="$PROJECT_DIR$/api/data.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/dl.html" beforeDir="false" afterPath="$PROJECT_DIR$/api/dl.html" afterDir="false" />
@@ -412,6 +422,7 @@
       <workItem from="1564416764163" duration="24889000" />
       <workItem from="1564601226142" duration="7996000" />
       <workItem from="1566126292016" duration="252000" />
+      <workItem from="1567446809099" duration="532000" />
     </task>
     <task id="LOCAL-00017" summary="Merge branch 'master' of https://github.com/catalyst-team/catalyst into new_metrics&#10;&#10;# Conflicts:&#10;#&#9;catalyst/dl/callbacks/metrics.py">
       <created>1556107029375</created>

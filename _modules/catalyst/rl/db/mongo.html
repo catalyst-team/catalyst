@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.rl.db.mongo &mdash; Catalyst 19.08.4 documentation</title>
+  <title>catalyst.rl.db.mongo &mdash; Catalyst 19.08.7 documentation</title>
   
 
   
@@ -291,11 +291,12 @@
         <span class="n">checkpoint_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoints_collection</span><span class="o">.</span><span class="n">find_one</span><span class="p">(</span>
             <span class="p">{</span><span class="s2">&quot;prefix&quot;</span><span class="p">:</span> <span class="s2">&quot;checkpoint&quot;</span><span class="p">}</span>
         <span class="p">)</span>
-        <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">checkpoint_obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;checkpoint&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">checkpoint</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span> <span class="o">=</span> <span class="n">checkpoint_obj</span><span class="p">[</span><span class="s2">&quot;epoch&quot;</span><span class="p">]</span>
-        <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">checkpoint_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">checkpoint_obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;checkpoint&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span> <span class="o">=</span> <span class="n">checkpoint_obj</span><span class="p">[</span><span class="s2">&quot;epoch&quot;</span><span class="p">]</span>
+            <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">checkpoint</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">checkpoint</span></div>
 
 <div class="viewcode-block" id="MongoDB.del_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.mongo.MongoDB.del_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">del_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

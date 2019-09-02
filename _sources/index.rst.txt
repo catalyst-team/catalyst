@@ -16,6 +16,9 @@ Catalyst
     :target: https://catalyst-team.github.io/catalyst/index.html
     :alt: Docs
 
+.. image:: https://ucde0995747f356870f615ffb990.previews.dropboxusercontent.com/p/thumb/AAju2yA3zKEEfV1Rbe1hdCK94o5cVH5blrqQCBfy1BFudg8VfehnZrvBCpKEKUjZ0yce8rVWsXDlxCV2tmXL1f18h9VMod21hbQ-E7_X_Qbomca3PLeTe0pTgcfqs1gGef9JBs4y36-raLf2Qrkf_AJGdvUWscUd9OScOHYI8FyrjmF6pqVaMRnJGv8hmfg1QiT1ZjF2I1KqFMiDNxY3CvVltWNYnCltOk0mLG95yUBNlzJIOROCujlKRV1nAsoL6u7f_ynoVJBVmLsnTZeJ4izf10zCdGc5vmxxMRBTxxwZV4OPDuA7jlTfxB2983Ho5h0CzRGa3k6HwWsLmVUfU2Prno8-6UT99q2x3Lq2RXWaT8CbJe7FNg1LbI1WQWq-6_9oQA4JAOXjP_mbWXk721kz/p.png?fv_content=true&size_mode=5
+    :target: https://www.patreon.com/catalyst_team
+    :alt: Donate
 
 .. image:: https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst\_logo.png
     :target: https://github.com/catalyst-team/catalyst

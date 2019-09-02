@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.callbacks.checkpoint &mdash; Catalyst 19.08.4 documentation</title>
+  <title>catalyst.dl.callbacks.checkpoint &mdash; Catalyst 19.08.7 documentation</title>
   
 
   
@@ -168,7 +168,7 @@
 <span class="kn">import</span> <span class="nn">safitty</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="k">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">RunnerState</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">RunnerState</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="k">import</span> <span class="n">is_exception</span>
 
 
@@ -176,15 +176,13 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class for all checkpoint callbacks</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">metric_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_metrics.json&quot;</span>
-    <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_metrics.json&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            metric_filename (str): filename to save metrics</span>
 <span class="sd">                in checkpoint folder. Must ends on ``.json`` or ``.yml``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Logger</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metric_filename</span> <span class="o">=</span> <span class="n">metric_filename</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -244,7 +242,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="CheckpointCallback.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.checkpoint.CheckpointCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">save_n_best</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">save_n_best</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">resume</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">resume_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">metric_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_metrics.json&quot;</span>
@@ -314,8 +312,11 @@
         <span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">top_best_metrics</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_n_best</span><span class="p">:</span>
             <span class="n">last_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_best_metrics</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">last_filepath</span> <span class="o">=</span> <span class="n">last_item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">last_filepath</span><span class="p">)</span></div>
+            <span class="n">last_filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">last_item</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">last_filepaths</span> <span class="o">=</span> <span class="n">last_filepath</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span>
+                <span class="n">last_filepath</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.pth&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">last_filepaths</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="CheckpointCallback.process_checkpoint"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.checkpoint.CheckpointCallback.process_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">process_checkpoint</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -325,10 +326,26 @@
         <span class="n">main_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
         <span class="n">minimize_metric</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="p">):</span>
-        <span class="n">filepath</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_checkpoint_suffix</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span>
             <span class="n">logdir</span><span class="o">=</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/checkpoints/&quot;</span><span class="p">,</span>
             <span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span>
-            <span class="n">suffix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_checkpoint_suffix</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">),</span>
+            <span class="n">suffix</span><span class="o">=</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{suffix}</span><span class="s2">_full&quot;</span><span class="p">,</span>
+            <span class="n">is_best</span><span class="o">=</span><span class="n">is_best</span><span class="p">,</span>
+            <span class="n">is_last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">special_suffix</span><span class="o">=</span><span class="s2">&quot;_full&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">exclude</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">]</span>
+        <span class="n">checkpoint</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">value</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">checkpoint</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">z</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">key</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span>
+            <span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span>
+            <span class="n">logdir</span><span class="o">=</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/checkpoints/&quot;</span><span class="p">,</span>
+            <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
             <span class="n">is_best</span><span class="o">=</span><span class="n">is_best</span><span class="p">,</span>
             <span class="n">is_last</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>

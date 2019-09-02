@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.compression &mdash; Catalyst 19.08.4 documentation</title>
+  <title>catalyst.utils.compression &mdash; Catalyst 19.08.7 documentation</title>
   
 
   
@@ -213,10 +213,14 @@
 
 <span class="k">if</span> <span class="n">LZ4_ENABLED</span><span class="p">:</span>
     <span class="n">pack</span> <span class="o">=</span> <span class="n">compress</span>
+    <span class="n">pack_if_needed</span> <span class="o">=</span> <span class="n">compress_if_needed</span>
     <span class="n">unpack</span> <span class="o">=</span> <span class="n">decompress</span>
+    <span class="n">unpack_if_needed</span> <span class="o">=</span> <span class="n">decompress_if_needed</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="n">pack</span> <span class="o">=</span> <span class="n">serialize</span>
+    <span class="n">pack_if_needed</span> <span class="o">=</span> <span class="n">serialize</span>
     <span class="n">unpack</span> <span class="o">=</span> <span class="n">deserialize</span>
+    <span class="n">unpack_if_needed</span> <span class="o">=</span> <span class="n">deserialize</span>
 </pre></div>
 
            </div>

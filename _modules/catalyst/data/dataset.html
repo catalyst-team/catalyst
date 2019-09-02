@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.data.dataset &mdash; Catalyst 19.08.4 documentation</title>
+  <title>catalyst.data.dataset &mdash; Catalyst 19.08.7 documentation</title>
   
 
   
@@ -161,9 +161,13 @@
             
   <h1>Source code for catalyst.data.dataset</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span>
+
 <span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="k">import</span> <span class="n">merge_dicts</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">Dataset</span>
+
+<span class="n">_Path</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="ListDataset"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.dataset.ListDataset">[docs]</a><span class="k">class</span> <span class="nc">ListDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
@@ -274,7 +278,50 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ListDataset&quot;</span><span class="p">,</span> <span class="s2">&quot;MergeDataset&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="PathsDataset"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.dataset.PathsDataset">[docs]</a><span class="k">class</span> <span class="nc">PathsDataset</span><span class="p">(</span><span class="n">ListDataset</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dataset that derives features and targets from samples filesystem paths.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="PathsDataset.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.dataset.PathsDataset.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">filenames</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">_Path</span><span class="p">],</span> <span class="n">open_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">],</span>
+        <span class="n">label_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">_Path</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">list_dataset_params</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">         Args:</span>
+<span class="sd">            filenames (List[str]): list of file paths that store information</span>
+<span class="sd">                about your dataset samples; it could be images, texts or</span>
+<span class="sd">                any other files in general.</span>
+<span class="sd">            open_fn (callable): function, that can open your</span>
+<span class="sd">                annotations dict and</span>
+<span class="sd">                transfer it to data, needed by your network</span>
+<span class="sd">                (for example open image by path, or tokenize read string)</span>
+<span class="sd">            label_fn (callable): function, that can extract target</span>
+<span class="sd">                value from sample path</span>
+<span class="sd">                (for example, your sample could be an image file like</span>
+<span class="sd">                ``/path/to/your/image_1.png`` where the target is encoded as</span>
+<span class="sd">                a part of file path)</span>
+<span class="sd">            list_dataset_params (dict): base class initialization</span>
+<span class="sd">                parameters.</span>
+
+<span class="sd">        Examples:</span>
+<span class="sd">            &gt;&gt;&gt; label_fn = lambda x: x.split(&quot;_&quot;)[0]</span>
+<span class="sd">            &gt;&gt;&gt; dataset = PathsDataset(</span>
+<span class="sd">            &gt;&gt;&gt;     filenames=Path(&quot;/path/to/images/&quot;).glob(&quot;*.jpg&quot;),</span>
+<span class="sd">            &gt;&gt;&gt;     label_fn=label_fn,</span>
+<span class="sd">            &gt;&gt;&gt;     open_fn=open_fn,</span>
+<span class="sd">            &gt;&gt;&gt; )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">list_data</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">dict</span><span class="p">(</span><span class="n">features</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">label_fn</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span>
+        <span class="p">]</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">list_data</span><span class="o">=</span><span class="n">list_data</span><span class="p">,</span> <span class="n">open_fn</span><span class="o">=</span><span class="n">open_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">list_dataset_params</span>
+        <span class="p">)</span></div></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_Path&quot;</span><span class="p">,</span> <span class="s2">&quot;ListDataset&quot;</span><span class="p">,</span> <span class="s2">&quot;MergeDataset&quot;</span><span class="p">,</span> <span class="s2">&quot;PathsDataset&quot;</span><span class="p">]</span>
 </pre></div>
 
            </div>
