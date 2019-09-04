@@ -17,9 +17,10 @@ class AtariEnvWrapper(EnvironmentSpec):
         step_delay=0.0,
         visualize=False,
         mode="train",
+        sampler_id=None,
         **params
     ):
-        super().__init__(visualize=visualize, mode=mode)
+        super().__init__(visualize=visualize, mode=mode, sampler_id=sampler_id)
         self.env = make_atari_env(**params)
 
         self._history_len = history_len
