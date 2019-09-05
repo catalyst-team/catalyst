@@ -16,7 +16,7 @@ environment:
   environment: GymWrapper
   env_name: LunarLanderContinuous-v2
 
-  history_len: 3
+  history_len: &history_len 3
 
   frame_skip: 2
   reward_scale: 1.0
@@ -27,17 +27,17 @@ agents:
 
     state_net_params:  # state -> hidden representation
       observation_net_params:
-        hiddens: [128]  # first hidden would be taken from state_shape
-        layer_fn: Linear
-        norm_fn: LayerNorm
-        activation_fn: ReLU
-        bias: false
+        _network_type: "linear"
+        history_len: *history_len
+        features: [128]  # first hidden would be taken from state_shape
+        use_bias: false
+        use_normalization: true
+        activation: ReLU
       main_net_params:
-        hiddens: [128, 128]
-        layer_fn: Linear
-        norm_fn: LayerNorm
-        activation_fn: ReLU
-        bias: false
+        features: [128, 128]
+        use_bias: false
+        use_normalization: true
+        activation: ReLU
     policy_head_params:  # hidden representation -> ~policy
       in_features: 128  # out features would be taken from action_shape
       policy_type: diagonal-gauss
