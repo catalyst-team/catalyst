@@ -144,7 +144,7 @@ class ConfigExperiment(Experiment):
         optimizer = OPTIMIZERS.get_from_params(**params, params=model_params)
 
         if load_from_previous_stage:
-            checkpoint_path = f"{self.logdir}/checkpoints/best.pth"
+            checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
             checkpoint = utils.load_checkpoint(checkpoint_path)
             utils.unpack_checkpoint(checkpoint, optimizer=optimizer)
             for key, value in params.items():

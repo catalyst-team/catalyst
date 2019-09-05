@@ -38,6 +38,7 @@ def main(args, _=None):
     db_len = db.num_trajectories
     trajectories = []
 
+    i = 0
     for i in tqdm(range(args.start_from, db_len)):
         if args.db == "redis":
             trajectory = db.get_trajectory(i)
