@@ -36,9 +36,12 @@ agents:
         use_dropout: false
         activation: LeakyReLU
       main_net_params:
-        out_features: &embedding_size 512
+        features: [512]
+        use_bias: false
+        use_normalization: true
+        activation: ReLU
     value_head_params:  # hidden representation -> ~policy
-      in_features: *embedding_size
+      in_features: 512
       # out features would be taken from action_shape
 
       use_state_value_head: True

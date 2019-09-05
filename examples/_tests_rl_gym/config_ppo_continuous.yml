@@ -36,8 +36,6 @@ agents:
         use_normalization: true
         activation: ReLU
       main_net_params:
-        _network_type: "linear"
-        history_len: *history_len
         features: [32, 32]
         use_bias: false
         use_normalization: true
@@ -59,8 +57,6 @@ agents:
         use_normalization: true
         activation: ReLU
       main_net_params:
-        _network_type: "linear"
-        history_len: *history_len
         features: [32, 32]
         use_bias: false
         use_normalization: true
