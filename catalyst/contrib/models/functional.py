@@ -80,9 +80,9 @@ def get_linear_net(
         layer_fn=nn.Linear,
         bias=use_bias,
         norm_fn=nn.LayerNorm if use_normalization else None,
-        dropout=partial(nn.Dropout, p=dropout_rate) \
-            if dropout_rate is not None \
-            else None,
+        dropout=partial(nn.Dropout, p=dropout_rate)
+        if dropout_rate is not None
+        else None,
         activation_fn=activation,
         residual=residual,
         layer_order=layer_order,
