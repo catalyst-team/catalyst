@@ -282,10 +282,24 @@ def set_requires_grad(model: nn.Module, requires_grad: bool):
         param.requires_grad = requires_grad
 
 
+def get_network_output(net: nn.Module, *input_shapes):
+    inputs = []
+    for input_shape in input_shapes:
+        if isinstance(input_shape, dict):
+            input_t = {}
+            for key, input_shape_ in input_shape.items():
+                input_t[key] = torch.Tensor(torch.randn((1,) + input_shape_))
+        else:
+            input_t = torch.Tensor(torch.randn((1,) + input_shape))
+        inputs.append(input_t)
+    output_t = net(*inputs)
+    return output_t
+
+
 __all__ = [
     "ce_with_logits", "log1p_exp", "normal_sample", "normal_logprob",
     "soft_update", "get_optimizable_params", "get_optimizer_momentum",
     "set_optimizer_momentum", "assert_fp16_available", "get_device",
     "get_available_gpus", "get_activation_fn", "any2device", "prepare_cudnn",
-    "process_model_params", "set_requires_grad"
+    "process_model_params", "set_requires_grad", "get_network_output"
 ]

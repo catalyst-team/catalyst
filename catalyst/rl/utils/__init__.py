@@ -2,6 +2,9 @@
 
 from .criterion import categorical_loss, quantile_loss
 
+from .agent import get_observation_net, \
+    process_state_ff, process_state_ff_kv, \
+    process_state_lama, process_state_lama_kv
 from .buffer import OffpolicyReplayBuffer, OnpolicyRolloutBuffer
 from .gamma import hyperbolic_gammas
 from .gym import extend_space
