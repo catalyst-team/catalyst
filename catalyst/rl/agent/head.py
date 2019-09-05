@@ -10,6 +10,14 @@ from .policy import CategoricalPolicy, BernoulliPolicy, DiagonalGaussPolicy, \
 
 
 class ValueHead(nn.Module):
+    @staticmethod
+    def _build_head(in_features, out_features, num_atoms, bias):
+        return nn.Linear(
+            in_features=in_features,
+            out_features=out_features * num_atoms,
+            bias=bias
+        )
+
     def __init__(
         self,
         in_features: int,
@@ -62,13 +70,6 @@ class ValueHead(nn.Module):
             self.state_value_heads = nn.ModuleList(state_value_heads)
 
         self.apply(outer_init)
-
-    def _build_head(self, in_features, out_features, num_atoms, bias):
-        return nn.Linear(
-            in_features=in_features,
-            out_features=out_features * num_atoms,
-            bias=bias
-        )
 
     def forward(self, state: torch.Tensor):
         x: List[torch.Tensor] = []

@@ -1,8 +1,8 @@
 from typing import Dict
-from functools import reduce
 from gym.spaces import Box, Discrete
 
 import torch
+
 from catalyst.rl.core import ActorSpec, EnvironmentSpec
 from .network import StateNet
 from .head import PolicyHead
@@ -38,25 +38,19 @@ class Actor(ActorSpec):
         policy_head_params: Dict,
         env_spec: EnvironmentSpec,
     ):
-        # @TODO: refactor
-        observation_size = reduce(
-            lambda x, y: x * y, env_spec.state_space.shape
-        )
-
-        state_net_params["observation_net_params"]["hiddens"].insert(
-            0, observation_size
-        )
-
         # @TODO: any better solution?
         action_space = env_spec.action_space
         if isinstance(action_space, Box):
+            # continuous control
             policy_head_params["out_features"] = action_space.shape[0]
         elif isinstance(action_space, Discrete):
+            # discrete control
             policy_head_params["out_features"] = action_space.n
         else:
             raise NotImplementedError()
 
-        # @TODO: make by init?
+        # @TODO: any better solution?
+        state_net_params["state_shape"] = env_spec.state_space.shape
         state_net = StateNet.get_from_params(**state_net_params)
         head_net = PolicyHead(**policy_head_params)
 
