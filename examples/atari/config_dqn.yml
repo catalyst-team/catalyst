@@ -23,14 +23,18 @@ environment:
 
 agents:
   critic:
-    agent: ConvQCritic
+    agent: ActionCritic
 
     state_net_params:  # state -> hidden representation
       observation_net_params:
+        _network_type: "convolution"
         history_len: *history_len
-        conv1_size: 32
-        conv2_size: 64
-        conv3_size: 32
+        channels: [32 64, 32]
+        use_bias: false
+        use_groups: false
+        use_normalization: false
+        use_dropout: false
+        activation: LeakyReLU
       main_net_params:
         out_features: &embedding_size 512
     value_head_params:  # hidden representation -> ~policy
