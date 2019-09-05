@@ -33,7 +33,7 @@ agents:
         use_normalization: true
         activation: ReLU
       main_net_params:
-        features: [32, 32]
+        features: [32]
         use_bias: false
         use_normalization: true
         activation: ReLU
@@ -53,7 +53,7 @@ agents:
         use_normalization: true
         activation: ReLU
       main_net_params:
-        features: [32, 32]
+        features: [32]
         use_bias: false
         use_normalization: true
         activation: ReLU
