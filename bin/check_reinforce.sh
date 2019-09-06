@@ -76,7 +76,7 @@ python -c """
 import pathlib
 import numpy as np
 from catalyst import utils
-reward_goal = -3.0
+reward_goal = -6.0
 
 folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_reinforce_continuous/').glob('sampler.valid*'))[0]
 checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')

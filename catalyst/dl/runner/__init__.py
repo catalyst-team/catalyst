@@ -9,6 +9,5 @@ try:
     from .wandb import WandbRunner, SupervisedWandbRunner
 except ImportError:
     logger.warning(
-        "wandb not available, switching to pickle. "
-        "To install wandb, run `pip install wandb`."
+        "wandb not available, to install wandb, run `pip install wandb`."
     )

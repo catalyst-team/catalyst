@@ -45,7 +45,7 @@ jobs:
 
     - stage: Examples
       name: "Examples DL"
-      install: *requirements_dl
+      install: *requirements_all
       script:
         - bash ./bin/check_dl.sh
 

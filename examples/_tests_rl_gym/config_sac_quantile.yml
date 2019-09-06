@@ -16,7 +16,7 @@ environment:
   environment: GymWrapper
   env_name: PointEnv-v0
 
-  history_len: 1
+  history_len: &history_len 1
   frame_skip: 1
   reward_scale: 0.1
 
@@ -29,17 +29,17 @@ agents:
 
     state_net_params:  # state -> hidden representation
       observation_net_params:
-        hiddens: [32]  # first hidden would be taken from state_shape
-        layer_fn: Linear
-        norm_fn: LayerNorm
-        activation_fn: ReLU
-        bias: false
+        _network_type: "linear"
+        history_len: *history_len
+        features: [32]  # first hidden would be taken from state_shape
+        use_bias: false
+        use_normalization: true
+        activation: ReLU
       main_net_params:
-        hiddens: [32, 32]
-        layer_fn: Linear
-        norm_fn: LayerNorm
-        activation_fn: ReLU
-        bias: false
+        features: [32]
+        use_bias: false
+        use_normalization: true
+        activation: ReLU
     policy_head_params:  # hidden representation -> ~policy
       in_features: 32    # out features would be taken from action_shape
       policy_type: squashing-gauss
@@ -50,24 +50,23 @@ agents:
 
     state_action_net_params:  # state -> hidden representation
       observation_net_params:
-        hiddens: [32, 16]   # first hidden would be taken from state_shape
-        layer_fn: Linear
-        norm_fn: LayerNorm
-        activation_fn: ReLU
-        bias: false
+        _network_type: "linear"
+        history_len: *history_len
+        features: [32, 16]  # first hidden would be taken from state_shape
+        use_bias: false
+        use_normalization: true
+        activation: ReLU
       action_net_params:
-        hiddens: [32, 16]   # first hidden would be taken from action_shape
-        layer_fn: Linear
-        norm_fn: LayerNorm
-        activation_fn: ReLU
-        bias: false
+        _network_type: "linear"
+        features: [32, 16]  # first hidden would be taken from action_shape
+        use_bias: false
+        use_normalization: true
+        activation: ReLU
       main_net_params:
-        hiddens: [32, 32]
-        layer_fn: Linear
-        norm_fn: LayerNorm
-        activation_fn: ReLU
-        bias: false
-
+        features: [32]  # first hidden would be taken from action_shape
+        use_bias: false
+        use_normalization: true
+        activation: ReLU
     value_head_params:  # hidden representation -> value
       in_features: 32  # out features would be taken from action_shape
       out_features: 1

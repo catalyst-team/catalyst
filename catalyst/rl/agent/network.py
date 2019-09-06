@@ -1,7 +1,11 @@
+import collections
+
 import torch
 import torch.nn as nn
-from catalyst.contrib.models import SequentialNet
+
+from catalyst.contrib.models import get_linear_net
 from catalyst.contrib.modules import LamaPooling
+from catalyst.rl import utils
 
 
 class StateNet(nn.Module):
@@ -44,30 +48,27 @@ class StateNet(nn.Module):
         self._forward_fn = None
         if aggregation_net is None:
             self._forward_fn = self._forward_ff
+            self._process_state = utils.process_state_ff_kv \
+                if isinstance(self.observation_net, nn.ModuleDict) \
+                else utils.process_state_ff
         elif isinstance(aggregation_net, LamaPooling):
             self._forward_fn = self._forward_lama
+            self._process_state = utils.process_state_lama_kv \
+                if isinstance(self.observation_net, nn.ModuleDict) \
+                else utils.process_state_lama
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def _forward_ff(self, state):
-        x = state.view(state.shape[0], -1)
-        x = self.observation_net(x)
+        x = state
+        x = self._process_state(x, self.observation_net)
         x = self.main_net(x)
         return x
 
     def _forward_lama(self, state):
         x = state
-        if len(x.shape) < 3:
-            x = x.unsqueeze(1)
-
-        if isinstance(self.observation_net, nn.Module):
-            batch_size, history_len, feature_size = x.shape
-            x = x.view(-1, feature_size)
-            x = self.observation_net(x)
-            x = x.view(batch_size, history_len, -1)
-
+        x = self._process_state(x, self.observation_net)
         x = self.aggregation_net(x)
-
         x = self.main_net(x)
         return x
 
@@ -78,16 +79,62 @@ class StateNet(nn.Module):
     @classmethod
     def get_from_params(
         cls,
+        state_shape,
         observation_net_params=None,
         aggregation_net_params=None,
         main_net_params=None,
     ) -> "StateNet":
-        assert observation_net_params is not None
-        assert aggregation_net_params is None, "Lama is not implemented yet"
 
-        observation_net = SequentialNet(**observation_net_params)
-        main_net = SequentialNet(**main_net_params)
-        net = cls(main_net=main_net, observation_net=observation_net)
+        assert main_net_params is not None
+        # @TODO: refactor, too complicated; fast&furious development
+
+        main_net_in_features = 0
+        observation_net_out_features = 0
+
+        # observation net
+        if observation_net_params is not None:
+            key_value_flag = observation_net_params.pop("_key_value", False)
+
+            if key_value_flag:
+                observation_net = collections.OrderedDict()
+                for key in observation_net_params:
+                    net_, out_features_ = \
+                        utils.get_observation_net(
+                            state_shape[key],
+                            **observation_net_params[key]
+                        )
+                    observation_net[key] = net_
+                    observation_net_out_features += out_features_
+                observation_net = nn.ModuleDict(observation_net)
+            else:
+                observation_net, observation_net_out_features = \
+                    utils.get_observation_net(
+                        state_shape,
+                        **observation_net_params
+                    )
+            main_net_in_features += observation_net_out_features
+        else:
+            observation_net, observation_net_out_features = \
+                utils.get_observation_net(state_shape)
+            main_net_in_features += observation_net_out_features
+
+        # aggregation net
+        if aggregation_net_params is not None:
+            aggregation_net = LamaPooling(
+                observation_net_out_features,
+                **aggregation_net_params)
+            main_net_in_features = aggregation_net.features_out
+        else:
+            aggregation_net = None
+
+        # main net
+        main_net_params["in_features"] = main_net_in_features
+        main_net = get_linear_net(**main_net_params)
+
+        net = cls(
+            main_net=main_net,
+            aggregation_net=aggregation_net,
+            observation_net=observation_net)
         return net
 
 
@@ -108,39 +155,28 @@ class StateActionNet(nn.Module):
         self._forward_fn = None
         if aggregation_net is None:
             self._forward_fn = self._forward_ff
+            self._process_state = utils.process_state_ff_kv \
+                if isinstance(self.observation_net, nn.ModuleDict) \
+                else utils.process_state_ff
         elif isinstance(aggregation_net, LamaPooling):
             self._forward_fn = self._forward_lama
+            self._process_state = utils.process_state_lama_kv \
+                if isinstance(self.observation_net, nn.ModuleDict) \
+                else utils.process_state_lama
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     def _forward_ff(self, state, action):
-        state_ = state.view(state.shape[0], -1)
-        state_ = self.observation_net(state_)
-
-        action_ = action.view(action.shape[0], -1)
-        action_ = self.action_net(action_)
-
+        state_ = self._process_state(state, self.observation_net)
+        action_ = self.action_net(action)
         x = torch.cat((state_, action_), dim=1)
         x = self.main_net(x)
         return x
 
     def _forward_lama(self, state, action):
-        state_ = state
-        if len(state_.shape) < 3:
-            state_ = state_.unsqueeze(1)
-
-        if isinstance(self.observation_net, nn.Module):
-            batch_size, history_len, feature_size = state_.shape
-            state_ = state_.view(-1, feature_size)
-            state_ = self.observation_net(state_)
-            state_ = state_.view(batch_size, history_len, -1)
-
+        state_ = self._process_state(state, self.observation_net)
         state_ = self.aggregation_net(state_)
-
-        # @TODO: add option to collapse observations based on action
-        action_ = action.view(action.shape[0], -1)
-        action_ = self.action_net(action_)
-
+        action_ = self.action_net(action)
         x = torch.cat((state_, action_), dim=1)
         x = self.main_net(x)
         return x
@@ -152,21 +188,73 @@ class StateActionNet(nn.Module):
     @classmethod
     def get_from_params(
         cls,
+        state_shape,
+        action_shape,
         observation_net_params=None,
         action_net_params=None,
         aggregation_net_params=None,
         main_net_params=None,
     ) -> "StateNet":
-        assert observation_net_params is not None
-        assert action_net_params is not None
-        assert aggregation_net_params is None, "Lama is not implemented yet"
+        assert main_net_params is not None
+        # @TODO: refactor, too complicated; fast&furious development
 
-        observation_net = SequentialNet(**observation_net_params)
-        action_net = SequentialNet(**action_net_params)
-        main_net = SequentialNet(**main_net_params)
+        main_net_in_features = 0
+        observation_net_out_features = 0
+
+        # observation net
+        if observation_net_params is not None:
+            key_value_flag = observation_net_params.pop("_key_value", False)
+
+            if key_value_flag:
+                observation_net = collections.OrderedDict()
+                for key in observation_net_params:
+                    net_, out_features_ = \
+                        utils.get_observation_net(
+                            state_shape[key],
+                            **observation_net_params[key]
+                        )
+                    observation_net[key] = net_
+                    observation_net_out_features += out_features_
+                observation_net = nn.ModuleDict(observation_net)
+            else:
+                observation_net, observation_net_out_features = \
+                    utils.get_observation_net(
+                        state_shape,
+                        **observation_net_params
+                    )
+        else:
+            observation_net, observation_net_out_features = \
+                utils.get_observation_net(state_shape)
+        main_net_in_features += observation_net_out_features
+
+        # aggregation net
+        if aggregation_net_params is not None:
+            aggregation_net = LamaPooling(
+                observation_net_out_features,
+                **aggregation_net_params)
+            main_net_in_features = aggregation_net.features_out
+        else:
+            aggregation_net = None
+
+        # action net
+        if action_net_params is not None:
+            # @TODO: hacky solution for code reuse
+            action_shape = (1, ) + action_shape
+            action_net, action_net_out_features = \
+                utils.get_observation_net(action_shape, **action_net_params)
+        else:
+            action_net, action_net_out_features = \
+                utils.get_observation_net(action_shape)
+        main_net_in_features += action_net_out_features
+
+        # main net
+        main_net_params["in_features"] = main_net_in_features
+        main_net = get_linear_net(**main_net_params)
+
         net = cls(
             observation_net=observation_net,
             action_net=action_net,
+            aggregation_net=aggregation_net,
             main_net=main_net
         )
         return net

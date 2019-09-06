@@ -34,8 +34,7 @@ try:
     WANDB_ENABLED = True
 except ImportError:
     logger.warning(
-        "wandb not available, switching to pickle. "
-        "To install wandb, run `pip install wandb`."
+        "wandb not available, to install wandb, run `pip install wandb`."
     )
     WANDB_ENABLED = False
 

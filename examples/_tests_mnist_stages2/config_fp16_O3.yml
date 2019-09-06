@@ -48,3 +48,4 @@ stages:
         reduce_metric: *reduce_metric
       saver:
         callback: CheckpointCallback
+        save_n_best: 3
