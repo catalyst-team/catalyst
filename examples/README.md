@@ -18,7 +18,7 @@
     - FocalLoss and OneCycle usage examples
     - class imbalance handling
     - model inference
-4. [tutorial - table data regression](./notebooks/Catalyst for tables.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/Catalyst for tables.ipynb.ipynb)
+4. [tutorial - table data regression](./notebooks/table-data-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/table-data-tutorial.ipynb)
     - dataset California housing dataset(sklearn)
     - StandardScaler preprocessing
     - Simple MLP (40,10,1) linear layers
