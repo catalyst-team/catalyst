@@ -216,7 +216,9 @@ observation_net_params = {
 }
 # observation_net_params = None
 
-aggregation_net_params = {"poolings": ["last", "avg", "max", "softmax"]}
+aggregation_net_params = {
+    "groups": ["last", "avg_droplast", "max_droplast", "softmax_droplast"]
+}
 # aggregation_net_params=None
 
 main_net_params = {
@@ -259,7 +261,9 @@ observation_net_params = {
     "activation": "LeakyReLU",
 }
 # observation_net_params = None
-aggregation_net_params = {"poolings": ["last", "avg", "max", "softmax"]}
+aggregation_net_params = {
+    "groups": ["last", "avg_droplast", "max_droplast", "softmax_droplast"]
+}
 # aggregation_net_params=None
 main_net_params = {
     "features": [128],
@@ -392,7 +396,9 @@ observation_net_params = {
 }
 # observation_net_params = None
 
-aggregation_net_params = {"poolings": ["last", "avg", "max", "softmax"]}
+aggregation_net_params = {
+    "groups": ["last", "avg_droplast", "max_droplast", "softmax_droplast"]
+}
 # aggregation_net_params=None
 
 main_net_params = {
@@ -516,7 +522,9 @@ observation_net_params = {
 }
 # observation_net_params = None
 
-aggregation_net_params = {"poolings": ["last", "avg", "max", "softmax"]}
+aggregation_net_params = {
+    "groups": ["last", "avg_droplast", "max_droplast", "softmax_droplast"]
+}
 # aggregation_net_params=None
 
 main_net_params = {
@@ -644,7 +652,9 @@ observation_net_params = {
 }
 # observation_net_params = None
 
-aggregation_net_params = {"poolings": ["last", "avg", "max", "softmax"]}
+aggregation_net_params = {
+    "groups": ["last", "avg_droplast", "max_droplast", "softmax_droplast"]
+}
 # aggregation_net_params=None
 
 main_net_params = {
@@ -809,7 +819,16 @@ observation_net_params = {
 }
 # observation_net_params = None
 
-aggregation_net_params = {"poolings": ["last", "avg", "max", "softmax"]}
+aggregation_net_params = {
+    "groups": [
+        "last", "avg_droplast", "max_droplast", {
+            "key": "softmax_droplast",
+            "kernel_size": 3,
+            "padding": 1,
+            "bias": False,
+        }
+    ]
+}
 # aggregation_net_params=None
 
 action_net_params = {
