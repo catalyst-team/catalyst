@@ -60,6 +60,21 @@ class TemporalAttentionPooling(nn.Module):
         return x_attn
 
 
+class TemporalConcatPooling(nn.Module):
+    def __init__(self, features_in, history_len=1):
+        super().__init__()
+        self.features_in = features_in
+        self.features_out = features_in * history_len
+
+    def forward(self, x):
+        """
+        :param x: [batch_size, history_len, feature_size]
+        :return:
+        """
+        x = x.view(x.shape[0], -1)
+        return x
+
+
 class TemporalDropLastWrapper(nn.Module):
     def __init__(self, net):
         super().__init__()
@@ -121,17 +136,16 @@ class LamaPooling(nn.Module):
 
         self.groups = nn.ModuleDict(groups)
 
-    def forward(self, features):
+    def forward(self, x):
         """
-        :param features: [batch_size, history_len, feature_size]
+        :param x: [batch_size, history_len, feature_size]
         :return:
         """
-        x = features
         batch_size, history_len, feature_size = x.shape
 
         x_ = []
         for pooling_fn in self.groups.values():
-            features_ = pooling_fn(features)
+            features_ = pooling_fn(x)
             x_.append(features_)
         x = torch.cat(x_, dim=1)
         x = x.view(batch_size, -1)
@@ -145,5 +159,6 @@ __all__ = [
     "TemporalMaxPooling",
     "TemporalDropLastWrapper",
     "TemporalAttentionPooling",
-    "LamaPooling"
+    "TemporalConcatPooling",
+    "LamaPooling",
 ]

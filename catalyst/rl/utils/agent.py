@@ -110,7 +110,7 @@ def process_state_ff_kv(state: Dict, observation_net: nn.ModuleDict):
     return x
 
 
-def process_state_lama(state: torch.Tensor, observation_net: nn.Module):
+def process_state_temporal(state: torch.Tensor, observation_net: nn.Module):
     x = state
 
     if len(x.shape) == 5:  # image input
@@ -128,9 +128,9 @@ def process_state_lama(state: torch.Tensor, observation_net: nn.Module):
     return x
 
 
-def process_state_lama_kv(state: Dict, observation_net: nn.ModuleDict):
+def process_state_temporal_kv(state: Dict, observation_net: nn.ModuleDict):
     x: List[torch.Tensor] = []
     for key, net in observation_net.items():
-        x.append(process_state_lama(state[key], net))
+        x.append(process_state_temporal(state[key], net))
     x = torch.cat(x, dim=-1)
     return x
