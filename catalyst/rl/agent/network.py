@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 
 from catalyst.contrib.models import get_linear_net
-from catalyst.contrib.modules import LamaPooling
+from catalyst.contrib.modules import LamaPooling, TemporalConcatPooling
 from catalyst.rl import utils
 
 
@@ -51,11 +51,11 @@ class StateNet(nn.Module):
             self._process_state = utils.process_state_ff_kv \
                 if isinstance(self.observation_net, nn.ModuleDict) \
                 else utils.process_state_ff
-        elif isinstance(aggregation_net, LamaPooling):
+        elif isinstance(aggregation_net, (TemporalConcatPooling, LamaPooling)):
             self._forward_fn = self._forward_lama
-            self._process_state = utils.process_state_lama_kv \
+            self._process_state = utils.process_state_temporal_kv \
                 if isinstance(self.observation_net, nn.ModuleDict) \
-                else utils.process_state_lama
+                else utils.process_state_temporal
         else:
             raise NotImplementedError()
 
@@ -120,9 +120,19 @@ class StateNet(nn.Module):
 
         # aggregation net
         if aggregation_net_params is not None:
-            aggregation_net = LamaPooling(
-                observation_net_out_features,
-                **aggregation_net_params)
+            aggregation_type = \
+                aggregation_net_params.pop("_network_type", "concat")
+
+            if aggregation_type == "concat":
+                aggregation_net = TemporalConcatPooling(
+                    observation_net_out_features, **aggregation_net_params)
+            elif aggregation_type == "lama":
+                aggregation_net = LamaPooling(
+                    observation_net_out_features,
+                    **aggregation_net_params)
+            else:
+                raise NotImplementedError()
+
             main_net_in_features = aggregation_net.features_out
         else:
             aggregation_net = None
@@ -158,11 +168,11 @@ class StateActionNet(nn.Module):
             self._process_state = utils.process_state_ff_kv \
                 if isinstance(self.observation_net, nn.ModuleDict) \
                 else utils.process_state_ff
-        elif isinstance(aggregation_net, LamaPooling):
+        elif isinstance(aggregation_net, (TemporalConcatPooling, LamaPooling)):
             self._forward_fn = self._forward_lama
-            self._process_state = utils.process_state_lama_kv \
+            self._process_state = utils.process_state_temporal_kv \
                 if isinstance(self.observation_net, nn.ModuleDict) \
-                else utils.process_state_lama
+                else utils.process_state_temporal
         else:
             raise NotImplementedError()
 
@@ -229,9 +239,19 @@ class StateActionNet(nn.Module):
 
         # aggregation net
         if aggregation_net_params is not None:
-            aggregation_net = LamaPooling(
-                observation_net_out_features,
-                **aggregation_net_params)
+            aggregation_type = \
+                aggregation_net_params.pop("_network_type", "concat")
+
+            if aggregation_type == "concat":
+                aggregation_net = TemporalConcatPooling(
+                    observation_net_out_features, **aggregation_net_params)
+            elif aggregation_type == "lama":
+                aggregation_net = LamaPooling(
+                    observation_net_out_features,
+                    **aggregation_net_params)
+            else:
+                raise NotImplementedError()
+
             main_net_in_features = aggregation_net.features_out
         else:
             aggregation_net = None

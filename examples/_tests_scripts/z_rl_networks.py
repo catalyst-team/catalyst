@@ -217,6 +217,7 @@ observation_net_params = {
 # observation_net_params = None
 
 aggregation_net_params = {
+    "_network_type": "lama",
     "groups": ["last", "avg_droplast", "max_droplast", "softmax_droplast"]
 }
 # aggregation_net_params=None
@@ -262,6 +263,7 @@ observation_net_params = {
 }
 # observation_net_params = None
 aggregation_net_params = {
+    "_network_type": "lama",
     "groups": ["last", "avg_droplast", "max_droplast", "softmax_droplast"]
 }
 # aggregation_net_params=None
@@ -397,6 +399,7 @@ observation_net_params = {
 # observation_net_params = None
 
 aggregation_net_params = {
+    "_network_type": "lama",
     "groups": ["last", "avg_droplast", "max_droplast", "softmax_droplast"]
 }
 # aggregation_net_params=None
@@ -523,6 +526,7 @@ observation_net_params = {
 # observation_net_params = None
 
 aggregation_net_params = {
+    "_network_type": "lama",
     "groups": ["last", "avg_droplast", "max_droplast", "softmax_droplast"]
 }
 # aggregation_net_params=None
@@ -653,7 +657,76 @@ observation_net_params = {
 # observation_net_params = None
 
 aggregation_net_params = {
+    "_network_type": "lama",
     "groups": ["last", "avg_droplast", "max_droplast", "softmax_droplast"]
+}
+# aggregation_net_params=None
+
+main_net_params = {
+    "features": [128],
+    "use_bias": False,
+    "use_normalization": True,
+    "dropout_rate": 0.1,
+    "activation": "LeakyReLU",
+}
+
+# In[27]:
+
+net = StateNet.get_from_params(
+    state_shape=state_shape,
+    observation_net_params=observation_net_params,
+    aggregation_net_params=aggregation_net_params,
+    main_net_params=main_net_params,
+)
+print(net)
+
+out = _get_network_output(net, state_shape)
+print(out.shape, out.nelement())
+
+# ----
+
+# # FF+CNN - LAMA - KV
+
+# In[26]:
+
+history_len = 5
+
+observation_shape1, observation_shape2 = (3, 80, 80), 42
+
+state_shape = {
+    "obs1": (history_len, ) + observation_shape1,
+    "obs2": (
+        history_len,
+        observation_shape2,
+    ),
+}
+
+observation_net_params = {
+    "_key_value": True,
+    "obs1": {
+        "_network_type": "convolution",
+        "history_len": 1,
+        "channels": [16, 32, 16],
+        "use_bias": False,
+        "use_normalization": False,
+        "dropout_rate": 0.1,
+        "activation": "LeakyReLU",
+    },
+    "obs2": {
+        "_network_type": "linear",
+        "history_len": 1,
+        "features": [128],
+        "use_bias": False,
+        "use_normalization": True,
+        "dropout_rate": 0.1,
+        "activation": "LeakyReLU",
+    }
+}
+# observation_net_params = None
+
+aggregation_net_params = {
+    "_network_type": "concat",
+    "history_len": history_len
 }
 # aggregation_net_params=None
 
@@ -820,6 +893,7 @@ observation_net_params = {
 # observation_net_params = None
 
 aggregation_net_params = {
+    "_network_type": "lama",
     "groups": [
         "last", "avg_droplast", "max_droplast", {
             "key": "softmax_droplast",
@@ -828,6 +902,84 @@ aggregation_net_params = {
             "bias": False,
         }
     ]
+}
+# aggregation_net_params=None
+
+action_net_params = {
+    "_network_type": "linear",
+    "history_len": 1,
+    "features": [128],
+    "use_bias": False,
+    "use_normalization": True,
+    "dropout_rate": 0.1,
+    "activation": "LeakyReLU",
+}
+# action_net_params = None
+
+main_net_params = {
+    "features": [128],
+    "use_bias": False,
+    "use_normalization": True,
+    "dropout_rate": 0.1,
+    "activation": "LeakyReLU",
+}
+
+# In[33]:
+
+net = StateActionNet.get_from_params(
+    state_shape=state_shape,
+    action_shape=action_shape,
+    observation_net_params=observation_net_params,
+    aggregation_net_params=aggregation_net_params,
+    action_net_params=action_net_params,
+    main_net_params=main_net_params,
+)
+print(net)
+
+out = _get_network_output(net, state_shape, action_shape)
+print(out.shape, out.nelement())
+
+# # FF+CNN - Concat - KV
+
+# In[32]:
+
+history_len = 5
+observation_shape1, observation_shape2 = (3, 80, 80), 42
+action_shape = (5, )
+state_shape = {
+    "obs1": (history_len, ) + observation_shape1,
+    "obs2": (
+        history_len,
+        observation_shape2,
+    ),
+}
+
+observation_net_params = {
+    "_key_value": True,
+    "obs1": {
+        "_network_type": "convolution",
+        "history_len": 1,
+        "channels": [16, 32, 16],
+        "use_bias": False,
+        "use_normalization": False,
+        "dropout_rate": 0.1,
+        "activation": "LeakyReLU",
+    },
+    "obs2": {
+        "_network_type": "linear",
+        "history_len": 1,
+        "features": [128],
+        "use_bias": False,
+        "use_normalization": True,
+        "dropout_rate": 0.1,
+        "activation": "LeakyReLU",
+    }
+}
+# observation_net_params = None
+
+aggregation_net_params = {
+    "_network_type": "concat",
+    "history_len": history_len
 }
 # aggregation_net_params=None
 
