@@ -65,7 +65,7 @@ def get_linear_net(
     history_len: int = 1,
     features: List = None,
     use_bias: bool = False,
-    use_normalization: bool = False,
+    normalization: str = None,
     dropout_rate: float = None,
     activation: str = "ReLU",
     residual: Union[bool, str] = False,
@@ -79,7 +79,7 @@ def get_linear_net(
         hiddens=features,
         layer_fn=nn.Linear,
         bias=use_bias,
-        norm_fn=nn.LayerNorm if use_normalization else None,
+        norm_fn=normalization,
         dropout=partial(nn.Dropout, p=dropout_rate)
         if dropout_rate is not None
         else None,
