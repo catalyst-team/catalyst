@@ -19,7 +19,6 @@ environment:
   history_len: &history_len 4
   frame_skip: 4
   reward_scale: 1.0
-  step_delay: 0.0
 
 agents:
   critic:
