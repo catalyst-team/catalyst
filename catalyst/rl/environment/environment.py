@@ -1,8 +1,12 @@
 #!/usr/bin/env python
 
+from typing import Union, List
+import time
+import random
+
 import numpy as np
 from gym import spaces
-import time
+
 from catalyst.rl.core import EnvironmentSpec
 from catalyst.rl.utils import extend_space
 
@@ -12,7 +16,7 @@ class EnvironmentWrapper(EnvironmentSpec):
         self,
         env,
         history_len: int = 1,
-        frame_skip: int = 1,
+        frame_skip: Union[int, List] = 1,
         reward_scale: float = 1,
         step_reward: float = 0.0,
         max_fps: int = None,
@@ -109,7 +113,10 @@ class EnvironmentWrapper(EnvironmentSpec):
 
         reward = 0
         action = self._process_action(action)
-        for i in range(self._frame_skip):
+        frame_skip = self._frame_skip \
+            if isinstance(self._frame_skip, int) \
+            else random.randint(self._frame_skip[0], self._frame_skip[1])
+        for i in range(frame_skip):
             observation, r, done, info = self.env.step(action)
             if self._visualize:
                 self.env.render()
