@@ -2,7 +2,7 @@
 
 from catalyst.rl.environment import EnvironmentWrapper
 
-from .atari_wrappers import make_atari_env
+from .env_wrappers import make_atari_env
 
 
 class AtariEnvWrapper(EnvironmentWrapper):
@@ -12,8 +12,9 @@ class AtariEnvWrapper(EnvironmentWrapper):
         max_episode_steps=None,
         episode_life=True,
         clip_rewards=False,
-        frame_stack=False,
-        scale=False,
+        width=84,
+        height=84,
+        grayscale=True,
         **params
     ):
         env = make_atari_env(
@@ -21,7 +22,8 @@ class AtariEnvWrapper(EnvironmentWrapper):
             max_episode_steps=max_episode_steps,
             episode_life=episode_life,
             clip_rewards=clip_rewards,
-            frame_stack=frame_stack,
-            scale=scale,
+            width=width,
+            height=height,
+            grayscale=grayscale,
         )
         super().__init__(env=env, **params)
