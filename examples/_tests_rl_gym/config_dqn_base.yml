@@ -13,7 +13,7 @@ db:
   prefix: gym-dqn-base  # TODO: remove
 
 environment:
-  environment: GymWrapper
+  environment: GymEnvWrapper
   env_name: CartPole-v1
 
   history_len: &history_len 4
