@@ -48,7 +48,7 @@ observation_net_params = {
     "history_len": history_len,
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -60,7 +60,7 @@ aggregation_net_params = None
 main_net_params = {
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -97,7 +97,7 @@ aggregation_net_params = None
 main_net_params = {
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -140,7 +140,7 @@ aggregation_net_params = None
 main_net_params = {
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -174,7 +174,7 @@ aggregation_net_params = None
 main_net_params = {
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -210,7 +210,7 @@ observation_net_params = {
     "history_len": 1,
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -225,7 +225,7 @@ aggregation_net_params = {
 main_net_params = {
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -270,7 +270,7 @@ aggregation_net_params = {
 main_net_params = {
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -315,7 +315,7 @@ observation_net_params = {
         "history_len": history_len,
         "features": [128],
         "use_bias": False,
-        "use_normalization": True,
+        "normalization": "LayerNorm",
         "dropout_rate": 0.1,
         "activation": "LeakyReLU",
     },
@@ -324,7 +324,7 @@ observation_net_params = {
         "history_len": history_len,
         "features": [128],
         "use_bias": False,
-        "use_normalization": True,
+        "normalization": "LayerNorm",
         "dropout_rate": 0.1,
         "activation": "LeakyReLU",
     }
@@ -337,7 +337,7 @@ aggregation_net_params = None
 main_net_params = {
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -382,7 +382,7 @@ observation_net_params = {
         "history_len": 1,
         "features": [128],
         "use_bias": False,
-        "use_normalization": True,
+        "normalization": "LayerNorm",
         "dropout_rate": 0.1,
         "activation": "LeakyReLU",
     },
@@ -391,7 +391,7 @@ observation_net_params = {
         "history_len": 1,
         "features": [128],
         "use_bias": False,
-        "use_normalization": True,
+        "normalization": "LayerNorm",
         "dropout_rate": 0.1,
         "activation": "LeakyReLU",
     }
@@ -407,7 +407,7 @@ aggregation_net_params = {
 main_net_params = {
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -469,7 +469,7 @@ aggregation_net_params = None
 main_net_params = {
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -534,7 +534,7 @@ aggregation_net_params = {
 main_net_params = {
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -584,7 +584,7 @@ observation_net_params = {
         "history_len": history_len,
         "features": [128],
         "use_bias": False,
-        "use_normalization": True,
+        "normalization": "LayerNorm",
         "dropout_rate": 0.1,
         "activation": "LeakyReLU",
     }
@@ -597,7 +597,7 @@ aggregation_net_params = None
 main_net_params = {
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -649,7 +649,7 @@ observation_net_params = {
         "history_len": 1,
         "features": [128],
         "use_bias": False,
-        "use_normalization": True,
+        "normalization": "LayerNorm",
         "dropout_rate": 0.1,
         "activation": "LeakyReLU",
     }
@@ -665,7 +665,7 @@ aggregation_net_params = {
 main_net_params = {
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -717,7 +717,7 @@ observation_net_params = {
         "history_len": 1,
         "features": [128],
         "use_bias": False,
-        "use_normalization": True,
+        "normalization": "LayerNorm",
         "dropout_rate": 0.1,
         "activation": "LeakyReLU",
     }
@@ -733,7 +733,7 @@ aggregation_net_params = {
 main_net_params = {
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -772,7 +772,7 @@ observation_net_params = {
     "history_len": history_len,
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -786,7 +786,7 @@ action_net_params = {
     "history_len": 1,
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -795,7 +795,7 @@ action_net_params = {
 main_net_params = {
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -834,7 +834,7 @@ action_net_params = None
 main_net_params = {
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -885,7 +885,7 @@ observation_net_params = {
         "history_len": 1,
         "features": [128],
         "use_bias": False,
-        "use_normalization": True,
+        "normalization": "LayerNorm",
         "dropout_rate": 0.1,
         "activation": "LeakyReLU",
     }
@@ -910,7 +910,7 @@ action_net_params = {
     "history_len": 1,
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -919,7 +919,7 @@ action_net_params = {
 main_net_params = {
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -970,7 +970,7 @@ observation_net_params = {
         "history_len": 1,
         "features": [128],
         "use_bias": False,
-        "use_normalization": True,
+        "normalization": "LayerNorm",
         "dropout_rate": 0.1,
         "activation": "LeakyReLU",
     }
@@ -988,7 +988,7 @@ action_net_params = {
     "history_len": 1,
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
@@ -997,7 +997,7 @@ action_net_params = {
 main_net_params = {
     "features": [128],
     "use_bias": False,
-    "use_normalization": True,
+    "normalization": "LayerNorm",
     "dropout_rate": 0.1,
     "activation": "LeakyReLU",
 }
