@@ -1,6 +1,6 @@
 args:
   logdir: ./logs/atari-dqn
-  expdir: src
+#  expdir: src
 
   vis: 0
   infer: 0   #  change me

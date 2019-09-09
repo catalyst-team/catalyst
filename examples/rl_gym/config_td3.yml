@@ -13,7 +13,7 @@ db:
   prefix: gym-td3  # TODO: remove
 
 environment:
-  environment: GymWrapper
+  environment: GymEnvWrapper
   env_name: LunarLanderContinuous-v2
 
   history_len: &history_len 3

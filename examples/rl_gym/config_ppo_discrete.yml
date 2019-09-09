@@ -13,7 +13,7 @@ db:
   prefix: gym-ppo-discrete  # TODO: remove
 
 environment:
-  environment: GymWrapper
+  environment: GymEnvWrapper
   env_name: LunarLander-v2
 
   history_len: &history_len 3

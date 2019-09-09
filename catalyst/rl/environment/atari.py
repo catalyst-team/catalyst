@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from catalyst.rl.environment import EnvironmentWrapper
+from .environment import EnvironmentWrapper
 
 from .env_wrappers import make_atari_env
 
@@ -27,3 +27,6 @@ class AtariEnvWrapper(EnvironmentWrapper):
             grayscale=grayscale,
         )
         super().__init__(env=env, **params)
+
+
+__all__ = ["AtariEnvWrapper"]

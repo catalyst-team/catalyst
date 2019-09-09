@@ -13,7 +13,7 @@ db:
   prefix: gym-ddpg-quantile  # TODO: remove
 
 environment:
-  environment: GymWrapper
+  environment: GymEnvWrapper
   env_name: PointEnv-v0
 
   history_len: &history_len 1
