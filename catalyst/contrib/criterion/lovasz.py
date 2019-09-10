@@ -61,8 +61,8 @@ def _flatten_binary_scores(logits, targets, ignore=None):
     Flattens predictions in the batch (binary case)
     Remove targets equal to "ignore"
     """
-    logits = logits.view(-1)
-    targets = targets.view(-1)
+    logits = logits.reshape(-1)
+    targets = targets.reshape(-1)
     if ignore is None:
         return logits, targets
     valid = (targets != ignore)
