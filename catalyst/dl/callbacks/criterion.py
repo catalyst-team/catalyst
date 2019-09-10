@@ -1,3 +1,5 @@
+from typing import Optional, Any
+
 from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 
 
@@ -35,10 +37,16 @@ class CriterionCallback(Callback):
             else:
                 state.loss = {self.loss_key: loss}
 
+    @staticmethod
+    def _get(dictionary: dict, key: Optional[str]) -> Any:
+        result = dictionary[key] if key is not None else dictionary
+        return result
+
     def _compute_loss(self, state: RunnerState, criterion):
-        loss = criterion(
-            state.output[self.output_key], state.input[self.input_key]
-        )
+        output = self._get(state.output, self.output_key)
+        input = self._get(state.input, self.input_key)
+
+        loss = criterion(output, input)
         return loss
 
     def on_stage_start(self, state: RunnerState):
