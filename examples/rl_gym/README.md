@@ -19,29 +19,23 @@
 4. Select config
 
     ```bash
-    # DQN        – off-policy algorithm on discrete action space LunarLander environment
+    # DQN        – off-policy algorithm on discrete LunarLander
     export CONFIG=./rl_gym/config_dqn.yml
-    
-    # DDPG       – off-policy algorithm on continuous action space environment LunarLander environment
+
+    # DDPG       – off-policy algorithm on continuous LunarLander
     export CONFIG=./rl_gym/config_ddpg.yml
- 
-    # SAC        – off-policy algorithm on continuous action space environment LunarLander environment
+    # SAC        – off-policy algorithm on continuous LunarLander
     export CONFIG=./rl_gym/config_sac.yml
- 
-    # TD3        – off-policy algorithm on continuous action space environment LunarLander environment
+    # TD3        – off-policy algorithm on continuous LunarLander
     export CONFIG=./rl_gym/config_td3.yml
 
-
-    # PPO        – on-policy algorithm on discrete action space LunarLander environment
+    # PPO        – on-policy algorithm on discrete LunarLander
     export CONFIG=./rl_gym/config_ppo_discrete.yml
-
-    # PPO        – on-policy algorithm on continuous action space environment LunarLander environment
+    # PPO        – on-policy algorithm on continuous LunarLander
     export CONFIG=./rl_gym/config_ppo_continuous.yml
-
-    # REINFORCE  – on-policy algorithm on discrete action space LunarLander environment
+    # REINFORCE  – on-policy algorithm on discrete LunarLander
     export CONFIG=./rl_gym/config_reinforce_discrete.yml
-
-    # REINFORCE  – on-policy algorithm on continuous action space environment LunarLander environment
+    # REINFORCE  – on-policy algorithm on continuous LunarLander
     export CONFIG=./rl_gym/config_reinforce_continuous.yml
     ```
 
