@@ -19,7 +19,9 @@ class OptimizerCallback(Callback):
         accumulation_steps: int = 1,
         optimizer_key: str = None,
         loss_key: str = None,
-        prefix: str = None
+        prefix: str = None,
+        loss_aggregate_fn: str = "sum",
+        multiplier: float = 1.0,
     ):
         """
         @TODO: docs
@@ -34,6 +36,15 @@ class OptimizerCallback(Callback):
         self.prefix: str = prefix
         self._optimizer_wd: List[float] = [0.0]
         self._accumulation_counter: int = 0
+
+        if loss_aggregate_fn == "sum":
+            self.loss_fn = lambda x: torch.sum(torch.stack(x)) * multiplier
+        elif loss_aggregate_fn == "mean":
+            self.loss_fn = lambda x: torch.mean(torch.stack(x)) * multiplier
+        else:
+            raise ValueError("loss_aggregate_fn must be `sum` or `mean`")
+
+        self.multiplier = multiplier
 
     @staticmethod
     def grad_step(
@@ -81,7 +92,7 @@ class OptimizerCallback(Callback):
         if isinstance(loss, dict):
             loss = list(loss.values())
         if isinstance(loss, list):
-            loss = torch.mean(torch.stack(loss))
+            loss = self.loss_fn(loss)
 
         if self.prefix is not None:
             state.metrics.add_batch_value(
