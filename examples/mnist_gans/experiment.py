@@ -1,5 +1,4 @@
 from collections import OrderedDict
-from typing import List
 import torch
 import torch.nn as nn
 import torchvision
@@ -10,101 +9,14 @@ from catalyst import utils
 from catalyst.dl.registry import \
     MODELS, CRITERIONS, OPTIMIZERS, SCHEDULERS, CALLBACKS
 
-
-class Phase:
-    def __init__(self, callbacks=None, steps=None, name=None):
-        self.steps = steps
-        self.curr_step = 0
-        self.name = name
-        self.callbacks = callbacks
+from .phase_managers import Phase, PhaseManager
 
 
-class PhaseManager:
-    def __init__(self, train_phases: "List[Phase]", valid_phases: "List[Phase]"):
-        self.train_phases = train_phases
-        self.valid_phases = valid_phases
-
-        self.train_index = 0
-        self.valid_index = 0
-
-    def step(self, state, step_size=1):
-        if state.need_backward:
-            if len(self.train_phases) > 1:
-                phase = self.train_phases[self.train_index]
-                phase.curr_step += step_size
-                if phase.curr_step >= phase.steps:
-                    phase.curr_step = 0
-                    self.train_index = (self.train_index + 1) % len(self.train_phases)
-        else:
-            if len(self.valid_phases) > 1:
-                phase = self.valid_phases[self.valid_index]
-                phase.curr_step += step_size
-                if phase.curr_step >= phase.steps:
-                    phase.curr_step = 0
-                    self.valid_index = (self.valid_index + 1) % len(self.valid_phases)
-
-    def get_phase_name(self, state):  # for runner predict_batch (may behave differently in different phases)
-        if state.need_backward:
-            return self.train_phases[self.train_index].name
-        return self.valid_phases[self.valid_index].name
-
-    def get_callbacks(self, state):
-        if state.need_backward:
-            return self.train_phases[self.train_index].callbacks
-        return self.valid_phases[self.valid_index].callbacks
-
-
-class GANExperiment(ConfigExperiment):
-    def get_phase_manager(self, stage):
-        state_params = self.get_state_params(stage)
-        callbacks = self.get_callbacks(stage)
-
-        runner_phases = state_params.get("runner_phases", None)
-
-        train_phases = []
-        valid_phases = []
-        if runner_phases is None:
-            train_phases = [Phase(callbacks=callbacks, steps=None, name=None)]
-            valid_phases = train_phases
-        else:
-            VM_ALL = "all"
-            VM_SAME = "same"
-            allowed_valid_modes = [VM_SAME, VM_ALL]
-
-            valid_mode = runner_phases.pop("_valid_mode", VM_ALL)
-            if valid_mode not in allowed_valid_modes:
-                raise ValueError(f"_valid_mode must be one of {allowed_valid_modes}, got '{valid_mode}'")
-            # train phases
-            for phase_name, phase_params in runner_phases.items():
-                steps = phase_params.get("steps", 1)
-                inactive_callbacks = phase_params.get("inactive_callbacks", None)
-                active_callbacks = phase_params.get("active_callbacks", None)
-                if active_callbacks is not None and inactive_callbacks is not None:
-                    raise ValueError("Only one of '[active_callbacks/inactive_callbacks]' may be specified")
-                phase_callbacks = callbacks
-                if active_callbacks:
-                    phase_callbacks = OrderedDict(x for x in callbacks.items() if x[0] in active_callbacks)
-                if inactive_callbacks:
-                    phase_callbacks = OrderedDict(x for x in callbacks.items() if x[0] not in inactive_callbacks)
-                phase = Phase(callbacks=phase_callbacks, steps=steps, name=phase_name)
-                train_phases.append(phase)
-                # valid
-                if valid_mode == VM_SAME:
-                    valid_phases.append(
-                        Phase(callbacks=phase_callbacks, steps=steps, name=phase_name)
-                    )
-            # valid
-            if valid_mode == VM_ALL:
-                valid_phases.append(Phase(callbacks=callbacks))
-
-        return PhaseManager(
-            train_phases=train_phases,
-            valid_phases=valid_phases
-        )
-
+# abstract; read multiple models & optimizers
+class MultiModelConfigExperiment(ConfigExperiment):
     def get_model(self, stage: str):
         model_params = self._config["model_params"]
-        model = GANExperiment._get_model(**model_params)
+        model = MultiModelConfigExperiment._get_model(**model_params)
 
         model = self._preprocess_model_for_stage(stage, model)
         model = self._postprocess_model_for_stage(stage, model)
@@ -117,14 +29,14 @@ class GANExperiment(ConfigExperiment):
         if key_value_flag:
             model = {}
             for key, params_ in params.items():
-                model[key] = GANExperiment._get_model(**params_)
+                model[key] = MultiModelConfigExperiment._get_model(**params_)
         else:
             model = MODELS.get_from_params(**params)
             if model is not None and torch.cuda.is_available():
                 model = model.cuda()
         return model
 
-    def __get_optimizer(self, stage, model, **params):
+    def _get_optimizer(self, stage, model, **params):
         layerwise_params = \
             params.pop("layerwise_params", OrderedDict())
         no_bias_weight_decay = \
@@ -191,24 +103,65 @@ class GANExperiment(ConfigExperiment):
         if key_value_flag:
             optimizer = {}
             for key, params_ in optimizer_params.items():
-                optimizer[key] = self.__get_optimizer(stage, model, **params_)
+                optimizer[key] = self._get_optimizer(stage, model, **params_)
         else:
-            optimizer = self.__get_optimizer(stage, model, **optimizer_params)
+            optimizer = self._get_optimizer(stage, model, **optimizer_params)
 
         return optimizer
 
-    def get_callbacks(self, stage: str):
-        callbacks_params = (
-            self.stages_config[stage].get("callbacks_params", {})
+
+# abstract; supports multiple phases
+class MultiPhaseConfigExperiment(MultiModelConfigExperiment):
+    def get_phase_manager(self, stage):
+        state_params = self.get_state_params(stage)
+        callbacks = self.get_callbacks(stage)
+
+        runner_phases = state_params.get("runner_phases", None)
+
+        train_phases = []
+        valid_phases = []
+        if runner_phases is None:
+            train_phases = [Phase(callbacks=callbacks, steps=None, name=None)]
+            valid_phases = train_phases
+        else:
+            VM_ALL = "all"
+            VM_SAME = "same"
+            allowed_valid_modes = [VM_SAME, VM_ALL]
+
+            valid_mode = runner_phases.pop("_valid_mode", VM_ALL)
+            if valid_mode not in allowed_valid_modes:
+                raise ValueError(f"_valid_mode must be one of {allowed_valid_modes}, got '{valid_mode}'")
+            # train phases
+            for phase_name, phase_params in runner_phases.items():
+                steps = phase_params.get("steps", 1)
+                inactive_callbacks = phase_params.get("inactive_callbacks", None)
+                active_callbacks = phase_params.get("active_callbacks", None)
+                if active_callbacks is not None and inactive_callbacks is not None:
+                    raise ValueError("Only one of '[active_callbacks/inactive_callbacks]' may be specified")
+                phase_callbacks = callbacks
+                if active_callbacks:
+                    phase_callbacks = OrderedDict(x for x in callbacks.items() if x[0] in active_callbacks)
+                if inactive_callbacks:
+                    phase_callbacks = OrderedDict(x for x in callbacks.items() if x[0] not in inactive_callbacks)
+                phase = Phase(callbacks=phase_callbacks, steps=steps, name=phase_name)
+                train_phases.append(phase)
+                # valid
+                if valid_mode == VM_SAME:
+                    valid_phases.append(
+                        Phase(callbacks=phase_callbacks, steps=steps, name=phase_name)
+                    )
+            # valid
+            if valid_mode == VM_ALL:
+                valid_phases.append(Phase(callbacks=callbacks))
+
+        return PhaseManager(
+            train_phases=train_phases,
+            valid_phases=valid_phases
         )
 
-        callbacks = OrderedDict()
-        for key, callback_params in callbacks_params.items():
-            callback = CALLBACKS.get_from_params(**callback_params)
-            callbacks[key] = callback
 
-        return callbacks
-
+# data loaders & transforms
+class MNISTGANExperiment(MultiPhaseConfigExperiment):
     @staticmethod
     def get_transforms(stage: str = None, mode: str = None):
         return transforms.Compose(
@@ -225,18 +178,16 @@ class GANExperiment(ConfigExperiment):
             root="./data",
             train=True,
             download=True,
-            transform=GANExperiment.get_transforms(stage=stage, mode="train")
+            transform=MNISTGANExperiment.get_transforms(stage=stage, mode="train")
         )
         testset = torchvision.datasets.MNIST(
             root="./data",
             train=False,
             download=True,
-            transform=GANExperiment.get_transforms(stage=stage, mode="valid")
+            transform=MNISTGANExperiment.get_transforms(stage=stage, mode="valid")
         )
 
         datasets["train"] = trainset
         datasets["valid"] = testset
 
         return datasets
-
-

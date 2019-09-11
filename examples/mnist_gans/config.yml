@@ -61,7 +61,6 @@ stages:
       callback: OptimizerCallback
       optimizer_key: discriminator
       loss_key: [loss_d_real, loss_d_fake]
-#      prefix: loss_d
     saver:
       callback: CheckpointCallback
 
@@ -77,4 +76,3 @@ stages:
         optimizer: Adam
         _model: ["discriminator"]
         lr: 0.0001
-

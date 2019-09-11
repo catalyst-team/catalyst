@@ -1,4 +1,4 @@
 # flake8: noqa
 from .runner import GANRunner as Runner
-from .experiment import GANExperiment as Experiment
+from .experiment import MNISTGANExperiment as Experiment
 from .model import SimpleDiscriminator, SimpleGenerator

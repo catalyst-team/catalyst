@@ -2,41 +2,37 @@ from typing import Tuple, Mapping, Any
 
 import torch
 from catalyst.dl import RunnerState, Runner
-from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
 
 
-class GANRunner(Runner):
-
-    def __init__(self, model=None, device=None, images_key="images", targets_key="targets"):
+class MultiStageRunner(Runner):
+    def __init__(self, model=None, device=None):
         super().__init__(model, device)
-        self.images_key = images_key
-        self.targets_key = targets_key
-
-    # def _get_experiment_components(
-    #         self,
-    #         stage: str = None
-    # ) -> Tuple[_Model, _Criterion, _Optimizer, _Scheduler, torch.device]:
-    #     result = super()._get_experiment_components(stage)
-    #
-    #     return result
+        self._callbacks = None
 
     @property
     def callbacks(self):
-        return self._get_callbacks()
+        if self.phase_manager is None:
+            return self._callbacks
+        else:
+            return self.phase_manager.get_callbacks(self.state)
 
     @callbacks.setter
-    def callbacks(self, value):
-        pass
+    def callbacks(self, callbacks):
+        self._callbacks = callbacks
+
+    def _run_prestage(self, stage: str):
+        if hasattr(self.experiment, "get_phase_manager"):
+            self.phase_manager = self.experiment.get_phase_manager(stage)
+        else:
+            self.phase_manager = None
 
     def _run_stage(self, stage: str):
+        # @TODO rewrite parent (Runner) method instead
         self._prepare_state(stage)
         loaders = self.experiment.get_loaders(stage)
-        # self.callbacks = self.experiment.get_callbacks(stage)
-        self.generator = self.model["generator"]
-        self.discriminator = self.model["discriminator"]
-        # @TODO ungovnocode
-        self.phase_manager = self.experiment.get_phase_manager(stage)
-        #
+        self.callbacks = self.experiment.get_callbacks(stage)
+
+        self._run_prestage(stage)
 
         self._run_event("stage_start")
         for epoch in range(self.state.num_epochs):
@@ -55,8 +51,17 @@ class GANRunner(Runner):
             self.state.epoch += 1
         self._run_event("stage_end")
 
-    def _get_callbacks(self):
-        return self.phase_manager.get_callbacks(self.state)
+    def _run_batch(self, batch):
+        self.state.phase = self.phase_manager.get_phase_name(self.state)
+        super()._run_batch(batch)
+        self.phase_manager.step(self.state)
+
+
+class GANRunner(MultiStageRunner):
+    def __init__(self, model=None, device=None, images_key="images", targets_key="targets"):
+        super().__init__(model, device)
+        self.images_key = images_key
+        self.targets_key = targets_key
 
     def _batch2device(self, batch: Mapping[str, Any], device):
         if isinstance(batch, (list, tuple)):
@@ -64,10 +69,10 @@ class GANRunner(Runner):
             batch = {self.images_key: batch[0], self.targets_key: batch[1]}
         return super()._batch2device(batch, device)
 
-    def _run_batch(self, batch):
-        self.state.phase = self.phase_manager.get_phase_name(self.state)
-        super()._run_batch(batch)
-        self.phase_manager.step(self.state)
+    def _run_prestage(self, stage: str):
+        super()._run_prestage(stage)
+        self.generator = self.model["generator"]
+        self.discriminator = self.model["discriminator"]
 
     def predict_batch(self, batch):
         real_imgs, labels = batch["images"], batch["targets"]
