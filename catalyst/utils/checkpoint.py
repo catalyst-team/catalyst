@@ -6,7 +6,7 @@ from collections import OrderedDict
 import torch
 
 from .ddp import get_real_module
-from ..dl.utils.torch import process_module_or_dict
+from .misc import maybe_recursive_call
 
 
 def pack_checkpoint(
@@ -18,7 +18,7 @@ def pack_checkpoint(
         raise NotImplementedError()
     else:
         model_ = get_real_module(model)
-        checkpoint["model_state_dict"] = process_module_or_dict(model_, "state_dict")
+        checkpoint["model_state_dict"] = maybe_recursive_call(model_, "state_dict")
 
     for dict2save, name2save in zip(
         [criterion, optimizer, scheduler],
@@ -26,6 +26,7 @@ def pack_checkpoint(
     ):
         if dict2save is None:
             continue
+        # @TODO refactor with maybe_recursive_call
         if isinstance(dict2save, dict):
             for key, value in dict2save.items():
                 if value is not None:
@@ -64,7 +65,7 @@ def unpack_checkpoint(
 ):
     if model is not None:
         model = get_real_module(model)
-        model.load_state_dict(checkpoint["model_state_dict"])
+        maybe_recursive_call(model, "load_state_dict", recursive_args=checkpoint["model_state_dict"])
 
     for dict2load, name2load in zip(
         [criterion, optimizer, scheduler],

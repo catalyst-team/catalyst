@@ -11,7 +11,7 @@ from torch.utils.data import DistributedSampler
 from catalyst.dl.registry import \
     MODELS, CRITERIONS, OPTIMIZERS, SCHEDULERS, CALLBACKS
 from catalyst.dl import utils
-from catalyst.utils import merge_dicts, get_short_hash, process_model_params
+from catalyst.utils import merge_dicts, maybe_recursive_call, get_short_hash, process_model_params
 from catalyst.dl.core import Experiment, Callback
 from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, \
     _Scheduler

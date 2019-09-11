@@ -2,10 +2,11 @@ from typing import Dict, List, Callable
 import torch
 import safitty
 
+from catalyst.utils import maybe_recursive_call
 from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 from catalyst.dl.registry import GRAD_CLIPPERS
 from catalyst.dl.utils import get_optimizer_momentum
-from catalyst.dl.utils.torch import _Optimizer, process_module_or_dict
+from catalyst.dl.utils.torch import _Optimizer
 
 
 class OptimizerCallback(Callback):
@@ -119,7 +120,7 @@ class OptimizerCallback(Callback):
                 optimizer_wds=self._optimizer_wd,
                 grad_clip_fn=self.grad_clip_fn
             )
-            process_module_or_dict(model, "zero_grad")
+            maybe_recursive_call(model, "zero_grad")
 
             self._accumulation_counter = 0
 
