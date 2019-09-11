@@ -44,6 +44,8 @@ class OptimizerCallback(Callback):
         else:
             raise ValueError("loss_aggregate_fn must be `sum` or `mean`")
 
+        self.loss_aggregate_name = loss_aggregate_fn
+
         self.multiplier = multiplier
 
     @staticmethod
