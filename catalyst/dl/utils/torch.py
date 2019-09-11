@@ -1,4 +1,5 @@
 from typing import Tuple, Dict
+from collections import OrderedDict
 import copy
 
 import torch
@@ -14,6 +15,18 @@ _Optimizer = optim.Optimizer
 _Scheduler = optim.lr_scheduler._LRScheduler
 
 
+def process_module_or_dict(module_or_dict, method, *args, **kwargs):
+    if isinstance(module_or_dict, nn.Module):
+        return getattr(module_or_dict, method)(*args, **kwargs)
+    elif isinstance(module_or_dict, (dict, OrderedDict)):
+        result = dict()
+        for k, v in module_or_dict.items():
+            result[k] = process_module_or_dict(v, method, *args, **kwargs)
+        return result
+    else:
+        raise ValueError(f"Invalid argument, must be nn.Module or dict or OrderedDict, got {type(module_or_dict)}")
+
+
 def process_components(
     model: _Model,
     criterion: _Criterion = None,
@@ -25,7 +38,13 @@ def process_components(
     distributed_params = copy.deepcopy(distributed_params)
     device = utils.get_device()
 
-    model = model.to(device)
+    if isinstance(model, nn.Module):
+        model = model.to(device)
+    elif isinstance(model, (dict, OrderedDict)):
+        for key, value in model.items():
+            value.to(device)
+    else:
+        raise ValueError("Unknown model type")
 
     if utils.is_wrapped_with_ddp(model):
         pass
@@ -53,7 +72,13 @@ def process_components(
     elif torch.cuda.device_count() > 1:
         model = torch.nn.DataParallel(model)
 
-    model = model.to(device)
+    if isinstance(model, nn.Module):
+        model = model.to(device)
+    elif isinstance(model, (dict, OrderedDict)):
+        for key, value in model.items():
+            value.to(device)
+    else:
+        raise ValueError("Unknown model type")
 
     return model, criterion, optimizer, scheduler, device
 
@@ -92,6 +117,7 @@ def get_loader(
 
 
 __all__ = [
+    "process_module_or_dict",
     "process_components", "get_loader",
     "_Model", "_Criterion", "_Optimizer", "_Scheduler"
 ]

@@ -5,7 +5,7 @@ import safitty
 from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 from catalyst.dl.registry import GRAD_CLIPPERS
 from catalyst.dl.utils import get_optimizer_momentum
-from catalyst.dl.utils.torch import _Optimizer
+from catalyst.dl.utils.torch import _Optimizer, process_module_or_dict
 
 
 class OptimizerCallback(Callback):
@@ -77,7 +77,10 @@ class OptimizerCallback(Callback):
         state.loss = None
 
     def on_batch_end(self, state):
-        loss = state.get_key(key="loss", inner_key=self.loss_key)
+        if isinstance(self.loss_key, (list, tuple)):
+            loss = [state.get_key(key="loss", inner_key=k) for k in self.loss_key]
+        else:
+            loss = state.get_key(key="loss", inner_key=self.loss_key)
         if isinstance(loss, dict):
             loss = list(loss.values())
         if isinstance(loss, list):
@@ -116,7 +119,8 @@ class OptimizerCallback(Callback):
                 optimizer_wds=self._optimizer_wd,
                 grad_clip_fn=self.grad_clip_fn
             )
-            model.zero_grad()
+            process_module_or_dict(model, "zero_grad")
+
             self._accumulation_counter = 0
 
     def on_epoch_end(self, state):

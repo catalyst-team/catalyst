@@ -3,7 +3,7 @@
 from .criterion import accuracy, average_accuracy, mean_average_accuracy, \
     dice, f1_score, sigmoid_focal_loss, reduced_focal_loss, iou, jaccard
 
-from .torch import process_components, get_loader
+from .torch import process_components, get_loader, process_module_or_dict
 # from .trace import *
 from .visualization import plot_metrics
 from .callbacks import process_callback

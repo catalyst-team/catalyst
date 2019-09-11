@@ -1,5 +1,5 @@
 from typing import Dict, Optional
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from pathlib import Path
 
 from torch.optim.optimizer import Optimizer
@@ -52,6 +52,7 @@ class RunnerState(FrozenClass):
         self.stage = stage
         self.device = device
         self.loader_name = None
+        self.phase = None
 
         # data pipeline
         self.input = None
@@ -87,8 +88,9 @@ class RunnerState(FrozenClass):
         self.timer = TimerManager()
 
         # base metrics
-        self.lr = None
-        self.momentum = None
+        single_optimizer = isinstance(optimizer, Optimizer)
+        self.lr = None if single_optimizer else defaultdict(lambda: None)
+        self.momentum = None if single_optimizer else defaultdict(lambda: None)
         self.loss = None
 
         # extra checkpoint data for saving in checkpoint files
@@ -123,7 +125,11 @@ class RunnerState(FrozenClass):
             ["_base/lr", "_base/momentum"], [self.lr, self.momentum]
         ):
             if value is not None:
-                values[key] = value
+                if isinstance(value, dict):
+                    for k, v in value.items():
+                        values[f"{key}/{k}"] = v
+                else:
+                    values[key] = value
 
         values.update(self.timer.elapsed)
 

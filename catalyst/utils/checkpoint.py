@@ -6,6 +6,7 @@ from collections import OrderedDict
 import torch
 
 from .ddp import get_real_module
+from ..dl.utils.torch import process_module_or_dict
 
 
 def pack_checkpoint(
@@ -17,7 +18,7 @@ def pack_checkpoint(
         raise NotImplementedError()
     else:
         model_ = get_real_module(model)
-        checkpoint["model_state_dict"] = model_.state_dict()
+        checkpoint["model_state_dict"] = process_module_or_dict(model_, "state_dict")
 
     for dict2save, name2save in zip(
         [criterion, optimizer, scheduler],

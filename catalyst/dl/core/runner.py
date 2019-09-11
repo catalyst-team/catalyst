@@ -151,7 +151,11 @@ class Runner(ABC):
             self.state.loader_name = loader_name
             self.state.loader_len = len(loader)
             self.state.need_backward = loader_name.startswith("train")
-            self.model.train(self.state.need_backward)
+            if isinstance(self.model, nn.Module):
+                self.model.train(self.state.need_backward)
+            else:
+                for k, v in self.model.items():
+                    v.train(self.state.need_backward)
 
             if isinstance(loader.sampler, DistributedSampler) \
                     and loader_name.startswith("train"):
@@ -192,7 +196,8 @@ class Runner(ABC):
             for stage in self.experiment.stages:
                 self._run_stage(stage)
         except (Exception, KeyboardInterrupt) as ex:
-            self.state.exception = ex
+            raise ex
+            # self.state.exception = ex
             self._run_event("exception")
 
         return self
