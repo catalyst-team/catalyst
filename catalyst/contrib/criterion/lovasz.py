@@ -166,7 +166,7 @@ def _lovasz_softmax_flat(probabilities, targets, classes="present"):
         if classes == "present" and fg.sum() == 0:
             continue
         if C == 1:
-            if len(classes) > 1:
+            if len(class_to_sum) > 1:
                 raise ValueError("Sigmoid output possible only with 1 class")
             class_pred = probabilities[:, 0]
         else:
