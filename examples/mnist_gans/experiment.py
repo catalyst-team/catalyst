@@ -1,13 +1,13 @@
 from collections import OrderedDict
+
 import torch
 import torch.nn as nn
 import torchvision
-from torchvision import transforms
-
-from catalyst.dl import ConfigExperiment
 from catalyst import utils
+from catalyst.dl import ConfigExperiment
 from catalyst.dl.registry import \
-    MODELS, CRITERIONS, OPTIMIZERS, SCHEDULERS, CALLBACKS
+    MODELS, OPTIMIZERS
+from torchvision import transforms
 
 from .phase_managers import Phase, PhaseManager
 
@@ -63,19 +63,22 @@ class MultiModelConfigExperiment(ConfigExperiment):
 
         model_key = params.pop("_model", None)
         if model_key is None:
-            assert isinstance(model, nn.Module), "model is keyvalue, but optimizer has no specified model"
+            assert isinstance(model, nn.Module), \
+                "model is keyvalue, but optimizer has no specified model"
             model_params = utils.process_model_params(
                 model, layerwise_params, no_bias_weight_decay, lr_scaling
             )
         elif isinstance(model_key, str):
             model_params = utils.process_model_params(
-                model[model_key], layerwise_params, no_bias_weight_decay, lr_scaling
+                model[model_key], layerwise_params, no_bias_weight_decay,
+                lr_scaling
             )
         elif isinstance(model_key, (list, tuple)):
             model_params = []
             for model_key_ in model_key:
                 model_params_ = utils.process_model_params(
-                    model[model_key_], layerwise_params, no_bias_weight_decay, lr_scaling
+                    model[model_key_], layerwise_params, no_bias_weight_decay,
+                    lr_scaling
                 )
                 model_params.extend(model_params_)
         else:
@@ -130,25 +133,37 @@ class MultiPhaseConfigExperiment(MultiModelConfigExperiment):
 
             valid_mode = runner_phases.pop("_valid_mode", VM_ALL)
             if valid_mode not in allowed_valid_modes:
-                raise ValueError(f"_valid_mode must be one of {allowed_valid_modes}, got '{valid_mode}'")
+                raise ValueError(
+                    f"_valid_mode must be one of {allowed_valid_modes}, "
+                    f"got '{valid_mode}'")
             # train phases
             for phase_name, phase_params in runner_phases.items():
                 steps = phase_params.get("steps", 1)
-                inactive_callbacks = phase_params.get("inactive_callbacks", None)
+                inactive_callbacks = phase_params.get("inactive_callbacks",
+                                                      None)
                 active_callbacks = phase_params.get("active_callbacks", None)
-                if active_callbacks is not None and inactive_callbacks is not None:
-                    raise ValueError("Only one of '[active_callbacks/inactive_callbacks]' may be specified")
+                if (active_callbacks is not None
+                        and inactive_callbacks is not None):
+                    raise ValueError(
+                        "Only one of '[active_callbacks/inactive_callbacks]'"
+                        " may be specified")
                 phase_callbacks = callbacks
                 if active_callbacks:
-                    phase_callbacks = OrderedDict(x for x in callbacks.items() if x[0] in active_callbacks)
+                    phase_callbacks = OrderedDict(
+                        x for x in callbacks.items() if
+                        x[0] in active_callbacks)
                 if inactive_callbacks:
-                    phase_callbacks = OrderedDict(x for x in callbacks.items() if x[0] not in inactive_callbacks)
-                phase = Phase(callbacks=phase_callbacks, steps=steps, name=phase_name)
+                    phase_callbacks = OrderedDict(
+                        x for x in callbacks.items() if
+                        x[0] not in inactive_callbacks)
+                phase = Phase(callbacks=phase_callbacks, steps=steps,
+                              name=phase_name)
                 train_phases.append(phase)
                 # valid
                 if valid_mode == VM_SAME:
                     valid_phases.append(
-                        Phase(callbacks=phase_callbacks, steps=steps, name=phase_name)
+                        Phase(callbacks=phase_callbacks, steps=steps,
+                              name=phase_name)
                     )
             # valid
             if valid_mode == VM_ALL:
@@ -167,7 +182,7 @@ class MNISTGANExperiment(MultiPhaseConfigExperiment):
         return transforms.Compose(
             [
                 transforms.ToTensor(),
-                transforms.Normalize((0.5, ), (0.5, ))
+                transforms.Normalize((0.5,), (0.5,))
             ]
         )
 
@@ -178,13 +193,15 @@ class MNISTGANExperiment(MultiPhaseConfigExperiment):
             root="./data",
             train=True,
             download=True,
-            transform=MNISTGANExperiment.get_transforms(stage=stage, mode="train")
+            transform=MNISTGANExperiment.get_transforms(stage=stage,
+                                                        mode="train")
         )
         testset = torchvision.datasets.MNIST(
             root="./data",
             train=False,
             download=True,
-            transform=MNISTGANExperiment.get_transforms(stage=stage, mode="valid")
+            transform=MNISTGANExperiment.get_transforms(stage=stage,
+                                                        mode="valid")
         )
 
         datasets["train"] = trainset

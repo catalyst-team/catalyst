@@ -1,7 +1,7 @@
-from typing import Tuple, Mapping, Any
+from typing import Mapping, Any
 
 import torch
-from catalyst.dl import RunnerState, Runner
+from catalyst.dl import Runner
 
 
 class MultiStageRunner(Runner):
@@ -58,7 +58,9 @@ class MultiStageRunner(Runner):
 
 
 class GANRunner(MultiStageRunner):
-    def __init__(self, model=None, device=None, images_key="images", targets_key="targets"):
+    def __init__(self, model=None, device=None,
+                 images_key="images",
+                 targets_key="targets"):
         super().__init__(model, device)
         self.images_key = images_key
         self.targets_key = targets_key
@@ -81,14 +83,19 @@ class GANRunner(MultiStageRunner):
         fake_targets = 1 - real_targets
         self.state.input["fake_targets"] = fake_targets
         self.state.input["real_targets"] = real_targets
-        z = torch.randn((real_imgs.size(0), self.generator.noise_dim), device=self.device)
+        z = torch.randn((real_imgs.size(0), self.generator.noise_dim),
+                        device=self.device)
 
-        if self.state.phase is None or self.state.phase == "discriminator_train":
+        if (
+                self.state.phase is None
+                or self.state.phase == "discriminator_train"
+        ):
             # (None for validation mode)
             fake_imgs = self.generator(z)
             fake_logits = self.discriminator(fake_imgs.detach())
             real_logits = self.discriminator(real_imgs)
-            # --> d_loss (fake logits + FAKE targets) + (real logits + real targets)
+            # --> d_loss
+            # (fake logits + FAKE targets) + (real logits + real targets)
             return {
                 "fake_images": fake_imgs,  # visualization purposes only
                 "fake_logits": fake_logits,

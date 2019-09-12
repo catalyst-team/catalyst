@@ -1,19 +1,18 @@
 import numpy as np
-import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 from catalyst.contrib import registry
 
 
 @registry.Model
 class SimpleGenerator(nn.Module):
-    def __init__(self, noise_dim=10, hidden_dim=256, image_resolution=(28, 28), channels=1):
+    def __init__(self, noise_dim=10, hidden_dim=256, image_resolution=(28, 28),
+                 channels=1):
         super().__init__()
         self.noise_dim = noise_dim
         self.image_resolution = image_resolution
         self.channels = channels
-        
+
         self.net = nn.Sequential(
             nn.Linear(noise_dim, hidden_dim),
             nn.LeakyReLU(0.05),

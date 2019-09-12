@@ -10,7 +10,9 @@ class Phase:
 
 
 class PhaseManager:
-    def __init__(self, train_phases: "List[Phase]", valid_phases: "List[Phase]"):
+    def __init__(self,
+                 train_phases: "List[Phase]",
+                 valid_phases: "List[Phase]"):
         self.train_phases = train_phases
         self.valid_phases = valid_phases
 
@@ -24,14 +26,16 @@ class PhaseManager:
                 phase.curr_step += step_size
                 if phase.curr_step >= phase.steps:
                     phase.curr_step = 0
-                    self.train_index = (self.train_index + 1) % len(self.train_phases)
+                    self.train_index = \
+                        (self.train_index + 1) % len(self.train_phases)
         else:
             if len(self.valid_phases) > 1:
                 phase = self.valid_phases[self.valid_index]
                 phase.curr_step += step_size
                 if phase.curr_step >= phase.steps:
                     phase.curr_step = 0
-                    self.valid_index = (self.valid_index + 1) % len(self.valid_phases)
+                    self.valid_index = \
+                        (self.valid_index + 1) % len(self.valid_phases)
 
     def get_phase_name(self, state):
         if state.need_backward:
