@@ -1,5 +1,6 @@
 from typing import Any, Mapping, Dict, List, Union
 from collections import OrderedDict  # noqa F401
+import logging
 
 from torch import nn
 from torch.utils.data import DataLoader  # noqa F401
@@ -9,7 +10,7 @@ from catalyst.dl.experiment import SupervisedExperiment
 from catalyst.dl.callbacks import InferCallback, CheckpointCallback
 from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
 
-import logging
+
 logger = logging.getLogger(__name__)
 
 
