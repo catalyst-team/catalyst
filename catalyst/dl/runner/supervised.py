@@ -12,6 +12,7 @@ from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
 import logging
 logger = logging.getLogger(__name__)
 
+
 class SupervisedRunner(Runner):
     """
     Runner for experiments with supervised model
@@ -109,10 +110,11 @@ class SupervisedRunner(Runner):
         monitoring_params: Dict = None,
         check: bool = False,
     ):
-        if len(loaders)==1:
-            valid_loader = list(a.keys())[0]
+        if len(loaders) == 1:
+            valid_loader = list(loaders.keys())[0]
             logger.warning(
-                "Attention,there is only one data loader - " + str(valid_loader)
+                "Attention,there is only one data loader - " \
+                + str(valid_loader)
             )
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
