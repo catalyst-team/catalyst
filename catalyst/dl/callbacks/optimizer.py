@@ -79,7 +79,9 @@ class OptimizerCallback(Callback):
 
     def on_batch_end(self, state):
         if isinstance(self.loss_key, (list, tuple)):
-            loss = [state.get_key(key="loss", inner_key=k) for k in self.loss_key]
+            loss = [
+                state.get_key(key="loss", inner_key=k) for k in self.loss_key
+            ]
         else:
             loss = state.get_key(key="loss", inner_key=self.loss_key)
         if isinstance(loss, dict):

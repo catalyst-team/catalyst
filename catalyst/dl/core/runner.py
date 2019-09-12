@@ -152,7 +152,8 @@ class Runner(ABC):
             self.state.loader_name = loader_name
             self.state.loader_len = len(loader)
             self.state.need_backward = loader_name.startswith("train")
-            maybe_recursive_call(self.model, "train", mode=self.state.need_backward)
+            maybe_recursive_call(self.model, "train",
+                                 mode=self.state.need_backward)
 
             if isinstance(loader.sampler, DistributedSampler) \
                     and loader_name.startswith("train"):

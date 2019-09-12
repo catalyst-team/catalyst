@@ -16,7 +16,7 @@ class VisualizationCallback(Callback):
             concat_images=True,
             max_images=20,
             n_row=1,
-            denorm='default'
+            denorm="default"
     ):
         if input_keys is None:
             self.input_keys = []
@@ -26,7 +26,10 @@ class VisualizationCallback(Callback):
             assert all(isinstance(k, str) for k in input_keys)
             self.input_keys = list(input_keys)
         else:
-            raise ValueError(f"Unexpected format of 'input_keys' argument: must be string or list/tuple")
+            raise ValueError(
+                f"Unexpected format of 'input_keys' "
+                f"argument: must be string or list/tuple"
+            )
 
         if output_keys is None:
             self.output_keys = []
@@ -36,7 +39,9 @@ class VisualizationCallback(Callback):
             assert all(isinstance(k, str) for k in output_keys)
             self.output_keys = list(output_keys)
         else:
-            raise ValueError(f"Unexpected format of 'output_keys' argument: must be string or list/tuple")
+            raise ValueError(
+                f"Unexpected format of 'output_keys' "
+                f"argument: must be string or list/tuple")
 
         if len(self.input_keys) + len(self.output_keys) == 0:
             raise ValueError("Useless visualizer: pass at least one image key")
@@ -46,9 +51,10 @@ class VisualizationCallback(Callback):
 
         self.concat_images = concat_images
         self.max_images = max_images
-        if denorm.lower() == 'default':
-            self.denorm = lambda x: x / 2 + .5  # normalization from [-1, 1] to [0, 1] (the latter is valid for tb)
-        elif denorm is None or denorm.lower() == 'none':
+        if denorm.lower() == "default":
+            # normalization from [-1, 1] to [0, 1] (the latter is valid for tb)
+            self.denorm = lambda x: x / 2 + .5
+        elif denorm is None or denorm.lower() == "none":
             self.denorm = lambda x: x
         else:
             raise ValueError("unknown denorm fn")
@@ -69,12 +75,17 @@ class VisualizationCallback(Callback):
         )
 
     def compute_visualizations(self, state):
-        input_tensors = [state.input[input_key] for input_key in self.input_keys]
-        output_tensors = [state.output[output_key] for output_key in self.output_keys]
+        input_tensors = [
+            state.input[input_key] for input_key in self.input_keys]
+        output_tensors = [
+            state.output[output_key] for output_key in self.output_keys]
         visualizations = dict()
         if self.concat_images:
-            viz_name = '|'.join(self.input_keys + self.output_keys)
-            viz_tensor = self.denorm(torch.cat(input_tensors + output_tensors, dim=3)).detach().cpu()  # concat by width
+            viz_name = "|".join(self.input_keys + self.output_keys)
+            viz_tensor = self.denorm(
+                # concat by width
+                torch.cat(input_tensors + output_tensors, dim=3)
+            ).detach().cpu()
             visualizations[viz_name] = viz_tensor
         else:
             visualizations = dict(

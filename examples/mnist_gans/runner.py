@@ -77,7 +77,7 @@ class GANRunner(MultiStageRunner):
         self.discriminator = self.model["discriminator"]
 
     def predict_batch(self, batch):
-        real_imgs, labels = batch["images"], batch["targets"]
+        real_imgs, _ = batch["images"], batch["targets"]
 
         real_targets = torch.ones((real_imgs.size(0), 1), device=self.device)
         fake_targets = 1 - real_targets
