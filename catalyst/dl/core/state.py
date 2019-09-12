@@ -33,6 +33,7 @@ class RunnerState(FrozenClass):
         valid_loader="valid",
         verbose=False,
         checkpoint_data: Dict = None,
+        batch_consistant_metrics=True,
         **kwargs
     ):
         # @TODO: refactor
@@ -73,7 +74,8 @@ class RunnerState(FrozenClass):
         self.metrics = MetricManager(
             valid_loader=valid_loader,
             main_metric=main_metric,
-            minimize=minimize_metric
+            minimize=minimize_metric,
+            batch_consistant_metrics=batch_consistant_metrics
         )
         self.verbose: bool = verbose
         loggers = OrderedDict()
