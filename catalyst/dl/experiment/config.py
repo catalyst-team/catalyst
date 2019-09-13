@@ -1,4 +1,4 @@
-from typing import Any, Mapping, Dict, List
+from typing import Any, Mapping, Dict, List, Union
 from copy import deepcopy
 from collections import OrderedDict
 import datetime
@@ -11,7 +11,7 @@ from torch.utils.data import DistributedSampler
 from catalyst.dl.registry import \
     MODELS, CRITERIONS, OPTIMIZERS, SCHEDULERS, CALLBACKS
 from catalyst.dl import utils
-from catalyst.utils import merge_dicts, get_short_hash, process_model_params
+from catalyst.utils import merge_dicts, get_short_hash
 from catalyst.dl.core import Experiment, Callback
 from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, \
     _Scheduler
@@ -110,12 +110,26 @@ class ConfigExperiment(Experiment):
     def _postprocess_model_for_stage(self, stage: str, model: _Model):
         return model
 
-    def get_model(self, stage: str) -> _Model:
+    def get_model(self, stage: str):
         model_params = self._config["model_params"]
-        model = MODELS.get_from_params(**model_params)
+        model = ConfigExperiment._get_model(**model_params)
 
         model = self._preprocess_model_for_stage(stage, model)
         model = self._postprocess_model_for_stage(stage, model)
+        return model
+
+    @staticmethod
+    def _get_model(**params):
+        key_value_flag = params.pop("_key_value", False)
+
+        if key_value_flag:
+            model = {}
+            for key, params_ in params.items():
+                model[key] = ConfigExperiment._get_model(**params_)
+        else:
+            model = MODELS.get_from_params(**params)
+            if model is not None and torch.cuda.is_available():
+                model = model.cuda()
         return model
 
     @staticmethod
@@ -138,32 +152,19 @@ class ConfigExperiment(Experiment):
         criterion = self._get_criterion(**criterion_params)
         return criterion
 
-    def _get_optimizer(self, *, model_params, **params):
-        load_from_previous_stage = \
-            params.pop("load_from_previous_stage", False)
-        optimizer = OPTIMIZERS.get_from_params(**params, params=model_params)
-
-        if load_from_previous_stage:
-            checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
-            checkpoint = utils.load_checkpoint(checkpoint_path)
-            utils.unpack_checkpoint(checkpoint, optimizer=optimizer)
-            for key, value in params.items():
-                for pg in optimizer.param_groups:
-                    pg[key] = value
-
-        return optimizer
-
-    def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
-        optimizer_params = \
-            self.stages_config[stage].get("optimizer_params", {})
-
+    def _get_optimizer(
+            self,
+            stage: str,
+            model: Union[_Model, Dict[str, _Model]],
+            **params
+    ) -> _Optimizer:
         layerwise_params = \
-            optimizer_params.pop("layerwise_params", OrderedDict())
+            params.pop("layerwise_params", OrderedDict())
         no_bias_weight_decay = \
-            optimizer_params.pop("no_bias_weight_decay", True)
+            params.pop("no_bias_weight_decay", True)
 
         # linear scaling rule from https://arxiv.org/pdf/1706.02677.pdf
-        lr_scaling_params = optimizer_params.pop("lr_linear_scaling", None)
+        lr_scaling_params = params.pop("lr_linear_scaling", None)
         if lr_scaling_params:
             data_params = dict(self.stages_config[stage]["data_params"])
             batch_size = data_params.get("batch_size")
@@ -177,17 +178,63 @@ class ConfigExperiment(Experiment):
             base_lr = lr_scaling_params.get("lr")
             base_batch_size = lr_scaling_params.get("base_batch_size", 256)
             lr_scaling = batch_size / base_batch_size
-            optimizer_params["lr"] = base_lr * lr_scaling  # scale default lr
+            params["lr"] = base_lr * lr_scaling  # scale default lr
         else:
             lr_scaling = 1.0
 
-        model_params = process_model_params(
-            model, layerwise_params, no_bias_weight_decay, lr_scaling
-        )
+        # getting model parameters
+        model_key = params.pop("_model", None)
+        if model_key is None:
+            assert isinstance(model, nn.Module), \
+                "model is keyvalue, but optimizer has no specified model"
+            model_params = utils.process_model_params(
+                model, layerwise_params, no_bias_weight_decay, lr_scaling
+            )
+        elif isinstance(model_key, str):
+            model_params = utils.process_model_params(
+                model[model_key], layerwise_params, no_bias_weight_decay,
+                lr_scaling
+            )
+        elif isinstance(model_key, (list, tuple)):
+            model_params = []
+            for model_key_ in model_key:
+                model_params_ = utils.process_model_params(
+                    model[model_key_], layerwise_params, no_bias_weight_decay,
+                    lr_scaling
+                )
+                model_params.extend(model_params_)
+        else:
+            raise ValueError("unknown type of model_params")
 
-        optimizer = self._get_optimizer(
-            model_params=model_params, **optimizer_params
-        )
+        load_from_previous_stage = \
+            params.pop("load_from_previous_stage", False)
+        optimizer = OPTIMIZERS.get_from_params(**params, params=model_params)
+
+        if load_from_previous_stage:
+            checkpoint_path = f"{self.logdir}/checkpoints/best.pth"
+            checkpoint = utils.load_checkpoint(checkpoint_path)
+            utils.unpack_checkpoint(checkpoint, optimizer=optimizer)
+            for key, value in params.items():
+                for pg in optimizer.param_groups:
+                    pg[key] = value
+
+        return optimizer
+
+    def get_optimizer(
+            self,
+            stage: str,
+            model: Union[_Model, Dict[str, _Model]]
+    ) -> Union[_Optimizer, Dict[str, _Optimizer]]:
+        optimizer_params = \
+            self.stages_config[stage].get("optimizer_params", {})
+        key_value_flag = optimizer_params.pop("_key_value", False)
+
+        if key_value_flag:
+            optimizer = {}
+            for key, params_ in optimizer_params.items():
+                optimizer[key] = self._get_optimizer(stage, model, **params_)
+        else:
+            optimizer = self._get_optimizer(stage, model, **optimizer_params)
 
         return optimizer
 
