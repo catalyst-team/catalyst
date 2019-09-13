@@ -326,6 +326,15 @@ class ConfigExperiment(Experiment):
 
         return loaders
 
+    @staticmethod
+    def _get_callback(**params):
+        wrapper_params = params.pop("_wrapper", None)
+        callback = CALLBACKS.get_from_params(**params)
+        if wrapper_params:
+            wrapper_params["base_callback"] = callback
+            return ConfigExperiment._get_callback(**wrapper_params)
+        return callback
+
     def get_callbacks(self, stage: str) -> "OrderedDict[Callback]":
         callbacks_params = (
             self.stages_config[stage].get("callbacks_params", {})
@@ -333,7 +342,7 @@ class ConfigExperiment(Experiment):
 
         callbacks = OrderedDict()
         for key, callback_params in callbacks_params.items():
-            callback = CALLBACKS.get_from_params(**callback_params)
+            callback = self._get_callback(**callback_params)
             callbacks[key] = callback
 
         return callbacks

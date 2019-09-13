@@ -62,7 +62,7 @@ class PhaseManagerCallback(Callback):
             valid_phases: "OrderedDict[str, int]" = None,
             valid_mode: str = None
     ):
-        super().__init__(CallbackOrder.Other)
+        super().__init__(CallbackOrder.Internal)
         self.phase_manager = self._get_phase_manager(
             train_phases=train_phases,
             valid_phases=valid_phases,

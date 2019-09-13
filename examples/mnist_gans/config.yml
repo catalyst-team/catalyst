@@ -28,7 +28,18 @@ stages:
     criterion: BCEWithLogitsLoss
 
   callbacks_params:
+    phase_manager:
+      callback: PhaseManagerCallback
+      # one of "all" (use all callbacks), "same" (same phases as in train)
+      valid_mode: "all"
+      train_phases:
+        discriminator_train: 1
+        generator_train: 1
+
     loss_g:
+      _wrapper: &g_train_wrapper
+        callback: CallbackPhaseBatchWrapper
+        active_phases: [generator_train]
       callback: CriterionCallback
       input_key: "real_targets"
       output_key: "fake_logits"
@@ -36,22 +47,28 @@ stages:
       prefix: loss_g
 
     loss_d_real:
+      _wrapper: &d_train_wrapper
+        callback: CallbackPhaseBatchWrapper
+        active_phases: [discriminator_train]
       callback: CriterionCallback
       input_key: "real_targets"
       output_key: "real_logits"
       loss_key: loss_d_real
       prefix: loss_d_real
     loss_d_fake:
+      _wrapper: *d_train_wrapper
       callback: CriterionCallback
       input_key: "fake_targets"
       output_key: "fake_logits"
       loss_key: loss_d_fake
       prefix: loss_d_fake
     optim_g:
+      _wrapper: *g_train_wrapper
       callback: OptimizerCallback
       optimizer_key: generator
       loss_key: loss_g
     optim_d:
+      _wrapper: *d_train_wrapper
       callback: OptimizerCallback
       optimizer_key: discriminator
       loss_key: [loss_d_real, loss_d_fake]
@@ -63,19 +80,6 @@ stages:
       max_images: 25
     saver:
       callback: CheckpointCallback
-    phase_manager:
-      callback: PhaseManagerCallback
-      # one of "all" (use all callbacks), "same" (same phases as in train)
-      valid_mode: "all"
-      train_phases:
-        discriminator_train: 1
-        generator_train: 1
-#      discriminator_train:
-##        inactive_callbacks: ["optim_g", "loss_g"]
-#        steps: 1
-#      generator_train:
-##        inactive_callbacks: ["optim_d", "loss_d_fake", "loss_d_real"]
-#        steps: 1
 
   stage1:
 
