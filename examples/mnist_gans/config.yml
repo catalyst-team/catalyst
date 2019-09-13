@@ -23,17 +23,6 @@ stages:
     main_metric: &reduce_metric loss_g
     minimize_metric: True
     batch_consistant_metrics: False
-    runner_phases:
-      # one of "all" (use all callbacks), "same" (same phases as in train)
-      _valid_mode: "all"
-      discriminator_train:
-#        active_models: ["discriminator"] @TODO implement
-        inactive_callbacks: ["optim_g", "loss_g"]
-        steps: 1
-      generator_train:
-#        active_models: ["generator"]
-        inactive_callbacks: ["optim_d", "loss_d_fake", "loss_d_real"]
-        steps: 1
 
   criterion_params:
     criterion: BCEWithLogitsLoss
@@ -74,6 +63,19 @@ stages:
       max_images: 25
     saver:
       callback: CheckpointCallback
+    phase_manager:
+      callback: PhaseManagerCallback
+      # one of "all" (use all callbacks), "same" (same phases as in train)
+      valid_mode: "all"
+      train_phases:
+        discriminator_train: 1
+        generator_train: 1
+#      discriminator_train:
+##        inactive_callbacks: ["optim_g", "loss_g"]
+#        steps: 1
+#      generator_train:
+##        inactive_callbacks: ["optim_d", "loss_d_fake", "loss_d_real"]
+#        steps: 1
 
   stage1:
 

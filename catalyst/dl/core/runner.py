@@ -164,10 +164,16 @@ class Runner(ABC):
                 self._run_loader(loader)
             self._run_event("loader_end")
 
+    def _run_prestage(self, stage: str):
+        # do something after stage initialization but before epoch cycle
+        pass
+
     def _run_stage(self, stage: str):
         self._prepare_state(stage)
         loaders = self.experiment.get_loaders(stage)
         self.callbacks = self.experiment.get_callbacks(stage)
+
+        self._run_prestage(stage)
 
         self._run_event("stage_start")
         for epoch in range(self.state.num_epochs):

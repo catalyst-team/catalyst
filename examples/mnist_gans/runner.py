@@ -4,66 +4,19 @@ import torch
 from catalyst.dl import Runner
 
 
-class MultiStageRunner(Runner):
-    def __init__(self, model=None, device=None):
-        super().__init__(model, device)
-        self._callbacks = None
-
-    @property
-    def callbacks(self):
-        if self.phase_manager is None:
-            return self._callbacks
-        else:
-            return self.phase_manager.get_callbacks(self.state)
-
-    @callbacks.setter
-    def callbacks(self, callbacks):
-        self._callbacks = callbacks
-
-    def _run_prestage(self, stage: str):
-        if hasattr(self.experiment, "get_phase_manager"):
-            self.phase_manager = self.experiment.get_phase_manager(stage)
-        else:
-            self.phase_manager = None
-
-    def _run_stage(self, stage: str):
-        # @TODO rewrite parent (Runner) method instead
-        self._prepare_state(stage)
-        loaders = self.experiment.get_loaders(stage)
-        self.callbacks = self.experiment.get_callbacks(stage)
-
-        self._run_prestage(stage)
-
-        self._run_event("stage_start")
-        for epoch in range(self.state.num_epochs):
-            self.state.stage_epoch = epoch
-
-            self._run_event("epoch_start")
-            self._run_epoch(loaders)
-            self._run_event("epoch_end")
-
-            if self._check_run and self.state.epoch >= 3:
-                break
-            if self.state.early_stop:
-                self.state.early_stop = False
-                break
-
-            self.state.epoch += 1
-        self._run_event("stage_end")
-
-    def _run_batch(self, batch):
-        self.state.phase = self.phase_manager.get_phase_name(self.state)
-        super()._run_batch(batch)
-        self.phase_manager.step(self.state)
-
-
-class GANRunner(MultiStageRunner):
+class GANRunner(Runner):
     def __init__(self, model=None, device=None,
                  images_key="images",
-                 targets_key="targets"):
+                 targets_key="targets",
+                 model_generator_key="generator",
+                 model_discriminator_key="discriminator"):
         super().__init__(model, device)
+
         self.images_key = images_key
         self.targets_key = targets_key
+
+        self.model_generator_key = model_generator_key
+        self.model_discriminator_key = model_discriminator_key
 
     def _batch2device(self, batch: Mapping[str, Any], device):
         if isinstance(batch, (list, tuple)):
@@ -72,9 +25,8 @@ class GANRunner(MultiStageRunner):
         return super()._batch2device(batch, device)
 
     def _run_prestage(self, stage: str):
-        super()._run_prestage(stage)
-        self.generator = self.model["generator"]
-        self.discriminator = self.model["discriminator"]
+        self.generator = self.model[self.model_generator_key]
+        self.discriminator = self.model[self.model_discriminator_key]
 
     def predict_batch(self, batch):
         real_imgs, _ = batch["images"], batch["targets"]
