@@ -24,19 +24,19 @@ class Callback:
 
     .. code:: bash
 
-        --stage start
-        ----epoch start (one epoch - one run of every loader)
-        ------loader start
-        --------batch start
-        --------batch handler
-        --------batch end
-        ------loader end
-        ----epoch end
-        --stage end
+        -- stage start
+        ---- epoch start (one epoch - one run of every loader)
+        ------ loader start
+        -------- batch start
+        -------- batch handler
+        -------- batch end
+        ------ loader end
+        ---- epoch end
+        -- stage end
 
         exception – if an Exception was raised
 
-    All callbacks has ``order`` one of the values in ``CallbackOrder``
+    All callbacks has ``order`` value from ``CallbackOrder``
     """
     def __init__(self, order: int):
         """

@@ -1,11 +1,14 @@
+import logging
 from typing import Dict, List, Callable
-import torch
+
 import safitty
 
 from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 from catalyst.dl.registry import GRAD_CLIPPERS
 from catalyst.dl.utils import get_optimizer_momentum
 from catalyst.dl.utils.torch import _Optimizer
+
+logger = logging.getLogger(__name__)
 
 
 class OptimizerCallback(Callback):
@@ -19,12 +22,15 @@ class OptimizerCallback(Callback):
         accumulation_steps: int = 1,
         optimizer_key: str = None,
         loss_key: str = None,
-        prefix: str = None,
-        loss_aggregate_fn: str = "sum",
-        multiplier: float = 1.0,
     ):
         """
-        @TODO: docs
+        Args:
+            grad_clip_params (dict): params for gradient clipping
+            accumulation_steps (int): number of steps before
+                ``model.zero_grad()``
+            optimizer_key (str): A key to take a optimizer in case
+                there are several of them and they are in a dictionary format.
+            loss_key (str): key to get loss from ``state.loss``
         """
         super().__init__(CallbackOrder.Optimizer)
         grad_clip_params: dict = grad_clip_params or {}
@@ -33,20 +39,8 @@ class OptimizerCallback(Callback):
         self.accumulation_steps: int = accumulation_steps
         self.optimizer_key: str = optimizer_key
         self.loss_key: str = loss_key
-        self.prefix: str = prefix
         self._optimizer_wd: List[float] = [0.0]
         self._accumulation_counter: int = 0
-
-        if loss_aggregate_fn == "sum":
-            self.loss_fn = lambda x: torch.sum(torch.stack(x)) * multiplier
-        elif loss_aggregate_fn == "mean":
-            self.loss_fn = lambda x: torch.mean(torch.stack(x)) * multiplier
-        else:
-            raise ValueError("loss_aggregate_fn must be `sum` or `mean`")
-
-        self.loss_aggregate_name = loss_aggregate_fn
-
-        self.multiplier = multiplier
 
     @staticmethod
     def grad_step(
@@ -90,21 +84,23 @@ class OptimizerCallback(Callback):
         state.loss = None
 
     def on_batch_end(self, state):
-        loss = state.get_key(key="loss", inner_key=self.loss_key)
-        if isinstance(loss, dict):
-            loss = list(loss.values())
-        if isinstance(loss, list):
-            loss = self.loss_fn(loss)
-
-        if self.prefix is not None:
-            state.metrics.add_batch_value(
-                metrics_dict={
-                    self.prefix: loss.item(),
-                }
-            )
-
         if not state.need_backward:
             return
+
+        loss = state.get_key(key="loss", inner_key=self.loss_key)
+        if isinstance(loss, list):
+            logger.warning(
+                f"Attention, the loss is a list. "
+                f"Only the last value will be used for `backward`."
+                f"To aggregate losses into "
+                "one value use `CriterionAggregatorCallback`"
+            )
+            loss = loss[-1]
+        if isinstance(loss, dict):
+            raise ValueError(
+                "Loss is a dict, to aggregate losses into "
+                "one value use `CriterionAggregatorCallback`"
+            )
 
         self._accumulation_counter += 1
         model = state.model
