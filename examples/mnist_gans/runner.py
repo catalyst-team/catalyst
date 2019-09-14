@@ -5,11 +5,15 @@ from catalyst.dl import Runner
 
 
 class GANRunner(Runner):
-    def __init__(self, model=None, device=None,
-                 images_key="images",
-                 targets_key="targets",
-                 model_generator_key="generator",
-                 model_discriminator_key="discriminator"):
+    def __init__(
+        self,
+        model=None,
+        device=None,
+        images_key="images",
+        targets_key="targets",
+        model_generator_key="generator",
+        model_discriminator_key="discriminator"
+    ):
         super().__init__(model, device)
 
         self.images_key = images_key
@@ -35,12 +39,13 @@ class GANRunner(Runner):
         fake_targets = 1 - real_targets
         self.state.input["fake_targets"] = fake_targets
         self.state.input["real_targets"] = real_targets
-        z = torch.randn((real_imgs.size(0), self.generator.noise_dim),
-                        device=self.device)
+        z = torch.randn(
+            (real_imgs.size(0), self.generator.noise_dim), device=self.device
+        )
 
         if (
-                self.state.phase is None
-                or self.state.phase == "discriminator_train"
+            self.state.phase is None
+            or self.state.phase == "discriminator_train"
         ):
             # (None for validation mode)
             fake_imgs = self.generator(z)

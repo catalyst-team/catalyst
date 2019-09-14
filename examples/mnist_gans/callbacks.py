@@ -9,14 +9,14 @@ from tensorboardX import SummaryWriter
 @registry.Callback
 class VisualizationCallback(Callback):
     def __init__(
-            self,
-            input_keys=None,
-            output_keys=None,
-            batch_frequency=25,
-            concat_images=True,
-            max_images=20,
-            n_row=1,
-            denorm="default"
+        self,
+        input_keys=None,
+        output_keys=None,
+        batch_frequency=25,
+        concat_images=True,
+        max_images=20,
+        n_row=1,
+        denorm="default"
     ):
         if input_keys is None:
             self.input_keys = []
@@ -41,7 +41,8 @@ class VisualizationCallback(Callback):
         else:
             raise ValueError(
                 f"Unexpected format of 'output_keys' "
-                f"argument: must be string or list/tuple")
+                f"argument: must be string or list/tuple"
+            )
 
         if len(self.input_keys) + len(self.output_keys) == 0:
             raise ValueError("Useless visualizer: pass at least one image key")
@@ -76,9 +77,11 @@ class VisualizationCallback(Callback):
 
     def compute_visualizations(self, state):
         input_tensors = [
-            state.input[input_key] for input_key in self.input_keys]
+            state.input[input_key] for input_key in self.input_keys
+        ]
         output_tensors = [
-            state.output[output_key] for output_key in self.output_keys]
+            state.output[output_key] for output_key in self.output_keys
+        ]
         visualizations = dict()
         if self.concat_images:
             viz_name = "|".join(self.input_keys + self.output_keys)
@@ -90,8 +93,8 @@ class VisualizationCallback(Callback):
         else:
             visualizations = dict(
                 (k, self.denorm(v)) for k, v in zip(
-                    self.input_keys + self.output_keys,
-                    input_tensors + output_tensors
+                    self.input_keys + self.output_keys, input_tensors +
+                    output_tensors
                 )
             )
         return visualizations

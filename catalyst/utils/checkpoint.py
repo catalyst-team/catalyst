@@ -18,8 +18,9 @@ def pack_checkpoint(
         raise NotImplementedError()
     else:
         model_ = get_real_module(model)
-        checkpoint["model_state_dict"] = maybe_recursive_call(model_,
-                                                              "state_dict")
+        checkpoint["model_state_dict"] = maybe_recursive_call(
+            model_, "state_dict"
+        )
 
     for dict2save, name2save in zip(
         [criterion, optimizer, scheduler],
@@ -66,8 +67,11 @@ def unpack_checkpoint(
 ):
     if model is not None:
         model = get_real_module(model)
-        maybe_recursive_call(model, "load_state_dict",
-                             recursive_args=checkpoint["model_state_dict"])
+        maybe_recursive_call(
+            model,
+            "load_state_dict",
+            recursive_args=checkpoint["model_state_dict"]
+        )
 
     for dict2load, name2load in zip(
         [criterion, optimizer, scheduler],

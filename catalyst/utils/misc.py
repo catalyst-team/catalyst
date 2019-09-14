@@ -88,11 +88,12 @@ def flatten_dict(d, parent_key="", sep="/"):
 
 
 def maybe_recursive_call(
-        object_or_dict,
-        method,
-        recursive_args=None,
-        recursive_kwargs=None,
-        **kwargs):
+    object_or_dict,
+    method,
+    recursive_args=None,
+    recursive_kwargs=None,
+    **kwargs
+):
     if isinstance(object_or_dict, dict):
         result = type(object_or_dict)()
         for k, v in object_or_dict.items():
@@ -100,10 +101,13 @@ def maybe_recursive_call(
                 None if recursive_args is None else recursive_args[k]
             r_kwargs = \
                 None if recursive_kwargs is None else recursive_kwargs[k]
-            result[k] = maybe_recursive_call(v, method,
-                                             recursive_args=r_args,
-                                             recursive_kwargs=r_kwargs,
-                                             **kwargs)
+            result[k] = maybe_recursive_call(
+                v,
+                method,
+                recursive_args=r_args,
+                recursive_kwargs=r_kwargs,
+                **kwargs
+            )
         return result
 
     r_args = recursive_args or []
