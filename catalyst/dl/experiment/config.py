@@ -151,6 +151,12 @@ class ConfigExperiment(Experiment):
                 for pg in optimizer.param_groups:
                     pg[key] = value
 
+            if torch.cuda.is_available():
+                for state in optimizer.state.values():
+                    for k, v in state.items():
+                        if isinstance(v, torch.Tensor):
+                            state[k] = v.cuda()
+
         return optimizer
 
     def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
