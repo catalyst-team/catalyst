@@ -107,7 +107,7 @@ class Runner(ABC):
 
         self._run_event("batch_start")
         self.state.timer.start("_timers/model_time")
-        self.state.output = self.predict_batch(batch)
+        self.state.output = self.forward(batch)
         self.state.timer.stop("_timers/model_time")
         self.state.timer.stop("_timers/batch_time")
         self._run_event("batch_end")
@@ -196,6 +196,10 @@ class Runner(ABC):
             self._run_event("exception")
 
         return self
+
+    @abstractmethod
+    def forward(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
+        pass
 
 
 __all__ = ["Runner"]
