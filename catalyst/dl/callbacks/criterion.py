@@ -38,7 +38,6 @@ class CriterionCallback(Callback):
         output_key: str = "logits",
         prefix: str = "loss",
         criterion_key: str = None,
-        loss_key: str = None,
         multiplier: float = 1.0
     ):
         """
@@ -47,10 +46,10 @@ class CriterionCallback(Callback):
                 If None, the whole input will be passed to the criterion.
             output_key (str): key that takes values from the output dictionary
                 If None, the whole output will be passed to the criterion.
-            prefix (str): prefix for metrics
+            prefix (str): prefix for metrics and output key for loss
+                in ``state.loss`` dictionary
             criterion_key (str): A key to take a criterion in case
                 there are several of them and they are in a dictionary format.
-            loss_key (str): output key for loss in ``state.loss`` dictionary
             multiplier (float): scale factor for the output loss.
         """
         super().__init__(CallbackOrder.Criterion)
@@ -58,7 +57,6 @@ class CriterionCallback(Callback):
         self.output_key = output_key
         self.prefix = prefix
         self.criterion_key = criterion_key
-        self.loss_key = loss_key
         self.multiplier = multiplier
 
     @staticmethod
@@ -89,7 +87,7 @@ class CriterionCallback(Callback):
             }
         )
 
-        _add_loss_to_state(self.loss_key, state, loss)
+        _add_loss_to_state(self.prefix, state, loss)
 
 
 class CriterionAggregatorCallback(Callback):
@@ -118,7 +116,7 @@ class CriterionAggregatorCallback(Callback):
             "prefix must be str"
         self.prefix = prefix
 
-        if not isinstance(loss_keys, list):
+        if not isinstance(loss_keys, list) and loss_keys is not None:
             loss_keys = [loss_keys]
         self.loss_keys = loss_keys
 
