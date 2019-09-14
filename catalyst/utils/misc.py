@@ -111,6 +111,8 @@ def maybe_recursive_call(
         return result
 
     r_args = recursive_args or []
+    if not isinstance(r_args, (list, tuple)):
+        r_args = [r_args]
     r_kwargs = recursive_kwargs or {}
     return getattr(object_or_dict, method)(*r_args, **r_kwargs, **kwargs)
 
