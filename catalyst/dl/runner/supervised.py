@@ -190,7 +190,7 @@ class SupervisedRunner(Runner):
         check: bool = False,
     ) -> None:
         """
-        Do the inference on the model.
+        Makes the inference on the model.
 
         Args:
             model (torch.nn.Module): model to infer
@@ -232,7 +232,24 @@ class SupervisedRunner(Runner):
         state_kwargs: Dict = None,
         fp16: Union[Dict, bool] = None,
         check: bool = False,
-    ):
+    ) -> Any:
+        """
+        Makes a prediction on the whole loader with the specified model.
+
+        Args:
+            model (torch.nn.Module): model to infer
+            loader (DataLoader): dictionary containing only one
+                ``torch.utils.data.DataLoader`` for inference
+            resume (str): path to checkpoint for model
+            verbose (bool): ff true, it displays the status of the inference
+                to the console.
+            state_kwargs (dict): additional state params to ``RunnerState``
+            fp16 (Union[Dict, bool]): If not None, then sets inference to FP16.
+                See https://nvidia.github.io/apex/amp.html#properties
+                if fp16=True, params by default will be ``{"opt_level": "O1"}``
+            check (bool): if True, then only checks that pipeline is working
+                (3 epochs only)
+        """
         loaders = OrderedDict([("infer", loader)])
 
         callbacks = OrderedDict([("inference", InferCallback())])
