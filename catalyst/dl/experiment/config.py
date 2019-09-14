@@ -158,6 +158,8 @@ class ConfigExperiment(Experiment):
             model: Union[_Model, Dict[str, _Model]],
             **params
     ) -> _Optimizer:
+        # TODO 1: refactoring; this method is too long
+        # TODO 2: load state dicts for schedulers & criteria
         layerwise_params = \
             params.pop("layerwise_params", OrderedDict())
         no_bias_weight_decay = \
@@ -208,12 +210,18 @@ class ConfigExperiment(Experiment):
 
         load_from_previous_stage = \
             params.pop("load_from_previous_stage", False)
+        optimizer_key = params.pop("optimizer_key", None)
         optimizer = OPTIMIZERS.get_from_params(**params, params=model_params)
 
         if load_from_previous_stage:
-            checkpoint_path = f"{self.logdir}/checkpoints/best.pth"
+            checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
             checkpoint = utils.load_checkpoint(checkpoint_path)
-            utils.unpack_checkpoint(checkpoint, optimizer=optimizer)
+
+            dict2load = optimizer
+            if optimizer_key:
+                dict2load = {optimizer_key: optimizer}
+
+            utils.unpack_checkpoint(checkpoint, optimizer=dict2load)
             for key, value in params.items():
                 for pg in optimizer.param_groups:
                     pg[key] = value
@@ -232,6 +240,11 @@ class ConfigExperiment(Experiment):
         if key_value_flag:
             optimizer = {}
             for key, params_ in optimizer_params.items():
+                # load specified optimizer from checkpoint
+                optimizer_key = "optimizer_key"
+                assert optimizer_key not in params_, "keyword reserved"
+                params_[optimizer_key] = key
+
                 optimizer[key] = self._get_optimizer(stage, model, **params_)
         else:
             optimizer = self._get_optimizer(stage, model, **optimizer_params)
