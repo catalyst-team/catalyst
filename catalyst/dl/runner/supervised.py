@@ -110,7 +110,42 @@ class SupervisedRunner(Runner):
         fp16: Union[Dict, bool] = None,
         monitoring_params: Dict = None,
         check: bool = False,
-    ):
+    ) -> None:
+        """
+        Starts the training process of the model.
+
+        Args:
+            model (torch.nn.Module): model to train
+            criterion (nn.Module): criterion function for training
+            optimizer (optim.Optimizer): optimizer for training
+            loaders (dict): dictionary containing one or several
+                ``torch.utils.data.DataLoader`` for training and validation
+            logdir (str): path to output directory
+            callbacks (List[catalyst.dl.Callback]): list of callbacks
+            scheduler (optim.lr_scheduler._LRScheduler): scheduler for training
+            num_epochs (int): number of training epochs
+            valid_loader (str): loader name used to calculate
+                the metrics and save the checkpoints. For example,
+                you can pass `train` and then
+                the metrics will be taken from `train` loader.
+            main_metric (str): the key to the name of the metric
+                by which the checkpoints will be selected.
+            minimize_metric (bool): flag to indicate whether
+                the ``main_metric`` should be minimized.
+            verbose (bool): ff true, it displays the status of the training
+                to the console.
+            state_kwargs (dict): additional state params to ``RunnerState``
+            checkpoint_data (dict): additional data to save in checkpoint,
+                for example: ``class_names``, ``date_of_training``, etc
+            fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
+                See https://nvidia.github.io/apex/amp.html#properties
+                if fp16=True, params by default will be ``{"opt_level": "O1"}``
+            monitoring_params (dict): If not None, then create monitoring
+                through Weights&Biases. This params is used for ``wandb.init``
+                see https://docs.wandb.com/wandb/init
+            check (bool): if True, then only checks that pipeline is working
+                (3 epochs only)
+        """
         if len(loaders) == 1:
             valid_loader = list(loaders.keys())[0]
             logger.warning(
@@ -119,6 +154,10 @@ class SupervisedRunner(Runner):
             )
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
+
+        if model is not None:
+            self.model = model
+
         experiment = self._default_experiment(
             stage="train",
             model=model,
@@ -149,9 +188,30 @@ class SupervisedRunner(Runner):
         state_kwargs: Dict = None,
         fp16: Union[Dict, bool] = None,
         check: bool = False,
-    ):
+    ) -> None:
+        """
+        Do the inference on the model.
+
+        Args:
+            model (torch.nn.Module): model to infer
+            loaders (dict): dictionary containing one or several
+                ``torch.utils.data.DataLoader`` for inference
+            callbacks (List[catalyst.dl.Callback]): list of inference callbacks
+            verbose (bool): ff true, it displays the status of the inference
+                to the console.
+            state_kwargs (dict): additional state params to ``RunnerState``
+            fp16 (Union[Dict, bool]): If not None, then sets inference to FP16.
+                See https://nvidia.github.io/apex/amp.html#properties
+                if fp16=True, params by default will be ``{"opt_level": "O1"}``
+            check (bool): if True, then only checks that pipeline is working
+                (3 epochs only)
+        """
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
+
+        if model is not None:
+            self.model = model
+
         experiment = self._default_experiment(
             stage="infer",
             model=model,
@@ -165,6 +225,7 @@ class SupervisedRunner(Runner):
 
     def predict_loader(
         self,
+        model: _Model,
         loader: DataLoader,
         resume: str = None,
         verbose: bool = False,
@@ -179,7 +240,7 @@ class SupervisedRunner(Runner):
             callbacks["loader"] = CheckpointCallback(resume=resume)
 
         self.infer(
-            model=self.model,
+            model=model,
             loaders=loaders,
             callbacks=callbacks,
             verbose=verbose,
