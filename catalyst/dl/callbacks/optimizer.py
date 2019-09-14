@@ -2,6 +2,7 @@ import logging
 from typing import Dict, List, Callable
 
 import safitty
+import torch
 
 from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 from catalyst.dl.registry import GRAD_CLIPPERS
@@ -80,6 +81,29 @@ class OptimizerCallback(Callback):
         for i in range(len(optimizer.param_groups)):
             safitty.set(optimizer.param_groups, i, "weight_decay", value=0.0)
 
+    def _get_loss(self, state) -> torch.Tensor:
+        loss = state.get_key(key="loss", inner_key=self.loss_key)
+
+        if isinstance(loss, list):
+            if len(loss) > 1:
+                logger.warning(
+                    f"Attention, the loss is a list. "
+                    f"Only the last value will be used for `backward`."
+                    f"To aggregate losses into "
+                    "one value use `CriterionAggregatorCallback`"
+                )
+            loss = loss[-1]
+        if isinstance(loss, dict):
+            if len(loss) > 1:
+                error = "Loss is a dict, to aggregate losses into " \
+                        "one value use `CriterionAggregatorCallback`."
+                if self.loss_key is None:
+                    error = error + " Or try to pass `loss_key` " \
+                                    "in the OptimizerCallback init"
+                raise ValueError(error)
+            loss = list(loss.values())[-1]
+        return loss
+
     def on_batch_start(self, state):
         state.loss = None
 
@@ -87,20 +111,7 @@ class OptimizerCallback(Callback):
         if not state.need_backward:
             return
 
-        loss = state.get_key(key="loss", inner_key=self.loss_key)
-        if isinstance(loss, list):
-            logger.warning(
-                f"Attention, the loss is a list. "
-                f"Only the last value will be used for `backward`."
-                f"To aggregate losses into "
-                "one value use `CriterionAggregatorCallback`"
-            )
-            loss = loss[-1]
-        if isinstance(loss, dict):
-            raise ValueError(
-                "Loss is a dict, to aggregate losses into "
-                "one value use `CriterionAggregatorCallback`"
-            )
+        loss = self._get_loss(state)
 
         self._accumulation_counter += 1
         model = state.model
