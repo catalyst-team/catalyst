@@ -83,7 +83,12 @@ def unpack_checkpoint(
 
 
 def load_checkpoint(filepath):
+    def map_location(storage, loc):
+        if torch.cuda.is_available():
+            storage = storage.cuda()
+        return storage
+
     checkpoint = torch.load(
-        filepath, map_location=lambda storage, loc: storage
+        filepath, map_location=map_location
     )
     return checkpoint
