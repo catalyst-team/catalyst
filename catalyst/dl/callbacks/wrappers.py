@@ -1,22 +1,23 @@
 from typing import List
+
 from catalyst.dl.core import Callback, RunnerState
 
 
 class CallbackPhaseWrapper(Callback):
     """
-    CallbackWrapper which disables/enables handlers 
+    CallbackWrapper which disables/enables handlers
     dependant on current phase and event type
-    
+
     May be useful i.e. to disable/enable optimizers & losses
     """
     LEVEL_STAGE = "stage"
     LEVEL_EPOCH = "epoch"
     LEVEL_LOADER = "loader"
     LEVEL_BATCH = "batch"
-    
+
     TIME_START = "start"
     TIME_END = "end"
-    
+
     def __init__(
             self,
             base_callback: Callback,
@@ -34,7 +35,7 @@ class CallbackPhaseWrapper(Callback):
 
     def is_active_on_phase(self, phase, level, time):
         return self._is_active_on_phase(phase=phase)
-    
+
     def _is_active_on_phase(self, phase):
         if phase is None:
             # if phase is None every callback is active
@@ -47,7 +48,7 @@ class CallbackPhaseWrapper(Callback):
         return False
 
     def on_stage_start(self, state: RunnerState):
-        if self.is_active_on_phase(phase=state.phase, 
+        if self.is_active_on_phase(phase=state.phase,
                                    level=self.LEVEL_STAGE,
                                    time=self.TIME_START):
             self.callback.on_stage_start(state)
@@ -96,8 +97,8 @@ class CallbackPhaseWrapper(Callback):
 
     def on_exception(self, state: RunnerState):
         self.callback.on_exception(state)
-        
-        
+
+
 class CallbackPhaseBatchWrapper(CallbackPhaseWrapper):
     def is_active_on_phase(self, phase, level, time):
         if level != self.LEVEL_BATCH:
