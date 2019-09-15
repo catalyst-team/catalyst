@@ -417,7 +417,7 @@ runner.train(
 # In[ ]:
 
 runner_out = runner.predict_loader(
-    loaders["valid"], resume=f"{logdir}/checkpoints/best.pth"
+    model, loaders["valid"], resume=f"{logdir}/checkpoints/best.pth"
 )
 
 # In[ ]:
