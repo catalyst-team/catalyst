@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Any, List
+from typing import Optional, Any, List, Union
 
 import torch
 from catalyst.dl.core import Callback, RunnerState, CallbackOrder
@@ -60,8 +60,13 @@ class CriterionCallback(Callback):
         self.multiplier = multiplier
 
     @staticmethod
-    def _get(dictionary: dict, key: Optional[str]) -> Any:
-        result = dictionary[key] if key is not None else dictionary
+    def _get(dictionary: dict, keys: Optional[Union[str, List[str]]]) -> Any:
+        if keys is None:
+            result = dictionary
+        elif isinstance(keys, list):
+            result = {key: dictionary[key] for key in keys}
+        else:
+            result = dictionary[keys]
         return result
 
     def _compute_loss(self, state: RunnerState, criterion):

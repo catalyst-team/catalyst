@@ -85,14 +85,12 @@ class OptimizerCallback(Callback):
         loss = state.get_key(key="loss", inner_key=self.loss_key)
 
         if isinstance(loss, list):
-            if len(loss) > 1:
-                logger.warning(
-                    f"Attention, the loss is a list. "
-                    f"Only the last value will be used for `backward`."
-                    f"To aggregate losses into "
-                    "one value use `CriterionAggregatorCallback`"
-                )
-            loss = loss[-1]
+            raise ValueError(
+                f"Loss is a list. "
+                f"Only the last value will be used for `backward`."
+                f"To aggregate losses into "
+                "one value use `CriterionAggregatorCallback`"
+            )
         if isinstance(loss, dict):
             if len(loss) > 1:
                 error = "Loss is a dict, to aggregate losses into " \
