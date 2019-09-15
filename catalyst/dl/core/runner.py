@@ -99,6 +99,10 @@ class Runner(ABC):
     def predict_batch(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
         pass
 
+    @abstractmethod
+    def forward(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
+        pass
+
     def _run_batch(self, batch):
         self.state.step += self.state.batch_size
         batch = self._batch2device(batch, self.device)
@@ -196,10 +200,6 @@ class Runner(ABC):
             self._run_event("exception")
 
         return self
-
-    @abstractmethod
-    def forward(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
-        pass
 
 
 __all__ = ["Runner"]

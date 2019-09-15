@@ -2,7 +2,7 @@
 set -e
 pip install tifffile #TODO: check if really required
 
-wget https://www.dropbox.com/s/0rvuae4mj6jn922/isbi.tar.gz -O ./data/isbi.tar.gz
+wget -P data -N https://www.dropbox.com/s/0rvuae4mj6jn922/isbi.tar.gz
 tar -xf ./data/isbi.tar.gz -C ./data/
 
 (set -e; for f in examples/_tests_scripts/*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
