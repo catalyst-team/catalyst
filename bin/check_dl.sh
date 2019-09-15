@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 set -e
+pip install tifffile #TODO: check if really required
 
-pip install tifffile
-
-wget -P ./data/ https://www.dropbox.com/s/0rvuae4mj6jn922/isbi.tar.gz
+wget -P data -N https://www.dropbox.com/s/0rvuae4mj6jn922/isbi.tar.gz
 tar -xf ./data/isbi.tar.gz -C ./data/
 
 (set -e; for f in examples/_tests_scripts/*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
@@ -19,7 +18,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 
 if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     echo "File $LOGFILE does not exist"
-    exit -1
+    exit 1
 fi
 
 python -c """
@@ -44,7 +43,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 
 if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     echo "File $LOGFILE does not exist"
-    exit -1
+    exit 1
 fi
 
 python -c """

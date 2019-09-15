@@ -86,9 +86,28 @@ class SupervisedRunner(Runner):
     def _process_output_none(self, output: Mapping[str, Any]):
         return output
 
-    def predict_batch(self, batch: Mapping[str, Any]):
+    def forward(self, batch):
+        """
+        Should not be called directly outside of runner.
+        If your model has specific interface, override this method to use it
+        """
         output = self._process_input(batch)
         output = self._process_output(output)
+        return output
+
+    def predict_batch(self, batch: Mapping[str, Any]):
+        """
+        Run model for a batch of elements
+
+        WARN: You should not override this method. If you need specific model
+        call, override forward() method
+        Args:
+            batch: Key-value batch items
+        Returns: model output key-value
+
+        """
+        batch = self._batch2device(batch, self.device)
+        output = self.forward(batch)
         return output
 
     def train(
