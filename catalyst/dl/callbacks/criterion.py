@@ -34,17 +34,19 @@ class CriterionCallback(Callback):
     """
     def __init__(
         self,
-        input_key: str = "targets",
-        output_key: str = "logits",
+        input_key: Union[str, List[str]] = "targets",
+        output_key: Union[str, List[str]] = "logits",
         prefix: str = "loss",
         criterion_key: str = None,
         multiplier: float = 1.0
     ):
         """
         Args:
-            input_key (str): key that takes values from the input dictionary
+            input_key (Union[str, List[str]]): key or list of keys that takes
+                values from the input dictionary
                 If None, the whole input will be passed to the criterion.
-            output_key (str): key that takes values from the output dictionary
+            output_key (Union[str, List[str]]): key or list of keys that takes
+                values from the output dictionary
                 If None, the whole output will be passed to the criterion.
             prefix (str): prefix for metrics and output key for loss
                 in ``state.loss`` dictionary
@@ -103,7 +105,7 @@ class CriterionAggregatorCallback(Callback):
     def __init__(
         self,
         prefix: str,
-        loss_keys: List[str] = None,
+        loss_keys: Union[str, List[str]] = None,
         loss_aggregate_fn: str = "sum",
         multiplier: float = 1.0
     ) -> None:
@@ -121,7 +123,7 @@ class CriterionAggregatorCallback(Callback):
             "prefix must be str"
         self.prefix = prefix
 
-        if not isinstance(loss_keys, list) and loss_keys is not None:
+        if isinstance(loss_keys, str):
             loss_keys = [loss_keys]
         self.loss_keys = loss_keys
 
@@ -135,7 +137,7 @@ class CriterionAggregatorCallback(Callback):
 
         self.loss_aggregate_name = loss_aggregate_fn
 
-    def _get_losses(self, loss: Any) -> List[torch.Tensor]:
+    def _preprocess_loss(self, loss: Any) -> List[torch.Tensor]:
         if isinstance(loss, list):
             if self.loss_keys is not None:
                 logger.warning(
@@ -155,7 +157,7 @@ class CriterionAggregatorCallback(Callback):
 
     def on_batch_end(self, state: RunnerState) -> None:
         loss = state.get_key(key="loss")
-        loss = self._get_losses(loss)
+        loss = self._preprocess_loss(loss)
         loss = self.loss_fn(loss)
 
         state.metrics.add_batch_value(

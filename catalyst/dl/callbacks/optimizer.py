@@ -22,7 +22,7 @@ class OptimizerCallback(Callback):
         grad_clip_params: Dict = None,
         accumulation_steps: int = 1,
         optimizer_key: str = None,
-        loss_key: str = None,
+        loss_key: str = "loss",
     ):
         """
         Args:
@@ -92,14 +92,13 @@ class OptimizerCallback(Callback):
                 "one value use `CriterionAggregatorCallback`"
             )
         if isinstance(loss, dict):
-            if len(loss) > 1:
-                error = "Loss is a dict, to aggregate losses into " \
-                        "one value use `CriterionAggregatorCallback`."
-                if self.loss_key is None:
-                    error = error + " Or try to pass `loss_key` " \
-                                    "in the OptimizerCallback init"
-                raise ValueError(error)
-            loss = list(loss.values())[-1]
+            error = f"Loss is a dict: {list(loss.keys())}, " \
+                    f"to aggregate losses into " \
+                    "one value use `CriterionAggregatorCallback`."
+            if self.loss_key is None:
+                error = error + " Or try to pass `loss_key` " \
+                                "in the OptimizerCallback init"
+            raise ValueError(error)
         return loss
 
     def on_batch_start(self, state):
