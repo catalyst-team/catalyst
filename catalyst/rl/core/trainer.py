@@ -19,6 +19,7 @@ from .environment import EnvironmentSpec
 from .algorithm import AlgorithmSpec
 
 logger = logging.getLogger(__name__)
+
 if os.environ.get("USE_WANDB", "1") == "1":
     try:
         import wandb
