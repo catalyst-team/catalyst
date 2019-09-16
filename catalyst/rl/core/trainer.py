@@ -19,13 +19,16 @@ from .environment import EnvironmentSpec
 from .algorithm import AlgorithmSpec
 
 logger = logging.getLogger(__name__)
-try:
-    import wandb
-    WANDB_ENABLED = True
-except ImportError:
-    logger.warning(
-        "wandb not available, to install wandb, run `pip install wandb`."
-    )
+if os.environ.get("USE_WANDB", "1") == "1":
+    try:
+        import wandb
+        WANDB_ENABLED = True
+    except ImportError:
+        logger.warning(
+            "wandb not available, to install wandb, run `pip install wandb`."
+        )
+        WANDB_ENABLED = False
+else:
     WANDB_ENABLED = False
 
 
