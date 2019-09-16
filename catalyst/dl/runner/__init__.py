@@ -3,6 +3,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from .supervised import SupervisedRunner
+from .gan_runner import GANRunner
 
 try:
     import wandb

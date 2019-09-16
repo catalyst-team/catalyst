@@ -66,3 +66,6 @@ class GANRunner(Runner):
                 "fake_images": fake_imgs,  # visualization purposes only
                 "fake_logits": fake_logits
             }
+
+
+__all__ = ["GANRunner"]

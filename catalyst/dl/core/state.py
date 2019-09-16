@@ -4,6 +4,7 @@ from pathlib import Path
 
 from torch.optim.optimizer import Optimizer
 
+import safitty
 from catalyst.dl.utils import process_callback
 from catalyst.utils.frozen import FrozenClass
 

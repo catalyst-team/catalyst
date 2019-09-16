@@ -5,6 +5,12 @@ from catalyst.dl.core import Callback, CallbackOrder
 
 
 class Phase:
+    """
+    Class for storing information about certain phase, including
+    - phase name
+    - number of steps (batches) in phase before next phase is chosen
+    - how many steps (batches) are done already
+    """
     def __init__(self, name: str = None, steps: int = None):
         self.steps = int(steps) if steps is not None else None
         self.curr_step = 0
@@ -12,6 +18,14 @@ class Phase:
 
 
 class PhaseManager:
+    """
+    Class for storing & managing all phases in experiment configuration
+
+    Stores separately current phases in train & validation modes
+
+    By calling `.step(...)` method current phase is updated by step-size
+    and if current phase is finished, the next phase becomes current
+    """
     def __init__(
             self,
             train_phases: List[Phase],
