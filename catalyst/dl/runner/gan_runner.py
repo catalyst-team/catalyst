@@ -32,7 +32,7 @@ class GANRunner(Runner):
         self.generator = self.model[self.model_generator_key]
         self.discriminator = self.model[self.model_discriminator_key]
 
-    def predict_batch(self, batch):
+    def forward(self, batch):
         real_imgs, _ = batch["images"], batch["targets"]
 
         real_targets = torch.ones((real_imgs.size(0), 1), device=self.device)

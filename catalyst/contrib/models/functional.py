@@ -3,8 +3,9 @@ from functools import partial
 
 import torch.nn as nn
 
-from .sequential import SequentialNet
+from catalyst.contrib.registry import MODULES
 from catalyst import utils
+from .sequential import SequentialNet
 
 
 def get_convolution_net(
@@ -15,12 +16,12 @@ def get_convolution_net(
     strides: List = None,
     groups: List = None,
     use_bias: bool = False,
-    use_normalization: bool = False,
+    normalization: str = None,
     dropout_rate: float = None,
     activation: str = "ReLU"
 ) -> nn.Module:
 
-    channels = channels or [16, 32, 16]
+    channels = channels or [32, 64, 64]
     kernel_sizes = kernel_sizes or [8, 4, 3]
     strides = strides or [4, 2, 1]
     groups = groups or [1, 1, 1]
@@ -29,8 +30,9 @@ def get_convolution_net(
 
     def _get_block(**conv_params):
         layers = [nn.Conv2d(**conv_params)]
-        if use_normalization:
-            layers.append(nn.InstanceNorm2d(conv_params["out_channels"]))
+        if normalization is not None:
+            normalization_fn = MODULES.get_if_str(normalization)
+            layers.append(normalization_fn(conv_params["out_channels"]))
         if dropout_rate is not None:
             layers.append(nn.Dropout2d(p=dropout_rate))
         layers.append(activation_fn(inplace=True))
@@ -65,7 +67,7 @@ def get_linear_net(
     history_len: int = 1,
     features: List = None,
     use_bias: bool = False,
-    use_normalization: bool = False,
+    normalization: str = None,
     dropout_rate: float = None,
     activation: str = "ReLU",
     residual: Union[bool, str] = False,
@@ -79,7 +81,7 @@ def get_linear_net(
         hiddens=features,
         layer_fn=nn.Linear,
         bias=use_bias,
-        norm_fn=nn.LayerNorm if use_normalization else None,
+        norm_fn=normalization,
         dropout=partial(nn.Dropout, p=dropout_rate)
         if dropout_rate is not None
         else None,

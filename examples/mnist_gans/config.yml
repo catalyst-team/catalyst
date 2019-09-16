@@ -43,7 +43,6 @@ stages:
       callback: CriterionCallback
       input_key: "real_targets"
       output_key: "fake_logits"
-      loss_key: loss_g
       prefix: loss_g
 
     loss_d_real:
@@ -53,15 +52,19 @@ stages:
       callback: CriterionCallback
       input_key: "real_targets"
       output_key: "real_logits"
-      loss_key: loss_d_real
       prefix: loss_d_real
     loss_d_fake:
       _wrapper: *d_train_wrapper
       callback: CriterionCallback
       input_key: "fake_targets"
       output_key: "fake_logits"
-      loss_key: loss_d_fake
       prefix: loss_d_fake
+    loss_d:
+      _wrapper: *d_train_wrapper
+      callback: CriterionAggregatorCallback
+      loss_keys: [loss_d_real, loss_d_fake]
+      loss_aggregate_fn: "mean"
+      prefix: loss_d
     optim_g:
       _wrapper: *g_train_wrapper
       callback: OptimizerCallback
@@ -71,8 +74,7 @@ stages:
       _wrapper: *d_train_wrapper
       callback: OptimizerCallback
       optimizer_key: discriminator
-      loss_key: [loss_d_real, loss_d_fake]
-      prefix: loss_d
+      loss_key: loss_d
     visualizer:
       callback: VisualizationCallback
       output_keys: "fake_images"

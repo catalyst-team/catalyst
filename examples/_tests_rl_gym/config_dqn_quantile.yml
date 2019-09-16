@@ -13,7 +13,7 @@ db:
   prefix: gym-dqn-quantile  # TODO: remove
 
 environment:
-  environment: GymWrapper
+  environment: GymEnvWrapper
   env_name: CartPole-v1
 
   history_len: &history_len 4
@@ -30,12 +30,12 @@ agents:
         history_len: *history_len
         features: [32]  # first hidden would be taken from state_shape
         use_bias: false
-        use_normalization: true
+        normalization: LayerNorm
         activation: ReLU
       main_net_params:
         features: [32]
         use_bias: false
-        use_normalization: true
+        normalization: LayerNorm
         activation: ReLU
     value_head_params:  # hidden representation -> ~policy
       in_features: 32  # out features would be taken from action_shape

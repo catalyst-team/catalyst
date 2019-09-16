@@ -56,12 +56,14 @@ if [[ "$DB_SPEC" == "mongo" ]]; then
     mkdir -p $DB_LOGDIR
 fi
 
-date=$(date +%y%m%d-%H%M%S-%3N)
-CURR_RUN_LOGDIR="${RUN_LOGDIR}/${date}-agent"
+date=$(date +%y%m%d-%H%M%S)
+postfix=$(openssl rand -hex 4)
+logname="$date-$postfix"
+CURR_RUN_LOGDIR="${RUN_LOGDIR}/${logname}-agent"
 mkdir -p $CURR_RUN_LOGDIR
 if [[ "$DB_SPEC" == "mongo" ]]; then
-    CURR_DB_LOGDIR="${DB_LOGDIR}/${date}-mongodb"
-    CURR_DB_LOGFILE="${DB_LOGDIR}/${date}-mongo.log"
+    CURR_DB_LOGDIR="${DB_LOGDIR}/${logname}-mongodb"
+    CURR_DB_LOGFILE="${DB_LOGDIR}/${logname}-mongo.log"
     mkdir -p $CURR_DB_LOGDIR
 fi
 

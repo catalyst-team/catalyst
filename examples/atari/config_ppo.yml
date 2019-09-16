@@ -1,6 +1,6 @@
 args:
   logdir: ./logs/atari-ppo
-  expdir: src
+#  expdir: src
 
   vis: 0
   infer: 0   #  change me
@@ -19,7 +19,6 @@ environment:
   history_len: &history_len 4
   frame_skip: 4
   reward_scale: 1.0
-  step_delay: 0.0
 
 agents:
   actor:
@@ -31,9 +30,8 @@ agents:
         history_len: *history_len
         channels: [32 64, 32]
         use_bias: false
-        use_groups: false
-        use_normalization: false
-        use_dropout: false
+        normalization: null
+        dropout_rate: null
         activation: LeakyReLU
       main_net_params:
         out_features: &embedding_size 512
@@ -51,14 +49,13 @@ agents:
         history_len: *history_len
         channels: [32 64, 32]
         use_bias: false
-        use_groups: false
-        use_normalization: false
-        use_dropout: false
+        normalization: null
+        dropout_rate: null
         activation: LeakyReLU
       main_net_params:
         features: [512]
         use_bias: false
-        use_normalization: true
+        normalization: LayerNorm
         activation: ReLU
     value_head_params:  # hidden representation -> ~policy
       in_features: 512
