@@ -71,8 +71,8 @@ class VisualizationCallback(Callback):
     def _get_tensorboard_logger(state: RunnerState) -> SummaryWriter:
         tb_key = VisualizationCallback.TENSORBOARD_LOGGER_KEY
         if (
-                tb_key in state.loggers
-                and state.loader_name in state.loggers[tb_key].loggers
+            tb_key in state.loggers
+            and state.loader_name in state.loggers[tb_key].loggers
         ):
             return state.loggers[tb_key].loggers[state.loader_name]
         raise RuntimeError(
