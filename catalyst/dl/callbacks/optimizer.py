@@ -23,7 +23,7 @@ class OptimizerCallback(Callback):
         accumulation_steps: int = 1,
         optimizer_key: str = None,
         loss_key: str = "loss",
-        decouple_weight_decay = True
+        decouple_weight_decay: bool = True
     ):
         """
         Args:
