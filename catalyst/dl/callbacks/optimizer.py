@@ -54,7 +54,7 @@ class OptimizerCallback(Callback):
         grad_clip_fn: Callable = None
     ):
         for group, wd in zip(optimizer.param_groups, optimizer_wds):
-            if self.decouple_wd and wd > 0:
+            if wd > 0:
                 for param in group["params"]:
                     param.data = param.data.add(
                         -wd * group["lr"], param.data
@@ -74,16 +74,19 @@ class OptimizerCallback(Callback):
         state.set_key(momentum, "momentum", inner_key=self.optimizer_key)
 
     def on_epoch_start(self, state):
+        optimizer = state.get_key(
+            key="optimizer", inner_key=self.optimizer_key
+        )
         if self.decouple_wd:
-            optimizer = state.get_key(
-                key="optimizer", inner_key=self.optimizer_key
-            )
             self._optimizer_wd = [
                 group.get("weight_decay", 0.0)
                 for group in optimizer.param_groups
             ]
             for i in range(len(optimizer.param_groups)):
-                safitty.set(optimizer.param_groups, i, "weight_decay", value=0.0)
+                safitty.set(optimizer.param_groups, i, "weight_decay",
+                            value=0.0)
+        else:
+            self._optimizer_wd = [0.0] * len(optimizer.param_groups)
 
     def _get_loss(self, state) -> torch.Tensor:
         loss = state.get_key(key="loss", inner_key=self.loss_key)
@@ -146,7 +149,8 @@ class OptimizerCallback(Callback):
                 key="optimizer", inner_key=self.optimizer_key
             )
             for i, wd in enumerate(self._optimizer_wd):
-                safitty.set(optimizer.param_groups, i, "weight_decay", value=wd)
+                safitty.set(optimizer.param_groups, i, "weight_decay",
+                            value=wd)
 
 
 __all__ = ["OptimizerCallback"]
