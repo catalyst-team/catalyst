@@ -9,14 +9,14 @@ class GANRunner(Runner):
         self,
         model=None,
         device=None,
-        images_key="images",
+        features_key="images",
         targets_key="targets",
         model_generator_key="generator",
         model_discriminator_key="discriminator"
     ):
         super().__init__(model, device)
 
-        self.images_key = images_key
+        self.features_key = features_key
         self.targets_key = targets_key
 
         self.model_generator_key = model_generator_key
@@ -25,7 +25,7 @@ class GANRunner(Runner):
     def _batch2device(self, batch: Mapping[str, Any], device):
         if isinstance(batch, (list, tuple)):
             assert len(batch) == 2
-            batch = {self.images_key: batch[0], self.targets_key: batch[1]}
+            batch = {self.features_key: batch[0], self.targets_key: batch[1]}
         return super()._batch2device(batch, device)
 
     def _run_prestage(self, stage: str):
@@ -33,7 +33,7 @@ class GANRunner(Runner):
         self.discriminator = self.model[self.model_discriminator_key]
 
     def forward(self, batch):
-        real_imgs, _ = batch["images"], batch["targets"]
+        real_imgs, _ = batch[self.features_key], batch[self.targets_key]
 
         real_targets = torch.ones((real_imgs.size(0), 1), device=self.device)
         fake_targets = 1 - real_targets

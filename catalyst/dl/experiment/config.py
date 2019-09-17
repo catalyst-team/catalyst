@@ -129,8 +129,6 @@ class ConfigExperiment(Experiment):
                 model[key] = ConfigExperiment._get_model(**params_)
         else:
             model = MODELS.get_from_params(**params)
-            if model is not None and torch.cuda.is_available():
-                model = model.cuda()
         return model
 
     @staticmethod
@@ -219,7 +217,7 @@ class ConfigExperiment(Experiment):
             checkpoint = utils.load_checkpoint(checkpoint_path)
 
             dict2load = optimizer
-            if optimizer_key:
+            if optimizer_key is not None:
                 dict2load = {optimizer_key: optimizer}
 
             # move optimizer to device

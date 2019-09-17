@@ -8,8 +8,8 @@ model_params:
 
 
 args:
-  expdir: "mnist_gans"
-  logdir: "./logs/mnist_gan"
+  expdir: "examples/mnist_gans"
+  logdir: "./examples/logs/mnist_gan"
 
 
 stages:

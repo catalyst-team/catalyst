@@ -66,9 +66,9 @@ class PhaseManagerCallback(Callback):
     PhaseManagerCallback updates state.phase
     """
 
-    VM_ALL = "all"  # (in validation) use all callbacks
-    VM_SAME = "same"  # (in validation) same phases as in training
-    allowed_valid_modes = [VM_SAME, VM_ALL]
+    VALIDATION_MODE_ALL = "all"  # (in validation) use all callbacks
+    VALIDATION_MODE_SAME = "same"  # (in validation) same phases as in training
+    allowed_valid_modes = [VALIDATION_MODE_SAME, VALIDATION_MODE_ALL]
 
     def __init__(
             self,
@@ -101,9 +101,9 @@ class PhaseManagerCallback(Callback):
             ]
 
         if valid_phases is None:
-            if valid_mode == self.VM_ALL:
+            if valid_mode == self.VALIDATION_MODE_ALL:
                 valid_phases = [Phase(name=None, steps=None)]
-            elif valid_mode == self.VM_SAME:
+            elif valid_mode == self.VALIDATION_MODE_SAME:
                 valid_phases = [Phase(name=p.name, steps=p.steps)
                                 for p in train_phases]
             else:

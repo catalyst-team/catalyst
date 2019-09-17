@@ -1,7 +1,6 @@
 import torch
 import torchvision.utils
 from catalyst.dl import registry
-from catalyst.dl.callbacks.logging import TensorboardLogger
 from catalyst.dl.core import Callback, RunnerState
 from tensorboardX import SummaryWriter
 
@@ -66,11 +65,16 @@ class VisualizationCallback(Callback):
         self._loader_batch_count = 0
         self._loader_visualized_in_current_epoch = False
 
+    TENSORBOARD_LOGGER_KEY = "tensorboard"
+
     @staticmethod
     def _get_tensorboard_logger(state: RunnerState) -> SummaryWriter:
-        for logger_name, logger in state.loggers.items():
-            if isinstance(logger, TensorboardLogger):
-                return logger.loggers[state.loader_name]
+        tb_key = VisualizationCallback.TENSORBOARD_LOGGER_KEY
+        if (
+                tb_key in state.loggers
+                and state.loader_name in state.loggers[tb_key].loggers
+        ):
+            return state.loggers[tb_key].loggers[state.loader_name]
         raise RuntimeError(
             f"Cannot find Tensorboard logger for loader {state.loader_name}"
         )
