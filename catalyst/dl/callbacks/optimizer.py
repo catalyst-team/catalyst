@@ -23,7 +23,7 @@ class OptimizerCallback(Callback):
         accumulation_steps: int = 1,
         optimizer_key: str = None,
         loss_key: str = "loss",
-        decouple_wd = True
+        decouple_weight_decay = True
     ):
         """
         Args:
@@ -33,7 +33,8 @@ class OptimizerCallback(Callback):
             optimizer_key (str): A key to take a optimizer in case
                 there are several of them and they are in a dictionary format.
             loss_key (str): key to get loss from ``state.loss``
-            decouple_wd (bool): If True - decouple weight decay regularization.
+            decouple_weight_decay (bool): If True - decouple weight decay
+                regularization.
         """
         super().__init__(CallbackOrder.Optimizer)
         grad_clip_params: dict = grad_clip_params or {}
@@ -42,7 +43,7 @@ class OptimizerCallback(Callback):
         self.accumulation_steps: int = accumulation_steps
         self.optimizer_key: str = optimizer_key
         self.loss_key: str = loss_key
-        self.decouple_wd = decouple_wd
+        self.decouple_wd = decouple_weight_decay
         self._optimizer_wd: List[float] = [0.0]
         self._accumulation_counter: int = 0
 

@@ -5,7 +5,8 @@ from torch.optim.optimizer import Optimizer
 from torch.utils.tensorboard import SummaryWriter
 
 
-def log_lamb_rs(optimizer: Optimizer, event_writer: SummaryWriter,
+def log_lamb_rs(optimizer: Optimizer,
+                event_writer: SummaryWriter,
                 token_count: int):
     """Log a histogram of trust ratio scalars in across layers."""
     results = collections.defaultdict(list)
@@ -21,8 +22,13 @@ def log_lamb_rs(optimizer: Optimizer, event_writer: SummaryWriter,
 
 
 class Lamb(Optimizer):
-    def __init__(self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-6,
-                 weight_decay=0, adam=False):
+    def __init__(self,
+                 params,
+                 lr=1e-3,
+                 betas=(0.9, 0.999),
+                 eps=1e-6,
+                 weight_decay=0,
+                 adam=False):
         """Implements Lamb algorithm from `Large Batch Optimization for
         Deep Learning: Training BERT in 76 minutes`_.
         Arguments:
