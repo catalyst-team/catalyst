@@ -8,6 +8,14 @@ from catalyst import utils
 from .sequential import SequentialNet
 
 
+def _process_additional_params(params, layers):
+    if isinstance(params, List):
+        assert len(params) == len(layers)
+    else:
+        params = [params] * len(layers)
+    return params
+
+
 def get_convolution_net(
     in_channels: int,
     history_len: int = 1,
@@ -15,10 +23,10 @@ def get_convolution_net(
     kernel_sizes: List = None,
     strides: List = None,
     groups: List = None,
-    use_bias: bool = False,
-    normalization: str = None,
-    dropout_rate: float = None,
-    activation: str = "ReLU"
+    use_bias: Union[bool, List] = False,
+    normalization: Union[str, List] = None,
+    dropout_rate: Union[float, List] = None,
+    activation: Union[str, List] = "ReLU"
 ) -> nn.Module:
 
     channels = channels or [32, 64, 64]
@@ -27,6 +35,10 @@ def get_convolution_net(
     groups = groups or [1, 1, 1]
     activation_fn = nn.__dict__[activation]
     assert len(channels) == len(kernel_sizes) == len(strides) == len(groups)
+    use_bias = _process_additional_params(use_bias, channels)
+    normalization = _process_additional_params(normalization, channels)
+    dropout_rate = _process_additional_params(dropout_rate, channels)
+    activation = _process_additional_params(activation, channels)
 
     def _get_block(**conv_params):
         layers = [nn.Conv2d(**conv_params)]
@@ -75,8 +87,12 @@ def get_linear_net(
 ) -> nn.Module:
 
     features = features or [64, 128, 64]
-    features.insert(0, history_len * in_features)
+    use_bias = _process_additional_params(use_bias, features)
+    normalization = _process_additional_params(normalization, features)
+    dropout_rate = _process_additional_params(dropout_rate, features)
+    activation = _process_additional_params(activation, features)
 
+    features.insert(0, history_len * in_features)
     net = SequentialNet(
         hiddens=features,
         layer_fn=nn.Linear,
