@@ -5,7 +5,8 @@ from torch.optim.optimizer import Optimizer
 from torch.utils.tensorboard import SummaryWriter
 
 
-def log_lamb_rs(optimizer: Optimizer, event_writer: SummaryWriter, token_count: int):
+def log_lamb_rs(optimizer: Optimizer, event_writer: SummaryWriter,
+                token_count: int):
     """Log a histogram of trust ratio scalars in across layers."""
     results = collections.defaultdict(list)
     for group in optimizer.param_groups:
@@ -22,30 +23,33 @@ def log_lamb_rs(optimizer: Optimizer, event_writer: SummaryWriter, token_count: 
 class Lamb(Optimizer):
     def __init__(self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-6,
                  weight_decay=0, adam=False):
-        """Implements Lamb algorithm from
-        `Large Batch Optimization for Deep Learning: Training BERT in 76 minutes`_.
+        """Implements Lamb algorithm from `Large Batch Optimization for
+        Deep Learning: Training BERT in 76 minutes`_.
         Arguments:
-            params (iterable): iterable of parameters to optimize or dicts defining
-                parameter groups
+            params (iterable): iterable of parameters to optimize or dicts
+                defining parameter groups
             lr (float, optional): learning rate (default: 1e-3)
-            betas (Tuple[float, float], optional): coefficients used for computing
-                running averages of gradient and its square (default: (0.9, 0.999))
+            betas (Tuple[float, float], optional): coefficients used for
+                computing running averages of gradient
+                and its square (default: (0.9, 0.999))
             eps (float, optional): term added to the denominator to improve
                 numerical stability (default: 1e-8)
-            weight_decay (float, optional): weight decay (L2 penalty) (default: 0)
-            adam (bool, optional): always use trust ratio = 1, which turns this into
-                Adam. Useful for comparison purposes.
-        .. _Large Batch Optimization for Deep Learning: Training BERT in 76 minutes:
+            weight_decay (float, optional): weight decay (L2 penalty)
+                (default: 0)
+            adam (bool, optional): always use trust ratio = 1, which turns
+                this into Adam. Useful for comparison purposes.
+        .. _Large Batch Optimization for Deep Learning:
+            Training BERT in 76 minutes:
             https://arxiv.org/abs/1904.00962
         """
         if not 0.0 <= lr:
-            raise ValueError("Invalid learning rate: {}".format(lr))
+            raise ValueError(f"Invalid learning rate: {lr}")
         if not 0.0 <= eps:
-            raise ValueError("Invalid epsilon value: {}".format(eps))
+            raise ValueError(f"Invalid epsilon value: {eps}")
         if not 0.0 <= betas[0] < 1.0:
-            raise ValueError("Invalid beta parameter at index 0: {}".format(betas[0]))
+            raise ValueError(f"Invalid beta parameter at index 0: {betas[0]}")
         if not 0.0 <= betas[1] < 1.0:
-            raise ValueError("Invalid beta parameter at index 1: {}".format(betas[1]))
+            raise ValueError(f"Invalid beta parameter at index 1: {betas[1]}")
         defaults = dict(lr=lr, betas=betas, eps=eps,
                         weight_decay=weight_decay)
         self.adam = adam
@@ -62,7 +66,9 @@ class Lamb(Optimizer):
                     continue
                 grad = p.grad.data
                 if grad.is_sparse:
-                    raise RuntimeError('Lamb does not support sparse gradients, consider SparseAdam instad.')
+                    raise RuntimeError(
+                        'Lamb does not support sparse gradients, '
+                        'consider SparseAdam instad.')
 
                 state = self.state[p]
 
@@ -79,7 +85,8 @@ class Lamb(Optimizer):
 
                 state['step'] += 1
 
-                # Decay the first and second moment running average coefficient
+                # Decay the first and second moment
+                # running average coefficient
                 # m_t
                 exp_avg.mul_(beta1).add_(1 - beta1, grad)
                 # v_t
@@ -89,7 +96,8 @@ class Lamb(Optimizer):
                 # bias_correction1 = 1 - beta1 ** state['step']
                 # bias_correction2 = 1 - beta2 ** state['step']
                 # Apply bias to lr to avoid broadcast.
-                step_size = group['lr']  # * math.sqrt(bias_correction2) / bias_correction1
+                # * math.sqrt(bias_correction2) / bias_correction1
+                step_size = group['lr']
 
                 weight_norm = p.data.pow(2).sum().sqrt().clamp(0, 10)
 

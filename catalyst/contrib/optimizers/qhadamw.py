@@ -6,9 +6,10 @@ class QHAdamW(Optimizer):
     def __init__(self, params, lr=1e-3, betas=(0.995, 0.999),
                  nus=(0.7, 1.0), weight_decay=0.0, eps=1e-8):
         r"""
-        Combines the weight decay decoupling
-        from AdamW (Decoupled Weight Decay Regularization. Loshchilov and Hutter, 2019)
-        with QHAdam (Quasi-hyperbolic momentum and Adam for deep learning. Ma and Yarats, 2019).
+        Combines the weight decay decoupling from AdamW (Decoupled Weight
+        Decay Regularization. Loshchilov and Hutter, 2019) with QHAdam
+        (Quasi-hyperbolic momentum and Adam for deep learning. Ma and
+        Yarats, 2019).
 
         https://github.com/iprally/qhadamw-pytorch/blob/master/qhadamw.py
 
@@ -18,11 +19,11 @@ class QHAdamW(Optimizer):
                 groups
             lr (float, optional): learning rate (:math:`\alpha` from the paper)
                 (default: 1e-3)
-            betas (Tuple[float, float], optional): coefficients used for computing
-                running averages of the gradient and its square
+            betas (Tuple[float, float], optional): coefficients used for
+                computing running averages of the gradient and its square
                 (default: (0.995, 0.999))
-            nus (Tuple[float, float], optional): immediate discount factors used to
-                estimate the gradient and its square
+            nus (Tuple[float, float], optional): immediate discount factors
+                used to estimate the gradient and its square
                 (default: (0.7, 1.0))
             eps (float, optional): term added to the denominator to improve
                 numerical stability
@@ -43,17 +44,23 @@ class QHAdamW(Optimizer):
         .. _`(Loshchilov and Hutter, 2019)`: https://arxiv.org/abs/1711.05101
         """
         if not 0.0 <= lr:
-            raise ValueError("Invalid learning rate: {}".format(lr))
+            raise ValueError(f"Invalid learning rate: {lr}")
         if not 0.0 <= eps:
-            raise ValueError("Invalid epsilon value: {}".format(eps))
+            raise ValueError(f"Invalid epsilon value: {eps}")
         if not 0.0 <= betas[0] < 1.0:
-            raise ValueError("Invalid beta parameter at index 0: {}".format(betas[0]))
+            raise ValueError(f"Invalid beta parameter at index 0: {betas[0]}")
         if not 0.0 <= betas[1] < 1.0:
-            raise ValueError("Invalid beta parameter at index 1: {}".format(betas[1]))
+            raise ValueError(f"Invalid beta parameter at index 1: {betas[1]}")
         if weight_decay < 0.0:
-            raise ValueError("Invalid weight_decay value: {}".format(weight_decay))
+            raise ValueError(f"Invalid weight_decay value: {weight_decay}")
 
-        defaults = {"lr": lr, "betas": betas, "nus": nus, "weight_decay": weight_decay, "eps": eps}
+        defaults = {
+            "lr": lr,
+            "betas": betas,
+            "nus": nus,
+            "weight_decay": weight_decay,
+            "eps": eps
+        }
         super(QHAdamW, self).__init__(params, defaults)
 
     def step(self, closure=None):
@@ -74,7 +81,8 @@ class QHAdamW(Optimizer):
 
                 d_p = p.grad.data
                 if d_p.is_sparse:
-                    raise RuntimeError("QHAdamW does not support sparse gradients")
+                    raise RuntimeError(
+                        "QHAdamW does not support sparse gradients")
 
                 param_state = self.state[p]
 
@@ -90,8 +98,10 @@ class QHAdamW(Optimizer):
                     param_state["exp_avg"] = torch.zeros_like(p.data)
                     param_state["exp_avg_sq"] = torch.zeros_like(p.data)
 
-                param_state["beta1_weight"] = 1.0 + beta1 * param_state["beta1_weight"]
-                param_state["beta2_weight"] = 1.0 + beta2 * param_state["beta2_weight"]
+                param_state["beta1_weight"] = \
+                    1.0 + beta1 * param_state["beta1_weight"]
+                param_state["beta2_weight"] = \
+                    1.0 + beta2 * param_state["beta2_weight"]
 
                 beta1_weight = param_state["beta1_weight"]
                 beta2_weight = param_state["beta2_weight"]
@@ -118,6 +128,7 @@ class QHAdamW(Optimizer):
                 # p.data.addcdiv_(-lr, avg_grad, avg_grad_rms)
 
                 # Implementation following AdamW paper:
-                p.data.add_(-weight_decay, p.data).addcdiv_(-lr, avg_grad, avg_grad_rms)
+                p.data.add_(-weight_decay, p.data)\
+                    .addcdiv_(-lr, avg_grad, avg_grad_rms)
 
         return loss
