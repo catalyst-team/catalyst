@@ -40,7 +40,7 @@ URL = {
     "detection": "https://github.com/catalyst-team/detection/"
 }
 
-CATALYST_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+CATALYST_ROOT = Path(__file__).resolve().parents[3]
 PATH_TO_TEMPLATE = CATALYST_ROOT / "examples" / "_empty"
 
 
@@ -51,9 +51,15 @@ def load_pipeline(
     with open(os.devnull, "w") as devnull:
         try:
             subprocess.run(
-                f"git clone {url} {out_dir}".split(),
+                f"git clone {url} {out_dir / 'temp'}".split(),
                 shell=True, stderr=devnull
             )
+
+            with open(os.devnull, "w") as devnull:
+                subprocess.run(
+                    f"mv {out_dir / 'temp'} {out_dir}".split(),
+                    shell=True, stderr=devnull
+                )
 
         except (subprocess.CalledProcessError, FileNotFoundError) as ex:
             raise CatalystInitException(
@@ -67,11 +73,27 @@ def load_pipeline(
 
 
 def load_empty(out_dir: Path) -> None:
-    pass
+    shutil.copytree(PATH_TO_TEMPLATE, out_dir / "temp")
+    with open(os.devnull, "w") as devnull:
+        print(f"mv {out_dir / 'temp'}/* {out_dir}/")
+        subprocess.run(
+            f"mv {out_dir / 'temp'}/* {out_dir}/".split()
+            # shell=True
+        )
+
+        subprocess.run(
+            f"rm -rf {out_dir / 'temp'}".split()
+            # shell=True
+        )
 
 
 def main(args, _):
-    pass
+    pipeline = args.pipeline
+    if (pipeline is None) or (pipeline == "empty"):
+        load_empty(args.out_dir)
+    else:
+        url = URL[pipeline]
+        load_pipeline(url, args.out_dir)
 
 
 def parse_args():
