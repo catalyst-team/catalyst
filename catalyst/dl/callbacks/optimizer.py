@@ -23,6 +23,7 @@ class OptimizerCallback(Callback):
         accumulation_steps: int = 1,
         optimizer_key: str = None,
         loss_key: str = "loss",
+        decouple_weight_decay: bool = True
     ):
         """
         Args:
@@ -32,6 +33,8 @@ class OptimizerCallback(Callback):
             optimizer_key (str): A key to take a optimizer in case
                 there are several of them and they are in a dictionary format.
             loss_key (str): key to get loss from ``state.loss``
+            decouple_weight_decay (bool): If True - decouple weight decay
+                regularization.
         """
         super().__init__(CallbackOrder.Optimizer)
         grad_clip_params: dict = grad_clip_params or {}
@@ -40,6 +43,7 @@ class OptimizerCallback(Callback):
         self.accumulation_steps: int = accumulation_steps
         self.optimizer_key: str = optimizer_key
         self.loss_key: str = loss_key
+        self.decouple_weight_decay = decouple_weight_decay
         self._optimizer_wd: List[float] = [0.0]
         self._accumulation_counter: int = 0
 
@@ -74,12 +78,16 @@ class OptimizerCallback(Callback):
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
         )
-        self._optimizer_wd = [
-            group.get("weight_decay", 0.0)
-            for group in optimizer.param_groups
-        ]
-        for i in range(len(optimizer.param_groups)):
-            safitty.set(optimizer.param_groups, i, "weight_decay", value=0.0)
+        if self.decouple_weight_decay:
+            self._optimizer_wd = [
+                group.get("weight_decay", 0.0)
+                for group in optimizer.param_groups
+            ]
+            for i in range(len(optimizer.param_groups)):
+                safitty.set(
+                    optimizer.param_groups, i, "weight_decay", value=0.0)
+        else:
+            self._optimizer_wd = [0.0] * len(optimizer.param_groups)
 
     def _get_loss(self, state) -> torch.Tensor:
         loss = state.get_key(key="loss", inner_key=self.loss_key)
@@ -137,11 +145,13 @@ class OptimizerCallback(Callback):
             self._accumulation_counter = 0
 
     def on_epoch_end(self, state):
-        optimizer = state.get_key(
-            key="optimizer", inner_key=self.optimizer_key
-        )
-        for i, wd in enumerate(self._optimizer_wd):
-            safitty.set(optimizer.param_groups, i, "weight_decay", value=wd)
+        if self.decouple_weight_decay:
+            optimizer = state.get_key(
+                key="optimizer", inner_key=self.optimizer_key
+            )
+            for i, wd in enumerate(self._optimizer_wd):
+                safitty.set(
+                    optimizer.param_groups, i, "weight_decay", value=wd)
 
 
 __all__ = ["OptimizerCallback"]
