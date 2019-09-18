@@ -111,7 +111,7 @@ class EnvironmentWrapper(EnvironmentSpec):
         time.sleep(max(0, self._min_delay_between_steps - delay_between_steps))
         self._last_step_time = time.time()
 
-        reward = 0
+        reward, raw_reward = 0, 0
         action = self._process_action(action)
         frame_skip = self._frame_skip \
             if isinstance(self._frame_skip, int) \
@@ -121,10 +121,12 @@ class EnvironmentWrapper(EnvironmentSpec):
             if self._visualize:
                 self.env.render()
             reward += r + self._step_reward
+            info = info or {}
+            raw_reward += info.get("raw_reward", r)
             if done:
                 break
         info = info or {}
-        info["raw_reward"] = reward
+        info["raw_reward"] = raw_reward
         reward *= self._reward_scale
         observation = self._process_observation(observation)
         return observation, reward, done, info
