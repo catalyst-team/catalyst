@@ -43,7 +43,7 @@ class OptimizerCallback(Callback):
         self.accumulation_steps: int = accumulation_steps
         self.optimizer_key: str = optimizer_key
         self.loss_key: str = loss_key
-        self.decouple_wd = decouple_weight_decay
+        self.decouple_weight_decay = decouple_weight_decay
         self._optimizer_wd: List[float] = [0.0]
         self._accumulation_counter: int = 0
 
@@ -78,7 +78,7 @@ class OptimizerCallback(Callback):
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
         )
-        if self.decouple_wd:
+        if self.decouple_weight_decay:
             self._optimizer_wd = [
                 group.get("weight_decay", 0.0)
                 for group in optimizer.param_groups
@@ -145,13 +145,13 @@ class OptimizerCallback(Callback):
             self._accumulation_counter = 0
 
     def on_epoch_end(self, state):
-        if self.decouple_wd:
+        if self.decouple_weight_decay:
             optimizer = state.get_key(
                 key="optimizer", inner_key=self.optimizer_key
             )
             for i, wd in enumerate(self._optimizer_wd):
-                safitty.set(optimizer.param_groups, i, "weight_decay",
-                            value=wd)
+                safitty.set(
+                    optimizer.param_groups, i, "weight_decay", value=wd)
 
 
 __all__ = ["OptimizerCallback"]
