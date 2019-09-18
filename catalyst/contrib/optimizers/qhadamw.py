@@ -3,13 +3,15 @@ from torch.optim.optimizer import Optimizer
 
 
 class QHAdamW(Optimizer):
-    def __init__(self,
-                 params,
-                 lr=1e-3,
-                 betas=(0.995, 0.999),
-                 nus=(0.7, 1.0),
-                 weight_decay=0.0,
-                 eps=1e-8):
+    def __init__(
+        self,
+        params,
+        lr=1e-3,
+        betas=(0.995, 0.999),
+        nus=(0.7, 1.0),
+        weight_decay=0.0,
+        eps=1e-8
+    ):
         r"""
         Combines the weight decay decoupling from AdamW (Decoupled Weight
         Decay Regularization. Loshchilov and Hutter, 2019) with QHAdam
