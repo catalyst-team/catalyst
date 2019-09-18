@@ -4,9 +4,11 @@ import torch
 from torch.optim.optimizer import Optimizer
 
 
-def log_lamb_rs(optimizer: Optimizer,
-                event_writer,
-                token_count: int):
+def log_lamb_rs(
+    optimizer: Optimizer,
+    event_writer,
+    token_count: int
+):
     """Log a histogram of trust ratio scalars in across layers."""
     results = collections.defaultdict(list)
     for group in optimizer.param_groups:
@@ -21,13 +23,15 @@ def log_lamb_rs(optimizer: Optimizer,
 
 
 class Lamb(Optimizer):
-    def __init__(self,
-                 params,
-                 lr=1e-3,
-                 betas=(0.9, 0.999),
-                 eps=1e-6,
-                 weight_decay=0,
-                 adam=False):
+    def __init__(
+        self,
+        params,
+        lr=1e-3,
+        betas=(0.9, 0.999),
+        eps=1e-6,
+        weight_decay=0,
+        adam=False
+    ):
         """Implements Lamb algorithm from `Large Batch Optimization for
         Deep Learning: Training BERT in 76 minutes`_.
         Arguments:
