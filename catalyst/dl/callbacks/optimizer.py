@@ -84,8 +84,8 @@ class OptimizerCallback(Callback):
                 for group in optimizer.param_groups
             ]
             for i in range(len(optimizer.param_groups)):
-                safitty.set(optimizer.param_groups, i, "weight_decay",
-                            value=0.0)
+                safitty.set(
+                    optimizer.param_groups, i, "weight_decay", value=0.0)
         else:
             self._optimizer_wd = [0.0] * len(optimizer.param_groups)
 
