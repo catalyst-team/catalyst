@@ -96,12 +96,21 @@ class Runner(ABC):
             getattr(self.state, f"on_{event}_post")()
 
     @abstractmethod
-    def predict_batch(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
-        pass
-
-    @abstractmethod
     def forward(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
         pass
+    
+    def predict_batch(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
+        """
+        Run model for a batch of elements
+        WARN: You should not override this method. If you need specific model
+        call, override forward() method
+        Args:
+            batch: Key-value batch items
+        Returns: model output key-value
+        """
+        batch = self._batch2device(batch, self.device)
+        output = self.forward(batch)
+        return output
 
     def _run_batch(self, batch):
         self.state.step += self.state.batch_size
