@@ -35,8 +35,8 @@ def get_convolution_net(
             "stride": stride,
             "groups": group,
         }
-        for bias, ksize, stride, group in \
-            zip(use_bias, kernel_sizes, strides, groups)
+        for bias, ksize, stride, group
+        in zip(use_bias, kernel_sizes, strides, groups)
     ]
 
     if dropout_rate is not None:
