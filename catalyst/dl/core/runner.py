@@ -98,7 +98,7 @@ class Runner(ABC):
     @abstractmethod
     def forward(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
         pass
-    
+
     def predict_batch(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
         """
         Run model for a batch of elements
