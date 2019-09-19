@@ -44,6 +44,8 @@ class AccuracyCallback(MultiMetricCallback):
         prefix: str = "accuracy",
         accuracy_args: List[int] = None,
         num_classes: int = None,
+        threshold: float = None,
+        activation: str = "Sigmoid"
     ):
         """
         Args:
@@ -66,7 +68,9 @@ class AccuracyCallback(MultiMetricCallback):
             metric_fn=criterion.accuracy,
             list_args=list_args,
             input_key=input_key,
-            output_key=output_key
+            output_key=output_key,
+            threshold=threshold,
+            activation=activation,
         )
 
 
