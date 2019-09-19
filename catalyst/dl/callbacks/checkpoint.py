@@ -6,7 +6,7 @@ from pathlib import Path
 import safitty
 
 from catalyst.dl import utils
-from catalyst.dl.core import Callback, RunnerState
+from catalyst.dl.core import Callback, CallbackOrder, RunnerState
 from catalyst.utils import is_exception
 
 
@@ -14,15 +14,13 @@ class BaseCheckpointCallback(Callback):
     """
     Base class for all checkpoint callbacks
     """
-    def __init__(
-        self,
-        metric_filename: str = "_metrics.json"
-    ):
+    def __init__(self, metric_filename: str = "_metrics.json"):
         """
         Args:
             metric_filename (str): filename to save metrics
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
         """
+        super().__init__(CallbackOrder.Logger)
         self.metric_filename = metric_filename
         self.metrics: dict = {}
 

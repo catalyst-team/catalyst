@@ -1,3 +1,5 @@
 # flake8: noqa
 
-from .gym import GymWrapper
+from .environment import EnvironmentWrapper
+from .gym import GymEnvWrapper
+from .atari import AtariEnvWrapper

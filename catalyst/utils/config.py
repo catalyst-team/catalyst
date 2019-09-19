@@ -113,30 +113,37 @@ def get_environment_vars() -> Dict[str, Any]:
 
 
 def list_pip_packages() -> str:
+    result = ""
     with open(os.devnull, "w") as devnull:
         try:
-            return subprocess.check_output(
+            result = subprocess.check_output(
                 "pip freeze".split(), stderr=devnull
             ).strip().decode("UTF-8")
+        except FileNotFoundError:
+            pass
         except subprocess.CalledProcessError as e:
             raise Exception("Failed to list packages") from e
 
+    return result
+
 
 def list_conda_packages() -> str:
+    result = ""
     conda_meta_path = Path(sys.prefix) / "conda-meta"
     if conda_meta_path.exists():
         # We are currently in conda venv
         with open(os.devnull, "w") as devnull:
             try:
-                return subprocess.check_output(
+                result = subprocess.check_output(
                     "conda list --export".split(), stderr=devnull
                 ).strip().decode("UTF-8")
+            except FileNotFoundError:
+                pass
             except subprocess.CalledProcessError as e:
                 raise Exception(
                     "Running from conda env, but failed to list conda packages"
                 ) from e
-    else:
-        return ""
+    return result
 
 
 def dump_environment(
@@ -175,10 +182,10 @@ def dump_environment(
         outpath = config_dir / name
         shutil.copyfile(path, outpath)
 
-    config_str = json.dumps(experiment_config, indent=2)
+    config_str = json.dumps(experiment_config, indent=2, ensure_ascii=False)
     config_str = config_str.replace("\n", "\n\n")
 
-    environment_str = json.dumps(environment, indent=2)
+    environment_str = json.dumps(environment, indent=2, ensure_ascii=False)
     environment_str = environment_str.replace("\n", "\n\n")
 
     pip_pkg = pip_pkg.replace("\n", "\n\n")

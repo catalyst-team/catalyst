@@ -7,6 +7,7 @@ import torchvision
 
 from catalyst.contrib.modules import Flatten
 from catalyst.contrib.registry import MODULES
+from catalyst import utils
 
 
 class ResnetEncoder(nn.Module):
@@ -50,8 +51,7 @@ class ResnetEncoder(nn.Module):
 
         if frozen:
             for module in modules:
-                for param in module.parameters():
-                    param.requires_grad = False
+                utils.set_requires_grad(module, requires_grad=False)
 
         if pooling is not None:
             pooling_kwargs = pooling_kwargs or {}

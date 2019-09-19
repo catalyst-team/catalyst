@@ -6,11 +6,14 @@ os.environ["MKL_NUM_THREADS"] = "1"
 
 import gc  # noqa E402
 import time  # noqa E402
+import shutil  # noqa E402
+from pathlib import Path  # noqa E402
 import threading  # noqa E402
 from ctypes import c_bool  # noqa E402
 import multiprocessing as mp  # noqa E402
 from datetime import datetime  # noqa E402
 import numpy as np  # noqa E402
+import logging  # noqa E402
 
 import torch  # noqa E402
 torch.set_num_threads(1)
@@ -24,6 +27,20 @@ from .exploration import ExplorationHandler  # noqa E402
 from .environment import EnvironmentSpec  # noqa E402
 from .db import DBSpec  # noqa E402
 from .agent import ActorSpec, CriticSpec  # noqa E402
+
+logger = logging.getLogger(__name__)
+
+if os.environ.get("USE_WANDB", "1") == "1":
+    try:
+        import wandb
+        WANDB_ENABLED = True
+    except ImportError:
+        logger.warning(
+            "wandb not available, to install wandb, run `pip install wandb`."
+        )
+        WANDB_ENABLED = False
+else:
+    WANDB_ENABLED = False
 
 
 class Sampler:
@@ -43,6 +60,7 @@ class Sampler:
         trajectory_limit: int = None,
         force_store: bool = False,
         gc_period: int = 10,
+        monitoring_params: Dict = None,
         **kwargs
     ):
         self._device = utils.get_device()
@@ -83,10 +101,22 @@ class Sampler:
         self.checkpoint = None
 
         #  special
+        self.monitoring_params = monitoring_params
         self._init(**kwargs)
 
     def _init(self, **kwargs):
+        global WANDB_ENABLED
         assert len(kwargs) == 0
+        if WANDB_ENABLED:
+            if self.monitoring_params is not None:
+                self.checkpoints_glob: List[str] = \
+                    self.monitoring_params.pop(
+                        "checkpoints_glob", ["best.pth", "last.pth"])
+
+                wandb.init(**self.monitoring_params)
+            else:
+                WANDB_ENABLED = False
+        self.wandb_mode = "sampler"
 
     def _prepare_logger(self, logdir, mode):
         if logdir is not None:
@@ -189,6 +219,38 @@ class Sampler:
 
             self.logger.flush()
 
+    @staticmethod
+    def _log_wandb_metrics(
+        metrics: Dict,
+        step: int,
+        mode: str,
+        suffix: str = ""
+    ):
+        metrics = {
+            f"{mode}/{key}{suffix}": value
+            for key, value in metrics.items()
+        }
+        step = None  # @TODO: fix, wandb issue
+        wandb.log(metrics, step=step)
+
+    def _log_to_wandb(self, *, step, suffix="", **metrics):
+        if WANDB_ENABLED:
+            self._log_wandb_metrics(
+                metrics, step=step, mode=self.wandb_mode, suffix=suffix)
+
+    def _save_wandb(self):
+        if WANDB_ENABLED:
+            logdir_src = Path(self.logdir)
+            logdir_dst = Path(wandb.run.dir)
+
+            events_src = list(logdir_src.glob("events.out.tfevents*"))
+            if len(events_src) > 0:
+                events_src = events_src[0]
+                os.makedirs(f"{logdir_dst}/{logdir_src.name}", exist_ok=True)
+                shutil.copy2(
+                    f"{str(events_src.absolute())}",
+                    f"{logdir_dst}/{logdir_src.name}/{events_src.name}")
+
     @torch.no_grad()
     def _run_trajectory_loop(self):
         seed = self._get_seed()
@@ -217,6 +279,7 @@ class Sampler:
 
             if self.trajectory_index % self._weights_sync_period == 0:
                 self.load_checkpoint(db_server=self.db_server)
+                self._save_wandb()
 
             trajectory, trajectory_info = self._run_trajectory_loop()
             if trajectory is None:
@@ -229,6 +292,7 @@ class Sampler:
                     self._store_trajectory(raw_trajectory, raw=True)
             self._log_to_console(**trajectory_info)
             self._log_to_tensorboard(**trajectory_info)
+            self._log_to_wandb(step=self.trajectory_index, **trajectory_info)
             self.trajectory_index += 1
 
             if self.trajectory_index % self._gc_period == 0:
@@ -250,8 +314,15 @@ class Sampler:
 
 
 class ValidSampler(Sampler):
+    @staticmethod
+    def rewards2metric(rewards):
+        return np.mean(rewards)  # - np.std(rewards)
+
     def _init(self, save_n_best: int = 3, **kwargs):
         assert len(kwargs) == 0
+        super()._init()
+        self.wandb_mode = "valid_sampler"
+
         self.save_n_best = save_n_best
         self.best_agents = []
         self._sampling_flag.value = True
@@ -290,15 +361,29 @@ class ValidSampler(Sampler):
 
         return True
 
-    @staticmethod
-    def rewards2metric(rewards):
-        return np.mean(rewards)  # - np.std(rewards)
+    def _save_wandb(self):
+        super()._save_wandb()
+        if WANDB_ENABLED:
+            logdir_src = Path(self.logdir)
+            logdir_dst = Path(wandb.run.dir)
+            checkpoints_src = logdir_src.joinpath("checkpoints")
+            checkpoints_dst = logdir_dst.joinpath("checkpoints")
+            os.makedirs(checkpoints_dst, exist_ok=True)
+
+            checkpoint_paths = []
+            for glob in self.checkpoints_glob:
+                checkpoint_paths.extend(list(checkpoints_src.glob(glob)))
+            checkpoint_paths = list(set(checkpoint_paths))
+            for checkpoint_path in checkpoint_paths:
+                shutil.copy2(
+                    f"{str(checkpoint_path.absolute())}",
+                    f"{checkpoints_dst}/{checkpoint_path.name}")
 
     def save_checkpoint(
         self,
         logdir: str,
         checkpoint: Dict,
-        save_n_best: int = 5,
+        save_n_best: int = 3,
         minimize_metric: bool = False
     ):
         agent_rewards = checkpoint["rewards"]
@@ -340,6 +425,8 @@ class ValidSampler(Sampler):
                 trajectory_info.pop("raw_trajectory", None)
                 self._log_to_console(**trajectory_info)
                 self._log_to_tensorboard(**trajectory_info)
+                self._log_to_wandb(
+                    step=self.trajectory_index, **trajectory_info)
                 self.trajectory_index += 1
 
                 if self.trajectory_index % self._gc_period == 0:
@@ -351,6 +438,12 @@ class ValidSampler(Sampler):
                     np.mean(trajectories_rewards),
                     self.db_server.epoch
                 )
+            self._log_to_wandb(
+                step=self.db_server.epoch, **{
+                    "trajectory/_mean_valid_reward":
+                        np.mean(trajectories_rewards)
+                }
+            )
 
             self.checkpoint["rewards"] = trajectories_rewards
             self.checkpoint["epoch"] = self.db_server.epoch
@@ -359,6 +452,7 @@ class ValidSampler(Sampler):
                 checkpoint=self.checkpoint,
                 save_n_best=self.save_n_best
             )
+            self._save_wandb()
 
     def run(self):
         self._start_sample_loop()

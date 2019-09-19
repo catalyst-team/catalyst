@@ -1,7 +1,11 @@
 import random
-from typing import List, Dict, Callable, Any
-from torch.utils.data import Dataset
+from pathlib import Path
+from typing import List, Dict, Callable, Any, Union
+
 from catalyst.utils.misc import merge_dicts
+from torch.utils.data import Dataset
+
+_Path = Union[str, Path]
 
 
 class ListDataset(Dataset):
@@ -112,4 +116,47 @@ class MergeDataset(Dataset):
         return self.len
 
 
-__all__ = ["ListDataset", "MergeDataset"]
+class PathsDataset(ListDataset):
+    """
+    Dataset that derives features and targets from samples filesystem paths.
+    """
+    def __init__(
+        self, filenames: List[_Path], open_fn: Callable[[dict], dict],
+        label_fn: Callable[[_Path], Any], **list_dataset_params
+    ):
+        """
+         Args:
+            filenames (List[str]): list of file paths that store information
+                about your dataset samples; it could be images, texts or
+                any other files in general.
+            open_fn (callable): function, that can open your
+                annotations dict and
+                transfer it to data, needed by your network
+                (for example open image by path, or tokenize read string)
+            label_fn (callable): function, that can extract target
+                value from sample path
+                (for example, your sample could be an image file like
+                ``/path/to/your/image_1.png`` where the target is encoded as
+                a part of file path)
+            list_dataset_params (dict): base class initialization
+                parameters.
+
+        Examples:
+            >>> label_fn = lambda x: x.split("_")[0]
+            >>> dataset = PathsDataset(
+            >>>     filenames=Path("/path/to/images/").glob("*.jpg"),
+            >>>     label_fn=label_fn,
+            >>>     open_fn=open_fn,
+            >>> )
+        """
+        list_data = [
+            dict(features=filename, targets=label_fn(filename))
+            for filename in filenames
+        ]
+
+        super().__init__(
+            list_data=list_data, open_fn=open_fn, **list_dataset_params
+        )
+
+
+__all__ = ["_Path", "ListDataset", "MergeDataset", "PathsDataset"]

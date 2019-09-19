@@ -13,10 +13,10 @@ db:
   prefix: gym-dqn-categorical  # TODO: remove
 
 environment:
-  environment: GymWrapper
+  environment: GymEnvWrapper
   env_name: CartPole-v1
 
-  history_len: 4
+  history_len: &history_len 4
   frame_skip: 2
   reward_scale: 0.01
 
@@ -26,17 +26,17 @@ agents:
 
     state_net_params:  # state -> hidden representation
       observation_net_params:
-        hiddens: [32]  # first hidden would be taken from state_shape
-        layer_fn: Linear
-        norm_fn: LayerNorm
-        activation_fn: ReLU
-        bias: false
+        _network_type: "linear"
+        history_len: *history_len
+        features: [32]  # first hidden would be taken from state_shape
+        use_bias: false
+        normalization: LayerNorm
+        activation: ReLU
       main_net_params:
-        hiddens: [32, 32]
-        layer_fn: Linear
-        norm_fn: LayerNorm
-        activation_fn: ReLU
-        bias: false
+        features: [32]
+        use_bias: false
+        normalization: LayerNorm
+        activation: ReLU
     value_head_params:  # hidden representation -> ~policy
       in_features: 32  # out features would be taken from action_shape
 

@@ -37,6 +37,7 @@ class Trainer(TrainerSpec):
         max_updates_per_sample: int = None,
         min_transitions_per_epoch: int = None,
     ):
+        super()._init()
         # updates configuration
         # (actor_period, critic_period)
         self.actor_update_period, self.critic_update_period = \

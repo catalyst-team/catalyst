@@ -7,13 +7,14 @@ from skimage.color import label2rgb
 import torch
 import torch.nn.functional as F
 
-from catalyst.dl.core import Callback, RunnerState
+from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 from catalyst.utils import tensor_to_ndimage
 
 
 # @TODO: refactor
 class InferCallback(Callback):
     def __init__(self, out_dir=None, out_prefix=None):
+        super().__init__(CallbackOrder.Internal)
         self.out_dir = out_dir
         self.out_prefix = out_prefix
         self.predictions = defaultdict(lambda: [])
@@ -64,6 +65,7 @@ class InferMaskCallback(Callback):
         mask_strength: float = 0.5,
         mask_type: str = "soft"
     ):
+        super().__init__(CallbackOrder.Internal)
         self.out_dir = out_dir
         self.out_prefix = out_prefix
         self.mean = mean or np.array([0.485, 0.456, 0.406])

@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader
 
 from catalyst.dl.core import Experiment, Callback
 from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
+from catalyst.dl.utils import process_callback
 
 
 class BaseExperiment(Experiment):
@@ -36,15 +37,7 @@ class BaseExperiment(Experiment):
     ):
         self._model = model
         self._loaders = loaders
-
-        if callbacks is None:
-            callbacks = OrderedDict()
-        elif isinstance(callbacks, List):
-            callbacks = OrderedDict([
-                (i, value)
-                for i, value in enumerate(callbacks)
-            ])
-        self._callbacks = callbacks
+        self._callbacks = process_callback(callbacks)
 
         self._criterion = criterion
         self._optimizer = optimizer

@@ -49,6 +49,7 @@ class Trainer(TrainerSpec):
         min_num_trajectories: int = 100,
         rollout_batch_size: int = None
     ):
+        super()._init()
         self.num_mini_epochs = num_mini_epochs
         self.min_num_trajectories = min_num_trajectories
         self.max_num_transitions = self.min_num_transitions * 3

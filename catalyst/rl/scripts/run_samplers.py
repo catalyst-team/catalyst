@@ -121,6 +121,8 @@ def run_sampler(
     else:
         sampler_fn = Sampler
 
+    monitoring_params = config.get("monitoring_params", None)
+
     sampler = sampler_fn(
         agent=agent,
         env=env,
@@ -131,6 +133,7 @@ def run_sampler(
         mode=mode,
         weights_sync_mode=weights_sync_mode,
         seeds=seeds,
+        monitoring_params=monitoring_params,
         **config_["sampler"],
     )
 
