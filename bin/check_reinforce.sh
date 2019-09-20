@@ -38,8 +38,8 @@ reward_goal = 2.0
 
 folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_reinforce_discrete/').glob('sampler.valid*'))[0]
 checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
-print('mean reward', np.mean(checkpoint['rewards']))
-assert np.mean(checkpoint['rewards']) > reward_goal
+print('mean reward', np.mean(checkpoint['reward']))
+assert np.mean(checkpoint['reward']) > reward_goal
 """
 
 
@@ -80,6 +80,6 @@ reward_goal = -6.0
 
 folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_reinforce_continuous/').glob('sampler.valid*'))[0]
 checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
-print('mean reward', np.mean(checkpoint['rewards']))
-assert np.mean(checkpoint['rewards']) > reward_goal
+print('mean reward', np.mean(checkpoint['reward']))
+assert np.mean(checkpoint['reward']) > reward_goal
 """
