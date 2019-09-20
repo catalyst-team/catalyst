@@ -31,11 +31,11 @@ def get_convolution_net(
         {
             "module": nn.Conv2d,
             "bias": bias,
-            "kernel_size": ksize,
+            "kernel_size": kernel_size,
             "stride": stride,
             "groups": group,
         }
-        for bias, ksize, stride, group
+        for bias, kernel_size, stride, group
         in zip(use_bias, kernel_sizes, strides, groups)
     ]
 
