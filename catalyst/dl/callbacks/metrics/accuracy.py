@@ -45,7 +45,7 @@ class AccuracyCallback(MultiMetricCallback):
         accuracy_args: List[int] = None,
         num_classes: int = None,
         threshold: float = None,
-        activation: str = "Sigmoid"
+        activation: str = None,
     ):
         """
         Args:
@@ -60,6 +60,9 @@ class AccuracyCallback(MultiMetricCallback):
                 [1, 3, 5] - accuracy at 1, 3 and 5
             num_classes (int): number of classes to calculate ``accuracy_args``
                 if ``accuracy_args`` is None
+            threshold (float): threshold for outputs binarization.
+            activation (str): An torch.nn activation applied to the outputs.
+                Must be one of ["none", "Sigmoid", "Softmax"].
         """
         list_args = accuracy_args or _get_default_accuracy_args(num_classes)
 
