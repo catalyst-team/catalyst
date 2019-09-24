@@ -163,17 +163,17 @@ class SupervisedRunner(Runner):
 
         if model is not None:
             self.model = model
-        
+
         if resume is not None:
             callbacks = callbacks or OrderedDict()
             checkpoint_callback_flag = all([
-                isinstance(x, CheckpointCallback) 
+                isinstance(x, CheckpointCallback)
                 for x in callbacks.values()
             ])
             if not checkpoint_callback_flag:
                 callbacks["loader"] = CheckpointCallback(resume=resume)
             else:
-                raise NotImplementerError("CheckpointCallback already exist")
+                raise NotImplementedError("CheckpointCallback already exist")
 
         experiment = self._default_experiment(
             stage="train",
