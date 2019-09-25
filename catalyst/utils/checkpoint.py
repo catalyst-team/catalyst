@@ -88,7 +88,5 @@ def load_checkpoint(filepath):
             storage = storage.cuda()
         return storage
 
-    checkpoint = torch.load(
-        filepath, map_location=map_location
-    )
+    checkpoint = torch.load(filepath, map_location=map_location)
     return checkpoint
