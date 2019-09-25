@@ -166,7 +166,7 @@ class SupervisedRunner(Runner):
 
         if resume is not None:
             callbacks = callbacks or OrderedDict()
-            checkpoint_callback_flag = all([
+            checkpoint_callback_flag = any([
                 isinstance(x, CheckpointCallback)
                 for x in callbacks.values()
             ])
