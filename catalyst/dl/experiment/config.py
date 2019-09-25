@@ -12,6 +12,7 @@ from catalyst.dl.registry import \
     MODELS, CRITERIONS, OPTIMIZERS, SCHEDULERS, CALLBACKS
 from catalyst.dl import utils
 from catalyst.utils import merge_dicts, get_short_hash, process_model_params
+from catalyst.utils.torch import any2device, get_device
 from catalyst.dl.core import Experiment, Callback
 from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, \
     _Scheduler
@@ -147,6 +148,16 @@ class ConfigExperiment(Experiment):
             checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
             checkpoint = utils.load_checkpoint(checkpoint_path)
             utils.unpack_checkpoint(checkpoint, optimizer=optimizer)
+
+            # move optimizer to device
+            device = get_device()
+            for param in model_params:
+                param = param["params"][0]
+                state = optimizer.state[param]
+                for key, value in state.items():
+                    state[key] = any2device(value, device)
+
+            # update optimizer params
             for key, value in params.items():
                 for pg in optimizer.param_groups:
                     pg[key] = value

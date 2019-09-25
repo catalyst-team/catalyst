@@ -13,6 +13,14 @@ ACTIVATIONS = {
 }
 
 
+def _nonlinearity2name(nonlinearity):
+    if isinstance(nonlinearity, nn.Module):
+        nonlinearity = nonlinearity.__class__
+    nonlinearity = ACTIVATIONS.get(nonlinearity, nonlinearity)
+    nonlinearity = nonlinearity.lower()
+    return nonlinearity
+
+
 def create_optimal_inner_init(
     nonlinearity: nn.Module, **kwargs
 ) -> Callable[[nn.Module], None]:
@@ -20,9 +28,8 @@ def create_optimal_inner_init(
     Create initializer for inner layers
     based on their activation function (nonlinearity).
     """
-    nonlinearity: str = ACTIVATIONS.get(nonlinearity, nonlinearity)
+    nonlinearity: str = _nonlinearity2name(nonlinearity)
     assert isinstance(nonlinearity, str)
-    nonlinearity = nonlinearity.lower()
 
     if nonlinearity in ["sigmoid", "tanh"]:
         weignt_init_fn = nn.init.xavier_uniform_
