@@ -318,14 +318,30 @@ class ValidSampler(Sampler):
     def rewards2metric(rewards):
         return np.mean(rewards)  # - np.std(rewards)
 
-    def _init(self, save_n_best: int = 3, **kwargs):
+    def _init(
+        self,
+        save_n_best: int = 3,
+        main_metric: str = "raw_reward",
+        main_metric_fn: str = "mean",
+        **kwargs
+    ):
         assert len(kwargs) == 0
+        assert main_metric in ["reward", "raw_reward"]
+        assert main_metric_fn in ["mean", "mean-std"]
         super()._init()
         self.wandb_mode = "valid_sampler"
 
         self.save_n_best = save_n_best
+        self.main_metric = main_metric
         self.best_agents = []
         self._sampling_flag.value = True
+
+        if main_metric_fn == "mean":
+            self.rewards2metric = lambda x: np.mean(x)
+        elif main_metric_fn == "mean-std":
+            self.rewards2metric = lambda x: np.mean(x) - np.std(x)
+        else:
+            raise NotImplementedError()
 
     def load_checkpoint(
         self, *, filepath: str = None, db_server: DBSpec = None
@@ -384,9 +400,10 @@ class ValidSampler(Sampler):
         logdir: str,
         checkpoint: Dict,
         save_n_best: int = 3,
+        main_metric: str = "raw_reward",
         minimize_metric: bool = False
     ):
-        agent_rewards = checkpoint["rewards"]
+        agent_rewards = checkpoint[main_metric]
         agent_metric = self.rewards2metric(agent_rewards)
 
         is_best = len(self.best_agents) == 0 or \
@@ -417,11 +434,17 @@ class ValidSampler(Sampler):
             if not ok:
                 return
 
-            trajectories_rewards = []
+            trajectories_reward, trajectories_raw_reward = [], []
 
             for i in range(len(self.seeds)):
                 trajectory, trajectory_info = self._run_trajectory_loop()
-                trajectories_rewards.append(trajectory_info["reward"])
+                trajectories_reward.append(trajectory_info["reward"])
+                trajectories_raw_reward.append(
+                    trajectory_info.get(
+                        "raw_reward",
+                        trajectory_info["reward"]
+                    )
+                )
                 trajectory_info.pop("raw_trajectory", None)
                 self._log_to_console(**trajectory_info)
                 self._log_to_tensorboard(**trajectory_info)
@@ -432,25 +455,26 @@ class ValidSampler(Sampler):
                 if self.trajectory_index % self._gc_period == 0:
                     gc.collect()
 
-            if self.logger is not None:
-                self.logger.add_scalar(
-                    "trajectory/_mean_valid_reward",
-                    np.mean(trajectories_rewards),
-                    self.db_server.epoch
-                )
-            self._log_to_wandb(
-                step=self.db_server.epoch, **{
-                    "trajectory/_mean_valid_reward":
-                        np.mean(trajectories_rewards)
-                }
-            )
+            loop_metrics = {
+                "trajectory/_mean_valid_reward":
+                    self.rewards2metric(trajectories_reward),
+                "trajectory/_mean_valid_raw_reward":
+                    self.rewards2metric(trajectories_raw_reward),
+            }
 
-            self.checkpoint["rewards"] = trajectories_rewards
+            if self.logger is not None:
+                for key, value in loop_metrics.items():
+                    self.logger.add_scalar(key, value, self.db_server.epoch)
+            self._log_to_wandb(step=self.db_server.epoch, **loop_metrics)
+
+            self.checkpoint["reward"] = trajectories_reward
+            self.checkpoint["raw_reward"] = trajectories_raw_reward
             self.checkpoint["epoch"] = self.db_server.epoch
             self.save_checkpoint(
                 logdir=self.logdir,
                 checkpoint=self.checkpoint,
-                save_n_best=self.save_n_best
+                save_n_best=self.save_n_best,
+                main_metric=self.main_metric,
             )
             self._save_wandb()
 
