@@ -32,8 +32,10 @@ def process_components(
     elif len(distributed_params) > 0:
         utils.assert_fp16_available()
         from apex import amp
+        from apex.parallel import convert_syncbn_model
 
         distributed_rank = distributed_params.pop("rank", -1)
+        syncbn = distributed_params.pop("syncbn", False)
 
         if distributed_rank > -1:
             torch.cuda.set_device(distributed_rank)
@@ -48,6 +50,9 @@ def process_components(
         if distributed_rank > -1:
             from apex.parallel import DistributedDataParallel
             model = DistributedDataParallel(model)
+
+            if syncbn:
+                model = convert_syncbn_model(model)
         elif torch.cuda.device_count() > 1:
             model = torch.nn.DataParallel(model)
     elif torch.cuda.device_count() > 1:
