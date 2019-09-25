@@ -1,10 +1,17 @@
 import argparse
-import os
 import shutil
-import subprocess
 from pathlib import Path
+from git import Repo
 
-from catalyst import utils
+
+def _copy(input_dir: Path, output_dir: Path):
+    output_dir.mkdir(exist_ok=True, parents=True)
+    for path in input_dir.iterdir():
+        if path.is_dir():
+            path_name = path.name
+            _copy(path, output_dir / path_name)
+        else:
+            shutil.copy2(path, output_dir)
 
 
 class CatalystInitException(Exception):
@@ -25,12 +32,6 @@ def build_args(parser):
         help="path where to init"
     )
 
-    utils.boolean_flag(
-        parser, "force",
-        default=False,
-        help="force init"
-    )
-
     return parser
 
 
@@ -48,24 +49,9 @@ def load_pipeline(
     url: str,
     out_dir: Path,
 ) -> None:
-    with open(os.devnull, "w") as devnull:
-        try:
-            subprocess.run(
-                f"git clone {url} {out_dir / 'temp'}".split(),
-                shell=True, stderr=devnull
-            )
-
-            with open(os.devnull, "w") as devnull:
-                subprocess.run(
-                    f"mv {out_dir / 'temp'} {out_dir}".split(),
-                    shell=True, stderr=devnull
-                )
-
-        except (subprocess.CalledProcessError, FileNotFoundError) as ex:
-            raise CatalystInitException(
-                f"Error cloning from {url} to {out_dir}"
-            ) from ex
-
+    Repo.clone_from(url, out_dir / "__git_temp")
+    _copy(out_dir / "__git_temp", out_dir)
+    shutil.rmtree(out_dir / "__git_temp")
     shutil.rmtree(out_dir / ".git")
 
     if (out_dir / ".gitignore").exists():
@@ -73,18 +59,7 @@ def load_pipeline(
 
 
 def load_empty(out_dir: Path) -> None:
-    shutil.copytree(PATH_TO_TEMPLATE, out_dir / "temp")
-    with open(os.devnull, "w") as devnull:
-        print(f"mv {out_dir / 'temp'}/* {out_dir}/")
-        subprocess.run(
-            f"mv {out_dir / 'temp'}/* {out_dir}/".split()
-            # shell=True
-        )
-
-        subprocess.run(
-            f"rm -rf {out_dir / 'temp'}".split()
-            # shell=True
-        )
+    _copy(PATH_TO_TEMPLATE, out_dir)
 
 
 def main(args, _):

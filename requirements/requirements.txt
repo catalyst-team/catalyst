@@ -17,3 +17,4 @@ matplotlib
 seaborn
 pandas>=0.22
 scikit-learn>=0.20
+GitPython>=2.1.11
