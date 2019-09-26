@@ -33,9 +33,9 @@ class Experiment(ConfigExperiment):
         trainset = SomeDataset()
 
         # CHANGE TO YOUR DATASET
-        testset = SomeDataset()
+        validset = SomeDataset()
 
         datasets["train"] = trainset
-        datasets["valid"] = testset
+        datasets["valid"] = validset
 
         return datasets
