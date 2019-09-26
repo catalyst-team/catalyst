@@ -4,6 +4,8 @@ import copy
 import collections
 import numpy as np
 from itertools import tee
+import shutil
+from pathlib import Path
 
 
 def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:
@@ -88,5 +90,25 @@ def flatten_dict(d, parent_key="", sep="/"):
 
 
 def is_exception(ex: Any) -> bool:
+    """
+    Check if the argument is of Exception type
+    """
     result = (ex is not None) and isinstance(ex, BaseException)
     return result
+
+
+def copy_directory(input_dir: Path, output_dir: Path) -> None:
+    """
+    Recursively copies the input directory
+
+    Args:
+        input_dir (Path): input directory
+        output_dir (Path): output directory
+    """
+    output_dir.mkdir(exist_ok=True, parents=True)
+    for path in input_dir.iterdir():
+        if path.is_dir():
+            path_name = path.name
+            copy_directory(path, output_dir / path_name)
+        else:
+            shutil.copy2(path, output_dir)
