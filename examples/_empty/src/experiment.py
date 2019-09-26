@@ -1,7 +1,9 @@
+# flake8: noqa
 from collections import OrderedDict
-import torchvision
 from torchvision import transforms
 from catalyst.dl import ConfigExperiment
+
+from .dataset import SomeDataset
 
 
 class Experiment(ConfigExperiment):
@@ -18,24 +20,20 @@ class Experiment(ConfigExperiment):
 
         return result
 
-    def get_datasets(self, stage: str, **kwargs):
+    def get_datasets(
+        self,
+        stage: str,
+        batch_size: int,
+        num_workers: int,
+        **kwargs
+    ):
         datasets = OrderedDict()
 
         # CHANGE TO YOUR DATASET
-        trainset = torchvision.datasets.CIFAR10(
-            root="./data",
-            train=True,
-            download=True,
-            transform=Experiment.get_transforms(stage=stage, mode="train")
-        )
+        trainset = SomeDataset()
 
         # CHANGE TO YOUR DATASET
-        testset = torchvision.datasets.CIFAR10(
-            root="./data",
-            train=False,
-            download=True,
-            transform=Experiment.get_transforms(stage=stage, mode="valid")
-        )
+        testset = SomeDataset()
 
         datasets["train"] = trainset
         datasets["valid"] = testset

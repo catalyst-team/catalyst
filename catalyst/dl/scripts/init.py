@@ -1,17 +1,9 @@
 import argparse
 import shutil
+from git import Repo as repo
 from pathlib import Path
-from git import Repo
 
-
-def _copy(input_dir: Path, output_dir: Path):
-    output_dir.mkdir(exist_ok=True, parents=True)
-    for path in input_dir.iterdir():
-        if path.is_dir():
-            path_name = path.name
-            _copy(path, output_dir / path_name)
-        else:
-            shutil.copy2(path, output_dir)
+from catalyst import utils
 
 
 class CatalystInitException(Exception):
@@ -49,8 +41,8 @@ def load_pipeline(
     url: str,
     out_dir: Path,
 ) -> None:
-    Repo.clone_from(url, out_dir / "__git_temp")
-    _copy(out_dir / "__git_temp", out_dir)
+    repo.clone_from(url, out_dir / "__git_temp")
+    utils.copy_directory(out_dir / "__git_temp", out_dir)
     shutil.rmtree(out_dir / "__git_temp")
     shutil.rmtree(out_dir / ".git")
 
@@ -59,7 +51,7 @@ def load_pipeline(
 
 
 def load_empty(out_dir: Path) -> None:
-    _copy(PATH_TO_TEMPLATE, out_dir)
+    utils.copy_directory(PATH_TO_TEMPLATE, out_dir)
 
 
 def main(args, _):
