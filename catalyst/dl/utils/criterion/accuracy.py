@@ -21,7 +21,7 @@ def accuracy(
     if threshold:
         outputs = (outputs > threshold).long()
 
-    # multi class classification
+    # multi-label classification
     if len(targets.shape) > 1 and targets.size(1) > 1:
         res = (targets.long() == outputs.long()).sum().float() / np.prod(
             targets.shape)
