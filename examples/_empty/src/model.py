@@ -10,3 +10,12 @@ class Model(torch.nn.Module):
     def forward(self, x):
         # CHANGE ME
         return x
+
+    @classmethod
+    def get_from_params(
+        cls,
+        **model_params,
+    ) -> "Model":
+        # CHANGE ME
+        model = cls(**model_params)
+        return model
