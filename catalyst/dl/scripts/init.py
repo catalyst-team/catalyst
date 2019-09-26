@@ -42,12 +42,12 @@ def load_pipeline(
     out_dir: Path,
 ) -> None:
     repo.clone_from(url, out_dir / "__git_temp")
+    shutil.rmtree(out_dir / "__git_temp" / ".git")
+    if (out_dir / "__git_temp" / ".gitignore").exists():
+        (out_dir / "__git_temp" / ".gitignore").unlink()
+
     utils.copy_directory(out_dir / "__git_temp", out_dir)
     shutil.rmtree(out_dir / "__git_temp")
-    shutil.rmtree(out_dir / ".git")
-
-    if (out_dir / ".gitignore").exists():
-        (out_dir / ".gitignore").unlink()
 
 
 def load_empty(out_dir: Path) -> None:
