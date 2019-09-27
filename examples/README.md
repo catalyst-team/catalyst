@@ -76,4 +76,6 @@
 4. [NeurIPS 2019: Animal-AI Olympics](https://github.com/Scitator/animal-olympics-starter-kit)
     - starter kit
 5. [ID R&D Anti-spoofing Challenge](https://github.com/bagxi/idrnd-anti-spoofing-challenge-solution)
-    - 14th place solution
+    - 14th place solution 
+6. [NeurIPS 2019: Recursion Cellular Image Classification](https://github.com/ngxbac/Kaggle-Recursion-Cellular)
+    - 4th place solution
