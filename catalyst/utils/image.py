@@ -131,15 +131,25 @@ def tensor_to_ndimage(
     return images
 
 
-def binary_mask_to_overlay_image(image: np.ndarray, masks: List[np.ndarray]):
+def binary_mask_to_overlay_image(
+    image: np.ndarray,
+    masks: List[np.ndarray],
+    threshold: float = 0,
+    mask_strength: float = 0.5
+) -> np.ndarray:
     """Draws every mask for with some color over image"""
     h, w = image.shape[:2]
     labels = np.zeros((h, w), np.uint8)
 
-    for idx, mask in enumerate(masks):
-        labels[mask > 0] = idx + 1
+    for idx, mask in enumerate(masks, start=1):
+        labels[mask > threshold] = idx
 
-    image_with_overlay = label2rgb(labels, image, bg_label=0)
+    mask = label2rgb(labels, bg_label=0)
 
-    image_with_overlay = (image_with_overlay * 255).round().astype(np.uint8)
+    image = np.array(image) / 255.0
+    image_with_overlay = image * (1 - mask_strength) + mask * mask_strength
+    image_with_overlay = (
+        (image_with_overlay * 255).clip(0, 255).round().astype(np.uint8)
+    )
+
     return image_with_overlay
