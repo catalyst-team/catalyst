@@ -5,7 +5,6 @@ import gc
 import time
 import shutil
 from pathlib import Path
-from datetime import datetime
 import numpy as np
 import logging
 
@@ -126,7 +125,7 @@ class TrainerSpec:
         self.wandb_mode = "trainer"
 
     def _prepare_logger(self, logdir):
-        timestamp = datetime.utcnow().strftime("%y%m%d.%H%M%S")
+        timestamp = utils.get_time_string()
         logpath = f"{logdir}/trainer.{timestamp}"
         os.makedirs(logpath, exist_ok=True)
         self.logger = SummaryWriter(logpath)

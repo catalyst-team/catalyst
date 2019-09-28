@@ -1,21 +1,20 @@
-from typing import List, Any, Dict, Union
-from pathlib import Path
-import os
-import sys
-import subprocess
 import copy
-import shutil
-import time
-import platform
-from collections import OrderedDict
 import json
+import os
+import platform
+import shutil
+import subprocess
+import sys
+from collections import OrderedDict
 from logging import getLogger
+from pathlib import Path
+from typing import List, Any, Dict, Union
 
 import safitty
 import yaml
 from tensorboardX import SummaryWriter
 
-from catalyst.utils.misc import merge_dicts
+from catalyst import utils
 
 LOG = getLogger(__name__)
 
@@ -73,7 +72,7 @@ def get_environment_vars() -> Dict[str, Any]:
     result = {
         "python_version": sys.version,
         "conda_environment": os.environ.get("CONDA_DEFAULT_ENV", ""),
-        "creation_time": time.strftime("%y%m%d.%H:%M:%S"),
+        "creation_time": utils.get_time_string(),
         "sysname": platform.uname()[0],
         "nodename": platform.uname()[1],
         "release": platform.uname()[2],
@@ -266,7 +265,7 @@ def parse_args_uargs(args, unknown_args):
                 config_ = load_ordered_yaml(fin)
             else:
                 raise Exception("Unknown file format")
-        config = merge_dicts(config, config_)
+        config = utils.merge_dicts(config, config_)
 
     config, args_ = parse_config_args(
         config=config, args=args_, unknown_args=unknown_args

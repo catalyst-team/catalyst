@@ -11,7 +11,6 @@ from pathlib import Path  # noqa E402
 import threading  # noqa E402
 from ctypes import c_bool  # noqa E402
 import multiprocessing as mp  # noqa E402
-from datetime import datetime  # noqa E402
 import numpy as np  # noqa E402
 import logging  # noqa E402
 
@@ -120,7 +119,7 @@ class Sampler:
 
     def _prepare_logger(self, logdir, mode):
         if logdir is not None:
-            timestamp = datetime.utcnow().strftime("%y%m%d.%H%M%S")
+            timestamp = utils.get_time_string()
             logpath = f"{logdir}/" \
                 f"sampler.{mode}.{self._sampler_id}.{timestamp}"
             os.makedirs(logpath, exist_ok=True)
