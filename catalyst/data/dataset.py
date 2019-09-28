@@ -90,14 +90,17 @@ class MergeDataset(Dataset):
     """
     Abstraction to merge several datasets into one dataset.
     """
-    def __init__(self, *datasets: Dataset):
+    def __init__(self, *datasets: Dataset, dict_transform: Callable = None):
         """
         Args:
             datasets (List[Dataset]): params count of datasets to merge
+            dict_transform (callable): transforms common for all datasets.
+                (for example normalize image, add blur, crop/resize/etc)
         """
         self.len = len(datasets[0])
         assert all([len(x) == self.len for x in datasets])
         self.datasets = datasets
+        self.dict_transform = dict_transform
 
     def __getitem__(self, index: int) -> Any:
         """Get item from all datasets
@@ -110,6 +113,10 @@ class MergeDataset(Dataset):
         """
         dcts = [x[index] for x in self.datasets]
         dct = merge_dicts(*dcts)
+
+        if self.dict_transform is not None:
+            dct = self.dict_transform(dct)
+
         return dct
 
     def __len__(self) -> int:
