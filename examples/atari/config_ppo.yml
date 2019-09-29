@@ -47,7 +47,7 @@ agents:
       observation_net_params:
         _network_type: "convolution"
         history_len: *history_len
-        channels: [32 64, 32]
+        channels: [32, 64, 32]
         use_bias: false
         normalization: null
         dropout_rate: null
