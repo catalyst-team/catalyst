@@ -125,7 +125,7 @@ class TrainerSpec:
         self.wandb_mode = "trainer"
 
     def _prepare_logger(self, logdir):
-        timestamp = utils.get_time_string()
+        timestamp = utils.get_utcnow_time()
         logpath = f"{logdir}/trainer.{timestamp}"
         os.makedirs(logpath, exist_ok=True)
         self.logger = SummaryWriter(logpath)

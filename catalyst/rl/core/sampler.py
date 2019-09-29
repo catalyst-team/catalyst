@@ -119,7 +119,7 @@ class Sampler:
 
     def _prepare_logger(self, logdir, mode):
         if logdir is not None:
-            timestamp = utils.get_time_string()
+            timestamp = utils.get_utcnow_time()
             logpath = f"{logdir}/" \
                 f"sampler.{mode}.{self._sampler_id}.{timestamp}"
             os.makedirs(logpath, exist_ok=True)

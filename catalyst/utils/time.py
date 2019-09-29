@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-def get_time_string(format: str = None) -> str:
+def get_utcnow_time(format: str = None) -> str:
     """
     Return string with current utc time in chosen format
 
@@ -17,4 +17,4 @@ def get_time_string(format: str = None) -> str:
     return result
 
 
-__all__ = ["get_time_string"]
+__all__ = ["get_utcnow_time"]

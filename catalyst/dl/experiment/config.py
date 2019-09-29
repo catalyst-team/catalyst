@@ -70,7 +70,7 @@ class ConfigExperiment(Experiment):
         return stages_config_out
 
     def _get_logdir(self, config: Dict) -> str:
-        timestamp = utils.get_time_string()
+        timestamp = utils.get_utcnow_time()
         config_hash = get_short_hash(config)
         logdir = f"{timestamp}.{config_hash}"
         distributed_rank = self.distributed_params.get("rank", -1)
