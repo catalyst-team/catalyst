@@ -12,7 +12,7 @@ from .ddp import is_wrapped_with_ddp, get_real_module
 from .hash import get_hash, get_short_hash
 from .image import imread, imwrite, mimwrite_with_meta, \
     tensor_from_rgb_image, tensor_to_ndimage, \
-    binary_mask_to_overlay_image
+    mask_to_overlay_image
 from .initialization import create_optimal_inner_init, outer_init, \
     constant_init, uniform_init, normal_init, xavier_init, kaiming_init, \
     bias_init_with_prob
