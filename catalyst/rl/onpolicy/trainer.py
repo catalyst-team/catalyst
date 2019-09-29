@@ -49,6 +49,7 @@ class Trainer(TrainerSpec):
         min_num_trajectories: int = 100,
         rollout_batch_size: int = None
     ):
+        super()._init()
         self.num_mini_epochs = num_mini_epochs
         self.min_num_trajectories = min_num_trajectories
         self.max_num_transitions = self.min_num_transitions * 3
@@ -82,7 +83,7 @@ class Trainer(TrainerSpec):
     def _fetch_trajectories(self):
 
         # cleanup trajectories
-        self.db_server.clean_trajectories()
+        self.db_server.del_trajectory()
         num_trajectories = 0
         num_transitions = 0
         del self.replay_buffer

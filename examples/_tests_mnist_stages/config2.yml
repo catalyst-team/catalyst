@@ -19,9 +19,9 @@ stages:
       criterion: CrossEntropyLoss
 
   optimizer_params:
-      optimizer: Adam
-      lr: 0.001
-      weight_decay: 0.0001
+    optimizer: Adam
+    lr: 0.001
+    weight_decay: 0.0001
 
   scheduler_params:
     scheduler: MultiStepLR
@@ -45,3 +45,4 @@ stages:
         reduce_metric: *reduce_metric
       saver:
         callback: CheckpointCallback
+        save_n_best: 3

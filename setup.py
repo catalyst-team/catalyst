@@ -22,9 +22,9 @@ REQUIRES_PYTHON = ">=3.6.0"
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
-def load_requirements():
-    with open(os.path.join(PROJECT_ROOT, "requirements.txt"), "r") as f:
-        return f.read()
+def load_requirements(filename):
+    with open(os.path.join(PROJECT_ROOT, filename), "r") as f:
+        return f.read().splitlines()
 
 
 def load_readme():
@@ -79,6 +79,24 @@ class UploadCommand(Command):
         sys.exit()
 
 
+# Specific dependencies.
+extras = {
+    "contrib": load_requirements("requirements/requirements-contrib.txt"),
+    "dl": load_requirements("requirements/requirements-dl.txt"),
+    "rl": load_requirements("requirements/requirements-rl.txt"),
+    "drl": (
+        load_requirements("requirements/requirements-dl.txt")
+        + load_requirements("requirements/requirements-rl.txt")),
+}
+
+
+# Meta dependency groups.
+all_deps = []
+for group_name in extras:
+    all_deps += extras[group_name]
+extras["all"] = all_deps
+
+
 setup(
     name=NAME,
     version=load_version(),
@@ -86,11 +104,11 @@ setup(
     long_description=load_readme(),
     long_description_content_type="text/markdown",
     keywords=[
+        "Machine Learning",
+        "Distributed Computing",
         "Deep Learning",
         "Reinforcement Learning",
-        "Machine Learning",
         "Computer Vision",
-        "Distributed Computing",
         "PyTorch",
     ],
     author=AUTHOR,
@@ -106,11 +124,16 @@ setup(
             "catalyst-data=catalyst.data.__main__:main",
         ],
     },
-    install_requires=load_requirements(),
+    scripts=[
+        "bin/catalyst-parallel-run",
+        "bin/catalyst-rl-run",
+    ],
+    install_requires=load_requirements("requirements/requirements.txt"),
+    extras_require=extras,
     include_package_data=True,
-    license="MIT",
+    license="Apache License 2.0",
     classifiers=[
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: Apache Software License",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
         "Programming Language :: Python",

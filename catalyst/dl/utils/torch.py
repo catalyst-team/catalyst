@@ -1,11 +1,10 @@
 from typing import Tuple, Dict
-import os
 import copy
 
 import torch
 from torch import nn, optim
-import torch.backends.cudnn as cudnn
 from torch.utils.data.dataloader import default_collate as default_collate_fn
+
 from catalyst.dl import utils
 
 _Model = nn.Module
@@ -26,10 +25,6 @@ def process_components(
     distributed_params = copy.deepcopy(distributed_params)
     device = utils.get_device()
 
-    if torch.cuda.is_available():
-        benchmark = os.environ.get("CUDNN_BENCHMARK", "True") == "True"
-        cudnn.benchmark = benchmark
-
     model = model.to(device)
 
     if utils.is_wrapped_with_ddp(model):
@@ -37,8 +32,10 @@ def process_components(
     elif len(distributed_params) > 0:
         utils.assert_fp16_available()
         from apex import amp
+        from apex.parallel import convert_syncbn_model
 
         distributed_rank = distributed_params.pop("rank", -1)
+        syncbn = distributed_params.pop("syncbn", False)
 
         if distributed_rank > -1:
             torch.cuda.set_device(distributed_rank)
@@ -53,6 +50,9 @@ def process_components(
         if distributed_rank > -1:
             from apex.parallel import DistributedDataParallel
             model = DistributedDataParallel(model)
+
+            if syncbn:
+                model = convert_syncbn_model(model)
         elif torch.cuda.device_count() > 1:
             model = torch.nn.DataParallel(model)
     elif torch.cuda.device_count() > 1:
@@ -97,6 +97,6 @@ def get_loader(
 
 
 __all__ = [
-    "process_components", "get_loader", "_Model", "_Criterion", "_Optimizer",
-    "_Scheduler"
+    "process_components", "get_loader",
+    "_Model", "_Criterion", "_Optimizer", "_Scheduler"
 ]

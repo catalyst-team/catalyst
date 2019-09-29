@@ -40,19 +40,8 @@ It's much harder to merge in a large change with a lot of disjoint features.
 
 Do not forget to check the codestyle for your PR with
 
-- flake
-    ```bash
-    flake8 . --count --ignore=E126,E226,E704,E731,W503,W504 --max-complexity=16 --show-source --statistics
-    ```
-- yapf
-    ```bash
-    ./yapf.sh --all-in-place
-    ```
-
-or with
-
 ```bash
-$ make check-style
+make codestyle
 ```
 
 ## Documentation
@@ -60,9 +49,9 @@ $ make check-style
 Catalyst uses [Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for formatting [docstrings](https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings). 
 Length of line inside docstrings block must be limited to 80 characters to fit into Jupyter documentation popups.
 
-Check that you wrote working docs with:
+#### Check that you have written working docs
 ```bash
-$ make check-docs
+make check-docs
 ```
 
 The command requires `Sphinx` and some sphinx-specific libraries.
@@ -75,3 +64,17 @@ docker run \
     catalyst-dev:latest \
     bash -c "make check-docs"
 ```
+
+#### To build docs add environment variable `REMOVE_BUILDS=0`
+```bash
+REMOVE_BUILDS=0 make check-docs
+```
+
+or through docker
+```bash
+docker run \
+    -v `pwd`/:/workspace/ \
+    catalyst-dev:latest \
+    bash -c "REMOVE_BUILDS=0 make check-docs"
+```
+The docs will be stored in `builds/` folder.

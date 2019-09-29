@@ -11,10 +11,11 @@ from torch.utils.data import DistributedSampler
 from catalyst.dl.registry import \
     MODELS, CRITERIONS, OPTIMIZERS, SCHEDULERS, CALLBACKS
 from catalyst.dl import utils
-from catalyst.utils.misc import merge_dicts
-from catalyst.utils.hash import get_short_hash
+from catalyst.utils import merge_dicts, get_short_hash, process_model_params
+from catalyst.utils.torch import any2device, get_device
 from catalyst.dl.core import Experiment, Callback
-from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
+from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, \
+    _Scheduler
 
 
 class ConfigExperiment(Experiment):
@@ -69,10 +70,6 @@ class ConfigExperiment(Experiment):
 
         return stages_config_out
 
-    @property
-    def logdir(self):
-        return self._logdir
-
     def _get_logdir(self, config: Dict) -> str:
         timestamp = datetime.datetime.utcnow().strftime("%y%m%d.%H%M%S")
         config_hash = get_short_hash(config)
@@ -83,6 +80,10 @@ class ConfigExperiment(Experiment):
         return logdir
 
     @property
+    def logdir(self):
+        return self._logdir
+
+    @property
     def stages(self) -> List[str]:
         stages_keys = list(self.stages_config.keys())
         return stages_keys
@@ -90,6 +91,10 @@ class ConfigExperiment(Experiment):
     @property
     def distributed_params(self) -> Dict:
         return self._config.get("distributed_params", {})
+
+    @property
+    def monitoring_params(self) -> Dict:
+        return self._config.get("monitoring_params", {})
 
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
         return self.stages_config[stage].get("state_params", {})
@@ -135,37 +140,61 @@ class ConfigExperiment(Experiment):
         return criterion
 
     def _get_optimizer(self, *, model_params, **params):
-        key_value_flag = params.pop("_key_value", False)
+        load_from_previous_stage = \
+            params.pop("load_from_previous_stage", False)
+        optimizer = OPTIMIZERS.get_from_params(**params, params=model_params)
 
-        if key_value_flag:
-            optimizer = {}
-            for key, params_ in params.items():
-                optimizer[key] = self._get_optimizer(
-                    model_params=model_params, **params_
-                )
-        else:
-            load_from_previous_stage = \
-                params.pop("load_from_previous_stage", False)
-            optimizer = OPTIMIZERS.get_from_params(
-                **params, params=model_params
-            )
+        if load_from_previous_stage:
+            checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
+            checkpoint = utils.load_checkpoint(checkpoint_path)
+            utils.unpack_checkpoint(checkpoint, optimizer=optimizer)
 
-            if load_from_previous_stage:
-                checkpoint_path = \
-                    f"{self.logdir}/checkpoints/best.pth"
-                checkpoint = utils.load_checkpoint(checkpoint_path)
-                utils.unpack_checkpoint(checkpoint, optimizer=optimizer)
-                for key, value in params.items():
-                    for pg in optimizer.param_groups:
-                        pg[key] = value
+            # move optimizer to device
+            device = get_device()
+            for param in model_params:
+                param = param["params"][0]
+                state = optimizer.state[param]
+                for key, value in state.items():
+                    state[key] = any2device(value, device)
+
+            # update optimizer params
+            for key, value in params.items():
+                for pg in optimizer.param_groups:
+                    pg[key] = value
 
         return optimizer
 
     def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
-
-        model_params = utils.get_optimizable_params(model.parameters())
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
+
+        layerwise_params = \
+            optimizer_params.pop("layerwise_params", OrderedDict())
+        no_bias_weight_decay = \
+            optimizer_params.pop("no_bias_weight_decay", True)
+
+        # linear scaling rule from https://arxiv.org/pdf/1706.02677.pdf
+        lr_scaling_params = optimizer_params.pop("lr_linear_scaling", None)
+        if lr_scaling_params:
+            data_params = dict(self.stages_config[stage]["data_params"])
+            batch_size = data_params.get("batch_size")
+            per_gpu_scaling = data_params.get("per_gpu_scaling", False)
+            distributed_rank = self.distributed_params.get("rank", -1)
+            distributed = distributed_rank > -1
+            if per_gpu_scaling and not distributed:
+                num_gpus = max(1, torch.cuda.device_count())
+                batch_size *= num_gpus
+
+            base_lr = lr_scaling_params.get("lr")
+            base_batch_size = lr_scaling_params.get("base_batch_size", 256)
+            lr_scaling = batch_size / base_batch_size
+            optimizer_params["lr"] = base_lr * lr_scaling  # scale default lr
+        else:
+            lr_scaling = 1.0
+
+        model_params = process_model_params(
+            model, layerwise_params, no_bias_weight_decay, lr_scaling
+        )
 
         optimizer = self._get_optimizer(
             model_params=model_params, **optimizer_params
@@ -200,7 +229,7 @@ class ConfigExperiment(Experiment):
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         data_params = dict(self.stages_config[stage]["data_params"])
 
-        batch_size = data_params.pop("batch_size")
+        batch_size = data_params.pop("batch_size", 1)
         num_workers = data_params.pop("num_workers")
         drop_last = data_params.pop("drop_last", False)
         per_gpu_scaling = data_params.pop("per_gpu_scaling", False)
@@ -249,19 +278,27 @@ class ConfigExperiment(Experiment):
                 and loader_params.get("sampler") is None
             )
 
+            if "batch_sampler" in loader_params:
+                if distributed:
+                    raise ValueError("batch_sampler option is mutually "
+                                     "exclusive with distributed")
+
+                for k in ("batch_size", "shuffle", "sampler", "drop_last"):
+                    loader_params.pop(k, None)
+
             loaders[name] = DataLoader(**loader_params)
 
         return loaders
 
-    def get_callbacks(self, stage: str) -> "List[Callback]":
+    def get_callbacks(self, stage: str) -> "OrderedDict[Callback]":
         callbacks_params = (
             self.stages_config[stage].get("callbacks_params", {})
         )
 
-        callbacks = []
+        callbacks = OrderedDict()
         for key, callback_params in callbacks_params.items():
             callback = CALLBACKS.get_from_params(**callback_params)
-            callbacks.append(callback)
+            callbacks[key] = callback
 
         return callbacks
 

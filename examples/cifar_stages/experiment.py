@@ -3,7 +3,9 @@ import torch
 import torch.nn as nn
 import torchvision
 from torchvision import transforms
+
 from catalyst.dl import ConfigExperiment
+from catalyst import utils
 
 
 class Experiment(ConfigExperiment):
@@ -15,8 +17,7 @@ class Experiment(ConfigExperiment):
         if stage == "stage2":
             for key in ["conv1", "pool", "conv2"]:
                 layer = getattr(model_, key)
-                for param in layer.parameters():
-                    param.requires_grad = False
+                utils.set_requires_grad(layer, requires_grad=False)
         return model_
 
     @staticmethod

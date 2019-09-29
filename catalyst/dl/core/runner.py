@@ -1,5 +1,6 @@
 from abc import abstractmethod, ABC
-from typing import Tuple, List, Mapping, Any
+from typing import Tuple, Mapping, Any
+from collections import OrderedDict
 
 import torch
 from torch import nn
@@ -26,7 +27,7 @@ class Runner(ABC):
         self.device = device
         self.experiment: Experiment = None
         self.state: RunnerState = None
-        self.callbacks: List[Callback] = None
+        self.callbacks: OrderedDict[str, Callback] = None
 
         # additional
         self._check_run = False
@@ -84,20 +85,32 @@ class Runner(ABC):
         )
 
     def _run_event(self, event: str):
-
         if self.state is not None and hasattr(self.state, f"on_{event}_pre"):
             getattr(self.state, f"on_{event}_pre")()
 
         if self.callbacks is not None:
-            for callback in self.callbacks:
+            for callback in self.callbacks.values():
                 getattr(callback, f"on_{event}")(self.state)
 
         if self.state is not None and hasattr(self.state, f"on_{event}_post"):
             getattr(self.state, f"on_{event}_post")()
 
     @abstractmethod
-    def predict_batch(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
+    def forward(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
         pass
+
+    def predict_batch(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
+        """
+        Run model for a batch of elements
+        WARN: You should not override this method. If you need specific model
+        call, override forward() method
+        Args:
+            batch: Key-value batch items
+        Returns: model output key-value
+        """
+        batch = self._batch2device(batch, self.device)
+        output = self.forward(batch)
+        return output
 
     def _run_batch(self, batch):
         self.state.step += self.state.batch_size
@@ -107,7 +120,7 @@ class Runner(ABC):
 
         self._run_event("batch_start")
         self.state.timer.start("_timers/model_time")
-        self.state.output = self.predict_batch(batch)
+        self.state.output = self.forward(batch)
         self.state.timer.stop("_timers/model_time")
         self.state.timer.stop("_timers/batch_time")
         self._run_event("batch_end")
@@ -186,10 +199,15 @@ class Runner(ABC):
 
     def run_experiment(self, experiment: Experiment, check: bool = False):
         self._check_run = check
-
         self.experiment = experiment
-        for stage in self.experiment.stages:
-            self._run_stage(stage)
+
+        try:
+            for stage in self.experiment.stages:
+                self._run_stage(stage)
+        except (Exception, KeyboardInterrupt) as ex:
+            self.state.exception = ex
+            self._run_event("exception")
+
         return self
 
 

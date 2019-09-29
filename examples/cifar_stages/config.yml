@@ -44,16 +44,30 @@ stages:
 
     optimizer_params:
       optimizer: Adam
-      lr: 0.001
+
+      layerwise_params:
+        conv1.*:
+          lr: 0.001
+          weight_decay: 0.0003
+        conv.*:
+          lr: 0.002
+
+      lr_linear_scaling:
+        lr: 0.001
+        base_batch_size: 64
       weight_decay: 0.0001
+      no_bias_weight_decay: True # removes `weight_decay` for model's biases
 
   # tune
   stage2:
-
     state_params:
       num_epochs: 3
 
     optimizer_params:
-      optimizer: SGD
-      lr: 0.0001
+      load_from_previous_stage: True
+      optimizer: Adam
+      lr_linear_scaling:
+        lr: 0.0001
+        base_batch_size: 64
       weight_decay: 0.0001
+      no_bias_weight_decay: False

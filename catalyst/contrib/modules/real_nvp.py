@@ -55,9 +55,9 @@ class CouplingLayer(nn.Module):
         is being copied and which is being transformed.
         """
         super().__init__()
+        assert parity in ["odd", "even"]
 
         layer_fn = MODULES.get_if_str(layer_fn)
-        activation_fn = MODULES.get_if_str(activation_fn)
 
         self.parity = parity
         if self.parity == "odd":
@@ -67,32 +67,28 @@ class CouplingLayer(nn.Module):
 
         self.scale_prenet = SequentialNet(
             hiddens=[action_size * 2 + self.copy_size, action_size],
-            layer_fn=layer_fn,
+            layer_fn={"module": layer_fn, "bias": bias},
             activation_fn=activation_fn,
             norm_fn=None,
-            bias=bias
         )
         self.scale_net = SequentialNet(
             hiddens=[action_size, action_size - self.copy_size],
-            layer_fn=layer_fn,
+            layer_fn={"module": layer_fn, "bias": True},
             activation_fn=None,
             norm_fn=None,
-            bias=True
         )
 
         self.translation_prenet = SequentialNet(
             hiddens=[action_size * 2 + self.copy_size, action_size],
-            layer_fn=layer_fn,
+            layer_fn={"module": layer_fn, "bias": bias},
             activation_fn=activation_fn,
             norm_fn=None,
-            bias=bias
         )
         self.translation_net = SequentialNet(
             hiddens=[action_size, action_size - self.copy_size],
-            layer_fn=layer_fn,
+            layer_fn={"module": layer_fn, "bias": True},
             activation_fn=None,
             norm_fn=None,
-            bias=True
         )
 
         inner_init = create_optimal_inner_init(nonlinearity=activation_fn)

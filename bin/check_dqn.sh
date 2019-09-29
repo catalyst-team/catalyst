@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# set -e
 
 redis-server --port 12000 &
 sleep 3
@@ -35,6 +36,13 @@ killall -9 python
 sleep 3
 killall -9 catalyst-rl
 sleep 3
+
+OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
+    PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+    python catalyst/rl/scripts/dump_db.py \
+    --db="redis" \
+    --min-reward=2 \
+    --out-pkl=./db.dump.out.pkl
 killall -9 redis-server
 sleep 3
 
@@ -46,16 +54,16 @@ reward_goal = 2.0
 
 folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_dqn_base/').glob('sampler.valid*'))[0]
 checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
-print('mean reward', np.mean(checkpoint['rewards']))
-assert np.mean(checkpoint['rewards']) > reward_goal
+print('mean reward', np.mean(checkpoint['reward']))
+assert np.mean(checkpoint['reward']) > reward_goal
 
 folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_dqn_categorical/').glob('sampler.valid*'))[0]
 checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
-print('mean reward', np.mean(checkpoint['rewards']))
-assert np.mean(checkpoint['rewards']) > reward_goal
+print('mean reward', np.mean(checkpoint['reward']))
+assert np.mean(checkpoint['reward']) > reward_goal
 
 folder = list(pathlib.Path('./examples/logs/_tests_rl_gym_dqn_quantile/').glob('sampler.valid*'))[0]
 checkpoint = utils.load_checkpoint(f'{folder}/checkpoints/best.pth')
-print('mean reward', np.mean(checkpoint['rewards']))
-assert np.mean(checkpoint['rewards']) > reward_goal
+print('mean reward', np.mean(checkpoint['reward']))
+assert np.mean(checkpoint['reward']) > reward_goal
 """

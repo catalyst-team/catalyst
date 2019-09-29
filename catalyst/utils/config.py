@@ -1,13 +1,23 @@
-from typing import Dict, List
-
+from typing import List, Any, Dict, Union
+from pathlib import Path
 import os
+import sys
+import subprocess
 import copy
 import shutil
+import time
+import platform
 from collections import OrderedDict
 import json
+from logging import getLogger
+
+import safitty
 import yaml
+from tensorboardX import SummaryWriter
 
 from catalyst.utils.misc import merge_dicts
+
+LOG = getLogger(__name__)
 
 
 def load_ordered_yaml(
@@ -37,13 +47,112 @@ def load_ordered_yaml(
     return yaml.load(stream, OrderedLoader)
 
 
-def dump_config(
+def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
+    """
+    Decode bytes values in the dictionary to UTF-8
+    Args:
+        dictionary: a dict
+
+    Returns:
+        dict: decoded dict
+    """
+    result = {
+        k: v.decode("UTF-8") if type(v) == bytes else v
+        for k, v in dictionary.items()
+    }
+    return result
+
+
+def get_environment_vars() -> Dict[str, Any]:
+    """
+    Creates a dictionary with environment variables
+
+    Returns:
+        dict: environment variables
+    """
+    result = {
+        "python_version": sys.version,
+        "conda_environment": os.environ.get("CONDA_DEFAULT_ENV", ""),
+        "creation_time": time.strftime("%y%m%d.%H:%M:%S"),
+        "sysname": platform.uname()[0],
+        "nodename": platform.uname()[1],
+        "release": platform.uname()[2],
+        "version": platform.uname()[3],
+        "architecture": platform.uname()[4],
+        "user": os.environ.get("USER", ""),
+        "path": os.environ.get("PWD", ""),
+    }
+
+    with open(os.devnull, "w") as devnull:
+        try:
+            git_branch = subprocess.check_output(
+                "git rev-parse --abbrev-ref HEAD".split(),
+                shell=True,
+                stderr=devnull
+            ).strip().decode("UTF-8")
+            git_local_commit = subprocess.check_output(
+                "git rev-parse HEAD".split(), shell=True, stderr=devnull
+            )
+            git_origin_commit = subprocess.check_output(
+                f"git rev-parse origin/{git_branch}".split(),
+                shell=True,
+                stderr=devnull
+            )
+
+            git = dict(
+                branch=git_branch,
+                local_commit=git_local_commit,
+                origin_commit=git_origin_commit
+            )
+            result["git"] = _decode_dict(git)
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            pass
+
+    result = _decode_dict(result)
+    return result
+
+
+def list_pip_packages() -> str:
+    result = ""
+    with open(os.devnull, "w") as devnull:
+        try:
+            result = subprocess.check_output(
+                "pip freeze".split(), stderr=devnull
+            ).strip().decode("UTF-8")
+        except FileNotFoundError:
+            pass
+        except subprocess.CalledProcessError as e:
+            raise Exception("Failed to list packages") from e
+
+    return result
+
+
+def list_conda_packages() -> str:
+    result = ""
+    conda_meta_path = Path(sys.prefix) / "conda-meta"
+    if conda_meta_path.exists():
+        # We are currently in conda venv
+        with open(os.devnull, "w") as devnull:
+            try:
+                result = subprocess.check_output(
+                    "conda list --export".split(), stderr=devnull
+                ).strip().decode("UTF-8")
+            except FileNotFoundError:
+                pass
+            except subprocess.CalledProcessError as e:
+                raise Exception(
+                    "Running from conda env, but failed to list conda packages"
+                ) from e
+    return result
+
+
+def dump_environment(
     experiment_config: Dict,
     logdir: str,
-    configs_path: List = None,
+    configs_path: List[str] = None,
 ) -> None:
     """
-    Saves config into JSON in logdir
+    Saves config, environment variables and package list in JSON into logdir
 
     Args:
         experiment_config (dict): experiment config
@@ -51,16 +160,42 @@ def dump_config(
         configs_path: path(s) to config
     """
     configs_path = configs_path or []
-    config_dir = f"{logdir}/configs/"
-    os.makedirs(config_dir, exist_ok=True)
+    configs_path = [
+        Path(path) for path in configs_path if isinstance(path, str)
+    ]
+    config_dir = Path(logdir) / "configs"
+    config_dir.mkdir(exist_ok=True, parents=True)
 
-    with open(f"{config_dir}/_config.json", "w") as fout:
-        json.dump(experiment_config, fout, indent=2, ensure_ascii=False)
+    environment = get_environment_vars()
 
-    for config_path_in in configs_path:
-        config_name = config_path_in.rsplit("/", 1)[-1]
-        config_path_out = f"{config_dir}/{config_name}"
-        shutil.copyfile(config_path_in, config_path_out)
+    safitty.save(experiment_config, config_dir / "_config.json")
+    safitty.save(environment, config_dir / "_environment.json")
+
+    pip_pkg = list_pip_packages()
+    (config_dir / "pip-packages.txt").write_text(pip_pkg)
+    conda_pkg = list_conda_packages()
+    if conda_pkg:
+        (config_dir / "conda-packages.txt").write_text(conda_pkg)
+
+    for path in configs_path:
+        name: str = path.name
+        outpath = config_dir / name
+        shutil.copyfile(path, outpath)
+
+    config_str = json.dumps(experiment_config, indent=2, ensure_ascii=False)
+    config_str = config_str.replace("\n", "\n\n")
+
+    environment_str = json.dumps(environment, indent=2, ensure_ascii=False)
+    environment_str = environment_str.replace("\n", "\n\n")
+
+    pip_pkg = pip_pkg.replace("\n", "\n\n")
+    conda_pkg = conda_pkg.replace("\n", "\n\n")
+    with SummaryWriter(config_dir) as writer:
+        writer.add_text("_config", config_str, 0)
+        writer.add_text("_environment", environment_str, 0)
+        writer.add_text("pip-packages", pip_pkg, 0)
+        if conda_pkg:
+            writer.add_text("conda-packages", conda_pkg, 0)
 
 
 def parse_config_args(*, config, args, unknown_args):
@@ -142,9 +277,15 @@ def parse_args_uargs(args, unknown_args):
     if config_args is not None:
         for key, value in config_args.items():
             arg_value = getattr(args_, key, None)
-            if arg_value is None \
-                    or (key in ["logdir", "baselogdir"] and arg_value == ""):
+            if arg_value is None or \
+                    (key in ["logdir", "baselogdir"] and arg_value == ""):
                 arg_value = value
             setattr(args_, key, arg_value)
 
     return args_, config
+
+
+__all__ = [
+    "load_ordered_yaml", "get_environment_vars", "dump_environment",
+    "parse_config_args", "parse_args_uargs"
+]

@@ -1,8 +1,21 @@
 #!/usr/bin/env bash
+#title           :catalyst-parallel-run
+#description     :script to run experiments in parallel over several gpus
+#author          :David Kuryakin, Sergey Kolesnikov
+#author_email    :dkuryakin@gmail.com, scitator@gmail.com
+#date            :20190807
+#version         :19.08.1
+#==============================================================================
 
 set -e
 
-cd "$(dirname "$0")"
+# usage:
+# cat ./runs.txt | catalyst-parallel-run {NUM_GPUS} {LOGDIR}
+
+# example:
+# cat ./runs.txt | catalyst-parallel-run 2 /Users/scitator/Documents/tmp/190000-l2m/"$(date +%s)"
+
+# cd "$(dirname "$0")"
 
 N=${1:-4}
 LOGS=${2:-logs/$(date +%s)}
@@ -15,19 +28,19 @@ IDX=0
 echo "$(cat)" | while read cmd ; do
     CMD="$CMD $cmd"
     lastchar="${cmd: -1}"
-    if [ '\' == "$lastchar" ] ; then
+    if [[ '\' == "$lastchar" ]] ; then
         continue
     fi
     CMD="${CMD#"${CMD%%[![:space:]]*}"}"
     CMD="${CMD%"${CMD##*[![:space:]]}"}"
-    if [ -z "$CMD" ] ; then
+    if [[ -z "$CMD" ]] ; then
         continue
     fi
     started=
-    while [ -z "$started" ] ; do
+    while [[ -z "$started" ]] ; do
         for ((gpu=0; gpu<N; gpu++)) ; do
             pid=${PIDS[$gpu]}
-            if [ -n "$pid" ] && ps -p $pid > /dev/null; then
+            if [[ -n "$pid" ]] && ps -p $pid > /dev/null; then
                 continue
             fi
             echo "RUN [GPU $gpu]: $CMD" | tee "$LOGS/$IDX.log"
@@ -40,8 +53,8 @@ echo "$(cat)" | while read cmd ; do
             IDX=$((IDX+1))
             break
         done
-        if [ -z "$started" ] ; then
-            sleep 0.1
+        if [[ -z "$started" ]] ; then
+            sleep 30
         fi
     done
     CMD=""
@@ -49,7 +62,7 @@ done
 
 for pid in $(cat "$LOGS/pids.txt") ; do
     while ps -p $pid > /dev/null ; do
-        sleep 0.1
+        sleep 30
     done
 done
 rm "$LOGS/pids.txt"

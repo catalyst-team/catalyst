@@ -3,7 +3,7 @@
 ### Local run
 
 ```bash
-catalyst-dl run --config=./cifar_stages/config.yml
+catalyst-dl run --config=./cifar_stages/config.yml --verbose
 ```
 
 ### Docker run

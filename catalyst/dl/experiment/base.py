@@ -1,4 +1,4 @@
-from typing import Dict, List, Iterable, Mapping, Any
+from typing import Dict, List, Iterable, Mapping, Any, Union
 from collections import OrderedDict
 
 from torch import nn
@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader
 
 from catalyst.dl.core import Experiment, Callback
 from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
+from catalyst.dl.utils import process_callback
 
 
 class BaseExperiment(Experiment):
@@ -18,7 +19,7 @@ class BaseExperiment(Experiment):
         self,
         model: _Model,
         loaders: "OrderedDict[str, DataLoader]",
-        callbacks: "List[Callback]" = None,
+        callbacks: "Union[OrderedDict[str, Callback], List[Callback]]" = None,
         logdir: str = None,
         stage: str = "train",
         criterion: _Criterion = None,
@@ -31,11 +32,12 @@ class BaseExperiment(Experiment):
         verbose: bool = False,
         state_kwargs: Dict = None,
         checkpoint_data: Dict = None,
-        distributed_params: Dict = None
+        distributed_params: Dict = None,
+        monitoring_params: Dict = None
     ):
         self._model = model
         self._loaders = loaders
-        self._callbacks = callbacks or []
+        self._callbacks = process_callback(callbacks)
 
         self._criterion = criterion
         self._optimizer = optimizer
@@ -51,6 +53,7 @@ class BaseExperiment(Experiment):
         self._additional_state_kwargs = state_kwargs or {}
         self.checkpoint_data = checkpoint_data or {}
         self._distributed_params = distributed_params or {}
+        self._monitoring_params = monitoring_params or {}
 
     @property
     def logdir(self):
@@ -63,6 +66,10 @@ class BaseExperiment(Experiment):
     @property
     def distributed_params(self) -> Dict:
         return self._distributed_params
+
+    @property
+    def monitoring_params(self) -> Dict:
+        return self._monitoring_params
 
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
         default_params = dict(
@@ -84,13 +91,12 @@ class BaseExperiment(Experiment):
         return self._criterion
 
     def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
-
         return self._optimizer
 
     def get_scheduler(self, stage: str, optimizer=None) -> _Scheduler:
         return self._scheduler
 
-    def get_callbacks(self, stage: str) -> "List[Callback]":
+    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         return self._callbacks
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":

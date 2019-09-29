@@ -4,11 +4,12 @@ import numpy as np
 
 def set_global_seed(seed: int) -> None:
     """
-    Sets random seed into PyTorch, TensorFlow, Numpy and Random
+    Sets random seed into PyTorch, TensorFlow, Numpy and Random.
 
     Args:
         seed: random seed
     """
+
     try:
         import torch
     except ImportError:
@@ -21,7 +22,10 @@ def set_global_seed(seed: int) -> None:
     except ImportError:
         pass
     else:
-        tf.set_random_seed(seed)
+        if tf.__version__ < "2.0.0-beta1":
+            tf.set_random_seed(seed)
+        else:
+            tf.random.set_seed(seed)
     random.seed(seed)
     np.random.seed(seed)
 

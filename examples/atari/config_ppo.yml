@@ -1,6 +1,6 @@
 args:
   logdir: ./logs/atari-ppo
-  expdir: src
+#  expdir: src
 
   vis: 0
   infer: 0   #  change me
@@ -19,18 +19,20 @@ environment:
   history_len: &history_len 4
   frame_skip: 4
   reward_scale: 1.0
-  step_delay: 0.0
 
 agents:
   actor:
-    agent: ConvActor
+    agent: Actor
 
     state_net_params:  # state -> hidden representation
       observation_net_params:
+        _network_type: "convolution"
         history_len: *history_len
-        conv1_size: 32
-        conv2_size: 64
-        conv3_size: 32
+        channels: [32 64, 32]
+        use_bias: false
+        normalization: null
+        dropout_rate: null
+        activation: LeakyReLU
       main_net_params:
         out_features: &embedding_size 512
     policy_head_params:  # hidden representation -> ~policy
@@ -39,18 +41,24 @@ agents:
       policy_type: categorical
 
   critic:
-    agent: ConvCritic
+    agent: StateCritic
 
     state_net_params:  # state -> hidden representation
       observation_net_params:
+        _network_type: "convolution"
         history_len: *history_len
-        conv1_size: 32
-        conv2_size: 64
-        conv3_size: 32
+        channels: [32 64, 32]
+        use_bias: false
+        normalization: null
+        dropout_rate: null
+        activation: LeakyReLU
       main_net_params:
-        out_features: &embedding_size 512
+        features: [512]
+        use_bias: false
+        normalization: LayerNorm
+        activation: ReLU
     value_head_params:  # hidden representation -> ~policy
-      in_features: *embedding_size
+      in_features: 512
       out_features: 1
 
 #        num_heads: 10

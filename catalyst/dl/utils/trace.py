@@ -5,6 +5,7 @@ from torch import nn
 from torch.jit import ScriptModule
 
 from catalyst.dl.core import Experiment, Runner
+from catalyst import utils
 
 
 class _ForwardOverrideModel(nn.Module):
@@ -65,32 +66,36 @@ def trace_model(
     model: nn.Module,
     experiment: Experiment,
     runner_type: Type[Runner],
-    method_name: str = "forward"
+    method_name: str = "forward",
+    mode: str = "eval",
+    requires_grad: bool = False,
 ) -> ScriptModule:
     """
     Traces model using it's native experiment and runner.
 
     Args:
-          model: Model to trace
-            NOTICE: will be switched to eval and
-            requires_grad=False will be set on all params
-          experiment: Native experiment that was used to train model
-          runner_type: Model's native runner that was used to train model
-          method_name: Model's method name that will be
+        model: Model to trace
+        experiment: Native experiment that was used to train model
+        runner_type: Model's native runner that was used to train model
+        method_name (str): Model's method name that will be
             used as entrypoint during tracing
+        mode (str): Mode for model to trace (``train`` or ``eval``)
+        requires_grad (bool): Flag to use grads
 
     Returns:
-          Traced model ScriptModule
+        Traced model ScriptModule
     """
-    stage = list(experiment.stages)[0]
 
-    model.eval()
-    for p in model.parameters():
-        p.requires_grad_(False)
+    if mode not in ["train", "eval"]:
+        raise ValueError(f"Unknown mode '{mode}'. Must be 'eval' or 'train'")
+
+    getattr(model, mode)()
+    utils.set_requires_grad(model, requires_grad=requires_grad)
 
     tracer = _TracingModelWrapper(model, method_name)
     runner: Runner = runner_type(tracer.cpu(), torch.device("cpu"))
 
+    stage = list(experiment.stages)[0]
     batch = _get_native_batch(experiment, stage)
     batch = runner._batch2device(batch, device=runner.device)
 

@@ -3,7 +3,7 @@ from time import time
 from numbers import Number
 from typing import Any, Dict
 
-from torchnet.meter import AverageValueMeter
+from catalyst.dl.meters import AverageValueMeter
 
 
 class TimerManager:
@@ -67,6 +67,20 @@ class MetricManager:
 
         self._current_loader_name: str = None
 
+    @property
+    def batch_values(self) -> Dict[str, float]:
+        self.add_batch_value()
+        return self._batch_values
+
+    @property
+    def main_metric_value(self) -> float:
+        assert self._valid_loader in self.epoch_values, \
+            f"{self._valid_loader} is not available yet"
+        assert self._main_metric in self.epoch_values[self._valid_loader], \
+            f"{self._main_metric} is not available yet"
+
+        return self.epoch_values[self._valid_loader][self._main_metric]
+
     def begin_epoch(self):
         self.epoch_values = defaultdict(lambda: {})
 
@@ -120,20 +134,6 @@ class MetricManager:
 
         for name, value in metrics_dict.items():
             self._batch_values[name] = self._to_single_value(value)
-
-    @property
-    def batch_values(self) -> Dict[str, float]:
-        self.add_batch_value()
-        return self._batch_values
-
-    @property
-    def main_metric_value(self) -> float:
-        assert self._valid_loader in self.epoch_values, \
-            f"{self._valid_loader} is not available yet"
-        assert self._main_metric in self.epoch_values[self._valid_loader], \
-            f"{self._main_metric} is not available yet"
-
-        return self.epoch_values[self._valid_loader][self._main_metric]
 
 
 __all__ = ["TimerManager", "MetricManager"]

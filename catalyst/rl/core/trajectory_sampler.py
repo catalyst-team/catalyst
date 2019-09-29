@@ -139,7 +139,7 @@ class TrajectorySampler:
         self._init_with_observation(observation)
 
     def sample(self, exploration_strategy=None):
-        reward, num_steps, done_t = 0, 0, False
+        reward, raw_reward, num_steps, done_t = 0, 0, 0, False
 
         while not done_t and self._sampling_flag.value:
             state_t = self.get_state()
@@ -152,6 +152,7 @@ class TrajectorySampler:
             )
             observation_tp1, reward_t, done_t, info = self.env.step(action_t)
             reward += reward_t
+            raw_reward += info.get("raw_reward", reward_t)
 
             transition = [observation_tp1, action_t, reward_t, done_t]
             self._put_transition(transition)
@@ -171,7 +172,7 @@ class TrajectorySampler:
             raw_num_steps = len(raw_trajectory[0])
             assert all(len(x) == raw_num_steps for x in raw_trajectory)
 
-        trajectory_info["raw_reward"] = reward
+        trajectory_info["raw_reward"] = raw_reward
         assert all(len(x) == num_steps for x in trajectory)
 
         return trajectory, trajectory_info

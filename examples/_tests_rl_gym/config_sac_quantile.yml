@@ -13,10 +13,10 @@ db:
   prefix: gym-sac-quantile  # TODO: remove
 
 environment:
-  environment: GymWrapper
+  environment: GymEnvWrapper
   env_name: PointEnv-v0
 
-  history_len: 1
+  history_len: &history_len 1
   frame_skip: 1
   reward_scale: 0.1
 
@@ -29,17 +29,17 @@ agents:
 
     state_net_params:  # state -> hidden representation
       observation_net_params:
-        hiddens: [32]  # first hidden would be taken from state_shape
-        layer_fn: Linear
-        norm_fn: LayerNorm
-        activation_fn: ReLU
-        bias: false
+        _network_type: "linear"
+        history_len: *history_len
+        features: [32]  # first hidden would be taken from state_shape
+        use_bias: false
+        normalization: LayerNorm
+        activation: ReLU
       main_net_params:
-        hiddens: [32, 32]
-        layer_fn: Linear
-        norm_fn: LayerNorm
-        activation_fn: ReLU
-        bias: false
+        features: [32]
+        use_bias: false
+        normalization: LayerNorm
+        activation: ReLU
     policy_head_params:  # hidden representation -> ~policy
       in_features: 32    # out features would be taken from action_shape
       policy_type: squashing-gauss
@@ -50,24 +50,23 @@ agents:
 
     state_action_net_params:  # state -> hidden representation
       observation_net_params:
-        hiddens: [32, 16]   # first hidden would be taken from state_shape
-        layer_fn: Linear
-        norm_fn: LayerNorm
-        activation_fn: ReLU
-        bias: false
+        _network_type: "linear"
+        history_len: *history_len
+        features: [32, 16]  # first hidden would be taken from state_shape
+        use_bias: false
+        normalization: LayerNorm
+        activation: ReLU
       action_net_params:
-        hiddens: [32, 16]   # first hidden would be taken from action_shape
-        layer_fn: Linear
-        norm_fn: LayerNorm
-        activation_fn: ReLU
-        bias: false
+        _network_type: "linear"
+        features: [32, 16]  # first hidden would be taken from action_shape
+        use_bias: false
+        normalization: LayerNorm
+        activation: ReLU
       main_net_params:
-        hiddens: [32, 32]
-        layer_fn: Linear
-        norm_fn: LayerNorm
-        activation_fn: ReLU
-        bias: false
-
+        features: [32]  # first hidden would be taken from action_shape
+        use_bias: false
+        normalization: LayerNorm
+        activation: ReLU
     value_head_params:  # hidden representation -> value
       in_features: 32  # out features would be taken from action_shape
       out_features: 1
@@ -92,10 +91,10 @@ algorithm:
 
   actor_optimizer_params:
     optimizer: Adam
-    lr: 0.0003
+    lr: 0.001
   critic_optimizer_params:
     optimizer: Adam
-    lr: 0.0003
+    lr: 0.001
 
   actor_grad_clip_params:
     func: clip_grad_value_
@@ -103,11 +102,11 @@ algorithm:
 
 trainer:
   batch_size: 256              # transitions
-  num_workers: 1
+  num_workers: 0
   epoch_len: 100               # batches
 
   replay_buffer_size: 1400000  # transitions
-  min_num_transitions: 1332440 # transitions
+  min_num_transitions: 1332422 # transitions
 
   save_period: 50              # epochs
   weights_sync_period: 1       # epochs

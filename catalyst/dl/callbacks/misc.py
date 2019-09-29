@@ -1,12 +1,10 @@
 from typing import List, Dict
 import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
-from torchnet.meter import ConfusionMeter
-from tensorboardX import SummaryWriter
 
-from catalyst.dl.core import Callback, RunnerState
+from catalyst.dl.meters import ConfusionMeter
+from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 from catalyst.dl import utils
-from .logging import TensorboardLogger
 
 
 class EarlyStoppingCallback(Callback):
@@ -17,6 +15,7 @@ class EarlyStoppingCallback(Callback):
         minimize: bool = True,
         min_delta: float = 1e-6
     ):
+        super().__init__(CallbackOrder.Logger)
         self.best_score = None
         self.metric = metric
         self.patience = patience
@@ -57,6 +56,7 @@ class ConfusionMatrixCallback(Callback):
         num_classes: int = None,
         plot_params: Dict = None
     ):
+        super().__init__(CallbackOrder.Metric)
         self.prefix = prefix
         self.output_key = output_key
         self.input_key = input_key
@@ -72,16 +72,6 @@ class ConfusionMatrixCallback(Callback):
 
         assert self.num_classes is not None
         self._reset_stats()
-
-    @staticmethod
-    def _get_tensorboard_logger(state: RunnerState) -> SummaryWriter:
-        # @TODO: remove this hack, simplify state
-        for logger in state.loggers:
-            if isinstance(logger, TensorboardLogger):
-                return logger.loggers[state.loader_name]
-        raise RuntimeError(
-            f"Cannot find Tensorboard logger for loader {state.loader_name}"
-        )
 
     def _reset_stats(self):
         if self._version == "tnt":
@@ -140,9 +130,8 @@ class ConfusionMatrixCallback(Callback):
             self.class_names or \
             [str(i) for i in range(self.num_classes)]
         confusion_matrix = self._compute_confusion_matrix()
-        logger = self._get_tensorboard_logger(state)
         self._plot_confusion_matrix(
-            logger=logger,
+            logger=state.loggers["tensorboard"].loggers[state.loader_name],
             epoch=state.epoch,
             confusion_matrix=confusion_matrix,
             class_names=class_names

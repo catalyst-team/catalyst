@@ -6,8 +6,9 @@ from tqdm import tqdm
 
 from tensorboardX import SummaryWriter
 
-from catalyst.dl.core import Callback, RunnerState
+from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 from catalyst.dl.utils.formatters import TxtMetricsFormatter
+from catalyst.dl import utils
 
 
 class VerboseLogger(Callback):
@@ -17,6 +18,7 @@ class VerboseLogger(Callback):
         Args:
             always_show (List[str]): list of metrics to always show
         """
+        super().__init__(CallbackOrder.Logger)
         self.tqdm: tqdm = None
         self.step = 0
         self.always_show = always_show
@@ -41,7 +43,7 @@ class VerboseLogger(Callback):
     def on_batch_end(self, state: RunnerState):
         self.tqdm.set_postfix(
             **{
-                k: "{:3.3f}".format(v)
+                k: "{:3.3f}".format(v) if v > 1e-3 else "{:1.3e}".format(v)
                 for k, v in sorted(state.metrics.batch_values.items())
                 if self._need_show(k)
             }
@@ -53,21 +55,30 @@ class VerboseLogger(Callback):
         self.tqdm = None
         self.step = 0
 
+    def on_exception(self, state: RunnerState):
+        exception = state.exception
+        if not utils.is_exception(exception):
+            return
+
+        if isinstance(exception, KeyboardInterrupt):
+            self.tqdm.write("Early exiting")
+            state.need_reraise_exception = False
+
 
 class ConsoleLogger(Callback):
     """
     Logger callback, translates ``state.metrics`` to console and text file
     """
-
     def __init__(self):
+        super().__init__(CallbackOrder.Logger)
         self.logger = None
 
     @staticmethod
     def _get_logger(logdir):
-        logger = logging.getLogger("metrics")
+        logger = logging.getLogger("metrics_logger")
         logger.setLevel(logging.INFO)
 
-        fh = logging.FileHandler(f"{logdir}/metrics.txt")
+        fh = logging.FileHandler(f"{logdir}/log.txt")
         fh.setLevel(logging.INFO)
         ch = logging.StreamHandler(sys.stdout)
         ch.setLevel(logging.INFO)
@@ -117,6 +128,7 @@ class TensorboardLogger(Callback):
             log_on_batch_end: Logs per-batch metrics if set True.
             log_on_epoch_end: Logs per-epoch metrics if set True.
         """
+        super().__init__(CallbackOrder.Logger)
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
@@ -161,6 +173,28 @@ class TensorboardLogger(Callback):
             self._log_metrics(
                 metrics=metrics_, step=state.epoch, mode=mode, suffix="/epoch"
             )
+        for logger in self.loggers.values():
+            logger.flush()
+
+    def on_stage_end(self, state: RunnerState):
+        for logger in self.loggers.values():
+            logger.close()
 
 
-__all__ = ["VerboseLogger", "ConsoleLogger", "TensorboardLogger"]
+class RaiseExceptionLogger(Callback):
+    def __init__(self):
+        super().__init__(CallbackOrder.Other + 1)
+
+    def on_exception(self, state: RunnerState):
+        exception = state.exception
+        if not utils.is_exception(exception):
+            return
+
+        if state.need_reraise_exception:
+            raise exception
+
+
+__all__ = [
+    "VerboseLogger", "ConsoleLogger",
+    "TensorboardLogger", "RaiseExceptionLogger"
+]

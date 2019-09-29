@@ -7,9 +7,14 @@
 # In[ ]:
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 plt.ioff()
+
+# ! pip install tifffile
+
+# In[ ]:
 
 import tifffile as tiff
 
@@ -28,11 +33,44 @@ import numpy as np
 import torch
 import torchvision
 import torchvision.transforms as transforms
-from catalyst.data.augmentor import Augmentor
+from catalyst.data import Augmentor
 from catalyst.dl import utils
+from catalyst.contrib.criterion import LovaszLossBinary, \
+    LovaszLossMultiLabel, \
+    LovaszLossMultiClass
 
 bs = 1
 num_workers = 0
+
+
+def get_loaders(transform):
+    open_fn = lambda x: {"features": x[0], "targets": x[1]}
+
+    loaders = collections.OrderedDict()
+
+    train_loader = utils.get_loader(
+        train_data,
+        open_fn=open_fn,
+        dict_transform=transform,
+        batch_size=bs,
+        num_workers=num_workers,
+        shuffle=True
+    )
+
+    valid_loader = utils.get_loader(
+        valid_data,
+        open_fn=open_fn,
+        dict_transform=transform,
+        batch_size=bs,
+        num_workers=num_workers,
+        shuffle=False
+    )
+
+    loaders["train"] = train_loader
+    loaders["valid"] = valid_loader
+
+    return loaders
+
 
 data_transform = transforms.Compose([
     Augmentor(
@@ -42,38 +80,15 @@ data_transform = transforms.Compose([
     Augmentor(
         dict_key="features",
         augment_fn=transforms.Normalize(
-            (0.5, ),
-            (0.5, ))),
+            (0.5,),
+            (0.5,))),
     Augmentor(
         dict_key="targets",
         augment_fn=lambda x: \
             torch.from_numpy(x.copy().astype(np.float32) / 255.).unsqueeze_(0))
 ])
 
-open_fn = lambda x: {"features": x[0], "targets": x[1]}
-
-loaders = collections.OrderedDict()
-
-train_loader = utils.get_loader(
-    train_data,
-    open_fn=open_fn,
-    dict_transform=data_transform,
-    batch_size=bs,
-    num_workers=num_workers,
-    shuffle=True
-)
-
-valid_loader = utils.get_loader(
-    valid_data,
-    open_fn=open_fn,
-    dict_transform=data_transform,
-    batch_size=bs,
-    num_workers=num_workers,
-    shuffle=False
-)
-
-loaders["train"] = train_loader
-loaders["valid"] = valid_loader
+loaders = get_loaders(data_transform)
 
 # # Model
 
@@ -119,15 +134,8 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.dl.callbacks import InferCallback, CheckpointCallback
-loaders = collections.OrderedDict([("infer", loaders["valid"])])
-runner.infer(
-    model=model,
-    loaders=loaders,
-    callbacks=[
-        CheckpointCallback(resume=f"{logdir}/checkpoints/best.pth"),
-        InferCallback()
-    ],
+runner_out = runner.predict_loader(
+    model, loaders["valid"], resume=f"{logdir}/checkpoints/best.pth"
 )
 
 # # Predictions visualization
@@ -141,9 +149,7 @@ plt.style.use("ggplot")
 
 sigmoid = lambda x: 1 / (1 + np.exp(-x))
 
-for i, (input, output) in enumerate(
-    zip(valid_data, runner.callbacks[1].predictions["logits"])
-):
+for i, (input, output) in enumerate(zip(valid_data, runner_out)):
     image, mask = input
 
     threshold = 0.5
@@ -163,4 +169,95 @@ for i, (input, output) in enumerate(
 
     plt.show()
 
-# In[ ]:
+# lovasz LovaszLossBinary criterion
+
+criterion = LovaszLossBinary()
+
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    logdir=logdir,
+    num_epochs=num_epochs,
+    check=True
+)
+
+# Multiclasses checks
+model = Unet(num_classes=2, in_channels=1, num_channels=32, num_blocks=2)
+
+# lovasz LovaszLossMultiClass criterion
+
+data_transform = transforms.Compose([
+    Augmentor(
+        dict_key="features",
+        augment_fn=lambda x: \
+            torch.from_numpy(
+                x.copy().astype(np.float32) / 255.).unsqueeze_(0)),
+    Augmentor(
+        dict_key="features",
+        augment_fn=transforms.Normalize(
+            (0.5,),
+            (0.5,))),
+    Augmentor(
+        dict_key="targets",
+        augment_fn=lambda x: \
+            torch.from_numpy(
+                x.copy().astype(np.float32) / 255.
+            ))
+])
+
+loaders = get_loaders(data_transform)
+
+criterion = LovaszLossMultiClass()
+
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    logdir=logdir,
+    num_epochs=num_epochs,
+    check=True
+)
+
+# lovasz LovaszLossMultiLabel criterion
+
+
+def transform_targets(x):
+    x1 = x.copy().astype(np.float32)[None]
+    x2 = 255 - x.copy().astype(np.float32)[None]
+    return np.vstack([x1, x2]) / 255.
+
+
+data_transform = transforms.Compose([
+    Augmentor(
+        dict_key="features",
+        augment_fn=lambda x: \
+            torch.from_numpy(
+                x.copy().astype(np.float32) / 255.
+            ).unsqueeze_(0)),
+    Augmentor(
+        dict_key="features",
+        augment_fn=transforms.Normalize(
+            (0.5,),
+            (0.5,))),
+    Augmentor(
+        dict_key="targets",
+        augment_fn=lambda x: \
+            torch.from_numpy(transform_targets(x)))
+])
+
+loaders = get_loaders(data_transform)
+
+criterion = LovaszLossMultiLabel()
+
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    logdir=logdir,
+    num_epochs=num_epochs,
+    check=True
+)

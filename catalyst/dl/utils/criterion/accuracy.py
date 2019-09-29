@@ -1,16 +1,32 @@
 import numpy as np
+from catalyst.utils import get_activation_fn
 
 
-def accuracy(outputs, targets, topk=(1, )):
+def accuracy(
+        outputs,
+        targets,
+        topk=(1, ),
+        threshold: float = None,
+        activation: str = None
+):
     """
-    Computes the accuracy@k for the specified values of k
+    Computes the accuracy@k for the specified values of k.
     """
     max_k = max(topk)
     batch_size = targets.size(0)
 
-    _, pred = outputs.topk(max_k, 1, True, True)
-    pred = pred.t()
-    correct = pred.eq(targets.view(1, -1).expand_as(pred))
+    activation_fn = get_activation_fn(activation)
+    outputs = activation_fn(outputs)
+
+    if threshold:
+        outputs = (outputs > threshold).long()
+
+    if len(outputs.shape) == 1 or outputs.shape[1] == 1:
+        pred = outputs.t()
+    else:
+        _, pred = outputs.topk(max_k, 1, True, True)
+        pred = pred.t()
+    correct = pred.eq(targets.long().view(1, -1).expand_as(pred))
 
     res = []
     for k in topk:

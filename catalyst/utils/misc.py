@@ -4,6 +4,8 @@ import copy
 import collections
 import numpy as np
 from itertools import tee
+import shutil
+from pathlib import Path
 
 
 def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:
@@ -74,3 +76,39 @@ def append_dict(dict1, dict2):
     for key in dict1.keys():
         dict1[key] = np.concatenate((dict1[key], dict2[key]))
     return dict1
+
+
+def flatten_dict(d, parent_key="", sep="/"):
+    items = []
+    for k, v in d.items():
+        new_key = parent_key + sep + k if parent_key else k
+        if isinstance(v, collections.MutableMapping):
+            items.extend(flatten_dict(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return collections.OrderedDict(items)
+
+
+def is_exception(ex: Any) -> bool:
+    """
+    Check if the argument is of Exception type
+    """
+    result = (ex is not None) and isinstance(ex, BaseException)
+    return result
+
+
+def copy_directory(input_dir: Path, output_dir: Path) -> None:
+    """
+    Recursively copies the input directory
+
+    Args:
+        input_dir (Path): input directory
+        output_dir (Path): output directory
+    """
+    output_dir.mkdir(exist_ok=True, parents=True)
+    for path in input_dir.iterdir():
+        if path.is_dir():
+            path_name = path.name
+            copy_directory(path, output_dir / path_name)
+        else:
+            shutil.copy2(path, output_dir)

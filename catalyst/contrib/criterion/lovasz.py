@@ -61,8 +61,8 @@ def _flatten_binary_scores(logits, targets, ignore=None):
     Flattens predictions in the batch (binary case)
     Remove targets equal to "ignore"
     """
-    logits = logits.view(-1)
-    targets = targets.view(-1)
+    logits = logits.reshape(-1)
+    targets = targets.reshape(-1)
     if ignore is None:
         return logits, targets
     valid = (targets != ignore)
@@ -166,7 +166,7 @@ def _lovasz_softmax_flat(probabilities, targets, classes="present"):
         if classes == "present" and fg.sum() == 0:
             continue
         if C == 1:
-            if len(classes) > 1:
+            if len(class_to_sum) > 1:
                 raise ValueError("Sigmoid output possible only with 1 class")
             class_pred = probabilities[:, 0]
         else:

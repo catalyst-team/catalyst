@@ -4,7 +4,8 @@ import os
 import argparse
 
 from catalyst.utils.scripts import import_module
-from catalyst.utils import parse_args_uargs, dump_config, set_global_seed
+from catalyst.utils import parse_args_uargs, dump_environment, set_global_seed
+from catalyst.utils.scripts import dump_code
 from catalyst.rl.registry import OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
     ENVIRONMENTS, DATABASES
 from catalyst.rl.offpolicy.trainer import Trainer as OffpolicyTrainer
@@ -45,10 +46,12 @@ def main(args, unknown_args):
 
     if args.logdir is not None:
         os.makedirs(args.logdir, exist_ok=True)
-        dump_config(config, args.logdir, args.configs)
+        dump_environment(config, args.logdir, args.configs)
 
     if args.expdir is not None:
         module = import_module(expdir=args.expdir)  # noqa: F841
+        if args.logdir is not None:
+            dump_code(args.expdir, args.logdir)
 
     env = ENVIRONMENTS.get_from_params(**config["environment"])
 
@@ -75,11 +78,14 @@ def main(args, unknown_args):
     # if args.resume is not None:
     #     algorithm.load_checkpoint(filepath=args.resume)
 
+    monitoring_params = config.get("monitoring_params", None)
+
     trainer = trainer_fn(
         algorithm=algorithm,
         env_spec=env,
         db_server=db_server,
         logdir=args.logdir,
+        monitoring_params=monitoring_params,
         **config["trainer"],
     )
 

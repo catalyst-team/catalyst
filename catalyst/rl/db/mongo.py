@@ -1,3 +1,4 @@
+import time
 import datetime
 
 import pymongo
@@ -9,10 +10,16 @@ from catalyst.rl.core import DBSpec
 
 class MongoDB(DBSpec):
     def __init__(
-        self, host="127.0.0.1", port=12000, prefix=None, sync_epoch=False
+        self,
+        host: str = "127.0.0.1",
+        port: int = 12000,
+        prefix: str = None,
+        sync_epoch: bool = False,
+        reconnect_timeout: int = 3,
     ):
         self._server = pymongo.MongoClient(host=host, port=port)
         self._prefix = "" if prefix is None else prefix
+        self._reconnect_timeout = reconnect_timeout
 
         self._shared_db = self._server["shared"]
         self._agent_db = self._server[f"agent_{self._prefix}"]
@@ -27,14 +34,24 @@ class MongoDB(DBSpec):
         self._sync_epoch = sync_epoch
 
     def _set_flag(self, key, value):
-        self._messages_collection.replace_one(
-            {"key": key},
-            {"key": key, "value": value},
-            upsert=True
-        )
+        try:
+            self._messages_collection.replace_one(
+                {"key": key},
+                {"key": key, "value": value},
+                upsert=True
+            )
+        except pymongo.errors.AutoReconnect:
+            time.sleep(self._reconnect_timeout)
+            return self._set_flag(key, value)
 
     def _get_flag(self, key, default=None):
-        flag_obj = self._messages_collection.find_one({"key": {"$eq": key}})
+        try:
+            flag_obj = self._messages_collection.find_one(
+                {"key": {"$eq": key}}
+            )
+        except pymongo.errors.AutoReconnect:
+            time.sleep(self._reconnect_timeout)
+            return self._get_flag(key, default)
         flag = safitty.get(flag_obj, "value", default=default)
         return flag
 
@@ -72,28 +89,37 @@ class MongoDB(DBSpec):
         else:
             raise NotImplementedError("unknown message", message)
 
-    def push_trajectory(self, trajectory, raw=False):
-        trajectory = utils.structed2dict_trajectory(trajectory)
-        trajectory = utils.pack(trajectory)
-        collection = self._raw_trajectory_collection if raw \
-            else self._trajectory_collection
+    def put_trajectory(self, trajectory, raw=False):
+        try:
+            trajectory_ = utils.structed2dict_trajectory(trajectory)
+            trajectory_ = utils.pack(trajectory_)
+            collection = self._raw_trajectory_collection if raw \
+                else self._trajectory_collection
 
-        collection.insert_one(
-            {
-                "trajectory": trajectory,
-                "date": datetime.datetime.utcnow(),
-                "epoch": self._epoch
-            }
-        )
+            collection.insert_one(
+                {
+                    "trajectory": trajectory_,
+                    "date": datetime.datetime.utcnow(),
+                    "epoch": self._epoch
+                }
+            )
+        except pymongo.errors.AutoReconnect:
+            time.sleep(self._reconnect_timeout)
+            return self.put_trajectory(trajectory, raw)
 
     def get_trajectory(self, index=None):
         assert index is None
 
-        trajectory_obj = self._trajectory_collection.find_one(
-            {"date": {
-                "$gt": self._last_datetime
-            }}
-        )
+        try:
+            trajectory_obj = self._trajectory_collection.find_one(
+                {"date": {
+                    "$gt": self._last_datetime
+                }}
+            )
+        except pymongo.errors.AutoReconnect:
+            time.sleep(self._reconnect_timeout)
+            return self.get_trajectory(index)
+
         if trajectory_obj is not None:
             self._last_datetime = trajectory_obj["date"]
 
@@ -109,34 +135,47 @@ class MongoDB(DBSpec):
 
         return trajectory
 
-    def clean_trajectories(self):
-        self._trajectory_collection.drop()
+    def del_trajectory(self):
+        try:
+            self._trajectory_collection.drop()
+        except pymongo.errors.AutoReconnect:
+            time.sleep(self._reconnect_timeout)
+            return self.del_trajectory()
 
-    def save_checkpoint(self, checkpoint, epoch):
-        self._epoch = epoch
+    def put_checkpoint(self, checkpoint, epoch):
+        try:
+            self._epoch = epoch
+            checkpoint_ = utils.pack(checkpoint)
+            self._checkpoints_collection.replace_one(
+                {"prefix": "checkpoint"}, {
+                    "checkpoint": checkpoint_,
+                    "prefix": "checkpoint",
+                    "epoch": self._epoch
+                },
+                upsert=True
+            )
+        except pymongo.errors.AutoReconnect:
+            time.sleep(self._reconnect_timeout)
+            return self.put_checkpoint(checkpoint, epoch)
 
-        checkpoint = utils.pack(checkpoint)
-        self._checkpoints_collection.replace_one(
-            {"prefix": "checkpoint"}, {
-                "checkpoint": checkpoint,
-                "prefix": "checkpoint",
-                "epoch": self._epoch
-            },
-            upsert=True
-        )
+    def get_checkpoint(self):
+        try:
+            checkpoint_obj = self._checkpoints_collection.find_one(
+                {"prefix": "checkpoint"}
+            )
+        except pymongo.errors.AutoReconnect:
+            time.sleep(self._reconnect_timeout)
+            return self.get_checkpoint()
 
-    def load_checkpoint(self):
-        checkpoint_obj = self._checkpoints_collection.find_one(
-            {"prefix": "checkpoint"}
-        )
-        checkpoint = checkpoint_obj.get("checkpoint")
-        if checkpoint is None:
-            return None
-        self._epoch = checkpoint_obj["epoch"]
-        checkpoint = utils.unpack(checkpoint)
+        if checkpoint_obj is not None:
+            checkpoint = checkpoint_obj.get("checkpoint")
+            self._epoch = checkpoint_obj["epoch"]
+            checkpoint = utils.unpack(checkpoint)
+        else:
+            checkpoint = None
         return checkpoint
 
-    def clean_checkpoint(self):
+    def del_checkpoint(self):
         self._checkpoints_collection.delete_one({"prefix": "checkpoint"})
 
 

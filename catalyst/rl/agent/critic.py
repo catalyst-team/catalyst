@@ -1,5 +1,4 @@
-from typing import Dict
-from functools import reduce
+from typing import Dict, Tuple
 from gym.spaces import Discrete
 
 from catalyst.rl.core import CriticSpec, EnvironmentSpec
@@ -30,7 +29,7 @@ class StateCritic(CriticSpec):
         return self.head_net.distribution
 
     @property
-    def values_range(self) -> tuple:
+    def values_range(self) -> Tuple:
         return self.head_net.values_range
 
     @property
@@ -53,16 +52,8 @@ class StateCritic(CriticSpec):
         value_head_params: Dict,
         env_spec: EnvironmentSpec,
     ):
-        # @TODO: refactor
-        observation_size = reduce(
-            lambda x, y: x * y, env_spec.state_space.shape
-        )
-
-        state_net_params["observation_net_params"]["hiddens"].insert(
-            0, observation_size
-        )
-
-        # @TODO: make by init?
+        # @TODO: any better solution?
+        state_net_params["state_shape"] = env_spec.state_space.shape
         state_net = StateNet.get_from_params(**state_net_params)
         head_net = ValueHead(**value_head_params)
 
@@ -123,7 +114,7 @@ class StateActionCritic(CriticSpec):
         return self.head_net.distribution
 
     @property
-    def values_range(self) -> tuple:
+    def values_range(self) -> Tuple:
         return self.head_net.values_range
 
     @property
@@ -141,24 +132,16 @@ class StateActionCritic(CriticSpec):
         value_head_params: Dict,
         env_spec: EnvironmentSpec,
     ):
-        # @TODO: refactor
-        observation_size = reduce(
-            lambda x, y: x * y, env_spec.state_space.shape
-        )
-        state_action_net_params["observation_net_params"]["hiddens"]\
-            .insert(0, observation_size)
-
-        action_size = reduce(lambda x, y: x * y, env_spec.action_space.shape)
-        state_action_net_params["action_net_params"]["hiddens"] \
-            .insert(0, action_size)
-
-        value_head_params["out_features"] = 1
-
-        # @TODO: make by init?
+        # @TODO: any better solution?
+        state_action_net_params["state_shape"] = \
+            env_spec.state_space.shape
+        state_action_net_params["action_shape"] = \
+            env_spec.action_space.shape
         state_action_net = StateActionNet.get_from_params(
             **state_action_net_params
         )
 
+        value_head_params["out_features"] = 1
         head_net = ValueHead(**value_head_params)
 
         net = cls(state_action_net=state_action_net, head_net=head_net)
