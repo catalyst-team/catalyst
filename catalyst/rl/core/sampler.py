@@ -130,6 +130,10 @@ class Sampler:
             self.logger = None
 
     def _start_db_loop(self):
+        if self.db_server is None:
+            self._training_flag.value = True
+            self._sampling_flag.value = True
+            return
         self._db_loop_thread = threading.Thread(
             target=_db2sampler_loop, kwargs={
                 "sampler": self,
@@ -148,7 +152,7 @@ class Sampler:
                 time.sleep(3.0)
                 checkpoint = db_server.get_checkpoint()
         else:
-            raise NotImplementedError
+            logger.warning("no new checkpoint found")
 
         self.checkpoint = checkpoint
         weights = self.checkpoint[f"{self._weights_sync_mode}_state_dict"]
