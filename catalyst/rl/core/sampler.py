@@ -152,7 +152,7 @@ class Sampler:
                 time.sleep(3.0)
                 checkpoint = db_server.get_checkpoint()
         else:
-            logger.warning("no new checkpoint found")
+            raise NotImplementedError("No checkpoint found")
 
         self.checkpoint = checkpoint
         weights = self.checkpoint[f"{self._weights_sync_mode}_state_dict"]
@@ -280,7 +280,8 @@ class Sampler:
                     return
                 time.sleep(5.0)
 
-            if self.trajectory_index % self._weights_sync_period == 0:
+            if self.trajectory_index % self._weights_sync_period == 0 \
+                    and self.db_server is not None:
                 self.load_checkpoint(db_server=self.db_server)
                 self._save_wandb()
 
