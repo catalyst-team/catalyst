@@ -21,7 +21,7 @@ from catalyst.rl.registry import \
 from catalyst.rl.scripts.misc import OFFPOLICY_ALGORITHMS_NAMES, \
     ONPOLICY_ALGORITHMS_NAMES  # noqa E402
 from catalyst.utils.config import parse_args_uargs  # noqa E402
-from catalyst.utils import set_global_seed, boolean_flag  # noqa E402
+from catalyst.utils import set_global_seed, boolean_flag, prepare_cudnn  # noqa E402
 from catalyst.utils.scripts import import_module  # noqa E402
 
 
@@ -145,6 +145,8 @@ def run_sampler(
 
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
+    set_global_seed(args.seed)
+    prepare_cudnn(args.deterministic, args.benchmark)
 
     args.vis = args.vis or 0
     args.infer = args.infer or 0

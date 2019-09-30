@@ -4,7 +4,8 @@ import os
 import argparse
 
 from catalyst.utils.scripts import import_module
-from catalyst.utils import parse_args_uargs, dump_environment, set_global_seed
+from catalyst.utils import parse_args_uargs, boolean_flag, \
+    dump_environment, set_global_seed, prepare_cudnn
 from catalyst.utils.scripts import dump_code
 from catalyst.rl.registry import OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
     ENVIRONMENTS, DATABASES
@@ -30,6 +31,17 @@ def build_args(parser):
     # parser.add_argument("--resume", type=str, default=None)
     parser.add_argument("--seed", type=int, default=42)
 
+    boolean_flag(
+        parser, "deterministic",
+        default=None,
+        help="Deterministic mode if running in CuDNN backend"
+    )
+    boolean_flag(
+        parser, "benchmark",
+        default=None,
+        help="Use CuDNN benchmark"
+    )
+
     return parser
 
 
@@ -43,6 +55,7 @@ def parse_args():
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
     set_global_seed(args.seed)
+    prepare_cudnn(args.deterministic, args.benchmark)
 
     if args.logdir is not None:
         os.makedirs(args.logdir, exist_ok=True)
