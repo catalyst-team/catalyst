@@ -434,7 +434,9 @@ class ValidSampler(Sampler):
         assert self.seeds is not None
 
         while True:
-            ok = self.load_checkpoint(db_server=self.db_server)
+            ok = self.load_checkpoint(db_server=self.db_server) \
+                if self.db_server is not None \
+                else True
             if not ok:
                 return
 
