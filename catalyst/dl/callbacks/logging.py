@@ -104,6 +104,8 @@ class ConsoleLogger(Callback):
         self.logger = self._get_logger(state.logdir)
 
     def on_stage_end(self, state):
+        for handler in self.logger.handlers:
+            handler.close()
         self.logger.handlers = []
 
     def on_epoch_end(self, state):
