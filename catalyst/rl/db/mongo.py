@@ -2,6 +2,7 @@ import time
 import datetime
 
 import pymongo
+import gridfs
 import safitty
 
 from catalyst.rl import utils
@@ -26,8 +27,10 @@ class MongoDB(DBSpec):
 
         self._trajectory_collection = self._shared_db["trajectories"]
         self._raw_trajectory_collection = self._shared_db["raw_trajectories"]
-        self._checkpoints_collection = self._agent_db["checkpoints"]
+        self._checkpoints_collection =\
+            gridfs.GridFS(self._agent_db, collection="checkpoints")
         self._messages_collection = self._agent_db["messages"]
+
         self._last_datetime = datetime.datetime.min
 
         self._epoch = 0
@@ -146,14 +149,17 @@ class MongoDB(DBSpec):
         try:
             self._epoch = epoch
             checkpoint_ = utils.pack(checkpoint)
-            self._checkpoints_collection.replace_one(
-                {"prefix": "checkpoint"}, {
-                    "checkpoint": checkpoint_,
-                    "prefix": "checkpoint",
-                    "epoch": self._epoch
-                },
-                upsert=True
-            )
+            if self._checkpoints_collection.exists(
+                    {"filename": "checkpoint"}
+            ):
+                self.del_checkpoint()
+
+            self._checkpoints_collection.put(
+                checkpoint_, encoding="ascii",
+                filename="checkpoint",
+                epoch=self._epoch
+                 )
+
         except pymongo.errors.AutoReconnect:
             time.sleep(self._reconnect_timeout)
             return self.put_checkpoint(checkpoint, epoch)
@@ -161,22 +167,24 @@ class MongoDB(DBSpec):
     def get_checkpoint(self):
         try:
             checkpoint_obj = self._checkpoints_collection.find_one(
-                {"prefix": "checkpoint"}
+                {"filename": "checkpoint"}
             )
         except pymongo.errors.AutoReconnect:
             time.sleep(self._reconnect_timeout)
             return self.get_checkpoint()
 
         if checkpoint_obj is not None:
-            checkpoint = checkpoint_obj.get("checkpoint")
-            self._epoch = checkpoint_obj["epoch"]
+            checkpoint = checkpoint_obj.read().decode("ascii")
+            self._epoch = checkpoint_obj.epoch
             checkpoint = utils.unpack(checkpoint)
         else:
             checkpoint = None
         return checkpoint
 
     def del_checkpoint(self):
-        self._checkpoints_collection.delete_one({"prefix": "checkpoint"})
+        id_ = self._checkpoints_collection.find_one(
+            {"filename": "checkpoint"})._id
+        self._checkpoints_collection.delete(id_)
 
 
 __all__ = ["MongoDB"]
