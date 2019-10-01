@@ -37,27 +37,19 @@ class AccuracyCallback(MultiMetricCallback):
     Accuracy metric callback.
 
     It can be used either for
-        - multi-class task, you can use accuracy_args. threshold and activation
-        are not required.
-            - input_key point on tensor: batch_size
-            - output_key point on tensor: batch_size x num_classes
-
-            An example of a configuration(config API):
-                accuracy:
-                  callback: AccuracyCallback
+        - multi-class task:
+            -you can use accuracy_args.
+            -threshold and activation are not required.
+            -input_key point on tensor: batch_size.
+            -output_key point on tensor: batch_size x num_classes.
         - OR multi-label task, in this case:
-            - you must specify threshold and activation
-            - accuracy_args and num_classes will not be used
+            -you must specify threshold and activation.
+            -accuracy_args and num_classes will not be used
             (because of there is no method to apply top-k in
-             multi-label classification).
-            - input_key, output_key point on tensor: batch_size x num_classes
-            - output_key point on a tensor with binary vectors
+            multi-label classification).
+            -input_key, output_key point on tensor: batch_size x num_classes.
+            -output_key point on a tensor with binary vectors.
 
-            An example of a configuration(config API):
-                accuracy:
-                  callback: AccuracyCallback
-                  threshold: 0.5
-                  activation: Sigmoid
 
     There is no need to choose a type (multi-class/multi label).
     An appropriate type will be chosen automatically via shape of tensors.
