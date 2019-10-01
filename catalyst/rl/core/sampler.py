@@ -280,8 +280,11 @@ class Sampler:
                     return
                 time.sleep(5.0)
 
+            # 1 – load from db, 2 – resume load trick (already have checkpoint)
+            need_checkpoint = \
+                self.db_server is not None or self.checkpoint is None
             if self.trajectory_index % self._weights_sync_period == 0 \
-                    and self.db_server is not None:
+                    and need_checkpoint:
                 self.load_checkpoint(db_server=self.db_server)
                 self._save_wandb()
 
@@ -434,8 +437,11 @@ class ValidSampler(Sampler):
         assert self.seeds is not None
 
         while True:
+            # 1 – load from db, 2 – resume load trick (already have checkpoint)
+            need_checkpoint = \
+                self.db_server is not None or self.checkpoint is None
             ok = self.load_checkpoint(db_server=self.db_server) \
-                if self.db_server is not None \
+                if need_checkpoint \
                 else True
             if not ok:
                 return
