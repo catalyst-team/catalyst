@@ -201,7 +201,7 @@ def prepare_cudnn(deterministic: bool = None, benchmark: bool = None) -> None:
         # https://pytorch.org/docs/stable/notes/randomness.html#cudnn
         if deterministic is None:
             deterministic = \
-                os.environ.get("CUDNN_DETERMINISTIC", "False") == "True"
+                os.environ.get("CUDNN_DETERMINISTIC", "True") == "True"
         cudnn.deterministic = deterministic
 
         # https://discuss.pytorch.org/t/how-should-i-disable-using-cudnn-in-my-code/38053/4

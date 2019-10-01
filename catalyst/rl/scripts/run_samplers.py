@@ -21,7 +21,7 @@ from catalyst.rl.registry import \
 from catalyst.rl.scripts.misc import OFFPOLICY_ALGORITHMS_NAMES, \
     ONPOLICY_ALGORITHMS_NAMES  # noqa E402
 from catalyst.utils.config import parse_args_uargs  # noqa E402
-from catalyst.utils import set_global_seed, boolean_flag  # noqa E402
+from catalyst.utils import set_global_seed, boolean_flag, prepare_cudnn  # noqa E402
 from catalyst.utils.scripts import import_module  # noqa E402
 
 
@@ -52,6 +52,17 @@ def build_args(parser):
     parser.add_argument("--run-delay", type=int, default=1)
     boolean_flag(parser, "daemon", default=True)
     parser.add_argument("--sampler-id", type=int, default=0)
+
+    boolean_flag(
+        parser, "deterministic",
+        default=None,
+        help="Deterministic mode if running in CuDNN backend"
+    )
+    boolean_flag(
+        parser, "benchmark",
+        default=None,
+        help="Use CuDNN benchmark"
+    )
 
     return parser
 
@@ -145,6 +156,8 @@ def run_sampler(
 
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
+    set_global_seed(args.seed)
+    prepare_cudnn(args.deterministic, args.benchmark)
 
     args.vis = args.vis or 0
     args.infer = args.infer or 0
