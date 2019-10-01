@@ -244,7 +244,7 @@ class ConfigExperiment(Experiment):
         loaders = OrderedDict()
         for name, ds_ in datasets.items():
             assert isinstance(ds_, (Dataset, dict)), \
-                f"{ds_} should be Dataset of Dict"
+                f"{ds_} should be Dataset or Dict"
 
             overridden_loader_params = overridden_loaders_params.pop(name, {})
             assert isinstance(overridden_loader_params, dict), \
