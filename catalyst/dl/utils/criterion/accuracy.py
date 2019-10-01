@@ -10,11 +10,24 @@ def accuracy(
         activation: str = None
 ):
     """
-    Computes the accuracy@k for the specified values of k.
-    """
-    max_k = max(topk)
-    batch_size = targets.size(0)
+    Computes the accuracy.
 
+    It can be used either for
+    - multi-class task, you can use topk. threshold and activation
+    are not required.
+        - targets is a tensor: batch_size
+        - outputs is a tensor: batch_size x num_classes
+
+        Computes the accuracy@k for the specified values of k.
+
+    - OR multi-label task, in this case:
+        - you must specify threshold and activation
+        - topk will not be used
+        (because of there is no method to apply top-k in
+         multi-label classification).
+        - outputs, targets are tensors with shape: batch_size x num_classes
+        - targets is a tensor with binary vectors
+    """
     activation_fn = get_activation_fn(activation)
     outputs = activation_fn(outputs)
 
@@ -26,6 +39,9 @@ def accuracy(
         res = (targets.long() == outputs.long()).sum().float() / np.prod(
             targets.shape)
         return [res]
+
+    max_k = max(topk)
+    batch_size = targets.size(0)
 
     if len(outputs.shape) == 1 or outputs.shape[1] == 1:
         pred = outputs.t()
