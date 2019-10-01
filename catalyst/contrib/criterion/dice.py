@@ -39,7 +39,8 @@ class BCEDiceLoss(nn.Module):
 
         if bce_weight == 0 and dice_weight == 0:
             raise ValueError(
-                "Both bce_wight and dice_weight cannot be equal to 0 at the same time."
+                "Both bce_wight and dice_weight cannot be "
+                "equal to 0 at the same time."
             )
 
         self.bce_weight = bce_weight
