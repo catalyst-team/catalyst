@@ -12,7 +12,7 @@ from .ddp import is_wrapped_with_ddp, get_real_module
 from .hash import get_hash, get_short_hash
 from .image import imread, imwrite, mimwrite_with_meta, \
     tensor_from_rgb_image, tensor_to_ndimage, \
-    binary_mask_to_overlay_image
+    mask_to_overlay_image
 from .initialization import create_optimal_inner_init, outer_init, \
     constant_init, uniform_init, normal_init, xavier_init, kaiming_init, \
     bias_init_with_prob
@@ -34,3 +34,4 @@ from .torch import ce_with_logits, log1p_exp, normal_sample, normal_logprob, \
     get_device, get_activation_fn, any2device, get_available_gpus, \
     prepare_cudnn, process_model_params, set_requires_grad, get_network_output
 from .visualization import plot_confusion_matrix, render_figure_to_tensor
+from .time import get_utcnow_time

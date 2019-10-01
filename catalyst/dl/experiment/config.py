@@ -1,7 +1,6 @@
 from typing import Any, Mapping, Dict, List
 from copy import deepcopy
 from collections import OrderedDict
-import datetime
 
 import torch
 from torch import nn
@@ -71,7 +70,7 @@ class ConfigExperiment(Experiment):
         return stages_config_out
 
     def _get_logdir(self, config: Dict) -> str:
-        timestamp = datetime.datetime.utcnow().strftime("%y%m%d.%H%M%S")
+        timestamp = utils.get_utcnow_time()
         config_hash = get_short_hash(config)
         logdir = f"{timestamp}.{config_hash}"
         distributed_rank = self.distributed_params.get("rank", -1)

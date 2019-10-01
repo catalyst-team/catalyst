@@ -106,6 +106,17 @@ def build_args(parser):
         default=False,
         help="Print additional information"
     )
+    parser.add_argument("--seed", type=int, default=42)
+    utils.boolean_flag(
+        parser, "deterministic",
+        default=None,
+        help="Deterministic mode if running in CuDNN backend"
+    )
+    utils.boolean_flag(
+        parser, "benchmark",
+        default=None,
+        help="Use CuDNN benchmark"
+    )
 
     return parser
 
@@ -119,6 +130,9 @@ def parse_args():
 
 def main(args, _=None):
     global IMG_SIZE
+
+    utils.set_global_seed(args.seed)
+    utils.prepare_cudnn(args.deterministic, args.benchmark)
 
     IMG_SIZE = (args.img_size, args.img_size)
 
