@@ -235,23 +235,36 @@ class ConfigExperiment(Experiment):
         distributed_rank = self.distributed_params.get("rank", -1)
         distributed = distributed_rank > -1
 
-        if per_gpu_scaling and not distributed:
-            num_gpus = max(1, torch.cuda.device_count())
-            batch_size *= num_gpus
-            num_workers *= num_gpus
-
         datasets = self.get_datasets(stage=stage, **data_params)
+
+        overridden_loaders_params = data_params.pop("loaders_params", {})
+        assert isinstance(overridden_loaders_params, dict), \
+            f"{overridden_loaders_params} should be Dict"
 
         loaders = OrderedDict()
         for name, ds_ in datasets.items():
             assert isinstance(ds_, (Dataset, dict)), \
-                f"{ds_} should be Dataset of Dict"
+                f"{ds_} should be Dataset or Dict"
+
+            overridden_loader_params = overridden_loaders_params.pop(name, {})
+            assert isinstance(overridden_loader_params, dict), \
+                f"{overridden_loader_params} should be Dict"
+
+            batch_size = overridden_loader_params.pop("batch_size", batch_size)
+            num_workers = overridden_loader_params.\
+                pop("num_workers", num_workers)
+
+            if per_gpu_scaling and not distributed:
+                num_gpus = max(1, torch.cuda.device_count())
+                batch_size *= num_gpus
+                num_workers *= num_gpus
 
             loader_params = {
                 "batch_size": batch_size,
                 "num_workers": num_workers,
                 "pin_memory": torch.cuda.is_available(),
                 "drop_last": drop_last,
+                **overridden_loader_params
             }
 
             if isinstance(ds_, Dataset):

@@ -10,6 +10,12 @@ stages:
   data_params:
     batch_size: 64
     num_workers: 0
+    loaders_params:
+      valid:
+        batch_size: 32
+      train:
+        num_workers: 1
+        drop_last: True
 
   state_params:
     main_metric: &reduce_metric accuracy01
