@@ -27,15 +27,29 @@ cv2.ocl.setUseOpenCL(False)
 
 
 def build_args(parser):
-    parser.add_argument("--in-dir", type=Path)
-    parser.add_argument("--out-dir", type=Path)
-    parser.add_argument("--num-workers", "-j", type=int, default=1)
-    parser.add_argument("--extension", type=str, default="jpg")
+    parser.add_argument("--in-dir", required=True, type=Path,
+                        help="Raw data folder path")
 
-    parser.add_argument("--max-size", default=None, type=int)
-    boolean_flag(parser, "clear-exif", default=True)
-    boolean_flag(parser, "grayscale", default=False)
-    boolean_flag(parser, "expand-dims", default=True)
+    parser.add_argument("--out-dir", required=True, type=Path,
+                        help="Processed images folder path")
+
+    parser.add_argument("--num-workers", "-j", default=1, type=int,
+                        help="Number of workers to parallel the processing")
+
+    parser.add_argument("--extension", default="jpg", type=str,
+                        help="Input images extension. JPG is default.")
+
+    parser.add_argument("--max-size", default=None, required=True, type=int,
+                        help="Output images size. E.g. 224, 448")
+
+    boolean_flag(parser, "clear-exif", default=True,
+                 help="Clear EXIF data")
+
+    boolean_flag(parser, "grayscale", default=False,
+                 help="Read images in grayscale")
+
+    boolean_flag(parser, "expand-dims", default=True,
+                 help="Expand array shape for grayscale images")
 
     return parser
 
@@ -111,13 +125,21 @@ class Preprocessor:
 
     def preprocess(self, image_path: Path):
         try:
-            image = np.array(
-                imread(
-                    uri=image_path,
-                    grayscale=self.grayscale,
-                    expand_dims=self.expand_dims,
-                    exifrotate=not self.clear_exif))
-        except Exception:
+            if self.extension in ("jpg", "JPG", "jpeg", "JPEG"):
+                image = np.array(
+                    imread(
+                        uri=image_path,
+                        grayscale=self.grayscale,
+                        expand_dims=self.expand_dims,
+                        exifrotate=not self.clear_exif))
+            else:  # imread does not have exifrotate for non-jpeg type
+                image = np.array(
+                    imread(
+                        uri=image_path,
+                        grayscale=self.grayscale,
+                        expand_dims=self.expand_dims))
+        except Exception as e:
+            print(f"Cannot read file {image_path}, exception: {e}")
             return
 
         if self.max_size is not None:
