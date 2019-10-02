@@ -27,29 +27,54 @@ cv2.ocl.setUseOpenCL(False)
 
 
 def build_args(parser):
-    parser.add_argument("--in-dir", required=True, type=Path,
-                        help="Raw data folder path")
+    parser.add_argument(
+        "--in-dir", 
+        required=True, 
+        type=Path,
+        help="Raw data folder path")
 
-    parser.add_argument("--out-dir", required=True, type=Path,
-                        help="Processed images folder path")
+    parser.add_argument(
+        "--out-dir", 
+        required=True, 
+        type=Path,
+        help="Processed images folder path")
 
-    parser.add_argument("--num-workers", "-j", default=1, type=int,
-                        help="Number of workers to parallel the processing")
+    parser.add_argument(
+        "--num-workers", "-j", 
+        default=1, 
+        type=int,
+        help="Number of workers to parallel the processing")
 
-    parser.add_argument("--extension", default="jpg", type=str,
-                        help="Input images extension. JPG is default.")
+    parser.add_argument(
+        "--extension", 
+        default="jpg", 
+        type=str,
+        help="Input images extension. JPG is default.")
 
-    parser.add_argument("--max-size", default=None, required=True, type=int,
-                        help="Output images size. E.g. 224, 448")
+    parser.add_argument(
+        "--max-size", 
+        default=None, 
+        required=True, 
+        type=int,
+        help="Output images size. E.g. 224, 448")
 
-    boolean_flag(parser, "clear-exif", default=True,
-                 help="Clear EXIF data")
+    boolean_flag(
+        parser, 
+        "clear-exif", 
+        default=True,
+        help="Clear EXIF data")
 
-    boolean_flag(parser, "grayscale", default=False,
-                 help="Read images in grayscale")
+    boolean_flag(
+        parser, 
+        "grayscale", 
+        default=False,
+        help="Read images in grayscale")
 
-    boolean_flag(parser, "expand-dims", default=True,
-                 help="Expand array shape for grayscale images")
+    boolean_flag(
+        parser, 
+        "expand-dims", 
+        default=True,
+        help="Expand array shape for grayscale images")
 
     return parser
 
