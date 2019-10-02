@@ -16,8 +16,8 @@ from functools import wraps
 import cv2
 import numpy as np
 
-from catalyst.utils import boolean_flag, imread, imwrite, \
-    Pool, tqdm_parallel_imap, get_pool
+from catalyst.utils import boolean_flag,imread,imwrite,\
+    Pool,tqdm_parallel_imap,get_pool
 
 # Limit cv2's processor usage
 # cv2.setNumThreads() doesn't work
@@ -99,30 +99,30 @@ def py3round(number):
 def preserve_channel_dim(func):
     """Preserve dummy channel dim."""
     @wraps(func)
-    def wrapped_function(img, *args, **kwargs):
+    def wrapped_function(img,*args,**kwargs):
         shape = img.shape
-        result = func(img, *args, **kwargs)
+        result = func(img,*args,**kwargs)
         if len(shape) == 3 and shape[-1] == 1 and len(result.shape) == 2:
-            result = np.expand_dims(result, axis=-1)
+            result = np.expand_dims(result,axis=-1)
         return result
 
     return wrapped_function
 
 
-def _func_max_size(img, max_size, interpolation, func):
-    height, width = img.shape[:2]
+def _func_max_size(img,max_size,interpolation,func):
+    height,width = img.shape[:2]
 
-    scale = max_size / float(func(width, height))
+    scale = max_size / float(func(width,height))
 
     if scale != 1.0:
-        out_size = tuple(py3round(dim * scale) for dim in (width, height))
-        img = cv2.resize(img, out_size, interpolation=interpolation)
+        out_size = tuple(py3round(dim * scale) for dim in (width,height))
+        img = cv2.resize(img,out_size,interpolation=interpolation)
     return img
 
 
 @preserve_channel_dim
-def longest_max_size(img, max_size, interpolation):
-    return _func_max_size(img, max_size, interpolation, max)
+def longest_max_size(img,max_size,interpolation):
+    return _func_max_size(img,max_size,interpolation,max)
 
 # <--- taken from albumentations - https://github.com/albu/albumentations --->
 
@@ -148,7 +148,7 @@ class Preprocessor:
         self.extension = extension
         self.interpolation = interpolation
 
-    def preprocess(self, image_path: Path):
+    def preprocess(self,image_path: Path):
         try:
             if self.extension in ("jpg", "JPG", "jpeg", "JPEG"):
                 image = np.array(
@@ -168,22 +168,22 @@ class Preprocessor:
             return
 
         if self.max_size is not None:
-            image = longest_max_size(image, self.max_size, self.interpolation)
+            image = longest_max_size(image,self.max_size,self.interpolation)
 
         target_path = self.out_dir / image_path.relative_to(self.in_dir)
-        target_path.parent.mkdir(parents=True, exist_ok=True)
+        target_path.parent.mkdir(parents=True,exist_ok=True)
 
-        image = image.clip(0, 255).round().astype(np.uint8)
-        imwrite(target_path, image)
+        image = image.clip(0,255).round().astype(np.uint8)
+        imwrite(target_path,image)
 
-    def process_all(self, pool: Pool):
+    def process_all(self,pool: Pool):
         images = [*self.in_dir.glob(f"**/*.{self.extension}")]
-        tqdm_parallel_imap(self.preprocess, images, pool)
+        tqdm_parallel_imap(self.preprocess,images,pool)
 
 
-def main(args, _=None):
+def main(args,_=None):
     args = args.__dict__
-    args.pop("command", None)
+    args.pop("command",None)
     num_workers = args.pop("num_workers")
 
     with get_pool(num_workers) as p:
