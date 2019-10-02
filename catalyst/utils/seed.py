@@ -22,9 +22,9 @@ def set_global_seed(seed: int) -> None:
     except ImportError:
         pass
     else:
-        if tf.__version__ >= '2.0.0':
+        if tf.__version__ >= "2.0.0":
             tf.random.set_seed(seed)
-        elif tf.__version__ <= '1.13.2':
+        elif tf.__version__ <= "1.13.2":
             tf.set_random_seed(seed)
         else:
             tf.compat.v1.set_random_seed(seed)
