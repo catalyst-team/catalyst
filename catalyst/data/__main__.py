@@ -3,7 +3,22 @@
 
 Examples:
 
-    1. **tag2label** prepares a dataset to json like
+    1.  **process-images** reads raw data and outputs
+    preprocessed resized images
+
+    .. code:: bash
+
+        $ catalyst-data process-images \\
+            --in-dir /path/to/raw/data/ \\
+            --out-dir=./data/dataset \\
+            --num-workers=6 \\
+            --max-size=224 \\
+            --extension=png \\
+            --clear-exif \\
+            --grayscale \\
+            --expand-dims
+
+    2. **tag2label** prepares a dataset to json like
     `{"class_id":  class_column_from_dataset}`
 
     .. code:: bash
@@ -13,7 +28,7 @@ Examples:
             --out-dataset=./data/dataset_raw.csv \\
             --out-labeling=./data/tag2cls.json
 
-    2. **check-images** checks images in your data
+    3. **check-images** checks images in your data
     to be non-broken and writes a flag:
     `true` if image opened without an error and `false` otherwise
 
@@ -26,7 +41,7 @@ Examples:
             --out-csv=./data/dataset_checked.csv \\
             --n-cpu=4
 
-    3. **split-dataframe** split your dataset into train/valid folds
+    4. **split-dataframe** split your dataset into train/valid folds
 
      .. code:: bash
 
@@ -39,7 +54,7 @@ Examples:
             --train-folds=0,1,2,3 \\
             --out-csv=./data/dataset.csv
 
-    4. **image2embedding** embeds images from your csv
+    5. **image2embedding** embeds images from your csv
     or image directory with specified neural net architecture
 
     .. code:: bash
