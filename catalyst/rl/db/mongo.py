@@ -27,9 +27,9 @@ class MongoDB(DBSpec):
 
         self._trajectory_collection = self._shared_db["trajectories"]
         self._raw_trajectory_collection = self._shared_db["raw_trajectories"]
-        self._checkpoints_collection =\
+        self._checkpoint_collection =\
             gridfs.GridFS(self._agent_db, collection="checkpoints")
-        self._messages_collection = self._agent_db["messages"]
+        self._message_collection = self._agent_db["messages"]
 
         self._last_datetime = datetime.datetime.min
 
@@ -38,7 +38,7 @@ class MongoDB(DBSpec):
 
     def _set_flag(self, key, value):
         try:
-            self._messages_collection.replace_one(
+            self._message_collection.replace_one(
                 {"key": key},
                 {"key": key, "value": value},
                 upsert=True
@@ -49,7 +49,7 @@ class MongoDB(DBSpec):
 
     def _get_flag(self, key, default=None):
         try:
-            flag_obj = self._messages_collection.find_one(
+            flag_obj = self._message_collection.find_one(
                 {"key": {"$eq": key}}
             )
         except pymongo.errors.AutoReconnect:
@@ -127,8 +127,8 @@ class MongoDB(DBSpec):
             self._last_datetime = trajectory_obj["date"]
 
             trajectory, trajectory_epoch = \
-                utils.unpack(
-                    trajectory_obj["trajectory"]), trajectory_obj["epoch"]
+                utils.unpack(trajectory_obj["trajectory"]), \
+                trajectory_obj["epoch"]
             if self._sync_epoch and self._epoch != trajectory_epoch:
                 trajectory = None
             else:
@@ -149,16 +149,15 @@ class MongoDB(DBSpec):
         try:
             self._epoch = epoch
             checkpoint_ = utils.pack(checkpoint)
-            if self._checkpoints_collection.exists(
-                    {"filename": "checkpoint"}
-            ):
+            if self._checkpoint_collection.exists({"filename": "checkpoint"}):
                 self.del_checkpoint()
 
-            self._checkpoints_collection.put(
-                checkpoint_, encoding="ascii",
+            self._checkpoint_collection.put(
+                checkpoint_,
+                encoding="ascii",
                 filename="checkpoint",
                 epoch=self._epoch
-                 )
+            )
 
         except pymongo.errors.AutoReconnect:
             time.sleep(self._reconnect_timeout)
@@ -166,7 +165,7 @@ class MongoDB(DBSpec):
 
     def get_checkpoint(self):
         try:
-            checkpoint_obj = self._checkpoints_collection.find_one(
+            checkpoint_obj = self._checkpoint_collection.find_one(
                 {"filename": "checkpoint"}
             )
         except pymongo.errors.AutoReconnect:
@@ -182,9 +181,10 @@ class MongoDB(DBSpec):
         return checkpoint
 
     def del_checkpoint(self):
-        id_ = self._checkpoints_collection.find_one(
-            {"filename": "checkpoint"})._id
-        self._checkpoints_collection.delete(id_)
+        id_ = self._checkpoint_collection.find_one(
+            {"filename": "checkpoint"}
+        )._id
+        self._checkpoint_collection.delete(id_)
 
 
 __all__ = ["MongoDB"]
