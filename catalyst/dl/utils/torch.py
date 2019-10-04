@@ -31,6 +31,7 @@ def process_components(
     if utils.is_wrapped_with_ddp(model):
         pass
     elif len(distributed_params) > 0:
+        assert isinstance(model, nn.Module)
         utils.assert_fp16_available()
         from apex import amp
         from apex.parallel import convert_syncbn_model
@@ -57,7 +58,10 @@ def process_components(
         elif torch.cuda.device_count() > 1:
             model = torch.nn.DataParallel(model)
     elif torch.cuda.device_count() > 1:
-        model = torch.nn.DataParallel(model)
+        if isinstance(model, nn.Module):
+            model = torch.nn.DataParallel(model)
+        elif isinstance(model, dict):
+            model = {k: torch.nn.DataParallel(v) for k, v in model.items()}
 
     model = maybe_recursive_call(model, "to", device=device)
 

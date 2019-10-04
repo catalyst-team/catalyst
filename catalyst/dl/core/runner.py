@@ -45,6 +45,7 @@ class Runner(ABC):
         :return:
         """
 
+        utils.set_global_seed(self.experiment.initial_seed)
         model = self.experiment.get_model(stage)
         criterion, optimizer, scheduler = \
             self.experiment.get_experiment_components(model, stage)

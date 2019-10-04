@@ -163,8 +163,8 @@ print('loss_d_real', loss_d_real)
 print('loss_d_fake', loss_d_fake)
 print('loss_d', loss_d)
 
-assert 1.38 < loss_g < 1.40
-assert 0.34 < loss_d_real < 0.36
-assert 0.29 < loss_d_fake < 0.31
-assert 0.31 < loss_d < 0.33
+assert 0.9 < loss_g < 1.5
+assert 0.3 < loss_d_real < 0.6
+assert 0.28 < loss_d_fake < 0.58
+assert 0.3 < loss_d < 0.6
 """
