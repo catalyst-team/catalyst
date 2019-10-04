@@ -133,3 +133,38 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 sleep 30
 kill %1
 rm -rf ./examples/logs/_tests_mnist_stages_finder
+
+
+LOGFILE=./examples/logs/mnist_gan/checkpoints/_metrics.json
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=./examples/mnist_gan \
+  --config=./examples/mnist_gan/config.yml \
+  --logdir=./examples/logs/mnist_gan \
+  --stages/state_params/num_epochs=11:int
+
+if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
+    echo "File $LOGFILE does not exist"
+    exit 1
+fi
+
+python -c """
+from safitty import Safict
+metrics=Safict.load('$LOGFILE')
+
+loss_g = metrics.get('last', 'loss_g')
+loss_d_real = metrics.get('last', 'loss_d_real')
+loss_d_fake = metrics.get('last', 'loss_d_fake')
+loss_d = metrics.get('last', 'loss_d')
+
+print('loss_g', loss_g)
+print('loss_d_real', loss_d_real)
+print('loss_d_fake', loss_d_fake)
+print('loss_d', loss_d)
+
+assert 1.38 < loss_g < 1.40
+assert 0.34 < loss_d_real < 0.36
+assert 0.29 < loss_d_fake < 0.31
+assert 0.31 < loss_d < 0.33
+"""
