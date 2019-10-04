@@ -1,12 +1,14 @@
 import torch
 import torchvision.utils
 from catalyst.dl import registry
-from catalyst.dl.core import Callback, RunnerState
+from catalyst.dl.core import Callback, CallbackOrder, RunnerState
 from tensorboardX import SummaryWriter
 
 
 @registry.Callback
 class VisualizationCallback(Callback):
+    TENSORBOARD_LOGGER_KEY = "tensorboard"
+
     def __init__(
         self,
         input_keys=None,
@@ -17,6 +19,7 @@ class VisualizationCallback(Callback):
         n_row=1,
         denorm="default"
     ):
+        super().__init__(CallbackOrder.Other)
         if input_keys is None:
             self.input_keys = []
         elif isinstance(input_keys, str):
@@ -64,8 +67,6 @@ class VisualizationCallback(Callback):
     def _reset(self):
         self._loader_batch_count = 0
         self._loader_visualized_in_current_epoch = False
-
-    TENSORBOARD_LOGGER_KEY = "tensorboard"
 
     @staticmethod
     def _get_tensorboard_logger(state: RunnerState) -> SummaryWriter:

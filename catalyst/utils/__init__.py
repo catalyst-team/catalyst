@@ -18,7 +18,7 @@ from .initialization import create_optimal_inner_init, outer_init, \
     bias_init_with_prob
 from .misc import pairwise, make_tuple, \
     merge_dicts, append_dict, flatten_dict, copy_directory, \
-    maybe_recursive_call, is_exception
+    maybe_recursive_call, is_exception, get_utcnow_time
 from .numpy import np_softmax, geometric_cumsum, structed2dict, \
     dict2structed, get_one_hot
 # from .pandas import *
@@ -35,4 +35,3 @@ from .torch import ce_with_logits, log1p_exp, normal_sample, normal_logprob, \
     get_device, get_activation_fn, any2device, get_available_gpus, \
     prepare_cudnn, process_model_params, set_requires_grad, get_network_output
 from .visualization import plot_confusion_matrix, render_figure_to_tensor
-from .time import get_utcnow_time
