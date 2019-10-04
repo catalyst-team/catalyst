@@ -42,7 +42,7 @@ stages:
     loss_g:
       _wrapper: &g_train_wrapper
         callback: PhaseBatchWrapperCallback
-        active_phases: [generator_train]
+        active_phases: [*generator_train_phase]
       callback: CriterionCallback
       input_key: "real_targets"
       output_key: "fake_logits"
@@ -51,7 +51,7 @@ stages:
     loss_d_real:
       _wrapper: &d_train_wrapper
         callback: PhaseBatchWrapperCallback
-        active_phases: [discriminator_train]
+        active_phases: [*discriminator_train_phase]
       callback: CriterionCallback
       input_key: "real_targets"
       output_key: "real_logits"
