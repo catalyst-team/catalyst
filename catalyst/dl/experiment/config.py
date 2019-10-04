@@ -27,6 +27,7 @@ class ConfigExperiment(Experiment):
 
     def __init__(self, config: Dict):
         self._config = deepcopy(config)
+        self._initial_seed = self._config.get("args", {}).get("seed", 42)
         self.__prepare_logdir()
 
         self._config["stages"]["state_params"] = utils.merge_dicts(
@@ -75,6 +76,10 @@ class ConfigExperiment(Experiment):
         if distributed_rank > -1:
             logdir = f"{logdir}.rank{distributed_rank:02d}"
         return logdir
+
+    @property
+    def initial_seed(self) -> int:
+        return self._initial_seed
 
     @property
     def logdir(self):
@@ -154,8 +159,8 @@ class ConfigExperiment(Experiment):
         model: Union[_Model, Dict[str, _Model]],
         **params
     ) -> _Optimizer:
-        # TODO 1: refactoring; this method is too long
-        # TODO 2: load state dicts for schedulers & criteria
+        # @TODO 1: refactoring; this method is too long
+        # @TODO 2: load state dicts for schedulers & criteria
         layerwise_params = \
             params.pop("layerwise_params", OrderedDict())
         no_bias_weight_decay = \
@@ -354,6 +359,10 @@ class ConfigExperiment(Experiment):
 
                 for k in ("batch_size", "shuffle", "sampler", "drop_last"):
                     loader_params.pop(k, None)
+
+            if "worker_init_fn" not in loader_params:
+                loader_params["worker_init_fn"] = \
+                    lambda x: utils.set_global_seed(self.initial_seed + x)
 
             loaders[name] = DataLoader(**loader_params)
 

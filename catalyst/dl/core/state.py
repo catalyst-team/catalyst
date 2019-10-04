@@ -25,15 +25,15 @@ class RunnerState(FrozenClass):
         criterion=None,
         optimizer: Optimizer = None,
         scheduler=None,
-        logdir=None,
-        stage="infer",
-        num_epochs=1,
-        main_metric="loss",
-        minimize_metric=True,
-        valid_loader="valid",
-        verbose=False,
+        logdir: str = None,
+        stage: str = "infer",
+        num_epochs: int = 1,
+        main_metric: str = "loss",
+        minimize_metric: bool = True,
+        valid_loader: str = "valid",
+        verbose: bool = False,
         checkpoint_data: Dict = None,
-        batch_consistant_metrics=True,
+        batch_consistant_metrics: bool = True,
         **kwargs
     ):
         # @TODO: refactor

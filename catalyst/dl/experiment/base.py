@@ -33,7 +33,8 @@ class BaseExperiment(Experiment):
         state_kwargs: Dict = None,
         checkpoint_data: Dict = None,
         distributed_params: Dict = None,
-        monitoring_params: Dict = None
+        monitoring_params: Dict = None,
+        initial_seed: int = 42,
     ):
         self._model = model
         self._loaders = loaders
@@ -43,6 +44,7 @@ class BaseExperiment(Experiment):
         self._optimizer = optimizer
         self._scheduler = scheduler
 
+        self._initial_seed = initial_seed
         self._logdir = logdir
         self._stage = stage
         self._num_epochs = num_epochs
@@ -54,6 +56,10 @@ class BaseExperiment(Experiment):
         self.checkpoint_data = checkpoint_data or {}
         self._distributed_params = distributed_params or {}
         self._monitoring_params = monitoring_params or {}
+
+    @property
+    def initial_seed(self) -> int:
+        return self._initial_seed
 
     @property
     def logdir(self):

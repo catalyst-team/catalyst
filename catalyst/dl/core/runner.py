@@ -61,6 +61,7 @@ class Runner(ABC):
         return model, criterion, optimizer, scheduler, device
 
     def _prepare_for_stage(self, stage: str):
+        utils.set_global_seed(self.experiment.initial_seed)
         migrating_params = {}
         if self.state is not None:
             migrating_params.update(
@@ -83,6 +84,7 @@ class Runner(ABC):
             **self.experiment.get_state_params(stage),
             **migrating_params
         )
+        utils.set_global_seed(self.experiment.initial_seed)
 
     def _run_event(self, event: str):
         if self.state is not None and hasattr(self.state, f"on_{event}_pre"):
@@ -174,6 +176,9 @@ class Runner(ABC):
                     and loader_name.startswith("train"):
                 loader.sampler.set_epoch(self.state.stage_epoch)
 
+            utils.set_global_seed(
+                self.experiment.initial_seed + self.state.epoch + 1
+            )
             self._run_event("loader_start")
             with torch.set_grad_enabled(self.state.need_backward):
                 self._run_loader(loader)
