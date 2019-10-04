@@ -6,7 +6,7 @@ from torchvision import transforms
 
 
 # data loaders & transforms
-class MNISTGANExperiment(ConfigExperiment):
+class MnistGanExperiment(ConfigExperiment):
     @staticmethod
     def get_transforms(stage: str = None, mode: str = None):
         return transforms.Compose(
@@ -21,7 +21,7 @@ class MNISTGANExperiment(ConfigExperiment):
             root="./data",
             train=True,
             download=True,
-            transform=MNISTGANExperiment.get_transforms(
+            transform=MnistGanExperiment.get_transforms(
                 stage=stage, mode="train"
             )
         )
@@ -29,7 +29,7 @@ class MNISTGANExperiment(ConfigExperiment):
             root="./data",
             train=False,
             download=True,
-            transform=MNISTGANExperiment.get_transforms(
+            transform=MnistGanExperiment.get_transforms(
                 stage=stage, mode="valid"
             )
         )

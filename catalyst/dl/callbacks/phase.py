@@ -27,9 +27,9 @@ class PhaseManager:
     and if current phase is finished, the next phase becomes current
     """
     def __init__(
-            self,
-            train_phases: List[Phase],
-            valid_phases: List[Phase]
+        self,
+        train_phases: List[Phase],
+        valid_phases: List[Phase]
     ):
         self.train_phases = train_phases
         self.valid_phases = valid_phases
@@ -71,10 +71,10 @@ class PhaseManagerCallback(Callback):
     allowed_valid_modes = [VALIDATION_MODE_SAME, VALIDATION_MODE_ALL]
 
     def __init__(
-            self,
-            train_phases: "OrderedDict[str, int]" = None,
-            valid_phases: "OrderedDict[str, int]" = None,
-            valid_mode: str = None
+        self,
+        train_phases: "OrderedDict[str, int]" = None,
+        valid_phases: "OrderedDict[str, int]" = None,
+        valid_mode: str = None
     ):
         super().__init__(CallbackOrder.Internal)
         self.phase_manager = self._get_phase_manager(
@@ -84,10 +84,10 @@ class PhaseManagerCallback(Callback):
         )
 
     def _get_phase_manager(
-            self,
-            train_phases: "OrderedDict[str, int]" = None,
-            valid_phases: "OrderedDict[str, int]" = None,
-            valid_mode: str = None
+        self,
+        train_phases: "OrderedDict[str, int]" = None,
+        valid_phases: "OrderedDict[str, int]" = None,
+        valid_mode: str = None
     ):
         assert (valid_phases is None) ^ (valid_mode is None), \
             "Exactly one of them must be specified"
@@ -104,12 +104,15 @@ class PhaseManagerCallback(Callback):
             if valid_mode == self.VALIDATION_MODE_ALL:
                 valid_phases = [Phase(name=None, steps=None)]
             elif valid_mode == self.VALIDATION_MODE_SAME:
-                valid_phases = [Phase(name=p.name, steps=p.steps)
-                                for p in train_phases]
+                valid_phases = [
+                    Phase(name=p.name, steps=p.steps)
+                    for p in train_phases
+                ]
             else:
-                raise ValueError(f"Unsupported validation_mode, "
-                                 f"should be one of "
-                                 f"{self.allowed_valid_modes}")
+                raise ValueError(
+                    f"Unsupported validation_mode, should be one of "
+                    f"{self.allowed_valid_modes}"
+                )
 
         return PhaseManager(
             train_phases=train_phases,

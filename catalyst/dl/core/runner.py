@@ -61,7 +61,7 @@ class Runner(ABC):
 
         return model, criterion, optimizer, scheduler, device
 
-    def _prepare_state(self, stage: str):
+    def _prepare_for_stage(self, stage: str):
         migrating_params = {}
         if self.state is not None:
             migrating_params.update(
@@ -165,8 +165,11 @@ class Runner(ABC):
             self.state.loader_name = loader_name
             self.state.loader_len = len(loader)
             self.state.need_backward = loader_name.startswith("train")
-            maybe_recursive_call(self.model, "train",
-                                 mode=self.state.need_backward)
+            maybe_recursive_call(
+                self.model,
+                "train",
+                mode=self.state.need_backward
+            )
 
             if isinstance(loader.sampler, DistributedSampler) \
                     and loader_name.startswith("train"):
@@ -177,16 +180,10 @@ class Runner(ABC):
                 self._run_loader(loader)
             self._run_event("loader_end")
 
-    def _run_prestage(self, stage: str):
-        # do something after stage initialization but before epoch cycle
-        pass
-
     def _run_stage(self, stage: str):
-        self._prepare_state(stage)
+        self._prepare_for_stage(stage)
         loaders = self.experiment.get_loaders(stage)
         self.callbacks = self.experiment.get_callbacks(stage)
-
-        self._run_prestage(stage)
 
         self._run_event("stage_start")
         for epoch in range(self.state.num_epochs):
@@ -213,7 +210,6 @@ class Runner(ABC):
             for stage in self.experiment.stages:
                 self._run_stage(stage)
         except (Exception, KeyboardInterrupt) as ex:
-            raise ex
             self.state.exception = ex
             self._run_event("exception")
 

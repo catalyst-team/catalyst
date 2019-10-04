@@ -4,68 +4,66 @@ import torch
 from catalyst.dl import Runner
 
 
-class GANRunner(Runner):
+class GanRunner(Runner):
     def __init__(
         self,
         model=None,
         device=None,
-        features_key="images",
-        targets_key="targets",
-        model_generator_key="generator",
-        model_discriminator_key="discriminator"
+        features_key="features",
+        generator_key="generator",
+        discriminator_key="discriminator"
     ):
         super().__init__(model, device)
 
         self.features_key = features_key
-        self.targets_key = targets_key
-
-        self.model_generator_key = model_generator_key
-        self.model_discriminator_key = model_discriminator_key
+        self.generator_key = generator_key
+        self.discriminator_key = discriminator_key
 
     def _batch2device(self, batch: Mapping[str, Any], device):
         if isinstance(batch, (list, tuple)):
-            assert len(batch) == 2
-            batch = {self.features_key: batch[0], self.targets_key: batch[1]}
+            batch = {self.features_key: batch[0]}
         return super()._batch2device(batch, device)
 
-    def _run_prestage(self, stage: str):
-        self.generator = self.model[self.model_generator_key]
-        self.discriminator = self.model[self.model_discriminator_key]
+    def _prepare_for_stage(self, stage: str):
+        super()._prepare_for_stage(stage)
+        self.generator = self.model[self.generator_key]
+        self.discriminator = self.model[self.discriminator_key]
+        assert hasattr(self.state, "noise_dim") \
+               and self.state.noise_dim is not None
 
     def forward(self, batch):
-        real_imgs, _ = batch[self.features_key], batch[self.targets_key]
+        real_features = batch[self.features_key]
+        batch_size = real_features.shape[0]
 
-        real_targets = torch.ones((real_imgs.size(0), 1), device=self.device)
-        fake_targets = 1 - real_targets
+        fake_targets = torch.ones((batch_size, 1), device=self.device)
+        real_targets = torch.zeros((batch_size, 1), device=self.device)
         self.state.input["fake_targets"] = fake_targets
         self.state.input["real_targets"] = real_targets
-        z = torch.randn(
-            (real_imgs.size(0), self.generator.noise_dim), device=self.device
-        )
+        z = torch.randn((batch_size, self.state.noise_dim), device=self.device)
 
         if (
             self.state.phase is None
             or self.state.phase == "discriminator_train"
         ):
             # (None for validation mode)
-            fake_imgs = self.generator(z)
-            fake_logits = self.discriminator(fake_imgs.detach())
-            real_logits = self.discriminator(real_imgs)
+            fake_features = self.generator(z)
+            fake_logits = self.discriminator(fake_features.detach())
+            real_logits = self.discriminator(real_features)
             # --> d_loss
             # (fake logits + FAKE targets) + (real logits + real targets)
             return {
-                "fake_images": fake_imgs,  # visualization purposes only
+                "fake_features": fake_features,  # visualization purposes only
                 "fake_logits": fake_logits,
                 "real_logits": real_logits
             }
         else:
-            fake_imgs = self.generator(z)
-            fake_logits = self.discriminator(fake_imgs)
+            fake_features = self.generator(z)
+            fake_logits = self.discriminator(fake_features)
             # --> g_loss (fake logits + REAL targets)
             return {
-                "fake_images": fake_imgs,  # visualization purposes only
+                "fake_features": fake_features,  # visualization purposes only
                 "fake_logits": fake_logits
             }
 
 
-__all__ = ["GANRunner"]
+__all__ = ["GanRunner"]

@@ -4,10 +4,9 @@ from typing import Dict, List, Callable
 import safitty
 import torch
 
-from catalyst.utils import maybe_recursive_call
 from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 from catalyst.dl.registry import GRAD_CLIPPERS
-from catalyst.dl.utils import get_optimizer_momentum
+from catalyst.dl.utils import get_optimizer_momentum, maybe_recursive_call
 from catalyst.dl.utils.torch import _Optimizer
 
 logger = logging.getLogger(__name__)

@@ -3,7 +3,7 @@ from typing import List
 from catalyst.dl.core import Callback, RunnerState
 
 
-class CallbackPhaseWrapper(Callback):
+class PhaseWrapperCallback(Callback):
     """
     CallbackWrapper which disables/enables handlers
     dependant on current phase and event type
@@ -19,10 +19,10 @@ class CallbackPhaseWrapper(Callback):
     TIME_END = "end"
 
     def __init__(
-            self,
-            base_callback: Callback,
-            active_phases: List[str] = None,
-            inactive_phases: List[str] = None
+        self,
+        base_callback: Callback,
+        active_phases: List[str] = None,
+        inactive_phases: List[str] = None
     ):
         super().__init__(base_callback.order)
         assert (active_phases is None) ^ (inactive_phases is None), \
@@ -48,62 +48,78 @@ class CallbackPhaseWrapper(Callback):
         return False
 
     def on_stage_start(self, state: RunnerState):
-        if self.is_active_on_phase(phase=state.phase,
-                                   level=self.LEVEL_STAGE,
-                                   time=self.TIME_START):
+        if self.is_active_on_phase(
+            phase=state.phase,
+            level=self.LEVEL_STAGE,
+            time=self.TIME_START
+        ):
             self.callback.on_stage_start(state)
 
     def on_stage_end(self, state: RunnerState):
-        if self.is_active_on_phase(phase=state.phase,
-                                   level=self.LEVEL_STAGE,
-                                   time=self.TIME_END):
+        if self.is_active_on_phase(
+            phase=state.phase,
+            level=self.LEVEL_STAGE,
+            time=self.TIME_END
+        ):
             self.callback.on_stage_end(state)
 
     def on_epoch_start(self, state: RunnerState):
-        if self.is_active_on_phase(phase=state.phase,
-                                   level=self.LEVEL_EPOCH,
-                                   time=self.TIME_START):
+        if self.is_active_on_phase(
+            phase=state.phase,
+            level=self.LEVEL_EPOCH,
+            time=self.TIME_START
+        ):
             self.callback.on_epoch_start(state)
 
     def on_epoch_end(self, state: RunnerState):
-        if self.is_active_on_phase(phase=state.phase,
-                                   level=self.LEVEL_EPOCH,
-                                   time=self.TIME_END):
+        if self.is_active_on_phase(
+            phase=state.phase,
+            level=self.LEVEL_EPOCH,
+            time=self.TIME_END
+        ):
             self.callback.on_epoch_end(state)
 
     def on_loader_start(self, state: RunnerState):
-        if self.is_active_on_phase(phase=state.phase,
-                                   level=self.LEVEL_LOADER,
-                                   time=self.TIME_START):
+        if self.is_active_on_phase(
+            phase=state.phase,
+            level=self.LEVEL_LOADER,
+            time=self.TIME_START
+        ):
             self.callback.on_loader_start(state)
 
     def on_loader_end(self, state: RunnerState):
-        if self.is_active_on_phase(phase=state.phase,
-                                   level=self.LEVEL_LOADER,
-                                   time=self.TIME_END):
+        if self.is_active_on_phase(
+            phase=state.phase,
+            level=self.LEVEL_LOADER,
+            time=self.TIME_END
+        ):
             self.callback.on_loader_end(state)
 
     def on_batch_start(self, state: RunnerState):
-        if self.is_active_on_phase(phase=state.phase,
-                                   level=self.LEVEL_BATCH,
-                                   time=self.TIME_START):
+        if self.is_active_on_phase(
+            phase=state.phase,
+            level=self.LEVEL_BATCH,
+            time=self.TIME_START
+        ):
             self.callback.on_batch_start(state)
 
     def on_batch_end(self, state: RunnerState):
-        if self.is_active_on_phase(phase=state.phase,
-                                   level=self.LEVEL_BATCH,
-                                   time=self.TIME_END):
+        if self.is_active_on_phase(
+            phase=state.phase,
+            level=self.LEVEL_BATCH,
+            time=self.TIME_END
+        ):
             self.callback.on_batch_end(state)
 
     def on_exception(self, state: RunnerState):
         self.callback.on_exception(state)
 
 
-class CallbackPhaseBatchWrapper(CallbackPhaseWrapper):
+class PhaseBatchWrapperCallback(PhaseWrapperCallback):
     def is_active_on_phase(self, phase, level, time):
         if level != self.LEVEL_BATCH:
             return True
         return self._is_active_on_phase(phase)
 
 
-__all__ = ["CallbackPhaseWrapper", "CallbackPhaseBatchWrapper"]
+__all__ = ["PhaseWrapperCallback", "PhaseBatchWrapperCallback"]

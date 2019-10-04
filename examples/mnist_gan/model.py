@@ -19,10 +19,14 @@ class SimpleGenerator(nn.Module):
         self.channels = channels
 
         self.net = nn.Sequential(
-            nn.Linear(noise_dim, hidden_dim), nn.LeakyReLU(0.05),
-            nn.Linear(hidden_dim, hidden_dim), nn.LeakyReLU(0.05),
-            nn.Linear(hidden_dim, hidden_dim), nn.LeakyReLU(0.05),
-            nn.Linear(hidden_dim, np.prod(image_resolution)), nn.Tanh()
+            nn.Linear(noise_dim, hidden_dim),
+            nn.LeakyReLU(0.05),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.LeakyReLU(0.05),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.LeakyReLU(0.05),
+            nn.Linear(hidden_dim, np.prod(image_resolution)),
+            nn.Tanh()
         )
 
     def forward(self, x):
@@ -40,10 +44,14 @@ class SimpleDiscriminator(nn.Module):
 
         self.net = nn.Sequential(
             nn.Linear(channels * np.prod(image_resolution), hidden_dim),
-            nn.LeakyReLU(0.05), nn.Linear(hidden_dim, hidden_dim),
-            nn.LeakyReLU(0.05), nn.Linear(hidden_dim, hidden_dim),
-            nn.LeakyReLU(0.05), nn.Linear(hidden_dim, hidden_dim),
-            nn.LeakyReLU(0.05), nn.Linear(hidden_dim, 1)
+            nn.LeakyReLU(0.05),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.LeakyReLU(0.05),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.LeakyReLU(0.05),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.LeakyReLU(0.05),
+            nn.Linear(hidden_dim, 1)
         )
 
     def forward(self, x):

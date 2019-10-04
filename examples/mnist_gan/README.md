@@ -17,7 +17,7 @@ docker run -it --rm --runtime=nvidia \
    -e "CUDA_VISIBLE_DEVICES=0" \
    -e "LOGDIR=/logdir" \
    catalyst-base \
-   catalyst-dl run --config=./cifar_stages/config.yml --logdir=/logdir
+   catalyst-dl run --config=./mnist_gan/config.yml --logdir=/logdir
 ```
 
 
