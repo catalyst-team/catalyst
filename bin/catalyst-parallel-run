@@ -10,17 +10,18 @@
 set -e
 
 # usage:
-# cat ./runs.txt | catalyst-parallel-run {NUM_GPUS} {LOGDIR}
+# cat ./runs.txt | catalyst-parallel-run {NUM_GPUS} {LOGDIR} {NUM_JOBS_PER_GPU}
 
 # example:
-# cat ./runs.txt | catalyst-parallel-run 2 /Users/scitator/Documents/tmp/190000-l2m/"$(date +%s)"
+# cat ./runs.txt | catalyst-parallel-run 2 ./logs/"$(date +%s)" 4
 
-# cd "$(dirname "$0")"
+NUM_GPUS=${1:-4}
+LOGDIR=${2:-logs/$(date +%s)}
+NUM_JOBS_PER_GPU=${3:-1}
+NUM_GPU_JOBS=$((NUM_GPUS*NUM_JOBS_PER_GPU))
+SLEEP_TIME=5
 
-N=${1:-4}
-LOGS=${2:-logs/$(date +%s)}
-
-mkdir -p "$LOGS"
+mkdir -p "$LOGDIR"
 
 PIDS=()
 CMD=
@@ -38,31 +39,33 @@ echo "$(cat)" | while read cmd ; do
     fi
     started=
     while [[ -z "$started" ]] ; do
-        for ((gpu=0; gpu<N; gpu++)) ; do
-            pid=${PIDS[$gpu]}
+        for ((gpu_job_id=0; gpu_job_id<NUM_GPU_JOBS; gpu_job_id++)) ; do
+            pid=${PIDS[$gpu_job_id]}
             if [[ -n "$pid" ]] && ps -p $pid > /dev/null; then
                 continue
             fi
-            echo "RUN [GPU $gpu]: $CMD" | tee "$LOGS/$IDX.log"
-            CUDA_VISIBLE_DEVICES=$gpu bash -c "$CMD" >>"$LOGS/$IDX.log" 2>>"$LOGS/$IDX.err" || \
-                echo $IDX >> "$LOGS/$IDX.die" &
+            gpu=$((gpu_job_id / NUM_JOBS_PER_GPU))
+            echo "RUN [GPU $gpu]: $CMD" | tee "$LOGDIR/$IDX.log"
+            CUDA_VISIBLE_DEVICES=$gpu \
+                bash -c "$CMD" >>"$LOGDIR/$IDX.log" 2>>"$LOGDIR/$IDX.err" || \
+                echo $IDX >> "$LOGDIR/$IDX.die" &
             pid=$!
-            echo $pid >> "$LOGS/pids.txt"
-            PIDS[$gpu]=$pid
+            echo $pid >> "$LOGDIR/pids.txt"
+            PIDS[$gpu_job_id]=$pid
             started=1
             IDX=$((IDX+1))
             break
         done
         if [[ -z "$started" ]] ; then
-            sleep 30
+            sleep $SLEEP_TIME
         fi
     done
     CMD=""
 done
 
-for pid in $(cat "$LOGS/pids.txt") ; do
+for pid in $(cat "$LOGDIR/pids.txt") ; do
     while ps -p $pid > /dev/null ; do
-        sleep 30
+        sleep $SLEEP_TIME
     done
 done
-rm "$LOGS/pids.txt"
+rm "$LOGDIR/pids.txt"
