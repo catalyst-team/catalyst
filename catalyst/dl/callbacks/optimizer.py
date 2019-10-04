@@ -4,6 +4,7 @@ from typing import Dict, List, Callable
 import safitty
 import torch
 
+from catalyst.utils import maybe_recursive_call
 from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 from catalyst.dl.registry import GRAD_CLIPPERS
 from catalyst.dl.utils import get_optimizer_momentum
@@ -141,7 +142,8 @@ class OptimizerCallback(Callback):
                 optimizer_wds=self._optimizer_wd,
                 grad_clip_fn=self.grad_clip_fn
             )
-            model.zero_grad()
+            maybe_recursive_call(model, "zero_grad")
+
             self._accumulation_counter = 0
 
     def on_epoch_end(self, state):

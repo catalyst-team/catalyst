@@ -5,6 +5,7 @@ import os
 logger = logging.getLogger(__name__)
 
 from .supervised import SupervisedRunner
+from .gan import GANRunner
 
 if os.environ.get("USE_WANDB", "1") == "1":
     try:

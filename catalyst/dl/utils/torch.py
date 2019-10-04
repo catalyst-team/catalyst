@@ -6,6 +6,7 @@ from torch import nn, optim
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
 from catalyst.dl import utils
+from catalyst.utils import maybe_recursive_call
 
 _Model = nn.Module
 _Criterion = nn.Module
@@ -25,7 +26,7 @@ def process_components(
     distributed_params = copy.deepcopy(distributed_params)
     device = utils.get_device()
 
-    model = model.to(device)
+    model = maybe_recursive_call(model, "to", device=device)
 
     if utils.is_wrapped_with_ddp(model):
         pass
@@ -58,7 +59,7 @@ def process_components(
     elif torch.cuda.device_count() > 1:
         model = torch.nn.DataParallel(model)
 
-    model = model.to(device)
+    model = maybe_recursive_call(model, "to", device=device)
 
     return model, criterion, optimizer, scheduler, device
 

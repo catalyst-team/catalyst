@@ -51,10 +51,12 @@ class MetricManager:
         valid_loader: str = "valid",
         main_metric: str = "loss",
         minimize: bool = True,
+        batch_consistant_metrics: bool = True,
     ):
         self._valid_loader = valid_loader
         self._main_metric = main_metric
         self._minimize = minimize
+        self._batch_consistant_metrics = batch_consistant_metrics
 
         self._meters: Dict[str, AverageValueMeter] = None
         self._batch_values: Dict[str, float] = None
@@ -114,7 +116,7 @@ class MetricManager:
         self._batch_values = {}
 
     def end_batch(self):
-        if len(self._meters) != 0:
+        if len(self._meters) != 0 and self._batch_consistant_metrics:
             assert self._meters.keys() == self._batch_values.keys(), \
                 "Metric set is not consistent among batches"
 

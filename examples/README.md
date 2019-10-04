@@ -34,6 +34,8 @@
     - metrics visualization with tensorboard
 2. [features – model training with stages](cifar_stages)
     - pipeline example with stages
+3. [features - vanilla GAN on MNIST](mnist_gans)
+    - experiment with multiple phases & models & optimizers
 3. [tutorial – classification](https://github.com/catalyst-team/classification)
     - classification model training and inference
     - different augmentations and stages usage
