@@ -9,10 +9,8 @@ from torch.utils.data import DistributedSampler
 
 from catalyst.dl.registry import \
     MODELS, CRITERIONS, OPTIMIZERS, SCHEDULERS, CALLBACKS
-from catalyst.dl import utils
-from catalyst.utils import merge_dicts, get_short_hash
-from catalyst.utils.torch import any2device, get_device
 from catalyst.dl.core import Experiment, Callback
+from catalyst.dl import utils
 from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, \
     _Scheduler
 
@@ -31,7 +29,7 @@ class ConfigExperiment(Experiment):
         self._config = deepcopy(config)
         self.__prepare_logdir()
 
-        self._config["stages"]["state_params"] = merge_dicts(
+        self._config["stages"]["state_params"] = utils.merge_dicts(
             deepcopy(self._config["stages"].get("state_params", {})),
             deepcopy(self._config.get("args", {})), {"logdir": self._logdir}
         )
@@ -62,7 +60,7 @@ class ConfigExperiment(Experiment):
                 continue
             stages_config_out[stage] = {}
             for key in self.STAGE_KEYWORDS:
-                stages_config_out[stage][key] = merge_dicts(
+                stages_config_out[stage][key] = utils.merge_dicts(
                     deepcopy(stages_defaults.get(key, {})),
                     deepcopy(stages_config[stage].get(key, {})),
                 )
@@ -71,7 +69,7 @@ class ConfigExperiment(Experiment):
 
     def _get_logdir(self, config: Dict) -> str:
         timestamp = utils.get_utcnow_time()
-        config_hash = get_short_hash(config)
+        config_hash = utils.get_short_hash(config)
         logdir = f"{timestamp}.{config_hash}"
         distributed_rank = self.distributed_params.get("rank", -1)
         if distributed_rank > -1:
@@ -110,14 +108,6 @@ class ConfigExperiment(Experiment):
     def _postprocess_model_for_stage(self, stage: str, model: _Model):
         return model
 
-    def get_model(self, stage: str):
-        model_params = self._config["model_params"]
-        model = ConfigExperiment._get_model(**model_params)
-
-        model = self._preprocess_model_for_stage(stage, model)
-        model = self._postprocess_model_for_stage(stage, model)
-        return model
-
     @staticmethod
     def _get_model(**params):
         key_value_flag = params.pop("_key_value", False)
@@ -128,6 +118,14 @@ class ConfigExperiment(Experiment):
                 model[key] = ConfigExperiment._get_model(**params_)
         else:
             model = MODELS.get_from_params(**params)
+        return model
+
+    def get_model(self, stage: str):
+        model_params = self._config["model_params"]
+        model = self._get_model(**model_params)
+
+        model = self._preprocess_model_for_stage(stage, model)
+        model = self._postprocess_model_for_stage(stage, model)
         return model
 
     @staticmethod
@@ -151,10 +149,10 @@ class ConfigExperiment(Experiment):
         return criterion
 
     def _get_optimizer(
-            self,
-            stage: str,
-            model: Union[_Model, Dict[str, _Model]],
-            **params
+        self,
+        stage: str,
+        model: Union[_Model, Dict[str, _Model]],
+        **params
     ) -> _Optimizer:
         # TODO 1: refactoring; this method is too long
         # TODO 2: load state dicts for schedulers & criteria
@@ -218,16 +216,17 @@ class ConfigExperiment(Experiment):
             dict2load = optimizer
             if optimizer_key is not None:
                 dict2load = {optimizer_key: optimizer}
+            utils.unpack_checkpoint(checkpoint, optimizer=dict2load)
 
             # move optimizer to device
-            device = get_device()
+            device = utils.get_device()
             for param in model_params:
                 param = param["params"][0]
                 state = optimizer.state[param]
                 for key, value in state.items():
-                    state[key] = any2device(value, device)
+                    state[key] = utils.any2device(value, device)
 
-            utils.unpack_checkpoint(checkpoint, optimizer=dict2load)
+            # update optimizer params
             for key, value in params.items():
                 for pg in optimizer.param_groups:
                     pg[key] = value
@@ -235,9 +234,9 @@ class ConfigExperiment(Experiment):
         return optimizer
 
     def get_optimizer(
-            self,
-            stage: str,
-            model: Union[_Model, Dict[str, _Model]]
+        self,
+        stage: str,
+        model: Union[_Model, Dict[str, _Model]]
     ) -> Union[_Optimizer, Dict[str, _Optimizer]]:
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
@@ -328,7 +327,7 @@ class ConfigExperiment(Experiment):
             elif isinstance(ds_, dict):
                 assert "dataset" in ds_, \
                     "You need to specify dataset for dataloader"
-                loader_params = merge_dicts(ds_, loader_params)
+                loader_params = utils.merge_dicts(ds_, loader_params)
             else:
                 raise NotImplementedError
 
@@ -348,8 +347,10 @@ class ConfigExperiment(Experiment):
 
             if "batch_sampler" in loader_params:
                 if distributed:
-                    raise ValueError("batch_sampler option is mutually "
-                                     "exclusive with distributed")
+                    raise ValueError(
+                        "batch_sampler option is mutually "
+                        "exclusive with distributed"
+                    )
 
                 for k in ("batch_size", "shuffle", "sampler", "drop_last"):
                     loader_params.pop(k, None)

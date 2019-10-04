@@ -9,7 +9,6 @@ from torch.utils.data import DistributedSampler
 from .callback import Callback
 from .experiment import Experiment
 from .state import RunnerState
-from catalyst.utils import maybe_recursive_call
 from catalyst.dl import utils
 from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
 
@@ -165,7 +164,7 @@ class Runner(ABC):
             self.state.loader_name = loader_name
             self.state.loader_len = len(loader)
             self.state.need_backward = loader_name.startswith("train")
-            maybe_recursive_call(
+            utils.maybe_recursive_call(
                 self.model,
                 "train",
                 mode=self.state.need_backward

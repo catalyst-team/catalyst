@@ -8,7 +8,7 @@ model_params:
 
 
 args:
-  expdir: "mnist_gans"
+  expdir: "mnist_gan"
   logdir: "./logs/mnist_gan"
 
 
