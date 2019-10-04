@@ -18,6 +18,11 @@ class Experiment(ABC):
 
     @property
     @abstractmethod
+    def initial_seed(self) -> int:
+        pass
+
+    @property
+    @abstractmethod
     def logdir(self) -> str:
         pass
 
