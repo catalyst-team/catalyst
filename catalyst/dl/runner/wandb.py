@@ -55,11 +55,11 @@ class WandbRunner(Runner):
             log_on_epoch_end=log_on_epoch_end,
             checkpoints_glob=checkpoints_glob,
         )
-
-        exp_config = None
         if isinstance(experiment, ConfigExperiment):
             exp_config = utils.flatten_dict(experiment.stages_config)
-        wandb.init(**monitoring_params, config=exp_config)
+            wandb.init(**monitoring_params, config=exp_config)
+        else:
+            wandb.init(**monitoring_params)
 
     def _post_experiment_hook(self, experiment: Experiment):
         logdir_src = Path(experiment.logdir)
