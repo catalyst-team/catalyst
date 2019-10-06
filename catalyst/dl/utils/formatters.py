@@ -71,8 +71,8 @@ class TxtMetricsFormatter(MetricsFormatter):
         metrics = self._format_metrics(state.metrics.epoch_values)
         for key, value in metrics.items():
             message.append(
-                f"{state.stage_epoch}/{state.num_epochs} "
-                f"* Epoch {state.epoch} ({key}): {value}"
+                f"{state.stage_epoch+1}/{state.num_epochs} "
+                f"* Epoch {state.epoch+1} ({key}): {value}"
             )
         message = "\n".join(message)
         return message
