@@ -2,14 +2,8 @@
 
 ### DL notebooks
 
-1. [features – classification](./notebooks/notebook-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/notebook-example.ipynb)
-    - cifar10 classification model
-    - Runner usage example
-2. [features – segmentation](./notebooks/segmentation-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-example.ipynb)
-    - segmentation with unet
-    - model training and inference
-    - predictions visialization
-3. [tutorial – classification](./notebooks/classification-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb)
+#### Tutorials
+1. [tutorial – classification](./notebooks/classification-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb)
     - dataset preparation (raw images -> train/valid/infer splits)
     - augmentations usage example
     - pretrained model finetuning
@@ -18,13 +12,31 @@
     - FocalLoss and OneCycle usage examples
     - class imbalance handling
     - model inference
-4. [tutorial - table data regression](./notebooks/table-data-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/table-data-tutorial.ipynb)
+2. [tutorial - segmentation](notebooks/segmentation-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb)
+    - car segmentation dataset
+    - augmentations with [albumentations](https://github.com/albu/albumentations) library
+    - training in FP16 with [NVIDIA Apex](https://github.com/NVIDIA/apex)
+    - using segmentation models from `catalyst/contrib/models/segmentation`
+    - training with multiple criterion (Dice + IoU + BCE) example
+    - RAdam optimizer usage example
+    - tensorboard logs visualization
+    - predictions visualization
+3. [tutorial - table data regression](./notebooks/table-data-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/table-data-tutorial.ipynb)
     - dataset California housing dataset(sklearn)
     - StandardScaler preprocessing
     - Simple MLP (40,10,1) linear layers
     - Training + Inference 
     - Results viz.
-    
+
+#### Usage examples
+4. [features – classification](./notebooks/notebook-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/notebook-example.ipynb)
+    - cifar10 classification model
+    - Runner usage example
+5. [features – segmentation](./notebooks/segmentation-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-example.ipynb)
+    - segmentation with unet
+    - model training and inference
+    - predictions visialization
+
 ----
 
 ### DL pipelines
