@@ -217,7 +217,8 @@ class Runner(ABC):
         # jupyter source code logging hack
         # + hack to prevent cycle imports
         from catalyst.dl.experiment import BaseExperiment
-        if isinstance(self.experiment, BaseExperiment):
+        if isinstance(self.experiment, BaseExperiment) \
+                and self.experiment.logdir is not None:
             expdir = Path(os.getcwd())
             logdir = Path(self.experiment.logdir)
             dump_base_experiment_code(expdir, logdir)
