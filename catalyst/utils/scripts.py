@@ -3,6 +3,7 @@ import sys
 import shutil
 import pathlib
 from importlib.util import spec_from_file_location, module_from_spec
+from .notebook import save_notebook
 
 
 def import_module(expdir: pathlib.Path):
@@ -43,4 +44,16 @@ def dump_code(expdir, logdir):
     _tricky_dir_copy(old_expdir, new_expdir)
 
 
-__all__ = ["import_module", "dump_code"]
+def dump_python_files(src, dst):
+    py_files = list(src.glob("*.py"))
+    ipynb_files = list(src.glob("*.ipynb"))
+    for filepath in ipynb_files:
+        save_notebook(filepath)
+    py_files += ipynb_files
+
+    py_files = list(set(py_files))
+    for py_file in py_files:
+        shutil.copy2(f"{str(py_file.absolute())}", f"{dst}/{py_file.name}")
+
+
+__all__ = ["import_module", "dump_code", "dump_python_files"]
