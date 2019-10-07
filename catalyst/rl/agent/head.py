@@ -147,10 +147,9 @@ class PolicyHead(nn.Module):
 
         head_net = SequentialNet(
             hiddens=[in_features, head_size],
-            layer_fn=nn.Linear,
+            layer_fn={"module": layer_fn, "bias": True},
             activation_fn=out_activation,
             norm_fn=None,
-            bias=True
         )
         head_net.apply(outer_init)
         self.head_net = head_net

@@ -34,6 +34,8 @@
     - metrics visualization with tensorboard
 2. [features – model training with stages](cifar_stages)
     - pipeline example with stages
+3. [features - vanilla GAN on MNIST](mnist_gan)
+    - experiment with multiple phases & models & optimizers
 3. [tutorial – classification](https://github.com/catalyst-team/classification)
     - classification model training and inference
     - different augmentations and stages usage
@@ -76,4 +78,7 @@
 4. [NeurIPS 2019: Animal-AI Olympics](https://github.com/Scitator/animal-olympics-starter-kit)
     - starter kit
 5. [ID R&D Anti-spoofing Challenge](https://github.com/bagxi/idrnd-anti-spoofing-challenge-solution)
-    - 14th place solution
+    - 14th place solution 
+6. [NeurIPS 2019: Recursion Cellular Image Classification](https://github.com/ngxbac/Kaggle-Recursion-Cellular)
+    - 4th place solution
+    - [writeup](https://www.kaggle.com/c/recursion-cellular-image-classification/discussion/110337#latest-634988)

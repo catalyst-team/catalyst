@@ -95,21 +95,6 @@ class SupervisedRunner(Runner):
         output = self._process_output(output)
         return output
 
-    def predict_batch(self, batch: Mapping[str, Any]):
-        """
-        Run model for a batch of elements
-
-        WARN: You should not override this method. If you need specific model
-        call, override forward() method
-        Args:
-            batch: Key-value batch items
-        Returns: model output key-value
-
-        """
-        batch = self._batch2device(batch, self.device)
-        output = self.forward(batch)
-        return output
-
     def train(
         self,
         model: _Model,
@@ -119,6 +104,7 @@ class SupervisedRunner(Runner):
         logdir: str,
         callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
         scheduler: _Scheduler = None,
+        resume: str = None,
         num_epochs: int = 1,
         valid_loader: str = "valid",
         main_metric: str = "loss",
@@ -142,6 +128,7 @@ class SupervisedRunner(Runner):
             logdir (str): path to output directory
             callbacks (List[catalyst.dl.Callback]): list of callbacks
             scheduler (optim.lr_scheduler._LRScheduler): scheduler for training
+            resume (str): path to checkpoint for model
             num_epochs (int): number of training epochs
             valid_loader (str): loader name used to calculate
                 the metrics and save the checkpoints. For example,
@@ -176,6 +163,17 @@ class SupervisedRunner(Runner):
 
         if model is not None:
             self.model = model
+
+        if resume is not None:
+            callbacks = callbacks or OrderedDict()
+            checkpoint_callback_flag = any([
+                isinstance(x, CheckpointCallback)
+                for x in callbacks.values()
+            ])
+            if not checkpoint_callback_flag:
+                callbacks["loader"] = CheckpointCallback(resume=resume)
+            else:
+                raise NotImplementedError("CheckpointCallback already exist")
 
         experiment = self._default_experiment(
             stage="train",

@@ -11,7 +11,6 @@ from pathlib import Path  # noqa E402
 import threading  # noqa E402
 from ctypes import c_bool  # noqa E402
 import multiprocessing as mp  # noqa E402
-from datetime import datetime  # noqa E402
 import numpy as np  # noqa E402
 import logging  # noqa E402
 
@@ -120,7 +119,7 @@ class Sampler:
 
     def _prepare_logger(self, logdir, mode):
         if logdir is not None:
-            timestamp = datetime.utcnow().strftime("%y%m%d.%H%M%S")
+            timestamp = utils.get_utcnow_time()
             logpath = f"{logdir}/" \
                 f"sampler.{mode}.{self._sampler_id}.{timestamp}"
             os.makedirs(logpath, exist_ok=True)
@@ -131,6 +130,10 @@ class Sampler:
             self.logger = None
 
     def _start_db_loop(self):
+        if self.db_server is None:
+            self._training_flag.value = True
+            self._sampling_flag.value = True
+            return
         self._db_loop_thread = threading.Thread(
             target=_db2sampler_loop, kwargs={
                 "sampler": self,
@@ -149,7 +152,7 @@ class Sampler:
                 time.sleep(3.0)
                 checkpoint = db_server.get_checkpoint()
         else:
-            raise NotImplementedError
+            raise NotImplementedError("No checkpoint found")
 
         self.checkpoint = checkpoint
         weights = self.checkpoint[f"{self._weights_sync_mode}_state_dict"]
@@ -277,7 +280,11 @@ class Sampler:
                     return
                 time.sleep(5.0)
 
-            if self.trajectory_index % self._weights_sync_period == 0:
+            # 1 – load from db, 2 – resume load trick (already have checkpoint)
+            need_checkpoint = \
+                self.db_server is not None or self.checkpoint is None
+            if self.trajectory_index % self._weights_sync_period == 0 \
+                    and need_checkpoint:
                 self.load_checkpoint(db_server=self.db_server)
                 self._save_wandb()
 
@@ -318,14 +325,30 @@ class ValidSampler(Sampler):
     def rewards2metric(rewards):
         return np.mean(rewards)  # - np.std(rewards)
 
-    def _init(self, save_n_best: int = 3, **kwargs):
+    def _init(
+        self,
+        save_n_best: int = 3,
+        main_metric: str = "raw_reward",
+        main_metric_fn: str = "mean",
+        **kwargs
+    ):
         assert len(kwargs) == 0
+        assert main_metric in ["reward", "raw_reward"]
+        assert main_metric_fn in ["mean", "mean-std"]
         super()._init()
         self.wandb_mode = "valid_sampler"
 
         self.save_n_best = save_n_best
+        self.main_metric = main_metric
         self.best_agents = []
         self._sampling_flag.value = True
+
+        if main_metric_fn == "mean":
+            self.rewards2metric = lambda x: np.mean(x)
+        elif main_metric_fn == "mean-std":
+            self.rewards2metric = lambda x: np.mean(x) - np.std(x)
+        else:
+            raise NotImplementedError()
 
     def load_checkpoint(
         self, *, filepath: str = None, db_server: DBSpec = None
@@ -384,9 +407,10 @@ class ValidSampler(Sampler):
         logdir: str,
         checkpoint: Dict,
         save_n_best: int = 3,
+        main_metric: str = "raw_reward",
         minimize_metric: bool = False
     ):
-        agent_rewards = checkpoint["rewards"]
+        agent_rewards = checkpoint[main_metric]
         agent_metric = self.rewards2metric(agent_rewards)
 
         is_best = len(self.best_agents) == 0 or \
@@ -413,15 +437,26 @@ class ValidSampler(Sampler):
         assert self.seeds is not None
 
         while True:
-            ok = self.load_checkpoint(db_server=self.db_server)
+            # 1 – load from db, 2 – resume load trick (already have checkpoint)
+            need_checkpoint = \
+                self.db_server is not None or self.checkpoint is None
+            ok = self.load_checkpoint(db_server=self.db_server) \
+                if need_checkpoint \
+                else True
             if not ok:
                 return
 
-            trajectories_rewards = []
+            trajectories_reward, trajectories_raw_reward = [], []
 
             for i in range(len(self.seeds)):
                 trajectory, trajectory_info = self._run_trajectory_loop()
-                trajectories_rewards.append(trajectory_info["reward"])
+                trajectories_reward.append(trajectory_info["reward"])
+                trajectories_raw_reward.append(
+                    trajectory_info.get(
+                        "raw_reward",
+                        trajectory_info["reward"]
+                    )
+                )
                 trajectory_info.pop("raw_trajectory", None)
                 self._log_to_console(**trajectory_info)
                 self._log_to_tensorboard(**trajectory_info)
@@ -432,25 +467,26 @@ class ValidSampler(Sampler):
                 if self.trajectory_index % self._gc_period == 0:
                     gc.collect()
 
-            if self.logger is not None:
-                self.logger.add_scalar(
-                    "trajectory/_mean_valid_reward",
-                    np.mean(trajectories_rewards),
-                    self.db_server.epoch
-                )
-            self._log_to_wandb(
-                step=self.db_server.epoch, **{
-                    "trajectory/_mean_valid_reward":
-                        np.mean(trajectories_rewards)
-                }
-            )
+            loop_metrics = {
+                "trajectory/_mean_valid_reward":
+                    self.rewards2metric(trajectories_reward),
+                "trajectory/_mean_valid_raw_reward":
+                    self.rewards2metric(trajectories_raw_reward),
+            }
 
-            self.checkpoint["rewards"] = trajectories_rewards
+            if self.logger is not None:
+                for key, value in loop_metrics.items():
+                    self.logger.add_scalar(key, value, self.db_server.epoch)
+            self._log_to_wandb(step=self.db_server.epoch, **loop_metrics)
+
+            self.checkpoint["reward"] = trajectories_reward
+            self.checkpoint["raw_reward"] = trajectories_raw_reward
             self.checkpoint["epoch"] = self.db_server.epoch
             self.save_checkpoint(
                 logdir=self.logdir,
                 checkpoint=self.checkpoint,
-                save_n_best=self.save_n_best
+                save_n_best=self.save_n_best,
+                main_metric=self.main_metric,
             )
             self._save_wandb()
 

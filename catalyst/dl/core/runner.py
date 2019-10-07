@@ -45,6 +45,7 @@ class Runner(ABC):
         :return:
         """
 
+        utils.set_global_seed(self.experiment.initial_seed)
         model = self.experiment.get_model(stage)
         criterion, optimizer, scheduler = \
             self.experiment.get_experiment_components(model, stage)
@@ -60,7 +61,8 @@ class Runner(ABC):
 
         return model, criterion, optimizer, scheduler, device
 
-    def _prepare_state(self, stage: str):
+    def _prepare_for_stage(self, stage: str):
+        utils.set_global_seed(self.experiment.initial_seed)
         migrating_params = {}
         if self.state is not None:
             migrating_params.update(
@@ -83,6 +85,7 @@ class Runner(ABC):
             **self.experiment.get_state_params(stage),
             **migrating_params
         )
+        utils.set_global_seed(self.experiment.initial_seed)
 
     def _run_event(self, event: str):
         if self.state is not None and hasattr(self.state, f"on_{event}_pre"):
@@ -96,12 +99,21 @@ class Runner(ABC):
             getattr(self.state, f"on_{event}_post")()
 
     @abstractmethod
-    def predict_batch(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
-        pass
-
-    @abstractmethod
     def forward(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
         pass
+
+    def predict_batch(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
+        """
+        Run model for a batch of elements
+        WARN: You should not override this method. If you need specific model
+        call, override forward() method
+        Args:
+            batch: Key-value batch items
+        Returns: model output key-value
+        """
+        batch = self._batch2device(batch, self.device)
+        output = self.forward(batch)
+        return output
 
     def _run_batch(self, batch):
         self.state.step += self.state.batch_size
@@ -155,19 +167,26 @@ class Runner(ABC):
             self.state.loader_name = loader_name
             self.state.loader_len = len(loader)
             self.state.need_backward = loader_name.startswith("train")
-            self.model.train(self.state.need_backward)
+            utils.maybe_recursive_call(
+                self.model,
+                "train",
+                mode=self.state.need_backward
+            )
 
             if isinstance(loader.sampler, DistributedSampler) \
                     and loader_name.startswith("train"):
                 loader.sampler.set_epoch(self.state.stage_epoch)
 
+            utils.set_global_seed(
+                self.experiment.initial_seed + self.state.epoch + 1
+            )
             self._run_event("loader_start")
             with torch.set_grad_enabled(self.state.need_backward):
                 self._run_loader(loader)
             self._run_event("loader_end")
 
     def _run_stage(self, stage: str):
-        self._prepare_state(stage)
+        self._prepare_for_stage(stage)
         loaders = self.experiment.get_loaders(stage)
         self.callbacks = self.experiment.get_callbacks(stage)
 

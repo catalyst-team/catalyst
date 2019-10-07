@@ -2,8 +2,11 @@ from typing import Iterable, Any
 
 import copy
 import collections
+from datetime import datetime
 import numpy as np
 from itertools import tee
+import shutil
+from pathlib import Path
 
 
 def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:
@@ -87,6 +90,72 @@ def flatten_dict(d, parent_key="", sep="/"):
     return collections.OrderedDict(items)
 
 
+def maybe_recursive_call(
+    object_or_dict,
+    method,
+    recursive_args=None,
+    recursive_kwargs=None,
+    **kwargs
+):
+    if isinstance(object_or_dict, dict):
+        result = type(object_or_dict)()
+        for k, v in object_or_dict.items():
+            r_args = \
+                None if recursive_args is None else recursive_args[k]
+            r_kwargs = \
+                None if recursive_kwargs is None else recursive_kwargs[k]
+            result[k] = maybe_recursive_call(
+                v,
+                method,
+                recursive_args=r_args,
+                recursive_kwargs=r_kwargs,
+                **kwargs
+            )
+        return result
+
+    r_args = recursive_args or []
+    if not isinstance(r_args, (list, tuple)):
+        r_args = [r_args]
+    r_kwargs = recursive_kwargs or {}
+    return getattr(object_or_dict, method)(*r_args, **r_kwargs, **kwargs)
+
+
 def is_exception(ex: Any) -> bool:
+    """
+    Check if the argument is of Exception type
+    """
     result = (ex is not None) and isinstance(ex, BaseException)
+    return result
+
+
+def copy_directory(input_dir: Path, output_dir: Path) -> None:
+    """
+    Recursively copies the input directory
+
+    Args:
+        input_dir (Path): input directory
+        output_dir (Path): output directory
+    """
+    output_dir.mkdir(exist_ok=True, parents=True)
+    for path in input_dir.iterdir():
+        if path.is_dir():
+            path_name = path.name
+            copy_directory(path, output_dir / path_name)
+        else:
+            shutil.copy2(path, output_dir)
+
+
+def get_utcnow_time(format: str = None) -> str:
+    """
+    Return string with current utc time in chosen format
+
+    Args:
+        format (str): format string. if None "%y%m%d.%H%M%S" will be used.
+
+    Returns:
+        str: formatted utc time string
+    """
+    if format is None:
+        format = "%y%m%d.%H%M%S"
+    result = datetime.utcnow().strftime(format)
     return result
