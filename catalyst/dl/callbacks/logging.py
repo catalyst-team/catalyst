@@ -27,7 +27,7 @@ class VerboseLogger(Callback):
         self.step = 0
         self.tqdm = tqdm(
             total=state.loader_len,
-            desc=f"{state.stage_epoch+1}/{state.num_epochs}"
+            desc=f"{state.stage_epoch}/{state.num_epochs-1}"
             f" * Epoch ({state.loader_name})",
             leave=True,
             ncols=0,
