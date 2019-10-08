@@ -11,6 +11,7 @@ tensorboardX>=1.8
 plotly>=4.1.0
 safitty>=1.2.3
 crc32c>=1.7
+ipython
 
 # Used in scripts
 matplotlib

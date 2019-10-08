@@ -1,5 +1,7 @@
 from abc import abstractmethod, ABC
 from typing import Tuple, Mapping, Any
+import os
+from pathlib import Path
 from collections import OrderedDict
 
 import torch
@@ -11,6 +13,7 @@ from .experiment import Experiment
 from .state import RunnerState
 from catalyst.dl import utils
 from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
+from catalyst.dl.utils.scripts import dump_base_experiment_code
 
 
 class Runner(ABC):
@@ -210,6 +213,15 @@ class Runner(ABC):
     def run_experiment(self, experiment: Experiment, check: bool = False):
         self._check_run = check
         self.experiment = experiment
+
+        # jupyter source code logging hack
+        # + hack to prevent cycle imports
+        from catalyst.dl.experiment import BaseExperiment
+        if isinstance(self.experiment, BaseExperiment) \
+                and self.experiment.logdir is not None:
+            expdir = Path(os.getcwd())
+            logdir = Path(self.experiment.logdir)
+            dump_base_experiment_code(expdir, logdir)
 
         try:
             for stage in self.experiment.stages:
