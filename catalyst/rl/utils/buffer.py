@@ -1,5 +1,6 @@
 from typing import Dict, Tuple
 
+import time
 import numpy as np
 import multiprocessing as mp
 from gym import spaces
@@ -172,6 +173,8 @@ class OffpolicyReplayBuffer(Dataset):
         n_step: int = 1,
         gamma: float = 0.99,
         history_len: int = 1,
+        cem_reward_threshold: float = None,
+        cem_minimal_capacity: int = None,
         mode: str = "numpy",
         logdir: str = None
     ):
@@ -200,11 +203,15 @@ class OffpolicyReplayBuffer(Dataset):
         self.capacity_mult = capacity_mult
         self.capacity_limit = capacity * capacity_mult
 
+        self.cem_reward_threshold = cem_reward_threshold
+        self.cem_minimal_capacity = cem_minimal_capacity
+
         self._store_lock = mp.Lock()
         self.num_trajectories = 0
         self.num_transitions = 0
         self.pointer = 0
-        self._trajectories_lens = []
+        self._trajectory_lengths = []
+        self._trajectory_rewards = []
 
         self.observations = BufferWrapper(
             capacity=self.capacity_limit,
@@ -251,12 +258,67 @@ class OffpolicyReplayBuffer(Dataset):
             self.rewards[self.pointer:self.pointer + trajectory_len] = rewards
             self.dones[self.pointer:self.pointer + trajectory_len] = dones
 
-            self._trajectories_lens.append(trajectory_len)
+            self._trajectory_lengths.append(trajectory_len)
+            self._trajectory_rewards.append(np.sum(rewards))
             self.pointer += trajectory_len
             self.num_trajectories += 1
             self.num_transitions += trajectory_len
 
         return True
+
+    def truncate_buffer(self):
+        if self.cem_minimal_capacity is None \
+                or self.length > self.cem_minimal_capacity:
+            timer = time.time()
+
+            lower_reward_threshold = np.inf
+            upper_reward_threshold = np.percentile(
+                self._trajectory_rewards, self.cem_reward_threshold)
+            if isinstance(upper_reward_threshold, np.ndarray):
+                assert len(upper_reward_threshold) == 2
+                lower_reward_threshold, upper_reward_threshold = \
+                    upper_reward_threshold
+
+            length_before = int(self.length)
+
+            elite_trajectories = []
+            elite_pointer, pointer = 0, 0
+            for i, reward in enumerate(self._trajectory_rewards):
+                if reward > upper_reward_threshold \
+                        or reward < lower_reward_threshold:
+                    elite_trajectories.append(i)
+                    tr_len = self._trajectory_lengths[i]
+
+                    self.observations[elite_pointer:elite_pointer + tr_len] = \
+                        self.observations[pointer:pointer + tr_len]
+                    self.actions[elite_pointer:elite_pointer + tr_len] = \
+                        self.actions[pointer:pointer + tr_len]
+                    self.rewards[elite_pointer:elite_pointer + tr_len] = \
+                        self.rewards[pointer:pointer + tr_len]
+                    self.dones[elite_pointer:elite_pointer + tr_len] = \
+                        self.dones[pointer:pointer + tr_len]
+
+                    elite_pointer += self._trajectory_lengths[i]
+                pointer += self._trajectory_lengths[i]
+
+            self._trajectory_lengths = list(
+                map(lambda x: x[1],
+                    filter(lambda x: x[0] in elite_trajectories,
+                           enumerate(self._trajectory_lengths))))
+            self._trajectory_rewards = list(
+                map(lambda x: x[1],
+                    filter(lambda x: x[0] in elite_trajectories,
+                           enumerate(self._trajectory_rewards))))
+
+            self.pointer = elite_pointer
+            self.length = elite_pointer
+
+            length_after = int(self.length)
+            print("lower_reward_threshold:", lower_reward_threshold)
+            print("upper_reward_threshold:", upper_reward_threshold)
+            print("length_before:", length_before)
+            print("length_after:", length_after)
+            print("elapsed_time:", time.time() - timer)
 
     def recalculate_index(self):
         with self._store_lock:
@@ -264,13 +326,16 @@ class OffpolicyReplayBuffer(Dataset):
             if curr_p > self.capacity:
                 diff = curr_p - self.capacity
 
-                tr_cumsum = np.cumsum(self._trajectories_lens)
+                tr_cumsum = np.cumsum(self._trajectory_lengths)
                 tr_cumsum_mask = tr_cumsum < diff
                 tr_offset = np.where(tr_cumsum_mask, tr_cumsum, -1)
                 offset = tr_offset.argmax()
                 offset += 1 if tr_offset[offset] > -1 else 0
 
-                self._trajectories_lens = self._trajectories_lens[offset + 1:]
+                self._trajectory_lengths = \
+                    self._trajectory_lengths[offset + 1:]
+                self._trajectory_rewards = \
+                    self._trajectory_rewards[offset + 1:]
                 offset = tr_cumsum[offset]
                 curr_p = curr_p - offset
 
@@ -289,6 +354,8 @@ class OffpolicyReplayBuffer(Dataset):
 
                 self.pointer = curr_p
             self.length = curr_p
+            if self.cem_reward_threshold is not None:
+                self.truncate_buffer()
 
     def get_state(self, idx, history_len=1):
         """

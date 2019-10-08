@@ -32,10 +32,13 @@ class Trainer(TrainerSpec):
         self,
         target_update_period: int = 1,
         replay_buffer_size: int = int(1e6),
+        cem_reward_threshold: float = None,
+        cem_minimal_capacity: int = None,
         replay_buffer_mode: str = "numpy",
         epoch_len: int = int(1e2),
         max_updates_per_sample: int = None,
         min_transitions_per_epoch: int = None,
+
     ):
         super()._init()
         # updates configuration
@@ -58,6 +61,8 @@ class Trainer(TrainerSpec):
             history_len=self.env_spec.history_len,
             n_step=self.algorithm.n_step,
             gamma=self.algorithm.gamma,
+            cem_reward_threshold=cem_reward_threshold,
+            cem_minimal_capacity=cem_minimal_capacity,
             mode=replay_buffer_mode,
             logdir=self.logdir
         )
