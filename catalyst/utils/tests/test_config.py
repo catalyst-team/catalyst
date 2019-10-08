@@ -64,6 +64,7 @@ def test_parse_numbers():
 
     buffer = io.StringIO()
     json.dump(configuration, buffer)
+    buffer.seek(0)
     yaml_config = config.load_ordered_yaml(buffer)
 
     for key, item in configuration.items():
