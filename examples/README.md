@@ -18,9 +18,10 @@
     - training in FP16 with [NVIDIA Apex](https://github.com/NVIDIA/apex)
     - using segmentation models from `catalyst/contrib/models/segmentation`
     - training with multiple criterion (Dice + IoU + BCE) example
-    - RAdam optimizer usage example
+    - Lookahead + RAdam optimizer usage example
     - tensorboard logs visualization
     - predictions visualization
+    - Test-time augmentations with [ttach](https://github.com/qubvel/ttach) library
 3. [tutorial - table data regression](./notebooks/table-data-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/table-data-tutorial.ipynb)
     - dataset California housing dataset(sklearn)
     - StandardScaler preprocessing
