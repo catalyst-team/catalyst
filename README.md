@@ -23,7 +23,7 @@ High-level utils for PyTorch DL & RL research.
 It was developed with a focus on reproducibility, 
 fast experimentation and code/ideas reusing.
 Being able to research/develop something new, 
-rather then write another regular train loop.
+rather than write another regular train loop.
 
 Break the cycle - use the Catalyst!
 
