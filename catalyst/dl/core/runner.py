@@ -68,7 +68,7 @@ class Runner(ABC):
             migrating_params.update(
                 {
                     "step": self.state.step,
-                    "epoch": self.state.epoch + 1
+                    "epoch": self.state.epoch
                 }
             )
 
