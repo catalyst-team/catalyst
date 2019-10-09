@@ -173,7 +173,10 @@ class TensorboardLogger(Callback):
             mode = state.loader_name
             metrics_ = state.metrics.epoch_values[mode]
             self._log_metrics(
-                metrics=metrics_, step=state.epoch_log, mode=mode, suffix="/epoch"
+                metrics=metrics_,
+                step=state.epoch_log,
+                mode=mode,
+                suffix="/epoch"
             )
         for logger in self.loggers.values():
             logger.flush()
