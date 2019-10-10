@@ -1,7 +1,8 @@
 # flake8: noqa
 
 from .metrics import AccuracyCallback, MapKCallback, \
-    AUCCallback, DiceCallback, F1ScoreCallback, IouCallback, JaccardCallback
+    AUCCallback, DiceCallback, F1ScoreCallback, IouCallback, JaccardCallback, \
+    PrecisionRecallF1ScoreCallback
 
 from .checkpoint import CheckpointCallback, IterationCheckpointCallback
 from .criterion import CriterionCallback, CriterionAggregatorCallback
