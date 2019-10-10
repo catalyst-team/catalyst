@@ -7,6 +7,7 @@ import torch
 from catalyst.dl.meters import PrecisionRecallF1ScoreMeter
 from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 
+
 class PrecisionRecallF1ScoreCallback(Callback):
     """
     Calculates the global precision (positive predictive value or ppv),
@@ -44,7 +45,8 @@ class PrecisionRecallF1ScoreCallback(Callback):
 
         assert self.num_classes is not None
 
-        self.meters = [PrecisionRecallF1ScoreMeter(threshold) for _ in range(self.num_classes)]
+        self.meters = [PrecisionRecallF1ScoreMeter(threshold)
+                       for _ in range(self.num_classes)]
 
     def _reset_stats(self):
         for meter in self.meters:
@@ -66,20 +68,23 @@ class PrecisionRecallF1ScoreCallback(Callback):
 
     def on_loader_end(self, state: RunnerState):
         prec_recall_f1score = defaultdict(list)
+        loader_values = state.metrics.epoch_values[state.loader_name]
         for i, meter in enumerate(self.meters):
             metrics = meter.value()
             postfix = self.class_names[i] \
                 if self.class_names is not None \
                 else str(i)
             for prefix, metric_ in zip(self.list_args, metrics):
+                # adding the per-class metrics
                 prec_recall_f1score[prefix] = metric_
                 metric_name = f"{prefix}/class_{postfix}"
-                state.metrics.epoch_values[state.loader_name][metric_name] = metric_
+                loader_values[metric_name] = metric_
 
         for prefix in self.list_args:
+            # averages computed metrics
             mean_value = float(np.mean(prec_recall_f1score[prefix]))
             metric_name = f"{prefix}/_mean"
-            state.metrics.epoch_values[state.loader_name][metric_name] = mean_value
+            loader_values[metric_name] = mean_value
 
         self._reset_stats()
 
