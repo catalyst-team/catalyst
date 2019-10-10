@@ -21,6 +21,17 @@ class PrecisionRecallF1ScoreCallback(Callback):
         num_classes: int = 1,
         threshold: float = 0.5
     ):
+        """
+        Args:
+            input_key (str): input key to use for iou calculation
+                specifies our ``y_true``.
+            output_key (str): output key to use for iou calculation;
+                specifies our ``y_pred``
+            class_names (List[str]): class names to display in the logs.
+                If None, defaults to indices for each class, starting from 0.
+            num_classes (int): Number of classes
+            threshold (float): threshold for outputs binarization
+        """
         super().__init__(CallbackOrder.Metric)
         self.input_key = input_key
         self.output_key = output_key
