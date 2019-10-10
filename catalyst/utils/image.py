@@ -164,3 +164,8 @@ def mask_to_overlay_image(
     )
 
     return image_with_overlay
+
+
+def has_image_extension(uri) -> bool:
+    _, ext = os.path.splitext(uri)
+    return ext.lower() in {".bmp", ".png", ".jpeg", ".jpg", ".tif", ".tiff"}
