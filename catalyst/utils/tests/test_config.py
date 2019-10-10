@@ -1,5 +1,8 @@
 # flake8: noqa
 import argparse
+import json
+import io
+import numpy as np
 
 from catalyst.utils import config
 
@@ -44,3 +47,25 @@ def test_parse_config_args():
         v = configuration["args"].get(key)
         assert v is not None
         assert v == value
+
+
+def test_parse_numbers():
+    configuration = {
+        "a": 1,
+        "b": 20,
+        "c": 303e5,
+        "d": -4,
+        "e": -50,
+        "f": -666e7,
+        "g": 0.35,
+        "h": 7.35e-5,
+        "k": 8e-10,
+    }
+
+    buffer = io.StringIO()
+    json.dump(configuration, buffer)
+    buffer.seek(0)
+    yaml_config = config.load_ordered_yaml(buffer)
+
+    for key, item in configuration.items():
+        assert np.isclose(yaml_config[key], item)

@@ -23,7 +23,7 @@ High-level utils for PyTorch DL & RL research.
 It was developed with a focus on reproducibility, 
 fast experimentation and code/ideas reusing.
 Being able to research/develop something new, 
-rather then write another regular train loop.
+rather than write another regular train loop.
 
 Break the cycle - use the Catalyst!
 
@@ -49,6 +49,7 @@ Catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+.
 
 #### Docs and examples
 - Detailed [classification tutorial](./examples/notebooks/classification-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb)
+- Advanced [segmentation tutorial](./examples/notebooks/segmentation-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb)
 - Comprehensive [classification pipeline](https://github.com/catalyst-team/classification).
 
 API documentation and an overview of the library can be found here

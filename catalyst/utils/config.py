@@ -5,6 +5,7 @@ import platform
 import shutil
 import subprocess
 import sys
+import re
 from collections import OrderedDict
 from logging import getLogger
 from pathlib import Path
@@ -42,6 +43,18 @@ def load_ordered_yaml(
 
     OrderedLoader.add_constructor(
         yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_mapping
+    )
+    OrderedLoader.add_implicit_resolver(
+        "tag:yaml.org,2002:float",
+        re.compile(
+            u"""^(?:
+            [-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+]?[0-9]+)?
+            |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)
+            |\\.[0-9_]+(?:[eE][-+][0-9]+)?
+            |[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*
+            |[-+]?\\.(?:inf|Inf|INF)
+            |\\.(?:nan|NaN|NAN))$""", re.X
+        ), list(u"-+0123456789.")
     )
     return yaml.load(stream, OrderedLoader)
 
