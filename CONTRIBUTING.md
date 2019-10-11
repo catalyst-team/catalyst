@@ -44,7 +44,7 @@ Do not forget to check the codestyle for your PR with
 make codestyle
 ```
 
-Make sure to have your python packages complied with requirements/requirements.txt, requirements/requirements-contrib.txt and requirements/requirements-dev.txt to get codestyle run clean.
+Make sure to have your python packages complied with requirements/requirements.txt and requirements/requirements-dev.txt to get codestyle run clean.
 
 ## Documentation
 
