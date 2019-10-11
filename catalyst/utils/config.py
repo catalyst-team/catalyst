@@ -13,7 +13,7 @@ from typing import List, Any, Dict, Union
 
 import safitty
 import yaml
-from tensorboardX import SummaryWriter
+from torch.utils.tensorboard import SummaryWriter
 
 from catalyst import utils
 

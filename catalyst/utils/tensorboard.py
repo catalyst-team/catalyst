@@ -6,7 +6,7 @@ from typing import BinaryIO, Union, Optional
 
 import cv2
 import numpy as np
-from tensorboardX.proto.event_pb2 import Event
+from tensorboard.compat.proto.event_pb2 import Event
 
 import os
 if os.environ.get("CRC32C_SW_MODE", None) is None:

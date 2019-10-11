@@ -9,7 +9,7 @@ import numpy as np
 import logging
 
 from torch.utils.data import DataLoader
-from tensorboardX import SummaryWriter
+from torch.utils.tensorboard import SummaryWriter
 
 from catalyst.utils.seed import set_global_seed, Seeder
 from catalyst import utils

@@ -17,7 +17,7 @@ import logging  # noqa E402
 import torch  # noqa E402
 torch.set_num_threads(1)
 
-from tensorboardX import SummaryWriter  # noqa E402
+from torch.utils.tensorboard import SummaryWriter  # noqa E402
 
 from catalyst.utils.seed import set_global_seed, Seeder  # noqa E402
 from catalyst import utils  # noqa E402
