@@ -167,5 +167,15 @@ def mask_to_overlay_image(
 
 
 def has_image_extension(uri) -> bool:
+    """
+    Check that file has image extension
+
+    Args:
+        uri (Union[str, pathlib.Path]): The resource to load the file from
+
+    Returns:
+        bool: True if file has image extension, False otherwise
+
+    """
     _, ext = os.path.splitext(uri)
     return ext.lower() in {".bmp", ".png", ".jpeg", ".jpg", ".tif", ".tiff"}
