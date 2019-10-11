@@ -45,7 +45,7 @@ pip install catalyst[contrib] # installs DL+contrib based catalyst
 pip install catalyst[all] # installs everything. Very convenient to deploy on a new server
 ```
 
-Catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+.
+Catalyst is compatible with: Python 3.6+. PyTorch 1.2.0+.
 
 #### Docs and examples
 - Detailed [classification tutorial](./examples/notebooks/classification-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb)
