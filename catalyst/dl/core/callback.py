@@ -38,7 +38,7 @@ class Callback:
 
     All callbacks has ``order`` value from ``CallbackOrder``
     """
-    def __init__(self, order: Union[int, Tuple[int, int]]):
+    def __init__(self, order):
         """
         For order see ``CallbackOrder`` class
         """

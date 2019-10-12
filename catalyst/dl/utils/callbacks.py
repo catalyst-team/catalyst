@@ -1,31 +1,59 @@
 from collections import OrderedDict
-from typing import Union, List
+from typing import Union, List, Tuple
 
 
-def get_sorted_callbacks(callbacks: list, event: str = "start") -> list:
+def get_callback_orders(callback) -> Tuple[int, int, int]:
+    order = callback.order
+    if isinstance(order, tuple):
+        if len(order) == 2:
+            pre, post = order
+            middle = None
+        else:
+            pre, middle, post = order
+    else:
+        middle = order
+        pre, post = None, None
+
+    return pre, middle, post
+
+
+def _sorted_callbacks(callbacks):
+    result = [
+        callback
+        for callback, order in sorted(callbacks, key=lambda x: x[1])
+    ]
+
+    return result
+
+
+def split_sorted_callbacks(
+    callbacks: list
+):
     """
     Sort callbacks by their order
 
     Args:
         callbacks (List[Callback]): callbacks to sort
-        event (str): event name to sort callbacks ('start' or 'end')
-
-    Returns:
-        (List[Callback]): sorted callbacks
     """
-    def key_to_sort(callback):
-        if isinstance(callback.order, tuple):
-            pre, post = callback.order
-            if event == "start":
-                return pre
-            else:
-                return post
+    pre_callbacks = []
+    middle_callbacks = []
+    post_callbacks = []
 
-        return callback.order
+    for callback in callbacks:
+        pre, middle, post = get_callback_orders(callback)
 
-    result = sorted(callbacks, key=key_to_sort)
+        if pre is not None:
+            pre_callbacks.append((callback, pre))
+        if middle is not None:
+            middle_callbacks.append((callback, middle))
+        if post is not None:
+            post_callbacks.append((callback, post))
 
-    return result
+    pre_callbacks = _sorted_callbacks(pre_callbacks)
+    middle_callbacks = _sorted_callbacks(middle_callbacks)
+    post_callbacks = _sorted_callbacks(post_callbacks)
+
+    return pre_callbacks, middle_callbacks, post_callbacks
 
 
 def process_callback(
