@@ -90,16 +90,21 @@ class Runner(ABC):
         )
         utils.set_global_seed(self.experiment.initial_seed)
 
-    def _run_event(self, event: str):
-        if self.state is not None and hasattr(self.state, f"on_{event}_pre"):
-            getattr(self.state, f"on_{event}_pre")()
+    def _run_event(self, event: str, moment: str = None):
+        def _state_has_event(state, name) -> bool:
+            return state is not None and hasattr(state, name)
+
+        event_name = f"{event}_{moment}" if moment is not None else event
+
+        if _state_has_event(self.state, f"on_{event_name}_pre"):
+            getattr(self.state, f"on_{event_name}_pre")()
 
         if self.callbacks is not None:
             for callback in self.callbacks.values():
-                getattr(callback, f"on_{event}")(self.state)
+                getattr(callback, f"on_{event_name}")(self.state)
 
-        if self.state is not None and hasattr(self.state, f"on_{event}_post"):
-            getattr(self.state, f"on_{event}_post")()
+        if _state_has_event(self.state, f"on_{event_name}_post"):
+            getattr(self.state, f"on_{event_name}_post")()
 
     @abstractmethod
     def forward(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
@@ -124,12 +129,12 @@ class Runner(ABC):
         self.state.input = batch
         self.state.timer.stop("_timers/data_time")
 
-        self._run_event("batch_start")
+        self._run_event("batch", moment="start")
         self.state.timer.start("_timers/model_time")
         self.state.output = self.forward(batch)
         self.state.timer.stop("_timers/model_time")
         self.state.timer.stop("_timers/batch_time")
-        self._run_event("batch_end")
+        self._run_event("batch", moment="end")
 
     def _run_loader(self, loader):
         self.state.batch_size = (
@@ -183,23 +188,23 @@ class Runner(ABC):
             utils.set_global_seed(
                 self.experiment.initial_seed + self.state.epoch + 1
             )
-            self._run_event("loader_start")
+            self._run_event("loader", moment="start")
             with torch.set_grad_enabled(self.state.need_backward):
                 self._run_loader(loader)
-            self._run_event("loader_end")
+            self._run_event("loader", moment="end")
 
     def _run_stage(self, stage: str):
         self._prepare_for_stage(stage)
         loaders = self.experiment.get_loaders(stage)
         self.callbacks = self.experiment.get_callbacks(stage)
 
-        self._run_event("stage_start")
+        self._run_event("stage", moment="start")
         for epoch in range(self.state.num_epochs):
             self.state.stage_epoch = epoch
 
-            self._run_event("epoch_start")
+            self._run_event("epoch", moment="start")
             self._run_epoch(loaders)
-            self._run_event("epoch_end")
+            self._run_event("epoch", moment="end")
 
             if self._check_run and self.state.epoch >= 3:
                 break
@@ -208,7 +213,7 @@ class Runner(ABC):
                 break
 
             self.state.epoch += 1
-        self._run_event("stage_end")
+        self._run_event("stage", moment="end")
 
     def run_experiment(self, experiment: Experiment, check: bool = False):
         self._check_run = check

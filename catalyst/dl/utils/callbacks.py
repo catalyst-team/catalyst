@@ -1,5 +1,31 @@
 from collections import OrderedDict
-from typing import Union
+from typing import Union, List
+
+
+def get_sorted_callbacks(callbacks: list, event: str = "start") -> list:
+    """
+    Sort callbacks by their order
+
+    Args:
+        callbacks (List[Callback]): callbacks to sort
+        event (str): event name to sort callbacks ('start' or 'end')
+
+    Returns:
+        (List[Callback]): sorted callbacks
+    """
+    def key_to_sort(callback):
+        if isinstance(callback.order, tuple):
+            pre, post = callback.order
+            if event == "start":
+                return pre
+            else:
+                return post
+
+        return callback.order
+
+    result = sorted(callbacks, key=key_to_sort)
+
+    return result
 
 
 def process_callback(
@@ -16,14 +42,15 @@ def process_callback(
     if callbacks is None:
         result = OrderedDict()
     elif isinstance(callbacks, OrderedDict):
-        result = [(k, v) for k, v in callbacks.items()]
-        result = sorted(result, key=lambda x: x[1].order)
-        result = OrderedDict(result)
+        # result = [(k, v) for k, v in callbacks.items()]
+        # result = sorted(result, key=lambda x: x[1].order)
+        # result = OrderedDict(result)
+        return callbacks
     elif isinstance(callbacks, list):
-        result = sorted(callbacks, key=lambda x: x.order)
+        # result = sorted(callbacks, key=lambda x: x.order)
         result = OrderedDict([
             (i, value)
-            for i, value in enumerate(result)
+            for i, value in enumerate(callbacks)
         ])
     else:
         raise TypeError(
