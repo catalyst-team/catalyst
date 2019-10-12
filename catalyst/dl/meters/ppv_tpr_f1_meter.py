@@ -7,6 +7,47 @@ from . import meter
 from collections import defaultdict
 
 
+def f1score(precision_value, recall_value, eps=1e-5):
+    """
+    Calculating F1-score from precision and recall to reduce computation
+    redundancy.
+    Args:
+        precision_value: precision (0-1)
+        recall_value: recall (0-1)
+    Returns:
+        F1 score (0-1)
+    """
+    numerator = 2 * (precision_value * recall_value)
+    denominator = precision_value + recall_value + eps
+    return numerator / denominator
+
+
+def precision(tp, fp, eps=1e-5):
+    """
+    Calculates precision (a.k.a. positive predictive value) for binary
+    classification and segmentation.
+    Args:
+        tp: number of true positives
+        fp: number of false positives
+    Returns:
+        precision value (0-1)
+    """
+    return tp / (tp + fp + eps)
+
+
+def recall(tp, fn, eps=1e-5):
+    """
+    Calculates recall (a.k.a. true positive rate) for binary classification and
+    segmentation
+    Args:
+        tp: number of true positives
+        fn: number of false negatives
+    Returns:
+        recall value (0-1)
+    """
+    return tp / (tp + fn + eps)
+
+
 class PrecisionRecallF1ScoreMeter(meter.Meter):
     """
     Keeps track of global true positives, false positives, and false negatives
@@ -55,44 +96,3 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
                               self.tp_fp_fn_counts["fn"])
         f1_value = f1score(precision_value, recall_value)
         return (float(precision_value), float(recall_value), float(f1_value))
-
-
-def f1score(precision_value, recall_value, eps=1e-5):
-    """
-    Calculating F1-score from precision and recall to reduce computation
-    redundancy.
-    Args:
-        precision_value: precision (0-1)
-        recall_value: recall (0-1)
-    Returns:
-        F1 score (0-1)
-    """
-    numerator = 2 * (precision_value * recall_value)
-    denominator = precision_value + recall_value + eps
-    return numerator / denominator
-
-
-def precision(tp, fp, eps=1e-5):
-    """
-    Calculates precision (a.k.a. positive predictive value) for binary
-    classification and segmentation.
-    Args:
-        tp: number of true positives
-        fp: number of false positives
-    Returns:
-        precision value (0-1)
-    """
-    return tp / (tp + fp + eps)
-
-
-def recall(tp, fn, eps=1e-5):
-    """
-    Calculates recall (a.k.a. true positive rate) for binary classification and
-    segmentation
-    Args:
-        tp: number of true positives
-        fn: number of false negatives
-    Returns:
-        recall value (0-1)
-    """
-    return tp / (tp + fn + eps)
