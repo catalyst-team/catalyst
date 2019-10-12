@@ -23,5 +23,5 @@
 - [ ] I have read the [CODE_OF_CONDUCT](../CODE_OF_CONDUCT.md) document.
 - [ ] I have read the [CONTRIBUTING](../CONTRIBUTING.md) document.
 - [ ] I have checked the code-style using `make check-style`.
-- [ ] I have written the docstring in Google format for all the method and classes that I used.
+- [ ] I have written the docstring in Google format for all the methods and classes that I used.
 - [ ] I have checked the docs using `make check-docs`.
