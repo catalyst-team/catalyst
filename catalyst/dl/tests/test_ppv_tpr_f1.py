@@ -1,6 +1,7 @@
 import torch
 
-from catalyst.dl.meters.ppv_tpr_f1_meter import PrecisionRecallF1ScoreMeter, precision, recall, f1score
+from catalyst.dl.meters.ppv_tpr_f1_meter import PrecisionRecallF1ScoreMeter, \
+                                                precision, recall, f1score
 
 
 def precision_recall_f1(tp, fp, fn):
@@ -13,10 +14,10 @@ def precision_recall_f1(tp, fp, fn):
     Returns:
         precision value (0-1), recall_value (0-1), f1score (0-1)
     """
-    precision_value = precision(tp, fp)
-    recall_value = recall(tp, fn)
-    f1_value = f1score(precision_value, recall_value)
-    return (round(precision_value, 3), round(recall_value, 3), round(f1_value, 3))
+    precision_value = round(precision(tp, fp), 3)
+    recall_value = round(recall(tp, fn), 3)
+    f1_value = round(f1score(precision_value, recall_value), 3)
+    return (precision_value, recall_value, f1_value)
 
 
 def test_precision_recall_f1score():
@@ -46,8 +47,8 @@ def create_dummy_tensors_single():
     """
     Binary: 1 actual, 1 predicted (tp: 1, fp: 0, fn: 0)
     """
-    label = torch.tensor([1,])
-    pred = torch.tensor([1,])
+    label = torch.tensor([1])
+    pred = torch.tensor([1])
     return (label, pred)
 
 
@@ -58,8 +59,8 @@ def create_dummy_tensors_batched(batch_size=16):
     label = torch.zeros((batch_size, 1))
     pred = torch.zeros((batch_size, 1))
     for i in range(batch_size):
-        label[i] = torch.tensor([1,])
-        pred[i] = torch.tensor([1,])
+        label[i] = torch.tensor([1])
+        pred[i] = torch.tensor([1])
     return (label, pred)
 
 
@@ -77,13 +78,13 @@ def test_meter():
             "Counts should be initialized to 0."
 
     # testing .add() and .value() with tensors w/no batch size dim
-    ## SHOULD FAIL
+    # SHOULD FAIL
     binary_y, binary_pred = create_dummy_tensors_single()
     try:
         meter.add(binary_pred, binary_y)
         raise Exception(".add() should not be able to work with tensors \
                         that do not have the batch size dimension")
-    except:
+    except AssertionError:
         pass
 
     # testing .add() and .value() with tensors w/the batch size dim
