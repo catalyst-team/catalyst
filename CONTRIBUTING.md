@@ -44,6 +44,8 @@ Do not forget to check the codestyle for your PR with
 make codestyle
 ```
 
+Make sure to have your python packages complied with requirements/requirements.txt and requirements/requirements-dev.txt to get codestyle run clean.
+
 ## Documentation
 
 Catalyst uses [Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for formatting [docstrings](https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings). 

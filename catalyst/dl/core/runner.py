@@ -1,5 +1,7 @@
 from abc import abstractmethod, ABC
 from typing import Tuple, Mapping, Any
+import os
+from pathlib import Path
 from collections import OrderedDict
 
 import torch
@@ -11,6 +13,7 @@ from .experiment import Experiment
 from .state import RunnerState
 from catalyst.dl import utils
 from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
+from catalyst.dl.utils.scripts import dump_base_experiment_code
 
 
 class Runner(ABC):
@@ -45,6 +48,7 @@ class Runner(ABC):
         :return:
         """
 
+        utils.set_global_seed(self.experiment.initial_seed)
         model = self.experiment.get_model(stage)
         criterion, optimizer, scheduler = \
             self.experiment.get_experiment_components(model, stage)
@@ -60,7 +64,8 @@ class Runner(ABC):
 
         return model, criterion, optimizer, scheduler, device
 
-    def _prepare_state(self, stage: str):
+    def _prepare_for_stage(self, stage: str):
+        utils.set_global_seed(self.experiment.initial_seed)
         migrating_params = {}
         if self.state is not None:
             migrating_params.update(
@@ -83,6 +88,7 @@ class Runner(ABC):
             **self.experiment.get_state_params(stage),
             **migrating_params
         )
+        utils.set_global_seed(self.experiment.initial_seed)
 
     def _run_event(self, event: str):
         if self.state is not None and hasattr(self.state, f"on_{event}_pre"):
@@ -164,19 +170,26 @@ class Runner(ABC):
             self.state.loader_name = loader_name
             self.state.loader_len = len(loader)
             self.state.need_backward = loader_name.startswith("train")
-            self.model.train(self.state.need_backward)
+            utils.maybe_recursive_call(
+                self.model,
+                "train",
+                mode=self.state.need_backward
+            )
 
             if isinstance(loader.sampler, DistributedSampler) \
                     and loader_name.startswith("train"):
                 loader.sampler.set_epoch(self.state.stage_epoch)
 
+            utils.set_global_seed(
+                self.experiment.initial_seed + self.state.epoch + 1
+            )
             self._run_event("loader_start")
             with torch.set_grad_enabled(self.state.need_backward):
                 self._run_loader(loader)
             self._run_event("loader_end")
 
     def _run_stage(self, stage: str):
-        self._prepare_state(stage)
+        self._prepare_for_stage(stage)
         loaders = self.experiment.get_loaders(stage)
         self.callbacks = self.experiment.get_callbacks(stage)
 
@@ -200,6 +213,15 @@ class Runner(ABC):
     def run_experiment(self, experiment: Experiment, check: bool = False):
         self._check_run = check
         self.experiment = experiment
+
+        # jupyter source code logging hack
+        # + hack to prevent cycle imports
+        from catalyst.dl.experiment import BaseExperiment
+        if isinstance(self.experiment, BaseExperiment) \
+                and self.experiment.logdir is not None:
+            expdir = Path(os.getcwd())
+            logdir = Path(self.experiment.logdir)
+            dump_base_experiment_code(expdir, logdir)
 
         try:
             for stage in self.experiment.stages:

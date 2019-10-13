@@ -23,7 +23,7 @@ High-level utils for PyTorch DL & RL research.
 It was developed with a focus on reproducibility, 
 fast experimentation and code/ideas reusing.
 Being able to research/develop something new, 
-rather then write another regular train loop.
+rather than write another regular train loop.
 
 Break the cycle - use the Catalyst!
 
@@ -49,15 +49,25 @@ Catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+.
 
 #### Docs and examples
 - Detailed [classification tutorial](./examples/notebooks/classification-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb)
+- Advanced [segmentation tutorial](./examples/notebooks/segmentation-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb)
 - Comprehensive [classification pipeline](https://github.com/catalyst-team/classification).
 
 API documentation and an overview of the library can be found here
 [![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html).
 
-In the [examples folder](examples) 
+In the **[examples folder](examples)** 
 of the repository, you can find advanced tutorials and Catalyst best practices.
 
+##### Blog
 To learn more about Catalyst internals and to be aware of the most important features, you can read [Catalyst-info](https://github.com/catalyst-team/catalyst-info), our blog where we regularly write facts about the framework.
+
+##### Releases
+We release a major release once a month with a name like `YY.MM`.
+And micro-releases with hotfixes and framework improvements in the format `YY.MM.#`.
+
+You can view the changelog on the [GitHub Releases](https://github.com/catalyst-team/catalyst/releases) page.
+
+Current version: [![Pipi version](https://img.shields.io/pypi/v/catalyst.svg)](https://pypi.org/project/catalyst/)
 
 ## Overview
 
@@ -74,7 +84,7 @@ and other features without the boilerplate.
 - Callbacks – reusable train/inference pipeline parts.
 - Training stages support.
 - Easy customization.
-- PyTorch best practices (SWA, AdamW, 1Cycle, FP16 and more).
+- PyTorch best practices (SWA, AdamW, 1Cycle, Ranger optimizer, FP16 and more).
 
 
 #### Structure
@@ -142,10 +152,15 @@ please do so without any further discussion.
 If you plan to contribute new features, utility functions or extensions, 
 please first open an issue and discuss the feature with us.
 
-Please see the [contribution guide](CONTRIBUTING.md) 
-for more information.
+- Please see the [contribution guide](CONTRIBUTING.md) for more information.
+- By participating in this project, you agree to abide by its [Code of Conduct](CODE_OF_CONDUCT.md).
 
 [![Donate](https://c5.patreon.com/external/logo/become_a_patron_button.png)](https://www.patreon.com/catalyst_team)
+
+## License
+
+This project is licensed under the Apache License, Version 2.0 see the [LICENSE](LICENSE) file for details
+[![License](https://img.shields.io/github/license/catalyst-team/catalyst.svg)](LICENSE)
 
 ## Citation
 

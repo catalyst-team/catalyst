@@ -12,12 +12,13 @@ from .ddp import is_wrapped_with_ddp, get_real_module
 from .hash import get_hash, get_short_hash
 from .image import imread, imwrite, mimwrite_with_meta, \
     tensor_from_rgb_image, tensor_to_ndimage, \
-    mask_to_overlay_image
+    mask_to_overlay_image, has_image_extension
 from .initialization import create_optimal_inner_init, outer_init, \
     constant_init, uniform_init, normal_init, xavier_init, kaiming_init, \
     bias_init_with_prob
 from .misc import pairwise, make_tuple, \
-    merge_dicts, append_dict, flatten_dict, is_exception, copy_directory
+    merge_dicts, append_dict, flatten_dict, copy_directory, \
+    maybe_recursive_call, is_exception, get_utcnow_time
 from .numpy import np_softmax, geometric_cumsum, structed2dict, \
     dict2structed, get_one_hot
 # from .pandas import *
@@ -34,4 +35,3 @@ from .torch import ce_with_logits, log1p_exp, normal_sample, normal_logprob, \
     get_device, get_activation_fn, any2device, get_available_gpus, \
     prepare_cudnn, process_model_params, set_requires_grad, get_network_output
 from .visualization import plot_confusion_matrix, render_figure_to_tensor
-from .time import get_utcnow_time

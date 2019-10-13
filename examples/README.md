@@ -2,14 +2,8 @@
 
 ### DL notebooks
 
-1. [features – classification](./notebooks/notebook-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/notebook-example.ipynb)
-    - cifar10 classification model
-    - Runner usage example
-2. [features – segmentation](./notebooks/segmentation-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-example.ipynb)
-    - segmentation with unet
-    - model training and inference
-    - predictions visialization
-3. [tutorial – classification](./notebooks/classification-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb)
+#### Tutorials
+1. [tutorial – classification](./notebooks/classification-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb)
     - dataset preparation (raw images -> train/valid/infer splits)
     - augmentations usage example
     - pretrained model finetuning
@@ -18,13 +12,32 @@
     - FocalLoss and OneCycle usage examples
     - class imbalance handling
     - model inference
-4. [tutorial - table data regression](./notebooks/table-data-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/table-data-tutorial.ipynb)
+2. [tutorial - segmentation](notebooks/segmentation-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb)
+    - car segmentation dataset
+    - augmentations with [albumentations](https://github.com/albu/albumentations) library
+    - training in FP16 with [NVIDIA Apex](https://github.com/NVIDIA/apex)
+    - using segmentation models from `catalyst/contrib/models/segmentation`
+    - training with multiple criterion (Dice + IoU + BCE) example
+    - Lookahead + RAdam optimizer usage example
+    - tensorboard logs visualization
+    - predictions visualization
+    - Test-time augmentations with [ttach](https://github.com/qubvel/ttach) library
+3. [tutorial - table data regression](./notebooks/table-data-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/table-data-tutorial.ipynb)
     - dataset California housing dataset(sklearn)
     - StandardScaler preprocessing
     - Simple MLP (40,10,1) linear layers
     - Training + Inference 
     - Results viz.
-    
+
+#### Usage examples
+4. [features – classification](./notebooks/notebook-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/notebook-example.ipynb)
+    - cifar10 classification model
+    - Runner usage example
+5. [features – segmentation](./notebooks/segmentation-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-example.ipynb)
+    - segmentation with unet
+    - model training and inference
+    - predictions visialization
+
 ----
 
 ### DL pipelines
@@ -34,6 +47,8 @@
     - metrics visualization with tensorboard
 2. [features – model training with stages](cifar_stages)
     - pipeline example with stages
+3. [features - vanilla GAN on MNIST](mnist_gan)
+    - experiment with multiple phases & models & optimizers
 3. [tutorial – classification](https://github.com/catalyst-team/classification)
     - classification model training and inference
     - different augmentations and stages usage
@@ -80,3 +95,8 @@
 6. [NeurIPS 2019: Recursion Cellular Image Classification](https://github.com/ngxbac/Kaggle-Recursion-Cellular)
     - 4th place solution
     - [writeup](https://www.kaggle.com/c/recursion-cellular-image-classification/discussion/110337#latest-634988)
+7. [MICCAI 2019: Automatic Structure Segmentation for Radiotherapy Planning Challenge 2019](https://github.com/ngxbac/StructSeg2019) 
+    - 3rd place solution of Task 3: Organ-at-risk segmentation from chest CT scans  
+    - 4th place solution of Task 4: Gross Target Volume segmentation of lung cancer
+8. [APTOS 2019 Blindness Detection](https://github.com/BloodAxe/Kaggle-2019-Blindness-Detection)
+    - 7th place solution
