@@ -61,9 +61,25 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
         self.reset()
 
     def reset(self):
+        """
+        Resets true positive, false positive and false negative counts to 0.
+        """
         self.tp_fp_fn_counts = defaultdict(int)
 
     def add(self, output, target):
+        """
+        Thresholds predictions and calculates the true positives,
+        false positives, and false negatives in comparison to the target.
+        Args:
+            output (torch.Tensor/numpy.ndarray/numbers.Number):
+                prediction after activation function
+                shape should be (batch_size, 1)
+            target (torch.Tensor/numpy.ndarray/numbers.Number):
+                label (binary)
+                shape should be (batch_size, 1)
+        Returns:
+            None
+        """
         if torch.is_tensor(output):
             output = output.cpu().squeeze().numpy()
         if torch.is_tensor(target):
@@ -90,6 +106,14 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
         self.tp_fp_fn_counts["fn"] += fn
 
     def value(self):
+        """
+        Calculates precision/recall/f1 based on the current stored
+        tp/fp/fn counts.
+        Args:
+            None
+        Returns:
+            tuple of floats: (precision, recall, f1)
+        """
         precision_value = precision(self.tp_fp_fn_counts["tp"],
                                     self.tp_fp_fn_counts["fp"])
         recall_value = recall(self.tp_fp_fn_counts["tp"],
