@@ -2,7 +2,7 @@ import safitty
 import torch
 
 from catalyst.dl.core import Callback, RunnerState, CallbackOrder
-from catalyst.contrib.schedulers import OneCycleLR, BatchScheduler
+from catalyst.contrib.schedulers import OneCycleLRWithWarmup, BatchScheduler
 from catalyst.utils import get_optimizer_momentum
 
 
@@ -44,7 +44,8 @@ class SchedulerCallback(Callback):
             else:
                 self.mode = "epoch"
 
-        if isinstance(scheduler, OneCycleLR) and self.mode == "batch":
+        if isinstance(scheduler, OneCycleLRWithWarmup) and \
+                self.mode == "batch":
             scheduler.reset()
 
     def on_loader_start(self, state: RunnerState):
@@ -52,7 +53,8 @@ class SchedulerCallback(Callback):
             key="scheduler", inner_key=self.scheduler_key
         )
         if state.loader_name.startswith("train") and \
-                isinstance(scheduler, OneCycleLR) and self.mode == "batch":
+                isinstance(scheduler, OneCycleLRWithWarmup) and \
+                self.mode == "batch":
             scheduler.recalculate(
                 loader_len=state.loader_len, current_step=state.stage_epoch
             )
