@@ -98,3 +98,5 @@
 7. [MICCAI 2019: Automatic Structure Segmentation for Radiotherapy Planning Challenge 2019](https://github.com/ngxbac/StructSeg2019) 
     - 3rd place solution of Task 3: Organ-at-risk segmentation from chest CT scans  
     - 4th place solution of Task 4: Gross Target Volume segmentation of lung cancer
+8. [APTOS 2019 Blindness Detection](https://github.com/BloodAxe/Kaggle-2019-Blindness-Detection)
+    - 7th place solution
