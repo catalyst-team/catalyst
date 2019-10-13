@@ -84,12 +84,7 @@ class MaskReader(ReaderSpec):
     """
     Mask reader abstraction. Reads masks from a `csv` dataset.
     """
-    def __init__(
-        self,
-        input_key: str,
-        output_key: str,
-        datapath: str = None
-    ):
+    def __init__(self, input_key: str, output_key: str, datapath: str = None):
         """
         Args:
             input_key (str): key to use from annotation dict
@@ -111,9 +106,7 @@ class MaskReader(ReaderSpec):
             np.ndarray: Mask
         """
         mask_name = str(row[self.input_key])
-        mask = mimread(
-            mask_name, rootpath=self.datapath, clip_range=(0, 1)
-        )
+        mask = mimread(mask_name, rootpath=self.datapath, clip_range=(0, 1))
 
         result = {self.output_key: mask}
         return result
