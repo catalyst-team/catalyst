@@ -3,12 +3,10 @@ import os
 import sys
 import logging
 from tqdm import tqdm
-
-from tensorboardX import SummaryWriter
-
 from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 from catalyst.dl.utils.formatters import TxtMetricsFormatter
 from catalyst.dl import utils
+from catalyst.utils.tensorboard import SummaryWriter
 
 
 class VerboseLogger(Callback):

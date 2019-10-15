@@ -9,13 +9,13 @@ import numpy as np
 import logging
 
 from torch.utils.data import DataLoader
-from tensorboardX import SummaryWriter
-
 from catalyst.utils.seed import set_global_seed, Seeder
 from catalyst import utils
 from .db import DBSpec
 from .environment import EnvironmentSpec
 from .algorithm import AlgorithmSpec
+from catalyst.utils.tensorboard import SummaryWriter
+
 
 logger = logging.getLogger(__name__)
 

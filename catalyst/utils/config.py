@@ -13,9 +13,9 @@ from typing import List, Any, Dict, Union
 
 import safitty
 import yaml
-from tensorboardX import SummaryWriter
 
 from catalyst import utils
+from catalyst.utils.tensorboard import SummaryWriter
 
 LOG = getLogger(__name__)
 

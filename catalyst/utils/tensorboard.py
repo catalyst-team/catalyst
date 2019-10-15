@@ -6,12 +6,25 @@ from typing import BinaryIO, Union, Optional
 
 import cv2
 import numpy as np
-from tensorboardX.proto.event_pb2 import Event
-
 import os
+
 if os.environ.get("CRC32C_SW_MODE", None) is None:
     os.environ["CRC32C_SW_MODE"] = "auto"
 from crc32c import crc32 as crc32c  # noqa: E402
+
+# Native tensorboard support from 1.2.0 version of PyTorch
+from torch import __version__ as torch_version  # noqa: E402
+from packaging import version  # noqa: E402
+if version.parse(torch_version) < version.parse("1.2.0"):
+    from tensorboardX import SummaryWriter as tensorboardX_SummaryWriter
+    SummaryWriter = tensorboardX_SummaryWriter
+else:
+    from torch.utils.tensorboard import SummaryWriter as torch_SummaryWriter
+    SummaryWriter = torch_SummaryWriter
+if version.parse(torch_version) < version.parse("1.2.0"):
+    from tensorboardX.proto.event_pb2 import Event
+else:
+    from tensorboard.compat.proto.event_pb2 import Event
 
 
 def _u32(x):
