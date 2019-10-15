@@ -2,13 +2,7 @@ import torch
 import torchvision.utils
 from catalyst.dl import registry
 from catalyst.dl.core import Callback, CallbackOrder, RunnerState
-
-# Native tensorboard support from 1.2.0 version of PyTorch
-from packaging import version
-if version.parse(torch.__version__) < version.parse("1.2.0"):
-    from tensorboardX import SummaryWriter
-else:
-    from torch.utils.tensorboard import SummaryWriter
+from catalyst.utils.tensorboard import SummaryWriter
 
 
 @registry.Callback

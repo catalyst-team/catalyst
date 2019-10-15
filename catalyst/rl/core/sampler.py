@@ -24,12 +24,7 @@ from .exploration import ExplorationHandler  # noqa E402
 from .environment import EnvironmentSpec  # noqa E402
 from .db import DBSpec  # noqa E402
 from .agent import ActorSpec, CriticSpec  # noqa E402
-# Native tensorboard support from 1.2.0 version of PyTorch
-from packaging import version # noqa E402
-if version.parse(torch.__version__) < version.parse("1.2.0"):
-    from tensorboardX import SummaryWriter
-else:
-    from torch.utils.tensorboard import SummaryWriter
+from catalyst.utils.tensorboard import SummaryWriter  # noqa E402
 
 
 logger = logging.getLogger(__name__)

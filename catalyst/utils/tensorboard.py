@@ -16,6 +16,12 @@ from crc32c import crc32 as crc32c  # noqa: E402
 from torch import __version__ as torch_version  # noqa: E402
 from packaging import version  # noqa: E402
 if version.parse(torch_version) < version.parse("1.2.0"):
+    from tensorboardX import SummaryWriter as tensorboardX_SummaryWriter
+    SummaryWriter = tensorboardX_SummaryWriter
+else:
+    from torch.utils.tensorboard import SummaryWriter as torch_SummaryWriter
+    SummaryWriter = torch_SummaryWriter
+if version.parse(torch_version) < version.parse("1.2.0"):
     from tensorboardX.proto.event_pb2 import Event
 else:
     from tensorboard.compat.proto.event_pb2 import Event

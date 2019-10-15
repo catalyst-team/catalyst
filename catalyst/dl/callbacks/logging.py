@@ -6,13 +6,7 @@ from tqdm import tqdm
 from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 from catalyst.dl.utils.formatters import TxtMetricsFormatter
 from catalyst.dl import utils
-# Native tensorboard support from 1.2.0 version of PyTorch
-from torch import __version__ as torch_version
-from packaging import version
-if version.parse(torch_version) < version.parse("1.2.0"):
-    from tensorboardX import SummaryWriter
-else:
-    from torch.utils.tensorboard import SummaryWriter
+from catalyst.utils.tensorboard import SummaryWriter
 
 
 class VerboseLogger(Callback):
