@@ -6,7 +6,13 @@ import cv2
 import numpy as np
 import pandas as pd
 import torch
-from torch.utils.tensorboard import SummaryWriter
+
+# Native tensorboard support from 1.2.0 version of PyTorch
+from packaging import version
+if version.parse(torch.__version__) < version.parse("1.2.0"):
+    from tensorboardX import SummaryWriter
+else:
+    from torch.utils.tensorboard import SummaryWriter
 
 
 def build_args(parser):

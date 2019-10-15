@@ -1,6 +1,6 @@
 # Framework must-haves
 numpy>=1.16.4
-torch>=1.2.0
+torch>=0.4.1
 torchvision>=0.2.1
 imageio
 opencv-python
@@ -8,6 +8,7 @@ scikit-image>=0.14.2
 tqdm>=4.29.1
 PyYAML
 tensorboard
+tensorboardX
 plotly>=4.1.0
 safitty>=1.2.3
 crc32c>=1.7

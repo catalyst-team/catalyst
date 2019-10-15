@@ -9,13 +9,19 @@ import numpy as np
 import logging
 
 from torch.utils.data import DataLoader
-from torch.utils.tensorboard import SummaryWriter
-
 from catalyst.utils.seed import set_global_seed, Seeder
 from catalyst import utils
 from .db import DBSpec
 from .environment import EnvironmentSpec
 from .algorithm import AlgorithmSpec
+# Native tensorboard support from 1.2.0 version of PyTorch
+from torch import __version__ as torch_version
+from packaging import version
+if version.parse(torch_version) < version.parse("1.2.0"):
+    from tensorboardX import SummaryWriter
+else:
+    from torch.utils.tensorboard import SummaryWriter
+
 
 logger = logging.getLogger(__name__)
 
