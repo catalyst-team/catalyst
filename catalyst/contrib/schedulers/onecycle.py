@@ -7,7 +7,7 @@ from catalyst.utils import get_optimizer_momentum
 from .base import BatchScheduler
 
 
-class OneCycleLR(BatchScheduler):
+class OneCycleLRWithWarmup(BatchScheduler):
     """
     OneCycle scheduler with warm-up & lr decay stages.
     First stage increases lr from ``init_lr`` to ``max_lr``,
