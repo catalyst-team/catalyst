@@ -55,7 +55,7 @@ class BaseCheckpointCallback(Callback):
                 epoch_metrics=epoch_metrics,
                 valid_metrics=valid_metrics,
                 stage=state.stage,
-                epoch=state.epoch,
+                epoch=state.epoch_log,
                 checkpoint_data=state.checkpoint_data
             )
             suffix = self.get_checkpoint_suffix(checkpoint)
@@ -229,7 +229,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             epoch_metrics=epoch_metrics,
             valid_metrics=valid_metrics,
             stage=state.stage,
-            epoch=state.epoch,
+            epoch=state.epoch_log,
             checkpoint_data=state.checkpoint_data
         )
         self.process_checkpoint(
@@ -336,7 +336,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
                 epoch_metrics=None,
                 valid_metrics=None,
                 stage=state.stage,
-                epoch=state.epoch
+                epoch=state.epoch_log
             )
             self.process_checkpoint(
                 logdir=state.logdir,
