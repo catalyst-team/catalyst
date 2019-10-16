@@ -152,9 +152,8 @@ please do so without any further discussion.
 If you plan to contribute new features, utility functions or extensions, 
 please first open an issue and discuss the feature with us.
 
-- Please see the [contribution guide](CONTRIBUTING.md) 
-for more information.
-- Also check our [code of conduct](CODE_OF_CONDUCT.md).
+- Please see the [contribution guide](CONTRIBUTING.md) for more information.
+- By participating in this project, you agree to abide by its [Code of Conduct](CODE_OF_CONDUCT.md).
 
 [![Donate](https://c5.patreon.com/external/logo/become_a_patron_button.png)](https://www.patreon.com/catalyst_team)
 

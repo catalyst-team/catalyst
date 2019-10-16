@@ -95,3 +95,8 @@
 6. [NeurIPS 2019: Recursion Cellular Image Classification](https://github.com/ngxbac/Kaggle-Recursion-Cellular)
     - 4th place solution
     - [writeup](https://www.kaggle.com/c/recursion-cellular-image-classification/discussion/110337#latest-634988)
+7. [MICCAI 2019: Automatic Structure Segmentation for Radiotherapy Planning Challenge 2019](https://github.com/ngxbac/StructSeg2019) 
+    - 3rd place solution of Task 3: Organ-at-risk segmentation from chest CT scans  
+    - 4th place solution of Task 4: Gross Target Volume segmentation of lung cancer
+8. [APTOS 2019 Blindness Detection](https://github.com/BloodAxe/Kaggle-2019-Blindness-Detection)
+    - 7th place solution
