@@ -98,7 +98,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         self.resume = resume
         self.resume_dir = resume_dir
         self.top_best_metrics = []
-
+        self.all_metrics = []
         self._keys_from_state = ["resume", "resume_dir"]
 
     def get_checkpoint_suffix(self, checkpoint: dict) -> str:
@@ -128,15 +128,20 @@ class CheckpointCallback(BaseCheckpointCallback):
             raise Exception(f"No checkpoint found at {filename}")
 
     def get_metric(self, last_valid_metrics) -> Dict:
-        checkpoints = [
+        top_best_checkpoints = [
             (Path(filepath).stem, valid_metric)
             for (filepath, _, valid_metric) in self.top_best_metrics
         ]
-        best_valid_metrics = checkpoints[0][1]
+        all_checkpoint_metrics = [
+            (f"chekpoint_{order_index}", valid_metric)
+            for (order_index, valid_metric) in enumerate(self.all_metrics)
+        ]
+        best_valid_metrics = top_best_checkpoints[0][1]
         metrics = OrderedDict(
             [("best", best_valid_metrics)] +
-            checkpoints +
-            [("last", last_valid_metrics)]
+            top_best_checkpoints +
+            [("last", last_valid_metrics)] +
+            all_checkpoint_metrics
         )
 
         self.metrics = metrics
@@ -190,11 +195,10 @@ class CheckpointCallback(BaseCheckpointCallback):
 
         valid_metrics = checkpoint["valid_metrics"]
         checkpoint_metric = valid_metrics[main_metric]
-        self.top_best_metrics.append(
-            (filepath, checkpoint_metric, valid_metrics)
-        )
+        metrics_record = (filepath, checkpoint_metric, valid_metrics)
+        self.top_best_metrics.append(metrics_record)
+        self.all_metrics.append(metrics_record)
         self.truncate_checkpoints(minimize_metric=minimize_metric)
-
         metrics = self.get_metric(valid_metrics)
         self.save_metric(logdir, metrics)
 
