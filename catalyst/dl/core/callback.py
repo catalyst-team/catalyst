@@ -1,5 +1,9 @@
 from typing import Callable, List
 from enum import IntFlag
+from collections import defaultdict
+
+import torch
+import numpy as np
 
 from .state import RunnerState
 from catalyst.utils import get_activation_fn
@@ -138,6 +142,7 @@ class MultiMetricCallback(Callback):
             batch_metrics[key] = metric
         state.metrics.add_batch_value(metrics_dict=batch_metrics)
 
+
 class MeterMetricsCallback(Callback):
     """
     A callback that tracks metrics through meters and prints metrics for
@@ -175,6 +180,7 @@ class MeterMetricsCallback(Callback):
         self.meters = meter_list
         self.input_key = input_key
         self.output_key = output_key
+        self.class_names = class_names
         self.activation = activation
 
     def _reset_stats(self):
@@ -218,6 +224,7 @@ class MeterMetricsCallback(Callback):
             loader_values[metric_name] = mean_value
 
         self._reset_stats()
+
 
 __all__ = [
     "CallbackOrder",
