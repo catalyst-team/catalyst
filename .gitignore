@@ -114,6 +114,7 @@ ENV/
 tmp/
 logs/
 data/
+!catalyst/data
 examples/data/
 examples/logs/
 notebooks/

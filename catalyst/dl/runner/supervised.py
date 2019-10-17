@@ -24,8 +24,8 @@ class SupervisedRunner(Runner):
         self,
         model: nn.Module = None,
         device=None,
-        input_key: str = "features",
-        output_key: str = "logits",
+        input_key: Any = "features",
+        output_key: Any = "logits",
         input_target_key: str = "targets",
     ):
         """
