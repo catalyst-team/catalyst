@@ -132,16 +132,16 @@ class CheckpointCallback(BaseCheckpointCallback):
             (Path(filepath).stem, valid_metric)
             for (filepath, _, valid_metric) in self.top_best_metrics
         ]
-        all_checkpoint_metrics = [
-            (f"chekpoint_{order_index}", valid_metric)
+        all_epochs_metrics = [
+            (f"epoch_{order_index}", valid_metric)
             for (order_index, valid_metric) in enumerate(self.all_metrics)
         ]
         best_valid_metrics = top_best_checkpoints[0][1]
         metrics = OrderedDict(
             [("best", best_valid_metrics)] +
-            top_best_checkpoints +
             [("last", last_valid_metrics)] +
-            all_checkpoint_metrics
+            top_best_checkpoints +
+            all_epochs_metrics
         )
 
         self.metrics = metrics
