@@ -98,7 +98,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         self.resume = resume
         self.resume_dir = resume_dir
         self.top_best_metrics = []
-        self.all_metrics = []
+        self.epochs_metrics = []
         self._keys_from_state = ["resume", "resume_dir"]
 
     def get_checkpoint_suffix(self, checkpoint: dict) -> str:
@@ -134,7 +134,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         ]
         all_epochs_metrics = [
             (f"epoch_{order_index}", valid_metric)
-            for (order_index, valid_metric) in enumerate(self.all_metrics)
+            for (order_index, valid_metric) in enumerate(self.epochs_metrics)
         ]
         best_valid_metrics = top_best_checkpoints[0][1]
         metrics = OrderedDict(
@@ -197,7 +197,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         checkpoint_metric = valid_metrics[main_metric]
         metrics_record = (filepath, checkpoint_metric, valid_metrics)
         self.top_best_metrics.append(metrics_record)
-        self.all_metrics.append(metrics_record)
+        self.epochs_metrics.append(metrics_record)
         self.truncate_checkpoints(minimize_metric=minimize_metric)
         metrics = self.get_metric(valid_metrics)
         self.save_metric(logdir, metrics)
