@@ -16,8 +16,13 @@ class WandbRunner(Runner):
     """
     @staticmethod
     def _log_metrics(metrics: Dict, mode: str, suffix: str = ""):
+        def key_locate(key: str):
+            if key.startswith("_"):
+                return key[1:]
+            return key
+
         metrics = {
-            f"{key}/{mode}{suffix}": value
+            f"{key_locate(key)}/{mode}{suffix}": value
             for key, value in metrics.items()
         }
         wandb.log(metrics)
