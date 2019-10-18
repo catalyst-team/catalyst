@@ -18,16 +18,29 @@ _LOGGER_ORDER = dict(
 
 
 class VerboseLogger(Callback):
-    def __init__(self, always_show: List[str] = ["_timers/_fps"]):
+    def __init__(
+        self,
+        always_show: List[str] = ["_timers/_fps"],
+        never_show: List[str] = None
+    ):
         """
         Log params into console
         Args:
             always_show (List[str]): list of metrics to always show
+            never_show (List[str]): list of metrics which will not be shown
         """
         super().__init__(order=_LOGGER_ORDER)
         self.tqdm: tqdm = None
         self.step = 0
-        self.always_show = always_show
+        self.always_show = always_show if always_show is not None else []
+        self.never_show = never_show if never_show is not None else []
+
+        intersection = set(self.always_show) & set(never_show)
+
+        _error_message = f"Intersection of always_show and 
+            never_show has common values: {intersection}"
+        if bool(intersection):
+            raise ValueError(_error_message)
 
     def on_loader_start(self, state: RunnerState):
         self.step = 0
@@ -41,10 +54,13 @@ class VerboseLogger(Callback):
         )
 
     def _need_show(self, key: str):
-        is_always_show: bool = key in self.always_show
+        not_is_never_shown: bool = key not in self.never_show
+        is_always_shown: bool = key in self.always_show
         not_basic = not (key.startswith("_base") or key.startswith("_timers"))
 
-        return is_always_show or not_basic
+        result = not_is_never_shown and (is_always_shown or not_basic)
+
+        return result
 
     def on_batch_end(self, state: RunnerState):
         self.tqdm.set_postfix(
