@@ -138,4 +138,21 @@ class ConfusionMatrixCallback(Callback):
         )
 
 
-__all__ = ["EarlyStoppingCallback", "ConfusionMatrixCallback"]
+class RaiseExceptionCallback(Callback):
+    def __init__(self):
+        super().__init__(CallbackOrder.Other + 1)
+
+    def on_exception(self, state: RunnerState):
+        exception = state.exception
+        if not utils.is_exception(exception):
+            return
+
+        if state.need_reraise_exception:
+            raise exception
+
+
+__all__ = [
+    "EarlyStoppingCallback",
+    "ConfusionMatrixCallback",
+    "RaiseExceptionCallback"
+]

@@ -100,7 +100,10 @@ class Runner(ABC):
             getattr(self.state, f"on_{event_name}_pre")()
 
         if self.callbacks is not None:
-            for callback in self.callbacks.values():
+            callbacks = utils.get_sorted_callbacks(
+                self.callbacks.values(), moment=moment
+            )
+            for callback in callbacks:
                 getattr(callback, f"on_{event_name}")(self.state)
 
         if _state_has_event(self.state, f"on_{event_name}_post"):

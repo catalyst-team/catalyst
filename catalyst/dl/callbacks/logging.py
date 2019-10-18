@@ -11,6 +11,12 @@ from catalyst.dl.utils.formatters import TxtMetricsFormatter
 from catalyst.dl import utils
 
 
+_LOGGER_ORDER = dict(
+    start=CallbackOrder.Internal,
+    end=CallbackOrder.Logger
+)
+
+
 class VerboseLogger(Callback):
     def __init__(self, always_show: List[str] = ["_timers/_fps"]):
         """
@@ -18,7 +24,7 @@ class VerboseLogger(Callback):
         Args:
             always_show (List[str]): list of metrics to always show
         """
-        super().__init__((CallbackOrder.Internal, CallbackOrder.Logger))
+        super().__init__(order=_LOGGER_ORDER)
         self.tqdm: tqdm = None
         self.step = 0
         self.always_show = always_show
@@ -70,7 +76,7 @@ class ConsoleLogger(Callback):
     Logger callback, translates ``state.metrics`` to console and text file
     """
     def __init__(self):
-        super().__init__((CallbackOrder.Internal, CallbackOrder.Logger))
+        super().__init__(order=_LOGGER_ORDER)
         self.logger = None
 
     @staticmethod
@@ -130,7 +136,7 @@ class TensorboardLogger(Callback):
             log_on_batch_end: Logs per-batch metrics if set True.
             log_on_epoch_end: Logs per-epoch metrics if set True.
         """
-        super().__init__((CallbackOrder.Internal, CallbackOrder.Logger))
+        super().__init__(order=_LOGGER_ORDER)
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
@@ -183,20 +189,8 @@ class TensorboardLogger(Callback):
             logger.close()
 
 
-class RaiseExceptionLogger(Callback):
-    def __init__(self):
-        super().__init__(CallbackOrder.Other + 1)
-
-    def on_exception(self, state: RunnerState):
-        exception = state.exception
-        if not utils.is_exception(exception):
-            return
-
-        if state.need_reraise_exception:
-            raise exception
-
-
 __all__ = [
-    "VerboseLogger", "ConsoleLogger",
-    "TensorboardLogger", "RaiseExceptionLogger"
+    "VerboseLogger",
+    "ConsoleLogger",
+    "TensorboardLogger"
 ]

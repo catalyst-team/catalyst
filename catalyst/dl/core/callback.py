@@ -1,4 +1,4 @@
-from typing import Callable, List, Union, Tuple
+from typing import Callable, List, Union, Tuple, Dict
 from enum import IntFlag
 
 from .state import RunnerState
@@ -38,7 +38,7 @@ class Callback:
 
     All callbacks has ``order`` value from ``CallbackOrder``
     """
-    def __init__(self, order):
+    def __init__(self, order: Union[int, Dict[str, int]]):
         """
         For order see ``CallbackOrder`` class
         """

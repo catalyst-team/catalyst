@@ -1,59 +1,49 @@
 from collections import OrderedDict
-from typing import Union, List, Tuple
+from typing import Union, List, Tuple, Dict
 
 
-def get_callback_orders(callback) -> Tuple[int, int, int]:
+def get_callback_orders(callback) -> Dict[str, int]:
+    """
+    Function that returns the callback orders for ``start`` and ``end``.
+
+    Args:
+        callback (Callback): input callback
+    """
     order = callback.order
-    if isinstance(order, tuple):
-        if len(order) == 2:
-            pre, post = order
-            middle = None
-        else:
-            pre, middle, post = order
+
+    result = {}
+    if isinstance(order, dict):
+        result = order
+    elif isinstance(order, int):
+        result["start"], result["end"] = order, order
     else:
-        middle = order
-        pre, post = None, None
-
-    return pre, middle, post
-
-
-def _sorted_callbacks(callbacks):
-    result = [
-        callback
-        for callback, order in sorted(callbacks, key=lambda x: x[1])
-    ]
+        raise TypeError(f"Got invalid type for callback order: {type(order)}")
 
     return result
 
 
-def split_sorted_callbacks(
-    callbacks: list
+def get_sorted_callbacks(
+    callbacks: list,
+    moment: str
 ):
     """
     Sort callbacks by their order
 
     Args:
         callbacks (List[Callback]): callbacks to sort
+        moment (str): one of ``start`` or ``end``
     """
-    pre_callbacks = []
-    middle_callbacks = []
-    post_callbacks = []
+    if moment is None:
+        moment = "start"
+    elif moment not in ["start", "end"]:
+        raise ValueError(f"Got unknown value for moment: {moment}")
 
-    for callback in callbacks:
-        pre, middle, post = get_callback_orders(callback)
+    result = sorted(
+        callbacks,
+        key=lambda callback: get_callback_orders(callback)[moment]
+    )
 
-        if pre is not None:
-            pre_callbacks.append((callback, pre))
-        if middle is not None:
-            middle_callbacks.append((callback, middle))
-        if post is not None:
-            post_callbacks.append((callback, post))
-
-    pre_callbacks = _sorted_callbacks(pre_callbacks)
-    middle_callbacks = _sorted_callbacks(middle_callbacks)
-    post_callbacks = _sorted_callbacks(post_callbacks)
-
-    return pre_callbacks, middle_callbacks, post_callbacks
+    return result
 
 
 def process_callback(
@@ -89,4 +79,4 @@ def process_callback(
     return result
 
 
-__all__ = ["process_callback"]
+__all__ = ["get_callback_orders", "get_sorted_callbacks", "process_callback"]

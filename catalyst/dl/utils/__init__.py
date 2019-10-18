@@ -6,6 +6,7 @@ from .criterion import accuracy, average_accuracy, mean_average_accuracy, \
 from .torch import process_components, get_loader
 # from .trace import *
 from .visualization import plot_metrics
-from .callbacks import process_callback
+from .callbacks import get_callback_orders, get_sorted_callbacks, \
+     process_callback
 
 from catalyst.utils import *
