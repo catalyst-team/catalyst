@@ -16,8 +16,22 @@ class WandbRunner(Runner):
     """
     @staticmethod
     def _log_metrics(metrics: Dict, mode: str, suffix: str = ""):
+        def key_locate(key: str):
+            """
+            wandb uses first symbol _ for it service purposes
+            because of that fact, we can not send original metric names
+
+            Args:
+                key: metric name
+            Returns:
+                formatted metric name
+            """
+            if key.startswith("_"):
+                return key[1:]
+            return key
+
         metrics = {
-            f"{key}/{mode}{suffix}": value
+            f"{key_locate(key)}/{mode}{suffix}": value
             for key, value in metrics.items()
         }
         wandb.log(metrics)
