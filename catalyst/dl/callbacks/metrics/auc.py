@@ -1,10 +1,7 @@
 from typing import List
 
-import numpy as np
-import torch
-
 from catalyst.dl.meters import AUCMeter
-from catalyst.dl.core import MeterMetricsCallback, RunnerState
+from catalyst.dl.core import MeterMetricsCallback
 
 
 class AUCCallback(MeterMetricsCallback):

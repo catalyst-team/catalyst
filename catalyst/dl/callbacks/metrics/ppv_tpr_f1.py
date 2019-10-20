@@ -1,12 +1,7 @@
 from typing import List
-from collections import defaultdict
-
-import numpy as np
-import torch
 
 from catalyst.dl.meters import PrecisionRecallF1ScoreMeter
-from catalyst.dl.core import MeterMetricsCallback, RunnerState, CallbackOrder
-from catalyst.utils import get_activation_fn
+from catalyst.dl.core import MeterMetricsCallback
 
 
 class PrecisionRecallF1ScoreCallback(MeterMetricsCallback):
@@ -43,7 +38,7 @@ class PrecisionRecallF1ScoreCallback(MeterMetricsCallback):
         assert self.num_classes is not None
 
         meters = [PrecisionRecallF1ScoreMeter(threshold)
-                       for _ in range(self.num_classes)]
+                  for _ in range(self.num_classes)]
 
         super().__init__(
             metric_names=["ppv", "tpr", "f1"],
