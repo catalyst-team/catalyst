@@ -147,8 +147,7 @@ class MeterMetricsCallback(Callback):
     """
     A callback that tracks metrics through meters and prints metrics for
     each class on `state.on_loader_end`.
-    This callback is designed for binary and multi-label cases and works
-    for both single metric and multi-metric meters.
+    This callback works for both single metric and multi-metric meters.
     """
     def __init__(
         self,
@@ -165,7 +164,7 @@ class MeterMetricsCallback(Callback):
                 Make sure that they are in the same order that metrics
                 are outputted by the meters in `meter_list`
             meter_list (list-like): List of meters.meter.Meter instances
-                len(meter_list) == n_classes except for binary cases
+                len(meter_list) == n_classes
             input_key (str): input key to use for metric calculation
                 specifies our ``y_true``.
             output_key (str): output key to use for metric calculation;
@@ -196,12 +195,8 @@ class MeterMetricsCallback(Callback):
         activation_fn = get_activation_fn(self.activation)
         probabilities: torch.Tensor = activation_fn(logits)
 
-        if self.num_classes == 1 and len(probabilities.shape) == 1:
-            # single meter for binary case (one class + background)
-            self.meters[0].add(probabilities, targets)
-        else:
-            for i in range(self.num_classes):
-                self.meters[i].add(probabilities[:, i], targets[:, i])
+        for i in range(self.num_classes):
+            self.meters[i].add(probabilities[:, i], targets[:, i])
 
     def on_loader_end(self, state: RunnerState):
         metrics_tracker = defaultdict(list)
