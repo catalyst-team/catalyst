@@ -277,6 +277,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         self.stage_restart = stage_restart
         self._iteration_counter = 0
         self.last_checkpoints = []
+        self.epochs_metrics = []
 
     def get_checkpoint_suffix(self, checkpoint: dict) -> str:
         result = f"{checkpoint['stage']}." \
@@ -286,12 +287,20 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         return result
 
     def get_metric(self, **kwargs) -> Dict:
-        checkpoints = [
+        n_last_checkpoints = [
             (Path(filepath).stem, batch_values)
             for (filepath, batch_values) in self.last_checkpoints
         ]
+        all_epochs_metrics = [
+            (f"epoch_{order_index}", valid_metric)
+            for (order_index, valid_metric) in enumerate(self.epochs_metrics)
+        ]
 
-        self.metrics = OrderedDict(checkpoints)
+        metrics = OrderedDict(
+            n_last_checkpoints +
+            all_epochs_metrics
+        )
+        self.metrics = metrics
         return self.metrics
 
     def truncate_checkpoints(self, **kwargs) -> None:
@@ -316,6 +325,8 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
 
         self.last_checkpoints.append((filepath, batch_values))
         self.truncate_checkpoints()
+
+        self.epochs_metrics.append(batch_values)
 
         metrics = self.get_metric()
         self.save_metric(logdir, metrics)
