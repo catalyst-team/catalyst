@@ -156,6 +156,7 @@ class MeterMetricsCallback(Callback):
         input_key: str = "targets",
         output_key: str = "logits",
         class_names: List[str] = None,
+        num_classes: int = 2,
         activation: str = "Sigmoid",
     ):
         """
@@ -171,6 +172,7 @@ class MeterMetricsCallback(Callback):
                 specifies our ``y_pred``
             class_names (List[str]): class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0.
+            num_classes (int): Number of classes; must be > 1
             activation (str): An torch.nn activation applied to the logits.
                 Must be one of ['none', 'Sigmoid', 'Softmax2d']
         """
@@ -180,6 +182,9 @@ class MeterMetricsCallback(Callback):
         self.input_key = input_key
         self.output_key = output_key
         self.class_names = class_names
+        self.num_classes = num_classes
+        assert self.num_classes is not None and self.num_classes > 1, \
+            "`num_classes` should be an integer greater than 1."
         self.activation = activation
 
     def _reset_stats(self):
