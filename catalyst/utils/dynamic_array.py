@@ -137,8 +137,15 @@ class DynamicArray:
         elif isinstance(value, dict) \
                 and isinstance(self._dtype, np.dtype):
             value_ = np.zeros(1, dtype=self._dtype)
-            for key in self._dtype.fields.keys():
-                value_[key] = value[key]
+            try:
+                for key in self._dtype.fields.keys():
+                    value_[key] = value[key]
+            except AttributeError:
+                raise ValueError("Collected observation has a format of "
+                                 "dict, when the type of observation is {}. "
+                                 "Try using gym.spaces.Dict as "
+                                 "an observation space, or change your env"
+                                 "to return an array".format(self._dtype))
         else:
             value_ = np.array(value, dtype=self._dtype)
 
