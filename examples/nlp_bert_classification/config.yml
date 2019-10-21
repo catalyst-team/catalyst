@@ -1,0 +1,53 @@
+model_params:
+  model: BertModel
+  model_type: distilbert/sequence_class
+  num_classes: 3
+
+dataset_params:
+  path_to_train: "./nlp_bert_classification/input/train.csv"
+  path_to_validation: "./nlp_bert_classification/input/valid.csv"
+  text_field: "text"
+  label_field: "label"
+
+args:
+  expdir: 'nlp_bert_classification'
+  logdir: './logs/'
+
+stages:
+  data_params:
+    batch_size: 8
+    num_workers: 0
+
+  state_params:
+    main_metric: &reduce_metric loss
+    minimize_metric: True
+
+  criterion_params:
+    criterion: CrossEntropyLoss
+
+  optimizer_params:
+    optimizer: TransformersAdamW
+    lr: 0.00005
+    weight_decay: 0.01
+    correct_bias: False
+
+  scheduler_params:
+    scheduler: WarmupLinearSchedule
+    warmup_steps: 500
+    t_total: 3000
+
+  callbacks_params:
+    loss:
+      callback: CriterionCallback
+    optimizer:
+      callback: OptimizerCallback
+      accumulation_steps: 4
+    scheduler:
+      callback: SchedulerCallback
+      reduce_metric: *reduce_metric
+    saver:
+      callback: CheckpointCallback
+
+  stage1:
+    state_params:
+      num_epochs: 2
