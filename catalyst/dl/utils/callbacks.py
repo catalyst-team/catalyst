@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from typing import Union, List, Tuple, Dict
+from typing import Union, Dict
 
 
 def get_callback_orders(callback) -> Dict[str, int]:
@@ -23,15 +23,18 @@ def get_callback_orders(callback) -> Dict[str, int]:
 
 
 def get_sorted_callbacks(
-    callbacks: list,
+    callbacks: dict,
     moment: str
 ):
     """
     Sort callbacks by their order
 
     Args:
-        callbacks (List[Callback]): callbacks to sort
+        callbacks (dict): callbacks to sort
         moment (str): one of ``start`` or ``end``
+
+    Returns:
+        (OrderedDict): sorted callbacks by their ordering
     """
     if moment is None:
         moment = "start"
@@ -39,9 +42,45 @@ def get_sorted_callbacks(
         raise ValueError(f"Got unknown value for moment: {moment}")
 
     result = sorted(
-        callbacks,
-        key=lambda callback: get_callback_orders(callback)[moment]
+        callbacks.items(),
+        key=lambda callback_kv: get_callback_orders(callback_kv[1])[moment]
     )
+
+    result = OrderedDict(result)
+
+    return result
+
+
+def get_loggers(
+    callbacks: dict,
+    moment: str
+):
+    """
+    Outputs a dict of loggers
+
+    Args:
+        callbacks (dict): all callbacks
+        moment (str): one of ``start`` or ``end``
+
+    Returns:
+        (dict): only the loggers from the callbacks
+    """
+    if moment is None:
+        moment = "start"
+    elif moment not in ["start", "end"]:
+        raise ValueError(f"Got unknown value for moment: {moment}")
+
+    from ..core import CallbackOrder
+    if moment == "start":
+        logger_order = CallbackOrder.Logger_pre
+    else:
+        logger_order = CallbackOrder.Logger
+
+    result = {
+        key: value
+        for key, value in callbacks.items()
+        if get_callback_orders(value)[moment] == logger_order
+    }
 
     return result
 
@@ -79,4 +118,9 @@ def process_callback(
     return result
 
 
-__all__ = ["get_callback_orders", "get_sorted_callbacks", "process_callback"]
+__all__ = [
+    "get_callback_orders",
+    "get_sorted_callbacks",
+    "get_loggers",
+    "process_callback"
+]

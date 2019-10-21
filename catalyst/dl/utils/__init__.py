@@ -7,6 +7,6 @@ from .torch import process_components, get_loader
 # from .trace import *
 from .visualization import plot_metrics
 from .callbacks import get_callback_orders, get_sorted_callbacks, \
-     process_callback
+     get_loggers, process_callback
 
 from catalyst.utils import *

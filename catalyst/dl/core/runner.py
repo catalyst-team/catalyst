@@ -94,16 +94,21 @@ class Runner(ABC):
         def _state_has_event(state, name) -> bool:
             return state is not None and hasattr(state, name)
 
-        event_name = f"{event}_{moment}" if moment is not None else event
+        if self.callbacks is not None:
+            callbacks = utils.get_sorted_callbacks(
+                self.callbacks, moment=moment
+            )
+            self.state.loggers = utils.get_loggers(callbacks, moment=moment)
+        else:
+            callbacks = None
+            self.state.loggers = OrderedDict()
 
+        event_name = f"{event}_{moment}" if moment is not None else event
         if _state_has_event(self.state, f"on_{event_name}_pre"):
             getattr(self.state, f"on_{event_name}_pre")()
 
-        if self.callbacks is not None:
-            callbacks = utils.get_sorted_callbacks(
-                self.callbacks.values(), moment=moment
-            )
-            for callback in callbacks:
+        if callbacks is not None:
+            for callback in callbacks.values():
                 getattr(callback, f"on_{event_name}")(self.state)
 
         if _state_has_event(self.state, f"on_{event_name}_post"):

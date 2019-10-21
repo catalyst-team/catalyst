@@ -12,7 +12,7 @@ from catalyst.dl import utils
 
 
 _LOGGER_ORDER = dict(
-    start=CallbackOrder.Internal,
+    start=CallbackOrder.Logger_pre,
     end=CallbackOrder.Logger
 )
 
@@ -35,10 +35,12 @@ class VerboseLogger(Callback):
         self.always_show = always_show if always_show is not None else []
         self.never_show = never_show if never_show is not None else []
 
-        intersection = set(self.always_show) & set(never_show)
+        intersection = set(self.always_show) & set(self.never_show)
 
-        _error_message = f"Intersection of always_show and 
-            never_show has common values: {intersection}"
+        _error_message = (
+            f"Intersection of always_show and "
+            f"never_show has common values: {intersection}"
+        )
         if bool(intersection):
             raise ValueError(_error_message)
 

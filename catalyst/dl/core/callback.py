@@ -1,4 +1,4 @@
-from typing import Callable, List, Union, Tuple, Dict
+from typing import Callable, List, Union, Dict
 from enum import IntFlag
 
 from .state import RunnerState
@@ -7,6 +7,7 @@ from .state import RunnerState
 class CallbackOrder(IntFlag):
     Unknown = -100
     Internal = 0
+    Logger_pre = 10
     Criterion = 20
     Optimizer = 40
     Scheduler = 60

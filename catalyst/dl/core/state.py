@@ -4,9 +4,7 @@ from pathlib import Path
 
 from torch.optim.optimizer import Optimizer
 
-from catalyst.dl.utils import process_callback
 from catalyst.utils.frozen import FrozenClass
-
 from .metric_manager import MetricManager, TimerManager
 
 
@@ -71,6 +69,7 @@ class RunnerState(FrozenClass):
             batch_consistant_metrics=batch_consistant_metrics
         )
         self.verbose: bool = verbose
+        self.loggers = OrderedDict()
         self.timer = TimerManager()
 
         # base metrics

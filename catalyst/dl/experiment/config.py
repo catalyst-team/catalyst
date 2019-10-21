@@ -393,15 +393,15 @@ class ConfigExperiment(Experiment):
         for key, callback_params in callbacks_params.items():
             callback = self._get_callback(**callback_params)
             callbacks[key] = callback
-        
-        #! For compatibility with previous versions.
+
+        # ! For compatibility with previous versions.
         default_callbacks = []
         if self._verbose:
             default_callbacks.append(("verbose", VerboseLogger))
         if not stage.startswith("infer"):
             default_callbacks.append(("console", ConsoleLogger))
             default_callbacks.append(("tensorboard", TensorboardLogger))
-        
+
         default_callbacks.append(("exception", RaiseExceptionCallback))
 
         for callback_name, callback_fn in default_callbacks:
