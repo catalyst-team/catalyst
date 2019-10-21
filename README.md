@@ -1,6 +1,6 @@
 <div align="center">
 
-![Catalyst logo](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png)
+[![Catalyst logo](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png)](https://github.com/catalyst-team/catalyst)
 
 **Reproducible and fast DL & RL**
  
@@ -60,6 +60,10 @@ of the repository, you can find advanced tutorials and Catalyst best practices.
 
 ##### Blog
 To learn more about Catalyst internals and to be aware of the most important features, you can read **[Catalyst-info](https://github.com/catalyst-team/catalyst-info)**, our blog where we regularly write facts about the framework.
+
+##### Awesome list of Catalyst-powered repositories
+
+We supervise the **[Awesome Catalyst list](https://github.com/catalyst-team/awesome-catalyst-list)**. You can make a PR with your project to the list.
 
 ##### Releases
 We release a major release once a month with a name like `YY.MM`.

@@ -82,21 +82,4 @@
 
 ### Contributions
 
-1. [NeurIPS 2018: AI for Prosthetics Challenge](https://github.com/Scitator/neurips-18-prosthetics-challenge)
-    - 3rd place solution
-2. [Catalyst.RL: A Distributed Framework for Reproducible RL Research](https://github.com/catalyst-team/catalyst-rl-framework)
-    - code for paper
-3. [NeurIPS 2019: Learn to Move - Walk Around](https://github.com/Scitator/learning-to-move-starter-kit)
-    - starter kit
-4. [NeurIPS 2019: Animal-AI Olympics](https://github.com/Scitator/animal-olympics-starter-kit)
-    - starter kit
-5. [ID R&D Anti-spoofing Challenge](https://github.com/bagxi/idrnd-anti-spoofing-challenge-solution)
-    - 14th place solution 
-6. [NeurIPS 2019: Recursion Cellular Image Classification](https://github.com/ngxbac/Kaggle-Recursion-Cellular)
-    - 4th place solution
-    - [writeup](https://www.kaggle.com/c/recursion-cellular-image-classification/discussion/110337#latest-634988)
-7. [MICCAI 2019: Automatic Structure Segmentation for Radiotherapy Planning Challenge 2019](https://github.com/ngxbac/StructSeg2019) 
-    - 3rd place solution of Task 3: Organ-at-risk segmentation from chest CT scans  
-    - 4th place solution of Task 4: Gross Target Volume segmentation of lung cancer
-8. [APTOS 2019 Blindness Detection](https://github.com/BloodAxe/Kaggle-2019-Blindness-Detection)
-    - 7th place solution
+We supervise the **[Awesome Catalyst list](https://github.com/catalyst-team/awesome-catalyst-list)**. You can make a PR with your project to the list.
