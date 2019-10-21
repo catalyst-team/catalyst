@@ -20,19 +20,22 @@ _LOGGER_ORDER = dict(
 class VerboseLogger(Callback):
     def __init__(
         self,
-        always_show: List[str] = ["_timers/_fps"],
+        always_show: List[str] = None,
         never_show: List[str] = None
     ):
         """
         Log params into console
         Args:
             always_show (List[str]): list of metrics to always show
+                if None default is ``["_timers/_fps"]``
+                to remove always_show metrics set it to an empty list ``[]``
             never_show (List[str]): list of metrics which will not be shown
         """
         super().__init__(order=_LOGGER_ORDER)
         self.tqdm: tqdm = None
         self.step = 0
-        self.always_show = always_show if always_show is not None else []
+        self.always_show = always_show \
+            if always_show is not None else ["_timers/_fps"]
         self.never_show = never_show if never_show is not None else []
 
         intersection = set(self.always_show) & set(self.never_show)
