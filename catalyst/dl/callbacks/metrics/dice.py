@@ -11,15 +11,14 @@ class DiceCallback(MetricCallback):
     """
     Dice metric callback.
     """
-
     def __init__(
-            self,
-            input_key: str = "targets",
-            output_key: str = "logits",
-            prefix: str = "dice",
-            eps: float = 1e-7,
-            threshold: float = None,
-            activation: str = "Sigmoid"
+        self,
+        input_key: str = "targets",
+        output_key: str = "logits",
+        prefix: str = "dice",
+        eps: float = 1e-7,
+        threshold: float = None,
+        activation: str = "Sigmoid"
     ):
         """
         :param input_key: input key to use for dice calculation;
@@ -52,7 +51,9 @@ def calculate_dice(tp_fp_fn_dict: dict) -> np.array:
     false_positives = tp_fp_fn_dict["false_positives"]
     false_negatives = tp_fp_fn_dict["false_negatives"]
 
-    dice = (2 * true_positives + epsilon) / (2 * true_positives + false_positives + false_negatives + epsilon)
+    dice = (2 * true_positives + epsilon) / (
+        2 * true_positives + false_positives + false_negatives + epsilon
+    )
 
     if not np.all(dice <= 1):
         raise ValueError("Dice index should be less than 1")
@@ -64,8 +65,15 @@ def calculate_dice(tp_fp_fn_dict: dict) -> np.array:
 
 
 class MulticlassDiceMetricCallback(Callback):
-    def __init__(self, prefix: str = "dice", input_key: str = "targets", output_key: str = "logits", class_names=None,
-                 class_prefix='', **metric_params):
+    def __init__(
+        self,
+        prefix: str = "dice",
+        input_key: str = "targets",
+        output_key: str = "logits",
+        class_names=None,
+        class_prefix='',
+        **metric_params
+    ):
         super().__init__(CallbackOrder.Metric)
         self.prefix = prefix
         self.input_key = input_key
@@ -82,7 +90,9 @@ class MulticlassDiceMetricCallback(Callback):
         outputs = state.output[self.output_key]
         targets = state.input[self.input_key]
 
-        confusion_matrix = calculate_confusion_matrix_from_tensors(outputs, targets)
+        confusion_matrix = calculate_confusion_matrix_from_tensors(
+            outputs, targets
+        )
 
         if self.confusion_matrix is None:
             self.confusion_matrix = confusion_matrix
@@ -99,9 +109,12 @@ class MulticlassDiceMetricCallback(Callback):
                 continue
 
             metric_name = self.class_names[metric_id]
-            state.metrics.epoch_values[state.loader_name][f"{self.class_prefix}_{metric_name}"] = dice_value
+            state.metrics.epoch_values[state.loader_name][
+                f"{self.class_prefix}_{metric_name}"] = dice_value
 
-        state.metrics.epoch_values[state.loader_name]["mean"] = np.mean([x for x in batch_metrics.values()])
+        state.metrics.epoch_values[state.loader_name]["mean"] = np.mean(
+            [x for x in batch_metrics.values()]
+        )
 
         self._reset_stats()
 

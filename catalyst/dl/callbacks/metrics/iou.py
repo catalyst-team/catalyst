@@ -11,15 +11,14 @@ class IouCallback(MetricCallback):
     """
     IoU (Jaccard) metric callback.
     """
-
     def __init__(
-            self,
-            input_key: str = "targets",
-            output_key: str = "logits",
-            prefix: str = "iou",
-            eps: float = 1e-7,
-            threshold: float = None,
-            activation: str = "Sigmoid",
+        self,
+        input_key: str = "targets",
+        output_key: str = "logits",
+        prefix: str = "iou",
+        eps: float = 1e-7,
+        threshold: float = None,
+        activation: str = "Sigmoid",
     ):
         """
         Args:
@@ -61,7 +60,9 @@ def calculate_jaccard(tp_fp_fn_dict: dict) -> np.array:
     false_positives = tp_fp_fn_dict["false_positives"]
     false_negatives = tp_fp_fn_dict["false_negatives"]
 
-    jaccard = (true_positives + epsilon) / (true_positives + false_positives + false_negatives + epsilon)
+    jaccard = (true_positives + epsilon) / (
+        true_positives + false_positives + false_negatives + epsilon
+    )
 
     if not np.all(jaccard <= 1):
         raise ValueError("Jaccard index should be less than 1")
@@ -73,8 +74,15 @@ def calculate_jaccard(tp_fp_fn_dict: dict) -> np.array:
 
 
 class MulticlassJaccardMetricCallback(Callback):
-    def __init__(self, prefix: str = "jaccard", input_key: str = "targets", output_key: str = "logits",
-                 class_names=None, class_prefix='', **metric_params):
+    def __init__(
+        self,
+        prefix: str = "jaccard",
+        input_key: str = "targets",
+        output_key: str = "logits",
+        class_names=None,
+        class_prefix='',
+        **metric_params
+    ):
 
         super().__init__(CallbackOrder.Metric)
         self.prefix = prefix
@@ -92,7 +100,9 @@ class MulticlassJaccardMetricCallback(Callback):
         outputs = state.output[self.output_key]
         targets = state.input[self.input_key]
 
-        confusion_matrix = calculate_confusion_matrix_from_tensors(outputs, targets)
+        confusion_matrix = calculate_confusion_matrix_from_tensors(
+            outputs, targets
+        )
 
         if self.confusion_matrix is None:
             self.confusion_matrix = confusion_matrix
@@ -110,9 +120,12 @@ class MulticlassJaccardMetricCallback(Callback):
                 continue
 
             metric_name = self.class_names[metric_id]
-            state.metrics.epoch_values[state.loader_name][f"{self.class_prefix}_{metric_name}"] = jaccard_value
+            state.metrics.epoch_values[state.loader_name][
+                f"{self.class_prefix}_{metric_name}"] = jaccard_value
 
-        state.metrics.epoch_values[state.loader_name]["mean"] = np.mean([x for x in batch_metrics.values()])
+        state.metrics.epoch_values[state.loader_name]["mean"] = np.mean(
+            [x for x in batch_metrics.values()]
+        )
 
         self._reset_stats()
 
