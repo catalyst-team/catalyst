@@ -99,12 +99,8 @@ def process_callback(
     if callbacks is None:
         result = OrderedDict()
     elif isinstance(callbacks, OrderedDict):
-        # result = [(k, v) for k, v in callbacks.items()]
-        # result = sorted(result, key=lambda x: x[1].order)
-        # result = OrderedDict(result)
-        return callbacks
+        result = callbacks
     elif isinstance(callbacks, list):
-        # result = sorted(callbacks, key=lambda x: x.order)
         result = OrderedDict([
             (i, value)
             for i, value in enumerate(callbacks)
