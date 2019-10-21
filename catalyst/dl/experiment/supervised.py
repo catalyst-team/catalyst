@@ -25,7 +25,9 @@ class SupervisedExperiment(BaseExperiment):
                 ("_console_logger", "console", ConsoleLogger),
                 ("_tensorboard_logger", "tensorboard", TensorboardLogger)
             ])
-        default_callbacks.append(("exception", RaiseExceptionCallback))
+        default_callbacks.append(
+            ("_exception", "exception", RaiseExceptionCallback)
+        )
 
         for component, callback_name, callback_fn in default_callbacks:
             is_already_present = any(
