@@ -24,7 +24,8 @@ class VerboseLogger(Callback):
         never_show: List[str] = None
     ):
         """
-        Log params into console
+        Logs the params into console
+
         Args:
             always_show (List[str]): list of metrics to always show
                 if None default is ``["_timers/_fps"]``
