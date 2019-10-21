@@ -9,11 +9,17 @@ codestyle:
 check-docs:
 	bash ./bin/_check_docs.sh
 
-docker: ./requirements/requirements.txt ./requirements/requirements-rl.txt
+docker: ./requirements/
 	docker build -t catalyst-base:latest . -f ./docker/Dockerfile
 
-docker-dev: ./requirements/requirements.txt ./requirements/requirements-rl.txt ./requirements/requirements-dev.txt
+docker-fp16: ./requirements/
+	docker build -t catalyst-base-fp16:latest . -f ./docker/Dockerfile-fp16
+
+docker-dev: ./requirements/
 	docker build -t catalyst-dev:latest . -f ./docker/Dockerfile-dev
+
+docker-dev-fp16: ./requirements/
+	docker build -t catalyst-dev-fp16:latest . -f ./docker/Dockerfile-dev-fp16
 
 install-from-source:
 	pip uninstall catalyst -y && pip install -e ./
