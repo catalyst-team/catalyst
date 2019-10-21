@@ -64,15 +64,16 @@ def calculate_dice(tp_fp_fn_dict: dict) -> np.array:
 
 
 class MulticlassDiceMetricCallback(Callback):
-    def __init__(self, prefix: str = "dice", input_key: str = "targets", output_key: str = "logits", **metric_params):
+    def __init__(self, prefix: str = "dice", input_key: str = "targets", output_key: str = "logits", class_names=None,
+                 class_prefix='', **metric_params):
         super().__init__(CallbackOrder.Metric)
         self.prefix = prefix
         self.input_key = input_key
         self.output_key = output_key
         self.metric_params = metric_params
         self.confusion_matrix = None
-        self.class_names = metric_params["class_names"]  # dictionary {class_id: class_name}
-        self.class_prefix = metric_params["class_prefix"]
+        self.class_names = class_names  # dictionary {class_id: class_name}
+        self.class_prefix = class_prefix
 
     def _reset_stats(self):
         self.confusion_matrix = None
