@@ -20,9 +20,9 @@ class DistilBertForTokenClassification(DistilBertPreTrainedModel):
         )
 
         sequence_output = outputs[0]
-
         sequence_output = self.dropout(sequence_output)
         logits = self.classifier(sequence_output)
+        logits = logits.permute(0, 2, 1)
 
         return logits
 

@@ -11,7 +11,7 @@ MODEL_MAP = {
     ),
     "distilbert/sequence_class": (
         DistilBertForSequenceClassification, "distilbert-base-uncased"
-    ),
+    )
 }
 
 
@@ -23,11 +23,8 @@ class BertModel(nn.Module):
         self.model = model_cls.from_pretrained(model_base, **kwargs)
 
     def forward(self, features, mask=None, head_mask=None):
+
         logits = self.model(features, attention_mask=mask, head_mask=head_mask)
-
-        if self.model_type == "distilbert/token_class":
-            logits = logits.permute(0, 2, 1)
-
         return logits
 
 
