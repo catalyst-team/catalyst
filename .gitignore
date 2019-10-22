@@ -134,3 +134,9 @@ _nogit*
 .history
 
 # End of https://www.gitignore.io/api/visualstudiocode
+
+# Examples
+# Mock data
+!examples/nlp_bert_classification/input/*.csv
+
+
