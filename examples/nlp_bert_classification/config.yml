@@ -11,7 +11,7 @@ dataset_params:
 
 args:
   expdir: 'nlp_bert_classification'
-  logdir: './logs/'
+  baselogdir: './logs/'
 
 stages:
   data_params:
