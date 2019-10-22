@@ -5,7 +5,7 @@ model_params:
 
 args:
   expdir: 'nlp_key_phrase'
-  logdir: './logs/'
+  baselogdir: './logs/'
 
 stages:
   data_params:
