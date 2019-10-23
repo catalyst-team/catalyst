@@ -52,8 +52,8 @@ class ClassificationDataset(Dataset):
 
         y_encoded = torch.Tensor([self.label_dict.get(y, -1)]).long().squeeze(0)
 
-        mask = torch.ones_like(x_encoded, dtype=int)
-        mask_pad = torch.zeros_like(pad_ids, dtype=int)
+        mask = torch.ones_like(x_encoded, dtype=torch.int8)
+        mask_pad = torch.zeros_like(pad_ids, dtype=torch.int8)
         mask = torch.cat((mask, mask_pad))
 
         return {
