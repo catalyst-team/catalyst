@@ -13,7 +13,6 @@ class IoULoss(nn.Module):
         activation (str): An torch.nn activation applied to the outputs.
             Must be one of ['none', 'Sigmoid', 'Softmax2d']
     """
-
     def __init__(
         self,
         eps: float = 1e-7,
@@ -41,7 +40,6 @@ class BCEIoULoss(nn.Module):
             Must be one of ['none', 'Sigmoid', 'Softmax2d']
         reduction (str): Specifies the reduction to apply to the output of BCE
     """
-
     def __init__(
         self,
         eps: float = 1e-7,
