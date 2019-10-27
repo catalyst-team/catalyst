@@ -2,9 +2,15 @@ from typing import Dict
 
 import numpy as np
 
-from catalyst.dl.core import MetricCallback, Callback, RunnerState, CallbackOrder
+from catalyst.dl.core import (MetricCallback,
+                              Callback,
+                              RunnerState,
+                              CallbackOrder)
+
 from catalyst.dl.utils import criterion
-from catalyst.utils.confusion_matrix import calculate_confusion_matrix_from_tensors, calculate_tp_fp_fn
+from catalyst.utils.confusion_matrix import (
+    calculate_confusion_matrix_from_tensors,
+    calculate_tp_fp_fn)
 
 
 class DiceCallback(MetricCallback):
@@ -71,7 +77,7 @@ class MulticlassDiceMetricCallback(Callback):
         input_key: str = "targets",
         output_key: str = "logits",
         class_names=None,
-        class_prefix='',
+        class_prefix="",
         **metric_params
     ):
         super().__init__(CallbackOrder.Metric)
