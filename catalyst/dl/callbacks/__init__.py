@@ -7,7 +7,7 @@ from .checkpoint import CheckpointCallback, IterationCheckpointCallback
 from .criterion import CriterionCallback, CriterionAggregatorCallback
 from .inference import InferCallback, InferMaskCallback
 from .logging import VerboseLogger, ConsoleLogger, TensorboardLogger, \
-    RaiseExceptionLogger
+    RaiseExceptionLogger, TelegramLogger
 from .misc import EarlyStoppingCallback, ConfusionMatrixCallback
 from .optimizer import OptimizerCallback
 from .scheduler import SchedulerCallback, LRUpdater, LRFinder

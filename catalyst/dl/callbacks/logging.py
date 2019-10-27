@@ -1,7 +1,10 @@
-from typing import List, Dict
+from typing import List, Dict, Optional
 import os
 import sys
 import logging
+from urllib.request import Request, urlopen
+from urllib.parse import quote_plus
+
 from tqdm import tqdm
 
 from tensorboardX import SummaryWriter
@@ -183,6 +186,92 @@ class TensorboardLogger(Callback):
             logger.close()
 
 
+class TelegramLogger(Callback):
+    """
+    Logger callback, translates state.metrics to telegram channel
+    """
+
+    def __init__(
+        self,
+        token: str,
+        chat_id: str,
+        log_on_stage_start: bool = True,
+        log_on_loader_start: bool = True,
+        log_on_loader_end: bool = True,
+        log_on_stage_end: bool = True
+    ):
+        """
+
+        :param token: Bot's token. You can create bot by following this official guide: https://core.telegram.org/bots
+        :param chat_id: Chat unique identifier. You can get chat_id by following this guide:
+            1. Add your bot to a group.
+            2. Send a dummy message like this: /test @your_bot_name_here
+            3. Open this page: https://api.telegram.org/bot<token>/getUpdates, where <token> is yours bot token.
+                example: https://api.telegram.org/bot1234566789/getUpdates, where token = 1234566789.
+            4. You should look for this pattern ..."chat":{"id":<chat_id>..., where <chat_id> - id of your group.
+        :param log_on_stage_start: Send notification on stage start.
+        :param log_on_loader_start: Send notification on loader start.
+        :param log_on_loader_end: Send notification on loader end.
+        :param log_on_stage_end: Send notification on stage end.
+        """
+        super().__init__(CallbackOrder.Logger)
+        self._token = token
+        self._chat_id = chat_id
+        self._base_url = f"https://api.telegram.org/bot{self._token}/sendMessage"
+
+        self._log_on_stage_start = log_on_stage_start
+        self._log_on_loader_start = log_on_loader_start
+        self._log_on_loader_end = log_on_loader_end
+        self._log_on_stage_end = log_on_stage_end
+
+        self._metrics_to_log: Optional[List[str]] = None
+
+    def _send_text(self, text: str):
+        url = f"{self._base_url}?chat_id={self._chat_id}&disable_web_page_preview=1&text={quote_plus(text, safe='')}"
+
+        request = Request(url)
+        json = urlopen(request).read().decode()
+
+        return json
+
+    def on_stage_start(self, state: RunnerState):
+        if self._log_on_stage_start:
+            text = f'{state.stage} stage was started'
+
+            self._send_text(text)
+
+    def on_loader_start(self, state: RunnerState):
+        if self._log_on_loader_start:
+            text = f'{state.loader_name} {state.epoch} epoch was started'
+
+            self._send_text(text)
+
+    def on_loader_end(self, state: RunnerState):
+        if self._log_on_loader_end:
+            metrics = state.metrics.epoch_values[state.loader_name]
+
+            if self._metrics_to_log is None:
+                self._metrics_to_log = sorted(list(metrics.keys()))
+
+            rows: List[str] = [
+                f'{state.loader_name} {state.epoch} epoch was finished:',
+            ]
+
+            for name in self._metrics_to_log:
+                if name in metrics:
+                    rows.append(f"{name}={metrics[name]}")
+
+            text = '\n'.join(rows)
+
+            self._send_text(text)
+
+    def on_stage_end(self, state: RunnerState):
+        if self._log_on_stage_end:
+            text = f'{state.stage} stage was finished'
+
+            self._send_text(text)
+
+
 class RaiseExceptionLogger(Callback):
     def __init__(self):
         super().__init__(CallbackOrder.Other + 1)
@@ -198,5 +287,6 @@ class RaiseExceptionLogger(Callback):
 
 __all__ = [
     "VerboseLogger", "ConsoleLogger",
-    "TensorboardLogger", "RaiseExceptionLogger"
+    "TensorboardLogger", "RaiseExceptionLogger",
+    "TelegramLogger"
 ]
