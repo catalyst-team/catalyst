@@ -59,10 +59,10 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None, **kwargs):
 
     if JPEG4PY_ENABLED and uri.endswith(("jpg", "JPG", "jpeg", "JPEG")):
         img = jpeg.JPEG(uri).decode()
-        if grayscale:
-            img = rgb2gray(img)
     else:
-        img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB", **kwargs)
+        img = imageio.imread(uri, **kwargs)
+    if grayscale:
+        img = rgb2gray(img)
 
     if expand_dims and len(img.shape) < 3:  # grayscale
         img = np.expand_dims(img, -1)
