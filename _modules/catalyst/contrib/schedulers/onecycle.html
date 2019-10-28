@@ -1,163 +1,35 @@
 
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>catalyst.contrib.schedulers.onecycle &mdash; Catalyst 19.09 documentation</title>
-  
 
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>catalyst.contrib.schedulers.onecycle &#8212; Catalyst 19.10.2 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../../search.html" /> 
-</head>
-
-<body class="wy-body-for-nav">
-
+    <link rel="search" title="Search" href="../../../../search.html" />
    
-  <div class="wy-grid-for-nav">
-    
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-          
-
-          
-            <a href="../../../../index.html" class="icon icon-home"> Catalyst
-          
-
-          
-          </a>
-
-          
-            
-            
-              <div class="version">
-                19.09
-              </div>
-            
-          
-
-          
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <p class="caption"><span class="caption-text">Overview</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Catalyst</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../info/examples.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../info/contributing.html">Contribution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../info/license.html">Apache License</a></li>
-</ul>
-<p class="caption"><span class="caption-text">API</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/rl.html">RL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utils</a></li>
-</ul>
-
-            
-          
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../../index.html">Catalyst</a>
-        
-      </nav>
-
-
-      <div class="wy-nav-content">
-        
-        <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
-  <ul class="wy-breadcrumbs">
-    
-      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
-        
-          <li><a href="../../../index.html">Module code</a> &raquo;</li>
-        
-      <li>catalyst.contrib.schedulers.onecycle</li>
-    
-    
-      <li class="wy-breadcrumbs-aside">
-        
-      </li>
-    
-  </ul>
-
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
   
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
             
   <h1>Source code for catalyst.contrib.schedulers.onecycle</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>
@@ -169,7 +41,7 @@
 <span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">BatchScheduler</span>
 
 
-<div class="viewcode-block" id="OneCycleLR"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.schedulers.onecycle.OneCycleLR">[docs]</a><span class="k">class</span> <span class="nc">OneCycleLR</span><span class="p">(</span><span class="n">BatchScheduler</span><span class="p">):</span>
+<div class="viewcode-block" id="OneCycleLRWithWarmup"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.schedulers.onecycle.OneCycleLRWithWarmup">[docs]</a><span class="k">class</span> <span class="nc">OneCycleLRWithWarmup</span><span class="p">(</span><span class="n">BatchScheduler</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    OneCycle scheduler with warm-up &amp; lr decay stages.</span>
 <span class="sd">    First stage increases lr from ``init_lr`` to ``max_lr``,</span>
@@ -182,7 +54,7 @@
 <span class="sd">    Third, optional, lr decay.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="OneCycleLR.__init__"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.schedulers.onecycle.OneCycleLR.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="OneCycleLRWithWarmup.__init__"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.schedulers.onecycle.OneCycleLRWithWarmup.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span><span class="p">,</span>
         <span class="n">num_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -324,7 +196,7 @@
             <span class="n">momentum</span> <span class="o">=</span> <span class="n">final_momentum</span>
         <span class="k">return</span> <span class="n">lr</span><span class="p">,</span> <span class="n">momentum</span>
 
-<div class="viewcode-block" id="OneCycleLR.get_lr"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.schedulers.onecycle.OneCycleLR.get_lr">[docs]</a>    <span class="k">def</span> <span class="nf">get_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<div class="viewcode-block" id="OneCycleLRWithWarmup.get_lr"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.schedulers.onecycle.OneCycleLRWithWarmup.get_lr">[docs]</a>    <span class="k">def</span> <span class="nf">get_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Function that returns the new lr for optimizer</span>
 <span class="sd">        Returns:</span>
@@ -333,7 +205,7 @@
         <span class="n">lr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_steps_lr_momentum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">lr</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_groups</span></div>
 
-<div class="viewcode-block" id="OneCycleLR.get_momentum"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.schedulers.onecycle.OneCycleLR.get_momentum">[docs]</a>    <span class="k">def</span> <span class="nf">get_momentum</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<div class="viewcode-block" id="OneCycleLRWithWarmup.get_momentum"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.schedulers.onecycle.OneCycleLRWithWarmup.get_momentum">[docs]</a>    <span class="k">def</span> <span class="nf">get_momentum</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Function that returns the new momentum for optimizer</span>
 
@@ -343,13 +215,13 @@
         <span class="n">_</span><span class="p">,</span> <span class="n">momentum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_steps_lr_momentum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">momentum</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_groups</span></div>
 
-<div class="viewcode-block" id="OneCycleLR.reset"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.schedulers.onecycle.OneCycleLR.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="OneCycleLRWithWarmup.reset"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.schedulers.onecycle.OneCycleLRWithWarmup.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_lr_momentum</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">warmup_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr_annealing_steps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">decay_steps</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">=</span> <span class="mi">0</span></div>
 
-<div class="viewcode-block" id="OneCycleLR.recalculate"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.schedulers.onecycle.OneCycleLR.recalculate">[docs]</a>    <span class="k">def</span> <span class="nf">recalculate</span><span class="p">(</span>
+<div class="viewcode-block" id="OneCycleLRWithWarmup.recalculate"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.schedulers.onecycle.OneCycleLRWithWarmup.recalculate">[docs]</a>    <span class="k">def</span> <span class="nf">recalculate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">loader_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">current_step</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -371,43 +243,80 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">=</span> <span class="n">current_step</span> <span class="o">*</span> <span class="n">loader_len</span></div></div>
 </pre></div>
 
-           </div>
-           
           </div>
-          <footer>
-  
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">Catalyst</a></h1>
 
-  <hr/>
 
-  <div role="contentinfo">
-    <p>
-        &copy; Copyright 2019, Scitator
 
-    </p>
-  </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-</footer>
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/contributing.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/license.html">Apache License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/rl.html">RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utils</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
 
         </div>
       </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Scitator.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
 
-    </section>
-
-  </div>
-  
-
-
-  <script type="text/javascript">
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script>
-
-  
-  
     
-   
 
-</body>
+    
+  </body>
 </html>
