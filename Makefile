@@ -27,4 +27,6 @@ install-from-source:
 clean:
 	rm -rf build/
 	docker rmi -f catalyst-base:latest
+	docker rmi -f catalyst-base-fp16:latest
 	docker rmi -f catalyst-dev:latest
+	docker rmi -f catalyst-dev-fp16:latest

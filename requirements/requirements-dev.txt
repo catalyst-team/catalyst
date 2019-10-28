@@ -1,7 +1,7 @@
 pytest==4.1.1
-Sphinx==2.0.1
-git+https://github.com/bitprophet/releases/#egg=releases
-sphinx_rtd_theme
+Sphinx==2.2.1
+# git+https://github.com/bitprophet/releases/#egg=releases
+# git+https://github.com/readthedocs/sphinx_rtd_theme
 flake8
 flake8-quotes
 yapf

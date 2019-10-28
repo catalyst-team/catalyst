@@ -10,6 +10,7 @@ __pycache__/
 .Python
 env/
 build/
+builds/
 develop-eggs/
 dist/
 downloads/
@@ -122,7 +123,7 @@ _nogit*
 
 ### VisualStudioCode ###
 .vscode/*
-!.vscode/settings.json
+.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
