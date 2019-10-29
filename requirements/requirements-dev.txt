@@ -4,5 +4,7 @@ Sphinx==2.2.1
 # git+https://github.com/readthedocs/sphinx_rtd_theme
 flake8
 flake8-quotes
+flake8-docstrings
 yapf
 mock
+pre-commit
