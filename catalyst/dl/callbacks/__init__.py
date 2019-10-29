@@ -8,7 +8,7 @@ from .logging import (
 )
 from .metrics import (
     AccuracyCallback, AUCCallback, DiceCallback, F1ScoreCallback, IouCallback,
-    JaccardCallback, MapKCallback
+    JaccardCallback, MapKCallback, PrecisionRecallF1ScoreCallback
 )
 from .misc import ConfusionMatrixCallback, EarlyStoppingCallback
 from .mixup import MixupCallback

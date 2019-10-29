@@ -50,7 +50,8 @@ Catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+.
 #### Docs and examples
 - Detailed [classification tutorial](./examples/notebooks/classification-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb)
 - Advanced [segmentation tutorial](./examples/notebooks/segmentation-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb)
-- Comprehensive [classification pipeline](https://github.com/catalyst-team/classification).
+- Comprehensive [classification pipeline](https://github.com/catalyst-team/classification)
+- Binary and semantic [segmentation pipeline](https://github.com/catalyst-team/segmentation)
 
 API documentation and an overview of the library can be found here
 [![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html).
@@ -93,15 +94,15 @@ and other features without the boilerplate.
 
 #### Structure
 
--  **DL** – runner for training and inference,
+- **DL** – runner for training and inference,
    all of the classic machine learning and computer vision metrics
    and a variety of callbacks for training, validation
    and inference of neural networks.
--  **RL** – scalable Reinforcement Learning,
+- **RL** – scalable Reinforcement Learning,
    on-policy & off-policy algorithms and their improvements
    with distributed training support.
--  **contrib** - additional modules contributed by Catalyst users.
--  **data** - useful tools and scripts for data processing.
+- **contrib** - additional modules contributed by Catalyst users.
+- **data** - useful tools and scripts for data processing.
 
 
 ## Getting started: 30 seconds with Catalyst
@@ -135,7 +136,7 @@ runner.train(
     loaders=loaders,
     logdir=logdir,
     num_epochs=num_epochs,
-    verbose=True
+    verbose=True,
 )
 ```
 
@@ -143,9 +144,14 @@ For Catalyst.RL introduction, please follow [OpenAI Gym example](https://github.
 
 
 ## Docker
+Catalyst has its own [DockerHub page](https://hub.docker.com/r/catalystteam/catalyst/tags):
+- `catalystteam/catalyst:{CATALYST_VERSION}` – simple image with Catalyst
+- `catalystteam/catalyst:{CATALYST_VERSION}-fp16` – Catalyst with FP16
+- `catalystteam/catalyst:{CATALYST_VERSION}-dev` – Catalyst for development with all the requirements
+- `catalystteam/catalyst:{CATALYST_VERSION}-dev-fp16` – Catalyst for development with FP16
 
-Please see the [docker folder](docker) 
-for more information and examples.
+To build a docker from the sources and get more information and examples, 
+please visit [docker folder](docker).
 
 
 ## Contribution guide
