@@ -110,7 +110,6 @@ and other features without the boilerplate.
 ```python
 import torch
 from catalyst.dl import SupervisedRunner
-from catalyst.dl.callbacks import EarlyStoppingCallback
 
 # experiment setup
 logdir = "./logdir"
@@ -125,10 +124,6 @@ criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters())
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer)
 
-callbacks = [
-    EarlyStoppingCallback(patience=3)
-] # Huge amount of callbacks
-
 # model runner
 runner = SupervisedRunner()
 
@@ -140,10 +135,8 @@ runner.train(
     scheduler=scheduler,
     loaders=loaders,
     logdir=logdir,
-    callbacks=callbacks,
     num_epochs=num_epochs,
     verbose=True,
-    fp16=True, # optional Apex FP16 support
 )
 ```
 
