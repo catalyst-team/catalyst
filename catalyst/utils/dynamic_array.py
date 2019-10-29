@@ -159,7 +159,6 @@ class DynamicArray:
 
         The row's shape has to match the array's trailing dimensions.
         """
-
         value = self._as_dtype(value)
 
         if value.shape != self._get_trailing_dimensions():
@@ -193,7 +192,6 @@ class DynamicArray:
         The rows" dimensions must match the trailing dimensions
         of the array.
         """
-
         values = self._as_dtype(values)
 
         required_size = self._size + values.shape[0]
@@ -208,7 +206,6 @@ class DynamicArray:
         """
         Reduce the array"s capacity to its size.
         """
-
         self._grow(self._size)
 
     @property

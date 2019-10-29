@@ -1,10 +1,11 @@
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union  # isort:skip
 import logging
 import os
 import pathlib
 import tempfile
-import numpy as np
+
 import imageio
+import numpy as np
 from skimage.color import label2rgb, rgb2gray
 
 import torch

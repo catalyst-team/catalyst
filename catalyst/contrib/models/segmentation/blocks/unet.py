@@ -3,8 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from ..abn import ABN
-from .core import EncoderBlock, DecoderBlock, \
-    _get_block, _upsample
+from .core import _get_block, _upsample, DecoderBlock, EncoderBlock
 
 
 class EncoderDownsampleBlock(EncoderBlock):

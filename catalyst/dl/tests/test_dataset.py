@@ -1,4 +1,4 @@
-from catalyst.data.dataset import PathsDataset, _Path
+from catalyst.data.dataset import _Path, PathsDataset
 
 
 def test_PathsDataset() -> None:

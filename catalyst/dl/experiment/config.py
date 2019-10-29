@@ -1,18 +1,19 @@
-from typing import Any, Mapping, Dict, List, Union
-from copy import deepcopy
+from typing import Any, Dict, List, Mapping, Union  # isort:skip
 from collections import OrderedDict
+from copy import deepcopy
 
 import torch
 from torch import nn
-from torch.utils.data import DataLoader, Dataset  # noqa F401
-from torch.utils.data import DistributedSampler
+from torch.utils.data import (  # noqa F401
+    DataLoader, Dataset, DistributedSampler
+)
 
-from catalyst.dl.registry import \
-    MODELS, CRITERIONS, OPTIMIZERS, SCHEDULERS, CALLBACKS
-from catalyst.dl.core import Experiment, Callback
 from catalyst.dl import utils
-from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, \
-    _Scheduler
+from catalyst.dl.core import Callback, Experiment
+from catalyst.dl.registry import (
+    CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SCHEDULERS
+)
+from catalyst.dl.utils.torch import _Criterion, _Model, _Optimizer, _Scheduler
 
 
 class ConfigExperiment(Experiment):

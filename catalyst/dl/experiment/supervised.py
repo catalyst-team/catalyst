@@ -1,10 +1,11 @@
 from collections import OrderedDict
 
+from catalyst.dl.callbacks import (
+    CheckpointCallback, CriterionCallback, OptimizerCallback,
+    SchedulerCallback
+)
 from catalyst.dl.core import Callback
 from .base import BaseExperiment
-from catalyst.dl.callbacks import \
-    CriterionCallback, OptimizerCallback, SchedulerCallback, \
-    CheckpointCallback
 
 
 class SupervisedExperiment(BaseExperiment):

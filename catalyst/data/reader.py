@@ -1,8 +1,9 @@
+from typing import Callable, List, Type  # isort:skip
 import functools
-from typing import Callable, Type, List
 
 import numpy as np
-from catalyst.utils import imread, mimread, get_one_hot
+
+from catalyst.utils import get_one_hot, imread, mimread
 
 
 class ReaderSpec:

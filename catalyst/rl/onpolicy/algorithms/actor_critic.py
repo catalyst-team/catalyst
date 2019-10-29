@@ -1,9 +1,10 @@
-from typing import Union, Dict
+from typing import Dict, Union  # isort:skip
 
 from catalyst.rl import utils
+from catalyst.rl.core import (
+    ActorSpec, AlgorithmSpec, CriticSpec, EnvironmentSpec
+)
 from catalyst.rl.registry import AGENTS
-from catalyst.rl.core import AlgorithmSpec, \
-    ActorSpec, CriticSpec, EnvironmentSpec
 
 
 class OnpolicyActorCritic(AlgorithmSpec):

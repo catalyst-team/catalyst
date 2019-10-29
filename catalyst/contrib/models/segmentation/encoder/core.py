@@ -1,5 +1,5 @@
-from typing import List
-from abc import abstractmethod, ABC
+from typing import List  # isort:skip
+from abc import ABC, abstractmethod
 
 import torch.nn as nn
 

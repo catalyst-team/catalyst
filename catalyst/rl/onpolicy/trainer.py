@@ -1,13 +1,14 @@
-from typing import Dict
+from typing import Dict  # isort:skip
 
 import time
+
 import numpy as np
 
 import torch
 from torch.utils.data import DataLoader
 
-from catalyst.rl.core import TrainerSpec
 from catalyst.rl import utils
+from catalyst.rl.core import TrainerSpec
 
 
 def _get_states_from_observations(observations: np.ndarray, history_len=1):

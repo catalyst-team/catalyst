@@ -4,10 +4,10 @@ import argparse
 from argparse import ArgumentParser
 from pathlib import Path
 
-from catalyst.utils import set_global_seed, boolean_flag, prepare_cudnn
-from catalyst.utils.config import parse_args_uargs, dump_environment
-from catalyst.utils.scripts import dump_code
 from catalyst.dl.utils.scripts import import_experiment_and_runner
+from catalyst.utils import boolean_flag, prepare_cudnn, set_global_seed
+from catalyst.utils.config import dump_environment, parse_args_uargs
+from catalyst.utils.scripts import dump_code
 
 
 def build_args(parser: ArgumentParser):

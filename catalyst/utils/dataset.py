@@ -1,14 +1,14 @@
+from collections import defaultdict
 import glob
 import itertools
 import os
-from collections import defaultdict
-from typing import Callable, Tuple, Dict
 
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import StratifiedKFold
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.utils import shuffle
+
+from typing import Callable, Dict, Tuple  # isort:skip
 
 DictDataset = Dict[str, object]
 

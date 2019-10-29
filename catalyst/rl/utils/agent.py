@@ -1,12 +1,12 @@
-from typing import List, Dict
-from functools import reduce
+from typing import Dict, List  # isort:skip
 from copy import deepcopy
+from functools import reduce
 
 import torch
 import torch.nn as nn
 
-from catalyst.contrib.models import get_convolution_net, get_linear_net
 from catalyst import utils
+from catalyst.contrib.models import get_convolution_net, get_linear_net
 
 
 def _get_observation_net(state_shape, **observation_net_params):

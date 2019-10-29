@@ -1,11 +1,11 @@
-from typing import List
+from typing import List  # isort:skip
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .core import HeadSpec
 from ..blocks import EncoderUpsampleBlock
+from .core import HeadSpec
 
 
 class UnetHead(HeadSpec):

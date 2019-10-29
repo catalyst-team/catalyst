@@ -1,6 +1,7 @@
 import torch
-from .critic import OffpolicyCritic
+
 from catalyst.rl import utils
+from .critic import OffpolicyCritic
 
 
 class DQN(OffpolicyCritic):

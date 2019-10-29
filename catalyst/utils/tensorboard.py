@@ -1,16 +1,17 @@
-import struct
+# isort:skip_file
+from typing import BinaryIO, Optional, Union  # isort:skip
 from collections import namedtuple
 from collections.abc import Iterable
-from pathlib import Path
-from typing import BinaryIO, Union, Optional
-
-import cv2
-import numpy as np
 import os
+from pathlib import Path
+import struct
 
 if os.environ.get("CRC32C_SW_MODE", None) is None:
     os.environ["CRC32C_SW_MODE"] = "auto"
 from crc32c import crc32 as crc32c  # noqa: E402
+
+import cv2  # noqa: E402
+import numpy as np  # noqa: E402
 
 # Native tensorboard support from 1.2.0 version of PyTorch
 from torch import __version__ as torch_version  # noqa: E402
@@ -214,7 +215,6 @@ class SummaryReader(Iterable):
             A generator with decoded events
             or `None`s if an event can"t be decoded
         """
-
         for event in events:
             if not event.HasField("summary"):
                 yield None

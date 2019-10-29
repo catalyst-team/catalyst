@@ -1,18 +1,21 @@
 #!/usr/bin/env python
 
-import os
 import argparse
+import os
 
-from catalyst.utils.scripts import import_module
-from catalyst.utils import parse_args_uargs, boolean_flag, \
-    dump_environment, set_global_seed, prepare_cudnn
-from catalyst.utils.scripts import dump_code
-from catalyst.rl.registry import OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
-    ENVIRONMENTS, DATABASES
 from catalyst.rl.offpolicy.trainer import Trainer as OffpolicyTrainer
 from catalyst.rl.onpolicy.trainer import Trainer as OnpolicyTrainer
-from catalyst.rl.scripts.misc import OFFPOLICY_ALGORITHMS_NAMES, \
-    ONPOLICY_ALGORITHMS_NAMES
+from catalyst.rl.registry import (
+    DATABASES, ENVIRONMENTS, OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS
+)
+from catalyst.rl.scripts.misc import (
+    OFFPOLICY_ALGORITHMS_NAMES, ONPOLICY_ALGORITHMS_NAMES
+)
+from catalyst.utils import (
+    boolean_flag, dump_environment, parse_args_uargs, prepare_cudnn,
+    set_global_seed
+)
+from catalyst.utils.scripts import dump_code, import_module
 
 
 def build_args(parser):

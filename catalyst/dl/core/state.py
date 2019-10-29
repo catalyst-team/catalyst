@@ -1,12 +1,11 @@
-from typing import Dict, Optional
-from collections import OrderedDict, defaultdict
+from typing import Dict, Optional  # isort:skip
+from collections import defaultdict, OrderedDict
 from pathlib import Path
 
 from torch.optim.optimizer import Optimizer
 
 from catalyst.dl.utils import process_callback
 from catalyst.utils.frozen import FrozenClass
-
 from .metric_manager import MetricManager, TimerManager
 
 

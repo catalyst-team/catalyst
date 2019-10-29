@@ -31,5 +31,4 @@
       args: [--markdown-linebreak-ext=md]
     - id: flake8
       additional_dependencies:
-        - flake8-docstrings
         - flake8-quotes

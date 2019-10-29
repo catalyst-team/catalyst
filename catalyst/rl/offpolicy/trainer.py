@@ -1,13 +1,14 @@
-from typing import Dict
-import time
+from typing import Dict  # isort:skip
 import threading
+import time
+
 import numpy as np
 
 import torch
 from torch.utils.data import DataLoader
 
-from catalyst.rl.core import TrainerSpec, DBSpec
 from catalyst.rl import utils
+from catalyst.rl.core import DBSpec, TrainerSpec
 
 
 def _db2buffer_loop(db_server: DBSpec, buffer: utils.OffpolicyReplayBuffer):

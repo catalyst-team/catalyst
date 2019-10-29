@@ -1,5 +1,5 @@
-import os
 import logging
+import os
 import pickle
 
 logger = logging.getLogger(__name__)

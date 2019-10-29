@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict  # isort:skip
 
 import numpy as np
 from scipy.signal import lfilter

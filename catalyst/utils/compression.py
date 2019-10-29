@@ -1,9 +1,11 @@
-import os
-import logging
 import base64
+import logging
+import os
+
 import numpy as np
 from six import string_types
-from catalyst.utils.serialization import serialize, deserialize
+
+from catalyst.utils.serialization import deserialize, serialize
 
 logger = logging.getLogger(__name__)
 

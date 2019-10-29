@@ -1,9 +1,9 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple  # isort:skip
 from gym.spaces import Discrete
 
 from catalyst.rl.core import CriticSpec, EnvironmentSpec
-from .network import StateNet, StateActionNet
 from .head import ValueHead
+from .network import StateActionNet, StateNet
 
 
 class StateCritic(CriticSpec):

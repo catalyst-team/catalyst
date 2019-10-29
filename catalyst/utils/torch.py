@@ -1,14 +1,15 @@
+from typing import Dict, Iterable, List, Union  # isort:skip
 import collections
-import re
-from typing import Iterable, Dict, List, Union
 import os
+import re
+
 import numpy as np
 import safitty
 
 import torch
 from torch import nn
-from torch.optim import Optimizer
 import torch.backends.cudnn as cudnn
+from torch.optim import Optimizer
 
 from catalyst import utils
 

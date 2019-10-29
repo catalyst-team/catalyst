@@ -8,16 +8,17 @@
 #   --clear-exif \
 #   --grayscale
 
-import os
 import argparse
-from pathlib import Path
 from functools import wraps
+import os
+from pathlib import Path
 
 import cv2
 import numpy as np
 
-from catalyst.utils import boolean_flag, imread, imwrite, \
-    Pool, tqdm_parallel_imap, get_pool
+from catalyst.utils import (
+    boolean_flag, get_pool, imread, imwrite, Pool, tqdm_parallel_imap
+)
 
 # Limit cv2's processor usage
 # cv2.setNumThreads() doesn't work

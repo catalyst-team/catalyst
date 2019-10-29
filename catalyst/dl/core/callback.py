@@ -1,4 +1,4 @@
-from typing import Callable, List
+from typing import Callable, List  # isort:skip
 from enum import IntFlag
 
 from .state import RunnerState

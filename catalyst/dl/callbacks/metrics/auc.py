@@ -1,10 +1,11 @@
-from typing import List
+from typing import List  # isort:skip
 
 import numpy as np
+
 import torch
 
+from catalyst.dl.core import Callback, CallbackOrder, RunnerState
 from catalyst.dl.meters import AUCMeter
-from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 
 
 class AUCCallback(Callback):

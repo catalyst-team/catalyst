@@ -1,11 +1,11 @@
 # flake8: noqa
 
-from .criterion import accuracy, average_accuracy, mean_average_accuracy, \
-    dice, f1_score, sigmoid_focal_loss, reduced_focal_loss, iou, jaccard
-
-from .torch import process_components, get_loader
-# from .trace import *
-from .visualization import plot_metrics
-from .callbacks import process_callback
-
 from catalyst.utils import *
+# from .trace import *
+from .callbacks import process_callback
+from .criterion import (
+    accuracy, average_accuracy, dice, f1_score, iou, jaccard,
+    mean_average_accuracy, reduced_focal_loss, sigmoid_focal_loss
+)
+from .torch import get_loader, process_components
+from .visualization import plot_metrics

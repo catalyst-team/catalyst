@@ -1,8 +1,8 @@
-from typing import List
+from typing import List  # isort:skip
 import torch
 
-from .core import BridgeSpec
 from ..blocks import EncoderBlock, EncoderDownsampleBlock
+from .core import BridgeSpec
 
 
 class UnetBridge(BridgeSpec):
