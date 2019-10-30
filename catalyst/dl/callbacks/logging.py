@@ -203,13 +203,16 @@ class TelegramLogger(Callback):
     ):
         """
 
-        :param token: Bot's token. You can create bot by following this official guide: https://core.telegram.org/bots
-        :param chat_id: Chat unique identifier. You can get chat_id by following this guide:
+        :param token: Telegram bot's token, see https://core.telegram.org/bots
+        :param chat_id: Chat unique identifier:
             1. Add your bot to a group.
             2. Send a dummy message like this: /test @your_bot_name_here
-            3. Open this page: https://api.telegram.org/bot<token>/getUpdates, where <token> is yours bot token.
-                example: https://api.telegram.org/bot1234566789/getUpdates, where token = 1234566789.
-            4. You should look for this pattern ..."chat":{"id":<chat_id>..., where <chat_id> - id of your group.
+            3. Open this page: https://api.telegram.org/bot<token>/getUpdates,
+               where <token> is yours bot token.
+               example: https://api.telegram.org/bot1234566789/getUpdates,
+               where token = 1234566789.
+            4. You should look for this pattern ..."chat":{"id":<chat_id>...,
+               where <chat_id> - id of your group.
         :param log_on_stage_start: Send notification on stage start.
         :param log_on_loader_start: Send notification on loader start.
         :param log_on_loader_end: Send notification on loader end.
@@ -218,7 +221,8 @@ class TelegramLogger(Callback):
         super().__init__(CallbackOrder.Logger)
         self._token = token
         self._chat_id = chat_id
-        self._base_url = f"https://api.telegram.org/bot{self._token}/sendMessage"
+        self._base_url = f"https://api.telegram.org/bot{self._token}" \
+                         f"/sendMessage"
 
         self._log_on_stage_start = log_on_stage_start
         self._log_on_loader_start = log_on_loader_start
@@ -229,22 +233,25 @@ class TelegramLogger(Callback):
 
     def _send_text(self, text: str):
         try:
-            url = f"{self._base_url}?chat_id={self._chat_id}&disable_web_page_preview=1&text={quote_plus(text, safe='')}"
+            url = f"{self._base_url}?" \
+                  f"chat_id={self._chat_id}&" \
+                  f"disable_web_page_preview=1&" \
+                  f"text={quote_plus(text, safe='')}"
 
             request = Request(url)
             urlopen(request)
         except Exception as e:
-            print(f'telegram.send.error:{e}')
+            print(f"telegram.send.error:{e}")
 
     def on_stage_start(self, state: RunnerState):
         if self._log_on_stage_start:
-            text = f'{state.stage} stage was started'
+            text = f"{state.stage} stage was started"
 
             self._send_text(text)
 
     def on_loader_start(self, state: RunnerState):
         if self._log_on_loader_start:
-            text = f'{state.loader_name} {state.epoch} epoch was started'
+            text = f"{state.loader_name} {state.epoch} epoch was started"
 
             self._send_text(text)
 
@@ -256,20 +263,20 @@ class TelegramLogger(Callback):
                 self._metrics_to_log = sorted(list(metrics.keys()))
 
             rows: List[str] = [
-                f'{state.loader_name} {state.epoch} epoch was finished:',
+                f"{state.loader_name} {state.epoch} epoch was finished:",
             ]
 
             for name in self._metrics_to_log:
                 if name in metrics:
                     rows.append(f"{name}={metrics[name]}")
 
-            text = '\n'.join(rows)
+            text = "\n".join(rows)
 
             self._send_text(text)
 
     def on_stage_end(self, state: RunnerState):
         if self._log_on_stage_end:
-            text = f'{state.stage} stage was finished'
+            text = f"{state.stage} stage was finished"
 
             self._send_text(text)
 
