@@ -6,18 +6,12 @@ from tqdm import tqdm
 
 from tensorboardX import SummaryWriter
 
-from catalyst.dl.core import Callback, RunnerState, CallbackOrder
+from catalyst.dl.core import LoggerCallback, RunnerState
 from catalyst.dl.utils.formatters import TxtMetricsFormatter
 from catalyst.dl import utils
 
 
-_LOGGER_ORDER = dict(
-    start=CallbackOrder.Logger_pre,
-    end=CallbackOrder.Logger
-)
-
-
-class VerboseLogger(Callback):
+class VerboseLogger(LoggerCallback):
     def __init__(
         self,
         always_show: List[str] = None,
@@ -32,7 +26,7 @@ class VerboseLogger(Callback):
                 to remove always_show metrics set it to an empty list ``[]``
             never_show (List[str]): list of metrics which will not be shown
         """
-        super().__init__(order=_LOGGER_ORDER)
+        super().__init__()
         self.tqdm: tqdm = None
         self.step = 0
         self.always_show = always_show \
@@ -48,6 +42,15 @@ class VerboseLogger(Callback):
         if bool(intersection):
             raise ValueError(_error_message)
 
+    def _need_show(self, key: str):
+        not_is_never_shown: bool = key not in self.never_show
+        is_always_shown: bool = key in self.always_show
+        not_basic = not (key.startswith("_base") or key.startswith("_timers"))
+
+        result = not_is_never_shown and (is_always_shown or not_basic)
+
+        return result
+
     def on_loader_start(self, state: RunnerState):
         self.step = 0
         self.tqdm = tqdm(
@@ -58,15 +61,6 @@ class VerboseLogger(Callback):
             ncols=0,
             file=sys.stdout
         )
-
-    def _need_show(self, key: str):
-        not_is_never_shown: bool = key not in self.never_show
-        is_always_shown: bool = key in self.always_show
-        not_basic = not (key.startswith("_base") or key.startswith("_timers"))
-
-        result = not_is_never_shown and (is_always_shown or not_basic)
-
-        return result
 
     def on_batch_end(self, state: RunnerState):
         self.tqdm.set_postfix(
@@ -93,12 +87,12 @@ class VerboseLogger(Callback):
             state.need_reraise_exception = False
 
 
-class ConsoleLogger(Callback):
+class ConsoleLogger(LoggerCallback):
     """
     Logger callback, translates ``state.metrics`` to console and text file
     """
     def __init__(self):
-        super().__init__(order=_LOGGER_ORDER)
+        super().__init__()
         self.logger = None
 
     @staticmethod
@@ -140,7 +134,7 @@ class ConsoleLogger(Callback):
         self.logger.info("", extra={"state": state})
 
 
-class TensorboardLogger(Callback):
+class TensorboardLogger(LoggerCallback):
     """
     Logger callback, translates state.metrics to tensorboard
     """
@@ -158,7 +152,7 @@ class TensorboardLogger(Callback):
             log_on_batch_end: Logs per-batch metrics if set True.
             log_on_epoch_end: Logs per-epoch metrics if set True.
         """
-        super().__init__(order=_LOGGER_ORDER)
+        super().__init__()
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end

@@ -1,4 +1,4 @@
-from typing import Callable, List, Union, Dict
+from typing import Callable, List
 from enum import IntFlag
 
 from .state import RunnerState
@@ -7,12 +7,11 @@ from .state import RunnerState
 class CallbackOrder(IntFlag):
     Unknown = -100
     Internal = 0
-    Logger_pre = 10
     Criterion = 20
     Optimizer = 40
     Scheduler = 60
     Metric = 80
-    Logger = 100
+    External = 100
     Other = 200
 
 
@@ -39,7 +38,7 @@ class Callback:
 
     All callbacks has ``order`` value from ``CallbackOrder``
     """
-    def __init__(self, order: Union[int, Dict[str, int]]):
+    def __init__(self, order: int):
         """
         For order see ``CallbackOrder`` class
         """
@@ -139,9 +138,63 @@ class MultiMetricCallback(Callback):
         state.metrics.add_batch_value(metrics_dict=batch_metrics)
 
 
+class LoggerCallback(Callback):
+    def __init__(self):
+        super().__init__(order=CallbackOrder.Internal)
+
+    def on_stage_start_pre(self, state: RunnerState):
+        pass
+
+    def on_stage_start_post(self, state: RunnerState):
+        pass
+
+    def on_stage_end_pre(self, state: RunnerState):
+        pass
+
+    def on_stage_end_post(self, state: RunnerState):
+        pass
+
+    def on_epoch_start_pre(self, state: RunnerState):
+        pass
+
+    def on_epoch_start_post(self, state: RunnerState):
+        pass
+
+    def on_epoch_end_pre(self, state: RunnerState):
+        pass
+
+    def on_epoch_end_post(self, state: RunnerState):
+        pass
+
+    def on_loader_start_pre(self, state: RunnerState):
+        pass
+
+    def on_loader_start_post(self, state: RunnerState):
+        pass
+
+    def on_loader_end_pre(self, state: RunnerState):
+        pass
+
+    def on_loader_end_post(self, state: RunnerState):
+        pass
+
+    def on_batch_start_pre(self, state: RunnerState):
+        pass
+
+    def on_batch_start_post(self, state: RunnerState):
+        pass
+
+    def on_batch_end_pre(self, state: RunnerState):
+        pass
+
+    def on_batch_end_post(self, state: RunnerState):
+        pass
+
+
 __all__ = [
     "CallbackOrder",
     "Callback",
     "MetricCallback",
     "MultiMetricCallback",
+    "LoggerCallback",
 ]

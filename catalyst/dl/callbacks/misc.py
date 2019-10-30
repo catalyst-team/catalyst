@@ -15,7 +15,7 @@ class EarlyStoppingCallback(Callback):
         minimize: bool = True,
         min_delta: float = 1e-6
     ):
-        super().__init__(CallbackOrder.Logger)
+        super().__init__(CallbackOrder.External)
         self.best_score = None
         self.metric = metric
         self.patience = patience

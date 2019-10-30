@@ -8,7 +8,7 @@ import torch
 from torch import nn
 from torch.utils.data import DistributedSampler
 
-from .callback import Callback
+from .callback import Callback, LoggerCallback
 from .experiment import Experiment
 from .state import RunnerState
 from catalyst.dl import utils
@@ -90,29 +90,16 @@ class Runner(ABC):
         )
         utils.set_global_seed(self.experiment.initial_seed)
 
-    def _run_event(self, event: str, moment: str = None):
-        def _state_has_event(state, name) -> bool:
-            return state is not None and hasattr(state, name)
+    def _run_event(self, event: str):
+        if self.state is not None and hasattr(self.state, f"on_{event}_pre"):
+            getattr(self.state, f"on_{event}_pre")()
 
         if self.callbacks is not None:
-            callbacks = utils.get_sorted_callbacks(
-                self.callbacks, moment=moment
-            )
-            self.state.loggers = utils.get_loggers(callbacks, moment=moment)
-        else:
-            callbacks = None
-            self.state.loggers = OrderedDict()
+            for callback in self.callbacks.values():
+                getattr(callback, f"on_{event}")(self.state)
 
-        event_name = f"{event}_{moment}" if moment is not None else event
-        if _state_has_event(self.state, f"on_{event_name}_pre"):
-            getattr(self.state, f"on_{event_name}_pre")()
-
-        if callbacks is not None:
-            for callback in callbacks.values():
-                getattr(callback, f"on_{event_name}")(self.state)
-
-        if _state_has_event(self.state, f"on_{event_name}_post"):
-            getattr(self.state, f"on_{event_name}_post")()
+        if self.state is not None and hasattr(self.state, f"on_{event}_post"):
+            getattr(self.state, f"on_{event}_post")()
 
     @abstractmethod
     def forward(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
@@ -137,12 +124,12 @@ class Runner(ABC):
         self.state.input = batch
         self.state.timer.stop("_timers/data_time")
 
-        self._run_event("batch", moment="start")
+        self._run_event("batch_start")
         self.state.timer.start("_timers/model_time")
         self.state.output = self.forward(batch)
         self.state.timer.stop("_timers/model_time")
         self.state.timer.stop("_timers/batch_time")
-        self._run_event("batch", moment="end")
+        self._run_event("batch_end")
 
     def _run_loader(self, loader):
         self.state.batch_size = (
@@ -196,23 +183,33 @@ class Runner(ABC):
             utils.set_global_seed(
                 self.experiment.initial_seed + self.state.epoch + 1
             )
-            self._run_event("loader", moment="start")
+            self._run_event("loader_start")
             with torch.set_grad_enabled(self.state.need_backward):
                 self._run_loader(loader)
-            self._run_event("loader", moment="end")
+            self._run_event("loader_end")
 
     def _run_stage(self, stage: str):
         self._prepare_for_stage(stage)
         loaders = self.experiment.get_loaders(stage)
-        self.callbacks = self.experiment.get_callbacks(stage)
+        callbacks = self.experiment.get_callbacks(stage)
+        loggers = OrderedDict([
+            (k, v) for k, v in callbacks.items()
+            if isinstance(v, LoggerCallback)
+        ])
+        callbacks = OrderedDict([
+            (k, v) for k, v in callbacks.items()
+            if not isinstance(v, LoggerCallback)
+        ])
+        self.state.loggers = loggers
+        self.callbacks = callbacks
 
-        self._run_event("stage", moment="start")
+        self._run_event("stage_start")
         for epoch in range(self.state.num_epochs):
             self.state.stage_epoch = epoch
 
-            self._run_event("epoch", moment="start")
+            self._run_event("epoch_start")
             self._run_epoch(loaders)
-            self._run_event("epoch", moment="end")
+            self._run_event("epoch_end")
 
             if self._check_run and self.state.epoch >= 3:
                 break
@@ -221,7 +218,7 @@ class Runner(ABC):
                 break
 
             self.state.epoch += 1
-        self._run_event("stage", moment="end")
+        self._run_event("stage_end")
 
     def run_experiment(self, experiment: Experiment, check: bool = False):
         self._check_run = check
