@@ -10,6 +10,7 @@ __pycache__/
 .Python
 env/
 build/
+builds/
 develop-eggs/
 dist/
 downloads/
@@ -119,3 +120,16 @@ examples/logs/
 notebooks/
 
 _nogit*
+
+### VisualStudioCode ###
+.vscode/*
+.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+
+# End of https://www.gitignore.io/api/visualstudiocode

@@ -1,17 +1,12 @@
-from typing import List, Dict, Optional
+from typing import List, Dict
 import os
 import sys
 import logging
-from urllib.request import Request, urlopen
-from urllib.parse import quote_plus
-
 from tqdm import tqdm
-
-from tensorboardX import SummaryWriter
-
 from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 from catalyst.dl.utils.formatters import TxtMetricsFormatter
 from catalyst.dl import utils
+from catalyst.utils.tensorboard import SummaryWriter
 
 
 class VerboseLogger(Callback):
@@ -30,8 +25,8 @@ class VerboseLogger(Callback):
         self.step = 0
         self.tqdm = tqdm(
             total=state.loader_len,
-            desc=f"{state.stage_epoch}/{state.num_epochs}"
-                 f" * Epoch ({state.loader_name})",
+            desc=f"{state.stage_epoch_log}/{state.num_epochs}"
+            f" * Epoch ({state.loader_name})",
             leave=True,
             ncols=0,
             file=sys.stdout
@@ -72,7 +67,6 @@ class ConsoleLogger(Callback):
     """
     Logger callback, translates ``state.metrics`` to console and text file
     """
-
     def __init__(self):
         super().__init__(CallbackOrder.Logger)
         self.logger = None
@@ -122,10 +116,10 @@ class TensorboardLogger(Callback):
     """
 
     def __init__(
-            self,
-            metric_names: List[str] = None,
-            log_on_batch_end: bool = True,
-            log_on_epoch_end: bool = True
+        self,
+        metric_names: List[str] = None,
+        log_on_batch_end: bool = True,
+        log_on_epoch_end: bool = True
     ):
         """
         Args:
@@ -145,7 +139,7 @@ class TensorboardLogger(Callback):
         self.loggers = dict()
 
     def _log_metrics(
-            self, metrics: Dict[str, float], step: int, mode: str, suffix=""
+        self, metrics: Dict[str, float], step: int, mode: str, suffix=""
     ):
         if self.metrics_to_log is None:
             metrics_to_log = sorted(list(metrics.keys()))
@@ -177,7 +171,10 @@ class TensorboardLogger(Callback):
             mode = state.loader_name
             metrics_ = state.metrics.epoch_values[mode]
             self._log_metrics(
-                metrics=metrics_, step=state.epoch, mode=mode, suffix="/epoch"
+                metrics=metrics_,
+                step=state.epoch_log,
+                mode=mode,
+                suffix="/epoch"
             )
         for logger in self.loggers.values():
             logger.flush()
@@ -185,100 +182,6 @@ class TensorboardLogger(Callback):
     def on_stage_end(self, state: RunnerState):
         for logger in self.loggers.values():
             logger.close()
-
-
-class TelegramLogger(Callback):
-    """
-    Logger callback, translates state.metrics to telegram channel
-    """
-
-    def __init__(
-            self,
-            token: str,
-            chat_id: str,
-            log_on_stage_start: bool = True,
-            log_on_loader_start: bool = True,
-            log_on_loader_end: bool = True,
-            log_on_stage_end: bool = True
-    ):
-        """
-
-        :param token: Telegram bot's token, see https://core.telegram.org/bots
-        :param chat_id: Chat unique identifier:
-            1. Add your bot to a group.
-            2. Send a dummy message like this: /test @your_bot_name_here
-            3. Open this page: https://api.telegram.org/bot<token>/getUpdates,
-               where <token> is yours bot token.
-               example: https://api.telegram.org/bot1234566789/getUpdates,
-               where token = 1234566789.
-            4. You should look for this pattern ..."chat":{"id":<chat_id>...,
-               where <chat_id> - id of your group.
-        :param log_on_stage_start: Send notification on stage start.
-        :param log_on_loader_start: Send notification on loader start.
-        :param log_on_loader_end: Send notification on loader end.
-        :param log_on_stage_end: Send notification on stage end.
-        """
-        super().__init__(CallbackOrder.Logger)
-        self._token = token
-        self._chat_id = chat_id
-        self._base_url = f"https://api.telegram.org/bot{self._token}" \
-                         f"/sendMessage"
-
-        self._log_on_stage_start = log_on_stage_start
-        self._log_on_loader_start = log_on_loader_start
-        self._log_on_loader_end = log_on_loader_end
-        self._log_on_stage_end = log_on_stage_end
-
-        self._metrics_to_log: Optional[List[str]] = None
-
-    def _send_text(self, text: str):
-        try:
-            url = f"{self._base_url}?" \
-                  f"chat_id={self._chat_id}&" \
-                  f"disable_web_page_preview=1&" \
-                  f"text={quote_plus(text, safe='')}"
-
-            request = Request(url)
-            urlopen(request)
-        except Exception as e:
-            print(f"telegram.send.error:{e}")
-
-    def on_stage_start(self, state: RunnerState):
-        if self._log_on_stage_start:
-            text = f"{state.stage} stage was started"
-
-            self._send_text(text)
-
-    def on_loader_start(self, state: RunnerState):
-        if self._log_on_loader_start:
-            text = f"{state.loader_name} {state.epoch} epoch was started"
-
-            self._send_text(text)
-
-    def on_loader_end(self, state: RunnerState):
-        if self._log_on_loader_end:
-            metrics = state.metrics.epoch_values[state.loader_name]
-
-            if self._metrics_to_log is None:
-                self._metrics_to_log = sorted(list(metrics.keys()))
-
-            rows: List[str] = [
-                f"{state.loader_name} {state.epoch} epoch was finished:",
-            ]
-
-            for name in self._metrics_to_log:
-                if name in metrics:
-                    rows.append(f"{name}={metrics[name]}")
-
-            text = "\n".join(rows)
-
-            self._send_text(text)
-
-    def on_stage_end(self, state: RunnerState):
-        if self._log_on_stage_end:
-            text = f"{state.stage} stage was finished"
-
-            self._send_text(text)
 
 
 class RaiseExceptionLogger(Callback):
@@ -296,6 +199,5 @@ class RaiseExceptionLogger(Callback):
 
 __all__ = [
     "VerboseLogger", "ConsoleLogger",
-    "TensorboardLogger", "RaiseExceptionLogger",
-    "TelegramLogger"
+    "TensorboardLogger", "RaiseExceptionLogger"
 ]
