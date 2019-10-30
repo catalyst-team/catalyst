@@ -144,8 +144,14 @@ class MultiMetricCallback(Callback):
 
 
 class LoggerCallback(Callback):
-    def __init__(self):
-        super().__init__(order=CallbackOrder.Internal)
+    """
+    Loggers are executed on ``start`` before all callbacks,
+    and on ``end`` after all callbacks.
+    """
+    def __init__(self, order: int = None):
+        if order is None:
+            order = CallbackOrder.Internal
+        super().__init__(order=order)
 
 
 class MeterMetricsCallback(Callback):

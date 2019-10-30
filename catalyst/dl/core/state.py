@@ -126,11 +126,20 @@ class RunnerState(FrozenClass):
     def on_stage_start_pre(self):
         pass
 
+    def on_stage_start_post(self):
+        pass
+
+    def on_stage_end_pre(self):
+        pass
+
     def on_stage_end_post(self):
         pass
 
     def on_epoch_start_pre(self):
         self.metrics.begin_epoch()
+        pass
+
+    def on_epoch_start_post(self):
         pass
 
     def on_epoch_end_pre(self):
@@ -143,15 +152,30 @@ class RunnerState(FrozenClass):
     def on_loader_start_pre(self):
         self.metrics.begin_loader(self.loader_name)
 
+    def on_loader_start_post(self):
+        pass
+
+    def on_loader_end_pre(self):
+        pass
+
     def on_loader_end_post(self):
         self.metrics.end_loader()
 
     def on_batch_start_pre(self):
         self.metrics.begin_batch()
 
+    def on_batch_start_post(self):
+        pass
+
+    def on_batch_end_pre(self):
+        pass
+
     def on_batch_end_post(self):
         self._handle_runner_metrics()
         self.metrics.end_batch()
+
+    def on_exception_pre(self):
+        pass
 
     def on_exception_post(self):
         pass

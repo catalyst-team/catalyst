@@ -3,7 +3,9 @@ import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 
 from catalyst.dl.meters import ConfusionMeter
-from catalyst.dl.core import Callback, RunnerState, CallbackOrder
+from catalyst.dl.core import (
+    Callback, RunnerState, CallbackOrder, LoggerCallback
+)
 from catalyst.dl import utils
 
 
@@ -138,9 +140,10 @@ class ConfusionMatrixCallback(Callback):
         )
 
 
-class RaiseExceptionCallback(Callback):
+class RaiseExceptionCallback(LoggerCallback):
     def __init__(self):
-        super().__init__(CallbackOrder.Other + 1)
+        order = CallbackOrder.Other + 1
+        super().__init__(order=order)
 
     def on_exception(self, state: RunnerState):
         exception = state.exception

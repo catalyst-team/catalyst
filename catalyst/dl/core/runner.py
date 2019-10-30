@@ -97,7 +97,7 @@ class Runner(ABC):
             fn_name = f"{fn_name}_{moment}"
 
         # before callbacks
-        if self.state is not None and hasattr(self.state, f"{fn_name}_pre"):
+        if self.state is not None:
             getattr(self.state, f"{fn_name}_pre")()
 
         if self.loggers is not None and moment == "start":
@@ -115,7 +115,7 @@ class Runner(ABC):
             for logger in self.loggers.values():
                 getattr(logger, fn_name)(self.state)
 
-        if self.state is not None and hasattr(self.state, f"{fn_name}_post"):
+        if self.state is not None:
             getattr(self.state, f"{fn_name}_post")()
 
     @abstractmethod
