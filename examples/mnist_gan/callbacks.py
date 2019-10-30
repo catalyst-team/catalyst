@@ -2,7 +2,7 @@ import torch
 import torchvision.utils
 from catalyst.dl import registry
 from catalyst.dl.core import Callback, CallbackOrder, RunnerState
-from tensorboardX import SummaryWriter
+from catalyst.utils.tensorboard import SummaryWriter
 
 
 @registry.Callback

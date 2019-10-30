@@ -166,5 +166,13 @@ class RunnerState(FrozenClass):
     def on_exception_post(self):
         pass
 
+    @property
+    def stage_epoch_log(self):
+        return self.stage_epoch+1
+
+    @property
+    def epoch_log(self):
+        return self.epoch+1
+
 
 __all__ = ["RunnerState"]

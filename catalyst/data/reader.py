@@ -2,7 +2,7 @@ import functools
 from typing import Callable, Type, List
 
 import numpy as np
-from catalyst.utils import imread, get_one_hot
+from catalyst.utils import imread, mimread, get_one_hot
 
 
 class ReaderSpec:
@@ -77,6 +77,38 @@ class ImageReader(ReaderSpec):
         )
 
         result = {self.output_key: img}
+        return result
+
+
+class MaskReader(ReaderSpec):
+    """
+    Mask reader abstraction. Reads masks from a `csv` dataset.
+    """
+    def __init__(self, input_key: str, output_key: str, datapath: str = None):
+        """
+        Args:
+            input_key (str): key to use from annotation dict
+            output_key (str): key to use to store the result
+            datapath (str): path to images dataset
+                (so your can use relative paths in annotations)
+        """
+        super().__init__(input_key, output_key)
+        self.datapath = datapath
+
+    def __call__(self, row):
+        """Reads a row from your annotations dict with filename and
+        transfer it to a mask
+
+        Args:
+            row: elem in your dataset.
+
+        Returns:
+            np.ndarray: Mask
+        """
+        mask_name = str(row[self.input_key])
+        mask = mimread(mask_name, rootpath=self.datapath, clip_range=(0, 1))
+
+        result = {self.output_key: mask}
         return result
 
 

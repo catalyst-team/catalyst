@@ -4,11 +4,10 @@ import sys
 import logging
 from tqdm import tqdm
 
-from tensorboardX import SummaryWriter
-
 from catalyst.dl.core import LoggerCallback, RunnerState
 from catalyst.dl.utils.formatters import TxtMetricsFormatter
 from catalyst.dl import utils
+from catalyst.utils.tensorboard import SummaryWriter
 
 
 class VerboseLogger(LoggerCallback):
@@ -55,7 +54,7 @@ class VerboseLogger(LoggerCallback):
         self.step = 0
         self.tqdm = tqdm(
             total=state.loader_len,
-            desc=f"{state.stage_epoch}/{state.num_epochs}"
+            desc=f"{state.stage_epoch_log}/{state.num_epochs}"
             f" * Epoch ({state.loader_name})",
             leave=True,
             ncols=0,
@@ -195,7 +194,10 @@ class TensorboardLogger(LoggerCallback):
             mode = state.loader_name
             metrics_ = state.metrics.epoch_values[mode]
             self._log_metrics(
-                metrics=metrics_, step=state.epoch, mode=mode, suffix="/epoch"
+                metrics=metrics_,
+                step=state.epoch_log,
+                mode=mode,
+                suffix="/epoch"
             )
         for logger in self.loggers.values():
             logger.flush()

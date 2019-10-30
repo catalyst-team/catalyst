@@ -71,7 +71,7 @@ class Runner(ABC):
             migrating_params.update(
                 {
                     "step": self.state.step,
-                    "epoch": self.state.epoch + 1
+                    "epoch": self.state.epoch
                 }
             )
 
@@ -192,14 +192,18 @@ class Runner(ABC):
         self._prepare_for_stage(stage)
         loaders = self.experiment.get_loaders(stage)
         callbacks = self.experiment.get_callbacks(stage)
-        loggers = OrderedDict([
-            (k, v) for k, v in callbacks.items()
-            if isinstance(v, LoggerCallback)
-        ])
-        callbacks = OrderedDict([
-            (k, v) for k, v in callbacks.items()
-            if not isinstance(v, LoggerCallback)
-        ])
+        loggers = utils.process_callbacks(
+            OrderedDict([
+                (k, v) for k, v in callbacks.items()
+                if isinstance(v, LoggerCallback)
+            ])
+        )
+        callbacks = utils.process_callbacks(
+            OrderedDict([
+                (k, v) for k, v in callbacks.items()
+                if not isinstance(v, LoggerCallback)
+            ])
+        )
         self.state.loggers = loggers
         self.callbacks = callbacks
 
