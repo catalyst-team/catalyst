@@ -147,54 +147,6 @@ class LoggerCallback(Callback):
     def __init__(self):
         super().__init__(order=CallbackOrder.Internal)
 
-    def on_stage_start_pre(self, state: RunnerState):
-        pass
-
-    def on_stage_start_post(self, state: RunnerState):
-        pass
-
-    def on_stage_end_pre(self, state: RunnerState):
-        pass
-
-    def on_stage_end_post(self, state: RunnerState):
-        pass
-
-    def on_epoch_start_pre(self, state: RunnerState):
-        pass
-
-    def on_epoch_start_post(self, state: RunnerState):
-        pass
-
-    def on_epoch_end_pre(self, state: RunnerState):
-        pass
-
-    def on_epoch_end_post(self, state: RunnerState):
-        pass
-
-    def on_loader_start_pre(self, state: RunnerState):
-        pass
-
-    def on_loader_start_post(self, state: RunnerState):
-        pass
-
-    def on_loader_end_pre(self, state: RunnerState):
-        pass
-
-    def on_loader_end_post(self, state: RunnerState):
-        pass
-
-    def on_batch_start_pre(self, state: RunnerState):
-        pass
-
-    def on_batch_start_post(self, state: RunnerState):
-        pass
-
-    def on_batch_end_pre(self, state: RunnerState):
-        pass
-
-    def on_batch_end_post(self, state: RunnerState):
-        pass
-
 
 class MeterMetricsCallback(Callback):
     """

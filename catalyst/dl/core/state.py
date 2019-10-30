@@ -124,35 +124,27 @@ class RunnerState(FrozenClass):
         self.metrics.add_batch_value(metrics_dict=values)
 
     def on_stage_start_pre(self):
-        for logger in self.loggers.values():
-            logger.on_stage_start(self)
+        pass
 
     def on_stage_end_post(self):
-        for logger in self.loggers.values():
-            logger.on_stage_end(self)
+        pass
 
     def on_epoch_start_pre(self):
         self.metrics.begin_epoch()
-        for logger in self.loggers.values():
-            logger.on_epoch_start(self)
+        pass
 
     def on_epoch_end_pre(self):
         if not self.stage.startswith("infer"):
             self.metrics.end_epoch_train()
 
     def on_epoch_end_post(self):
-        for logger in self.loggers.values():
-            logger.on_epoch_end(self)
+        pass
 
     def on_loader_start_pre(self):
         self.metrics.begin_loader(self.loader_name)
-        for logger in self.loggers.values():
-            logger.on_loader_start(self)
 
     def on_loader_end_post(self):
         self.metrics.end_loader()
-        for logger in self.loggers.values():
-            logger.on_loader_end(self)
 
     def on_batch_start_pre(self):
         self.metrics.begin_batch()
@@ -160,19 +152,17 @@ class RunnerState(FrozenClass):
     def on_batch_end_post(self):
         self._handle_runner_metrics()
         self.metrics.end_batch()
-        for logger in self.loggers.values():
-            logger.on_batch_end(self)
 
     def on_exception_post(self):
         pass
 
     @property
     def stage_epoch_log(self):
-        return self.stage_epoch+1
+        return self.stage_epoch + 1
 
     @property
     def epoch_log(self):
-        return self.epoch+1
+        return self.epoch + 1
 
 
 __all__ = ["RunnerState"]

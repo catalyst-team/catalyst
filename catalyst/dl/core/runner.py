@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from typing import Tuple, Mapping, Any
+from typing import Tuple, Mapping, Any, Optional
 import os
 from pathlib import Path
 from collections import OrderedDict
@@ -31,6 +31,7 @@ class Runner(ABC):
         self.experiment: Experiment = None
         self.state: RunnerState = None
         self.callbacks: OrderedDict[str, Callback] = None
+        self.loggers: OrderedDict[str, LoggerCallback] = None
 
         # additional
         self._check_run = False
@@ -90,16 +91,32 @@ class Runner(ABC):
         )
         utils.set_global_seed(self.experiment.initial_seed)
 
-    def _run_event(self, event: str):
-        if self.state is not None and hasattr(self.state, f"on_{event}_pre"):
-            getattr(self.state, f"on_{event}_pre")()
+    def _run_event(self, event: str, moment: Optional[str]):
+        fn_name = f"on_{event}"
+        if moment is not None:
+            fn_name = f"{fn_name}_{moment}"
 
+        # before callbacks
+        if self.state is not None and hasattr(self.state, f"{fn_name}_pre"):
+            getattr(self.state, f"{fn_name}_pre")()
+
+        if self.loggers is not None and moment == "start":
+            for logger in self.loggers.values():
+                getattr(logger, fn_name)(self.state)
+
+        # running callbacks
         if self.callbacks is not None:
             for callback in self.callbacks.values():
-                getattr(callback, f"on_{event}")(self.state)
+                getattr(callback, fn_name)(self.state)
 
-        if self.state is not None and hasattr(self.state, f"on_{event}_post"):
-            getattr(self.state, f"on_{event}_post")()
+        # after callbacks
+        if self.loggers is not None and \
+                (moment == "end" or moment is None):  # for on_exception case
+            for logger in self.loggers.values():
+                getattr(logger, fn_name)(self.state)
+
+        if self.state is not None and hasattr(self.state, f"{fn_name}_post"):
+            getattr(self.state, f"{fn_name}_post")()
 
     @abstractmethod
     def forward(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
@@ -124,12 +141,12 @@ class Runner(ABC):
         self.state.input = batch
         self.state.timer.stop("_timers/data_time")
 
-        self._run_event("batch_start")
+        self._run_event("batch", moment="start")
         self.state.timer.start("_timers/model_time")
         self.state.output = self.forward(batch)
         self.state.timer.stop("_timers/model_time")
         self.state.timer.stop("_timers/batch_time")
-        self._run_event("batch_end")
+        self._run_event("batch", moment="end")
 
     def _run_loader(self, loader):
         self.state.batch_size = (
@@ -183,10 +200,10 @@ class Runner(ABC):
             utils.set_global_seed(
                 self.experiment.initial_seed + self.state.epoch + 1
             )
-            self._run_event("loader_start")
+            self._run_event("loader", moment="start")
             with torch.set_grad_enabled(self.state.need_backward):
                 self._run_loader(loader)
-            self._run_event("loader_end")
+            self._run_event("loader", moment="end")
 
     def _run_stage(self, stage: str):
         self._prepare_for_stage(stage)
@@ -205,15 +222,16 @@ class Runner(ABC):
             ])
         )
         self.state.loggers = loggers
+        self.loggers = loggers
         self.callbacks = callbacks
 
-        self._run_event("stage_start")
+        self._run_event("stage", moment="start")
         for epoch in range(self.state.num_epochs):
             self.state.stage_epoch = epoch
 
-            self._run_event("epoch_start")
+            self._run_event("epoch", moment="start")
             self._run_epoch(loaders)
-            self._run_event("epoch_end")
+            self._run_event("epoch", moment="end")
 
             if self._check_run and self.state.epoch >= 3:
                 break
@@ -222,7 +240,7 @@ class Runner(ABC):
                 break
 
             self.state.epoch += 1
-        self._run_event("stage_end")
+        self._run_event("stage", moment="end")
 
     def run_experiment(self, experiment: Experiment, check: bool = False):
         self._check_run = check
@@ -242,7 +260,7 @@ class Runner(ABC):
                 self._run_stage(stage)
         except (Exception, KeyboardInterrupt) as ex:
             self.state.exception = ex
-            self._run_event("exception")
+            self._run_event("exception", moment=None)
 
         return self
 
