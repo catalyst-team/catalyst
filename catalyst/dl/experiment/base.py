@@ -5,7 +5,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 
 from catalyst.dl.core import Callback, Experiment
-from catalyst.dl.utils import process_callback
+from catalyst.dl.utils import process_callbacks
 from catalyst.dl.utils.torch import _Criterion, _Model, _Optimizer, _Scheduler
 
 
@@ -38,7 +38,7 @@ class BaseExperiment(Experiment):
     ):
         self._model = model
         self._loaders = loaders
-        self._callbacks = process_callback(callbacks)
+        self._callbacks = process_callbacks(callbacks)
 
         self._criterion = criterion
         self._optimizer = optimizer

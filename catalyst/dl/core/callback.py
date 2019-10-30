@@ -17,7 +17,7 @@ class CallbackOrder(IntFlag):
     Optimizer = 40
     Scheduler = 60
     Metric = 80
-    Logger = 100
+    External = 100
     Other = 200
 
 
@@ -144,6 +144,17 @@ class MultiMetricCallback(Callback):
         state.metrics.add_batch_value(metrics_dict=batch_metrics)
 
 
+class LoggerCallback(Callback):
+    """
+    Loggers are executed on ``start`` before all callbacks,
+    and on ``end`` after all callbacks.
+    """
+    def __init__(self, order: int = None):
+        if order is None:
+            order = CallbackOrder.Internal
+        super().__init__(order=order)
+
+
 class MeterMetricsCallback(Callback):
     """
     A callback that tracks metrics through meters and prints metrics for
@@ -232,5 +243,6 @@ __all__ = [
     "Callback",
     "MetricCallback",
     "MultiMetricCallback",
+    "LoggerCallback",
     "MeterMetricsCallback",
 ]
