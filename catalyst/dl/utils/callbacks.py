@@ -2,14 +2,13 @@ from collections import OrderedDict
 from typing import Union
 
 
-def process_callback(
+def process_callbacks(
     callbacks: Union[list, OrderedDict]
 ) -> OrderedDict:
     """
     Creates an sequence of callbacks and sort them
     Args:
         callbacks: either list of callbacks or ordered dict
-
     Returns:
         sequence of callbacks sorted by ``callback order``
     """
@@ -34,4 +33,6 @@ def process_callback(
     return result
 
 
-__all__ = ["process_callback"]
+__all__ = [
+    "process_callbacks"
+]
