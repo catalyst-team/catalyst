@@ -7,9 +7,9 @@ from .metrics import AccuracyCallback, MapKCallback, \
 from .checkpoint import CheckpointCallback, IterationCheckpointCallback
 from .criterion import CriterionCallback, CriterionAggregatorCallback
 from .inference import InferCallback, InferMaskCallback
-from .logging import VerboseLogger, ConsoleLogger, TensorboardLogger, \
-    RaiseExceptionLogger, TelegramLogger
-from .misc import EarlyStoppingCallback, ConfusionMatrixCallback
+from .logging import VerboseLogger, ConsoleLogger, TensorboardLogger, TelegramLogger
+from .misc import EarlyStoppingCallback, ConfusionMatrixCallback, \
+    RaiseExceptionCallback
 from .optimizer import OptimizerCallback
 from .scheduler import SchedulerCallback, LRUpdater, LRFinder
 from .mixup import MixupCallback

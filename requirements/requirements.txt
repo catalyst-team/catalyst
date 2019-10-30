@@ -5,7 +5,7 @@ torchvision>=0.2.1
 imageio
 opencv-python
 scikit-image>=0.14.2
-tqdm>=4.29.1
+tqdm>=4.33.0
 PyYAML
 tensorboard
 tensorboardX
