@@ -1,7 +1,9 @@
-from typing import List, Dict
+from typing import List, Dict, Optional
 import os
 import sys
 import logging
+from urllib.request import Request, urlopen
+from urllib.parse import quote_plus
 from tqdm import tqdm
 
 from catalyst.dl.core import LoggerCallback, RunnerState
