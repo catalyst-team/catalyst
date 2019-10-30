@@ -54,7 +54,7 @@ def build_args(parser):
     parser.add_argument(
         "--max-size",
         default=None,
-        required=True,
+        required=False,
         type=int,
         help="Output images size. E.g. 224, 448")
 
