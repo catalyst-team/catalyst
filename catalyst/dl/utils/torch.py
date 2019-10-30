@@ -1,4 +1,4 @@
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Union
 import copy
 
 import torch
@@ -20,13 +20,13 @@ def process_components(
     criterion: _Criterion = None,
     optimizer: _Optimizer = None,
     scheduler: _Scheduler = None,
-    distributed_params: Dict = None
+    distributed_params: Dict = None,
+    device: Union[str, torch.device] = None,
 ) -> Tuple[_Model, _Criterion, _Optimizer, _Scheduler, torch.device]:
     distributed_params = distributed_params or {}
     distributed_params = copy.deepcopy(distributed_params)
-    device = utils.get_device()
-
-    model = maybe_recursive_call(model, "to", device=device)
+    if device is None:
+        device = utils.get_device()
 
     if utils.is_wrapped_with_ddp(model):
         pass
