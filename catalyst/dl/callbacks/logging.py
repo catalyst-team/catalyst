@@ -207,8 +207,103 @@ class TensorboardLogger(LoggerCallback):
             logger.close()
 
 
+class TelegramLogger(LoggerCallback):
+    """
+    Logger callback, translates state.metrics to telegram channel
+    """
+
+    def __init__(
+            self,
+            token: str,
+            chat_id: str,
+            log_on_stage_start: bool = True,
+            log_on_loader_start: bool = True,
+            log_on_loader_end: bool = True,
+            log_on_stage_end: bool = True
+    ):
+        """
+
+        :param token: Telegram bot's token, see https://core.telegram.org/bots
+        :param chat_id: Chat unique identifier:
+            1. Add your bot to a group.
+            2. Send a dummy message like this: /test @your_bot_name_here
+            3. Open this page: https://api.telegram.org/bot<token>/getUpdates,
+               where <token> is yours bot token.
+               example: https://api.telegram.org/bot1234566789/getUpdates,
+               where token = 1234566789.
+            4. You should look for this pattern ..."chat":{"id":<chat_id>...,
+               where <chat_id> - id of your group.
+        :param log_on_stage_start: Send notification on stage start.
+        :param log_on_loader_start: Send notification on loader start.
+        :param log_on_loader_end: Send notification on loader end.
+        :param log_on_stage_end: Send notification on stage end.
+        """
+        super().__init__()
+        self._token = token
+        self._chat_id = chat_id
+        self._base_url = f"https://api.telegram.org/bot{self._token}" \
+                         f"/sendMessage"
+
+        self._log_on_stage_start = log_on_stage_start
+        self._log_on_loader_start = log_on_loader_start
+        self._log_on_loader_end = log_on_loader_end
+        self._log_on_stage_end = log_on_stage_end
+
+        self._metrics_to_log: Optional[List[str]] = None
+
+    def _send_text(self, text: str):
+        try:
+            url = f"{self._base_url}?" \
+                  f"chat_id={self._chat_id}&" \
+                  f"disable_web_page_preview=1&" \
+                  f"text={quote_plus(text, safe='')}"
+
+            request = Request(url)
+            urlopen(request)
+        except Exception as e:
+            print(f"telegram.send.error:{e}")
+
+    def on_stage_start(self, state: RunnerState):
+        if self._log_on_stage_start:
+            text = f"{state.stage} stage was started"
+
+            self._send_text(text)
+
+    def on_loader_start(self, state: RunnerState):
+        if self._log_on_loader_start:
+            text = f"{state.loader_name} {state.epoch} epoch was started"
+
+            self._send_text(text)
+
+    def on_loader_end(self, state: RunnerState):
+        if self._log_on_loader_end:
+            metrics = state.metrics.epoch_values[state.loader_name]
+
+            if self._metrics_to_log is None:
+                self._metrics_to_log = sorted(list(metrics.keys()))
+
+            rows: List[str] = [
+                f"{state.loader_name} {state.epoch} epoch was finished:",
+            ]
+
+            for name in self._metrics_to_log:
+                if name in metrics:
+                    rows.append(f"{name}={metrics[name]}")
+
+            text = "\n".join(rows)
+
+            self._send_text(text)
+
+    def on_stage_end(self, state: RunnerState):
+        if self._log_on_stage_end:
+            text = f"{state.stage} stage was finished"
+
+            self._send_text(text)
+
+
 __all__ = [
     "VerboseLogger",
     "ConsoleLogger",
-    "TensorboardLogger"
+    "TensorboardLogger",
+    "TelegramLogger"
 ]
