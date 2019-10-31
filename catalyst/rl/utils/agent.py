@@ -96,21 +96,21 @@ def process_state_ff(state: torch.Tensor, observation_net: nn.Module):
     x = state
 
     if len(x.shape) == 5:  # image input
-        # @TODO: hotfix, need to check it better
-        # x = x / 255.
+        # @TODO: ATTENTION: image support only, need to check it better
+        x = x / 255.
         batch_size, history_len, c, h, w = x.shape
 
-        # x = x.view(batch_size, -1, h, w)
-        x = x.reshape(batch_size, -1, h, w)
+        x = x.view(batch_size, -1, h, w)
+        # x = x.reshape(batch_size, -1, h, w)
         x = observation_net(x)
     else:  # vector input
         batch_size, history_len, f = x.shape
-        # x = x.view(batch_size, -1)
-        x = x.reshape(batch_size, -1)
+        x = x.view(batch_size, -1)
+        # x = x.reshape(batch_size, -1)
         x = observation_net(x)
 
-    # x = x.view(batch_size, -1)
-    x = x.reshape(batch_size, -1)
+    x = x.view(batch_size, -1)
+    # x = x.reshape(batch_size, -1)
     return x
 
 
@@ -126,8 +126,8 @@ def process_state_temporal(state: torch.Tensor, observation_net: nn.Module):
     x = state
 
     if len(x.shape) == 5:  # image input
-        # @TODO: hotfix, need to check it better
-        # x = x / 255.
+        # @TODO: ATTENTION: image support only, need to check it better
+        x = x / 255.
         batch_size, history_len, c, h, w = x.shape
 
         x = x.view(-1, c, h, w)
