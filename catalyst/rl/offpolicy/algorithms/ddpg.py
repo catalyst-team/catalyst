@@ -49,10 +49,10 @@ class DDPG(OffpolicyActorCritic):
     def _process_components(self, done_t, rewards_t):
         # Array of size [num_heads,]
         gammas = self._gammas ** self._n_step
-        gammas = gammas[None, :, None]  # 1 x num_heads x 1
+        gammas = gammas[None, :, None]  # [1; num_heads; 1]
         # We use the same done_t, rewards_t, actions_t for each head
-        done_t = done_t[:, None, :]  # B x 1 x 1
-        rewards_t = rewards_t[:, None, :]  # B x 1 x 1
+        done_t = done_t[:, None, :]  # [bs; 1; 1]
+        rewards_t = rewards_t[:, None, :]  # [bs; 1; 1]
 
         return gammas, done_t, rewards_t
 
@@ -64,14 +64,22 @@ class DDPG(OffpolicyActorCritic):
         policy_loss = -torch.mean(self.critic(states_t, self.actor(states_t)))
 
         # critic loss
-        # B x num_heads x 1
-        q_values_t = self.critic(states_t, actions_t).squeeze_(dim=2)
-        # B x num_heads x 1
+        # [bs; num_heads; 1] -> many-heads view transform
+        # [{bs * num_heads}; 1]
+        q_values_t = (
+            self.critic(states_t, actions_t).squeeze_(dim=2).view(-1, 1)
+        )
+        # [bs; num_heads; 1]
         q_values_tp1 = self.target_critic(
             states_tp1, self.target_actor(states_tp1)
-        ).squeeze_(dim=2).detach()
+        ).squeeze_(dim=2)
 
-        q_target_t = rewards_t + (1 - done_t) * gammas * q_values_tp1
+        # [bs; num_heads; 1] -> many-heads view transform
+        # [{bs * num_heads}; 1]
+        q_target_t = (
+            rewards_t + (1 - done_t) * gammas * q_values_tp1
+        ).view(-1, 1).detach()
+
         value_loss = self.critic_criterion(q_values_t, q_target_t).mean()
 
         return policy_loss, value_loss
@@ -83,25 +91,48 @@ class DDPG(OffpolicyActorCritic):
 
         # actor loss
         # For now we have the same actor for all heads of the critic
-        logits_tp0 = self.critic(states_t, self.actor(states_t))
+        # [bs; num_heads; num_atoms] -> many-heads view transform
+        # [{bs * num_heads}; num_atoms]
+        logits_tp0 = (
+            self.critic(states_t, self.actor(states_t)).squeeze_(dim=2)
+            .view(-1, self.num_atoms)
+        )
+        # [{bs * num_heads}; num_atoms]
         probs_tp0 = torch.softmax(logits_tp0, dim=-1)
+        # [{bs * num_heads}; 1]
         q_values_tp0 = torch.sum(probs_tp0 * self.z, dim=-1)
         policy_loss = -torch.mean(q_values_tp0)
 
         # critic loss (kl-divergence between categorical distributions)
-        # B x num_heads x num_atoms
-        logits_t = self.critic(states_t, actions_t).squeeze_(dim=2)
-        # B x num_heads x num_atoms
-        logits_tp1 = self.target_critic(
-            states_tp1, self.target_actor(states_tp1)
-        ).squeeze_(dim=2).detach()
+        # [bs; num_heads; num_atoms] -> many-heads view transform
+        # [{bs * num_heads}; num_atoms]
+        logits_t = (
+            self.critic(states_t, actions_t).squeeze_(dim=2)
+            .view(-1, self.num_atoms)
+        )
 
-        # B x num_heads x num_atoms
-        atoms_target_t = rewards_t + (1 - done_t) * gammas * self.z
+        # [bs; action_size]
+        actions_tp1 = self.target_actor(states_tp1)
+        # [bs; num_heads; num_atoms] -> many-heads view transform
+        # [{bs * num_heads}; num_atoms]
+        logits_tp1 = (
+            self.target_critic(states_tp1, actions_tp1).squeeze_(dim=2)
+            .view(-1, self.num_atoms)
+        ).detach()
+
+        # [bs; num_heads; num_atoms] -> many-heads view transform
+        # [{bs * num_heads}; num_atoms]
+        atoms_target_t = (
+            rewards_t + (1 - done_t) * gammas * self.z
+        ).view(-1, self.num_atoms)
+
         value_loss = utils.categorical_loss(
-            logits_t.view(-1, self.num_atoms),
-            logits_tp1.view(-1, self.num_atoms),
-            atoms_target_t.view(-1, self.num_atoms),
+            # [{bs * num_heads}; num_atoms]
+            logits_t,
+            # [{bs * num_heads}; num_atoms]
+            logits_tp1,
+            # [{bs * num_heads}; num_atoms]
+            atoms_target_t,
             self.z, self.delta_z,
             self.v_min, self.v_max
         )
@@ -117,16 +148,19 @@ class DDPG(OffpolicyActorCritic):
         policy_loss = -torch.mean(self.critic(states_t, self.actor(states_t)))
 
         # critic loss (quantile regression)
-        # B x num_heads x num_atoms
+        # [bs; num_heads; num_atoms]
         atoms_t = self.critic(states_t, actions_t).squeeze_(dim=2)
-        # B x num_heads x num_atoms
+        # [bs; num_heads; num_atoms]
         atoms_tp1 = self.target_critic(
             states_tp1, self.target_actor(states_tp1)
         ).squeeze_(dim=2).detach()
 
+        # [bs; num_heads; num_atoms]
         atoms_target_t = rewards_t + (1 - done_t) * gammas * atoms_tp1
         value_loss = utils.quantile_loss(
+            # [{bs * num_heads}; num_atoms]
             atoms_t.view(-1, self.num_atoms),
+            # [{bs * num_heads}; num_atoms]
             atoms_target_t.view(-1, self.num_atoms),
             self.tau,
             self.num_atoms,
@@ -148,7 +182,9 @@ class DDPG(OffpolicyActorCritic):
         if critic_update:
             critic_update_metrics = self.critic_update(value_loss) or {}
 
-        loss = value_loss + policy_loss
+        loss = 0
+        loss += value_loss
+        loss += policy_loss
         metrics = {
             "loss": loss.item(),
             "loss_critic": value_loss.item(),

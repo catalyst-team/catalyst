@@ -60,7 +60,7 @@ def _get_observation_net_out_features(
 def get_observation_net(state_shape, **observation_net_params):
     if len(observation_net_params) == 0:
         # no observation net required
-        observation_net = None
+        observation_net = nn.Sequential()
         observation_net_out_features = 0
         if isinstance(state_shape, dict):
             for value in state_shape.values():
@@ -69,6 +69,14 @@ def get_observation_net(state_shape, **observation_net_params):
         else:
             observation_net_out_features = reduce(
                 lambda x, y: x * y, state_shape)
+    elif len(observation_net_params) == 2:
+        # _network_type and history_len
+        network_type = observation_net_params["_network_type"]
+        assert network_type == "linear"
+        history_len = observation_net_params["history_len"]
+        observation_net = nn.Sequential()
+        observation_net_out_features = reduce(
+            lambda x, y: x * y, state_shape[1:]) * history_len
     else:
         observation_net: nn.Module = \
             _get_observation_net(
@@ -88,17 +96,21 @@ def process_state_ff(state: torch.Tensor, observation_net: nn.Module):
     x = state
 
     if len(x.shape) == 5:  # image input
+        # @TODO: ATTENTION: image support only, need to check it better
         x = x / 255.
         batch_size, history_len, c, h, w = x.shape
 
         x = x.view(batch_size, -1, h, w)
+        # x = x.reshape(batch_size, -1, h, w)
         x = observation_net(x)
     else:  # vector input
         batch_size, history_len, f = x.shape
         x = x.view(batch_size, -1)
+        # x = x.reshape(batch_size, -1)
         x = observation_net(x)
 
     x = x.view(batch_size, -1)
+    # x = x.reshape(batch_size, -1)
     return x
 
 
@@ -114,6 +126,7 @@ def process_state_temporal(state: torch.Tensor, observation_net: nn.Module):
     x = state
 
     if len(x.shape) == 5:  # image input
+        # @TODO: ATTENTION: image support only, need to check it better
         x = x / 255.
         batch_size, history_len, c, h, w = x.shape
 

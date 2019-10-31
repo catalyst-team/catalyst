@@ -1,5 +1,7 @@
 from typing import Dict  # isort:skip
-from gym.spaces import Box, Discrete
+import copy
+
+from gym import spaces
 import torch
 
 from catalyst.rl.core import ActorSpec, EnvironmentSpec
@@ -37,19 +39,30 @@ class Actor(ActorSpec):
         policy_head_params: Dict,
         env_spec: EnvironmentSpec,
     ):
+        state_net_params = copy.deepcopy(state_net_params)
+        policy_head_params = copy.deepcopy(policy_head_params)
+
         # @TODO: any better solution?
         action_space = env_spec.action_space
-        if isinstance(action_space, Box):
+        if isinstance(action_space, spaces.Box):
             # continuous control
             policy_head_params["out_features"] = action_space.shape[0]
-        elif isinstance(action_space, Discrete):
+        elif isinstance(action_space, spaces.Discrete):
             # discrete control
             policy_head_params["out_features"] = action_space.n
         else:
             raise NotImplementedError()
 
         # @TODO: any better solution?
-        state_net_params["state_shape"] = env_spec.state_space.shape
+
+        if isinstance(env_spec.state_space, spaces.Dict):
+            state_net_params["state_shape"] = {
+                k: v.shape
+                for k, v in env_spec.state_space.spaces.items()
+            }
+        else:
+            state_net_params["state_shape"] = env_spec.state_space.shape
+
         state_net = StateNet.get_from_params(**state_net_params)
         head_net = PolicyHead(**policy_head_params)
 

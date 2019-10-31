@@ -14,17 +14,18 @@ from .policy import (
 class ValueHead(nn.Module):
     @staticmethod
     def _build_head(in_features, out_features, num_atoms, bias):
-        return nn.Linear(
+        head = nn.Linear(
             in_features=in_features,
             out_features=out_features * num_atoms,
             bias=bias
         )
+        return head
 
     def __init__(
         self,
         in_features: int,
         out_features: int,
-        bias: bool = False,
+        bias: bool = True,
         num_atoms: int = 1,
         use_state_value_head: bool = False,
         distribution: str = None,
