@@ -1,5 +1,6 @@
 from typing import Dict, Tuple
-from gym.spaces import Discrete
+import copy
+from gym import spaces
 
 from catalyst.rl.core import CriticSpec, EnvironmentSpec
 from .network import StateNet, StateActionNet
@@ -52,6 +53,9 @@ class StateCritic(CriticSpec):
         value_head_params: Dict,
         env_spec: EnvironmentSpec,
     ):
+        state_net_params = copy.deepcopy(state_net_params)
+        value_head_params = copy.deepcopy(value_head_params)
+
         # @TODO: any better solution?
         state_net_params["state_shape"] = env_spec.state_space.shape
         state_net = StateNet.get_from_params(**state_net_params)
@@ -74,9 +78,12 @@ class ActionCritic(StateCritic):
         value_head_params: Dict,
         env_spec: EnvironmentSpec,
     ):
+        state_net_params = copy.deepcopy(state_net_params)
+        value_head_params = copy.deepcopy(value_head_params)
+
         # @TODO: any better solution?
         action_space = env_spec.action_space
-        assert isinstance(action_space, Discrete)
+        assert isinstance(action_space, spaces.Discrete)
         value_head_params["out_features"] = action_space.n
         net = super().get_from_params(
             state_net_params=state_net_params,
@@ -132,9 +139,17 @@ class StateActionCritic(CriticSpec):
         value_head_params: Dict,
         env_spec: EnvironmentSpec,
     ):
+        state_action_net_params = copy.deepcopy(state_action_net_params)
+        value_head_params = copy.deepcopy(value_head_params)
+
         # @TODO: any better solution?
-        state_action_net_params["state_shape"] = \
-            env_spec.state_space.shape
+        if isinstance(env_spec.state_space, spaces.Dict):
+            state_action_net_params["state_shape"] = {
+                k: v.shape
+                for k, v in env_spec.state_space.spaces.items()
+            }
+        else:
+            state_action_net_params["state_shape"] = env_spec.state_space.shape
         state_action_net_params["action_shape"] = \
             env_spec.action_space.shape
         state_action_net = StateActionNet.get_from_params(

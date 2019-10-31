@@ -52,6 +52,7 @@ def get_trainer_components(
 
     # optimizer
     agent_params = utils.get_optimizable_params(agent.parameters())
+
     optimizer_params = _copy_params(optimizer_params)
     optimizer = OPTIMIZERS.get_from_params(
         **optimizer_params, params=agent_params
