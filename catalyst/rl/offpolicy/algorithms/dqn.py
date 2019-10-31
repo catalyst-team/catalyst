@@ -52,10 +52,10 @@ class DQN(OffpolicyCritic):
     def _process_components(self, done_t, rewards_t):
         # Array of size [num_heads,]
         gammas = self._gammas ** self._n_step
-        gammas = gammas[None, :, None]  # 1 x num_heads x 1
+        gammas = gammas[None, :, None]  # [1; num_heads; 1]
         # We use the same done_t, rewards_t, actions_t for each head
-        done_t = done_t[:, None, :]  # B x 1 x 1
-        rewards_t = rewards_t[:, None, :]  # B x 1 x 1
+        done_t = done_t[:, None, :]  # [bs; 1; 1]
+        rewards_t = rewards_t[:, None, :]  # [bs; 1; 1]
 
         return gammas, done_t, rewards_t
 
@@ -67,17 +67,31 @@ class DQN(OffpolicyCritic):
     def _base_loss(self, states_t, actions_t, rewards_t, states_tp1, done_t):
         gammas, done_t, rewards_t = self._process_components(done_t, rewards_t)
 
-        # B x num_heads x 1
+        # [bs; 1] ->
+        # [bs; num_heads; 1]
         actions_t = actions_t.unsqueeze(1).repeat(1, self._num_heads, 1)
-        # B x num_heads x num_actions
+
+        # [bs; num_heads; num_actions, 1] ->
+        # [bs; num_heads; num_actions]
         q_values_t = self.critic(states_t).squeeze(-1)
-        # B x num_heads x 1
-        action_q_values_t = q_values_t.gather(-1, actions_t)
-        # B x num_heads x 1
+
+        # [bs; num_heads; num_actions] -> gathering selected actions
+        # [bs; num_heads; 1] -> many-heads view transform
+        # [{bs * num_heads}; 1]
+        action_q_values_t = q_values_t.gather(-1, actions_t).view(-1, 1)
+
+        # [bs; num_heads; num_actions, 1] ->
+        # [bs; num_heads; num_actions] -> max
+        # [bs; num_heads; 1]
         q_values_tp1 = \
             self.target_critic(states_tp1).squeeze(-1).max(-1, keepdim=True)[0]
 
-        q_target_t = rewards_t + (1 - done_t) * gammas * q_values_tp1.detach()
+        # [bs; num_heads; 1] -> many-heads view transform
+        # [{bs * num_heads}; 1]
+        q_target_t = (
+            rewards_t + (1 - done_t) * gammas * q_values_tp1
+        ).view(-1, 1).detach()
+
         value_loss = \
             self.critic_criterion(action_q_values_t, q_target_t).mean()
 
@@ -92,32 +106,59 @@ class DQN(OffpolicyCritic):
     ):
         gammas, done_t, rewards_t = self._process_components(done_t, rewards_t)
 
-        actions_t = actions_t[:, None, None, :]  # B x 1 x 1 x 1
-        # B x num_heads x 1 x num_atoms
+        # [bs; 1] ->
+        # [bs; 1; 1; 1;]
+        actions_t = actions_t[:, None, None, :]
+
+        # [bs; num_heads; 1; num_atoms]
         indices_t = actions_t.repeat(1, self._num_heads, 1, self.num_atoms)
-        # B x num_heads x num_actions x num_atoms
+        # [bs; num_heads; num_actions; num_atoms]
         q_logits_t = self.critic(states_t)
-        # B x num_heads x num_atoms
-        logits_t = q_logits_t.gather(-2, indices_t).squeeze(-2)
-
-        # B x num_heads x num_actions x num_atoms
-        q_logits_tp1 = self.target_critic(states_tp1).detach()
-        q_values_tp1 = torch.sum(
-            torch.softmax(q_logits_tp1, dim=-1) * self.z, dim=-1
+        # [bs; num_heads; 1; num_atoms] -> gathering selected actions
+        # [bs; num_heads; num_atoms] -> many-heads view transform
+        # [{bs * num_heads}; num_atoms]
+        logits_t = (
+            q_logits_t.gather(-2, indices_t).squeeze(-2)
+            .view(-1, self.num_atoms)
         )
-        # B x num_heads x 1
-        actions_tp1 = torch.argmax(q_values_tp1, dim=-1, keepdim=True)
-        # B x num_heads x 1 x num_atoms
-        indices_tp1 = \
-            actions_tp1.unsqueeze(-1).repeat(1, 1, 1, self.num_atoms)
-        # B x num_heads x num_atoms
-        logits_tp1 = q_logits_tp1.gather(-2, indices_tp1).squeeze(-2)
 
-        atoms_target_t = rewards_t + (1 - done_t) * gammas * self.z
+        # [bs; num_heads; num_actions; num_atoms]
+        q_logits_tp1 = self.target_critic(states_tp1).detach()
+
+        # [bs; num_heads; num_actions; num_atoms] -> categorical value
+        # [bs; num_heads; num_actions] -> gathering best actions
+        # [bs; num_heads; 1]
+        actions_tp1 = (
+            (torch.softmax(q_logits_tp1, dim=-1) * self.z)
+            .sum(dim=-1)
+            .argmax(dim=-1, keepdim=True)
+        )
+        # [bs; num_heads; 1] ->
+        # [bs; num_heads; 1; 1] ->
+        # [bs; num_heads; 1; num_atoms]
+        indices_tp1 = actions_tp1.unsqueeze(-1).repeat(1, 1, 1, self.num_atoms)
+        # [bs; num_heads; 1; num_atoms] -> gathering best actions
+        # [bs; num_heads; num_atoms] -> many-heads view transform
+        # [{bs * num_heads}; num_atoms]
+        logits_tp1 = (
+            q_logits_tp1.gather(-2, indices_tp1).squeeze(-2)
+            .view(-1, self.num_atoms)
+        ).detach()
+
+        # [bs; num_heads; num_atoms] -> many-heads view transform
+        # [{bs * num_heads}; num_atoms]
+        atoms_target_t = (
+            rewards_t + (1 - done_t) * gammas * self.z
+        ).view(-1, self.num_atoms).detach()
+
         value_loss = utils.categorical_loss(
-            logits_t.view(-1, self.num_atoms),
-            logits_tp1.view(-1, self.num_atoms),
-            atoms_target_t.view(-1, self.num_atoms), self.z, self.delta_z,
+            # [{bs * num_heads}; num_atoms]
+            logits_t,
+            # [{bs * num_heads}; num_atoms]
+            logits_tp1,
+            # [{bs * num_heads}; num_atoms]
+            atoms_target_t,
+            self.z, self.delta_z,
             self.v_min, self.v_max
         )
 
@@ -135,29 +176,52 @@ class DQN(OffpolicyCritic):
     ):
         gammas, done_t, rewards_t = self._process_components(done_t, rewards_t)
 
-        actions_t = actions_t[:, None, None, :]  # B x 1 x 1 x 1
-        # B x num_heads x 1 x num_atoms
-        indices_t = actions_t.repeat(1, self._num_heads, 1, self.num_atoms)
-        # B x num_heads x num_actions x num_atoms
-        q_atoms_t = self.critic(states_t)
-        # B x num_heads x num_atoms
-        atoms_t = q_atoms_t.gather(-2, indices_t).squeeze(-2)
+        # [bs; 1] ->
+        # [bs; 1; 1; 1;]
+        actions_t = actions_t[:, None, None, :]
 
-        # B x num_heads x num_actions x num_atoms
-        q_atoms_tp1 = self.target_critic(states_tp1).detach()
-        # B x num_heads x num_actions
-        q_values_tp1 = q_atoms_tp1.mean(dim=-1)
-        # B x num_heads x 1
-        actions_tp1 = torch.argmax(q_values_tp1, dim=-1, keepdim=True)
-        # B x num_heads x 1 x num_atoms
+        # [bs; num_heads; 1; num_atoms]
+        indices_t = actions_t.repeat(1, self._num_heads, 1, self.num_atoms)
+        # [bs; num_heads; num_actions; num_atoms]
+        q_atoms_t = self.critic(states_t)
+        # [bs; num_heads; 1; num_atoms] -> gathering selected actions
+        # [bs; num_heads; num_atoms] -> many-heads view transform
+        # [{bs * num_heads}; num_atoms]
+        atoms_t = (
+            q_atoms_t.gather(-2, indices_t).squeeze(-2)
+            .view(-1, self.num_atoms)
+        )
+
+        # [bs; num_heads; num_actions; num_atoms]
+        q_atoms_tp1 = self.target_critic(states_tp1)
+
+        # [bs; num_heads; num_actions; num_atoms] -> quantile value
+        # [bs; num_heads; num_actions] -> gathering best actions
+        # [bs; num_heads; 1]
+        actions_tp1 = (
+            q_atoms_tp1
+            .mean(dim=-1)
+            .argmax(dim=-1, keepdim=True)
+        )
+        # [bs; num_heads; 1] ->
+        # [bs; num_heads; 1; 1] ->
+        # [bs; num_heads; 1; num_atoms]
         indices_tp1 = actions_tp1.unsqueeze(-1).repeat(1, 1, 1, self.num_atoms)
-        # B x num_heads x num_atoms
+        # [bs; num_heads; 1; num_atoms] -> gathering best actions
+        # [bs; num_heads; num_atoms]
         atoms_tp1 = q_atoms_tp1.gather(-2, indices_tp1).squeeze(-2)
 
-        atoms_target_t = rewards_t + (1 - done_t) * gammas * atoms_tp1
+        # [bs; num_heads; num_atoms] -> many-heads view transform
+        # [{bs * num_heads}; num_atoms]
+        atoms_target_t = (
+            rewards_t + (1 - done_t) * gammas * atoms_tp1
+        ).view(-1, self.num_atoms).detach()
+
         value_loss = utils.quantile_loss(
-            atoms_t.view(-1, self.num_atoms),
-            atoms_target_t.view(-1, self.num_atoms),
+            # [{bs * num_heads}; num_atoms]
+            atoms_t,
+            # [{bs * num_heads}; num_atoms]
+            atoms_target_t,
             self.tau, self.num_atoms,
             self.critic_criterion
         )

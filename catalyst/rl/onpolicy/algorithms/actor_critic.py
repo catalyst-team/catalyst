@@ -1,4 +1,5 @@
 from typing import Union, Dict
+from copy import deepcopy
 
 from catalyst.rl import utils
 from catalyst.rl.registry import AGENTS
@@ -28,6 +29,53 @@ class OnpolicyActorCritic(AlgorithmSpec):
         self.actor = actor.to(self._device)
         self.critic = critic.to(self._device)
 
+        self._actor_loss_params = deepcopy(actor_loss_params)
+        self._critic_loss_params = deepcopy(critic_loss_params)
+        self._actor_optimizer_params = deepcopy(actor_optimizer_params)
+        self._critic_optimizer_params = deepcopy(critic_optimizer_params)
+        self._actor_scheduler_params = deepcopy(actor_scheduler_params)
+        self._critic_scheduler_params = deepcopy(critic_scheduler_params)
+        self._actor_grad_clip_params = deepcopy(actor_grad_clip_params)
+        self._critic_grad_clip_params = deepcopy(critic_grad_clip_params)
+
+        self._process_agents(
+            actor_loss_params=actor_loss_params,
+            critic_loss_params=critic_loss_params,
+            actor_optimizer_params=actor_optimizer_params,
+            critic_optimizer_params=critic_optimizer_params,
+            actor_scheduler_params=actor_scheduler_params,
+            critic_scheduler_params=critic_scheduler_params,
+            actor_grad_clip_params=actor_grad_clip_params,
+            critic_grad_clip_params=critic_grad_clip_params,
+        )
+
+        # other hyperparameters
+        assert n_step == 1, "For now, on-policy setup works only with n-step=1"
+        self._n_step = n_step
+        self._gamma = gamma
+
+        # other init
+        self._init(**kwargs)
+
+    @property
+    def n_step(self) -> int:
+        return self._n_step
+
+    @property
+    def gamma(self) -> float:
+        return self._gamma
+
+    def _process_agents(
+        self,
+        actor_loss_params: Dict = None,
+        critic_loss_params: Dict = None,
+        actor_optimizer_params: Dict = None,
+        critic_optimizer_params: Dict = None,
+        actor_scheduler_params: Dict = None,
+        critic_scheduler_params: Dict = None,
+        actor_grad_clip_params: Dict = None,
+        critic_grad_clip_params: Dict = None,
+    ):
         # actor preparation
         actor_components = utils.get_trainer_components(
             agent=self.actor,
@@ -70,22 +118,6 @@ class OnpolicyActorCritic(AlgorithmSpec):
         self._critic_grad_clip_params = critic_components["grad_clip_params"]
         self.critic_grad_clip_fn = critic_components["grad_clip_fn"]
 
-        # other hyperparameters
-        assert n_step == 1, "For now, on-policy setup works only with n-step=1"
-        self._n_step = n_step
-        self._gamma = gamma
-
-        # other init
-        self._init(**kwargs)
-
-    @property
-    def n_step(self) -> int:
-        return self._n_step
-
-    @property
-    def gamma(self) -> float:
-        return self._gamma
-
     def pack_checkpoint(self, with_optimizer: bool = True):
         checkpoint = {}
 
@@ -108,12 +140,24 @@ class OnpolicyActorCritic(AlgorithmSpec):
                 value_l.load_state_dict(value_r)
 
             if with_optimizer:
-                for key2 in ["optimizer", "scheduler"]:
-                    key2 = f"{key}_{key2}"
-                    value_l = getattr(self, key2, None)
-                    if value_l is not None:
-                        value_r = checkpoint[f"{key2}_state_dict"]
-                        value_l.load_state_dict(value_r)
+                raise NotImplementedError()
+                # for key2 in ["optimizer", "scheduler"]:
+                #     key2 = f"{key}_{key2}"
+                #     value_l = getattr(self, key2, None)
+                #     if value_l is not None:
+                #         value_r = checkpoint[f"{key2}_state_dict"]
+                #         value_l.load_state_dict(value_r)
+
+        self._process_agents(
+            actor_loss_params=self._actor_loss_params,
+            critic_loss_params=self._critic_loss_params,
+            actor_optimizer_params=self._actor_optimizer_params,
+            critic_optimizer_params=self._critic_optimizer_params,
+            actor_scheduler_params=self._actor_scheduler_params,
+            critic_scheduler_params=self._critic_scheduler_params,
+            actor_grad_clip_params=self._actor_grad_clip_params,
+            critic_grad_clip_params=self._critic_grad_clip_params,
+        )
 
     def actor_update(self, loss):
         self.actor.zero_grad()
