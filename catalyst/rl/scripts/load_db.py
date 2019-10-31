@@ -6,6 +6,8 @@ import argparse
 import pickle
 from tqdm import tqdm
 
+import numpy as np
+
 from catalyst import utils
 from catalyst.rl.db import RedisDB, MongoDB
 
@@ -19,10 +21,18 @@ def build_args(parser):
         nargs="+",
         metavar="PKL_PATH",
         dest="in_pkl",
-        required=True)
+        required=True
+    )
     parser.add_argument(
         "--db", type=str, choices=["redis", "mongo"],
-        default=None, required=True)
+        default=None, required=True
+    )
+    parser.add_argument("--min-reward", type=int, default=None)
+    utils.boolean_flag(
+        parser, "use-sqil",
+        default=False,
+        help="Use SQIL – 0 reward"
+    )
 
     return parser
 
@@ -44,6 +54,15 @@ def main(args, _=None):
 
         for trajectory in tqdm(trajectories):
             trajectory = utils.unpack_if_needed(trajectory)
+
+            if args.min_reward is not None \
+                    and sum(trajectory[-2]) < args.min_reward:
+                continue
+
+            if args.use_sqil:
+                observation, action, reward, done = trajectory
+                trajectory = observation, action, np.zeros_like(reward), done
+
             db.put_trajectory(trajectory)
 
 

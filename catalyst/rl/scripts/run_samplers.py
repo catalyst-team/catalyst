@@ -213,6 +213,7 @@ def main(args, unknown_args):
             id=sampler_id
         )
         run_sampler(**params, **params_)
+        return
 
     for i in range(args.vis):
         params_ = dict(
