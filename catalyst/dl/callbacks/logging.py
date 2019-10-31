@@ -224,20 +224,13 @@ class TelegramLogger(LoggerCallback):
             log_on_stage_end: bool = True
     ):
         """
-        :param token: Telegram bot's token, see https://core.telegram.org/bots
-        :param chat_id: Chat unique identifier:
-            1. Add your bot to a group.
-            2. Send a dummy message like this: /test @your_bot_name_here
-            3. Open this page: https://api.telegram.org/bot<token>/getUpdates,
-               where <token> is yours bot token.
-               example: https://api.telegram.org/bot1234566789/getUpdates,
-               where token = 1234566789.
-            4. You should look for this pattern ..."chat":{"id":<chat_id>...,
-               where <chat_id> - id of your group.
-        :param log_on_stage_start: Send notification on stage start.
-        :param log_on_loader_start: Send notification on loader start.
-        :param log_on_loader_end: Send notification on loader end.
-        :param log_on_stage_end: Send notification on stage end.
+        Args:
+            token: Telegram bot's token, see https://core.telegram.org/bots
+            chat_id: Chat unique identifier
+            log_on_stage_start: Send notification on stage start
+            log_on_loader_start: Send notification on loader start
+            log_on_loader_end: Send notification on loader end
+            log_on_stage_end: Send notification on stage end
         """
         super().__init__()
         self._token = token
