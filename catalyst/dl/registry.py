@@ -1,6 +1,6 @@
 from catalyst.contrib.registry import (
-    MODULES, CRITERIONS, OPTIMIZERS, SCHEDULERS, GRAD_CLIPPERS, MODELS,
-    Optimizer, Scheduler, Criterion, Model, Module
+    Criterion, CRITERIONS, GRAD_CLIPPERS, Model, MODELS, Module, MODULES,
+    Optimizer, OPTIMIZERS, Scheduler, SCHEDULERS
 )
 from ..utils.registry import Registry
 

@@ -1,6 +1,7 @@
-import time
-from IPython.display import display, Javascript
 import hashlib
+import time
+
+from IPython.display import display, Javascript
 
 
 def save_notebook(filepath: str, wait_period: float = 0.1, max_wait_time=1.0):

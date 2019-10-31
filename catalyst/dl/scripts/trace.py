@@ -1,14 +1,15 @@
+from typing import Dict  # isort:skip
 import argparse
 from argparse import ArgumentParser
 from pathlib import Path
-from typing import Dict
 
 import safitty
+
 import torch
 
-from catalyst.dl.utils.scripts import import_experiment_and_runner
-from catalyst.dl.core import Experiment
 from catalyst import utils
+from catalyst.dl.core import Experiment
+from catalyst.dl.utils.scripts import import_experiment_and_runner
 from catalyst.dl.utils.trace import trace_model
 
 

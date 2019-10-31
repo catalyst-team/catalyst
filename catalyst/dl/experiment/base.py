@@ -1,12 +1,12 @@
-from typing import Dict, List, Iterable, Mapping, Any, Union
+from typing import Any, Dict, Iterable, List, Mapping, Union  # isort:skip
 from collections import OrderedDict
 
 from torch import nn
 from torch.utils.data import DataLoader
 
-from catalyst.dl.core import Experiment, Callback
-from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
+from catalyst.dl.core import Callback, Experiment
 from catalyst.dl.utils import process_callbacks
+from catalyst.dl.utils.torch import _Criterion, _Model, _Optimizer, _Scheduler
 
 
 class BaseExperiment(Experiment):

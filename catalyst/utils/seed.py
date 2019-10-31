@@ -1,4 +1,5 @@
 import random
+
 import numpy as np
 
 
@@ -9,7 +10,6 @@ def set_global_seed(seed: int) -> None:
     Args:
         seed: random seed
     """
-
     try:
         import torch
     except ImportError:

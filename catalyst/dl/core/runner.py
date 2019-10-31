@@ -1,19 +1,19 @@
-from abc import abstractmethod, ABC
-from typing import Tuple, Mapping, Any, Optional
+from typing import Any, Mapping, Optional, Tuple  # isort:skip
+from abc import ABC, abstractmethod
+from collections import OrderedDict
 import os
 from pathlib import Path
-from collections import OrderedDict
 
 import torch
 from torch import nn
 from torch.utils.data import DistributedSampler
 
+from catalyst.dl import utils
+from catalyst.dl.utils.scripts import dump_base_experiment_code
+from catalyst.dl.utils.torch import _Criterion, _Model, _Optimizer, _Scheduler
 from .callback import Callback, LoggerCallback
 from .experiment import Experiment
 from .state import RunnerState
-from catalyst.dl import utils
-from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
-from catalyst.dl.utils.scripts import dump_base_experiment_code
 
 
 class Runner(ABC):
@@ -48,7 +48,6 @@ class Runner(ABC):
         As baseline, checks device support and puts model on it.
         :return:
         """
-
         utils.set_global_seed(self.experiment.initial_seed)
         model = self.experiment.get_model(stage)
         criterion, optimizer, scheduler = \

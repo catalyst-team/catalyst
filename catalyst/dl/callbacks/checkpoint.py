@@ -1,8 +1,8 @@
-import os
-from typing import Dict
+from typing import Dict  # isort:skip
 from collections import OrderedDict
-
+import os
 from pathlib import Path
+
 import safitty
 
 from catalyst.dl import utils

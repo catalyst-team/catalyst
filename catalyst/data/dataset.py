@@ -1,9 +1,10 @@
-import random
+from typing import Any, Callable, Dict, List, Union  # isort:skip
 from pathlib import Path
-from typing import List, Dict, Callable, Any, Union
+import random
+
+from torch.utils.data import Dataset
 
 from catalyst.utils.misc import merge_dicts
-from torch.utils.data import Dataset
 
 _Path = Union[str, Path]
 

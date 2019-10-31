@@ -1,6 +1,7 @@
 import torch
-from .actor_critic import OffpolicyActorCritic
+
 from catalyst.rl import utils
+from .actor_critic import OffpolicyActorCritic
 
 
 class DDPG(OffpolicyActorCritic):

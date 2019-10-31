@@ -1,8 +1,9 @@
 import numpy as np
+
 import torch
 
-from .actor_critic import OnpolicyActorCritic
 from catalyst.rl import utils
+from .actor_critic import OnpolicyActorCritic
 
 
 class PPO(OnpolicyActorCritic):

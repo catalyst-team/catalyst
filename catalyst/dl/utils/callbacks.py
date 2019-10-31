@@ -1,5 +1,5 @@
+from typing import Union  # isort:skip
 from collections import OrderedDict
-from typing import Union
 
 
 def process_callbacks(

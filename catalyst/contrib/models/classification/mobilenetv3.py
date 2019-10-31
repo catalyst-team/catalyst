@@ -9,8 +9,9 @@ arXiv preprint arXiv:1905.02244.
 source: https://github.com/d-li14/mobilenetv3.pytorch
 """
 
-import torch.nn as nn
 import math
+
+import torch.nn as nn
 
 
 def _make_divisible(v, divisor, min_value=None):

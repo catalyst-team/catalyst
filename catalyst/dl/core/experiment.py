@@ -1,12 +1,12 @@
-from abc import abstractmethod, ABC
-from typing import Iterable, Mapping, Any, Tuple, Dict
+from typing import Any, Dict, Iterable, Mapping, Tuple  # isort:skip
+from abc import ABC, abstractmethod
 from collections import OrderedDict
 
 from torch import nn
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader, Dataset
 
+from catalyst.dl.utils.torch import _Criterion, _Model, _Optimizer, _Scheduler
 from .callback import Callback
-from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
 
 
 class Experiment(ABC):

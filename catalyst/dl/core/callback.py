@@ -1,12 +1,13 @@
-from typing import Callable, List
-from enum import IntFlag
+from typing import Callable, List  # isort:skip
 from collections import defaultdict
+from enum import IntFlag
 
-import torch
 import numpy as np
 
-from .state import RunnerState
+import torch
+
 from catalyst.utils import get_activation_fn
+from .state import RunnerState
 
 
 class CallbackOrder(IntFlag):

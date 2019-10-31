@@ -1,9 +1,11 @@
 import argparse
 import json
+
 import pandas as pd
 
-from catalyst.utils.dataset import create_dataset, create_dataframe, \
-    prepare_dataset_labeling, separate_tags
+from catalyst.utils.dataset import (
+    create_dataframe, create_dataset, prepare_dataset_labeling, separate_tags
+)
 
 
 def prepare_df_from_dirs(in_dirs, tag_column_name):

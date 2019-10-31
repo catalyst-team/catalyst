@@ -1,27 +1,32 @@
 #!/usr/bin/env python
+# isort:skip_file
 
 import os
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
 
-import copy  # noqa E402
-import time  # noqa E402
-import atexit  # noqa E402
 import argparse  # noqa E402
+import atexit  # noqa E402
+import copy  # noqa E402
 import multiprocessing as mp  # noqa E402
+import time  # noqa E402
 
 import torch  # noqa E402
 torch.set_num_threads(1)
 
-from catalyst.rl.core import Sampler, ValidSampler, \
-    ExplorationHandler  # noqa E402
-from catalyst.rl.registry import \
-    OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS, \
-    ENVIRONMENTS, DATABASES  # noqa E402
-from catalyst.rl.scripts.misc import OFFPOLICY_ALGORITHMS_NAMES, \
-    ONPOLICY_ALGORITHMS_NAMES  # noqa E402
+from catalyst.rl.core import (  # noqa E402
+    ExplorationHandler, Sampler, ValidSampler
+)
+from catalyst.rl.registry import (  # noqa E402
+    DATABASES, ENVIRONMENTS, OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS
+)
+from catalyst.rl.scripts.misc import (  # noqa E402
+    OFFPOLICY_ALGORITHMS_NAMES, ONPOLICY_ALGORITHMS_NAMES
+)
+from catalyst.utils import (  # noqa E402
+    boolean_flag, prepare_cudnn, set_global_seed
+)
 from catalyst.utils.config import parse_args_uargs  # noqa E402
-from catalyst.utils import set_global_seed, boolean_flag, prepare_cudnn  # noqa E402
 from catalyst.utils.scripts import import_module  # noqa E402
 
 

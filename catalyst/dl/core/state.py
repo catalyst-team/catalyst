@@ -1,5 +1,5 @@
-from typing import Dict, Optional
-from collections import OrderedDict, defaultdict
+from typing import Dict, Optional  # isort:skip
+from collections import defaultdict, OrderedDict
 from pathlib import Path
 
 from torch.optim.optimizer import Optimizer

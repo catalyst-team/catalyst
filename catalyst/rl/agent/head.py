@@ -1,12 +1,14 @@
-from typing import List
+from typing import List  # isort:skip
 
 import torch
 import torch.nn as nn
 
-from catalyst.utils import outer_init
 from catalyst.contrib.models import SequentialNet
-from .policy import CategoricalPolicy, BernoulliPolicy, DiagonalGaussPolicy, \
-    SquashingGaussPolicy, RealNVPPolicy
+from catalyst.utils import outer_init
+from .policy import (
+    BernoulliPolicy, CategoricalPolicy, DiagonalGaussPolicy, RealNVPPolicy,
+    SquashingGaussPolicy
+)
 
 
 class ValueHead(nn.Module):

@@ -4,10 +4,11 @@
 
 import argparse
 import pickle
+
 from tqdm import tqdm
 
 from catalyst import utils
-from catalyst.rl.db import RedisDB, MongoDB
+from catalyst.rl.db import MongoDB, RedisDB
 from catalyst.rl.utils import structed2dict_trajectory
 
 

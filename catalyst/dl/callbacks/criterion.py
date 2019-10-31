@@ -1,8 +1,9 @@
+from typing import Any, List, Optional, Union  # isort:skip
 import logging
-from typing import Optional, Any, List, Union
 
 import torch
-from catalyst.dl.core import Callback, RunnerState, CallbackOrder
+
+from catalyst.dl.core import Callback, CallbackOrder, RunnerState
 
 logger = logging.getLogger(__name__)
 

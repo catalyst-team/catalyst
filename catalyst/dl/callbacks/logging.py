@@ -1,12 +1,13 @@
-from typing import List, Dict
+from typing import Dict, List  # isort:skip
+import logging
 import os
 import sys
-import logging
+
 from tqdm import tqdm
 
+from catalyst.dl import utils
 from catalyst.dl.core import LoggerCallback, RunnerState
 from catalyst.dl.utils.formatters import TxtMetricsFormatter
-from catalyst.dl import utils
 from catalyst.utils.tensorboard import SummaryWriter
 
 

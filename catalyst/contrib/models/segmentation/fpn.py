@@ -1,11 +1,11 @@
-from typing import Dict
+from typing import Dict  # isort:skip
 
 from .blocks import EncoderDownsampleBlock
-from .encoder import UnetEncoder, ResnetEncoder
 from .bridge import UnetBridge
+from .core import ResnetUnetSpec, UnetSpec
 from .decoder import FPNDecoder
+from .encoder import ResnetEncoder, UnetEncoder
 from .head import FPNHead
-from .core import UnetSpec, ResnetUnetSpec
 
 
 class FPNUnet(UnetSpec):

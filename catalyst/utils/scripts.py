@@ -1,8 +1,9 @@
+from importlib.util import module_from_spec, spec_from_file_location
 import os
-import sys
-import shutil
 import pathlib
-from importlib.util import spec_from_file_location, module_from_spec
+import shutil
+import sys
+
 from .notebook import save_notebook
 
 

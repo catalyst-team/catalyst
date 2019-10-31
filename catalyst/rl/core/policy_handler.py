@@ -1,11 +1,12 @@
-from typing import Union
+from typing import Union  # isort:skip
 import numpy as np
+
 from gym.spaces import Discrete
 import torch
 
+from catalyst.rl import utils
 from .agent import ActorSpec, CriticSpec
 from .environment import EnvironmentSpec
-from catalyst.rl import utils
 
 
 def _state2device(array: np.ndarray, device):

@@ -1,7 +1,7 @@
-from typing import Dict
+from typing import Dict  # isort:skip
+from collections import OrderedDict
 import os
 import shutil
-from collections import OrderedDict
 
 import torch
 

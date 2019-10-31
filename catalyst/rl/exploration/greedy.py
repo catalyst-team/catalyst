@@ -1,4 +1,5 @@
 import numpy as np
+
 from catalyst.rl.core import ExplorationStrategy
 
 

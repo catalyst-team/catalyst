@@ -1,10 +1,11 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple  # isort:skip
 import copy
+
 from gym import spaces
 
 from catalyst.rl.core import CriticSpec, EnvironmentSpec
-from .network import StateNet, StateActionNet
 from .head import ValueHead
+from .network import StateActionNet, StateNet
 
 
 class StateCritic(CriticSpec):

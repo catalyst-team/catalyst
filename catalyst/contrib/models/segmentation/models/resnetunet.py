@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
 from torchvision import models
 
 
@@ -25,7 +24,6 @@ class ConvRelu(nn.Module):
           num_in: number of input feature maps
           num_out: number of output feature maps
         """
-
         super().__init__()
 
         self.block = nn.Conv2d(
@@ -43,7 +41,6 @@ class ConvRelu(nn.Module):
         Returns:
           The networks output tensor.
         """
-
         return F.relu(self.block(x), inplace=True)
 
 
@@ -58,7 +55,6 @@ class DecoderBlock(nn.Module):
           num_in: number of input feature maps
           num_out: number of output feature maps
         """
-
         super().__init__()
 
         self.block = ConvRelu(num_in, num_out)
@@ -74,7 +70,6 @@ class DecoderBlock(nn.Module):
         Returns:
           The networks output tensor.
         """
-
         return self.block(F.interpolate(x, scale_factor=2, mode="nearest"))
 
 
@@ -95,7 +90,6 @@ class ResNetUnet(nn.Module):
           num_classes: number of classes to predict.
           pretrained: use ImageNet pre-trained backbone feature extractor
         """
-
         super().__init__()
 
         # Todo: make input channels configurable,
