@@ -224,7 +224,6 @@ class TelegramLogger(LoggerCallback):
             log_on_stage_end: bool = True
     ):
         """
-
         :param token: Telegram bot's token, see https://core.telegram.org/bots
         :param chat_id: Chat unique identifier:
             1. Add your bot to a group.
