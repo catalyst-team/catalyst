@@ -50,3 +50,18 @@ class ClassificationDatasetTests(unittest.TestCase):
 		for batch in loader:
 			ans.append(batch['features'].shape[1])
 		self.assertEqual(shapes, ans)
+
+	def test_dataset(self):
+		dataset = ClassificationDataset(texts, classes)
+		data, tg = dataset[0]["features"], dataset[0]["targets"]
+		self.assertEqual(0, tg.item())
+
+	def test_batches(self):
+		dataset = ClassificationDataset(texts, classes)
+		loader = DataLoader(dataset, batch_size=3)
+		shapes = [512, 512, 512]
+
+		ans = []
+		for batch in loader:
+			ans.append(batch['features'].shape[1])
+		self.assertEqual(shapes, ans)
