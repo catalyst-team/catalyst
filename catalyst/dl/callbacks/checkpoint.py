@@ -61,7 +61,7 @@ class BaseCheckpointCallback(Callback):
             suffix = self.get_checkpoint_suffix(checkpoint)
             suffix = f"{suffix}.exception_{exception.__class__.__name__}"
             utils.save_checkpoint(
-                logdir=f"{state.logdir}/checkpoints",
+                logdir=Path(f"{state.logdir}/checkpoints/"),
                 checkpoint=checkpoint,
                 suffix=suffix,
                 is_best=False,
@@ -166,7 +166,7 @@ class CheckpointCallback(BaseCheckpointCallback):
     ):
         suffix = self.get_checkpoint_suffix(checkpoint)
         utils.save_checkpoint(
-            logdir=f"{logdir}/checkpoints",
+            logdir=Path(f"{logdir}/checkpoints/"),
             checkpoint=checkpoint,
             suffix=f"{suffix}_full",
             is_best=is_best,
@@ -182,7 +182,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         }
         filepath = utils.save_checkpoint(
             checkpoint=checkpoint,
-            logdir=f"{logdir}/checkpoints",
+            logdir=Path(f"{logdir}/checkpoints/"),
             suffix=suffix,
             is_best=is_best,
             is_last=True
@@ -303,7 +303,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         batch_values: Dict[str, float]
     ):
         filepath = utils.save_checkpoint(
-            logdir=f"{logdir}/checkpoints",
+            logdir=Path(f"{logdir}/checkpoints/"),
             checkpoint=checkpoint,
             suffix=self.get_checkpoint_suffix(checkpoint),
             is_best=False,
