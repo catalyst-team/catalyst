@@ -1,23 +1,24 @@
-import os
-import logging
 import base64
+import logging
+import os
+
 import numpy as np
 from six import string_types
-from catalyst.utils.serialization import serialize, deserialize
+
+from catalyst.utils.serialization import deserialize, serialize
 
 logger = logging.getLogger(__name__)
 
-if os.environ.get("USE_LZ4", "1") == "1":
-    try:
-        import lz4.frame
-        LZ4_ENABLED = True
-    except ImportError:
+try:
+    import lz4.frame
+    LZ4_ENABLED = True
+except ImportError as ex:
+    if os.environ.get("USE_LZ4", "0") == "1":
         logger.warning(
             "lz4 not available, disabling compression. "
             "To install lz4, run `pip install lz4`."
         )
-        LZ4_ENABLED = False
-else:
+        raise ex
     LZ4_ENABLED = False
 
 

@@ -1,12 +1,12 @@
-from typing import List
+from typing import List  # isort:skip
 import numpy as np
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .core import HeadSpec
 from ..blocks import EncoderUpsampleBlock, SegmentationBlock
+from .core import HeadSpec
 
 
 class FPNHead(HeadSpec):

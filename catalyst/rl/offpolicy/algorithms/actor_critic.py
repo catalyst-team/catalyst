@@ -1,12 +1,13 @@
-from typing import Union, Dict
+from typing import Dict, Union  # isort:skip
 import copy
+
 from gym.spaces import Box
 
 from catalyst.rl import utils
+from catalyst.rl.core import (
+    ActorSpec, AlgorithmSpec, CriticSpec, EnvironmentSpec
+)
 from catalyst.rl.registry import AGENTS
-
-from catalyst.rl.core import AlgorithmSpec, \
-    ActorSpec, CriticSpec, EnvironmentSpec
 
 
 class OffpolicyActorCritic(AlgorithmSpec):
@@ -165,7 +166,7 @@ class OffpolicyActorCritic(AlgorithmSpec):
         self, policy_loss, value_loss, actor_update=True, critic_update=True
     ):
         """
-        updates parameters of neural networks and returns learning metrics
+        Updates parameters of neural networks and returns learning metrics
 
         Args:
             policy_loss:

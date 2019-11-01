@@ -1,8 +1,10 @@
-from typing import List
+from typing import List  # isort:skip
 from copy import deepcopy
+
 import numpy as np
-from catalyst.rl.registry import EXPLORATION
+
 from catalyst.rl.core import EnvironmentSpec
+from catalyst.rl.registry import EXPLORATION
 
 
 class ExplorationStrategy:

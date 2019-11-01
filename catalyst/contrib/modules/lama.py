@@ -1,5 +1,6 @@
 import torch
 from torch import nn
+
 from catalyst.utils import outer_init
 
 

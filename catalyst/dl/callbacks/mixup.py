@@ -1,11 +1,11 @@
-from typing import List
+from typing import List  # isort:skip
 
 import numpy as np
 
 import torch
 
-from catalyst.dl.core.state import RunnerState
 from catalyst.dl.callbacks import CriterionCallback
+from catalyst.dl.core.state import RunnerState
 
 
 class MixupCallback(CriterionCallback):

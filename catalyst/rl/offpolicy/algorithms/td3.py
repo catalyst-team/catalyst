@@ -1,12 +1,13 @@
-from typing import Dict, List
+from typing import Dict, List  # isort:skip
 import copy
+
 from gym.spaces import Box
 import torch
 
+from catalyst.rl import utils
+from catalyst.rl.core import AlgorithmSpec, CriticSpec, EnvironmentSpec
 from catalyst.rl.registry import AGENTS
 from .actor_critic import OffpolicyActorCritic
-from catalyst.rl.core import AlgorithmSpec, CriticSpec, EnvironmentSpec
-from catalyst.rl import utils
 
 
 class TD3(OffpolicyActorCritic):
@@ -31,10 +32,10 @@ class TD3(OffpolicyActorCritic):
         for critic in critics:
             critic_components = utils.get_trainer_components(
                 agent=critic,
-                loss_params=self._critic_loss_params,
+                loss_params=None,
                 optimizer_params=self._critic_optimizer_params,
                 scheduler_params=self._critic_scheduler_params,
-                grad_clip_params=self._critic_grad_clip_params
+                grad_clip_params=None
             )
             critics_optimizer.append(critic_components["optimizer"])
             critics_scheduler.append(critic_components["scheduler"])
@@ -84,10 +85,10 @@ class TD3(OffpolicyActorCritic):
     def _process_components(self, done_t, rewards_t):
         # Array of size [num_heads,]
         gammas = self._gammas ** self._n_step
-        gammas = gammas[None, :, None]  # 1 x num_heads x 1
+        gammas = gammas[None, :, None]  # [1; num_heads; 1]
         # We use the same done_t, rewards_t, actions_t for each head
-        done_t = done_t[:, None, :]  # B x 1 x 1
-        rewards_t = rewards_t[:, None, :]  # B x 1 x 1
+        done_t = done_t[:, None, :]  # [bs; 1; 1]
+        rewards_t = rewards_t[:, None, :]  # [bs; 1; 1]
 
         return gammas, done_t, rewards_t
 
@@ -108,32 +109,58 @@ class TD3(OffpolicyActorCritic):
         gammas, done_t, rewards_t = self._process_components(done_t, rewards_t)
 
         # actor loss
+        # [bs; action_size]
         actions_tp0 = self.actor(states_t)
         # For now we use the same actions for each head
+        # {num_critics} * [bs; num_heads; 1]
         q_values_tp0 = [
             x(states_t, actions_tp0).squeeze_(dim=3)
             for x in self.critics
         ]
-        q_values_tp0_min = torch.cat(q_values_tp0, dim=-1).min(dim=-1)[0]
+        # {num_critics} * [bs; num_heads; 1] -> concat
+        # [bs; num_heads, num_critics] -> many-heads view transform
+        # [{bs * num_heads}; num_critics] ->   min over all critics
+        # [{bs * num_heads};]
+        q_values_tp0_min = (
+            torch.cat(q_values_tp0, dim=-1)
+            .view(-1, self._num_critics)
+            .min(dim=1)[0]
+        )
         policy_loss = -torch.mean(q_values_tp0_min)
 
         # critic loss
-        actions_tp1 = self.target_actor(states_tp1).detach()
-        actions_tp1 = self._add_noise_to_actions(actions_tp1)
+        # [bs; action_size]
+        actions_tp1 = self.target_actor(states_tp1)
+        actions_tp1 = self._add_noise_to_actions(actions_tp1).detach()
+
+        # {num_critics} * [bs; num_heads; 1, 1]
+        # -> many-heads view transform
+        # {num_critics} * [{bs * num_heads}; 1]
         q_values_t = [
-            x(states_t, actions_t).squeeze_(dim=3)
+            x(states_t, actions_t)
+            .view(-1, 1)
             for x in self.critics
         ]
-        # B x num_heads x num_critics
-        q_values_tp1 = torch.cat([
+
+        # {num_critics} * [bs; num_heads; 1]
+        q_values_tp1 = [
             x(states_tp1, actions_tp1).squeeze_(dim=3)
             for x in self.target_critics
-        ], dim=-1)
-        # B x num_heads x 1
-        q_values_tp1 = q_values_tp1.min(dim=-1, keepdim=True)[0].detach()
+        ]
+        # {num_critics} * [bs; num_heads; 1] -> concat
+        # [bs; num_heads; num_critics] -> min over all critics
+        # [bs; num_heads; 1]
+        q_values_tp1 = (
+            torch.cat(q_values_tp1, dim=-1)
+            .min(dim=-1, keepdim=True)[0]
+        )
 
-        # B x num_heads x 1
-        q_target_t = rewards_t + (1 - done_t) * gammas * q_values_tp1
+        # [bs; num_heads; 1] -> many-heads view transform
+        # [{bs * num_heads}; 1]
+        q_target_t = (
+            rewards_t + (1 - done_t) * gammas * q_values_tp1
+        ).view(-1, 1).detach()
+
         value_loss = [
             self.critic_criterion(x, q_target_t).mean() for x in q_values_t
         ]
@@ -146,51 +173,86 @@ class TD3(OffpolicyActorCritic):
         gammas, done_t, rewards_t = self._process_components(done_t, rewards_t)
 
         # actor loss
+        # [bs; action_size]
         actions_tp0 = self.actor(states_t)
         # Again, we use the same actor for each critic
+        # {num_critics} * [bs; num_heads; num_atoms]
+        # -> many-heads view transform
+        # {num_critics} * [{bs * num_heads}; num_atoms]
         logits_tp0 = [
-            x(states_t, actions_tp0).squeeze_(dim=2) for x in self.critics
+            x(states_t, actions_tp0).squeeze_(dim=2).view(-1, self.num_atoms)
+            for x in self.critics
         ]
+        # -> categorical probs
+        # {num_critics} * [{bs * num_heads}; num_atoms]
         probs_tp0 = [torch.softmax(x, dim=-1) for x in logits_tp0]
+        # -> categorical value
+        # {num_critics} * [{bs * num_heads}; 1]
         q_values_tp0 = [
             torch.sum(x * self.z, dim=-1, keepdim=True) for x in probs_tp0
         ]
+        #  [{bs * num_heads}; num_critics] ->  min over all critics
+        #  [{bs * num_heads}]
         q_values_tp0_min = torch.cat(q_values_tp0, dim=-1).min(dim=-1)[0]
         policy_loss = -torch.mean(q_values_tp0_min)
 
         # critic loss (kl-divergence between categorical distributions)
-        actions_tp1 = self.target_actor(states_tp1).detach()
-        actions_tp1 = self._add_noise_to_actions(actions_tp1)
+        # [bs; action_size]
+        actions_tp1 = self.target_actor(states_tp1)
+        actions_tp1 = self._add_noise_to_actions(actions_tp1).detach()
+
+        # {num_critics} * [bs; num_heads; num_atoms]
+        # -> many-heads view transform
+        # {num_critics} * [{bs * num_heads}; num_atoms]
         logits_t = [
-            x(states_t, actions_t).squeeze_(dim=2) for x in self.critics
+            x(states_t, actions_t).squeeze_(dim=2).view(-1, self.num_atoms)
+            for x in self.critics
         ]
+
+        # {num_critics} * [bs; num_heads; num_atoms]
         logits_tp1 = [
             x(states_tp1, actions_tp1).squeeze_(dim=2)
             for x in self.target_critics
         ]
+        # {num_critics} * [{bs * num_heads}; num_atoms]
         probs_tp1 = [torch.softmax(x, dim=-1) for x in logits_tp1]
+        # {num_critics} * [bs; num_heads; 1]
         q_values_tp1 = [
             torch.sum(x * self.z, dim=-1, keepdim=True) for x in probs_tp1
         ]
+        #  [{bs * num_heads}; num_critics] ->  argmin over all critics
+        #  [{bs * num_heads}]
         probs_ids_tp1_min = torch.cat(q_values_tp1, dim=-1).argmin(dim=-1)
-        # B x num_heads
 
+        # [bs; num_heads; num_atoms; num_critics]
         logits_tp1 = torch.cat([x.unsqueeze(-1) for x in logits_tp1], dim=-1)
-        # B x num_heads x num_atoms x num_critics
         # @TODO: smarter way to do this (other than reshaping)?
         probs_ids_tp1_min = probs_ids_tp1_min.view(-1)
-        logits_tp1 = logits_tp1.view(-1, self.num_atoms, self._num_critics)
+        # [bs; num_heads; num_atoms; num_critics] -> many-heads view transform
+        # [{bs * num_heads}; num_atoms; num_critics] -> min over all critics
+        # [{bs * num_heads}; num_atoms; 1] -> target view transform
+        # [{bs; num_heads}; num_atoms]
+        logits_tp1 = (
+            logits_tp1
+            .view(-1, self.num_atoms, self._num_critics)[
+                range(len(probs_ids_tp1_min)), :, probs_ids_tp1_min]
+            .view(-1, self.num_atoms)
+        ).detach()
 
-        logits_tp1 = \
-            logits_tp1[range(len(logits_tp1)), :, probs_ids_tp1_min].\
-            view(-1, self._num_heads, self.num_atoms).detach()
+        # [bs; num_heads; num_atoms] -> many-heads view transform
+        # [{bs * num_heads}; num_atoms]
+        atoms_target_t = (
+            rewards_t + (1 - done_t) * gammas * self.z
+        ).view(-1, self.num_atoms)
 
-        atoms_target_t = rewards_t + (1 - done_t) * gammas * self.z
         value_loss = [
             utils.categorical_loss(
-                x.view(-1, self.num_atoms),
-                logits_tp1.view(-1, self.num_atoms),
-                atoms_target_t.view(-1, self.num_atoms),
+                # [{bs * num_heads}; num_atoms]
+                x,
+                # [{bs * num_heads}; num_atoms]
+                logits_tp1,
+                # [{bs * num_heads}; num_atoms]
+                atoms_target_t,
                 self.z,
                 self.delta_z,
                 self.v_min,
@@ -206,40 +268,70 @@ class TD3(OffpolicyActorCritic):
         gammas, done_t, rewards_t = self._process_components(done_t, rewards_t)
 
         # actor loss
+        # [bs; action_size]
         actions_tp0 = self.actor(states_t)
+        # {num_critics} * [bs; num_heads; num_atoms; 1]
         atoms_tp0 = [
-            x(states_t, actions_tp0).squeeze_(dim=2) for x in self.critics
+            x(states_t, actions_tp0).squeeze_(dim=2).unsqueeze_(-1)
+            for x in self.critics
         ]
-        q_values_tp0_min = torch.cat(
-            atoms_tp0, dim=-1
-        ).mean(dim=-2).min(dim=-1)[0]
+        # [bs; num_heads, num_atoms; num_critics] -> many-heads view transform
+        # [{bs * num_heads}; num_atoms; num_critics] ->  quantile value
+        # [{bs * num_heads}; num_critics] ->  min over all critics
+        # [{bs * num_heads};]
+        q_values_tp0_min = (
+            torch.cat(atoms_tp0, dim=-1)
+            .view(-1, self.num_atoms, self._num_critics)
+            .mean(dim=1)
+            .min(dim=1)[0]
+        )
         policy_loss = -torch.mean(q_values_tp0_min)
 
         # critic loss (quantile regression)
-        actions_tp1 = self.target_actor(states_tp1).detach()
-        actions_tp1 = self._add_noise_to_actions(actions_tp1)
+        # [bs; action_size]
+        actions_tp1 = self.target_actor(states_tp1)
+        actions_tp1 = self._add_noise_to_actions(actions_tp1).detach()
+
+        # {num_critics} * [bs; num_heads; num_atoms]
+        # -> many-heads view transform
+        # {num_critics} * [{bs * num_heads}; num_atoms]
         atoms_t = [
-            x(states_t, actions_t).squeeze_(dim=2).unsqueeze_(-1)
+            x(states_t, actions_t).squeeze_(dim=2)
+            .view(-1, self.num_atoms)
             for x in self.critics
         ]
+
+        # [bs; num_heads; num_atoms; num_critics]
         atoms_tp1 = torch.cat([
             x(states_tp1, actions_tp1).squeeze_(dim=2).unsqueeze_(-1)
             for x in self.target_critics
         ], dim=-1)
-        # B x num_heads x num_atoms x num_critics
         # @TODO: smarter way to do this (other than reshaping)?
+        # [{bs * num_heads}; ]
         atoms_ids_tp1_min = atoms_tp1.mean(dim=-2).argmin(dim=-1).view(-1)
-        atoms_tp1 = atoms_tp1.view(-1, self.num_atoms, self._num_critics)
-        atoms_tp1 = \
-            atoms_tp1[range(len(atoms_tp1)), :, atoms_ids_tp1_min].\
-            view(-1, self._num_heads, self.num_atoms).detach()
+        # [bs; num_heads; num_atoms; num_critics] -> many-heads view transform
+        # [{bs * num_heads}; num_atoms; num_critics] -> min over all critics
+        # [{bs * num_heads}; num_atoms; 1] -> target view transform
+        # [bs; num_heads; num_atoms]
+        atoms_tp1 = (
+            atoms_tp1
+            .view(-1, self.num_atoms, self._num_critics)[
+                range(len(atoms_ids_tp1_min)), :, atoms_ids_tp1_min]
+            .view(-1, self._num_heads, self.num_atoms)
+        )
 
-        # B x num_heads x num_atoms
-        atoms_target_t = rewards_t + (1 - done_t) * gammas * atoms_tp1
+        # [bs; num_heads; num_atoms] -> many-heads view transform
+        # [{bs * num_heads}; num_atoms]
+        atoms_target_t = (
+            rewards_t + (1 - done_t) * gammas * atoms_tp1
+        ).view(-1, self.num_atoms).detach()
+
         value_loss = [
             utils.quantile_loss(
-                x.view(-1, self.num_atoms),
-                atoms_target_t.view(-1, self.num_atoms),
+                # [{bs * num_heads}; num_atoms]
+                x,
+                # [{bs * num_heads}; num_atoms]
+                atoms_target_t,
                 self.tau,
                 self.num_atoms,
                 self.critic_criterion
@@ -327,9 +419,7 @@ class TD3(OffpolicyActorCritic):
         if critic_update:
             critic_update_metrics = self.critic_update(value_loss) or {}
 
-        loss = policy_loss
-        for l_ in value_loss:
-            loss += l_
+        loss = torch.sum(torch.stack([policy_loss] + value_loss))
 
         metrics = {
             f"loss_critic{i}": x.item()

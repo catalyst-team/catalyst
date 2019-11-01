@@ -1,10 +1,11 @@
 import argparse
-import numpy as np
 import pickle
-from sklearn.preprocessing import StandardScaler, Normalizer
+
+import nmslib
+import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.pipeline import Pipeline
-import nmslib
+from sklearn.preprocessing import Normalizer, StandardScaler
 
 
 def build_args(parser):

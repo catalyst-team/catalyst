@@ -1,12 +1,13 @@
-from typing import Dict, List
+from typing import Dict, List  # isort:skip
 import os
-import shutil
 from pathlib import Path
+import shutil
+
 import wandb
 
-from catalyst.dl.core import Runner, Experiment
-from catalyst.dl.experiment import ConfigExperiment
 from catalyst.dl import utils
+from catalyst.dl.core import Experiment, Runner
+from catalyst.dl.experiment import ConfigExperiment
 from .supervised import SupervisedRunner
 
 
@@ -16,8 +17,22 @@ class WandbRunner(Runner):
     """
     @staticmethod
     def _log_metrics(metrics: Dict, mode: str, suffix: str = ""):
+        def key_locate(key: str):
+            """
+            Wandb uses first symbol _ for it service purposes
+            because of that fact, we can not send original metric names
+
+            Args:
+                key: metric name
+            Returns:
+                formatted metric name
+            """
+            if key.startswith("_"):
+                return key[1:]
+            return key
+
         metrics = {
-            f"{key}/{mode}{suffix}": value
+            f"{key_locate(key)}/{mode}{suffix}": value
             for key, value in metrics.items()
         }
         wandb.log(metrics)

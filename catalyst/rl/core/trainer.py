@@ -1,21 +1,22 @@
-from typing import List, Dict
+from typing import Dict, List  # isort:skip
 
-import os
 import gc
-import time
-import shutil
-from pathlib import Path
-import numpy as np
 import logging
+import os
+from pathlib import Path
+import shutil
+import time
+
+import numpy as np
 
 from torch.utils.data import DataLoader
-from tensorboardX import SummaryWriter
 
-from catalyst.utils.seed import set_global_seed, Seeder
 from catalyst import utils
+from catalyst.utils.seed import Seeder, set_global_seed
+from catalyst.utils.tensorboard import SummaryWriter
+from .algorithm import AlgorithmSpec
 from .db import DBSpec
 from .environment import EnvironmentSpec
-from .algorithm import AlgorithmSpec
 
 logger = logging.getLogger(__name__)
 

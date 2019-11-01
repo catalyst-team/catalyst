@@ -1,8 +1,9 @@
-from collections import OrderedDict
 from argparse import ArgumentParser, RawTextHelpFormatter
+from collections import OrderedDict
 
-from catalyst.contrib.scripts import project_embeddings, \
-    check_index_model, create_index_model
+from catalyst.contrib.scripts import (
+    check_index_model, create_index_model, project_embeddings
+)
 
 COMMANDS = OrderedDict(
     [

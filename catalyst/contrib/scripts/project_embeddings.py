@@ -5,8 +5,10 @@ from os import path
 import cv2
 import numpy as np
 import pandas as pd
+
 import torch
-from tensorboardX import SummaryWriter
+
+from catalyst.utils.tensorboard import SummaryWriter
 
 
 def build_args(parser):

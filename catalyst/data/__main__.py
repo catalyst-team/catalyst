@@ -76,8 +76,9 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
 
 from catalyst.__version__ import __version__
-from catalyst.contrib.scripts import process_images, \
-    image2embedding, tag2label, split_dataframe
+from catalyst.contrib.scripts import (
+    image2embedding, process_images, split_dataframe, tag2label
+)
 
 COMMANDS = OrderedDict(
     [

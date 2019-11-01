@@ -1,5 +1,6 @@
-from typing import Dict
+from typing import Dict  # isort:skip
 import random
+
 import albumentations as A
 
 

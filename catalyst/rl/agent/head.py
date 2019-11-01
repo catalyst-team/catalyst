@@ -1,28 +1,31 @@
-from typing import List
+from typing import List  # isort:skip
 
 import torch
 import torch.nn as nn
 
-from catalyst.utils import outer_init
 from catalyst.contrib.models import SequentialNet
-from .policy import CategoricalPolicy, BernoulliPolicy, DiagonalGaussPolicy, \
-    SquashingGaussPolicy, RealNVPPolicy
+from catalyst.utils import outer_init
+from .policy import (
+    BernoulliPolicy, CategoricalPolicy, DiagonalGaussPolicy, RealNVPPolicy,
+    SquashingGaussPolicy
+)
 
 
 class ValueHead(nn.Module):
     @staticmethod
     def _build_head(in_features, out_features, num_atoms, bias):
-        return nn.Linear(
+        head = nn.Linear(
             in_features=in_features,
             out_features=out_features * num_atoms,
             bias=bias
         )
+        return head
 
     def __init__(
         self,
         in_features: int,
         out_features: int,
-        bias: bool = False,
+        bias: bool = True,
         num_atoms: int = 1,
         use_state_value_head: bool = False,
         distribution: str = None,

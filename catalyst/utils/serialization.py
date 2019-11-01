@@ -1,20 +1,19 @@
-import os
 import logging
+import os
 import pickle
 
 logger = logging.getLogger(__name__)
 
-if os.environ.get("USE_PYARROW", "1") == "1":
-    try:
-        import pyarrow
-        PYARROW_ENABLED = True
-    except ImportError:
+try:
+    import pyarrow
+    PYARROW_ENABLED = True
+except ImportError as ex:
+    if os.environ.get("USE_PYARROW", "0") == "1":
         logger.warning(
             "pyarrow not available, switching to pickle. "
             "To install pyarrow, run `pip install pyarrow`."
         )
-        PYARROW_ENABLED = False
-else:
+        raise ex
     PYARROW_ENABLED = False
 
 

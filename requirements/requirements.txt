@@ -5,9 +5,10 @@ torchvision>=0.2.1
 imageio
 opencv-python
 scikit-image>=0.14.2
-tqdm>=4.29.1
+tqdm>=4.33.0
 PyYAML
-tensorboardX>=1.8
+tensorboard
+tensorboardX
 plotly>=4.1.0
 safitty>=1.2.3
 crc32c>=1.7

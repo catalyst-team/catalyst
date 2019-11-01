@@ -1,7 +1,8 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple  # isort:skip
+import multiprocessing as mp
 
 import numpy as np
-import multiprocessing as mp
+
 from gym import spaces
 from torch.utils.data import Dataset
 
@@ -292,7 +293,7 @@ class OffpolicyReplayBuffer(Dataset):
 
     def get_state(self, idx, history_len=1):
         """
-        compose the state from a number (history_len) of observations
+        Compose the state from a number (history_len) of observations
         """
         start_idx = idx - history_len + 1
 

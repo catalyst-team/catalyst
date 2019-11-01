@@ -1,7 +1,9 @@
 #!/usr/bin/env python
+# isort:skip_file
 
 import argparse
 from glob import glob
+
 import pandas as pd
 from catalyst import utils
 

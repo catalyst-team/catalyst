@@ -29,7 +29,11 @@ If you are not familiar with creating a Pull Request, here are some guides:
 
 ##### Contribution best practices
 
-1. Break your work into small, single-purpose updates if possible. 
+0. Install pre-commit hook:
+```
+pip install pre-commit
+```
+1. Break your work into small, single-purpose updates if possible.
 It's much harder to merge in a large change with a lot of disjoint features.
 2. Submit the update as a GitHub pull request against the `master` branch.
 3. Make sure that you provide docstrings for all your new methods and classes
@@ -43,10 +47,13 @@ Do not forget to check the codestyle for your PR with
 ```bash
 make codestyle
 ```
+and add new requirements in the `[isort]` section of a `setup.cfg` file.
+
+Make sure to have your python packages complied with requirements/requirements.txt and requirements/requirements-dev.txt to get codestyle run clean.
 
 ## Documentation
 
-Catalyst uses [Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for formatting [docstrings](https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings). 
+Catalyst uses [Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for formatting [docstrings](https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings).
 Length of line inside docstrings block must be limited to 80 characters to fit into Jupyter documentation popups.
 
 #### Check that you have written working docs
