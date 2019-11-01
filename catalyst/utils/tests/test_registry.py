@@ -2,8 +2,8 @@ import pytest
 
 from catalyst.utils.registry import RegistryException
 from . import registery_foo as module
-from .registery_foo import foo
 from ..registry import Registry
+from .registery_foo import foo
 
 
 def test_add_function():

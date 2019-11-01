@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-from .environment import EnvironmentWrapper
-
 from .env_wrappers import make_atari_env
+from .environment import EnvironmentWrapper
 
 
 class AtariEnvWrapper(EnvironmentWrapper):

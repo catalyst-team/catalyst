@@ -1,9 +1,11 @@
 from copy import deepcopy
 
 import torch
+
 from catalyst.rl import utils
-from catalyst.rl.registry import \
+from catalyst.rl.registry import (
     CRITERIONS, GRAD_CLIPPERS, OPTIMIZERS, SCHEDULERS
+)
 
 
 def get_network_weights(network, exclude_norm=False):
@@ -52,6 +54,7 @@ def get_trainer_components(
 
     # optimizer
     agent_params = utils.get_optimizable_params(agent.parameters())
+
     optimizer_params = _copy_params(optimizer_params)
     optimizer = OPTIMIZERS.get_from_params(
         **optimizer_params, params=agent_params

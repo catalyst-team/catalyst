@@ -1,7 +1,9 @@
+import numpy as np
+
 from gym.core import Wrapper
+
 from catalyst.rl.utils.buffer import get_buffer
 from catalyst.utils.dynamic_array import DynamicArray
-import numpy as np
 
 
 class RawTrajectoryWrapper(Wrapper):

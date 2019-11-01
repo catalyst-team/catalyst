@@ -1,10 +1,10 @@
-from typing import List
+from typing import List  # isort:skip
 
 import torch
 import torch.nn as nn
 
-from .core import EncoderSpec, _take
 from ..blocks.unet import EncoderDownsampleBlock
+from .core import _take, EncoderSpec
 
 
 class UnetEncoder(EncoderSpec):

@@ -1,9 +1,10 @@
 import argparse
+import collections
+
+import nmslib
 import numpy as np
 import pandas as pd
-import nmslib
 import tqdm
-import collections
 
 
 def build_args(parser):

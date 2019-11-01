@@ -1,5 +1,5 @@
+from typing import Any, Optional  # isort:skip
 import argparse
-from typing import Any, Optional
 
 
 def args_are_not_none(*args: Optional[Any]) -> bool:

@@ -1,7 +1,8 @@
+import cv2
 import numpy as np
+
 import gym
 from gym import spaces
-import cv2
 
 cv2.ocl.setUseOpenCL(False)
 
@@ -70,7 +71,7 @@ class NoopResetEnv(gym.Wrapper):
         assert env.unwrapped.get_action_meanings()[0] == "NOOP"
 
     def reset(self, **kwargs):
-        """ Do no-op action for a number of steps in [1, noop_max]."""
+        """Do no-op action for a number of steps in [1, noop_max]."""
         self.env.reset(**kwargs)
         if self.override_num_noops is not None:
             noops = self.override_num_noops

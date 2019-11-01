@@ -1,15 +1,14 @@
-from typing import Any, Mapping, Dict, List, Union
-from collections import OrderedDict  # noqa F401
+from typing import Any, Dict, List, Mapping, Union  # isort:skip
+from collections import OrderedDict
 import logging
 
 from torch import nn
-from torch.utils.data import DataLoader  # noqa F401
+from torch.utils.data import DataLoader
 
-from catalyst.dl.core import Runner, Callback
+from catalyst.dl.callbacks import CheckpointCallback, InferCallback
+from catalyst.dl.core import Callback, Runner
 from catalyst.dl.experiment import SupervisedExperiment
-from catalyst.dl.callbacks import InferCallback, CheckpointCallback
-from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
-
+from catalyst.dl.utils.torch import _Criterion, _Model, _Optimizer, _Scheduler
 
 logger = logging.getLogger(__name__)
 
@@ -155,7 +154,7 @@ class SupervisedRunner(Runner):
         if len(loaders) == 1:
             valid_loader = list(loaders.keys())[0]
             logger.warning(
-                "Attention,there is only one data loader - "
+                "Attention, there is only one data loader - "
                 + str(valid_loader)
             )
         if isinstance(fp16, bool) and fp16:

@@ -1,12 +1,13 @@
-from typing import Iterable, Any
+from typing import Any, Iterable  # isort:skip
 
-import copy
 import collections
+import copy
 from datetime import datetime
-import numpy as np
 from itertools import tee
-import shutil
 from pathlib import Path
+import shutil
+
+import numpy as np
 
 
 def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:

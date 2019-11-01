@@ -1,8 +1,9 @@
 import numpy as np
+
 import torch
 
-from .actor import OnpolicyActor
 from catalyst.rl import utils
+from .actor import OnpolicyActor
 
 
 class REINFORCE(OnpolicyActor):

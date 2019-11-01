@@ -12,10 +12,10 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os
 import datetime
-import sys
+import os
 import re
+import sys
 
 catalyst_root_path = "../"
 sys.path.insert(0, os.path.abspath(catalyst_root_path))

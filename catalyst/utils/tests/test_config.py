@@ -1,7 +1,8 @@
 # flake8: noqa
 import argparse
-import json
 import io
+import json
+
 import numpy as np
 
 from catalyst.utils import config

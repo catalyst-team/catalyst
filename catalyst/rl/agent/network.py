@@ -52,7 +52,7 @@ class StateNet(nn.Module):
                 if isinstance(self.observation_net, nn.ModuleDict) \
                 else utils.process_state_ff
         elif isinstance(aggregation_net, (TemporalConcatPooling, LamaPooling)):
-            self._forward_fn = self._forward_lama
+            self._forward_fn = self._forward_temporal
             self._process_state = utils.process_state_temporal_kv \
                 if isinstance(self.observation_net, nn.ModuleDict) \
                 else utils.process_state_temporal
@@ -65,7 +65,7 @@ class StateNet(nn.Module):
         x = self.main_net(x)
         return x
 
-    def _forward_lama(self, state):
+    def _forward_temporal(self, state):
         x = state
         x = self._process_state(x, self.observation_net)
         x = self.aggregation_net(x)
@@ -169,7 +169,7 @@ class StateActionNet(nn.Module):
                 if isinstance(self.observation_net, nn.ModuleDict) \
                 else utils.process_state_ff
         elif isinstance(aggregation_net, (TemporalConcatPooling, LamaPooling)):
-            self._forward_fn = self._forward_lama
+            self._forward_fn = self._forward_temporal
             self._process_state = utils.process_state_temporal_kv \
                 if isinstance(self.observation_net, nn.ModuleDict) \
                 else utils.process_state_temporal
@@ -183,7 +183,7 @@ class StateActionNet(nn.Module):
         x = self.main_net(x)
         return x
 
-    def _forward_lama(self, state, action):
+    def _forward_temporal(self, state, action):
         state_ = self._process_state(state, self.observation_net)
         state_ = self.aggregation_net(state_)
         action_ = self.action_net(action)

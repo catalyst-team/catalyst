@@ -1,7 +1,8 @@
 import argparse
-import shutil
-from git import Repo as repo
 from pathlib import Path
+import shutil
+
+from git import Repo as repo
 
 from catalyst import utils
 

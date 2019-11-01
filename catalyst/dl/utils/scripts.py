@@ -1,7 +1,8 @@
 import os
 import pathlib
+
 from catalyst.utils.misc import get_utcnow_time
-from catalyst.utils.scripts import import_module, dump_python_files
+from catalyst.utils.scripts import dump_python_files, import_module
 
 
 def import_experiment_and_runner(expdir: pathlib.Path):

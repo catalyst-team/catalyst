@@ -1,18 +1,24 @@
-from typing import Any, Mapping, Dict, List, Union
-from copy import deepcopy
+from typing import Any, Dict, List, Mapping, Union  # isort:skip
 from collections import OrderedDict
+from copy import deepcopy
+
+import safitty
 
 import torch
 from torch import nn
-from torch.utils.data import DataLoader, Dataset  # noqa F401
-from torch.utils.data import DistributedSampler
+from torch.utils.data import (  # noqa F401
+    DataLoader, Dataset, DistributedSampler
+)
 
-from catalyst.dl.registry import \
-    MODELS, CRITERIONS, OPTIMIZERS, SCHEDULERS, CALLBACKS
-from catalyst.dl.core import Experiment, Callback
 from catalyst.dl import utils
-from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, \
-    _Scheduler
+from catalyst.dl.callbacks import (
+    ConsoleLogger, RaiseExceptionCallback, TensorboardLogger, VerboseLogger
+)
+from catalyst.dl.core import Callback, Experiment
+from catalyst.dl.registry import (
+    CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SCHEDULERS
+)
+from catalyst.dl.utils.torch import _Criterion, _Model, _Optimizer, _Scheduler
 
 
 class ConfigExperiment(Experiment):
@@ -28,6 +34,9 @@ class ConfigExperiment(Experiment):
     def __init__(self, config: Dict):
         self._config = deepcopy(config)
         self._initial_seed = self._config.get("args", {}).get("seed", 42)
+        self._verbose = safitty.get(
+            self._config, "args", "verbose", default=False
+        )
         self.__prepare_logdir()
 
         self._config["stages"]["state_params"] = utils.merge_dicts(
@@ -372,7 +381,7 @@ class ConfigExperiment(Experiment):
     def _get_callback(**params):
         wrapper_params = params.pop("_wrapper", None)
         callback = CALLBACKS.get_from_params(**params)
-        if wrapper_params:
+        if wrapper_params is not None:
             wrapper_params["base_callback"] = callback
             return ConfigExperiment._get_callback(**wrapper_params)
         return callback
@@ -386,6 +395,23 @@ class ConfigExperiment(Experiment):
         for key, callback_params in callbacks_params.items():
             callback = self._get_callback(**callback_params)
             callbacks[key] = callback
+
+        # ! For compatibility with previous versions.
+        default_callbacks = []
+        if self._verbose:
+            default_callbacks.append(("verbose", VerboseLogger))
+        if not stage.startswith("infer"):
+            default_callbacks.append(("console", ConsoleLogger))
+            default_callbacks.append(("tensorboard", TensorboardLogger))
+
+        default_callbacks.append(("exception", RaiseExceptionCallback))
+
+        for callback_name, callback_fn in default_callbacks:
+            is_already_present = any(
+                isinstance(x, callback_fn) for x in callbacks.values()
+            )
+            if not is_already_present:
+                callbacks[callback_name] = callback_fn()
 
         return callbacks
 

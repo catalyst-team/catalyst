@@ -1,17 +1,15 @@
 # flake8: noqa
 # folders
+from .abn import *
 from .blocks import *
 from .bridge import *
+from .core import *
 from .decoder import *
 from .encoder import *
-from .head import *
-from .models import *
-
-# files
-from .abn import *
-from .core import *
 from .fpn import *
+from .head import *
 from .linknet import *
+from .models import *
 from .psp import *
 from .unet import *
 

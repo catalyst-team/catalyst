@@ -30,7 +30,6 @@ class F1ScoreCallback(MetricCallback):
             activation (str): An torch.nn activation applied to the outputs.
                 Must be one of ['none', 'Sigmoid', 'Softmax2d']
         """
-
         super().__init__(
             prefix=prefix,
             metric_fn=criterion.f1_score,

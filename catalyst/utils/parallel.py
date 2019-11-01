@@ -5,7 +5,7 @@
 # version         :19.08.7
 # ==============================================================================
 
-from typing import List, Union, TypeVar
+from typing import List, TypeVar, Union  # isort:skip
 from multiprocessing.pool import Pool
 
 from tqdm import tqdm

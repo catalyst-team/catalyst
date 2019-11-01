@@ -1,5 +1,6 @@
-from abc import abstractmethod, ABC
-from gym.spaces import Space, Discrete
+from abc import ABC, abstractmethod
+
+from gym.spaces import Discrete, Space
 
 
 class EnvironmentSpec(ABC):

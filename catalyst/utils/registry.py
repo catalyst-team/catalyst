@@ -1,8 +1,9 @@
+from typing import (  # isort:skip
+    Any, Callable, Dict, Iterator, List, Mapping, Optional, Tuple, Type, Union
+)
 import collections
 import inspect
 import warnings
-from typing import Dict, Callable, Any, Union, Type, Mapping, Tuple, List, \
-    Optional, Iterator
 
 Factory = Union[Type, Callable[..., Any]]
 LateAddCallbak = Callable[["Registry"], None]
@@ -152,7 +153,6 @@ class Registry(collections.MutableMapping):
         Returns:
             Factory: factory by name
         """
-
         self._do_late_add()
 
         if name is None:
@@ -214,7 +214,6 @@ class Registry(collections.MutableMapping):
         Returns:
              result of calling ``instantiate_fn(factory, **config)``
         """
-
         name = kwargs.pop(self._name_key, None)
         if name:
             return self.get_instance(name, meta_factory=meta_factory, **kwargs)

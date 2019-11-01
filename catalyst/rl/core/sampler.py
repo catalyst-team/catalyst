@@ -1,30 +1,32 @@
-from typing import Union, List, Dict
+# isort:skip_file
+from typing import Dict, List, Union  # isort:skip
 
 import os
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
 
-import gc  # noqa E402
-import time  # noqa E402
-import shutil  # noqa E402
-from pathlib import Path  # noqa E402
-import threading  # noqa E402
 from ctypes import c_bool  # noqa E402
-import multiprocessing as mp  # noqa E402
-import numpy as np  # noqa E402
+import gc  # noqa E402
 import logging  # noqa E402
+import multiprocessing as mp  # noqa E402
+from pathlib import Path  # noqa E402
+import shutil  # noqa E402
+import threading  # noqa E402
+import time  # noqa E402
+
+import numpy as np  # noqa E402
 
 import torch  # noqa E402
 torch.set_num_threads(1)
 
-from catalyst.utils.seed import set_global_seed, Seeder  # noqa E402
 from catalyst import utils  # noqa E402
-from .trajectory_sampler import TrajectorySampler  # noqa E402
-from .exploration import ExplorationHandler  # noqa E402
-from .environment import EnvironmentSpec  # noqa E402
-from .db import DBSpec  # noqa E402
-from .agent import ActorSpec, CriticSpec  # noqa E402
+from catalyst.utils.seed import Seeder, set_global_seed  # noqa E402
 from catalyst.utils.tensorboard import SummaryWriter  # noqa E402
+from .agent import ActorSpec, CriticSpec  # noqa E402
+from .db import DBSpec  # noqa E402
+from .environment import EnvironmentSpec  # noqa E402
+from .exploration import ExplorationHandler  # noqa E402
+from .trajectory_sampler import TrajectorySampler  # noqa E402
 
 
 logger = logging.getLogger(__name__)

@@ -1,8 +1,8 @@
-import os
-from typing import Dict
+from typing import Dict  # isort:skip
 from collections import OrderedDict
-
+import os
 from pathlib import Path
+
 import safitty
 
 from catalyst.dl import utils
@@ -20,7 +20,7 @@ class BaseCheckpointCallback(Callback):
             metric_filename (str): filename to save metrics
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
         """
-        super().__init__(CallbackOrder.Logger)
+        super().__init__(CallbackOrder.External)
         self.metric_filename = metric_filename
         self.metrics: dict = {}
 
