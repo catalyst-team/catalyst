@@ -1,11 +1,11 @@
-from typing import List
+from typing import List  # isort:skip
 
 import torch
 import torch.nn as nn
 
-from .core import DecoderSpec
 from ..blocks.core import DecoderBlock
 from ..blocks.unet import DecoderConcatBlock
+from .core import DecoderSpec
 
 
 class UNetDecoder(DecoderSpec):

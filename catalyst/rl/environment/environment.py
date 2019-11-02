@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
-from typing import Union, List
-import time
+from typing import List, Union  # isort:skip
 import random
+import time
 
 import numpy as np
+
 from gym import spaces
 
 from catalyst.rl.core import EnvironmentSpec

@@ -1,8 +1,0 @@
-[style]
-based_on_style=pep8
-allow_split_before_dict_value=False
-join_multiple_lines=False
-split_before_named_assigns=True
-dedent_closing_brackets=True
-split_penalty_after_opening_bracket=-100
-split_penalty_for_added_line_split=300

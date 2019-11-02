@@ -1,11 +1,11 @@
-from typing import Union, Dict
+from typing import Dict, Union  # isort:skip
 import copy
 
 from catalyst.rl import utils
+from catalyst.rl.core import (
+    ActorSpec, AlgorithmSpec, CriticSpec, EnvironmentSpec
+)
 from catalyst.rl.registry import AGENTS
-
-from catalyst.rl.core import AlgorithmSpec, \
-    ActorSpec, CriticSpec, EnvironmentSpec
 
 
 class OffpolicyCritic(AlgorithmSpec):
@@ -110,7 +110,7 @@ class OffpolicyCritic(AlgorithmSpec):
 
     def update_step(self, value_loss, critic_update=True):
         """
-        updates parameters of neural networks and returns learning metrics
+        Updates parameters of neural networks and returns learning metrics
 
         Args:
             value_loss:

@@ -1,6 +1,6 @@
-from hashlib import sha256
+from typing import Any  # isort:skip
 from base64 import urlsafe_b64encode
-from typing import Any
+from hashlib import sha256
 
 
 def _make_hashable(o):

@@ -1,9 +1,11 @@
-from typing import List, Tuple
+from typing import List, Tuple, Union  # isort:skip
 import logging
 import os
+import pathlib
 import tempfile
-import numpy as np
+
 import imageio
+import numpy as np
 from skimage.color import label2rgb, rgb2gray
 
 import torch
@@ -58,10 +60,10 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None, **kwargs):
 
     if JPEG4PY_ENABLED and uri.endswith(("jpg", "JPG", "jpeg", "JPEG")):
         img = jpeg.JPEG(uri).decode()
-        if grayscale:
-            img = rgb2gray(img)
     else:
-        img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB", **kwargs)
+        img = imageio.imread(uri, **kwargs)
+    if grayscale:
+        img = rgb2gray(img)
 
     if expand_dims and len(img.shape) < 3:  # grayscale
         img = np.expand_dims(img, -1)
@@ -71,6 +73,42 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None, **kwargs):
 
 imwrite = imageio.imwrite
 imsave = imageio.imsave
+
+
+def mimread(
+    uri,
+    clip_range: Tuple[int, int] = None,
+    expand_dims: bool = True,
+    rootpath: Union[str, pathlib.Path] = None,
+    **kwargs
+):
+    """
+
+    Args:
+        uri: {str, pathlib.Path, bytes, file}
+        The resource to load the mask from, e.g. a filename, pathlib.Path,
+        http address or file object, see the docs for more info.
+        clip_range (Tuple[int, int]): lower and upper interval edges,
+            image values outside the interval are clipped to the interval edges
+        expand_dims (bool): if True, append channel axis to grayscale images
+        rootpath (Union[str, pathlib.Path]): path to an image
+            (allows to use relative path)
+
+    Returns:
+        np.ndarray: Image
+
+    """
+    if rootpath is not None:
+        uri = uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
+
+    image = np.dstack(imageio.mimread(uri, **kwargs))
+    if clip_range is not None:
+        image = np.clip(image, *clip_range)
+
+    if expand_dims and len(image.shape) < 3:  # grayscale
+        image = np.expand_dims(image, -1)
+
+    return image
 
 
 def mimwrite_with_meta(uri, ims, meta, **kwargs):
@@ -164,3 +202,18 @@ def mask_to_overlay_image(
     )
 
     return image_with_overlay
+
+
+def has_image_extension(uri) -> bool:
+    """
+    Check that file has image extension
+
+    Args:
+        uri (Union[str, pathlib.Path]): The resource to load the file from
+
+    Returns:
+        bool: True if file has image extension, False otherwise
+
+    """
+    _, ext = os.path.splitext(uri)
+    return ext.lower() in {".bmp", ".png", ".jpeg", ".jpg", ".tif", ".tiff"}

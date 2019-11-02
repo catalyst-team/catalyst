@@ -1,4 +1,4 @@
-from typing import Dict, Callable
+from typing import Callable, Dict  # isort:skip
 
 
 class Augmentor:
@@ -25,14 +25,13 @@ class Augmentor:
 
 
 class AugmentorKeys:
-    """ Augmentation abstraction to match input and augmentations keys"""
+    """Augmentation abstraction to match input and augmentations keys"""
     def __init__(self, dict2fn_dict: Dict[str, str], augment_fn: Callable):
         """
         :param dict2fn_dict: keys matching dict {input_key: augment_fn_key}
                ex: {"image": "image", "mask": "mask"}
         :param augment_fn: augmentation function
         """
-
         self.dict2fn_dict = dict2fn_dict
         self.augment_fn = augment_fn
 

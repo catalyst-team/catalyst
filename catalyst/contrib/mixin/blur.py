@@ -1,5 +1,6 @@
-from typing import List
+from typing import List  # isort:skip
 import random
+
 import numpy as np
 
 import albumentations as A

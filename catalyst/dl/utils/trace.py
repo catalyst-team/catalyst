@@ -1,11 +1,11 @@
-from typing import Type
+from typing import Type  # isort:skip
 
 import torch
 from torch import nn
 from torch.jit import ScriptModule
 
-from catalyst.dl.core import Experiment, Runner
 from catalyst import utils
+from catalyst.dl.core import Experiment, Runner
 
 
 class _ForwardOverrideModel(nn.Module):
@@ -85,7 +85,6 @@ def trace_model(
     Returns:
         Traced model ScriptModule
     """
-
     if mode not in ["train", "eval"]:
         raise ValueError(f"Unknown mode '{mode}'. Must be 'eval' or 'train'")
 

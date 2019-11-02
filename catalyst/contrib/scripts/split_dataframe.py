@@ -1,8 +1,9 @@
 import argparse
 import json
+
 import pandas as pd
 
-from catalyst.utils.pandas import split_dataframe, folds_to_list
+from catalyst.utils.pandas import folds_to_list, split_dataframe
 
 
 def build_args(parser):

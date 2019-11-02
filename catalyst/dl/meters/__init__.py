@@ -7,3 +7,4 @@ from .movingaveragevaluemeter import MovingAverageValueMeter
 from .aucmeter import AUCMeter
 from .apmeter import APMeter
 from .mapmeter import mAPMeter
+from .ppv_tpr_f1_meter import PrecisionRecallF1ScoreMeter

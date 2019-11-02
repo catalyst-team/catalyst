@@ -1,7 +1,7 @@
+from typing import Any, Dict  # isort:skip
 from collections import defaultdict
-from time import time
 from numbers import Number
-from typing import Any, Dict
+from time import time
 
 from catalyst.dl.meters import AverageValueMeter
 

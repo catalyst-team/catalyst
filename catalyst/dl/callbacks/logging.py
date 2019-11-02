@@ -1,44 +1,66 @@
-from typing import List, Dict
+from typing import Dict, List  # isort:skip
+import logging
 import os
 import sys
-import logging
+
 from tqdm import tqdm
 
-from tensorboardX import SummaryWriter
-
-from catalyst.dl.core import Callback, RunnerState, CallbackOrder
-from catalyst.dl.utils.formatters import TxtMetricsFormatter
 from catalyst.dl import utils
+from catalyst.dl.core import LoggerCallback, RunnerState
+from catalyst.dl.utils.formatters import TxtMetricsFormatter
+from catalyst.utils.tensorboard import SummaryWriter
 
 
-class VerboseLogger(Callback):
-    def __init__(self, always_show: List[str] = ["_timers/_fps"]):
+class VerboseLogger(LoggerCallback):
+    def __init__(
+        self,
+        always_show: List[str] = None,
+        never_show: List[str] = None
+    ):
         """
-        Log params into console
+        Logs the params into console
+
         Args:
             always_show (List[str]): list of metrics to always show
+                if None default is ``["_timers/_fps"]``
+                to remove always_show metrics set it to an empty list ``[]``
+            never_show (List[str]): list of metrics which will not be shown
         """
-        super().__init__(CallbackOrder.Logger)
+        super().__init__()
         self.tqdm: tqdm = None
         self.step = 0
-        self.always_show = always_show
+        self.always_show = always_show \
+            if always_show is not None else ["_timers/_fps"]
+        self.never_show = never_show if never_show is not None else []
+
+        intersection = set(self.always_show) & set(self.never_show)
+
+        _error_message = (
+            f"Intersection of always_show and "
+            f"never_show has common values: {intersection}"
+        )
+        if bool(intersection):
+            raise ValueError(_error_message)
+
+    def _need_show(self, key: str):
+        not_is_never_shown: bool = key not in self.never_show
+        is_always_shown: bool = key in self.always_show
+        not_basic = not (key.startswith("_base") or key.startswith("_timers"))
+
+        result = not_is_never_shown and (is_always_shown or not_basic)
+
+        return result
 
     def on_loader_start(self, state: RunnerState):
         self.step = 0
         self.tqdm = tqdm(
             total=state.loader_len,
-            desc=f"{state.stage_epoch}/{state.num_epochs}"
+            desc=f"{state.stage_epoch_log}/{state.num_epochs}"
             f" * Epoch ({state.loader_name})",
             leave=True,
             ncols=0,
             file=sys.stdout
         )
-
-    def _need_show(self, key: str):
-        is_always_show: bool = key in self.always_show
-        not_basic = not (key.startswith("_base") or key.startswith("_timers"))
-
-        return is_always_show or not_basic
 
     def on_batch_end(self, state: RunnerState):
         self.tqdm.set_postfix(
@@ -65,12 +87,12 @@ class VerboseLogger(Callback):
             state.need_reraise_exception = False
 
 
-class ConsoleLogger(Callback):
+class ConsoleLogger(LoggerCallback):
     """
     Logger callback, translates ``state.metrics`` to console and text file
     """
     def __init__(self):
-        super().__init__(CallbackOrder.Logger)
+        super().__init__()
         self.logger = None
 
     @staticmethod
@@ -112,7 +134,7 @@ class ConsoleLogger(Callback):
         self.logger.info("", extra={"state": state})
 
 
-class TensorboardLogger(Callback):
+class TensorboardLogger(LoggerCallback):
     """
     Logger callback, translates state.metrics to tensorboard
     """
@@ -130,7 +152,7 @@ class TensorboardLogger(Callback):
             log_on_batch_end: Logs per-batch metrics if set True.
             log_on_epoch_end: Logs per-epoch metrics if set True.
         """
-        super().__init__(CallbackOrder.Logger)
+        super().__init__()
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
@@ -173,7 +195,10 @@ class TensorboardLogger(Callback):
             mode = state.loader_name
             metrics_ = state.metrics.epoch_values[mode]
             self._log_metrics(
-                metrics=metrics_, step=state.epoch, mode=mode, suffix="/epoch"
+                metrics=metrics_,
+                step=state.epoch_log,
+                mode=mode,
+                suffix="/epoch"
             )
         for logger in self.loggers.values():
             logger.flush()
@@ -183,20 +208,8 @@ class TensorboardLogger(Callback):
             logger.close()
 
 
-class RaiseExceptionLogger(Callback):
-    def __init__(self):
-        super().__init__(CallbackOrder.Other + 1)
-
-    def on_exception(self, state: RunnerState):
-        exception = state.exception
-        if not utils.is_exception(exception):
-            return
-
-        if state.need_reraise_exception:
-            raise exception
-
-
 __all__ = [
-    "VerboseLogger", "ConsoleLogger",
-    "TensorboardLogger", "RaiseExceptionLogger"
+    "VerboseLogger",
+    "ConsoleLogger",
+    "TensorboardLogger"
 ]

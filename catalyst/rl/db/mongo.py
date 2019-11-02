@@ -1,8 +1,8 @@
-import time
 import datetime
+import time
 
-import pymongo
 import gridfs
+import pymongo
 import safitty
 
 from catalyst.rl import utils

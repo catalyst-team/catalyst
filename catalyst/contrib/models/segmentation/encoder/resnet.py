@@ -1,14 +1,13 @@
-from typing import List, Union
+from typing import List, Union  # isort:skip
 from collections import OrderedDict
-
 from pathlib import Path
 
 import torch
 import torch.nn as nn
 import torchvision
 
-from .core import EncoderSpec, _take
 from catalyst import utils
+from .core import _take, EncoderSpec
 
 RESNET_PARAMS = {
     "resnet18": {

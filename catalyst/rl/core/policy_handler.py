@@ -1,11 +1,12 @@
-from typing import Union
+from typing import Union  # isort:skip
 import numpy as np
-from gym.spaces import Box, Discrete
+
+from gym.spaces import Discrete
 import torch
 
+from catalyst.rl import utils
 from .agent import ActorSpec, CriticSpec
 from .environment import EnvironmentSpec
-from catalyst.rl import utils
 
 
 def _state2device(array: np.ndarray, device):
@@ -47,8 +48,6 @@ class PolicyHandler:
         # PPO, DDPG, SAC, TD3
         else:
             assert isinstance(agent, ActorSpec)
-            action_space: Box = env.action_space
-            self.action_clip = action_space.low, action_space.high
             self.action_fn = self._actor_handler
 
     @torch.no_grad()
@@ -77,11 +76,6 @@ class PolicyHandler:
         states = _state2device(state, device)
         action = actor(states, deterministic=deterministic)
         action = action[0].cpu().numpy()
-
-        if self.action_clip is not None:
-            action = np.clip(
-                action, a_min=self.action_clip[0], a_max=self.action_clip[1]
-            )
         return action
 
     def _critic_handler(

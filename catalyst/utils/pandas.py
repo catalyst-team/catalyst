@@ -1,11 +1,9 @@
-from typing import List, Dict, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union  # isort:skip
 import pandas as pd
-
-from catalyst.utils.dataset import \
-    default_fold_split, stratified_fold_split
-from catalyst.utils import args_are_not_none
-
 from tqdm.auto import tqdm
+
+from catalyst.utils import args_are_not_none
+from catalyst.utils.dataset import default_fold_split, stratified_fold_split
 
 tqdm.pandas()
 
@@ -116,7 +114,6 @@ def split_dataframe(
         (tuple): tuple with 4 dataframes
             whole dataframe, train part, valid part and infer part
     """
-
     if args_are_not_none(tag2class, tag_column, class_column):
         dataframe = map_dataframe(
             dataframe, tag_column, class_column, tag2class

@@ -1,16 +1,17 @@
 import argparse
 from pathlib import Path
 
+import cv2
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-import cv2
+
 import torch
 from torchvision import transforms
 
-from catalyst.dl import utils
-from catalyst.data.reader import ImageReader
 from catalyst.contrib.models.encoder import ResnetEncoder
+from catalyst.data.reader import ImageReader
+from catalyst.dl import utils
 
 cv2.setNumThreads(0)
 cv2.ocl.setUseOpenCL(False)

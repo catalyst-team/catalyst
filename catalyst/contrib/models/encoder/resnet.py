@@ -1,13 +1,13 @@
+from typing import Union  # isort:skip
 from pathlib import Path
-from typing import Union
 
 import torch
 import torch.nn as nn
 import torchvision
 
+from catalyst import utils
 from catalyst.contrib.modules import Flatten
 from catalyst.contrib.registry import MODULES
-from catalyst import utils
 
 
 class ResnetEncoder(nn.Module):

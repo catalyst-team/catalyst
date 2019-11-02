@@ -1,9 +1,9 @@
-from typing import Dict
+from typing import Dict  # isort:skip
 
-from .encoder import UnetEncoder, ResnetEncoder
+from .core import ResnetUnetSpec, UnetSpec
 from .decoder import PSPDecoder
+from .encoder import ResnetEncoder, UnetEncoder
 from .head import UnetHead
-from .core import UnetSpec, ResnetUnetSpec
 
 
 class PSPnet(UnetSpec):

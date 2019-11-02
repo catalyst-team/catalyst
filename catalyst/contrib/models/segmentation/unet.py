@@ -1,14 +1,16 @@
-from typing import Dict
+from typing import Dict  # isort:skip
 from functools import partial
+
 import numpy as np
 
-from .blocks import EncoderDownsampleBlock, EncoderUpsampleBlock, \
-    DecoderConcatBlock
-from .encoder import UnetEncoder, ResnetEncoder
+from .blocks import (
+    DecoderConcatBlock, EncoderDownsampleBlock, EncoderUpsampleBlock
+)
 from .bridge import UnetBridge
+from .core import ResnetUnetSpec, UnetSpec
 from .decoder import UNetDecoder
+from .encoder import ResnetEncoder, UnetEncoder
 from .head import UnetHead
-from .core import UnetSpec, ResnetUnetSpec
 
 
 class Unet(UnetSpec):

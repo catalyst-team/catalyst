@@ -1,11 +1,11 @@
-from typing import List, Dict
+from typing import Dict, List  # isort:skip
 
 import torch
 import torch.nn as nn
 
-from .encoder import EncoderSpec, UnetEncoder, ResnetEncoder
 from .bridge import BridgeSpec
 from .decoder import DecoderSpec
+from .encoder import EncoderSpec, ResnetEncoder, UnetEncoder
 from .head import HeadSpec
 
 
