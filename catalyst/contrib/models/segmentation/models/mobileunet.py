@@ -1,11 +1,12 @@
 # https://github.com/akirasosa/mobile-semantic-segmentation
 
 import math
+
 import torch
 import torch.nn as nn
 from torch.nn.functional import interpolate
 
-from ...classification.mobilenetv2 import MobileNetV2, InvertedResidual
+from ...classification.mobilenetv2 import InvertedResidual, MobileNetV2
 
 
 class MobileUnet(nn.Module):

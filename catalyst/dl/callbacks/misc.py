@@ -1,12 +1,13 @@
-from typing import List, Dict
+from typing import Dict, List  # isort:skip
+
 import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 
-from catalyst.dl.meters import ConfusionMeter
-from catalyst.dl.core import (
-    Callback, RunnerState, CallbackOrder, LoggerCallback
-)
 from catalyst.dl import utils
+from catalyst.dl.core import (
+    Callback, CallbackOrder, LoggerCallback, RunnerState
+)
+from catalyst.dl.meters import ConfusionMeter
 
 
 class EarlyStoppingCallback(Callback):

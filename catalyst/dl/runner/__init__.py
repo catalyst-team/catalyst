@@ -2,10 +2,11 @@
 import logging
 import os
 
+from .gan import GanRunner
+from .supervised import SupervisedRunner
+
 logger = logging.getLogger(__name__)
 
-from .supervised import SupervisedRunner
-from .gan import GanRunner
 
 try:
     import wandb

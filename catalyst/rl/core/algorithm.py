@@ -1,5 +1,6 @@
-from typing import Union, Dict
-from abc import abstractmethod, ABC
+from typing import Dict, Union  # isort:skip
+from abc import ABC, abstractmethod
+
 from .agent import ActorSpec, CriticSpec
 from .environment import EnvironmentSpec
 

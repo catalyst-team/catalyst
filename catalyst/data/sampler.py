@@ -1,4 +1,4 @@
-from typing import List, Iterator
+from typing import Iterator, List  # isort:skip
 import numpy as np
 
 from torch.utils.data.sampler import Sampler

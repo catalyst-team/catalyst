@@ -1,10 +1,11 @@
+from typing import Callable, Dict, List  # isort:skip
 import logging
-from typing import Dict, List, Callable
 
 import safitty
+
 import torch
 
-from catalyst.dl.core import Callback, RunnerState, CallbackOrder
+from catalyst.dl.core import Callback, CallbackOrder, RunnerState
 from catalyst.dl.registry import GRAD_CLIPPERS
 from catalyst.dl.utils import get_optimizer_momentum, maybe_recursive_call
 from catalyst.dl.utils.torch import _Optimizer

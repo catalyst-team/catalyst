@@ -4,7 +4,7 @@ check-style:
 	bash ./bin/_check_codestyle.sh -s
 
 codestyle:
-	bash ./bin/_check_codestyle.sh
+	pre-commit run
 
 check-docs:
 	bash ./bin/_check_docs.sh

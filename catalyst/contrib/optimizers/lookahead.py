@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict  # isort:skip
 from collections import defaultdict
 
 import torch
@@ -13,7 +13,7 @@ class Lookahead(Optimizer):
         alpha: float = 0.5
     ):
         """
-        taken from: https://github.com/alphadl/lookahead.pytorch
+        Taken from: https://github.com/alphadl/lookahead.pytorch
         """
         self.optimizer = optimizer
         self.k = k

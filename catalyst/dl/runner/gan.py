@@ -1,6 +1,7 @@
-from typing import Mapping, Any
+from typing import Any, Mapping  # isort:skip
 
 import torch
+
 from catalyst.dl import Runner
 
 

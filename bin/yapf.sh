@@ -30,7 +30,7 @@ fi
 git fetch upstream master
 
 YAPF_FLAGS=(
-    '--style' "$ROOT/.style.yapf"
+    '--style' "$ROOT/setup.cfg"
     '--recursive'
     '--parallel'
 )
@@ -86,11 +86,11 @@ else
 fi
 
 if ! git diff --quiet &>/dev/null; then
-    echo 'Reformatted changed files. Please review and stage the changes.'
-    echo 'Files updated:'
-    echo
+    echo 'Reformatted changed files. Please review and stage the changes.' 1>&2
+    echo 'Files updated:' 1>&2
+    echo 1>&2
 
-    git --no-pager diff --name-only
+    git --no-pager diff --name-only 1>&2
 
     exit 1
 fi

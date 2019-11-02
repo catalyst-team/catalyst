@@ -1,12 +1,12 @@
-from typing import Dict
+from typing import Dict  # isort:skip
 import copy
-from gym import spaces
 
+from gym import spaces
 import torch
 
 from catalyst.rl.core import ActorSpec, EnvironmentSpec
-from .network import StateNet
 from .head import PolicyHead
+from .network import StateNet
 
 
 class Actor(ActorSpec):

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List  # isort:skip
 
 from catalyst.dl.core import MultiMetricCallback
 from catalyst.dl.utils import criterion

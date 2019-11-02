@@ -1,12 +1,13 @@
-from typing import Dict, List
+from typing import Dict, List  # isort:skip
 import copy
+
 from gym.spaces import Box
 import torch
 
+from catalyst.rl import utils
+from catalyst.rl.core import AlgorithmSpec, CriticSpec, EnvironmentSpec
 from catalyst.rl.registry import AGENTS
 from .actor_critic import OffpolicyActorCritic
-from catalyst.rl.core import AlgorithmSpec, CriticSpec, EnvironmentSpec
-from catalyst.rl import utils
 
 
 class TD3(OffpolicyActorCritic):

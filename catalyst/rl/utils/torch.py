@@ -1,9 +1,11 @@
 from copy import deepcopy
 
 import torch
+
 from catalyst.rl import utils
-from catalyst.rl.registry import \
+from catalyst.rl.registry import (
     CRITERIONS, GRAD_CLIPPERS, OPTIMIZERS, SCHEDULERS
+)
 
 
 def get_network_weights(network, exclude_norm=False):

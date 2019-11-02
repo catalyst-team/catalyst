@@ -1,14 +1,16 @@
 from typing import List, Dict, Optional
+import logging
 import os
 import sys
-import logging
-from urllib.request import Request, urlopen
-from urllib.parse import quote_plus
+
 from tqdm import tqdm
 
+from urllib.request import Request, urlopen
+from urllib.parse import quote_plus
+
+from catalyst.dl import utils
 from catalyst.dl.core import LoggerCallback, RunnerState
 from catalyst.dl.utils.formatters import TxtMetricsFormatter
-from catalyst.dl import utils
 from catalyst.utils.tensorboard import SummaryWriter
 
 

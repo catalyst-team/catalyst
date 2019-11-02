@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 import json
 import logging
-from datetime import datetime
 
 from catalyst.dl.core.state import RunnerState
 

@@ -4,12 +4,12 @@
 
 import argparse
 import pickle
-from tqdm import tqdm
 
 import numpy as np
+from tqdm import tqdm
 
 from catalyst import utils
-from catalyst.rl.db import RedisDB, MongoDB
+from catalyst.rl.db import MongoDB, RedisDB
 
 
 def build_args(parser):

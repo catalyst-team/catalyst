@@ -1,12 +1,12 @@
-from typing import List
+from typing import List  # isort:skip
 from functools import partial
 
 import torch
 
-from .core import DecoderSpec
+from ..abn import ABN
 from ..blocks.core import _get_block
 from ..blocks.psp import PSPBlock
-from ..abn import ABN
+from .core import DecoderSpec
 
 
 class PSPDecoder(DecoderSpec):
