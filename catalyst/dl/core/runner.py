@@ -59,7 +59,8 @@ class Runner(ABC):
                 criterion=criterion,
                 optimizer=optimizer,
                 scheduler=scheduler,
-                distributed_params=self.experiment.distributed_params
+                distributed_params=self.experiment.distributed_params,
+                device=self.device
             )
 
         return model, criterion, optimizer, scheduler, device
