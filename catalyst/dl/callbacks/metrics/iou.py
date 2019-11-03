@@ -51,7 +51,8 @@ class IouCallback(MetricCallback):
 JaccardCallback = IouCallback
 
 
-def calculate_jaccard(true_positives: np.array, false_positives: np.array, false_negatives: np.array) -> np.array:
+def calculate_jaccard(true_positives: np.array, false_positives: np.array,
+                      false_negatives: np.array) -> np.array:
     """Calculate list of Jaccard indices.
 
     Args:

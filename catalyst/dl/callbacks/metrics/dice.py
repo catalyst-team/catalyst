@@ -44,7 +44,8 @@ class DiceCallback(MetricCallback):
         )
 
 
-def calculate_dice(true_positives: np.array, false_positives: np.array, false_negatives: np.array) -> np.array:
+def calculate_dice(true_positives: np.array, false_positives: np.array,
+                   false_negatives: np.array) -> np.array:
     """Calculate list of Dice coefficients.
 
     Args:
