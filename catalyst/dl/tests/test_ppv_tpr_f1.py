@@ -71,7 +71,7 @@ def create_dummy_tensors_seg(batch_size=16, channels=1):
     return (label, pred)
 
 
-def test_meter_counts_and_value(meter, num_tp_check=16):
+def runs_tests_on_meter_counts_and_value(meter, num_tp_check=16):
     """
     Tests the meter's counts and values (ppv, tpr, f1). Assumes there are no
     fp and fn (everything is tp).
@@ -102,18 +102,18 @@ def test_meter():
     # testing .add() and .value() with tensors w/no batch size dim
     binary_y, binary_pred = create_dummy_tensors_single()
     meter.add(binary_pred, binary_y)
-    test_meter_counts_and_value(meter, num_tp_check=1)
+    runs_tests_on_meter_counts_and_value(meter, num_tp_check=1)
 
     # testing .add() and .value() with tensors w/the batch size dim
     meter.reset()
     batch_size = 16
     binary_y, binary_pred = create_dummy_tensors_batched(batch_size)
     meter.add(binary_pred, binary_y)
-    test_meter_counts_and_value(meter, num_tp_check=batch_size)
+    runs_tests_on_meter_counts_and_value(meter, num_tp_check=batch_size)
 
     # testing with seg; shape (batch_size, n_channels, h, w)
     meter.reset()
     batch_size = 16
     binary_y, binary_pred = create_dummy_tensors_seg(batch_size)
     meter.add(binary_pred, binary_y)
-    test_meter_counts_and_value(meter, num_tp_check=batch_size*15*15)
+    runs_tests_on_meter_counts_and_value(meter, num_tp_check=batch_size*15*15)
