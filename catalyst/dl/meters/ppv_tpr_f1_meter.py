@@ -73,7 +73,7 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
         Args:
             output (torch.Tensor/numpy.ndarray/numbers.Number):
                 prediction after activation function
-                shape should be (batch_size, ...)
+                shape should be (batch_size, ...), but works with any shape
             target (torch.Tensor/numpy.ndarray/numbers.Number):
                 label (binary)
                 shape should be the same as output's shape
@@ -88,8 +88,6 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
             target = np.asarray([target])
         assert output.size == target.size, \
             "outputs and targets must have the same number of elements"
-        assert output.shape[0] == target.shape[0], \
-            "batch sizes do not match."
         assert np.all(np.add(np.equal(target, 1), np.equal(target, 0))), \
             "targets should be binary (0, 1)"
 
