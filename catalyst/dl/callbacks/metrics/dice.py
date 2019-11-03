@@ -17,14 +17,15 @@ class DiceCallback(MetricCallback):
     """
     Dice metric callback.
     """
+
     def __init__(
-        self,
-        input_key: str = "targets",
-        output_key: str = "logits",
-        prefix: str = "dice",
-        eps: float = 1e-7,
-        threshold: float = None,
-        activation: str = "Sigmoid"
+            self,
+            input_key: str = "targets",
+            output_key: str = "logits",
+            prefix: str = "dice",
+            eps: float = 1e-7,
+            threshold: float = None,
+            activation: str = "Sigmoid"
     ):
         """
         :param input_key: input key to use for dice calculation;
@@ -43,22 +44,21 @@ class DiceCallback(MetricCallback):
         )
 
 
-def calculate_dice(tp_fp_fn_dict: dict) -> np.array:
+def calculate_dice(true_positives: np.array, false_positives: np.array, false_negatives: np.array) -> np.array:
     """Calculate list of Dice coefficients.
+
     Args:
-        tp_fp_fn_dict: {"true_positives": true_positives,
-                        "false_positives": false_positives,
-                        "false_negatives": false_negatives}
+        true_positives:
+        false_positives:
+        false_negatives:
+
     Returns:
+
     """
     epsilon = 1e-7
 
-    true_positives = tp_fp_fn_dict["true_positives"]
-    false_positives = tp_fp_fn_dict["false_positives"]
-    false_negatives = tp_fp_fn_dict["false_negatives"]
-
     dice = (2 * true_positives + epsilon) / (
-        2 * true_positives + false_positives + false_negatives + epsilon
+            2 * true_positives + false_positives + false_negatives + epsilon
     )
 
     if not np.all(dice <= 1):
@@ -72,13 +72,13 @@ def calculate_dice(tp_fp_fn_dict: dict) -> np.array:
 
 class MulticlassDiceMetricCallback(Callback):
     def __init__(
-        self,
-        prefix: str = "dice",
-        input_key: str = "targets",
-        output_key: str = "logits",
-        class_names=None,
-        class_prefix="",
-        **metric_params
+            self,
+            prefix: str = "dice",
+            input_key: str = "targets",
+            output_key: str = "logits",
+            class_names=None,
+            class_prefix="",
+            **metric_params
     ):
         super().__init__(CallbackOrder.Metric)
         self.prefix = prefix
@@ -108,7 +108,7 @@ class MulticlassDiceMetricCallback(Callback):
     def on_loader_end(self, state: RunnerState):
         tp_fp_fn_dict = calculate_tp_fp_fn(self.confusion_matrix)
 
-        batch_metrics: Dict = calculate_dice(tp_fp_fn_dict)
+        batch_metrics: Dict = calculate_dice(**tp_fp_fn_dict)
 
         for metric_id, dice_value in batch_metrics.items():
             if metric_id not in self.class_names:
