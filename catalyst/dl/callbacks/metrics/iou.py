@@ -69,15 +69,15 @@ def calculate_jaccard(tp_fp_fn_dict: dict) -> np.array:
     )
 
     if not np.all(jaccard <= 1):
-        raise ValueError("Jaccard index should be less than 1")
+        raise ValueError("Jaccard index should be less or equal to 1")
 
-    if not np.all(jaccard >= 0):
+    if not np.all(jaccard > 0):
         raise ValueError("Jaccard index should be more than 1")
 
     return jaccard
 
 
-class MulticlassJaccardMetricCallback(Callback):
+class MulticlassIOUMetricCallback(Callback):
     def __init__(
         self,
         prefix: str = "jaccard",
@@ -134,4 +134,4 @@ class MulticlassJaccardMetricCallback(Callback):
         self._reset_stats()
 
 
-__all__ = ["IouCallback", "JaccardCallback", "MulticlassJaccardMetricCallback"]
+__all__ = ["IouCallback", "JaccardCallback", "MulticlassIOUMetricCallback"]

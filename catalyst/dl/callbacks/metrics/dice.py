@@ -62,9 +62,9 @@ def calculate_dice(tp_fp_fn_dict: dict) -> np.array:
     )
 
     if not np.all(dice <= 1):
-        raise ValueError("Dice index should be less than 1")
+        raise ValueError("Dice index should be less or equal to 1")
 
-    if not np.all(dice >= 0):
+    if not np.all(dice > 0):
         raise ValueError("Dice index should be more than 1")
 
     return dice
