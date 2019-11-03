@@ -56,11 +56,18 @@ def create_dummy_tensors_batched(batch_size=16):
     """
     Binary: 1 actual, 1 predicted (tp: 1, fp: 0, fn: 0)
     """
-    label = torch.zeros((batch_size, 1))
-    pred = torch.zeros((batch_size, 1))
-    for i in range(batch_size):
-        label[i] = torch.tensor([1])
-        pred[i] = torch.tensor([1])
+    label = torch.ones((batch_size, 1))
+    pred = torch.ones((batch_size, 1))
+    return (label, pred)
+
+
+def create_dummy_tensors_seg(batch_size=16, channels=1):
+    """
+    Binary: 1 actual, 1 predicted (tp: 1, fp: 0, fn: 0)
+    """
+    base_shape = (channels, 15, 15)
+    label = torch.ones((batch_size,)+base_shape)
+    pred = torch.ones((batch_size,)+base_shape)
     return (label, pred)
 
 
@@ -94,6 +101,20 @@ def test_meter():
     meter.add(binary_pred, binary_y)
     counts_dict = meter.tp_fp_fn_counts
     assert counts_dict["tp"] == batch_size
+    assert counts_dict["fp"] == 0 and counts_dict["fn"] == 0, \
+        "There should be no fp and fn for this test case."
+    ppv, tpr, f1 = meter.value()
+    ppv, tpr, f1 = map(lambda x: round(x, 3), [ppv, tpr, f1])
+    assert ppv == tpr == f1 == 1, \
+        "No fp and fn means that all metrics should be =1."
+
+    # testing with seg; shape (batch_size, n_channels, h, w)
+    meter.reset()
+    batch_size = 16
+    binary_y, binary_pred = create_dummy_tensors_seg(batch_size)
+    meter.add(binary_pred, binary_y)
+    counts_dict = meter.tp_fp_fn_counts
+    assert counts_dict["tp"] == batch_size*15*15
     assert counts_dict["fp"] == 0 and counts_dict["fn"] == 0, \
         "There should be no fp and fn for this test case."
     ppv, tpr, f1 = meter.value()
