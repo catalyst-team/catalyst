@@ -7,10 +7,10 @@ from catalyst.dl.utils import criterion
 
 class DiceLoss(nn.Module):
     def __init__(
-            self,
-            eps: float = 1e-7,
-            threshold: float = None,
-            activation: str = "Sigmoid"
+        self,
+        eps: float = 1e-7,
+        threshold: float = None,
+        activation: str = "Sigmoid"
     ):
         super().__init__()
 
@@ -28,12 +28,12 @@ class DiceLoss(nn.Module):
 
 class BCEDiceLoss(nn.Module):
     def __init__(
-            self,
-            eps: float = 1e-7,
-            threshold: float = None,
-            activation: str = "Sigmoid",
-            bce_weight: float = 0.5,
-            dice_weight: float = 0.5,
+        self,
+        eps: float = 1e-7,
+        threshold: float = None,
+        activation: str = "Sigmoid",
+        bce_weight: float = 0.5,
+        dice_weight: float = 0.5,
     ):
         super().__init__()
 
