@@ -56,6 +56,12 @@ class ClassificationDatasetTests(unittest.TestCase):
 		data, tg = dataset[0]["features"], dataset[0]["targets"]
 		self.assertEqual(0, tg.item())
 
+	def test_dataset_without_labels(self):
+		dataset = ClassificationDataset(texts, None)
+		data = dataset[0]["features"]
+		flag = "targets" not in dataset[0].keys()
+		self.assertEqual(flag, True)
+
 	def test_batches(self):
 		dataset = ClassificationDataset(texts, classes)
 		loader = DataLoader(dataset, batch_size=3)

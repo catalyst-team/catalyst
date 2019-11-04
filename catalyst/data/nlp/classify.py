@@ -28,7 +28,9 @@ class ClassificationDataset(Dataset):
 		# {'class1': 0, 'class2': 1, 'class3': 2, ...}
 		# using this instead of `sklearn.preprocessing.LabelEncoder`
 		# no easily handle unknown target values
-		self.label_dict = dict(zip(labels.unique(), range(labels.nunique())))
+		self.label_dict = None
+		if labels is not None:
+			self.label_dict = dict(zip(labels.unique(), range(labels.nunique())))
 		self.max_seq_length = max_seq_length
 
 		self.tokenizer = DistilBertTokenizer.from_pretrained(
@@ -54,6 +56,8 @@ class ClassificationDataset(Dataset):
 		texts_length.sort_values(inplace=True, ascending=False)
 		texts_length.name = "texts length"
 		texts_length = texts_length.reset_index()
+		if "id" in texts_length.columns:
+			texts_length.columns = ['index', 'texts length']
 
 		pad_length = []
 
@@ -83,11 +87,16 @@ class ClassificationDataset(Dataset):
 	def __getitem__(self, index) -> Mapping[str, torch.Tensor]:
 
 		metadata = None
+		x, y = None, None
 		if self.use_seq_bucketing is True:
 			metadata = self.frame_with_pad.iloc[index]
-			x, y = 	self.texts[metadata["index"]], self.labels[metadata["index"]]
+			x = self.texts[metadata["index"]]
+			if self.labels is not None:
+				y = self.labels[metadata["index"]]
 		else:
-			x, y = self.texts[index], self.labels[index]
+			x = self.texts[index]
+			if self.labels is not None:
+				y = self.labels[index]
 
 		#TODO: remove max_length flag and use custom function for seq cropping
 		# (eg. 128 head tokens, 128 tail tokens)
@@ -108,17 +117,23 @@ class ClassificationDataset(Dataset):
 		pad_ids = torch.Tensor([self.pad_vid] * pad_size).long()
 		x_tensor = torch.cat((x_encoded, pad_ids))
 
-		y_encoded = torch.Tensor([self.label_dict.get(y, -1)]).long().squeeze(0)
+
+		y_encoded = None
+		if y is not None:
+			y_encoded = torch.Tensor([self.label_dict.get(y, -1)]).long().squeeze(0)
 
 		mask = torch.ones_like(x_encoded, dtype=int)
 		mask_pad = torch.zeros_like(pad_ids, dtype=int)
 		mask = torch.cat((mask, mask_pad))
 
-		return {
+		return_dict = {
 			"features": x_tensor,
-			"targets": y_encoded,
 			'mask': mask
 		}
+
+		if y_encoded is not None:
+			return_dict["targets"] = y_encoded
+		return return_dict
 
 
 __all__ = ["ClassificationDataset"]
