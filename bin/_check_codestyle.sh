@@ -11,7 +11,7 @@ done
 
 
 # stop the build if there are any unexpected flake8 issues
-flake8 . --count \
+bash ./bin/flake8.sh --count \
     --config=./setup.cfg \
     --show-source --statistics
 
