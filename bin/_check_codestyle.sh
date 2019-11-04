@@ -11,20 +11,15 @@ done
 
 
 # stop the build if there are any unexpected flake8 issues
-flake8 . --count --ignore=E126,E226,E704,E731,W503,W504 \
-  --max-complexity=16 \
-  --inline-quotes "double" \
-  --multiline-quotes "double" \
-  --docstring-quotes "double" \
-  --show-source --statistics
+bash ./bin/flake8.sh --count \
+    --config=./setup.cfg \
+    --show-source --statistics
 
 # exit-zero treats all errors as warnings.
 flake8 . --count --exit-zero \
-  --max-complexity=10 \
-  --inline-quotes "double" \
-  --multiline-quotes "double" \
-  --docstring-quotes "double" \
-  --statistics
+    --max-complexity=10 \
+    --config=./setup.cfg \
+    --statistics
 
 # test to make sure the code is yapf compliant
 if [[ -f ${skip_inplace} ]]; then
