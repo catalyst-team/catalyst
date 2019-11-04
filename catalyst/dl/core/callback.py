@@ -195,8 +195,6 @@ class MeterMetricsCallback(Callback):
         self.output_key = output_key
         self.class_names = class_names
         self.num_classes = num_classes
-        assert self.num_classes is not None and self.num_classes > 1, \
-            "`num_classes` should be an integer greater than 1."
         self.activation = activation
 
     def _reset_stats(self):
