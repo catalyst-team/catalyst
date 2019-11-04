@@ -1,8 +1,8 @@
 from typing import Dict, Union  # isort:skip
-import os
-import shutil
 from collections import OrderedDict
+import os
 from pathlib import Path
+import shutil
 
 import torch
 

@@ -1,8 +1,9 @@
 # flake8: noqa
 from collections import OrderedDict
-from torchvision import transforms
-from catalyst.dl import ConfigExperiment
 
+from torchvision import transforms
+
+from catalyst.dl import ConfigExperiment
 from .dataset import SomeDataset
 
 

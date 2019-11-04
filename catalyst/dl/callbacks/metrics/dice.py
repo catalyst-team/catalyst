@@ -2,15 +2,13 @@ from typing import Dict
 
 import numpy as np
 
-from catalyst.dl.core import (MetricCallback,
-                              Callback,
-                              RunnerState,
-                              CallbackOrder)
-
+from catalyst.dl.core import (
+    Callback, CallbackOrder, MetricCallback, RunnerState
+)
 from catalyst.dl.utils import criterion
 from catalyst.utils.confusion_matrix import (
-    calculate_confusion_matrix_from_tensors,
-    calculate_tp_fp_fn)
+    calculate_confusion_matrix_from_tensors, calculate_tp_fp_fn
+)
 
 
 class DiceCallback(MetricCallback):
@@ -19,19 +17,20 @@ class DiceCallback(MetricCallback):
     """
 
     def __init__(
-            self,
-            input_key: str = "targets",
-            output_key: str = "logits",
-            prefix: str = "dice",
-            eps: float = 1e-7,
-            threshold: float = None,
-            activation: str = "Sigmoid"
+        self,
+        input_key: str = "targets",
+        output_key: str = "logits",
+        prefix: str = "dice",
+        eps: float = 1e-7,
+        threshold: float = None,
+        activation: str = "Sigmoid"
     ):
         """
-        :param input_key: input key to use for dice calculation;
-            specifies our `y_true`.
-        :param output_key: output key to use for dice calculation;
-            specifies our `y_pred`.
+        Args:
+            input_key (str): input key to use for dice calculation;
+                specifies our `y_true`.
+            output_key (str): output key to use for dice calculation;
+                specifies our `y_pred`.
         """
         super().__init__(
             prefix=prefix,
@@ -44,8 +43,11 @@ class DiceCallback(MetricCallback):
         )
 
 
-def calculate_dice(true_positives: np.array, false_positives: np.array,
-                   false_negatives: np.array) -> np.array:
+def calculate_dice(
+    true_positives: np.array,
+    false_positives: np.array,
+    false_negatives: np.array
+) -> np.array:
     """Calculate list of Dice coefficients.
 
     Args:
@@ -59,7 +61,7 @@ def calculate_dice(true_positives: np.array, false_positives: np.array,
     epsilon = 1e-7
 
     dice = (2 * true_positives + epsilon) / (
-            2 * true_positives + false_positives + false_negatives + epsilon
+        2 * true_positives + false_positives + false_negatives + epsilon
     )
 
     if not np.all(dice <= 1):
@@ -73,13 +75,13 @@ def calculate_dice(true_positives: np.array, false_positives: np.array,
 
 class MulticlassDiceMetricCallback(Callback):
     def __init__(
-            self,
-            prefix: str = "dice",
-            input_key: str = "targets",
-            output_key: str = "logits",
-            class_names=None,
-            class_prefix="",
-            **metric_params
+        self,
+        prefix: str = "dice",
+        input_key: str = "targets",
+        output_key: str = "logits",
+        class_names=None,
+        class_prefix="",
+        **metric_params
     ):
         super().__init__(CallbackOrder.Metric)
         self.prefix = prefix
@@ -117,7 +119,8 @@ class MulticlassDiceMetricCallback(Callback):
 
             metric_name = self.class_names[metric_id]
             state.metrics.epoch_values[state.loader_name][
-                f"{self.class_prefix}_{metric_name}"] = dice_value
+                f"{self.class_prefix}_{metric_name}"
+            ] = dice_value
 
         state.metrics.epoch_values[state.loader_name]["mean"] = np.mean(
             [x for x in batch_metrics.values()]

@@ -1,7 +1,8 @@
-import gym
-import gym_minigrid  # noqa: F401
-from gym import spaces
 import cv2
+
+import gym
+from gym import spaces
+import gym_minigrid  # noqa: F401
 
 cv2.ocl.setUseOpenCL(False)
 

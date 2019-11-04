@@ -6,10 +6,10 @@
 
 import io
 import os
-import sys
 from shutil import rmtree
+import sys
 
-from setuptools import find_packages, setup, Command
+from setuptools import Command, find_packages, setup
 
 # Package meta-data.
 NAME = "catalyst"

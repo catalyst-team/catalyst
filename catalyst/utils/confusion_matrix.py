@@ -1,12 +1,15 @@
 import numpy as np
+
 import torch
 
 
 def calculate_confusion_matrix_from_arrays(
     ground_truth: np.array, prediction: np.array, num_classes: int
 ) -> np.array:
-    """Calculate confusion matrix for a given set of classes.
-        if GT value is outside of the [0, num_classes) it is excluded.
+    """
+    Calculate confusion matrix for a given set of classes.
+    if GT value is outside of the [0, num_classes) it is excluded.
+
     Args:
         ground_truth:
         prediction:
