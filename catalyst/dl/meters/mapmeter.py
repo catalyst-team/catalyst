@@ -1,4 +1,4 @@
-from . import meter, APMeter
+from . import APMeter, meter
 
 
 class mAPMeter(meter.Meter):

@@ -1,8 +1,9 @@
 from collections import OrderedDict
 
 import torchvision
-from catalyst.dl import ConfigExperiment
 from torchvision import transforms
+
+from catalyst.dl import ConfigExperiment
 
 
 # data loaders & transforms

@@ -1,11 +1,12 @@
 from collections import OrderedDict
+
 import torch
 import torch.nn as nn
 import torchvision
 from torchvision import transforms
 
-from catalyst.dl import ConfigExperiment
 from catalyst import utils
+from catalyst.dl import ConfigExperiment
 
 
 class Experiment(ConfigExperiment):

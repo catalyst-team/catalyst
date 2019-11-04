@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from catalyst.rl.environment import EnvironmentWrapper
-
 from .minigrid_wrappers import make_minigrid_env
 
 

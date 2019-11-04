@@ -2,13 +2,13 @@ from typing import Dict
 
 import numpy as np
 
-from catalyst.dl.core import (MetricCallback,
-                              Callback,
-                              RunnerState,
-                              CallbackOrder)
+from catalyst.dl.core import (
+    Callback, CallbackOrder, MetricCallback, RunnerState
+)
 from catalyst.dl.utils import criterion
 from catalyst.utils.confusion_matrix import (
-    calculate_confusion_matrix_from_tensors, calculate_tp_fp_fn)
+    calculate_confusion_matrix_from_tensors, calculate_tp_fp_fn
+)
 
 
 class IouCallback(MetricCallback):
@@ -17,13 +17,13 @@ class IouCallback(MetricCallback):
     """
 
     def __init__(
-            self,
-            input_key: str = "targets",
-            output_key: str = "logits",
-            prefix: str = "iou",
-            eps: float = 1e-7,
-            threshold: float = None,
-            activation: str = "Sigmoid",
+        self,
+        input_key: str = "targets",
+        output_key: str = "logits",
+        prefix: str = "iou",
+        eps: float = 1e-7,
+        threshold: float = None,
+        activation: str = "Sigmoid",
     ):
         """
         Args:
@@ -51,8 +51,11 @@ class IouCallback(MetricCallback):
 JaccardCallback = IouCallback
 
 
-def calculate_jaccard(true_positives: np.array, false_positives: np.array,
-                      false_negatives: np.array) -> np.array:
+def calculate_jaccard(
+    true_positives: np.array,
+    false_positives: np.array,
+    false_negatives: np.array
+) -> np.array:
     """Calculate list of Jaccard indices.
 
     Args:
@@ -66,7 +69,7 @@ def calculate_jaccard(true_positives: np.array, false_positives: np.array,
     epsilon = 1e-7
 
     jaccard = (true_positives + epsilon) / (
-            true_positives + false_positives + false_negatives + epsilon
+        true_positives + false_positives + false_negatives + epsilon
     )
 
     if not np.all(jaccard <= 1):
@@ -80,13 +83,13 @@ def calculate_jaccard(true_positives: np.array, false_positives: np.array,
 
 class MulticlassIOUMetricCallback(Callback):
     def __init__(
-            self,
-            prefix: str = "jaccard",
-            input_key: str = "targets",
-            output_key: str = "logits",
-            class_names=None,
-            class_prefix="",
-            **metric_params
+        self,
+        prefix: str = "jaccard",
+        input_key: str = "targets",
+        output_key: str = "logits",
+        class_names=None,
+        class_prefix="",
+        **metric_params
     ):
 
         super().__init__(CallbackOrder.Metric)
@@ -126,7 +129,8 @@ class MulticlassIOUMetricCallback(Callback):
 
             metric_name = self.class_names[metric_id]
             state.metrics.epoch_values[state.loader_name][
-                f"{self.class_prefix}_{metric_name}"] = jaccard_value
+                f"{self.class_prefix}_{metric_name}"
+            ] = jaccard_value
 
         state.metrics.epoch_values[state.loader_name]["mean"] = np.mean(
             [x for x in batch_metrics.values()]
@@ -137,5 +141,7 @@ class MulticlassIOUMetricCallback(Callback):
 
 MulticlassJaccardMetricCallback = MulticlassIOUMetricCallback
 
-__all__ = ["IouCallback", "JaccardCallback",
-           "MulticlassIOUMetricCallback", "MulticlassJaccardMetricCallback"]
+__all__ = [
+    "IouCallback", "JaccardCallback",
+    "MulticlassIOUMetricCallback", "MulticlassJaccardMetricCallback"
+]

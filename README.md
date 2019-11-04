@@ -3,7 +3,7 @@
 [![Catalyst logo](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png)](https://github.com/catalyst-team/catalyst)
 
 **Reproducible and fast DL & RL**
- 
+
 [![Pipi version](https://img.shields.io/pypi/v/catalyst.svg)](https://pypi.org/project/catalyst/)
 [![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html)
 [![PyPI Status](https://pepy.tech/badge/catalyst)](https://pepy.tech/project/catalyst)
@@ -20,9 +20,9 @@
 </div>
 
 High-level utils for PyTorch DL & RL research.
-It was developed with a focus on reproducibility, 
+It was developed with a focus on reproducibility,
 fast experimentation and code/ideas reusing.
-Being able to research/develop something new, 
+Being able to research/develop something new,
 rather than write another regular train loop.
 
 Break the cycle - use the Catalyst!
@@ -56,7 +56,7 @@ Catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+.
 API documentation and an overview of the library can be found here
 [![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html).
 
-In the **[examples folder](examples)** 
+In the **[examples folder](examples)**
 of the repository, you can find advanced tutorials and Catalyst best practices.
 
 ##### Blog
@@ -150,16 +150,16 @@ Catalyst has its own [DockerHub page](https://hub.docker.com/r/catalystteam/cata
 - `catalystteam/catalyst:{CATALYST_VERSION}-dev` – Catalyst for development with all the requirements
 - `catalystteam/catalyst:{CATALYST_VERSION}-dev-fp16` – Catalyst for development with FP16
 
-To build a docker from the sources and get more information and examples, 
+To build a docker from the sources and get more information and examples,
 please visit [docker folder](docker).
 
 
 ## Contribution guide
 
-We appreciate all contributions. 
-If you are planning to contribute back bug-fixes, 
-please do so without any further discussion. 
-If you plan to contribute new features, utility functions or extensions, 
+We appreciate all contributions.
+If you are planning to contribute back bug-fixes,
+please do so without any further discussion.
+If you plan to contribute new features, utility functions or extensions,
 please first open an issue and discuss the feature with us.
 
 - Please see the [contribution guide](CONTRIBUTING.md) for more information.

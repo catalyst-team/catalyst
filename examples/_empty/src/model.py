@@ -1,4 +1,5 @@
 import torch
+
 from catalyst.contrib import registry
 
 

@@ -1,10 +1,11 @@
+from collections import defaultdict
 import numbers
 
 import numpy as np
+
 import torch
 
 from . import meter
-from collections import defaultdict
 
 
 def f1score(precision_value, recall_value, eps=1e-5):

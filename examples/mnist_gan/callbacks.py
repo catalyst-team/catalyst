@@ -1,5 +1,6 @@
 import torch
 import torchvision.utils
+
 from catalyst.dl import registry
 from catalyst.dl.core import Callback, CallbackOrder, RunnerState
 from catalyst.utils.tensorboard import SummaryWriter
