@@ -2,11 +2,10 @@ from typing import List, Dict, Optional  # isort:skip
 import logging
 import os
 import sys
+from urllib.parse import quote_plus
+from urllib.request import Request, urlopen
 
 from tqdm import tqdm
-
-from urllib.request import Request, urlopen
-from urllib.parse import quote_plus
 
 from catalyst.dl import utils
 from catalyst.dl.core import LoggerCallback, RunnerState
