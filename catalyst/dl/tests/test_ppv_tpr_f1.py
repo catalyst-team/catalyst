@@ -1,7 +1,8 @@
 import torch
 
-from catalyst.dl.meters.ppv_tpr_f1_meter import PrecisionRecallF1ScoreMeter, \
-                                                precision, recall, f1score
+from catalyst.dl.meters.ppv_tpr_f1_meter import (
+    f1score, precision, PrecisionRecallF1ScoreMeter, recall
+)
 
 
 def precision_recall_f1(tp, fp, fn):
@@ -56,12 +57,34 @@ def create_dummy_tensors_batched(batch_size=16):
     """
     Binary: 1 actual, 1 predicted (tp: 1, fp: 0, fn: 0)
     """
-    label = torch.zeros((batch_size, 1))
-    pred = torch.zeros((batch_size, 1))
-    for i in range(batch_size):
-        label[i] = torch.tensor([1])
-        pred[i] = torch.tensor([1])
+    label = torch.ones((batch_size, 1))
+    pred = torch.ones((batch_size, 1))
     return (label, pred)
+
+
+def create_dummy_tensors_seg(batch_size=16, channels=1):
+    """
+    Binary: 1 actual, 1 predicted (tp: 1, fp: 0, fn: 0)
+    """
+    base_shape = (channels, 15, 15)
+    label = torch.ones((batch_size,)+base_shape)
+    pred = torch.ones((batch_size,)+base_shape)
+    return (label, pred)
+
+
+def runs_tests_on_meter_counts_and_value(meter, num_tp_check=16):
+    """
+    Tests the meter's counts and values (ppv, tpr, f1). Assumes there are no
+    fp and fn (everything is tp).
+    """
+    counts_dict = meter.tp_fp_fn_counts
+    assert counts_dict["tp"] == num_tp_check
+    assert counts_dict["fp"] == 0 and counts_dict["fn"] == 0, \
+        "There should be no fp and fn for this test case."
+    ppv, tpr, f1 = meter.value()
+    ppv, tpr, f1 = map(lambda x: round(x, 3), [ppv, tpr, f1])
+    assert ppv == tpr == f1 == 1, \
+        "No fp and fn means that all metrics should be =1."
 
 
 def test_meter():
@@ -78,25 +101,20 @@ def test_meter():
             "Counts should be initialized to 0."
 
     # testing .add() and .value() with tensors w/no batch size dim
-    # SHOULD FAIL
     binary_y, binary_pred = create_dummy_tensors_single()
-    try:
-        meter.add(binary_pred, binary_y)
-        raise Exception(".add() should not be able to work with tensors \
-                        that do not have the batch size dimension")
-    except AssertionError:
-        pass
+    meter.add(binary_pred, binary_y)
+    runs_tests_on_meter_counts_and_value(meter, num_tp_check=1)
 
     # testing .add() and .value() with tensors w/the batch size dim
     meter.reset()
     batch_size = 16
     binary_y, binary_pred = create_dummy_tensors_batched(batch_size)
     meter.add(binary_pred, binary_y)
-    counts_dict = meter.tp_fp_fn_counts
-    assert counts_dict["tp"] == batch_size
-    assert counts_dict["fp"] == 0 and counts_dict["fn"] == 0, \
-        "There should be no fp and fn for this test case."
-    ppv, tpr, f1 = meter.value()
-    ppv, tpr, f1 = map(lambda x: round(x, 3), [ppv, tpr, f1])
-    assert ppv == tpr == f1 == 1, \
-        "No fp and fn means that all metrics should be =1."
+    runs_tests_on_meter_counts_and_value(meter, num_tp_check=batch_size)
+
+    # testing with seg; shape (batch_size, n_channels, h, w)
+    meter.reset()
+    batch_size = 16
+    binary_y, binary_pred = create_dummy_tensors_seg(batch_size)
+    meter.add(binary_pred, binary_y)
+    runs_tests_on_meter_counts_and_value(meter, num_tp_check=batch_size*15*15)

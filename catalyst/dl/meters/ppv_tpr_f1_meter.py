@@ -1,10 +1,11 @@
+from collections import defaultdict
 import numbers
 
 import numpy as np
+
 import torch
 
 from . import meter
-from collections import defaultdict
 
 
 def f1score(precision_value, recall_value, eps=1e-5):
@@ -73,10 +74,10 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
         Args:
             output (torch.Tensor/numpy.ndarray/numbers.Number):
                 prediction after activation function
-                shape should be (batch_size, 1)
+                shape should be (batch_size, ...), but works with any shape
             target (torch.Tensor/numpy.ndarray/numbers.Number):
                 label (binary)
-                shape should be (batch_size, 1)
+                shape should be the same as output's shape
         Returns:
             None
         """
@@ -86,12 +87,8 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
             target = target.cpu().squeeze().numpy()
         elif isinstance(target, numbers.Number):
             target = np.asarray([target])
-        assert np.ndim(output) == 1, \
-            "wrong output size (1D expected)"
-        assert np.ndim(target) == 1, \
-            "wrong target size (1D expected)"
-        assert output.shape[0] == target.shape[0], \
-            "number of outputs and targets does not match"
+        assert output.size == target.size, \
+            "outputs and targets must have the same number of elements"
         assert np.all(np.add(np.equal(target, 1), np.equal(target, 0))), \
             "targets should be binary (0, 1)"
 
