@@ -7,6 +7,7 @@ from pathlib import Path
 from catalyst.dl.utils.scripts import import_experiment_and_runner
 from catalyst.utils import boolean_flag, prepare_cudnn, set_global_seed
 from catalyst.utils.config import dump_environment, parse_args_uargs
+from catalyst.utils.config_validator import validate_dl_config
 from catalyst.utils.scripts import dump_code
 
 
@@ -70,6 +71,7 @@ def parse_args():
 
 def main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
+    config = validate_dl_config(config)
     set_global_seed(args.seed)
     prepare_cudnn(args.deterministic, args.benchmark)
 

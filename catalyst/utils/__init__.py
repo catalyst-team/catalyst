@@ -10,6 +10,9 @@ from .config import (
     dump_environment, get_environment_vars, load_ordered_yaml,
     parse_args_uargs, parse_config_args
 )
+from .config_validator import (
+    validate_dl_config
+)
 # from .dataset import *
 from .ddp import get_real_module, is_wrapped_with_ddp
 # from .frozen import *
