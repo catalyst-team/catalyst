@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional  # isort:skip
 import logging
 import os
 import sys
