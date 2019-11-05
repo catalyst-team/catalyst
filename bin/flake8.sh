@@ -31,7 +31,7 @@ git fetch upstream master
 
 MERGEBASE="$(git merge-base upstream/master HEAD)"
 if ! git diff --diff-filter=ACM --quiet --exit-code "$MERGEBASE" -- '*.py' &>/dev/null; then
-    git diff --name-only --diff-filter=ACM "$MERGEBASE" -- '*.py' | flake8 "$@"
+    flake8 "$@" --filename=$(git diff --name-only --diff-filter=AM "$MERGEBASE" -- '*.py')
 fi
 
 if ! git diff --quiet &>/dev/null; then
