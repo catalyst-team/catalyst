@@ -1,7 +1,7 @@
 from typing import List
 
-from catalyst.dl.meters import PrecisionRecallF1ScoreMeter
 from catalyst.dl.core import MeterMetricsCallback
+from catalyst.dl.meters import PrecisionRecallF1ScoreMeter
 
 
 class PrecisionRecallF1ScoreCallback(MeterMetricsCallback):
