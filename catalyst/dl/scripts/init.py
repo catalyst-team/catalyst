@@ -5,6 +5,7 @@ import shutil
 from git import Repo as repo
 
 from catalyst import utils
+from catalyst.dl.utils import run_wizard
 
 
 class CatalystInitException(Exception):
@@ -18,6 +19,11 @@ def build_args(parser):
         type=str, default=None,
         choices=["empty", "classification", "segmentation", "detection"],
         help="select a Catalyst pipeline"
+    )
+    parser.add_argument(
+        "-w", "--wizard",
+        action="store_true",
+        help="use wizard to setup Catalyst pipeline"
     )
     parser.add_argument(
         "-o", "--out-dir",
@@ -62,6 +68,8 @@ def main(args, _):
     else:
         url = URL[pipeline]
         load_pipeline(url, args.out_dir)
+    if args.wizard is not None:
+        run_wizard()
 
 
 def parse_args():
