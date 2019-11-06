@@ -28,6 +28,8 @@ def process_components(
     if device is None:
         device = utils.get_device()
 
+    model = maybe_recursive_call(model, "to", device=device)
+
     if utils.is_wrapped_with_ddp(model):
         pass
     elif len(distributed_params) > 0:
