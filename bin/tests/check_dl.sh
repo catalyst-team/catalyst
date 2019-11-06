@@ -1,9 +1,18 @@
 #!/usr/bin/env bash
-set -e
 pip install tifffile #TODO: check if really required
 
-wget -P data -N https://www.dropbox.com/s/0rvuae4mj6jn922/isbi.tar.gz
+function gdrive_download () {
+  CONFIRM=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate "https://docs.google.com/uc?export=download&id=$1" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')
+  wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$CONFIRM&id=$1" -O $2
+  rm -rf /tmp/cookies.txt
+}
+
+mkdir -p data
+gdrive_download 1N82zh0kzmnzqRvUyMgVOGsCoS1kHf3RP ./data/isbi.tar.gz
 tar -xf ./data/isbi.tar.gz -C ./data/
+
+# @TODO: fix macos fail with sed
+set -e
 
 (set -e; for f in examples/_tests_scripts/*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
 
