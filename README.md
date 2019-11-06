@@ -45,7 +45,7 @@ pip install catalyst[contrib] # installs DL+contrib based catalyst
 pip install catalyst[all] # installs everything. Very convenient to deploy on a new server
 ```
 
-Catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+.
+Catalyst is compatible with: Python 3.6+. PyTorch 1.0.0+.
 
 #### Docs and examples
 - Detailed [classification tutorial](./examples/notebooks/classification-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb)
@@ -89,7 +89,7 @@ and other features without the boilerplate.
 - Callbacks – reusable train/inference pipeline parts.
 - Training stages support.
 - Easy customization.
-- PyTorch best practices (SWA, AdamW, 1Cycle, Ranger optimizer, FP16 and more).
+- PyTorch best practices (SWA, AdamW, Ranger optimizer, OneCycleLRWithWarmup, FP16 and more).
 
 
 #### Structure
@@ -149,6 +149,8 @@ Catalyst has its own [DockerHub page](https://hub.docker.com/r/catalystteam/cata
 - `catalystteam/catalyst:{CATALYST_VERSION}-fp16` – Catalyst with FP16
 - `catalystteam/catalyst:{CATALYST_VERSION}-dev` – Catalyst for development with all the requirements
 - `catalystteam/catalyst:{CATALYST_VERSION}-dev-fp16` – Catalyst for development with FP16
+
+[![Docker Pulls](https://img.shields.io/docker/pulls/catalystteam/catalyst)](https://hub.docker.com/r/catalystteam/catalyst/tags)
 
 To build a docker from the sources and get more information and examples,
 please visit [docker folder](docker).
