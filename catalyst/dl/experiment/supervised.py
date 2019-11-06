@@ -14,27 +14,22 @@ class SupervisedExperiment(BaseExperiment):
         callbacks = self._callbacks
         default_callbacks = []
         if self._verbose:
-            default_callbacks.append(
-                ("_verbose_logger", "verbose", VerboseLogger)
-            )
+            default_callbacks.append(("verbose", VerboseLogger))
         if not stage.startswith("infer"):
-            default_callbacks.extend([
-                (self._criterion, "_criterion", CriterionCallback),
-                (self._optimizer, "_optimizer", OptimizerCallback),
-                (self._scheduler, "_scheduler", SchedulerCallback),
-                ("_default_saver", "_saver", CheckpointCallback),
-                ("_console_logger", "console", ConsoleLogger),
-                ("_tensorboard_logger", "tensorboard", TensorboardLogger)
-            ])
-        default_callbacks.append(
-            ("_exception", "exception", RaiseExceptionCallback)
-        )
+            default_callbacks.append(("_criterion", CriterionCallback))
+            default_callbacks.append(("_optimizer", OptimizerCallback))
+            if self._scheduler is not None:
+                default_callbacks.append(("_scheduler", SchedulerCallback))
+            default_callbacks.append(("_saver", CheckpointCallback))
+            default_callbacks.append(("console", ConsoleLogger))
+            default_callbacks.append(("tensorboard", TensorboardLogger))
+        default_callbacks.append(("exception", RaiseExceptionCallback))
 
-        for component, callback_name, callback_fn in default_callbacks:
+        for callback_name, callback_fn in default_callbacks:
             is_already_present = any(
                 isinstance(x, callback_fn) for x in callbacks.values()
             )
-            if component is not None and not is_already_present:
+            if not is_already_present:
                 callbacks[callback_name] = callback_fn()
         return callbacks
 
