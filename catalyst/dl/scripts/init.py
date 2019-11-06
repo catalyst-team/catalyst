@@ -21,9 +21,9 @@ def build_args(parser):
         help="select a Catalyst pipeline"
     )
     parser.add_argument(
-        "-w", "--wizard",
+        "-i", "--interactive",
         action="store_true",
-        help="use wizard to setup Catalyst pipeline"
+        help="use interactive wizard to setup Catalyst pipeline"
     )
     parser.add_argument(
         "-o", "--out-dir",
