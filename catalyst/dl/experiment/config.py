@@ -12,7 +12,8 @@ from torch.utils.data import (  # noqa F401
 
 from catalyst.dl import utils
 from catalyst.dl.callbacks import (
-    ConsoleLogger, RaiseExceptionCallback, TensorboardLogger, VerboseLogger
+    CriterionCallback, ConsoleLogger, CheckpointCallback, OptimizerCallback,
+    RaiseExceptionCallback, TensorboardLogger, VerboseLogger
 )
 from catalyst.dl.core import Callback, Experiment
 from catalyst.dl.registry import (
@@ -401,6 +402,9 @@ class ConfigExperiment(Experiment):
         if self._verbose:
             default_callbacks.append(("verbose", VerboseLogger))
         if not stage.startswith("infer"):
+            default_callbacks.append(("_criterion", CriterionCallback))
+            default_callbacks.append(("_optimizer", OptimizerCallback))
+            default_callbacks.append(("_saver", CheckpointCallback))
             default_callbacks.append(("console", ConsoleLogger))
             default_callbacks.append(("tensorboard", TensorboardLogger))
 
