@@ -1,4 +1,4 @@
-.PHONY: check-style check-docs docker docker-fp16 docker-dev docker-dev-fp16 clean
+.PHONY: check-style codestyle check-docs docker docker-fp16 docker-dev docker-dev-fp16 install-from-source clean
 
 check-style:
 	bash ./bin/_check_codestyle.sh -s
