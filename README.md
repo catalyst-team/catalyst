@@ -150,7 +150,7 @@ Catalyst has its own [DockerHub page](https://hub.docker.com/r/catalystteam/cata
 - `catalystteam/catalyst:{CATALYST_VERSION}-dev` – Catalyst for development with all the requirements
 - `catalystteam/catalyst:{CATALYST_VERSION}-dev-fp16` – Catalyst for development with FP16
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/catalystteam/catalyst)](https://hub.docker.com/r/catalystteam/catalyst/tags?ordering=last_updated&page=1)
+[![Docker Pulls](https://img.shields.io/docker/pulls/catalystteam/catalyst)](https://hub.docker.com/r/catalystteam/catalyst/tags)
 
 To build a docker from the sources and get more information and examples,
 please visit [docker folder](docker).
