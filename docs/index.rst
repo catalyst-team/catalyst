@@ -141,7 +141,7 @@ Features
 -  Callbacks – reusable train/inference pipeline parts.
 -  Training stages support.
 -  Easy customization.
-- PyTorch best practices (SWA, AdamW, Ranger optimizer,OneCycleLRWithWarmup, FP16 and more)
+- PyTorch best practices (SWA, AdamW, Ranger optimizer, OneCycleLRWithWarmup, FP16 and more)
 
 Structure
 ~~~~~~~~~~~~~~~~~
