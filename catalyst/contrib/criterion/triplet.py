@@ -155,3 +155,6 @@ class TripletLoss(nn.Module):
         # Uses broadcasting where the 1st argument
         # has shape (1, batch_size) and the 2nd (batch_size, 1)
         return ~(labels.unsqueeze(0) == labels.unsqueeze(1))
+
+
+__all__ = ["TripletLoss"]
