@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.rl.core.trainer &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.rl.core.trainer &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -32,24 +32,25 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.rl.core.trainer</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">gc</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.seed</span> <span class="k">import</span> <span class="n">set_global_seed</span><span class="p">,</span> <span class="n">Seeder</span>
+
 <span class="kn">from</span> <span class="nn">catalyst</span> <span class="k">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.seed</span> <span class="k">import</span> <span class="n">Seeder</span><span class="p">,</span> <span class="n">set_global_seed</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.tensorboard</span> <span class="k">import</span> <span class="n">SummaryWriter</span>
+<span class="kn">from</span> <span class="nn">.algorithm</span> <span class="k">import</span> <span class="n">AlgorithmSpec</span>
 <span class="kn">from</span> <span class="nn">.db</span> <span class="k">import</span> <span class="n">DBSpec</span>
 <span class="kn">from</span> <span class="nn">.environment</span> <span class="k">import</span> <span class="n">EnvironmentSpec</span>
-<span class="kn">from</span> <span class="nn">.algorithm</span> <span class="k">import</span> <span class="n">AlgorithmSpec</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.tensorboard</span> <span class="k">import</span> <span class="n">SummaryWriter</span>
-
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 

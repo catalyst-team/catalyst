@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.utils.torch &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.dl.utils.torch &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -32,7 +32,7 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.utils.torch</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
@@ -54,13 +54,13 @@
     <span class="n">criterion</span><span class="p">:</span> <span class="n">_Criterion</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">optimizer</span><span class="p">:</span> <span class="n">_Optimizer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">scheduler</span><span class="p">:</span> <span class="n">_Scheduler</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">distributed_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">distributed_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">device</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">_Model</span><span class="p">,</span> <span class="n">_Criterion</span><span class="p">,</span> <span class="n">_Optimizer</span><span class="p">,</span> <span class="n">_Scheduler</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">]:</span>
     <span class="n">distributed_params</span> <span class="o">=</span> <span class="n">distributed_params</span> <span class="ow">or</span> <span class="p">{}</span>
     <span class="n">distributed_params</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">distributed_params</span><span class="p">)</span>
-    <span class="n">device</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_device</span><span class="p">()</span>
-
-    <span class="n">model</span> <span class="o">=</span> <span class="n">maybe_recursive_call</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_device</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">utils</span><span class="o">.</span><span class="n">is_wrapped_with_ddp</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
         <span class="k">pass</span>

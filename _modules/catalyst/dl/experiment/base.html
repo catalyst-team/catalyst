@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.experiment.base &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.dl.experiment.base &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -32,15 +32,15 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.experiment.base</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 
 <span class="kn">from</span> <span class="nn">torch</span> <span class="k">import</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">Callback</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.utils.torch</span> <span class="k">import</span> <span class="n">_Model</span><span class="p">,</span> <span class="n">_Criterion</span><span class="p">,</span> <span class="n">_Optimizer</span><span class="p">,</span> <span class="n">_Scheduler</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="k">import</span> <span class="n">process_callback</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">Experiment</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="k">import</span> <span class="n">process_callbacks</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.utils.torch</span> <span class="k">import</span> <span class="n">_Criterion</span><span class="p">,</span> <span class="n">_Model</span><span class="p">,</span> <span class="n">_Optimizer</span><span class="p">,</span> <span class="n">_Scheduler</span>
 
 
 <div class="viewcode-block" id="BaseExperiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.base.BaseExperiment">[docs]</a><span class="k">class</span> <span class="nc">BaseExperiment</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
@@ -72,7 +72,7 @@
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span> <span class="o">=</span> <span class="n">loaders</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span> <span class="o">=</span> <span class="n">process_callback</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span> <span class="o">=</span> <span class="n">process_callbacks</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span> <span class="o">=</span> <span class="n">criterion</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>

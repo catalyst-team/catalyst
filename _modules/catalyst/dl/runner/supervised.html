@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.runner.supervised &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.dl.runner.supervised &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -32,18 +32,17 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.runner.supervised</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>  <span class="c1"># noqa F401</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">from</span> <span class="nn">torch</span> <span class="k">import</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>  <span class="c1"># noqa F401</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Runner</span><span class="p">,</span> <span class="n">Callback</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.callbacks</span> <span class="k">import</span> <span class="n">CheckpointCallback</span><span class="p">,</span> <span class="n">InferCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">Runner</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.experiment</span> <span class="k">import</span> <span class="n">SupervisedExperiment</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.callbacks</span> <span class="k">import</span> <span class="n">InferCallback</span><span class="p">,</span> <span class="n">CheckpointCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.utils.torch</span> <span class="k">import</span> <span class="n">_Model</span><span class="p">,</span> <span class="n">_Criterion</span><span class="p">,</span> <span class="n">_Optimizer</span><span class="p">,</span> <span class="n">_Scheduler</span>
-
+<span class="kn">from</span> <span class="nn">catalyst.dl.utils.torch</span> <span class="k">import</span> <span class="n">_Criterion</span><span class="p">,</span> <span class="n">_Model</span><span class="p">,</span> <span class="n">_Optimizer</span><span class="p">,</span> <span class="n">_Scheduler</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -189,7 +188,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loaders</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">valid_loader</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">loaders</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Attention,there is only one data loader - &quot;</span>
+                <span class="s2">&quot;Attention, there is only one data loader - &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">valid_loader</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp16</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fp16</span><span class="p">:</span>

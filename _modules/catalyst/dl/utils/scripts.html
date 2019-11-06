@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.utils.scripts &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.dl.utils.scripts &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -34,8 +34,9 @@
   <h1>Source code for catalyst.dl.utils.scripts</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
+
 <span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="k">import</span> <span class="n">get_utcnow_time</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.scripts</span> <span class="k">import</span> <span class="n">import_module</span><span class="p">,</span> <span class="n">dump_python_files</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.scripts</span> <span class="k">import</span> <span class="n">dump_python_files</span><span class="p">,</span> <span class="n">import_module</span>
 
 
 <div class="viewcode-block" id="import_experiment_and_runner"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.scripts.import_experiment_and_runner">[docs]</a><span class="k">def</span> <span class="nf">import_experiment_and_runner</span><span class="p">(</span><span class="n">expdir</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.rl.onpolicy.algorithms.ppo &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.rl.onpolicy.algorithms.ppo &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
@@ -33,10 +33,11 @@
             
   <h1>Source code for catalyst.rl.onpolicy.algorithms.ppo</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">.actor_critic</span> <span class="k">import</span> <span class="n">OnpolicyActorCritic</span>
 <span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="k">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">.actor_critic</span> <span class="k">import</span> <span class="n">OnpolicyActorCritic</span>
 
 
 <div class="viewcode-block" id="PPO"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.onpolicy.algorithms.ppo.PPO">[docs]</a><span class="k">class</span> <span class="nc">PPO</span><span class="p">(</span><span class="n">OnpolicyActorCritic</span><span class="p">):</span>
@@ -111,8 +112,21 @@
     <span class="k">def</span> <span class="nf">_base_value_loss</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">states_t</span><span class="p">,</span> <span class="n">values_t</span><span class="p">,</span> <span class="n">returns_t</span><span class="p">,</span> <span class="n">states_tp1</span><span class="p">,</span> <span class="n">done_t</span>
     <span class="p">):</span>
+        <span class="c1"># [bs; num_heads; 1, num_atoms=1] -&gt;</span>
+        <span class="c1"># [bs; num_heads; num_atoms=1] -&gt; many-heads view transform</span>
+        <span class="c1"># [{bs * num_heads}; num_atoms=1]</span>
         <span class="n">values_tp0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="p">(</span><span class="n">states_t</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze_</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># [bs; num_heads; num_atoms=1] -&gt; many-heads view transform</span>
+        <span class="c1"># [{bs * num_heads}; num_atoms=1]</span>
+        <span class="n">values_t</span> <span class="o">=</span> <span class="n">values_t</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># [bs; num_heads; num_atoms=1] -&gt; many-heads view transform</span>
+        <span class="c1"># [{bs * num_heads}; num_atoms=1]</span>
+        <span class="n">returns_t</span> <span class="o">=</span> <span class="n">returns_t</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
         <span class="n">value_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_loss</span><span class="p">(</span><span class="n">values_tp0</span><span class="p">,</span> <span class="n">values_t</span><span class="p">,</span> <span class="n">returns_t</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">value_loss</span>
 
     <span class="k">def</span> <span class="nf">_categorical_value_loss</span><span class="p">(</span>
@@ -136,7 +150,8 @@
         <span class="n">value_loss</span> <span class="o">+=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">utils</span><span class="o">.</span><span class="n">categorical_loss</span><span class="p">(</span>
             <span class="n">logits_tp0</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">),</span>
             <span class="n">logits_tp1</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">),</span>
-            <span class="n">atoms_target_t</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_z</span><span class="p">,</span>
+            <span class="n">atoms_target_t</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_z</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">v_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_max</span>
         <span class="p">)</span>
 
@@ -271,6 +286,7 @@
         <span class="p">)</span><span class="o">.</span><span class="n">unsqueeze_</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">states_tp1</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">any2device</span><span class="p">(</span><span class="n">states_tp1</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
         <span class="n">done_t</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">any2device</span><span class="p">(</span><span class="n">done_t</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="c1"># done_t = done_t[:, None, :]  # [bs; 1; 1]</span>
 
         <span class="n">values_t</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">any2device</span><span class="p">(</span><span class="n">values_t</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
         <span class="n">advantages_t</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">any2device</span><span class="p">(</span><span class="n">advantages_t</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
@@ -279,6 +295,11 @@
         <span class="p">)</span>
 
         <span class="c1"># critic loss</span>
+        <span class="c1"># states_t - [bs; {state_shape}]</span>
+        <span class="c1"># values_t - [bs; num_heads; num_atoms]</span>
+        <span class="c1"># returns_t - [bs; num_heads; 1]</span>
+        <span class="c1"># states_tp1 - [bs; {state_shape}]</span>
+        <span class="c1"># done_t - [bs; 1; 1]</span>
         <span class="n">value_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_loss_fn</span><span class="p">(</span>
             <span class="n">states_t</span><span class="p">,</span> <span class="n">values_t</span><span class="p">,</span> <span class="n">returns_t</span><span class="p">,</span> <span class="n">states_tp1</span><span class="p">,</span> <span class="n">done_t</span>
         <span class="p">)</span>

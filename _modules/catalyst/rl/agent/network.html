@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.rl.agent.network &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.rl.agent.network &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -86,7 +86,7 @@
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">)</span> \
                 <span class="k">else</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_state_ff</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aggregation_net</span><span class="p">,</span> <span class="p">(</span><span class="n">TemporalConcatPooling</span><span class="p">,</span> <span class="n">LamaPooling</span><span class="p">)):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_lama</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_temporal</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_process_state</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_state_temporal_kv</span> \
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">)</span> \
                 <span class="k">else</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_state_temporal</span>
@@ -99,7 +99,7 @@
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">x</span>
 
-    <span class="k">def</span> <span class="nf">_forward_lama</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_forward_temporal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">state</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_state</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregation_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -203,7 +203,7 @@
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">)</span> \
                 <span class="k">else</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_state_ff</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aggregation_net</span><span class="p">,</span> <span class="p">(</span><span class="n">TemporalConcatPooling</span><span class="p">,</span> <span class="n">LamaPooling</span><span class="p">)):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_lama</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_temporal</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_process_state</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_state_temporal_kv</span> \
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">)</span> \
                 <span class="k">else</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_state_temporal</span>
@@ -217,7 +217,7 @@
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">x</span>
 
-    <span class="k">def</span> <span class="nf">_forward_lama</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_forward_temporal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="n">state_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span><span class="p">)</span>
         <span class="n">state_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregation_net</span><span class="p">(</span><span class="n">state_</span><span class="p">)</span>
         <span class="n">action_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_net</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>

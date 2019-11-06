@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.core.runner &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.dl.core.runner &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -32,22 +32,22 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.core.runner</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">ABC</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Any</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>  <span class="c1"># isort:skip</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="k">import</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DistributedSampler</span>
 
-<span class="kn">from</span> <span class="nn">.callback</span> <span class="k">import</span> <span class="n">Callback</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="k">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.utils.scripts</span> <span class="k">import</span> <span class="n">dump_base_experiment_code</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.utils.torch</span> <span class="k">import</span> <span class="n">_Criterion</span><span class="p">,</span> <span class="n">_Model</span><span class="p">,</span> <span class="n">_Optimizer</span><span class="p">,</span> <span class="n">_Scheduler</span>
+<span class="kn">from</span> <span class="nn">.callback</span> <span class="k">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">LoggerCallback</span>
 <span class="kn">from</span> <span class="nn">.experiment</span> <span class="k">import</span> <span class="n">Experiment</span>
 <span class="kn">from</span> <span class="nn">.state</span> <span class="k">import</span> <span class="n">RunnerState</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="k">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.utils.torch</span> <span class="k">import</span> <span class="n">_Model</span><span class="p">,</span> <span class="n">_Criterion</span><span class="p">,</span> <span class="n">_Optimizer</span><span class="p">,</span> <span class="n">_Scheduler</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.utils.scripts</span> <span class="k">import</span> <span class="n">dump_base_experiment_code</span>
 
 
 <div class="viewcode-block" id="Runner"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.runner.Runner">[docs]</a><span class="k">class</span> <span class="nc">Runner</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
@@ -65,6 +65,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">:</span> <span class="n">Experiment</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callback</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">LoggerCallback</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># additional</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_run</span> <span class="o">=</span> <span class="kc">False</span></div>
@@ -81,7 +82,6 @@
 <span class="sd">        As baseline, checks device support and puts model on it.</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">utils</span><span class="o">.</span><span class="n">set_global_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">initial_seed</span><span class="p">)</span>
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
         <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span> <span class="o">=</span> \
@@ -93,7 +93,8 @@
                 <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
                 <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
                 <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
-                <span class="n">distributed_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">distributed_params</span>
+                <span class="n">distributed_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">distributed_params</span><span class="p">,</span>
+                <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">,</span> <span class="n">device</span>
@@ -124,16 +125,32 @@
         <span class="p">)</span>
         <span class="n">utils</span><span class="o">.</span><span class="n">set_global_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">initial_seed</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_run_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;on_</span><span class="si">{event}</span><span class="s2">_pre&quot;</span><span class="p">):</span>
-            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;on_</span><span class="si">{event}</span><span class="s2">_pre&quot;</span><span class="p">)()</span>
+    <span class="k">def</span> <span class="nf">_run_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">moment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+        <span class="n">fn_name</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;on_</span><span class="si">{event}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">moment</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fn_name</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{fn_name}</span><span class="s2">_</span><span class="si">{moment}</span><span class="s2">&quot;</span>
 
+        <span class="c1"># before callbacks</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{fn_name}</span><span class="s2">_pre&quot;</span><span class="p">)()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">moment</span> <span class="o">==</span> <span class="s2">&quot;start&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">fn_name</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+
+        <span class="c1"># running callbacks</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                <span class="nb">getattr</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;on_</span><span class="si">{event}</span><span class="s2">&quot;</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">fn_name</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;on_</span><span class="si">{event}</span><span class="s2">_post&quot;</span><span class="p">):</span>
-            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;on_</span><span class="si">{event}</span><span class="s2">_post&quot;</span><span class="p">)()</span>
+        <span class="c1"># after callbacks</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> \
+                <span class="p">(</span><span class="n">moment</span> <span class="o">==</span> <span class="s2">&quot;end&quot;</span> <span class="ow">or</span> <span class="n">moment</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>  <span class="c1"># for on_exception case</span>
+            <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">fn_name</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{fn_name}</span><span class="s2">_post&quot;</span><span class="p">)()</span>
 
 <div class="viewcode-block" id="Runner.forward"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.runner.Runner.forward">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -158,12 +175,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">batch</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s2">&quot;_timers/data_time&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;batch_start&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;batch&quot;</span><span class="p">,</span> <span class="n">moment</span><span class="o">=</span><span class="s2">&quot;start&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s2">&quot;_timers/model_time&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s2">&quot;_timers/model_time&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s2">&quot;_timers/batch_time&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;batch_end&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;batch&quot;</span><span class="p">,</span> <span class="n">moment</span><span class="o">=</span><span class="s2">&quot;end&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_run_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loader</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="p">(</span>
@@ -217,23 +234,38 @@
             <span class="n">utils</span><span class="o">.</span><span class="n">set_global_seed</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">initial_seed</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;loader_start&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;loader&quot;</span><span class="p">,</span> <span class="n">moment</span><span class="o">=</span><span class="s2">&quot;start&quot;</span><span class="p">)</span>
             <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">set_grad_enabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">need_backward</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_run_loader</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;loader_end&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;loader&quot;</span><span class="p">,</span> <span class="n">moment</span><span class="o">=</span><span class="s2">&quot;end&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_run_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_for_stage</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
         <span class="n">loaders</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">get_loaders</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">get_callbacks</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
+        <span class="n">callbacks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">get_callbacks</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
+        <span class="n">loggers</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_callbacks</span><span class="p">(</span>
+            <span class="n">OrderedDict</span><span class="p">([</span>
+                <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">LoggerCallback</span><span class="p">)</span>
+            <span class="p">])</span>
+        <span class="p">)</span>
+        <span class="n">callbacks</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_callbacks</span><span class="p">(</span>
+            <span class="n">OrderedDict</span><span class="p">([</span>
+                <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">LoggerCallback</span><span class="p">)</span>
+            <span class="p">])</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">loggers</span> <span class="o">=</span> <span class="n">loggers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span> <span class="o">=</span> <span class="n">loggers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="n">callbacks</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;stage_start&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;stage&quot;</span><span class="p">,</span> <span class="n">moment</span><span class="o">=</span><span class="s2">&quot;start&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">num_epochs</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">stage_epoch</span> <span class="o">=</span> <span class="n">epoch</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;epoch_start&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="n">moment</span><span class="o">=</span><span class="s2">&quot;start&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_epoch</span><span class="p">(</span><span class="n">loaders</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;epoch_end&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="n">moment</span><span class="o">=</span><span class="s2">&quot;end&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_run</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">epoch</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
                 <span class="k">break</span>
@@ -242,7 +274,7 @@
                 <span class="k">break</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">epoch</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;stage_end&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;stage&quot;</span><span class="p">,</span> <span class="n">moment</span><span class="o">=</span><span class="s2">&quot;end&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Runner.run_experiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.runner.Runner.run_experiment">[docs]</a>    <span class="k">def</span> <span class="nf">run_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment</span><span class="p">:</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_run</span> <span class="o">=</span> <span class="n">check</span>
@@ -262,7 +294,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_run_stage</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="ne">KeyboardInterrupt</span><span class="p">)</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">exception</span> <span class="o">=</span> <span class="n">ex</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;exception&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;exception&quot;</span><span class="p">,</span> <span class="n">moment</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span></div></div>
 

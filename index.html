@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Catalyst &#8212; Catalyst 19.10.2 documentation</title>
+    <title>Catalyst &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -37,7 +37,7 @@
 <a class="reference external image-reference" href="https://travis-ci.com/catalyst-team/catalyst"><img alt="Build Status" src="https://travis-ci.com/catalyst-team/catalyst.svg?branch=master" /></a>
 <img alt="License" src="https://img.shields.io/github/license/catalyst-team/catalyst.svg" /><a class="reference external image-reference" href="https://pypi.org/project/catalyst/"><img alt="Pipi version" src="https://img.shields.io/pypi/v/catalyst.svg" /></a>
 <a class="reference external image-reference" href="https://catalyst-team.github.io/catalyst/index.html"><img alt="Docs" src="https://img.shields.io/badge/dynamic/json.svg?label=docs&amp;url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&amp;query=%24.info.version&amp;colorB=brightgreen&amp;prefix=v" /></a>
-<a class="reference external image-reference" href="https://www.patreon.com/catalyst_team"><img alt="Donate" src="https://ucde0995747f356870f615ffb990.previews.dropboxusercontent.com/p/thumb/AAju2yA3zKEEfV1Rbe1hdCK94o5cVH5blrqQCBfy1BFudg8VfehnZrvBCpKEKUjZ0yce8rVWsXDlxCV2tmXL1f18h9VMod21hbQ-E7_X_Qbomca3PLeTe0pTgcfqs1gGef9JBs4y36-raLf2Qrkf_AJGdvUWscUd9OScOHYI8FyrjmF6pqVaMRnJGv8hmfg1QiT1ZjF2I1KqFMiDNxY3CvVltWNYnCltOk0mLG95yUBNlzJIOROCujlKRV1nAsoL6u7f_ynoVJBVmLsnTZeJ4izf10zCdGc5vmxxMRBTxxwZV4OPDuA7jlTfxB2983Ho5h0CzRGa3k6HwWsLmVUfU2Prno8-6UT99q2x3Lq2RXWaT8CbJe7FNg1LbI1WQWq-6_9oQA4JAOXjP_mbWXk721kz/p.png" /></a>
+<a class="reference external image-reference" href="https://www.patreon.com/catalyst_team"><img alt="Donate" src="https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/third_party_pics/patreon.png" /></a>
 <a class="reference external image-reference" href="https://github.com/catalyst-team/catalyst"><img alt="Catalyst logo" src="https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png" /></a>
 <p>High-level utils for PyTorch DL &amp; RL research.
 It was developed with a focus on reproducibility,
@@ -55,18 +55,45 @@ rather then write another regular train loop.</p>
 <li class="toctree-l1"><a class="reference internal" href="info/license.html">Apache License</a></li>
 </ul>
 </div>
-<p>Catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+.</p>
-<p>API documentation and an overview of the library can be found here.</p>
-<div class="section" id="examples">
-<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
-<p>Examples and tutorials could be found <a class="reference internal" href="info/examples.html"><span class="doc">here</span></a>.
-In the examples folder of the repository,
-you can find advanced tutorials and Catalyst best practices.</p>
-</div>
+<p>Catalyst is compatible with: Python 3.6+. PyTorch 1.0.0+.</p>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install catalyst
+<p>Common installation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install -U catalyst
 </pre></div>
+</div>
+<p>More specific with additional requirements:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install catalyst<span class="o">[</span>dl<span class="o">]</span> <span class="c1"># installs DL based catalyst with Weights &amp; Biases support</span>
+pip install catalyst<span class="o">[</span>rl<span class="o">]</span> <span class="c1"># installs DL+RL based catalyst</span>
+pip install catalyst<span class="o">[</span>drl<span class="o">]</span> <span class="c1"># installs DL+RL based catalyst with Weights &amp; Biases support</span>
+pip install catalyst<span class="o">[</span>contrib<span class="o">]</span> <span class="c1"># installs DL+contrib based catalyst</span>
+pip install catalyst<span class="o">[</span>all<span class="o">]</span> <span class="c1"># installs everything. Very convenient to deploy on a new server</span>
+</pre></div>
+</div>
+<p>Catalyst is compatible with: Python 3.6+. PyTorch 1.0.0+.</p>
+</div>
+<div class="section" id="docs-and-examples">
+<h2>Docs and examples<a class="headerlink" href="#docs-and-examples" title="Permalink to this headline">¶</a></h2>
+<p>Detailed classification tutorial</p>
+<a class="reference external image-reference" href="https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a>
+<p>Advanced segmentation tutorial</p>
+<a class="reference external image-reference" href="https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a>
+<p>Comprehensive <a class="reference external" href="https://github.com/catalyst-team/classification">classification pipeline</a></p>
+<p>Binary and semantic <a class="reference external" href="https://github.com/catalyst-team/segmentation">segmentation pipeline</a></p>
+<p>In the <a class="reference external" href="https://github.com/catalyst-team/catalyst/tree/master/examples">examples</a> of the repository, you can find advanced tutorials and Catalyst best practices.</p>
+<div class="section" id="blog">
+<h3>Blog<a class="headerlink" href="#blog" title="Permalink to this headline">¶</a></h3>
+<p>To learn more about Catalyst internals and to be aware of the most important features, you can read <a class="reference external" href="https://github.com/catalyst-team/catalyst-info">Catalyst-info</a>, our blog where we regularly write facts about the framework.</p>
+</div>
+<div class="section" id="awesome-list-of-catalyst-powered-repositories">
+<h3>Awesome list of Catalyst-powered repositories<a class="headerlink" href="#awesome-list-of-catalyst-powered-repositories" title="Permalink to this headline">¶</a></h3>
+<p>We supervise the <a class="reference external" href="https://github.com/catalyst-team/awesome-catalyst-list">Awesome Catalyst list</a>. You can make a PR with your project to the list.</p>
+</div>
+<div class="section" id="releases">
+<h3>Releases<a class="headerlink" href="#releases" title="Permalink to this headline">¶</a></h3>
+<p>We release a major release once a month with a name like YY.MM.
+And micro-releases with hotfixes and framework improvements in the format YY.MM.#.</p>
+<p>You can view the changelog on the <a class="reference external" href="https://github.com/catalyst-team/catalyst/releases">GitHub Releases</a> page.</p>
 </div>
 </div>
 <div class="section" id="overview">
@@ -80,11 +107,11 @@ and other features without the boilerplate.</p>
 <ul class="simple">
 <li><p>Universal train/inference loop.</p></li>
 <li><p>Configuration files for model/data hyperparameters.</p></li>
-<li><p>Reproducibility – even source code will be saved.</p></li>
+<li><p>Reproducibility – all source code and environment variables will be saved.</p></li>
 <li><p>Callbacks – reusable train/inference pipeline parts.</p></li>
 <li><p>Training stages support.</p></li>
 <li><p>Easy customization.</p></li>
-<li><p>PyTorch best practices (SWA, AdamW, 1Cycle, FP16 and more).</p></li>
+<li><p>PyTorch best practices (SWA, AdamW, Ranger optimizer,OneCycleLRWithWarmup, FP16 and more)</p></li>
 </ul>
 </div>
 <div class="section" id="structure">
@@ -101,8 +128,9 @@ with distributed training support.</p></li>
 <li><p><strong>data</strong> - useful tools and scripts for data processing.</p></li>
 </ul>
 </div>
+</div>
 <div class="section" id="getting-started-30-seconds-with-catalyst">
-<h3>Getting started: 30 seconds with Catalyst<a class="headerlink" href="#getting-started-30-seconds-with-catalyst" title="Permalink to this headline">¶</a></h3>
+<h2>Getting started: 30 seconds with Catalyst<a class="headerlink" href="#getting-started-30-seconds-with-catalyst" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.experiments</span> <span class="kn">import</span> <span class="n">SupervisedRunner</span>
 
@@ -178,7 +206,6 @@ with distributed training support.</p></li>
 </ul>
 </div>
 </div>
-</div>
 <div class="section" id="contribution-guide">
 <h2>Contribution guide<a class="headerlink" href="#contribution-guide" title="Permalink to this headline">¶</a></h2>
 <p>We appreciate all contributions.
@@ -186,8 +213,13 @@ If you are planning to contribute back bug-fixes,
 please do so without any further discussion.
 If you plan to contribute new features, utility functions or extensions,
 please first open an issue and discuss the feature with us.</p>
-<p>Please see the <a class="reference internal" href="info/contributing.html"><span class="doc">contribution guide</span></a>
-for more information.</p>
+<p>Please see the <a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">contribution guide</a> for more information.</p>
+<p>By participating in this project, you agree to abide by its <a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CODE_OF_CONDUCT.md">Code of Conduct</a>.</p>
+<a class="reference external image-reference" href="https://www.patreon.com/catalyst_team"><img alt="Donate" src="https://c5.patreon.com/external/logo/become_a_patron_button.png" /></a>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>This project is licensed under the Apache License, Version 2.0 see the <a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/LICENSE">LICENSE</a> file for details</p>
 </div>
 <div class="section" id="citation">
 <h2>Citation<a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h2>

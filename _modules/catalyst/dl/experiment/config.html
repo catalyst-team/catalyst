@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.experiment.config &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.dl.experiment.config &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -32,21 +32,27 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.experiment.config</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">import</span> <span class="nn">safitty</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="k">import</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>  <span class="c1"># noqa F401</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DistributedSampler</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="p">(</span>  <span class="c1"># noqa F401</span>
+    <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DistributedSampler</span>
+<span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl.registry</span> <span class="k">import</span> \
-    <span class="n">MODELS</span><span class="p">,</span> <span class="n">CRITERIONS</span><span class="p">,</span> <span class="n">OPTIMIZERS</span><span class="p">,</span> <span class="n">SCHEDULERS</span><span class="p">,</span> <span class="n">CALLBACKS</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">Callback</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="k">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.utils.torch</span> <span class="k">import</span> <span class="n">_Model</span><span class="p">,</span> <span class="n">_Criterion</span><span class="p">,</span> <span class="n">_Optimizer</span><span class="p">,</span> \
-    <span class="n">_Scheduler</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.callbacks</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">ConsoleLogger</span><span class="p">,</span> <span class="n">RaiseExceptionCallback</span><span class="p">,</span> <span class="n">TensorboardLogger</span><span class="p">,</span> <span class="n">VerboseLogger</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">Experiment</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.registry</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">CALLBACKS</span><span class="p">,</span> <span class="n">CRITERIONS</span><span class="p">,</span> <span class="n">MODELS</span><span class="p">,</span> <span class="n">OPTIMIZERS</span><span class="p">,</span> <span class="n">SCHEDULERS</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.utils.torch</span> <span class="k">import</span> <span class="n">_Criterion</span><span class="p">,</span> <span class="n">_Model</span><span class="p">,</span> <span class="n">_Optimizer</span><span class="p">,</span> <span class="n">_Scheduler</span>
 
 
 <div class="viewcode-block" id="ConfigExperiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment">[docs]</a><span class="k">class</span> <span class="nc">ConfigExperiment</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
@@ -62,6 +68,9 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initial_seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="n">safitty</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="s2">&quot;verbose&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__prepare_logdir</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s2">&quot;stages&quot;</span><span class="p">][</span><span class="s2">&quot;state_params&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge_dicts</span><span class="p">(</span>
@@ -406,7 +415,7 @@
     <span class="k">def</span> <span class="nf">_get_callback</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">):</span>
         <span class="n">wrapper_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_wrapper&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">callback</span> <span class="o">=</span> <span class="n">CALLBACKS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">wrapper_params</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">wrapper_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">wrapper_params</span><span class="p">[</span><span class="s2">&quot;base_callback&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">callback</span>
             <span class="k">return</span> <span class="n">ConfigExperiment</span><span class="o">.</span><span class="n">_get_callback</span><span class="p">(</span><span class="o">**</span><span class="n">wrapper_params</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">callback</span>
@@ -420,6 +429,23 @@
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">callback_params</span> <span class="ow">in</span> <span class="n">callbacks_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_callback</span><span class="p">(</span><span class="o">**</span><span class="n">callback_params</span><span class="p">)</span>
             <span class="n">callbacks</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">callback</span>
+
+        <span class="c1"># ! For compatibility with previous versions.</span>
+        <span class="n">default_callbacks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span>
+            <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;verbose&quot;</span><span class="p">,</span> <span class="n">VerboseLogger</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stage</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">):</span>
+            <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;console&quot;</span><span class="p">,</span> <span class="n">ConsoleLogger</span><span class="p">))</span>
+            <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;tensorboard&quot;</span><span class="p">,</span> <span class="n">TensorboardLogger</span><span class="p">))</span>
+
+        <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;exception&quot;</span><span class="p">,</span> <span class="n">RaiseExceptionCallback</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">callback_name</span><span class="p">,</span> <span class="n">callback_fn</span> <span class="ow">in</span> <span class="n">default_callbacks</span><span class="p">:</span>
+            <span class="n">is_already_present</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">callback_fn</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_already_present</span><span class="p">:</span>
+                <span class="n">callbacks</span><span class="p">[</span><span class="n">callback_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">callback_fn</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">callbacks</span></div></div>
 

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.core.state &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.dl.core.state &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -32,15 +32,13 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.core.state</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>  <span class="c1"># isort:skip</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span> <span class="nn">torch.optim.optimizer</span> <span class="k">import</span> <span class="n">Optimizer</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="k">import</span> <span class="n">process_callback</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.frozen</span> <span class="k">import</span> <span class="n">FrozenClass</span>
-
 <span class="kn">from</span> <span class="nn">.metric_manager</span> <span class="k">import</span> <span class="n">MetricManager</span><span class="p">,</span> <span class="n">TimerManager</span>
 
 
@@ -70,13 +68,6 @@
         <span class="n">batch_consistant_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
-        <span class="c1"># @TODO: refactor</span>
-        <span class="c1"># hack to prevent cycle imports</span>
-        <span class="kn">from</span> <span class="nn">..callbacks</span> <span class="k">import</span> <span class="p">(</span>
-            <span class="n">VerboseLogger</span><span class="p">,</span> <span class="n">ConsoleLogger</span><span class="p">,</span>
-            <span class="n">TensorboardLogger</span><span class="p">,</span> <span class="n">RaiseExceptionLogger</span><span class="p">,</span>
-        <span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">logdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">logdir</span><span class="p">)</span> <span class="k">if</span> <span class="n">logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">criterion</span>
@@ -112,15 +103,7 @@
             <span class="n">batch_consistant_metrics</span><span class="o">=</span><span class="n">batch_consistant_metrics</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">verbose</span>
-        <span class="n">loggers</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-            <span class="n">loggers</span><span class="p">[</span><span class="s2">&quot;verbose&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">VerboseLogger</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">stage</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">):</span>
-            <span class="n">loggers</span><span class="p">[</span><span class="s2">&quot;console&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConsoleLogger</span><span class="p">()</span>
-            <span class="n">loggers</span><span class="p">[</span><span class="s2">&quot;tensorboard&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TensorboardLogger</span><span class="p">()</span>
-        <span class="n">loggers</span><span class="p">[</span><span class="s2">&quot;exception&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">RaiseExceptionLogger</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span> <span class="o">=</span> <span class="n">process_callback</span><span class="p">(</span><span class="n">loggers</span><span class="p">)</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="n">TimerManager</span><span class="p">()</span>
 
         <span class="c1"># base metrics</span>
@@ -175,56 +158,69 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">add_batch_value</span><span class="p">(</span><span class="n">metrics_dict</span><span class="o">=</span><span class="n">values</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RunnerState.on_stage_start_pre"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_stage_start_pre">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_start_pre</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">on_stage_start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="RunnerState.on_stage_start_post"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_stage_start_post">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_start_post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="RunnerState.on_stage_end_pre"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_stage_end_pre">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_end_pre</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="RunnerState.on_stage_end_post"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_stage_end_post">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_end_post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">on_stage_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="RunnerState.on_epoch_start_pre"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_epoch_start_pre">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_start_pre</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">begin_epoch</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">on_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="RunnerState.on_epoch_start_post"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_epoch_start_post">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_start_post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="RunnerState.on_epoch_end_pre"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_epoch_end_pre">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_end_pre</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">end_epoch_train</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="RunnerState.on_epoch_end_post"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_epoch_end_post">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_end_post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="RunnerState.on_loader_start_pre"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_loader_start_pre">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_start_pre</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">begin_loader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_name</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">begin_loader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RunnerState.on_loader_start_post"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_loader_start_post">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_start_post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="RunnerState.on_loader_end_pre"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_loader_end_pre">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_end_pre</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="RunnerState.on_loader_end_post"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_loader_end_post">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_end_post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">end_loader</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">end_loader</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="RunnerState.on_batch_start_pre"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_batch_start_pre">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_start_pre</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">begin_batch</span><span class="p">()</span></div>
 
+<div class="viewcode-block" id="RunnerState.on_batch_start_post"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_batch_start_post">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_start_post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="RunnerState.on_batch_end_pre"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_batch_end_pre">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end_pre</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
 <div class="viewcode-block" id="RunnerState.on_batch_end_post"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_batch_end_post">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end_post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_handle_runner_metrics</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">end_batch</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">end_batch</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="RunnerState.on_exception_pre"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_exception_pre">[docs]</a>    <span class="k">def</span> <span class="nf">on_exception_pre</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="RunnerState.on_exception_post"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_exception_post">[docs]</a>    <span class="k">def</span> <span class="nf">on_exception_post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">on_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="k">pass</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">stage_epoch_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage_epoch</span><span class="o">+</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage_epoch</span> <span class="o">+</span> <span class="mi">1</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">epoch_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;RunnerState&quot;</span><span class="p">]</span>

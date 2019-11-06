@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>RL &#8212; Catalyst 19.10.2 documentation</title>
+    <title>RL &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -502,7 +502,7 @@ In continuous case must contain method get_action(action).</p>
 
 <span class="target" id="module-catalyst.rl.agent.head"></span><dl class="class">
 <dt id="catalyst.rl.agent.head.ValueHead">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.rl.agent.head.</code><code class="sig-name descname">ValueHead</code><span class="sig-paren">(</span><em class="sig-param">in_features: int</em>, <em class="sig-param">out_features: int</em>, <em class="sig-param">bias: bool = False</em>, <em class="sig-param">num_atoms: int = 1</em>, <em class="sig-param">use_state_value_head: bool = False</em>, <em class="sig-param">distribution: str = None</em>, <em class="sig-param">values_range: tuple = None</em>, <em class="sig-param">num_heads: int = 1</em>, <em class="sig-param">hyperbolic_constant: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agent/head.html#ValueHead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agent.head.ValueHead" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.rl.agent.head.</code><code class="sig-name descname">ValueHead</code><span class="sig-paren">(</span><em class="sig-param">in_features: int</em>, <em class="sig-param">out_features: int</em>, <em class="sig-param">bias: bool = True</em>, <em class="sig-param">num_atoms: int = 1</em>, <em class="sig-param">use_state_value_head: bool = False</em>, <em class="sig-param">distribution: str = None</em>, <em class="sig-param">values_range: tuple = None</em>, <em class="sig-param">num_heads: int = 1</em>, <em class="sig-param">hyperbolic_constant: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/agent/head.html#ValueHead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.agent.head.ValueHead" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <dl class="method">
 <dt id="catalyst.rl.agent.head.ValueHead.forward">
@@ -948,7 +948,7 @@ Paper: <a class="reference external" href="https://arxiv.org/abs/1706.01905">htt
 <dl class="method">
 <dt id="catalyst.rl.offpolicy.algorithms.critic.OffpolicyCritic.update_step">
 <code class="sig-name descname">update_step</code><span class="sig-paren">(</span><em class="sig-param">value_loss</em>, <em class="sig-param">critic_update=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/critic.html#OffpolicyCritic.update_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.critic.OffpolicyCritic.update_step" title="Permalink to this definition">¶</a></dt>
-<dd><p>updates parameters of neural networks and returns learning metrics</p>
+<dd><p>Updates parameters of neural networks and returns learning metrics</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1039,7 +1039,7 @@ Paper: <a class="reference external" href="https://arxiv.org/abs/1706.01905">htt
 <dl class="method">
 <dt id="catalyst.rl.offpolicy.algorithms.actor_critic.OffpolicyActorCritic.update_step">
 <code class="sig-name descname">update_step</code><span class="sig-paren">(</span><em class="sig-param">policy_loss</em>, <em class="sig-param">value_loss</em>, <em class="sig-param">actor_update=True</em>, <em class="sig-param">critic_update=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/rl/offpolicy/algorithms/actor_critic.html#OffpolicyActorCritic.update_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.rl.offpolicy.algorithms.actor_critic.OffpolicyActorCritic.update_step" title="Permalink to this definition">¶</a></dt>
-<dd><p>updates parameters of neural networks and returns learning metrics</p>
+<dd><p>Updates parameters of neural networks and returns learning metrics</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
