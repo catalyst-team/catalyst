@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.rl.onpolicy.algorithms.actor_critic &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.rl.onpolicy.algorithms.actor_critic &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
@@ -32,12 +32,14 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.rl.onpolicy.algorithms.actor_critic</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="k">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl.core</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">ActorSpec</span><span class="p">,</span> <span class="n">AlgorithmSpec</span><span class="p">,</span> <span class="n">CriticSpec</span><span class="p">,</span> <span class="n">EnvironmentSpec</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.rl.registry</span> <span class="k">import</span> <span class="n">AGENTS</span>
-<span class="kn">from</span> <span class="nn">catalyst.rl.core</span> <span class="k">import</span> <span class="n">AlgorithmSpec</span><span class="p">,</span> \
-    <span class="n">ActorSpec</span><span class="p">,</span> <span class="n">CriticSpec</span><span class="p">,</span> <span class="n">EnvironmentSpec</span>
 
 
 <div class="viewcode-block" id="OnpolicyActorCritic"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.onpolicy.algorithms.actor_critic.OnpolicyActorCritic">[docs]</a><span class="k">class</span> <span class="nc">OnpolicyActorCritic</span><span class="p">(</span><span class="n">AlgorithmSpec</span><span class="p">):</span>
@@ -62,6 +64,53 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">actor</span> <span class="o">=</span> <span class="n">actor</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">critic</span> <span class="o">=</span> <span class="n">critic</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actor_loss_params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">actor_loss_params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_critic_loss_params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">critic_loss_params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actor_optimizer_params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">actor_optimizer_params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_critic_optimizer_params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">critic_optimizer_params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actor_scheduler_params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">actor_scheduler_params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_critic_scheduler_params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">critic_scheduler_params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actor_grad_clip_params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">actor_grad_clip_params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_critic_grad_clip_params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">critic_grad_clip_params</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_process_agents</span><span class="p">(</span>
+            <span class="n">actor_loss_params</span><span class="o">=</span><span class="n">actor_loss_params</span><span class="p">,</span>
+            <span class="n">critic_loss_params</span><span class="o">=</span><span class="n">critic_loss_params</span><span class="p">,</span>
+            <span class="n">actor_optimizer_params</span><span class="o">=</span><span class="n">actor_optimizer_params</span><span class="p">,</span>
+            <span class="n">critic_optimizer_params</span><span class="o">=</span><span class="n">critic_optimizer_params</span><span class="p">,</span>
+            <span class="n">actor_scheduler_params</span><span class="o">=</span><span class="n">actor_scheduler_params</span><span class="p">,</span>
+            <span class="n">critic_scheduler_params</span><span class="o">=</span><span class="n">critic_scheduler_params</span><span class="p">,</span>
+            <span class="n">actor_grad_clip_params</span><span class="o">=</span><span class="n">actor_grad_clip_params</span><span class="p">,</span>
+            <span class="n">critic_grad_clip_params</span><span class="o">=</span><span class="n">critic_grad_clip_params</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># other hyperparameters</span>
+        <span class="k">assert</span> <span class="n">n_step</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;For now, on-policy setup works only with n-step=1&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_step</span> <span class="o">=</span> <span class="n">n_step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gamma</span> <span class="o">=</span> <span class="n">gamma</span>
+
+        <span class="c1"># other init</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_step</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_step</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">gamma</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gamma</span>
+
+    <span class="k">def</span> <span class="nf">_process_agents</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">actor_loss_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">critic_loss_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">actor_optimizer_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">critic_optimizer_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">actor_scheduler_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">critic_scheduler_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">actor_grad_clip_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">critic_grad_clip_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="c1"># actor preparation</span>
         <span class="n">actor_components</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_trainer_components</span><span class="p">(</span>
             <span class="n">agent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">,</span>
@@ -104,22 +153,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_critic_grad_clip_params</span> <span class="o">=</span> <span class="n">critic_components</span><span class="p">[</span><span class="s2">&quot;grad_clip_params&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">critic_grad_clip_fn</span> <span class="o">=</span> <span class="n">critic_components</span><span class="p">[</span><span class="s2">&quot;grad_clip_fn&quot;</span><span class="p">]</span>
 
-        <span class="c1"># other hyperparameters</span>
-        <span class="k">assert</span> <span class="n">n_step</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;For now, on-policy setup works only with n-step=1&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_n_step</span> <span class="o">=</span> <span class="n">n_step</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_gamma</span> <span class="o">=</span> <span class="n">gamma</span>
-
-        <span class="c1"># other init</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">n_step</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_step</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">gamma</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gamma</span>
-
 <div class="viewcode-block" id="OnpolicyActorCritic.pack_checkpoint"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.onpolicy.algorithms.actor_critic.OnpolicyActorCritic.pack_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">pack_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_optimizer</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="n">checkpoint</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -142,12 +175,24 @@
                 <span class="n">value_l</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">value_r</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">with_optimizer</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">key2</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">]:</span>
-                    <span class="n">key2</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">_</span><span class="si">{key2}</span><span class="s2">&quot;</span>
-                    <span class="n">value_l</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key2</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">value_l</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">value_r</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{key2}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span>
-                        <span class="n">value_l</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">value_r</span><span class="p">)</span></div>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+                <span class="c1"># for key2 in [&quot;optimizer&quot;, &quot;scheduler&quot;]:</span>
+                <span class="c1">#     key2 = f&quot;{key}_{key2}&quot;</span>
+                <span class="c1">#     value_l = getattr(self, key2, None)</span>
+                <span class="c1">#     if value_l is not None:</span>
+                <span class="c1">#         value_r = checkpoint[f&quot;{key2}_state_dict&quot;]</span>
+                <span class="c1">#         value_l.load_state_dict(value_r)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_process_agents</span><span class="p">(</span>
+            <span class="n">actor_loss_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_actor_loss_params</span><span class="p">,</span>
+            <span class="n">critic_loss_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_critic_loss_params</span><span class="p">,</span>
+            <span class="n">actor_optimizer_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_actor_optimizer_params</span><span class="p">,</span>
+            <span class="n">critic_optimizer_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_critic_optimizer_params</span><span class="p">,</span>
+            <span class="n">actor_scheduler_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_actor_scheduler_params</span><span class="p">,</span>
+            <span class="n">critic_scheduler_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_critic_scheduler_params</span><span class="p">,</span>
+            <span class="n">actor_grad_clip_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_actor_grad_clip_params</span><span class="p">,</span>
+            <span class="n">critic_grad_clip_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_critic_grad_clip_params</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="OnpolicyActorCritic.actor_update"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.onpolicy.algorithms.actor_critic.OnpolicyActorCritic.actor_update">[docs]</a>    <span class="k">def</span> <span class="nf">actor_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>

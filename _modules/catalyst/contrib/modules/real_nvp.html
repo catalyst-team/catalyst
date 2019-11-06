@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.contrib.modules.real_nvp &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.contrib.modules.real_nvp &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -36,8 +36,8 @@
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.contrib.models</span> <span class="k">import</span> <span class="n">SequentialNet</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="k">import</span> <span class="n">create_optimal_inner_init</span><span class="p">,</span> <span class="n">outer_init</span><span class="p">,</span> <span class="n">log1p_exp</span>
 <span class="kn">from</span> <span class="nn">catalyst.contrib.registry</span> <span class="k">import</span> <span class="n">MODULES</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="k">import</span> <span class="n">create_optimal_inner_init</span><span class="p">,</span> <span class="n">log1p_exp</span><span class="p">,</span> <span class="n">outer_init</span>
 
 
 <div class="viewcode-block" id="SquashingLayer"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.modules.real_nvp.SquashingLayer">[docs]</a><span class="k">class</span> <span class="nc">SquashingLayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>

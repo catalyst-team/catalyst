@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.rl.offpolicy.algorithms.ddpg &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.rl.offpolicy.algorithms.ddpg &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
@@ -33,8 +33,9 @@
             
   <h1>Source code for catalyst.rl.offpolicy.algorithms.ddpg</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">.actor_critic</span> <span class="k">import</span> <span class="n">OffpolicyActorCritic</span>
+
 <span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="k">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">.actor_critic</span> <span class="k">import</span> <span class="n">OffpolicyActorCritic</span>
 
 
 <div class="viewcode-block" id="DDPG"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.offpolicy.algorithms.ddpg.DDPG">[docs]</a><span class="k">class</span> <span class="nc">DDPG</span><span class="p">(</span><span class="n">OffpolicyActorCritic</span><span class="p">):</span>
@@ -82,10 +83,10 @@
     <span class="k">def</span> <span class="nf">_process_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">done_t</span><span class="p">,</span> <span class="n">rewards_t</span><span class="p">):</span>
         <span class="c1"># Array of size [num_heads,]</span>
         <span class="n">gammas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gammas</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_step</span>
-        <span class="n">gammas</span> <span class="o">=</span> <span class="n">gammas</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">]</span>  <span class="c1"># 1 x num_heads x 1</span>
+        <span class="n">gammas</span> <span class="o">=</span> <span class="n">gammas</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">]</span>  <span class="c1"># [1; num_heads; 1]</span>
         <span class="c1"># We use the same done_t, rewards_t, actions_t for each head</span>
-        <span class="n">done_t</span> <span class="o">=</span> <span class="n">done_t</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># B x 1 x 1</span>
-        <span class="n">rewards_t</span> <span class="o">=</span> <span class="n">rewards_t</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># B x 1 x 1</span>
+        <span class="n">done_t</span> <span class="o">=</span> <span class="n">done_t</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># [bs; 1; 1]</span>
+        <span class="n">rewards_t</span> <span class="o">=</span> <span class="n">rewards_t</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># [bs; 1; 1]</span>
 
         <span class="k">return</span> <span class="n">gammas</span><span class="p">,</span> <span class="n">done_t</span><span class="p">,</span> <span class="n">rewards_t</span>
 
@@ -97,14 +98,22 @@
         <span class="n">policy_loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span><span class="n">states_t</span><span class="p">)))</span>
 
         <span class="c1"># critic loss</span>
-        <span class="c1"># B x num_heads x 1</span>
-        <span class="n">q_values_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="n">actions_t</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze_</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="c1"># B x num_heads x 1</span>
+        <span class="c1"># [bs; num_heads; 1] -&gt; many-heads view transform</span>
+        <span class="c1"># [{bs * num_heads}; 1]</span>
+        <span class="n">q_values_t</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="n">actions_t</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze_</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># [bs; num_heads; 1]</span>
         <span class="n">q_values_tp1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_critic</span><span class="p">(</span>
             <span class="n">states_tp1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_actor</span><span class="p">(</span><span class="n">states_tp1</span><span class="p">)</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">squeeze_</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">squeeze_</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
-        <span class="n">q_target_t</span> <span class="o">=</span> <span class="n">rewards_t</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">done_t</span><span class="p">)</span> <span class="o">*</span> <span class="n">gammas</span> <span class="o">*</span> <span class="n">q_values_tp1</span>
+        <span class="c1"># [bs; num_heads; 1] -&gt; many-heads view transform</span>
+        <span class="c1"># [{bs * num_heads}; 1]</span>
+        <span class="n">q_target_t</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">rewards_t</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">done_t</span><span class="p">)</span> <span class="o">*</span> <span class="n">gammas</span> <span class="o">*</span> <span class="n">q_values_tp1</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+
         <span class="n">value_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic_criterion</span><span class="p">(</span><span class="n">q_values_t</span><span class="p">,</span> <span class="n">q_target_t</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">policy_loss</span><span class="p">,</span> <span class="n">value_loss</span>
@@ -116,25 +125,48 @@
 
         <span class="c1"># actor loss</span>
         <span class="c1"># For now we have the same actor for all heads of the critic</span>
-        <span class="n">logits_tp0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span><span class="n">states_t</span><span class="p">))</span>
+        <span class="c1"># [bs; num_heads; num_atoms] -&gt; many-heads view transform</span>
+        <span class="c1"># [{bs * num_heads}; num_atoms]</span>
+        <span class="n">logits_tp0</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span><span class="n">states_t</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze_</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># [{bs * num_heads}; num_atoms]</span>
         <span class="n">probs_tp0</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logits_tp0</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># [{bs * num_heads}; 1]</span>
         <span class="n">q_values_tp0</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">probs_tp0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">policy_loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">q_values_tp0</span><span class="p">)</span>
 
         <span class="c1"># critic loss (kl-divergence between categorical distributions)</span>
-        <span class="c1"># B x num_heads x num_atoms</span>
-        <span class="n">logits_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="n">actions_t</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze_</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="c1"># B x num_heads x num_atoms</span>
-        <span class="n">logits_tp1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_critic</span><span class="p">(</span>
-            <span class="n">states_tp1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_actor</span><span class="p">(</span><span class="n">states_tp1</span><span class="p">)</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">squeeze_</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="c1"># [bs; num_heads; num_atoms] -&gt; many-heads view transform</span>
+        <span class="c1"># [{bs * num_heads}; num_atoms]</span>
+        <span class="n">logits_t</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="n">actions_t</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze_</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">)</span>
+        <span class="p">)</span>
 
-        <span class="c1"># B x num_heads x num_atoms</span>
-        <span class="n">atoms_target_t</span> <span class="o">=</span> <span class="n">rewards_t</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">done_t</span><span class="p">)</span> <span class="o">*</span> <span class="n">gammas</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span>
+        <span class="c1"># [bs; action_size]</span>
+        <span class="n">actions_tp1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_actor</span><span class="p">(</span><span class="n">states_tp1</span><span class="p">)</span>
+        <span class="c1"># [bs; num_heads; num_atoms] -&gt; many-heads view transform</span>
+        <span class="c1"># [{bs * num_heads}; num_atoms]</span>
+        <span class="n">logits_tp1</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">target_critic</span><span class="p">(</span><span class="n">states_tp1</span><span class="p">,</span> <span class="n">actions_tp1</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze_</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+
+        <span class="c1"># [bs; num_heads; num_atoms] -&gt; many-heads view transform</span>
+        <span class="c1"># [{bs * num_heads}; num_atoms]</span>
+        <span class="n">atoms_target_t</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">rewards_t</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">done_t</span><span class="p">)</span> <span class="o">*</span> <span class="n">gammas</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">)</span>
+
         <span class="n">value_loss</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">categorical_loss</span><span class="p">(</span>
-            <span class="n">logits_t</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">),</span>
-            <span class="n">logits_tp1</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">),</span>
-            <span class="n">atoms_target_t</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">),</span>
+            <span class="c1"># [{bs * num_heads}; num_atoms]</span>
+            <span class="n">logits_t</span><span class="p">,</span>
+            <span class="c1"># [{bs * num_heads}; num_atoms]</span>
+            <span class="n">logits_tp1</span><span class="p">,</span>
+            <span class="c1"># [{bs * num_heads}; num_atoms]</span>
+            <span class="n">atoms_target_t</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_z</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">v_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_max</span>
         <span class="p">)</span>
@@ -150,16 +182,19 @@
         <span class="n">policy_loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span><span class="n">states_t</span><span class="p">)))</span>
 
         <span class="c1"># critic loss (quantile regression)</span>
-        <span class="c1"># B x num_heads x num_atoms</span>
+        <span class="c1"># [bs; num_heads; num_atoms]</span>
         <span class="n">atoms_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="p">(</span><span class="n">states_t</span><span class="p">,</span> <span class="n">actions_t</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze_</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-        <span class="c1"># B x num_heads x num_atoms</span>
+        <span class="c1"># [bs; num_heads; num_atoms]</span>
         <span class="n">atoms_tp1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_critic</span><span class="p">(</span>
             <span class="n">states_tp1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_actor</span><span class="p">(</span><span class="n">states_tp1</span><span class="p">)</span>
         <span class="p">)</span><span class="o">.</span><span class="n">squeeze_</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
 
+        <span class="c1"># [bs; num_heads; num_atoms]</span>
         <span class="n">atoms_target_t</span> <span class="o">=</span> <span class="n">rewards_t</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">done_t</span><span class="p">)</span> <span class="o">*</span> <span class="n">gammas</span> <span class="o">*</span> <span class="n">atoms_tp1</span>
         <span class="n">value_loss</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">quantile_loss</span><span class="p">(</span>
+            <span class="c1"># [{bs * num_heads}; num_atoms]</span>
             <span class="n">atoms_t</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">),</span>
+            <span class="c1"># [{bs * num_heads}; num_atoms]</span>
             <span class="n">atoms_target_t</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">,</span>
@@ -181,7 +216,9 @@
         <span class="k">if</span> <span class="n">critic_update</span><span class="p">:</span>
             <span class="n">critic_update_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic_update</span><span class="p">(</span><span class="n">value_loss</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
 
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">value_loss</span> <span class="o">+</span> <span class="n">policy_loss</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">loss</span> <span class="o">+=</span> <span class="n">value_loss</span>
+        <span class="n">loss</span> <span class="o">+=</span> <span class="n">policy_loss</span>
         <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>
             <span class="s2">&quot;loss_critic&quot;</span><span class="p">:</span> <span class="n">value_loss</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span>

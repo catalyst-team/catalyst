@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.utils.tensorboard &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.utils.tensorboard &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -32,19 +32,20 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.utils.tensorboard</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">struct</span>
+<span></span><span class="c1"># isort:skip_file</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">BinaryIO</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="k">import</span> <span class="n">Iterable</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">BinaryIO</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
-
-<span class="kn">import</span> <span class="nn">cv2</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">struct</span>
 
 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CRC32C_SW_MODE&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CRC32C_SW_MODE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span>
 <span class="kn">from</span> <span class="nn">crc32c</span> <span class="k">import</span> <span class="n">crc32</span> <span class="k">as</span> <span class="n">crc32c</span>  <span class="c1"># noqa: E402</span>
+
+<span class="kn">import</span> <span class="nn">cv2</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># noqa: E402</span>
 
 <span class="c1"># Native tensorboard support from 1.2.0 version of PyTorch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="k">import</span> <span class="n">__version__</span> <span class="k">as</span> <span class="n">torch_version</span>  <span class="c1"># noqa: E402</span>
@@ -248,7 +249,6 @@
 <span class="sd">            A generator with decoded events</span>
 <span class="sd">            or `None`s if an event can&quot;t be decoded</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">event</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="s2">&quot;summary&quot;</span><span class="p">):</span>
                 <span class="k">yield</span> <span class="kc">None</span>

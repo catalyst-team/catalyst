@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.rl.onpolicy.algorithms.reinforce &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.rl.onpolicy.algorithms.reinforce &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
@@ -33,10 +33,11 @@
             
   <h1>Source code for catalyst.rl.onpolicy.algorithms.reinforce</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">.actor</span> <span class="k">import</span> <span class="n">OnpolicyActor</span>
 <span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="k">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">.actor</span> <span class="k">import</span> <span class="n">OnpolicyActor</span>
 
 
 <div class="viewcode-block" id="REINFORCE"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.onpolicy.algorithms.reinforce.REINFORCE">[docs]</a><span class="k">class</span> <span class="nc">REINFORCE</span><span class="p">(</span><span class="n">OnpolicyActor</span><span class="p">):</span>

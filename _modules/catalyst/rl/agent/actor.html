@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.rl.agent.actor &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.rl.agent.actor &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -32,14 +32,15 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.rl.agent.actor</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span>
-<span class="kn">from</span> <span class="nn">gym.spaces</span> <span class="k">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span>  <span class="c1"># isort:skip</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 
+<span class="kn">from</span> <span class="nn">gym</span> <span class="k">import</span> <span class="n">spaces</span>
 <span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.rl.core</span> <span class="k">import</span> <span class="n">ActorSpec</span><span class="p">,</span> <span class="n">EnvironmentSpec</span>
-<span class="kn">from</span> <span class="nn">.network</span> <span class="k">import</span> <span class="n">StateNet</span>
 <span class="kn">from</span> <span class="nn">.head</span> <span class="k">import</span> <span class="n">PolicyHead</span>
+<span class="kn">from</span> <span class="nn">.network</span> <span class="k">import</span> <span class="n">StateNet</span>
 
 
 <div class="viewcode-block" id="Actor"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agent.actor.Actor">[docs]</a><span class="k">class</span> <span class="nc">Actor</span><span class="p">(</span><span class="n">ActorSpec</span><span class="p">):</span>
@@ -72,19 +73,30 @@
         <span class="n">policy_head_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
         <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvironmentSpec</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="n">state_net_params</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">state_net_params</span><span class="p">)</span>
+        <span class="n">policy_head_params</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">policy_head_params</span><span class="p">)</span>
+
         <span class="c1"># @TODO: any better solution?</span>
         <span class="n">action_space</span> <span class="o">=</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">action_space</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action_space</span><span class="p">,</span> <span class="n">Box</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action_space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">):</span>
             <span class="c1"># continuous control</span>
             <span class="n">policy_head_params</span><span class="p">[</span><span class="s2">&quot;out_features&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">action_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action_space</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action_space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span><span class="p">):</span>
             <span class="c1"># discrete control</span>
             <span class="n">policy_head_params</span><span class="p">[</span><span class="s2">&quot;out_features&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">action_space</span><span class="o">.</span><span class="n">n</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
         <span class="c1"># @TODO: any better solution?</span>
-        <span class="n">state_net_params</span><span class="p">[</span><span class="s2">&quot;state_shape&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Dict</span><span class="p">):</span>
+            <span class="n">state_net_params</span><span class="p">[</span><span class="s2">&quot;state_shape&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">shape</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">state_net_params</span><span class="p">[</span><span class="s2">&quot;state_shape&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">state_space</span><span class="o">.</span><span class="n">shape</span>
+
         <span class="n">state_net</span> <span class="o">=</span> <span class="n">StateNet</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span><span class="o">**</span><span class="n">state_net_params</span><span class="p">)</span>
         <span class="n">head_net</span> <span class="o">=</span> <span class="n">PolicyHead</span><span class="p">(</span><span class="o">**</span><span class="n">policy_head_params</span><span class="p">)</span>
 

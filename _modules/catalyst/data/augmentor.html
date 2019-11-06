@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.data.augmentor &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.data.augmentor &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -32,7 +32,7 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.data.augmentor</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Callable</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span>  <span class="c1"># isort:skip</span>
 
 
 <div class="viewcode-block" id="Augmentor"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.augmentor.Augmentor">[docs]</a><span class="k">class</span> <span class="nc">Augmentor</span><span class="p">:</span>
@@ -59,14 +59,13 @@
 
 
 <div class="viewcode-block" id="AugmentorKeys"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.augmentor.AugmentorKeys">[docs]</a><span class="k">class</span> <span class="nc">AugmentorKeys</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Augmentation abstraction to match input and augmentations keys&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Augmentation abstraction to match input and augmentations keys&quot;&quot;&quot;</span>
 <div class="viewcode-block" id="AugmentorKeys.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.augmentor.AugmentorKeys.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict2fn_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">augment_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param dict2fn_dict: keys matching dict {input_key: augment_fn_key}</span>
 <span class="sd">               ex: {&quot;image&quot;: &quot;image&quot;, &quot;mask&quot;: &quot;mask&quot;}</span>
 <span class="sd">        :param augment_fn: augmentation function</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">dict2fn_dict</span> <span class="o">=</span> <span class="n">dict2fn_dict</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">augment_fn</span> <span class="o">=</span> <span class="n">augment_fn</span></div>
 

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.contrib.models.segmentation.unet &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.contrib.models.segmentation.unet &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
@@ -32,17 +32,19 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.contrib.models.segmentation.unet</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span>  <span class="c1"># isort:skip</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">.blocks</span> <span class="k">import</span> <span class="n">EncoderDownsampleBlock</span><span class="p">,</span> <span class="n">EncoderUpsampleBlock</span><span class="p">,</span> \
-    <span class="n">DecoderConcatBlock</span>
-<span class="kn">from</span> <span class="nn">.encoder</span> <span class="k">import</span> <span class="n">UnetEncoder</span><span class="p">,</span> <span class="n">ResnetEncoder</span>
+<span class="kn">from</span> <span class="nn">.blocks</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">DecoderConcatBlock</span><span class="p">,</span> <span class="n">EncoderDownsampleBlock</span><span class="p">,</span> <span class="n">EncoderUpsampleBlock</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.bridge</span> <span class="k">import</span> <span class="n">UnetBridge</span>
+<span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">ResnetUnetSpec</span><span class="p">,</span> <span class="n">UnetSpec</span>
 <span class="kn">from</span> <span class="nn">.decoder</span> <span class="k">import</span> <span class="n">UNetDecoder</span>
+<span class="kn">from</span> <span class="nn">.encoder</span> <span class="k">import</span> <span class="n">ResnetEncoder</span><span class="p">,</span> <span class="n">UnetEncoder</span>
 <span class="kn">from</span> <span class="nn">.head</span> <span class="k">import</span> <span class="n">UnetHead</span>
-<span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">UnetSpec</span><span class="p">,</span> <span class="n">ResnetUnetSpec</span>
 
 
 <div class="viewcode-block" id="Unet"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.models.segmentation.unet.Unet">[docs]</a><span class="k">class</span> <span class="nc">Unet</span><span class="p">(</span><span class="n">UnetSpec</span><span class="p">):</span>

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Utils &#8212; Catalyst 19.10.2 documentation</title>
+    <title>Utils &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -88,7 +88,7 @@ while –no-&lt;name&gt; will disable it</p></li>
 
 <dl class="function">
 <dt id="catalyst.utils.checkpoint.save_checkpoint">
-<code class="sig-prename descclassname">catalyst.utils.checkpoint.</code><code class="sig-name descname">save_checkpoint</code><span class="sig-paren">(</span><em class="sig-param">checkpoint: Dict</em>, <em class="sig-param">logdir: str</em>, <em class="sig-param">suffix: str</em>, <em class="sig-param">is_best: bool = False</em>, <em class="sig-param">is_last: bool = False</em>, <em class="sig-param">special_suffix: str = ''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/checkpoint.html#save_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.checkpoint.save_checkpoint" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.checkpoint.</code><code class="sig-name descname">save_checkpoint</code><span class="sig-paren">(</span><em class="sig-param">checkpoint: Dict, logdir: Union[pathlib.Path, str], suffix: str, is_best: bool = False, is_last: bool = False, special_suffix: str = ''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/checkpoint.html#save_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.checkpoint.save_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -655,7 +655,7 @@ when dtype is <cite>np.uint8</cite>.</p>
 <span class="target" id="module-catalyst.utils.initialization"></span><dl class="function">
 <dt id="catalyst.utils.initialization.bias_init_with_prob">
 <code class="sig-prename descclassname">catalyst.utils.initialization.</code><code class="sig-name descname">bias_init_with_prob</code><span class="sig-paren">(</span><em class="sig-param">prior_prob</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/initialization.html#bias_init_with_prob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.bias_init_with_prob" title="Permalink to this definition">¶</a></dt>
-<dd><p>initialize conv/fc bias value according to giving probablity</p>
+<dd><p>Initialize conv/fc bias value according to giving probablity</p>
 </dd></dl>
 
 <dl class="function">
@@ -872,6 +872,215 @@ from <code class="docutils literal notranslate"><span class="pre">Bag</span> <sp
 <dt id="catalyst.utils.numpy.structed2dict">
 <code class="sig-prename descclassname">catalyst.utils.numpy.</code><code class="sig-name descname">structed2dict</code><span class="sig-paren">(</span><em class="sig-param">array: numpy.ndarray</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/numpy.html#structed2dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.numpy.structed2dict" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<span class="target" id="module-catalyst.utils.pandas"></span><dl class="function">
+<dt id="catalyst.utils.pandas.dataframe_to_list">
+<code class="sig-prename descclassname">catalyst.utils.pandas.</code><code class="sig-name descname">dataframe_to_list</code><span class="sig-paren">(</span><em class="sig-param">dataframe: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; List[dict]<a class="reference internal" href="../_modules/catalyst/utils/pandas.html#dataframe_to_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.pandas.dataframe_to_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts dataframe to a list of rows (without indexes)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dataframe</strong> (<em>DataFrame</em>) – input dataframe</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of rows</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(List[dict])</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.pandas.folds_to_list">
+<code class="sig-prename descclassname">catalyst.utils.pandas.</code><code class="sig-name descname">folds_to_list</code><span class="sig-paren">(</span><em class="sig-param">folds: Union[list, str, pandas.core.series.Series]</em><span class="sig-paren">)</span> &#x2192; List[int]<a class="reference internal" href="../_modules/catalyst/utils/pandas.html#folds_to_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.pandas.folds_to_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function formats string or either list of numbers
+into a list of unique int</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>folds</strong> (<em>Union</em><em>[</em><em>list</em><em>, </em><em>str</em><em>, </em><em>pd.Series</em><em>]</em>) – Either list of numbers or
+one string with numbers separated by commas or
+pandas series</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of unique ints</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[int]</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">folds_to_list</span><span class="p">(</span><span class="s2">&quot;1,2,1,3,4,2,4,6&quot;</span><span class="p">)</span>
+<span class="go">[1, 2, 3, 4, 6]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">folds_to_list</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="go">[1, 2, 3, 5]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – if value in string or array cannot be casted to int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.pandas.map_dataframe">
+<code class="sig-prename descclassname">catalyst.utils.pandas.</code><code class="sig-name descname">map_dataframe</code><span class="sig-paren">(</span><em class="sig-param">dataframe: pandas.core.frame.DataFrame, tag_column: str, class_column: str, tag2class: Dict[str, int], verbose: bool = False</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/pandas.html#map_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.pandas.map_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function maps tags from <code class="docutils literal notranslate"><span class="pre">tag_column</span></code> to ints into <code class="docutils literal notranslate"><span class="pre">class_column</span></code>
+Using <code class="docutils literal notranslate"><span class="pre">tag2class</span></code> dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataframe</strong> (<em>pd.DataFrame</em>) – input dataframe</p></li>
+<li><p><strong>tag_column</strong> (<em>str</em>) – column with tags</p></li>
+<li><p><strong>class_column</strong> (<em>str</em>) – </p></li>
+<li><p><strong>tag2class</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – mapping from tags to class labels</p></li>
+<li><p><strong>verbose</strong> – flag if true, uses tqdm</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>updated dataframe with <code class="docutils literal notranslate"><span class="pre">class_column</span></code></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.pandas.merge_multiple_fold_csv">
+<code class="sig-prename descclassname">catalyst.utils.pandas.</code><code class="sig-name descname">merge_multiple_fold_csv</code><span class="sig-paren">(</span><em class="sig-param">fold_name: str, paths: Optional[str]</em><span class="sig-paren">)</span> &#x2192; pandas.core.frame.DataFrame<a class="reference internal" href="../_modules/catalyst/utils/pandas.html#merge_multiple_fold_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.pandas.merge_multiple_fold_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads csv into one DataFrame with column <code class="docutils literal notranslate"><span class="pre">fold</span></code>
+:param fold_name: current fold name
+:type fold_name: str
+:param paths: paths to csv separated by commas
+:type paths: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>merged dataframes with column <code class="docutils literal notranslate"><span class="pre">fold</span></code> == <code class="docutils literal notranslate"><span class="pre">fold_name</span></code></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.pandas.read_csv_data">
+<code class="sig-prename descclassname">catalyst.utils.pandas.</code><code class="sig-name descname">read_csv_data</code><span class="sig-paren">(</span><em class="sig-param">in_csv: str = None</em>, <em class="sig-param">train_folds: Optional[List[int]] = None</em>, <em class="sig-param">valid_folds: Optional[List[int]] = None</em>, <em class="sig-param">infer_folds: Optional[List[int]] = None</em>, <em class="sig-param">seed: int = 42</em>, <em class="sig-param">n_folds: int = 5</em>, <em class="sig-param">in_csv_train: str = None</em>, <em class="sig-param">in_csv_valid: str = None</em>, <em class="sig-param">in_csv_infer: str = None</em>, <em class="sig-param">tag2class: Optional[Dict[str</em>, <em class="sig-param">int]] = None</em>, <em class="sig-param">class_column: str = None</em>, <em class="sig-param">tag_column: str = None</em><span class="sig-paren">)</span> &#x2192; Tuple[pandas.core.frame.DataFrame, List[dict], List[dict], List[dict]]<a class="reference internal" href="../_modules/catalyst/utils/pandas.html#read_csv_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.pandas.read_csv_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>From giving path <code class="docutils literal notranslate"><span class="pre">in_csv</span></code> reads a dataframe
+and split it to train/valid/infer folds
+or from several paths <code class="docutils literal notranslate"><span class="pre">in_csv_train</span></code>, <code class="docutils literal notranslate"><span class="pre">in_csv_valid</span></code>, <code class="docutils literal notranslate"><span class="pre">in_csv_infer</span></code>
+reads independent folds.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<dl class="simple">
+<dt>This function can be used with different combinations of params.</dt><dd><dl class="simple">
+<dt>First block is used to get dataset from one <cite>csv</cite>:</dt><dd><p>in_csv, train_folds, valid_folds, infer_folds, seed, n_folds</p>
+</dd>
+<dt>Second includes paths to different csv for train/valid and infer parts:</dt><dd><p>in_csv_train, in_csv_valid, in_csv_infer</p>
+</dd>
+<dt>The other params (tag2class, tag_column, class_column) are optional</dt><dd><p>for any previous block</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_csv</strong> (<em>str</em>) – paths to whole dataset</p></li>
+<li><p><strong>train_folds</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – train folds</p></li>
+<li><p><strong>valid_folds</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – valid folds.
+If none takes all folds not included in <code class="docutils literal notranslate"><span class="pre">train_folds</span></code></p></li>
+<li><p><strong>infer_folds</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – infer folds.
+If none takes all folds not included in <code class="docutils literal notranslate"><span class="pre">train_folds</span></code>
+and <code class="docutils literal notranslate"><span class="pre">valid_folds</span></code></p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – seed for split</p></li>
+<li><p><strong>n_folds</strong> (<em>int</em>) – number of folds</p></li>
+<li><p><strong>in_csv_train</strong> (<em>str</em>) – paths to train csv separated by commas</p></li>
+<li><p><strong>in_csv_valid</strong> (<em>str</em>) – paths to valid csv separated by commas</p></li>
+<li><p><strong>in_csv_infer</strong> (<em>str</em>) – paths to infer csv separated by commas</p></li>
+<li><p><strong>tag2class</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – mapping from label names into ints</p></li>
+<li><p><strong>tag_column</strong> (<em>str</em>) – column with label names</p></li>
+<li><p><strong>class_column</strong> (<em>str</em>) – column to use for split</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple with 4 elements
+(whole dataframe,
+list with train data,
+list with valid data
+and list with infer data)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(Tuple[pd.DataFrame, List[dict], List[dict], List[dict]])</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.pandas.read_multiple_dataframes">
+<code class="sig-prename descclassname">catalyst.utils.pandas.</code><code class="sig-name descname">read_multiple_dataframes</code><span class="sig-paren">(</span><em class="sig-param">in_csv_train: str = None</em>, <em class="sig-param">in_csv_valid: str = None</em>, <em class="sig-param">in_csv_infer: str = None</em>, <em class="sig-param">tag2class: Optional[Dict[str</em>, <em class="sig-param">int]] = None</em>, <em class="sig-param">class_column: str = None</em>, <em class="sig-param">tag_column: str = None</em><span class="sig-paren">)</span> &#x2192; Tuple[pandas.core.frame.DataFrame, pandas.core.frame.DataFrame, pandas.core.frame.DataFrame, pandas.core.frame.DataFrame]<a class="reference internal" href="../_modules/catalyst/utils/pandas.html#read_multiple_dataframes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.pandas.read_multiple_dataframes" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function reads train/valid/infer dataframes from giving paths
+:param in_csv_train: paths to train csv separated by commas
+:type in_csv_train: str
+:param in_csv_valid: paths to valid csv separated by commas
+:type in_csv_valid: str
+:param in_csv_infer: paths to infer csv separated by commas
+:type in_csv_infer: str
+:param tag2class: mapping from label names into int
+:type tag2class: Dict[str, int], optional
+:param tag_column: column with label names
+:type tag_column: str, optional
+:param class_column: column to use for split
+:type class_column: str, optional</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>tuple with 4 dataframes</dt><dd><p>whole dataframe, train part, valid part and infer part</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>(tuple)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.pandas.split_dataframe">
+<code class="sig-prename descclassname">catalyst.utils.pandas.</code><code class="sig-name descname">split_dataframe</code><span class="sig-paren">(</span><em class="sig-param">dataframe: pandas.core.frame.DataFrame, train_folds: List[int], valid_folds: Optional[List[int]] = None, infer_folds: Optional[List[int]] = None, tag2class: Optional[Dict[str, int]] = None, tag_column: str = None, class_column: str = None, seed: int = 42, n_folds: int = 5</em><span class="sig-paren">)</span> &#x2192; Tuple[pandas.core.frame.DataFrame, pandas.core.frame.DataFrame, pandas.core.frame.DataFrame, pandas.core.frame.DataFrame]<a class="reference internal" href="../_modules/catalyst/utils/pandas.html#split_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.pandas.split_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split a Pandas DataFrame into folds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataframe</strong> (<em>pd.DataFrame</em>) – input dataframe</p></li>
+<li><p><strong>train_folds</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – train folds</p></li>
+<li><p><strong>valid_folds</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – valid folds.
+If none takes all folds not included in <code class="docutils literal notranslate"><span class="pre">train_folds</span></code></p></li>
+<li><p><strong>infer_folds</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – infer folds.
+If none takes all folds not included in <code class="docutils literal notranslate"><span class="pre">train_folds</span></code>
+and <code class="docutils literal notranslate"><span class="pre">valid_folds</span></code></p></li>
+<li><p><strong>tag2class</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em><em>, </em><em>optional</em>) – mapping from label names into int</p></li>
+<li><p><strong>tag_column</strong> (<em>str</em><em>, </em><em>optional</em>) – column with label names</p></li>
+<li><p><strong>class_column</strong> (<em>str</em><em>, </em><em>optional</em>) – column to use for split</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – seed for split</p></li>
+<li><p><strong>n_folds</strong> (<em>int</em>) – number of folds</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>tuple with 4 dataframes</dt><dd><p>whole dataframe, train part, valid part and infer part</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(tuple)</p>
+</dd>
+</dl>
+</dd></dl>
 
 <span class="target" id="module-catalyst.utils.plotly"></span><dl class="function">
 <dt id="catalyst.utils.plotly.plot_tensorboard_log">

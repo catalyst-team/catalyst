@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Data &#8212; Catalyst 19.10.2 documentation</title>
+    <title>Data &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -41,6 +41,69 @@
 <p>You can use scripts typing <cite>catalyst-data</cite> in your terminal.
 For example:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-data tag2label --help
+</pre></div>
+</div>
+<span class="target" id="module-catalyst.data.__main__"></span><p>Catalyst-data scripts.</p>
+<p class="rubric">Examples</p>
+<p>1.  <strong>process-images</strong> reads raw data and outputs
+preprocessed resized images</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-data process-images <span class="se">\</span>
+    --in-dir /path/to/raw/data/ <span class="se">\</span>
+    --out-dir<span class="o">=</span>./data/dataset <span class="se">\</span>
+    --num-workers<span class="o">=</span><span class="m">6</span> <span class="se">\</span>
+    --max-size<span class="o">=</span><span class="m">224</span> <span class="se">\</span>
+    --extension<span class="o">=</span>png <span class="se">\</span>
+    --clear-exif <span class="se">\</span>
+    --grayscale <span class="se">\</span>
+    --expand-dims
+</pre></div>
+</div>
+<p>2. <strong>tag2label</strong> prepares a dataset to json like
+<cite>{“class_id”:  class_column_from_dataset}</cite></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-data tag2label <span class="se">\</span>
+    --in-dir<span class="o">=</span>./data/dataset <span class="se">\</span>
+    --out-dataset<span class="o">=</span>./data/dataset_raw.csv <span class="se">\</span>
+    --out-labeling<span class="o">=</span>./data/tag2cls.json
+</pre></div>
+</div>
+<p>3. <strong>check-images</strong> checks images in your data
+to be non-broken and writes a flag:
+<cite>true</cite> if image opened without an error and <cite>false</cite> otherwise</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-data check-images <span class="se">\</span>
+    --in-csv<span class="o">=</span>./data/dataset_raw.csv <span class="se">\</span>
+    --img-datapath<span class="o">=</span>./data/dataset <span class="se">\</span>
+    --img-col<span class="o">=</span><span class="s2">&quot;tag&quot;</span> <span class="se">\</span>
+    --out-csv<span class="o">=</span>./data/dataset_checked.csv <span class="se">\</span>
+    --n-cpu<span class="o">=</span><span class="m">4</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p><strong>split-dataframe</strong> split your dataset into train/valid folds</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-data split-dataframe <span class="se">\</span>
+   --in-csv<span class="o">=</span>./data/dataset_raw.csv <span class="se">\</span>
+   --tag2class<span class="o">=</span>./data/tag2cls.json <span class="se">\</span>
+   --tag-column<span class="o">=</span>tag <span class="se">\</span>
+   --class-column<span class="o">=</span>class <span class="se">\</span>
+   --n-folds<span class="o">=</span><span class="m">5</span> <span class="se">\</span>
+   --train-folds<span class="o">=</span><span class="m">0</span>,1,2,3 <span class="se">\</span>
+   --out-csv<span class="o">=</span>./data/dataset.csv
+</pre></div>
+</div>
+</div></blockquote>
+<p>5. <strong>image2embedding</strong> embeds images from your csv
+or image directory with specified neural net architecture</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-data image2embedding <span class="se">\</span>
+    --in-csv<span class="o">=</span>./data/input.csv <span class="se">\</span>
+    --img-col<span class="o">=</span><span class="s2">&quot;filename&quot;</span> <span class="se">\</span>
+    --img-size<span class="o">=</span><span class="m">64</span> <span class="se">\</span>
+    --out-npy<span class="o">=</span>./embeddings.npy <span class="se">\</span>
+    --arch<span class="o">=</span>resnet34 <span class="se">\</span>
+    --pooling<span class="o">=</span>GlobalMaxPool2d <span class="se">\</span>
+    --batch-size<span class="o">=</span><span class="m">8</span> <span class="se">\</span>
+    --num-workers<span class="o">=</span><span class="m">16</span> <span class="se">\</span>
+    --verbose
 </pre></div>
 </div>
 </div>

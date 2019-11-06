@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.rl.core.policy_handler &#8212; Catalyst 19.10.2 documentation</title>
+    <title>catalyst.rl.core.policy_handler &#8212; Catalyst 19.11.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -32,14 +32,15 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.rl.core.policy_handler</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">gym.spaces</span> <span class="k">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span>
+
+<span class="kn">from</span> <span class="nn">gym.spaces</span> <span class="k">import</span> <span class="n">Discrete</span>
 <span class="kn">import</span> <span class="nn">torch</span>
 
+<span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="k">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">.agent</span> <span class="k">import</span> <span class="n">ActorSpec</span><span class="p">,</span> <span class="n">CriticSpec</span>
 <span class="kn">from</span> <span class="nn">.environment</span> <span class="k">import</span> <span class="n">EnvironmentSpec</span>
-<span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="k">import</span> <span class="n">utils</span>
 
 
 <span class="k">def</span> <span class="nf">_state2device</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
@@ -81,8 +82,6 @@
         <span class="c1"># PPO, DDPG, SAC, TD3</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">ActorSpec</span><span class="p">)</span>
-            <span class="n">action_space</span><span class="p">:</span> <span class="n">Box</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">action_clip</span> <span class="o">=</span> <span class="n">action_space</span><span class="o">.</span><span class="n">low</span><span class="p">,</span> <span class="n">action_space</span><span class="o">.</span><span class="n">high</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">action_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actor_handler</span>
 
     <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
@@ -111,11 +110,6 @@
         <span class="n">states</span> <span class="o">=</span> <span class="n">_state2device</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
         <span class="n">action</span> <span class="o">=</span> <span class="n">actor</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="n">deterministic</span><span class="p">)</span>
         <span class="n">action</span> <span class="o">=</span> <span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_clip</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
-                <span class="n">action</span><span class="p">,</span> <span class="n">a_min</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">action_clip</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">a_max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">action_clip</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="p">)</span>
         <span class="k">return</span> <span class="n">action</span>
 
     <span class="k">def</span> <span class="nf">_critic_handler</span><span class="p">(</span>
