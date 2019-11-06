@@ -125,8 +125,10 @@ setup(
         ],
     },
     scripts=[
-        "bin/catalyst-parallel-run",
-        "bin/catalyst-rl-run",
+        "bin/scripts/catalyst-parallel-run",
+        "bin/scripts/catalyst-rl-run",
+        "bin/scripts/download-gdrive",
+        "bin/scripts/extract-archive",
     ],
     install_requires=load_requirements("requirements/requirements.txt"),
     extras_require=extras,
