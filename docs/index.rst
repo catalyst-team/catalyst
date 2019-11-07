@@ -16,11 +16,11 @@ Catalyst
     :target: https://catalyst-team.github.io/catalyst/index.html
     :alt: Docs
 
-.. image:: https://ucde0995747f356870f615ffb990.previews.dropboxusercontent.com/p/thumb/AAju2yA3zKEEfV1Rbe1hdCK94o5cVH5blrqQCBfy1BFudg8VfehnZrvBCpKEKUjZ0yce8rVWsXDlxCV2tmXL1f18h9VMod21hbQ-E7_X_Qbomca3PLeTe0pTgcfqs1gGef9JBs4y36-raLf2Qrkf_AJGdvUWscUd9OScOHYI8FyrjmF6pqVaMRnJGv8hmfg1QiT1ZjF2I1KqFMiDNxY3CvVltWNYnCltOk0mLG95yUBNlzJIOROCujlKRV1nAsoL6u7f_ynoVJBVmLsnTZeJ4izf10zCdGc5vmxxMRBTxxwZV4OPDuA7jlTfxB2983Ho5h0CzRGa3k6HwWsLmVUfU2Prno8-6UT99q2x3Lq2RXWaT8CbJe7FNg1LbI1WQWq-6_9oQA4JAOXjP_mbWXk721kz/p.png
+.. image:: https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/third_party_pics/patreon.png
     :target: https://www.patreon.com/catalyst_team
     :alt: Donate
 
-.. image:: https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst\_logo.png
+.. image:: https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png
     :target: https://github.com/catalyst-team/catalyst
     :alt: Catalyst logo
 
@@ -47,24 +47,82 @@ Break the cycle - use the Catalyst_!
    info/contributing
    info/license
 
-Catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+.
-
-API documentation and an overview of the library can be found here.
-
-
-Examples
---------
-Examples and tutorials could be found :doc:`here </info/examples>`.
-In the examples folder of the repository,
-you can find advanced tutorials and Catalyst best practices.
+Catalyst is compatible with: Python 3.6+. PyTorch 1.0.0+.
 
 
 Installation
 ------------
+Common installation:
 
 .. code:: bash
 
-   pip install catalyst
+   pip install -U catalyst
+
+
+More specific with additional requirements:
+
+.. code:: bash
+
+    pip install catalyst[dl] # installs DL based catalyst with Weights & Biases support
+    pip install catalyst[rl] # installs DL+RL based catalyst
+    pip install catalyst[drl] # installs DL+RL based catalyst with Weights & Biases support
+    pip install catalyst[contrib] # installs DL+contrib based catalyst
+    pip install catalyst[all] # installs everything. Very convenient to deploy on a new server
+
+
+Catalyst is compatible with: Python 3.6+. PyTorch 1.0.0+.
+
+Docs and examples
+------------------------
+Detailed classification tutorial
+
+.. image:: https://colab.research.google.com/assets/colab-badge.svg
+    :target: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb
+    :alt: Open In Colab
+
+Advanced segmentation tutorial
+
+.. image:: https://colab.research.google.com/assets/colab-badge.svg
+    :target: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb
+    :alt: Open In Colab
+
+
+Comprehensive `classification pipeline`_
+
+.. _`classification pipeline`: https://github.com/catalyst-team/classification
+
+
+Binary and semantic `segmentation pipeline`_
+
+.. _`segmentation pipeline`: https://github.com/catalyst-team/segmentation
+
+
+In the examples_ of the repository, you can find advanced tutorials and Catalyst best practices.
+
+.. _examples: https://github.com/catalyst-team/catalyst/tree/master/examples
+
+
+Blog
+~~~~~~
+To learn more about Catalyst internals and to be aware of the most important features, you can read `Catalyst-info`_, our blog where we regularly write facts about the framework.
+
+.. _`Catalyst-info`: https://github.com/catalyst-team/catalyst-info
+
+Awesome list of Catalyst-powered repositories
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+We supervise the `Awesome Catalyst list`_. You can make a PR with your project to the list.
+
+.. _`Awesome Catalyst list`: https://github.com/catalyst-team/awesome-catalyst-list
+
+Releases
+~~~~~~~~~~~~
+We release a major release once a month with a name like YY.MM.
+And micro-releases with hotfixes and framework improvements in the format YY.MM.#.
+
+You can view the changelog on the `GitHub Releases`_ page.
+
+.. _`GitHub Releases`: https://github.com/catalyst-team/catalyst/releases
 
 Overview
 --------
@@ -75,18 +133,18 @@ You get a training loop with metrics, early-stopping, model checkpointing
 and other features without the boilerplate.
 
 Features
-^^^^^^^^
+~~~~~~~~~~~~~~~~~
 
 -  Universal train/inference loop.
 -  Configuration files for model/data hyperparameters.
--  Reproducibility – even source code will be saved.
+-  Reproducibility – all source code and environment variables will be saved.
 -  Callbacks – reusable train/inference pipeline parts.
 -  Training stages support.
 -  Easy customization.
--  PyTorch best practices (SWA, AdamW, 1Cycle, FP16 and more).
+- PyTorch best practices (SWA, AdamW, Ranger optimizer, OneCycleLRWithWarmup, FP16 and more)
 
 Structure
-^^^^^^^^^
+~~~~~~~~~~~~~~~~~
 
 -  **DL** – runner for training and inference,
    all of the classic machine learning and computer vision metrics
@@ -100,7 +158,7 @@ Structure
 
 
 Getting started: 30 seconds with Catalyst
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+------------------------------------------------------
 
 .. code:: python
 
@@ -157,9 +215,25 @@ please do so without any further discussion.
 If you plan to contribute new features, utility functions or extensions,
 please first open an issue and discuss the feature with us.
 
-Please see the :doc:`contribution guide </info/contributing>`
-for more information.
+Please see the `contribution guide`_ for more information.
 
+.. _`contribution guide`: https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md
+
+By participating in this project, you agree to abide by its `Code of Conduct`_.
+
+.. _`Code of Conduct`: https://github.com/catalyst-team/catalyst/blob/master/CODE_OF_CONDUCT.md
+
+.. image:: https://c5.patreon.com/external/logo/become_a_patron_button.png
+    :target: https://www.patreon.com/catalyst_team
+    :alt: Donate
+
+
+License
+------------------
+
+This project is licensed under the Apache License, Version 2.0 see the LICENSE_ file for details
+
+.. _LICENSE: https://github.com/catalyst-team/catalyst/blob/master/LICENSE
 
 Citation
 ------------------

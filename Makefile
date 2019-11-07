@@ -1,4 +1,4 @@
-.PHONY: check-style check-docs docker docker-dev clean
+.PHONY: check-style codestyle check-docs docker docker-fp16 docker-dev docker-dev-fp16 install-from-source clean
 
 check-style:
 	bash ./bin/_check_codestyle.sh -s
@@ -10,16 +10,28 @@ check-docs:
 	bash ./bin/_check_docs.sh
 
 docker: ./requirements/
-	docker build -t catalyst-base:latest . -f ./docker/Dockerfile
+	echo building $${REPO_NAME:=catalyst-base}:$${TAG:=latest} ...
+	docker build \
+		-t $${REPO_NAME}:$${TAG} . \
+		-f ./docker/Dockerfile --no-cache
 
 docker-fp16: ./requirements/
-	docker build -t catalyst-base-fp16:latest . -f ./docker/Dockerfile-fp16
+	echo building $${REPO_NAME:=catalyst-base-fp16}:$${TAG:=latest} ...
+	docker build \
+		-t $${REPO_NAME}:$${TAG} . \
+		-f ./docker/Dockerfile-fp16 --no-cache
 
 docker-dev: ./requirements/
-	docker build -t catalyst-dev:latest . -f ./docker/Dockerfile-dev
+	echo building $${REPO_NAME:=catalyst-dev}:$${TAG:=latest} ...
+	docker build \
+		-t $${REPO_NAME}:$${TAG} . \
+		-f ./docker/Dockerfile-dev --no-cache
 
 docker-dev-fp16: ./requirements/
-	docker build -t catalyst-dev-fp16:latest . -f ./docker/Dockerfile-dev-fp16
+	echo building $${REPO_NAME:=catalyst-dev-fp16}:$${TAG:=latest} ...
+	docker build \
+		-t $${REPO_NAME}:$${TAG} . \
+		-f ./docker/Dockerfile-dev-fp16 --no-cache
 
 install-from-source:
 	pip uninstall catalyst -y && pip install -e ./

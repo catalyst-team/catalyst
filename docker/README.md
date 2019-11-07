@@ -1,5 +1,5 @@
 ## Catalyst Docker
-
+[![Docker Pulls](https://img.shields.io/docker/pulls/catalystteam/catalyst)](https://hub.docker.com/r/catalystteam/catalyst/tags)
 
 ### Base version
 Base docker has Catalyst and all needed requirements.
