@@ -65,7 +65,9 @@ class Wizard():
 
 
     def preview(self):
+        self.sep()
         print(yaml.dump(self._cfg, default_flow_style=False))
+        self.sep()
 
     def dump_step(self):
         path = prompt("Enter config path: ", default="./configs/config.yml")
@@ -115,7 +117,7 @@ class Wizard():
         else:
             module = prompt(f"Enter class name of {param} "
                                "you'll be using: ")
-        op["module"] = module
+        op[param] = module
         res = prompt("If there are arguments you want to provide during "
                      f"{param} initialization, provide them here in "
                      "following format:\n\nlr=0.001,beta=3.41\n\n"
