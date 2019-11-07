@@ -282,7 +282,7 @@ class TelegramLogger(LoggerCallback):
             request = Request(url)
             urlopen(request)
         except Exception as e:
-            print(f"telegram.send.error:{e}")
+            logging.getLogger(__name__).warning(f"telegram.send.error:{e}")
 
     def on_stage_start(self, state: RunnerState):
         """Notify about starting a new stage"""
