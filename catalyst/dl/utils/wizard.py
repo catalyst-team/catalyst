@@ -97,7 +97,7 @@ class Wizard():
             return False
 
     def _basic_params_step(self, param, stage, optional=False):
-        self.sep(f"stage: {param}_params")
+        self.sep(f"{param}_params")
         if self._skip_override_stages_common(f"{param}_params"):
             return
         op = OrderedDict()
@@ -131,7 +131,7 @@ class Wizard():
         stage[f"{param}_params"] = op
 
     def state_params_step(self, stage):
-        self.sep(f"stage: state_params")
+        self.sep(f"state_params")
         if self._skip_override_stages_common("state_params"):
             return
         sp = OrderedDict()
@@ -143,7 +143,7 @@ class Wizard():
         stage["state_params"] = sp
 
     def data_params_step(self, stage):
-        self.sep(f"stage: data_params")
+        self.sep(f"data_params")
         if self._skip_override_stages_common("data_params"):
             return
         dp = OrderedDict()
@@ -180,20 +180,7 @@ class Wizard():
             self._cfg["stages"][name] = stage
 
     def model_step(self):
-        self.sep("model")
-        models = self.__sorted_for_user("MODELS")
-        msg = "What model you'll be using:\n\n"
-        if len(models):
-            msg += "\n".join([f"{n+1}: {m}" for n, m in enumerate(models)])
-            print(msg)
-            model = prompt("\nEnter number from list above or "
-                           "class name of model you'll be using: ")
-            if model.isdigit():
-                model = models[int(model) - 1]
-        else:
-            model = prompt("Enter class name of model you'll be using: ")
-
-        self._cfg["model_params"]["model"] = model
+        self._basic_params_step('model', self._cfg)
 
     def export_user_modules(self):
         try:
