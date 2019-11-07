@@ -14,13 +14,55 @@ yaml.add_representer(
 
 class Wizard():
     def __init__(self):
-        print("Welcome to Catalyst Config API wizard!\n")
+        self.sep("Welcome to Catalyst Config API wizard!")
+        self.print_logo()
 
         self._cfg = OrderedDict([
             ("model_params", OrderedDict()),
             ("args", OrderedDict()),
             ("stages", OrderedDict())
         ])
+
+        self.pipeline_path = pathlib.Path('./')
+        self.__before_export = {
+            "MODELS": registry.__dict__["MODELS"].all(),
+            "CRITERIONS": registry.__dict__["CRITERIONS"].all(),
+            "OPTIMIZERS": registry.__dict__["OPTIMIZERS"].all(),
+            "SCHEDULERS": registry.__dict__["SCHEDULERS"].all()
+        }
+
+    def __sorted_for_user(self, key):
+        modules = registry.__dict__[key].all()
+        user_modules = list(set(modules) - set(self.__before_export[key]))
+        user_modules = sorted(user_modules)
+        return user_modules + sorted([m for m in modules if m[0].isupper()])
+
+    def print_logo(self):
+        print('''
+                       ___________
+                      (_         _)
+                        |       |
+                        |       |
+                        |       |
+                       /         \\
+                      /    (      \\
+                     /    /  (#    \\
+                    /    #     #    \\
+                   /    #       #    \\
+                  /      #######      \\
+                 (_____________________)
+        \n''')
+
+    def sep(self, step_name: str = None):
+        if step_name is None:
+            print("\n" + "="*100 + "\n")
+        else:
+            msg = "\n" + "="*100 + "\n"
+            msg += "="*10 + " " + step_name + " "
+            msg += "="*(100 - len(step_name) - 12)
+            msg += "\n" + "="*100 + "\n"
+            print(msg)
+
 
     def preview(self):
         print(yaml.dump(self._cfg, default_flow_style=False))
@@ -51,34 +93,42 @@ class Wizard():
         else:
             return False
 
-    def criterion_params_step(self, stage):
-        if self._skip_override_stages_common("criterion_params"):
+    def _basic_params_step(self, param, stage, optional=False):
+        self.sep(f"stage: {param}_params")
+        if self._skip_override_stages_common(f"{param}_params"):
             return
-        cp = OrderedDict()
-        criterions = registry.CRITERIONS.all()
-        criterions = sorted([c for c in criterions if c[0].isupper()])
-        msg = "What criterion you'll be using:\n\n"
-        if len(criterions):
-            msg += "\n".join([f"{n+1}: {c}" for n, c in enumerate(criterions)])
+        op = OrderedDict()
+        modules = self.__sorted_for_user(f"{param.upper()}S")
+        msg = f"What {param} you'll be using:\n\n"
+        if len(modules):
+            if optional:
+                msg += "0: Skip this param\n"
+            msg += "\n".join([f"{n+1}: {m}" for n, m in enumerate(modules)])
             print(msg)
-            criterion = prompt("\nEnter number from list above or "
-                               "class name of criterion you\"ll be using: ")
-            if criterion.isdigit():
-                criterion = criterions[int(criterion) - 1]
+            module = prompt("\nEnter number from list above or "
+                               f"class name of {param} you'll be using: ")
+            if module.isdigit():
+                module = int(module)
+                if module == 0:
+                    return
+                module = modules[module - 1]
         else:
-            criterion = prompt("Enter class name of criterion you\"ll be using: ")
-        cp["criterion"] = criterion
+            module = prompt(f"Enter class name of {param} "
+                               "you'll be using: ")
+        op["module"] = module
         res = prompt("If there are arguments you want to provide during "
-                     "criterion initialization, provide them here in "
-                     "following format:\n\narg1=val,arg2=3.41\n\n"
+                     f"{param} initialization, provide them here in "
+                     "following format:\n\nlr=0.001,beta=3.41\n\n"
                      "Or just skip this step (press Enter): ")
         if len(res):
             res = [t.split('=') for t in res.split(',')]
             for k, v in res:
-                cp[k] = v
-        stage["criterion_params"] = cp
+                # We can add regex to parse params properly into types we need
+                op[k] = int(v) if v.isdigit() else v
+        stage[f"{param}_params"] = op
 
     def state_params_step(self, stage):
+        self.sep(f"stage: state_params")
         if self._skip_override_stages_common("state_params"):
             return
         sp = OrderedDict()
@@ -87,6 +137,7 @@ class Wizard():
         stage["state_params"] = sp
 
     def data_params_step(self, stage):
+        self.sep(f"stage: data_params")
         if self._skip_override_stages_common("data_params"):
             return
         dp = OrderedDict()
@@ -97,13 +148,14 @@ class Wizard():
     def _stage_step(self, stage):
         self.data_params_step(stage)
         self.state_params_step(stage)
-        self.criterion_params_step(stage)
+        self._basic_params_step("criterion", stage)
+        self._basic_params_step("optimizer", stage)
+        self._basic_params_step("scheduler", stage, optional=True)
         return
-        self.optimizer_params_step(stage)
-        self.scheduler_params_step(stage)
-        self.callbacks_params_step(stage)
+        self.callback_params_step(stage)
 
     def stages_step(self):
+        self.sep("stages")
         cnt = prompt("How much stages your exepriment will contain: ")
         cnt = int(cnt) or 1
         if cnt > 1:
@@ -120,8 +172,8 @@ class Wizard():
             self._cfg['stages'][name] = stage
 
     def model_step(self):
-        models = registry.MODELS.all()
-        models = sorted([m for m in models if m[0].isupper()])
+        self.sep("model")
+        models = self.__sorted_for_user("MODELS")
         msg = "What model you'll be using:\n\n"
         if len(models):
             msg += "\n".join([f"{n+1}: {m}" for n, m in enumerate(models)])
@@ -146,18 +198,37 @@ class Wizard():
             print(f"No modules were imported from {expdir}:\n{e}")
 
     def args_step(self):
+        self.sep("args")
         self._cfg["args"]["expdir"] = prompt(
             "Where is the `__init__.py` with your modules stored: ",
-            default="./src")
+            default=str(self.pipeline_path/"src"))
         self._cfg["args"]["logdir"] = prompt(
             "Where Catalyst supposed to save its logs: ",
-            default="./logs/experiment")
+            default=str(self.pipeline_path/"logs/experiment"))
+
+        self.export_user_modules()
+
+    def pipeline_step(self):
+        self.sep("Pipeline templates")
+        opts = ["Classification", "Segmentation", "Detection", "Empty"]
+        msg = "0: Skip this step\n"
+        msg += "\n".join([f"{n + 1}: {v}" for n, v in enumerate(opts)])
+        print(msg)
+        res = int(prompt("\nChoose pipeline template you want to init "
+                         "your project from: "))
+        if res == 0:
+            return
+        pipeline = opts[res - 1]
+        out_dir = prompt(f"Where we need to copy {pipeline} "
+                         "template files?: ", default="./")
+        self.pipeline_path = pathlib.Path(out_dir)
+        clone_pipeline(pipeline.lower(), self.pipeline_path)
 
 
 def run_wizard():
     wiz = Wizard()
+    wiz.pipeline_step()
     wiz.args_step()
-    wiz.export_user_modules()
     wiz.model_step()
     wiz.stages_step()
     while True:
