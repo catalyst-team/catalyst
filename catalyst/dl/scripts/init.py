@@ -5,7 +5,7 @@ import shutil
 from git import Repo as repo
 
 from catalyst import utils
-from catalyst.dl.utils import run_wizard, clone_pipeline
+from catalyst.dl.utils import clone_pipeline, run_wizard
 
 
 def build_args(parser):

@@ -1,10 +1,12 @@
-import pathlib
-from prompt_toolkit import prompt
 from collections import OrderedDict
-from catalyst.utils.scripts import import_module
+import pathlib
+
+from prompt_toolkit import prompt
+import yaml
+
 from catalyst.dl import registry
 from catalyst.dl.utils import clone_pipeline
-import yaml
+from catalyst.utils.scripts import import_module
 
 yaml.add_representer(
     OrderedDict,
@@ -23,7 +25,7 @@ class Wizard():
             ("stages", OrderedDict())
         ])
 
-        self.pipeline_path = pathlib.Path('./')
+        self.pipeline_path = pathlib.Path("./")
         self.__before_export = {
             "MODELS": registry.__dict__["MODELS"].all(),
             "CRITERIONS": registry.__dict__["CRITERIONS"].all(),
@@ -38,7 +40,7 @@ class Wizard():
         return user_modules + sorted([m for m in modules if m[0].isupper()])
 
     def print_logo(self):
-        print('''
+        print("""
                        ___________
                       (_         _)
                         |       |
@@ -51,7 +53,7 @@ class Wizard():
                    /    #       #    \\
                   /      #######      \\
                  (_____________________)
-        \n''')
+        \n""")
 
     def sep(self, step_name: str = None):
         if step_name is None:
@@ -62,7 +64,6 @@ class Wizard():
             msg += "="*(100 - len(step_name) - 12)
             msg += "\n" + "="*100 + "\n"
             print(msg)
-
 
     def preview(self):
         self.sep()
@@ -85,13 +86,13 @@ class Wizard():
 
     def _skip_override_stages_common(self, param_name):
         common = None
-        if param_name in self._cfg['stages']:
-            common = self._cfg['stages'][param_name]
+        if param_name in self._cfg["stages"]:
+            common = self._cfg["stages"][param_name]
             print("You have common setting for all stages:\n" +
                   yaml.dump(common, default_flow_style=False))
             res = prompt("Do you want to override it? (y/N): ",
                          default="N")
-            return res.upper() == 'N'
+            return res.upper() == "N"
         else:
             return False
 
@@ -108,7 +109,7 @@ class Wizard():
             msg += "\n".join([f"{n+1}: {m}" for n, m in enumerate(modules)])
             print(msg)
             module = prompt("\nEnter number from list above or "
-                               f"class name of {param} you'll be using: ")
+                            f"class name of {param} you'll be using: ")
             if module.isdigit():
                 module = int(module)
                 if module == 0:
@@ -116,14 +117,14 @@ class Wizard():
                 module = modules[module - 1]
         else:
             module = prompt(f"Enter class name of {param} "
-                               "you'll be using: ")
+                            "you'll be using: ")
         op[param] = module
         res = prompt("If there are arguments you want to provide during "
                      f"{param} initialization, provide them here in "
                      "following format:\n\nlr=0.001,beta=3.41\n\n"
                      "Or just skip this step (press Enter): ")
         if len(res):
-            res = [t.split('=') for t in res.split(',')]
+            res = [t.split("=") for t in res.split(",")]
             for k, v in res:
                 # We can add regex to parse params properly into types we need
                 op[k] = int(v) if v.isdigit() else v
@@ -134,8 +135,11 @@ class Wizard():
         if self._skip_override_stages_common("state_params"):
             return
         sp = OrderedDict()
-        sp["main_metric"] = prompt("What is the main_metric?: ", default="loss")
-        sp["minimize_metric"] = bool(prompt("Will it be minimized (True/False): ", default="True"))
+        sp["main_metric"] = prompt("What is the main_metric?: ",
+                                   default="loss")
+        minimize = bool(prompt("Will it be minimized (True/False): ",
+                               default="True"))
+        sp["minimize_metric"] = minimize
         stage["state_params"] = sp
 
     def data_params_step(self, stage):
@@ -143,8 +147,10 @@ class Wizard():
         if self._skip_override_stages_common("data_params"):
             return
         dp = OrderedDict()
-        dp["batch_size"] = int(prompt("What is the batch_size?: ", default="1"))
-        dp["num_workers"] = int(prompt("What is the num_workers?: ", default="1"))
+        dp["batch_size"] = int(prompt("What is the batch_size?: ",
+                                      default="1"))
+        dp["num_workers"] = int(prompt("What is the num_workers?: ",
+                                       default="1"))
         stage["data_params"] = dp
 
     def _stage_step(self, stage):
@@ -163,15 +169,15 @@ class Wizard():
         if cnt > 1:
             res = prompt("Do you want to assign some common settings "
                          "for all stages? (y/N): ", default="y")
-            if res.lower() == 'y':
-                self._stage_step(self._cfg['stages'])
+            if res.lower() == "y":
+                self._stage_step(self._cfg["stages"])
             print(f"\nNow we'll configure all {cnt} stages one-by-one\n")
         for stage_id in range(cnt):
             name = prompt("What would be the name of this stage: ",
                           default=f"stage{stage_id + 1}")
             stage = OrderedDict()
             self._stage_step(stage)
-            self._cfg['stages'][name] = stage
+            self._cfg["stages"][name] = stage
 
     def model_step(self):
         self.sep("model")
@@ -181,11 +187,11 @@ class Wizard():
             msg += "\n".join([f"{n+1}: {m}" for n, m in enumerate(models)])
             print(msg)
             model = prompt("\nEnter number from list above or "
-                           "class name of model you\"ll be using: ")
+                           "class name of model you'll be using: ")
             if model.isdigit():
                 model = models[int(model) - 1]
         else:
-            model = prompt("Enter class name of model you\"ll be using: ")
+            model = prompt("Enter class name of model you'll be using: ")
 
         self._cfg["model_params"]["model"] = model
 

@@ -5,7 +5,6 @@ from git import Repo as repo
 
 from catalyst import utils
 
-
 URL = {
     "classification": "https://github.com/catalyst-team/classification/",
     "segmentation": "https://github.com/catalyst-team/segmentation/",
