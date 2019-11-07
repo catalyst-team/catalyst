@@ -1,19 +1,20 @@
-import torch
 from collections import OrderedDict
-from catalyst.dl.experiment.supervised import SupervisedExperiment
+
+import torch
+
 from catalyst.dl.callbacks import (
-    CriterionCallback, ConsoleLogger, CheckpointCallback, OptimizerCallback,
+    CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
     RaiseExceptionCallback, TensorboardLogger
 )
-
+from catalyst.dl.experiment.supervised import SupervisedExperiment
 
 DEFAULT_CALLBACKS = OrderedDict([
-    ('_criterion', CriterionCallback),
-    ('_optimizer', OptimizerCallback),
-    ('_saver', CheckpointCallback),
-    ('console', ConsoleLogger),
-    ('tensorboard', TensorboardLogger),
-    ('exception', RaiseExceptionCallback)])
+    ("_criterion", CriterionCallback),
+    ("_optimizer", OptimizerCallback),
+    ("_saver", CheckpointCallback),
+    ("console", ConsoleLogger),
+    ("tensorboard", TensorboardLogger),
+    ("exception", RaiseExceptionCallback)])
 
 
 def test_defaults():
@@ -21,7 +22,7 @@ def test_defaults():
     dataset = torch.utils.data.Dataset()
     dataloader = torch.utils.data.DataLoader(dataset)
     loaders = OrderedDict()
-    loaders['train'] = dataloader
+    loaders["train"] = dataloader
 
     exp = SupervisedExperiment(model=model, loaders=loaders)
 

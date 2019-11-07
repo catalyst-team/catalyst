@@ -1,14 +1,15 @@
+from collections import OrderedDict
+
 import pytest
 
 import torch
-from collections import OrderedDict
-from catalyst.dl.experiment.config import ConfigExperiment
+
 from catalyst.dl import registry
 from catalyst.dl.callbacks import (
-    CriterionCallback, ConsoleLogger, CheckpointCallback, OptimizerCallback,
+    CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
     RaiseExceptionCallback, TensorboardLogger
 )
-
+from catalyst.dl.experiment.config import ConfigExperiment
 
 DEFAULT_MINIMAL_CONFIG = {
     "model_params": {
@@ -24,12 +25,12 @@ DEFAULT_MINIMAL_CONFIG = {
 
 
 DEFAULT_CALLBACKS = OrderedDict([
-    ('_criterion', CriterionCallback),
-    ('_optimizer', OptimizerCallback),
-    ('_saver', CheckpointCallback),
-    ('console', ConsoleLogger),
-    ('tensorboard', TensorboardLogger),
-    ('exception', RaiseExceptionCallback)])
+    ("_criterion", CriterionCallback),
+    ("_optimizer", OptimizerCallback),
+    ("_saver", CheckpointCallback),
+    ("console", ConsoleLogger),
+    ("tensorboard", TensorboardLogger),
+    ("exception", RaiseExceptionCallback)])
 
 
 class SomeModel(torch.nn.Module):
