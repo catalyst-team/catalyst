@@ -3,6 +3,7 @@ from prompt_toolkit import prompt
 from collections import OrderedDict
 from catalyst.utils.scripts import import_module
 from catalyst.dl import registry
+from catalyst.dl.utils import clone_pipeline
 import yaml
 
 yaml.add_representer(

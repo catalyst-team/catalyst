@@ -9,4 +9,5 @@ from .criterion import (
 )
 from .torch import get_loader, process_components
 from .visualization import plot_metrics
+from .pipelines import clone_pipeline
 from .wizard import Wizard, run_wizard

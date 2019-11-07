@@ -5,12 +5,7 @@ import shutil
 from git import Repo as repo
 
 from catalyst import utils
-from catalyst.dl.utils import run_wizard
-
-
-class CatalystInitException(Exception):
-    def __init__(self, message):
-        super().__init__(message)
+from catalyst.dl.utils import run_wizard, clone_pipeline
 
 
 def build_args(parser):
@@ -62,14 +57,10 @@ def load_empty(out_dir: Path) -> None:
 
 
 def main(args, _):
-    pipeline = args.pipeline
-    if (pipeline is None) or (pipeline == "empty"):
-        load_empty(args.out_dir)
-    else:
-        url = URL[pipeline]
-        load_pipeline(url, args.out_dir)
-    if args.wizard is not None:
+    if args.interactive:
         run_wizard()
+    else:
+        clone_pipeline(args.pipeline, args.out_dir)
 
 
 def parse_args():
