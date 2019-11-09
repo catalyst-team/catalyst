@@ -15,31 +15,24 @@ yaml.add_representer(
 
 
 class Wizard():
+    """
+    Class for Catalyst Config API Wizard.
+
+    The instance of this class will be created and called from cli command:
+    ``catalyst-dl init --interactive``.
+
+    With help of this Wizard user will be able to setup pipeline from available
+    templates and make choices of what predefined classes to use in different
+    parts of pipeline.
+    """
     def __init__(self):
-        self.sep("Welcome to Catalyst Config API wizard!")
-        self.print_logo()
-
-        self._cfg = OrderedDict([
-            ("model_params", OrderedDict()),
-            ("args", OrderedDict()),
-            ("stages", OrderedDict())
-        ])
-
-        self.pipeline_path = pathlib.Path("./")
-        self.__before_export = {
-            "MODELS": registry.__dict__["MODELS"].all(),
-            "CRITERIONS": registry.__dict__["CRITERIONS"].all(),
-            "OPTIMIZERS": registry.__dict__["OPTIMIZERS"].all(),
-            "SCHEDULERS": registry.__dict__["SCHEDULERS"].all()
-        }
-
-    def __sorted_for_user(self, key):
-        modules = registry.__dict__[key].all()
-        user_modules = list(set(modules) - set(self.__before_export[key]))
-        user_modules = sorted(user_modules)
-        return user_modules + sorted([m for m in modules if m[0].isupper()])
-
-    def print_logo(self):
+        """
+        Initialization of instance of this class will print welcome message and
+        logo of Catalyst in ASCII format. Also here we'll save all classes of
+        Catalyst own pipeline parts to be able to put user's modules on top of
+        lists to ease the choice.
+        """
+        self.__sep("Welcome to Catalyst Config API wizard!")
         print("""
                        ___________
                       (_         _)
@@ -55,34 +48,63 @@ class Wizard():
                  (_____________________)
         \n""")
 
-    def sep(self, step_name: str = None):
+        self._cfg = OrderedDict([
+            ("model_params", OrderedDict()),
+            ("args", OrderedDict()),
+            ("stages", OrderedDict())
+        ])
+
+        self.pipeline_path = pathlib.Path("./")
+        self.__before_export = {
+            "MODELS": registry.__dict__["MODELS"].all(),
+            "CRITERIONS": registry.__dict__["CRITERIONS"].all(),
+            "OPTIMIZERS": registry.__dict__["OPTIMIZERS"].all(),
+            "SCHEDULERS": registry.__dict__["SCHEDULERS"].all()
+        }
+
+    @staticmethod
+    def __sep(step_name: str = None):
+        """
+        Separator between Wizard sections
+        """
         if step_name is None:
-            print("\n" + "="*100 + "\n")
+            print("\n\n" + "="*100 + "\n\n")
         else:
-            msg = "\n" + "="*100 + "\n"
+            msg = "\n\n" + "="*100 + "\n"
             msg += "="*10 + " " + step_name + " "
             msg += "="*(100 - len(step_name) - 12)
-            msg += "\n" + "="*100 + "\n"
+            msg += "\n" + "="*100 + "\n\n"
             print(msg)
 
-    def preview(self):
-        self.sep()
-        print(yaml.dump(self._cfg, default_flow_style=False))
-        self.sep()
-
-    def dump_step(self):
-        path = prompt("Enter config path: ", default="./configs/config.yml")
-        path = pathlib.Path(path)
-        with path.open(mode="w") as stream:
-            yaml.dump(self._cfg, stream, default_flow_style=False)
-        print(f"Config was written to {path}")
-
-    def export_step(self):
+    @staticmethod
+    def _export_step():
         print("Config is complete. What is next?\n\n"
               "1. Preview config in YAML format\n"
               "2. Save config to file\n"
               "3. Discard changes and exit\n")
         return prompt("Enter the number: ")
+
+    def __sorted_for_user(self, key):
+        """
+        Here we put user's modules of specific part of pipeline on top of
+        modules predefined in Catalyst
+        """
+        modules = registry.__dict__[key].all()
+        user_modules = list(set(modules) - set(self.__before_export[key]))
+        user_modules = sorted(user_modules)
+        return user_modules + sorted([m for m in modules if m[0].isupper()])
+
+    def _preview(self):
+        self.__sep()
+        print(yaml.dump(self._cfg, default_flow_style=False))
+        self.__sep()
+
+    def _dump_step(self):
+        path = prompt("Enter config path: ", default="./configs/config.yml")
+        path = pathlib.Path(path)
+        with path.open(mode="w") as stream:
+            yaml.dump(self._cfg, stream, default_flow_style=False)
+        print(f"Config was written to {path}")
 
     def _skip_override_stages_common(self, param_name):
         common = None
@@ -93,17 +115,16 @@ class Wizard():
             res = prompt("Do you want to override it? (y/N): ",
                          default="N")
             return res.upper() == "N"
-        else:
-            return False
+        return False
 
     def _basic_params_step(self, param, stage, optional=False):
-        self.sep(f"{param}_params")
+        self.__sep(f"{param}_params")
         if self._skip_override_stages_common(f"{param}_params"):
             return
-        op = OrderedDict()
+        opts = OrderedDict()
         modules = self.__sorted_for_user(f"{param.upper()}S")
         msg = f"What {param} you'll be using:\n\n"
-        if len(modules):
+        if modules:
             if optional:
                 msg += "0: Skip this param\n"
             msg += "\n".join([f"{n+1}: {m}" for n, m in enumerate(modules)])
@@ -118,52 +139,52 @@ class Wizard():
         else:
             module = prompt(f"Enter class name of {param} "
                             "you'll be using: ")
-        op[param] = module
+        opts[param] = module
         res = prompt("If there are arguments you want to provide during "
                      f"{param} initialization, provide them here in "
                      "following format:\n\nlr=0.001,beta=3.41\n\n"
                      "Or just skip this step (press Enter): ")
-        if len(res):
+        if res:
             res = [t.split("=") for t in res.split(",")]
-            for k, v in res:
+            for k, val in res:
                 # We can add regex to parse params properly into types we need
-                op[k] = int(v) if v.isdigit() else v
-        stage[f"{param}_params"] = op
+                opts[k] = int(val) if val.isdigit() else val
+        stage[f"{param}_params"] = opts
 
-    def state_params_step(self, stage):
-        self.sep(f"state_params")
+    def _state_params_step(self, stage):
+        self.__sep(f"state_params")
         if self._skip_override_stages_common("state_params"):
             return
-        sp = OrderedDict()
-        sp["main_metric"] = prompt("What is the main_metric?: ",
-                                   default="loss")
+        opts = OrderedDict()
+        opts["main_metric"] = prompt("What is the main_metric?: ",
+                                     default="loss")
         minimize = bool(prompt("Will it be minimized (True/False): ",
                                default="True"))
-        sp["minimize_metric"] = minimize
-        stage["state_params"] = sp
+        opts["minimize_metric"] = minimize
+        stage["state_params"] = opts
 
-    def data_params_step(self, stage):
-        self.sep(f"data_params")
+    def _data_params_step(self, stage):
+        self.__sep(f"data_params")
         if self._skip_override_stages_common("data_params"):
             return
-        dp = OrderedDict()
-        dp["batch_size"] = int(prompt("What is the batch_size?: ",
-                                      default="1"))
-        dp["num_workers"] = int(prompt("What is the num_workers?: ",
-                                       default="1"))
-        stage["data_params"] = dp
+        opts = OrderedDict()
+        opts["batch_size"] = int(prompt("What is the batch_size?: ",
+                                        default="1"))
+        opts["num_workers"] = int(prompt("What is the num_workers?: ",
+                                         default="1"))
+        stage["data_params"] = opts
 
     def _stage_step(self, stage):
-        self.data_params_step(stage)
-        self.state_params_step(stage)
+        self._data_params_step(stage)
+        self._state_params_step(stage)
         self._basic_params_step("criterion", stage)
         self._basic_params_step("optimizer", stage)
         self._basic_params_step("scheduler", stage, optional=True)
         return
         self.callback_params_step(stage)
 
-    def stages_step(self):
-        self.sep("stages")
+    def _stages_step(self):
+        self.__sep("stages")
         cnt = prompt("How much stages your exepriment will contain: ")
         cnt = int(cnt) or 1
         if cnt > 1:
@@ -179,21 +200,24 @@ class Wizard():
             self._stage_step(stage)
             self._cfg["stages"][name] = stage
 
-    def model_step(self):
-        self._basic_params_step('model', self._cfg)
+    def _model_step(self):
+        self._basic_params_step("model", self._cfg)
 
-    def export_user_modules(self):
+    def __export_user_modules(self):
         try:
             # We need to import module to add possible modules to registry
             expdir = self._cfg["args"]["expdir"]
             if not isinstance(expdir, pathlib.Path):
                 expdir = pathlib.Path(expdir)
             import_module(expdir)
-        except Exception as e:
-            print(f"No modules were imported from {expdir}:\n{e}")
+        except OSError:
+            print(f"There is no modules to import found: {expdir}")
+        except Exception as err:
+            print("Unexpected error when tried to import modules from "
+                  f"{expdir}: {err}")
 
-    def args_step(self):
-        self.sep("args")
+    def _args_step(self):
+        self.__sep("args")
         self._cfg["args"]["expdir"] = prompt(
             "Where is the `__init__.py` with your modules stored: ",
             default=str(self.pipeline_path/"src"))
@@ -201,10 +225,10 @@ class Wizard():
             "Where Catalyst supposed to save its logs: ",
             default=str(self.pipeline_path/"logs/experiment"))
 
-        self.export_user_modules()
+        self.__export_user_modules()
 
-    def pipeline_step(self):
-        self.sep("Pipeline templates")
+    def _pipeline_step(self):
+        self.__sep("Pipeline templates")
         opts = ["Classification", "Segmentation", "Detection", "Empty"]
         msg = "0: Skip this step\n"
         msg += "\n".join([f"{n + 1}: {v}" for n, v in enumerate(opts)])
@@ -219,21 +243,30 @@ class Wizard():
         self.pipeline_path = pathlib.Path(out_dir)
         clone_pipeline(pipeline.lower(), self.pipeline_path)
 
+    def run(self):
+        """
+        Walks user through predefined wizard steps
+        """
+        self._pipeline_step()
+        self._args_step()
+        self._model_step()
+        self._stages_step()
+        while True:
+            res = self._export_step()
+            if res == "1":
+                self._preview()
+            elif res == "2":
+                self._dump_step()
+                return
+            elif res == "3":
+                return
+            else:
+                print(f"Unknown option `{res}`")
+
 
 def run_wizard():
+    """
+    Method to initialize and run wizard
+    """
     wiz = Wizard()
-    wiz.pipeline_step()
-    wiz.args_step()
-    wiz.model_step()
-    wiz.stages_step()
-    while True:
-        res = wiz.export_step()
-        if res == "1":
-            wiz.preview()
-        elif res == "2":
-            wiz.dump_step()
-            return
-        elif res == "3":
-            return
-        else:
-            print(f"Unknown option `{res}`")
+    wiz.run()
