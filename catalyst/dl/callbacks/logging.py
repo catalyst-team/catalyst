@@ -236,8 +236,8 @@ class TelegramLogger(LoggerCallback):
 
     def __init__(
         self,
-        token: str,
-        chat_id: str,
+        token: str = None,
+        chat_id: str = None,
         log_on_stage_start: bool = True,
         log_on_loader_start: bool = True,
         log_on_loader_end: bool = True,
@@ -256,8 +256,10 @@ class TelegramLogger(LoggerCallback):
             log_on_exception (bool): send notification on exception
         """
         super().__init__()
-        self._token = token
-        self._chat_id = chat_id
+        # @TODO: replace this logic with global catalyst config at ~/.catalyst
+        self._token = token or os.environ.get("CATALYST_TELEGRAM_TOKEN", None)
+        self._chat_id = chat_id or os.environ.get("CATALYST_TELEGRAM_CHAT_ID", None)
+        assert self._token is not None and self._chat_id is not None
         self._base_url = (
             f"https://api.telegram.org/bot{self._token}/sendMessage"
         )
