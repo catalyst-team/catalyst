@@ -99,11 +99,11 @@ class TripletLoss(nn.Module):
         return ~(labels.unsqueeze(0) == labels.unsqueeze(1))
 
     def _batch_hard_triplet_loss(
-        self, 
-        embeddings, 
-        labels, 
+        self,
+        embeddings,
+        labels,
         margin,
-        squared=True
+        squared=True,
     ):
         """
         Build the triplet loss over a batch of embeddings.
