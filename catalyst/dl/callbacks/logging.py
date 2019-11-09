@@ -258,7 +258,9 @@ class TelegramLogger(LoggerCallback):
         super().__init__()
         # @TODO: replace this logic with global catalyst config at ~/.catalyst
         self._token = token or os.environ.get("CATALYST_TELEGRAM_TOKEN", None)
-        self._chat_id = chat_id or os.environ.get("CATALYST_TELEGRAM_CHAT_ID", None)
+        self._chat_id = (
+            chat_id or os.environ.get("CATALYST_TELEGRAM_CHAT_ID", None)
+        )
         assert self._token is not None and self._chat_id is not None
         self._base_url = (
             f"https://api.telegram.org/bot{self._token}/sendMessage"
