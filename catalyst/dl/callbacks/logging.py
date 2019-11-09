@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional  # isort:skip
+from typing import Dict, List  # isort:skip
 import logging
 import os
 import sys
@@ -238,6 +238,7 @@ class TelegramLogger(LoggerCallback):
         self,
         token: str = None,
         chat_id: str = None,
+        metric_names: List[str] = None,
         log_on_stage_start: bool = True,
         log_on_loader_start: bool = True,
         log_on_loader_end: bool = True,
@@ -249,6 +250,8 @@ class TelegramLogger(LoggerCallback):
             token (str): telegram bot's token,
                 see https://core.telegram.org/bots
             chat_id (str): Chat unique identifier
+            metric_names: List of metric names to log.
+                if none - logs everything.
             log_on_stage_start (bool): send notification on stage start
             log_on_loader_start (bool): send notification on loader start
             log_on_loader_end (bool): send notification on loader end
@@ -266,13 +269,13 @@ class TelegramLogger(LoggerCallback):
             f"https://api.telegram.org/bot{self._token}/sendMessage"
         )
 
-        self._log_on_stage_start = log_on_stage_start
-        self._log_on_loader_start = log_on_loader_start
-        self._log_on_loader_end = log_on_loader_end
-        self._log_on_stage_end = log_on_stage_end
-        self._log_on_exception = log_on_exception
+        self.log_on_stage_start = log_on_stage_start
+        self.log_on_loader_start = log_on_loader_start
+        self.log_on_loader_end = log_on_loader_end
+        self.log_on_stage_end = log_on_stage_end
+        self.log_on_exception = log_on_exception
 
-        self._metrics_to_log: Optional[List[str]] = None
+        self.metrics_to_log = metric_names
 
     def _send_text(self, text: str):
         try:
@@ -288,35 +291,46 @@ class TelegramLogger(LoggerCallback):
         except Exception as e:
             logging.getLogger(__name__).warning(f"telegram.send.error:{e}")
 
+    def _format_metric(self, name: str, value: float) -> str:
+        if value < 1e-4:
+            # Print LR in scientific format since
+            # 4 decimal chars is not enough for LR
+            # lower than 1e-4
+            return f"{name}={value:1.3e}"
+
+        return f"{name}={value:.4f}"
+
     def on_stage_start(self, state: RunnerState):
         """Notify about starting a new stage"""
-        if self._log_on_stage_start:
+        if self.log_on_stage_start:
             text = f"{state.stage} stage was started"
 
             self._send_text(text)
 
     def on_loader_start(self, state: RunnerState):
         """Notify about starting running the new loader"""
-        if self._log_on_loader_start:
+        if self.log_on_loader_start:
             text = f"{state.loader_name} {state.epoch} epoch was started"
 
             self._send_text(text)
 
     def on_loader_end(self, state: RunnerState):
         """Translate ``state.metrics`` to telegram channel"""
-        if self._log_on_loader_end:
+        if self.log_on_loader_end:
             metrics = state.metrics.epoch_values[state.loader_name]
 
-            if self._metrics_to_log is None:
-                self._metrics_to_log = sorted(list(metrics.keys()))
+            if self.metrics_to_log is None:
+                metrics_to_log = sorted(list(metrics.keys()))
+            else:
+                metrics_to_log = self.metrics_to_log
 
             rows: List[str] = [
                 f"{state.loader_name} {state.epoch} epoch was finished:"
             ]
 
-            for name in self._metrics_to_log:
+            for name in metrics_to_log:
                 if name in metrics:
-                    rows.append(f"{name}={metrics[name]}")
+                    rows.append(self._format_metric(name, metrics[name]))
 
             text = "\n".join(rows)
 
@@ -324,14 +338,14 @@ class TelegramLogger(LoggerCallback):
 
     def on_stage_end(self, state: RunnerState):
         """Notify about finishing a stage"""
-        if self._log_on_stage_end:
+        if self.log_on_stage_end:
             text = f"{state.stage} stage was finished"
 
             self._send_text(text)
 
     def on_exception(self, state: RunnerState):
         """Notify about raised Exception"""
-        if self._log_on_exception:
+        if self.log_on_exception:
             exception = state.exception
             if utils.is_exception(exception) and not isinstance(
                 exception, KeyboardInterrupt
