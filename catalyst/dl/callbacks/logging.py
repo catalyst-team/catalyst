@@ -10,6 +10,7 @@ from tqdm import tqdm
 from catalyst.dl import utils
 from catalyst.dl.core import LoggerCallback, RunnerState
 from catalyst.dl.utils.formatters import TxtMetricsFormatter
+from catalyst.utils import format_metric
 from catalyst.utils.tensorboard import SummaryWriter
 
 
@@ -291,15 +292,6 @@ class TelegramLogger(LoggerCallback):
         except Exception as e:
             logging.getLogger(__name__).warning(f"telegram.send.error:{e}")
 
-    def _format_metric(self, name: str, value: float) -> str:
-        if value < 1e-4:
-            # Print LR in scientific format since
-            # 4 decimal chars is not enough for LR
-            # lower than 1e-4
-            return f"{name}={value:1.3e}"
-
-        return f"{name}={value:.4f}"
-
     def on_stage_start(self, state: RunnerState):
         """Notify about starting a new stage"""
         if self.log_on_stage_start:
@@ -330,7 +322,7 @@ class TelegramLogger(LoggerCallback):
 
             for name in metrics_to_log:
                 if name in metrics:
-                    rows.append(self._format_metric(name, metrics[name]))
+                    rows.append(format_metric(name, metrics[name]))
 
             text = "\n".join(rows)
 

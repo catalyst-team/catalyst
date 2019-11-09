@@ -80,7 +80,15 @@ def append_dict(dict1, dict2):
     return dict1
 
 
-def flatten_dict(d, parent_key="", sep="/"):
+def flatten_dict(d: dict, parent_key: str = "", sep: str = "/") -> dict:
+    """
+    Flatten nested dicts
+
+    Args:
+        d (dict): the dict that will be flattened
+        parent_key (str): prefix nested keys with string `parent_key`
+        sep (str): delimiter between `parent_key` and `key` to use
+    """
     items = []
     for k, v in d.items():
         new_key = parent_key + sep + k if parent_key else k
@@ -96,7 +104,7 @@ def maybe_recursive_call(
     method,
     recursive_args=None,
     recursive_kwargs=None,
-    **kwargs
+    **kwargs,
 ):
     if isinstance(object_or_dict, dict):
         result = type(object_or_dict)()
@@ -110,7 +118,7 @@ def maybe_recursive_call(
                 method,
                 recursive_args=r_args,
                 recursive_kwargs=r_kwargs,
-                **kwargs
+                **kwargs,
             )
         return result
 
@@ -160,3 +168,17 @@ def get_utcnow_time(format: str = None) -> str:
         format = "%y%m%d.%H%M%S"
     result = datetime.utcnow().strftime(format)
     return result
+
+
+def format_metric(self, name: str, value: float) -> str:
+    """
+    Format metric. Metric will be returned in the scientific format if 4
+    decimal chars are not enough (metric value lower than 1e-4)
+
+    Args:
+        name (str): metric name
+        value (float): value of metric
+    """
+    if value < 1e-4:
+        return f"{name}={value:1.3e}"
+    return f"{name}={value:.4f}"
