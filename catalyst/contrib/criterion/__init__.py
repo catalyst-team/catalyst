@@ -12,4 +12,5 @@ from .iou import BCEIoULoss, IoULoss
 from .lovasz import (
     LovaszLossBinary, LovaszLossMultiClass, LovaszLossMultiLabel
 )
+from .triplet import TripletLoss
 from .wing import WingLoss
