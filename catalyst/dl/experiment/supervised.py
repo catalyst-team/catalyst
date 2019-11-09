@@ -10,7 +10,38 @@ from .base import BaseExperiment
 
 
 class SupervisedExperiment(BaseExperiment):
+    """
+    Supervised experiment used mostly in Notebook API
+        The main difference with BaseExperiment that it will
+        add several callbacks by default if you haven't.
+
+        Here are list of callbacks by default:
+            CriterionCallback:
+                measures loss with specified ``criterion``.
+            OptimizerCallback: abstraction over ``optimizer`` step.
+            SchedulerCallback: only in case if you provided scheduler to your
+                experiment does `lr_scheduler.step`
+            CheckpointCallback: saves model and optimizer state each epoch
+                callback to save/restore your
+                model/criterion/optimizer/metrics.
+            ConsoleLogger: standard Catalyst logger, translates
+                ``state.metrics`` to console and text file
+            TensorboardLogger: will write ``state.metrics`` to tensorboard
+            RaiseExceptionCallback: will raise exception if needed
+    """
+
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
+        """
+        Override of ``BaseExperiment.get_callbacks`` method.
+        Will add several of callbacks by default in case they missed.
+
+        Args:
+            stage (str): name of stage. It should start with `infer` if you
+                don't need default callbacks, as they required only for
+                training stages.
+        Returns:
+            List[Callback]: list of callbacks for experiment
+        """
         callbacks = self._callbacks
         default_callbacks = []
         if self._verbose:

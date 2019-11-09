@@ -13,7 +13,8 @@ from torch.utils.data import (  # noqa F401
 from catalyst.dl import utils
 from catalyst.dl.callbacks import (
     CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
-    RaiseExceptionCallback, SchedulerCallback, TensorboardLogger, VerboseLogger
+    RaiseExceptionCallback, SchedulerCallback, TensorboardLogger,
+    VerboseLogger
 )
 from catalyst.dl.core import Callback, Experiment
 from catalyst.dl.registry import (

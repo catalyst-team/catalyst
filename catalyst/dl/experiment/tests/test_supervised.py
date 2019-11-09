@@ -18,6 +18,11 @@ DEFAULT_CALLBACKS = OrderedDict([
 
 
 def test_defaults():
+    """
+    Test on defaults for SupervisedExperiment class, which is child class of
+    BaseExperiment.  That's why we check only default callbacks functionality
+    here
+    """
     model = torch.nn.Module()
     dataset = torch.utils.data.Dataset()
     dataloader = torch.utils.data.DataLoader(dataset)
@@ -28,5 +33,5 @@ def test_defaults():
 
     assert exp.get_callbacks("train").keys() == DEFAULT_CALLBACKS.keys()
     cbs = zip(exp.get_callbacks("train").values(), DEFAULT_CALLBACKS.values())
-    for cb, klass in cbs:
-        assert isinstance(cb, klass)
+    for callback, klass in cbs:
+        assert isinstance(callback, klass)

@@ -34,6 +34,9 @@ DEFAULT_CALLBACKS = OrderedDict([
 
 
 class SomeModel(torch.nn.Module):
+    """
+    Dummy test torch model
+    """
     pass
 
 
@@ -41,6 +44,12 @@ registry.MODELS.add(SomeModel)
 
 
 def test_defaults():
+    """
+    Test on ConfigExperiment defaults. It's pretty similar to BaseExperiment's
+    test but the thing is that those two are very different classes and
+    inherits from different parent classes.
+    Also very important to check which callbacks are added by default
+    """
     exp = ConfigExperiment(config=DEFAULT_MINIMAL_CONFIG)
 
     assert exp.initial_seed == 42
@@ -62,6 +71,10 @@ def test_defaults():
 
 
 def test_not_implemented_datasets():
+    """
+    Test on ``get_datasets`` method, which should be implememnted by user.
+    Method ``get_loaders`` will call ``get_dataset``.
+    """
     exp = ConfigExperiment(config=DEFAULT_MINIMAL_CONFIG)
 
     with pytest.raises(NotImplementedError):

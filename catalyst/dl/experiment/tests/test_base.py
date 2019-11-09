@@ -6,6 +6,10 @@ from catalyst.dl.experiment.base import BaseExperiment
 
 
 def test_defaults():
+    """
+    Test on defaults for BaseExperiment. It will be useful if we decide to
+    change anything in those values as it could make breaking change.
+    """
     model = torch.nn.Module()
     dataset = torch.utils.data.Dataset()
     dataloader = torch.utils.data.DataLoader(dataset)
