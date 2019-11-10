@@ -13,8 +13,8 @@ from torch.utils.data import (  # noqa F401
 from catalyst.dl import utils
 from catalyst.dl.callbacks import (
     CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
-    RaiseExceptionCallback, SchedulerCallback, TensorboardLogger,
-    VerboseLogger
+    PhaseWrapperCallback, RaiseExceptionCallback, SchedulerCallback,
+    TensorboardLogger, VerboseLogger
 )
 from catalyst.dl.core import Callback, Experiment
 from catalyst.dl.registry import (
@@ -414,9 +414,13 @@ class ConfigExperiment(Experiment):
         default_callbacks.append(("exception", RaiseExceptionCallback))
 
         for callback_name, callback_fn in default_callbacks:
-            is_already_present = any(
-                isinstance(x, callback_fn) for x in callbacks.values()
-            )
+            is_already_present = False
+            for x in callbacks.values():
+                if isinstance(x, PhaseWrapperCallback):
+                    x = x.callback
+                if isinstance(x, callback_fn):
+                    is_already_present = True
+                    break
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
 

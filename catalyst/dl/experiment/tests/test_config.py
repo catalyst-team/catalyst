@@ -7,7 +7,7 @@ import torch
 from catalyst.dl import registry
 from catalyst.dl.callbacks import (
     CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
-    RaiseExceptionCallback, TensorboardLogger
+    PhaseWrapperCallback, RaiseExceptionCallback, TensorboardLogger
 )
 from catalyst.dl.experiment.config import ConfigExperiment
 
@@ -47,7 +47,7 @@ def test_defaults():
     """
     Test on ConfigExperiment defaults. It's pretty similar to BaseExperiment's
     test but the thing is that those two are very different classes and
-    inherits from different parent classes.
+    inherit from different parent classes.
     Also very important to check which callbacks are added by default
     """
     exp = ConfigExperiment(config=DEFAULT_MINIMAL_CONFIG)
@@ -68,6 +68,45 @@ def test_defaults():
     cbs = zip(exp.get_callbacks("train").values(), DEFAULT_CALLBACKS.values())
     for c1, klass in cbs:
         assert isinstance(c1, klass)
+
+
+def test_when_callback_defined():
+    """
+    There should be no default callback of same kind if there is user defined
+    already.
+    """
+    config = DEFAULT_MINIMAL_CONFIG
+    config["stages"]["callbacks_params"] = {
+        "my_criterion": {
+            "callback": "CriterionCallback"
+        }
+    }
+    exp = ConfigExperiment(config=config)
+
+    assert "_criterion" not in exp.get_callbacks("train").keys()
+    assert "my_criterion" in exp.get_callbacks("train").keys()
+
+
+def test_when_callback_wrapped():
+    """
+    There should be no default callback of same kind of user defined wrapped
+    callback.
+    """
+    config = DEFAULT_MINIMAL_CONFIG
+    config["stages"]["callbacks_params"] = {
+        "my_wrapped_criterion": {
+            "_wrapper": {
+                "callback": "PhaseBatchWrapperCallback",
+                "active_phases": [1]
+            },
+            "callback": "CriterionCallback"
+        }
+    }
+    exp = ConfigExperiment(config=config)
+
+    assert "_criterion" not in exp.get_callbacks("train").keys()
+    callback = exp.get_callbacks("train")["my_wrapped_criterion"]
+    assert isinstance(callback, PhaseWrapperCallback)
 
 
 def test_not_implemented_datasets():
