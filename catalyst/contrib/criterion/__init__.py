@@ -2,7 +2,7 @@
 
 from torch.nn.modules.loss import *
 
-from .ce import NaiveCrossEntropyLoss
+from .ce import NaiveCrossEntropyLoss, SymmetricCrossEntropyLoss
 from .center import CenterLoss
 from .contrastive import ContrastiveDistanceLoss, ContrastiveEmbeddingLoss
 from .dice import BCEDiceLoss, DiceLoss
