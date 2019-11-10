@@ -10,24 +10,29 @@ from .base import BaseExperiment
 
 
 class SupervisedExperiment(BaseExperiment):
-    """
-    Supervised experiment used mostly in Notebook API
-        The main difference with BaseExperiment that it will
-        add several callbacks by default if you haven't.
+    """Supervised experiment used mostly in Notebook API
 
-        Here are list of callbacks by default:
-            CriterionCallback:
-                measures loss with specified ``criterion``.
-            OptimizerCallback: abstraction over ``optimizer`` step.
-            SchedulerCallback: only in case if you provided scheduler to your
-                experiment does `lr_scheduler.step`
-            CheckpointCallback: saves model and optimizer state each epoch
-                callback to save/restore your
-                model/criterion/optimizer/metrics.
-            ConsoleLogger: standard Catalyst logger, translates
-                ``state.metrics`` to console and text file
-            TensorboardLogger: will write ``state.metrics`` to tensorboard
-            RaiseExceptionCallback: will raise exception if needed
+    The main difference with BaseExperiment that it will
+    add several callbacks by default if you haven't.
+
+    Here are list of callbacks by default:
+        CriterionCallback:
+            measures loss with specified ``criterion``.
+        OptimizerCallback:
+            abstraction over ``optimizer`` step.
+        SchedulerCallback:
+            only in case if you provided scheduler to your experiment does
+            `lr_scheduler.step`
+        CheckpointCallback:
+            saves model and optimizer state each epoch callback to save/restore
+            your model/criterion/optimizer/metrics.
+        ConsoleLogger:
+            standard Catalyst logger, translates ``state.metrics`` to console
+            and text file
+        TensorboardLogger:
+            will write ``state.metrics`` to tensorboard
+        RaiseExceptionCallback:
+            will raise exception if needed
     """
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
