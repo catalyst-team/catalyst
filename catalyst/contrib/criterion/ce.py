@@ -16,16 +16,15 @@ class NaiveCrossEntropyLoss(nn.Module):
         return loss
     
 class SymmetricCrossEntropyLoss(nn.Module):
-	def __init__(self, alpha, beta, num_classes = 10):
+	def __init__(self, alpha, beta, num_classes):
 		super(SymmetricCrossEntropyLoss, self).__init__()
 		self.alpha = alpha
 		self.beta = beta
 		self.num_classes = num_classes
-		self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 	def forward(self, input, target):
-		assert input.size() == target.size()
-		target_one_hot = F.one_hot(target, self.num_classes).float().to(self.device) 
+		target_one_hot = F.one_hot(target, self.num_classes).float()
+		assert target_one_hot.shape == input.shape
 
 		input = torch.clamp(input, min=1e-7, max=1.0)
 		target_one_hot = torch.clamp(target_one_hot, min=1e-4, max=1.0)
