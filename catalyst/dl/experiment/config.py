@@ -12,7 +12,9 @@ from torch.utils.data import (  # noqa F401
 
 from catalyst.dl import utils
 from catalyst.dl.callbacks import (
-    ConsoleLogger, RaiseExceptionCallback, TensorboardLogger, VerboseLogger
+    CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
+    PhaseWrapperCallback, RaiseExceptionCallback, SchedulerCallback,
+    TensorboardLogger, VerboseLogger
 )
 from catalyst.dl.core import Callback, Experiment
 from catalyst.dl.registry import (
@@ -401,15 +403,24 @@ class ConfigExperiment(Experiment):
         if self._verbose:
             default_callbacks.append(("verbose", VerboseLogger))
         if not stage.startswith("infer"):
+            default_callbacks.append(("_criterion", CriterionCallback))
+            default_callbacks.append(("_optimizer", OptimizerCallback))
+            if self.stages_config[stage].get("scheduler_params", {}):
+                default_callbacks.append(("_scheduler", SchedulerCallback))
+            default_callbacks.append(("_saver", CheckpointCallback))
             default_callbacks.append(("console", ConsoleLogger))
             default_callbacks.append(("tensorboard", TensorboardLogger))
 
         default_callbacks.append(("exception", RaiseExceptionCallback))
 
         for callback_name, callback_fn in default_callbacks:
-            is_already_present = any(
-                isinstance(x, callback_fn) for x in callbacks.values()
-            )
+            is_already_present = False
+            for x in callbacks.values():
+                if isinstance(x, PhaseWrapperCallback):
+                    x = x.callback
+                if isinstance(x, callback_fn):
+                    is_already_present = True
+                    break
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
 
