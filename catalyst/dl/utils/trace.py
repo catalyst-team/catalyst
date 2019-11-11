@@ -85,7 +85,13 @@ def trace_model(
         # the jit
         # https://github.com/NVIDIA/apex/issues/303#issuecomment-493142950
         from apex import amp
-        model, _ = amp.initialize(model, optimizers=None, opt_level=opt_level)
+        model = model.to(device)
+        model = amp.initialize(model, optimizers=None, opt_level=opt_level)
+        # TODO: remove `check_trace=False`
+        # after fixing this bug https://github.com/pytorch/pytorch/issues/23993
+        params = dict(check_trace=False)
+    else:
+        params = dict()
 
     getattr(model, mode)()
     utils.set_requires_grad(model, requires_grad=requires_grad)
@@ -93,7 +99,7 @@ def trace_model(
     _runner_model, _runner_device = runner.get_model_device()
 
     runner.set_model_device(tracer.to(device), device)
-    runner.predict_batch(batch)
+    runner.predict_batch(batch, **params)
     result: ScriptModule = tracer.tracing_result
 
     runner.set_model_device(_runner_model, _runner_device)

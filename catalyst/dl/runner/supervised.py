@@ -67,17 +67,17 @@ class SupervisedRunner(Runner):
         batch = super()._batch2device(batch, device)
         return batch
 
-    def _process_input_str(self, batch: Mapping[str, Any]):
-        output = self.model(batch[self.input_key])
+    def _process_input_str(self, batch: Mapping[str, Any], **kwargs):
+        output = self.model(batch[self.input_key], **kwargs)
         return output
 
-    def _process_input_list(self, batch: Mapping[str, Any]):
+    def _process_input_list(self, batch: Mapping[str, Any], **kwargs):
         input = dict((key, batch[key]) for key in self.input_key)
-        output = self.model(**input)
+        output = self.model(**input, **kwargs)
         return output
 
-    def _process_input_none(self, batch: Mapping[str, Any]):
-        output = self.model(**batch)
+    def _process_input_none(self, batch: Mapping[str, Any], **kwargs):
+        output = self.model(**batch, **kwargs)
         return output
 
     def _process_output_str(self, output: Mapping[str, Any]):
@@ -93,12 +93,12 @@ class SupervisedRunner(Runner):
     def _process_output_none(self, output: Mapping[str, Any]):
         return output
 
-    def forward(self, batch):
+    def forward(self, batch, **kwargs):
         """
         Should not be called directly outside of runner.
         If your model has specific interface, override this method to use it
         """
-        output = self._process_input(batch)
+        output = self._process_input(batch, **kwargs)
         output = self._process_output(output)
         return output
 
