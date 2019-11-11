@@ -31,6 +31,8 @@ def trace_model_from_checkpoint(
     Args:
         logdir (Union[str, Path]): Path to Catalyst logdir with model
         checkpoint_name (str): Name of model checkpoint to use
+        stage (str): experiment's stage name
+        loader (Union[str, int]): experiment's loader name or its index
         method_name (str): Model's method name that will be
             used as entrypoint during tracing
         mode (str): Mode for model to trace (``train`` or ``eval``)
