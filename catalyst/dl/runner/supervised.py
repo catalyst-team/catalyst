@@ -1,14 +1,19 @@
 from typing import Any, Dict, List, Mapping, Union  # isort:skip
 from collections import OrderedDict
 import logging
+from pathlib import Path
 
-from torch import nn
+import torch
+from torch.jit import ScriptModule
 from torch.utils.data import DataLoader
 
 from catalyst.dl.callbacks import CheckpointCallback, InferCallback
 from catalyst.dl.core import Callback, Runner
 from catalyst.dl.experiment import SupervisedExperiment
-from catalyst.dl.utils.torch import _Criterion, _Model, _Optimizer, _Scheduler
+from catalyst.dl.utils.trace import get_trace_name, trace_model
+from catalyst.utils.typing import (
+    Criterion, Device, Model, Optimizer, Scheduler
+)
 
 logger = logging.getLogger(__name__)
 
@@ -21,17 +26,20 @@ class SupervisedRunner(Runner):
 
     def __init__(
         self,
-        model: nn.Module = None,
-        device=None,
+        model: Model = None,
+        device: Device = None,
         input_key: str = "features",
         output_key: str = "logits",
         input_target_key: str = "targets",
     ):
         """
-        @TODO update docs
         Args:
-            input_key: Key in batch dict mapping to model input
-            output_key: Key in output dict model output will be stored under
+            model (Model): Torch model object
+            device (Device): Torch device
+            input_key (str): Key in batch dict mapping for model input
+            output_key (str): Key in output dict model output
+                will be stored under
+            input_target_key (str): Key in batch dict mapping for target
         """
         super().__init__(model=model, device=device)
         self.input_key = input_key
@@ -52,7 +60,7 @@ class SupervisedRunner(Runner):
         else:
             self._process_output = self._process_output_none
 
-    def _batch2device(self, batch: Mapping[str, Any], device):
+    def _batch2device(self, batch: Mapping[str, Any], device: Device):
         if isinstance(batch, (tuple, list)):
             assert len(batch) == 2
             batch = {self.input_key: batch[0], self.target_key: batch[1]}
@@ -96,13 +104,13 @@ class SupervisedRunner(Runner):
 
     def train(
         self,
-        model: _Model,
-        criterion: _Criterion,
-        optimizer: _Optimizer,
+        model: Model,
+        criterion: Criterion,
+        optimizer: Optimizer,
         loaders: "OrderedDict[str, DataLoader]",
         logdir: str,
         callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
-        scheduler: _Scheduler = None,
+        scheduler: Scheduler = None,
         resume: str = None,
         num_epochs: int = 1,
         valid_loader: str = "valid",
@@ -119,14 +127,14 @@ class SupervisedRunner(Runner):
         Starts the training process of the model.
 
         Args:
-            model (torch.nn.Module): model to train
-            criterion (nn.Module): criterion function for training
-            optimizer (optim.Optimizer): optimizer for training
+            model (Model): model to train
+            criterion (Criterion): criterion function for training
+            optimizer (Optimizer): optimizer for training
             loaders (dict): dictionary containing one or several
                 ``torch.utils.data.DataLoader`` for training and validation
             logdir (str): path to output directory
             callbacks (List[catalyst.dl.Callback]): list of callbacks
-            scheduler (optim.lr_scheduler._LRScheduler): scheduler for training
+            scheduler (Scheduler): scheduler for training
             resume (str): path to checkpoint for model
             num_epochs (int): number of training epochs
             valid_loader (str): loader name used to calculate
@@ -197,7 +205,7 @@ class SupervisedRunner(Runner):
 
     def infer(
         self,
-        model: _Model,
+        model: Model,
         loaders: "OrderedDict[str, DataLoader]",
         callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
         verbose: bool = False,
@@ -209,7 +217,7 @@ class SupervisedRunner(Runner):
         Makes the inference on the model.
 
         Args:
-            model (torch.nn.Module): model to infer
+            model (Model): model to infer
             loaders (dict): dictionary containing one or several
                 ``torch.utils.data.DataLoader`` for inference
             callbacks (List[catalyst.dl.Callback]): list of inference callbacks
@@ -241,7 +249,7 @@ class SupervisedRunner(Runner):
 
     def predict_loader(
         self,
-        model: _Model,
+        model: Model,
         loader: DataLoader,
         resume: str = None,
         verbose: bool = False,
@@ -253,7 +261,7 @@ class SupervisedRunner(Runner):
         Makes a prediction on the whole loader with the specified model.
 
         Args:
-            model (torch.nn.Module): model to infer
+            model (Model): model to infer
             loader (DataLoader): dictionary containing only one
                 ``torch.utils.data.DataLoader`` for inference
             resume (str): path to checkpoint for model
@@ -287,6 +295,86 @@ class SupervisedRunner(Runner):
             output = output[self.output_key]
 
         return output
+
+    def trace(
+        self,
+        model: Model = None,
+        batch=None,
+        logdir: str = None,
+        loader: DataLoader = None,
+        method_name: str = "forward",
+        mode: str = "eval",
+        requires_grad: bool = False,
+        fp16: Union[Dict, bool] = None,
+        device: Device = "cpu",
+    ) -> ScriptModule:
+        """
+        Traces model using Torch Jit
+
+        Args:
+            model (Model): model to trace
+            batch: batch to forward through the model to trace
+            logdir (str, optional): If specified,
+                the result will be written to the directory
+            loader (DataLoader, optional): if batch is not specified, the batch
+                will be ``next(iter(loader))``
+            method_name (str): model's method name that will be traced
+            mode (str): ``train`` or ``eval``
+            requires_grad (bool): flag to trace with gradients
+            fp16 (Union[Dict, bool]): If not None, then sets
+                tracing params to FP16
+            deivice (Device): Torch deivice or a string
+        """
+        if batch is None:
+            if loader is None:
+                raise ValueError(
+                    "If batch is not provided the loader must be specified"
+                )
+            batch = next(iter(loader))
+
+        if model is not None:
+            self.model = model
+
+        if device is None:
+            device = self.device
+
+        if isinstance(fp16, bool) and fp16:
+            opt_level = "O1"
+        elif isinstance(fp16, bool) and not fp16:
+            opt_level = None
+        elif isinstance(fp16, dict):
+            opt_level = fp16["opt_level"]
+        else:
+            opt_level = fp16
+
+        result = trace_model(
+            model=self.model,
+            runner=self,
+            batch=batch,
+            method_name=method_name,
+            mode=mode,
+            requires_grad=requires_grad,
+            opt_level=opt_level,
+            device=device,
+        )
+
+        if logdir is not None:
+            filename = get_trace_name(
+                method_name=method_name,
+                mode=mode,
+                requires_grad=requires_grad,
+                opt_level=opt_level
+            )
+
+            logdir = Path(logdir)
+            output: Path = logdir / "trace"
+            output.mkdir(exist_ok=True, parents=True)
+
+            out_model = str(output / filename)
+
+            torch.jit.save(result, out_model)
+
+        return result
 
 
 __all__ = ["SupervisedRunner"]

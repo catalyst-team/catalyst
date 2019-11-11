@@ -1,4 +1,4 @@
-from typing import Any, Iterable  # isort:skip
+from typing import Any, Iterable, Optional, Dict  # isort:skip
 
 import collections
 import copy
@@ -86,22 +86,33 @@ def append_dict(dict1, dict2):
     return dict1
 
 
-def flatten_dict(d: dict, parent_key: str = "", sep: str = "/") -> dict:
+def flatten_dict(
+    dictionary: Dict[str, Any],
+    parent_key: str = "",
+    separator: str = "/"
+) -> "collections.OrderedDict":
     """
-    Flatten nested dicts
+    Make the given dictionary flatten
 
     Args:
-        d (dict): the dict that will be flattened
-        parent_key (str): prefix nested keys with string `parent_key`
-        sep (str): delimiter between `parent_key` and `key` to use
+        dictionary (dict): giving dictionary
+        parent_key (str, optional): prefix nested keys with
+            string ``parent_key``
+        separator (str, optional): delimiter between
+            ``parent_key`` and ``key`` to use
+
+    Returns:
+        collections.OrderedDict: ordered dictionary with flatten keys
     """
     items = []
-    for k, v in d.items():
-        new_key = parent_key + sep + k if parent_key else k
-        if isinstance(v, collections.MutableMapping):
-            items.extend(flatten_dict(v, new_key, sep=sep).items())
+    for key, value in dictionary.items():
+        new_key = parent_key + separator + key if parent_key else key
+        if isinstance(value, collections.MutableMapping):
+            items.extend(
+                flatten_dict(value, new_key, separator=separator).items()
+            )
         else:
-            items.append((new_key, v))
+            items.append((new_key, value))
     return collections.OrderedDict(items)
 
 
@@ -198,3 +209,21 @@ def format_metric(self, name: str, value: float) -> str:
     if value < 1e-4:
         return f"{name}={value:1.3e}"
     return f"{name}={value:.4f}"
+
+
+def args_are_not_none(*args: Optional[Any]) -> bool:
+    """
+    Check that all arguments are not None
+    Args:
+        *args (Any): values
+    Returns:
+         bool: True if all value were not None, False otherwise
+    """
+    if args is None:
+        return False
+
+    for arg in args:
+        if arg is None:
+            return False
+
+    return True

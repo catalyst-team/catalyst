@@ -1,4 +1,4 @@
-from typing import Dict  # isort:skip
+from typing import Dict, Union  # isort:skip
 import argparse
 from argparse import ArgumentParser
 from pathlib import Path
@@ -10,16 +10,37 @@ import torch
 from catalyst import utils
 from catalyst.dl.core import Experiment
 from catalyst.dl.utils.scripts import import_experiment_and_runner
-from catalyst.dl.utils.trace import trace_model
+from catalyst.dl.utils.trace import get_trace_name, trace_model
+from catalyst.utils.typing import Device
 
 
 def trace_model_from_checkpoint(
     logdir: Path,
     method_name: str,
     checkpoint_name: str,
+    stage: str = None,
+    loader: Union[str, int] = None,
     mode: str = "eval",
     requires_grad: bool = False,
+    opt_level: str = None,
+    device: Device = "cpu",
 ):
+    """
+    Traces model using created experiment and runner.
+
+    Args:
+        logdir (Union[str, Path]): Path to Catalyst logdir with model
+        checkpoint_name (str): Name of model checkpoint to use
+        method_name (str): Model's method name that will be
+            used as entrypoint during tracing
+        mode (str): Mode for model to trace (``train`` or ``eval``)
+        requires_grad (bool): Flag to use grads
+        opt_level (str): AMP FP16 init level
+        device (str): Torch device
+
+    Returns:
+        the traced model
+    """
     config_path = logdir / "configs" / "_config.json"
     checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
     print("Load config")
@@ -35,16 +56,30 @@ def trace_model_from_checkpoint(
     experiment: Experiment = ExperimentType(config)
 
     print(f"Load model state from checkpoints/{checkpoint_name}.pth")
-    model = experiment.get_model(next(iter(experiment.stages)))
+    if stage is None:
+        stage = list(experiment.stages)[0]
+
+    model = experiment.get_model(stage)
     checkpoint = utils.load_checkpoint(checkpoint_path)
     utils.unpack_checkpoint(checkpoint, model=model)
 
+    runner: RunnerType = RunnerType()
+    runner.set_model_device(model, device)
+
+    if loader is None:
+        loader = 0
+    batch = experiment.get_native_batch(stage, loader)
+
     print("Tracing")
     traced = trace_model(
-        model, experiment, RunnerType,
+        model,
+        runner,
+        batch,
         method_name=method_name,
         mode=mode,
         requires_grad=requires_grad,
+        opt_level=opt_level,
+        device=device,
     )
 
     print("Done")
@@ -52,6 +87,9 @@ def trace_model_from_checkpoint(
 
 
 def build_args(parser: ArgumentParser):
+    """
+    Builds the command line parameters
+    """
     parser.add_argument(
         "logdir",
         type=Path,
@@ -93,11 +131,34 @@ def build_args(parser: ArgumentParser):
         default=False,
         help="If true, model will be traced with `requires_grad_(True)`"
     )
+    parser.add_argument(
+        "--opt-level",
+        type=str,
+        default=None,
+        help="Opt level for FP16 (optional)"
+    )
+
+    parser.add_argument(
+        "--stage",
+        type=str,
+        default=None,
+        help="Stage from experiment from which model and loader will be taken"
+    )
+
+    parser.add_argument(
+        "--loader",
+        type=str,
+        default=None,
+        help="Loader name to get the batch from"
+    )
 
     return parser
 
 
 def parse_args():
+    """
+    Parses the command line arguments for the main method
+    """
     parser = argparse.ArgumentParser()
     build_args(parser)
     args = parser.parse_args()
@@ -105,27 +166,42 @@ def parse_args():
 
 
 def main(args, _):
+    """
+    Main method for `catalyst-dl trace`
+    """
     logdir: Path = args.logdir
     method_name: str = args.method
     checkpoint_name: str = args.checkpoint
     mode: str = args.mode
     requires_grad: bool = args.with_grad
+    opt_level: str = args.opt_level
+
+    if opt_level is not None:
+        opt_level = opt_level
+        device = "cuda"
+    else:
+        opt_level = None
+        device = "cpu"
 
     traced = trace_model_from_checkpoint(
         logdir, method_name,
         checkpoint_name=checkpoint_name,
+        stage=args.stage,
+        loader=args.loader,
         mode=mode,
         requires_grad=requires_grad,
+        opt_level=opt_level,
+        device=device,
     )
 
     if args.out_model is None:
-        file_name = f"traced-{checkpoint_name}-{method_name}"
-        if mode == "train":
-            file_name += "-in_train"
-
-        if requires_grad:
-            file_name += f"-with_grad"
-        file_name += ".pth"
+        file_name = get_trace_name(
+            method_name=method_name,
+            mode=mode,
+            requires_grad=requires_grad,
+            opt_level=opt_level,
+            additional_string=checkpoint_name,
+        )
 
         output: Path = args.out_dir
         if output is None:

@@ -20,10 +20,13 @@ from catalyst.dl.core import Callback, Experiment
 from catalyst.dl.registry import (
     CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SCHEDULERS
 )
-from catalyst.dl.utils.torch import _Criterion, _Model, _Optimizer, _Scheduler
+from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
 
 
 class ConfigExperiment(Experiment):
+    """
+    Experiment created from a configuration file
+    """
     STAGE_KEYWORDS = [
         "criterion_params",
         "optimizer_params",
@@ -34,6 +37,10 @@ class ConfigExperiment(Experiment):
     ]
 
     def __init__(self, config: Dict):
+        """
+        Args:
+            config (dict): dictionary of parameters
+        """
         self._config = deepcopy(config)
         self._initial_seed = self._config.get("args", {}).get("seed", 42)
         self._verbose = safitty.get(
@@ -90,29 +97,35 @@ class ConfigExperiment(Experiment):
 
     @property
     def initial_seed(self) -> int:
+        """Experiment's initial seed value"""
         return self._initial_seed
 
     @property
     def logdir(self):
+        """Path to the directory where the experiment logs"""
         return self._logdir
 
     @property
     def stages(self) -> List[str]:
+        """Experiment's stage names"""
         stages_keys = list(self.stages_config.keys())
         return stages_keys
 
     @property
     def distributed_params(self) -> Dict:
+        """Dict with the parameters for distributed and FP16 methond"""
         return self._config.get("distributed_params", {})
 
     @property
     def monitoring_params(self) -> Dict:
+        """Dict with the parameters for monitoring services"""
         return self._config.get("monitoring_params", {})
 
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
+        """Returns the state parameters for a given stage"""
         return self.stages_config[stage].get("state_params", {})
 
-    def _preprocess_model_for_stage(self, stage: str, model: _Model):
+    def _preprocess_model_for_stage(self, stage: str, model: Model):
         stage_index = self.stages.index(stage)
         if stage_index > 0:
             checkpoint_path = \
@@ -121,7 +134,7 @@ class ConfigExperiment(Experiment):
             utils.unpack_checkpoint(checkpoint, model=model)
         return model
 
-    def _postprocess_model_for_stage(self, stage: str, model: _Model):
+    def _postprocess_model_for_stage(self, stage: str, model: Model):
         return model
 
     @staticmethod
@@ -137,6 +150,7 @@ class ConfigExperiment(Experiment):
         return model
 
     def get_model(self, stage: str):
+        """Returns the model for a given stage"""
         model_params = self._config["model_params"]
         model = self._get_model(**model_params)
 
@@ -158,7 +172,8 @@ class ConfigExperiment(Experiment):
                 criterion = criterion.cuda()
         return criterion
 
-    def get_criterion(self, stage: str) -> _Criterion:
+    def get_criterion(self, stage: str) -> Criterion:
+        """Returns the criterion for a given stage"""
         criterion_params = \
             self.stages_config[stage].get("criterion_params", {})
         criterion = self._get_criterion(**criterion_params)
@@ -167,9 +182,9 @@ class ConfigExperiment(Experiment):
     def _get_optimizer(
         self,
         stage: str,
-        model: Union[_Model, Dict[str, _Model]],
+        model: Union[Model, Dict[str, Model]],
         **params
-    ) -> _Optimizer:
+    ) -> Optimizer:
         # @TODO 1: refactoring; this method is too long
         # @TODO 2: load state dicts for schedulers & criteria
         layerwise_params = \
@@ -252,8 +267,15 @@ class ConfigExperiment(Experiment):
     def get_optimizer(
         self,
         stage: str,
-        model: Union[_Model, Dict[str, _Model]]
-    ) -> Union[_Optimizer, Dict[str, _Optimizer]]:
+        model: Union[Model, Dict[str, Model]]
+    ) -> Union[Optimizer, Dict[str, Optimizer]]:
+        """
+        Returns the optimizer for a given stage
+
+        Args:
+            stage (str): stage name
+            model (Union[Model, Dict[str, Model]]): model or a dict of models
+        """
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
         key_value_flag = optimizer_params.pop("_key_value", False)
@@ -288,7 +310,8 @@ class ConfigExperiment(Experiment):
             )
         return scheduler
 
-    def get_scheduler(self, stage: str, optimizer) -> _Scheduler:
+    def get_scheduler(self, stage: str, optimizer: Optimizer) -> Scheduler:
+        """Returns the scheduler for a given stage"""
         scheduler_params = \
             self.stages_config[stage].get("scheduler_params", {})
         scheduler = self._get_scheduler(
@@ -297,6 +320,7 @@ class ConfigExperiment(Experiment):
         return scheduler
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+        """Returns the loaders for a given stage"""
         data_params = dict(self.stages_config[stage]["data_params"])
 
         batch_size = data_params.pop("batch_size", 1)
@@ -389,6 +413,7 @@ class ConfigExperiment(Experiment):
         return callback
 
     def get_callbacks(self, stage: str) -> "OrderedDict[Callback]":
+        """Returns the callbacks for a given stage"""
         callbacks_params = (
             self.stages_config[stage].get("callbacks_params", {})
         )

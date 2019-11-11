@@ -1,7 +1,7 @@
 # flake8: noqa
 # isort:skip_file
 
-from .argparse import args_are_not_none, boolean_flag
+from .argparse import boolean_flag
 from .checkpoint import (
     load_checkpoint, pack_checkpoint, save_checkpoint, unpack_checkpoint
 )
@@ -15,7 +15,8 @@ from .ddp import get_real_module, is_wrapped_with_ddp
 # from .frozen import *
 from .hash import get_hash, get_short_hash
 from .image import (
-    has_image_extension, imread, imwrite, mask_to_overlay_image, mimread,
+    has_image_extension, imread, imwrite, imsave,
+    mask_to_overlay_image, mimread,
     mimwrite_with_meta, tensor_from_rgb_image, tensor_to_ndimage
 )
 from .initialization import (
@@ -23,8 +24,9 @@ from .initialization import (
     kaiming_init, normal_init, outer_init, uniform_init, xavier_init
 )
 from .misc import (
-    append_dict, copy_directory, flatten_dict, format_metric, get_utcnow_time,
-    is_exception, make_tuple, maybe_recursive_call, merge_dicts, pairwise
+    args_are_not_none, append_dict, copy_directory, flatten_dict,
+    format_metric, get_utcnow_time, is_exception, make_tuple,
+    maybe_recursive_call, merge_dicts, pairwise
 )
 from .numpy import (
     dict2structed, geometric_cumsum, get_one_hot, np_softmax, structed2dict

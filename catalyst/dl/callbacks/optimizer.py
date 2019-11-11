@@ -125,18 +125,29 @@ class OptimizerCallback(Callback):
             key="optimizer", inner_key=self.optimizer_key
         )
 
+        need_gradient_step = \
+            (self._accumulation_counter + 1) % self.accumulation_steps == 0
+
         # This is very hacky check whether we have AMP optimizer and this may
         # change in future.
         # But alternative solution is to have AmpOptimizerCallback.
         # or expose another c'tor argument.
         if hasattr(optimizer, "_amp_stash"):
             from apex import amp
-            with amp.scale_loss(loss, optimizer) as scaled_loss:
+            # Need to set ``delay_unscale``
+            # according to
+            # https://nvidia.github.io/apex/advanced.html#gradient-accumulation-across-iterations
+            delay_unscale = not need_gradient_step
+            with amp.scale_loss(
+                loss,
+                optimizer,
+                delay_unscale=delay_unscale
+            ) as scaled_loss:
                 scaled_loss.backward()
         else:
             loss.backward()
 
-        if (self._accumulation_counter + 1) % self.accumulation_steps == 0:
+        if need_gradient_step:
             self.grad_step(
                 optimizer=optimizer,
                 optimizer_wds=self._optimizer_wd,

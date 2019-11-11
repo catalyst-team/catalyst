@@ -5,29 +5,35 @@ import os
 from pathlib import Path
 
 import torch
-from torch import nn
 from torch.utils.data import DistributedSampler
 
 from catalyst.dl import utils
 from catalyst.dl.utils.scripts import dump_base_experiment_code
-from catalyst.dl.utils.torch import _Criterion, _Model, _Optimizer, _Scheduler
+from catalyst.utils.typing import (
+    Criterion, Device, Model, Optimizer, Scheduler
+)
 from .callback import Callback, LoggerCallback
 from .experiment import Experiment
 from .state import RunnerState
 
 
 class Runner(ABC):
+    """
+    Abstract class for all runners inherited from
+    """
     def __init__(
         self,
-        model: nn.Module = None,
-        device=None,
+        model: Model = None,
+        device: Device = None,
     ):
         """
-        @TODO: write docs
+        Args:
+            model (Model): Torch model object
+            device (Device): Torch device
         """
         # main
-        self.model: nn.Module = model
-        self.device = device
+        self.model: Model = model
+        self.device: Device = device
         self.experiment: Experiment = None
         self.state: RunnerState = None
         self.callbacks: OrderedDict[str, Callback] = None
@@ -36,13 +42,13 @@ class Runner(ABC):
         # additional
         self._check_run = False
 
-    def _batch2device(self, batch: Mapping[str, Any], device):
+    def _batch2device(self, batch: Mapping[str, Any], device: Device):
         res = utils.any2device(batch, device)
         return res
 
     def _get_experiment_components(
         self, stage: str = None
-    ) -> Tuple[_Model, _Criterion, _Optimizer, _Scheduler, torch.device]:
+    ) -> Tuple[Model, Criterion, Optimizer, Scheduler, Device]:
         """
         Inner method for children's classes for model specific initialization.
         As baseline, checks device support and puts model on it.
@@ -118,8 +124,22 @@ class Runner(ABC):
         if self.state is not None:
             getattr(self.state, f"{fn_name}_post")()
 
+    def set_model_device(
+        self,
+        model: Model,
+        device: Device
+    ) -> None:
+        """Set the model and device to the Runner"""
+        self.model = model
+        self.device = device
+
+    def get_model_device(self) -> Tuple[Model, Device]:
+        """Returns the model and device from the Runner"""
+        return self.model, self.device
+
     @abstractmethod
     def forward(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
+        """Forward method for your Runner"""
         pass
 
     def predict_batch(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
@@ -243,6 +263,9 @@ class Runner(ABC):
         self._run_event("stage", moment="end")
 
     def run_experiment(self, experiment: Experiment, check: bool = False):
+        """
+        Starts the experiment
+        """
         self._check_run = check
         self.experiment = experiment
 
