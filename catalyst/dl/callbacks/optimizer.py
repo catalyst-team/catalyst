@@ -8,7 +8,7 @@ import torch
 from catalyst.dl.core import Callback, CallbackOrder, RunnerState
 from catalyst.dl.registry import GRAD_CLIPPERS
 from catalyst.dl.utils import get_optimizer_momentum, maybe_recursive_call
-from catalyst.dl.utils.torch import _Optimizer
+from catalyst.utils.typing import Optimizer
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,6 @@ class OptimizerCallback(Callback):
     """
     Optimizer callback, abstraction over optimizer step.
     """
-
     def __init__(
         self,
         grad_clip_params: Dict = None,
@@ -51,10 +50,19 @@ class OptimizerCallback(Callback):
     @staticmethod
     def grad_step(
         *,
-        optimizer: _Optimizer,
+        optimizer: Optimizer,
         optimizer_wds: List[float] = 0,
         grad_clip_fn: Callable = None
     ):
+        """
+        Makes a gradient step for a given optimizer
+
+        Args:
+            optimizer (Optimizer): the optimizer
+            optimizer_wds (List[float]): list of weight decay parameters
+                for each param group
+            grad_clip_fn (Callable): function for gradient clipping
+        """
         for group, wd in zip(optimizer.param_groups, optimizer_wds):
             if wd > 0:
                 for param in group["params"]:
@@ -66,6 +74,7 @@ class OptimizerCallback(Callback):
         optimizer.step()
 
     def on_stage_start(self, state: RunnerState):
+        """On stage start event"""
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
         )
@@ -76,6 +85,7 @@ class OptimizerCallback(Callback):
         state.set_key(momentum, "momentum", inner_key=self.optimizer_key)
 
     def on_epoch_start(self, state):
+        """On epoch start event"""
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
         )
@@ -111,9 +121,11 @@ class OptimizerCallback(Callback):
         return loss
 
     def on_batch_start(self, state):
+        """On batch start event"""
         state.loss = None
 
     def on_batch_end(self, state):
+        """On batch end event"""
         if not state.need_backward:
             return
 
@@ -158,6 +170,7 @@ class OptimizerCallback(Callback):
             self._accumulation_counter = 0
 
     def on_epoch_end(self, state):
+        """On epoch end event"""
         if self.decouple_weight_decay:
             optimizer = state.get_key(
                 key="optimizer", inner_key=self.optimizer_key
