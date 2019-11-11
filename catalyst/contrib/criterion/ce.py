@@ -15,6 +15,7 @@ class NaiveCrossEntropyLoss(nn.Module):
         loss = loss / input.size()[0] if self.size_average else loss
         return loss
     
+	
 class SymmetricCrossEntropyLoss(nn.Module):
     def __init__(self, alpha, beta, num_classes):
 	super(SymmetricCrossEntropyLoss, self).__init__()
