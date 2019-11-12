@@ -9,6 +9,7 @@ from catalyst.dl.callbacks import CheckpointCallback, InferCallback
 from catalyst.dl.core import Callback, Runner
 from catalyst.dl.experiment import SupervisedExperiment
 from catalyst.dl.utils.torch import _Criterion, _Model, _Optimizer, _Scheduler
+from catalyst.dl.utils import process_callback
 
 logger = logging.getLogger(__name__)
 
@@ -164,7 +165,7 @@ class SupervisedRunner(Runner):
             self.model = model
 
         if resume is not None:
-            callbacks = callbacks or OrderedDict()
+            callbacks = process_callback(callbacks)
             checkpoint_callback_flag = any([
                 isinstance(x, CheckpointCallback)
                 for x in callbacks.values()
