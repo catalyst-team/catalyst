@@ -1,3 +1,4 @@
+from pathlib import Path
 import pandas as pd
 from typing import Dict
 from collections import OrderedDict
@@ -15,12 +16,13 @@ class Experiment(ConfigExperiment):
 
     def get_datasets(self, stage: str, **kwargs):
         datasets = OrderedDict()
+        
+        path_to_data = Path(self.config['dataset_params']['path_to_data'])
+        train_df = pd.read_csv(path_to_data / self.config['dataset_params']['train_filename'])
+        valid_df = pd.read_csv(path_to_data / self.config['dataset_params']['validation_filename'])
+        test_df = pd.read_csv(path_to_data / self.config['dataset_params']['test_filename'])
 
-        train_df = pd.read_csv(self.config['dataset_params']['path_to_train'])
-        valid_df = pd.read_csv(self.config['dataset_params']['path_to_validation'])
-        test_df = pd.read_csv(self.config['dataset_params']['path_to_test'])
-
-        max_seq_length = self.config['model_params']['max_sequence_length']
+        max_seq_length = self.config['dataset_params']['max_sequence_length']
 
         train_dataset = TextClassificationDataset(
             texts=train_df['text'],
@@ -42,7 +44,7 @@ class Experiment(ConfigExperiment):
 
         datasets["train"] = train_dataset
         datasets["valid"] = valid_dataset
-        datasets["test"] = test_dataset
+        #datasets["test"] = test_dataset
 
         return datasets
 

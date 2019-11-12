@@ -76,7 +76,7 @@ class TextClassificationDataset(Dataset):
 
         output_dict = {
             "features": x_tensor,
-            'attention_mask': mask
+            'mask': mask
         }
 
         # encoding target
