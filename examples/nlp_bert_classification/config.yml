@@ -1,10 +1,10 @@
 model_params:
   model: DistilBertForSequenceClassification
-  model_type: distilbert-base-uncased
+  pretrained_model_name: distilbert-base-uncased
   num_classes: 6
 
 dataset_params:
-  path_to_data: "/home/kashn500/transfer_learning_proj/amazon_pet_prod_reviews/input/"
+  path_to_data: './nlp_bert_classification/input'
   train_filename: "train.csv"
   validation_filename: "valid.csv"
   test_filename: "test.csv"
@@ -18,7 +18,7 @@ args:
 
 stages:
   data_params:
-    batch_size: 8
+    batch_size: 24
     num_workers: 0
 
   state_params:
@@ -51,5 +51,5 @@ stages:
 
   stage1:
     state_params:
-      num_epochs: 1
+      num_epochs: 2
 

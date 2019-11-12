@@ -3,13 +3,13 @@ from transformers import AutoModel, AutoConfig
 
 
 class DistilBertForSequenceClassification(nn.Module):
-    def __init__(self, model_type, num_classes=None):
+    def __init__(self, pretrained_model_name, num_classes=None):
         super().__init__()
 
         config = AutoConfig.from_pretrained(
-            model_type, num_labels=num_classes)
+            pretrained_model_name, num_labels=num_classes)
 
-        self.distilbert = AutoModel.from_pretrained(model_type,
+        self.distilbert = AutoModel.from_pretrained(pretrained_model_name,
                                                     config=config)
         self.pre_classifier = nn.Linear(config.dim, config.dim)
         self.classifier = nn.Linear(config.dim, num_classes)

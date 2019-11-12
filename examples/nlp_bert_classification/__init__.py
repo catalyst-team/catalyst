@@ -1,6 +1,5 @@
 # flake8: noqa
 # pylint: disable=unused-import
-#from transformers import AdamW, WarmupLinearSchedule
 from torch.optim import Adam
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from catalyst.contrib.models.nlp.bert.distil_classify import DistilBertForSequenceClassification
