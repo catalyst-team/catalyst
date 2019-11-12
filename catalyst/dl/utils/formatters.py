@@ -40,7 +40,7 @@ class TxtMetricsFormatter(MetricsFormatter):
     """
     Translate batch metrics in human-readable format.
 
-    This class is used by logging.Logger to make a string from record.
+    This class is used by ``logging.Logger`` to make a string from record.
     For details refer to official docs for 'logging' module.
 
     Note:
@@ -49,6 +49,9 @@ class TxtMetricsFormatter(MetricsFormatter):
     """
 
     def __init__(self):
+        """
+        Initializes the ``TxtMetricsFormatter``
+        """
         super().__init__("[{asctime}] ")
 
     def _format_metrics(self, metrics):
@@ -80,7 +83,7 @@ class JsonMetricsFormatter(MetricsFormatter):
     """
     Translate batch metrics in json format.
 
-    This class is used by logging.Logger to make a string from record.
+    This class is used by ``logging.Logger`` to make a string from record.
     For details refer to official docs for 'logging' module.
 
     Note:
@@ -89,6 +92,9 @@ class JsonMetricsFormatter(MetricsFormatter):
     """
 
     def __init__(self):
+        """
+        Initializes the ``JsonMetricsFormatter``
+        """
         super().__init__("")
 
     def _format_message(self, state: RunnerState):

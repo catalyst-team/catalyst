@@ -33,6 +33,12 @@ def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:
 
 
 def make_tuple(tuple_like):
+    """
+    Creates a tuple if given ``tuple_like`` value isn't list or tuple
+
+    Returns:
+        tuple or list
+    """
     tuple_like = (
         tuple_like if isinstance(tuple_like, (list, tuple)) else
         (tuple_like, tuple_like)
@@ -101,11 +107,21 @@ def flatten_dict(d: dict, parent_key: str = "", sep: str = "/") -> dict:
 
 def maybe_recursive_call(
     object_or_dict,
-    method,
+    method: str,
     recursive_args=None,
     recursive_kwargs=None,
     **kwargs,
 ):
+    """
+    Calls the ``method`` recursively for the object_or_dict
+
+    Args:
+        object_or_dict (Any): some object or a dictinary of objects
+        method (str): method name to call
+        recursive_args: list of arguments to pass to the ``method``
+        recursive_kwargs: list of key-arguments to pass to the ``method``
+        **kwargs: Arbitrary keyword arguments
+    """
     if isinstance(object_or_dict, dict):
         result = type(object_or_dict)()
         for k, v in object_or_dict.items():
