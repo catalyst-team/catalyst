@@ -23,8 +23,8 @@ from .initialization import (
     kaiming_init, normal_init, outer_init, uniform_init, xavier_init
 )
 from .misc import (
-    append_dict, copy_directory, flatten_dict, get_utcnow_time, is_exception,
-    make_tuple, maybe_recursive_call, merge_dicts, pairwise
+    append_dict, copy_directory, flatten_dict, format_metric, get_utcnow_time,
+    is_exception, make_tuple, maybe_recursive_call, merge_dicts, pairwise
 )
 from .numpy import (
     dict2structed, geometric_cumsum, get_one_hot, np_softmax, structed2dict
