@@ -1,31 +1,47 @@
-from typing import Mapping
-import pandas as pd
+from typing import Mapping, List
 import logging
 import torch
 from torch.utils.data import Dataset
-from transformers import DistilBertTokenizer
+from transformers import AutoTokenizer
 
 
-class ClassificationDataset(Dataset):
-    def __init__(self, texts: pd.Series, labels: pd.Series, max_seq_length=512):
-        logging.getLogger("transformers.tokenization_utils").setLevel(
-            logging.FATAL
-        )
+class TextClassificationDataset(Dataset):
+    def __init__(self,
+                 texts: List[str],
+                 labels: List[str] = None,
+                 label_dict: Mapping[str, int] = None,
+                 max_seq_length: int = 512,
+                 model_name: str = 'distilbert-base-uncased'):
+        """
 
-        # pandas Series with texts to classify
+        :param texts: a list with texts to classify or to train the classifier on
+        :param labels: a list with classification labels (strings, optional)
+        :param label_dict: a dictionary mapping class names to class ids, to be passed
+                           to the validation data (optional)
+        :param max_seq_length: maximal sequence length, texts will be stripped
+        :param model_name: transformer model name, we need here to perform
+                           appropriate tokenization
+
+        """
+
         self.texts = texts
-        # pandas Series with classification labels (strings)
         self.labels = labels
-
-        # {'class1': 0, 'class2': 1, 'class3': 2, ...}
-        # using this instead of `sklearn.preprocessing.LabelEncoder`
-        # no easily handle unknown target values
-        self.label_dict = dict(zip(labels.unique(), range(labels.nunique())))
+        self.label_dict = label_dict
         self.max_seq_length = max_seq_length
 
-        self.tokenizer = DistilBertTokenizer.from_pretrained(
-            "distilbert-base-uncased"
-        )
+        if self.label_dict is None and labels is not None:
+            # {'class1': 0, 'class2': 1, 'class3': 2, ...}
+            # using this instead of `sklearn.preprocessing.LabelEncoder`
+            # no easily handle unknown target values
+            self.label_dict = dict(zip(sorted(set(labels)), range(len(set(labels)))))
+
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        # suppresses tokenizer warnings
+        logging.getLogger("transformers.tokenization_utils").setLevel(logging.FATAL)
+
+        # special tokens for transformers
+        # in the simplest case a [CLS] token is added in the beginning
+        # and [SEP] token is added in the end of a piece of text
         self.sep_vid = self.tokenizer.vocab["[SEP]"]
         self.cls_vid = self.tokenizer.vocab["[CLS]"]
         self.pad_vid = self.tokenizer.vocab["[PAD]"]
@@ -35,8 +51,8 @@ class ClassificationDataset(Dataset):
 
     def __getitem__(self, index) -> Mapping[str, torch.Tensor]:
 
-        x, y = self.texts[index], self.labels[index]
-
+        # encoding the text
+        x = self.texts[index]
         x_encoded = self.tokenizer.encode(
             x,
             add_special_tokens=True,
@@ -44,23 +60,33 @@ class ClassificationDataset(Dataset):
             return_tensors="pt",
         ).squeeze(0)
 
+        # padding short texts
         true_seq_length = x_encoded.size(0)
         pad_size = self.max_seq_length - true_seq_length
-
         pad_ids = torch.Tensor([self.pad_vid] * pad_size).long()
         x_tensor = torch.cat((x_encoded, pad_ids))
 
-        y_encoded = torch.Tensor([self.label_dict.get(y, -1)]).long().squeeze(0)
-
-        mask = torch.ones_like(x_encoded, dtype=int)
-        mask_pad = torch.zeros_like(pad_ids, dtype=int)
+        # dealing with attention masks - there's a 1 for each input token and
+        # if the sequence is shorter that `max_seq_length` then the rest is
+        # padded with zeroes. Attention mask will be passed to the model in
+        # order to compute attention scores only with input data ignoring padding
+        mask = torch.ones_like(x_encoded, dtype=torch.int8)
+        mask_pad = torch.zeros_like(pad_ids, dtype=torch.int8)
         mask = torch.cat((mask, mask_pad))
 
-        return {
+        output_dict = {
             "features": x_tensor,
-            "targets": y_encoded,
-            'mask': mask
+            'attention_mask': mask
         }
 
+        # encoding target
+        if self.labels is not None:
+            y = self.labels[index]
+            y_encoded = torch.Tensor([self.label_dict.get(y, -1)]).long().squeeze(0)
+            output_dict["targets"] = y_encoded
 
-__all__ = ["ClassificationDataset"]
+        return output_dict
+
+
+__all__ = ["TextClassificationDataset"]
+
