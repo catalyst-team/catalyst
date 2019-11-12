@@ -15,9 +15,8 @@ from .ddp import get_real_module, is_wrapped_with_ddp
 # from .frozen import *
 from .hash import get_hash, get_short_hash
 from .image import (
-    has_image_extension, imread, imwrite, imsave,
-    mask_to_overlay_image, mimread,
-    mimwrite_with_meta, tensor_from_rgb_image, tensor_to_ndimage
+    has_image_extension, imread, imwrite, imsave, mask_to_overlay_image,
+    mimread, mimwrite_with_meta, tensor_from_rgb_image, tensor_to_ndimage
 )
 from .initialization import (
     bias_init_with_prob, constant_init, create_optimal_inner_init,
