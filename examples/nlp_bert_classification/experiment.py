@@ -1,9 +1,7 @@
+import pandas as pd
 from typing import Dict
 from collections import OrderedDict
-
-import pandas as pd
-
-from catalyst.data.nlp.classify import ClassificationDataset
+from catalyst.data.nlp.classify import TextClassificationDataset
 from catalyst.dl import ConfigExperiment
 
 
@@ -20,18 +18,31 @@ class Experiment(ConfigExperiment):
 
         train_df = pd.read_csv(self.config['dataset_params']['path_to_train'])
         valid_df = pd.read_csv(self.config['dataset_params']['path_to_validation'])
+        test_df = pd.read_csv(self.config['dataset_params']['path_to_test'])
 
-        train_set = ClassificationDataset(
-            texts=train_df[self.config['dataset_params']['text_field']],
-            labels=train_df[self.config['dataset_params']['label_field']]
-        )
+        max_seq_length = self.config['model_params']['max_sequence_length']
 
-        validation_set = ClassificationDataset(
-            texts=valid_df[self.config['dataset_params']['text_field']],
-            labels=valid_df[self.config['dataset_params']['label_field']]
-        )
+        train_dataset = TextClassificationDataset(
+            texts=train_df['text'],
+            labels=train_df['label'],
+            label_dict=None,
+            max_seq_length=max_seq_length)
 
-        datasets["train"] = train_set
-        datasets["valid"] = validation_set
+        valid_dataset = TextClassificationDataset(
+            texts=valid_df['text'],
+            labels=valid_df['label'],
+            label_dict=train_dataset.label_dict,
+            max_seq_length=max_seq_length)
+
+        test_dataset = TextClassificationDataset(
+            texts=test_df['text'],
+            labels=None,
+            label_dict=None,
+            max_seq_length=max_seq_length)
+
+        datasets["train"] = train_dataset
+        datasets["valid"] = valid_dataset
+        datasets["test"] = test_dataset
 
         return datasets
+

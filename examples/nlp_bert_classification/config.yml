@@ -2,10 +2,12 @@ model_params:
   model: BertModel
   model_type: distilbert/sequence_class
   num_classes: 3
+  max_sequence_length: 512
 
 dataset_params:
   path_to_train: "./nlp_bert_classification/input/train.csv"
   path_to_validation: "./nlp_bert_classification/input/valid.csv"
+  path_to_test: "./nlp_bert_classification/input/test.csv"
   text_field: "text"
   label_field: "label"
 
@@ -39,6 +41,9 @@ stages:
   callbacks_params:
     loss:
       callback: CriterionCallback
+    accuracy:
+      callback: AccuracyCallback
+      activation: Softmax
     optimizer:
       callback: OptimizerCallback
       accumulation_steps: 4
@@ -51,3 +56,4 @@ stages:
   stage1:
     state_params:
       num_epochs: 2
+
