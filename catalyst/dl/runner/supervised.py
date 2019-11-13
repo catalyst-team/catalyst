@@ -9,7 +9,7 @@ from catalyst.dl.callbacks import CheckpointCallback, InferCallback
 from catalyst.dl.core import Callback, Runner
 from catalyst.dl.experiment import SupervisedExperiment
 from catalyst.dl.utils.torch import _Criterion, _Model, _Optimizer, _Scheduler
-from catalyst.dl.utils import process_callback
+from catalyst.dl.utils import callbacks
 
 logger = logging.getLogger(__name__)
 
