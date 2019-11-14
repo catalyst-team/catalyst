@@ -195,7 +195,7 @@ def get_utcnow_time(format: str = None) -> str:
     return result
 
 
-def format_metric(self, name: str, value: float) -> str:
+def format_metric(name: str, value: float) -> str:
     """
     Format metric. Metric will be returned in the scientific format if 4
     decimal chars are not enough (metric value lower than 1e-4)
