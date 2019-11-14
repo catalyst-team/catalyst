@@ -11,3 +11,7 @@ from .pipelines import clone_pipeline
 from .torch import get_loader, process_components
 from .visualization import plot_metrics
 from .wizard import run_wizard, Wizard
+from .trace import trace_model, get_trace_name
+from .scripts import (
+    import_experiment_and_runner, dump_base_experiment_code
+)

@@ -8,7 +8,6 @@ import torch
 from torch.utils.data import DistributedSampler
 
 from catalyst.dl import utils
-from catalyst.dl.utils.scripts import dump_base_experiment_code
 from catalyst.utils.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
@@ -289,7 +288,7 @@ class Runner(ABC):
                 and self.experiment.logdir is not None:
             expdir = Path(os.getcwd())
             logdir = Path(self.experiment.logdir)
-            dump_base_experiment_code(expdir, logdir)
+            utils.dump_base_experiment_code(expdir, logdir)
 
         try:
             for stage in self.experiment.stages:

@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 from catalyst.dl.callbacks import CheckpointCallback, InferCallback
 from catalyst.dl.core import Callback, Runner
 from catalyst.dl.experiment import SupervisedExperiment
-from catalyst.dl.utils.trace import get_trace_name, trace_model
+from catalyst.dl import utils
 from catalyst.utils.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
@@ -307,6 +307,7 @@ class SupervisedRunner(Runner):
         requires_grad: bool = False,
         fp16: Union[Dict, bool] = None,
         device: Device = "cpu",
+        predict_params: dict = None,
     ) -> ScriptModule:
         """
         Traces model using Torch Jit
@@ -324,6 +325,7 @@ class SupervisedRunner(Runner):
             fp16 (Union[Dict, bool]): If not None, then sets
                 tracing params to FP16
             deivice (Device): Torch deivice or a string
+            predict_params (dict): additional parameters for model forward
         """
         if batch is None:
             if loader is None:
@@ -335,9 +337,6 @@ class SupervisedRunner(Runner):
         if model is not None:
             self.model = model
 
-        if device is None:
-            device = self.device
-
         if isinstance(fp16, bool) and fp16:
             opt_level = "O1"
         elif isinstance(fp16, bool) and not fp16:
@@ -347,7 +346,14 @@ class SupervisedRunner(Runner):
         else:
             opt_level = fp16
 
-        result = trace_model(
+        if opt_level is not None:
+            device = "cuda"
+        elif device is None:
+            if self.device is None:
+                self.device = utils.get_device()
+            device = self.device
+
+        result = utils.trace_model(
             model=self.model,
             runner=self,
             batch=batch,
@@ -356,10 +362,11 @@ class SupervisedRunner(Runner):
             requires_grad=requires_grad,
             opt_level=opt_level,
             device=device,
+            predict_params=predict_params
         )
 
         if logdir is not None:
-            filename = get_trace_name(
+            filename = utils.get_trace_name(
                 method_name=method_name,
                 mode=mode,
                 requires_grad=requires_grad,

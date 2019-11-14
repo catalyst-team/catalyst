@@ -53,21 +53,22 @@ def trace_model(
     requires_grad: bool = False,
     opt_level: str = None,
     device: Device = "cpu",
+    predict_params: dict = None,
 ) -> ScriptModule:
     """
-    Traces model using it's native experiment and runner.
+    Traces model using runner and batch
 
     Args:
         model: Model to trace
-        batch: Batch to trace the model
         runner: Model's native runner that was used to train model
-        experiment: Native experiment that was used to train model
+        batch: Batch to trace the model
         method_name (str): Model's method name that will be
             used as entrypoint during tracing
         mode (str): Mode for model to trace (``train`` or ``eval``)
         requires_grad (bool): Flag to use grads
         opt_level (str): AMP FP16 init level, optional
         device (str): Torch device
+        predict_params (dict): additional parameters for model forward
 
     Returns:
         (ScriptModule): Traced model
@@ -77,6 +78,8 @@ def trace_model(
 
     if mode not in ["train", "eval"]:
         raise ValueError(f"Unknown mode '{mode}'. Must be 'eval' or 'train'")
+
+    predict_params = predict_params or {}
 
     tracer = _TracingModelWrapper(model, method_name)
     if opt_level is not None:
@@ -89,9 +92,9 @@ def trace_model(
         model = amp.initialize(model, optimizers=None, opt_level=opt_level)
         # TODO: remove `check_trace=False`
         # after fixing this bug https://github.com/pytorch/pytorch/issues/23993
-        params = dict(check_trace=False)
+        params = {**predict_params, "check_trace": False}
     else:
-        params = dict()
+        params = predict_params
 
     getattr(model, mode)()
     utils.set_requires_grad(model, requires_grad=requires_grad)
