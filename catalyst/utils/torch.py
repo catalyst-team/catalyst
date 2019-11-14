@@ -112,7 +112,8 @@ def assert_fp16_available() -> None:
         "fp16 mode requires cudnn backend to be enabled."
 
     try:
-        __import__("apex")
+        import apex  # noqa: F401
+        from apex import amp  # noqa: F401
     except ImportError:
         assert False, \
             "NVidia Apex package must be installed. " \
@@ -322,10 +323,17 @@ def get_network_output(net: Model, *input_shapes):
     return output_t
 
 
+def detach(tensor: torch.Tensor) -> np.ndarray:
+    """
+    Detaches the input tensor to a numpy array
+    """
+    return tensor.detach().cpu().numpy()
+
+
 __all__ = [
     "ce_with_logits", "log1p_exp", "normal_sample", "normal_logprob",
     "soft_update", "get_optimizable_params", "get_optimizer_momentum",
     "set_optimizer_momentum", "assert_fp16_available", "get_device",
     "get_available_gpus", "get_activation_fn", "any2device", "prepare_cudnn",
-    "process_model_params", "set_requires_grad", "get_network_output"
+    "process_model_params", "set_requires_grad", "get_network_output", "detach"
 ]
