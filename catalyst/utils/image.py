@@ -60,6 +60,8 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None, **kwargs):
 
     if JPEG4PY_ENABLED and uri.endswith(("jpg", "JPG", "jpeg", "JPEG")):
         img = jpeg.JPEG(uri).decode()
+    elif uri.endswith(("jpg", "JPG", "jpeg", "JPEG", "png", "PNG")):
+        img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB", **kwargs)
     else:
         img = imageio.imread(uri, **kwargs)
     if grayscale:
