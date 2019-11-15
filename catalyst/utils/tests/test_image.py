@@ -9,18 +9,22 @@ from catalyst.utils.image import (
 
 
 def test_imread():
-    jpg_rgb_uri = \
-        "https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master" \
+    jpg_rgb_uri = (
+        "https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master"
         "/test_images/catalyst_icon.jpg"
-    jpg_grs_uri = \
-        "https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master" \
+    )
+    jpg_grs_uri = (
+        "https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master"
         "/test_images/catalyst_icon_grayscale.jpg"
-    png_rgb_uri = \
-        "https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master" \
+    )
+    png_rgb_uri = (
+        "https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master"
         "/test_images/catalyst_icon.png"
-    png_grs_uri = \
-        "https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master" \
+    )
+    png_grs_uri = (
+        "https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master"
         "/test_images/catalyst_icon_grayscale.png"
+    )
 
     for uri in [jpg_rgb_uri, jpg_grs_uri, png_rgb_uri, png_grs_uri]:
         img = imread(uri)
