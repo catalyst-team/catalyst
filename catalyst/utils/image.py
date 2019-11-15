@@ -59,24 +59,18 @@ def imread(
     Returns:
 
     """
-    is_str = isinstance(uri, (str, pathlib.Path))
     if rootpath is not None:
         uri = str(uri)
         rootpath = str(rootpath)
         uri = str(
             uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
         )
-    if is_str:
-        uri = str(uri)
 
-    if JPEG4PY_ENABLED and is_str \
-            and uri.endswith(("jpg", "JPG", "jpeg", "JPEG")):
+    if JPEG4PY_ENABLED and uri.endswith(("jpg", "JPG", "jpeg", "JPEG")):
         img = jpeg.JPEG(uri).decode()
-    elif is_str \
-            and uri.endswith(("jpg", "JPG", "jpeg", "JPEG", "png", "PNG")):
-        img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB", **kwargs)
     else:
-        img = imageio.imread(uri, **kwargs)
+        # @TODO: add tiff support, currently – jpg and png
+        img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB", **kwargs)
     if grayscale:
         img = rgb2gray(img)
 
