@@ -29,7 +29,6 @@ def test_imread():
         assert img.shape == (400, 400, 1)
 
 
-
 def test_tensor_to_ndimage():
     orig_images = np.random.randint(0, 255, (2, 20, 10, 3), np.uint8)
 
