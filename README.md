@@ -38,9 +38,7 @@ pip install -U catalyst
 
 More specific with additional requirements:
 ```bash
-pip install catalyst[dl] # installs DL based catalyst with Weights & Biases support
 pip install catalyst[rl] # installs DL+RL based catalyst
-pip install catalyst[drl] # installs DL+RL based catalyst with Weights & Biases support
 pip install catalyst[contrib] # installs DL+contrib based catalyst
 pip install catalyst[all] # installs everything. Very convenient to deploy on a new server
 ```
