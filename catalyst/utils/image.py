@@ -39,7 +39,13 @@ if os.environ.get("FORCE_JPEG_TURBO", False):
         )
 
 
-def imread(uri, grayscale=False, expand_dims=True, rootpath=None, **kwargs):
+def imread(
+    uri, 
+    grayscale: bool = False, 
+    expand_dims: bool = True, 
+    rootpath: Union[str, pathlib.Path] = None, 
+    **kwargs,
+):
     """
 
     Args:
@@ -53,14 +59,21 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None, **kwargs):
     Returns:
 
     """
+    is_str = isinstance(uri, (str, pathlib.Path))
     if rootpath is not None:
-        uri = (
+        uri = str(uri)
+        rootpath = str(rootpath)
+        uri = str(
             uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
         )
+    if is_str:
+        uri = str(uri)
 
-    if JPEG4PY_ENABLED and uri.endswith(("jpg", "JPG", "jpeg", "JPEG")):
+    if JPEG4PY_ENABLED and is_str \
+            and uri.endswith(("jpg", "JPG", "jpeg", "JPEG")):
         img = jpeg.JPEG(uri).decode()
-    elif uri.endswith(("jpg", "JPG", "jpeg", "JPEG", "png", "PNG")):
+    elif is_str \
+            and uri.endswith(("jpg", "JPG", "jpeg", "JPEG", "png", "PNG")):
         img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB", **kwargs)
     else:
         img = imageio.imread(uri, **kwargs)
