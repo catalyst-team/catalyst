@@ -1,2 +1,2 @@
-nmslib
 albumentations
+wandb
