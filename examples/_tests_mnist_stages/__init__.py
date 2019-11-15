@@ -1,7 +1,8 @@
 # flake8: noqa
 from catalyst.dl import SupervisedRunner as Runner
 from .experiment import Experiment
-from catalyst.dl.registry import MODELS
+from catalyst.dl.registry import MODELS  # isort:skip
 
-del MODELS["SimpleNet"]  #  TODO: fix hack for duplicate SimpleNet
-from .model import SimpleNet
+#  TODO: fix hack for duplicate SimpleNets
+del MODELS["SimpleNet"]  # isort:skip
+from .model import SimpleNet  # isort:skip
