@@ -39,7 +39,13 @@ if os.environ.get("FORCE_JPEG_TURBO", False):
         )
 
 
-def imread(uri, grayscale=False, expand_dims=True, rootpath=None, **kwargs):
+def imread(
+    uri,
+    grayscale: bool = False,
+    expand_dims: bool = True,
+    rootpath: Union[str, pathlib.Path] = None,
+    **kwargs,
+):
     """
 
     Args:
@@ -54,14 +60,17 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None, **kwargs):
 
     """
     if rootpath is not None:
-        uri = (
+        uri = str(uri)
+        rootpath = str(rootpath)
+        uri = str(
             uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
         )
 
     if JPEG4PY_ENABLED and uri.endswith(("jpg", "JPG", "jpeg", "JPEG")):
         img = jpeg.JPEG(uri).decode()
     else:
-        img = imageio.imread(uri, **kwargs)
+        # @TODO: add tiff support, currently – jpg and png
+        img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB", **kwargs)
     if grayscale:
         img = rgb2gray(img)
 

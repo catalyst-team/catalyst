@@ -30,4 +30,4 @@ else
     bash ./bin/yapf.sh --all-in-place
 fi
 
-pytest
+pytest ./catalyst
