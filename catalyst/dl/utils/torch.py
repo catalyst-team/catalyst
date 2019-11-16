@@ -43,10 +43,6 @@ def process_components(
         pass
     elif len(distributed_params) > 0:
         assert isinstance(model, nn.Module)
-        utils.assert_fp16_available()
-        from apex import amp
-        from apex.parallel import convert_syncbn_model
-
         distributed_rank = distributed_params.pop("rank", -1)
         syncbn = distributed_params.pop("syncbn", False)
 
@@ -56,21 +52,27 @@ def process_components(
                 backend="nccl", init_method="env://"
             )
 
-        amp_result = amp.initialize(
-            model, optimizer, **distributed_params
-        )
-        if optimizer is not None:
-            model, optimizer = amp_result
-        else:
-            model = amp_result
+        if "opt_level" in distributed_params:
+            utils.assert_fp16_available()
+            from apex import amp
 
-        if distributed_rank > -1:
-            from apex.parallel import DistributedDataParallel
-            model = DistributedDataParallel(model)
+            amp_result = amp.initialize(
+                model, optimizer, **distributed_params
+            )
+            if optimizer is not None:
+                model, optimizer = amp_result
+            else:
+                model = amp_result
 
-            if syncbn:
-                model = convert_syncbn_model(model)
-        elif torch.cuda.device_count() > 1:
+            if distributed_rank > -1:
+                from apex.parallel import DistributedDataParallel
+                model = DistributedDataParallel(model)
+
+                if syncbn:
+                    from apex.parallel import convert_syncbn_model
+                    model = convert_syncbn_model(model)
+
+        if distributed_rank <= -1 and torch.cuda.device_count() > 1:
             model = torch.nn.DataParallel(model)
     elif torch.cuda.device_count() > 1:
         if isinstance(model, nn.Module):
