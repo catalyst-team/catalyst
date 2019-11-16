@@ -93,7 +93,7 @@ class Experiment(ABC):
         stage: str,
         **kwargs,
     ) -> "OrderedDict[str, Dataset]":
-        r"""Returns the datasets for a given stage and **kwargs"""
+        """Returns the datasets for a given stage and kwargs"""
         raise NotImplementedError
 
     @abstractmethod
