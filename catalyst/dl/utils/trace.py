@@ -1,3 +1,7 @@
+from typing import Union  # isort:skip
+
+from pathlib import Path
+
 import torch
 from torch import nn
 from torch.jit import ScriptModule
@@ -66,7 +70,7 @@ def trace_model(
             used as entrypoint during tracing
         mode (str): Mode for model to trace (``train`` or ``eval``)
         requires_grad (bool): Flag to use grads
-        opt_level (str): AMP FP16 init level, optional
+        opt_level (str): Apex FP16 init level, optional
         device (str): Torch device
         predict_params (dict): additional parameters for model forward
 
@@ -145,7 +149,40 @@ def get_trace_name(
     return file_name
 
 
+def load_traced_model(
+    model_path: Union[str, Path],
+    device: Device = "cpu",
+    opt_level: str = None,
+) -> ScriptModule:
+    """
+    Loads a traced model
+
+    Args:
+        model_path: Path to traced model
+        device (str): Torch device
+        opt_level (str): Apex FP16 init level, optional
+
+    Returns:
+        (ScriptModule): Traced model
+    """
+    # jit.load dont work with pathlib.Path
+    model_path = str(model_path)
+
+    if opt_level is not None:
+        device = "cuda"
+
+    model = torch.jit.load(model_path, map_location=device)
+
+    if opt_level is not None:
+        utils.assert_fp16_available()
+        from apex import amp
+        model = amp.initialize(model, optimizers=None, opt_level=opt_level)
+
+    return model
+
+
 __all__ = [
     "trace_model",
-    "get_trace_name"
+    "get_trace_name",
+    "load_traced_model",
 ]
