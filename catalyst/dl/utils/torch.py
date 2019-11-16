@@ -56,9 +56,13 @@ def process_components(
                 backend="nccl", init_method="env://"
             )
 
-        model, optimizer = amp.initialize(
+        amp_result = amp.initialize(
             model, optimizer, **distributed_params
         )
+        if optimizer is not None:
+            model, optimizer = amp_result
+        else:
+            model = amp_result
 
         if distributed_rank > -1:
             from apex.parallel import DistributedDataParallel
