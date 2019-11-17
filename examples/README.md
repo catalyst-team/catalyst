@@ -26,7 +26,7 @@
     - dataset California housing dataset(sklearn)
     - StandardScaler preprocessing
     - Simple MLP (40,10,1) linear layers
-    - Training + Inference 
+    - Training + Inference
     - Results viz.
 
 #### Usage examples
@@ -52,14 +52,12 @@
 3. [tutorial – classification](https://github.com/catalyst-team/classification)
     - classification model training and inference
     - different augmentations and stages usage
-    - knn index model example
-    - embeddings projector
-    - LrFinder usage
-    - grid search metrics visualization
-4. [tutorial – autolabel](https://github.com/catalyst-team/classification#2-autolabel)
-    - pseudolabeling for your dataset
-5. [tutorial – segmentation][WIP]
-6. [tutorial – autounet][WIP]
+    - metrics visualization with tensorboard and weights & biases
+4. [tutorial – segmentation](https://github.com/catalyst-team/segmentation)
+    - binary and semantic segmentation with U-Net
+    - model training and inference
+    - different augmentations and stages usage
+    - metrics visualization with tensorboard and weights & biases
 
 ----
 
