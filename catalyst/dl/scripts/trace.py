@@ -66,7 +66,7 @@ def trace_model_from_checkpoint(
     utils.unpack_checkpoint(checkpoint, model=model)
 
     runner: RunnerType = RunnerType()
-    runner.set_model_device(model, device)
+    runner.model, runner.device = model, device
 
     if loader is None:
         loader = 0

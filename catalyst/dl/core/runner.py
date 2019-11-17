@@ -1,10 +1,11 @@
-from typing import Any, Mapping, Optional, Tuple  # isort:skip
+from typing import Any, Mapping, Optional, Tuple, Dict, Union  # isort:skip
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 import os
 from pathlib import Path
 
 import torch
+from torch import nn
 from torch.utils.data import DistributedSampler
 
 from catalyst.dl import utils
@@ -31,8 +32,9 @@ class Runner(ABC):
             device (Device): Torch device
         """
         # main
-        self.model: Model = model
-        self.device: Device = device
+        self._model: Model = model
+        self._device: Device = device
+
         self.experiment: Experiment = None
         self.state: RunnerState = None
         self.callbacks: OrderedDict[str, Callback] = None
@@ -123,18 +125,70 @@ class Runner(ABC):
         if self.state is not None:
             getattr(self.state, f"{fn_name}_post")()
 
-    def set_model_device(
-        self,
-        model: Model,
-        device: Device
-    ) -> None:
-        """Set the model and device to the Runner"""
-        self.model = model
-        self.device = device
+    @property
+    def model(self) -> Model:
+        """
+        Returns the runner's model instance
+        """
+        return self._model
 
-    def get_model_device(self) -> Tuple[Model, Device]:
-        """Returns the model and device from the Runner"""
-        return self.model, self.device
+    @model.setter
+    def model(self, value: Union[Model, Dict[str, Model]]):
+        """
+        Setter for the runner's model'
+        """
+        if isinstance(value, nn.Module):
+            model = value
+        elif isinstance(value, dict):
+            values_are_models = all([
+                isinstance(v, nn.Module) for v in value.values()
+            ])
+            if not values_are_models:
+                raise TypeError(
+                    "Invalid dict value type, must be `torch.nn.Module`"
+                )
+
+            model = value
+
+        else:
+            raise TypeError(
+                f"Invalid value type "
+                f"must be `torch.nn.Module` or `Dict[str, torch.nn.Module]` "
+                f"got '{type(value)}'"
+            )
+
+        if self._device is not None:
+            model: Model = utils.maybe_recursive_call(
+                model, "to", device=self._device
+            )
+
+        self._model = model
+
+    @property
+    def device(self) -> Device:
+        """
+        Returns the runner's device instance
+        """
+        return self._device
+
+    @device.setter
+    def device(self, value: Device):
+        """
+        Setter for the runner's device'
+        """
+        if isinstance(value, (str, torch.device)):
+            self._device = value
+        else:
+            raise TypeError(
+                f"Invalid value type "
+                f"must be `str` or `torch.device` "
+                f"got '{type(value)}'"
+            )
+
+        if self._model is not None:
+            self._model = utils.maybe_recursive_call(
+                self._model, "to", device=self._device
+            )
 
     @abstractmethod
     def forward(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:

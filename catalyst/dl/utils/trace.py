@@ -103,13 +103,13 @@ def trace_model(
     getattr(model, mode)()
     utils.set_requires_grad(model, requires_grad=requires_grad)
 
-    _runner_model, _runner_device = runner.get_model_device()
+    _runner_model, _runner_device = runner.model, runner.device
 
-    runner.set_model_device(tracer.to(device), device)
+    runner.model, runner.device = tracer, device
     runner.predict_batch(batch, **params)
     result: ScriptModule = tracer.tracing_result
 
-    runner.set_model_device(_runner_model, _runner_device)
+    runner.model, runner.device = _runner_model, _runner_device
     return result
 
 
