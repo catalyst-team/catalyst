@@ -33,9 +33,7 @@ class ListDataset(Dataset):
         self.data = list_data
         self.open_fn = open_fn
         self.dict_transform = (
-            dict_transform
-            if dict_transform is not None
-            else lambda x: x
+            dict_transform if dict_transform is not None else lambda x: x
         )
 
     def __getitem__(self, index: int) -> Any:
