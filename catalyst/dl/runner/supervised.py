@@ -1,16 +1,14 @@
+import logging
 from typing import Any, Dict, List, Mapping, Union  # isort:skip
 from collections import OrderedDict
-import logging
-
-from torch import nn
-from torch.utils.data import DataLoader
 
 from catalyst.dl.callbacks import CheckpointCallback, InferCallback
 from catalyst.dl.core import Callback, Runner
 from catalyst.dl.experiment import SupervisedExperiment
 from catalyst.dl.utils import callbacks
 from catalyst.dl.utils.torch import _Criterion, _Model, _Optimizer, _Scheduler
-
+from torch import nn
+from torch.utils.data import DataLoader
 
 logger = logging.getLogger(__name__)
 
