@@ -32,7 +32,7 @@ fi
 
 python -c """
 from safitty import Safict
-metrics=Safict.load('$LOGFILE')
+metrics = Safict.load('$LOGFILE')
 assert metrics.get('stage1.3', 'loss') < metrics.get('stage1.1', 'loss')
 assert metrics.get('stage1.3', 'loss') < 2.0
 """
@@ -57,7 +57,7 @@ fi
 
 python -c """
 from safitty import Safict
-metrics=Safict.load('$LOGFILE')
+metrics = Safict.load('$LOGFILE')
 assert metrics.get('stage1.3', 'loss') < metrics.get('stage1.1', 'loss')
 assert metrics.get('stage1.3', 'loss') < 2.0
 """
