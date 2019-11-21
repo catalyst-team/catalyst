@@ -174,7 +174,8 @@ class Sampler:
 
     def _get_seed(self):
         if self.trajectory_seeds is not None:
-            seed = self.trajectory_seeds[self.trajectory_index % len(self.trajectory_seeds)]
+            seed = self.trajectory_seeds[
+                self.trajectory_index % len(self.trajectory_seeds)]
         else:
             seed = self._seeder()[0]
         set_global_seed(seed)
