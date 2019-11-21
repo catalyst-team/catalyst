@@ -148,7 +148,8 @@ def run_sampler(
         id=id,
         mode=mode,
         weights_sync_mode=weights_sync_mode,
-        seeds=seeds,
+        sampler_seed=seed,
+        trajectory_seeds=seeds,
         monitoring_params=monitoring_params,
         **config_["sampler"],
     )

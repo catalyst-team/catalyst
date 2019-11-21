@@ -57,7 +57,8 @@ class Sampler:
         deterministic: bool = None,
         weights_sync_period: int = 1,
         weights_sync_mode: str = None,
-        seeds: List = None,
+        sampler_seed: int = 42,
+        trajectory_seeds: List = None,
         trajectory_limit: int = None,
         force_store: bool = False,
         gc_period: int = 10,
@@ -70,8 +71,8 @@ class Sampler:
         self._deterministic = deterministic \
             if deterministic is not None \
             else mode in ["valid", "infer"]
-        self.seeds = seeds
-        self._seeder = Seeder(init_seed=42 + id)
+        self.trajectory_seeds = trajectory_seeds
+        self._seeder = Seeder(init_seed=sampler_seed)
 
         # logging
         self._prepare_logger(logdir, mode)
@@ -172,8 +173,8 @@ class Sampler:
         self.db_server.put_trajectory(trajectory, raw=raw)
 
     def _get_seed(self):
-        if self.seeds is not None:
-            seed = self.seeds[self.trajectory_index % len(self.seeds)]
+        if self.trajectory_seeds is not None:
+            seed = self.trajectory_seeds[self.trajectory_index % len(self.trajectory_seeds)]
         else:
             seed = self._seeder()[0]
         set_global_seed(seed)
@@ -436,7 +437,7 @@ class ValidSampler(Sampler):
             os.remove(last_filepath)
 
     def _run_sample_loop(self):
-        assert self.seeds is not None
+        assert self.trajectory_seeds is not None
 
         while True:
             # 1 – load from db, 2 – resume load trick (already have checkpoint)
@@ -450,7 +451,7 @@ class ValidSampler(Sampler):
 
             trajectories_reward, trajectories_raw_reward = [], []
 
-            for i in range(len(self.seeds)):
+            for i in range(len(self.trajectory_seeds)):
                 trajectory, trajectory_info = self._run_trajectory_loop()
                 trajectories_reward.append(trajectory_info["reward"])
                 trajectories_raw_reward.append(
