@@ -18,19 +18,19 @@ class NaiveCrossEntropyLoss(nn.Module):
 	
 class SymmetricCrossEntropyLoss(nn.Module):
     def __init__(self, alpha, beta, num_classes):
-	super(SymmetricCrossEntropyLoss, self).__init__()
-	self.alpha = alpha
-	self.beta = beta
-	self.num_classes = num_classes
+       super(SymmetricCrossEntropyLoss, self).__init__()
+       self.alpha = alpha
+       self.beta = beta
+       self.num_classes = num_classes
 
     def forward(self, input, target):
-	target_one_hot = F.one_hot(target, self.num_classes).float()
-	assert target_one_hot.shape == input.shape
+        target_one_hot = F.one_hot(target, self.num_classes).float()
+        assert target_one_hot.shape == input.shape
 
-	input = torch.clamp(input, min=1e-7, max=1.0)
-	target_one_hot = torch.clamp(target_one_hot, min=1e-4, max=1.0)
+        input = torch.clamp(input, min=1e-7, max=1.0)
+        target_one_hot = torch.clamp(target_one_hot, min=1e-4, max=1.0)
 
-	cross_entropy = (-torch.sum(target_one_hot * torch.log(input), dim=1)).mean()
-	reverse_cross_entropy = (-torch.sum(input * torch.log(target_one_hot), dim=1)).mean()
-	loss = self.alpha * cross_entropy + self.beta * reverse_cross_entropy
-	return loss
+        cross_entropy = (-torch.sum(target_one_hot * torch.log(input), dim=1)).mean()
+        reverse_cross_entropy = (-torch.sum(input * torch.log(target_one_hot), dim=1)).mean()
+        loss = self.alpha * cross_entropy + self.beta * reverse_cross_entropy
+        return loss
