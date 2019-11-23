@@ -18,10 +18,10 @@ class NaiveCrossEntropyLoss(nn.Module):
 	
 class SymmetricCrossEntropyLoss(nn.Module):
     def __init__(self, alpha, beta, num_classes):
-       super(SymmetricCrossEntropyLoss, self).__init__()
-       self.alpha = alpha
-       self.beta = beta
-       self.num_classes = num_classes
+        super(SymmetricCrossEntropyLoss, self).__init__()
+        self.alpha = alpha
+        self.beta = beta
+        self.num_classes = num_classes
 
     def forward(self, input, target):
         target_one_hot = F.one_hot(target, self.num_classes).float()
