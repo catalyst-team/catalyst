@@ -32,9 +32,9 @@ class SymmetricCrossEntropyLoss(nn.Module):
 
         cross_entropy = (
             -torch.sum(target_one_hot * torch.log(input), dim=1)
-            ).mean()
+        ).mean()
         reverse_cross_entropy = (
             -torch.sum(input * torch.log(target_one_hot), dim=1)
-            ).mean()
+        ).mean()
         loss = self.alpha * cross_entropy + self.beta * reverse_cross_entropy
         return loss
