@@ -41,6 +41,12 @@
 ----
 
 ### DL pipelines
+
+Full description of configs with comments:
+- [Eng](configs/config-description-eng.yml)
+- [Rus](configs/config-description-rus.yml)
+
+Link to the pipelines
 1. [features – model training](cifar_simple)
     - configuration files usage example
     - local and docker runs
