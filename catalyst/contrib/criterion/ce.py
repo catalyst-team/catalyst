@@ -17,6 +17,11 @@ class NaiveCrossEntropyLoss(nn.Module):
 
 
 class SymmetricCrossEntropyLoss(nn.Module):
+    """
+    Symmetric Cross Entropy 
+
+    paper : https://arxiv.org/abs/1908.06112
+    """
     def __init__(self, alpha, beta, num_classes):
         super(SymmetricCrossEntropyLoss, self).__init__()
         self.alpha = alpha
