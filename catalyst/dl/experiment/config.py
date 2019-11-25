@@ -21,109 +21,48 @@ from catalyst.dl.registry import (
     CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SCHEDULERS
 )
 from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
+from catalyst.utils.parsed_config import Config
 
 
 class ConfigExperiment(Experiment):
     """
     Experiment created from a configuration file
     """
-    STAGE_KEYWORDS = [
-        "criterion_params",
-        "optimizer_params",
-        "scheduler_params",
-        "data_params",
-        "state_params",
-        "callbacks_params",
-    ]
-
-    def __init__(self, config: Dict):
+    def __init__(self, config: Config):
         """
         Args:
-            config (dict): dictionary of parameters
+            config (Config): parsed config
         """
-        self._config = deepcopy(config)
-        self._initial_seed = self._config.get("args", {}).get("seed", 42)
-        self._verbose = safitty.get(
-            self._config, "args", "verbose", default=False
-        )
-        self.__prepare_logdir()
-
-        self._config["stages"]["state_params"] = utils.merge_dicts(
-            deepcopy(self._config["stages"].get("state_params", {})),
-            deepcopy(self._config.get("args", {})), {"logdir": self._logdir}
-        )
-        self.stages_config = self._get_stages_config(self._config["stages"])
-
-    def __prepare_logdir(self):
-        EXCLUDE_TAG = "none"
-
-        logdir = self._config.get("args", {}).get("logdir", None)
-        baselogdir = self._config.get("args", {}).get("baselogdir", None)
-
-        if logdir is not None and logdir.lower() != EXCLUDE_TAG:
-            self._logdir = logdir
-        elif baselogdir is not None and baselogdir.lower() != EXCLUDE_TAG:
-            logdir_postfix = self._get_logdir(self._config)
-            self._logdir = f"{baselogdir}/{logdir_postfix}"
-        else:
-            self._logdir = None
-
-    def _get_stages_config(self, stages_config):
-        stages_defaults = {}
-        stages_config_out = OrderedDict()
-        for key in self.STAGE_KEYWORDS:
-            stages_defaults[key] = deepcopy(stages_config.get(key, {}))
-        for stage in stages_config:
-            if stage in self.STAGE_KEYWORDS \
-                    or stages_config.get(stage) is None:
-                continue
-            stages_config_out[stage] = {}
-            for key in self.STAGE_KEYWORDS:
-                stages_config_out[stage][key] = utils.merge_dicts(
-                    deepcopy(stages_defaults.get(key, {})),
-                    deepcopy(stages_config[stage].get(key, {})),
-                )
-
-        return stages_config_out
-
-    def _get_logdir(self, config: Dict) -> str:
-        timestamp = utils.get_utcnow_time()
-        config_hash = utils.get_short_hash(config)
-        logdir = f"{timestamp}.{config_hash}"
-        distributed_rank = self.distributed_params.get("rank", -1)
-        if distributed_rank > -1:
-            logdir = f"{logdir}.rank{distributed_rank:02d}"
-        return logdir
+        self._config = config
 
     @property
     def initial_seed(self) -> int:
         """Experiment's initial seed value"""
-        return self._initial_seed
+        return self._config.seed
 
     @property
     def logdir(self):
         """Path to the directory where the experiment logs"""
-        return self._logdir
+        return self._config.logdir
 
     @property
     def stages(self) -> List[str]:
         """Experiment's stage names"""
-        stages_keys = list(self.stages_config.keys())
-        return stages_keys
+        return self._config.stages
 
     @property
     def distributed_params(self) -> Dict:
         """Dict with the parameters for distributed and FP16 methond"""
-        return self._config.get("distributed_params", {})
+        return self._config.distributed_params
 
     @property
     def monitoring_params(self) -> Dict:
         """Dict with the parameters for monitoring services"""
-        return self._config.get("monitoring_params", {})
+        return self._config.monitoring_params
 
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
         """Returns the state parameters for a given stage"""
-        return self.stages_config[stage].get("state_params", {})
+        return self._config.stage_state_params(stage)
 
     def _preprocess_model_for_stage(self, stage: str, model: Model):
         stage_index = self.stages.index(stage)
