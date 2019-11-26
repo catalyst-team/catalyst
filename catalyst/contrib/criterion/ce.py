@@ -39,7 +39,7 @@ class SymmetricCrossEntropyLoss(nn.Module):
         """
         Args:
             input: shape = [batch_size; num_classes]
-            target: shape = [batch_size] 
+            target: shape = [batch_size]
             values of a vector correspond to class index
         """
         target_one_hot = F.one_hot(target, self.num_classes).float()
