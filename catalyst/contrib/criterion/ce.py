@@ -23,7 +23,8 @@ class SymmetricCrossEntropyLoss(nn.Module):
 
     Args:
         alpha(float): corresponds to overfitting issue of CE
-        beta(float): corresponds to flexible exploration on the robustness of RCE
+        beta(float): corresponds to flexible exploration on the robustness 
+        of RCE
         num_classes(int): number of classes in dataset
     """
     def __init__(self, alpha, beta, num_classes):
