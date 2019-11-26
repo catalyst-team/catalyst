@@ -20,6 +20,11 @@ class SymmetricCrossEntropyLoss(nn.Module):
     """
     Symmetric Cross Entropy
     paper : https://arxiv.org/abs/1908.06112
+
+    Args:
+        alpha(float): corresponds to overfitting issue of CE
+        beta(float): corresponds to flexible exploration on the robustness of RCE
+        num_classes(int): number of classes in dataset
     """
     def __init__(self, alpha, beta, num_classes):
         super(SymmetricCrossEntropyLoss, self).__init__()
@@ -28,6 +33,11 @@ class SymmetricCrossEntropyLoss(nn.Module):
         self.num_classes = num_classes
 
     def forward(self, input, target):
+        """
+        Args:
+            input: shape = [batch_size; num_classes]
+            target: shape = [batch_size] values of a vector correspond to class index
+        """
         target_one_hot = F.one_hot(target, self.num_classes).float()
         assert target_one_hot.shape == input.shape
 
