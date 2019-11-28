@@ -16,11 +16,14 @@ import numpy as np  # noqa: E402
 # Native tensorboard support from 1.2.0 version of PyTorch
 from torch import __version__ as torch_version  # noqa: E402
 from packaging import version  # noqa: E402
+
 if version.parse(torch_version) < version.parse("1.2.0"):
     from tensorboardX import SummaryWriter as tensorboardX_SummaryWriter
+
     SummaryWriter = tensorboardX_SummaryWriter
 else:
     from torch.utils.tensorboard import SummaryWriter as torch_SummaryWriter
+
     SummaryWriter = torch_SummaryWriter
 if version.parse(torch_version) < version.parse("1.2.0"):
     from tensorboardX.proto.event_pb2 import Event
@@ -48,6 +51,7 @@ class EventsFileReader(Iterable):
     """
     An iterator over a Tensorboard events file
     """
+
     def __init__(self, events_file: BinaryIO):
         """
         Initialize an iterator over an events file
@@ -176,10 +180,10 @@ class SummaryReader(Iterable):
     }
 
     def __init__(
-        self,
-        logdir: Union[str, Path],
-        tag_filter: Optional[Iterable] = None,
-        types: Iterable = ("scalar", )
+            self,
+            logdir: Union[str, Path],
+            tag_filter: Optional[Iterable] = None,
+            types: Iterable = ("scalar",)
     ):
         """
         Initalize new summary reader
@@ -200,7 +204,7 @@ class SummaryReader(Iterable):
         if self._types is None:
             return
         if not all(
-            type_name in self._DECODERS.keys() for type_name in self._types
+                type_name in self._DECODERS.keys() for type_name in self._types
         ):
             raise ValueError("Invalid type name")
 
@@ -259,8 +263,7 @@ class SummaryReader(Iterable):
         for file_path in log_files:
             with open(file_path, "rb") as f:
                 reader = EventsFileReader(f)
-                yield from (
-                    item for item in self._decode_events(reader)
-                    if item is not None and self._check_tag(item.tag)
-                    and item.type in self._types
-                )
+                item = (item for item in self._decode_events(reader)
+                        if item is not None and self._check_tag(
+                    item.tag) and item.type in self._types)
+                yield from item

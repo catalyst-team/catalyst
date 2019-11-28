@@ -11,6 +11,7 @@ class FilteringCollateFn:
     Only adds them to list.
     Supports only key-value format batches
     """
+
     def __init__(self, *keys):
         """
         Args:

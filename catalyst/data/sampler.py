@@ -9,6 +9,7 @@ class BalanceClassSampler(Sampler):
     Abstraction over data sampler. Allows you to create stratified sample
     on unbalanced classes.
     """
+
     def __init__(self, labels: List[int], mode: str = "downsampling"):
         """
         Args:
@@ -89,12 +90,13 @@ class MiniEpochSampler(Sampler):
         >>> MiniEpochSampler(len(dataset), mini_epoch_len=100,
         >>>     shuffle="per_epoch")
     """
+
     def __init__(
-        self,
-        data_len: int,
-        mini_epoch_len: int,
-        drop_last: bool = False,
-        shuffle: str = None
+            self,
+            data_len: int,
+            mini_epoch_len: int,
+            drop_last: bool = False,
+            shuffle: str = None
     ):
         super().__init__(None)
 
