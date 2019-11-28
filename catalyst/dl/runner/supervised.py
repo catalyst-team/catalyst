@@ -1,18 +1,19 @@
-import logging
 from typing import Any, Dict, List, Mapping, Union  # isort:skip
 from collections import OrderedDict
 import logging
 from pathlib import Path
+
 import torch
 from torch.jit import ScriptModule
 from torch.utils.data import DataLoader
+
 from catalyst.dl import utils
 from catalyst.dl.callbacks import CheckpointCallback, InferCallback
 from catalyst.dl.core import Callback, Runner
 from catalyst.dl.experiment import SupervisedExperiment
 from catalyst.utils.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
-
+)
 
 logger = logging.getLogger(__name__)
 
@@ -171,7 +172,7 @@ class SupervisedRunner(Runner):
             self.model = model
 
         if resume is not None:
-            callbacks = process_callback(callbacks)
+            callbacks = utils.process_callbacks(callbacks)
             checkpoint_callback_flag = any([
                 isinstance(x, CheckpointCallback)
                 for x in callbacks.values()
@@ -323,7 +324,7 @@ class SupervisedRunner(Runner):
             requires_grad (bool): flag to trace with gradients
             fp16 (Union[Dict, bool]): If not None, then sets
                 tracing params to FP16
-            deivice (Device): Torch deivice or a string
+            device (Device): Torch deivice or a string
             predict_params (dict): additional parameters for model forward
         """
         if batch is None:
