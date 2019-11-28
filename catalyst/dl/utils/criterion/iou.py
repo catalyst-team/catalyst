@@ -8,7 +8,7 @@ from catalyst.utils import get_activation_fn
 def iou(
     outputs: torch.Tensor,
     targets: torch.Tensor,
-    # values are discarded, only None check 
+    # values are discarded, only None check
     # used for compatibility with MultiMetricCallback
     classes: List[str] = None,
     eps: float = 1e-7,
@@ -32,10 +32,10 @@ def iou(
 
     if threshold is not None:
         outputs = (outputs > threshold).float()
-    
+
     # if classes are specified we reduce across all dims except channels
     red_dim = list(range(len(targets.shape))) if classes is None else [0, 2, 3]
-    
+
     intersection = torch.sum(targets * outputs, red_dim)
     union = torch.sum(targets, red_dim) + torch.sum(outputs, red_dim)
     iou = (intersection + eps) / (union - intersection + eps)

@@ -1,8 +1,7 @@
 from typing import List
 
-from catalyst.dl.core import Callback, MetricCallback, MultiMetricCallback
+from catalyst.dl.core import MetricCallback, MultiMetricCallback
 from catalyst.dl.utils import criterion
-
 
 
 class IouCallback(MetricCallback):
@@ -43,7 +42,6 @@ class IouCallback(MetricCallback):
 
 
 JaccardCallback = IouCallback
-
 
 
 def _get_default_classwise_iou_args(num_classes: int) -> List[int]:
@@ -96,7 +94,6 @@ class ClasswiseIouCallback(MultiMetricCallback):
 
 
 ClasswiseJaccardCallback = ClasswiseIouCallback
-
 
 
 __all__ = [
