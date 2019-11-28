@@ -37,8 +37,8 @@ jobs:
   include:
     - stage: Tests
       install:
-        - *requirements_dl
-        - pip install flake8 flake8-docstrings flake8-quotes yapf isort
+        - *requirements_all
+        - pip install flake8 flake8-quotes yapf isort
         - pip install -U pytest
       script:
         - isort -rc --check-only --settings-path ./setup.cfg

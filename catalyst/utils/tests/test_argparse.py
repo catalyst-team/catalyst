@@ -1,5 +1,5 @@
 # flake8: noqa
-from catalyst.utils.argparse import args_are_not_none
+from catalyst.utils.misc import args_are_not_none
 
 
 def test_args_are_not_none():

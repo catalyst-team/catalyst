@@ -156,10 +156,10 @@ class RunnerState(FrozenClass):
         pass
 
     def on_loader_end_pre(self):
-        pass
+        self.metrics.end_loader()
 
     def on_loader_end_post(self):
-        self.metrics.end_loader()
+        pass
 
     def on_batch_start_pre(self):
         self.metrics.begin_batch()

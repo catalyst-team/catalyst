@@ -1,25 +1,5 @@
-from typing import Any, Optional  # isort:skip
+from typing import Optional  # isort:skip
 import argparse
-
-
-def args_are_not_none(*args: Optional[Any]) -> bool:
-    """
-    Check that all arguments are not None
-    Args:
-        *args (Any): values
-    Returns:
-         bool: True if all value were not None, False otherwise
-    """
-    result = args is not None
-    if not result:
-        return result
-
-    for arg in args:
-        if arg is None:
-            result = False
-            break
-
-    return result
 
 
 def boolean_flag(

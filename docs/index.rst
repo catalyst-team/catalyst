@@ -244,7 +244,7 @@ Please use this bibtex if you want to cite this repository in your publications:
 
     @misc{catalyst,
         author = {Kolesnikov, Sergey},
-        title = {Reproducible and fast DL & RL.},
+        title = {Accelerated DL & RL.},
         year = {2018},
         publisher = {GitHub},
         journal = {GitHub repository},
