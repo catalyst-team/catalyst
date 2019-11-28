@@ -1,11 +1,14 @@
 import torch
 
+from typing import List
+
 from catalyst.utils import get_activation_fn
 
 
 def iou(
     outputs: torch.Tensor,
     targets: torch.Tensor,
+    classes: List[str] = None,
     eps: float = 1e-7,
     threshold: float = None,
     activation: str = "Sigmoid"
@@ -27,6 +30,8 @@ def iou(
 
     if threshold is not None:
         outputs = (outputs > threshold).float()
+        
+    
 
     intersection = torch.sum(targets * outputs)
     union = torch.sum(targets) + torch.sum(outputs)
