@@ -23,11 +23,11 @@
     - predictions visualization
     - Test-time augmentations with [ttach](https://github.com/qubvel/ttach) library
 3. [tutorial - table data regression](./notebooks/table-data-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/table-data-tutorial.ipynb)
-    - dataset California housing dataset(sklearn)
+    - dataset California housing dataset (sklearn)
     - StandardScaler preprocessing
-    - Simple MLP (40,10,1) linear layers
-    - Training + Inference 
-    - Results viz.
+    - simple MLP example
+    - training + inference
+    - results visualization.
 
 #### Usage examples
 4. [features – classification](./notebooks/notebook-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/notebook-example.ipynb)
@@ -41,6 +41,12 @@
 ----
 
 ### DL pipelines
+
+Full description of configs with comments:
+- [Eng](configs/config-description-eng.yml)
+- [Rus](configs/config-description-rus.yml)
+
+Link to the pipelines
 1. [features – model training](cifar_simple)
     - configuration files usage example
     - local and docker runs
@@ -52,14 +58,12 @@
 3. [tutorial – classification](https://github.com/catalyst-team/classification)
     - classification model training and inference
     - different augmentations and stages usage
-    - knn index model example
-    - embeddings projector
-    - LrFinder usage
-    - grid search metrics visualization
-4. [tutorial – autolabel](https://github.com/catalyst-team/classification#2-autolabel)
-    - pseudolabeling for your dataset
-5. [tutorial – segmentation][WIP]
-6. [tutorial – autounet][WIP]
+    - metrics visualization with tensorboard
+4. [tutorial – segmentation](https://github.com/catalyst-team/segmentation)
+    - binary and semantic segmentation with U-Net
+    - model training and inference
+    - different augmentations and stages usage
+    - metrics visualization with tensorboard
 
 ----
 

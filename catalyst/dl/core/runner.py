@@ -1,4 +1,4 @@
-from typing import Any, Mapping, Optional, Tuple  # isort:skip
+from typing import Any, Mapping, Optional, Tuple, Dict, Union  # isort:skip
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 import os
@@ -9,25 +9,32 @@ from torch import nn
 from torch.utils.data import DistributedSampler
 
 from catalyst.dl import utils
-from catalyst.dl.utils.scripts import dump_base_experiment_code
-from catalyst.dl.utils.torch import _Criterion, _Model, _Optimizer, _Scheduler
+from catalyst.utils.typing import (
+    Criterion, Device, Model, Optimizer, Scheduler
+)
 from .callback import Callback, LoggerCallback
 from .experiment import Experiment
 from .state import RunnerState
 
 
 class Runner(ABC):
+    """
+    Abstract class for all runners inherited from
+    """
     def __init__(
         self,
-        model: nn.Module = None,
-        device=None,
+        model: Model = None,
+        device: Device = None,
     ):
         """
-        @TODO: write docs
+        Args:
+            model (Model): Torch model object
+            device (Device): Torch device
         """
         # main
-        self.model: nn.Module = model
-        self.device = device
+        self._model: Model = model
+        self._device: Device = device
+
         self.experiment: Experiment = None
         self.state: RunnerState = None
         self.callbacks: OrderedDict[str, Callback] = None
@@ -36,13 +43,13 @@ class Runner(ABC):
         # additional
         self._check_run = False
 
-    def _batch2device(self, batch: Mapping[str, Any], device):
+    def _batch2device(self, batch: Mapping[str, Any], device: Device):
         res = utils.any2device(batch, device)
         return res
 
     def _get_experiment_components(
         self, stage: str = None
-    ) -> Tuple[_Model, _Criterion, _Optimizer, _Scheduler, torch.device]:
+    ) -> Tuple[Model, Criterion, Optimizer, Scheduler, Device]:
         """
         Inner method for children's classes for model specific initialization.
         As baseline, checks device support and puts model on it.
@@ -118,21 +125,100 @@ class Runner(ABC):
         if self.state is not None:
             getattr(self.state, f"{fn_name}_post")()
 
+    @property
+    def model(self) -> Model:
+        """
+        Returns the runner's model instance
+        """
+        return self._model
+
+    @model.setter
+    def model(self, value: Union[Model, Dict[str, Model]]):
+        """
+        Setter for the runner's model'
+        """
+        if isinstance(value, nn.Module):
+            model = value
+        elif isinstance(value, dict):
+            values_are_models = all([
+                isinstance(v, nn.Module) for v in value.values()
+            ])
+            if not values_are_models:
+                raise TypeError(
+                    "Invalid dict value type, must be `torch.nn.Module`"
+                )
+
+            model = value
+
+        else:
+            raise TypeError(
+                f"Invalid value type "
+                f"must be `torch.nn.Module` or `Dict[str, torch.nn.Module]` "
+                f"got '{type(value)}'"
+            )
+
+        if self._device is not None:
+            model: Model = utils.maybe_recursive_call(
+                model, "to", device=self._device
+            )
+
+        self._model = model
+
+    @property
+    def device(self) -> Device:
+        """
+        Returns the runner's device instance
+        """
+        return self._device
+
+    @device.setter
+    def device(self, value: Device):
+        """
+        Setter for the runner's device'
+        """
+        if isinstance(value, (str, torch.device)):
+            self._device = value
+        else:
+            raise TypeError(
+                f"Invalid value type "
+                f"must be `str` or `torch.device` "
+                f"got '{type(value)}'"
+            )
+
+        if self._model is not None:
+            self._model = utils.maybe_recursive_call(
+                self._model, "to", device=self._device
+            )
+
     @abstractmethod
-    def forward(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
+    def forward(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
+        """
+        Forward method for your Runner
+
+        Args:
+            batch: Key-value batch items
+            **kwargs: kwargs to pass to the model
+        """
         pass
 
-    def predict_batch(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
+    def predict_batch(
+        self,
+        batch: Mapping[str, Any],
+        **kwargs
+    ) -> Mapping[str, Any]:
         """
         Run model for a batch of elements
         WARN: You should not override this method. If you need specific model
         call, override forward() method
         Args:
             batch: Key-value batch items
-        Returns: model output key-value
+            **kwargs: kwargs to pass to the model
+
+        Returns:
+            model output key-value
         """
         batch = self._batch2device(batch, self.device)
-        output = self.forward(batch)
+        output = self.forward(batch, **kwargs)
         return output
 
     def _run_batch(self, batch):
@@ -243,6 +329,9 @@ class Runner(ABC):
         self._run_event("stage", moment="end")
 
     def run_experiment(self, experiment: Experiment, check: bool = False):
+        """
+        Starts the experiment
+        """
         self._check_run = check
         self.experiment = experiment
 
@@ -253,7 +342,7 @@ class Runner(ABC):
                 and self.experiment.logdir is not None:
             expdir = Path(os.getcwd())
             logdir = Path(self.experiment.logdir)
-            dump_base_experiment_code(expdir, logdir)
+            utils.dump_base_experiment_code(expdir, logdir)
 
         try:
             for stage in self.experiment.stages:

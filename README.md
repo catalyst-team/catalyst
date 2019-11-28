@@ -2,7 +2,7 @@
 
 [![Catalyst logo](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png)](https://github.com/catalyst-team/catalyst)
 
-**Reproducible and fast DL & RL**
+**Accelerated DL & RL**
 
 [![Pipi version](https://img.shields.io/pypi/v/catalyst.svg)](https://pypi.org/project/catalyst/)
 [![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html)
@@ -38,9 +38,7 @@ pip install -U catalyst
 
 More specific with additional requirements:
 ```bash
-pip install catalyst[dl] # installs DL based catalyst with Weights & Biases support
 pip install catalyst[rl] # installs DL+RL based catalyst
-pip install catalyst[drl] # installs DL+RL based catalyst with Weights & Biases support
 pip install catalyst[contrib] # installs DL+contrib based catalyst
 pip install catalyst[all] # installs everything. Very convenient to deploy on a new server
 ```
@@ -180,7 +178,7 @@ Please use this bibtex if you want to cite this repository in your publications:
 
     @misc{catalyst,
         author = {Kolesnikov, Sergey},
-        title = {Reproducible and fast DL & RL.},
+        title = {Accelerated DL & RL.},
         year = {2018},
         publisher = {GitHub},
         journal = {GitHub repository},
