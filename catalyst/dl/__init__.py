@@ -4,7 +4,8 @@ from .callbacks import (
     AccuracyCallback, AUCCallback, CheckpointCallback, ConfusionMatrixCallback,
     CriterionCallback, DiceCallback, EarlyStoppingCallback, F1ScoreCallback,
     IouCallback, JaccardCallback, MapKCallback, OptimizerCallback,
-    SchedulerCallback, TelegramLogger
+    SchedulerCallback, TelegramLogger, 
+    ClasswiseIouCallback, ClasswiseJaccardCallback
 )
 from .core import (
     Callback, CallbackOrder, Experiment, MetricCallback, MultiMetricCallback,

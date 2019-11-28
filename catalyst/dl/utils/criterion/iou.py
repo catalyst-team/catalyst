@@ -23,7 +23,7 @@ def iou(
             Must be one of ["none", "Sigmoid", "Softmax2d"]
 
     Returns:
-        float: IoU (Jaccard) score
+        float or List[float]: IoU (Jaccard) score(s)
     """
     activation_fn = get_activation_fn(activation)
     outputs = activation_fn(outputs)
@@ -31,10 +31,9 @@ def iou(
     if threshold is not None:
         outputs = (outputs > threshold).float()
         
-    
-
-    intersection = torch.sum(targets * outputs)
-    union = torch.sum(targets) + torch.sum(outputs)
+    reduction_channels = (0, 1, 2, 3) if classes is None else (0, 2, 3)
+    intersection = torch.sum(targets * outputs, reduction_channels)
+    union = torch.sum(targets, reduction_channels) + torch.sum(outputs, reduction_channels)
     iou = (intersection + eps) / (union - intersection + eps)
 
     return iou
