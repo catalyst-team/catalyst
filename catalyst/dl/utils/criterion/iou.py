@@ -30,10 +30,12 @@ def iou(
 
     if threshold is not None:
         outputs = (outputs > threshold).float()
-        
-    reduction_channels = (0, 1, 2, 3) if classes is None else (0, 2, 3)
-    intersection = torch.sum(targets * outputs, reduction_channels)
-    union = torch.sum(targets, reduction_channels) + torch.sum(outputs, reduction_channels)
+    
+    # if classes are specified we reduce across all dims except channels
+    red_dim = list(range(len(targets.shape))) if classes is None else [0, 2, 3]
+    
+    intersection = torch.sum(targets * outputs, red_dim)
+    union = torch.sum(targets, red_dim) + torch.sum(outputs, red_dim)
     iou = (intersection + eps) / (union - intersection + eps)
 
     return iou
