@@ -1,4 +1,4 @@
-from typing import Dict, Union  # isort:skip
+from typing import Dict, Union  # isort:skip noqa: F401
 import argparse
 from argparse import ArgumentParser
 from pathlib import Path
@@ -54,6 +54,7 @@ def trace_model_from_checkpoint(
     expdir = Path(logdir) / "code" / config_expdir.name
 
     print("Import experiment and runner from logdir")
+    # noqa: N806
     ExperimentType, RunnerType = import_experiment_and_runner(expdir)
     experiment: Experiment = ExperimentType(config)
 

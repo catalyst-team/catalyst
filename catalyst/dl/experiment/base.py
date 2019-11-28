@@ -1,4 +1,5 @@
-from typing import Any, Dict, Iterable, List, Mapping, Union  # isort:skip
+from typing import Any, Dict, Iterable  # isort:skip noqa: F401
+from typing import List, Mapping, Union  # isort:skip noqa: F401
 from collections import OrderedDict
 
 from torch import nn
@@ -14,26 +15,28 @@ class BaseExperiment(Experiment):
     Super-simple one-staged experiment
         you can use to declare experiment in code
     """
+
     def __init__(
-        self,
-        model: Model,
-        loaders: "OrderedDict[str, DataLoader]",
-        callbacks: "Union[OrderedDict[str, Callback], List[Callback]]" = None,
-        logdir: str = None,
-        stage: str = "train",
-        criterion: Criterion = None,
-        optimizer: Optimizer = None,
-        scheduler: Scheduler = None,
-        num_epochs: int = 1,
-        valid_loader: str = "valid",
-        main_metric: str = "loss",
-        minimize_metric: bool = True,
-        verbose: bool = False,
-        state_kwargs: Dict = None,
-        checkpoint_data: Dict = None,
-        distributed_params: Dict = None,
-        monitoring_params: Dict = None,
-        initial_seed: int = 42,
+            self,
+            model: Model,
+            loaders: "OrderedDict[str, DataLoader]",
+            callbacks: "Union[OrderedDict[str, Callback], "
+                       "List[Callback]]" = None,
+            logdir: str = None,
+            stage: str = "train",
+            criterion: Criterion = None,
+            optimizer: Optimizer = None,
+            scheduler: Scheduler = None,
+            num_epochs: int = 1,
+            valid_loader: str = "valid",
+            main_metric: str = "loss",
+            minimize_metric: bool = True,
+            verbose: bool = False,
+            state_kwargs: Dict = None,
+            checkpoint_data: Dict = None,
+            distributed_params: Dict = None,
+            monitoring_params: Dict = None,
+            initial_seed: int = 42,
     ):
         """
         Args:

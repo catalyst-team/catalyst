@@ -179,9 +179,11 @@ def main(args, unknown_args):
     algorithm_name = config["algorithm"].pop("algorithm")
 
     if algorithm_name in OFFPOLICY_ALGORITHMS_NAMES:
+        # noqa: N806
         ALGORITHMS = OFFPOLICY_ALGORITHMS
         sync_epoch = False
     elif algorithm_name in ONPOLICY_ALGORITHMS_NAMES:
+        # noqa: N806
         ALGORITHMS = ONPOLICY_ALGORITHMS
         sync_epoch = True
     else:

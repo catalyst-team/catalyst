@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Mapping, Union  # isort:skip
+from typing import Any, Dict, List, Mapping, Union  # isort:skip noqa: F401
 from collections import OrderedDict
 from copy import deepcopy
 
@@ -55,7 +55,7 @@ class ConfigExperiment(Experiment):
         self.stages_config = self._get_stages_config(self._config["stages"])
 
     def __prepare_logdir(self):
-        EXCLUDE_TAG = "none"
+        EXCLUDE_TAG = "none"  # noqa: N806
 
         logdir = self._config.get("args", {}).get("logdir", None)
         baselogdir = self._config.get("args", {}).get("baselogdir", None)
@@ -180,10 +180,10 @@ class ConfigExperiment(Experiment):
         return criterion
 
     def _get_optimizer(
-        self,
-        stage: str,
-        model: Union[Model, Dict[str, Model]],
-        **params
+            self,
+            stage: str,
+            model: Union[Model, Dict[str, Model]],
+            **params
     ) -> Optimizer:
         # @TODO 1: refactoring; this method is too long
         # @TODO 2: load state dicts for schedulers & criteria
@@ -265,9 +265,9 @@ class ConfigExperiment(Experiment):
         return optimizer
 
     def get_optimizer(
-        self,
-        stage: str,
-        model: Union[Model, Dict[str, Model]]
+            self,
+            stage: str,
+            model: Union[Model, Dict[str, Model]]
     ) -> Union[Optimizer, Dict[str, Optimizer]]:
         """
         Returns the optimizer for a given stage
@@ -346,7 +346,7 @@ class ConfigExperiment(Experiment):
                 f"{overridden_loader_params} should be Dict"
 
             batch_size = overridden_loader_params.pop("batch_size", batch_size)
-            num_workers = overridden_loader_params.\
+            num_workers = overridden_loader_params. \
                 pop("num_workers", num_workers)
 
             if per_gpu_scaling and not distributed:
@@ -381,8 +381,8 @@ class ConfigExperiment(Experiment):
                     )
 
             loader_params["shuffle"] = (
-                name.startswith("train")
-                and loader_params.get("sampler") is None
+                    name.startswith("train")
+                    and loader_params.get("sampler") is None
             )
 
             if "batch_sampler" in loader_params:

@@ -1,12 +1,12 @@
 from typing import Any, Dict, Iterable, Mapping, Tuple, Union  # isort:skip
 from abc import ABC, abstractmethod
-from collections import OrderedDict
+from collections import OrderedDict  # noqa: F401
 
 from torch import nn
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader, Dataset  # noqa: F401
 
 from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
-from .callback import Callback
+from .callback import Callback  # noqa: F401
 
 
 class Experiment(ABC):
@@ -72,7 +72,7 @@ class Experiment(ABC):
         pass
 
     def get_experiment_components(
-        self, model: nn.Module, stage: str
+            self, model: nn.Module, stage: str
     ) -> Tuple[Criterion, Optimizer, Scheduler]:
         """
         Returns the tuple containing criterion, optimizer and scheduler by
@@ -89,9 +89,9 @@ class Experiment(ABC):
         pass
 
     def get_datasets(
-        self,
-        stage: str,
-        **kwargs,
+            self,
+            stage: str,
+            **kwargs,
     ) -> "OrderedDict[str, Dataset]":
         """Returns the datasets for a given stage and kwargs"""
         raise NotImplementedError
@@ -107,10 +107,10 @@ class Experiment(ABC):
         raise NotImplementedError
 
     def get_native_batch(
-        self,
-        stage: str,
-        loader: Union[str, int] = 0,
-        data_index: int = 0
+            self,
+            stage: str,
+            loader: Union[str, int] = 0,
+            data_index: int = 0
     ):
         """Returns a batch from experiment loader
 
