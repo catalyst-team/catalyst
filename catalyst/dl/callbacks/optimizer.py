@@ -66,9 +66,7 @@ class OptimizerCallback(Callback):
         for group, wd in zip(optimizer.param_groups, optimizer_wds):
             if wd > 0:
                 for param in group["params"]:
-                    param.data = param.data.add(
-                        -wd * group["lr"], param.data
-                    )
+                    param.data = param.data.add(-wd * group["lr"], param.data)
             if grad_clip_fn is not None:
                 grad_clip_fn(group["params"])
         optimizer.step()
@@ -96,7 +94,8 @@ class OptimizerCallback(Callback):
             ]
             for i in range(len(optimizer.param_groups)):
                 safitty.set(
-                    optimizer.param_groups, i, "weight_decay", value=0.0)
+                    optimizer.param_groups, i, "weight_decay", value=0.0
+                )
         else:
             self._optimizer_wd = [0.0] * len(optimizer.param_groups)
 
@@ -151,9 +150,7 @@ class OptimizerCallback(Callback):
             # https://nvidia.github.io/apex/advanced.html#gradient-accumulation-across-iterations
             delay_unscale = not need_gradient_step
             with amp.scale_loss(
-                loss,
-                optimizer,
-                delay_unscale=delay_unscale
+                loss, optimizer, delay_unscale=delay_unscale
             ) as scaled_loss:
                 scaled_loss.backward()
         else:
@@ -177,7 +174,8 @@ class OptimizerCallback(Callback):
             )
             for i, wd in enumerate(self._optimizer_wd):
                 safitty.set(
-                    optimizer.param_groups, i, "weight_decay", value=wd)
+                    optimizer.param_groups, i, "weight_decay", value=wd
+                )
 
 
 __all__ = ["OptimizerCallback"]

@@ -15,7 +15,6 @@ class Experiment(ABC):
 
     Abstract, look for implementations
     """
-
     @property
     @abstractmethod
     def initial_seed(self) -> int:
@@ -72,7 +71,7 @@ class Experiment(ABC):
         pass
 
     def get_experiment_components(
-            self, model: nn.Module, stage: str
+        self, model: nn.Module, stage: str
     ) -> Tuple[Criterion, Optimizer, Scheduler]:
         """
         Returns the tuple containing criterion, optimizer and scheduler by
@@ -89,9 +88,9 @@ class Experiment(ABC):
         pass
 
     def get_datasets(
-            self,
-            stage: str,
-            **kwargs,
+        self,
+        stage: str,
+        **kwargs,
     ) -> "OrderedDict[str, Dataset]":
         """Returns the datasets for a given stage and kwargs"""
         raise NotImplementedError
@@ -107,10 +106,7 @@ class Experiment(ABC):
         raise NotImplementedError
 
     def get_native_batch(
-            self,
-            stage: str,
-            loader: Union[str, int] = 0,
-            data_index: int = 0
+        self, stage: str, loader: Union[str, int] = 0, data_index: int = 0
     ):
         """Returns a batch from experiment loader
 

@@ -35,7 +35,6 @@ def load_ordered_yaml(  # noqa: N803
     Returns:
         dict: configuration
     """
-
     class OrderedLoader(Loader):
         pass
 
@@ -163,9 +162,9 @@ def list_conda_packages() -> str:
 
 
 def dump_environment(
-        experiment_config: Dict,
-        logdir: str,
-        configs_path: List[str] = None,
+    experiment_config: Dict,
+    logdir: str,
+    configs_path: List[str] = None,
 ) -> None:
     """
     Saves config, environment variables and package list in JSON into logdir

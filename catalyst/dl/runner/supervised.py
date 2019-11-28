@@ -25,12 +25,12 @@ class SupervisedRunner(Runner):
     _default_experiment = SupervisedExperiment
 
     def __init__(
-            self,
-            model: Model = None,
-            device: Device = None,
-            input_key: str = "features",
-            output_key: str = "logits",
-            input_target_key: str = "targets",
+        self,
+        model: Model = None,
+        device: Device = None,
+        input_key: str = "features",
+        output_key: str = "logits",
+        input_target_key: str = "targets",
     ):
         """
         Args:
@@ -103,26 +103,26 @@ class SupervisedRunner(Runner):
         return output
 
     def train(
-            self,
-            model: Model,
-            criterion: Criterion,
-            optimizer: Optimizer,
-            loaders: "OrderedDict[str, DataLoader]",
-            logdir: str,
-            callbacks: "Union[List[Callback], "
-                       "OrderedDict[str, Callback]]" = None,
-            scheduler: Scheduler = None,
-            resume: str = None,
-            num_epochs: int = 1,
-            valid_loader: str = "valid",
-            main_metric: str = "loss",
-            minimize_metric: bool = True,
-            verbose: bool = False,
-            state_kwargs: Dict = None,
-            checkpoint_data: Dict = None,
-            fp16: Union[Dict, bool] = None,
-            monitoring_params: Dict = None,
-            check: bool = False,
+        self,
+        model: Model,
+        criterion: Criterion,
+        optimizer: Optimizer,
+        loaders: "OrderedDict[str, DataLoader]",
+        logdir: str,
+        callbacks: "Union[List[Callback], "
+        "OrderedDict[str, Callback]]" = None,
+        scheduler: Scheduler = None,
+        resume: str = None,
+        num_epochs: int = 1,
+        valid_loader: str = "valid",
+        main_metric: str = "loss",
+        minimize_metric: bool = True,
+        verbose: bool = False,
+        state_kwargs: Dict = None,
+        checkpoint_data: Dict = None,
+        fp16: Union[Dict, bool] = None,
+        monitoring_params: Dict = None,
+        check: bool = False,
     ) -> None:
         """
         Starts the training process of the model.
@@ -163,8 +163,8 @@ class SupervisedRunner(Runner):
         if len(loaders) == 1:
             valid_loader = list(loaders.keys())[0]
             logger.warning(
-                "Attention, there is only one data loader - "
-                + str(valid_loader)
+                "Attention, there is only one data loader - " +
+                str(valid_loader)
             )
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
@@ -174,10 +174,12 @@ class SupervisedRunner(Runner):
 
         if resume is not None:
             callbacks = utils.process_callbacks(callbacks)
-            checkpoint_callback_flag = any([
-                isinstance(x, CheckpointCallback)
-                for x in callbacks.values()
-            ])
+            checkpoint_callback_flag = any(
+                [
+                    isinstance(x, CheckpointCallback)
+                    for x in callbacks.values()
+                ]
+            )
             if not checkpoint_callback_flag:
                 callbacks["loader"] = CheckpointCallback(resume=resume)
             else:
@@ -205,15 +207,15 @@ class SupervisedRunner(Runner):
         self.run_experiment(experiment, check=check)
 
     def infer(
-            self,
-            model: Model,
-            loaders: "OrderedDict[str, DataLoader]",
-            callbacks: "Union[List[Callback], "
-                       "OrderedDict[str, Callback]]" = None,
-            verbose: bool = False,
-            state_kwargs: Dict = None,
-            fp16: Union[Dict, bool] = None,
-            check: bool = False,
+        self,
+        model: Model,
+        loaders: "OrderedDict[str, DataLoader]",
+        callbacks: "Union[List[Callback], "
+        "OrderedDict[str, Callback]]" = None,
+        verbose: bool = False,
+        state_kwargs: Dict = None,
+        fp16: Union[Dict, bool] = None,
+        check: bool = False,
     ) -> None:
         """
         Makes the inference on the model.
@@ -250,14 +252,14 @@ class SupervisedRunner(Runner):
         self.run_experiment(experiment, check=check)
 
     def predict_loader(
-            self,
-            model: Model,
-            loader: DataLoader,
-            resume: str = None,
-            verbose: bool = False,
-            state_kwargs: Dict = None,
-            fp16: Union[Dict, bool] = None,
-            check: bool = False,
+        self,
+        model: Model,
+        loader: DataLoader,
+        resume: str = None,
+        verbose: bool = False,
+        state_kwargs: Dict = None,
+        fp16: Union[Dict, bool] = None,
+        check: bool = False,
     ) -> Any:
         """
         Makes a prediction on the whole loader with the specified model.
@@ -299,17 +301,17 @@ class SupervisedRunner(Runner):
         return output
 
     def trace(
-            self,
-            model: Model = None,
-            batch=None,
-            logdir: str = None,
-            loader: DataLoader = None,
-            method_name: str = "forward",
-            mode: str = "eval",
-            requires_grad: bool = False,
-            fp16: Union[Dict, bool] = None,
-            device: Device = "cpu",
-            predict_params: dict = None,
+        self,
+        model: Model = None,
+        batch=None,
+        logdir: str = None,
+        loader: DataLoader = None,
+        method_name: str = "forward",
+        mode: str = "eval",
+        requires_grad: bool = False,
+        fp16: Union[Dict, bool] = None,
+        device: Device = "cpu",
+        predict_params: dict = None,
     ) -> ScriptModule:
         """
         Traces model using Torch Jit

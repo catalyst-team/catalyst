@@ -2,6 +2,7 @@
 # isort:skip_file
 
 import os
+
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
 
@@ -12,6 +13,7 @@ import multiprocessing as mp  # noqa E402
 import time  # noqa E402
 
 import torch  # noqa E402
+
 torch.set_num_threads(1)
 
 from catalyst.rl.core import (  # noqa E402
@@ -59,15 +61,12 @@ def build_args(parser):
     parser.add_argument("--sampler-id", type=int, default=0)
 
     boolean_flag(
-        parser, "deterministic",
+        parser,
+        "deterministic",
         default=None,
         help="Deterministic mode if running in CuDNN backend"
     )
-    boolean_flag(
-        parser, "benchmark",
-        default=None,
-        help="Use CuDNN benchmark"
-    )
+    boolean_flag(parser, "benchmark", default=None, help="Use CuDNN benchmark")
 
     return parser
 
@@ -80,19 +79,19 @@ def parse_args():
 
 
 def run_sampler(
-    *,
-    config,
-    logdir,
-    algorithm_fn,
-    environment_fn,
-    visualize,
-    mode,
-    seed=42,
-    id=None,
-    resume=None,
-    db=True,
-    exploration_power=1.0,
-    sync_epoch=False
+        *,
+        config,
+        logdir,
+        algorithm_fn,
+        environment_fn,
+        visualize,
+        mode,
+        seed=42,
+        id=None,
+        resume=None,
+        db=True,
+        exploration_power=1.0,
+        sync_epoch=False
 ):
     config_ = copy.deepcopy(config)
     id = 0 if id is None else id
@@ -179,12 +178,10 @@ def main(args, unknown_args):
     algorithm_name = config["algorithm"].pop("algorithm")
 
     if algorithm_name in OFFPOLICY_ALGORITHMS_NAMES:
-        # noqa: N806
-        ALGORITHMS = OFFPOLICY_ALGORITHMS
+        ALGORITHMS = OFFPOLICY_ALGORITHMS  # noqa: N806
         sync_epoch = False
     elif algorithm_name in ONPOLICY_ALGORITHMS_NAMES:
-        # noqa: N806
-        ALGORITHMS = ONPOLICY_ALGORITHMS
+        ALGORITHMS = ONPOLICY_ALGORITHMS  # noqa: N806
         sync_epoch = True
     else:
         raise NotImplementedError()

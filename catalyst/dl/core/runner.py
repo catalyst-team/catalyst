@@ -48,7 +48,8 @@ class Runner(ABC):
         return res
 
     def _get_experiment_components(
-        self, stage: str = None
+        self,
+        stage: str = None
     ) -> Tuple[Model, Criterion, Optimizer, Scheduler, Device]:
         """
         Inner method for children's classes for model specific initialization.
@@ -140,9 +141,9 @@ class Runner(ABC):
         if isinstance(value, nn.Module):
             model = value
         elif isinstance(value, dict):
-            values_are_models = all([
-                isinstance(v, nn.Module) for v in value.values()
-            ])
+            values_are_models = all(
+                [isinstance(v, nn.Module) for v in value.values()]
+            )
             if not values_are_models:
                 raise TypeError(
                     "Invalid dict value type, must be `torch.nn.Module`"
@@ -201,11 +202,8 @@ class Runner(ABC):
         """
         pass
 
-    def predict_batch(
-        self,
-        batch: Mapping[str, Any],
-        **kwargs
-    ) -> Mapping[str, Any]:
+    def predict_batch(self, batch: Mapping[str, Any],
+                      **kwargs) -> Mapping[str, Any]:
         """
         Run model for a batch of elements
         WARN: You should not override this method. If you need specific model
@@ -274,9 +272,7 @@ class Runner(ABC):
             self.state.loader_len = len(loader)
             self.state.need_backward = loader_name.startswith("train")
             utils.maybe_recursive_call(
-                self.model,
-                "train",
-                mode=self.state.need_backward
+                self.model, "train", mode=self.state.need_backward
             )
 
             if isinstance(loader.sampler, DistributedSampler) \
@@ -296,16 +292,20 @@ class Runner(ABC):
         loaders = self.experiment.get_loaders(stage)
         callbacks = self.experiment.get_callbacks(stage)
         loggers = utils.process_callbacks(
-            OrderedDict([
-                (k, v) for k, v in callbacks.items()
-                if isinstance(v, LoggerCallback)
-            ])
+            OrderedDict(
+                [
+                    (k, v) for k, v in callbacks.items()
+                    if isinstance(v, LoggerCallback)
+                ]
+            )
         )
         callbacks = utils.process_callbacks(
-            OrderedDict([
-                (k, v) for k, v in callbacks.items()
-                if not isinstance(v, LoggerCallback)
-            ])
+            OrderedDict(
+                [
+                    (k, v) for k, v in callbacks.items()
+                    if not isinstance(v, LoggerCallback)
+                ]
+            )
         )
         self.state.loggers = loggers
         self.loggers = loggers

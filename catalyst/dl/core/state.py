@@ -14,7 +14,6 @@ class RunnerState(FrozenClass):
     """
     An object that is used to pass internal state during train/valid/infer.
     """
-
     def __init__(
         self,
         *,

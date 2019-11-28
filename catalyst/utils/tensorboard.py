@@ -51,7 +51,6 @@ class EventsFileReader(Iterable):
     """
     An iterator over a Tensorboard events file
     """
-
     def __init__(self, events_file: BinaryIO):
         """
         Initialize an iterator over an events file
@@ -180,10 +179,10 @@ class SummaryReader(Iterable):
     }
 
     def __init__(
-            self,
-            logdir: Union[str, Path],
-            tag_filter: Optional[Iterable] = None,
-            types: Iterable = ("scalar",)
+        self,
+        logdir: Union[str, Path],
+        tag_filter: Optional[Iterable] = None,
+        types: Iterable = ("scalar", )
     ):
         """
         Initalize new summary reader
@@ -204,7 +203,7 @@ class SummaryReader(Iterable):
         if self._types is None:
             return
         if not all(
-                type_name in self._DECODERS.keys() for type_name in self._types
+            type_name in self._DECODERS.keys() for type_name in self._types
         ):
             raise ValueError("Invalid type name")
 
@@ -263,7 +262,9 @@ class SummaryReader(Iterable):
         for file_path in log_files:
             with open(file_path, "rb") as f:
                 reader = EventsFileReader(f)
-                item = (item for item in self._decode_events(reader)
-                        if item is not None and self._check_tag(
-                    item.tag) and item.type in self._types)
+                item = (
+                    item for item in self._decode_events(reader)
+                    if item is not None and self._check_tag(item.tag)
+                    and item.type in self._types
+                )
                 yield from item

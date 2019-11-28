@@ -23,11 +23,10 @@ class Registry(collections.MutableMapping):
     """
     Universal class allowing to add and access various factories by name
     """
-
     def __init__(
-            self,
-            default_name_key: str,
-            default_meta_factory: MetaFactory = _default_meta_factory
+        self,
+        default_name_key: str,
+        default_meta_factory: MetaFactory = _default_meta_factory
     ):
         """
         Args:
@@ -63,11 +62,11 @@ class Registry(collections.MutableMapping):
             self._late_add_callbacks = []
 
     def add(
-            self,
-            factory: Factory = None,
-            *factories: Factory,
-            name: str = None,
-            **named_factories: Factory
+        self,
+        factory: Factory = None,
+        *factories: Factory,
+        name: str = None,
+        **named_factories: Factory
     ) -> Factory:
         """
         Adds factory to registry with it's ``__name__`` attribute or provided
@@ -200,9 +199,10 @@ class Registry(collections.MutableMapping):
                 f"Factory '{name}' call failed: args={args} kwargs={kwargs}"
             ) from e
 
-    def get_from_params(
-            self, *, meta_factory=None, **kwargs
-    ) -> Union[Any, Tuple[Any, Mapping[str, Any]]]:
+    def get_from_params(self,
+                        *,
+                        meta_factory=None,
+                        **kwargs) -> Union[Any, Tuple[Any, Mapping[str, Any]]]:
         """
         Creates instance based in configuration dict with ``instantiation_fn``.
         If ``config[name_key]`` is None, None is returned.

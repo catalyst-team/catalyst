@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Mapping, Union  # isort:skip noqa: F401
+from typing import Any, Dict, List, Mapping, Union  # noqa: F401 isort:skip
 from collections import OrderedDict
 from copy import deepcopy
 
@@ -16,7 +16,7 @@ from catalyst.dl.callbacks import (
     PhaseWrapperCallback, RaiseExceptionCallback, SchedulerCallback,
     TensorboardLogger, VerboseLogger
 )
-from catalyst.dl.core import Callback, Experiment
+from catalyst.dl.core import Callback, Experiment  # noqa: F401
 from catalyst.dl.registry import (
     CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SCHEDULERS
 )
@@ -180,10 +180,7 @@ class ConfigExperiment(Experiment):
         return criterion
 
     def _get_optimizer(
-            self,
-            stage: str,
-            model: Union[Model, Dict[str, Model]],
-            **params
+        self, stage: str, model: Union[Model, Dict[str, Model]], **params
     ) -> Optimizer:
         # @TODO 1: refactoring; this method is too long
         # @TODO 2: load state dicts for schedulers & criteria
@@ -265,9 +262,7 @@ class ConfigExperiment(Experiment):
         return optimizer
 
     def get_optimizer(
-            self,
-            stage: str,
-            model: Union[Model, Dict[str, Model]]
+        self, stage: str, model: Union[Model, Dict[str, Model]]
     ) -> Union[Optimizer, Dict[str, Optimizer]]:
         """
         Returns the optimizer for a given stage
@@ -381,8 +376,8 @@ class ConfigExperiment(Experiment):
                     )
 
             loader_params["shuffle"] = (
-                    name.startswith("train")
-                    and loader_params.get("sampler") is None
+                name.startswith("train")
+                and loader_params.get("sampler") is None
             )
 
             if "batch_sampler" in loader_params:

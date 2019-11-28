@@ -5,10 +5,11 @@ class Augmentor:
     """
     Augmentation abstraction to use with data dictionaries.
     """
-
     def __init__(
-            self, dict_key: str, augment_fn: Callable,
-            default_kwargs: Dict = None
+        self,
+        dict_key: str,
+        augment_fn: Callable,
+        default_kwargs: Dict = None
     ):
         """
         Args:
@@ -28,7 +29,6 @@ class Augmentor:
 
 class AugmentorKeys:
     """Augmentation abstraction to match input and augmentations keys"""
-
     def __init__(self, dict2fn_dict: Dict[str, str], augment_fn: Callable):
         """
         :param dict2fn_dict: keys matching dict {input_key: augment_fn_key}

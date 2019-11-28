@@ -1,4 +1,4 @@
-from typing import Dict, Union  # isort:skip noqa: F401
+from typing import Dict, Union  # noqa: F401 isort:skip
 import argparse
 from argparse import ArgumentParser
 from pathlib import Path
@@ -15,15 +15,15 @@ from catalyst.utils.typing import Device
 
 
 def trace_model_from_checkpoint(
-    logdir: Path,
-    method_name: str,
-    checkpoint_name: str,
-    stage: str = None,
-    loader: Union[str, int] = None,
-    mode: str = "eval",
-    requires_grad: bool = False,
-    opt_level: str = None,
-    device: Device = "cpu",
+        logdir: Path,
+        method_name: str,
+        checkpoint_name: str,
+        stage: str = None,
+        loader: Union[str, int] = None,
+        mode: str = "eval",
+        requires_grad: bool = False,
+        opt_level: str = None,
+        device: Device = "cpu",
 ):
     """
     Traces model using created experiment and runner.
@@ -54,9 +54,8 @@ def trace_model_from_checkpoint(
     expdir = Path(logdir) / "code" / config_expdir.name
 
     print("Import experiment and runner from logdir")
-    # noqa: N806
-    ExperimentType, RunnerType = import_experiment_and_runner(expdir)
-    experiment: Experiment = ExperimentType(config)
+    ExpType, RunType = import_experiment_and_runner(expdir)  # noqa: N806
+    experiment: Experiment = ExpType(config)
 
     print(f"Load model state from checkpoints/{checkpoint_name}.pth")
     if stage is None:
@@ -66,7 +65,7 @@ def trace_model_from_checkpoint(
     checkpoint = utils.load_checkpoint(checkpoint_path)
     utils.unpack_checkpoint(checkpoint, model=model)
 
-    runner: RunnerType = RunnerType()
+    runner: RunType = RunType()
     runner.model, runner.device = model, device
 
     if loader is None:
@@ -93,18 +92,13 @@ def build_args(parser: ArgumentParser):
     """
     Builds the command line parameters
     """
+    parser.add_argument("logdir", type=Path, help="Path to model logdir")
     parser.add_argument(
-        "logdir",
-        type=Path,
-        help="Path to model logdir"
+        "--method", "-m", default="forward", help="Model method to trace"
     )
     parser.add_argument(
-        "--method", "-m",
-        default="forward",
-        help="Model method to trace"
-    )
-    parser.add_argument(
-        "--checkpoint", "-c",
+        "--checkpoint",
+        "-c",
         default="best",
         help="Checkpoint's name to trace",
         metavar="CHECKPOINT_NAME"
@@ -187,7 +181,8 @@ def main(args, _):
         device = "cpu"
 
     traced = trace_model_from_checkpoint(
-        logdir, method_name,
+        logdir,
+        method_name,
         checkpoint_name=checkpoint_name,
         stage=args.stage,
         loader=args.loader,

@@ -18,7 +18,6 @@ class VerboseLogger(LoggerCallback):
     """
     Logs the params into console
     """
-
     def __init__(
         self,
         always_show: List[str] = None,
@@ -101,7 +100,6 @@ class ConsoleLogger(LoggerCallback):
     """
     Logger callback, translates ``state.metrics`` to console and text file
     """
-
     def __init__(self):
         """Init ``ConsoleLogger``"""
         super().__init__()
@@ -156,7 +154,6 @@ class TensorboardLogger(LoggerCallback):
     """
     Logger callback, translates ``state.metrics`` to tensorboard
     """
-
     def __init__(
         self,
         metric_names: List[str] = None,
@@ -234,7 +231,6 @@ class TelegramLogger(LoggerCallback):
     """
     Logger callback, translates ``state.metrics`` to telegram channel
     """
-
     def __init__(
         self,
         token: str = None,

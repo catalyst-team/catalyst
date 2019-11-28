@@ -56,9 +56,7 @@ def process_components(
             utils.assert_fp16_available()
             from apex import amp
 
-            amp_result = amp.initialize(
-                model, optimizer, **distributed_params
-            )
+            amp_result = amp.initialize(model, optimizer, **distributed_params)
             if optimizer is not None:
                 model, optimizer = amp_result
             else:
@@ -149,7 +147,4 @@ def get_loader(
     return loader
 
 
-__all__ = [
-    "process_components",
-    "get_loader"
-]
+__all__ = ["process_components", "get_loader"]
