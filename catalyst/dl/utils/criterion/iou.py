@@ -8,6 +8,8 @@ from catalyst.utils import get_activation_fn
 def iou(
     outputs: torch.Tensor,
     targets: torch.Tensor,
+    # values are discarded, only None check 
+    # used for compatibility with MultiMetricCallback
     classes: List[str] = None,
     eps: float = 1e-7,
     threshold: float = None,
