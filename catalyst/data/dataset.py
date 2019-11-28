@@ -12,11 +12,12 @@ class ListDataset(Dataset):
     """
     General purpose dataset class with several data sources `list_data`
     """
+
     def __init__(
-        self,
-        list_data: List[Dict],
-        open_fn: Callable,
-        dict_transform: Callable = None,
+            self,
+            list_data: List[Dict],
+            open_fn: Callable,
+            dict_transform: Callable = None,
     ):
         """
         Args:
@@ -62,6 +63,7 @@ class MergeDataset(Dataset):
     """
     Abstraction to merge several datasets into one dataset.
     """
+
     def __init__(self, *datasets: Dataset, dict_transform: Callable = None):
         """
         Args:
@@ -99,9 +101,10 @@ class PathsDataset(ListDataset):
     """
     Dataset that derives features and targets from samples filesystem paths.
     """
+
     def __init__(
-        self, filenames: List[_Path], open_fn: Callable[[dict], dict],
-        label_fn: Callable[[_Path], Any], **list_dataset_params
+            self, filenames: List[_Path], open_fn: Callable[[dict], dict],
+            label_fn: Callable[[_Path], Any], **list_dataset_params
     ):
         """
          Args:
