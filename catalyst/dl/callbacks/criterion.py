@@ -120,7 +120,7 @@ class CriterionAggregatorCallback(Callback):
         """
         Args:
             prefix (str): new key for aggregated loss.
-            loss_keys (Union[str, List[str], Dict[str, float]]): If not empty, 
+            loss_keys (Union[str, List[str], Dict[str, float]]): If not empty,
                 it aggregates only the values from the loss by these keys.
                 for ``weighted_sum`` aggregation it must be a Dict[str, float].
             loss_aggregate_fn (str): function for aggregation.
