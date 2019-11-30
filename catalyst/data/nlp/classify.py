@@ -42,6 +42,7 @@ class TextClassificationDataset(Dataset):
         # special tokens for transformers
         # in the simplest case a [CLS] token is added in the beginning
         # and [SEP] token is added in the end of a piece of text
+        # [CLS] <indexes text tokens> [SEP] .. <[PAD]>
         self.sep_vid = self.tokenizer.vocab["[SEP]"]
         self.cls_vid = self.tokenizer.vocab["[CLS]"]
         self.pad_vid = self.tokenizer.vocab["[PAD]"]

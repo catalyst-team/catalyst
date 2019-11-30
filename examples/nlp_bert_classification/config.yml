@@ -3,15 +3,6 @@ model_params:
   pretrained_model_name: distilbert-base-uncased
   num_classes: 6
 
-dataset_params:
-  path_to_data: './nlp_bert_classification/input'
-  train_filename: "train.csv"
-  validation_filename: "valid.csv"
-  test_filename: "test.csv"
-  text_field: "text"
-  label_field: "label"
-  max_sequence_length: 512
-
 args:
   expdir: 'nlp_bert_classification'
   baselogdir: './logs/'
@@ -20,6 +11,13 @@ stages:
   data_params:
     batch_size: 24
     num_workers: 0
+    path_to_data: './nlp_bert_classification/input'
+    train_filename: "train.csv"
+    validation_filename: "valid.csv"
+    test_filename: "test.csv"
+    text_field: "text"
+    label_field: "label"
+    max_sequence_length: 512
 
   state_params:
     main_metric: &reduce_metric loss

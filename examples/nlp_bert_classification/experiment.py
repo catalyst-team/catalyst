@@ -14,33 +14,36 @@ class Experiment(ConfigExperiment):
     def get_transforms(self, stage: str = None, mode: str = None):
         return []
 
-    def get_datasets(self, stage: str, **kwargs):
+    # noinspection PyMethodOverriding
+    def get_datasets(self, stage: str, path_to_data,
+                     train_filename, validation_filename,
+                     test_filename, max_sequence_length,
+                     **kwargs):
         datasets = OrderedDict()
-        
-        path_to_data = Path(self.config['dataset_params']['path_to_data'])
-        train_df = pd.read_csv(path_to_data / self.config['dataset_params']['train_filename'])
-        valid_df = pd.read_csv(path_to_data / self.config['dataset_params']['validation_filename'])
-        test_df = pd.read_csv(path_to_data / self.config['dataset_params']['test_filename'])
 
-        max_seq_length = self.config['dataset_params']['max_sequence_length']
+        path_to_data = Path(path_to_data)
+
+        train_df = pd.read_csv(path_to_data / train_filename)
+        valid_df = pd.read_csv(path_to_data / validation_filename)
+        # test_df = pd.read_csv(path_to_data / test_filename)
 
         train_dataset = TextClassificationDataset(
             texts=train_df['text'],
             labels=train_df['label'],
             label_dict=None,
-            max_seq_length=max_seq_length)
+            max_seq_length=max_sequence_length)
 
         valid_dataset = TextClassificationDataset(
             texts=valid_df['text'],
             labels=valid_df['label'],
             label_dict=train_dataset.label_dict,
-            max_seq_length=max_seq_length)
+            max_seq_length=max_sequence_length)
 
-        test_dataset = TextClassificationDataset(
-            texts=test_df['text'],
-            labels=None,
-            label_dict=None,
-            max_seq_length=max_seq_length)
+        # test_dataset = TextClassificationDataset(
+        #     texts=test_df['text'],
+        #     labels=None,
+        #     label_dict=None,
+        #     max_seq_length=max_seq_length)
 
         datasets["train"] = train_dataset
         datasets["valid"] = valid_dataset
