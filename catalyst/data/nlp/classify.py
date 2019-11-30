@@ -19,7 +19,7 @@ class TextClassificationDataset(Dataset):
         :param label_dict: a dictionary mapping class names to class ids, to be passed
                            to the validation data (optional)
         :param max_seq_length: maximal sequence length, texts will be stripped
-        :param model_name: transformer model name, we need here to perform
+        :param model_name: transformer model name, we need it here to perform
                            appropriate tokenization
 
         """

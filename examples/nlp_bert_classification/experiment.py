@@ -25,7 +25,6 @@ class Experiment(ConfigExperiment):
 
         train_df = pd.read_csv(path_to_data / train_filename)
         valid_df = pd.read_csv(path_to_data / validation_filename)
-        # test_df = pd.read_csv(path_to_data / test_filename)
 
         train_dataset = TextClassificationDataset(
             texts=train_df['text'],
@@ -39,15 +38,8 @@ class Experiment(ConfigExperiment):
             label_dict=train_dataset.label_dict,
             max_seq_length=max_sequence_length)
 
-        # test_dataset = TextClassificationDataset(
-        #     texts=test_df['text'],
-        #     labels=None,
-        #     label_dict=None,
-        #     max_seq_length=max_seq_length)
-
         datasets["train"] = train_dataset
         datasets["valid"] = valid_dataset
-        #datasets["test"] = test_dataset
 
         return datasets
 

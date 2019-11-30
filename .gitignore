@@ -117,6 +117,8 @@ logs/
 data/
 !catalyst/data
 examples/data/
+# Examples - mock data
+!examples/nlp_bert_classification/input/*.csv
 examples/logs/
 notebooks/
 
@@ -134,9 +136,5 @@ _nogit*
 .history
 
 # End of https://www.gitignore.io/api/visualstudiocode
-
-# Examples
-# Mock data
-!examples/nlp_bert_classification/input/*.csv
 
 

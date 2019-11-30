@@ -14,7 +14,6 @@ stages:
     path_to_data: './nlp_bert_classification/input'
     train_filename: "train.csv"
     validation_filename: "valid.csv"
-    test_filename: "test.csv"
     text_field: "text"
     label_field: "label"
     max_sequence_length: 512

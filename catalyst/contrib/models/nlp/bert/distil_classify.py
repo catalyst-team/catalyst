@@ -3,6 +3,9 @@ from transformers import AutoModel, AutoConfig
 
 
 class DistilBertForSequenceClassification(nn.Module):
+    """
+    Simplified version of the same class by HuggingFace
+    """
     def __init__(self, pretrained_model_name, num_classes=None):
         super().__init__()
 
@@ -20,7 +23,10 @@ class DistilBertForSequenceClassification(nn.Module):
         distilbert_output = self.distilbert(input_ids=features,
                                             attention_mask=mask,
                                             head_mask=head_mask)
+        # we only need the hidden state here and don't need
+        # transformer output, so index 0
         hidden_state = distilbert_output[0]  # (bs, seq_len, dim)
+        # we take embeddings from the [CLS] token, so again index 0
         pooled_output = hidden_state[:, 0]  # (bs, dim)
         pooled_output = self.pre_classifier(pooled_output)  # (bs, dim)
         pooled_output = nn.ReLU()(pooled_output)  # (bs, dim)
