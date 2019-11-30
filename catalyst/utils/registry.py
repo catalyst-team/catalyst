@@ -15,7 +15,9 @@ def _default_meta_factory(factory: Factory, args: Tuple, kwargs: Mapping):
 
 
 class RegistryException(Exception):
+    """Exception class for all registry errors"""
     def __init__(self, message):
+        """Init"""
         super().__init__(message)
 
 
@@ -168,6 +170,9 @@ class Registry(collections.MutableMapping):
         return res
 
     def get_if_str(self, obj: Union[str, Factory]):
+        """
+        Returns object from the registry if ``obj`` type is string
+        """
         if type(obj) is str:
             return self.get(obj)
         return obj
@@ -199,9 +204,10 @@ class Registry(collections.MutableMapping):
                 f"Factory '{name}' call failed: args={args} kwargs={kwargs}"
             ) from e
 
-    def get_from_params(
-        self, *, meta_factory=None, **kwargs
-    ) -> Union[Any, Tuple[Any, Mapping[str, Any]]]:
+    def get_from_params(self,
+                        *,
+                        meta_factory=None,
+                        **kwargs) -> Union[Any, Tuple[Any, Mapping[str, Any]]]:
         """
         Creates instance based in configuration dict with ``instantiation_fn``.
         If ``config[name_key]`` is None, None is returned.
@@ -236,31 +242,39 @@ class Registry(collections.MutableMapping):
         return len(self._factories)
 
     def __str__(self) -> str:
+        """Returns a string of registered items"""
         return self.all().__str__()
 
     def __repr__(self) -> str:
+        """Returns a string representation of registered items"""
         return self.all().__str__()
 
     # mapping methods
     def __len__(self) -> int:
+        """Returns length of registered items"""
         self._do_late_add()
         return self.len()
 
     def __getitem__(self, name: str) -> Optional[Factory]:
+        """Returns a value from the registry by name"""
         return self.get(name)
 
     def __iter__(self) -> Iterator[str]:
+        """Iterates over all registered items"""
         self._do_late_add()
         return self._factories.__iter__()
 
     def __contains__(self, name: str):
+        """Check if a particular name was registered"""
         self._do_late_add()
         return self._factories.__contains__(name)
 
     def __setitem__(self, name: str, factory: Factory) -> None:
+        """Add a new factory by giving name"""
         self.add(factory, name=name)
 
     def __delitem__(self, name: str) -> None:
+        """Removes a factory by giving name"""
         self._factories.pop(name)
 
 

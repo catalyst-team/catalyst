@@ -22,12 +22,14 @@ def _nonlinearity2name(nonlinearity):
     return nonlinearity
 
 
-def create_optimal_inner_init(
-    nonlinearity: nn.Module, **kwargs
-) -> Callable[[nn.Module], None]:
+def create_optimal_inner_init(nonlinearity: nn.Module,
+                              **kwargs) -> Callable[[nn.Module], None]:
     """
     Create initializer for inner layers
     based on their activation function (nonlinearity).
+
+    Args:
+        nonlinearity: non-linear activation
     """
     nonlinearity: str = _nonlinearity2name(nonlinearity)
     assert isinstance(nonlinearity, str)
@@ -63,24 +65,36 @@ def outer_init(layer: nn.Module) -> None:
 
 
 def constant_init(module, val, bias=0):
+    """
+    Initialize the module with constant value
+    """
     nn.init.constant_(module.weight, val)
     if hasattr(module, "bias") and module.bias is not None:
         nn.init.constant_(module.bias, bias)
 
 
 def uniform_init(module, a=0, b=1, bias=0):
+    """
+    Initialize the module with uniform distribution
+    """
     nn.init.uniform_(module.weight, a, b)
     if hasattr(module, "bias") and module.bias is not None:
         nn.init.constant_(module.bias, bias)
 
 
 def normal_init(module, mean=0, std=1, bias=0):
+    """
+    Initialize the module with normal distribution
+    """
     nn.init.normal_(module.weight, mean, std)
     if hasattr(module, "bias") and module.bias is not None:
         nn.init.constant_(module.bias, bias)
 
 
 def xavier_init(module, gain=1, bias=0, distribution="normal"):
+    """
+    Initialize the module with xavier initialization
+    """
     assert distribution in ["uniform", "normal"]
     if distribution == "uniform":
         nn.init.xavier_uniform_(module.weight, gain=gain)
@@ -91,8 +105,15 @@ def xavier_init(module, gain=1, bias=0, distribution="normal"):
 
 
 def kaiming_init(
-    module, mode="fan_out", nonlinearity="relu", bias=0, distribution="normal"
+    module,
+    mode="fan_out",
+    nonlinearity="relu",
+    bias=0,
+    distribution="normal"
 ):
+    """
+    Initialize the module with he initialization
+    """
     assert distribution in ["uniform", "normal"]
     if distribution == "uniform":
         nn.init.kaiming_uniform_(

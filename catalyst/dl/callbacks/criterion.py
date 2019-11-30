@@ -165,7 +165,7 @@ class CriterionAggregatorCallback(Callback):
             result = loss
         elif isinstance(loss, dict):
             if self.loss_keys is not None:
-                if self.loss_aggregate_name:
+                if self.loss_aggregate_name == "weighted_sum":
                     result = [
                         loss[key] * value
                         for key, value in self.loss_keys.items()

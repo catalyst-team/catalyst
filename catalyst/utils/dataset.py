@@ -53,9 +53,8 @@ def create_dataset(
     return dataset
 
 
-def split_dataset(
-    dataset: pd.DataFrame, **train_test_split_args
-) -> Tuple[DictDataset, DictDataset]:
+def split_dataset(dataset: pd.DataFrame,
+                  **train_test_split_args) -> Tuple[DictDataset, DictDataset]:
     """
     Split dataset in train and test parts.
 
@@ -167,7 +166,9 @@ def split_dataframe(
 
 
 def default_fold_split(
-    dataframe: pd.DataFrame, random_state: int = 42, n_folds: int = 5
+    dataframe: pd.DataFrame,
+    random_state: int = 42,
+    n_folds: int = 5
 ) -> pd.DataFrame:
     """
     Splits DataFrame into `N` folds.
@@ -316,9 +317,8 @@ def balance_classes(
     return balanced_df
 
 
-def prepare_dataset_labeling(
-    dataframe: pd.DataFrame, class_column: str
-) -> Dict[str, int]:
+def prepare_dataset_labeling(dataframe: pd.DataFrame,
+                             class_column: str) -> Dict[str, int]:
     """
     Prepares a mapping using unique values from ``class_column``
 
@@ -347,7 +347,9 @@ def prepare_dataset_labeling(
 
 
 def separate_tags(
-    dataframe: pd.DataFrame, tag_column: str = "label", tag_delim: str = "-"
+    dataframe: pd.DataFrame,
+    tag_column: str = "label",
+    tag_delim: str = "-"
 ) -> pd.DataFrame:
     """
     Separates values in ``class_column`` column
@@ -358,10 +360,10 @@ def separate_tags(
         tag_delim: delimiter to separate values
 
     Returns:
-
+        pd.DataFrame: new dataframe
     """
     df_new = []
-    for i, row in dataframe.iterrows():
+    for _, row in dataframe.iterrows():
         for class_name in row[tag_column].split(tag_delim):
             df_new.append({**row, **{tag_column: class_name}})
     df_new = pd.DataFrame(df_new)
