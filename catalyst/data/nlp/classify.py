@@ -6,6 +6,9 @@ from transformers import AutoTokenizer
 
 
 class TextClassificationDataset(Dataset):
+    """
+    Wrapper around Torch Dataset to perform text classification
+    """
     def __init__(self,
                  texts: List[str],
                  labels: List[str] = None,
@@ -13,14 +16,16 @@ class TextClassificationDataset(Dataset):
                  max_seq_length: int = 512,
                  model_name: str = 'distilbert-base-uncased'):
         """
-
-        :param texts: a list with texts to classify or to train the classifier on
-        :param labels: a list with classification labels (strings, optional)
-        :param label_dict: a dictionary mapping class names to class ids, to be passed
-                           to the validation data (optional)
-        :param max_seq_length: maximal sequence length, texts will be stripped
-        :param model_name: transformer model name, we need it here to perform
-                           appropriate tokenization
+        Args:
+            texts (List[str]): a list with texts to classify or to train the
+                classifier on
+            labels List[str]: a list with classification labels (optional)
+            label_dict (dict): a dictionary mapping class names to class ids,
+                to be passed to the validation data (optional)
+            max_seq_length (int): maximal sequence length in tokens,
+                texts will be stripped to this length
+            model_name (str): transformer model name, needed to perform
+                appropriate tokenization
 
         """
 
@@ -33,11 +38,13 @@ class TextClassificationDataset(Dataset):
             # {'class1': 0, 'class2': 1, 'class3': 2, ...}
             # using this instead of `sklearn.preprocessing.LabelEncoder`
             # no easily handle unknown target values
-            self.label_dict = dict(zip(sorted(set(labels)), range(len(set(labels)))))
+            self.label_dict = dict(zip(sorted(set(labels)),
+                                       range(len(set(labels)))))
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         # suppresses tokenizer warnings
-        logging.getLogger("transformers.tokenization_utils").setLevel(logging.FATAL)
+        logging.getLogger(
+            "transformers.tokenization_utils").setLevel(logging.FATAL)
 
         # special tokens for transformers
         # in the simplest case a [CLS] token is added in the beginning
@@ -48,9 +55,20 @@ class TextClassificationDataset(Dataset):
         self.pad_vid = self.tokenizer.vocab["[PAD]"]
 
     def __len__(self):
+        """
+        Returns:
+            int: length of the dataset
+        """
         return len(self.texts)
 
     def __getitem__(self, index) -> Mapping[str, torch.Tensor]:
+        """Gets element of the dataset
+
+        Args:
+            index (int): index of the element in the dataset
+        Returns:
+            Single element by index
+        """
 
         # encoding the text
         x = self.texts[index]
@@ -70,20 +88,23 @@ class TextClassificationDataset(Dataset):
         # dealing with attention masks - there's a 1 for each input token and
         # if the sequence is shorter that `max_seq_length` then the rest is
         # padded with zeroes. Attention mask will be passed to the model in
-        # order to compute attention scores only with input data ignoring padding
+        # order to compute attention scores only with input data
+        # ignoring padding
         mask = torch.ones_like(x_encoded, dtype=torch.int8)
         mask_pad = torch.zeros_like(pad_ids, dtype=torch.int8)
         mask = torch.cat((mask, mask_pad))
 
         output_dict = {
             "features": x_tensor,
-            'mask': mask
+            'attention_mask': mask
         }
 
         # encoding target
         if self.labels is not None:
             y = self.labels[index]
-            y_encoded = torch.Tensor([self.label_dict.get(y, -1)]).long().squeeze(0)
+            y_encoded = torch.Tensor(
+                [self.label_dict.get(y, -1)]
+            ).long().squeeze(0)
             output_dict["targets"] = y_encoded
 
         return output_dict

@@ -4,14 +4,14 @@ model_params:
   num_classes: 6
 
 args:
-  expdir: 'nlp_bert_classification'
-  baselogdir: './logs/'
+  expdir: 'distilbert_text_classification'
+  baselogdir: './logs/distilbert_text_classification'
 
 stages:
   data_params:
     batch_size: 24
     num_workers: 0
-    path_to_data: './nlp_bert_classification/input'
+    path_to_data: './distilbert_text_classification/input'
     train_filename: "train.csv"
     validation_filename: "valid.csv"
     text_field: "text"
