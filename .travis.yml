@@ -33,6 +33,9 @@ install_dl: &requirements_dl
 install_rl: &requirements_all
   pip install -r requirements/requirements.txt -r requirements/requirements-rl.txt
 
+install_nlp:
+  pip install -r requirements/requirements-nlp.txt
+
 jobs:
   include:
     - stage: Tests
@@ -49,6 +52,12 @@ jobs:
       install: *requirements_all
       script:
         - bash ./bin/tests/check_dl.sh
+
+    - stage: Examples
+      name: "Examples NLP DistilBERT"
+      install: *requirements_all
+      script:
+        - bash ./bin/tests/check_nlp.sh
 
     - stage: Examples
       name: "Examples on-policy RL – REINFORCE"
