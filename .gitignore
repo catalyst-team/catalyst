@@ -118,7 +118,7 @@ data/
 !catalyst/data
 examples/data/
 # Examples - mock data
-!examples/nlp_bert_classification/input/*.csv
+!examples/distilbert_text_classification/input/*.csv
 examples/logs/
 notebooks/
 
