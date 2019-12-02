@@ -1,5 +1,6 @@
+from transformers import AutoConfig, AutoModel
+
 import torch.nn as nn
-from transformers import AutoModel, AutoConfig
 
 
 class DistilBertForSequenceClassification(nn.Module):

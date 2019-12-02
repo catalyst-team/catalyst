@@ -1,8 +1,10 @@
-from typing import Mapping, List
 import logging
+from typing import List, Mapping
+
+from transformers import AutoTokenizer
+
 import torch
 from torch.utils.data import Dataset
-from transformers import AutoTokenizer
 
 
 class TextClassificationDataset(Dataset):

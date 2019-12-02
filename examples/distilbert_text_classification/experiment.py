@@ -1,7 +1,9 @@
-from pathlib import Path
-import pandas as pd
-from typing import Dict
 from collections import OrderedDict
+from pathlib import Path
+from typing import Dict
+
+import pandas as pd
+
 from catalyst.data.nlp.classify import TextClassificationDataset
 from catalyst.dl import ConfigExperiment
 
@@ -27,15 +29,15 @@ class Experiment(ConfigExperiment):
         valid_df = pd.read_csv(path_to_data / validation_filename)
 
         train_dataset = TextClassificationDataset(
-            texts=train_df['text'],
-            labels=train_df['label'],
+            texts=train_df["text"],
+            labels=train_df["label"],
             label_dict=None,
             max_seq_length=max_sequence_length
         )
 
         valid_dataset = TextClassificationDataset(
-            texts=valid_df['text'],
-            labels=valid_df['label'],
+            texts=valid_df["text"],
+            labels=valid_df["label"],
             label_dict=train_dataset.label_dict,
             max_seq_length=max_sequence_length
         )
