@@ -33,7 +33,7 @@ install_dl: &requirements_dl
 install_rl: &requirements_all
   pip install -r requirements/requirements.txt -r requirements/requirements-rl.txt
 
-install_nlp:
+install_nlp: &requirements_nlp
   pip install -r requirements/requirements-nlp.txt
 
 jobs:
@@ -55,7 +55,9 @@ jobs:
 
     - stage: Examples
       name: "Examples NLP DistilBERT"
-      install: *requirements_all
+      install:
+       - *requirements_all
+       - *requirements_nlp
       script:
         - bash ./bin/tests/check_nlp.sh
 
