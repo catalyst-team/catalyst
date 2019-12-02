@@ -31,7 +31,7 @@ class TextClassificationDatasetTests(unittest.TestCase):
     def test_label_dict(self):
         dataset = TextClassificationDataset(texts, labels)
         label_dict = dataset.label_dict
-        self.assertEqual({'negative': 0, 'positive': 1}, label_dict)
+        self.assertEqual({"negative": 0, "positive": 1}, label_dict)
 
 
 __all__ = ["TextClassificationDatasetTests"]
