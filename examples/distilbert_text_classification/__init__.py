@@ -7,7 +7,6 @@ from catalyst.dl import registry
 from .experiment import Experiment
 from catalyst.contrib.runner.nlp.bert_supervised import BertSupervisedRunner as Runner
 
-
 registry.Model(DistilBertForSequenceClassification)
 registry.Optimizer(Adam)
 registry.Scheduler(ReduceLROnPlateau)

@@ -15,10 +15,10 @@ class Experiment(ConfigExperiment):
         return []
 
     # noinspection PyMethodOverriding
-    def get_datasets(self, stage: str, path_to_data,
-                     train_filename, validation_filename,
-                     max_sequence_length,
-                     **kwargs):
+    def get_datasets(
+        self, stage: str, path_to_data, train_filename, validation_filename,
+        max_sequence_length, **kwargs
+    ):
         datasets = OrderedDict()
 
         path_to_data = Path(path_to_data)
@@ -30,13 +30,15 @@ class Experiment(ConfigExperiment):
             texts=train_df['text'],
             labels=train_df['label'],
             label_dict=None,
-            max_seq_length=max_sequence_length)
+            max_seq_length=max_sequence_length
+        )
 
         valid_dataset = TextClassificationDataset(
             texts=valid_df['text'],
             labels=valid_df['label'],
             label_dict=train_dataset.label_dict,
-            max_seq_length=max_sequence_length)
+            max_seq_length=max_sequence_length
+        )
 
         datasets["train"] = train_dataset
         datasets["valid"] = valid_dataset
