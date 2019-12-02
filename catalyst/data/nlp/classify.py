@@ -16,7 +16,7 @@ class TextClassificationDataset(Dataset):
                  labels: List[str] = None,
                  label_dict: Mapping[str, int] = None,
                  max_seq_length: int = 512,
-                 model_name: str = 'distilbert-base-uncased'):
+                 model_name: str = "distilbert-base-uncased"):
         """
         Args:
             texts (List[str]): a list with texts to classify or to train the
@@ -98,7 +98,7 @@ class TextClassificationDataset(Dataset):
 
         output_dict = {
             "features": x_tensor,
-            'attention_mask': mask
+            "attention_mask": mask
         }
 
         # encoding target
