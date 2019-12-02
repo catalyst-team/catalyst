@@ -17,7 +17,7 @@ class Experiment(ConfigExperiment):
     # noinspection PyMethodOverriding
     def get_datasets(self, stage: str, path_to_data,
                      train_filename, validation_filename,
-                     test_filename, max_sequence_length,
+                     max_sequence_length,
                      **kwargs):
         datasets = OrderedDict()
 
@@ -42,4 +42,3 @@ class Experiment(ConfigExperiment):
         datasets["valid"] = valid_dataset
 
         return datasets
-
