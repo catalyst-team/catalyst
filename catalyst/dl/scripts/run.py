@@ -4,6 +4,8 @@ import argparse
 from argparse import ArgumentParser
 from pathlib import Path
 
+import safitty
+
 from catalyst.dl.utils.scripts import import_experiment_and_runner
 from catalyst.utils import boolean_flag, prepare_cudnn, set_global_seed
 from catalyst.utils.config import dump_environment, parse_args_uargs
@@ -45,8 +47,8 @@ def build_args(parser: ArgumentParser):
         help="path to latest checkpoint"
     )
     parser.add_argument("--seed", type=int, default=42)
-    boolean_flag(parser, "verbose", default=False)
-    boolean_flag(parser, "check", default=False)
+    boolean_flag(parser, "verbose", default=None)
+    boolean_flag(parser, "check", default=None)
     boolean_flag(
         parser, "deterministic",
         default=None,
@@ -82,7 +84,8 @@ def main(args, unknown_args):
         dump_environment(config, experiment.logdir, args.configs)
         dump_code(args.expdir, experiment.logdir)
 
-    runner.run_experiment(experiment, check=args.check)
+    check_run = safitty.get(config, "args", "check", default=False)
+    runner.run_experiment(experiment, check=check_run)
 
 
 if __name__ == "__main__":
