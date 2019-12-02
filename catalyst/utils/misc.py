@@ -87,7 +87,9 @@ def append_dict(dict1, dict2):
 
 
 def flatten_dict(
-    dictionary: Dict[str, Any], parent_key: str = "", separator: str = "/"
+    dictionary: Dict[str, Any],
+    parent_key: str = "",
+    separator: str = "/"
 ) -> "collections.OrderedDict":
     """
     Make the given dictionary flatten
