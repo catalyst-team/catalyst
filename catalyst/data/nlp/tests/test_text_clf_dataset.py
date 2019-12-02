@@ -1,4 +1,5 @@
 import unittest
+
 from catalyst.data.nlp.classify import TextClassificationDataset
 
 texts = [
