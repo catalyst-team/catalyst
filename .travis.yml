@@ -44,13 +44,10 @@ jobs:
     - stage: Tests
       install:
         - *requirements_all
-<<<<<<< HEAD
+        - *requirements_dev
         - *requirements_nlp
         - pip install flake8 flake8-quotes yapf isort
         - pip install -U pytest
-=======
-        - *requirements_dev
->>>>>>> master
       script:
         - isort -rc --check-only --settings-path ./setup.cfg
         - make check-style
