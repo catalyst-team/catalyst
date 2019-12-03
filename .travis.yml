@@ -59,7 +59,7 @@ jobs:
         - bash ./bin/tests/check_dl.sh
 
     - stage: Examples
-      name: "Examples NLP DistilBERT"
+      name: "Examples NLP"
       install:
        - *requirements_all
        - *requirements_nlp
