@@ -96,6 +96,13 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --check
 rm -rf ./examples/logs/_tests_mnist_stages1
 
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=./examples/_tests_mnist_stages \
+  --config=./examples/_tests_mnist_stages/config6.yml \
+  --logdir=./examples/logs/_tests_mnist_stages1 \
+  --check
+rm -rf ./examples/logs/_tests_mnist_stages1
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
