@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn import CrossEntropyLoss
 
 
 class NaiveCrossEntropyLoss(nn.Module):
@@ -17,13 +16,13 @@ class NaiveCrossEntropyLoss(nn.Module):
         return loss
 
 
-class MaskCrossEntropyLoss(CrossEntropyLoss):
+class MaskCrossEntropyLoss(torch.nn.CrossEntropyLoss):
     def __init__(
-        self,
-        *args,
-        target_name: str = "targets",
-        mask_name: str = "mask",
-        **kwargs
+            self,
+            *args,
+            target_name: str = "targets",
+            mask_name: str = "mask",
+            **kwargs
     ):
         super().__init__(*args, **kwargs)
         self.target_name = target_name
@@ -39,4 +38,4 @@ class MaskCrossEntropyLoss(CrossEntropyLoss):
         return loss
 
 
-__all__ = ["NaiveCrossEntropyLoss", "MaskCrossEntropyLoss"]
+__all__ = ["MaskCrossEntropyLoss", "NaiveCrossEntropyLoss"]
