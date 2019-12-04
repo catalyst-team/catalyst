@@ -35,7 +35,7 @@ class SupervisedRunner(Runner):
     ):
         """
         Args:
-            model (Model): Torch model object
+            model (Module): Torch model object
             device (Device): Torch device
             input_key (Any): Key in batch dict mapping for model input
             output_key (Any): Key in output dict model output
