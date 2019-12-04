@@ -1,4 +1,4 @@
-from typing import List
+from typing import List  # isort:skip
 from collections import OrderedDict
 
 from catalyst.dl.core import Callback, CallbackOrder

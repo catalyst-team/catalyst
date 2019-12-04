@@ -1,7 +1,8 @@
-from typing import Dict
-import os
-import shutil
+from typing import Dict, Union  # isort:skip
 from collections import OrderedDict
+import os
+from pathlib import Path
+import shutil
 
 import torch
 
@@ -46,7 +47,7 @@ def pack_checkpoint(
 
 def save_checkpoint(
     checkpoint: Dict,
-    logdir: str,
+    logdir: Union[Path, str],
     suffix: str,
     is_best: bool = False,
     is_last: bool = False,

@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 
 from catalyst.contrib.models import SequentialNet
-from catalyst.utils import create_optimal_inner_init, outer_init, log1p_exp
 from catalyst.contrib.registry import MODULES
+from catalyst.utils import create_optimal_inner_init, log1p_exp, outer_init
 
 
 class SquashingLayer(nn.Module):

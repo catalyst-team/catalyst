@@ -1,7 +1,9 @@
 import logging
+
+import numpy as np
+
 import gym
 from gym.envs.registration import register
-import numpy as np
 
 logger = logging.getLogger(__name__)
 

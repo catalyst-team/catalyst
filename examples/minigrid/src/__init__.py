@@ -1,8 +1,7 @@
 from catalyst.rl import registry
-
-from .env import MiniGridEnvWrapper
 from .actor import ConvActor
 from .critic import ConvCritic, ConvQCritic
+from .env import MiniGridEnvWrapper
 
 registry.Environment(MiniGridEnvWrapper)
 registry.Agent(ConvActor)

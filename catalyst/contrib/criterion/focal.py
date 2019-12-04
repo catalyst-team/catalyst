@@ -1,6 +1,7 @@
 from functools import partial
 
 from torch.nn.modules.loss import _Loss
+
 from catalyst.dl.utils import criterion
 
 

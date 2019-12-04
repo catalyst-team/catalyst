@@ -23,11 +23,11 @@
     - predictions visualization
     - Test-time augmentations with [ttach](https://github.com/qubvel/ttach) library
 3. [tutorial - table data regression](./notebooks/table-data-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/table-data-tutorial.ipynb)
-    - dataset California housing dataset(sklearn)
+    - dataset California housing dataset (sklearn)
     - StandardScaler preprocessing
-    - Simple MLP (40,10,1) linear layers
-    - Training + Inference 
-    - Results viz.
+    - simple MLP example
+    - training + inference
+    - results visualization.
 
 #### Usage examples
 4. [features – classification](./notebooks/notebook-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/notebook-example.ipynb)
@@ -41,6 +41,12 @@
 ----
 
 ### DL pipelines
+
+Full description of configs with comments:
+- [Eng](configs/config-description-eng.yml)
+- [Rus](configs/config-description-rus.yml)
+
+Link to the pipelines
 1. [features – model training](cifar_simple)
     - configuration files usage example
     - local and docker runs
@@ -52,14 +58,12 @@
 3. [tutorial – classification](https://github.com/catalyst-team/classification)
     - classification model training and inference
     - different augmentations and stages usage
-    - knn index model example
-    - embeddings projector
-    - LrFinder usage
-    - grid search metrics visualization
-4. [tutorial – autolabel](https://github.com/catalyst-team/classification#2-autolabel)
-    - pseudolabeling for your dataset
-5. [tutorial – segmentation][WIP]
-6. [tutorial – autounet][WIP]
+    - metrics visualization with tensorboard
+4. [tutorial – segmentation](https://github.com/catalyst-team/segmentation)
+    - binary and semantic segmentation with U-Net
+    - model training and inference
+    - different augmentations and stages usage
+    - metrics visualization with tensorboard
 
 ----
 
@@ -82,21 +86,4 @@
 
 ### Contributions
 
-1. [NeurIPS 2018: AI for Prosthetics Challenge](https://github.com/Scitator/neurips-18-prosthetics-challenge)
-    - 3rd place solution
-2. [Catalyst.RL: A Distributed Framework for Reproducible RL Research](https://github.com/catalyst-team/catalyst-rl-framework)
-    - code for paper
-3. [NeurIPS 2019: Learn to Move - Walk Around](https://github.com/Scitator/learning-to-move-starter-kit)
-    - starter kit
-4. [NeurIPS 2019: Animal-AI Olympics](https://github.com/Scitator/animal-olympics-starter-kit)
-    - starter kit
-5. [ID R&D Anti-spoofing Challenge](https://github.com/bagxi/idrnd-anti-spoofing-challenge-solution)
-    - 14th place solution 
-6. [NeurIPS 2019: Recursion Cellular Image Classification](https://github.com/ngxbac/Kaggle-Recursion-Cellular)
-    - 4th place solution
-    - [writeup](https://www.kaggle.com/c/recursion-cellular-image-classification/discussion/110337#latest-634988)
-7. [MICCAI 2019: Automatic Structure Segmentation for Radiotherapy Planning Challenge 2019](https://github.com/ngxbac/StructSeg2019) 
-    - 3rd place solution of Task 3: Organ-at-risk segmentation from chest CT scans  
-    - 4th place solution of Task 4: Gross Target Volume segmentation of lung cancer
-8. [APTOS 2019 Blindness Detection](https://github.com/BloodAxe/Kaggle-2019-Blindness-Detection)
-    - 7th place solution
+We supervise the **[Awesome Catalyst list](https://github.com/catalyst-team/awesome-catalyst-list)**. You can make a PR with your project to the list.

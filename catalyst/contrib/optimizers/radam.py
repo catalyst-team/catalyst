@@ -14,7 +14,7 @@ class RAdam(Optimizer):
         weight_decay=0
     ):
         """
-        taken from https://github.com/LiyuanLucasLiu/RAdam
+        Taken from https://github.com/LiyuanLucasLiu/RAdam
         """
         defaults = dict(lr=lr, betas=betas, eps=eps, weight_decay=weight_decay)
         self.buffer = [[None, None, None] for _ in range(10)]

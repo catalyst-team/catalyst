@@ -1,10 +1,15 @@
 ## Catalyst Docker
-
+[![Docker Pulls](https://img.shields.io/docker/pulls/catalystteam/catalyst)](https://hub.docker.com/r/catalystteam/catalyst/tags)
 
 ### Base version
 Base docker has Catalyst and all needed requirements.
 ```bash
 make docker
+```
+
+With FP16
+```bash
+make docker-fp16
 ```
 
 ### Developer version
@@ -13,6 +18,11 @@ The developer version contains [packages](/requirements/requirements-dev.txt) fo
 And does not contain Catalyst itself.
 ```bash
 make docker-dev
+```
+
+With FP16
+```bash
+make docker-dev-fp16
 ```
 
 ## How to use

@@ -1,12 +1,12 @@
-from typing import Tuple
+from typing import Tuple  # isort:skip
 from functools import partial
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .core import _get_block
 from ..abn import ABN
+from .core import _get_block
 
 
 class PyramidBlock(nn.Module):

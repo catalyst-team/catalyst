@@ -1,7 +1,9 @@
-from typing import Union
-import numpy as np
+from typing import Union  # isort:skip
 from ctypes import c_bool
 import multiprocessing as mp
+
+import numpy as np
+
 import torch
 
 from catalyst.rl import utils

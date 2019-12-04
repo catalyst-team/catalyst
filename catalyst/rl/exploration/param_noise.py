@@ -1,5 +1,7 @@
 import numpy as np
+
 import torch
+
 from catalyst.rl.core import ExplorationStrategy
 from catalyst.rl.utils import get_network_weights, set_network_weights
 
@@ -23,7 +25,6 @@ def _set_params_noise(
         tol: float, controls the tolerance of binary search
         max_steps: maximum number of steps in binary search
     """
-
     if states is None:
         return noise_delta
 

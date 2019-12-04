@@ -1,10 +1,13 @@
-from typing import List, Dict
+from typing import Dict, List  # isort:skip
+
 import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 
-from catalyst.dl.meters import ConfusionMeter
-from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 from catalyst.dl import utils
+from catalyst.dl.core import (
+    Callback, CallbackOrder, LoggerCallback, RunnerState
+)
+from catalyst.dl.meters import ConfusionMeter
 
 
 class EarlyStoppingCallback(Callback):
@@ -15,7 +18,7 @@ class EarlyStoppingCallback(Callback):
         minimize: bool = True,
         min_delta: float = 1e-6
     ):
-        super().__init__(CallbackOrder.Logger)
+        super().__init__(CallbackOrder.External)
         self.best_score = None
         self.metric = metric
         self.patience = patience
@@ -138,4 +141,22 @@ class ConfusionMatrixCallback(Callback):
         )
 
 
-__all__ = ["EarlyStoppingCallback", "ConfusionMatrixCallback"]
+class RaiseExceptionCallback(LoggerCallback):
+    def __init__(self):
+        order = CallbackOrder.Other + 1
+        super().__init__(order=order)
+
+    def on_exception(self, state: RunnerState):
+        exception = state.exception
+        if not utils.is_exception(exception):
+            return
+
+        if state.need_reraise_exception:
+            raise exception
+
+
+__all__ = [
+    "EarlyStoppingCallback",
+    "ConfusionMatrixCallback",
+    "RaiseExceptionCallback"
+]

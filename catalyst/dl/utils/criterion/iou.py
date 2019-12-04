@@ -1,4 +1,5 @@
 import torch
+
 from catalyst.utils import get_activation_fn
 
 
@@ -29,7 +30,7 @@ def iou(
 
     intersection = torch.sum(targets * outputs)
     union = torch.sum(targets) + torch.sum(outputs)
-    iou = intersection / (union - intersection + eps)
+    iou = (intersection + eps) / (union - intersection + eps)
 
     return iou
 

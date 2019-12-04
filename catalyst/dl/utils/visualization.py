@@ -1,4 +1,4 @@
-from typing import Union, Optional, List
+from typing import List, Optional, Union  # isort:skip
 from pathlib import Path
 
 from catalyst.utils.plotly import plot_tensorboard_log

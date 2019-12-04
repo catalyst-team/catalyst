@@ -1,10 +1,10 @@
-from typing import List
+from typing import List  # isort:skip
 
 import torch
 import torch.nn as nn
 
-from .core import DecoderSpec
 from ..blocks.fpn import DecoderFPNBlock
+from .core import DecoderSpec
 
 
 class FPNDecoder(DecoderSpec):

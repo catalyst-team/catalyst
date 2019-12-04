@@ -1,4 +1,4 @@
-from typing import Union, List, Dict
+from typing import Dict, List, Union  # isort:skip
 from collections import OrderedDict
 from copy import deepcopy
 
@@ -6,8 +6,8 @@ import torch
 import torch.nn as nn
 
 from catalyst.contrib.registry import MODULES
-from catalyst.utils.misc import pairwise
 from catalyst.utils.initialization import create_optimal_inner_init
+from catalyst.utils.misc import pairwise
 
 
 def _process_additional_params(params, layers):

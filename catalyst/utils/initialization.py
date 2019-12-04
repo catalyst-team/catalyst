@@ -1,6 +1,7 @@
-from typing import Callable
+from typing import Callable  # isort:skip
 
 import numpy as np
+
 import torch.nn as nn
 
 ACTIVATIONS = {
@@ -107,7 +108,7 @@ def kaiming_init(
 
 def bias_init_with_prob(prior_prob):
     """
-    initialize conv/fc bias value according to giving probablity
+    Initialize conv/fc bias value according to giving probablity
     """
     bias_init = float(-np.log((1 - prior_prob) / prior_prob))
     return bias_init

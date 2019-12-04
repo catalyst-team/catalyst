@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import gym
+
 from .environment import EnvironmentWrapper
 
 

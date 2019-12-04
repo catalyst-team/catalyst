@@ -1,11 +1,11 @@
+from typing import Dict, List, Optional, Union  # isort:skip
 from collections import defaultdict
 from pathlib import Path
-from typing import List, Dict, Union, Optional
 
 import plotly.graph_objs as go
 from plotly.offline import init_notebook_mode, iplot
 
-from catalyst.utils.tensorboard import SummaryReader, SummaryItem
+from catalyst.utils.tensorboard import SummaryItem, SummaryReader
 
 
 def _get_tensorboard_scalars(

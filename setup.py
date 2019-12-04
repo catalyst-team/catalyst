@@ -6,10 +6,10 @@
 
 import io
 import os
-import sys
 from shutil import rmtree
+import sys
 
-from setuptools import find_packages, setup, Command
+from setuptools import Command, find_packages, setup
 
 # Package meta-data.
 NAME = "catalyst"
@@ -82,11 +82,8 @@ class UploadCommand(Command):
 # Specific dependencies.
 extras = {
     "contrib": load_requirements("requirements/requirements-contrib.txt"),
-    "dl": load_requirements("requirements/requirements-dl.txt"),
+    "knn": load_requirements("requirements/requirements-knn.txt"),
     "rl": load_requirements("requirements/requirements-rl.txt"),
-    "drl": (
-        load_requirements("requirements/requirements-dl.txt")
-        + load_requirements("requirements/requirements-rl.txt")),
 }
 
 
@@ -125,8 +122,10 @@ setup(
         ],
     },
     scripts=[
-        "bin/catalyst-parallel-run",
-        "bin/catalyst-rl-run",
+        "bin/scripts/catalyst-parallel-run",
+        "bin/scripts/catalyst-rl-run",
+        "bin/scripts/download-gdrive",
+        "bin/scripts/extract-archive",
     ],
     install_requires=load_requirements("requirements/requirements.txt"),
     extras_require=extras,

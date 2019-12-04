@@ -1,19 +1,21 @@
+from typing import Dict, Iterable, List, Union  # isort:skip
 import collections
-import re
-from typing import Iterable, Dict, List, Union
 import os
+import re
+
 import numpy as np
 import safitty
 
 import torch
 from torch import nn
-from torch.optim import Optimizer
 import torch.backends.cudnn as cudnn
 
 from catalyst import utils
+from catalyst.utils.typing import Device, Model, Optimizer
 
 
 def ce_with_logits(logits, target):
+    """Returns cross entropy for giving logits"""
     return torch.sum(-target * torch.log_softmax(logits, -1), -1)
 
 
@@ -47,6 +49,7 @@ def normal_logprob(mu, sigma, z):
 
 
 def soft_update(target, source, tau):
+    """Updates the target data with smoothing by ``tau``"""
     for target_param, param in zip(target.parameters(), source.parameters()):
         target_param.data.copy_(
             target_param.data * (1.0 - tau) + param.data * tau
@@ -54,6 +57,9 @@ def soft_update(target, source, tau):
 
 
 def get_optimizable_params(model_or_params):
+    """
+    Returns all the parameters that requires gradients
+    """
     params: Iterable[torch.Tensor] = model_or_params
     if isinstance(model_or_params, nn.Module):
         params = model_or_params.parameters()
@@ -98,12 +104,16 @@ def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
         safitty.set(optimizer.param_groups, index, "momentum", value=value)
 
 
-def assert_fp16_available():
+def assert_fp16_available() -> None:
+    """
+    Asserts for installed and available Apex FP16
+    """
     assert torch.backends.cudnn.enabled, \
         "fp16 mode requires cudnn backend to be enabled."
 
     try:
-        __import__("apex")
+        import apex  # noqa: F401
+        from apex import amp  # noqa: F401
     except ImportError:
         assert False, \
             "NVidia Apex package must be installed. " \
@@ -111,6 +121,9 @@ def assert_fp16_available():
 
 
 def get_device() -> torch.device:
+    """
+    Simple returning the best available device (GPU or CPU)
+    """
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
@@ -152,6 +165,9 @@ def get_available_gpus():
 
 
 def get_activation_fn(activation: str = None):
+    """
+    Returns the activation function from ``torch.nn`` by its name
+    """
     if activation is None or activation.lower() == "none":
         activation_fn = lambda x: x  # noqa: E731
     else:
@@ -159,13 +175,17 @@ def get_activation_fn(activation: str = None):
     return activation_fn
 
 
-def any2device(value, device):
+def any2device(value, device: Device):
     """
     Move tensor, list of tensors, list of list of tensors,
     dict of tensors, tuple of tensors to target device.
-    :param value: Object to be moved
-    :param device: target device ids
-    :return: Save data structure holding tensors on target device
+
+    Args:
+        value: Object to be moved
+        device (Device): target device ids
+
+    Returns:
+        Same structure as value, but all tensors and np.arrays moved to device
     """
     if isinstance(value, dict):
         return dict((k, any2device(v, device)) for k, v in value.items())
@@ -211,7 +231,7 @@ def prepare_cudnn(deterministic: bool = None, benchmark: bool = None) -> None:
 
 
 def process_model_params(
-    model: nn.Module,
+    model: Model,
     layerwise_params: Dict[str, dict] = None,
     no_bias_weight_decay: bool = True,
     lr_scaling: float = 1.0
@@ -265,7 +285,7 @@ def process_model_params(
     return model_params
 
 
-def set_requires_grad(model: nn.Module, requires_grad: bool):
+def set_requires_grad(model: Model, requires_grad: bool):
     """
     Sets the ``requires_grad`` value for all model parameters.
 
@@ -282,7 +302,14 @@ def set_requires_grad(model: nn.Module, requires_grad: bool):
         param.requires_grad = requires_grad
 
 
-def get_network_output(net: nn.Module, *input_shapes):
+def get_network_output(net: Model, *input_shapes):
+    """
+    For each input shape returns an output tensor
+
+    Args:
+        net (Model): the model
+        *args: variable length argument list of shapes
+    """
     inputs = []
     for input_shape in input_shapes:
         if isinstance(input_shape, dict):
@@ -296,10 +323,17 @@ def get_network_output(net: nn.Module, *input_shapes):
     return output_t
 
 
+def detach(tensor: torch.Tensor) -> np.ndarray:
+    """
+    Detaches the input tensor to a numpy array
+    """
+    return tensor.detach().cpu().numpy()
+
+
 __all__ = [
     "ce_with_logits", "log1p_exp", "normal_sample", "normal_logprob",
     "soft_update", "get_optimizable_params", "get_optimizer_momentum",
     "set_optimizer_momentum", "assert_fp16_available", "get_device",
     "get_available_gpus", "get_activation_fn", "any2device", "prepare_cudnn",
-    "process_model_params", "set_requires_grad", "get_network_output"
+    "process_model_params", "set_requires_grad", "get_network_output", "detach"
 ]

@@ -1,10 +1,11 @@
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union  # isort:skip
 import logging
 import os
 import pathlib
 import tempfile
-import numpy as np
+
 import imageio
+import numpy as np
 from skimage.color import label2rgb, rgb2gray
 
 import torch
@@ -38,7 +39,13 @@ if os.environ.get("FORCE_JPEG_TURBO", False):
         )
 
 
-def imread(uri, grayscale=False, expand_dims=True, rootpath=None, **kwargs):
+def imread(
+    uri,
+    grayscale: bool = False,
+    expand_dims: bool = True,
+    rootpath: Union[str, pathlib.Path] = None,
+    **kwargs,
+):
     """
 
     Args:
@@ -53,16 +60,19 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None, **kwargs):
 
     """
     if rootpath is not None:
-        uri = (
+        uri = str(uri)
+        rootpath = str(rootpath)
+        uri = str(
             uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
         )
 
     if JPEG4PY_ENABLED and uri.endswith(("jpg", "JPG", "jpeg", "JPEG")):
         img = jpeg.JPEG(uri).decode()
-        if grayscale:
-            img = rgb2gray(img)
     else:
+        # @TODO: add tiff support, currently – jpg and png
         img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB", **kwargs)
+    if grayscale:
+        img = rgb2gray(img)
 
     if expand_dims and len(img.shape) < 3:  # grayscale
         img = np.expand_dims(img, -1)

@@ -1,6 +1,7 @@
-from typing import List
+from typing import List  # isort:skip
 
 import numpy as np
+
 from torch.optim import Optimizer
 
 from catalyst.utils import get_optimizer_momentum

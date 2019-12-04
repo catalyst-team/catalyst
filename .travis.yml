@@ -33,63 +33,66 @@ install_dl: &requirements_dl
 install_rl: &requirements_all
   pip install -r requirements/requirements.txt -r requirements/requirements-rl.txt
 
+install_dev: &requirements_dev
+  pip install -r requirements/requirements-dev.txt
+
 jobs:
   include:
     - stage: Tests
       install:
-        - *requirements_dl
-        - pip install flake8 flake8-quotes yapf
-        - pip install -U pytest
+        - *requirements_all
+        - *requirements_dev
       script:
+        - isort -rc --check-only --settings-path ./setup.cfg
         - make check-style
 
     - stage: Examples
       name: "Examples DL"
       install: *requirements_all
       script:
-        - bash ./bin/check_dl.sh
+        - bash ./bin/tests/check_dl.sh
 
     - stage: Examples
       name: "Examples on-policy RL – REINFORCE"
       before_install: *before_install_rl
       install: *requirements_all
       script:
-        - bash ./bin/check_reinforce.sh
+        - bash ./bin/tests/check_reinforce.sh
 
     - stage: Examples
       name: "Examples on-policy RL – PPO"
       before_install: *before_install_rl
       install: *requirements_all
       script:
-        - bash ./bin/check_ppo.sh
+        - bash ./bin/tests/check_ppo.sh
 
     - stage: Examples
       name: "Examples off-policy RL – DQN"
       before_install: *before_install_rl
       install: *requirements_all
       script:
-        - bash ./bin/check_dqn.sh
+        - bash ./bin/tests/check_dqn.sh
 
     - stage: Examples
       name: "Examples off-policy RL – DDPG"
       before_install: *before_install_rl
       install: *requirements_all
       script:
-        - bash ./bin/check_ddpg.sh
+        - bash ./bin/tests/check_ddpg.sh
 
     - stage: Examples
       name: "Examples off-policy RL – SAC"
       before_install: *before_install_rl
       install: *requirements_all
       script:
-        - bash ./bin/check_sac.sh
+        - bash ./bin/tests/check_sac.sh
 
     - stage: Examples
       name: "Examples off-policy RL – TD3"
       before_install: *before_install_rl
       install: *requirements_all
       script:
-        - bash ./bin/check_td3.sh
+        - bash ./bin/tests/check_td3.sh
 
 # speed up for now
 #    - stage: Deploy

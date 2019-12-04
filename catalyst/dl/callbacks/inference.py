@@ -1,13 +1,14 @@
-import os
 from collections import defaultdict
-import numpy as np
+import os
+
 import imageio
+import numpy as np
 from skimage.color import label2rgb
 
 import torch
 import torch.nn.functional as F
 
-from catalyst.dl.core import Callback, RunnerState, CallbackOrder
+from catalyst.dl.core import Callback, CallbackOrder, RunnerState
 from catalyst.utils import tensor_to_ndimage
 
 
