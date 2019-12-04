@@ -7,7 +7,7 @@ def test_iou():
     size = 4
     half_size = size // 2
     shape = (1, 1, size, size)
-    
+
     # check 0: one empty
     empty = torch.zeros(shape)
     full = torch.ones(shape)
@@ -31,7 +31,7 @@ def test_iou():
     assert iou(top_left, left, activation="none").item() == 0.5
 
     # check multiclass: 0, 0, 1, 1, 1, 0.5
-    a = torch.cat([ empty, left, empty, full, left, top_left ], dim=1)
-    b = torch.cat([ full, right, empty, full, left, left ], dim=1)
+    a = torch.cat([empty, left, empty, full, left, top_left], dim=1)
+    b = torch.cat([full, right, empty, full, left, left], dim=1)
     ans = torch.Tensor([0, 0, 1, 1, 1, 0.5])
     assert torch.all(iou(a, b, classes=["dummy"], activation="none") == ans)
