@@ -1,11 +1,11 @@
 # flake8: noqa
 
 from .callbacks import (
-    AccuracyCallback, AUCCallback, CheckpointCallback, ConfusionMatrixCallback,
-    CriterionCallback, DiceCallback, EarlyStoppingCallback, F1ScoreCallback,
-    IouCallback, JaccardCallback, MapKCallback, OptimizerCallback,
-    SchedulerCallback, TelegramLogger, 
-    ClasswiseIouCallback, ClasswiseJaccardCallback
+    AccuracyCallback, AUCCallback, CheckpointCallback, ClasswiseIouCallback,
+    ClasswiseJaccardCallback, ConfusionMatrixCallback, CriterionCallback,
+    DiceCallback, EarlyStoppingCallback, F1ScoreCallback, IouCallback,
+    JaccardCallback, MapKCallback, OptimizerCallback, SchedulerCallback,
+    TelegramLogger
 )
 from .core import (
     Callback, CallbackOrder, Experiment, MetricCallback, MultiMetricCallback,

@@ -1,6 +1,6 @@
-import torch
-
 from typing import List
+
+import torch
 
 from catalyst.utils import get_activation_fn
 
