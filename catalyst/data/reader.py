@@ -13,7 +13,6 @@ class ReaderSpec:
 
     All inherited classes have to implement `__call__`.
     """
-
     def __init__(self, input_key: str, output_key: str):
         """
         Args:
@@ -43,13 +42,12 @@ class ImageReader(ReaderSpec):
     """
     Image reader abstraction. Reads images from a `csv` dataset.
     """
-
     def __init__(
-            self,
-            input_key: str,
-            output_key: str,
-            datapath: str = None,
-            grayscale: bool = False
+        self,
+        input_key: str,
+        output_key: str,
+        datapath: str = None,
+        grayscale: bool = False
     ):
         """
         Args:
@@ -87,7 +85,6 @@ class MaskReader(ReaderSpec):
     """
     Mask reader abstraction. Reads masks from a `csv` dataset.
     """
-
     def __init__(self, input_key: str, output_key: str, datapath: str = None):
         """
         Args:
@@ -121,15 +118,14 @@ class ScalarReader(ReaderSpec):
     Numeric data reader abstraction.
     Reads a single float, int, str or other from data
     """
-
     def __init__(
-            self,
-            input_key: str,
-            output_key: str,
-            dtype: Type = np.float32,
-            default_value: float = None,
-            one_hot_classes: int = None,
-            smoothing: float = None,
+        self,
+        input_key: str,
+        output_key: str,
+        dtype: Type = np.float32,
+        default_value: float = None,
+        one_hot_classes: int = None,
+        smoothing: float = None,
     ):
         """
         Args:
@@ -175,13 +171,12 @@ class LambdaReader(ReaderSpec):
     Reader abstraction with an lambda encoder.
     Can read an elem from dataset and apply `encode_fn` function to it
     """
-
     def __init__(
-            self,
-            input_key: str,
-            output_key: str,
-            encode_fn: Callable = lambda x: x,
-            **kwargs
+        self,
+        input_key: str,
+        output_key: str,
+        encode_fn: Callable = lambda x: x,
+        **kwargs
     ):
         """
         Args:
@@ -214,7 +209,6 @@ class ReaderCompose(object):
     """
     Abstraction to compose several readers into one open function.
     """
-
     def __init__(self, readers: List[ReaderSpec], mixins: [] = None):
         """
         Args:

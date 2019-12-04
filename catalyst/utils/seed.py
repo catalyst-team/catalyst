@@ -51,7 +51,6 @@ class Seeder:
         [209652396, 398764591, 924231285, 1478610112, 441365315]
 
     """
-
     def __init__(self, init_seed: int = 0, max_seed: int = None):
         """
         Initialize the seeder.

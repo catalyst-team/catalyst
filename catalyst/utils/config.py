@@ -20,9 +20,8 @@ from catalyst.utils.tensorboard import SummaryWriter
 LOG = getLogger(__name__)
 
 
-# noinspection PyPep8Naming
-def load_ordered_yaml(  # noqa: N803
-        stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict
+def load_ordered_yaml(
+    stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict
 ):
     """
     Loads `yaml` config into OrderedDict
@@ -35,16 +34,13 @@ def load_ordered_yaml(  # noqa: N803
     Returns:
         dict: configuration
     """
-
     class OrderedLoader(Loader):
         pass
 
     def construct_mapping(loader, node):
         loader.flatten_mapping(node)
-        # noinspection PyArgumentList
         return object_pairs_hook(loader.construct_pairs(node))
 
-    # noinspection PyUnresolvedReferences
     OrderedLoader.add_constructor(
         yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_mapping
     )
@@ -163,9 +159,9 @@ def list_conda_packages() -> str:
 
 
 def dump_environment(
-        experiment_config: Dict,
-        logdir: str,
-        configs_path: List[str] = None,
+    experiment_config: Dict,
+    logdir: str,
+    configs_path: List[str] = None,
 ) -> None:
     """
     Saves config, environment variables and package list in JSON into logdir

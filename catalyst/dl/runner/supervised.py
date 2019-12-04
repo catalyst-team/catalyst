@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Mapping, Union  # noqa: F401 isort:skip
+from typing import Any, Dict, List, Mapping, Union  # isort:skip
 from collections import OrderedDict
 import logging
 from pathlib import Path
@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 
 from catalyst.dl import utils
 from catalyst.dl.callbacks import CheckpointCallback, InferCallback
-from catalyst.dl.core import Callback, Runner  # noqa: F401
+from catalyst.dl.core import Callback, Runner
 from catalyst.dl.experiment import SupervisedExperiment
 from catalyst.utils.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
