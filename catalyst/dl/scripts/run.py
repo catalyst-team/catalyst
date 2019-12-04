@@ -77,8 +77,9 @@ def main(args, unknown_args):
 
     Experiment, Runner = import_experiment_and_runner(Path(args.expdir))
 
+    runner_params = config.get("runner_params", {})
     experiment = Experiment(config)
-    runner = Runner()
+    runner = Runner(**runner_params)
 
     if experiment.logdir is not None:
         dump_environment(config, experiment.logdir, args.configs)
