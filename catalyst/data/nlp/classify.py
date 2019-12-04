@@ -7,7 +7,8 @@ from transformers import DistilBertTokenizer
 
 
 class ClassificationDataset(Dataset):
-    def __init__(self, texts: pd.Series, labels: pd.Series, max_seq_length=512):
+    def __init__(self, texts: pd.Series, labels: pd.Series,
+                 max_seq_length=512):
         logging.getLogger("transformers.tokenization_utils").setLevel(
             logging.FATAL
         )
@@ -34,7 +35,6 @@ class ClassificationDataset(Dataset):
         return len(self.texts)
 
     def __getitem__(self, index) -> Mapping[str, torch.Tensor]:
-
         x, y = self.texts[index], self.labels[index]
 
         x_encoded = self.tokenizer.encode(
@@ -47,19 +47,24 @@ class ClassificationDataset(Dataset):
         true_seq_length = x_encoded.size(0)
         pad_size = self.max_seq_length - true_seq_length
 
+        # noinspection PyArgumentList
         pad_ids = torch.Tensor([self.pad_vid] * pad_size).long()
         x_tensor = torch.cat((x_encoded, pad_ids))
 
-        y_encoded = torch.Tensor([self.label_dict.get(y, -1)]).long().squeeze(0)
+        # noinspection PyArgumentList
+        y_encoded = torch.Tensor([self.label_dict.get(y, -1)]).long()
+        y_encoded = y_encoded.squeeze(0)
 
+        # noinspection PyTypeChecker
         mask = torch.ones_like(x_encoded, dtype=int)
+        # noinspection PyTypeChecker
         mask_pad = torch.zeros_like(pad_ids, dtype=int)
         mask = torch.cat((mask, mask_pad))
 
         return {
             "features": x_tensor,
             "targets": y_encoded,
-            'mask': mask
+            "mask": mask
         }
 
 

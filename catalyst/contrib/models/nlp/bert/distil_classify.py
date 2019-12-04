@@ -19,12 +19,12 @@ class DistilBertForSequenceClassification(DistilBertPreTrainedModel):
         distilbert_output = self.distilbert(input_ids=features,
                                             attention_mask=attention_mask,
                                             head_mask=head_mask)
-        hidden_state = distilbert_output[0]                  # (bs, seq_len, dim)
-        pooled_output = hidden_state[:, 0]                   # (bs, dim)
-        pooled_output = self.pre_classifier(pooled_output)   # (bs, dim)
-        pooled_output = nn.ReLU()(pooled_output)             # (bs, dim)
-        pooled_output = self.dropout(pooled_output)          # (bs, dim)
-        logits = self.classifier(pooled_output)              # (bs, dim)
+        hidden_state = distilbert_output[0]  # (bs, seq_len, dim)
+        pooled_output = hidden_state[:, 0]  # (bs, dim)
+        pooled_output = self.pre_classifier(pooled_output)  # (bs, dim)
+        pooled_output = nn.ReLU()(pooled_output)  # (bs, dim)
+        pooled_output = self.dropout(pooled_output)  # (bs, dim)
+        logits = self.classifier(pooled_output)  # (bs, dim)
 
         return logits
 
