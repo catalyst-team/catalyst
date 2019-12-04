@@ -30,11 +30,11 @@ before_install_rl: &before_install_rl
 install_dl: &requirements_dl
   pip install -r requirements/requirements.txt
 
-install_rl: &requirements_all
-  pip install -r requirements/requirements.txt -r requirements/requirements-rl.txt
-
 install_nlp: &requirements_nlp
   pip install -r requirements/requirements-nlp.txt
+
+install_rl: &requirements_all
+  pip install -r requirements/requirements.txt -r requirements/requirements-rl.txt
 
 install_dev: &requirements_dev
   pip install -r requirements/requirements-dev.txt
@@ -44,16 +44,14 @@ jobs:
     - stage: Tests
       install:
         - *requirements_all
-        - *requirements_dev
         - *requirements_nlp
-        - pip install flake8 flake8-quotes yapf isort
-        - pip install -U pytest
+        - *requirements_dev
       script:
         - isort -rc --check-only --settings-path ./setup.cfg
         - make check-style
 
     - stage: Examples
-      name: "Examples DL"
+      name: "Examples CV"
       install: *requirements_all
       script:
         - bash ./bin/tests/check_dl.sh
@@ -61,8 +59,8 @@ jobs:
     - stage: Examples
       name: "Examples NLP"
       install:
-       - *requirements_all
-       - *requirements_nlp
+        - *requirements_all
+        - *requirements_nlp
       script:
         - bash ./bin/tests/check_nlp.sh
 
