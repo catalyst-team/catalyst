@@ -204,10 +204,9 @@ class Registry(collections.MutableMapping):
                 f"Factory '{name}' call failed: args={args} kwargs={kwargs}"
             ) from e
 
-    def get_from_params(self,
-                        *,
-                        meta_factory=None,
-                        **kwargs) -> Union[Any, Tuple[Any, Mapping[str, Any]]]:
+    def get_from_params(
+        self, *, meta_factory=None, **kwargs
+    ) -> Union[Any, Tuple[Any, Mapping[str, Any]]]:
         """
         Creates instance based in configuration dict with ``instantiation_fn``.
         If ``config[name_key]`` is None, None is returned.
