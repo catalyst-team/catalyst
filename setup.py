@@ -84,6 +84,7 @@ extras = {
     "contrib": load_requirements("requirements/requirements-contrib.txt"),
     "knn": load_requirements("requirements/requirements-knn.txt"),
     "rl": load_requirements("requirements/requirements-rl.txt"),
+    "nlp": load_requirements("requirements/requirements-nlp.txt"),
 }
 
 

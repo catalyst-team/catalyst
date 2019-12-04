@@ -1,7 +1,7 @@
 ## Transformers for sequence classification
 
 ### Prerequisites
-You need to install developer version of catalyst (`pip install -e .` in [catalyst](https://github.com/catalyst-team/catalyst) main folder).
+`pip install catalyst-nlp`
 
 ### Running text classification experiment with DistilBert
 1. Specify paths to train and validation csv files in `config.yaml`
