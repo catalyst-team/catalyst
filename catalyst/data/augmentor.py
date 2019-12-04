@@ -21,8 +21,10 @@ class Augmentor:
         self.default_kwargs = default_kwargs or {}
 
     def __call__(self, dict_):
-        dict_[self.dict_key
-        ] = self.augment_fn(dict_[self.dict_key], **self.default_kwargs)
+        dict_[self.dict_key] = self.augment_fn(
+            dict_[self.dict_key],
+            **self.default_kwargs
+        )
         return dict_
 
 
