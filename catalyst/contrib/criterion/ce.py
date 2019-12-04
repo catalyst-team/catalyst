@@ -17,19 +17,19 @@ class NaiveCrossEntropyLoss(nn.Module):
 
 
 class SymmetricCrossEntropyLoss(nn.Module):
-    """
-    Symmetric Cross Entropy
-    paper : https://arxiv.org/abs/1908.06112
-
-    Args:
-        alpha(float):
-            corresponds to overfitting issue of CE
-        beta(float):
-            corresponds to flexible exploration on the robustness of RCE
-        num_classes(int):
-            number of classes in dataset
-    """
     def __init__(self, alpha, beta, num_classes):
+        """
+        Symmetric Cross Entropy
+        paper : https://arxiv.org/abs/1908.06112
+
+        Args:
+            alpha(float):
+                corresponds to overfitting issue of CE
+            beta(float):
+                corresponds to flexible exploration on the robustness of RCE
+            num_classes(int):
+                number of classes in dataset
+        """
         super(SymmetricCrossEntropyLoss, self).__init__()
         self.alpha = alpha
         self.beta = beta
