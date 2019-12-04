@@ -67,6 +67,12 @@ Link to the pipelines
 
 ----
 
+### NLP pipelines
+1. [features - Text classification with DistilBert](distilbert_text_classification)
+    - DistilBERT model
+    - Kaggle kernel with the same example
+----
+
 ### RL pipelines
 1. [features – OpenAI Gym LunarLander](rl_gym)
     - off-policy RL for continuous action space environment

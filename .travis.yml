@@ -30,10 +30,13 @@ before_install_rl: &before_install_rl
 install_dl: &requirements_dl
   pip install -r requirements/requirements.txt
 
+install_rl: &requirements_rl
+  pip install -r requirements/requirements-rl.txt
+
 install_nlp: &requirements_nlp
   pip install -r requirements/requirements-nlp.txt
 
-install_rl: &requirements_all
+install_all: &requirements_all
   pip install -r requirements/requirements.txt -r requirements/requirements-rl.txt
 
 install_dev: &requirements_dev
@@ -43,66 +46,75 @@ jobs:
   include:
     - stage: Tests
       install:
-        - *requirements_all
-        - *requirements_nlp
+        - *requirements_dl
+        - *requirements_rl
         - *requirements_dev
+        - *requirements_nlp
       script:
         - isort -rc --check-only --settings-path ./setup.cfg
         - make check-style
 
     - stage: Examples
-      name: "Examples CV"
-      install: *requirements_all
-      script:
-        - bash ./bin/tests/check_dl.sh
-
-    - stage: Examples
-      name: "Examples NLP"
+      name: "Examples: CV, NLP, RL"
       install:
-        - *requirements_all
+        - *requirements_dl
+        - *requirements_rl
         - *requirements_nlp
       script:
+        - bash ./bin/tests/check_dl.sh
         - bash ./bin/tests/check_nlp.sh
 
     - stage: Examples
       name: "Examples on-policy RL – REINFORCE"
       before_install: *before_install_rl
-      install: *requirements_all
+      install:
+        - *requirements_dl
+        - *requirements_rl
       script:
         - bash ./bin/tests/check_reinforce.sh
 
     - stage: Examples
       name: "Examples on-policy RL – PPO"
       before_install: *before_install_rl
-      install: *requirements_all
+      install:
+        - *requirements_dl
+        - *requirements_rl
       script:
         - bash ./bin/tests/check_ppo.sh
 
     - stage: Examples
       name: "Examples off-policy RL – DQN"
       before_install: *before_install_rl
-      install: *requirements_all
+      install:
+        - *requirements_dl
+        - *requirements_rl
       script:
         - bash ./bin/tests/check_dqn.sh
 
     - stage: Examples
       name: "Examples off-policy RL – DDPG"
       before_install: *before_install_rl
-      install: *requirements_all
+      install:
+        - *requirements_dl
+        - *requirements_rl
       script:
         - bash ./bin/tests/check_ddpg.sh
 
     - stage: Examples
       name: "Examples off-policy RL – SAC"
       before_install: *before_install_rl
-      install: *requirements_all
+      install:
+        - *requirements_dl
+        - *requirements_rl
       script:
         - bash ./bin/tests/check_sac.sh
 
     - stage: Examples
       name: "Examples off-policy RL – TD3"
       before_install: *before_install_rl
-      install: *requirements_all
+      install:
+        - *requirements_dl
+        - *requirements_rl
       script:
         - bash ./bin/tests/check_td3.sh
 
@@ -117,7 +129,7 @@ jobs:
       name: "Docs"
       if: branch = master
       install:
-        - *requirements_all
+        - *requirements_dl
         - pip install -r docs/requirements.txt
         - pip install travis-sphinx
         # for correct changelog on github pages

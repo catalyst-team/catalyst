@@ -40,6 +40,7 @@ More specific with additional requirements:
 ```bash
 pip install catalyst[rl] # installs DL+RL based catalyst
 pip install catalyst[contrib] # installs DL+contrib based catalyst
+pip install catalyst[nlp] # installs DL+NLP based catalyst
 pip install catalyst[all] # installs everything. Very convenient to deploy on a new server
 ```
 

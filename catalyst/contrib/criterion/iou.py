@@ -17,10 +17,10 @@ class IoULoss(nn.Module):
     """
 
     def __init__(
-        self,
-        eps: float = 1e-7,
-        threshold: float = None,
-        activation: str = "Sigmoid",
+            self,
+            eps: float = 1e-7,
+            threshold: float = None,
+            activation: str = "Sigmoid",
     ):
         super().__init__()
         self.metric_fn = partial(
@@ -45,11 +45,11 @@ class BCEIoULoss(nn.Module):
     """
 
     def __init__(
-        self,
-        eps: float = 1e-7,
-        threshold: float = None,
-        activation: str = "Sigmoid",
-        reduction: str = "mean",
+            self,
+            eps: float = 1e-7,
+            threshold: float = None,
+            activation: str = "Sigmoid",
+            reduction: str = "mean",
     ):
         super().__init__()
         self.bce_loss = nn.BCEWithLogitsLoss(reduction=reduction)
@@ -60,3 +60,6 @@ class BCEIoULoss(nn.Module):
         bce = self.bce_loss(outputs, targets)
         loss = iou + bce
         return loss
+
+
+__all__ = ["IoULoss", "BCEIoULoss"]
