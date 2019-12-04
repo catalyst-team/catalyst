@@ -14,9 +14,9 @@ DictDataset = Dict[str, object]
 
 
 def create_dataset(
-        dirs: str,
-        extension: str = None,
-        process_fn: Callable[[str], object] = None
+    dirs: str,
+    extension: str = None,
+    process_fn: Callable[[str], object] = None
 ) -> DictDataset:
     """
     Create dataset (dict like `{key: [values]}`) from vctk-like dataset::
@@ -54,7 +54,7 @@ def create_dataset(
 
 
 def split_dataset(
-        dataset: pd.DataFrame, **train_test_split_args
+    dataset: pd.DataFrame, **train_test_split_args
 ) -> Tuple[DictDataset, DictDataset]:
     """
     Split dataset in train and test parts.
@@ -126,7 +126,7 @@ def create_dataframe(dataset: DictDataset, **dataframe_args) -> pd.DataFrame:
 
 
 def split_dataframe(
-        dataframe: pd.DataFrame, **train_test_split_args
+    dataframe: pd.DataFrame, **train_test_split_args
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Split dataframe in train and test part.
@@ -167,7 +167,7 @@ def split_dataframe(
 
 
 def default_fold_split(
-        dataframe: pd.DataFrame, random_state: int = 42, n_folds: int = 5
+    dataframe: pd.DataFrame, random_state: int = 42, n_folds: int = 5
 ) -> pd.DataFrame:
     """
     Splits DataFrame into `N` folds.
@@ -191,10 +191,10 @@ def default_fold_split(
 
 
 def stratified_fold_split(
-        dataframe: pd.DataFrame,
-        class_column: str,
-        random_state: int = 42,
-        n_folds: int = 5
+    dataframe: pd.DataFrame,
+    class_column: str,
+    random_state: int = 42,
+    n_folds: int = 5
 ) -> pd.DataFrame:
     """
     Splits DataFrame into `N` stratified folds.
@@ -215,7 +215,7 @@ def stratified_fold_split(
     )
     fold_column = np.zeros(len(dataframe), dtype=int)
     for i, (_, test_index) in enumerate(
-            skf.split(range(len(dataframe)), dataframe[class_column])
+        skf.split(range(len(dataframe)), dataframe[class_column])
     ):
         fold_column[test_index] = i
     dataframe["fold"] = fold_column
@@ -223,10 +223,10 @@ def stratified_fold_split(
 
 
 def column_fold_split(
-        dataframe: pd.DataFrame,
-        column: str,
-        random_state: int = 42,
-        n_folds: int = 5
+    dataframe: pd.DataFrame,
+    column: str,
+    random_state: int = 42,
+    n_folds: int = 5
 ) -> pd.DataFrame:
     """
     Splits DataFrame into `N` folds.
@@ -253,10 +253,10 @@ def column_fold_split(
 
 
 def balance_classes(
-        dataframe: pd.DataFrame,
-        class_column: str = "label",
-        random_state: int = 42,
-        how: str = "downsampling"
+    dataframe: pd.DataFrame,
+    class_column: str = "label",
+    random_state: int = 42,
+    how: str = "downsampling"
 ) -> pd.DataFrame:
     """
     Balance classes in dataframe by ``class_column``
@@ -317,7 +317,7 @@ def balance_classes(
 
 
 def prepare_dataset_labeling(
-        dataframe: pd.DataFrame, class_column: str
+    dataframe: pd.DataFrame, class_column: str
 ) -> Dict[str, int]:
     """
     Prepares a mapping using unique values from ``class_column``
@@ -347,8 +347,7 @@ def prepare_dataset_labeling(
 
 
 def separate_tags(
-        dataframe: pd.DataFrame, tag_column: str = "label",
-        tag_delim: str = "-"
+    dataframe: pd.DataFrame, tag_column: str = "label", tag_delim: str = "-"
 ) -> pd.DataFrame:
     """
     Separates values in ``class_column`` column

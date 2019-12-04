@@ -23,7 +23,7 @@ def _nonlinearity2name(nonlinearity):
 
 
 def create_optimal_inner_init(
-        nonlinearity: nn.Module, **kwargs
+    nonlinearity: nn.Module, **kwargs
 ) -> Callable[[nn.Module], None]:
     """
     Create initializer for inner layers
@@ -91,8 +91,7 @@ def xavier_init(module, gain=1, bias=0, distribution="normal"):
 
 
 def kaiming_init(
-        module, mode="fan_out", nonlinearity="relu", bias=0,
-        distribution="normal"
+    module, mode="fan_out", nonlinearity="relu", bias=0, distribution="normal"
 ):
     assert distribution in ["uniform", "normal"]
     if distribution == "uniform":
