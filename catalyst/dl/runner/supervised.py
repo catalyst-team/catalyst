@@ -28,7 +28,7 @@ class SupervisedRunner(Runner):
     def __init__(
         self,
         model: nn.Module = None,
-        device=None,
+        device: Device = None,
         input_key: Any = "features",
         output_key: Any = "logits",
         input_target_key: str = "targets",
@@ -37,8 +37,8 @@ class SupervisedRunner(Runner):
         Args:
             model (Model): Torch model object
             device (Device): Torch device
-            input_key (str): Key in batch dict mapping for model input
-            output_key (str): Key in output dict model output
+            input_key (Any): Key in batch dict mapping for model input
+            output_key (Any): Key in output dict model output
                 will be stored under
             input_target_key (str): Key in batch dict mapping for target
         """
