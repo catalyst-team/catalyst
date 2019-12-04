@@ -33,13 +33,15 @@ install_dl: &requirements_dl
 install_rl: &requirements_all
   pip install -r requirements/requirements.txt -r requirements/requirements-rl.txt
 
+install_dev: &requirements_dev
+  pip install -r requirements/requirements-dev.txt
+
 jobs:
   include:
     - stage: Tests
       install:
         - *requirements_all
-        - pip install flake8 flake8-quotes yapf isort
-        - pip install -U pytest
+        - *requirements_dev
       script:
         - isort -rc --check-only --settings-path ./setup.cfg
         - make check-style
