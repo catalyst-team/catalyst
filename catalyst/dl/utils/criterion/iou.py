@@ -25,7 +25,7 @@ def iou(
             Must be one of ["none", "Sigmoid", "Softmax2d"]
 
     Returns:
-        float or List[float]: IoU (Jaccard) score(s)
+        float or torch.Tensor: IoU (Jaccard) score(s)
     """
     activation_fn = get_activation_fn(activation)
     outputs = activation_fn(outputs)
@@ -38,7 +38,11 @@ def iou(
 
     intersection = torch.sum(targets * outputs, red_dim)
     union = torch.sum(targets, red_dim) + torch.sum(outputs, red_dim)
-    iou = (intersection + eps) / (union - intersection + eps)
+    # this looks a bit awkward but `eps * (union == 0)` term
+    # makes sure that if I and U are both 0, than IoU == 1
+    # and if U != 0 and I == 0 the eps term in numerator is zeroed out
+    # i.e. (0 + eps) / (U - 0 + eps) doesn't happen
+    iou = (intersection + eps * (union == 0)) / (union - intersection + eps)
 
     return iou
 
