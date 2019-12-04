@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 
 import torch
+from torch import nn
 from torch.jit import ScriptModule
 from torch.utils.data import DataLoader
 
@@ -26,10 +27,10 @@ class SupervisedRunner(Runner):
 
     def __init__(
         self,
-        model: Model = None,
-        device: Device = None,
-        input_key: str = "features",
-        output_key: str = "logits",
+        model: nn.Module = None,
+        device=None,
+        input_key: Any = "features",
+        output_key: Any = "logits",
         input_target_key: str = "targets",
     ):
         """

@@ -1,1 +1,1 @@
-transformers
+transformers>=2.0.0
