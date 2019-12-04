@@ -30,31 +30,7 @@ rm -rf ./examples/logs/_tests_distilbert_text_classification
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=./examples/_tests_distilbert_text_classification \
-  --config=./examples/_tests_distilbert_text_classification/config2_more_metrics.yml \
-  --logdir=./examples/logs/_tests_distilbert_text_classification \
-  --check
-rm -rf ./examples/logs/_tests_distilbert_text_classification
-
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-  python catalyst/dl/scripts/run.py \
-  --expdir=./examples/_tests_distilbert_text_classification \
-  --config=./examples/_tests_distilbert_text_classification/config3_lr_schedule.yml \
-  --logdir=./examples/logs/_tests_distilbert_text_classification \
-  --check
-rm -rf ./examples/logs/_tests_distilbert_text_classification
-
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-  python catalyst/dl/scripts/run.py \
-  --expdir=./examples/_tests_distilbert_text_classification \
-  --config=./examples/_tests_distilbert_text_classification/config4_small_max_seq_length.yml \
-  --logdir=./examples/logs/_tests_distilbert_text_classification \
-  --check
-rm -rf ./examples/logs/_tests_distilbert_text_classification
-
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-  python catalyst/dl/scripts/run.py \
-  --expdir=./examples/_tests_distilbert_text_classification \
-  --config=./examples/_tests_distilbert_text_classification/config5_more_epochs.yml \
+  --config=./examples/_tests_distilbert_text_classification/config2_small_max_seq_length.yml \
   --logdir=./examples/logs/_tests_distilbert_text_classification \
   --check
 rm -rf ./examples/logs/_tests_distilbert_text_classification
