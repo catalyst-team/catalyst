@@ -67,8 +67,8 @@ def merge_dicts(*dicts: dict) -> dict:
         merge_dict = merge_dict or {}
         for k, v in merge_dict.items():
             if (
-                k in dict_ and isinstance(dict_[k], dict)
-                and isinstance(merge_dict[k], collections.Mapping)
+                    k in dict_ and isinstance(dict_[k], dict)
+                    and isinstance(merge_dict[k], collections.Mapping)
             ):
                 dict_[k] = merge_dicts(dict_[k], merge_dict[k])
             else:
@@ -87,9 +87,7 @@ def append_dict(dict1, dict2):
 
 
 def flatten_dict(
-    dictionary: Dict[str, Any],
-    parent_key: str = "",
-    separator: str = "/"
+        dictionary: Dict[str, Any], parent_key: str = "", separator: str = "/"
 ) -> "collections.OrderedDict":
     """
     Make the given dictionary flatten
@@ -117,11 +115,11 @@ def flatten_dict(
 
 
 def maybe_recursive_call(
-    object_or_dict,
-    method: str,
-    recursive_args=None,
-    recursive_kwargs=None,
-    **kwargs,
+        object_or_dict,
+        method: str,
+        recursive_args=None,
+        recursive_kwargs=None,
+        **kwargs,
 ):
     """
     Calls the ``method`` recursively for the object_or_dict
