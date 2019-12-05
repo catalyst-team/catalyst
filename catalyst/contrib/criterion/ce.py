@@ -14,3 +14,28 @@ class NaiveCrossEntropyLoss(nn.Module):
         loss = -torch.sum(input * target)
         loss = loss / input.size()[0] if self.size_average else loss
         return loss
+
+
+class MaskCrossEntropyLoss(torch.nn.CrossEntropyLoss):
+    def __init__(
+            self,
+            *args,
+            target_name: str = "targets",
+            mask_name: str = "mask",
+            **kwargs
+    ):
+        super().__init__(*args, **kwargs)
+        self.target_name = target_name
+        self.mask_name = mask_name
+        self.reduction = "none"
+
+    def forward(self, input, target_mask):
+        target = target_mask[self.target_name]
+        mask = target_mask[self.mask_name]
+
+        loss = super().forward(input, target)
+        loss = torch.mean(loss[mask == 1])
+        return loss
+
+
+__all__ = ["MaskCrossEntropyLoss", "NaiveCrossEntropyLoss"]

@@ -47,3 +47,6 @@ class ContrastiveDistanceLoss(nn.Module):
         loss = (1 - y) * torch.pow(dist, 2) + y * torch.pow(mdist_, 2)
         loss = torch.sum(loss) / 2.0 / bs
         return loss
+
+
+__all__ = ["ContrastiveEmbeddingLoss", "ContrastiveDistanceLoss"]
