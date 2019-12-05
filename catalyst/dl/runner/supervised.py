@@ -214,6 +214,7 @@ class SupervisedRunner(Runner):
     ) -> None:
         """
         Makes the inference on the model.
+
         Args:
             model (Model): model to infer
             loaders (dict): dictionary containing one or several
@@ -257,6 +258,7 @@ class SupervisedRunner(Runner):
     ) -> Any:
         """
         Makes a prediction on the whole loader with the specified model.
+
         Args:
             model (Model): model to infer
             loader (DataLoader): dictionary containing only one
@@ -308,6 +310,7 @@ class SupervisedRunner(Runner):
     ) -> ScriptModule:
         """
         Traces model using Torch Jit
+        
         Args:
             model (Model): model to trace
             batch: batch to forward through the model to trace
