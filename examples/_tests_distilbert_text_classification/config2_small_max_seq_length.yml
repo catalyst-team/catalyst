@@ -1,8 +1,11 @@
 # Refer to configs/config-description-eng.yml
 # for detailed comments on this configuration file
 
+runner_params:
+  input_key: ["features", "attention_mask"]
+
 model_params:
-  model: DistilBertForSequenceClassification
+  model: BertClassifier
   pretrained_model_name: distilbert-base-uncased
   num_classes: 6
 

@@ -4,7 +4,7 @@ from torch.optim import Adam
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from catalyst.contrib.models.nlp.bert.distil_classify import (
-    DistilBertForSequenceClassification
+    BertClassifier
 )
 from catalyst.contrib.runner.nlp.bert_supervised import (
     BertSupervisedRunner as Runner
@@ -12,6 +12,6 @@ from catalyst.contrib.runner.nlp.bert_supervised import (
 from catalyst.dl import registry
 from .experiment import Experiment
 
-registry.Model(DistilBertForSequenceClassification)
+registry.Model(BertClassifier)
 registry.Optimizer(Adam)
 registry.Scheduler(ReduceLROnPlateau)

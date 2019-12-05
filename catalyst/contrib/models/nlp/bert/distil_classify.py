@@ -1,9 +1,9 @@
-from transformers import AutoConfig, AutoModel
-
 import torch.nn as nn
 
+from transformers import AutoConfig, AutoModel
 
-class DistilBertForSequenceClassification(nn.Module):
+
+class BertClassifier(nn.Module):
     """
     Simplified version of the same class by HuggingFace.
     See transformers/modeling_distilbert.py in the transformers repository.
@@ -22,11 +22,14 @@ class DistilBertForSequenceClassification(nn.Module):
         config = AutoConfig.from_pretrained(
             pretrained_model_name, num_labels=num_classes)
 
-        self.distilbert = AutoModel.from_pretrained(pretrained_model_name,
-                                                    config=config)
+        self.distilbert = AutoModel.from_pretrained(
+            pretrained_model_name, config=config)
         self.pre_classifier = nn.Linear(config.dim, config.dim)
-        self.classifier = nn.Linear(config.dim, num_classes)
-        self.dropout = nn.Dropout(config.seq_classif_dropout)
+        self.classifier = nn.Sequential(
+            nn.ReLU(),
+            nn.Dropout(config.seq_classif_dropout),
+            nn.Linear(config.dim, num_classes)
+        )
 
     def forward(self, features, attention_mask=None, head_mask=None):
         """Compute class probabilities for the input sequence.
@@ -44,20 +47,20 @@ class DistilBertForSequenceClassification(nn.Module):
             PyTorch Tensor with predicted class probabilities
         """
         assert attention_mask is not None, "attention mask is none"
-        distilbert_output = self.distilbert(input_ids=features,
-                                            attention_mask=attention_mask,
-                                            head_mask=head_mask)
+        distilbert_output = self.distilbert(
+            input_ids=features,
+            attention_mask=attention_mask,
+            head_mask=head_mask
+        )
         # we only need the hidden state here and don't need
         # transformer output, so index 0
         hidden_state = distilbert_output[0]  # (bs, seq_len, dim)
         # we take embeddings from the [CLS] token, so again index 0
         pooled_output = hidden_state[:, 0]  # (bs, dim)
         pooled_output = self.pre_classifier(pooled_output)  # (bs, dim)
-        pooled_output = nn.ReLU()(pooled_output)  # (bs, dim)
-        pooled_output = self.dropout(pooled_output)  # (bs, dim)
         logits = self.classifier(pooled_output)  # (bs, dim)
 
         return logits
 
 
-__all__ = ["DistilBertForSequenceClassification"]
+__all__ = ["BertClassifier"]

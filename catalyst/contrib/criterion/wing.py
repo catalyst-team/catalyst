@@ -6,11 +6,11 @@ import torch.nn as nn
 
 
 def wing_loss(
-        outputs: torch.Tensor,
-        targets: torch.Tensor,
-        width: int = 5,
-        curvature: float = 0.5,
-        reduction: str = "mean"
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    width: int = 5,
+    curvature: float = 0.5,
+    reduction: str = "mean"
 ):
     """
     https://arxiv.org/pdf/1711.06753.pdf
@@ -40,8 +40,10 @@ def wing_loss(
 
 class WingLoss(nn.Module):
     def __init__(
-            self, width: int = 5, curvature: float = 0.5,
-            reduction: str = "mean"
+        self,
+        width: int = 5,
+        curvature: float = 0.5,
+        reduction: str = "mean"
     ):
         super().__init__()
         self.loss_fn = partial(

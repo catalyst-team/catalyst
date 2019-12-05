@@ -1,22 +1,24 @@
 import logging
 from typing import List, Mapping
 
-from transformers import AutoTokenizer
-
 import torch
 from torch.utils.data import Dataset
+
+from transformers import AutoTokenizer
 
 
 class TextClassificationDataset(Dataset):
     """
     Wrapper around Torch Dataset to perform text classification
     """
-    def __init__(self,
-                 texts: List[str],
-                 labels: List[str] = None,
-                 label_dict: Mapping[str, int] = None,
-                 max_seq_length: int = 512,
-                 model_name: str = "distilbert-base-uncased"):
+    def __init__(
+        self,
+        texts: List[str],
+        labels: List[str] = None,
+        label_dict: Mapping[str, int] = None,
+        max_seq_length: int = 512,
+        model_name: str = "distilbert-base-uncased"
+    ):
         """
         Args:
             texts (List[str]): a list with texts to classify or to train the
@@ -40,8 +42,8 @@ class TextClassificationDataset(Dataset):
             # {'class1': 0, 'class2': 1, 'class3': 2, ...}
             # using this instead of `sklearn.preprocessing.LabelEncoder`
             # no easily handle unknown target values
-            self.label_dict = dict(zip(sorted(set(labels)),
-                                       range(len(set(labels)))))
+            self.label_dict = dict(zip(
+                sorted(set(labels)), range(len(set(labels)))))
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         # suppresses tokenizer warnings
