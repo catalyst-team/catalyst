@@ -30,26 +30,29 @@ before_install_rl: &before_install_rl
 install_dl: &requirements_dl
   pip install -r requirements/requirements.txt
 
-install_rl: &requirements_rl
-  pip install -r requirements/requirements-rl.txt
-
 install_nlp: &requirements_nlp
   pip install -r requirements/requirements-nlp.txt
 
-install_all: &requirements_all
+install_rl: &requirements_rl
+  pip install -r requirements/requirements-rl.txt
+
+install_all: &requirements_dl_rl
   pip install -r requirements/requirements.txt -r requirements/requirements-rl.txt
 
 install_dev: &requirements_dev
   pip install -r requirements/requirements-dev.txt
+
+install_docs: &requirements_docs
+  pip install -r docs/requirements.txt
 
 jobs:
   include:
     - stage: Tests
       install:
         - *requirements_dl
+        - *requirements_nlp
         - *requirements_rl
         - *requirements_dev
-        - *requirements_nlp
       script:
         - isort -rc --check-only --settings-path ./setup.cfg
         - make check-style
@@ -58,8 +61,8 @@ jobs:
       name: "Examples: CV, NLP, RL"
       install:
         - *requirements_dl
-        - *requirements_rl
         - *requirements_nlp
+        - *requirements_rl
       script:
         - bash ./bin/tests/check_dl.sh
         - bash ./bin/tests/check_nlp.sh
@@ -130,7 +133,9 @@ jobs:
       if: branch = master
       install:
         - *requirements_dl
-        - pip install -r docs/requirements.txt
+        - *requirements_nlp
+        - *requirements_rl
+        - *requirements_docs
         - pip install travis-sphinx
         # for correct changelog on github pages
         - pip install git+https://github.com/bitprophet/releases/#egg=releases
