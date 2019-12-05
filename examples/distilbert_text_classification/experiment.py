@@ -18,13 +18,8 @@ class Experiment(ConfigExperiment):
 
     # noinspection PyMethodOverriding
     def get_datasets(
-        self,
-        stage: str,
-        path_to_data: str,
-        train_filename: str,
-        valid_filename: str,
-        max_sequence_length: int,
-        **kwargs
+        self, stage: str, path_to_data: str, train_filename: str,
+        valid_filename: str, max_sequence_length: int, **kwargs
     ):
         datasets = OrderedDict()
 
