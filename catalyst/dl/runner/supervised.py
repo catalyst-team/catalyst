@@ -311,7 +311,7 @@ class SupervisedRunner(Runner):
     ) -> ScriptModule:
         """
         Traces model using Torch Jit
-        
+
         Args:
             model (Model): model to trace
             batch: batch to forward through the model to trace
