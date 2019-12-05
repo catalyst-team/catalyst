@@ -25,12 +25,12 @@ class SupervisedRunner(Runner):
     _default_experiment = SupervisedExperiment
 
     def __init__(
-            self,
-            model: Model = None,
-            device: Device = None,
-            input_key: str = "features",
-            output_key: str = "logits",
-            input_target_key: str = "targets",
+        self,
+        model: Model = None,
+        device: Device = None,
+        input_key: str = "features",
+        output_key: str = "logits",
+        input_target_key: str = "targets",
     ):
         """
         Args:
@@ -103,30 +103,28 @@ class SupervisedRunner(Runner):
         return output
 
     def train(
-            self,
-            model: Model,
-            criterion: Criterion,
-            optimizer: Optimizer,
-            loaders: "OrderedDict[str, DataLoader]",
-            logdir: str,
-            callbacks: "Union[List[Callback], "
-                       "OrderedDict[str, Callback]]" = None,
-            scheduler: Scheduler = None,
-            resume: str = None,
-            num_epochs: int = 1,
-            valid_loader: str = "valid",
-            main_metric: str = "loss",
-            minimize_metric: bool = True,
-            verbose: bool = False,
-            state_kwargs: Dict = None,
-            checkpoint_data: Dict = None,
-            fp16: Union[Dict, bool] = None,
-            monitoring_params: Dict = None,
-            check: bool = False,
+        self,
+        model: Model,
+        criterion: Criterion,
+        optimizer: Optimizer,
+        loaders: "OrderedDict[str, DataLoader]",
+        logdir: str,
+        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
+        scheduler: Scheduler = None,
+        resume: str = None,
+        num_epochs: int = 1,
+        valid_loader: str = "valid",
+        main_metric: str = "loss",
+        minimize_metric: bool = True,
+        verbose: bool = False,
+        state_kwargs: Dict = None,
+        checkpoint_data: Dict = None,
+        fp16: Union[Dict, bool] = None,
+        monitoring_params: Dict = None,
+        check: bool = False,
     ) -> None:
         """
         Starts the training process of the model.
-
         Args:
             model (Model): model to train
             criterion (Criterion): criterion function for training
@@ -205,19 +203,17 @@ class SupervisedRunner(Runner):
         self.run_experiment(experiment, check=check)
 
     def infer(
-            self,
-            model: Model,
-            loaders: "OrderedDict[str, DataLoader]",
-            callbacks: "Union[List[Callback], "
-                       "OrderedDict[str, Callback]]" = None,
-            verbose: bool = False,
-            state_kwargs: Dict = None,
-            fp16: Union[Dict, bool] = None,
-            check: bool = False,
+        self,
+        model: Model,
+        loaders: "OrderedDict[str, DataLoader]",
+        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
+        verbose: bool = False,
+        state_kwargs: Dict = None,
+        fp16: Union[Dict, bool] = None,
+        check: bool = False,
     ) -> None:
         """
         Makes the inference on the model.
-
         Args:
             model (Model): model to infer
             loaders (dict): dictionary containing one or several
@@ -250,18 +246,17 @@ class SupervisedRunner(Runner):
         self.run_experiment(experiment, check=check)
 
     def predict_loader(
-            self,
-            model: Model,
-            loader: DataLoader,
-            resume: str = None,
-            verbose: bool = False,
-            state_kwargs: Dict = None,
-            fp16: Union[Dict, bool] = None,
-            check: bool = False,
+        self,
+        model: Model,
+        loader: DataLoader,
+        resume: str = None,
+        verbose: bool = False,
+        state_kwargs: Dict = None,
+        fp16: Union[Dict, bool] = None,
+        check: bool = False,
     ) -> Any:
         """
         Makes a prediction on the whole loader with the specified model.
-
         Args:
             model (Model): model to infer
             loader (DataLoader): dictionary containing only one
@@ -299,21 +294,20 @@ class SupervisedRunner(Runner):
         return output
 
     def trace(
-            self,
-            model: Model = None,
-            batch=None,
-            logdir: str = None,
-            loader: DataLoader = None,
-            method_name: str = "forward",
-            mode: str = "eval",
-            requires_grad: bool = False,
-            fp16: Union[Dict, bool] = None,
-            device: Device = "cpu",
-            predict_params: dict = None,
+        self,
+        model: Model = None,
+        batch=None,
+        logdir: str = None,
+        loader: DataLoader = None,
+        method_name: str = "forward",
+        mode: str = "eval",
+        requires_grad: bool = False,
+        fp16: Union[Dict, bool] = None,
+        device: Device = "cpu",
+        predict_params: dict = None,
     ) -> ScriptModule:
         """
         Traces model using Torch Jit
-
         Args:
             model (Model): model to trace
             batch: batch to forward through the model to trace
@@ -326,7 +320,7 @@ class SupervisedRunner(Runner):
             requires_grad (bool): flag to trace with gradients
             fp16 (Union[Dict, bool]): If not None, then sets
                 tracing params to FP16
-            device (Device): Torch deivice or a string
+            deivice (Device): Torch deivice or a string
             predict_params (dict): additional parameters for model forward
         """
         if batch is None:
