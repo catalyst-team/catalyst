@@ -125,7 +125,6 @@ class SupervisedRunner(Runner):
     ) -> None:
         """
         Starts the training process of the model.
-
         Args:
             model (Model): model to train
             criterion (Criterion): criterion function for training
@@ -172,7 +171,7 @@ class SupervisedRunner(Runner):
             self.model = model
 
         if resume is not None:
-            callbacks = callbacks or OrderedDict()
+            callbacks = utils.process_callbacks(callbacks)
             checkpoint_callback_flag = any([
                 isinstance(x, CheckpointCallback)
                 for x in callbacks.values()
@@ -311,7 +310,7 @@ class SupervisedRunner(Runner):
     ) -> ScriptModule:
         """
         Traces model using Torch Jit
-
+        
         Args:
             model (Model): model to trace
             batch: batch to forward through the model to trace
