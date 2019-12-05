@@ -3,7 +3,6 @@ from typing import List, Mapping
 
 import torch
 from torch.utils.data import Dataset
-
 from transformers import AutoTokenizer
 
 
