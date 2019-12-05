@@ -77,7 +77,7 @@ def main(args, unknown_args):
 
     Experiment, Runner = import_experiment_and_runner(Path(args.expdir))
 
-    runner_params = config.get("runner_params", {})
+    runner_params = config.pop("runner_params", {})
     experiment = Experiment(config)
     runner = Runner(**runner_params)
 
