@@ -22,7 +22,7 @@ class Experiment(ConfigExperiment):
         stage: str,
         path_to_data: str,
         train_filename: str,
-        validation_filename: str,
+        valid_filename: str,
         max_sequence_length: int,
         **kwargs
     ):
@@ -31,7 +31,7 @@ class Experiment(ConfigExperiment):
         path_to_data = Path(path_to_data)
 
         train_df = pd.read_csv(path_to_data / train_filename)
-        valid_df = pd.read_csv(path_to_data / validation_filename)
+        valid_df = pd.read_csv(path_to_data / valid_filename)
 
         train_dataset = TextClassificationDataset(
             texts=train_df["text"],

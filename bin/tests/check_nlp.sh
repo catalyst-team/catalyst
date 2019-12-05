@@ -9,7 +9,7 @@ LOGFILE=./examples/logs/_tests_distilbert_text_classification/checkpoints/_metri
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
-  --expdir=./examples/_tests_distilbert_text_classification \
+  --expdir=./examples/distilbert_text_classification \
   --config=./examples/_tests_distilbert_text_classification/config1_basic.yml \
   --logdir=./examples/logs/_tests_distilbert_text_classification \
   --check
@@ -29,7 +29,7 @@ rm -rf ./examples/logs/_tests_distilbert_text_classification
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
-  --expdir=./examples/_tests_distilbert_text_classification \
+  --expdir=./examples/distilbert_text_classification \
   --config=./examples/_tests_distilbert_text_classification/config2_small_max_seq_length.yml \
   --logdir=./examples/logs/_tests_distilbert_text_classification \
   --check

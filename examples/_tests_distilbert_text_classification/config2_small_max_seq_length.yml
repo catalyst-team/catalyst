@@ -23,7 +23,7 @@ stages:
     num_workers: 1
     path_to_data: './examples/_tests_distilbert_text_classification/input'
     train_filename: "train.csv"
-    validation_filename: "valid.csv"
+    valid_filename: "valid.csv"
     text_field: "text"
     label_field: "label"
     max_sequence_length: 24
