@@ -126,6 +126,7 @@ class SupervisedRunner(Runner):
     ) -> None:
         """
         Starts the training process of the model.
+
         Args:
             model (Model): model to train
             criterion (Criterion): criterion function for training
