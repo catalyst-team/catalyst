@@ -1,4 +1,4 @@
-from typing import List
+from typing import List  # isort:skip
 
 from catalyst.dl.core import MetricCallback, MultiMetricCallback
 from catalyst.dl.utils import criterion
@@ -51,6 +51,21 @@ def _get_default_classwise_iou_args(num_classes: int) -> List[int]:
 
 class ClasswiseIouCallback(MultiMetricCallback):
     """
+    Classwise IoU (Jaccard) metric callback.
+    """
+
+    def __init__(
+        self,
+        input_key: str = "targets",
+        output_key: str = "logits",
+        prefix: str = "iou",
+        classes: List[str] = None,
+        num_classes: int = None,
+        eps: float = 1e-7,
+        threshold: float = None,
+        activation: str = "Sigmoid",
+    ):
+        """
         Args:
             input_key (str): input key to use for iou calculation
                 specifies our ``y_true``.
@@ -66,17 +81,6 @@ class ClasswiseIouCallback(MultiMetricCallback):
             activation (str): An torch.nn activation applied to the outputs.
                 Must be one of ['none', 'Sigmoid', 'Softmax2d']
         """
-    def __init__(
-        self,
-        input_key: str = "targets",
-        output_key: str = "logits",
-        prefix: str = "iou",
-        classes: List[str] = None,
-        num_classes: int = None,
-        eps: float = 1e-7,
-        threshold: float = None,
-        activation: str = "Sigmoid",
-    ):
         assert classes is not None or num_classes is not None, \
             "You should specify either 'classes' or 'num_classes'"
         list_args = classes or _get_default_classwise_iou_args(num_classes)
