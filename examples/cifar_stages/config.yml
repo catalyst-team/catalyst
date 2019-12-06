@@ -1,3 +1,6 @@
+# Refer to configs/config-description-eng.yml
+# for detailed comments on this configuration file
+
 model_params:
   model: SimpleNet
 
@@ -12,6 +15,13 @@ stages:
   data_params:
     batch_size: 64
     num_workers: 1
+    samplers_params:
+      train:
+        sampler: MiniEpochSampler
+        data_len: 50000
+        mini_epoch_len: 40000
+        drop_last: True
+        shuffle: per_epoch
 
   state_params:
     num_epochs: 2
@@ -41,7 +51,6 @@ stages:
       callback: CheckpointCallback
 
   stage1:
-
     optimizer_params:
       optimizer: Adam
 
