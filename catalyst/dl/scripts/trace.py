@@ -47,7 +47,7 @@ def trace_model_from_checkpoint(
     checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
     print("Load config")
     config: Dict[str, dict] = safitty.load(config_path)
-    runner_params = config.pop("runner_params", {})
+    runner_params = config.pop("runner_params", {}) or {}
 
     # Get expdir name
     config_expdir = safitty.get(config, "args", "expdir", apply=Path)
