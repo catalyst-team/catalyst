@@ -1,6 +1,7 @@
 import random
 
 import numpy as np
+from packaging.version import Version, parse
 
 
 def set_global_seed(seed: int) -> None:
@@ -22,9 +23,9 @@ def set_global_seed(seed: int) -> None:
     except ImportError:
         pass
     else:
-        if tf.__version__ >= "2.0.0":
+        if parse(tf.__version__) >= Version("2.0.0"):
             tf.random.set_seed(seed)
-        elif tf.__version__ <= "1.13.2":
+        elif parse(tf.__version__) <= Version("1.13.2"):
             tf.set_random_seed(seed)
         else:
             tf.compat.v1.set_random_seed(seed)
