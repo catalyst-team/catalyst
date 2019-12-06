@@ -13,6 +13,7 @@ from catalyst.utils.scripts import dump_code
 
 
 def build_args(parser: ArgumentParser):
+    """Constructs the command-line arguments for ``catalyst-dl run``"""
     parser.add_argument(
         "--config",
         "--configs",
@@ -64,6 +65,7 @@ def build_args(parser: ArgumentParser):
 
 
 def parse_args():
+    """Parses the command line arguments and returns arguments and config"""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args, unknown_args = parser.parse_known_args()
@@ -71,13 +73,14 @@ def parse_args():
 
 
 def main(args, unknown_args):
+    """Run scripts"""
     args, config = parse_args_uargs(args, unknown_args)
     set_global_seed(args.seed)
     prepare_cudnn(args.deterministic, args.benchmark)
 
     Experiment, Runner = import_experiment_and_runner(Path(args.expdir))
 
-    runner_params = config.pop("runner_params", {})
+    runner_params = config.pop("runner_params", {}) or {}
     experiment = Experiment(config)
     runner = Runner(**runner_params)
 
