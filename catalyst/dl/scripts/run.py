@@ -73,7 +73,7 @@ def parse_args():
 
 
 def main(args, unknown_args):
-    """Run scripts"""
+    """Run the ``catalyst-dl run`` script"""
     args, config = parse_args_uargs(args, unknown_args)
     set_global_seed(args.seed)
     prepare_cudnn(args.deterministic, args.benchmark)
