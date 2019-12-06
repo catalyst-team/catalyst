@@ -1,7 +1,7 @@
 import random
 
 import numpy as np
-from packaging.version import Version, parse
+from packaging.version import parse, Version
 
 
 def set_global_seed(seed: int) -> None:
