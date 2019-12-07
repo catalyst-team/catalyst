@@ -359,7 +359,8 @@ class ConfigExperiment(Experiment):
                     sampler = None
             else:
                 sampler = SAMPLERS.get_from_params(**sampler_params)
-                ds_.pop("sampler", None)
+                if isinstance(ds_, dict) and "sampler" in ds_:
+                    ds_.pop("sampler", None)
 
             batch_size = overridden_loader_params.pop("batch_size", batch_size)
             num_workers = overridden_loader_params.\
