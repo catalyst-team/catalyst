@@ -7,7 +7,7 @@ import torch
 
 from catalyst.dl.core import Callback, CallbackOrder, RunnerState
 from catalyst.dl.registry import GRAD_CLIPPERS
-from catalyst.dl.utils import get_optimizer_momentum, maybe_recursive_call
+from catalyst.dl.utils import get_optimizer_momentum
 from catalyst.utils.typing import Optimizer
 
 logger = logging.getLogger(__name__)
@@ -75,7 +75,7 @@ class OptimizerCallback(Callback):
 
     def on_stage_start(self, state: RunnerState):
         """On stage start event"""
-        optimizer = state.get_key(
+        optimizer: Optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
         )
         assert optimizer is not None
@@ -86,7 +86,7 @@ class OptimizerCallback(Callback):
 
     def on_epoch_start(self, state):
         """On epoch start event"""
-        optimizer = state.get_key(
+        optimizer: Optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
         )
         if self.decouple_weight_decay:
@@ -132,8 +132,7 @@ class OptimizerCallback(Callback):
         loss = self._get_loss(state)
 
         self._accumulation_counter += 1
-        model = state.model
-        optimizer = state.get_key(
+        optimizer: Optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
         )
 
@@ -165,7 +164,10 @@ class OptimizerCallback(Callback):
                 optimizer_wds=self._optimizer_wd,
                 grad_clip_fn=self.grad_clip_fn
             )
-            maybe_recursive_call(model, "zero_grad")
+            # do not `model.zero_grad()`
+            # because there can be several optimizers
+            # or not all model parameters update by this optimizer
+            optimizer.zero_grad()
 
             self._accumulation_counter = 0
 
