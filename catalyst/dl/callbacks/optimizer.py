@@ -164,7 +164,7 @@ class OptimizerCallback(Callback):
                 optimizer_wds=self._optimizer_wd,
                 grad_clip_fn=self.grad_clip_fn
             )
-            # do not `model.zero_grad()`
+            # don't do `model.zero_grad()`
             # because there can be several optimizers
             # or not all model parameters update by this optimizer
             optimizer.zero_grad()
