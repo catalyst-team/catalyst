@@ -151,7 +151,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --expdir=./examples/mnist_gan \
   --config=./examples/mnist_gan/config.yml \
   --logdir=./examples/logs/mnist_gan \
-  --stages/state_params/num_epochs=11:int
+  --stages/state_params/num_epochs=13:int
 
 if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     echo "File $LOGFILE does not exist"
@@ -160,7 +160,7 @@ fi
 
 python -c """
 from safitty import Safict
-metrics=Safict.load('$LOGFILE')
+metrics = Safict.load('$LOGFILE')
 
 loss_g = metrics.get('last', 'loss_g')
 loss_d_real = metrics.get('last', 'loss_d_real')
@@ -176,8 +176,8 @@ print('loss_d', loss_d)
 # assert 0.3 < loss_d_real < 0.6
 # assert 0.28 < loss_d_fake < 0.58
 # assert 0.3 < loss_d < 0.6
-assert loss_g < 2.0
-assert loss_d_real < 0.9
-assert loss_d_fake < 0.9
-assert loss_d < 0.9
+assert loss_g < 2.0, 'loss_g must be < 2.0'
+assert loss_d_real < 0.9, 'loss_d_real must be < 0.9'
+assert loss_d_fake < 0.9, 'loss_d_fake must be < 0.9'
+assert loss_d < 0.9, 'loss_d must be < 0.9'
 """
