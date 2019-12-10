@@ -352,8 +352,13 @@ class Runner(ABC):
             for stage in self.experiment.stages:
                 self._run_stage(stage)
         except (Exception, KeyboardInterrupt) as ex:
-            self.state.exception = ex
-            self._run_event("exception", moment=None)
+            # if an exception had been raised 
+            # before the exception-handlers were initialized
+            if self.loggers is None or self.callbacks is None:
+                raise ex
+            else:
+                self.state.exception = ex
+                self._run_event("exception", moment=None)
 
         return self
 

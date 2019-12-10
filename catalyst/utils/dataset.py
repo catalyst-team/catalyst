@@ -358,10 +358,10 @@ def separate_tags(
         tag_delim: delimiter to separate values
 
     Returns:
-
+        pd.DataFrame: new dataframe
     """
     df_new = []
-    for i, row in dataframe.iterrows():
+    for _, row in dataframe.iterrows():
         for class_name in row[tag_column].split(tag_delim):
             df_new.append({**row, **{tag_column: class_name}})
     df_new = pd.DataFrame(df_new)

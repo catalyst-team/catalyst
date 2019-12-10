@@ -60,3 +60,6 @@ class BCEIoULoss(nn.Module):
         bce = self.bce_loss(outputs, targets)
         loss = iou + bce
         return loss
+
+
+__all__ = ["IoULoss", "BCEIoULoss"]

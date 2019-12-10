@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from typing import List
+=======
+from typing import List, Union  # isort:skip
+>>>>>>> patch-2
 
 import torch
 
@@ -14,7 +18,7 @@ def iou(
     eps: float = 1e-7,
     threshold: float = None,
     activation: str = "Sigmoid"
-):
+) -> Union[float, List[float]]:
     """
     Args:
         outputs (torch.Tensor): A list of predicted elements
@@ -25,7 +29,11 @@ def iou(
             Must be one of ["none", "Sigmoid", "Softmax2d"]
 
     Returns:
+<<<<<<< HEAD
         float or torch.Tensor: IoU (Jaccard) score(s)
+=======
+        Union[float, List[float]]: IoU (Jaccard) score(s)
+>>>>>>> patch-2
     """
     activation_fn = get_activation_fn(activation)
     outputs = activation_fn(outputs)
