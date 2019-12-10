@@ -23,6 +23,12 @@ args:  # REQUIRED KEYWORD, различные аргументы для Catalyst
   check: False  # KEYWORD, если True, то Catalyst делает только 3 эпохи (чтобы проверить работоспособность пайплайна, по умолчанию False)
 
 
+runner_params:  # OPTIONAL KEYWORD, параметры для инициализации Runner
+  # Например для SupervisedRunner
+  input_key: "features"  # Пример
+  output_key: null  # Пример
+
+
 distributed_params:  # OPTIONAL KEYWORD, параметры для distributed training и NVIDIA Apex
   rank: -1  # Rank для distributed training
   opt_level: O1  # Пример для NVIDIA Apex

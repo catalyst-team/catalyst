@@ -176,7 +176,7 @@ print('loss_d', loss_d)
 # assert 0.3 < loss_d_real < 0.6
 # assert 0.28 < loss_d_fake < 0.58
 # assert 0.3 < loss_d < 0.6
-assert loss_g < 1.5
+assert loss_g < 2.0
 assert loss_d_real < 0.9
 assert loss_d_fake < 0.9
 assert loss_d < 0.9
