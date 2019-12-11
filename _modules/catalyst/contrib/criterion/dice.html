@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.contrib.criterion.dice &#8212; Catalyst 19.11.1 documentation</title>
+    <title>catalyst.contrib.criterion.dice &#8212; Catalyst 19.12.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -97,6 +97,9 @@
         <span class="n">dice</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dice_weight</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dice_loss</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
         <span class="n">bce</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bce_weight</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">bce_loss</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">dice</span> <span class="o">+</span> <span class="n">bce</span></div></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;BCEDiceLoss&quot;</span><span class="p">,</span> <span class="s2">&quot;DiceLoss&quot;</span><span class="p">]</span>
 </pre></div>
 
           </div>

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.rl.core.sampler &#8212; Catalyst 19.11.1 documentation</title>
+    <title>catalyst.rl.core.sampler &#8212; Catalyst 19.12.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -91,7 +91,8 @@
         <span class="n">deterministic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">weights_sync_period</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">weights_sync_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">seeds</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">sampler_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+        <span class="n">trajectory_seeds</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">trajectory_limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">force_store</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">gc_period</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
@@ -104,8 +105,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_deterministic</span> <span class="o">=</span> <span class="n">deterministic</span> \
             <span class="k">if</span> <span class="n">deterministic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> \
             <span class="k">else</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span> <span class="s2">&quot;infer&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">seeds</span> <span class="o">=</span> <span class="n">seeds</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="n">init_seed</span><span class="o">=</span><span class="mi">42</span> <span class="o">+</span> <span class="nb">id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_seeds</span> <span class="o">=</span> <span class="n">trajectory_seeds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="n">init_seed</span><span class="o">=</span><span class="n">sampler_seed</span><span class="p">)</span>
 
         <span class="c1"># logging</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_logger</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
@@ -206,8 +207,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">db_server</span><span class="o">.</span><span class="n">put_trajectory</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="n">raw</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeds</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectory_index</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seeds</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_seeds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_seeds</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_index</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectory_seeds</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_seeder</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">set_global_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
@@ -470,7 +472,7 @@
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">last_filepath</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_run_sample_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_seeds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="c1"># 1 – load from db, 2 – resume load trick (already have checkpoint)</span>
@@ -484,7 +486,7 @@
 
             <span class="n">trajectories_reward</span><span class="p">,</span> <span class="n">trajectories_raw_reward</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
 
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seeds</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectory_seeds</span><span class="p">)):</span>
                 <span class="n">trajectory</span><span class="p">,</span> <span class="n">trajectory_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_trajectory_loop</span><span class="p">()</span>
                 <span class="n">trajectories_reward</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trajectory_info</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">])</span>
                 <span class="n">trajectories_raw_reward</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>

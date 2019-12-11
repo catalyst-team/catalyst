@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.data.dataset &#8212; Catalyst 19.11.1 documentation</title>
+    <title>catalyst.data.dataset &#8212; Catalyst 19.12.1 documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -34,7 +34,6 @@
   <h1>Source code for catalyst.data.dataset</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">random</span>
 
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">Dataset</span>
 
@@ -52,8 +51,6 @@
         <span class="n">list_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span>
         <span class="n">open_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
         <span class="n">dict_transform</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">cache_prob</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">cache_transforms</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
@@ -66,29 +63,12 @@
 <span class="sd">                (for example open image by path, or tokenize read string.)</span>
 <span class="sd">            dict_transform (callable): transforms to use on dict.</span>
 <span class="sd">                (for example normalize image, add blur, crop/resize/etc)</span>
-<span class="sd">            cache_prob (float): probability of saving opened dict to RAM</span>
-<span class="sd">                for speedup</span>
-<span class="sd">            cache_transforms (bool): flag if you need</span>
-<span class="sd">                to cache sample after transformations to RAM</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">list_data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">open_fn</span> <span class="o">=</span> <span class="n">open_fn</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dict_transform</span> <span class="o">=</span> <span class="n">dict_transform</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cache_prob</span> <span class="o">=</span> <span class="n">cache_prob</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cache_transforms</span> <span class="o">=</span> <span class="n">cache_transforms</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span></div>
-
-    <span class="k">def</span> <span class="nf">prepare_new_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-        <span class="n">dict_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">open_fn</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_transforms</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">dict_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_transform</span><span class="p">(</span><span class="n">dict_</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">dict_</span>
-
-    <span class="k">def</span> <span class="nf">prepare_item_from_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_transform</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">dict_transform</span> <span class="k">if</span> <span class="n">dict_transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="ListDataset.__getitem__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.dataset.ListDataset.__getitem__">[docs]</a>    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Gets element of the dataset</span>
@@ -98,18 +78,9 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            Single element by index</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">dict_</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_prob</span><span class="p">:</span>
-            <span class="n">dict_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_item_from_cache</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">dict_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">dict_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_new_item</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_prob</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">dict_</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_transforms</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">dict_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_transform</span><span class="p">(</span><span class="n">dict_</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="n">dict_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">open_fn</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="n">dict_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_transform</span><span class="p">(</span><span class="n">dict_</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">dict_</span></div>
 

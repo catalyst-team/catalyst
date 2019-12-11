@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.utils.dataset &#8212; Catalyst 19.11.1 documentation</title>
+    <title>catalyst.utils.dataset &#8212; Catalyst 19.12.1 documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -392,10 +392,10 @@
 <span class="sd">        tag_delim: delimiter to separate values</span>
 
 <span class="sd">    Returns:</span>
-
+<span class="sd">        pd.DataFrame: new dataframe</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">df_new</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
         <span class="k">for</span> <span class="n">class_name</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="n">tag_column</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">tag_delim</span><span class="p">):</span>
             <span class="n">df_new</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="o">**</span><span class="n">row</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="n">tag_column</span><span class="p">:</span> <span class="n">class_name</span><span class="p">}})</span>
     <span class="n">df_new</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df_new</span><span class="p">)</span>

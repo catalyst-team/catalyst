@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Data &#8212; Catalyst 19.11.1 documentation</title>
+    <title>Data &#8212; Catalyst 19.12.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -141,8 +141,9 @@ For modern Catalyst use <a class="reference external" href="https://github.com/a
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dict2fn_dict</strong> – keys matching dict {input_key: augment_fn_key}
-ex: {“image”: “image”, “mask”: “mask”}</p></li>
+<li><p><strong>dict2fn_dict</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – keys matching dict
+<code class="docutils literal notranslate"><span class="pre">{input_key:</span> <span class="pre">augment_fn_key}</span></code>. For example:
+<code class="docutils literal notranslate"><span class="pre">{&quot;image&quot;:</span> <span class="pre">&quot;image&quot;,</span> <span class="pre">&quot;mask&quot;:</span> <span class="pre">&quot;mask&quot;}</span></code></p></li>
 <li><p><strong>augment_fn</strong> – augmentation function</p></li>
 </ul>
 </dd>
@@ -192,7 +193,7 @@ converted to tensor and stacked</p>
 <span id="dataset"></span><h2>Dataset<a class="headerlink" href="#module-catalyst.data.dataset" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.data.dataset.ListDataset">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.dataset.</code><code class="sig-name descname">ListDataset</code><span class="sig-paren">(</span><em class="sig-param">list_data: List[Dict], open_fn: Callable, dict_transform: Callable = None, cache_prob: float = -1, cache_transforms: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#ListDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.ListDataset" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.dataset.</code><code class="sig-name descname">ListDataset</code><span class="sig-paren">(</span><em class="sig-param">list_data: List[Dict], open_fn: Callable, dict_transform: Callable = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#ListDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.ListDataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
 <p>General purpose dataset class with several data sources <cite>list_data</cite></p>
 <dl class="method">
@@ -211,7 +212,7 @@ converted to tensor and stacked</p>
 
 <dl class="method">
 <dt id="catalyst.data.dataset.ListDataset.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">list_data: List[Dict], open_fn: Callable, dict_transform: Callable = None, cache_prob: float = -1, cache_transforms: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#ListDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.ListDataset.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">list_data: List[Dict], open_fn: Callable, dict_transform: Callable = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#ListDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.ListDataset.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -224,10 +225,6 @@ transfer it to data, needed by your network
 (for example open image by path, or tokenize read string.)</p></li>
 <li><p><strong>dict_transform</strong> (<em>callable</em>) – transforms to use on dict.
 (for example normalize image, add blur, crop/resize/etc)</p></li>
-<li><p><strong>cache_prob</strong> (<em>float</em>) – probability of saving opened dict to RAM
-for speedup</p></li>
-<li><p><strong>cache_transforms</strong> (<em>bool</em>) – flag if you need
-to cache sample after transformations to RAM</p></li>
 </ul>
 </dd>
 </dl>
@@ -288,12 +285,12 @@ to cache sample after transformations to RAM</p></li>
 
 <dl class="class">
 <dt id="catalyst.data.dataset.PathsDataset">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.dataset.</code><code class="sig-name descname">PathsDataset</code><span class="sig-paren">(</span><em class="sig-param">filenames: List[Union[str, pathlib.Path]], open_fn: Callable[dict, dict], label_fn: Callable[Union[str, pathlib.Path], Any], **list_dataset_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#PathsDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.PathsDataset" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.dataset.</code><code class="sig-name descname">PathsDataset</code><span class="sig-paren">(</span><em class="sig-param">filenames: List[Union[str, pathlib.Path]], open_fn: Callable[[dict], dict], label_fn: Callable[[Union[str, pathlib.Path]], Any], **list_dataset_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#PathsDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.PathsDataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.data.dataset.ListDataset" title="catalyst.data.dataset.ListDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.data.dataset.ListDataset</span></code></a></p>
 <p>Dataset that derives features and targets from samples filesystem paths.</p>
 <dl class="method">
 <dt id="catalyst.data.dataset.PathsDataset.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">filenames: List[Union[str, pathlib.Path]], open_fn: Callable[dict, dict], label_fn: Callable[Union[str, pathlib.Path], Any], **list_dataset_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#PathsDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.PathsDataset.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">filenames: List[Union[str, pathlib.Path]], open_fn: Callable[[dict], dict], label_fn: Callable[[Union[str, pathlib.Path]], Any], **list_dataset_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#PathsDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.PathsDataset.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
