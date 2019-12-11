@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.utils.criterion.iou &#8212; Catalyst 19.11.1 documentation</title>
+    <title>catalyst.dl.utils.criterion.iou &#8212; Catalyst 19.12.1 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
@@ -32,7 +32,9 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.utils.criterion.iou</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="k">import</span> <span class="n">get_activation_fn</span>
 
@@ -40,10 +42,13 @@
 <div class="viewcode-block" id="iou"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.utils.criterion.iou.iou">[docs]</a><span class="k">def</span> <span class="nf">iou</span><span class="p">(</span>
     <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
     <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="c1"># values are discarded, only None check</span>
+    <span class="c1"># used for compatibility with MultiMetricCallback</span>
+    <span class="n">classes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-7</span><span class="p">,</span>
     <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">activation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Sigmoid&quot;</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Args:</span>
 <span class="sd">        outputs (torch.Tensor): A list of predicted elements</span>
@@ -54,7 +59,7 @@
 <span class="sd">            Must be one of [&quot;none&quot;, &quot;Sigmoid&quot;, &quot;Softmax2d&quot;]</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        float: IoU (Jaccard) score</span>
+<span class="sd">        Union[float, List[float]]: IoU (Jaccard) score(s)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">activation_fn</span> <span class="o">=</span> <span class="n">get_activation_fn</span><span class="p">(</span><span class="n">activation</span><span class="p">)</span>
     <span class="n">outputs</span> <span class="o">=</span> <span class="n">activation_fn</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
@@ -62,9 +67,16 @@
     <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">outputs</span> <span class="o">=</span> <span class="p">(</span><span class="n">outputs</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
 
-    <span class="n">intersection</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">targets</span> <span class="o">*</span> <span class="n">outputs</span><span class="p">)</span>
-    <span class="n">union</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
-    <span class="n">iou</span> <span class="o">=</span> <span class="n">intersection</span> <span class="o">/</span> <span class="p">(</span><span class="n">union</span> <span class="o">-</span> <span class="n">intersection</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="c1"># if classes are specified we reduce across all dims except channels</span>
+    <span class="n">red_dim</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">shape</span><span class="p">)))</span> <span class="k">if</span> <span class="n">classes</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+    <span class="n">intersection</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">targets</span> <span class="o">*</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">red_dim</span><span class="p">)</span>
+    <span class="n">union</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">red_dim</span><span class="p">)</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">red_dim</span><span class="p">)</span>
+    <span class="c1"># this looks a bit awkward but `eps * (union == 0)` term</span>
+    <span class="c1"># makes sure that if I and U are both 0, than IoU == 1</span>
+    <span class="c1"># and if U != 0 and I == 0 the eps term in numerator is zeroed out</span>
+    <span class="c1"># i.e. (0 + eps) / (U - 0 + eps) doesn&#39;t happen</span>
+    <span class="n">iou</span> <span class="o">=</span> <span class="p">(</span><span class="n">intersection</span> <span class="o">+</span> <span class="n">eps</span> <span class="o">*</span> <span class="p">(</span><span class="n">union</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">union</span> <span class="o">-</span> <span class="n">intersection</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">iou</span></div>
 

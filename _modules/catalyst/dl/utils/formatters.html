@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.utils.formatters &#8212; Catalyst 19.11.1 documentation</title>
+    <title>catalyst.dl.utils.formatters &#8212; Catalyst 19.12.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -38,9 +38,14 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.dl.core.state</span> <span class="k">import</span> <span class="n">RunnerState</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="k">import</span> <span class="n">format_metric</span>
 
 
 <div class="viewcode-block" id="MetricsFormatter"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.formatters.MetricsFormatter">[docs]</a><span class="k">class</span> <span class="nc">MetricsFormatter</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract metrics formatter</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="MetricsFormatter.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.formatters.MetricsFormatter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_prefix</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
@@ -54,6 +59,9 @@
         <span class="k">pass</span>
 
 <div class="viewcode-block" id="MetricsFormatter.format"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.formatters.MetricsFormatter.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">LogRecord</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Format message string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># noinspection PyUnresolvedReferences</span>
         <span class="n">state</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">state</span>
 
@@ -66,33 +74,26 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Translate batch metrics in human-readable format.</span>
 
-<span class="sd">    This class is used by logging.Logger to make a string from record.</span>
+<span class="sd">    This class is used by ``logging.Logger`` to make a string from record.</span>
 <span class="sd">    For details refer to official docs for &#39;logging&#39; module.</span>
 
 <span class="sd">    Note:</span>
-
-<span class="sd">    This is inner class used by Logger callback,</span>
-<span class="sd">    no need to use it directly!</span>
+<span class="sd">        This is inner class used by Logger callback,</span>
+<span class="sd">        no need to use it directly!</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">{asctime}</span><span class="s2">] &quot;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_format_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mf">1e-4</span><span class="p">:</span>
-            <span class="c1"># Print LR in scientific format since</span>
-            <span class="c1"># 4 decimal chars is not enough for LR</span>
-            <span class="c1"># lower than 1e-4</span>
-            <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{name}</span><span class="s2">=</span><span class="si">{value:1.3e}</span><span class="s2">&quot;</span>
-
-        <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{name}</span><span class="s2">=</span><span class="si">{value:.4f}</span><span class="s2">&quot;</span>
+<div class="viewcode-block" id="TxtMetricsFormatter.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.formatters.TxtMetricsFormatter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the ``TxtMetricsFormatter``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">{asctime}</span><span class="s2">] &quot;</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_format_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">):</span>
         <span class="c1"># metrics : dict[str: dict[str: float]]</span>
         <span class="n">metrics_formatted</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">metrics_formatted_</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_format_metric</span><span class="p">(</span><span class="n">m_name</span><span class="p">,</span> <span class="n">m_value</span><span class="p">)</span>
+                <span class="n">format_metric</span><span class="p">(</span><span class="n">m_name</span><span class="p">,</span> <span class="n">m_value</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">m_name</span><span class="p">,</span> <span class="n">m_value</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
             <span class="p">]</span>
             <span class="n">metrics_formatted_</span> <span class="o">=</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">metrics_formatted_</span><span class="p">)</span>
@@ -116,7 +117,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Translate batch metrics in json format.</span>
 
-<span class="sd">    This class is used by logging.Logger to make a string from record.</span>
+<span class="sd">    This class is used by ``logging.Logger`` to make a string from record.</span>
 <span class="sd">    For details refer to official docs for &#39;logging&#39; module.</span>
 
 <span class="sd">    Note:</span>
@@ -124,8 +125,11 @@
 <span class="sd">        no need to use it directly!</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="JsonMetricsFormatter.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.formatters.JsonMetricsFormatter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the ``JsonMetricsFormatter``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_format_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>

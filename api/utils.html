@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Utils &#8212; Catalyst 19.11.1 documentation</title>
+    <title>Utils &#8212; Catalyst 19.12.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -35,22 +35,6 @@
   <div class="section" id="module-catalyst.utils">
 <span id="utils"></span><h1>Utils<a class="headerlink" href="#module-catalyst.utils" title="Permalink to this headline">¶</a></h1>
 <span class="target" id="module-catalyst.utils.argparse"></span><dl class="function">
-<dt id="catalyst.utils.argparse.args_are_not_none">
-<code class="sig-prename descclassname">catalyst.utils.argparse.</code><code class="sig-name descname">args_are_not_none</code><span class="sig-paren">(</span><em class="sig-param">*args: Optional[Any]</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/argparse.html#args_are_not_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.argparse.args_are_not_none" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check that all arguments are not None
-:param *args: values
-:type *args: Any</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>True if all value were not None, False otherwise</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
 <dt id="catalyst.utils.argparse.boolean_flag">
 <code class="sig-prename descclassname">catalyst.utils.argparse.</code><code class="sig-name descname">boolean_flag</code><span class="sig-paren">(</span><em class="sig-param">parser: argparse.ArgumentParser</em>, <em class="sig-param">name: str</em>, <em class="sig-param">default: Optional[bool] = False</em>, <em class="sig-param">help: str = None</em>, <em class="sig-param">shorthand: str = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/argparse.html#boolean_flag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.argparse.boolean_flag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a boolean flag to a parser inplace.</p>
@@ -295,7 +279,7 @@ np.arange(n) if no column labels are provided</p>
 
 <dl class="function">
 <dt id="catalyst.utils.dataset.create_dataset">
-<code class="sig-prename descclassname">catalyst.utils.dataset.</code><code class="sig-name descname">create_dataset</code><span class="sig-paren">(</span><em class="sig-param">dirs: str</em>, <em class="sig-param">extension: str = None</em>, <em class="sig-param">process_fn: Callable[str</em>, <em class="sig-param">object] = None</em><span class="sig-paren">)</span> &#x2192; Dict[str, object]<a class="reference internal" href="../_modules/catalyst/utils/dataset.html#create_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.dataset.create_dataset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.dataset.</code><code class="sig-name descname">create_dataset</code><span class="sig-paren">(</span><em class="sig-param">dirs: str, extension: str = None, process_fn: Callable[[str], object] = None</em><span class="sig-paren">)</span> &#x2192; Dict[str, object]<a class="reference internal" href="../_modules/catalyst/utils/dataset.html#create_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.dataset.create_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create dataset (dict like <cite>{key: [values]}</cite>) from vctk-like dataset:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">/</span>
     <span class="n">cat</span><span class="o">/</span>
@@ -383,8 +367,13 @@ process function for found files, by default</p></li>
 <li><p><strong>tag_delim</strong> – delimiter to separate values</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>new dataframe</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
 </dl>
-<p>Returns:</p>
 </dd></dl>
 
 <dl class="function">
@@ -558,7 +547,7 @@ apex.parallel.DistributedDataParallel.</p>
 
 <dl class="function">
 <dt id="catalyst.utils.image.imread">
-<code class="sig-prename descclassname">catalyst.utils.image.</code><code class="sig-name descname">imread</code><span class="sig-paren">(</span><em class="sig-param">uri</em>, <em class="sig-param">grayscale=False</em>, <em class="sig-param">expand_dims=True</em>, <em class="sig-param">rootpath=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/image.html#imread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.image.imread" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.image.</code><code class="sig-name descname">imread</code><span class="sig-paren">(</span><em class="sig-param">uri</em>, <em class="sig-param">grayscale: bool = False</em>, <em class="sig-param">expand_dims: bool = True</em>, <em class="sig-param">rootpath: Union[str</em>, <em class="sig-param">pathlib.Path] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/image.html#imread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.image.imread" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -661,24 +650,32 @@ when dtype is <cite>np.uint8</cite>.</p>
 <dl class="function">
 <dt id="catalyst.utils.initialization.constant_init">
 <code class="sig-prename descclassname">catalyst.utils.initialization.</code><code class="sig-name descname">constant_init</code><span class="sig-paren">(</span><em class="sig-param">module</em>, <em class="sig-param">val</em>, <em class="sig-param">bias=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/initialization.html#constant_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.constant_init" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Initialize the module with constant value</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.initialization.create_optimal_inner_init">
-<code class="sig-prename descclassname">catalyst.utils.initialization.</code><code class="sig-name descname">create_optimal_inner_init</code><span class="sig-paren">(</span><em class="sig-param">nonlinearity: torch.nn.modules.module.Module</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; Callable[torch.nn.modules.module.Module, None]<a class="reference internal" href="../_modules/catalyst/utils/initialization.html#create_optimal_inner_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.create_optimal_inner_init" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.initialization.</code><code class="sig-name descname">create_optimal_inner_init</code><span class="sig-paren">(</span><em class="sig-param">nonlinearity: torch.nn.modules.module.Module</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; Callable[[torch.nn.modules.module.Module], None]<a class="reference internal" href="../_modules/catalyst/utils/initialization.html#create_optimal_inner_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.create_optimal_inner_init" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create initializer for inner layers
 based on their activation function (nonlinearity).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>nonlinearity</strong> – non-linear activation</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.initialization.kaiming_init">
 <code class="sig-prename descclassname">catalyst.utils.initialization.</code><code class="sig-name descname">kaiming_init</code><span class="sig-paren">(</span><em class="sig-param">module</em>, <em class="sig-param">mode='fan_out'</em>, <em class="sig-param">nonlinearity='relu'</em>, <em class="sig-param">bias=0</em>, <em class="sig-param">distribution='normal'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/initialization.html#kaiming_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.kaiming_init" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Initialize the module with he initialization</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.initialization.normal_init">
 <code class="sig-prename descclassname">catalyst.utils.initialization.</code><code class="sig-name descname">normal_init</code><span class="sig-paren">(</span><em class="sig-param">module</em>, <em class="sig-param">mean=0</em>, <em class="sig-param">std=1</em>, <em class="sig-param">bias=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/initialization.html#normal_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.normal_init" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Initialize the module with normal distribution</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.initialization.outer_init">
@@ -690,17 +687,35 @@ used in deep reinforcement learning literature.</p>
 <dl class="function">
 <dt id="catalyst.utils.initialization.uniform_init">
 <code class="sig-prename descclassname">catalyst.utils.initialization.</code><code class="sig-name descname">uniform_init</code><span class="sig-paren">(</span><em class="sig-param">module</em>, <em class="sig-param">a=0</em>, <em class="sig-param">b=1</em>, <em class="sig-param">bias=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/initialization.html#uniform_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.uniform_init" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Initialize the module with uniform distribution</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.initialization.xavier_init">
 <code class="sig-prename descclassname">catalyst.utils.initialization.</code><code class="sig-name descname">xavier_init</code><span class="sig-paren">(</span><em class="sig-param">module</em>, <em class="sig-param">gain=1</em>, <em class="sig-param">bias=0</em>, <em class="sig-param">distribution='normal'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/initialization.html#xavier_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.xavier_init" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Initialize the module with xavier initialization</p>
+</dd></dl>
 
 <span class="target" id="module-catalyst.utils.misc"></span><dl class="function">
 <dt id="catalyst.utils.misc.append_dict">
 <code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">append_dict</code><span class="sig-paren">(</span><em class="sig-param">dict1</em>, <em class="sig-param">dict2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#append_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.append_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Appends dict2 with the same keys as dict1 to dict1</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.misc.args_are_not_none">
+<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">args_are_not_none</code><span class="sig-paren">(</span><em class="sig-param">*args: Optional[Any]</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/misc.html#args_are_not_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.args_are_not_none" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that all arguments are not None
+:param *args: values
+:type *args: Any</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if all value were not None, False otherwise</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -719,8 +734,41 @@ used in deep reinforcement learning literature.</p>
 
 <dl class="function">
 <dt id="catalyst.utils.misc.flatten_dict">
-<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">flatten_dict</code><span class="sig-paren">(</span><em class="sig-param">d</em>, <em class="sig-param">parent_key=''</em>, <em class="sig-param">sep='/'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#flatten_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.flatten_dict" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">flatten_dict</code><span class="sig-paren">(</span><em class="sig-param">dictionary: Dict[str, Any], parent_key: str = '', separator: str = '/'</em><span class="sig-paren">)</span> &#x2192; collections.OrderedDict<a class="reference internal" href="../_modules/catalyst/utils/misc.html#flatten_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.flatten_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the given dictionary flatten</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dictionary</strong> (<em>dict</em>) – giving dictionary</p></li>
+<li><p><strong>parent_key</strong> (<em>str</em><em>, </em><em>optional</em>) – prefix nested keys with
+string <code class="docutils literal notranslate"><span class="pre">parent_key</span></code></p></li>
+<li><p><strong>separator</strong> (<em>str</em><em>, </em><em>optional</em>) – delimiter between
+<code class="docutils literal notranslate"><span class="pre">parent_key</span></code> and <code class="docutils literal notranslate"><span class="pre">key</span></code> to use</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ordered dictionary with flatten keys</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>collections.OrderedDict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.misc.format_metric">
+<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">format_metric</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">value: float</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/catalyst/utils/misc.html#format_metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.format_metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format metric. Metric will be returned in the scientific format if 4
+decimal chars are not enough (metric value lower than 1e-4)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – metric name</p></li>
+<li><p><strong>value</strong> (<em>float</em>) – value of metric</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.misc.get_utcnow_time">
@@ -748,12 +796,30 @@ used in deep reinforcement learning literature.</p>
 <dl class="function">
 <dt id="catalyst.utils.misc.make_tuple">
 <code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">make_tuple</code><span class="sig-paren">(</span><em class="sig-param">tuple_like</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#make_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.make_tuple" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Creates a tuple if given <code class="docutils literal notranslate"><span class="pre">tuple_like</span></code> value isn’t list or tuple</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>tuple or list</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.misc.maybe_recursive_call">
-<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">maybe_recursive_call</code><span class="sig-paren">(</span><em class="sig-param">object_or_dict</em>, <em class="sig-param">method</em>, <em class="sig-param">recursive_args=None</em>, <em class="sig-param">recursive_kwargs=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#maybe_recursive_call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.maybe_recursive_call" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">maybe_recursive_call</code><span class="sig-paren">(</span><em class="sig-param">object_or_dict</em>, <em class="sig-param">method: str</em>, <em class="sig-param">recursive_args=None</em>, <em class="sig-param">recursive_kwargs=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#maybe_recursive_call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.maybe_recursive_call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls the <code class="docutils literal notranslate"><span class="pre">method</span></code> recursively for the object_or_dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>object_or_dict</strong> (<em>Any</em>) – some object or a dictinary of objects</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – method name to call</p></li>
+<li><p><strong>recursive_args</strong> – list of arguments to pass to the <code class="docutils literal notranslate"><span class="pre">method</span></code></p></li>
+<li><p><strong>recursive_kwargs</strong> – list of key-arguments to pass to the <code class="docutils literal notranslate"><span class="pre">method</span></code></p></li>
+<li><p><strong>**kwargs</strong> – Arbitrary keyword arguments</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.misc.merge_dicts">
@@ -1314,7 +1380,8 @@ Only scalars and images are supported at the moment.</p>
 <span class="target" id="module-catalyst.utils.torch"></span><dl class="function">
 <dt id="catalyst.utils.torch.ce_with_logits">
 <code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">ce_with_logits</code><span class="sig-paren">(</span><em class="sig-param">logits</em>, <em class="sig-param">target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#ce_with_logits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.ce_with_logits" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns cross entropy for giving logits</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.torch.log1p_exp">
@@ -1339,12 +1406,14 @@ N(z|mu,sigma).</p>
 <dl class="function">
 <dt id="catalyst.utils.torch.soft_update">
 <code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">soft_update</code><span class="sig-paren">(</span><em class="sig-param">target</em>, <em class="sig-param">source</em>, <em class="sig-param">tau</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#soft_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.soft_update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Updates the target data with smoothing by <code class="docutils literal notranslate"><span class="pre">tau</span></code></p>
+</dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.torch.get_optimizable_params">
 <code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">get_optimizable_params</code><span class="sig-paren">(</span><em class="sig-param">model_or_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_optimizable_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_optimizable_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns all the parameters that requires gradients</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.torch.get_optimizer_momentum">
@@ -1381,13 +1450,15 @@ default is 0</p></li>
 
 <dl class="function">
 <dt id="catalyst.utils.torch.assert_fp16_available">
-<code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">assert_fp16_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#assert_fp16_available"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.assert_fp16_available" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">assert_fp16_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/torch.html#assert_fp16_available"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.assert_fp16_available" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts for installed and available Apex FP16</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.torch.get_device">
 <code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">get_device</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.device<a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_device" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Simple returning the best available device (GPU or CPU)</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.torch.get_available_gpus">
@@ -1421,16 +1492,25 @@ default is 0</p></li>
 <dl class="function">
 <dt id="catalyst.utils.torch.get_activation_fn">
 <code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">get_activation_fn</code><span class="sig-paren">(</span><em class="sig-param">activation: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_activation_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_activation_fn" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns the activation function from <code class="docutils literal notranslate"><span class="pre">torch.nn</span></code> by its name</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.torch.any2device">
-<code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">any2device</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">device</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#any2device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.any2device" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">any2device</code><span class="sig-paren">(</span><em class="sig-param">value, device: Union[str, torch.device]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#any2device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.any2device" title="Permalink to this definition">¶</a></dt>
 <dd><p>Move tensor, list of tensors, list of list of tensors,
-dict of tensors, tuple of tensors to target device.
-:param value: Object to be moved
-:param device: target device ids
-:return: Save data structure holding tensors on target device</p>
+dict of tensors, tuple of tensors to target device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> – Object to be moved</p></li>
+<li><p><strong>device</strong> (<em>Device</em>) – target device ids</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Same structure as value, but all tensors and np.arrays moved to device</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -1509,7 +1589,22 @@ if 1.0, learning rates will not be scaled</p></li>
 <dl class="function">
 <dt id="catalyst.utils.torch.get_network_output">
 <code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">get_network_output</code><span class="sig-paren">(</span><em class="sig-param">net: torch.nn.modules.module.Module</em>, <em class="sig-param">*input_shapes</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_network_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_network_output" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>For each input shape returns an output tensor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>net</strong> (<em>Model</em>) – the model</p></li>
+<li><p><strong>*args</strong> – variable length argument list of shapes</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.detach">
+<code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">detach</code><span class="sig-paren">(</span><em class="sig-param">tensor: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="../_modules/catalyst/utils/torch.html#detach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.detach" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detaches the input tensor to a numpy array</p>
+</dd></dl>
 
 <span class="target" id="module-catalyst.utils.visualization"></span><dl class="function">
 <dt id="catalyst.utils.visualization.plot_confusion_matrix">

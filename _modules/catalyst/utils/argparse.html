@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.utils.argparse &#8212; Catalyst 19.11.1 documentation</title>
+    <title>catalyst.utils.argparse &#8212; Catalyst 19.12.1 documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -32,28 +32,8 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.utils.argparse</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Optional</span>  <span class="c1"># isort:skip</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
-
-
-<div class="viewcode-block" id="args_are_not_none"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.argparse.args_are_not_none">[docs]</a><span class="k">def</span> <span class="nf">args_are_not_none</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Check that all arguments are not None</span>
-<span class="sd">    Args:</span>
-<span class="sd">        *args (Any): values</span>
-<span class="sd">    Returns:</span>
-<span class="sd">         bool: True if all value were not None, False otherwise</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">args</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">result</span>
-
-    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">break</span>
-
-    <span class="k">return</span> <span class="n">result</span></div>
 
 
 <div class="viewcode-block" id="boolean_flag"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.argparse.boolean_flag">[docs]</a><span class="k">def</span> <span class="nf">boolean_flag</span><span class="p">(</span>

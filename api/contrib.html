@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Contrib &#8212; Catalyst 19.11.1 documentation</title>
+    <title>Contrib &#8212; Catalyst 19.12.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -37,6 +37,17 @@
 <span id="contrib"></span><h1>Contrib<a class="headerlink" href="#module-catalyst.contrib" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-catalyst.contrib.criterion.ce">
 <span id="criterion"></span><h2>Criterion<a class="headerlink" href="#module-catalyst.contrib.criterion.ce" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.contrib.criterion.ce.MaskCrossEntropyLoss">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.criterion.ce.</code><code class="sig-name descname">MaskCrossEntropyLoss</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">target_name: str = 'targets'</em>, <em class="sig-param">mask_name: str = 'mask'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/ce.html#MaskCrossEntropyLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.ce.MaskCrossEntropyLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.loss.CrossEntropyLoss</span></code></p>
+<dl class="method">
+<dt id="catalyst.contrib.criterion.ce.MaskCrossEntropyLoss.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input</em>, <em class="sig-param">target_mask</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/ce.html#MaskCrossEntropyLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.ce.MaskCrossEntropyLoss.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="class">
 <dt id="catalyst.contrib.criterion.ce.NaiveCrossEntropyLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.criterion.ce.</code><code class="sig-name descname">NaiveCrossEntropyLoss</code><span class="sig-paren">(</span><em class="sig-param">size_average=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/ce.html#NaiveCrossEntropyLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.ce.NaiveCrossEntropyLoss" title="Permalink to this definition">¶</a></dt>
@@ -76,18 +87,6 @@
 </dd></dl>
 
 <span class="target" id="module-catalyst.contrib.criterion.contrastive"></span><dl class="class">
-<dt id="catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.criterion.contrastive.</code><code class="sig-name descname">ContrastiveDistanceLoss</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveDistanceLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<p>Contrastive distance loss</p>
-<dl class="method">
-<dt id="catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">dist</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveDistanceLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss.forward" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="catalyst.contrib.criterion.contrastive.ContrastiveEmbeddingLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.criterion.contrastive.</code><code class="sig-name descname">ContrastiveEmbeddingLoss</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em>, <em class="sig-param">reduction='elementwise_mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveEmbeddingLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastiveEmbeddingLoss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
@@ -96,6 +95,18 @@
 <dl class="method">
 <dt id="catalyst.contrib.criterion.contrastive.ContrastiveEmbeddingLoss.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x0</em>, <em class="sig-param">x1</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveEmbeddingLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastiveEmbeddingLoss.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.criterion.contrastive.</code><code class="sig-name descname">ContrastiveDistanceLoss</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveDistanceLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Contrastive distance loss</p>
+<dl class="method">
+<dt id="catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">dist</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveDistanceLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss.forward" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -180,6 +191,28 @@ Ignores targets having -1 label</p>
 </dd></dl>
 
 <span class="target" id="module-catalyst.contrib.criterion.iou"></span><dl class="class">
+<dt id="catalyst.contrib.criterion.iou.IoULoss">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.criterion.iou.</code><code class="sig-name descname">IoULoss</code><span class="sig-paren">(</span><em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/iou.html#IoULoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.iou.IoULoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Intersection over union (Jaccard) loss</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
+<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
+Must be one of [‘none’, ‘Sigmoid’, ‘Softmax2d’]</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="catalyst.contrib.criterion.iou.IoULoss.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">outputs</em>, <em class="sig-param">targets</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/iou.html#IoULoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.iou.IoULoss.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="catalyst.contrib.criterion.iou.BCEIoULoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.criterion.iou.</code><code class="sig-name descname">BCEIoULoss</code><span class="sig-paren">(</span><em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em>, <em class="sig-param">reduction: str = 'mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/iou.html#BCEIoULoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.iou.BCEIoULoss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
@@ -198,28 +231,6 @@ Must be one of [‘none’, ‘Sigmoid’, ‘Softmax2d’]</p></li>
 <dl class="method">
 <dt id="catalyst.contrib.criterion.iou.BCEIoULoss.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">outputs</em>, <em class="sig-param">targets</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/iou.html#BCEIoULoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.iou.BCEIoULoss.forward" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="catalyst.contrib.criterion.iou.IoULoss">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.criterion.iou.</code><code class="sig-name descname">IoULoss</code><span class="sig-paren">(</span><em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/iou.html#IoULoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.iou.IoULoss" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<p>Intersection over union (Jaccard) loss</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
-Must be one of [‘none’, ‘Sigmoid’, ‘Softmax2d’]</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="method">
-<dt id="catalyst.contrib.criterion.iou.IoULoss.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">outputs</em>, <em class="sig-param">targets</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/iou.html#IoULoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.iou.IoULoss.forward" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -293,14 +304,6 @@ Maxim Berman 2018 ESAT-PSI KU Leuven (MIT License)</p>
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">outputs</em>, <em class="sig-param">targets</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/wing.html#WingLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.wing.WingLoss.forward" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.contrib.criterion.wing.wing_loss">
-<code class="sig-prename descclassname">catalyst.contrib.criterion.wing.</code><code class="sig-name descname">wing_loss</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">width: int = 5</em>, <em class="sig-param">curvature: float = 0.5</em>, <em class="sig-param">reduction: str = 'mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/wing.html#wing_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.wing.wing_loss" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference external" href="https://arxiv.org/pdf/1711.06753.pdf">https://arxiv.org/pdf/1711.06753.pdf</a></p>
-<p>Source <a class="reference external" href="https://github.com/BloodAxe/pytorch-toolbelt">https://github.com/BloodAxe/pytorch-toolbelt</a>
-See <code class="xref py py-class docutils literal notranslate"><span class="pre">losses</span></code> for details.</p>
 </dd></dl>
 
 </div>

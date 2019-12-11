@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.utils.torch &#8212; Catalyst 19.11.1 documentation</title>
+    <title>catalyst.utils.torch &#8212; Catalyst 19.12.1 documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -43,12 +43,13 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="k">import</span> <span class="n">nn</span>
 <span class="kn">import</span> <span class="nn">torch.backends.cudnn</span> <span class="k">as</span> <span class="nn">cudnn</span>
-<span class="kn">from</span> <span class="nn">torch.optim</span> <span class="k">import</span> <span class="n">Optimizer</span>
 
 <span class="kn">from</span> <span class="nn">catalyst</span> <span class="k">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.typing</span> <span class="k">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span>
 
 
 <div class="viewcode-block" id="ce_with_logits"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.ce_with_logits">[docs]</a><span class="k">def</span> <span class="nf">ce_with_logits</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns cross entropy for giving logits&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="n">target</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
 
 
@@ -82,6 +83,7 @@
 
 
 <div class="viewcode-block" id="soft_update"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.soft_update">[docs]</a><span class="k">def</span> <span class="nf">soft_update</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Updates the target data with smoothing by ``tau``&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">target_param</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">source</span><span class="o">.</span><span class="n">parameters</span><span class="p">()):</span>
         <span class="n">target_param</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span>
             <span class="n">target_param</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">tau</span><span class="p">)</span> <span class="o">+</span> <span class="n">param</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="n">tau</span>
@@ -89,6 +91,9 @@
 
 
 <div class="viewcode-block" id="get_optimizable_params"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_optimizable_params">[docs]</a><span class="k">def</span> <span class="nf">get_optimizable_params</span><span class="p">(</span><span class="n">model_or_params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns all the parameters that requires gradients</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">params</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_or_params</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_or_params</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">model_or_params</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
@@ -133,12 +138,16 @@
         <span class="n">safitty</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="s2">&quot;momentum&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="assert_fp16_available"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.assert_fp16_available">[docs]</a><span class="k">def</span> <span class="nf">assert_fp16_available</span><span class="p">():</span>
+<div class="viewcode-block" id="assert_fp16_available"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.assert_fp16_available">[docs]</a><span class="k">def</span> <span class="nf">assert_fp16_available</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Asserts for installed and available Apex FP16</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">enabled</span><span class="p">,</span> \
         <span class="s2">&quot;fp16 mode requires cudnn backend to be enabled.&quot;</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="nb">__import__</span><span class="p">(</span><span class="s2">&quot;apex&quot;</span><span class="p">)</span>
+        <span class="kn">import</span> <span class="nn">apex</span>  <span class="c1"># noqa: F401</span>
+        <span class="kn">from</span> <span class="nn">apex</span> <span class="k">import</span> <span class="n">amp</span>  <span class="c1"># noqa: F401</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
         <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> \
             <span class="s2">&quot;NVidia Apex package must be installed. &quot;</span> \
@@ -146,6 +155,9 @@
 
 
 <div class="viewcode-block" id="get_device"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_device">[docs]</a><span class="k">def</span> <span class="nf">get_device</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simple returning the best available device (GPU or CPU)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span></div>
 
 
@@ -187,6 +199,9 @@
 
 
 <div class="viewcode-block" id="get_activation_fn"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_activation_fn">[docs]</a><span class="k">def</span> <span class="nf">get_activation_fn</span><span class="p">(</span><span class="n">activation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the activation function from ``torch.nn`` by its name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">activation</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">activation</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
         <span class="n">activation_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>  <span class="c1"># noqa: E731</span>
     <span class="k">else</span><span class="p">:</span>
@@ -194,13 +209,17 @@
     <span class="k">return</span> <span class="n">activation_fn</span></div>
 
 
-<div class="viewcode-block" id="any2device"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.any2device">[docs]</a><span class="k">def</span> <span class="nf">any2device</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+<div class="viewcode-block" id="any2device"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.any2device">[docs]</a><span class="k">def</span> <span class="nf">any2device</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Device</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Move tensor, list of tensors, list of list of tensors,</span>
 <span class="sd">    dict of tensors, tuple of tensors to target device.</span>
-<span class="sd">    :param value: Object to be moved</span>
-<span class="sd">    :param device: target device ids</span>
-<span class="sd">    :return: Save data structure holding tensors on target device</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: Object to be moved</span>
+<span class="sd">        device (Device): target device ids</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Same structure as value, but all tensors and np.arrays moved to device</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">any2device</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">device</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
@@ -246,7 +265,7 @@
 
 
 <div class="viewcode-block" id="process_model_params"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.process_model_params">[docs]</a><span class="k">def</span> <span class="nf">process_model_params</span><span class="p">(</span>
-    <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
     <span class="n">layerwise_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">no_bias_weight_decay</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">lr_scaling</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
@@ -300,7 +319,7 @@
     <span class="k">return</span> <span class="n">model_params</span></div>
 
 
-<div class="viewcode-block" id="set_requires_grad"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.set_requires_grad">[docs]</a><span class="k">def</span> <span class="nf">set_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">requires_grad</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<div class="viewcode-block" id="set_requires_grad"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.set_requires_grad">[docs]</a><span class="k">def</span> <span class="nf">set_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">requires_grad</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sets the ``requires_grad`` value for all model parameters.</span>
 
@@ -317,7 +336,14 @@
         <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="n">requires_grad</span></div>
 
 
-<div class="viewcode-block" id="get_network_output"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_network_output">[docs]</a><span class="k">def</span> <span class="nf">get_network_output</span><span class="p">(</span><span class="n">net</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="o">*</span><span class="n">input_shapes</span><span class="p">):</span>
+<div class="viewcode-block" id="get_network_output"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_network_output">[docs]</a><span class="k">def</span> <span class="nf">get_network_output</span><span class="p">(</span><span class="n">net</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="o">*</span><span class="n">input_shapes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For each input shape returns an output tensor</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        net (Model): the model</span>
+<span class="sd">        *args: variable length argument list of shapes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">inputs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">input_shape</span> <span class="ow">in</span> <span class="n">input_shapes</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_shape</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -331,12 +357,19 @@
     <span class="k">return</span> <span class="n">output_t</span></div>
 
 
+<div class="viewcode-block" id="detach"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.detach">[docs]</a><span class="k">def</span> <span class="nf">detach</span><span class="p">(</span><span class="n">tensor</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Detaches the input tensor to a numpy array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">tensor</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span></div>
+
+
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;ce_with_logits&quot;</span><span class="p">,</span> <span class="s2">&quot;log1p_exp&quot;</span><span class="p">,</span> <span class="s2">&quot;normal_sample&quot;</span><span class="p">,</span> <span class="s2">&quot;normal_logprob&quot;</span><span class="p">,</span>
     <span class="s2">&quot;soft_update&quot;</span><span class="p">,</span> <span class="s2">&quot;get_optimizable_params&quot;</span><span class="p">,</span> <span class="s2">&quot;get_optimizer_momentum&quot;</span><span class="p">,</span>
     <span class="s2">&quot;set_optimizer_momentum&quot;</span><span class="p">,</span> <span class="s2">&quot;assert_fp16_available&quot;</span><span class="p">,</span> <span class="s2">&quot;get_device&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_available_gpus&quot;</span><span class="p">,</span> <span class="s2">&quot;get_activation_fn&quot;</span><span class="p">,</span> <span class="s2">&quot;any2device&quot;</span><span class="p">,</span> <span class="s2">&quot;prepare_cudnn&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;process_model_params&quot;</span><span class="p">,</span> <span class="s2">&quot;set_requires_grad&quot;</span><span class="p">,</span> <span class="s2">&quot;get_network_output&quot;</span>
+    <span class="s2">&quot;process_model_params&quot;</span><span class="p">,</span> <span class="s2">&quot;set_requires_grad&quot;</span><span class="p">,</span> <span class="s2">&quot;get_network_output&quot;</span><span class="p">,</span> <span class="s2">&quot;detach&quot;</span>
 <span class="p">]</span>
 </pre></div>
 

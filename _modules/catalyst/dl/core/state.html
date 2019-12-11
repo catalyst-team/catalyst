@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.core.state &#8212; Catalyst 19.11.1 documentation</title>
+    <title>catalyst.dl.core.state &#8212; Catalyst 19.12.1 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -190,10 +190,10 @@
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="RunnerState.on_loader_end_pre"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_loader_end_pre">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_end_pre</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">end_loader</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="RunnerState.on_loader_end_post"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_loader_end_post">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_end_post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">end_loader</span><span class="p">()</span></div>
+        <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="RunnerState.on_batch_start_pre"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.state.RunnerState.on_batch_start_pre">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_start_pre</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">begin_batch</span><span class="p">()</span></div>
