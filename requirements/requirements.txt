@@ -7,7 +7,7 @@ opencv-python
 scikit-image>=0.14.2
 tqdm>=4.33.0
 PyYAML
-tensorboard
+tensorboard>=1.14.0
 tensorboardX
 plotly>=4.1.0
 safitty>=1.2.3
