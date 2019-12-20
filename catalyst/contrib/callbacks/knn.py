@@ -3,6 +3,8 @@ from catalyst.dl.core import Callback, RunnerState, CallbackOrder
 import torch
 import numpy as np
 
+from typing import List
+
 from math import ceil
 from scipy import stats
 
@@ -23,6 +25,7 @@ class KNNMetricCallback(Callback):
             prefix: str = "knn",
             num_classes: int = 2,
             class_names: dict = None,
+            cv_loader_names: List[str] = None,
             metric_fn: str = "f1-score",
             knn_metric: str = "euclidean",
             n_neighbors: int = 5
@@ -34,10 +37,12 @@ class KNNMetricCallback(Callback):
             prefix (str): key to store in logs
             num_classes (int): Number of classes; must be > 1
             class_names (dict): of indexes and class names
+            cv_loader_names (list): list of loader_names for which cross
+                                    validation should be calculated.
             metric_fn (str): one of `accuracy`, `precision`, `recall`, 
                             `f1-score`, default is `f1-score`
             knn_metric (str): look sklearn.neighbors.NearestNeighbors parameter
-            n_neighbors (int): number of neighbors
+            n_neighbors (int): number of neighbors, default is 5
         """
 
         super().__init__(CallbackOrder.Metric)
@@ -48,16 +53,19 @@ class KNNMetricCallback(Callback):
         self.num_classes = num_classes
         self.class_names = class_names
 
-        if metric_fn == 'accuracy':
+        self.cv_loader_names = [] \
+            if cv_loader_names is None else cv_loader_names
+
+        if metric_fn == "accuracy":
             self.metric_fn = accuracy_score
-        elif metric_fn == 'recall':
+        elif metric_fn == "recall":
             self.metric_fn = recall_score
-        elif metric_fn == 'precision':
+        elif metric_fn == "precision":
             self.metric_fn = precision_score
-        elif metric_fn == 'f1-score':
+        elif metric_fn == "f1-score":
             self.metric_fn = f1_score
         else:
-            raise ValueError(f"Metric function with value '{metric_fn}'"
+            raise ValueError(f"Metric function with value `{metric_fn}`"
                              f" not implemented")
 
         self.knn_metric = knn_metric
@@ -111,7 +119,7 @@ class KNNMetricCallback(Callback):
 
     def on_epoch_end(self, state: RunnerState):
 
-        for s in ["valid", "test"]:
+        for s in self.cv_loader_names:
             if s in self.sets:
                 y_true, y_pred = self._knn(self.sets["train"], self.sets[s])
 
