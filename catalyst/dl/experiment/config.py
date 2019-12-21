@@ -18,7 +18,7 @@ from catalyst.dl.callbacks import (
 )
 from catalyst.dl.core import Callback, Experiment
 from catalyst.dl.registry import (
-    CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SCHEDULERS
+    CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS
 )
 from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
 
@@ -333,8 +333,14 @@ class ConfigExperiment(Experiment):
         datasets = self.get_datasets(stage=stage, **data_params)
 
         overridden_loaders_params = data_params.pop("loaders_params", {})
-        assert isinstance(overridden_loaders_params, dict), \
-            f"{overridden_loaders_params} should be Dict"
+        assert isinstance(overridden_loaders_params, dict), (
+            f"`overridden_loaders_params` should be a Dict. "
+            f"Got: {overridden_loaders_params}"
+        )
+
+        samplers_params = data_params.pop("samplers_params", {})
+        assert isinstance(samplers_params, dict), \
+            f"`samplers_params` should be a Dict. Got: {samplers_params}"
 
         loaders = OrderedDict()
         for name, ds_ in datasets.items():
@@ -344,6 +350,17 @@ class ConfigExperiment(Experiment):
             overridden_loader_params = overridden_loaders_params.pop(name, {})
             assert isinstance(overridden_loader_params, dict), \
                 f"{overridden_loader_params} should be Dict"
+
+            sampler_params = samplers_params.pop(name, None)
+            if sampler_params is None:
+                if isinstance(ds_, dict) and "sampler" in ds_:
+                    sampler = ds_.pop("sampler", None)
+                else:
+                    sampler = None
+            else:
+                sampler = SAMPLERS.get_from_params(**sampler_params)
+                if isinstance(ds_, dict) and "sampler" in ds_:
+                    ds_.pop("sampler", None)
 
             batch_size = overridden_loader_params.pop("batch_size", batch_size)
             num_workers = overridden_loader_params.\
@@ -372,18 +389,18 @@ class ConfigExperiment(Experiment):
                 raise NotImplementedError
 
             if distributed:
-                sampler = loader_params.get("sampler")
                 if sampler is not None:
                     assert isinstance(sampler, DistributedSampler)
                 else:
-                    loader_params["sampler"] = DistributedSampler(
+                    sampler = DistributedSampler(
                         dataset=loader_params["dataset"]
                     )
 
             loader_params["shuffle"] = (
-                name.startswith("train")
-                and loader_params.get("sampler") is None
+                name.startswith("train") and sampler is None
             )
+
+            loader_params["sampler"] = sampler
 
             if "batch_sampler" in loader_params:
                 if distributed:
