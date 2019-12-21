@@ -351,8 +351,9 @@ class TelegramLogger(LoggerCallback):
 
 
 __all__ = [
-    "VerboseLogger",
     "ConsoleLogger",
-    "TensorboardLogger",
     "TelegramLogger",
+    "TensorboardLogger",
+    "VerboseLogger",
+
 ]
