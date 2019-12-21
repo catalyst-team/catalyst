@@ -5,6 +5,11 @@ args:
   expdir: "mnist_simple"
   logdir: "./logs/mnist_simple"
 
+monitoring_params:
+  token: 46febb1f5e13d568b034a803b0c03908
+  experiment: "simple_run"
+  group: "simple_group"
+
 stages:
 
   data_params:

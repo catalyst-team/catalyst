@@ -91,7 +91,7 @@ CI tests
 1. DL – Mnist with stages
 2. RL – OpenAI Gym MountainCarContinuous
 
-.. _features – classification: https://github.com/catalyst-team/catalyst/blob/master/examples/notebooks/notebook-example.ipynb
+.. _features – classification: https://github.com/catalyst-team/catalyst/blob/master/examples/notebooks/classification-example.ipynb
 .. _features – segmentation: https://github.com/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-example.ipynb
 .. _tutorial – classification: https://github.com/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb
 .. _features – model training: https://github.com/catalyst-team/catalyst/tree/master/examples/cifar_simple
