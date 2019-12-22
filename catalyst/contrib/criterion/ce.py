@@ -77,4 +77,5 @@ class MaskCrossEntropyLoss(torch.nn.CrossEntropyLoss):
         loss = torch.mean(loss[mask == 1])
         return loss
 
-__all__ = ["MaskCrossEntropyLoss", "NaiveCrossEntropyLoss", "SymmetricCrossEntropyLoss"]
+__all__ = ["MaskCrossEntropyLoss", "NaiveCrossEntropyLoss", 
+           "SymmetricCrossEntropyLoss"]
