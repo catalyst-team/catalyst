@@ -4,11 +4,42 @@ import torch
 from torchvision.transforms.functional import normalize, to_tensor
 
 from catalyst.utils.image import (
-    _IMAGENET_MEAN, _IMAGENET_STD, tensor_to_ndimage
+    _IMAGENET_MEAN, _IMAGENET_STD, imread, tensor_to_ndimage
 )
 
 
+def test_imread():
+    """
+    Tests imread functionality
+    """
+    jpg_rgb_uri = (
+        "https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master"
+        "/test_images/catalyst_icon.jpg"
+    )
+    jpg_grs_uri = (
+        "https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master"
+        "/test_images/catalyst_icon_grayscale.jpg"
+    )
+    png_rgb_uri = (
+        "https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master"
+        "/test_images/catalyst_icon.png"
+    )
+    png_grs_uri = (
+        "https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master"
+        "/test_images/catalyst_icon_grayscale.png"
+    )
+
+    for uri in [jpg_rgb_uri, jpg_grs_uri, png_rgb_uri, png_grs_uri]:
+        img = imread(uri)
+        assert img.shape == (400, 400, 3)
+        img = imread(uri, grayscale=True)
+        assert img.shape == (400, 400, 1)
+
+
 def test_tensor_to_ndimage():
+    """
+    Tests tensor_to_ndimage functionality
+    """
     orig_images = np.random.randint(0, 255, (2, 20, 10, 3), np.uint8)
 
     torch_images = torch.stack(

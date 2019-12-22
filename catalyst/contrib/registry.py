@@ -73,4 +73,20 @@ SCHEDULERS = Registry("scheduler")
 SCHEDULERS.late_add(_schedulers_loader)
 Scheduler = SCHEDULERS.add
 
-__all__ = ["Criterion", "Model", "Module", "Optimizer", "Scheduler"]
+
+def _samplers_loader(r: Registry):
+    from torch.utils.data import sampler as s
+    factories = {
+        k: v
+        for k, v in s.__dict__.items() if "Sampler" in k and k != "Sampler"
+    }
+    r.add(**factories)
+    from catalyst.data import sampler
+    r.add_from_module(sampler)
+
+
+SAMPLERS = Registry("sampler")
+SAMPLERS.late_add(_samplers_loader)
+Sampler = SAMPLERS.add
+
+__all__ = ["Criterion", "Model", "Module", "Optimizer", "Scheduler", "Sampler"]

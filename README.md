@@ -2,7 +2,7 @@
 
 [![Catalyst logo](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png)](https://github.com/catalyst-team/catalyst)
 
-**Reproducible and fast DL & RL**
+**Accelerated DL & RL**
 
 [![Pipi version](https://img.shields.io/pypi/v/catalyst.svg)](https://pypi.org/project/catalyst/)
 [![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html)
@@ -11,9 +11,10 @@
 [![License](https://img.shields.io/github/license/catalyst-team/catalyst.svg)](LICENSE)
 
 [![Build Status](https://travis-ci.com/catalyst-team/catalyst.svg?branch=master)](https://travis-ci.com/catalyst-team/catalyst)
-[![Telegram](./pics/telegram.svg)](https://t.me/catalyst_team)
+[![Telegram](https://img.shields.io/badge/news-on%20telegram-blue)](https://t.me/catalyst_team)
 [![Gitter](https://badges.gitter.im/catalyst-team/community.svg)](https://gitter.im/catalyst-team/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-[![Slack](./pics/slack.svg)](https://opendatascience.slack.com/messages/CGK4KQBHD)
+[![Spectrum](https://img.shields.io/badge/chat-on%20spectrum-blueviolet)](https://spectrum.chat/catalyst)
+[![Slack](https://img.shields.io/badge/ODS-slack-red)](https://opendatascience.slack.com/messages/CGK4KQBHD)
 [![Donate](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/third_party_pics/patreon.png)](https://www.patreon.com/catalyst_team)
 
 
@@ -38,9 +39,8 @@ pip install -U catalyst
 
 More specific with additional requirements:
 ```bash
-pip install catalyst[dl] # installs DL based catalyst with Weights & Biases support
 pip install catalyst[rl] # installs DL+RL based catalyst
-pip install catalyst[drl] # installs DL+RL based catalyst with Weights & Biases support
+pip install catalyst[nlp] # installs DL+NLP based catalyst
 pip install catalyst[contrib] # installs DL+contrib based catalyst
 pip install catalyst[all] # installs everything. Very convenient to deploy on a new server
 ```
@@ -180,7 +180,7 @@ Please use this bibtex if you want to cite this repository in your publications:
 
     @misc{catalyst,
         author = {Kolesnikov, Sergey},
-        title = {Reproducible and fast DL & RL.},
+        title = {Accelerated DL & RL.},
         year = {2018},
         publisher = {GitHub},
         journal = {GitHub repository},

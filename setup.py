@@ -82,11 +82,9 @@ class UploadCommand(Command):
 # Specific dependencies.
 extras = {
     "contrib": load_requirements("requirements/requirements-contrib.txt"),
-    "dl": load_requirements("requirements/requirements-dl.txt"),
+    "knn": load_requirements("requirements/requirements-knn.txt"),
+    "nlp": load_requirements("requirements/requirements-nlp.txt"),
     "rl": load_requirements("requirements/requirements-rl.txt"),
-    "drl": (
-        load_requirements("requirements/requirements-dl.txt")
-        + load_requirements("requirements/requirements-rl.txt")),
 }
 
 

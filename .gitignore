@@ -115,7 +115,11 @@ ENV/
 tmp/
 logs/
 data/
+!catalyst/data
 examples/data/
+# Examples - mock data
+!examples/distilbert_text_classification/input/*.csv
+!examples/_tests_distilbert_text_classification/input/*.csv
 examples/logs/
 notebooks/
 
@@ -133,3 +137,5 @@ _nogit*
 .history
 
 # End of https://www.gitignore.io/api/visualstudiocode
+
+

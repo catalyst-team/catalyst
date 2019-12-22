@@ -16,10 +16,12 @@ bash ./bin/flake8.sh --count \
     --show-source --statistics
 
 # exit-zero treats all errors as warnings.
+echo '~ ~ ~ ~ ~ ~ ~ flake8 warnings ~ ~ ~ ~ ~ ~ ~' 1>&2
 flake8 . --count --exit-zero \
     --max-complexity=10 \
     --config=./setup.cfg \
     --statistics
+echo '~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~' 1>&2
 
 # test to make sure the code is yapf compliant
 if [[ -f ${skip_inplace} ]]; then
@@ -28,4 +30,4 @@ else
     bash ./bin/yapf.sh --all-in-place
 fi
 
-pytest
+pytest ./catalyst
