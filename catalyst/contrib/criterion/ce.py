@@ -15,6 +15,7 @@ class NaiveCrossEntropyLoss(nn.Module):
         loss = loss / input.size()[0] if self.size_average else loss
         return loss
 
+
 class SymmetricCrossEntropyLoss(nn.Module):
     def __init__(self, alpha, beta, num_classes):
         """
@@ -56,6 +57,7 @@ class SymmetricCrossEntropyLoss(nn.Module):
         loss = self.alpha * cross_entropy + self.beta * reverse_cross_entropy
         return loss
 
+
 class MaskCrossEntropyLoss(torch.nn.CrossEntropyLoss):
     def __init__(
             self,
@@ -77,5 +79,6 @@ class MaskCrossEntropyLoss(torch.nn.CrossEntropyLoss):
         loss = torch.mean(loss[mask == 1])
         return loss
 
-__all__ = ["MaskCrossEntropyLoss", "NaiveCrossEntropyLoss", 
-           "SymmetricCrossEntropyLoss"]
+
+__all__ = ["MaskCrossEntropyLoss", "NaiveCrossEntropyLoss",
+"SymmetricCrossEntropyLoss"]
