@@ -81,4 +81,4 @@ class MaskCrossEntropyLoss(torch.nn.CrossEntropyLoss):
 
 
 __all__ = ["MaskCrossEntropyLoss", "NaiveCrossEntropyLoss",
-"SymmetricCrossEntropyLoss"]
+                                   "SymmetricCrossEntropyLoss"]
