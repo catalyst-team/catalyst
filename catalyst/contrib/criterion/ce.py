@@ -17,7 +17,7 @@ class NaiveCrossEntropyLoss(nn.Module):
 
 
 class SymmetricCrossEntropyLoss(nn.Module):
-    def __init__(self, alpha = 1.0, beta = 1.0, num_classes):
+    def __init__(self, num_classes, alpha=1.0, beta=1.0):
         """
         Symmetric Cross Entropy
         paper : https://arxiv.org/abs/1908.06112
