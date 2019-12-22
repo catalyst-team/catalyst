@@ -87,6 +87,7 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
             target = target.cpu().squeeze().numpy()
         elif isinstance(target, numbers.Number):
             target = np.asarray([target])
+        target = np.int32(target)
         assert output.size == target.size, \
             "outputs and targets must have the same number of elements"
         assert np.all(np.add(np.equal(target, 1), np.equal(target, 0))), \

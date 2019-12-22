@@ -12,16 +12,21 @@ from torch.utils.data import (  # noqa F401
 
 from catalyst.dl import utils
 from catalyst.dl.callbacks import (
-    ConsoleLogger, RaiseExceptionCallback, TensorboardLogger, VerboseLogger
+    CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
+    PhaseWrapperCallback, RaiseExceptionCallback, SchedulerCallback,
+    TensorboardLogger, VerboseLogger
 )
 from catalyst.dl.core import Callback, Experiment
 from catalyst.dl.registry import (
-    CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SCHEDULERS
+    CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS
 )
-from catalyst.dl.utils.torch import _Criterion, _Model, _Optimizer, _Scheduler
+from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
 
 
 class ConfigExperiment(Experiment):
+    """
+    Experiment created from a configuration file
+    """
     STAGE_KEYWORDS = [
         "criterion_params",
         "optimizer_params",
@@ -32,6 +37,10 @@ class ConfigExperiment(Experiment):
     ]
 
     def __init__(self, config: Dict):
+        """
+        Args:
+            config (dict): dictionary of parameters
+        """
         self._config = deepcopy(config)
         self._initial_seed = self._config.get("args", {}).get("seed", 42)
         self._verbose = safitty.get(
@@ -88,29 +97,35 @@ class ConfigExperiment(Experiment):
 
     @property
     def initial_seed(self) -> int:
+        """Experiment's initial seed value"""
         return self._initial_seed
 
     @property
     def logdir(self):
+        """Path to the directory where the experiment logs"""
         return self._logdir
 
     @property
     def stages(self) -> List[str]:
+        """Experiment's stage names"""
         stages_keys = list(self.stages_config.keys())
         return stages_keys
 
     @property
     def distributed_params(self) -> Dict:
+        """Dict with the parameters for distributed and FP16 methond"""
         return self._config.get("distributed_params", {})
 
     @property
     def monitoring_params(self) -> Dict:
+        """Dict with the parameters for monitoring services"""
         return self._config.get("monitoring_params", {})
 
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
+        """Returns the state parameters for a given stage"""
         return self.stages_config[stage].get("state_params", {})
 
-    def _preprocess_model_for_stage(self, stage: str, model: _Model):
+    def _preprocess_model_for_stage(self, stage: str, model: Model):
         stage_index = self.stages.index(stage)
         if stage_index > 0:
             checkpoint_path = \
@@ -119,7 +134,7 @@ class ConfigExperiment(Experiment):
             utils.unpack_checkpoint(checkpoint, model=model)
         return model
 
-    def _postprocess_model_for_stage(self, stage: str, model: _Model):
+    def _postprocess_model_for_stage(self, stage: str, model: Model):
         return model
 
     @staticmethod
@@ -135,6 +150,7 @@ class ConfigExperiment(Experiment):
         return model
 
     def get_model(self, stage: str):
+        """Returns the model for a given stage"""
         model_params = self._config["model_params"]
         model = self._get_model(**model_params)
 
@@ -156,7 +172,8 @@ class ConfigExperiment(Experiment):
                 criterion = criterion.cuda()
         return criterion
 
-    def get_criterion(self, stage: str) -> _Criterion:
+    def get_criterion(self, stage: str) -> Criterion:
+        """Returns the criterion for a given stage"""
         criterion_params = \
             self.stages_config[stage].get("criterion_params", {})
         criterion = self._get_criterion(**criterion_params)
@@ -165,9 +182,9 @@ class ConfigExperiment(Experiment):
     def _get_optimizer(
         self,
         stage: str,
-        model: Union[_Model, Dict[str, _Model]],
+        model: Union[Model, Dict[str, Model]],
         **params
-    ) -> _Optimizer:
+    ) -> Optimizer:
         # @TODO 1: refactoring; this method is too long
         # @TODO 2: load state dicts for schedulers & criteria
         layerwise_params = \
@@ -223,7 +240,7 @@ class ConfigExperiment(Experiment):
         optimizer_key = params.pop("optimizer_key", None)
         optimizer = OPTIMIZERS.get_from_params(**params, params=model_params)
 
-        if load_from_previous_stage:
+        if load_from_previous_stage and self.stages.index(stage) != 0:
             checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
             checkpoint = utils.load_checkpoint(checkpoint_path)
 
@@ -250,8 +267,15 @@ class ConfigExperiment(Experiment):
     def get_optimizer(
         self,
         stage: str,
-        model: Union[_Model, Dict[str, _Model]]
-    ) -> Union[_Optimizer, Dict[str, _Optimizer]]:
+        model: Union[Model, Dict[str, Model]]
+    ) -> Union[Optimizer, Dict[str, Optimizer]]:
+        """
+        Returns the optimizer for a given stage
+
+        Args:
+            stage (str): stage name
+            model (Union[Model, Dict[str, Model]]): model or a dict of models
+        """
         optimizer_params = \
             self.stages_config[stage].get("optimizer_params", {})
         key_value_flag = optimizer_params.pop("_key_value", False)
@@ -286,7 +310,8 @@ class ConfigExperiment(Experiment):
             )
         return scheduler
 
-    def get_scheduler(self, stage: str, optimizer) -> _Scheduler:
+    def get_scheduler(self, stage: str, optimizer: Optimizer) -> Scheduler:
+        """Returns the scheduler for a given stage"""
         scheduler_params = \
             self.stages_config[stage].get("scheduler_params", {})
         scheduler = self._get_scheduler(
@@ -295,6 +320,7 @@ class ConfigExperiment(Experiment):
         return scheduler
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+        """Returns the loaders for a given stage"""
         data_params = dict(self.stages_config[stage]["data_params"])
 
         batch_size = data_params.pop("batch_size", 1)
@@ -307,8 +333,14 @@ class ConfigExperiment(Experiment):
         datasets = self.get_datasets(stage=stage, **data_params)
 
         overridden_loaders_params = data_params.pop("loaders_params", {})
-        assert isinstance(overridden_loaders_params, dict), \
-            f"{overridden_loaders_params} should be Dict"
+        assert isinstance(overridden_loaders_params, dict), (
+            f"`overridden_loaders_params` should be a Dict. "
+            f"Got: {overridden_loaders_params}"
+        )
+
+        samplers_params = data_params.pop("samplers_params", {})
+        assert isinstance(samplers_params, dict), \
+            f"`samplers_params` should be a Dict. Got: {samplers_params}"
 
         loaders = OrderedDict()
         for name, ds_ in datasets.items():
@@ -318,6 +350,17 @@ class ConfigExperiment(Experiment):
             overridden_loader_params = overridden_loaders_params.pop(name, {})
             assert isinstance(overridden_loader_params, dict), \
                 f"{overridden_loader_params} should be Dict"
+
+            sampler_params = samplers_params.pop(name, None)
+            if sampler_params is None:
+                if isinstance(ds_, dict) and "sampler" in ds_:
+                    sampler = ds_.pop("sampler", None)
+                else:
+                    sampler = None
+            else:
+                sampler = SAMPLERS.get_from_params(**sampler_params)
+                if isinstance(ds_, dict) and "sampler" in ds_:
+                    ds_.pop("sampler", None)
 
             batch_size = overridden_loader_params.pop("batch_size", batch_size)
             num_workers = overridden_loader_params.\
@@ -346,18 +389,18 @@ class ConfigExperiment(Experiment):
                 raise NotImplementedError
 
             if distributed:
-                sampler = loader_params.get("sampler")
                 if sampler is not None:
                     assert isinstance(sampler, DistributedSampler)
                 else:
-                    loader_params["sampler"] = DistributedSampler(
+                    sampler = DistributedSampler(
                         dataset=loader_params["dataset"]
                     )
 
             loader_params["shuffle"] = (
-                name.startswith("train")
-                and loader_params.get("sampler") is None
+                name.startswith("train") and sampler is None
             )
+
+            loader_params["sampler"] = sampler
 
             if "batch_sampler" in loader_params:
                 if distributed:
@@ -387,6 +430,7 @@ class ConfigExperiment(Experiment):
         return callback
 
     def get_callbacks(self, stage: str) -> "OrderedDict[Callback]":
+        """Returns the callbacks for a given stage"""
         callbacks_params = (
             self.stages_config[stage].get("callbacks_params", {})
         )
@@ -401,15 +445,24 @@ class ConfigExperiment(Experiment):
         if self._verbose:
             default_callbacks.append(("verbose", VerboseLogger))
         if not stage.startswith("infer"):
+            default_callbacks.append(("_criterion", CriterionCallback))
+            default_callbacks.append(("_optimizer", OptimizerCallback))
+            if self.stages_config[stage].get("scheduler_params", {}):
+                default_callbacks.append(("_scheduler", SchedulerCallback))
+            default_callbacks.append(("_saver", CheckpointCallback))
             default_callbacks.append(("console", ConsoleLogger))
             default_callbacks.append(("tensorboard", TensorboardLogger))
 
         default_callbacks.append(("exception", RaiseExceptionCallback))
 
         for callback_name, callback_fn in default_callbacks:
-            is_already_present = any(
-                isinstance(x, callback_fn) for x in callbacks.values()
-            )
+            is_already_present = False
+            for x in callbacks.values():
+                if isinstance(x, PhaseWrapperCallback):
+                    x = x.callback
+                if isinstance(x, callback_fn):
+                    is_already_present = True
+                    break
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
 

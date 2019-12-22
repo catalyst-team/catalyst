@@ -1,5 +1,4 @@
 # flake8: noqa
-
 from torch.nn.modules.loss import *
 
 from .ce import NaiveCrossEntropyLoss, SymmetricCrossEntropyLoss,MaskCrossEntropyLoss

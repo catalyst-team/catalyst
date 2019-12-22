@@ -67,6 +67,7 @@ More specific with additional requirements:
     pip install catalyst[rl] # installs DL+RL based catalyst
     pip install catalyst[drl] # installs DL+RL based catalyst with Weights & Biases support
     pip install catalyst[contrib] # installs DL+contrib based catalyst
+    pip install catalyst[nlp] # installs DL+NLP based catalyst
     pip install catalyst[all] # installs everything. Very convenient to deploy on a new server
 
 
@@ -244,7 +245,7 @@ Please use this bibtex if you want to cite this repository in your publications:
 
     @misc{catalyst,
         author = {Kolesnikov, Sergey},
-        title = {Reproducible and fast DL & RL.},
+        title = {Accelerated DL & RL.},
         year = {2018},
         publisher = {GitHub},
         journal = {GitHub repository},

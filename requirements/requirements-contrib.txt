@@ -1,2 +1,3 @@
-nmslib
 albumentations
+alchemy-catalyst
+wandb

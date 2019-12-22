@@ -1,6 +1,6 @@
 from catalyst.contrib.registry import (
     Criterion, CRITERIONS, GRAD_CLIPPERS, Model, MODELS, Module, MODULES,
-    Optimizer, OPTIMIZERS, Scheduler, SCHEDULERS
+    Optimizer, OPTIMIZERS, Sampler, SAMPLERS, Scheduler, SCHEDULERS
 )
 from ..utils.registry import Registry
 
@@ -16,6 +16,6 @@ Callback = CALLBACKS.add
 
 __all__ = [
     "Criterion", "Optimizer", "Scheduler", "Callback", "Module", "Model",
-    "MODULES", "CRITERIONS", "OPTIMIZERS", "SCHEDULERS", "GRAD_CLIPPERS",
-    "MODELS"
+    "Sampler", "MODULES", "CRITERIONS", "OPTIMIZERS", "SCHEDULERS",
+    "GRAD_CLIPPERS", "MODELS", "SAMPLERS"
 ]
