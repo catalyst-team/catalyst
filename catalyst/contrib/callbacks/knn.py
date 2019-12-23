@@ -17,7 +17,6 @@ class KNNMetricCallback(Callback):
     """
     A callback that returns single metric on `state.on_loader_end`
     """
-
     def __init__(
             self,
             input_key: str = "logits",
@@ -179,7 +178,6 @@ class KNNMetricCallback(Callback):
         """
         Loader end hook.
         """
-
         self.features = np.stack(self.features)
         self.targets = np.stack(self.targets)
 
@@ -212,7 +210,6 @@ class KNNMetricCallback(Callback):
         """
         Epoch end hook.
         """
-
         if self.cv_loader_names is not None:
             for k, vs in self.cv_loader_names.items():
 
