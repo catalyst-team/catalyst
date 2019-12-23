@@ -1,21 +1,21 @@
-from catalyst.dl.core import Callback, RunnerState, CallbackOrder
+from math import ceil
+from typing import Dict, List
+
+import numpy as np
+from scipy import stats
+from sklearn.metrics import (
+    accuracy_score, f1_score, precision_score, recall_score
+)
+from sklearn.neighbors import NearestNeighbors
 
 import torch
-import numpy as np
 
-from typing import List, Dict
-
-from math import ceil
-from scipy import stats
-
-from sklearn.neighbors import NearestNeighbors
-from sklearn.metrics import f1_score, accuracy_score, \
-    precision_score, recall_score
+from catalyst.dl.core import Callback, CallbackOrder, RunnerState
 
 
 class KNNMetricCallback(Callback):
     """
-    A callback that returns single metric on `state.on_batch_end`
+    A callback that returns single metric on `state.on_loader_end`
     """
 
     def __init__(
@@ -30,21 +30,23 @@ class KNNMetricCallback(Callback):
             knn_metric: str = "euclidean",
             n_neighbors: int = 5
     ):
-        """Returns accuracy calculated using kNN algorithm.
+        """
+        Returns metric value calculated using kNN algorithm.
+
         Args:
-            input_key (str): input key to get features
-            output_key (str): output key to get targets
-            prefix (str): key to store in logs
-            num_classes (int): Number of classes; must be > 1
-            class_names (dict): of indexes and class names
-            cv_loader_names (dict): dict with keys and values of loader_names
+            input_key: input key to get features.
+            output_key: output key to get targets.
+            prefix: key to store in logs.
+            num_classes: Number of classes; must be > 1.
+            class_names: of indexes and class names.
+            cv_loader_names: dict with keys and values of loader_names
                                     for which cross validation should be
                                     calculated.
-                                    For example {"train" : ["valid", "test"]}
-            metric_fn (str): one of `accuracy`, `precision`, `recall`, 
-                            `f1-score`, default is `f1-score`
-            knn_metric (str): look sklearn.neighbors.NearestNeighbors parameter
-            n_neighbors (int): number of neighbors, default is 5
+                                    For example {"train" : ["valid", "test"]}.
+            metric_fn: one of `accuracy`, `precision`, `recall`, `f1-score`.
+                       default is `f1-score`.
+            knn_metric: look sklearn.neighbors.NearestNeighbors parameter.
+            n_neighbors: number of neighbors, default is 5.
         """
         super().__init__(CallbackOrder.Metric)
 
@@ -81,19 +83,27 @@ class KNNMetricCallback(Callback):
         self.reset_sets()
 
     def reset_cache(self):
+        """
+        Function to reset cache for features and labels.
+        """
         self.features = []
         self.targets = []
 
     def reset_sets(self):
+        """
+        Function to reset cache for all sets.
+        """
         self.sets = {}
 
     def _knn(self, train_set, test_set=None):
-        """Returns accuracy calculated using kNN algorithm.
+        """
+        Returns accuracy calculated using kNN algorithm.
+
         Args:
             train_set: dict of feature "values" and "labels" for training set.
             test_set: dict of feature "values" and "labels" for test set.
         Returns:
-            cm: np.ndarray of confusion matrix
+            cm: tuple of lists of true & predicted classes.
         """
         # if the test_set is None, we will test train_set on itself,
         # in that case we need to delete the closest neighbor
@@ -154,6 +164,9 @@ class KNNMetricCallback(Callback):
         return result
 
     def on_batch_end(self, state: RunnerState):
+        """
+        Batch end hook.
+        """
         features: torch.Tensor = \
             state.output[self.features_key].cpu().detach().numpy()
         targets: torch.Tensor = \
@@ -163,6 +176,9 @@ class KNNMetricCallback(Callback):
         self.targets.extend(targets)
 
     def on_loader_end(self, state: RunnerState):
+        """
+        Loader end hook.
+        """
 
         self.features = np.stack(self.features)
         self.targets = np.stack(self.targets)
@@ -193,13 +209,16 @@ class KNNMetricCallback(Callback):
         self.reset_cache()
 
     def on_epoch_end(self, state: RunnerState):
+        """
+        Epoch end hook.
+        """
 
         if self.cv_loader_names is not None:
             for k, vs in self.cv_loader_names.items():
 
                 # checking for presence of subset
                 if k not in self.sets:
-                    print(f"Set `{k}` not found in the sets." 
+                    print(f"Set `{k}` not found in the sets."
                           f"Please change `cv_loader_names` parameter.")
                     continue
 
@@ -207,7 +226,7 @@ class KNNMetricCallback(Callback):
 
                     # checking for presence of subset
                     if v not in self.sets:
-                        print(f"Set `{v}` not found in the sets." 
+                        print(f"Set `{v}` not found in the sets."
                               f"Please change `cv_loader_names` parameter.")
                         continue
 
