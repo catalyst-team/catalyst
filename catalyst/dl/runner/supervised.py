@@ -156,10 +156,7 @@ class SupervisedRunner(Runner):
             monitoring_params (dict): If not None, then create monitoring
                 through Alchemy or Weights&Biases.
                 For example,
-                {
-                    "token": "...", # your personal token for Alchemy
-                    "experiment": "your_experiment_name"
-                }
+                ``{"token": "api_token", "experiment": "experiment_name"}``
             check (bool): if True, then only checks that pipeline is working
                 (3 epochs only)
         """
