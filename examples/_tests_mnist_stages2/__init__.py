@@ -1,6 +1,6 @@
 # flake8: noqa
-from catalyst.dl import registry # , SupervisedRunner as Runner
 from catalyst.contrib.runner import SupervisedAlchemyRunner as Runner
+from catalyst.dl import registry  # , SupervisedRunner as Runner
 from .experiment import Experiment
 from .model import SimpleNet
 
