@@ -27,7 +27,7 @@ class KNNMetricCallback(Callback):
             cv_loader_names: Dict[str, List[str]] = None,
             metric_fn: str = "f1-score",
             knn_metric: str = "euclidean",
-            n_neighbors: int = 5
+            num_neighbors: int = 5
     ):
         """
         Returns metric value calculated using kNN algorithm.
@@ -39,13 +39,12 @@ class KNNMetricCallback(Callback):
             num_classes: Number of classes; must be > 1.
             class_names: of indexes and class names.
             cv_loader_names: dict with keys and values of loader_names
-                                    for which cross validation should be
-                                    calculated.
-                                    For example {"train" : ["valid", "test"]}.
+                for which cross validation should be calculated.
+                For example {"train" : ["valid", "test"]}.
             metric_fn: one of `accuracy`, `precision`, `recall`, `f1-score`.
                        default is `f1-score`.
             knn_metric: look sklearn.neighbors.NearestNeighbors parameter.
-            n_neighbors: number of neighbors, default is 5.
+            num_neighbors: number of neighbors, default is 5.
         """
         super().__init__(CallbackOrder.Metric)
 
@@ -74,9 +73,9 @@ class KNNMetricCallback(Callback):
 
         self.metric_fn = metric_fns[metric_fn]
         self.knn_metric = knn_metric
-        self.n_neighbors = n_neighbors
+        self.num_neighbors = num_neighbors
 
-        self.n_folds = 1
+        self.num_folds = 1
 
         self._reset_cache()
         self._reset_sets()
@@ -123,13 +122,13 @@ class KNNMetricCallback(Callback):
 
                 # fit nearest neighbors class on our train data
                 classifier = NearestNeighbors(
-                    n_neighbors=self.n_neighbors + int(leave_one_out),
+                    num_neighbors=self.num_neighbors + int(leave_one_out),
                     metric=self.knn_metric,
                     algorithm="brute")
                 classifier.fit(x_train, y_train)
 
-                # data could be evaluated in n_folds in order to avoid OOM
-                end_idx, batch_size = 0, ceil(size / self.n_folds)
+                # data could be evaluated in num_folds in order to avoid OOM
+                end_idx, batch_size = 0, ceil(size / self.num_folds)
                 for s, start_idx in enumerate(range(0, size, batch_size)):
 
                     end_idx = min(start_idx + batch_size, size)
@@ -156,8 +155,8 @@ class KNNMetricCallback(Callback):
             # this try catch block made because sometimes sets are quite big
             # and it is not possible to put everything in memory, so we split
             except MemoryError:
-                print(f"Memory error with {self.n_folds} folds, trying more.")
-                self.n_folds *= 2
+                print(f"Memory error with {self.num_folds} folds, trying more.")
+                self.num_folds *= 2
                 result = None
 
         return result
