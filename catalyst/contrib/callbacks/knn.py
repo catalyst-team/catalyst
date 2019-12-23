@@ -156,7 +156,7 @@ class KNNMetricCallback(Callback):
             # this try catch block made because sometimes sets are quite big
             # and it is not possible to put everything in memory, so we split
             except MemoryError:
-                print(f"Memory error with {self.n_folds} fold, trying more.")
+                print(f"Memory error with {self.n_folds} folds, trying more.")
                 self.n_folds *= 2
                 result = None
 
@@ -215,7 +215,7 @@ class KNNMetricCallback(Callback):
 
                 # checking for presence of subset
                 if k not in self.sets:
-                    print(f"Set `{k}` not found in the sets."
+                    print(f"Set `{k}` not found in the sets. "
                           f"Please change `cv_loader_names` parameter.")
                     continue
 
@@ -223,7 +223,7 @@ class KNNMetricCallback(Callback):
 
                     # checking for presence of subset
                     if v not in self.sets:
-                        print(f"Set `{v}` not found in the sets."
+                        print(f"Set `{v}` not found in the sets. "
                               f"Please change `cv_loader_names` parameter.")
                         continue
 
