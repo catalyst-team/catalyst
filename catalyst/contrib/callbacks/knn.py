@@ -78,17 +78,17 @@ class KNNMetricCallback(Callback):
 
         self.n_folds = 1
 
-        self.reset_cache()
-        self.reset_sets()
+        self._reset_cache()
+        self._reset_sets()
 
-    def reset_cache(self):
+    def _reset_cache(self):
         """
         Function to reset cache for features and labels.
         """
         self.features = []
         self.targets = []
 
-    def reset_sets(self):
+    def _reset_sets(self):
         """
         Function to reset cache for all sets.
         """
@@ -204,7 +204,7 @@ class KNNMetricCallback(Callback):
             for i, value in enumerate(values):
                 loader_values[f"{self.prefix}/{self.class_names[i]}"] = value
 
-        self.reset_cache()
+        self._reset_cache()
 
     def on_epoch_end(self, state: RunnerState):
         """
@@ -244,8 +244,8 @@ class KNNMetricCallback(Callback):
                             prefix = f"{self.prefix}/{self.class_names[i]}"
                             loader_values[prefix] = value
 
-        self.reset_cache()
-        self.reset_sets()
+        self._reset_cache()
+        self._reset_sets()
 
 
 __all__ = ["KNNMetricCallback"]
