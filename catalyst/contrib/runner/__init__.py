@@ -10,7 +10,8 @@ try:
     from .alchemy import AlchemyRunner, SupervisedAlchemyRunner
 except ImportError as ex:
     logger.warning(
-        "alchemy not available, to install alchemy, run `pip install alchemy`."
+        "alchemy not available, to install alchemy, "
+        "run `pip install alchemy-catalyst`."
     )
     if os.environ.get("USE_ALCHEMY", "0") == "1":
         raise ex
