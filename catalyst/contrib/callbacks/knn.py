@@ -155,7 +155,9 @@ class KNNMetricCallback(Callback):
             # this try catch block made because sometimes sets are quite big
             # and it is not possible to put everything in memory, so we split
             except MemoryError:
-                print(f"Memory error with {self.num_folds} folds, trying more.")
+                print(
+                    f"Memory error with {self.num_folds} folds, trying more."
+                )
                 self.num_folds *= 2
                 result = None
 
