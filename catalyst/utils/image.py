@@ -59,12 +59,11 @@ def imread(
     Returns:
 
     """
+    uri = str(uri)
+
     if rootpath is not None:
-        uri = str(uri)
         rootpath = str(rootpath)
-        uri = str(
-            uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
-        )
+        uri = uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
 
     if JPEG4PY_ENABLED and uri.endswith(("jpg", "JPG", "jpeg", "JPEG")):
         img = jpeg.JPEG(uri).decode()
