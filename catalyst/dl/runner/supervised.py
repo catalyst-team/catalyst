@@ -154,8 +154,9 @@ class SupervisedRunner(Runner):
                 See https://nvidia.github.io/apex/amp.html#properties
                 if fp16=True, params by default will be ``{"opt_level": "O1"}``
             monitoring_params (dict): If not None, then create monitoring
-                through Weights&Biases. This params is used for ``wandb.init``
-                see https://docs.wandb.com/wandb/init
+                through Alchemy or Weights&Biases.
+                For example,
+                ``{"token": "api_token", "experiment": "experiment_name"}``
             check (bool): if True, then only checks that pipeline is working
                 (3 epochs only)
         """

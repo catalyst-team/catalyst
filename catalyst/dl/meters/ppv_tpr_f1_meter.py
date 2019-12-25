@@ -79,7 +79,6 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
         Returns:
             None
         """
-        
         output = (output > self.threshold).float()
 
         tp = torch.sum(target * output)

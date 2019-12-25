@@ -8,6 +8,7 @@
 #   --clear-exif \
 #   --grayscale
 
+from typing import List  # isort:skip
 import argparse
 from functools import wraps
 import os
@@ -17,7 +18,8 @@ import cv2
 import numpy as np
 
 from catalyst.utils import (
-    boolean_flag, get_pool, imread, imwrite, Pool, tqdm_parallel_imap
+    boolean_flag, get_pool, has_image_extension, imread, imwrite, Pool,
+    tqdm_parallel_imap
 )
 
 # Limit cv2's processor usage
@@ -45,12 +47,6 @@ def build_args(parser):
         default=1,
         type=int,
         help="Number of workers to parallel the processing")
-
-    parser.add_argument(
-        "--extension",
-        default="jpg",
-        type=str,
-        help="Input images extension. JPG is default.")
 
     parser.add_argument(
         "--max-size",
@@ -137,7 +133,6 @@ class Preprocessor:
         clear_exif: bool = True,
         grayscale: bool = False,
         expand_dims: bool = True,
-        extension: str = "jpg",
         interpolation=cv2.INTER_LANCZOS4,
     ):
         self.in_dir = in_dir
@@ -146,24 +141,19 @@ class Preprocessor:
         self.expand_dims = expand_dims
         self.max_size = max_size
         self.clear_exif = clear_exif
-        self.extension = extension
         self.interpolation = interpolation
 
     def preprocess(self, image_path: Path):
         try:
-            if self.extension in ("jpg", "JPG", "jpeg", "JPEG"):
-                image = np.array(
-                    imread(
-                        uri=image_path,
-                        grayscale=self.grayscale,
-                        expand_dims=self.expand_dims,
-                        exifrotate=not self.clear_exif))
-            else:  # imread does not have exifrotate for non-jpeg type
-                image = np.array(
-                    imread(
-                        uri=image_path,
-                        grayscale=self.grayscale,
-                        expand_dims=self.expand_dims))
+            _, extension = os.path.splitext(image_path)
+            kwargs = {
+                "grayscale": self.grayscale, "expand_dims": self.expand_dims
+            }
+            if extension.lower() in {"jpg", "jpeg"}:
+                # imread does not have exifrotate for non-jpeg type
+                kwargs["exifrotate"] = not self.clear_exif
+
+            image = np.array(imread(uri=image_path, **kwargs))
         except Exception as e:
             print(f"Cannot read file {image_path}, exception: {e}")
             return
@@ -178,7 +168,14 @@ class Preprocessor:
         imwrite(target_path, image)
 
     def process_all(self, pool: Pool):
-        images = [*self.in_dir.glob(f"**/*.{self.extension}")]
+        images: List[Path] = []
+        for root, dirs, files in os.walk(self.in_dir):
+            root = Path(root)
+            images.extend([
+                root / filename for filename in files
+                if has_image_extension(filename)
+            ])
+
         tqdm_parallel_imap(self.preprocess, images, pool)
 
 

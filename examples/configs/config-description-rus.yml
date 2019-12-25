@@ -55,6 +55,15 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
         drop_last: True
       valid:  # Переопределит значение для valid лоадера
         batch_size: 32
+    samplers_params:  # KEYWORD, параметры sampler для каждого лоадера, такое же API, как в loaders_params
+      # Пример
+      train:  # только для train лоадера
+        sampler: MiniEpochSampler  # KEYWORD, имя для sampler
+        # на этом уровне могут лежать параметры для __init__ данного sampler, например
+        data_len: 50000  # Пример
+        mini_epoch_len: 40000  # Пример
+        drop_last: True  # Пример
+        shuffle: per_epoch  # Пример
     # на этом уровне могут лежать kwargs параметры для `get_datasets`
     key_for_data: value  # Пример
 
