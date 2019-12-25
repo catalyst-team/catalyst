@@ -124,10 +124,6 @@ class Runner(ABC):
 
         if self.state is not None:
             getattr(self.state, f"{fn_name}_post")()
-            # if an exception had been raised 
-            # before the exception-handlers were initialized
-            if self.loggers is None and self.callbacks is None and event == "exception":
-                raise self.state.exception
 
     @property
     def model(self) -> Model:
