@@ -4,7 +4,6 @@ import os
 
 logger = logging.getLogger(__name__)
 
-
 try:
     import alchemy
     from .alchemy import AlchemyRunner, SupervisedAlchemyRunner
@@ -15,6 +14,15 @@ except ImportError as ex:
     )
     if os.environ.get("USE_ALCHEMY", "0") == "1":
         raise ex
+
+try:
+    import neptune
+    from .neptune import NeptuneRunner, SupervisedNeptuneRunner
+except ImportError as ex:
+    logger.warning(
+        "neptune not available, to install neptune, run `pip install neptune-client`."
+    )
+    raise ex
 
 try:
     import wandb
