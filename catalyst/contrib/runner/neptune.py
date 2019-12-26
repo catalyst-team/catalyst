@@ -1,4 +1,4 @@
-from typing import List  # isort:skip
+from typing import List
 from pathlib import Path
 
 import neptune
