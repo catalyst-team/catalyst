@@ -31,7 +31,10 @@ def precision(tp, fp, eps=1e-5):
     Returns:
         precision value (0-1)
     """
-    return tp / (tp + fp + eps)
+    # originally precision is: ppv = tp / (tp + fp + eps)
+    # but when both masks are empty this gives: tp=0 and fp=0 => ppv=0
+    # so here precision is defined as ppv := 1 - fdr (false discovery rate)
+    return 1 - fp / (tp + fp + eps)
 
 
 def recall(tp, fn, eps=1e-5):
@@ -44,7 +47,10 @@ def recall(tp, fn, eps=1e-5):
     Returns:
         recall value (0-1)
     """
-    return tp / (tp + fn + eps)
+    # originally reacall is: tpr := tp / (tp + fn + eps)
+    # but when both masks are empty this gives: tp=0 and fn=0 => tpr=0
+    # so here recall is defined as tpr := 1 - fnr (false negative rate)
+    return 1 - fn / (fn + tp + eps)
 
 
 class PrecisionRecallF1ScoreMeter(meter.Meter):
