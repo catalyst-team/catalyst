@@ -23,7 +23,7 @@ flake8 . --count --exit-zero \
     --statistics
 echo '~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~' 1>&2
 
-# test to make sure the code is yapf compliant
+ test to make sure the code is yapf compliant
 if [[ -f ${skip_inplace} ]]; then
     bash ./bin/yapf.sh --all
 else

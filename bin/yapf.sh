@@ -4,7 +4,11 @@
 set -eo pipefail
 
 is_submodule() {
-    (cd "$(git rev-parse --show-toplevel)/.." && git rev-parse --is-inside-work-tree) | grep -q true
+  if [ -d "$(git rev-parse --show-toplevel)/../.git" ]; then
+     (cd "$(git rev-parse --show-toplevel)/.." && git rev-parse --is-inside-work-tree) | grep -q true
+  else
+      return 1
+  fi
 }
 
 # this stops git rev-parse from failing if we run this from the .git directory
@@ -13,6 +17,7 @@ builtin cd "$(dirname "${BASH_SOURCE:-$0}")"
 ROOT="$(git rev-parse --show-toplevel)"
 builtin cd "$ROOT" || exit 1
 
+echo $is_submodule
 if is_submodule; then
     # Add the upstream branch if it doesn't exist
     if ! [[ -e "$ROOT/../.git/modules/catalyst/refs/remotes/upstream" ]]; then
