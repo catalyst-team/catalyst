@@ -12,6 +12,7 @@ from catalyst.dl.runner.supervised import SupervisedRunner
 class NeptuneRunner(Runner):
     """
     Runner wrapper with Neptune integration hooks.
+    Read about Neptune here https://neptune.ml
 
     Example:
 
