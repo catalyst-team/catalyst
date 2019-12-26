@@ -13,9 +13,7 @@ is_submodule() {
 
 # this stops git rev-parse from failing if we run this from the .git directory
 builtin cd "$(dirname "${BASH_SOURCE:-$0}")"
-
-ROOT="$(git rev-parse --show-toplevel)"
-builtin cd "$ROOT" || exit 1
+UPSTREAM="$(git remote| grep "upstream")"
 
 if is_submodule; then
     echo "submodule"
@@ -25,7 +23,7 @@ if is_submodule; then
     fi
 else
     # Add the upstream branch if it doesn't exist
-    if ! [[ -e "$ROOT/.git/refs/remotes/upstream" ]]; then
+    if ! [[ "$UPSTREAM"!="upstream" ]]; then
         git remote add 'upstream' 'https://github.com/catalyst-team/catalyst'
     fi
 fi
