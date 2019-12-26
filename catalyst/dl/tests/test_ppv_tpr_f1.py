@@ -42,7 +42,7 @@ def test_precision_recall_f1score():
     ppv, tpr, f1 = precision_recall_f1(tp, fp, fn)
     assert ppv == tpr == 0.5, \
         "Example where ppv and tpr should be =0.5."
-    
+
     # case 4
     tp, fp, fn = (0, 1, 1)
     ppv, tpr, f1 = precision_recall_f1(tp, fp, fn)
