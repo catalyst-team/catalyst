@@ -28,15 +28,19 @@ class NeptuneRunner(Runner):
             logdir=logdir,
             num_epochs=num_epochs,
             verbose=True,
-            monitoring_params={'init': {'project_qualified_name': 'jakub-czakon/examples', # project name in Neptune
-                                        'api_token': None, # api key if kept in NEPTUNE_API_TOKEN can be left None
-                                        },
-                               'create_experiment': {'name': 'catalyst-example', # experiment name
-                                    'params': {}, # key value pairs for model parameters (immutable)
-                                    'properties': {'data_source': 'cifar10'} , # key value pairs for other things
-                                    'tags': ['resnet', 'no-augmentations'], # tags for experiment organization
-                                    'upload_source_files': ['**/*.py']} # upload all .py files recursively
-                                                     })
+            monitoring_params={
+               'init': {
+                  'project_qualified_name': 'jakub-czakon/examples',
+                'api_token': None, # api key, keep in NEPTUNE_API_TOKEN
+                       },
+               'create_experiment': {
+                     'name': 'catalyst-example', # experiment name
+                     'params': {'epoch_nr':10}, # immutable
+                     'properties': {'data_source': 'cifar10'} , # mutable
+                     'tags': ['resnet', 'no-augmentations'],
+                     'upload_source_files': ['**/*.py'] # grep-like
+                                    }
+                             })
     """
 
     def _init(self,
@@ -54,7 +58,8 @@ class NeptuneRunner(Runner):
 
         neptune.init(**monitoring_params['init'])
 
-        self._neptune_experiment = neptune.create_experiment(**monitoring_params['create_experiment'])
+        self._neptune_experiment = neptune.create_experiment(
+            **monitoring_params['create_experiment'])
 
         log_on_batch_end: bool = \
             monitoring_params.pop("log_on_batch_end", True)
@@ -69,9 +74,12 @@ class NeptuneRunner(Runner):
             checkpoints_glob=checkpoints_glob,
         )
 
-        self._neptune_experiment.set_property('log_on_batch_end', self.log_on_batch_end)
-        self._neptune_experiment.set_property('log_on_epoch_end', self.log_on_epoch_end)
-        self._neptune_experiment.set_property('checkpoints_glob', self.checkpoints_glob)
+        self._neptune_experiment.set_property('log_on_batch_end',
+                                              self.log_on_batch_end)
+        self._neptune_experiment.set_property('log_on_epoch_end',
+                                              self.log_on_epoch_end)
+        self._neptune_experiment.set_property('checkpoints_glob',
+                                              self.checkpoints_glob)
 
         if isinstance(experiment, ConfigExperiment):
             exp_config = utils.flatten_dict(experiment.stages_config)
@@ -93,7 +101,8 @@ class NeptuneRunner(Runner):
             metrics = self.state.metrics.batch_values
 
             for name, value in metrics.items():
-                self._neptune_experiment.log_metric(f'batch_{mode}_{name}', value)
+                self._neptune_experiment.log_metric(f'batch_{mode}_{name}',
+                                                    value)
 
     def _run_epoch(self, loaders):
         super()._run_epoch(loaders=loaders)
@@ -102,7 +111,8 @@ class NeptuneRunner(Runner):
             metrics = self.state.metrics.batch_values
 
             for name, value in metrics.items():
-                self._neptune_experiment.log_metric(f'epoch_{mode}_{name}', value)
+                self._neptune_experiment.log_metric(f'epoch_{mode}_{name}',
+                                                    value)
 
     def run_experiment(
             self,
