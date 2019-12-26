@@ -114,13 +114,13 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # Ignoring Third-party packages
 
-autodoc_mock_imports = ['alchemy',
-                        'neptune',
-                        'wandb',
-                        'gym',
-                        'gridfs',
-                        'pymongo',
-                        'redis']
+autodoc_mock_imports = ["alchemy",
+                        "neptune",
+                        "wandb",
+                        "gym",
+                        "gridfs",
+                        "pymongo",
+                        "redis"]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
