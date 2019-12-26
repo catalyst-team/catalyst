@@ -13,6 +13,9 @@ is_submodule() {
 # this stops git rev-parse from failing if we run this from the .git directory
 builtin cd "$(dirname "${BASH_SOURCE:-$0}")"
 
+ROOT="$(git rev-parse --show-toplevel)"
+builtin cd "$ROOT" || exit 1
+
 UPSTREAM="$(git remote| grep "upstream")"
 
 if is_submodule; then
