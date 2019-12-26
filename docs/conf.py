@@ -112,6 +112,16 @@ language = None
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
+# Ignoring Third-party packages
+
+autodoc_mock_imports = ['alchemy',
+                        'neptune',
+                        'wandb',
+                        'gym',
+                        'gridfs',
+                        'pymongo',
+                        'redis']
+
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
 
