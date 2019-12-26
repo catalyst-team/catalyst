@@ -17,8 +17,8 @@ builtin cd "$(dirname "${BASH_SOURCE:-$0}")"
 ROOT="$(git rev-parse --show-toplevel)"
 builtin cd "$ROOT" || exit 1
 
-echo $is_submodule
 if is_submodule; then
+    echo "submodule"
     # Add the upstream branch if it doesn't exist
     if ! [[ -e "$ROOT/../.git/modules/catalyst/refs/remotes/upstream" ]]; then
         git remote add 'upstream' 'https://github.com/catalyst-team/catalyst'
