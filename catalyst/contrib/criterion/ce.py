@@ -17,7 +17,7 @@ class NaiveCrossEntropyLoss(nn.Module):
 
 
 class SymmetricCrossEntropyLoss(nn.Module):
-    def __init__(self, num_classes, alpha=1.0, beta=1.0):
+    def __init__(self, alpha=1.0, beta=1.0):
         """
         Symmetric Cross Entropy
         paper : https://arxiv.org/abs/1908.06112
@@ -27,13 +27,10 @@ class SymmetricCrossEntropyLoss(nn.Module):
                 corresponds to overfitting issue of CE
             beta(float):
                 corresponds to flexible exploration on the robustness of RCE
-            num_classes(int):
-                number of classes in dataset
         """
         super(SymmetricCrossEntropyLoss, self).__init__()
         self.alpha = alpha
         self.beta = beta
-        self.num_classes = num_classes
 
     def forward(self, input, target):
         """
@@ -42,7 +39,8 @@ class SymmetricCrossEntropyLoss(nn.Module):
             target: shape = [batch_size]
             values of a vector correspond to class index
         """
-        target_one_hot = F.one_hot(target, self.num_classes).float()
+        num_classes = input.shape[1]
+        target_one_hot = F.one_hot(target, num_classes).float()
         assert target_one_hot.shape == input.shape
 
         input = torch.clamp(input, min=1e-7, max=1.0)
@@ -80,5 +78,8 @@ class MaskCrossEntropyLoss(torch.nn.CrossEntropyLoss):
         return loss
 
 
-__all__ = ["MaskCrossEntropyLoss", "SymmetricCrossEntropyLoss",
-                                   "NaiveCrossEntropyLoss"]
+__all__ = [
+    "MaskCrossEntropyLoss", 
+    "SymmetricCrossEntropyLoss",
+    "NaiveCrossEntropyLoss",
+]
