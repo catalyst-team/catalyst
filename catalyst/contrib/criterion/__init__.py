@@ -1,7 +1,9 @@
 # flake8: noqa
 from torch.nn.modules.loss import *
 
-from .ce import MaskCrossEntropyLoss, NaiveCrossEntropyLoss
+from .ce import (
+    MaskCrossEntropyLoss, NaiveCrossEntropyLoss, SymmetricCrossEntropyLoss
+)
 from .center import CenterLoss
 from .contrastive import ContrastiveDistanceLoss, ContrastiveEmbeddingLoss
 from .dice import BCEDiceLoss, DiceLoss

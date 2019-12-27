@@ -16,6 +16,46 @@ class NaiveCrossEntropyLoss(nn.Module):
         return loss
 
 
+class SymmetricCrossEntropyLoss(nn.Module):
+    def __init__(self, alpha=1.0, beta=1.0):
+        """
+        Symmetric Cross Entropy
+        paper : https://arxiv.org/abs/1908.06112
+
+        Args:
+            alpha(float):
+                corresponds to overfitting issue of CE
+            beta(float):
+                corresponds to flexible exploration on the robustness of RCE
+        """
+        super(SymmetricCrossEntropyLoss, self).__init__()
+        self.alpha = alpha
+        self.beta = beta
+
+    def forward(self, input, target):
+        """
+        Args:
+            input: shape = [batch_size; num_classes]
+            target: shape = [batch_size]
+            values of a vector correspond to class index
+        """
+        num_classes = input.shape[1]
+        target_one_hot = F.one_hot(target, num_classes).float()
+        assert target_one_hot.shape == input.shape
+
+        input = torch.clamp(input, min=1e-7, max=1.0)
+        target_one_hot = torch.clamp(target_one_hot, min=1e-4, max=1.0)
+
+        cross_entropy = (
+            -torch.sum(target_one_hot * torch.log(input), dim=1)
+        ).mean()
+        reverse_cross_entropy = (
+            -torch.sum(input * torch.log(target_one_hot), dim=1)
+        ).mean()
+        loss = self.alpha * cross_entropy + self.beta * reverse_cross_entropy
+        return loss
+
+
 class MaskCrossEntropyLoss(torch.nn.CrossEntropyLoss):
     def __init__(
             self,
@@ -38,4 +78,8 @@ class MaskCrossEntropyLoss(torch.nn.CrossEntropyLoss):
         return loss
 
 
-__all__ = ["MaskCrossEntropyLoss", "NaiveCrossEntropyLoss"]
+__all__ = [
+    "MaskCrossEntropyLoss",
+    "SymmetricCrossEntropyLoss",
+    "NaiveCrossEntropyLoss",
+]
