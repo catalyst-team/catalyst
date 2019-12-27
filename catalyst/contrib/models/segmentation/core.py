@@ -1,4 +1,5 @@
-from typing import Dict, List  # isort:skip
+from typing import Dict, List, Union  # isort:skip
+from pathlib import Path
 
 import torch
 import torch.nn as nn
@@ -16,12 +17,21 @@ class UnetMetaSpec(nn.Module):
         decoder: DecoderSpec,
         bridge: BridgeSpec = None,
         head: HeadSpec = None,
+        state_dict: Union[dict, str, Path] = None,
     ):
         super().__init__()
         self.encoder = encoder
         self.bridge = bridge or (lambda x: x)
         self.decoder = decoder
         self.head = head or (lambda x: x)
+        
+        if state_dict is not None:
+            if isinstance(state_dict, (Path, str)):
+                print(f"loading checkpoint {str(state_dict)}")
+                state_dict = torch.load(str(state_dict))
+            if "model_state_dict" in state_dict.keys():
+                state_dict = state_dict["model_state_dict"]
+            self.load_state_dict(state_dict)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         encoder_features: List[torch.Tensor] = self.encoder(x)
@@ -42,6 +52,7 @@ class UnetSpec(UnetMetaSpec):
         bridge_params: Dict = None,
         decoder_params: Dict = None,
         head_params: Dict = None,
+        state_dict: Union[dict, str, Path] = None,
     ):
         encoder_params = encoder_params or {}
         bridge_params = bridge_params or {}
@@ -60,7 +71,8 @@ class UnetSpec(UnetMetaSpec):
         )
 
         super().__init__(
-            encoder=encoder, bridge=bridge, decoder=decoder, head=head
+            encoder=encoder, bridge=bridge, decoder=decoder, head=head, 
+            state_dict=state_dict
         )
 
     def _get_components(
@@ -84,6 +96,7 @@ class ResnetUnetSpec(UnetMetaSpec):
         bridge_params: Dict = None,
         decoder_params: Dict = None,
         head_params: Dict = None,
+        state_dict: Union[dict, str, Path] = None,
     ):
         encoder_params = encoder_params or {}
         bridge_params = bridge_params or {}
@@ -99,7 +112,8 @@ class ResnetUnetSpec(UnetMetaSpec):
         )
 
         super().__init__(
-            encoder=encoder, bridge=bridge, decoder=decoder, head=head
+            encoder=encoder, bridge=bridge, decoder=decoder, head=head, 
+            state_dict=state_dict
         )
 
     def _get_components(
