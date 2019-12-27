@@ -10,7 +10,7 @@ from catalyst.utils.dataset import (
 
 
 def prepare_df_from_dirs(
-    in_dirs, tag_column_name, include_subdirs: bool = False
+    in_dirs, tag_column_name, recursive: bool = False
 ):
     dfs = []
     splitted_dirs = in_dirs.strip(",").split(",")
@@ -29,7 +29,7 @@ def prepare_df_from_dirs(
             in_dir = f"{in_dir}/"
 
         dataset = create_dataset(
-            f"{in_dir}/**", process_fn=process_fn, recursive=include_subdirs
+            f"{in_dir}/**", process_fn=process_fn, recursive=recursive
         )
 
         dfs.append(
@@ -78,7 +78,7 @@ def build_args(parser):
     )
     boolean_flag(
         parser,
-        "include-subdirs",
+        "recursive",
         default=False,
         help="Include subdirs in dataset",
     )
@@ -98,7 +98,7 @@ def main(args, _=None):
         df = pd.read_csv(args.in_csv)
     elif args.in_dir is not None:
         df = prepare_df_from_dirs(
-            args.in_dir, args.tag_column, include_subdirs=args.include_subdirs
+            args.in_dir, args.tag_column, recursive=args.recursive
         )
     else:
         raise Exception
