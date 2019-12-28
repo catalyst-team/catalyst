@@ -15,9 +15,8 @@ class AlchemyRunner(Runner):
     Example:
 
         from catalyst.dl import SupervisedAlchemyRunner
-        runner = SupervisedAlchemyRunner()
 
-        # model training
+        runner = SupervisedAlchemyRunner()
 
         runner.train(
             model=model,
@@ -31,7 +30,8 @@ class AlchemyRunner(Runner):
                 "token": "...", # your Alchemy token
                 "experiment": "your_experiment_name",
                 "group": "your_experiment_group_name"
-            })
+            }
+        )
     """
 
     def _init(
