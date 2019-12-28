@@ -32,22 +32,24 @@ class NeptuneRunner(Runner):
             monitoring_params={
                "init": {
                   "project_qualified_name": "jakub-czakon/examples",
-                "api_token": None, # api key, keep in NEPTUNE_API_TOKEN
-                       },
+                  "api_token": None, # api key, keep in NEPTUNE_API_TOKEN
+               },
                "create_experiment": {
-                     "name": "catalyst-example", # experiment name
-                     "params": {"epoch_nr":10}, # immutable
-                     "properties": {"data_source": "cifar10"} , # mutable
-                     "tags": ["resnet", "no-augmentations"],
-                     "upload_source_files": ["**/*.py"] # grep-like
-                                    }
-                             })
+                 "name": "catalyst-example", # experiment name
+                 "params": {"epoch_nr":10}, # immutable
+                 "properties": {"data_source": "cifar10"} , # mutable
+                 "tags": ["resnet", "no-augmentations"],
+                 "upload_source_files": ["**/*.py"] # grep-like
+               }
+            })
     """
 
-    def _init(self,
-              log_on_batch_end: bool = True,
-              log_on_epoch_end: bool = True,
-              checkpoints_glob: List = None):
+    def _init(
+        self,
+        log_on_batch_end: bool = True,
+        log_on_epoch_end: bool = True,
+        checkpoints_glob: List = None
+    ):
 
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
