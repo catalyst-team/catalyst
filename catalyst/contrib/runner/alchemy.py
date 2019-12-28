@@ -10,7 +10,7 @@ class AlchemyRunner(Runner):
     """
     Runner wrapper with Alchemy integration hooks.
     Read about Alchemy here https://alchemy.host
-    Powered by Catalyst.Ecosystem.
+    Powered by Catalyst.Ecosystem
 
     Example:
 
