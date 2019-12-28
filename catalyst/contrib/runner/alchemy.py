@@ -8,7 +8,30 @@ from catalyst.dl.runner.supervised import SupervisedRunner
 
 class AlchemyRunner(Runner):
     """
-    Runner wrapper with alchemy integration hooks.
+    Runner wrapper with Alchemy integration hooks.
+    Read about Alchemy here https://alchemy.host
+    Powered by Catalyst.Ecosystem
+
+    Example:
+
+        from catalyst.dl import SupervisedAlchemyRunner
+
+        runner = SupervisedAlchemyRunner()
+
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            loaders=loaders,
+            logdir=logdir,
+            num_epochs=num_epochs,
+            verbose=True,
+            monitoring_params={
+                "token": "...", # your Alchemy token
+                "experiment": "your_experiment_name",
+                "group": "your_experiment_group_name"
+            }
+        )
     """
 
     def _init(
