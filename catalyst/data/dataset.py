@@ -1,6 +1,8 @@
 from typing import Any, Callable, Dict, List, Union  # isort:skip
 from pathlib import Path
 
+import numpy as np
+
 from torch.utils.data import Dataset
 
 from catalyst.utils.misc import merge_dicts
@@ -37,7 +39,8 @@ class ListDataset(Dataset):
         )
 
     def __getitem__(self, index: int) -> Any:
-        """Gets element of the dataset
+        """
+        Gets element of the dataset
 
         Args:
             index (int): index of the element in the dataset
@@ -95,13 +98,44 @@ class MergeDataset(Dataset):
         return self.len
 
 
+class NumpyDataset(ListDataset):
+    def __init__(
+        self,
+        numpy_data: np.ndarray,
+        numpy_key: str = "features",
+        **list_dataset_params
+    ):
+        super().__init__(**list_dataset_params)
+        self.numpy_data = numpy_data
+        self.numpy_key = numpy_key
+        assert len(self.numpy_data) == len(self.data), "Different data error"
+
+    def __getitem__(self, index: int) -> Any:
+        """
+        Gets element of the dataset
+
+        Args:
+            index (int): index of the element in the dataset
+        Returns:
+            Single element by index
+        """
+        item = self.data[index]
+        dict_ = self.open_fn(item)
+        dict_[self.numpy_key] = np.copy(self.numpy_data[index])
+        dict_ = self.dict_transform(dict_)
+        return dict_
+
+
 class PathsDataset(ListDataset):
     """
     Dataset that derives features and targets from samples filesystem paths.
     """
     def __init__(
-        self, filenames: List[_Path], open_fn: Callable[[dict], dict],
-        label_fn: Callable[[_Path], Any], **list_dataset_params
+        self,
+        filenames: List[_Path],
+        open_fn: Callable[[dict], dict],
+        label_fn: Callable[[_Path], Any],
+        **list_dataset_params
     ):
         """
          Args:
@@ -138,4 +172,4 @@ class PathsDataset(ListDataset):
         )
 
 
-__all__ = ["_Path", "ListDataset", "MergeDataset", "PathsDataset"]
+__all__ = ["ListDataset", "MergeDataset", "NumpyDataset", "PathsDataset"]
