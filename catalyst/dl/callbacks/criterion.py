@@ -33,6 +33,40 @@ class CriterionCallback(Callback):
     """
     Callback for that measures loss with specified criterion.
     """
+
+    @staticmethod
+    def _get_key_str(
+        dictionary: dict,
+        keys: Optional[Union[str, List[str]]],
+    ) -> Any:
+        return dictionary[keys]
+
+    @staticmethod
+    def _get_key_list(
+        dictionary: dict,
+        keys: Optional[Union[str, List[str]]],
+    ) -> Any:
+        result = {key: dictionary[key] for key in keys}
+        return result
+
+    @staticmethod
+    def _get_key_dict(
+        dictionary: dict,
+        keys: Optional[Union[str, List[str]]],
+    ) -> Any:
+        result = {
+            key_out: dictionary[key_in]
+            for key_in, key_out in keys.items()
+        }
+        return result
+
+    @staticmethod
+    def _get_key_none(
+        dictionary: dict,
+        keys: Optional[Union[str, List[str]]],
+    ) -> Any:
+        return dictionary
+
     def __init__(
         self,
         input_key: Union[str, List[str]] = "targets",
@@ -62,19 +96,27 @@ class CriterionCallback(Callback):
         self.criterion_key = criterion_key
         self.multiplier = multiplier
 
-    @staticmethod
-    def _get(dictionary: dict, keys: Optional[Union[str, List[str]]]) -> Any:
-        if keys is None:
-            result = dictionary
-        elif isinstance(keys, list):
-            result = {key: dictionary[key] for key in keys}
+        if isinstance(self.input_key, str):
+            self._get_input = self._get_key_str
+        elif isinstance(self.input_key, (list, tuple)):
+            self._get_input = self._get_key_list
+        elif isinstance(self.input_key, dict):
+            self._get_input = self._get_key_dict
         else:
-            result = dictionary[keys]
-        return result
+            self._get_input = self._get_key_none
+
+        if isinstance(self.output_key, str):
+            self._get_output = self._get_key_str
+        elif isinstance(self.output_key, (list, tuple)):
+            self._get_output = self._get_key_list
+        elif isinstance(self.output_key, dict):
+            self._get_output = self._get_key_dict
+        else:
+            self._get_output = self._get_key_none
 
     def _compute_loss(self, state: RunnerState, criterion):
-        output = self._get(state.output, self.output_key)
-        input = self._get(state.input, self.input_key)
+        output = self._get_output(state.output, self.output_key)
+        input = self._get_input(state.input, self.input_key)
 
         loss = criterion(output, input)
         return loss
@@ -102,6 +144,26 @@ class CriterionCallback(Callback):
         )
 
         _add_loss_to_state(self.prefix, state, loss)
+
+
+class CriterionOutputOnlyCallback(CriterionCallback):
+    def __init__(
+        self,
+        output_key: Union[str, List[str]],
+        **kwargs
+    ):
+        assert isinstance(output_key, (list, tuple, dict))
+        super().__init__(
+            input_key=None,
+            output_key=output_key,
+            **kwargs
+        )
+
+    def _compute_loss(self, state: RunnerState, criterion):
+        output = self._get_output(state.output, self.output_key)
+
+        loss = criterion(**output)
+        return loss
 
 
 class CriterionAggregatorCallback(Callback):
@@ -196,4 +258,8 @@ class CriterionAggregatorCallback(Callback):
         _add_loss_to_state(self.prefix, state, loss)
 
 
-__all__ = ["CriterionCallback", "CriterionAggregatorCallback"]
+__all__ = [
+    "CriterionCallback",
+    "CriterionOutputOnlyCallback",
+    "CriterionAggregatorCallback",
+]

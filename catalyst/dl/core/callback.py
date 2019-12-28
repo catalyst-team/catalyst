@@ -4,8 +4,6 @@ from enum import IntFlag
 
 import numpy as np
 
-import torch
-
 from catalyst.utils import get_activation_fn
 from .state import RunnerState
 

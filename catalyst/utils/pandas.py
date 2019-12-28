@@ -190,10 +190,9 @@ def read_multiple_dataframes(
         (tuple): tuple with 4 dataframes
             whole dataframe, train part, valid part and infer part
     """
-    assert any([
-        x is not None
-        for x in (in_csv_train, in_csv_valid, in_csv_infer)
-    ])
+    assert any(
+        [x is not None for x in (in_csv_train, in_csv_valid, in_csv_infer)]
+    )
 
     result_df = None
     fold_dfs = {}
@@ -203,15 +202,11 @@ def read_multiple_dataframes(
     ):
         if fold_df is not None:
             fold_df = merge_multiple_fold_csv(
-                fold_name=fold_name,
-                paths=fold_df
+                fold_name=fold_name, paths=fold_df
             )
             if args_are_not_none(tag2class, tag_column, class_column):
                 fold_df = map_dataframe(
-                    fold_df,
-                    tag_column,
-                    class_column,
-                    tag2class
+                    fold_df, tag_column, class_column, tag2class
                 )
             fold_dfs[fold_name] = fold_df
 
