@@ -170,7 +170,7 @@ class TripletLoss(nn.Module):
 
 
 class TripletPairwiseEmbeddingLoss(nn.Module):
-    def __init__(self, margin=0.3, reduction="elementwise_mean"):
+    def __init__(self, margin=0.3, reduction="mean"):
         super().__init__()
         self.margin = margin
         self.reduction = reduction or "none"
@@ -200,7 +200,7 @@ class TripletPairwiseEmbeddingLoss(nn.Module):
         loss = torch.relu(
             self.margin - positive_similarities + negative_similarities
         )
-        if self.reduction == "elementwise_mean":
+        if self.reduction == "mean":
             loss = torch.sum(loss) / bs
         elif self.reduction == "sum":
             loss = torch.sum(loss)

@@ -10,7 +10,7 @@ class ContrastiveEmbeddingLoss(nn.Module):
     paper: http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf
     """
 
-    def __init__(self, margin=1.0, reduction="elementwise_mean"):
+    def __init__(self, margin=1.0, reduction="mean"):
         super().__init__()
         self.margin = margin
         self.reduction = reduction or "none"
@@ -25,7 +25,7 @@ class ContrastiveEmbeddingLoss(nn.Module):
         mdist_ = torch.clamp(mdist, min=0.0)
         loss = (1 - y) * torch.pow(dist, 2) + y * torch.pow(mdist_, 2)
 
-        if self.reduction == "elementwise_mean":
+        if self.reduction == "mean":
             loss = torch.sum(loss) / 2.0 / bs
         elif self.reduction == "sum":
             loss = torch.sum(loss)
@@ -51,7 +51,7 @@ class ContrastiveDistanceLoss(nn.Module):
 
 
 class ContrastivePairwiseEmbeddingLoss(nn.Module):
-    def __init__(self, margin=1.0, reduction="elementwise_mean"):
+    def __init__(self, margin=1.0, reduction="mean"):
         super().__init__()
         self.margin = margin
         self.reduction = reduction or "none"
