@@ -3,12 +3,15 @@ import json
 
 import pandas as pd
 
+from catalyst.utils import boolean_flag
 from catalyst.utils.dataset import (
     create_dataframe, create_dataset, prepare_dataset_labeling, separate_tags
 )
 
 
-def prepare_df_from_dirs(in_dirs, tag_column_name):
+def prepare_df_from_dirs(
+    in_dirs, tag_column_name, recursive: bool = False
+):
     dfs = []
     splitted_dirs = in_dirs.strip(",").split(",")
 
@@ -25,7 +28,9 @@ def prepare_df_from_dirs(in_dirs, tag_column_name):
         if not in_dir.endswith("/"):
             in_dir = f"{in_dir}/"
 
-        dataset = create_dataset(f"{in_dir}/**", process_fn=process_fn)
+        dataset = create_dataset(
+            f"{in_dir}/**", process_fn=process_fn, recursive=recursive
+        )
 
         dfs.append(
             create_dataframe(dataset, columns=[tag_column_name, "filepath"])
@@ -71,6 +76,12 @@ def build_args(parser):
         default=None,
         help="Separator if you want to use several target columns"
     )
+    boolean_flag(
+        parser,
+        "recursive",
+        default=False,
+        help="Include subdirs in dataset",
+    )
 
     return parser
 
@@ -86,7 +97,9 @@ def main(args, _=None):
     if args.in_csv is not None:
         df = pd.read_csv(args.in_csv)
     elif args.in_dir is not None:
-        df = prepare_df_from_dirs(args.in_dir, args.tag_column)
+        df = prepare_df_from_dirs(
+            args.in_dir, args.tag_column, recursive=args.recursive
+        )
     else:
         raise Exception
 
