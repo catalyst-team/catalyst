@@ -4,11 +4,11 @@ from catalyst.utils import get_activation_fn
 
 
 def accuracy(
-        outputs,
-        targets,
-        topk=(1,),
-        threshold: float = None,
-        activation: str = None
+    outputs,
+    targets,
+    topk=(1,),
+    threshold: float = None,
+    activation: str = None
 ):
     """
     Computes the accuracy.

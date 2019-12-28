@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 class ContrastiveEmbeddingLoss(nn.Module):
@@ -49,4 +50,34 @@ class ContrastiveDistanceLoss(nn.Module):
         return loss
 
 
-__all__ = ["ContrastiveEmbeddingLoss", "ContrastiveDistanceLoss"]
+class ContrastivePairwiseEmbeddingLoss(nn.Module):
+    def __init__(self, margin=1.0, reduction="elementwise_mean"):
+        super().__init__()
+        self.margin = margin
+        self.reduction = reduction or "none"
+
+    def forward(self, embeddings_pred, embeddings_true):
+        device = embeddings_pred.device
+        # s - state space
+        # d - embeddings space
+        # a - action space
+        pairwise_similarity = torch.einsum(
+            "se,ae->sa",
+            embeddings_pred,
+            embeddings_true
+        )
+        bs = embeddings_pred.shape[0]
+        batch_idx = torch.arange(bs, device=device)
+        loss = F.cross_entropy(
+            pairwise_similarity,
+            batch_idx,
+            reduction=self.reduction
+        )
+        return loss
+
+
+__all__ = [
+    "ContrastiveEmbeddingLoss",
+    "ContrastiveDistanceLoss",
+    "ContrastivePairwiseEmbeddingLoss"
+]
