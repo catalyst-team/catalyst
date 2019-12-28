@@ -27,7 +27,6 @@ class UnetMetaSpec(nn.Module):
         
         if state_dict is not None:
             if isinstance(state_dict, (Path, str)):
-                print(f"loading checkpoint {str(state_dict)}")
                 state_dict = torch.load(str(state_dict))
             if "model_state_dict" in state_dict.keys():
                 state_dict = state_dict["model_state_dict"]
