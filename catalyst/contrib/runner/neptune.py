@@ -75,12 +75,18 @@ class NeptuneRunner(Runner):
             checkpoints_glob=checkpoints_glob,
         )
 
-        self._neptune_experiment.set_property("log_on_batch_end",
-                                              self.log_on_batch_end)
-        self._neptune_experiment.set_property("log_on_epoch_end",
-                                              self.log_on_epoch_end)
-        self._neptune_experiment.set_property("checkpoints_glob",
-                                              self.checkpoints_glob)
+        self._neptune_experiment.set_property(
+            "log_on_batch_end",
+            self.log_on_batch_end
+        )
+        self._neptune_experiment.set_property(
+            "log_on_epoch_end",
+            self.log_on_epoch_end
+        )
+        self._neptune_experiment.set_property(
+            "checkpoints_glob",
+            self.checkpoints_glob
+        )
 
         if isinstance(experiment, ConfigExperiment):
             exp_config = utils.flatten_dict(experiment.stages_config)
@@ -102,8 +108,10 @@ class NeptuneRunner(Runner):
             metrics = self.state.metrics.batch_values
 
             for name, value in metrics.items():
-                self._neptune_experiment.log_metric(f"batch_{mode}_{name}",
-                                                    value)
+                self._neptune_experiment.log_metric(
+                    f"batch_{mode}_{name}",
+                    value
+                )
 
     def _run_epoch(self, loaders):
         super()._run_epoch(loaders=loaders)
@@ -112,8 +120,10 @@ class NeptuneRunner(Runner):
             metrics = self.state.metrics.batch_values
 
             for name, value in metrics.items():
-                self._neptune_experiment.log_metric(f"epoch_{mode}_{name}",
-                                                    value)
+                self._neptune_experiment.log_metric(
+                    f"epoch_{mode}_{name}",
+                    value
+                )
 
     def run_experiment(
             self,
