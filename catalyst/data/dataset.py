@@ -95,20 +95,37 @@ class MergeDataset(Dataset):
         return dct
 
     def __len__(self) -> int:
+        """
+        Returns:
+            int: length of the dataset
+        """
         return self.len
 
 
-class NumpyDataset(ListDataset):
+class NumpyDataset(Dataset):
+    """
+    General purpose dataset class to use with `numpy_data`
+    """
     def __init__(
         self,
         numpy_data: np.ndarray,
         numpy_key: str = "features",
-        **list_dataset_params
+        dict_transform: Callable = None,
     ):
-        super().__init__(**list_dataset_params)
+        """
+        Args:
+            numpy_data (np.ndarray): numpy data
+                (for example path to embeddings, features, etc.)
+            numpy_key (str): key to use for output dictionary
+            dict_transform (callable): transforms to use on dict.
+                (for example normalize vector, etc)
+        """
+        super().__init__()
         self.numpy_data = numpy_data
         self.numpy_key = numpy_key
-        assert len(self.numpy_data) == len(self.data), "Different data error"
+        self.dict_transform = (
+            dict_transform if dict_transform is not None else lambda x: x
+        )
 
     def __getitem__(self, index: int) -> Any:
         """
@@ -119,9 +136,7 @@ class NumpyDataset(ListDataset):
         Returns:
             Single element by index
         """
-        item = self.data[index]
-        dict_ = self.open_fn(item)
-        dict_[self.numpy_key] = np.copy(self.numpy_data[index])
+        dict_ = {self.numpy_key: np.copy(self.numpy_data[index])}
         dict_ = self.dict_transform(dict_)
         return dict_
 

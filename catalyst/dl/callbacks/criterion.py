@@ -1,8 +1,9 @@
-from typing import Any, List, Optional, Union, Dict  # isort:skip
+from typing import Any, Dict, List, Optional, Union  # isort:skip
 import logging
 
 import torch
 
+from catalyst import utils
 from catalyst.dl.core import Callback, CallbackOrder, RunnerState
 
 logger = logging.getLogger(__name__)
@@ -33,44 +34,10 @@ class CriterionCallback(Callback):
     """
     Callback for that measures loss with specified criterion.
     """
-
-    @staticmethod
-    def _get_key_str(
-        dictionary: dict,
-        keys: Optional[Union[str, List[str]]],
-    ) -> Any:
-        return dictionary[keys]
-
-    @staticmethod
-    def _get_key_list(
-        dictionary: dict,
-        keys: Optional[Union[str, List[str]]],
-    ) -> Any:
-        result = {key: dictionary[key] for key in keys}
-        return result
-
-    @staticmethod
-    def _get_key_dict(
-        dictionary: dict,
-        keys: Optional[Union[str, List[str]]],
-    ) -> Any:
-        result = {
-            key_out: dictionary[key_in]
-            for key_in, key_out in keys.items()
-        }
-        return result
-
-    @staticmethod
-    def _get_key_none(
-        dictionary: dict,
-        keys: Optional[Union[str, List[str]]],
-    ) -> Any:
-        return dictionary
-
     def __init__(
         self,
-        input_key: Union[str, List[str]] = "targets",
-        output_key: Union[str, List[str]] = "logits",
+        input_key: Union[str, List[str], Dict[str]] = "targets",
+        output_key: Union[str, List[str], Dict[str]] = "logits",
         prefix: str = "loss",
         criterion_key: str = None,
         multiplier: float = 1.0
@@ -96,29 +63,31 @@ class CriterionCallback(Callback):
         self.criterion_key = criterion_key
         self.multiplier = multiplier
 
-        if isinstance(self.input_key, str):
-            self._get_input = self._get_key_str
-        elif isinstance(self.input_key, (list, tuple)):
-            self._get_input = self._get_key_list
-        elif isinstance(self.input_key, dict):
-            self._get_input = self._get_key_dict
+        self._get_input = utils.get_dictkey_auto_fn(self.input_key)
+        self._get_output = utils.get_dictkey_auto_fn(self.output_key)
+        kv_types = (dict, tuple, list, type(None))
+        # @TODO: fix to only KV usage
+        if isinstance(self.input_key, str) \
+                and isinstance(self.output_key, str):
+            self._compute_loss = self._compute_loss_value
+        elif isinstance(self.input_key, kv_types) \
+                and isinstance(self.output_key, kv_types):
+            self._compute_loss = self._compute_loss_key_value
         else:
-            self._get_input = self._get_key_none
+            raise NotImplementedError()
 
-        if isinstance(self.output_key, str):
-            self._get_output = self._get_key_str
-        elif isinstance(self.output_key, (list, tuple)):
-            self._get_output = self._get_key_list
-        elif isinstance(self.output_key, dict):
-            self._get_output = self._get_key_dict
-        else:
-            self._get_output = self._get_key_none
-
-    def _compute_loss(self, state: RunnerState, criterion):
+    def _compute_loss_value(self, state: RunnerState, criterion):
         output = self._get_output(state.output, self.output_key)
         input = self._get_input(state.input, self.input_key)
 
         loss = criterion(output, input)
+        return loss
+
+    def _compute_loss_key_value(self, state: RunnerState, criterion):
+        output = self._get_output(state.output, self.output_key)
+        input = self._get_input(state.input, self.input_key)
+
+        loss = criterion(**output, **input)
         return loss
 
     def on_stage_start(self, state: RunnerState):
@@ -147,19 +116,37 @@ class CriterionCallback(Callback):
 
 
 class CriterionOutputOnlyCallback(CriterionCallback):
+    """
+    Callback for that measures loss with specified criterion.
+    Based on model output only.
+    @TODO: merge logic with CriterionCallback.
+    """
     def __init__(
         self,
-        output_key: Union[str, List[str]],
+        output_key: Union[Dict[str], List[str]],
         **kwargs
     ):
-        assert isinstance(output_key, (list, tuple, dict))
+        """
+
+        Args:
+            output_key (Union[List[str]], Dict[str]): dict or list of keys
+                that takes values from the output dictionary
+                If None, the whole output will be passed to the criterion.
+            **kwargs: CriterionCallback init parameters
+        """
         super().__init__(
             input_key=None,
             output_key=output_key,
             **kwargs
         )
 
-    def _compute_loss(self, state: RunnerState, criterion):
+    def _compute_loss_value(self, state: RunnerState, criterion):
+        output = self._get_output(state.output, self.output_key)
+
+        loss = criterion(output)
+        return loss
+
+    def _compute_loss_key_value(self, state: RunnerState, criterion):
         output = self._get_output(state.output, self.output_key)
 
         loss = criterion(**output)
