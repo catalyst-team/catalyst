@@ -36,19 +36,19 @@ class CriterionCallback(Callback):
     """
     def __init__(
         self,
-        input_key: Union[str, List[str], Dict[str]] = "targets",
-        output_key: Union[str, List[str], Dict[str]] = "logits",
+        input_key: Union[str, List[str], Dict[str, str]] = "targets",
+        output_key: Union[str, List[str], Dict[str, str]] = "logits",
         prefix: str = "loss",
         criterion_key: str = None,
         multiplier: float = 1.0
     ):
         """
         Args:
-            input_key (Union[str, List[str]]): key or list of keys that takes
-                values from the input dictionary
+            input_key (Union[str, List[str], Dict[str, str]]): key/list/dict
+                of keys that takes values from the input dictionary
                 If None, the whole input will be passed to the criterion.
-            output_key (Union[str, List[str]]): key or list of keys that takes
-                values from the output dictionary
+            output_key (Union[str, List[str], Dict[str, str]]): key/list/dict
+                of keys that takes values from the input dictionary
                 If None, the whole output will be passed to the criterion.
             prefix (str): prefix for metrics and output key for loss
                 in ``state.loss`` dictionary
@@ -123,13 +123,13 @@ class CriterionOutputOnlyCallback(CriterionCallback):
     """
     def __init__(
         self,
-        output_key: Union[Dict[str], List[str]],
+        output_key: Union[Dict[str, str], List[str]],
         **kwargs
     ):
         """
 
         Args:
-            output_key (Union[List[str]], Dict[str]): dict or list of keys
+            output_key (Union[List[str]], Dict[str, str]): dict or list of keys
                 that takes values from the output dictionary
                 If None, the whole output will be passed to the criterion.
             **kwargs: CriterionCallback init parameters
