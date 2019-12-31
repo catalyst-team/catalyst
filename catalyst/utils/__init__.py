@@ -12,6 +12,7 @@ from .config import (
 )
 # from .dataset import *
 from .ddp import get_real_module, is_wrapped_with_ddp
+from .dict import get_dictkey_auto_fn
 # from .frozen import *
 from .hash import get_hash, get_short_hash
 from .image import (

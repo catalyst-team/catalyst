@@ -1,6 +1,8 @@
 from typing import Any, Callable, Dict, List, Union  # isort:skip
 from pathlib import Path
 
+import numpy as np
+
 from torch.utils.data import Dataset
 
 from catalyst.utils.misc import merge_dicts
@@ -37,7 +39,8 @@ class ListDataset(Dataset):
         )
 
     def __getitem__(self, index: int) -> Any:
-        """Gets element of the dataset
+        """
+        Gets element of the dataset
 
         Args:
             index (int): index of the element in the dataset
@@ -92,7 +95,50 @@ class MergeDataset(Dataset):
         return dct
 
     def __len__(self) -> int:
+        """
+        Returns:
+            int: length of the dataset
+        """
         return self.len
+
+
+class NumpyDataset(Dataset):
+    """
+    General purpose dataset class to use with `numpy_data`
+    """
+    def __init__(
+        self,
+        numpy_data: np.ndarray,
+        numpy_key: str = "features",
+        dict_transform: Callable = None,
+    ):
+        """
+        Args:
+            numpy_data (np.ndarray): numpy data
+                (for example path to embeddings, features, etc.)
+            numpy_key (str): key to use for output dictionary
+            dict_transform (callable): transforms to use on dict.
+                (for example normalize vector, etc)
+        """
+        super().__init__()
+        self.numpy_data = numpy_data
+        self.numpy_key = numpy_key
+        self.dict_transform = (
+            dict_transform if dict_transform is not None else lambda x: x
+        )
+
+    def __getitem__(self, index: int) -> Any:
+        """
+        Gets element of the dataset
+
+        Args:
+            index (int): index of the element in the dataset
+        Returns:
+            Single element by index
+        """
+        dict_ = {self.numpy_key: np.copy(self.numpy_data[index])}
+        dict_ = self.dict_transform(dict_)
+        return dict_
 
 
 class PathsDataset(ListDataset):
@@ -138,4 +184,4 @@ class PathsDataset(ListDataset):
         )
 
 
-__all__ = ["_Path", "ListDataset", "MergeDataset", "PathsDataset"]
+__all__ = ["ListDataset", "MergeDataset", "NumpyDataset", "PathsDataset"]

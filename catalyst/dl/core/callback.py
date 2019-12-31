@@ -4,8 +4,6 @@ from enum import IntFlag
 
 import numpy as np
 
-import torch
-
 from catalyst.utils import get_activation_fn
 from .state import RunnerState
 
@@ -196,6 +194,7 @@ class MeterMetricsCallback(Callback):
         self.class_names = class_names
         self.num_classes = num_classes
         self.activation = activation
+        self.activation_fn = get_activation_fn(self.activation)
 
     def _reset_stats(self):
         for meter in self.meters:
@@ -207,9 +206,7 @@ class MeterMetricsCallback(Callback):
     def on_batch_end(self, state: RunnerState):
         logits = state.output[self.output_key].detach().float()
         targets = state.input[self.input_key].detach().float()
-        
-        activation_fn = get_activation_fn(self.activation)
-        probabilities = activation_fn(logits)
+        probabilities = self.activation_fn(logits)
 
         for i in range(self.num_classes):
             self.meters[i].add(probabilities[:, i], targets[:, i])

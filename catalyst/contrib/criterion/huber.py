@@ -3,7 +3,7 @@ import torch.nn as nn
 
 
 class HuberLoss(nn.Module):
-    def __init__(self, clip_delta=1.0, reduction="elementwise_mean"):
+    def __init__(self, clip_delta=1.0, reduction="mean"):
         super().__init__()
         self.clip_delta = clip_delta
         self.reduction = reduction or "none"
@@ -20,7 +20,7 @@ class HuberLoss(nn.Module):
         else:
             loss = torch.mean(loss, dim=1)
 
-        if self.reduction == "elementwise_mean":
+        if self.reduction == "mean":
             loss = torch.mean(loss)
         elif self.reduction == "sum":
             loss = torch.sum(loss)
