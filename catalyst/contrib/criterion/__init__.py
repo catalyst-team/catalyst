@@ -6,8 +6,7 @@ from .ce import (
 )
 from .center import CenterLoss
 from .contrastive import (
-    ContrastiveDistanceLoss,
-    ContrastiveEmbeddingLoss,
+    ContrastiveDistanceLoss, ContrastiveEmbeddingLoss,
     ContrastivePairwiseEmbeddingLoss
 )
 from .dice import BCEDiceLoss, DiceLoss

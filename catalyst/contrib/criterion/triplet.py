@@ -170,12 +170,31 @@ class TripletLoss(nn.Module):
 
 
 class TripletPairwiseEmbeddingLoss(nn.Module):
+    """
+    TripletPairwiseEmbeddingLoss – proof of concept criterion.
+    Still work in progress.
+    """
     def __init__(self, margin=0.3, reduction="mean"):
+        """
+        Constructor method for the TripletPairwiseEmbeddingLoss class.
+        Args:
+            margin: margin parameter.
+            reduction: criterion reduction type.
+        """
         super().__init__()
         self.margin = margin
         self.reduction = reduction or "none"
 
     def forward(self, embeddings_pred, embeddings_true):
+        """
+        Work in progress.
+        Args:
+            embeddings_pred: predicted embeddings
+            embeddings_true: true embeddings
+
+        Returns:
+            loss
+        """
         device = embeddings_pred.device
         # s - state space
         # d - embeddings space
