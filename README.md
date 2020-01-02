@@ -92,13 +92,13 @@ and other features without the boilerplate.
 - Callbacks – reusable train/inference pipeline parts.
 - Training stages support.
 - Easy customization.
-- PyTorch best practices (SWA, AdamW, Ranger optimizer, OneCycleLRWithWarmup, FP16 and more).
+- PyTorch best practices (SWA, AdamW, Ranger optimizer, OneCycle, FP16 and more).
 
 
 #### Structure
 
 - **DL** – runner for training and inference,
-   all of the classic machine learning and computer vision metrics
+   all of the classic ML and CV/NLP metrics
    and a variety of callbacks for training, validation
    and inference of neural networks.
 - **RL** – scalable Reinforcement Learning,
