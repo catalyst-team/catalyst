@@ -113,7 +113,7 @@ We also supervise **[Awesome Catalyst list](https://github.com/catalyst-team/awe
 Feel free to make a PR with your project to the list. And don't forget to check out current list, there are many interesting projects.
 
 ##### Releases
-We deploy a major release once a month with a name like `YY.MM`.
+We deploy a major release once a month with a name like `YY.MM`. <br/>
 And micro-releases with framework improvements during a month in the format `YY.MM.#`.
 
 You can view the changelog on the **[GitHub Releases](https://github.com/catalyst-team/catalyst/releases)** page. <br/>
