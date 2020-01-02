@@ -1,4 +1,2 @@
-albumentations
-alchemy-catalyst
 neptune-client
 wandb
