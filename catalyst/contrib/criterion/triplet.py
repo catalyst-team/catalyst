@@ -169,4 +169,61 @@ class TripletLoss(nn.Module):
         return self._batch_hard_triplet_loss(embeddings, targets, self.margin)
 
 
-__all__ = ["TripletLoss"]
+class TripletPairwiseEmbeddingLoss(nn.Module):
+    """
+    TripletPairwiseEmbeddingLoss – proof of concept criterion.
+    Still work in progress.
+    """
+    def __init__(self, margin=0.3, reduction="mean"):
+        """
+        Constructor method for the TripletPairwiseEmbeddingLoss class.
+        Args:
+            margin: margin parameter.
+            reduction: criterion reduction type.
+        """
+        super().__init__()
+        self.margin = margin
+        self.reduction = reduction or "none"
+
+    def forward(self, embeddings_pred, embeddings_true):
+        """
+        Work in progress.
+        Args:
+            embeddings_pred: predicted embeddings
+            embeddings_true: true embeddings
+
+        Returns:
+            loss
+        """
+        device = embeddings_pred.device
+        # s - state space
+        # d - embeddings space
+        # a - action space
+        pairwise_similarity = torch.einsum(
+            "se,ae->sa",
+            embeddings_pred,
+            embeddings_true
+        )
+        bs = embeddings_pred.shape[0]
+        batch_idx = torch.arange(bs, device=device)
+        negative_similarity = (
+            pairwise_similarity
+            + torch.diag(torch.full([bs], -10 ** 9, device=device))
+        )
+        # TODO argsort, take k worst
+        hard_negative_ids = negative_similarity.argmax(dim=-1)
+
+        negative_similarities = \
+            pairwise_similarity[batch_idx, hard_negative_ids]
+        positive_similarities = pairwise_similarity[batch_idx, batch_idx]
+        loss = torch.relu(
+            self.margin - positive_similarities + negative_similarities
+        )
+        if self.reduction == "mean":
+            loss = torch.sum(loss) / bs
+        elif self.reduction == "sum":
+            loss = torch.sum(loss)
+        return loss
+
+
+__all__ = ["TripletLoss", "TripletPairwiseEmbeddingLoss"]

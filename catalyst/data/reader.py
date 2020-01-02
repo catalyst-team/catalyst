@@ -148,7 +148,8 @@ class ScalarReader(ReaderSpec):
                 f"got {smoothing}"
 
     def __call__(self, row):
-        """Reads a row from your annotations dict with filename and
+        """
+        Reads a row from your annotations dict and
         transfer it to a single value
 
         Args:

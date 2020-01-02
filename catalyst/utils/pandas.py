@@ -190,20 +190,38 @@ def read_multiple_dataframes(
         (tuple): tuple with 4 dataframes
             whole dataframe, train part, valid part and infer part
     """
-    df_train = merge_multiple_fold_csv(fold_name="train", paths=in_csv_train)
-    df_valid = merge_multiple_fold_csv(fold_name="valid", paths=in_csv_valid)
-    df_infer = merge_multiple_fold_csv(fold_name="infer", paths=in_csv_infer)
+    assert any(
+        [x is not None for x in (in_csv_train, in_csv_valid, in_csv_infer)]
+    )
 
-    if args_are_not_none(tag2class, tag_column, class_column):
-        df_train = map_dataframe(df_train, tag_column, class_column, tag2class)
-        df_valid = map_dataframe(df_valid, tag_column, class_column, tag2class)
-        df_infer = map_dataframe(df_infer, tag_column, class_column, tag2class)
+    result_df = None
+    fold_dfs = {}
+    for fold_df, fold_name in zip(
+        (in_csv_train, in_csv_valid, in_csv_infer),
+        ("train", "valid", "infer")
+    ):
+        if fold_df is not None:
+            fold_df = merge_multiple_fold_csv(
+                fold_name=fold_name, paths=fold_df
+            )
+            if args_are_not_none(tag2class, tag_column, class_column):
+                fold_df = map_dataframe(
+                    fold_df, tag_column, class_column, tag2class
+                )
+            fold_dfs[fold_name] = fold_df
 
-    result_dataframe = df_train. \
-        append(df_valid, ignore_index=True). \
-        append(df_infer, ignore_index=True)
+            result_df = fold_df \
+                if result_df is None \
+                else result_df.append(fold_df, ignore_index=True)
 
-    return result_dataframe, df_train, df_valid, df_infer
+    output = (
+        result_df,
+        fold_dfs.get("train", None),
+        fold_dfs.get("valid", None),
+        fold_dfs.get("infer", None),
+    )
+
+    return output
 
 
 def read_csv_data(
@@ -298,12 +316,14 @@ def read_csv_data(
         )
 
     for data in [df_train, df_valid, df_infer]:
-        if "fold" in data.columns:
+        if data is not None and "fold" in data.columns:
             del data["fold"]
 
     result = (
-        dataframe, dataframe_to_list(df_train), dataframe_to_list(df_valid),
-        dataframe_to_list(df_infer)
+        dataframe,
+        dataframe_to_list(df_train) if df_train is not None else None,
+        dataframe_to_list(df_valid) if df_valid is not None else None,
+        dataframe_to_list(df_infer) if df_infer is not None else None,
     )
 
     return result
