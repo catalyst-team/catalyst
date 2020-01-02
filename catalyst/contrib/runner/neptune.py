@@ -14,40 +14,43 @@ class NeptuneRunner(Runner):
     Runner wrapper with Neptune integration hooks.
     Read about Neptune here https://neptune.ml
 
-    Example:
+    Examples:
+        Initialize runner::
 
-        from catalyst.contrib.runner.neptune import SupervisedNeptuneRunner
-        runner = SupervisedNeptuneRunner()
+            from catalyst.contrib.runner.neptune import SupervisedNeptuneRunner
+            runner = SupervisedNeptuneRunner()
 
-        # model training
+        Pass `monitoring_params` and train model::
 
-        runner.train(
-            model=model,
-            criterion=criterion,
-            optimizer=optimizer,
-            loaders=loaders,
-            logdir=logdir,
-            num_epochs=num_epochs,
-            verbose=True,
-            monitoring_params={
-               "init": {
-                  "project_qualified_name": "jakub-czakon/examples",
-                "api_token": None, # api key, keep in NEPTUNE_API_TOKEN
-                       },
-               "create_experiment": {
-                     "name": "catalyst-example", # experiment name
-                     "params": {"epoch_nr":10}, # immutable
-                     "properties": {"data_source": "cifar10"} , # mutable
-                     "tags": ["resnet", "no-augmentations"],
-                     "upload_source_files": ["**/*.py"] # grep-like
-                                    }
-                             })
+            runner.train(
+                model=model,
+                criterion=criterion,
+                optimizer=optimizer,
+                loaders=loaders,
+                logdir=logdir,
+                num_epochs=num_epochs,
+                verbose=True,
+                monitoring_params={
+                    "init": {
+                    "project_qualified_name": "hapyp-user/examples",
+                    "api_token": None, # api key, keep in NEPTUNE_API_TOKEN
+                },
+                    "create_experiment": {
+                        "name": "catalyst-example", # experiment name
+                        "params": {"epoch_nr":10}, # immutable
+                        "properties": {"data_source": "cifar10"} , # mutable
+                        "tags": ["resnet", "no-augmentations"],
+                        "upload_source_files": ["**/*.py"] # grep-like
+                    }
+                })
     """
 
-    def _init(self,
-              log_on_batch_end: bool = True,
-              log_on_epoch_end: bool = True,
-              checkpoints_glob: List = None):
+    def _init(
+            self,
+            log_on_batch_end: bool = True,
+            log_on_epoch_end: bool = True,
+            checkpoints_glob: List = None
+    ):
 
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
@@ -75,12 +78,18 @@ class NeptuneRunner(Runner):
             checkpoints_glob=checkpoints_glob,
         )
 
-        self._neptune_experiment.set_property("log_on_batch_end",
-                                              self.log_on_batch_end)
-        self._neptune_experiment.set_property("log_on_epoch_end",
-                                              self.log_on_epoch_end)
-        self._neptune_experiment.set_property("checkpoints_glob",
-                                              self.checkpoints_glob)
+        self._neptune_experiment.set_property(
+            "log_on_batch_end",
+            self.log_on_batch_end
+        )
+        self._neptune_experiment.set_property(
+            "log_on_epoch_end",
+            self.log_on_epoch_end
+        )
+        self._neptune_experiment.set_property(
+            "checkpoints_glob",
+            self.checkpoints_glob
+        )
 
         if isinstance(experiment, ConfigExperiment):
             exp_config = utils.flatten_dict(experiment.stages_config)
@@ -102,8 +111,10 @@ class NeptuneRunner(Runner):
             metrics = self.state.metrics.batch_values
 
             for name, value in metrics.items():
-                self._neptune_experiment.log_metric(f"batch_{mode}_{name}",
-                                                    value)
+                self._neptune_experiment.log_metric(
+                    f"batch_{mode}_{name}",
+                    value
+                )
 
     def _run_epoch(self, loaders):
         super()._run_epoch(loaders=loaders)
@@ -112,8 +123,10 @@ class NeptuneRunner(Runner):
             metrics = self.state.metrics.batch_values
 
             for name, value in metrics.items():
-                self._neptune_experiment.log_metric(f"epoch_{mode}_{name}",
-                                                    value)
+                self._neptune_experiment.log_metric(
+                    f"epoch_{mode}_{name}",
+                    value
+                )
 
     def run_experiment(
             self,
