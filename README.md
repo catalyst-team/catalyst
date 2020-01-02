@@ -108,15 +108,15 @@ In the **[examples folder](examples)**
 of the repository, you can find advanced tutorials and Catalyst best practices.
 
 ##### Blog
-To learn more about Catalyst internals and to be aware of the most important features, you can read **[Catalyst-info](https://github.com/catalyst-team/catalyst-info)**, our blog where we regularly write facts about the framework.
+To learn more about Catalyst internals and to be aware of the most important features, you can read **[Catalyst-info](https://github.com/catalyst-team/catalyst-info)** – our blog where we regularly write facts about the framework.
 
 ##### Awesome list of Catalyst-powered repositories
 
 We supervise the **[Awesome Catalyst list](https://github.com/catalyst-team/awesome-catalyst-list)**. You can make a PR with your project to the list.
 
 ##### Releases
-We release a major release once a month with a name like `YY.MM`.
-And micro-releases with hotfixes and framework improvements in the format `YY.MM.#`.
+We deploy a major release once a month with a name like `YY.MM`.
+And micro-releases with framework improvements during a month in the format `YY.MM.#`.
 
 You can view the changelog on the **[GitHub Releases](https://github.com/catalyst-team/catalyst/releases)** page.
 
