@@ -116,8 +116,7 @@ Feel free to make a PR with your project to the list. And don't forget to check 
 We deploy a major release once a month with a name like `YY.MM`.
 And micro-releases with framework improvements during a month in the format `YY.MM.#`.
 
-You can view the changelog on the **[GitHub Releases](https://github.com/catalyst-team/catalyst/releases)** page.
-
+You can view the changelog on the **[GitHub Releases](https://github.com/catalyst-team/catalyst/releases)** page. <br/>
 Current version: [![Pipi version](https://img.shields.io/pypi/v/catalyst.svg)](https://pypi.org/project/catalyst/)
 
 
