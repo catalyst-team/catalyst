@@ -39,8 +39,11 @@ pip install -U catalyst
 
 More specific with additional requirements:
 ```bash
+pip install catalyst[ml] # installs DL+ML based catalyst
 pip install catalyst[rl] # installs DL+RL based catalyst
+pip install catalyst[cv] # installs DL+CV based catalyst
 pip install catalyst[nlp] # installs DL+NLP based catalyst
+pip install catalyst[ecosystem] # installs Catalyst.Ecosystem for DL/RL R&D
 pip install catalyst[contrib] # installs DL+contrib based catalyst
 pip install catalyst[all] # installs everything. Very convenient to deploy on a new server
 ```
