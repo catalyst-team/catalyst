@@ -112,8 +112,6 @@ class ConsoleLogger(LoggerCallback):
         logger = logging.getLogger("metrics_logger")
         logger.setLevel(logging.INFO)
 
-        fh = logging.FileHandler(f"{logdir}/log.txt")
-        fh.setLevel(logging.INFO)
         ch = logging.StreamHandler(sys.stdout)
         ch.setLevel(logging.INFO)
         # @TODO: fix json logger
@@ -122,29 +120,29 @@ class ConsoleLogger(LoggerCallback):
 
         txt_formatter = TxtMetricsFormatter()
         # json_formatter = JsonMetricsFormatter()
-        fh.setFormatter(txt_formatter)
         ch.setFormatter(txt_formatter)
         # jh.setFormatter(json_formatter)
 
         # add the handlers to the logger
-        logger.addHandler(fh)
         logger.addHandler(ch)
+
+        if logdir:
+            fh = logging.FileHandler(f"{logdir}/log.txt")
+            fh.setLevel(logging.INFO)
+            fh.setFormatter(txt_formatter)
+            logger.addHandler(fh)
+
         # logger.addHandler(jh)
         return logger
 
     def on_stage_start(self, state: RunnerState):
         """Prepare ``state.logdir`` for the current stage"""
-        if state.logdir is None:
-            return
-
-        state.logdir.mkdir(parents=True, exist_ok=True)
+        if state.logdir:
+            state.logdir.mkdir(parents=True, exist_ok=True)
         self.logger = self._get_logger(state.logdir)
 
     def on_stage_end(self, state):
         """Called at the end of each stage"""
-        if state.logdir is None:
-            return
-
         for handler in self.logger.handlers:
             handler.close()
         self.logger.handlers = []
@@ -154,9 +152,6 @@ class ConsoleLogger(LoggerCallback):
         Translate ``state.metrics`` to console and text file
         at the end of an epoch
         """
-        if state.logdir is None:
-            return
-
         self.logger.info("", extra={"state": state})
 
 
