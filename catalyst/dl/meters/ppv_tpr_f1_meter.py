@@ -1,7 +1,4 @@
 from collections import defaultdict
-import numbers
-
-import numpy as np
 
 import torch
 
@@ -33,7 +30,10 @@ def precision(tp, fp, eps=1e-5):
     Returns:
         precision value (0-1)
     """
-    return tp / (tp + fp + eps)
+    # originally precision is: ppv = tp / (tp + fp + eps)
+    # but when both masks are empty this gives: tp=0 and fp=0 => ppv=0
+    # so here precision is defined as ppv := 1 - fdr (false discovery rate)
+    return 1 - fp / (tp + fp + eps)
 
 
 def recall(tp, fn, eps=1e-5):
@@ -46,7 +46,10 @@ def recall(tp, fn, eps=1e-5):
     Returns:
         recall value (0-1)
     """
-    return tp / (tp + fn + eps)
+    # originally reacall is: tpr := tp / (tp + fn + eps)
+    # but when both masks are empty this gives: tp=0 and fn=0 => tpr=0
+    # so here recall is defined as tpr := 1 - fnr (false negative rate)
+    return 1 - fn / (fn + tp + eps)
 
 
 class PrecisionRecallF1ScoreMeter(meter.Meter):
@@ -72,32 +75,20 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
         Thresholds predictions and calculates the true positives,
         false positives, and false negatives in comparison to the target.
         Args:
-            output (torch.Tensor/numpy.ndarray/numbers.Number):
+            output (torch.Tensor):
                 prediction after activation function
                 shape should be (batch_size, ...), but works with any shape
-            target (torch.Tensor/numpy.ndarray/numbers.Number):
+            target (torch.Tensor):
                 label (binary)
                 shape should be the same as output's shape
         Returns:
             None
         """
-        if torch.is_tensor(output):
-            output = output.cpu().squeeze().numpy()
-        if torch.is_tensor(target):
-            target = target.cpu().squeeze().numpy()
-        elif isinstance(target, numbers.Number):
-            target = np.asarray([target])
-        target = np.int32(target)
-        assert output.size == target.size, \
-            "outputs and targets must have the same number of elements"
-        assert np.all(np.add(np.equal(target, 1), np.equal(target, 0))), \
-            "targets should be binary (0, 1)"
+        output = (output > self.threshold).float()
 
-        output = (output > self.threshold).astype(np.int32)
-
-        tp = np.sum(target * output)
-        fp = np.sum(output) - tp
-        fn = np.sum(target) - tp
+        tp = torch.sum(target * output)
+        fp = torch.sum(output) - tp
+        fn = torch.sum(target) - tp
 
         self.tp_fp_fn_counts["tp"] += tp
         self.tp_fp_fn_counts["fp"] += fp

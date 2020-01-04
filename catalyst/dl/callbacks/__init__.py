@@ -1,7 +1,10 @@
 # flake8: noqa
 
 from .checkpoint import CheckpointCallback, IterationCheckpointCallback
-from .criterion import CriterionAggregatorCallback, CriterionCallback
+from .criterion import (
+    CriterionAggregatorCallback, CriterionCallback,
+    CriterionOutputOnlyCallback
+)
 from .inference import InferCallback, InferMaskCallback
 from .logging import (
     ConsoleLogger, TelegramLogger, TensorboardLogger, VerboseLogger
