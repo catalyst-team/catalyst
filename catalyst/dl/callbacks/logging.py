@@ -134,12 +134,17 @@ class ConsoleLogger(LoggerCallback):
 
     def on_stage_start(self, state: RunnerState):
         """Prepare ``state.logdir`` for the current stage"""
-        assert state.logdir is not None
+        if state.logdir is None:
+            return
+
         state.logdir.mkdir(parents=True, exist_ok=True)
         self.logger = self._get_logger(state.logdir)
 
     def on_stage_end(self, state):
         """Called at the end of each stage"""
+        if state.logdir is None:
+            return
+
         for handler in self.logger.handlers:
             handler.close()
         self.logger.handlers = []
@@ -149,6 +154,9 @@ class ConsoleLogger(LoggerCallback):
         Translate ``state.metrics`` to console and text file
         at the end of an epoch
         """
+        if state.logdir is None:
+            return
+
         self.logger.info("", extra={"state": state})
 
 
@@ -196,6 +204,9 @@ class TensorboardLogger(LoggerCallback):
 
     def on_loader_start(self, state):
         """Prepare tensorboard writers for the current stage"""
+        if state.logdir is None:
+            return
+
         lm = state.loader_name
         if lm not in self.loggers:
             log_dir = os.path.join(state.logdir, f"{lm}_log")
@@ -203,6 +214,9 @@ class TensorboardLogger(LoggerCallback):
 
     def on_batch_end(self, state: RunnerState):
         """Translate batch metrics to tensorboard"""
+        if state.logdir is None:
+            return
+
         if self.log_on_batch_end:
             mode = state.loader_name
             metrics_ = state.metrics.batch_values
@@ -212,6 +226,9 @@ class TensorboardLogger(LoggerCallback):
 
     def on_loader_end(self, state: RunnerState):
         """Translate epoch metrics to tensorboard"""
+        if state.logdir is None:
+            return
+
         if self.log_on_epoch_end:
             mode = state.loader_name
             metrics_ = state.metrics.epoch_values[mode]
@@ -226,6 +243,9 @@ class TensorboardLogger(LoggerCallback):
 
     def on_stage_end(self, state: RunnerState):
         """Close opened tensorboard writers"""
+        if state.logdir is None:
+            return
+
         for logger in self.loggers.values():
             logger.close()
 
