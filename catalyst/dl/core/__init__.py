@@ -5,5 +5,5 @@ from .callback import (
     MetricCallback, MultiMetricCallback
 )
 from .experiment import Experiment
-from .runner import Runner
-from .state import RunnerState
+from .runner import DLRunner
+from .state import DLRunnerState

@@ -3,7 +3,7 @@ from datetime import datetime
 import json
 import logging
 
-from catalyst.dl.core.state import RunnerState
+from catalyst.dl.core.state import DLRunnerState
 from catalyst.utils import format_metric
 
 
@@ -21,7 +21,7 @@ class MetricsFormatter(ABC, logging.Formatter):
         super().__init__(f"{message_prefix}{{message}}", style="{")
 
     @abstractmethod
-    def _format_message(self, state: RunnerState):
+    def _format_message(self, state: State):
         pass
 
     def format(self, record: logging.LogRecord):
@@ -67,7 +67,7 @@ class TxtMetricsFormatter(MetricsFormatter):
 
         return metrics_formatted
 
-    def _format_message(self, state: RunnerState):
+    def _format_message(self, state: State):
         message = [""]
         metrics = self._format_metrics(state.metrics.epoch_values)
         for key, value in metrics.items():
@@ -97,7 +97,7 @@ class JsonMetricsFormatter(MetricsFormatter):
         """
         super().__init__("")
 
-    def _format_message(self, state: RunnerState):
+    def _format_message(self, state: State):
         res = dict(
             metirics=state.metrics.epoch_values.copy(),
             epoch=state.epoch,

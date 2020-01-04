@@ -2,10 +2,10 @@ from typing import Any, Mapping  # isort:skip
 
 import torch
 
-from catalyst.dl import Runner
+from catalyst.dl import DLRunner
 
 
-class GanRunner(Runner):
+class GanRunner(DLRunner):
     def __init__(
         self,
         model=None,

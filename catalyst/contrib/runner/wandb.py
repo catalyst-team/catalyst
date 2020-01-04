@@ -6,12 +6,12 @@ import shutil
 import wandb
 
 from catalyst.dl import utils
-from catalyst.dl.core import Experiment, Runner
+from catalyst.dl.core import Experiment, DLRunner
 from catalyst.dl.experiment import ConfigExperiment
 from catalyst.dl.runner.supervised import SupervisedRunner
 
 
-class WandbRunner(Runner):
+class WandbRunner(DLRunner):
     """
     Runner wrapper with wandb integration hooks.
     """

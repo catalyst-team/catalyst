@@ -7,7 +7,7 @@ from torch import nn
 from torch.jit import ScriptModule
 
 from catalyst import utils
-from catalyst.dl.core import Runner
+from catalyst.dl.core import DLRunner
 from catalyst.utils.typing import Device, Model
 
 
@@ -50,7 +50,7 @@ class _TracingModelWrapper(nn.Module):
 
 def trace_model(
     model: Model,
-    runner: Runner,
+    runner: DLRunner,
     batch=None,
     method_name: str = "forward",
     mode: str = "eval",

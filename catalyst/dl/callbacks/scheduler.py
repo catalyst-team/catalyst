@@ -2,8 +2,8 @@ import safitty
 
 import torch
 
+from catalyst.core import Callback, CallbackOrder, State
 from catalyst.contrib.schedulers import BatchScheduler, OneCycleLRWithWarmup
-from catalyst.dl.core import Callback, CallbackOrder, RunnerState
 from catalyst.utils import get_optimizer_momentum
 
 
@@ -19,7 +19,7 @@ class SchedulerCallback(Callback):
         self.mode = mode
         self.reduce_metric = reduce_metric
 
-    def step(self, state: RunnerState):
+    def step(self, state: State):
         scheduler = state.get_key(
             key="scheduler", inner_key=self.scheduler_key
         )
@@ -33,7 +33,7 @@ class SchedulerCallback(Callback):
         state.set_key(lr, key="lr", inner_key=self.scheduler_key)
         state.set_key(momentum, key="momentum", inner_key=self.scheduler_key)
 
-    def on_stage_start(self, state: RunnerState):
+    def on_stage_start(self, state: State):
         scheduler = state.get_key(
             key="scheduler", inner_key=self.scheduler_key
         )
@@ -49,7 +49,7 @@ class SchedulerCallback(Callback):
                 self.mode == "batch":
             scheduler.reset()
 
-    def on_loader_start(self, state: RunnerState):
+    def on_loader_start(self, state: State):
         scheduler = state.get_key(
             key="scheduler", inner_key=self.scheduler_key
         )

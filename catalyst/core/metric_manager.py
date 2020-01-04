@@ -5,7 +5,7 @@ from time import time
 
 from catalyst.dl.meters import AverageValueMeter
 
-
+# @TODO: move to utils, not core
 class TimerManager:
     def __init__(self):
         self._starts = {}

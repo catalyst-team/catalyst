@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+import numpy as np
+
 from gym.spaces import Discrete, Space
 
 
@@ -9,10 +11,6 @@ class EnvironmentSpec(ABC):
         self._visualize = visualize
         self._mode = mode
         self._sampler_id = 0 if sampler_id is None else sampler_id
-
-    @property
-    def discrete_actions(self) -> int:
-        return isinstance(self.action_space, Discrete)
 
     @property
     def history_len(self) -> int:
@@ -32,6 +30,15 @@ class EnvironmentSpec(ABC):
     @abstractmethod
     def action_space(self) -> Space:
         pass
+
+    @property
+    @abstractmethod
+    def reward_space(self) -> Space:
+        return gym.spaces.Space(shape=(1,), dtype=np.float32)
+
+    @property
+    def discrete_actions(self) -> int:
+        return isinstance(self.action_space, Discrete)
 
     @abstractmethod
     def reset(self):

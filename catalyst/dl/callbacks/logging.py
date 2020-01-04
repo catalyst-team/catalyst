@@ -7,8 +7,8 @@ from urllib.request import Request, urlopen
 
 from tqdm import tqdm
 
+from catalyst.core import LoggerCallback, State
 from catalyst.dl import utils
-from catalyst.dl.core import LoggerCallback, RunnerState
 from catalyst.dl.utils.formatters import TxtMetricsFormatter
 from catalyst.utils import format_metric
 from catalyst.utils.tensorboard import SummaryWriter
@@ -57,7 +57,7 @@ class VerboseLogger(LoggerCallback):
 
         return result
 
-    def on_loader_start(self, state: RunnerState):
+    def on_loader_start(self, state: State):
         """Init tqdm progress bar"""
         self.step = 0
         self.tqdm = tqdm(
@@ -69,7 +69,7 @@ class VerboseLogger(LoggerCallback):
             file=sys.stdout,
         )
 
-    def on_batch_end(self, state: RunnerState):
+    def on_batch_end(self, state: State):
         """Update tqdm progress bar at the end of each batch"""
         self.tqdm.set_postfix(
             **{
@@ -80,13 +80,13 @@ class VerboseLogger(LoggerCallback):
         )
         self.tqdm.update()
 
-    def on_loader_end(self, state: RunnerState):
+    def on_loader_end(self, state: State):
         """Cleanup and close tqdm progress bar"""
         self.tqdm.close()
         self.tqdm = None
         self.step = 0
 
-    def on_exception(self, state: RunnerState):
+    def on_exception(self, state: State):
         """Called if an Exception was raised"""
         exception = state.exception
         if not utils.is_exception(exception):
@@ -132,7 +132,7 @@ class ConsoleLogger(LoggerCallback):
         # logger.addHandler(jh)
         return logger
 
-    def on_stage_start(self, state: RunnerState):
+    def on_stage_start(self, state: State):
         """Prepare ``state.logdir`` for the current stage"""
         assert state.logdir is not None
         state.logdir.mkdir(parents=True, exist_ok=True)
@@ -201,7 +201,7 @@ class TensorboardLogger(LoggerCallback):
             log_dir = os.path.join(state.logdir, f"{lm}_log")
             self.loggers[lm] = SummaryWriter(log_dir)
 
-    def on_batch_end(self, state: RunnerState):
+    def on_batch_end(self, state: State):
         """Translate batch metrics to tensorboard"""
         if self.log_on_batch_end:
             mode = state.loader_name
@@ -210,7 +210,7 @@ class TensorboardLogger(LoggerCallback):
                 metrics=metrics_, step=state.step, mode=mode, suffix="/batch"
             )
 
-    def on_loader_end(self, state: RunnerState):
+    def on_loader_end(self, state: State):
         """Translate epoch metrics to tensorboard"""
         if self.log_on_epoch_end:
             mode = state.loader_name
@@ -224,7 +224,7 @@ class TensorboardLogger(LoggerCallback):
         for logger in self.loggers.values():
             logger.flush()
 
-    def on_stage_end(self, state: RunnerState):
+    def on_stage_end(self, state: State):
         """Close opened tensorboard writers"""
         for logger in self.loggers.values():
             logger.close()
@@ -292,21 +292,21 @@ class TelegramLogger(LoggerCallback):
         except Exception as e:
             logging.getLogger(__name__).warning(f"telegram.send.error:{e}")
 
-    def on_stage_start(self, state: RunnerState):
+    def on_stage_start(self, state: State):
         """Notify about starting a new stage"""
         if self.log_on_stage_start:
             text = f"{state.stage} stage was started"
 
             self._send_text(text)
 
-    def on_loader_start(self, state: RunnerState):
+    def on_loader_start(self, state: State):
         """Notify about starting running the new loader"""
         if self.log_on_loader_start:
             text = f"{state.loader_name} {state.epoch} epoch was started"
 
             self._send_text(text)
 
-    def on_loader_end(self, state: RunnerState):
+    def on_loader_end(self, state: State):
         """Translate ``state.metrics`` to telegram channel"""
         if self.log_on_loader_end:
             metrics = state.metrics.epoch_values[state.loader_name]
@@ -328,14 +328,14 @@ class TelegramLogger(LoggerCallback):
 
             self._send_text(text)
 
-    def on_stage_end(self, state: RunnerState):
+    def on_stage_end(self, state: State):
         """Notify about finishing a stage"""
         if self.log_on_stage_end:
             text = f"{state.stage} stage was finished"
 
             self._send_text(text)
 
-    def on_exception(self, state: RunnerState):
+    def on_exception(self, state: State):
         """Notify about raised Exception"""
         if self.log_on_exception:
             exception = state.exception

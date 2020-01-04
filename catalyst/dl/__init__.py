@@ -8,8 +8,8 @@ from .callbacks import (
     TelegramLogger
 )
 from .core import (
-    Callback, CallbackOrder, Experiment, MetricCallback, MultiMetricCallback,
-    Runner, RunnerState
+    Callback, CallbackOrder, Experiment, LoggerCallback, MeterMetricsCallback,
+    MetricCallback, MultiMetricCallback, DLRunner, DLRunnerState
 )
 from .experiment import BaseExperiment, ConfigExperiment, SupervisedExperiment
 from .meters import (

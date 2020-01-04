@@ -5,9 +5,9 @@ import safitty
 
 import torch
 
-from catalyst.dl.core import Callback, CallbackOrder, RunnerState
+from catalyst.core import Callback, CallbackOrder, State
 from catalyst.dl.registry import GRAD_CLIPPERS
-from catalyst.dl.utils import get_optimizer_momentum, maybe_recursive_call
+from catalyst.dl.utils import get_optimizer_momentum
 from catalyst.utils.typing import Optimizer
 
 logger = logging.getLogger(__name__)
@@ -73,7 +73,7 @@ class OptimizerCallback(Callback):
                 grad_clip_fn(group["params"])
         optimizer.step()
 
-    def on_stage_start(self, state: RunnerState):
+    def on_stage_start(self, state: State):
         """On stage start event"""
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
@@ -165,7 +165,7 @@ class OptimizerCallback(Callback):
                 optimizer_wds=self._optimizer_wd,
                 grad_clip_fn=self.grad_clip_fn
             )
-            maybe_recursive_call(model, "zero_grad")
+            model.zero_grad()
 
             self._accumulation_counter = 0
 

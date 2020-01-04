@@ -1,7 +1,8 @@
-from typing import Dict, List  # isort:skip
+from typing import Dict, List, Optional  # isort:skip
 
 import gc
 import logging
+from collections import OrderedDict
 import os
 from pathlib import Path
 import shutil
@@ -9,57 +10,42 @@ import time
 
 import numpy as np
 
+import torch
 from torch.utils.data import DataLoader
 
 from catalyst import utils
-from catalyst.utils.seed import Seeder, set_global_seed
-from catalyst.utils.tensorboard import SummaryWriter
+from catalyst.dl import DLRunner, Experiment, DLRunnerState, \
+    Callback, LoggerCallback
 from .algorithm import AlgorithmSpec
 from .db import DBSpec
 from .environment import EnvironmentSpec
 
 logger = logging.getLogger(__name__)
 
-if os.environ.get("USE_WANDB", "1") == "1":
-    try:
-        import wandb
-        WANDB_ENABLED = True
-    except ImportError:
-        logger.warning(
-            "wandb not available, to install wandb, run `pip install wandb`."
-        )
-        WANDB_ENABLED = False
-else:
-    WANDB_ENABLED = False
-
 
 class TrainerSpec:
     def __init__(
         self,
         algorithm: AlgorithmSpec,
-        env_spec: EnvironmentSpec,
-        db_server: DBSpec,
+        environment_spec: EnvironmentSpec,
         logdir: str,
         num_workers: int = 1,
         batch_size: int = 64,
         min_num_transitions: int = int(1e4),
         online_update_period: int = 1,
         weights_sync_period: int = 1,
-        save_period: int = 10,
-        gc_period: int = 10,
         seed: int = 42,
         epoch_limit: int = None,
-        monitoring_params: Dict = None,
+        db_server: DBSpec = None,
         **kwargs,
     ):
-        # algorithm & environment
+        # environment & algorithm
+        self.environment_spec = environment_spec
         self.algorithm = algorithm
-        self.env_spec = env_spec
 
         # logging
         self.logdir = logdir
-        self._prepare_logger(logdir)
-        self._seeder = Seeder(init_seed=seed)
+        self._seeder = utils.Seeder(init_seed=seed)
 
         # updates & counters
         self.batch_size = batch_size
@@ -78,151 +64,68 @@ class TrainerSpec:
         # synchronization configuration
         self.db_server = db_server
         self.min_num_transitions = min_num_transitions
-        self.save_period = save_period
         self.weights_sync_period = weights_sync_period
-
-        self._gc_period = gc_period
 
         self.replay_buffer = None
         self.replay_sampler = None
         self.loader = None
-        self._epoch_limit = epoch_limit
+        self._epoch_limit = epoch_limit or np.iinfo(np.int32).max
 
         #  special
-        self.monitoring_params = monitoring_params
         self._prepare_seed()
-        self._init(**kwargs)
 
-    def _init(self, **kwargs):
-        global WANDB_ENABLED
-        assert len(kwargs) == 0
-        if WANDB_ENABLED:
-            if self.monitoring_params is not None:
-                self.checkpoints_glob: List[str] = \
-                    self.monitoring_params.pop(
-                        "checkpoints_glob", ["best.pth", "last.pth"])
-
-                wandb.init(**self.monitoring_params)
-
-                logdir_src = Path(self.logdir)
-                logdir_dst = Path(wandb.run.dir)
-
-                configs_src = logdir_src.joinpath("configs")
-                os.makedirs(f"{logdir_dst}/{configs_src.name}", exist_ok=True)
-                shutil.rmtree(f"{logdir_dst}/{configs_src.name}")
-                shutil.copytree(
-                    f"{str(configs_src.absolute())}",
-                    f"{logdir_dst}/{configs_src.name}")
-
-                code_src = logdir_src.joinpath("code")
-                if code_src.exists():
-                    os.makedirs(f"{logdir_dst}/{code_src.name}", exist_ok=True)
-                    shutil.rmtree(f"{logdir_dst}/{code_src.name}")
-                    shutil.copytree(
-                        f"{str(code_src.absolute())}",
-                        f"{logdir_dst}/{code_src.name}")
-            else:
-                WANDB_ENABLED = False
-        self.wandb_mode = "trainer"
-
-    def _prepare_logger(self, logdir):
-        timestamp = utils.get_utcnow_time()
-        logpath = f"{logdir}/trainer.{timestamp}"
-        os.makedirs(logpath, exist_ok=True)
-        self.logger = SummaryWriter(logpath)
-
-    def _prepare_seed(self):
-        seed = self._seeder()[0]
-        set_global_seed(seed)
-
-    def _log_to_console(
-        self, fps: float, updates_per_sample: float, num_trajectories: int,
-        num_transitions: int, buffer_size: int, **kwargs
-    ):
-        prefix = f"--- Epoch {self.epoch:09d}/{self._epoch_limit:09d}" \
-            if self._epoch_limit is not None \
-            else f"--- Epoch {self.epoch:09d}"
-        metrics = [
-            prefix,
-            f"fps: {fps:7.1f}",
-            f"updates per sample: {updates_per_sample:7.1f}",
-            f"trajectories: {num_trajectories:09d}",
-            f"transitions: {num_transitions:09d}",
-            f"buffer size: {buffer_size:09d}",
-        ]
-        metrics = " | ".join(metrics)
-        print(metrics)
-
-    def _log_to_tensorboard(
-        self, fps: float, updates_per_sample: float, num_trajectories: int,
-        num_transitions: int, buffer_size: int, **kwargs
-    ):
-        self.logger.add_scalar("fps", fps, self.epoch)
-        self.logger.add_scalar(
-            "updates_per_sample", updates_per_sample, self.epoch
-        )
-        self.logger.add_scalar(
-            "num_trajectories", num_trajectories, self.epoch
-        )
-        self.logger.add_scalar("num_transitions", num_transitions, self.epoch)
-        self.logger.add_scalar("buffer_size", buffer_size, self.epoch)
-        self.logger.flush()
-
-    @staticmethod
-    def _log_wandb_metrics(
-        metrics: Dict,
-        step: int,
-        mode: str,
-        suffix: str = ""
-    ):
-        metrics = {
-            f"{mode}/{key}{suffix}": value
-            for key, value in metrics.items()
-        }
-        step = None  # @TODO: fix, wandb issue
-        wandb.log(metrics, step=step)
-
-    def _log_to_wandb(self, *, step, suffix="", **metrics):
-        if WANDB_ENABLED:
-            self._log_wandb_metrics(
-                metrics, step=step, mode=self.wandb_mode, suffix=suffix)
-
-    def _save_wandb(self):
-        if WANDB_ENABLED:
-            logdir_src = Path(self.logdir)
-            logdir_dst = Path(wandb.run.dir)
-
-            events_src = list(logdir_src.glob("events.out.tfevents*"))
-            if len(events_src) > 0:
-                events_src = events_src[0]
-                os.makedirs(f"{logdir_dst}/{logdir_src.name}", exist_ok=True)
-                shutil.copy2(
-                    f"{str(events_src.absolute())}",
-                    f"{logdir_dst}/{logdir_src.name}/{events_src.name}")
-
-    def _save_checkpoint(self):
-        if self.epoch % self.save_period == 0:
-            checkpoint = self.algorithm.pack_checkpoint()
-            checkpoint["epoch"] = self.epoch
-            filename = utils.save_checkpoint(
-                logdir=self.logdir,
-                checkpoint=checkpoint,
-                suffix=str(self.epoch)
-            )
-            print(f"Checkpoint saved to: {filename}")
-
-    def _update_sampler_weights(self):
-        if self.epoch % self.weights_sync_period == 0:
-            checkpoint = self.algorithm.pack_checkpoint(with_optimizer=False)
-            for key in checkpoint:
-                checkpoint[key] = {
-                    k: v.detach().cpu().numpy()
-                    for k, v in checkpoint[key].items()
+    def _prepare_for_stage(self, stage: str):
+        utils.set_global_seed(self.experiment.initial_seed)
+        migrating_params = {}
+        if self.state is not None:
+            migrating_params.update(
+                {
+                    "step": self.state.step,
+                    "epoch": self.state.epoch
                 }
-
-            self.db_server.put_checkpoint(
-                checkpoint=checkpoint, epoch=self.epoch
             )
+
+        self.model, criterion, optimizer, scheduler, self.device = \
+            self._get_experiment_components(stage)
+
+        self.state = DLRunnerState(
+            stage=stage,
+            model=self.model,
+            device=self.device,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            **self.experiment.get_state_params(stage),
+            **migrating_params
+        )
+        utils.set_global_seed(self.experiment.initial_seed)
+
+    def _run_event(self, event: str, moment: Optional[str]):
+        fn_name = f"on_{event}"
+        if moment is not None:
+            fn_name = f"{fn_name}_{moment}"
+
+        # before callbacks
+        if self.state is not None:
+            getattr(self.state, f"{fn_name}_pre")()
+
+        if self.loggers is not None and moment == "start":
+            for logger in self.loggers.values():
+                getattr(logger, fn_name)(self.state)
+
+        # running callbacks
+        if self.callbacks is not None:
+            for callback in self.callbacks.values():
+                getattr(callback, fn_name)(self.state)
+
+        # after callbacks
+        if self.loggers is not None and \
+                (moment == "end" or moment is None):  # for on_exception case
+            for logger in self.loggers.values():
+                getattr(logger, fn_name)(self.state)
+
+        if self.state is not None:
+            getattr(self.state, f"{fn_name}_post")()
 
     def _update_target_weights(self, update_step) -> Dict:
         pass
@@ -250,18 +153,6 @@ class TrainerSpec:
                 if isinstance(value, (float, int))
             )
 
-            for key, value in metrics.items():
-                self.logger.add_scalar(key, value, self.update_step)
-            self._log_to_wandb(
-                step=self.update_step, suffix="_batch", **metrics)
-
-        elapsed_time = time.time() - start_time
-        elapsed_num_updates = len(loader) * loader.batch_size
-        self.num_updates += elapsed_num_updates
-        fps = elapsed_num_updates / elapsed_time
-
-        output = {"elapsed_time": elapsed_time, "fps": fps}
-
         return output
 
     def _run_epoch(self) -> Dict:
@@ -271,31 +162,60 @@ class TrainerSpec:
         self._prepare_seed()
         metrics: Dict = self._run_epoch()
         self.epoch += 1
-        self._log_to_console(**metrics)
-        self._log_to_tensorboard(**metrics)
-        self._log_to_wandb(step=self.epoch, suffix="_epoch", **metrics)
-        self._save_checkpoint()
-        self._save_wandb()
-        self._update_sampler_weights()
-        if self.epoch % self._gc_period == 0:
-            gc.collect()
 
-    def _run_train_loop(self):
-        self.db_server.push_message(self.db_server.Message.ENABLE_TRAINING)
-        epoch_limit = self._epoch_limit or np.iinfo(np.int32).max
-        while self.epoch < epoch_limit:
-            try:
-                self._run_epoch_loop()
-            except Exception as ex:
-                self.db_server.push_message(
-                    self.db_server.Message.DISABLE_TRAINING)
-                raise ex
-        self.db_server.push_message(self.db_server.Message.DISABLE_TRAINING)
+    def _run_train_stage(self):
+        self._run_event("stage", moment="start")
+        while self.epoch < self._epoch_limit:
+            self._run_epoch()
+        self._run_event("stage", moment="end")
 
-    def _start_train_loop(self):
-        self._run_train_loop()
+    def run_experiment(self, experiment: Experiment):
+        self.experiment = experiment
+
+        stage = "train"
+        self._prepare_for_stage(stage)
+
+        callbacks = self.experiment.get_callbacks(stage)
+        loggers = utils.process_callbacks(
+            OrderedDict([
+                (k, v) for k, v in callbacks.items()
+                if isinstance(v, LoggerCallback)
+            ])
+        )
+        callbacks = utils.process_callbacks(
+            OrderedDict([
+                (k, v) for k, v in callbacks.items()
+                if not isinstance(v, LoggerCallback)
+            ])
+        )
+        self.state.loggers = loggers
+        self.loggers = loggers
+        self.callbacks = callbacks
+
+        self._run_train_stage()
+
+
+class RLRunner(DLRunner):
+
+    @torch.no_grad()
+    def inference(
+        self,
+        sampler_ids: List[int],
+        run_ids: List[int],
+        states: np.ndarray,
+        rewards: np.ndarray,
+    ):
+        # looks like production-ready thing
+        # @TODO: make a microservice from this method
+        raise NotImplementedError()
 
     def run(self):
-        self._update_sampler_weights()
-        self._start_train_loop()
-        self.logger.close()
+        
+
+    @classmethod
+    def get_from_params(
+        cls,
+        algorithm_params: Dict,
+        env_spec: EnvironmentSpec,
+    ):
+        pass

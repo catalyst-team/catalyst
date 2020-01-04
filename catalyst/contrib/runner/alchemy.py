@@ -2,11 +2,11 @@ from typing import Dict  # isort:skip
 
 from alchemy import Logger
 
-from catalyst.dl.core import Experiment, Runner
+from catalyst.dl.core import Experiment, DLRunner
 from catalyst.dl.runner.supervised import SupervisedRunner
 
 
-class AlchemyRunner(Runner):
+class AlchemyRunner(DLRunner):
     """
     Runner wrapper with Alchemy integration hooks.
     Read about Alchemy here https://alchemy.host

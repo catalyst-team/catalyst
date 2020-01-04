@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 
 from catalyst.dl import utils
 from catalyst.dl.callbacks import CheckpointCallback, InferCallback
-from catalyst.dl.core import Callback, Runner
+from catalyst.dl.core import Callback, DLRunner
 from catalyst.dl.experiment import SupervisedExperiment
 from catalyst.utils.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
@@ -18,7 +18,7 @@ from catalyst.utils.typing import (
 logger = logging.getLogger(__name__)
 
 
-class SupervisedRunner(Runner):
+class SupervisedRunner(DLRunner):
     """
     Runner for experiments with supervised model
     """

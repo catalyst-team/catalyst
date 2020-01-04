@@ -3,15 +3,15 @@ import logging
 
 import torch
 
+from catalyst.core import Callback, CallbackOrder, State
 from catalyst import utils
-from catalyst.dl.core import Callback, CallbackOrder, RunnerState
 
 logger = logging.getLogger(__name__)
 
 
 def _add_loss_to_state(
     loss_key: Optional[str],
-    state: RunnerState,
+    state: State,
     loss: torch.Tensor
 ):
     if loss_key is None:
@@ -76,27 +76,27 @@ class CriterionCallback(Callback):
         else:
             raise NotImplementedError()
 
-    def _compute_loss_value(self, state: RunnerState, criterion):
+    def _compute_loss_value(self, state: State, criterion):
         output = self._get_output(state.output, self.output_key)
         input = self._get_input(state.input, self.input_key)
 
         loss = criterion(output, input)
         return loss
 
-    def _compute_loss_key_value(self, state: RunnerState, criterion):
+    def _compute_loss_key_value(self, state: State, criterion):
         output = self._get_output(state.output, self.output_key)
         input = self._get_input(state.input, self.input_key)
 
         loss = criterion(**output, **input)
         return loss
 
-    def on_stage_start(self, state: RunnerState):
+    def on_stage_start(self, state: State):
         """
         Checks that the current stage has correct criterion
         """
         assert state.criterion is not None
 
-    def on_batch_end(self, state: RunnerState):
+    def on_batch_end(self, state: State):
         """
         Computes the loss and add it to the metrics
         """
@@ -140,13 +140,13 @@ class CriterionOutputOnlyCallback(CriterionCallback):
             **kwargs
         )
 
-    def _compute_loss_value(self, state: RunnerState, criterion):
+    def _compute_loss_value(self, state: State, criterion):
         output = self._get_output(state.output, self.output_key)
 
         loss = criterion(output)
         return loss
 
-    def _compute_loss_key_value(self, state: RunnerState, criterion):
+    def _compute_loss_key_value(self, state: State, criterion):
         output = self._get_output(state.output, self.output_key)
 
         loss = criterion(**output)
@@ -228,7 +228,7 @@ class CriterionAggregatorCallback(Callback):
 
         return result
 
-    def on_batch_end(self, state: RunnerState) -> None:
+    def on_batch_end(self, state: State) -> None:
         """
         Computes the loss and add it to the metrics
         """
