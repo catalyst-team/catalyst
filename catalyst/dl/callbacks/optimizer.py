@@ -165,6 +165,11 @@ class OptimizerCallback(Callback):
                 optimizer_wds=self._optimizer_wd,
                 grad_clip_fn=self.grad_clip_fn
             )
+
+            for tag, value in model.named_parameters():
+                tag = tag.replace('.', '/')
+                state.model_grads[tag] = value.grad.cpu().numpy()
+
             maybe_recursive_call(model, "zero_grad")
 
             self._accumulation_counter = 0
