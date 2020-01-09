@@ -1,4 +1,4 @@
-from typing import Any, Mapping, Optional, Tuple, Dict, Union  # isort:skip
+from typing import Any, Mapping, Optional, Tuple  # isort:skip
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 import os
@@ -133,7 +133,7 @@ class Runner(ABC):
         return self._model
 
     @model.setter
-    def model(self, value: Union[Model, Dict[str, Model]]):
+    def model(self, value: Model):
         """
         Setter for the runner's model'
         """
