@@ -1,6 +1,7 @@
 # Framework must-haves
 numpy>=1.16.4
 torch>=1.0.0
+Pillow==6.2.2
 torchvision>=0.2.1
 imageio
 opencv-python
