@@ -65,29 +65,12 @@ class CriterionCallback(Callback):
 
         self._get_input = utils.get_dictkey_auto_fn(self.input_key)
         self._get_output = utils.get_dictkey_auto_fn(self.output_key)
-        kv_types = (dict, tuple, list, type(None))
-        # @TODO: fix to only KV usage
-        if isinstance(self.input_key, str) \
-                and isinstance(self.output_key, str):
-            self._compute_loss = self._compute_loss_value
-        elif isinstance(self.input_key, kv_types) \
-                and isinstance(self.output_key, kv_types):
-            self._compute_loss = self._compute_loss_key_value
-        else:
-            raise NotImplementedError()
 
-    def _compute_loss_value(self, state: RunnerState, criterion):
+    def _compute_loss(self, state: RunnerState, criterion):
         output = self._get_output(state.output, self.output_key)
         input = self._get_input(state.input, self.input_key)
 
         loss = criterion(output, input)
-        return loss
-
-    def _compute_loss_key_value(self, state: RunnerState, criterion):
-        output = self._get_output(state.output, self.output_key)
-        input = self._get_input(state.input, self.input_key)
-
-        loss = criterion(**output, **input)
         return loss
 
     def on_stage_start(self, state: RunnerState):
