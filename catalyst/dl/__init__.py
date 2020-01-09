@@ -10,7 +10,7 @@ from .core import (
     Callback, CallbackOrder, Experiment, MetricCallback, MultiMetricCallback,
     Runner, RunnerState
 )
-from .experiment import BaseExperiment, ConfigExperiment, SupervisedExperiment
+from .experiment import BaseExperiment, ConfigExperiment, SupervisedExperiment, GanExperiment
 from .meters import (
     APMeter, AUCMeter, AverageValueMeter, ClassErrorMeter, ConfusionMeter,
     mAPMeter, MovingAverageValueMeter, MSEMeter
