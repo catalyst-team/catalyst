@@ -1,4 +1,5 @@
 # Framework must-haves
+Pillow==6.2.2
 numpy>=1.16.4
 torch>=1.0.0
 torchvision>=0.2.1
