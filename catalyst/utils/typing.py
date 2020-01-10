@@ -4,9 +4,9 @@ import torch
 from torch import nn, optim
 from torch.utils import data
 
-Model = Union[nn.Module, Dict[str, nn.Module]]
+Model = nn.Module
 Criterion = nn.Module
-Optimizer = Union[optim.Adam, optim.SGD]
+Optimizer = optim.Optimizer
 Scheduler = optim.lr_scheduler._LRScheduler  # noinspection PyProtectedMember
 Dataset = data.Dataset
 DataLoader = data.DataLoader
