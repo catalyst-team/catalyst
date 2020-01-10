@@ -20,10 +20,10 @@ from catalyst.utils.typing import (
 class GanExperiment(Experiment):
     def __init__(
         self,
-        models: Union[Model, Dict[str, Model]],
-        criterions: Dict[str, Criterion],
-        optimizers: Dict[str, Optimizer],
-        schedulers: Dict[str, Scheduler] = {},
+        model: Dict[str, Dict[str, Model]],
+        criterion: Dict[str, Criterion],
+        optimizer: Dict[str, Optimizer],
+        scheduler: Dict[str, Scheduler] = {},
         callbacks: "Dict[str, Callback]" = {},  # noqa: F821, E501
         datasets: Dict[str, Any] = {},
         loaders: Dict[str, Any] = {},
@@ -35,10 +35,10 @@ class GanExperiment(Experiment):
         verbose: bool = False,
         initial_seed: int = 42,
     ):
-        self._models = models
-        self._criterions = criterions
-        self._optimizers = optimizers
-        self._schedulers = schedulers
+        self._model = model
+        self._criterion = criterion
+        self._optimizer = optimizer
+        self._scheduler = scheduler
         # Process callbacks for every stage
         for stage, stage_callbacks in callbacks.items():
             callbacks[stage] = process_callbacks(stage_callbacks)
@@ -76,17 +76,17 @@ class GanExperiment(Experiment):
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
         return self._state_params[stage]
 
-    def get_model(self, stage: str) -> Model:
-        return self._models[stage]
+    def get_model(self, stage: str) -> Dict[str, Model]:
+        return self._model[stage]
 
     def get_criterion(self, stage: str) -> Criterion:
-        return self._criterions[stage]
+        return self._criterion[stage]
 
     def get_optimizer(self, stage: str, model: Model) -> Optimizer:
-        return self._optimizers[stage]
+        return self._optimizer[stage]
 
     def get_scheduler(self, stage: str, optimizer: Optimizer) -> Scheduler:
-        return self._schedulers.get(stage, None)
+        return self._scheduler.get(stage, None)
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":  # noqa: F821, E501
         callbacks = self._callbacks[stage]
