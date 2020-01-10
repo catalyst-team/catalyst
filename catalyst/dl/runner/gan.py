@@ -39,7 +39,7 @@ class GanRunner(Runner):
 
     def __init__(
         self,
-        model: Model = None,
+        model: Dict[str, Model] = None,
         device: Device = None,
         features_key: str = "features",
         generator_key: str = "generator",
@@ -48,7 +48,7 @@ class GanRunner(Runner):
         """
         Args:
             model (Model): dict with two models: discriminator and generator
-            device (Device): Torch device
+            device (Device): Torch device to run model on
             features_key (str): Key to extract features from batch
             generator_key (str): Key in model dict for generator model
             discriminator_key (str): Key in model dict for discriminator model
@@ -109,22 +109,22 @@ class GanRunner(Runner):
         else:
             raise NotImplementedError(f"Unknown phase: self.state.phase")
 
-    def validate_models(self, models: Model) -> None:
+    def validate_models(self, models: Dict[str, Model]) -> None:
         assert isinstance(
             models, dict
         ), "models must be of Dict[str, torch.nn.Module] type"
         for key, model in models.items():
             assert isinstance(
                 model, torch.nn.Module
-            ), "model {key} must be torch.nn.Module type"
+            ), f"model {key} must be torch.nn.Module type"
         discriminator_assert_message = \
-            "models must have discriminator Module with {self.discriminator_key} key"  # noqa: E501
+            f"models must have discriminator Module with {self.discriminator_key} key"  # noqa: E501
         assert self.discriminator_key in models, discriminator_assert_message
         assert isinstance(
             models[self.discriminator_key], torch.nn.Module
         ), discriminator_assert_message
         generator_assert_message = \
-            "models must have generator Module with {self.generator_key} key"  # noqa: E501
+            f"models must have generator Module with {self.generator_key} key"  # noqa: E501
         assert self.generator_key in models, generator_assert_message
         assert isinstance(
             models[self.generator_key], torch.nn.Module
@@ -132,7 +132,7 @@ class GanRunner(Runner):
 
     def prepare_state_params(
         self, num_epochs: int, logdir: str, additional_state_params
-    ):
+    ) -> Dict[str, Any]:
         state_params = {
             "num_epochs": num_epochs,
             "logdir": logdir,
@@ -235,7 +235,7 @@ class GanRunner(Runner):
 
     def train(
         self,
-        models: Model,
+        models: Dict[str, Model],
         criterion: Criterion,
         optimizers: Dict[str, Optimizer],
         datasets: Dict[str, Dataset],
@@ -254,10 +254,10 @@ class GanRunner(Runner):
         # Check for optimizers
         assert (
             self.generator_key in optimizers.keys()
-        ), "optimizers must have optimizer with {self.generator_key} key"
+        ), f"optimizers must have optimizer with {self.generator_key} key"
         assert (
             self.discriminator_key in optimizers.keys()
-        ), "optimizers must have optimizer with {self.discriminator_key} key"
+        ), f"optimizers must have optimizer with {self.discriminator_key} key"
         # Init from parameters and set default state params
         state_params = self.prepare_state_params(
             num_epochs, logdir, additional_state_params
