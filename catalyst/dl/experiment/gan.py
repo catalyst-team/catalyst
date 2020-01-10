@@ -114,7 +114,7 @@ class GanExperiment(Experiment):
 
     @staticmethod
     def get_transforms(stage: str = None, mode: str = None):
-        return NotImplementedError(
+        raise NotImplementedError(
             "No static transforms are used in GAN experiment"
         )
 
