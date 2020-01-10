@@ -115,7 +115,7 @@ class GanRunner(Runner):
         ), "models must be of Dict[str, torch.nn.Module] type"
         for key, model in models.items():
             assert isinstance(
-                model, torch.nn.Module
+                model, Model
             ), f"model {key} must be torch.nn.Module type"
         discriminator_assert_message = \
             f"models must have discriminator Module with {self.discriminator_key} key"  # noqa: E501
