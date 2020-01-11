@@ -7,11 +7,7 @@ from urllib.request import Request, urlopen
 
 from tqdm import tqdm
 
-from catalyst.core import LoggerCallback, State
-from catalyst.dl import utils
-from catalyst.dl.utils.formatters import TxtMetricsFormatter
-from catalyst.utils import format_metric
-from catalyst.utils.tensorboard import SummaryWriter
+from catalyst.core import utils, LoggerCallback, State
 
 
 class VerboseLogger(LoggerCallback):
@@ -120,7 +116,7 @@ class ConsoleLogger(LoggerCallback):
         # jh = logging.FileHandler(f"{logdir}/metrics.json")
         # jh.setLevel(logging.INFO)
 
-        txt_formatter = TxtMetricsFormatter()
+        txt_formatter = utils.TxtMetricsFormatter()
         # json_formatter = JsonMetricsFormatter()
         fh.setFormatter(txt_formatter)
         ch.setFormatter(txt_formatter)
@@ -199,7 +195,7 @@ class TensorboardLogger(LoggerCallback):
         lm = state.loader_name
         if lm not in self.loggers:
             log_dir = os.path.join(state.logdir, f"{lm}_log")
-            self.loggers[lm] = SummaryWriter(log_dir)
+            self.loggers[lm] = utils.SummaryWriter(log_dir)
 
     def on_batch_end(self, state: State):
         """Translate batch metrics to tensorboard"""
@@ -322,7 +318,7 @@ class TelegramLogger(LoggerCallback):
 
             for name in metrics_to_log:
                 if name in metrics:
-                    rows.append(format_metric(name, metrics[name]))
+                    rows.append(utils.format_metric(name, metrics[name]))
 
             text = "\n".join(rows)
 

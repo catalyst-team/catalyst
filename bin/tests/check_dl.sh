@@ -7,14 +7,15 @@ function gdrive_download () {
   rm -rf /tmp/cookies.txt
 }
 
-mkdir -p data
-gdrive_download 1N82zh0kzmnzqRvUyMgVOGsCoS1kHf3RP ./data/isbi.tar.gz
-tar -xf ./data/isbi.tar.gz -C ./data/
+#mkdir -p data
+#gdrive_download 1N82zh0kzmnzqRvUyMgVOGsCoS1kHf3RP ./data/isbi.tar.gz
+#tar -xf ./data/isbi.tar.gz -C ./data/
 
 # @TODO: fix macos fail with sed
 set -e
 
-(set -e; for f in examples/_tests_scripts/*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
+(set -e; for f in examples/_tests_scripts/dl_*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
+(set -e; for f in examples/_tests_scripts/z_*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
 
 LOGFILE=./examples/logs/_tests_mnist_stages1/checkpoints/_metrics.json
 

@@ -38,7 +38,7 @@ class DLRunnerState(State):
         self.scheduler = scheduler
         self.device = device
 
-        # @TODO: GAN hack
+        # @TODO: remove GAN hack
         self.phase = None
 
         # data pipeline

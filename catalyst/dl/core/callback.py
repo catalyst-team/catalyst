@@ -1,9 +1,9 @@
-from typing import Callable, List  # isort:skip
+from typing import List  # isort:skip
 from collections import defaultdict
 
 import numpy as np
 
-from catalyst.core import CallbackOrder, Callback, LoggerCallback
+from catalyst.core import CallbackOrder, Callback
 from catalyst.utils import get_activation_fn
 from .state import DLRunnerState
 
@@ -58,7 +58,7 @@ class MeterMetricsCallback(Callback):
     def on_loader_start(self, state):
         self._reset_stats()
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: DLRunnerState):
         logits = state.output[self.output_key].detach().float()
         targets = state.input[self.input_key].detach().float()
         probabilities = self.activation_fn(logits)
@@ -66,7 +66,7 @@ class MeterMetricsCallback(Callback):
         for i in range(self.num_classes):
             self.meters[i].add(probabilities[:, i], targets[:, i])
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, state: DLRunnerState):
         metrics_tracker = defaultdict(list)
         loader_values = state.metrics.epoch_values[state.loader_name]
         # Computing metrics for each class
@@ -89,77 +89,4 @@ class MeterMetricsCallback(Callback):
         self._reset_stats()
 
 
-class MetricCallback(Callback):
-    """
-    A callback that returns single metric on `state.on_batch_end`
-    """
-    def __init__(
-        self,
-        prefix: str,
-        metric_fn: Callable,
-        input_key: str = "targets",
-        output_key: str = "logits",
-        **metric_params
-    ):
-        super().__init__(CallbackOrder.Metric)
-        self.prefix = prefix
-        self.metric_fn = metric_fn
-        self.input_key = input_key
-        self.output_key = output_key
-        self.metric_params = metric_params
-
-    def on_batch_end(self, state: State):
-        outputs = state.output[self.output_key]
-        targets = state.input[self.input_key]
-        metric = self.metric_fn(outputs, targets, **self.metric_params)
-        state.metrics.add_batch_value(name=self.prefix, value=metric)
-
-
-class MultiMetricCallback(Callback):
-    """
-    A callback that returns multiple metrics on `state.on_batch_end`
-    """
-
-    def __init__(
-        self,
-        prefix: str,
-        metric_fn: Callable,
-        list_args: List,
-        input_key: str = "targets",
-        output_key: str = "logits",
-        **metric_params
-    ):
-        super().__init__(CallbackOrder.Metric)
-        self.prefix = prefix
-        self.metric_fn = metric_fn
-        self.list_args = list_args
-        self.input_key = input_key
-        self.output_key = output_key
-        self.metric_params = metric_params
-
-    def on_batch_end(self, state: State):
-        outputs = state.output[self.output_key]
-        targets = state.input[self.input_key]
-
-        metrics_ = self.metric_fn(
-            outputs, targets, self.list_args, **self.metric_params
-        )
-
-        batch_metrics = {}
-        for arg, metric in zip(self.list_args, metrics_):
-            if isinstance(arg, int):
-                key = f"{self.prefix}{arg:02}"
-            else:
-                key = f"{self.prefix}_{arg}"
-            batch_metrics[key] = metric
-        state.metrics.add_batch_value(metrics_dict=batch_metrics)
-
-
-__all__ = [
-    "CallbackOrder",
-    "Callback",
-    "LoggerCallback",
-    "MeterMetricsCallback",
-    "MetricCallback",
-    "MultiMetricCallback",
-]
+__all__ = ["MeterMetricsCallback"]

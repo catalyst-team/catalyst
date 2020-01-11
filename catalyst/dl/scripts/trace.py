@@ -7,10 +7,7 @@ import safitty
 
 import torch
 
-from catalyst import utils
-from catalyst.dl.core import Experiment
-from catalyst.dl.utils.scripts import import_experiment_and_runner
-from catalyst.dl.utils.trace import get_trace_name, trace_model
+from catalyst.dl import utils, Experiment
 from catalyst.utils.typing import Device
 
 
@@ -55,7 +52,7 @@ def trace_model_from_checkpoint(
     expdir = Path(logdir) / "code" / config_expdir.name
 
     print("Import experiment and runner from logdir")
-    ExperimentType, RunnerType = import_experiment_and_runner(expdir)
+    ExperimentType, RunnerType = utils.import_experiment_and_runner(expdir)
     experiment: Experiment = ExperimentType(config)
 
     print(f"Load model state from checkpoints/{checkpoint_name}.pth")
@@ -74,7 +71,7 @@ def trace_model_from_checkpoint(
     batch = experiment.get_native_batch(stage, loader)
 
     print("Tracing")
-    traced = trace_model(
+    traced = utils.trace_model(
         model=model,
         runner=runner,
         batch=batch,
@@ -198,7 +195,7 @@ def main(args, _):
     )
 
     if args.out_model is None:
-        file_name = get_trace_name(
+        file_name = utils.get_trace_name(
             method_name=method_name,
             mode=mode,
             requires_grad=requires_grad,

@@ -95,7 +95,7 @@ class MulticlassDiceMetricCallback(Callback):
     def _reset_stats(self):
         self.confusion_matrix = None
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: DLRunnerState):
         outputs = state.output[self.output_key]
         targets = state.input[self.input_key]
 
@@ -108,7 +108,7 @@ class MulticlassDiceMetricCallback(Callback):
         else:
             self.confusion_matrix += confusion_matrix
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, state: DLRunnerState):
         tp_fp_fn_dict = calculate_tp_fp_fn(self.confusion_matrix)
 
         batch_metrics: Dict = calculate_dice(**tp_fp_fn_dict)

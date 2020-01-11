@@ -1,6 +1,7 @@
 # flake8: noqa
 
 from catalyst.utils import *
+from catalyst.core.utils import *
 from .agent import (
     get_observation_net, process_state_ff, process_state_ff_kv,
     process_state_temporal, process_state_temporal_kv

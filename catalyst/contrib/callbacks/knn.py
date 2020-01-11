@@ -163,7 +163,7 @@ class KNNMetricCallback(Callback):
 
         return result
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: DLRunnerState):
         """
         Batch end hook.
         """
@@ -175,7 +175,7 @@ class KNNMetricCallback(Callback):
         self.features.extend(features)
         self.targets.extend(targets)
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, state: DLRunnerState):
         """
         Loader end hook.
         """
@@ -207,7 +207,7 @@ class KNNMetricCallback(Callback):
 
         self._reset_cache()
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, state: DLRunnerState):
         """
         Epoch end hook.
         """

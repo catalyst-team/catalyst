@@ -5,12 +5,13 @@ from catalyst.dl.callbacks import (
     RaiseExceptionCallback, SchedulerCallback, TensorboardLogger,
     VerboseLogger
 )
-from catalyst.dl.core import Callback
+from catalyst.dl import Callback
 from .base import BaseExperiment
 
 
 class SupervisedExperiment(BaseExperiment):
-    """Supervised experiment used mostly in Notebook API
+    """
+    Supervised experiment used mostly in Notebook API
 
     The main difference with BaseExperiment that it will
     add several callbacks by default if you haven't.

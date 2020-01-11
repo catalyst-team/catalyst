@@ -4,8 +4,7 @@ import shutil
 
 from git import Repo as repo
 
-from catalyst import utils
-from catalyst.dl.utils import clone_pipeline, run_wizard
+from catalyst.dl import utils
 
 
 def build_args(parser):
@@ -58,9 +57,9 @@ def load_empty(out_dir: Path) -> None:
 
 def main(args, _):
     if args.interactive:
-        run_wizard()
+        utils.run_wizard()
     else:
-        clone_pipeline(args.pipeline, args.out_dir)
+        utils.clone_pipeline(args.pipeline, args.out_dir)
 
 
 def parse_args():

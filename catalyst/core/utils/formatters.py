@@ -3,8 +3,7 @@ from datetime import datetime
 import json
 import logging
 
-from catalyst.dl.core.state import DLRunnerState
-from catalyst.utils import format_metric
+from catalyst.core import utils, State
 
 
 class MetricsFormatter(ABC, logging.Formatter):
@@ -59,7 +58,7 @@ class TxtMetricsFormatter(MetricsFormatter):
         metrics_formatted = {}
         for key, value in metrics.items():
             metrics_formatted_ = [
-                format_metric(m_name, m_value)
+                utils.format_metric(m_name, m_value)
                 for m_name, m_value in sorted(value.items())
             ]
             metrics_formatted_ = " | ".join(metrics_formatted_)

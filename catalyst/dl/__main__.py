@@ -2,14 +2,14 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
 
 from catalyst.__version__ import __version__
-from .scripts import init, make_report, run, trace
+from .scripts import init, run, trace
 
 COMMANDS = OrderedDict(
     [
         ("init", init),
         ("run", run),
         ("trace", trace),
-        ("make-report", make_report),
+        # ("make-report", make_report),
     ]
 )
 

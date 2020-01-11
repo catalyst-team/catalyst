@@ -6,10 +6,7 @@ from pathlib import Path
 
 import safitty
 
-from catalyst.dl.utils.scripts import import_experiment_and_runner
-from catalyst.utils import boolean_flag, prepare_cudnn, set_global_seed
-from catalyst.utils.config import dump_environment, parse_args_uargs
-from catalyst.utils.scripts import dump_code
+from catalyst.dl import utils
 
 
 def build_args(parser: ArgumentParser):
@@ -48,14 +45,14 @@ def build_args(parser: ArgumentParser):
         help="path to latest checkpoint"
     )
     parser.add_argument("--seed", type=int, default=42)
-    boolean_flag(parser, "verbose", default=None)
-    boolean_flag(parser, "check", default=None)
-    boolean_flag(
+    utils.boolean_flag(parser, "verbose", default=None)
+    utils.boolean_flag(parser, "check", default=None)
+    utils.boolean_flag(
         parser, "deterministic",
         default=None,
         help="Deterministic mode if running in CuDNN backend"
     )
-    boolean_flag(
+    utils.boolean_flag(
         parser, "benchmark",
         default=None,
         help="Use CuDNN benchmark"
@@ -74,19 +71,19 @@ def parse_args():
 
 def main(args, unknown_args):
     """Run the ``catalyst-dl run`` script"""
-    args, config = parse_args_uargs(args, unknown_args)
-    set_global_seed(args.seed)
-    prepare_cudnn(args.deterministic, args.benchmark)
+    args, config = utils.parse_args_uargs(args, unknown_args)
+    utils.set_global_seed(args.seed)
+    utils.prepare_cudnn(args.deterministic, args.benchmark)
 
-    Experiment, Runner = import_experiment_and_runner(Path(args.expdir))
+    Experiment, Runner = utils.import_experiment_and_runner(Path(args.expdir))
 
     runner_params = config.pop("runner_params", {}) or {}
     experiment = Experiment(config)
     runner = Runner(**runner_params)
 
     if experiment.logdir is not None:
-        dump_environment(config, experiment.logdir, args.configs)
-        dump_code(args.expdir, experiment.logdir)
+        utils.dump_environment(config, experiment.logdir, args.configs)
+        utils.dump_code(args.expdir, experiment.logdir)
 
     check_run = safitty.get(config, "args", "check", default=False)
     runner.run_experiment(experiment, check=check_run)

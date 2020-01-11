@@ -5,9 +5,7 @@ from pathlib import Path
 
 import safitty
 
-from catalyst.core import Callback, CallbackOrder, State
-from catalyst.dl import utils
-from catalyst.utils import is_exception
+from catalyst.core import utils, Callback, CallbackOrder, State
 
 
 class BaseCheckpointCallback(Callback):
@@ -41,7 +39,7 @@ class BaseCheckpointCallback(Callback):
 
     def on_exception(self, state: State):
         exception = state.exception
-        if not is_exception(exception):
+        if not utils.is_exception(exception):
             return
 
         try:
@@ -259,21 +257,21 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
     def __init__(
         self,
         save_n_last: int = 3,
-        num_iters: int = 100,
+        period: int = 100,
         stage_restart: bool = True,
         metric_filename: str = "_metrics_iter.json"
     ):
         """
         Args:
             save_n_last (int): number of last checkpoint to keep
-            num_iters (int): save the checkpoint every `num_iters`
+            period (int): save the checkpoint every `period`
             stage_restart (bool): restart counter every stage or not
             metric_filename (str): filename to save metrics
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
         """
         super().__init__(metric_filename)
         self.save_n_last = save_n_last
-        self.num_iters = num_iters
+        self.period = period
         self.stage_restart = stage_restart
         self._iteration_counter = 0
         self.last_checkpoints = []
@@ -332,13 +330,13 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         self.save_metric(logdir, metrics)
         print(f"\nSaved checkpoint at {filepath}")
 
-    def on_stage_start(self, state):
+    def on_stage_start(self, state: State):
         if self.stage_restart:
             self._iteration_counter = 0
 
-    def on_batch_end(self, state):
+    def on_batch_end(self, state: State):
         self._iteration_counter += 1
-        if self._iteration_counter % self.num_iters == 0:
+        if self._iteration_counter % self.period == 0:
             checkpoint = utils.pack_checkpoint(
                 model=state.model,
                 criterion=state.criterion,

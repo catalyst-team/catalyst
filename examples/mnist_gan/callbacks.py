@@ -2,7 +2,7 @@ import torch
 import torchvision.utils
 
 from catalyst.dl import registry
-from catalyst.dl.core import Callback, CallbackOrder, RunnerState
+from catalyst.dl.core import Callback, CallbackOrder, DLRunnerState
 from catalyst.utils.tensorboard import SummaryWriter
 
 
@@ -70,7 +70,7 @@ class VisualizationCallback(Callback):
         self._loader_visualized_in_current_epoch = False
 
     @staticmethod
-    def _get_tensorboard_logger(state: RunnerState) -> SummaryWriter:
+    def _get_tensorboard_logger(state: DLRunnerState) -> SummaryWriter:
         tb_key = VisualizationCallback.TENSORBOARD_LOGGER_KEY
         if (
             tb_key in state.loggers
@@ -117,14 +117,14 @@ class VisualizationCallback(Callback):
         self.save_visualizations(state, visualizations)
         self._loader_visualized_in_current_epoch = True
 
-    def on_loader_start(self, state: RunnerState):
+    def on_loader_start(self, state: DLRunnerState):
         self._reset()
 
-    def on_loader_end(self, state: RunnerState):
+    def on_loader_end(self, state: DLRunnerState):
         if not self._loader_visualized_in_current_epoch:
             self.visualize(state)
 
-    def on_batch_end(self, state: RunnerState):
+    def on_batch_end(self, state: DLRunnerState):
         self._loader_batch_count += 1
         if self._loader_batch_count % self.batch_frequency:
             self.visualize(state)

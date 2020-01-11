@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 
 from catalyst.utils.frozen import FrozenClass
-from .metric_manager import MetricManager, TimerManager
+from catalyst.utils.metric_manager import MetricManager, TimerManager
 
 
 class State(FrozenClass):
@@ -19,7 +19,6 @@ class State(FrozenClass):
         minimize_metric: bool = True,
         valid_loader: str = "train",
         verbose: bool = False,
-        initial_seed: int = 42,
         checkpoint_data: Dict = None,
         batch_consistant_metrics: bool = True,
         **kwargs
@@ -32,7 +31,6 @@ class State(FrozenClass):
         self.loaders = None
 
         # counters
-        self.initial_seed = initial_seed
         self.loader_len = 0
         self.batch_size = 0
         self.step = 0

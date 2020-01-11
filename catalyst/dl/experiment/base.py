@@ -4,8 +4,8 @@ from collections import OrderedDict
 from torch import nn
 from torch.utils.data import DataLoader
 
-from catalyst.dl.core import Callback, Experiment
-from catalyst.dl.utils import process_callbacks
+from catalyst.dl import Callback, Experiment
+from catalyst.dl import utils
 from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
 
 
@@ -68,7 +68,7 @@ class BaseExperiment(Experiment):
         """
         self._model = model
         self._loaders = loaders
-        self._callbacks = process_callbacks(callbacks)
+        self._callbacks = utils.process_callbacks(callbacks)
 
         self._criterion = criterion
         self._optimizer = optimizer

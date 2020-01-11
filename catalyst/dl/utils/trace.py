@@ -7,7 +7,7 @@ from torch import nn
 from torch.jit import ScriptModule
 
 from catalyst import utils
-from catalyst.dl.core import DLRunner
+from catalyst.dl import DLRunner
 from catalyst.utils.typing import Device, Model
 
 

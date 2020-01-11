@@ -193,29 +193,3 @@ class TrainerSpec:
         self.callbacks = callbacks
 
         self._run_train_stage()
-
-
-class RLRunner(DLRunner):
-
-    @torch.no_grad()
-    def inference(
-        self,
-        sampler_ids: List[int],
-        run_ids: List[int],
-        states: np.ndarray,
-        rewards: np.ndarray,
-    ):
-        # looks like production-ready thing
-        # @TODO: make a microservice from this method
-        raise NotImplementedError()
-
-    def run(self):
-        
-
-    @classmethod
-    def get_from_params(
-        cls,
-        algorithm_params: Dict,
-        env_spec: EnvironmentSpec,
-    ):
-        pass

@@ -1,14 +1,21 @@
-from typing import Any, Mapping, Optional, Dict, Union  # isort:skip
+from typing import (
+    Any, Callable, Mapping, Optional, Dict, Tuple, Union
+)  # isort:skip
 from abc import ABC, abstractmethod
 from collections import OrderedDict
+import os
+from pathlib import Path
 
 import torch
 from torch import nn
 from torch.utils.data import DistributedSampler, DataLoader
 
-from catalyst.dl import utils
-from catalyst.utils.typing import Device, Model
+from catalyst.core import utils
+from catalyst.utils.typing import (
+    Criterion, Device, Model, Optimizer, Scheduler
+)
 from .callback import Callback, LoggerCallback
+from .experiment import Experiment
 from .state import State
 
 
@@ -16,6 +23,10 @@ class Runner(ABC):
     """
     Abstract class for all runners inherited from
     """
+
+    experiment_fn: Callable = Experiment
+    state_fn: callable = State
+
     def __init__(
         self,
         model: Model = None,
@@ -30,9 +41,12 @@ class Runner(ABC):
         self._model: Model = model
         self._device: Device = device
 
+        self.experiment: Experiment = None
         self.state: State = None
+
         self.callbacks: OrderedDict[str, Callback] = None
         self.loggers: OrderedDict[str, LoggerCallback] = None
+        self.loaders: OrderedDict[str, DataLoader] = None
 
         # additional
         self._check_run = False
@@ -99,14 +113,6 @@ class Runner(ABC):
             self._model.to(device=self._device)
 
     @abstractmethod
-    def _prepare_for_stage(self, stage: str):
-        pass
-
-    @abstractmethod
-    def _prepare_for_epoch(self, stage: str, epoch: int):
-        pass
-
-    @abstractmethod
     def forward(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
         """
         Forward method for your Runner
@@ -115,6 +121,81 @@ class Runner(ABC):
             batch: Key-value batch items
             **kwargs: kwargs to pass to the model
         """
+        pass
+
+    def _get_experiment_components(
+        self, stage: str = None
+    ) -> Tuple[Model, Criterion, Optimizer, Scheduler, Device]:
+        """
+        Inner method for children's classes for model specific initialization.
+        As baseline, checks device support and puts model on it.
+        :return:
+        """
+        utils.set_global_seed(self.experiment.initial_seed)
+        model = self.experiment.get_model(stage)
+        criterion, optimizer, scheduler = \
+            self.experiment.get_experiment_components(model, stage)
+
+        model, criterion, optimizer, scheduler, device = \
+            utils.process_components(
+                model=model,
+                criterion=criterion,
+                optimizer=optimizer,
+                scheduler=scheduler,
+                distributed_params=self.experiment.distributed_params,
+                device=self.device
+            )
+
+        return model, criterion, optimizer, scheduler, device
+
+    def _prepare_for_stage(self, stage: str):
+        utils.set_global_seed(self.experiment.initial_seed)
+        migrating_params = {}
+        if self.state is not None:
+            migrating_params.update(
+                {
+                    "step": self.state.step,
+                    "epoch": self.state.epoch
+                }
+            )
+
+        utils.set_global_seed(self.experiment.initial_seed)
+        self.model, criterion, optimizer, scheduler, self.device = \
+            self._get_experiment_components(stage)
+
+        utils.set_global_seed(self.experiment.initial_seed)
+        self.state = self.state_fn(
+            stage=stage,
+            model=self.model,
+            device=self.device,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            **self.experiment.get_state_params(stage),
+            **migrating_params
+        )
+
+        utils.set_global_seed(self.experiment.initial_seed)
+        callbacks = self.experiment.get_callbacks(stage)
+
+        loggers = utils.process_callbacks(
+            OrderedDict([
+                (k, v) for k, v in callbacks.items()
+                if isinstance(v, LoggerCallback)
+            ])
+        )
+        callbacks = utils.process_callbacks(
+            OrderedDict([
+                (k, v) for k, v in callbacks.items()
+                if not isinstance(v, LoggerCallback)
+            ])
+        )
+
+        self.state.loggers = loggers
+        self.loggers = loggers
+        self.callbacks = callbacks
+
+    def _prepare_for_epoch(self, stage: str, epoch: int):
         pass
 
     def _batch2device(self, batch: Mapping[str, Any], device: Device):
@@ -207,7 +288,10 @@ class Runner(ABC):
             self.state.timer.start("_timers/data_time")
 
     def _run_epoch(self, stage: str, epoch: int):
-        loaders = self._prepare_for_epoch(stage=stage, epoch=epoch)
+        self._prepare_for_epoch(stage=stage, epoch=epoch)
+
+        assert self.loaders is not None
+        loaders = self.loaders
 
         # @TODO: better solution with train/inference handling ?
         if not self.state.stage.startswith("infer"):
@@ -229,7 +313,7 @@ class Runner(ABC):
                 loader.sampler.set_epoch(self.state.stage_epoch)
 
             utils.set_global_seed(
-                self.state.initial_seed + self.state.epoch + 1
+                self.experiment.initial_seed + self.state.epoch + 1
             )
             self._run_event("loader", moment="start")
             with torch.set_grad_enabled(self.state.need_backward):
@@ -237,25 +321,7 @@ class Runner(ABC):
             self._run_event("loader", moment="end")
 
     def _run_stage(self, stage: str):
-        callbacks = self._prepare_for_stage(stage)
-
-        # loaders = self.experiment.get_loaders(stage)
-        # callbacks = self.experiment.get_callbacks(stage)
-        loggers = utils.process_callbacks(
-            OrderedDict([
-                (k, v) for k, v in callbacks.items()
-                if isinstance(v, LoggerCallback)
-            ])
-        )
-        callbacks = utils.process_callbacks(
-            OrderedDict([
-                (k, v) for k, v in callbacks.items()
-                if not isinstance(v, LoggerCallback)
-            ])
-        )
-        self.state.loggers = loggers
-        self.loggers = loggers
-        self.callbacks = callbacks
+        self._prepare_for_stage(stage)
 
         self._run_event("stage", moment="start")
         for epoch in range(self.state.num_epochs):
@@ -273,6 +339,37 @@ class Runner(ABC):
 
             self.state.epoch += 1
         self._run_event("stage", moment="end")
+
+    def run_experiment(self, experiment: Experiment, check: bool = False):
+        """
+        Starts the experiment
+        """
+        self._check_run = check
+        self.experiment = experiment
+
+        # jupyter source code logging hack
+        # + hack to prevent cycle imports
+        # @TODO: remove hack to catalyst.dl only, not core
+        from catalyst.dl.experiment import BaseExperiment
+        if isinstance(self.experiment, BaseExperiment) \
+                and self.experiment.logdir is not None:
+            expdir = Path(os.getcwd())
+            logdir = Path(self.experiment.logdir)
+            utils.dump_base_experiment_code(expdir, logdir)
+
+        try:
+            for stage in self.experiment.stages:
+                self._run_stage(stage)
+        except (Exception, KeyboardInterrupt) as ex:
+            # if an exception had been raised
+            # before the exception-handlers were initialized
+            if self.loggers is None or self.callbacks is None:
+                raise ex
+            else:
+                self.state.exception = ex
+                self._run_event("exception", moment=None)
+
+        return self
 
 
 __all__ = ["Runner"]
