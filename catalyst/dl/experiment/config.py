@@ -145,6 +145,7 @@ class ConfigExperiment(DLExperiment):
             model = {}
             for key, params_ in params.items():
                 model[key] = ConfigExperiment._get_model(**params_)
+            model = nn.ModuleDict(model)
         else:
             model = MODELS.get_from_params(**params)
         return model

@@ -8,5 +8,6 @@ from .logging import (
     ConsoleLogger, TelegramLogger, TensorboardLogger, VerboseLogger
 )
 from .optimizer import OptimizerCallback
+from .phase import PhaseManagerCallback
 from .scheduler import SchedulerCallback, LRUpdater
 from .wrappers import PhaseWrapperCallback, PhaseBatchWrapperCallback
