@@ -1,8 +1,7 @@
-from typing import Optional, Union, List
+from typing import List, Optional, Union
 
 import torch
 import torch.nn.functional as F
-
 
 _EPS = 1e-8
 
