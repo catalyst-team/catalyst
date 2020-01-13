@@ -4,7 +4,7 @@ import copy
 import torch
 from torch import nn
 
-from catalyst.dl import utils
+from catalyst.core import utils
 from catalyst.utils.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )

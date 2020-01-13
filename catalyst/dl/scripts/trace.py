@@ -7,7 +7,7 @@ import safitty
 
 import torch
 
-from catalyst.dl import utils, Experiment
+from catalyst.dl import utils, DLExperiment
 from catalyst.utils.typing import Device
 
 
@@ -53,7 +53,7 @@ def trace_model_from_checkpoint(
 
     print("Import experiment and runner from logdir")
     ExperimentType, RunnerType = utils.import_experiment_and_runner(expdir)
-    experiment: Experiment = ExperimentType(config)
+    experiment: DLExperiment = ExperimentType(config)
 
     print(f"Load model state from checkpoints/{checkpoint_name}.pth")
     if stage is None:

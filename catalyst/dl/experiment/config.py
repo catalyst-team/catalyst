@@ -16,14 +16,14 @@ from catalyst.dl.callbacks import (
     PhaseWrapperCallback, RaiseExceptionCallback, SchedulerCallback,
     TensorboardLogger, VerboseLogger
 )
-from catalyst.dl import Callback, Experiment
+from catalyst.dl import Callback, DLExperiment
 from catalyst.dl.registry import (
     CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS
 )
 from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
 
 
-class ConfigExperiment(Experiment):
+class ConfigExperiment(DLExperiment):
     """
     Experiment created from a configuration file
     """

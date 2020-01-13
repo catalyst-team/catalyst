@@ -4,12 +4,11 @@ from collections import OrderedDict
 from torch import nn
 from torch.utils.data import DataLoader
 
-from catalyst.dl import Callback, Experiment
-from catalyst.dl import utils
+from catalyst.dl import utils, Callback, DLExperiment
 from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
 
 
-class BaseExperiment(Experiment):
+class BaseExperiment(DLExperiment):
     """
     Super-simple one-staged experiment
         you can use to declare experiment in code
