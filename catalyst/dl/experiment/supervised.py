@@ -6,14 +6,14 @@ from catalyst.dl.callbacks import (
     VerboseLogger
 )
 from catalyst.dl import Callback
-from .base import BaseExperiment
+from .base import BaseDLExperiment
 
 
-class SupervisedExperiment(BaseExperiment):
+class SupervisedDLExperiment(BaseDLExperiment):
     """
     Supervised experiment used mostly in Notebook API
 
-    The main difference with BaseExperiment that it will
+    The main difference with BaseDLExperiment that it will
     add several callbacks by default if you haven't.
 
     Here are list of callbacks by default:
@@ -38,7 +38,7 @@ class SupervisedExperiment(BaseExperiment):
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """
-        Override of ``BaseExperiment.get_callbacks`` method.
+        Override of ``BaseDLExperiment.get_callbacks`` method.
         Will add several of callbacks by default in case they missed.
 
         Args:
@@ -71,4 +71,4 @@ class SupervisedExperiment(BaseExperiment):
         return callbacks
 
 
-__all__ = ["SupervisedExperiment"]
+__all__ = ["SupervisedDLExperiment"]

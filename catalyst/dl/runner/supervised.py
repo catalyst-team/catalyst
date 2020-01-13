@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 
 from catalyst.dl import utils
 from catalyst.dl import (
-    DLRunner, SupervisedExperiment, Callback, CheckpointCallback, InferCallback
+    DLRunner, SupervisedDLExperiment, Callback, CheckpointCallback, InferCallback
 )
 from catalyst.utils.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
@@ -18,11 +18,11 @@ from catalyst.utils.typing import (
 logger = logging.getLogger(__name__)
 
 
-class SupervisedRunner(DLRunner):
+class SupervisedDLRunner(DLRunner):
     """
     Runner for experiments with supervised model
     """
-    _default_experiment = SupervisedExperiment
+    _default_experiment = SupervisedDLExperiment
 
     def __init__(
         self,
@@ -385,4 +385,4 @@ class SupervisedRunner(DLRunner):
         return result
 
 
-__all__ = ["SupervisedRunner"]
+__all__ = ["SupervisedDLRunner"]

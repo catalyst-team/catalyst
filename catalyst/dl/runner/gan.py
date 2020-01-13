@@ -5,7 +5,7 @@ import torch
 from catalyst.dl import DLRunner
 
 
-class GanRunner(DLRunner):
+class GanDLRunner(DLRunner):
     def __init__(
         self,
         model=None,
@@ -75,4 +75,4 @@ class GanRunner(DLRunner):
             raise NotImplementedError(f"Unknown phase: self.state.phase")
 
 
-__all__ = ["GanRunner"]
+__all__ = ["GanDLRunner"]

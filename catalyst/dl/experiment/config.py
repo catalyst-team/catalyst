@@ -23,7 +23,7 @@ from catalyst.dl.registry import (
 from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
 
 
-class ConfigExperiment(DLExperiment):
+class ConfigDLExperiment(DLExperiment):
     """
     Experiment created from a configuration file
     """
@@ -144,7 +144,7 @@ class ConfigExperiment(DLExperiment):
         if key_value_flag:
             model = {}
             for key, params_ in params.items():
-                model[key] = ConfigExperiment._get_model(**params_)
+                model[key] = ConfigDLExperiment._get_model(**params_)
             model = nn.ModuleDict(model)
         else:
             model = MODELS.get_from_params(**params)
@@ -166,7 +166,7 @@ class ConfigExperiment(DLExperiment):
         if key_value_flag:
             criterion = {}
             for key, params_ in params.items():
-                criterion[key] = ConfigExperiment._get_criterion(**params_)
+                criterion[key] = ConfigDLExperiment._get_criterion(**params_)
         else:
             criterion = CRITERIONS.get_from_params(**params)
             if criterion is not None and torch.cuda.is_available():
@@ -302,7 +302,7 @@ class ConfigExperiment(DLExperiment):
         if key_value_flag:
             scheduler = {}
             for key, params_ in params.items():
-                scheduler[key] = ConfigExperiment._get_scheduler(
+                scheduler[key] = ConfigDLExperiment._get_scheduler(
                     optimizer=optimizer, **params_
                 )
         else:
@@ -427,7 +427,7 @@ class ConfigExperiment(DLExperiment):
         callback = CALLBACKS.get_from_params(**params)
         if wrapper_params is not None:
             wrapper_params["base_callback"] = callback
-            return ConfigExperiment._get_callback(**wrapper_params)
+            return ConfigDLExperiment._get_callback(**wrapper_params)
         return callback
 
     def get_callbacks(self, stage: str) -> "OrderedDict[Callback]":
@@ -470,4 +470,4 @@ class ConfigExperiment(DLExperiment):
         return callbacks
 
 
-__all__ = ["ConfigExperiment"]
+__all__ = ["ConfigDLExperiment"]

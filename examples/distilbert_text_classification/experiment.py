@@ -5,10 +5,10 @@ from typing import Dict
 import pandas as pd
 
 from catalyst.data.nlp.classify import TextClassificationDataset
-from catalyst.dl import ConfigExperiment
+from catalyst.dl import ConfigDLExperiment
 
 
-class Experiment(ConfigExperiment):
+class Experiment(ConfigDLExperiment):
     def __init__(self, config: Dict):
         super().__init__(config)
         self.config = config

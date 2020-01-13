@@ -3,7 +3,7 @@ from typing import Dict  # isort:skip
 from alchemy import Logger
 
 from catalyst.dl.core import Experiment, DLRunner
-from catalyst.dl.runner.supervised import SupervisedRunner
+from catalyst.dl.runner.supervised import SupervisedDLRunner
 
 
 class AlchemyRunner(DLRunner):
@@ -103,7 +103,7 @@ class AlchemyRunner(DLRunner):
         self._post_experiment_hook(experiment=experiment)
 
 
-class SupervisedAlchemyRunner(AlchemyRunner, SupervisedRunner):
+class SupervisedAlchemyRunner(AlchemyRunner, SupervisedDLRunner):
     pass
 
 

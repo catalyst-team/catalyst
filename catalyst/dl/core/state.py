@@ -8,7 +8,7 @@ from catalyst.core import State
 
 # TODO Deep refactoring
 #  - lr/loss/momentum bypass (how to deal when multiple optimizers?)
-class DLRunnerState(State):
+class DLState(State):
     """
     An object that is used to pass internal state during train/valid/infer.
     """
@@ -84,4 +84,4 @@ class DLRunnerState(State):
         self.metrics.add_batch_value(metrics_dict=values)
 
 
-__all__ = ["DLRunnerState"]
+__all__ = ["DLState"]

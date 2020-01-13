@@ -8,7 +8,7 @@ from skimage.color import label2rgb
 import torch
 import torch.nn.functional as F
 
-from catalyst.dl import utils, Callback, CallbackOrder, DLRunnerState
+from catalyst.dl import utils, Callback, CallbackOrder, DLState
 
 
 # @TODO: refactor
@@ -20,7 +20,7 @@ class InferCallback(Callback):
         self.predictions = defaultdict(lambda: [])
         self._keys_from_state = ["out_dir", "out_prefix"]
 
-    def on_stage_start(self, state: DLRunnerState):
+    def on_stage_start(self, state: DLState):
         for key in self._keys_from_state:
             value = getattr(state, key, None)
             if value is not None:
@@ -31,16 +31,16 @@ class InferCallback(Callback):
         if self.out_prefix is not None:
             os.makedirs(os.path.dirname(self.out_prefix), exist_ok=True)
 
-    def on_loader_start(self, state: DLRunnerState):
+    def on_loader_start(self, state: DLState):
         self.predictions = defaultdict(lambda: [])
 
-    def on_batch_end(self, state: DLRunnerState):
+    def on_batch_end(self, state: DLState):
         dct = state.output
         dct = {key: value.detach().cpu().numpy() for key, value in dct.items()}
         for key, value in dct.items():
             self.predictions[key].append(value)
 
-    def on_loader_end(self, state: DLRunnerState):
+    def on_loader_end(self, state: DLState):
         self.predictions = {
             key: np.concatenate(value, axis=0)
             for key, value in self.predictions.items()
@@ -81,7 +81,7 @@ class InferMaskCallback(Callback):
         self.counter = 0
         self._keys_from_state = ["out_dir", "out_prefix"]
 
-    def on_stage_start(self, state: DLRunnerState):
+    def on_stage_start(self, state: DLState):
         for key in self._keys_from_state:
             value = getattr(state, key, None)
             if value is not None:
@@ -94,11 +94,11 @@ class InferMaskCallback(Callback):
             self.out_prefix = str(self.out_dir) + "/" + str(self.out_prefix)
         os.makedirs(os.path.dirname(self.out_prefix), exist_ok=True)
 
-    def on_loader_start(self, state: DLRunnerState):
+    def on_loader_start(self, state: DLState):
         lm = state.loader_name
         os.makedirs(f"{self.out_prefix}/{lm}/", exist_ok=True)
 
-    def on_batch_end(self, state: DLRunnerState):
+    def on_batch_end(self, state: DLState):
         lm = state.loader_name
         names = state.input.get(self.name_key, [])
 

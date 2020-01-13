@@ -350,8 +350,8 @@ class Runner(ABC):
         # jupyter source code logging hack
         # + hack to prevent cycle imports
         # @TODO: remove hack to catalyst.dl only, not core
-        from catalyst.dl.experiment import BaseExperiment
-        if isinstance(self.experiment, BaseExperiment) \
+        from catalyst.dl.experiment import BaseDLExperiment
+        if isinstance(self.experiment, BaseDLExperiment) \
                 and self.experiment.logdir is not None:
             expdir = Path(os.getcwd())
             logdir = Path(self.experiment.logdir)

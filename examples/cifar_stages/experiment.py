@@ -6,10 +6,10 @@ import torchvision
 from torchvision import transforms
 
 from catalyst import utils
-from catalyst.dl import ConfigExperiment
+from catalyst.dl import ConfigDLExperiment
 
 
-class Experiment(ConfigExperiment):
+class Experiment(ConfigDLExperiment):
     def _postprocess_model_for_stage(self, stage: str, model: nn.Module):
         model_ = model
         if isinstance(model, torch.nn.DataParallel):

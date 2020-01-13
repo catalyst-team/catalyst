@@ -5,7 +5,7 @@ import numpy as np
 
 from catalyst.core import CallbackOrder, Callback
 from catalyst.utils import get_activation_fn
-from .state import DLRunnerState
+from .state import DLState
 
 
 class MeterMetricsCallback(Callback):
@@ -58,7 +58,7 @@ class MeterMetricsCallback(Callback):
     def on_loader_start(self, state):
         self._reset_stats()
 
-    def on_batch_end(self, state: DLRunnerState):
+    def on_batch_end(self, state: DLState):
         logits = state.output[self.output_key].detach().float()
         targets = state.input[self.input_key].detach().float()
         probabilities = self.activation_fn(logits)
@@ -66,7 +66,7 @@ class MeterMetricsCallback(Callback):
         for i in range(self.num_classes):
             self.meters[i].add(probabilities[:, i], targets[:, i])
 
-    def on_loader_end(self, state: DLRunnerState):
+    def on_loader_end(self, state: DLState):
         metrics_tracker = defaultdict(list)
         loader_values = state.metrics.epoch_values[state.loader_name]
         # Computing metrics for each class

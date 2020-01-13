@@ -14,7 +14,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from catalyst import utils
-from catalyst.dl import DLRunner, Experiment, DLRunnerState, \
+from catalyst.dl import DLRunner, Experiment, DLState, \
     Callback, LoggerCallback
 from .algorithm import AlgorithmSpec
 from .db import DBSpec
@@ -88,7 +88,7 @@ class TrainerSpec:
         self.model, criterion, optimizer, scheduler, self.device = \
             self._get_experiment_components(stage)
 
-        self.state = DLRunnerState(
+        self.state = DLState(
             stage=stage,
             model=self.model,
             device=self.device,

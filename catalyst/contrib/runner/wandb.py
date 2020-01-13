@@ -7,8 +7,8 @@ import wandb
 
 from catalyst.dl import utils
 from catalyst.dl.core import Experiment, DLRunner
-from catalyst.dl.experiment import ConfigExperiment
-from catalyst.dl.runner.supervised import SupervisedRunner
+from catalyst.dl.experiment import ConfigDLExperiment
+from catalyst.dl.runner.supervised import SupervisedDLRunner
 
 
 class WandbRunner(DLRunner):
@@ -70,7 +70,7 @@ class WandbRunner(DLRunner):
             log_on_epoch_end=log_on_epoch_end,
             checkpoints_glob=checkpoints_glob,
         )
-        if isinstance(experiment, ConfigExperiment):
+        if isinstance(experiment, ConfigDLExperiment):
             exp_config = utils.flatten_dict(experiment.stages_config)
             wandb.init(**monitoring_params, config=exp_config)
         else:
@@ -142,7 +142,7 @@ class WandbRunner(DLRunner):
         self._post_experiment_hook(experiment=experiment)
 
 
-class SupervisedWandbRunner(WandbRunner, SupervisedRunner):
+class SupervisedWandbRunner(WandbRunner, SupervisedDLRunner):
     pass
 
 

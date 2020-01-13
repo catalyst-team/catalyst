@@ -86,7 +86,7 @@ NUM_EPOCHS = 2
 
 # In[ ]:
 
-from catalyst.dl.runner import SupervisedRunner
+from catalyst.dl.runner import SupervisedDLRunner
 
 # experiment setup
 num_epochs = NUM_EPOCHS
@@ -98,7 +98,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters())
 
 # model runner
-runner = SupervisedRunner()
+runner = SupervisedDLRunner()
 
 # model training
 runner.train(
@@ -121,7 +121,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.dl.runner import SupervisedRunner
+from catalyst.dl.runner import SupervisedDLRunner
 
 # experiment setup
 num_epochs = NUM_EPOCHS
@@ -139,7 +139,7 @@ scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
 )
 
 # model runner
-runner = SupervisedRunner()
+runner = SupervisedDLRunner()
 
 # model training
 runner.train(
@@ -157,7 +157,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.dl.runner import SupervisedRunner
+from catalyst.dl.runner import SupervisedDLRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback
 
 # experiment setup
@@ -173,7 +173,7 @@ scheduler = torch.optim.lr_scheduler.MultiStepLR(
 )
 
 # model runner
-runner = SupervisedRunner()
+runner = SupervisedDLRunner()
 
 # model training
 runner.train(
@@ -196,7 +196,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.dl.runner import SupervisedRunner
+from catalyst.dl.runner import SupervisedDLRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
 
 # experiment setup
@@ -212,7 +212,7 @@ scheduler = torch.optim.lr_scheduler.MultiStepLR(
 )
 
 # model runner
-runner = SupervisedRunner()
+runner = SupervisedDLRunner()
 
 # model training
 runner.train(
@@ -240,7 +240,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.dl.runner import SupervisedRunner
+from catalyst.dl.runner import SupervisedDLRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
 from catalyst.contrib.schedulers import OneCycleLRWithWarmup
 
@@ -261,7 +261,7 @@ scheduler = OneCycleLRWithWarmup(
 )
 
 # model runner
-runner = SupervisedRunner()
+runner = SupervisedDLRunner()
 
 # model training
 runner.train(
@@ -290,7 +290,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.dl.runner import SupervisedRunner
+from catalyst.dl.runner import SupervisedDLRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
 
 # experiment setup
@@ -306,7 +306,7 @@ scheduler = torch.optim.lr_scheduler.MultiStepLR(
 )
 
 # model runner
-runner = SupervisedRunner()
+runner = SupervisedDLRunner()
 
 # model training
 runner.train(
@@ -332,7 +332,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.dl.runner import SupervisedRunner
+from catalyst.dl.runner import SupervisedDLRunner
 
 # experiment setup
 num_epochs = NUM_EPOCHS
@@ -347,7 +347,7 @@ scheduler = torch.optim.lr_scheduler.MultiStepLR(
 )
 
 # model runner
-runner = SupervisedRunner()
+runner = SupervisedDLRunner()
 
 # model training
 runner.train(
@@ -365,7 +365,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.dl.runner import SupervisedRunner
+from catalyst.dl.runner import SupervisedDLRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
 
 # experiment setup
@@ -381,7 +381,7 @@ scheduler = torch.optim.lr_scheduler.MultiStepLR(
 )
 
 # model runner
-runner = SupervisedRunner()
+runner = SupervisedDLRunner()
 
 # model training - 1
 runner.train(

@@ -3,15 +3,15 @@ from typing import Callable  # isort:skip
 from catalyst.core import Runner
 from catalyst.dl import utils
 from .experiment import DLExperiment
-from .state import DLRunnerState
+from .state import DLState
 
 
 class DLRunner(Runner):
     experiment: DLExperiment
-    state: DLRunnerState
+    state: DLState
 
     experiment_fn: Callable = DLExperiment
-    state_fn: callable = DLRunnerState
+    state_fn: callable = DLState
 
     def _prepare_for_stage(self, stage: str):
         super()._prepare_for_stage(stage=stage)

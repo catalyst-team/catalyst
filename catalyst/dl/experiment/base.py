@@ -8,7 +8,7 @@ from catalyst.dl import utils, Callback, DLExperiment
 from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
 
 
-class BaseExperiment(DLExperiment):
+class BaseDLExperiment(DLExperiment):
     """
     Super-simple one-staged experiment
         you can use to declare experiment in code
@@ -150,4 +150,4 @@ class BaseExperiment(DLExperiment):
         return self._loaders
 
 
-__all__ = ["BaseExperiment"]
+__all__ = ["BaseDLExperiment"]
