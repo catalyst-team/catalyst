@@ -8,8 +8,7 @@ from catalyst import utils
 URL = {
     "classification": "https://github.com/catalyst-team/classification/",
     "segmentation": "https://github.com/catalyst-team/segmentation/",
-    # Not here yet
-    # "detection": "https://github.com/catalyst-team/detection/"
+    "detection": "https://github.com/catalyst-team/detection/"
 }
 
 CATALYST_ROOT = Path(__file__).resolve().parents[3]
