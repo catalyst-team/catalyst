@@ -2,7 +2,8 @@ from catalyst.contrib.registry import (
     Criterion, CRITERIONS, GRAD_CLIPPERS, Model, MODELS, Module, MODULES,
     Optimizer, OPTIMIZERS, Sampler, SAMPLERS, Scheduler, SCHEDULERS
 )
-from ..utils.registry import Registry
+from catalyst.utils.registry import Registry
+from catalyst.core.registry import CALLBACKS, Callback
 
 
 def _callbacks_loader(r: Registry):
@@ -10,9 +11,7 @@ def _callbacks_loader(r: Registry):
     r.add_from_module(m)
 
 
-CALLBACKS = Registry("callback")
 CALLBACKS.late_add(_callbacks_loader)
-Callback = CALLBACKS.add
 
 __all__ = [
     "Criterion", "Optimizer", "Scheduler", "Callback", "Module", "Model",

@@ -40,16 +40,16 @@ class LRFinder(LRUpdater):
         else:
             raise Exception("Not supported")
 
-    def calc_lr(self):
-        res = self._calc_lr()
-        self.find_iter += 1
-        return res
-
     def _calc_lr_log(self):
         return self.init_lr * self.multiplier**self.find_iter
 
     def _calc_lr_linear(self):
         return self.init_lr + self.lr_step * self.find_iter
+
+    def calc_lr(self):
+        res = self._calc_lr()
+        self.find_iter += 1
+        return res
 
     def on_loader_start(self, state: DLRunnerState):
         if state.need_backward:
