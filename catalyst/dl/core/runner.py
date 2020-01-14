@@ -348,6 +348,7 @@ class Runner(ABC):
             for stage in self.experiment.stages:
                 self._run_stage(stage)
         except (Exception, KeyboardInterrupt) as ex:
+            raise ex
             self.state.exception = ex
             self._run_event("exception", moment=None)
 
