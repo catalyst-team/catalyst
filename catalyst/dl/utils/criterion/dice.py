@@ -32,7 +32,9 @@ def dice(
 
     intersection = torch.sum(targets * outputs)
     union = torch.sum(targets) + torch.sum(outputs)
-    dice = 2 * intersection / (union + eps)
+    
+    # same as in iou.py
+    dice = 2 * (intersection + eps * (union == 0)) / (union + eps)
 
     return dice
 
