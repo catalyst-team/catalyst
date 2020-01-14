@@ -18,7 +18,7 @@ class DLRunner(Runner):
 
         # @TODO: remove this trick
         utils.set_global_seed(self.experiment.initial_seed)
-        loaders = self.experiment.get_loaders(stage)
+        loaders = self.experiment.get_loaders(stage=stage)
         self.loaders = loaders
 
 

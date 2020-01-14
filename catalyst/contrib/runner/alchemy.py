@@ -76,7 +76,7 @@ class AlchemyRunner(DLRunner):
         super()._run_batch(batch=batch)
         if self.log_on_batch_end:
             mode = self.state.loader_name
-            metrics = self.state.metrics.batch_values
+            metrics = self.state.metric_manager.batch_values
             self._log_metrics(
                 metrics=metrics,
                 mode=mode,
@@ -86,7 +86,7 @@ class AlchemyRunner(DLRunner):
     def _run_epoch(self, loaders):
         super()._run_epoch(loaders=loaders)
         if self.log_on_epoch_end:
-            for mode, metrics in self.state.metrics.epoch_values.items():
+            for mode, metrics in self.state.metric_manager.epoch_values.items():
                 self._log_metrics(
                     metrics=metrics,
                     mode=mode,

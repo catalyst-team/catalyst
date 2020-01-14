@@ -31,7 +31,7 @@ class EarlyStoppingCallback(Callback):
         if state.stage.startswith("infer"):
             return
 
-        score = state.metrics.valid_values[self.metric]
+        score = state.metric_manager.valid_values[self.metric]
         if self.best_score is None:
             self.best_score = score
         if self.is_better(score, self.best_score):

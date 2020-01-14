@@ -118,11 +118,11 @@ class MulticlassDiceMetricCallback(Callback):
                 continue
 
             metric_name = self.class_names[metric_id]
-            state.metrics.epoch_values[state.loader_name][
+            state.metric_manager.epoch_values[state.loader_name][
                 f"{self.class_prefix}_{metric_name}"
             ] = dice_value
 
-        state.metrics.epoch_values[state.loader_name]["mean"] = np.mean(
+        state.metric_manager.epoch_values[state.loader_name]["mean"] = np.mean(
             [x for x in batch_metrics.values()]
         )
 

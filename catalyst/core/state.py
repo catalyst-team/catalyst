@@ -42,7 +42,7 @@ class State(FrozenClass):
         self.main_metric = main_metric
         self.minimize_metric = minimize_metric
         self.valid_loader = valid_loader
-        self.metrics = MetricManager(
+        self.metric_manager = MetricManager(
             valid_loader=valid_loader,
             main_metric=main_metric,
             minimize=minimize_metric,
@@ -94,7 +94,7 @@ class State(FrozenClass):
         values["_timers/_fps"] = \
             self.batch_size / self.timer.elapsed["_timers/batch_time"]
 
-        self.metrics.add_batch_value(metrics_dict=values)
+        self.metric_manager.add_batch_value(metrics_dict=values)
 
     def on_stage_start_pre(self):
         pass
@@ -109,7 +109,7 @@ class State(FrozenClass):
         pass
 
     def on_epoch_start_pre(self):
-        self.metrics.begin_epoch()
+        self.metric_manager.begin_epoch()
         pass
 
     def on_epoch_start_post(self):
@@ -117,25 +117,25 @@ class State(FrozenClass):
 
     def on_epoch_end_pre(self):
         if not self.stage.startswith("infer"):
-            self.metrics.end_epoch_train()
+            self.metric_manager.end_epoch_train()
 
     def on_epoch_end_post(self):
         pass
 
     def on_loader_start_pre(self):
-        self.metrics.begin_loader(self.loader_name)
+        self.metric_manager.begin_loader(self.loader_name)
 
     def on_loader_start_post(self):
         pass
 
     def on_loader_end_pre(self):
-        self.metrics.end_loader()
+        self.metric_manager.end_loader()
 
     def on_loader_end_post(self):
         pass
 
     def on_batch_start_pre(self):
-        self.metrics.begin_batch()
+        self.metric_manager.begin_batch()
 
     def on_batch_start_post(self):
         pass
@@ -145,7 +145,7 @@ class State(FrozenClass):
 
     def on_batch_end_post(self):
         self._handle_runner_metrics()
-        self.metrics.end_batch()
+        self.metric_manager.end_batch()
 
     def on_exception_pre(self):
         pass

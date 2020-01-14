@@ -106,7 +106,7 @@ class MetricCallback(Callback):
         outputs = state.output[self.output_key]
         targets = state.input[self.input_key]
         metric = self.metric_fn(outputs, targets, **self.metric_params)
-        state.metrics.add_batch_value(name=self.prefix, value=metric)
+        state.metric_manager.add_batch_value(name=self.prefix, value=metric)
 
 
 class MultiMetricCallback(Callback):
@@ -146,7 +146,7 @@ class MultiMetricCallback(Callback):
             else:
                 key = f"{self.prefix}_{arg}"
             batch_metrics[key] = metric
-        state.metrics.add_batch_value(metrics_dict=batch_metrics)
+        state.metric_manager.add_batch_value(metrics_dict=batch_metrics)
 
 
 __all__ = [

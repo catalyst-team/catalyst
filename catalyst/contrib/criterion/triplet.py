@@ -138,8 +138,8 @@ class TripletLoss(nn.Module):
         # For each anchor, get the hardest negative
         # First, we need to get a mask for every valid negative
         # (they should have different labels)
-        mask_anchor_negative = self._get_anchor_negative_triplet_mask(
-            labels).float()
+        mask_anchor_negative = \
+            self._get_anchor_negative_triplet_mask(labels).float()
 
         # We add the maximum value in each row
         # to the invalid negatives (label(a) == label(n))
@@ -189,8 +189,8 @@ class TripletPairwiseEmbeddingLoss(nn.Module):
         """
         Work in progress.
         Args:
-            embeddings_pred: predicted embeddings
-            embeddings_true: true embeddings
+            embeddings_pred: predicted embeddings with shape [batch_size, embedding_size]
+            embeddings_true: true embeddings with shape [batch_size, embedding_size]
 
         Returns:
             loss
@@ -199,6 +199,8 @@ class TripletPairwiseEmbeddingLoss(nn.Module):
         # s - state space
         # d - embeddings space
         # a - action space
+        # [batch_size, embedding_size] x [batch_size, embedding_size]
+        # -> [batch_size, batch_size]
         pairwise_similarity = torch.einsum(
             "se,ae->sa",
             embeddings_pred,

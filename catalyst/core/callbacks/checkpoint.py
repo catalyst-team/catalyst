@@ -43,8 +43,8 @@ class BaseCheckpointCallback(Callback):
             return
 
         try:
-            valid_metrics = state.metrics.valid_values
-            epoch_metrics = state.metrics.epoch_values
+            valid_metrics = state.metric_manager.valid_values
+            epoch_metrics = state.metric_manager.epoch_values
             checkpoint = utils.pack_checkpoint(
                 model=state.model,
                 criterion=state.criterion,
@@ -216,8 +216,8 @@ class CheckpointCallback(BaseCheckpointCallback):
         if state.stage.startswith("infer"):
             return
 
-        valid_metrics = dict(state.metrics.valid_values)
-        epoch_metrics = dict(state.metrics.epoch_values)
+        valid_metrics = dict(state.metric_manager.valid_values)
+        epoch_metrics = dict(state.metric_manager.epoch_values)
 
         checkpoint = utils.pack_checkpoint(
             model=state.model,
@@ -233,7 +233,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         self.process_checkpoint(
             logdir=state.logdir,
             checkpoint=checkpoint,
-            is_best=state.metrics.is_best,
+            is_best=state.metric_manager.is_best,
             main_metric=state.main_metric,
             minimize_metric=state.minimize_metric
         )
@@ -350,7 +350,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
             self.process_checkpoint(
                 logdir=state.logdir,
                 checkpoint=checkpoint,
-                batch_values=state.metrics.batch_values
+                batch_values=state.metric_manager.batch_values
             )
 
 

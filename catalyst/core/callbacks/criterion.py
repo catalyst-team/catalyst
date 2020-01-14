@@ -105,7 +105,7 @@ class CriterionCallback(Callback):
 
         loss = self._compute_loss(state, criterion) * self.multiplier
 
-        state.metrics.add_batch_value(
+        state.metric_manager.add_batch_value(
             metrics_dict={
                 self.prefix: loss.item(),
             }
@@ -235,7 +235,7 @@ class CriterionAggregatorCallback(Callback):
         loss = self._preprocess_loss(loss)
         loss = self.loss_fn(loss)
 
-        state.metrics.add_batch_value(
+        state.metric_manager.add_batch_value(
             metrics_dict={
                 self.prefix: loss.item(),
             }

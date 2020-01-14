@@ -194,7 +194,7 @@ class KNNMetricCallback(Callback):
 
         y_true, y_pred = self._knn(s)
 
-        loader_values = state.metrics.epoch_values[state.loader_name]
+        loader_values = state.metric_manager.epoch_values[state.loader_name]
         if self.num_classes == 2:
             loader_values[self.prefix] = \
                 self.metric_fn(y_true, y_pred, average="binary")
@@ -232,7 +232,7 @@ class KNNMetricCallback(Callback):
                         self._knn(self.sets[k], self.sets[v])
 
                     loader_values = \
-                        state.metrics.epoch_values[f"{k}_{v}_cv"]
+                        state.metric_manager.epoch_values[f"{k}_{v}_cv"]
 
                     if self.num_classes == 2:
                         loader_values[f"{self.prefix}"] = \

@@ -81,7 +81,7 @@ class DLState(State):
         values["_timers/_fps"] = \
             self.batch_size / self.timer.elapsed["_timers/batch_time"]
 
-        self.metrics.add_batch_value(metrics_dict=values)
+        self.metric_manager.add_batch_value(metrics_dict=values)
 
 
 __all__ = ["DLState"]

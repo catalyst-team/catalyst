@@ -70,7 +70,7 @@ class VerboseLogger(LoggerCallback):
         self.tqdm.set_postfix(
             **{
                 k: "{:3.3f}".format(v) if v > 1e-3 else "{:1.3e}".format(v)
-                for k, v in sorted(state.metrics.batch_values.items())
+                for k, v in sorted(state.metric_manager.batch_values.items())
                 if self._need_show(k)
             }
         )
@@ -201,7 +201,7 @@ class TensorboardLogger(LoggerCallback):
         """Translate batch metrics to tensorboard"""
         if self.log_on_batch_end:
             mode = state.loader_name
-            metrics_ = state.metrics.batch_values
+            metrics_ = state.metric_manager.batch_values
             self._log_metrics(
                 metrics=metrics_, step=state.step, mode=mode, suffix="/batch"
             )
@@ -210,7 +210,7 @@ class TensorboardLogger(LoggerCallback):
         """Translate epoch metrics to tensorboard"""
         if self.log_on_epoch_end:
             mode = state.loader_name
-            metrics_ = state.metrics.epoch_values[mode]
+            metrics_ = state.metric_manager.epoch_values[mode]
             self._log_metrics(
                 metrics=metrics_,
                 step=state.epoch_log,
@@ -305,7 +305,7 @@ class TelegramLogger(LoggerCallback):
     def on_loader_end(self, state: State):
         """Translate ``state.metrics`` to telegram channel"""
         if self.log_on_loader_end:
-            metrics = state.metrics.epoch_values[state.loader_name]
+            metrics = state.metric_manager.epoch_values[state.loader_name]
 
             if self.metrics_to_log is None:
                 metrics_to_log = sorted(list(metrics.keys()))

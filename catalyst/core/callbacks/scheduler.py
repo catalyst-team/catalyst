@@ -24,7 +24,7 @@ class SchedulerCallback(Callback):
         )
 
         valid_metric = \
-            safitty.get(state.metrics.valid_values, self.reduce_metric)
+            safitty.get(state.metric_manager.valid_values, self.reduce_metric)
         lr, momentum = self._scheduler_step(
             scheduler=scheduler, valid_metric=valid_metric
         )
