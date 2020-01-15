@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.runner.supervised &#8212; Catalyst 19.12.1 documentation</title>
+    <title>catalyst.dl.runner.supervised &#8212; Catalyst 20.01 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -12,7 +12,6 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
    
@@ -188,8 +187,9 @@
 <span class="sd">                See https://nvidia.github.io/apex/amp.html#properties</span>
 <span class="sd">                if fp16=True, params by default will be ``{&quot;opt_level&quot;: &quot;O1&quot;}``</span>
 <span class="sd">            monitoring_params (dict): If not None, then create monitoring</span>
-<span class="sd">                through Weights&amp;Biases. This params is used for ``wandb.init``</span>
-<span class="sd">                see https://docs.wandb.com/wandb/init</span>
+<span class="sd">                through Alchemy or Weights&amp;Biases.</span>
+<span class="sd">                For example,</span>
+<span class="sd">                ``{&quot;token&quot;: &quot;api_token&quot;, &quot;experiment&quot;: &quot;experiment_name&quot;}``</span>
 <span class="sd">            check (bool): if True, then only checks that pipeline is working</span>
 <span class="sd">                (3 epochs only)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -485,10 +485,10 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019, Scitator.
+      &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

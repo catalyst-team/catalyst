@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Contrib &#8212; Catalyst 19.12.1 documentation</title>
+    <title>Contrib &#8212; Catalyst 20.01 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -12,7 +12,6 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data" href="data.html" />
@@ -45,6 +44,41 @@
 <dt id="catalyst.contrib.criterion.ce.MaskCrossEntropyLoss.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input</em>, <em class="sig-param">target_mask</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/ce.html#MaskCrossEntropyLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.ce.MaskCrossEntropyLoss.forward" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.criterion.ce.SymmetricCrossEntropyLoss">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.criterion.ce.</code><code class="sig-name descname">SymmetricCrossEntropyLoss</code><span class="sig-paren">(</span><em class="sig-param">alpha=1.0</em>, <em class="sig-param">beta=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/ce.html#SymmetricCrossEntropyLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.ce.SymmetricCrossEntropyLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="method">
+<dt id="catalyst.contrib.criterion.ce.SymmetricCrossEntropyLoss.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">alpha=1.0</em>, <em class="sig-param">beta=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/ce.html#SymmetricCrossEntropyLoss.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.ce.SymmetricCrossEntropyLoss.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Symmetric Cross Entropy
+paper : <a class="reference external" href="https://arxiv.org/abs/1908.06112">https://arxiv.org/abs/1908.06112</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> (<em>float</em>) – corresponds to overfitting issue of CE</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – corresponds to flexible exploration on the robustness of RCE</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.criterion.ce.SymmetricCrossEntropyLoss.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input</em>, <em class="sig-param">target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/ce.html#SymmetricCrossEntropyLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.ce.SymmetricCrossEntropyLoss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> – shape = [batch_size; num_classes]</p></li>
+<li><p><strong>target</strong> – shape = [batch_size]</p></li>
+<li><p><strong>of a vector correspond to class index</strong> (<em>values</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -88,26 +122,88 @@
 
 <span class="target" id="module-catalyst.contrib.criterion.contrastive"></span><dl class="class">
 <dt id="catalyst.contrib.criterion.contrastive.ContrastiveEmbeddingLoss">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.criterion.contrastive.</code><code class="sig-name descname">ContrastiveEmbeddingLoss</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em>, <em class="sig-param">reduction='elementwise_mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveEmbeddingLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastiveEmbeddingLoss" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.criterion.contrastive.</code><code class="sig-name descname">ContrastiveEmbeddingLoss</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveEmbeddingLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastiveEmbeddingLoss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>Contrastive embedding loss</p>
 <p>paper: <a class="reference external" href="http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf">http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf</a></p>
 <dl class="method">
+<dt id="catalyst.contrib.criterion.contrastive.ContrastiveEmbeddingLoss.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveEmbeddingLoss.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastiveEmbeddingLoss.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor method for the ContrastiveEmbeddingLoss class.
+:param margin: margin parameter.
+:param reduction: criterion reduction type.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="catalyst.contrib.criterion.contrastive.ContrastiveEmbeddingLoss.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x0</em>, <em class="sig-param">x1</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveEmbeddingLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastiveEmbeddingLoss.forward" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">embeddings_left</em>, <em class="sig-param">embeddings_right</em>, <em class="sig-param">distance_true</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveEmbeddingLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastiveEmbeddingLoss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward propagation method for the contrastive loss.
+:param embeddings_left: left objects embeddings
+:param embeddings_right: right objects embeddings
+:param distance_true: true distances</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>loss</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.criterion.contrastive.</code><code class="sig-name descname">ContrastiveDistanceLoss</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveDistanceLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.criterion.contrastive.</code><code class="sig-name descname">ContrastiveDistanceLoss</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveDistanceLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>Contrastive distance loss</p>
 <dl class="method">
+<dt id="catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveDistanceLoss.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor method for the ContrastiveDistanceLoss class.
+:param margin: margin parameter.
+:param reduction: criterion reduction type.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">dist</em>, <em class="sig-param">y</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveDistanceLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss.forward" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">distance_pred</em>, <em class="sig-param">distance_true</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastiveDistanceLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastiveDistanceLoss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward propagation method for the contrastive loss.
+:param distance_pred: predicted distances
+:param distance_true: true distances</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>loss</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.criterion.contrastive.ContrastivePairwiseEmbeddingLoss">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.criterion.contrastive.</code><code class="sig-name descname">ContrastivePairwiseEmbeddingLoss</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastivePairwiseEmbeddingLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastivePairwiseEmbeddingLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>ContrastivePairwiseEmbeddingLoss – proof of concept criterion.
+Still work in progress.</p>
+<dl class="method">
+<dt id="catalyst.contrib.criterion.contrastive.ContrastivePairwiseEmbeddingLoss.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastivePairwiseEmbeddingLoss.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastivePairwiseEmbeddingLoss.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor method for the ContrastivePairwiseEmbeddingLoss class.
+:param margin: margin parameter.
+:param reduction: criterion reduction type.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.criterion.contrastive.ContrastivePairwiseEmbeddingLoss.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">embeddings_pred</em>, <em class="sig-param">embeddings_true</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/contrastive.html#ContrastivePairwiseEmbeddingLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.contrastive.ContrastivePairwiseEmbeddingLoss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Work in progress.
+:param embeddings_pred: predicted embeddings
+:param embeddings_true: true embeddings</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>loss</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -181,7 +277,7 @@ Ignores targets having -1 label</p>
 
 <span class="target" id="module-catalyst.contrib.criterion.huber"></span><dl class="class">
 <dt id="catalyst.contrib.criterion.huber.HuberLoss">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.criterion.huber.</code><code class="sig-name descname">HuberLoss</code><span class="sig-paren">(</span><em class="sig-param">clip_delta=1.0</em>, <em class="sig-param">reduction='elementwise_mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/huber.html#HuberLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.huber.HuberLoss" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.criterion.huber.</code><code class="sig-name descname">HuberLoss</code><span class="sig-paren">(</span><em class="sig-param">clip_delta=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/criterion/huber.html#HuberLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.criterion.huber.HuberLoss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <dl class="method">
 <dt id="catalyst.contrib.criterion.huber.HuberLoss.forward">
@@ -313,49 +409,49 @@ Maxim Berman 2018 ESAT-PSI KU Leuven (MIT License)</p>
 <span id="segmentation"></span><h3>Segmentation<a class="headerlink" href="#module-catalyst.contrib.models.segmentation.unet" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.contrib.models.segmentation.unet.ResnetUnet">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.segmentation.unet.</code><code class="sig-name descname">ResnetUnet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">arch: str = 'resnet18'</em>, <em class="sig-param">pretrained: bool = True</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/unet.html#ResnetUnet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.segmentation.unet.ResnetUnet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.segmentation.unet.</code><code class="sig-name descname">ResnetUnet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">arch: str = 'resnet18'</em>, <em class="sig-param">pretrained: bool = True</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em>, <em class="sig-param">state_dict: Union[dict</em>, <em class="sig-param">str</em>, <em class="sig-param">pathlib.Path] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/unet.html#ResnetUnet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.segmentation.unet.ResnetUnet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.models.segmentation.core.ResnetUnetSpec</span></code></p>
 </dd></dl>
 
 <dl class="class">
 <dt id="catalyst.contrib.models.segmentation.unet.Unet">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.segmentation.unet.</code><code class="sig-name descname">Unet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">in_channels: int = 3</em>, <em class="sig-param">num_channels: int = 32</em>, <em class="sig-param">num_blocks: int = 4</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/unet.html#Unet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.segmentation.unet.Unet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.segmentation.unet.</code><code class="sig-name descname">Unet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">in_channels: int = 3</em>, <em class="sig-param">num_channels: int = 32</em>, <em class="sig-param">num_blocks: int = 4</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em>, <em class="sig-param">state_dict: Union[dict</em>, <em class="sig-param">str</em>, <em class="sig-param">pathlib.Path] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/unet.html#Unet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.segmentation.unet.Unet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.models.segmentation.core.UnetSpec</span></code></p>
 </dd></dl>
 
 <span class="target" id="module-catalyst.contrib.models.segmentation.linknet"></span><dl class="class">
 <dt id="catalyst.contrib.models.segmentation.linknet.Linknet">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.segmentation.linknet.</code><code class="sig-name descname">Linknet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">in_channels: int = 3</em>, <em class="sig-param">num_channels: int = 32</em>, <em class="sig-param">num_blocks: int = 4</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/linknet.html#Linknet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.segmentation.linknet.Linknet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.segmentation.linknet.</code><code class="sig-name descname">Linknet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">in_channels: int = 3</em>, <em class="sig-param">num_channels: int = 32</em>, <em class="sig-param">num_blocks: int = 4</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em>, <em class="sig-param">state_dict: Union[dict</em>, <em class="sig-param">str</em>, <em class="sig-param">pathlib.Path] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/linknet.html#Linknet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.segmentation.linknet.Linknet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.models.segmentation.core.UnetSpec</span></code></p>
 </dd></dl>
 
 <dl class="class">
 <dt id="catalyst.contrib.models.segmentation.linknet.ResnetLinknet">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.segmentation.linknet.</code><code class="sig-name descname">ResnetLinknet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">arch: str = 'resnet18'</em>, <em class="sig-param">pretrained: bool = True</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/linknet.html#ResnetLinknet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.segmentation.linknet.ResnetLinknet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.segmentation.linknet.</code><code class="sig-name descname">ResnetLinknet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">arch: str = 'resnet18'</em>, <em class="sig-param">pretrained: bool = True</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em>, <em class="sig-param">state_dict: Union[dict</em>, <em class="sig-param">str</em>, <em class="sig-param">pathlib.Path] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/linknet.html#ResnetLinknet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.segmentation.linknet.ResnetLinknet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.models.segmentation.core.ResnetUnetSpec</span></code></p>
 </dd></dl>
 
 <span class="target" id="module-catalyst.contrib.models.segmentation.fpn"></span><dl class="class">
 <dt id="catalyst.contrib.models.segmentation.fpn.FPNUnet">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.segmentation.fpn.</code><code class="sig-name descname">FPNUnet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">in_channels: int = 3</em>, <em class="sig-param">num_channels: int = 32</em>, <em class="sig-param">num_blocks: int = 4</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/fpn.html#FPNUnet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.segmentation.fpn.FPNUnet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.segmentation.fpn.</code><code class="sig-name descname">FPNUnet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">in_channels: int = 3</em>, <em class="sig-param">num_channels: int = 32</em>, <em class="sig-param">num_blocks: int = 4</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em>, <em class="sig-param">state_dict: Union[dict</em>, <em class="sig-param">str</em>, <em class="sig-param">pathlib.Path] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/fpn.html#FPNUnet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.segmentation.fpn.FPNUnet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.models.segmentation.core.UnetSpec</span></code></p>
 </dd></dl>
 
 <dl class="class">
 <dt id="catalyst.contrib.models.segmentation.fpn.ResnetFPNUnet">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.segmentation.fpn.</code><code class="sig-name descname">ResnetFPNUnet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">arch: str = 'resnet18'</em>, <em class="sig-param">pretrained: bool = True</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/fpn.html#ResnetFPNUnet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.segmentation.fpn.ResnetFPNUnet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.segmentation.fpn.</code><code class="sig-name descname">ResnetFPNUnet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">arch: str = 'resnet18'</em>, <em class="sig-param">pretrained: bool = True</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em>, <em class="sig-param">state_dict: Union[dict</em>, <em class="sig-param">str</em>, <em class="sig-param">pathlib.Path] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/fpn.html#ResnetFPNUnet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.segmentation.fpn.ResnetFPNUnet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.models.segmentation.core.ResnetUnetSpec</span></code></p>
 </dd></dl>
 
 <span class="target" id="module-catalyst.contrib.models.segmentation.psp"></span><dl class="class">
 <dt id="catalyst.contrib.models.segmentation.psp.PSPnet">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.segmentation.psp.</code><code class="sig-name descname">PSPnet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">in_channels: int = 3</em>, <em class="sig-param">num_channels: int = 32</em>, <em class="sig-param">num_blocks: int = 4</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/psp.html#PSPnet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.segmentation.psp.PSPnet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.segmentation.psp.</code><code class="sig-name descname">PSPnet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">in_channels: int = 3</em>, <em class="sig-param">num_channels: int = 32</em>, <em class="sig-param">num_blocks: int = 4</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em>, <em class="sig-param">state_dict: Union[dict</em>, <em class="sig-param">str</em>, <em class="sig-param">pathlib.Path] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/psp.html#PSPnet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.segmentation.psp.PSPnet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.models.segmentation.core.UnetSpec</span></code></p>
 </dd></dl>
 
 <dl class="class">
 <dt id="catalyst.contrib.models.segmentation.psp.ResnetPSPnet">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.segmentation.psp.</code><code class="sig-name descname">ResnetPSPnet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">arch: str = 'resnet18'</em>, <em class="sig-param">pretrained: bool = True</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/psp.html#ResnetPSPnet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.segmentation.psp.ResnetPSPnet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.segmentation.psp.</code><code class="sig-name descname">ResnetPSPnet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">arch: str = 'resnet18'</em>, <em class="sig-param">pretrained: bool = True</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em>, <em class="sig-param">state_dict: Union[dict</em>, <em class="sig-param">str</em>, <em class="sig-param">pathlib.Path] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/segmentation/psp.html#ResnetPSPnet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.segmentation.psp.ResnetPSPnet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.models.segmentation.core.ResnetUnetSpec</span></code></p>
 </dd></dl>
 
@@ -880,10 +976,10 @@ Cannot be set together with <code class="docutils literal notranslate"><span cla
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019, Scitator.
+      &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

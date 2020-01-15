@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.contrib.criterion.ce &#8212; Catalyst 19.12.1 documentation</title>
+    <title>catalyst.contrib.criterion.ce &#8212; Catalyst 20.01 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -12,7 +12,6 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
    
@@ -50,6 +49,46 @@
         <span class="k">return</span> <span class="n">loss</span></div></div>
 
 
+<div class="viewcode-block" id="SymmetricCrossEntropyLoss"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.ce.SymmetricCrossEntropyLoss">[docs]</a><span class="k">class</span> <span class="nc">SymmetricCrossEntropyLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="SymmetricCrossEntropyLoss.__init__"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.ce.SymmetricCrossEntropyLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Symmetric Cross Entropy</span>
+<span class="sd">        paper : https://arxiv.org/abs/1908.06112</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            alpha(float):</span>
+<span class="sd">                corresponds to overfitting issue of CE</span>
+<span class="sd">            beta(float):</span>
+<span class="sd">                corresponds to flexible exploration on the robustness of RCE</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SymmetricCrossEntropyLoss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span></div>
+
+<div class="viewcode-block" id="SymmetricCrossEntropyLoss.forward"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.ce.SymmetricCrossEntropyLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            input: shape = [batch_size; num_classes]</span>
+<span class="sd">            target: shape = [batch_size]</span>
+<span class="sd">            values of a vector correspond to class index</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_classes</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">target_one_hot</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">one_hot</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">target_one_hot</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="nb">input</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">target_one_hot</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">target_one_hot</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="n">cross_entropy</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">target_one_hot</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">input</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">reverse_cross_entropy</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="nb">input</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">target_one_hot</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">cross_entropy</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">*</span> <span class="n">reverse_cross_entropy</span>
+        <span class="k">return</span> <span class="n">loss</span></div></div>
+
+
 <div class="viewcode-block" id="MaskCrossEntropyLoss"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.ce.MaskCrossEntropyLoss">[docs]</a><span class="k">class</span> <span class="nc">MaskCrossEntropyLoss</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
@@ -72,7 +111,11 @@
         <span class="k">return</span> <span class="n">loss</span></div></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MaskCrossEntropyLoss&quot;</span><span class="p">,</span> <span class="s2">&quot;NaiveCrossEntropyLoss&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;MaskCrossEntropyLoss&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SymmetricCrossEntropyLoss&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;NaiveCrossEntropyLoss&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 </pre></div>
 
           </div>
@@ -139,10 +182,10 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019, Scitator.
+      &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

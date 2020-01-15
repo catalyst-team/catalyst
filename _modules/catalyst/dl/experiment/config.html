@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.experiment.config &#8212; Catalyst 19.12.1 documentation</title>
+    <title>catalyst.dl.experiment.config &#8212; Catalyst 20.01 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -12,7 +12,6 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
    
@@ -52,7 +51,7 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">Experiment</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.registry</span> <span class="k">import</span> <span class="p">(</span>
-    <span class="n">CALLBACKS</span><span class="p">,</span> <span class="n">CRITERIONS</span><span class="p">,</span> <span class="n">MODELS</span><span class="p">,</span> <span class="n">OPTIMIZERS</span><span class="p">,</span> <span class="n">SCHEDULERS</span>
+    <span class="n">CALLBACKS</span><span class="p">,</span> <span class="n">CRITERIONS</span><span class="p">,</span> <span class="n">MODELS</span><span class="p">,</span> <span class="n">OPTIMIZERS</span><span class="p">,</span> <span class="n">SAMPLERS</span><span class="p">,</span> <span class="n">SCHEDULERS</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.typing</span> <span class="k">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
 
@@ -367,8 +366,14 @@
         <span class="n">datasets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_datasets</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">,</span> <span class="o">**</span><span class="n">data_params</span><span class="p">)</span>
 
         <span class="n">overridden_loaders_params</span> <span class="o">=</span> <span class="n">data_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;loaders_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">overridden_loaders_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> \
-            <span class="n">f</span><span class="s2">&quot;</span><span class="si">{overridden_loaders_params}</span><span class="s2"> should be Dict&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">overridden_loaders_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> <span class="p">(</span>
+            <span class="n">f</span><span class="s2">&quot;`overridden_loaders_params` should be a Dict. &quot;</span>
+            <span class="n">f</span><span class="s2">&quot;Got: </span><span class="si">{overridden_loaders_params}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">samplers_params</span> <span class="o">=</span> <span class="n">data_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;samplers_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">samplers_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> \
+            <span class="n">f</span><span class="s2">&quot;`samplers_params` should be a Dict. Got: </span><span class="si">{samplers_params}</span><span class="s2">&quot;</span>
 
         <span class="n">loaders</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">ds_</span> <span class="ow">in</span> <span class="n">datasets</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -378,6 +383,17 @@
             <span class="n">overridden_loader_params</span> <span class="o">=</span> <span class="n">overridden_loaders_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">{})</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">overridden_loader_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> \
                 <span class="n">f</span><span class="s2">&quot;</span><span class="si">{overridden_loader_params}</span><span class="s2"> should be Dict&quot;</span>
+
+            <span class="n">sampler_params</span> <span class="o">=</span> <span class="n">samplers_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sampler_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ds_</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;sampler&quot;</span> <span class="ow">in</span> <span class="n">ds_</span><span class="p">:</span>
+                    <span class="n">sampler</span> <span class="o">=</span> <span class="n">ds_</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sampler</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sampler</span> <span class="o">=</span> <span class="n">SAMPLERS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span><span class="o">**</span><span class="n">sampler_params</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ds_</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;sampler&quot;</span> <span class="ow">in</span> <span class="n">ds_</span><span class="p">:</span>
+                    <span class="n">ds_</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
             <span class="n">batch_size</span> <span class="o">=</span> <span class="n">overridden_loader_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;batch_size&quot;</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
             <span class="n">num_workers</span> <span class="o">=</span> <span class="n">overridden_loader_params</span><span class="o">.</span>\
@@ -406,18 +422,18 @@
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
             <span class="k">if</span> <span class="n">distributed</span><span class="p">:</span>
-                <span class="n">sampler</span> <span class="o">=</span> <span class="n">loader_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">sampler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">DistributedSampler</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">loader_params</span><span class="p">[</span><span class="s2">&quot;sampler&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DistributedSampler</span><span class="p">(</span>
+                    <span class="n">sampler</span> <span class="o">=</span> <span class="n">DistributedSampler</span><span class="p">(</span>
                         <span class="n">dataset</span><span class="o">=</span><span class="n">loader_params</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
                     <span class="p">)</span>
 
             <span class="n">loader_params</span><span class="p">[</span><span class="s2">&quot;shuffle&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;train&quot;</span><span class="p">)</span>
-                <span class="ow">and</span> <span class="n">loader_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;train&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sampler</span> <span class="ow">is</span> <span class="kc">None</span>
             <span class="p">)</span>
+
+            <span class="n">loader_params</span><span class="p">[</span><span class="s2">&quot;sampler&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sampler</span>
 
             <span class="k">if</span> <span class="s2">&quot;batch_sampler&quot;</span> <span class="ow">in</span> <span class="n">loader_params</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">distributed</span><span class="p">:</span>
@@ -553,10 +569,10 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019, Scitator.
+      &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

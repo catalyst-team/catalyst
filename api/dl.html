@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>DL &#8212; Catalyst 19.12.1 documentation</title>
+    <title>DL &#8212; Catalyst 20.01 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -12,7 +12,6 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="RL" href="rl.html" />
@@ -503,7 +502,7 @@ call, override forward() method
 <span class="target" id="module-catalyst.dl.core.state"></span><dl class="class">
 <dt id="catalyst.dl.core.state.RunnerState">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.core.state.</code><code class="sig-name descname">RunnerState</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">device=None</em>, <em class="sig-param">model=None</em>, <em class="sig-param">criterion=None</em>, <em class="sig-param">optimizer: torch.optim.optimizer.Optimizer = None</em>, <em class="sig-param">scheduler=None</em>, <em class="sig-param">logdir: str = None</em>, <em class="sig-param">stage: str = 'infer'</em>, <em class="sig-param">num_epochs: int = 1</em>, <em class="sig-param">main_metric: str = 'loss'</em>, <em class="sig-param">minimize_metric: bool = True</em>, <em class="sig-param">valid_loader: str = 'valid'</em>, <em class="sig-param">verbose: bool = False</em>, <em class="sig-param">checkpoint_data: Dict = None</em>, <em class="sig-param">batch_consistant_metrics: bool = True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/core/state.html#RunnerState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.core.state.RunnerState" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="utils.html#catalyst.utils.frozen.FrozenClass" title="catalyst.utils.frozen.FrozenClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.utils.frozen.FrozenClass</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.utils.frozen.FrozenClass</span></code></p>
 <p>An object that is used to pass internal state during train/valid/infer.</p>
 <dl class="method">
 <dt id="catalyst.dl.core.state.RunnerState.epoch_log">
@@ -738,20 +737,20 @@ in checkpoint folder. Must ends on <code class="docutils literal notranslate"><s
 
 <span class="target" id="module-catalyst.dl.callbacks.criterion"></span><dl class="class">
 <dt id="catalyst.dl.callbacks.criterion.CriterionCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.criterion.</code><code class="sig-name descname">CriterionCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: Union[str</em>, <em class="sig-param">List[str]] = 'targets'</em>, <em class="sig-param">output_key: Union[str</em>, <em class="sig-param">List[str]] = 'logits'</em>, <em class="sig-param">prefix: str = 'loss'</em>, <em class="sig-param">criterion_key: str = None</em>, <em class="sig-param">multiplier: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/criterion.html#CriterionCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.criterion.CriterionCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.criterion.</code><code class="sig-name descname">CriterionCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', prefix: str = 'loss', criterion_key: str = None, multiplier: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/criterion.html#CriterionCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.criterion.CriterionCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.dl.core.callback.Callback" title="catalyst.dl.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.core.callback.Callback</span></code></a></p>
 <p>Callback for that measures loss with specified criterion.</p>
 <dl class="method">
 <dt id="catalyst.dl.callbacks.criterion.CriterionCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: Union[str</em>, <em class="sig-param">List[str]] = 'targets'</em>, <em class="sig-param">output_key: Union[str</em>, <em class="sig-param">List[str]] = 'logits'</em>, <em class="sig-param">prefix: str = 'loss'</em>, <em class="sig-param">criterion_key: str = None</em>, <em class="sig-param">multiplier: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/criterion.html#CriterionCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.criterion.CriterionCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', prefix: str = 'loss', criterion_key: str = None, multiplier: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/criterion.html#CriterionCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.criterion.CriterionCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – key or list of keys that takes
-values from the input dictionary
+<li><p><strong>input_key</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>]</em>) – key/list/dict
+of keys that takes values from the input dictionary
 If None, the whole input will be passed to the criterion.</p></li>
-<li><p><strong>output_key</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – key or list of keys that takes
-values from the output dictionary
+<li><p><strong>output_key</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>]</em>) – key/list/dict
+of keys that takes values from the input dictionary
 If None, the whole output will be passed to the criterion.</p></li>
 <li><p><strong>prefix</strong> (<em>str</em>) – prefix for metrics and output key for loss
 in <code class="docutils literal notranslate"><span class="pre">state.loss</span></code> dictionary</p></li>
@@ -773,6 +772,30 @@ there are several of them and they are in a dictionary format.</p></li>
 <dt id="catalyst.dl.callbacks.criterion.CriterionCallback.on_stage_start">
 <code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/criterion.html#CriterionCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.criterion.CriterionCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks that the current stage has correct criterion</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.callbacks.criterion.CriterionOutputOnlyCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.criterion.</code><code class="sig-name descname">CriterionOutputOnlyCallback</code><span class="sig-paren">(</span><em class="sig-param">output_key: Union[Dict[str, str], List[str]], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/criterion.html#CriterionOutputOnlyCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.criterion.CriterionOutputOnlyCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.callbacks.criterion.CriterionCallback" title="catalyst.dl.callbacks.criterion.CriterionCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.callbacks.criterion.CriterionCallback</span></code></a></p>
+<p>Callback for that measures loss with specified criterion.
+Based on model output only.
+&#64;TODO: merge logic with CriterionCallback.</p>
+<dl class="method">
+<dt id="catalyst.dl.callbacks.criterion.CriterionOutputOnlyCallback.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">output_key: Union[Dict[str, str], List[str]], **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/criterion.html#CriterionOutputOnlyCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.criterion.CriterionOutputOnlyCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output_key</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em><em>, </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – dict or list of keys
+that takes values from the output dictionary
+If None, the whole output will be passed to the criterion.</p></li>
+<li><p><strong>**kwargs</strong> – CriterionCallback init parameters</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -858,52 +881,6 @@ Must be either <code class="docutils literal notranslate"><span class="pre">sum<
 </dd></dl>
 
 <span class="target" id="module-catalyst.dl.callbacks.logging"></span><dl class="class">
-<dt id="catalyst.dl.callbacks.logging.VerboseLogger">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.logging.</code><code class="sig-name descname">VerboseLogger</code><span class="sig-paren">(</span><em class="sig-param">always_show: List[str] = None</em>, <em class="sig-param">never_show: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#VerboseLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.VerboseLogger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.core.callback.LoggerCallback" title="catalyst.dl.core.callback.LoggerCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.core.callback.LoggerCallback</span></code></a></p>
-<p>Logs the params into console</p>
-<dl class="method">
-<dt id="catalyst.dl.callbacks.logging.VerboseLogger.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">always_show: List[str] = None</em>, <em class="sig-param">never_show: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#VerboseLogger.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.VerboseLogger.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>always_show</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of metrics to always show
-if None default is <code class="docutils literal notranslate"><span class="pre">[&quot;_timers/_fps&quot;]</span></code>
-to remove always_show metrics set it to an empty list <code class="docutils literal notranslate"><span class="pre">[]</span></code></p></li>
-<li><p><strong>never_show</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of metrics which will not be shown</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.dl.callbacks.logging.VerboseLogger.on_batch_end">
-<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#VerboseLogger.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.VerboseLogger.on_batch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update tqdm progress bar at the end of each batch</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.dl.callbacks.logging.VerboseLogger.on_exception">
-<code class="sig-name descname">on_exception</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#VerboseLogger.on_exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.VerboseLogger.on_exception" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called if an Exception was raised</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.dl.callbacks.logging.VerboseLogger.on_loader_end">
-<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#VerboseLogger.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.VerboseLogger.on_loader_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cleanup and close tqdm progress bar</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.dl.callbacks.logging.VerboseLogger.on_loader_start">
-<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#VerboseLogger.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.VerboseLogger.on_loader_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Init tqdm progress bar</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="catalyst.dl.callbacks.logging.ConsoleLogger">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.logging.</code><code class="sig-name descname">ConsoleLogger</code><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#ConsoleLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.ConsoleLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.dl.core.callback.LoggerCallback" title="catalyst.dl.core.callback.LoggerCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.core.callback.LoggerCallback</span></code></a></p>
@@ -931,52 +908,6 @@ at the end of an epoch</p>
 <dt id="catalyst.dl.callbacks.logging.ConsoleLogger.on_stage_start">
 <code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#ConsoleLogger.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.ConsoleLogger.on_stage_start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prepare <code class="docutils literal notranslate"><span class="pre">state.logdir</span></code> for the current stage</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="catalyst.dl.callbacks.logging.TensorboardLogger">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.logging.</code><code class="sig-name descname">TensorboardLogger</code><span class="sig-paren">(</span><em class="sig-param">metric_names: List[str] = None</em>, <em class="sig-param">log_on_batch_end: bool = True</em>, <em class="sig-param">log_on_epoch_end: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#TensorboardLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.TensorboardLogger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.core.callback.LoggerCallback" title="catalyst.dl.core.callback.LoggerCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.core.callback.LoggerCallback</span></code></a></p>
-<p>Logger callback, translates <code class="docutils literal notranslate"><span class="pre">state.metrics</span></code> to tensorboard</p>
-<dl class="method">
-<dt id="catalyst.dl.callbacks.logging.TensorboardLogger.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">metric_names: List[str] = None</em>, <em class="sig-param">log_on_batch_end: bool = True</em>, <em class="sig-param">log_on_epoch_end: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#TensorboardLogger.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.TensorboardLogger.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>metric_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of metric names to log,
-if none - logs everything</p></li>
-<li><p><strong>log_on_batch_end</strong> (<em>bool</em>) – logs per-batch metrics if set True</p></li>
-<li><p><strong>log_on_epoch_end</strong> (<em>bool</em>) – logs per-epoch metrics if set True</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.dl.callbacks.logging.TensorboardLogger.on_batch_end">
-<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#TensorboardLogger.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.TensorboardLogger.on_batch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Translate batch metrics to tensorboard</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.dl.callbacks.logging.TensorboardLogger.on_loader_end">
-<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#TensorboardLogger.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.TensorboardLogger.on_loader_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Translate epoch metrics to tensorboard</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.dl.callbacks.logging.TensorboardLogger.on_loader_start">
-<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#TensorboardLogger.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.TensorboardLogger.on_loader_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prepare tensorboard writers for the current stage</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.dl.callbacks.logging.TensorboardLogger.on_stage_end">
-<code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#TensorboardLogger.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.TensorboardLogger.on_stage_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Close opened tensorboard writers</p>
 </dd></dl>
 
 </dd></dl>
@@ -1035,6 +966,98 @@ if none - logs everything.</p></li>
 <dt id="catalyst.dl.callbacks.logging.TelegramLogger.on_stage_start">
 <code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#TelegramLogger.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.TelegramLogger.on_stage_start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Notify about starting a new stage</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.callbacks.logging.TensorboardLogger">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.logging.</code><code class="sig-name descname">TensorboardLogger</code><span class="sig-paren">(</span><em class="sig-param">metric_names: List[str] = None</em>, <em class="sig-param">log_on_batch_end: bool = True</em>, <em class="sig-param">log_on_epoch_end: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#TensorboardLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.TensorboardLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.core.callback.LoggerCallback" title="catalyst.dl.core.callback.LoggerCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.core.callback.LoggerCallback</span></code></a></p>
+<p>Logger callback, translates <code class="docutils literal notranslate"><span class="pre">state.metrics</span></code> to tensorboard</p>
+<dl class="method">
+<dt id="catalyst.dl.callbacks.logging.TensorboardLogger.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">metric_names: List[str] = None</em>, <em class="sig-param">log_on_batch_end: bool = True</em>, <em class="sig-param">log_on_epoch_end: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#TensorboardLogger.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.TensorboardLogger.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metric_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of metric names to log,
+if none - logs everything</p></li>
+<li><p><strong>log_on_batch_end</strong> (<em>bool</em>) – logs per-batch metrics if set True</p></li>
+<li><p><strong>log_on_epoch_end</strong> (<em>bool</em>) – logs per-epoch metrics if set True</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.logging.TensorboardLogger.on_batch_end">
+<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#TensorboardLogger.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.TensorboardLogger.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translate batch metrics to tensorboard</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.logging.TensorboardLogger.on_loader_end">
+<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#TensorboardLogger.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.TensorboardLogger.on_loader_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translate epoch metrics to tensorboard</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.logging.TensorboardLogger.on_loader_start">
+<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#TensorboardLogger.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.TensorboardLogger.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare tensorboard writers for the current stage</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.logging.TensorboardLogger.on_stage_end">
+<code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#TensorboardLogger.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.TensorboardLogger.on_stage_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close opened tensorboard writers</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.dl.callbacks.logging.VerboseLogger">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.logging.</code><code class="sig-name descname">VerboseLogger</code><span class="sig-paren">(</span><em class="sig-param">always_show: List[str] = None</em>, <em class="sig-param">never_show: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#VerboseLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.VerboseLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.core.callback.LoggerCallback" title="catalyst.dl.core.callback.LoggerCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.core.callback.LoggerCallback</span></code></a></p>
+<p>Logs the params into console</p>
+<dl class="method">
+<dt id="catalyst.dl.callbacks.logging.VerboseLogger.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">always_show: List[str] = None</em>, <em class="sig-param">never_show: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#VerboseLogger.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.VerboseLogger.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>always_show</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of metrics to always show
+if None default is <code class="docutils literal notranslate"><span class="pre">[&quot;_timers/_fps&quot;]</span></code>
+to remove always_show metrics set it to an empty list <code class="docutils literal notranslate"><span class="pre">[]</span></code></p></li>
+<li><p><strong>never_show</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of metrics which will not be shown</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.logging.VerboseLogger.on_batch_end">
+<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#VerboseLogger.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.VerboseLogger.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update tqdm progress bar at the end of each batch</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.logging.VerboseLogger.on_exception">
+<code class="sig-name descname">on_exception</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#VerboseLogger.on_exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.VerboseLogger.on_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called if an Exception was raised</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.logging.VerboseLogger.on_loader_end">
+<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#VerboseLogger.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.VerboseLogger.on_loader_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cleanup and close tqdm progress bar</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.logging.VerboseLogger.on_loader_start">
+<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.dl.core.state.RunnerState</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/logging.html#VerboseLogger.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.logging.VerboseLogger.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init tqdm progress bar</p>
 </dd></dl>
 
 </dd></dl>
@@ -1991,8 +2014,9 @@ for example: <code class="docutils literal notranslate"><span class="pre">class_
 See <a class="reference external" href="https://nvidia.github.io/apex/amp.html#properties">https://nvidia.github.io/apex/amp.html#properties</a>
 if fp16=True, params by default will be <code class="docutils literal notranslate"><span class="pre">{&quot;opt_level&quot;:</span> <span class="pre">&quot;O1&quot;}</span></code></p></li>
 <li><p><strong>monitoring_params</strong> (<em>dict</em>) – If not None, then create monitoring
-through Weights&amp;Biases. This params is used for <code class="docutils literal notranslate"><span class="pre">wandb.init</span></code>
-see <a class="reference external" href="https://docs.wandb.com/wandb/init">https://docs.wandb.com/wandb/init</a></p></li>
+through Alchemy or Weights&amp;Biases.
+For example,
+<code class="docutils literal notranslate"><span class="pre">{&quot;token&quot;:</span> <span class="pre">&quot;api_token&quot;,</span> <span class="pre">&quot;experiment&quot;:</span> <span class="pre">&quot;experiment_name&quot;}</span></code></p></li>
 <li><p><strong>check</strong> (<em>bool</em>) – if True, then only checks that pipeline is working
 (3 epochs only)</p></li>
 </ul>
@@ -2114,7 +2138,7 @@ transfer it to data, needed by your network
 (for example open image by path, or tokenize read string)</p></li>
 <li><p><strong>dict_transform</strong> (<em>callable</em>) – transforms to use on dict
 (for example normalize image, add blur, crop/resize/etc)</p></li>
-<li><p><strong>sampler</strong> (<a class="reference internal" href="rl.html#catalyst.rl.core.sampler.Sampler" title="catalyst.rl.core.sampler.Sampler"><em>Sampler</em></a><em>, </em><em>optional</em>) – defines the strategy to draw samples from
+<li><p><strong>sampler</strong> (<em>Sampler</em><em>, </em><em>optional</em>) – defines the strategy to draw samples from
 the dataset</p></li>
 <li><p><strong>collate_fn</strong> (<em>callable</em><em>, </em><em>optional</em>) – merges a list of samples to form a
 mini-batch of Tensor(s).  Used when using batched loading from a
@@ -2820,10 +2844,10 @@ each sample.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019, Scitator.
+      &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

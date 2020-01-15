@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.callbacks.logging &#8212; Catalyst 19.12.1 documentation</title>
+    <title>catalyst.dl.callbacks.logging &#8212; Catalyst 20.01 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -12,7 +12,6 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
    
@@ -146,8 +145,6 @@
         <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;metrics_logger&quot;</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 
-        <span class="n">fh</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/log.txt&quot;</span><span class="p">)</span>
-        <span class="n">fh</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
         <span class="n">ch</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
         <span class="n">ch</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
         <span class="c1"># @TODO: fix json logger</span>
@@ -156,20 +153,25 @@
 
         <span class="n">txt_formatter</span> <span class="o">=</span> <span class="n">TxtMetricsFormatter</span><span class="p">()</span>
         <span class="c1"># json_formatter = JsonMetricsFormatter()</span>
-        <span class="n">fh</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">txt_formatter</span><span class="p">)</span>
         <span class="n">ch</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">txt_formatter</span><span class="p">)</span>
         <span class="c1"># jh.setFormatter(json_formatter)</span>
 
         <span class="c1"># add the handlers to the logger</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">logdir</span><span class="p">:</span>
+            <span class="n">fh</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/log.txt&quot;</span><span class="p">)</span>
+            <span class="n">fh</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+            <span class="n">fh</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">txt_formatter</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+
         <span class="c1"># logger.addHandler(jh)</span>
         <span class="k">return</span> <span class="n">logger</span>
 
 <div class="viewcode-block" id="ConsoleLogger.on_stage_start"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.ConsoleLogger.on_stage_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Prepare ``state.logdir`` for the current stage&quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="n">state</span><span class="o">.</span><span class="n">logdir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">logdir</span><span class="p">:</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">logdir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logger</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">logdir</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ConsoleLogger.on_stage_end"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.ConsoleLogger.on_stage_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
@@ -230,6 +232,9 @@
 
 <div class="viewcode-block" id="TensorboardLogger.on_loader_start"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.TensorboardLogger.on_loader_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Prepare tensorboard writers for the current stage&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">logdir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
         <span class="n">lm</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">loader_name</span>
         <span class="k">if</span> <span class="n">lm</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="p">:</span>
             <span class="n">log_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{lm}</span><span class="s2">_log&quot;</span><span class="p">)</span>
@@ -237,6 +242,9 @@
 
 <div class="viewcode-block" id="TensorboardLogger.on_batch_end"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.TensorboardLogger.on_batch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Translate batch metrics to tensorboard&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">logdir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_on_batch_end</span><span class="p">:</span>
             <span class="n">mode</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">loader_name</span>
             <span class="n">metrics_</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">batch_values</span>
@@ -246,6 +254,9 @@
 
 <div class="viewcode-block" id="TensorboardLogger.on_loader_end"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.TensorboardLogger.on_loader_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Translate epoch metrics to tensorboard&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">logdir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_on_epoch_end</span><span class="p">:</span>
             <span class="n">mode</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">loader_name</span>
             <span class="n">metrics_</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">epoch_values</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span>
@@ -260,6 +271,9 @@
 
 <div class="viewcode-block" id="TensorboardLogger.on_stage_end"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.TensorboardLogger.on_stage_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Close opened tensorboard writers&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">logdir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
         <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
 
@@ -385,10 +399,11 @@
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;VerboseLogger&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ConsoleLogger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TensorboardLogger&quot;</span><span class="p">,</span>
     <span class="s2">&quot;TelegramLogger&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TensorboardLogger&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;VerboseLogger&quot;</span><span class="p">,</span>
+
 <span class="p">]</span>
 </pre></div>
 
@@ -456,10 +471,10 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019, Scitator.
+      &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
