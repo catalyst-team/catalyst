@@ -7,6 +7,9 @@ logger = logging.getLogger(__name__)
 
 
 class MetricAggregatorCallback(Callback):
+    """
+    A callback to aggregate several metrics in one value.
+    """
     def __init__(
         self,
         prefix: str,
@@ -17,7 +20,7 @@ class MetricAggregatorCallback(Callback):
         """
         Args:
             prefix (str): new key for aggregated metric.
-            metric_keys (Union[str, List[str], Dict[str, float]]): If not empty,
+            metric_keys (Union[str, List[str], Dict[str, float]]): If not None,
                 it aggregates only the values from the metric by these keys.
                 for ``weighted_sum`` aggregation it must be a Dict[str, float].
             metric_aggregate_fn (str): function for aggregation.
@@ -40,8 +43,8 @@ class MetricAggregatorCallback(Callback):
         elif metric_aggregate_fn == "weighted_sum":
             if metric_keys is None or not isinstance(metric_keys, dict):
                 raise ValueError(
-                    "For `weighted_sum` mode the metric_keys must be specified "
-                    "and must be a dict"
+                    "For `weighted_sum` mode the metric_keys must be specified"
+                    " and must be a dict"
                 )
             self.metric_fn = lambda x: sum(x) * multiplier
         elif metric_aggregate_fn == "mean":
