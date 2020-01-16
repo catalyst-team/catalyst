@@ -2,7 +2,8 @@ from typing import Any, Mapping  # isort:skip
 
 import torch
 
-from catalyst.dl import Runner
+from catalyst.dl import Runner, SupervisedRunner
+from utils.typing import Model, Device
 
 
 class BaseGANRunner(Runner):
@@ -332,11 +333,7 @@ class ICGanRunner(CGanRunner):
         batch_size = real_features.shape[0]
         assert torch.equal(real_targets[:batch_size//2], real_targets[batch_size//2:])
         same_class_real_features = torch.cat((real_features[batch_size//2:], real_features[:batch_size//2]), dim=0)
-
-        real_targets = torch.ones((batch_size, 1), device=self.device)
-        fake_targets = torch.zeros((batch_size, 1), device=self.device)
-        self.state.input["real_targets"] = real_targets
-        self.state.input["fake_targets"] = fake_targets
+        self.state.input["same_real_images"] = same_class_real_features
         z = torch.randn((batch_size, self.state.noise_dim), device=self.device)
 
         if (
@@ -366,89 +363,113 @@ class ICGanRunner(CGanRunner):
             raise NotImplementedError(f"Unknown phase: self.state.phase")
 
 
-class AE_Runner(BaseGANRunner):
+class AE_Runner(SupervisedRunner):
     """TODO:
-        image + [additional_inputs] -> autoencoder -> out_image
+        image -> autoencoder -> out_image
     """
 
-    def forward(self, batch):
-        real_features = batch[self.features_key]
-        batch_size = real_features.shape[0]
+    def __init__(self, model: Model = None, device: Device = None, input_key: str = "features",
+                 output_key: str = "reconstructed_features", input_target_key: str = "targets"):
+        super().__init__(model, device, input_key, output_key, input_target_key)
 
-        real_targets = torch.ones((batch_size, 1), device=self.device)
-        fake_targets = torch.zeros((batch_size, 1), device=self.device)
-        self.state.input["real_targets"] = real_targets
-        self.state.input["fake_targets"] = fake_targets
-        z = torch.randn((batch_size, self.state.noise_dim), device=self.device)
 
-        if (
-            self.state.phase is None
-            or self.state.phase == self.state.discriminator_train_phase
-        ):
-            # (None for validation mode)
-            fake_features = self.generator(z)
-            fake_logits = self.discriminator(fake_features.detach())
-            real_logits = self.discriminator(real_features)
-            # --> d_loss
-            # (fake logits + FAKE targets) + (real logits + real targets)
+class YAERunner(Runner):
+    """TODO: check if it works (NOT REALLY WORKS RIGHT NOW)"""
+    INPUT_IMG_KEY = "images"
+    INPUT_Y_KEY = "targets_a"
+    INPUT_RANDOM_Y_KEY = "targets_b"
+
+    OUTPUT_IMAGES_A_KEY = "images_a"
+    OUTPUT_IMAGES_B_KEY = "images_b"
+    OUTPUT_LOGITS_A_KEY = "logits_a"
+    OUTPUT_LOGITS_B_KEY = "logits_b"
+
+    OUTPUT_IMPLICIT_LOSS_KEY = "implicit_loss"
+
+    def __init__(
+            self,
+            model: Model = None,
+            device: Device = None,
+            input_img_key=INPUT_IMG_KEY,
+            input_y_key=INPUT_Y_KEY,
+            input_random_y_key=INPUT_RANDOM_Y_KEY,
+            output_images_a_key=OUTPUT_IMAGES_A_KEY,
+            output_images_b_key=OUTPUT_IMAGES_B_KEY,
+            output_logits_a_key=OUTPUT_LOGITS_A_KEY,
+            output_logits_b_key=OUTPUT_LOGITS_B_KEY,
+            output_implicit_loss_key=OUTPUT_IMPLICIT_LOSS_KEY
+    ):
+        """
+        Custom runner
+
+        :param model: model
+            with .encoder(x) -> x_explicit, x_implicit
+            and  .decoder(y, x_implicit) -> x
+        :param device:
+
+        :param input_img_key:
+        :param input_y_key:
+        :param input_random_y_key:
+
+        :param output_images_a_key:
+        :param output_images_b_key:
+        :param output_logits_a_key:
+        :param output_logits_b_key:
+        """
+        super().__init__(model=model, device=device)
+        self.input_img_key = input_img_key
+        self.input_y_key = input_y_key
+        self.input_random_y_key = input_random_y_key
+
+        self.input_key = (self.input_img_key, self.input_y_key, self.input_random_y_key)
+
+        self.output_images_a_key = output_images_a_key
+        self.output_images_b_key = output_images_b_key
+        self.output_logits_a_key = output_logits_a_key
+        self.output_logits_b_key = output_logits_b_key
+
+        self.output_implicit_loss_key = output_implicit_loss_key
+
+    def _batch2device(self, batch: Mapping[str, Any], device):
+        batch = super()._batch2device(batch, device)
+        assert len(batch) == len(self.input_key)
+        return dict((k, v) for k, v in zip(self.input_key, batch))
+
+    def predict_batch(self, batch: Mapping[str, Any]):
+        images = batch[self.input_img_key]
+        targets_a = batch[self.input_y_key]
+        targets_b = batch[self.input_random_y_key]
+
+        enc = self.model.encoder
+        dec = self.model.decoder
+        #
+        expl_a, impl_a = enc(images)
+
+        images_a = dec(targets_a, impl_a)
+        expl_aa, impl_aa = enc(images_a)
+
+        images_b = dec(targets_b, impl_a)
+        expl_ab, impl_ab = enc(images_b)
+
+        impl_loss = torch.norm(impl_aa - impl_ab, dim=1)
+        if self.state.stage.startswith('sampl') or self.state.stage.startswith('infer'):
             return {
-                "fake_features": fake_features,  # visualization purposes only
-                "fake_logits": fake_logits,
-                "real_logits": real_logits
+                self.output_images_a_key: images_a,
+                self.output_images_b_key: images_b,
+                self.output_logits_a_key: expl_a,
+                self.output_logits_b_key: expl_ab,
+                self.output_implicit_loss_key: impl_loss,
+                # inference sampling needs this
+                self.input_y_key: targets_a,
+                self.input_random_y_key: targets_b
             }
-        elif self.state.phase == self.state.generator_train_phase:
-            fake_features = self.generator(z)
-            fake_logits = self.discriminator(fake_features)
-            # --> g_loss (fake logits + REAL targets)
-            return {
-                "fake_features": fake_features,  # visualization purposes only
-                "fake_logits": fake_logits
-            }
-        else:
-            raise NotImplementedError(f"Unknown phase: self.state.phase")
-
-
-class YAE_Runner(BaseGANRunner):
-    """TODO:
-        e=encoder; d=decoder
-        image + [additional_inputs] -> autoencoder -> out_image + [additional_outputs]
-    """
-
-    def forward(self, batch):
-        real_features = batch[self.features_key]
-        batch_size = real_features.shape[0]
-
-        real_targets = torch.ones((batch_size, 1), device=self.device)
-        fake_targets = torch.zeros((batch_size, 1), device=self.device)
-        self.state.input["real_targets"] = real_targets
-        self.state.input["fake_targets"] = fake_targets
-        z = torch.randn((batch_size, self.state.noise_dim), device=self.device)
-
-        if (
-            self.state.phase is None
-            or self.state.phase == self.state.discriminator_train_phase
-        ):
-            # (None for validation mode)
-            fake_features = self.generator(z)
-            fake_logits = self.discriminator(fake_features.detach())
-            real_logits = self.discriminator(real_features)
-            # --> d_loss
-            # (fake logits + FAKE targets) + (real logits + real targets)
-            return {
-                "fake_features": fake_features,  # visualization purposes only
-                "fake_logits": fake_logits,
-                "real_logits": real_logits
-            }
-        elif self.state.phase == self.state.generator_train_phase:
-            fake_features = self.generator(z)
-            fake_logits = self.discriminator(fake_features)
-            # --> g_loss (fake logits + REAL targets)
-            return {
-                "fake_features": fake_features,  # visualization purposes only
-                "fake_logits": fake_logits
-            }
-        else:
-            raise NotImplementedError(f"Unknown phase: self.state.phase")
+        return {
+            self.output_images_a_key: images_a,
+            self.output_images_b_key: images_b,
+            self.output_logits_a_key: expl_a,
+            self.output_logits_b_key: expl_ab,
+            self.output_implicit_loss_key: impl_loss,
+        }
 
 
 class D2GanRunner(BaseGANRunner):
