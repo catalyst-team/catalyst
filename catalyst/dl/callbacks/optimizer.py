@@ -24,7 +24,7 @@ class OptimizerCallback(Callback):
         optimizer_key: str = None,
         loss_key: str = "loss",
         decouple_weight_decay: bool = True,
-        return_model_grads: bool = False
+        save_model_grads: bool = False
     ):
         """
         Args:
@@ -36,7 +36,7 @@ class OptimizerCallback(Callback):
             loss_key (str): key to get loss from ``state.loss``
             decouple_weight_decay (bool): If True - decouple weight decay
                 regularization.
-            return_model_grads (bool): If True - RunnerState.model_grads will
+            save_model_grads (bool): If True - RunnerState.model_grads will
                 contain gradients calculated on backward propagation on current
                 batch
         """
@@ -48,7 +48,7 @@ class OptimizerCallback(Callback):
         self.optimizer_key: str = optimizer_key
         self.loss_key: str = loss_key
         self.decouple_weight_decay = decouple_weight_decay
-        self.return_model_grads = return_model_grads
+        self.save_model_grads = save_model_grads
 
         self._optimizer_wd: List[float] = [0.0]
         self._accumulation_counter: int = 0
@@ -173,7 +173,7 @@ class OptimizerCallback(Callback):
                 grad_clip_fn=self.grad_clip_fn
             )
 
-            if self.return_model_grads:
+            if self.save_model_grads:
                 for tag, value in model.named_parameters():
                     tag = tag.replace('.', '/')
                     state.model_grads[tag] = value.grad.cpu().numpy()
