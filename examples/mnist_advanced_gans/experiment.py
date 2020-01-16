@@ -4,6 +4,7 @@ import torchvision
 from torchvision import transforms
 
 from catalyst.dl import ConfigExperiment
+from catalyst.utils import merge_dicts
 
 
 # data loaders & transforms
@@ -39,3 +40,33 @@ class MnistGanExperiment(ConfigExperiment):
         datasets["valid"] = testset
 
         return datasets
+
+from .data import SameClassBatchSampler
+# data loaders & transforms
+class DAGANMnistGanExperiment(MnistGanExperiment):
+
+    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+        # WARN: 1)for simplicity of implementation datasets will be get twice
+        # WARN: 2)"loaders_params" are ignored in fact
+        data_params = self.stages_config[stage]["data_params"]
+        if "use_same_class_batch_sampler" in data_params:
+            pass
+        build_batch_sampler = data_params.get("use_same_class_batch_sampler", False)
+        if build_batch_sampler:
+            batch_size = data_params.pop("batch_size", 1)
+            drop_last = data_params.pop("drop_last", False)
+
+            datasets = self.get_datasets(stage, **data_params)
+            loaders_params_key = "loaders_params"
+            data_params[loaders_params_key] = merge_dicts(
+                {
+                    dataset_name: {
+                        "batch_sampler": SameClassBatchSampler(dataset,
+                                                               batch_size=batch_size,
+                                                               drop_last=drop_last,
+                                                               shuffle=dataset_name.startswith("train"))
+                    } for dataset_name, dataset in datasets.items()
+                },
+                data_params.get(loaders_params_key, {})
+            )
+        return super().get_loaders(stage)

@@ -257,9 +257,27 @@ class CGanRunner(BaseGANRunner):
         image & one_hot_class_id_condition -> discriminator_model -> logit confidence (of g_image vs d_image)
     """
 
+    def __init__(self, model=None, device=None,
+                 features_key="features",
+                 targets_key="targets",
+                 generator_key="generator",
+                 discriminator_key="discriminator"):
+        super().__init__(model, device, features_key, generator_key, discriminator_key)
+        self.targets_key = targets_key
+
+    def _batch2device(self, batch: Mapping[str, Any], device):
+        if isinstance(batch, (list, tuple)):  # TODO: merge into base gan runner
+            batch = {self.features_key: batch[0], self.targets_key: batch[1]}
+        return super()._batch2device(batch, device)
+
     def forward(self, batch):
         real_features = batch[self.features_key]
+        real_c_inds = batch[self.targets_key]
         batch_size = real_features.shape[0]
+
+        n_classes = 10
+        real_c = torch.zeros((batch_size, n_classes), device=self.device)
+        real_c[torch.arange(batch_size, device=self.device), real_c_inds] = 1
 
         real_targets = torch.ones((batch_size, 1), device=self.device)
         fake_targets = torch.zeros((batch_size, 1), device=self.device)
@@ -267,14 +285,21 @@ class CGanRunner(BaseGANRunner):
         self.state.input["fake_targets"] = fake_targets
         z = torch.randn((batch_size, self.state.noise_dim), device=self.device)
 
+        # TODO: refactor as callback with on_batch_start
+        n_classes = 10
+        c = torch.zeros((batch_size, n_classes))
+        c_one_hot_indices = torch.randint(0, 10, (batch_size,))
+        c[torch.arange(batch_size), c_one_hot_indices] = 1
+        fake_c = c.to(self.device)
+
         if (
             self.state.phase is None
             or self.state.phase == self.state.discriminator_train_phase
         ):
             # (None for validation mode)
-            fake_features = self.generator(z)
-            fake_logits = self.discriminator(fake_features.detach())
-            real_logits = self.discriminator(real_features)
+            fake_features = self.generator(z, fake_c)
+            fake_logits = self.discriminator(fake_features.detach(), fake_c)
+            real_logits = self.discriminator(real_features, real_c)
             # --> d_loss
             # (fake logits + FAKE targets) + (real logits + real targets)
             return {
@@ -283,8 +308,8 @@ class CGanRunner(BaseGANRunner):
                 "real_logits": real_logits
             }
         elif self.state.phase == self.state.generator_train_phase:
-            fake_features = self.generator(z)
-            fake_logits = self.discriminator(fake_features)
+            fake_features = self.generator(z, fake_c)
+            fake_logits = self.discriminator(fake_features, fake_c)
             # --> g_loss (fake logits + REAL targets)
             return {
                 "fake_features": fake_features,  # visualization purposes only
@@ -294,7 +319,7 @@ class CGanRunner(BaseGANRunner):
             raise NotImplementedError(f"Unknown phase: self.state.phase")
 
 
-class ICGanRunner(BaseGANRunner):
+class ICGanRunner(CGanRunner):
     """TODO:
         vanilla noise & [other_image_of_that_class] to image GAN
         z (noise) -> generator_model -> g_image
@@ -303,7 +328,10 @@ class ICGanRunner(BaseGANRunner):
 
     def forward(self, batch):
         real_features = batch[self.features_key]
+        real_targets = batch[self.targets_key]
         batch_size = real_features.shape[0]
+        assert torch.equal(real_targets[:batch_size//2], real_targets[batch_size//2:])
+        same_class_real_features = torch.cat((real_features[batch_size//2:], real_features[:batch_size//2]), dim=0)
 
         real_targets = torch.ones((batch_size, 1), device=self.device)
         fake_targets = torch.zeros((batch_size, 1), device=self.device)
@@ -312,13 +340,13 @@ class ICGanRunner(BaseGANRunner):
         z = torch.randn((batch_size, self.state.noise_dim), device=self.device)
 
         if (
-            self.state.phase is None
-            or self.state.phase == self.state.discriminator_train_phase
+                self.state.phase is None
+                or self.state.phase == self.state.discriminator_train_phase
         ):
             # (None for validation mode)
-            fake_features = self.generator(z)
-            fake_logits = self.discriminator(fake_features.detach())
-            real_logits = self.discriminator(real_features)
+            fake_features = self.generator(z, same_class_real_features)
+            fake_logits = self.discriminator(fake_features.detach(), same_class_real_features)
+            real_logits = self.discriminator(real_features, same_class_real_features)
             # --> d_loss
             # (fake logits + FAKE targets) + (real logits + real targets)
             return {
@@ -327,8 +355,8 @@ class ICGanRunner(BaseGANRunner):
                 "real_logits": real_logits
             }
         elif self.state.phase == self.state.generator_train_phase:
-            fake_features = self.generator(z)
-            fake_logits = self.discriminator(fake_features)
+            fake_features = self.generator(z, same_class_real_features)
+            fake_logits = self.discriminator(fake_features, same_class_real_features)
             # --> g_loss (fake logits + REAL targets)
             return {
                 "fake_features": fake_features,  # visualization purposes only
