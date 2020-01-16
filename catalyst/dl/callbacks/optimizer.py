@@ -23,7 +23,8 @@ class OptimizerCallback(Callback):
         accumulation_steps: int = 1,
         optimizer_key: str = None,
         loss_key: str = "loss",
-        decouple_weight_decay: bool = True
+        decouple_weight_decay: bool = True,
+        save_model_grads: bool = False
     ):
         """
         Args:
@@ -35,6 +36,9 @@ class OptimizerCallback(Callback):
             loss_key (str): key to get loss from ``state.loss``
             decouple_weight_decay (bool): If True - decouple weight decay
                 regularization.
+            save_model_grads (bool): If True - RunnerState.model_grads will
+                contain gradients calculated on backward propagation on current
+                batch
         """
         super().__init__(CallbackOrder.Optimizer)
         grad_clip_params: dict = grad_clip_params or {}
@@ -44,8 +48,11 @@ class OptimizerCallback(Callback):
         self.optimizer_key: str = optimizer_key
         self.loss_key: str = loss_key
         self.decouple_weight_decay = decouple_weight_decay
+        self.save_model_grads = save_model_grads
+
         self._optimizer_wd: List[float] = [0.0]
         self._accumulation_counter: int = 0
+
 
     @staticmethod
     def grad_step(
@@ -165,6 +172,12 @@ class OptimizerCallback(Callback):
                 optimizer_wds=self._optimizer_wd,
                 grad_clip_fn=self.grad_clip_fn
             )
+
+            if self.save_model_grads:
+                for tag, value in model.named_parameters():
+                    tag = tag.replace('.', '/')
+                    state.model_grads[tag] = value.grad.cpu().numpy()
+
             maybe_recursive_call(model, "zero_grad")
 
             self._accumulation_counter = 0
