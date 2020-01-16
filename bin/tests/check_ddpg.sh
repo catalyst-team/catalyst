@@ -40,7 +40,6 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
 sleep 900
 
 echo "run samplers"
-
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_samplers.py \
@@ -59,6 +58,7 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
 sleep 300
 
 
+echo "kill python processes"
 killall -9 python
 sleep 3
 killall -9 catalyst-rl
@@ -70,11 +70,12 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     python catalyst/rl/scripts/dump_db.py \
     --db="redis" \
     --out-pkl=./db.dump.pointenv.190821.out.pkl
+
+echo "kill redis server"
 killall -9 redis-server
 sleep 3
 
-echo "checking results"
-
+echo "check results"
 python -c """
 import pathlib
 import numpy as np
