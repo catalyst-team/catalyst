@@ -3,6 +3,7 @@ import numpy as np
 import torch.nn as nn
 
 from catalyst.contrib import registry
+# TODO: add conv models
 
 
 @registry.Model

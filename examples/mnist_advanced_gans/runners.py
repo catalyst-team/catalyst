@@ -253,8 +253,8 @@ class WGAN_GP_Runner(BaseGANRunner):
 class CGanRunner(BaseGANRunner):
     """TODO:
         vanilla noise & [one_hot_class_id_condition] to image GAN
-        z (noise) -> generator_model -> g_image
-        image -> discriminator_model -> logit confidence (of g_image vs d_image)
+        z (noise) & one_hot_class_id_condition -> generator_model -> g_image
+        image & one_hot_class_id_condition -> discriminator_model -> logit confidence (of g_image vs d_image)
     """
 
     def forward(self, batch):

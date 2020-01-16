@@ -87,6 +87,13 @@ stages:
       loss_key: loss_d
       weight_clamp_value: 0.01
 
+    wasserstein_distance:
+      _wrapper: *d_train_wrapper
+      callback: WassersteinDistanceCallback
+      prefix: "wasserstein_distance"
+      real_validity_output_key: "real_validity"
+      fake_validity_output_key: "fake_validity"
+
     visualizer:
       callback: VisualizationCallback
       output_keys: "fake_features"

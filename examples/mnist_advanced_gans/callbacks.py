@@ -1,4 +1,4 @@
-from typing import Union, List, Any, Dict, Callable
+from typing import Union, List, Any, Dict, Callable, Optional
 
 import torch
 import torchvision.utils
@@ -10,17 +10,63 @@ from catalyst.dl.core import Callback, CallbackOrder, MetricCallback
 from catalyst.utils.tensorboard import SummaryWriter
 
 # TODO: implement abstract class and move to core catalyst
-# @registry.Callback
-# class MultiInputOutputMetric(MetricCallback):
-#     """Class similar to MetricCallback,
-#     but it can accept arbitrary number of input and output keys for main criterion function"""
-#
-#     def __init__(self, prefix: str, metric_fn: Callable, input_key: str = "targets", output_key: str = "logits",
-#                  **metric_params):
-#         super().__init__(prefix, metric_fn, input_key, output_key, **metric_params)
-#
-#     def on_batch_end(self, state: RunnerState):
-#         super().on_batch_end(state)
+@registry.Callback
+class MultiKeyMetricCallback(Callback):
+    """
+    A callback that returns single metric on `state.on_batch_end`
+    """
+    # TODO: merge it with MetricCallback in catalyst.core
+    # TODO: move _get to catalyst.utils
+    def __init__(
+        self,
+        prefix: str,
+        metric_fn: Callable,
+        input_key: Optional[Union[str, List[str]]] = "targets",
+        output_key: Optional[Union[str, List[str]]] = "logits",
+        **metric_params
+    ):
+        super().__init__(CallbackOrder.Metric)
+        self.prefix = prefix
+        self.metric_fn = metric_fn
+        self.input_key = input_key
+        self.output_key = output_key
+        self.metric_params = metric_params
+
+    @staticmethod
+    def _get(dictionary: dict, keys: Optional[Union[str, List[str]]]) -> Any:
+        if keys is None:
+            result = dictionary
+        elif isinstance(keys, list):
+            result = {key: dictionary[key] for key in keys}
+        else:
+            result = dictionary[keys]
+        return result
+
+    def on_batch_end(self, state: RunnerState):
+        outputs = self._get(state.output, self.output_key)
+        targets = self._get(state.input, self.input_key)
+        metric = self.metric_fn(outputs, targets, **self.metric_params)
+        state.metrics.add_batch_value(name=self.prefix, value=metric)
+
+
+@registry.Callback
+class WassersteinDistanceCallback(MultiKeyMetricCallback):
+
+    def __init__(self, prefix: str = "wasserstein_distance",
+                 real_validity_output_key: str = "real_validity",
+                 fake_validity_output_key: str = "fake_validity"):
+        super().__init__(prefix,
+                         metric_fn=self.get_wasserstein_distance,
+                         input_key=None,
+                         output_key=[real_validity_output_key, fake_validity_output_key])
+        self.real_validity_key = real_validity_output_key
+        self.fake_validity_key = fake_validity_output_key
+
+    def get_wasserstein_distance(self, outputs, targets):
+        real_validity = outputs[self.real_validity_key]
+        fake_validity = outputs[self.fake_validity_key]
+        return real_validity.mean() - fake_validity.mean()
+
 
 
 @registry.Callback
