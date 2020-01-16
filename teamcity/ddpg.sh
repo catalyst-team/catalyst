@@ -1,3 +1,5 @@
+set -eo pipefail
+
 echo "apt update && apt install -y redis-server"
 apt update && apt install -y redis-server
 
