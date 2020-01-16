@@ -18,7 +18,8 @@ from catalyst.dl.callbacks import (
 )
 from catalyst.dl.core import Callback, Experiment
 from catalyst.dl.registry import (
-    CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS
+    CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS,
+    TRANSFORMS
 )
 from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
 
@@ -32,6 +33,7 @@ class ConfigExperiment(Experiment):
         "optimizer_params",
         "scheduler_params",
         "data_params",
+        "transform_params",
         "state_params",
         "callbacks_params",
     ]
@@ -318,6 +320,35 @@ class ConfigExperiment(Experiment):
             optimizer=optimizer, **scheduler_params
         )
         return scheduler
+
+    @staticmethod
+    def _get_transform(**params):
+        if "transforms" in params:
+            transforms_composition = [
+                ConfigExperiment._get_transform(**transform_params)
+                for transform_params in params["transforms"]
+            ]
+            params.update(transforms=transforms_composition)
+
+        transform = TRANSFORMS.get_from_params(**params)
+
+        return transform
+
+    def get_transforms(self, stage: str = None, mode: str = None):
+        transform_params = deepcopy(dict(
+            self.stages_config[stage]["transform_params"][mode]
+        ))
+
+        transform = self._get_transform(**transform_params)
+
+        def process(dict_):
+            # cast to `float` prevents internal mask scaling in albumentations
+            if "mask" in dict_.keys():
+                dict_.update(mask=dict_["mask"].astype("float32"))
+
+            return transform(**dict_)
+
+        return process
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage"""

@@ -14,8 +14,18 @@ CALLBACKS = Registry("callback")
 CALLBACKS.late_add(_callbacks_loader)
 Callback = CALLBACKS.add
 
+
+def _transforms_loader(r: Registry):
+    import albumentations as m
+    r.add_from_module(m)
+
+
+TRANSFORMS = Registry("transform")
+TRANSFORMS.late_add(_transforms_loader)
+Transform = TRANSFORMS.add
+
 __all__ = [
     "Criterion", "Optimizer", "Scheduler", "Callback", "Module", "Model",
-    "Sampler", "MODULES", "CRITERIONS", "OPTIMIZERS", "SCHEDULERS",
-    "GRAD_CLIPPERS", "MODELS", "SAMPLERS"
+    "Sampler", "Transform", "MODULES", "CRITERIONS", "OPTIMIZERS",
+    "SCHEDULERS", "GRAD_CLIPPERS", "MODELS", "SAMPLERS", "TRANSFORMS",
 ]
