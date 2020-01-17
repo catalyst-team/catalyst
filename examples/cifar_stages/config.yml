@@ -5,6 +5,10 @@ model_params:
   model: SimpleNet
 
 
+runner_params:
+  input_key: image
+
+
 args:
   expdir: "cifar_stages"
   logdir: "./logs/cifar_stages"
@@ -22,6 +26,18 @@ stages:
         mini_epoch_len: 35000
         drop_last: True
         shuffle: per_epoch
+
+  transform_params:
+    train:
+      transform: Compose
+      transforms:
+        - transform: Normalize
+        - transform: ToTensorV2
+    valid:
+      transform: Compose
+      transforms:
+        - transform: Normalize
+        - transform: ToTensorV2
 
   state_params:
     num_epochs: 3

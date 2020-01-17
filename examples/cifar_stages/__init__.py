@@ -1,4 +1,9 @@
 # flake8: noqa
-from catalyst.dl import SupervisedRunner as Runner
+from albumentations.pytorch import ToTensorV2
+
+from catalyst.dl import registry, SupervisedRunner as Runner
 from .experiment import Experiment
 from .model import SimpleNet
+
+registry.Model(SimpleNet)
+registry.Transform(ToTensorV2)
