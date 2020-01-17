@@ -1,18 +1,12 @@
 #!/usr/bin/env bash
 # set -e
 
-function gdrive_download () {
-  CONFIRM=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate "https://docs.google.com/uc?export=download&id=$1" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')
-  wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$CONFIRM&id=$1" -O $2
-  rm -rf /tmp/cookies.txt
-}
-
 echo "start redis"
 redis-server --port 12000 &
 sleep 3
 
 echo "download data"
-gdrive_download 1SllkKVC65W0j3D9G7OdCjgH_kd-4jphd db.dump.pointenv.190821.pkl
+wget https://catalyst-ai.s3-eu-west-1.amazonaws.com/db.dump.pointenv.190821.pkl
 
 echo "load data to Redis Database"
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
