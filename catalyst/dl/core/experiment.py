@@ -102,8 +102,8 @@ class Experiment(ABC):
         """Returns the loaders for a given stage"""
         raise NotImplementedError
 
-    @staticmethod  # @TODO:
-    def get_transforms(self, stage: str = None, mode: str = None):
+    @staticmethod
+    def get_transforms(stage: str = None, mode: str = None):
         """Returns the data transforms for a given stage and mode"""
         raise NotImplementedError
 

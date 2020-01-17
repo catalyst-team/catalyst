@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Mapping, Union  # isort:skip
+from typing import Any, Callable, Dict, List, Mapping, Union  # isort:skip
 from collections import OrderedDict
 from copy import deepcopy
 
@@ -322,7 +322,7 @@ class ConfigExperiment(Experiment):
         return scheduler
 
     @staticmethod
-    def _get_transform(**params):
+    def _get_transform(**params) -> Callable:
         if "transforms" in params:
             transforms_composition = [
                 ConfigExperiment._get_transform(**transform_params)
@@ -334,19 +334,19 @@ class ConfigExperiment(Experiment):
 
         return transform
 
-    def get_transforms(self, stage: str = None, mode: str = None):
-        transform_params = deepcopy(dict(
-            self.stages_config[stage]["transform_params"][mode]
-        ))
+    def get_transforms(self, stage: str = None, mode: str = None) -> Callable:
+        transform_params = deepcopy(
+            self.stages_config[stage]["transform_params"].get(mode, {})
+        )
 
         transform = self._get_transform(**transform_params)
-
-        def process(dict_):
-            # cast to `float` prevents internal mask scaling in albumentations
-            if "mask" in dict_.keys():
-                dict_.update(mask=dict_["mask"].astype("float32"))
-
-            return transform(**dict_)
+        if transform is not None:
+            def process(dict_):
+                result = transform(**dict_)
+                return result
+        else:
+            def process(dict_):
+                return dict_
 
         return process
 
