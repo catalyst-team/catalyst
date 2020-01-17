@@ -32,14 +32,14 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.core.state</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>  <span class="c1"># isort:skip</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>  <span class="c1"># isort:skip</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">torch.optim.optimizer</span> <span class="k">import</span> <span class="n">Optimizer</span>
+<span class="kn">from</span> <span class="nn">torch.optim.optimizer</span> <span class="kn">import</span> <span class="n">Optimizer</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.utils.frozen</span> <span class="k">import</span> <span class="n">FrozenClass</span>
-<span class="kn">from</span> <span class="nn">.metric_manager</span> <span class="k">import</span> <span class="n">MetricManager</span><span class="p">,</span> <span class="n">TimerManager</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.frozen</span> <span class="kn">import</span> <span class="n">FrozenClass</span>
+<span class="kn">from</span> <span class="nn">.metric_manager</span> <span class="kn">import</span> <span class="n">MetricManager</span><span class="p">,</span> <span class="n">TimerManager</span>
 
 
 <span class="c1"># TODO Deep refactoring</span>
@@ -49,7 +49,7 @@
 <span class="sd">    An object that is used to pass internal state during train/valid/infer.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -146,7 +146,7 @@
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                        <span class="n">values</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">/</span><span class="si">{k}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+                        <span class="n">values</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">/</span><span class="si">{k}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 

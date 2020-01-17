@@ -32,10 +32,10 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.callbacks.metrics.auc</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">MeterMetricsCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.meters</span> <span class="k">import</span> <span class="n">AUCMeter</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="kn">import</span> <span class="n">MeterMetricsCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.meters</span> <span class="kn">import</span> <span class="n">AUCMeter</span>
 
 
 <div class="viewcode-block" id="AUCCallback"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.auc.AUCCallback">[docs]</a><span class="k">class</span> <span class="nc">AUCCallback</span><span class="p">(</span><span class="n">MeterMetricsCallback</span><span class="p">):</span>
@@ -43,7 +43,7 @@
 <span class="sd">    Calculates the AUC  per class for each loader.</span>
 <span class="sd">    Currently, supports binary and multi-label cases.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="AUCCallback.__init__"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.auc.AUCCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="AUCCallback.__init__"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.auc.AUCCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span>
         <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;logits&quot;</span><span class="p">,</span>

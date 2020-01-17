@@ -32,14 +32,14 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.callbacks.mixup</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl.callbacks</span> <span class="k">import</span> <span class="n">CriterionCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.core.state</span> <span class="k">import</span> <span class="n">RunnerState</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.callbacks</span> <span class="kn">import</span> <span class="n">CriterionCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.core.state</span> <span class="kn">import</span> <span class="n">RunnerState</span>
 
 
 <div class="viewcode-block" id="MixupCallback"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.mixup.MixupCallback">[docs]</a><span class="k">class</span> <span class="nc">MixupCallback</span><span class="p">(</span><span class="n">CriterionCallback</span><span class="p">):</span>
@@ -55,7 +55,7 @@
 <span class="sd">        You may not use them together.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="MixupCallback.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.mixup.MixupCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="MixupCallback.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.mixup.MixupCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="p">),</span>
         <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>

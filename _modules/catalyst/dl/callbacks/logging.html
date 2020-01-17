@@ -32,20 +32,20 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.callbacks.logging</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="k">import</span> <span class="n">quote_plus</span>
-<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="k">import</span> <span class="n">Request</span><span class="p">,</span> <span class="n">urlopen</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">quote_plus</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">Request</span><span class="p">,</span> <span class="n">urlopen</span>
 
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="k">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">LoggerCallback</span><span class="p">,</span> <span class="n">RunnerState</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.utils.formatters</span> <span class="k">import</span> <span class="n">TxtMetricsFormatter</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="k">import</span> <span class="n">format_metric</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.tensorboard</span> <span class="k">import</span> <span class="n">SummaryWriter</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="kn">import</span> <span class="n">LoggerCallback</span><span class="p">,</span> <span class="n">RunnerState</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.utils.formatters</span> <span class="kn">import</span> <span class="n">TxtMetricsFormatter</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="n">format_metric</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
 
 
 <div class="viewcode-block" id="VerboseLogger"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.VerboseLogger">[docs]</a><span class="k">class</span> <span class="nc">VerboseLogger</span><span class="p">(</span><span class="n">LoggerCallback</span><span class="p">):</span>
@@ -53,7 +53,7 @@
 <span class="sd">    Logs the params into console</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="VerboseLogger.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.VerboseLogger.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="VerboseLogger.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.VerboseLogger.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">always_show</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">never_show</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -76,8 +76,8 @@
         <span class="n">intersection</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">always_show</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">never_show</span><span class="p">)</span>
 
         <span class="n">_error_message</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">f</span><span class="s2">&quot;Intersection of always_show and &quot;</span>
-            <span class="n">f</span><span class="s2">&quot;never_show has common values: </span><span class="si">{intersection}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Intersection of always_show and &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;never_show has common values: </span><span class="si">{intersection}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">intersection</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">_error_message</span><span class="p">)</span></div>
@@ -96,8 +96,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span>
             <span class="n">total</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">loader_len</span><span class="p">,</span>
-            <span class="n">desc</span><span class="o">=</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{state.stage_epoch_log}</span><span class="s2">/</span><span class="si">{state.num_epochs}</span><span class="s2">&quot;</span>
-            <span class="n">f</span><span class="s2">&quot; * Epoch (</span><span class="si">{state.loader_name}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{state.stage_epoch_log}</span><span class="s2">/</span><span class="si">{state.num_epochs}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; * Epoch (</span><span class="si">{state.loader_name}</span><span class="s2">)&quot;</span><span class="p">,</span>
             <span class="n">leave</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">ncols</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
             <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
@@ -136,7 +136,7 @@
 <span class="sd">    Logger callback, translates ``state.metrics`` to console and text file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="ConsoleLogger.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.ConsoleLogger.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ConsoleLogger.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.ConsoleLogger.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init ``ConsoleLogger``&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="kc">None</span></div>
@@ -161,7 +161,7 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">logdir</span><span class="p">:</span>
-            <span class="n">fh</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/log.txt&quot;</span><span class="p">)</span>
+            <span class="n">fh</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/log.txt&quot;</span><span class="p">)</span>
             <span class="n">fh</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
             <span class="n">fh</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">txt_formatter</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
@@ -194,7 +194,7 @@
 <span class="sd">    Logger callback, translates ``state.metrics`` to tensorboard</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="TensorboardLogger.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.TensorboardLogger.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="TensorboardLogger.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.TensorboardLogger.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">metric_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">log_on_batch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -228,7 +228,7 @@
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">metrics_to_log</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span>
-                    <span class="n">f</span><span class="s2">&quot;</span><span class="si">{name}{suffix}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">metrics</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">step</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{name}{suffix}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">metrics</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">step</span>
                 <span class="p">)</span>
 
 <div class="viewcode-block" id="TensorboardLogger.on_loader_start"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.TensorboardLogger.on_loader_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
@@ -238,7 +238,7 @@
 
         <span class="n">lm</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">loader_name</span>
         <span class="k">if</span> <span class="n">lm</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="p">:</span>
-            <span class="n">log_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{lm}</span><span class="s2">_log&quot;</span><span class="p">)</span>
+            <span class="n">log_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{lm}</span><span class="s2">_log&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="p">[</span><span class="n">lm</span><span class="p">]</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">log_dir</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TensorboardLogger.on_batch_end"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.TensorboardLogger.on_batch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
@@ -284,7 +284,7 @@
 <span class="sd">    Logger callback, translates ``state.metrics`` to telegram channel</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="TelegramLogger.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.TelegramLogger.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="TelegramLogger.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.TelegramLogger.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">chat_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -316,7 +316,7 @@
         <span class="p">)</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chat_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_base_url</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">f</span><span class="s2">&quot;https://api.telegram.org/bot</span><span class="si">{self._token}</span><span class="s2">/sendMessage&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;https://api.telegram.org/bot</span><span class="si">{self._token}</span><span class="s2">/sendMessage&quot;</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">log_on_stage_start</span> <span class="o">=</span> <span class="n">log_on_stage_start</span>
@@ -330,28 +330,28 @@
     <span class="k">def</span> <span class="nf">_send_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">url</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">f</span><span class="s2">&quot;</span><span class="si">{self._base_url}</span><span class="s2">?&quot;</span>
-                <span class="n">f</span><span class="s2">&quot;chat_id=</span><span class="si">{self._chat_id}</span><span class="s2">&amp;&quot;</span>
-                <span class="n">f</span><span class="s2">&quot;disable_web_page_preview=1&amp;&quot;</span>
-                <span class="n">f</span><span class="s2">&quot;text={quote_plus(text, safe=&#39;&#39;)}&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self._base_url}</span><span class="s2">?&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;chat_id=</span><span class="si">{self._chat_id}</span><span class="s2">&amp;&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;disable_web_page_preview=1&amp;&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;text={quote_plus(text, safe=&#39;&#39;)}&quot;</span>
             <span class="p">)</span>
 
             <span class="n">request</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
             <span class="n">urlopen</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;telegram.send.error:</span><span class="si">{e}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;telegram.send.error:</span><span class="si">{e}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TelegramLogger.on_stage_start"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.TelegramLogger.on_stage_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Notify about starting a new stage&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_on_stage_start</span><span class="p">:</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{state.stage}</span><span class="s2"> stage was started&quot;</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{state.stage}</span><span class="s2"> stage was started&quot;</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_send_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TelegramLogger.on_loader_start"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.TelegramLogger.on_loader_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Notify about starting running the new loader&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_on_loader_start</span><span class="p">:</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{state.loader_name}</span><span class="s2"> </span><span class="si">{state.epoch}</span><span class="s2"> epoch was started&quot;</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{state.loader_name}</span><span class="s2"> </span><span class="si">{state.epoch}</span><span class="s2"> epoch was started&quot;</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_send_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
 
@@ -366,7 +366,7 @@
                 <span class="n">metrics_to_log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics_to_log</span>
 
             <span class="n">rows</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">f</span><span class="s2">&quot;</span><span class="si">{state.loader_name}</span><span class="s2"> </span><span class="si">{state.epoch}</span><span class="s2"> epoch was finished:&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{state.loader_name}</span><span class="s2"> </span><span class="si">{state.epoch}</span><span class="s2"> epoch was finished:&quot;</span>
             <span class="p">]</span>
 
             <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">metrics_to_log</span><span class="p">:</span>
@@ -380,7 +380,7 @@
 <div class="viewcode-block" id="TelegramLogger.on_stage_end"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.logging.TelegramLogger.on_stage_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Notify about finishing a stage&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_on_stage_end</span><span class="p">:</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{state.stage}</span><span class="s2"> stage was finished&quot;</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{state.stage}</span><span class="s2"> stage was finished&quot;</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_send_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
 
@@ -392,8 +392,8 @@
                 <span class="n">exception</span><span class="p">,</span> <span class="ne">KeyboardInterrupt</span>
             <span class="p">):</span>
                 <span class="n">text</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">f</span><span class="s2">&quot;`{type(exception).__name__}` exception was raised:</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="n">f</span><span class="s2">&quot;</span><span class="si">{exception}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;`{type(exception).__name__}` exception was raised:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{exception}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_send_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div></div>

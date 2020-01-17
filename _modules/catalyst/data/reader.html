@@ -32,12 +32,12 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.data.reader</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Type</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Type</span>  <span class="c1"># isort:skip</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="k">import</span> <span class="n">get_one_hot</span><span class="p">,</span> <span class="n">imread</span><span class="p">,</span> <span class="n">mimread</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="n">get_one_hot</span><span class="p">,</span> <span class="n">imread</span><span class="p">,</span> <span class="n">mimread</span>
 
 
 <div class="viewcode-block" id="ReaderSpec"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ReaderSpec">[docs]</a><span class="k">class</span> <span class="nc">ReaderSpec</span><span class="p">:</span>
@@ -47,7 +47,7 @@
 
 <span class="sd">    All inherited classes have to implement `__call__`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="ReaderSpec.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ReaderSpec.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="ReaderSpec.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ReaderSpec.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            input_key (str): input key to use from annotation dict</span>
@@ -56,7 +56,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span> <span class="o">=</span> <span class="n">input_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="o">=</span> <span class="n">output_key</span></div>
 
-<div class="viewcode-block" id="ReaderSpec.__call__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ReaderSpec.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+<div class="viewcode-block" id="ReaderSpec.__call__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ReaderSpec.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reads a row from your annotations dict and</span>
 <span class="sd">        transfer it to data, needed by your network</span>
 <span class="sd">        for example open image by path, or read string and tokenize it.</span>
@@ -76,7 +76,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Image reader abstraction. Reads images from a `csv` dataset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="ImageReader.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ImageReader.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="ImageReader.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ImageReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -96,7 +96,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">datapath</span> <span class="o">=</span> <span class="n">datapath</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grayscale</span> <span class="o">=</span> <span class="n">grayscale</span></div>
 
-<div class="viewcode-block" id="ImageReader.__call__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ImageReader.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageReader.__call__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ImageReader.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reads a row from your annotations dict with filename and</span>
 <span class="sd">        transfer it to an image</span>
 
@@ -119,7 +119,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Mask reader abstraction. Reads masks from a `csv` dataset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">datapath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">datapath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            input_key (str): key to use from annotation dict</span>
@@ -130,7 +130,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_key</span><span class="p">,</span> <span class="n">output_key</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">datapath</span> <span class="o">=</span> <span class="n">datapath</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reads a row from your annotations dict with filename and</span>
 <span class="sd">        transfer it to a mask</span>
 
@@ -152,7 +152,7 @@
 <span class="sd">    Numeric data reader abstraction.</span>
 <span class="sd">    Reads a single float, int, str or other from data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="ScalarReader.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ScalarReader.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="ScalarReader.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ScalarReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -178,10 +178,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">smoothing</span> <span class="o">=</span> <span class="n">smoothing</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">one_hot_classes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">smoothing</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">smoothing</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">,</span> \
-                <span class="n">f</span><span class="s2">&quot;If smoothing is specified it must be in (0; 1), &quot;</span> \
-                <span class="n">f</span><span class="s2">&quot;got </span><span class="si">{smoothing}</span><span class="s2">&quot;</span></div>
+                <span class="sa">f</span><span class="s2">&quot;If smoothing is specified it must be in (0; 1), &quot;</span> \
+                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{smoothing}</span><span class="s2">&quot;</span></div>
 
-<div class="viewcode-block" id="ScalarReader.__call__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ScalarReader.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+<div class="viewcode-block" id="ScalarReader.__call__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ScalarReader.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reads a row from your annotations dict and</span>
 <span class="sd">        transfer it to a single value</span>
@@ -206,7 +206,7 @@
 <span class="sd">    Reader abstraction with an lambda encoder.</span>
 <span class="sd">    Can read an elem from dataset and apply `encode_fn` function to it</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="LambdaReader.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.LambdaReader.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="LambdaReader.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.LambdaReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -224,7 +224,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_key</span><span class="p">,</span> <span class="n">output_key</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">encode_fn</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">encode_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="LambdaReader.__call__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.LambdaReader.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+<div class="viewcode-block" id="LambdaReader.__call__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.LambdaReader.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reads a row from your annotations dict</span>
 <span class="sd">        and applies `encode_fn` function</span>
 
@@ -244,7 +244,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstraction to compose several readers into one open function.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="ReaderCompose.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ReaderCompose.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">readers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ReaderSpec</span><span class="p">],</span> <span class="n">mixins</span><span class="p">:</span> <span class="p">[]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ReaderCompose.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ReaderCompose.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">readers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ReaderSpec</span><span class="p">],</span> <span class="n">mixins</span><span class="p">:</span> <span class="p">[]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            readers (List[ReaderSpec]): list of reader to compose</span>
@@ -253,7 +253,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">readers</span> <span class="o">=</span> <span class="n">readers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mixins</span> <span class="o">=</span> <span class="n">mixins</span> <span class="ow">or</span> <span class="p">[]</span></div>
 
-<div class="viewcode-block" id="ReaderCompose.__call__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ReaderCompose.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+<div class="viewcode-block" id="ReaderCompose.__call__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ReaderCompose.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reads a row from your annotations dict</span>
 <span class="sd">        and applies all readers and mixins</span>
 

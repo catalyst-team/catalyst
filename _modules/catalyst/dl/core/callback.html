@@ -32,14 +32,14 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.core.callback</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="k">import</span> <span class="n">IntFlag</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">IntFlag</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="k">import</span> <span class="n">get_activation_fn</span>
-<span class="kn">from</span> <span class="nn">.state</span> <span class="k">import</span> <span class="n">RunnerState</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="n">get_activation_fn</span>
+<span class="kn">from</span> <span class="nn">.state</span> <span class="kn">import</span> <span class="n">RunnerState</span>
 
 
 <div class="viewcode-block" id="CallbackOrder"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.callback.CallbackOrder">[docs]</a><span class="k">class</span> <span class="nc">CallbackOrder</span><span class="p">(</span><span class="n">IntFlag</span><span class="p">):</span>
@@ -76,7 +76,7 @@
 
 <span class="sd">    All callbacks has ``order`` value from ``CallbackOrder``</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="Callback.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.callback.Callback.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<div class="viewcode-block" id="Callback.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.callback.Callback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        For order see ``CallbackOrder`` class</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -114,7 +114,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A callback that returns single metric on `state.on_batch_end`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">metric_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
@@ -141,7 +141,7 @@
 <span class="sd">    A callback that returns multiple metrics on `state.on_batch_end`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">metric_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
@@ -169,9 +169,9 @@
         <span class="n">batch_metrics</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">metric</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_args</span><span class="p">,</span> <span class="n">metrics_</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-                <span class="n">key</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{self.prefix}{arg:02}</span><span class="s2">&quot;</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.prefix}{arg:02}</span><span class="s2">&quot;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">key</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{self.prefix}</span><span class="s2">_</span><span class="si">{arg}</span><span class="s2">&quot;</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.prefix}</span><span class="s2">_</span><span class="si">{arg}</span><span class="s2">&quot;</span>
             <span class="n">batch_metrics</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">metric</span>
         <span class="n">state</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">add_batch_value</span><span class="p">(</span><span class="n">metrics_dict</span><span class="o">=</span><span class="n">batch_metrics</span><span class="p">)</span></div></div>
 
@@ -181,7 +181,7 @@
 <span class="sd">    Loggers are executed on ``start`` before all callbacks,</span>
 <span class="sd">    and on ``end`` after all callbacks.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">order</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">order</span> <span class="o">=</span> <span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Internal</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span></div>
@@ -193,7 +193,7 @@
 <span class="sd">    each class on `state.on_loader_end`.</span>
 <span class="sd">    This callback works for both single metric and multi-metric meters.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="MeterMetricsCallback.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.callback.MeterMetricsCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="MeterMetricsCallback.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.callback.MeterMetricsCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">metric_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">meter_list</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
@@ -257,12 +257,12 @@
             <span class="k">for</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">metric_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_names</span><span class="p">,</span> <span class="n">metrics</span><span class="p">):</span>
                 <span class="c1"># appending the per-class values</span>
                 <span class="n">metrics_tracker</span><span class="p">[</span><span class="n">prefix</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metric_</span><span class="p">)</span>
-                <span class="n">metric_name</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{prefix}</span><span class="s2">/class_</span><span class="si">{postfix}</span><span class="s2">&quot;</span>
+                <span class="n">metric_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{prefix}</span><span class="s2">/class_</span><span class="si">{postfix}</span><span class="s2">&quot;</span>
                 <span class="n">loader_values</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">metric_</span>
         <span class="c1"># averaging the per-class values for each metric</span>
         <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_names</span><span class="p">:</span>
             <span class="n">mean_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">metrics_tracker</span><span class="p">[</span><span class="n">prefix</span><span class="p">]))</span>
-            <span class="n">metric_name</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{prefix}</span><span class="s2">/_mean&quot;</span>
+            <span class="n">metric_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{prefix}</span><span class="s2">/_mean&quot;</span>
             <span class="n">loader_values</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean_value</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_reset_stats</span><span class="p">()</span></div></div>

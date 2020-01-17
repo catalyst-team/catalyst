@@ -32,15 +32,15 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.experiment.supervised</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl.callbacks</span> <span class="k">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.callbacks</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">CheckpointCallback</span><span class="p">,</span> <span class="n">ConsoleLogger</span><span class="p">,</span> <span class="n">CriterionCallback</span><span class="p">,</span> <span class="n">OptimizerCallback</span><span class="p">,</span>
     <span class="n">RaiseExceptionCallback</span><span class="p">,</span> <span class="n">SchedulerCallback</span><span class="p">,</span> <span class="n">TensorboardLogger</span><span class="p">,</span>
     <span class="n">VerboseLogger</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Callback</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="k">import</span> <span class="n">BaseExperiment</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="kn">import</span> <span class="n">Callback</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseExperiment</span>
 
 
 <div class="viewcode-block" id="SupervisedExperiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.supervised.SupervisedExperiment">[docs]</a><span class="k">class</span> <span class="nc">SupervisedExperiment</span><span class="p">(</span><span class="n">BaseExperiment</span><span class="p">):</span>

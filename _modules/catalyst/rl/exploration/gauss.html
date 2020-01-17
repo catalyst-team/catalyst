@@ -34,7 +34,7 @@
   <h1>Source code for catalyst.rl.exploration.gauss</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.rl.core</span> <span class="k">import</span> <span class="n">ExplorationStrategy</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl.core</span> <span class="kn">import</span> <span class="n">ExplorationStrategy</span>
 
 
 <div class="viewcode-block" id="NoExploration"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.exploration.gauss.NoExploration">[docs]</a><span class="k">class</span> <span class="nc">NoExploration</span><span class="p">(</span><span class="n">ExplorationStrategy</span><span class="p">):</span>
@@ -53,7 +53,7 @@
 <span class="sd">    Adds spherical Gaussian noise to the action produced by actor.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span>
@@ -75,7 +75,7 @@
 <span class="sd">    Paper: https://arxiv.org/abs/1509.02971</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span>

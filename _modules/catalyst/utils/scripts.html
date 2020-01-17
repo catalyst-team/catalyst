@@ -32,13 +32,13 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.utils.scripts</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">importlib.util</span> <span class="k">import</span> <span class="n">module_from_spec</span><span class="p">,</span> <span class="n">spec_from_file_location</span>
+<span></span><span class="kn">from</span> <span class="nn">importlib.util</span> <span class="kn">import</span> <span class="n">module_from_spec</span><span class="p">,</span> <span class="n">spec_from_file_location</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
-<span class="kn">from</span> <span class="nn">.notebook</span> <span class="k">import</span> <span class="n">save_notebook</span>
+<span class="kn">from</span> <span class="nn">.notebook</span> <span class="kn">import</span> <span class="n">save_notebook</span>
 
 
 <div class="viewcode-block" id="import_module"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.scripts.import_module">[docs]</a><span class="k">def</span> <span class="nf">import_module</span><span class="p">(</span><span class="n">expdir</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
@@ -66,7 +66,7 @@
 
 <div class="viewcode-block" id="dump_code"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.scripts.dump_code">[docs]</a><span class="k">def</span> <span class="nf">dump_code</span><span class="p">(</span><span class="n">expdir</span><span class="p">,</span> <span class="n">logdir</span><span class="p">):</span>
     <span class="n">expdir</span> <span class="o">=</span> <span class="n">expdir</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">expdir</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">expdir</span>
-    <span class="n">new_src_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;code&quot;</span>
+    <span class="n">new_src_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;code&quot;</span>
 
     <span class="c1"># @TODO: hardcoded</span>
     <span class="n">old_pro_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;/../&quot;</span>
@@ -88,7 +88,7 @@
 
     <span class="n">py_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">py_files</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">py_file</span> <span class="ow">in</span> <span class="n">py_files</span><span class="p">:</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{str(py_file.absolute())}&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{dst}</span><span class="s2">/</span><span class="si">{py_file.name}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;{str(py_file.absolute())}&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{dst}</span><span class="s2">/</span><span class="si">{py_file.name}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;import_module&quot;</span><span class="p">,</span> <span class="s2">&quot;dump_code&quot;</span><span class="p">,</span> <span class="s2">&quot;dump_python_files&quot;</span><span class="p">]</span>

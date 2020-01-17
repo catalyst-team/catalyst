@@ -32,7 +32,7 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.utils.torch</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
 <span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
@@ -41,11 +41,11 @@
 <span class="kn">import</span> <span class="nn">safitty</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="k">import</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 <span class="kn">import</span> <span class="nn">torch.backends.cudnn</span> <span class="k">as</span> <span class="nn">cudnn</span>
 
-<span class="kn">from</span> <span class="nn">catalyst</span> <span class="k">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.typing</span> <span class="k">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.typing</span> <span class="kn">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span>
 
 
 <div class="viewcode-block" id="ce_with_logits"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.ce_with_logits">[docs]</a><span class="k">def</span> <span class="nf">ce_with_logits</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
@@ -147,7 +147,7 @@
 
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">apex</span>  <span class="c1"># noqa: F401</span>
-        <span class="kn">from</span> <span class="nn">apex</span> <span class="k">import</span> <span class="n">amp</span>  <span class="c1"># noqa: F401</span>
+        <span class="kn">from</span> <span class="nn">apex</span> <span class="kn">import</span> <span class="n">amp</span>  <span class="c1"># noqa: F401</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
         <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> \
             <span class="s2">&quot;NVidia Apex package must be installed. &quot;</span> \

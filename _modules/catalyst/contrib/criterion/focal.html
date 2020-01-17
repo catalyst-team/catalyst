@@ -32,15 +32,15 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.contrib.criterion.focal</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">partial</span>
+<span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
-<span class="kn">from</span> <span class="nn">torch.nn.modules.loss</span> <span class="k">import</span> <span class="n">_Loss</span>
+<span class="kn">from</span> <span class="nn">torch.nn.modules.loss</span> <span class="kn">import</span> <span class="n">_Loss</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="k">import</span> <span class="n">criterion</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="kn">import</span> <span class="n">criterion</span>
 
 
 <div class="viewcode-block" id="FocalLossBinary"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.focal.FocalLossBinary">[docs]</a><span class="k">class</span> <span class="nc">FocalLossBinary</span><span class="p">(</span><span class="n">_Loss</span><span class="p">):</span>
-<div class="viewcode-block" id="FocalLossBinary.__init__"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.focal.FocalLossBinary.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="FocalLossBinary.__init__"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.focal.FocalLossBinary.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ignore</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">reduced</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>

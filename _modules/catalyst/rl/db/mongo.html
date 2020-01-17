@@ -39,12 +39,12 @@
 <span class="kn">import</span> <span class="nn">pymongo</span>
 <span class="kn">import</span> <span class="nn">safitty</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="k">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">catalyst.rl.core</span> <span class="k">import</span> <span class="n">DBSpec</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl.core</span> <span class="kn">import</span> <span class="n">DBSpec</span>
 
 
 <div class="viewcode-block" id="MongoDB"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.mongo.MongoDB">[docs]</a><span class="k">class</span> <span class="nc">MongoDB</span><span class="p">(</span><span class="n">DBSpec</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
         <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12000</span><span class="p">,</span>
@@ -57,7 +57,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_reconnect_timeout</span> <span class="o">=</span> <span class="n">reconnect_timeout</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_shared_db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="p">[</span><span class="s2">&quot;shared&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;agent_</span><span class="si">{self._prefix}</span><span class="s2">&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;agent_</span><span class="si">{self._prefix}</span><span class="s2">&quot;</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_collection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shared_db</span><span class="p">[</span><span class="s2">&quot;trajectories&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_raw_trajectory_collection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shared_db</span><span class="p">[</span><span class="s2">&quot;raw_trajectories&quot;</span><span class="p">]</span>

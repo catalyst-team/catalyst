@@ -32,10 +32,10 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.callbacks.metrics.accuracy</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">MultiMetricCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="k">import</span> <span class="n">criterion</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="kn">import</span> <span class="n">MultiMetricCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="kn">import</span> <span class="n">criterion</span>
 
 
 <span class="k">def</span> <span class="nf">_get_default_accuracy_args</span><span class="p">(</span><span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
@@ -89,7 +89,7 @@
 <span class="sd">    An appropriate type will be chosen automatically via shape of tensors.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AccuracyCallback.__init__"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="AccuracyCallback.__init__"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span>
         <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;logits&quot;</span><span class="p">,</span>
@@ -134,7 +134,7 @@
 <span class="sd">    mAP@k metric callback.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="MapKCallback.__init__"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.accuracy.MapKCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="MapKCallback.__init__"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.accuracy.MapKCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span>
         <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;logits&quot;</span><span class="p">,</span>

@@ -35,8 +35,8 @@
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="k">import</span> <span class="n">get_utcnow_time</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.scripts</span> <span class="k">import</span> <span class="n">dump_python_files</span><span class="p">,</span> <span class="n">import_module</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">get_utcnow_time</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.scripts</span> <span class="kn">import</span> <span class="n">dump_python_files</span><span class="p">,</span> <span class="n">import_module</span>
 
 
 <div class="viewcode-block" id="import_experiment_and_runner"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.scripts.import_experiment_and_runner">[docs]</a><span class="k">def</span> <span class="nf">import_experiment_and_runner</span><span class="p">(</span><span class="n">expdir</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
@@ -50,7 +50,7 @@
 <div class="viewcode-block" id="dump_base_experiment_code"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.scripts.dump_base_experiment_code">[docs]</a><span class="k">def</span> <span class="nf">dump_base_experiment_code</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="n">dst</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
     <span class="n">utcnow</span> <span class="o">=</span> <span class="n">get_utcnow_time</span><span class="p">()</span>
     <span class="n">dst_</span> <span class="o">=</span> <span class="n">dst</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">)</span>
-    <span class="n">dst</span> <span class="o">=</span> <span class="n">dst</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;code-</span><span class="si">{utcnow}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">dst_</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="n">dst_</span>
+    <span class="n">dst</span> <span class="o">=</span> <span class="n">dst</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;code-</span><span class="si">{utcnow}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">dst_</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="n">dst_</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">dump_python_files</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span></div>
 

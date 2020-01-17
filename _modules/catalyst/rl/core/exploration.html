@@ -32,13 +32,13 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.rl.core.exploration</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.rl.core</span> <span class="k">import</span> <span class="n">EnvironmentSpec</span>
-<span class="kn">from</span> <span class="nn">catalyst.rl.registry</span> <span class="k">import</span> <span class="n">EXPLORATION</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl.core</span> <span class="kn">import</span> <span class="n">EnvironmentSpec</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl.registry</span> <span class="kn">import</span> <span class="n">EXPLORATION</span>
 
 
 <div class="viewcode-block" id="ExplorationStrategy"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.exploration.ExplorationStrategy">[docs]</a><span class="k">class</span> <span class="nc">ExplorationStrategy</span><span class="p">:</span>
@@ -48,7 +48,7 @@
 <span class="sd">    In continuous case must contain method get_action(action).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_power</span> <span class="o">=</span> <span class="n">power</span>
 
 <div class="viewcode-block" id="ExplorationStrategy.set_power"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.exploration.ExplorationStrategy.set_power">[docs]</a>    <span class="k">def</span> <span class="nf">set_power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -57,7 +57,7 @@
 
 
 <div class="viewcode-block" id="ExplorationHandler"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.exploration.ExplorationHandler">[docs]</a><span class="k">class</span> <span class="nc">ExplorationHandler</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exploration_params</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">EnvironmentSpec</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exploration_params</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">EnvironmentSpec</span><span class="p">):</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">exploration_params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exploration_strategies</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ExplorationStrategy</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">probs</span> <span class="o">=</span> <span class="p">[]</span>

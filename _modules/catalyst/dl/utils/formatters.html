@@ -32,13 +32,13 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.utils.formatters</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl.core.state</span> <span class="k">import</span> <span class="n">RunnerState</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="k">import</span> <span class="n">format_metric</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.core.state</span> <span class="kn">import</span> <span class="n">RunnerState</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="n">format_metric</span>
 
 
 <div class="viewcode-block" id="MetricsFormatter"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.formatters.MetricsFormatter">[docs]</a><span class="k">class</span> <span class="nc">MetricsFormatter</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">):</span>
@@ -46,13 +46,13 @@
 <span class="sd">    Abstract metrics formatter</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="MetricsFormatter.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.formatters.MetricsFormatter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_prefix</span><span class="p">):</span>
+<div class="viewcode-block" id="MetricsFormatter.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.formatters.MetricsFormatter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message_prefix</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            message_prefix: logging format string</span>
 <span class="sd">                that will be prepended to message</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{message_prefix}</span><span class="s2">{{message}}&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;{&quot;</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{message_prefix}</span><span class="s2">{{message}}&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;{&quot;</span><span class="p">)</span></div>
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">_format_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
@@ -82,7 +82,7 @@
 <span class="sd">        no need to use it directly!</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="TxtMetricsFormatter.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.formatters.TxtMetricsFormatter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TxtMetricsFormatter.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.formatters.TxtMetricsFormatter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes the ``TxtMetricsFormatter``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -106,8 +106,8 @@
         <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_metrics</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">epoch_values</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">message</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">f</span><span class="s2">&quot;</span><span class="si">{state.stage_epoch_log}</span><span class="s2">/</span><span class="si">{state.num_epochs}</span><span class="s2"> &quot;</span>
-                <span class="n">f</span><span class="s2">&quot;* Epoch </span><span class="si">{state.epoch_log}</span><span class="s2"> (</span><span class="si">{key}</span><span class="s2">): </span><span class="si">{value}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{state.stage_epoch_log}</span><span class="s2">/</span><span class="si">{state.num_epochs}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;* Epoch </span><span class="si">{state.epoch_log}</span><span class="s2"> (</span><span class="si">{key}</span><span class="s2">): </span><span class="si">{value}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">message</span></div>
@@ -125,7 +125,7 @@
 <span class="sd">        no need to use it directly!</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="JsonMetricsFormatter.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.formatters.JsonMetricsFormatter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="JsonMetricsFormatter.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.formatters.JsonMetricsFormatter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes the ``JsonMetricsFormatter``</span>
 <span class="sd">        &quot;&quot;&quot;</span>

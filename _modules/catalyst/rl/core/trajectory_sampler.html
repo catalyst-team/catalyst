@@ -32,24 +32,24 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.rl.core.trajectory_sampler</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
-<span class="kn">from</span> <span class="nn">ctypes</span> <span class="k">import</span> <span class="n">c_bool</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
+<span class="kn">from</span> <span class="nn">ctypes</span> <span class="kn">import</span> <span class="n">c_bool</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="k">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">catalyst.rl.utils.buffer</span> <span class="k">import</span> <span class="n">get_buffer</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.dynamic_array</span> <span class="k">import</span> <span class="n">DynamicArray</span>
-<span class="kn">from</span> <span class="nn">.agent</span> <span class="k">import</span> <span class="n">ActorSpec</span><span class="p">,</span> <span class="n">CriticSpec</span>
-<span class="kn">from</span> <span class="nn">.environment</span> <span class="k">import</span> <span class="n">EnvironmentSpec</span>
-<span class="kn">from</span> <span class="nn">.policy_handler</span> <span class="k">import</span> <span class="n">PolicyHandler</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl.utils.buffer</span> <span class="kn">import</span> <span class="n">get_buffer</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.dynamic_array</span> <span class="kn">import</span> <span class="n">DynamicArray</span>
+<span class="kn">from</span> <span class="nn">.agent</span> <span class="kn">import</span> <span class="n">ActorSpec</span><span class="p">,</span> <span class="n">CriticSpec</span>
+<span class="kn">from</span> <span class="nn">.environment</span> <span class="kn">import</span> <span class="n">EnvironmentSpec</span>
+<span class="kn">from</span> <span class="nn">.policy_handler</span> <span class="kn">import</span> <span class="n">PolicyHandler</span>
 
 
 <div class="viewcode-block" id="TrajectorySampler"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.trajectory_sampler.TrajectorySampler">[docs]</a><span class="k">class</span> <span class="nc">TrajectorySampler</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">EnvironmentSpec</span><span class="p">,</span>
         <span class="n">agent</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ActorSpec</span><span class="p">,</span> <span class="n">CriticSpec</span><span class="p">],</span>
@@ -157,7 +157,7 @@
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exploration_strategy</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deterministic</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">catalyst.rl.exploration</span> <span class="k">import</span> \
+            <span class="kn">from</span> <span class="nn">catalyst.rl.exploration</span> <span class="kn">import</span> \
                 <span class="n">ParameterSpaceNoise</span><span class="p">,</span> <span class="n">OrnsteinUhlenbeckProcess</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exploration_strategy</span><span class="p">,</span> <span class="n">OrnsteinUhlenbeckProcess</span><span class="p">):</span>

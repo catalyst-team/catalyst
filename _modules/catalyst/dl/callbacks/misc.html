@@ -32,20 +32,20 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.callbacks.misc</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">confusion_matrix</span> <span class="k">as</span> <span class="n">confusion_matrix_fn</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">confusion_matrix</span> <span class="k">as</span> <span class="n">confusion_matrix_fn</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="k">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">LoggerCallback</span><span class="p">,</span> <span class="n">RunnerState</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.meters</span> <span class="k">import</span> <span class="n">ConfusionMeter</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.meters</span> <span class="kn">import</span> <span class="n">ConfusionMeter</span>
 
 
 <div class="viewcode-block" id="EarlyStoppingCallback"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.misc.EarlyStoppingCallback">[docs]</a><span class="k">class</span> <span class="nc">EarlyStoppingCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">patience</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
@@ -78,12 +78,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">num_bad_epochs</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_bad_epochs</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">patience</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Early stop at </span><span class="si">{state.stage_epoch}</span><span class="s2"> epoch&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Early stop at </span><span class="si">{state.stage_epoch}</span><span class="s2"> epoch&quot;</span><span class="p">)</span>
             <span class="n">state</span><span class="o">.</span><span class="n">early_stop</span> <span class="o">=</span> <span class="kc">True</span></div></div>
 
 
 <div class="viewcode-block" id="ConfusionMatrixCallback"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.misc.ConfusionMatrixCallback">[docs]</a><span class="k">class</span> <span class="nc">ConfusionMatrixCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span>
         <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;logits&quot;</span><span class="p">,</span>
@@ -151,7 +151,7 @@
             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_plot_params</span>
         <span class="p">)</span>
         <span class="n">fig</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">render_figure_to_tensor</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{self.prefix}</span><span class="s2">/epoch&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">global_step</span><span class="o">=</span><span class="n">epoch</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.prefix}</span><span class="s2">/epoch&quot;</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">global_step</span><span class="o">=</span><span class="n">epoch</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ConfusionMatrixCallback.on_loader_start"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.misc.ConfusionMatrixCallback.on_loader_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">RunnerState</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reset_stats</span><span class="p">()</span></div>
@@ -176,7 +176,7 @@
 
 
 <div class="viewcode-block" id="RaiseExceptionCallback"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.misc.RaiseExceptionCallback">[docs]</a><span class="k">class</span> <span class="nc">RaiseExceptionCallback</span><span class="p">(</span><span class="n">LoggerCallback</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">order</span> <span class="o">=</span> <span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Other</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
 

@@ -33,17 +33,17 @@
             
   <h1>Source code for catalyst.rl.core.sampler</h1><div class="highlight"><pre>
 <span></span><span class="c1"># isort:skip_file</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;OMP_NUM_THREADS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
 <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MKL_NUM_THREADS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
 
-<span class="kn">from</span> <span class="nn">ctypes</span> <span class="k">import</span> <span class="n">c_bool</span>  <span class="c1"># noqa E402</span>
+<span class="kn">from</span> <span class="nn">ctypes</span> <span class="kn">import</span> <span class="n">c_bool</span>  <span class="c1"># noqa E402</span>
 <span class="kn">import</span> <span class="nn">gc</span>  <span class="c1"># noqa E402</span>
 <span class="kn">import</span> <span class="nn">logging</span>  <span class="c1"># noqa E402</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>  <span class="c1"># noqa E402</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>  <span class="c1"># noqa E402</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>  <span class="c1"># noqa E402</span>
 <span class="kn">import</span> <span class="nn">shutil</span>  <span class="c1"># noqa E402</span>
 <span class="kn">import</span> <span class="nn">threading</span>  <span class="c1"># noqa E402</span>
 <span class="kn">import</span> <span class="nn">time</span>  <span class="c1"># noqa E402</span>
@@ -53,14 +53,14 @@
 <span class="kn">import</span> <span class="nn">torch</span>  <span class="c1"># noqa E402</span>
 <span class="n">torch</span><span class="o">.</span><span class="n">set_num_threads</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">catalyst</span> <span class="k">import</span> <span class="n">utils</span>  <span class="c1"># noqa E402</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.seed</span> <span class="k">import</span> <span class="n">Seeder</span><span class="p">,</span> <span class="n">set_global_seed</span>  <span class="c1"># noqa E402</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.tensorboard</span> <span class="k">import</span> <span class="n">SummaryWriter</span>  <span class="c1"># noqa E402</span>
-<span class="kn">from</span> <span class="nn">.agent</span> <span class="k">import</span> <span class="n">ActorSpec</span><span class="p">,</span> <span class="n">CriticSpec</span>  <span class="c1"># noqa E402</span>
-<span class="kn">from</span> <span class="nn">.db</span> <span class="k">import</span> <span class="n">DBSpec</span>  <span class="c1"># noqa E402</span>
-<span class="kn">from</span> <span class="nn">.environment</span> <span class="k">import</span> <span class="n">EnvironmentSpec</span>  <span class="c1"># noqa E402</span>
-<span class="kn">from</span> <span class="nn">.exploration</span> <span class="k">import</span> <span class="n">ExplorationHandler</span>  <span class="c1"># noqa E402</span>
-<span class="kn">from</span> <span class="nn">.trajectory_sampler</span> <span class="k">import</span> <span class="n">TrajectorySampler</span>  <span class="c1"># noqa E402</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>  <span class="c1"># noqa E402</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.seed</span> <span class="kn">import</span> <span class="n">Seeder</span><span class="p">,</span> <span class="n">set_global_seed</span>  <span class="c1"># noqa E402</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>  <span class="c1"># noqa E402</span>
+<span class="kn">from</span> <span class="nn">.agent</span> <span class="kn">import</span> <span class="n">ActorSpec</span><span class="p">,</span> <span class="n">CriticSpec</span>  <span class="c1"># noqa E402</span>
+<span class="kn">from</span> <span class="nn">.db</span> <span class="kn">import</span> <span class="n">DBSpec</span>  <span class="c1"># noqa E402</span>
+<span class="kn">from</span> <span class="nn">.environment</span> <span class="kn">import</span> <span class="n">EnvironmentSpec</span>  <span class="c1"># noqa E402</span>
+<span class="kn">from</span> <span class="nn">.exploration</span> <span class="kn">import</span> <span class="n">ExplorationHandler</span>  <span class="c1"># noqa E402</span>
+<span class="kn">from</span> <span class="nn">.trajectory_sampler</span> <span class="kn">import</span> <span class="n">TrajectorySampler</span>  <span class="c1"># noqa E402</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -79,7 +79,7 @@
 
 
 <div class="viewcode-block" id="Sampler"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.sampler.Sampler">[docs]</a><span class="k">class</span> <span class="nc">Sampler</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">agent</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ActorSpec</span><span class="p">,</span> <span class="n">CriticSpec</span><span class="p">],</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">EnvironmentSpec</span><span class="p">,</span>
@@ -157,8 +157,8 @@
     <span class="k">def</span> <span class="nf">_prepare_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logdir</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">timestamp</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_utcnow_time</span><span class="p">()</span>
-            <span class="n">logpath</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/&quot;</span> \
-                <span class="n">f</span><span class="s2">&quot;sampler.</span><span class="si">{mode}</span><span class="s2">.</span><span class="si">{self._sampler_id}</span><span class="s2">.</span><span class="si">{timestamp}</span><span class="s2">&quot;</span>
+            <span class="n">logpath</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/&quot;</span> \
+                <span class="sa">f</span><span class="s2">&quot;sampler.</span><span class="si">{mode}</span><span class="s2">.</span><span class="si">{self._sampler_id}</span><span class="s2">.</span><span class="si">{timestamp}</span><span class="s2">&quot;</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">logpath</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logdir</span> <span class="o">=</span> <span class="n">logpath</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">logpath</span><span class="p">)</span>
@@ -192,7 +192,7 @@
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;No checkpoint found&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint</span> <span class="o">=</span> <span class="n">checkpoint</span>
-        <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{self._weights_sync_mode}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self._weights_sync_mode}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span>
         <span class="n">weights</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">k</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">any2device</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">weights</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
@@ -219,15 +219,15 @@
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">raw_reward</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">,</span> <span class="n">seed</span>
     <span class="p">):</span>
         <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">f</span><span class="s2">&quot;trajectory {int(self.trajectory_index):05d}&quot;</span><span class="p">,</span>
-            <span class="n">f</span><span class="s2">&quot;steps: {int(num_steps):05d}&quot;</span><span class="p">,</span>
-            <span class="n">f</span><span class="s2">&quot;reward: </span><span class="si">{reward:9.3f}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="n">f</span><span class="s2">&quot;raw_reward: </span><span class="si">{raw_reward:9.3f}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="n">f</span><span class="s2">&quot;time: </span><span class="si">{elapsed_time:9.3f}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="n">f</span><span class="s2">&quot;seed: </span><span class="si">{seed:010d}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;trajectory {int(self.trajectory_index):05d}&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;steps: {int(num_steps):05d}&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;reward: </span><span class="si">{reward:9.3f}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;raw_reward: </span><span class="si">{raw_reward:9.3f}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;time: </span><span class="si">{elapsed_time:9.3f}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;seed: </span><span class="si">{seed:010d}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="p">]</span>
         <span class="n">metrics</span> <span class="o">=</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;--- </span><span class="si">{metrics}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;--- </span><span class="si">{metrics}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_log_to_tensorboard</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">raw_reward</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
@@ -268,7 +268,7 @@
         <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="p">):</span>
         <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">f</span><span class="s2">&quot;</span><span class="si">{mode}</span><span class="s2">/</span><span class="si">{key}{suffix}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">value</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{mode}</span><span class="s2">/</span><span class="si">{key}{suffix}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">value</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
         <span class="p">}</span>
         <span class="n">step</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># @TODO: fix, wandb issue</span>
@@ -287,10 +287,10 @@
             <span class="n">events_src</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">logdir_src</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;events.out.tfevents*&quot;</span><span class="p">))</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">events_src</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">events_src</span> <span class="o">=</span> <span class="n">events_src</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir_dst}</span><span class="s2">/</span><span class="si">{logdir_src.name}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{logdir_dst}</span><span class="s2">/</span><span class="si">{logdir_src.name}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span>
-                    <span class="n">f</span><span class="s2">&quot;{str(events_src.absolute())}&quot;</span><span class="p">,</span>
-                    <span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir_dst}</span><span class="s2">/</span><span class="si">{logdir_src.name}</span><span class="s2">/</span><span class="si">{events_src.name}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="sa">f</span><span class="s2">&quot;{str(events_src.absolute())}&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{logdir_dst}</span><span class="s2">/</span><span class="si">{logdir_src.name}</span><span class="s2">/</span><span class="si">{events_src.name}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">_run_trajectory_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -411,7 +411,7 @@
             <span class="k">return</span> <span class="kc">False</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint</span> <span class="o">=</span> <span class="n">checkpoint</span>
-        <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{self._weights_sync_mode}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self._weights_sync_mode}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span>
         <span class="n">weights</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">k</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">any2device</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">weights</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
@@ -437,8 +437,8 @@
             <span class="n">checkpoint_paths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">checkpoint_paths</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">checkpoint_path</span> <span class="ow">in</span> <span class="n">checkpoint_paths</span><span class="p">:</span>
                 <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span>
-                    <span class="n">f</span><span class="s2">&quot;{str(checkpoint_path.absolute())}&quot;</span><span class="p">,</span>
-                    <span class="n">f</span><span class="s2">&quot;</span><span class="si">{checkpoints_dst}</span><span class="s2">/</span><span class="si">{checkpoint_path.name}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="sa">f</span><span class="s2">&quot;{str(checkpoint_path.absolute())}&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{checkpoints_dst}</span><span class="s2">/</span><span class="si">{checkpoint_path.name}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ValidSampler.save_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.sampler.ValidSampler.save_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">save_checkpoint</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -453,9 +453,9 @@
 
         <span class="n">is_best</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">best_agents</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> \
             <span class="n">agent_metric</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewards2metric</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">best_agents</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">suffix</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{checkpoint[&#39;epoch&#39;]}</span><span class="s2">&quot;</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{checkpoint[&#39;epoch&#39;]}</span><span class="s2">&quot;</span>
         <span class="n">filepath</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span>
-            <span class="n">logdir</span><span class="o">=</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/checkpoints/&quot;</span><span class="p">,</span>
+            <span class="n">logdir</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/checkpoints/&quot;</span><span class="p">,</span>
             <span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span>
             <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
             <span class="n">is_best</span><span class="o">=</span><span class="n">is_best</span><span class="p">,</span>

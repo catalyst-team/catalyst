@@ -32,12 +32,12 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.contrib.models.segmentation.psp</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>  <span class="c1"># isort:skip</span>
 
-<span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">ResnetUnetSpec</span><span class="p">,</span> <span class="n">UnetSpec</span>
-<span class="kn">from</span> <span class="nn">.decoder</span> <span class="k">import</span> <span class="n">PSPDecoder</span>
-<span class="kn">from</span> <span class="nn">.encoder</span> <span class="k">import</span> <span class="n">ResnetEncoder</span><span class="p">,</span> <span class="n">UnetEncoder</span>
-<span class="kn">from</span> <span class="nn">.head</span> <span class="k">import</span> <span class="n">UnetHead</span>
+<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">ResnetUnetSpec</span><span class="p">,</span> <span class="n">UnetSpec</span>
+<span class="kn">from</span> <span class="nn">.decoder</span> <span class="kn">import</span> <span class="n">PSPDecoder</span>
+<span class="kn">from</span> <span class="nn">.encoder</span> <span class="kn">import</span> <span class="n">ResnetEncoder</span><span class="p">,</span> <span class="n">UnetEncoder</span>
+<span class="kn">from</span> <span class="nn">.head</span> <span class="kn">import</span> <span class="n">UnetHead</span>
 
 
 <div class="viewcode-block" id="PSPnet"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.models.segmentation.psp.PSPnet">[docs]</a><span class="k">class</span> <span class="nc">PSPnet</span><span class="p">(</span><span class="n">UnetSpec</span><span class="p">):</span>

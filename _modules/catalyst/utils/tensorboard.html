@@ -33,33 +33,33 @@
             
   <h1>Source code for catalyst.utils.tensorboard</h1><div class="highlight"><pre>
 <span></span><span class="c1"># isort:skip_file</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">BinaryIO</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
-<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="k">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">BinaryIO</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">struct</span>
 
 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CRC32C_SW_MODE&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CRC32C_SW_MODE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span>
-<span class="kn">from</span> <span class="nn">crc32c</span> <span class="k">import</span> <span class="n">crc32</span> <span class="k">as</span> <span class="n">crc32c</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">from</span> <span class="nn">crc32c</span> <span class="kn">import</span> <span class="n">crc32</span> <span class="k">as</span> <span class="n">crc32c</span>  <span class="c1"># noqa: E402</span>
 
 <span class="kn">import</span> <span class="nn">cv2</span>  <span class="c1"># noqa: E402</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># noqa: E402</span>
 
 <span class="c1"># Native tensorboard support from 1.2.0 version of PyTorch</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="k">import</span> <span class="n">__version__</span> <span class="k">as</span> <span class="n">torch_version</span>  <span class="c1"># noqa: E402</span>
-<span class="kn">from</span> <span class="nn">packaging</span> <span class="k">import</span> <span class="n">version</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">__version__</span> <span class="k">as</span> <span class="n">torch_version</span>  <span class="c1"># noqa: E402</span>
+<span class="kn">from</span> <span class="nn">packaging</span> <span class="kn">import</span> <span class="n">version</span>  <span class="c1"># noqa: E402</span>
 <span class="k">if</span> <span class="n">version</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">torch_version</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">version</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;1.2.0&quot;</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">tensorboardX</span> <span class="k">import</span> <span class="n">SummaryWriter</span> <span class="k">as</span> <span class="n">tensorboardX_SummaryWriter</span>
+    <span class="kn">from</span> <span class="nn">tensorboardX</span> <span class="kn">import</span> <span class="n">SummaryWriter</span> <span class="k">as</span> <span class="n">tensorboardX_SummaryWriter</span>
     <span class="n">SummaryWriter</span> <span class="o">=</span> <span class="n">tensorboardX_SummaryWriter</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">torch.utils.tensorboard</span> <span class="k">import</span> <span class="n">SummaryWriter</span> <span class="k">as</span> <span class="n">torch_SummaryWriter</span>
+    <span class="kn">from</span> <span class="nn">torch.utils.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span> <span class="k">as</span> <span class="n">torch_SummaryWriter</span>
     <span class="n">SummaryWriter</span> <span class="o">=</span> <span class="n">torch_SummaryWriter</span>
 <span class="k">if</span> <span class="n">version</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">torch_version</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">version</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;1.2.0&quot;</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">tensorboardX.proto.event_pb2</span> <span class="k">import</span> <span class="n">Event</span>
+    <span class="kn">from</span> <span class="nn">tensorboardX.proto.event_pb2</span> <span class="kn">import</span> <span class="n">Event</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">tensorboard.compat.proto.event_pb2</span> <span class="k">import</span> <span class="n">Event</span>
+    <span class="kn">from</span> <span class="nn">tensorboard.compat.proto.event_pb2</span> <span class="kn">import</span> <span class="n">Event</span>
 
 
 <span class="k">def</span> <span class="nf">_u32</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -82,7 +82,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An iterator over a Tensorboard events file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="EventsFileReader.__init__"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.tensorboard.EventsFileReader.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events_file</span><span class="p">:</span> <span class="n">BinaryIO</span><span class="p">):</span>
+<div class="viewcode-block" id="EventsFileReader.__init__"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.tensorboard.EventsFileReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events_file</span><span class="p">:</span> <span class="n">BinaryIO</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize an iterator over an events file</span>
 
@@ -139,7 +139,7 @@
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span>
 
-    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Event</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Event</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Iterates over events in the current events file</span>
 
@@ -209,7 +209,7 @@
         <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="n">_get_image</span><span class="p">,</span>
     <span class="p">}</span>
 
-<div class="viewcode-block" id="SummaryReader.__init__"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.tensorboard.SummaryReader.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="SummaryReader.__init__"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.tensorboard.SummaryReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">logdir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
         <span class="n">tag_filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -282,7 +282,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag_filter</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag_filter</span>
 
-    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SummaryItem</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SummaryItem</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Iterate over events in all the files in the current logdir</span>
 

@@ -32,17 +32,17 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.rl.onpolicy.trainer</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>  <span class="c1"># isort:skip</span>
 
 <span class="kn">import</span> <span class="nn">time</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="k">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="k">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">catalyst.rl.core</span> <span class="k">import</span> <span class="n">TrainerSpec</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl.core</span> <span class="kn">import</span> <span class="n">TrainerSpec</span>
 
 
 <span class="k">def</span> <span class="nf">_get_states_from_observations</span><span class="p">(</span><span class="n">observations</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">history_len</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
@@ -142,18 +142,18 @@
             <span class="n">trajectories_percentrage</span> <span class="o">=</span> \
                 <span class="mi">100</span> <span class="o">*</span> <span class="n">num_trajectories</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_num_trajectories</span>
             <span class="n">trajectories_stats</span> <span class="o">=</span> \
-                <span class="n">f</span><span class="s2">&quot;</span><span class="si">{num_trajectories:09d}</span><span class="s2"> / &quot;</span> \
-                <span class="n">f</span><span class="s2">&quot;</span><span class="si">{self.min_num_trajectories:09d}</span><span class="s2"> &quot;</span> \
-                <span class="n">f</span><span class="s2">&quot;(</span><span class="si">{trajectories_percentrage:5.2f}</span><span class="s2">%)&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{num_trajectories:09d}</span><span class="s2"> / &quot;</span> \
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.min_num_trajectories:09d}</span><span class="s2"> &quot;</span> \
+                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{trajectories_percentrage:5.2f}</span><span class="s2">%)&quot;</span>
             <span class="n">transitions_percentrage</span> <span class="o">=</span> \
                 <span class="mi">100</span> <span class="o">*</span> <span class="n">num_transitions</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_num_transitions</span>
             <span class="n">transitions_stats</span> <span class="o">=</span> \
-                <span class="n">f</span><span class="s2">&quot;</span><span class="si">{num_transitions:09d}</span><span class="s2"> / &quot;</span> \
-                <span class="n">f</span><span class="s2">&quot;</span><span class="si">{self.min_num_transitions:09d}</span><span class="s2"> &quot;</span> \
-                <span class="n">f</span><span class="s2">&quot;(</span><span class="si">{transitions_percentrage:5.2f}</span><span class="s2">%)&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{num_transitions:09d}</span><span class="s2"> / &quot;</span> \
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.min_num_transitions:09d}</span><span class="s2"> &quot;</span> \
+                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{transitions_percentrage:5.2f}</span><span class="s2">%)&quot;</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="n">f</span><span class="s2">&quot;trajectories: </span><span class="si">{trajectories_stats}</span><span class="se">\t</span><span class="s2">&quot;</span>
-                <span class="n">f</span><span class="s2">&quot;transitions: </span><span class="si">{transitions_stats}</span><span class="se">\t</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;trajectories: </span><span class="si">{trajectories_stats}</span><span class="se">\t</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;transitions: </span><span class="si">{transitions_stats}</span><span class="se">\t</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
             <span class="k">try</span><span class="p">:</span>

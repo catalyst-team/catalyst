@@ -32,7 +32,7 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.utils.ddp</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">torch</span> <span class="k">import</span> <span class="n">nn</span>
+<span></span><span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 
 
 <div class="viewcode-block" id="is_wrapped_with_ddp"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.ddp.is_wrapped_with_ddp">[docs]</a><span class="k">def</span> <span class="nf">is_wrapped_with_ddp</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -44,7 +44,7 @@
     <span class="c1"># Check whether Apex is installed and if it is,</span>
     <span class="c1"># add Apex&#39;s DistributedDataParallel to list of checked types</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">apex.parallel</span> <span class="k">import</span> <span class="n">DistributedDataParallel</span> <span class="k">as</span> <span class="n">apex_DDP</span>
+        <span class="kn">from</span> <span class="nn">apex.parallel</span> <span class="kn">import</span> <span class="n">DistributedDataParallel</span> <span class="k">as</span> <span class="n">apex_DDP</span>
         <span class="n">parallel_wrappers</span> <span class="o">=</span> <span class="n">parallel_wrappers</span> <span class="o">+</span> <span class="p">(</span><span class="n">apex_DDP</span><span class="p">,</span> <span class="p">)</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
         <span class="k">pass</span>

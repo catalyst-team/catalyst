@@ -32,17 +32,17 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.callbacks.optimizer</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">import</span> <span class="nn">safitty</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">RunnerState</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.registry</span> <span class="k">import</span> <span class="n">GRAD_CLIPPERS</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="k">import</span> <span class="n">get_optimizer_momentum</span><span class="p">,</span> <span class="n">maybe_recursive_call</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.typing</span> <span class="k">import</span> <span class="n">Optimizer</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">RunnerState</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.registry</span> <span class="kn">import</span> <span class="n">GRAD_CLIPPERS</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="kn">import</span> <span class="n">get_optimizer_momentum</span><span class="p">,</span> <span class="n">maybe_recursive_call</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.typing</span> <span class="kn">import</span> <span class="n">Optimizer</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -51,7 +51,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Optimizer callback, abstraction over optimizer step.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="OptimizerCallback.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.optimizer.OptimizerCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="OptimizerCallback.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.optimizer.OptimizerCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">grad_clip_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">accumulation_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -139,14 +139,14 @@
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="n">f</span><span class="s2">&quot;Loss is a list. &quot;</span>
-                <span class="n">f</span><span class="s2">&quot;Only the last value will be used for `backward`.&quot;</span>
-                <span class="n">f</span><span class="s2">&quot;To aggregate losses into &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Loss is a list. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Only the last value will be used for `backward`.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;To aggregate losses into &quot;</span>
                 <span class="s2">&quot;one value use `CriterionAggregatorCallback`&quot;</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="n">error</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;Loss is a dict: {list(loss.keys())}, &quot;</span> \
-                    <span class="n">f</span><span class="s2">&quot;to aggregate losses into &quot;</span> \
+            <span class="n">error</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Loss is a dict: {list(loss.keys())}, &quot;</span> \
+                    <span class="sa">f</span><span class="s2">&quot;to aggregate losses into &quot;</span> \
                     <span class="s2">&quot;one value use `CriterionAggregatorCallback`.&quot;</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">error</span> <span class="o">=</span> <span class="n">error</span> <span class="o">+</span> <span class="s2">&quot; Or try to pass `loss_key` &quot;</span> \
@@ -179,7 +179,7 @@
         <span class="c1"># But alternative solution is to have AmpOptimizerCallback.</span>
         <span class="c1"># or expose another c&#39;tor argument.</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="s2">&quot;_amp_stash&quot;</span><span class="p">):</span>
-            <span class="kn">from</span> <span class="nn">apex</span> <span class="k">import</span> <span class="n">amp</span>
+            <span class="kn">from</span> <span class="nn">apex</span> <span class="kn">import</span> <span class="n">amp</span>
             <span class="c1"># Need to set ``delay_unscale``</span>
             <span class="c1"># according to</span>
             <span class="c1"># https://nvidia.github.io/apex/advanced.html#gradient-accumulation-across-iterations</span>

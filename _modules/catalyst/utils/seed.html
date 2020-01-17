@@ -35,7 +35,7 @@
 <span></span><span class="kn">import</span> <span class="nn">random</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">packaging.version</span> <span class="k">import</span> <span class="n">parse</span><span class="p">,</span> <span class="n">Version</span>
+<span class="kn">from</span> <span class="nn">packaging.version</span> <span class="kn">import</span> <span class="n">parse</span><span class="p">,</span> <span class="n">Version</span>
 
 
 <div class="viewcode-block" id="set_global_seed"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.seed.set_global_seed">[docs]</a><span class="k">def</span> <span class="nf">set_global_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -86,7 +86,7 @@
 <span class="sd">        [209652396, 398764591, 924231285, 1478610112, 441365315]</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="Seeder.__init__"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.seed.Seeder.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">max_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Seeder.__init__"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.seed.Seeder.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">max_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the seeder.</span>
 
@@ -95,14 +95,14 @@
 <span class="sd">                Initial seed for generating random seeds. Default: ``0``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init_seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">init_seed</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> \
-            <span class="n">f</span><span class="s2">&quot;expected non-negative integer, got </span><span class="si">{init_seed}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;expected non-negative integer, got </span><span class="si">{init_seed}</span><span class="s2">&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">init_seed</span><span class="p">)</span>
 
         <span class="c1"># Upper bound for sampling new random seeds</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="n">max_seed</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">max</span></div>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the sampled random seeds according to the given size.</span>
 

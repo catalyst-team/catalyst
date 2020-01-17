@@ -37,13 +37,13 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.contrib.models</span> <span class="k">import</span> <span class="n">get_linear_net</span>
-<span class="kn">from</span> <span class="nn">catalyst.contrib.modules</span> <span class="k">import</span> <span class="n">LamaPooling</span><span class="p">,</span> <span class="n">TemporalConcatPooling</span>
-<span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="k">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.models</span> <span class="kn">import</span> <span class="n">get_linear_net</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.modules</span> <span class="kn">import</span> <span class="n">LamaPooling</span><span class="p">,</span> <span class="n">TemporalConcatPooling</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="kn">import</span> <span class="n">utils</span>
 
 
 <div class="viewcode-block" id="StateNet"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agent.network.StateNet">[docs]</a><span class="k">class</span> <span class="nc">StateNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<div class="viewcode-block" id="StateNet.__init__"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agent.network.StateNet.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="StateNet.__init__"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agent.network.StateNet.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">main_net</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
         <span class="n">observation_net</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -183,7 +183,7 @@
 
 
 <div class="viewcode-block" id="StateActionNet"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agent.network.StateActionNet">[docs]</a><span class="k">class</span> <span class="nc">StateActionNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">main_net</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
         <span class="n">observation_net</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

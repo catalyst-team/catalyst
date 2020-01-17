@@ -32,16 +32,16 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.utils.checkpoint</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">.ddp</span> <span class="k">import</span> <span class="n">get_real_module</span>
-<span class="kn">from</span> <span class="nn">.misc</span> <span class="k">import</span> <span class="n">maybe_recursive_call</span>
+<span class="kn">from</span> <span class="nn">.ddp</span> <span class="kn">import</span> <span class="n">get_real_module</span>
+<span class="kn">from</span> <span class="nn">.misc</span> <span class="kn">import</span> <span class="n">maybe_recursive_call</span>
 
 
 <div class="viewcode-block" id="pack_checkpoint"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.checkpoint.pack_checkpoint">[docs]</a><span class="k">def</span> <span class="nf">pack_checkpoint</span><span class="p">(</span>
@@ -88,12 +88,12 @@
     <span class="n">special_suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 <span class="p">):</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">filename</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/</span><span class="si">{suffix}</span><span class="s2">.pth&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/</span><span class="si">{suffix}</span><span class="s2">.pth&quot;</span>
     <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">is_best</span><span class="p">:</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/best</span><span class="si">{special_suffix}</span><span class="s2">.pth&quot;</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/best</span><span class="si">{special_suffix}</span><span class="s2">.pth&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">is_last</span><span class="p">:</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/last</span><span class="si">{special_suffix}</span><span class="s2">.pth&quot;</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/last</span><span class="si">{special_suffix}</span><span class="s2">.pth&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">filename</span></div>
 
 
@@ -118,10 +118,10 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dict2load</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dict2load</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">name2load_</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{name2load}</span><span class="s2">_</span><span class="si">{key}</span><span class="s2">_state_dict&quot;</span>
+                    <span class="n">name2load_</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{name2load}</span><span class="s2">_</span><span class="si">{key}</span><span class="s2">_state_dict&quot;</span>
                     <span class="n">value</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">[</span><span class="n">name2load_</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">name2load</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{name2load}</span><span class="s2">_state_dict&quot;</span>
+            <span class="n">name2load</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{name2load}</span><span class="s2">_state_dict&quot;</span>
             <span class="n">dict2load</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">[</span><span class="n">name2load</span><span class="p">])</span></div>
 
 

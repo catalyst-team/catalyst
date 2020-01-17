@@ -32,10 +32,10 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.utils.visualization</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.utils.plotly</span> <span class="k">import</span> <span class="n">plot_tensorboard_log</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.plotly</span> <span class="kn">import</span> <span class="n">plot_tensorboard_log</span>
 
 
 <div class="viewcode-block" id="plot_metrics"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.visualization.plot_metrics">[docs]</a><span class="k">def</span> <span class="nf">plot_metrics</span><span class="p">(</span>
@@ -60,7 +60,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="n">step</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;batch&quot;</span><span class="p">,</span> <span class="s2">&quot;epoch&quot;</span><span class="p">],</span> \
-        <span class="n">f</span><span class="s2">&quot;Step should be either &#39;batch&#39; or &#39;epoch&#39;, got &#39;</span><span class="si">{step}</span><span class="s2">&#39;&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;Step should be either &#39;batch&#39; or &#39;epoch&#39;, got &#39;</span><span class="si">{step}</span><span class="s2">&#39;&quot;</span>
     <span class="n">metrics</span> <span class="o">=</span> <span class="n">metrics</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">]</span>
     <span class="n">plot_tensorboard_log</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span></div>
 

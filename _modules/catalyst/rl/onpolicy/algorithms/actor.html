@@ -32,17 +32,17 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.rl.onpolicy.algorithms.actor</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="k">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">catalyst.rl.core</span> <span class="k">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl.core</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ActorSpec</span><span class="p">,</span> <span class="n">AlgorithmSpec</span><span class="p">,</span> <span class="n">CriticSpec</span><span class="p">,</span> <span class="n">EnvironmentSpec</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">catalyst.rl.registry</span> <span class="k">import</span> <span class="n">AGENTS</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl.registry</span> <span class="kn">import</span> <span class="n">AGENTS</span>
 
 
 <div class="viewcode-block" id="OnpolicyActor"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.onpolicy.algorithms.actor.OnpolicyActor">[docs]</a><span class="k">class</span> <span class="nc">OnpolicyActor</span><span class="p">(</span><span class="n">AlgorithmSpec</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">actor</span><span class="p">:</span> <span class="n">ActorSpec</span><span class="p">,</span>
         <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -96,13 +96,13 @@
         <span class="n">checkpoint</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;actor&quot;</span><span class="p">]:</span>
-            <span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+            <span class="n">checkpoint</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">with_optimizer</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">key2</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">]:</span>
-                    <span class="n">key2</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">_</span><span class="si">{key2}</span><span class="s2">&quot;</span>
+                    <span class="n">key2</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">_</span><span class="si">{key2}</span><span class="s2">&quot;</span>
                     <span class="n">value2</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key2</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">value2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{key2}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value2</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+                        <span class="n">checkpoint</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{key2}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value2</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">checkpoint</span></div>
 
@@ -110,15 +110,15 @@
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;actor&quot;</span><span class="p">]:</span>
             <span class="n">value_l</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">value_l</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">value_r</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span>
+                <span class="n">value_r</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span>
                 <span class="n">value_l</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">value_r</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">with_optimizer</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">key2</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">]:</span>
-                    <span class="n">key2</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">_</span><span class="si">{key2}</span><span class="s2">&quot;</span>
+                    <span class="n">key2</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{key}</span><span class="s2">_</span><span class="si">{key2}</span><span class="s2">&quot;</span>
                     <span class="n">value_l</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key2</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">value_l</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">value_r</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{key2}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span>
+                        <span class="n">value_r</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{key2}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span>
                         <span class="n">value_l</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">value_r</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="OnpolicyActor.actor_update"><a class="viewcode-back" href="../../../../../api/rl.html#catalyst.rl.onpolicy.algorithms.actor.OnpolicyActor.actor_update">[docs]</a>    <span class="k">def</span> <span class="nf">actor_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>

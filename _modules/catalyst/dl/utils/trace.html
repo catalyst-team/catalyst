@@ -32,17 +32,17 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.utils.trace</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
 
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="k">import</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">torch.jit</span> <span class="k">import</span> <span class="n">ScriptModule</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">torch.jit</span> <span class="kn">import</span> <span class="n">ScriptModule</span>
 
-<span class="kn">from</span> <span class="nn">catalyst</span> <span class="k">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="k">import</span> <span class="n">Runner</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.typing</span> <span class="k">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="kn">import</span> <span class="n">Runner</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.typing</span> <span class="kn">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Model</span>
 
 
 <span class="k">class</span> <span class="nc">_ForwardOverrideModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -52,7 +52,7 @@
 <span class="sd">    (Workaround, single method tracing is not supported)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">method_name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">method_name</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method_name</span>
@@ -68,13 +68,13 @@
 <span class="sd">    (Workaround, to use native model batch handler)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">method_name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">method_name</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">method_name</span> <span class="o">=</span> <span class="n">method_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tracing_result</span><span class="p">:</span> <span class="n">ScriptModule</span>
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">method_model</span> <span class="o">=</span> <span class="n">_ForwardOverrideModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">method_name</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">tracing_result</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span>
@@ -115,7 +115,7 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Both batch and runner must be specified.&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;eval&quot;</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Unknown mode &#39;</span><span class="si">{mode}</span><span class="s2">&#39;. Must be &#39;eval&#39; or &#39;train&#39;&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown mode &#39;</span><span class="si">{mode}</span><span class="s2">&#39;. Must be &#39;eval&#39; or &#39;train&#39;&quot;</span><span class="p">)</span>
 
     <span class="n">predict_params</span> <span class="o">=</span> <span class="n">predict_params</span> <span class="ow">or</span> <span class="p">{}</span>
 
@@ -125,7 +125,7 @@
         <span class="c1"># If traced in AMP we need to initialize the model before calling</span>
         <span class="c1"># the jit</span>
         <span class="c1"># https://github.com/NVIDIA/apex/issues/303#issuecomment-493142950</span>
-        <span class="kn">from</span> <span class="nn">apex</span> <span class="k">import</span> <span class="n">amp</span>
+        <span class="kn">from</span> <span class="nn">apex</span> <span class="kn">import</span> <span class="n">amp</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">amp</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">opt_level</span><span class="o">=</span><span class="n">opt_level</span><span class="p">)</span>
         <span class="c1"># TODO: remove `check_trace=False`</span>
@@ -164,19 +164,19 @@
 <span class="sd">        opt_level (str): opt_level if model was traced in FP16</span>
 <span class="sd">        additional_string (str): any additional information</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">file_name</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;traced&quot;</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;traced&quot;</span>
     <span class="k">if</span> <span class="n">additional_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">file_name</span> <span class="o">+=</span> <span class="n">f</span><span class="s2">&quot;-</span><span class="si">{additional_string}</span><span class="s2">&quot;</span>
+        <span class="n">file_name</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;-</span><span class="si">{additional_string}</span><span class="s2">&quot;</span>
 
-    <span class="n">file_name</span> <span class="o">+=</span> <span class="n">f</span><span class="s2">&quot;-</span><span class="si">{method_name}</span><span class="s2">&quot;</span>
+    <span class="n">file_name</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;-</span><span class="si">{method_name}</span><span class="s2">&quot;</span>
     <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;train&quot;</span><span class="p">:</span>
         <span class="n">file_name</span> <span class="o">+=</span> <span class="s2">&quot;-in_train&quot;</span>
 
     <span class="k">if</span> <span class="n">requires_grad</span><span class="p">:</span>
-        <span class="n">file_name</span> <span class="o">+=</span> <span class="n">f</span><span class="s2">&quot;-with_grad&quot;</span>
+        <span class="n">file_name</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;-with_grad&quot;</span>
 
     <span class="k">if</span> <span class="n">opt_level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">file_name</span> <span class="o">+=</span> <span class="n">f</span><span class="s2">&quot;-opt_</span><span class="si">{opt_level}</span><span class="s2">&quot;</span>
+        <span class="n">file_name</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;-opt_</span><span class="si">{opt_level}</span><span class="s2">&quot;</span>
 
     <span class="n">file_name</span> <span class="o">+=</span> <span class="s2">&quot;.pth&quot;</span>
 
@@ -209,7 +209,7 @@
 
     <span class="k">if</span> <span class="n">opt_level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">utils</span><span class="o">.</span><span class="n">assert_fp16_available</span><span class="p">()</span>
-        <span class="kn">from</span> <span class="nn">apex</span> <span class="k">import</span> <span class="n">amp</span>
+        <span class="kn">from</span> <span class="nn">apex</span> <span class="kn">import</span> <span class="n">amp</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">amp</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">opt_level</span><span class="o">=</span><span class="n">opt_level</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">model</span></div>

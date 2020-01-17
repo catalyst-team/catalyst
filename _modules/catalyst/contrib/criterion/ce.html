@@ -38,7 +38,7 @@
 
 
 <div class="viewcode-block" id="NaiveCrossEntropyLoss"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.ce.NaiveCrossEntropyLoss">[docs]</a><span class="k">class</span> <span class="nc">NaiveCrossEntropyLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size_average</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size_average</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">size_average</span> <span class="o">=</span> <span class="n">size_average</span>
 
@@ -51,7 +51,7 @@
 
 
 <div class="viewcode-block" id="SymmetricCrossEntropyLoss"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.ce.SymmetricCrossEntropyLoss">[docs]</a><span class="k">class</span> <span class="nc">SymmetricCrossEntropyLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<div class="viewcode-block" id="SymmetricCrossEntropyLoss.__init__"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.ce.SymmetricCrossEntropyLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+<div class="viewcode-block" id="SymmetricCrossEntropyLoss.__init__"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.ce.SymmetricCrossEntropyLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Symmetric Cross Entropy</span>
 <span class="sd">        paper : https://arxiv.org/abs/1908.06112</span>
@@ -91,7 +91,7 @@
 
 
 <div class="viewcode-block" id="MaskCrossEntropyLoss"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.criterion.ce.MaskCrossEntropyLoss">[docs]</a><span class="k">class</span> <span class="nc">MaskCrossEntropyLoss</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="o">*</span><span class="n">args</span><span class="p">,</span>
             <span class="n">target_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span>
