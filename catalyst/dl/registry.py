@@ -1,8 +1,13 @@
+import logging
+import os
+
 from catalyst.contrib.registry import (
     Criterion, CRITERIONS, GRAD_CLIPPERS, Model, MODELS, Module, MODULES,
     Optimizer, OPTIMIZERS, Sampler, SAMPLERS, Scheduler, SCHEDULERS
 )
 from ..utils.registry import Registry
+
+logger = logging.getLogger(__name__)
 
 
 def _callbacks_loader(r: Registry):
@@ -16,8 +21,16 @@ Callback = CALLBACKS.add
 
 
 def _transforms_loader(r: Registry):
-    import albumentations as m
-    r.add_from_module(m)
+    try:
+        import albumentations as m
+        r.add_from_module(m)
+    except ImportError as ex:
+        logger.warning(
+            "albumentations not available, to install albumentations, "
+            "run `pip install albumentations`."
+        )
+        if os.environ.get("USE_ALBUMENTATIONS", "0") == "1":
+            raise ex
 
 
 TRANSFORMS = Registry("transform")
