@@ -3,18 +3,31 @@
 # Cause the script to exit if a single command fails
 set -eo pipefail
 
+is_submodule() {
+    if ! [[ -d "$(git rev-parse --show-toplevel)/../git" ]]; then
+        return 1
+    fi
+    (cd "$(git rev-parse --show-toplevel)/.." && git rev-parse --is-inside-work-tree) | grep -q true
+}
+
 # this stops git rev-parse from failing if we run this from the .git directory
 builtin cd "$(dirname "${BASH_SOURCE:-$0}")"
 
 ROOT="$(git rev-parse --show-toplevel)"
 builtin cd "$ROOT" || exit 1
 
-UPSTREAM="$(git remote| grep "upstream")"
-
-# Add the upstream branch if it doesn't exist
-if ! [[ "$UPSTREAM"!="upstream" ]]; then
-    git remote add 'upstream' 'https://github.com/catalyst-team/catalyst'
+if is_submodule; then
+    # Add the upstream branch if it doesn't exist
+    if ! [[ -e "$ROOT/../.git/modules/catalyst/refs/remotes/upstream" ]]; then
+        git remote add 'upstream' 'https://github.com/catalyst-team/catalyst'
+    fi
+else
+    # Add the upstream branch if it doesn't exist
+    if ! [[ -e "$ROOT/.git/refs/remotes/upstream" ]]; then
+        git remote add 'upstream' 'https://github.com/catalyst-team/catalyst'
+    fi
 fi
+
 
 # Only fetch master since that's the branch we're diffing against.
 git fetch upstream master
@@ -51,7 +64,7 @@ format_changed() {
     fi
 }
 
-# Format all files, and print the diff to stdout for CI.
+# Format all files, and print the diff to stdout for travis.
 format_all() {
     yapf --diff "${YAPF_FLAGS[@]}" "${YAPF_EXCLUDES[@]}" ./**/**/*.py
 }
