@@ -152,12 +152,10 @@ def list_conda_packages() -> str:
             except FileNotFoundError:
                 pass
             except subprocess.CalledProcessError as e:
-                result = subprocess.check_output(
-                    "conda list --export".split()
-                ).strip().decode("UTF-8")
-
                 raise Exception(
-                    "Running from conda env, but failed to list conda packages"
+                    f"Running from conda env, "
+                    f"but failed to list conda packages. "
+                    f"Conda Output: {e.output}"
                 ) from e
     return result
 
