@@ -1,31 +1,15 @@
 #!/usr/bin/env bash
 
 # Cause the script to exit if a single command fails
-set -eo pipefail
-
-is_submodule() {
-    (cd "$(git rev-parse --show-toplevel)/.." && git rev-parse --is-inside-work-tree) | grep -q true
-}
+set -eo pipefail -v
 
 # this stops git rev-parse from failing if we run this from the .git directory
 builtin cd "$(dirname "${BASH_SOURCE:-$0}")"
 
 ROOT="$(git rev-parse --show-toplevel)"
 builtin cd "$ROOT" || exit 1
-UPSTREAM="$(git remote| grep "upstream")"
 
-if is_submodule; then
-    # Add the upstream branch if it doesn't exist
-    if ! [[ -e "$ROOT/../.git/modules/catalyst/refs/remotes/upstream" ]]; then
-        git remote add 'upstream' 'https://github.com/catalyst-team/catalyst'
-    fi
-else
-    # Add the upstream branch if it doesn't exist
-    if ! [[ "$UPSTREAM"!="upstream" ]]; then
-        git remote add 'upstream' 'https://github.com/catalyst-team/catalyst'
-    fi
-fi
-
+git remote add 'upstream' 'https://github.com/catalyst-team/catalyst' || true
 
 # Only fetch master since that's the branch we're diffing against.
 git fetch upstream master

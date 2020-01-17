@@ -1,23 +1,21 @@
 #!/usr/bin/env bash
 # set -e
 
-function gdrive_download () {
-  CONFIRM=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate "https://docs.google.com/uc?export=download&id=$1" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')
-  wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$CONFIRM&id=$1" -O $2
-  rm -rf /tmp/cookies.txt
-}
-
+echo "start redis"
 redis-server --port 12000 &
 sleep 3
 
-gdrive_download 1SllkKVC65W0j3D9G7OdCjgH_kd-4jphd db.dump.pointenv.190821.pkl
+echo "download data"
+wget https://catalyst-ai.s3-eu-west-1.amazonaws.com/db.dump.pointenv.190821.pkl
 
+echo "load data to Redis Database"
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/load_db.py \
     --db="redis" \
     --in-pkl=./db.dump.pointenv.190821.pkl
 
+echo "run trainers"
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_trainer.py \
@@ -35,7 +33,7 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     --logdir=./examples/logs/_tests_rl_gym_ddpg_quantile &
 sleep 900
 
-
+echo "run samplers"
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_samplers.py \
@@ -54,19 +52,24 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
 sleep 300
 
 
+echo "kill python processes"
 killall -9 python
 sleep 3
 killall -9 catalyst-rl
 sleep 3
 
+echo "dump Redis Database to file"
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/dump_db.py \
     --db="redis" \
     --out-pkl=./db.dump.pointenv.190821.out.pkl
+
+echo "kill redis server"
 killall -9 redis-server
 sleep 3
 
+echo "check results"
 python -c """
 import pathlib
 import numpy as np

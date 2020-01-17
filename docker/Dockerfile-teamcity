@@ -17,6 +17,8 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
 	libturbojpeg \
 	software-properties-common \
+	nano \
+	wget \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
