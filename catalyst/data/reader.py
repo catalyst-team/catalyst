@@ -22,13 +22,13 @@ class ReaderSpec:
         self.input_key = input_key
         self.output_key = output_key
 
-    def __call__(self, row):
+    def __call__(self, element):
         """Reads a row from your annotations dict and
         transfer it to data, needed by your network
         for example open image by path, or read string and tokenize it.
 
         Args:
-            row: elem in your dataset.
+            element: elem in your dataset.
 
         Returns:
             Data object used for your neural network
@@ -62,23 +62,23 @@ class ImageReader(ReaderSpec):
         self.datapath = datapath
         self.grayscale = grayscale
 
-    def __call__(self, row):
+    def __call__(self, element):
         """Reads a row from your annotations dict with filename and
         transfer it to an image
 
         Args:
-            row: elem in your dataset.
+            element: elem in your dataset.
 
         Returns:
             np.ndarray: Image
         """
-        image_name = str(row[self.input_key])
+        image_name = str(element[self.input_key])
         img = imread(
             image_name, rootpath=self.datapath, grayscale=self.grayscale
         )
 
-        result = {self.output_key: img}
-        return result
+        output = {self.output_key: img}
+        return output
 
 
 class MaskReader(ReaderSpec):
@@ -96,21 +96,21 @@ class MaskReader(ReaderSpec):
         super().__init__(input_key, output_key)
         self.datapath = datapath
 
-    def __call__(self, row):
+    def __call__(self, element):
         """Reads a row from your annotations dict with filename and
         transfer it to a mask
 
         Args:
-            row: elem in your dataset.
+            element: elem in your dataset.
 
         Returns:
             np.ndarray: Mask
         """
-        mask_name = str(row[self.input_key])
+        mask_name = str(element[self.input_key])
         mask = mimread(mask_name, rootpath=self.datapath, clip_range=(0, 1))
 
-        result = {self.output_key: mask}
-        return result
+        output = {self.output_key: mask}
+        return output
 
 
 class ScalarReader(ReaderSpec):
@@ -147,24 +147,24 @@ class ScalarReader(ReaderSpec):
                 f"If smoothing is specified it must be in (0; 1), " \
                 f"got {smoothing}"
 
-    def __call__(self, row):
+    def __call__(self, element):
         """
         Reads a row from your annotations dict and
         transfer it to a single value
 
         Args:
-            row: elem in your dataset.
+            element: elem in your dataset.
 
         Returns:
             dtype: Scalar value
         """
-        scalar = self.dtype(row.get(self.input_key, self.default_value))
+        scalar = self.dtype(element.get(self.input_key, self.default_value))
         if self.one_hot_classes is not None:
             scalar = get_one_hot(
                 scalar, self.one_hot_classes, smoothing=self.smoothing
             )
-        result = {self.output_key: scalar}
-        return result
+        output = {self.output_key: scalar}
+        return output
 
 
 class LambdaReader(ReaderSpec):
@@ -176,34 +176,36 @@ class LambdaReader(ReaderSpec):
         self,
         input_key: str,
         output_key: str,
-        encode_fn: Callable = lambda x: x,
+        lambda_fn: Callable = lambda x: x,
         **kwargs
     ):
         """
         Args:
             input_key (str): input key to use from annotation dict
             output_key (str): output key to use to store the result
-            encode_fn (callable): encode function to use to prepare your data
+            lambda_fn (callable): encode function to use to prepare your data
                 (for example convert chars/words/tokens to indices, etc)
             kwargs: kwargs for encode function
         """
         super().__init__(input_key, output_key)
-        self.encode_fn = functools.partial(encode_fn, **kwargs)
+        self.lambda_fn = functools.partial(lambda_fn, **kwargs)
 
-    def __call__(self, row):
+    def __call__(self, element):
         """Reads a row from your annotations dict
         and applies `encode_fn` function
 
         Args:
-            row: elem in your dataset.
+            element: elem in your dataset.
 
         Returns:
-            Value after applying `encode_fn` function
+            Value after applying `lambda_fn` function
         """
-        elem = row[self.input_key]
-        elem = self.encode_fn(elem)
-        result = {self.output_key: elem}
-        return result
+        if self.input_key is not None:
+            element = element[self.input_key]
+        output = self.lambda_fn(element)
+        if self.output_key is not None:
+            output = {self.output_key: output}
+        return output
 
 
 class ReaderCompose(object):
@@ -219,19 +221,19 @@ class ReaderCompose(object):
         self.readers = readers
         self.mixins = mixins or []
 
-    def __call__(self, row):
+    def __call__(self, element):
         """Reads a row from your annotations dict
         and applies all readers and mixins
 
         Args:
-            row: elem in your dataset.
+            element: elem in your dataset.
 
         Returns:
             Value after applying all readers and mixins
         """
         result = {}
         for fn in self.readers:
-            result = {**result, **fn(row)}
+            result = {**result, **fn(element)}
         for fn in self.mixins:
             result = {**result, **fn(result)}
         return result
