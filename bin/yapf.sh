@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Cause the script to exit if a single command fails
-set -eo pipefail
+set -eo pipefail -v
 
 is_submodule() {
     if ! [[ -d "$(git rev-parse --show-toplevel)/../git" ]]; then
