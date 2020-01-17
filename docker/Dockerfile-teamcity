@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:1.3-cuda10.1-cudnn7-devel
+FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04
 
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -17,10 +17,22 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
 	libturbojpeg \
 	software-properties-common \
-	nano \
+        nano \
 	wget \
+        psmisc \
+        python3-dev \
+        python3-setuptools \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN apt-get update && apt-get install -y software-properties-common && add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && apt-get install -y python3.6 python3.6-dev python3-pip
+
+RUN ln -sfn /usr/bin/python3.6 /usr/bin/python3 && ln -sfn /usr/bin/python3 /usr/bin/python && ln -sfn /usr/bin/pip3 /usr/bin/pip
+
+RUN apt install git -y
+
+RUN pip install torch==1.4.0
 
 CMD mkdir -p /workspace
 
