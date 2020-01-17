@@ -94,7 +94,7 @@ COMMANDS = OrderedDict(
 )
 
 try:
-    import transformers
+    import transformers  # noqa: F401
     from catalyst.contrib.scripts import text2embedding
     COMMANDS["text2embedding"] = text2embedding
 except ImportError as ex:

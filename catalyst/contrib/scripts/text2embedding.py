@@ -1,17 +1,17 @@
-from typing import Dict
 import argparse
-from path import Path
+from pathlib import Path
+from typing import Dict
 
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
 import torch
-from transformers import BertModel, BertConfig, BertTokenizer
+from transformers import BertConfig, BertModel, BertTokenizer
 
+from catalyst.contrib.modules import LamaPooling
 from catalyst.data.reader import LambdaReader
 from catalyst.dl import utils
-from catalyst.contrib.modules import LamaPooling
 
 
 def build_args(parser):
@@ -101,6 +101,7 @@ def get_features(
         "token_type_ids": np.array(token_type_ids),
         "attention_mask": np.array(attention_mask),
     }
+
 
 def _detach(tensor):
     return tensor.cpu().detach().numpy()
