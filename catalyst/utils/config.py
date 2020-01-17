@@ -143,7 +143,7 @@ def list_conda_packages() -> str:
     result = ""
     conda_meta_path = Path(sys.prefix) / "conda-meta"
     if conda_meta_path.exists():
-        # We are currently in conda venv
+        # We are currently in conda virtual env
         with open(os.devnull, "w") as devnull:
             try:
                 result = subprocess.check_output(
