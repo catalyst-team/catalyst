@@ -149,6 +149,7 @@ def list_conda_packages() -> str:
         result = subprocess.check_output(
             "conda list --export".split()
         ).strip().decode("UTF-8")
+
             # except FileNotFoundError:
             #     pass
             # except subprocess.CalledProcessError as e:
