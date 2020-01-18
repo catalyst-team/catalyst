@@ -32,6 +32,7 @@ def build_args(parser):
         required=True,
     )
     parser.add_argument("--max-length", type=int, default=512)
+    utils.boolean_flag(parser, "mask-for-max-length", default=False)
     utils.boolean_flag(parser, "output-hidden-states", default=False)
     parser.add_argument("--pooling", type=str, default="avg")
     parser.add_argument(
@@ -203,14 +204,23 @@ def main(args, _=None):
                 min((idx + 1) * batch_size, num_samples)
             )
             features["class"][indices] = _detach(features_[1])
+            mask = batch["attention_mask"].unsqueeze(-1) \
+                if args.mask_for_max_length \
+                else None
             if args.output_hidden_states:
                 # all embeddings
                 for i, feature_ in enumerate(features_[2]):
                     name_ = f"embeddings_{i + 1:02d}"
-                    feature_ = poolings[name_](feature_)
+                    feature_ = poolings[name_](
+                        feature_,
+                        mask=mask
+                    )
                     features[name_][indices] = _detach(feature_)
             else:
-                feature_ = poolings[name_](features_[0])
+                feature_ = poolings[name_](
+                    features_[0],
+                    mask=mask
+                )
                 features["last"][indices] = _detach(feature_)
 
 

@@ -1,7 +1,7 @@
 # flake8: noqa
 from torch.nn import *
 
-from .common import Flatten, Lambda
+from .common import Flatten, Lambda, Normalize
 from .lama import LamaPooling, TemporalAttentionPooling, TemporalConcatPooling
 from .noisy import NoisyFactorizedLinear, NoisyLinear
 from .pooling import (
