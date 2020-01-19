@@ -5,19 +5,27 @@ from catalyst.utils import outer_init
 
 
 class TemporalLastPooling(nn.Module):
-    def forward(self, x):
+    def forward(self, x: torch.Tensor, mask: torch.Tensor = None):
         x_out = x[:, -1:, :]
         return x_out
 
 
 class TemporalAvgPooling(nn.Module):
-    def forward(self, x):
-        x_out = x.mean(1, keepdim=True)
+    def forward(self, x: torch.Tensor, mask: torch.Tensor = None):
+        if mask is None:
+            x_out = x.mean(1, keepdim=True)
+        else:
+            x_ = torch.sum(x * mask.float(), dim=1, keepdim=True)
+            mask_ = torch.sum(mask.float(), dim=1, keepdim=True)
+            x_out = x_ / mask_
         return x_out
 
 
 class TemporalMaxPooling(nn.Module):
-    def forward(self, x):
+    def forward(self, x: torch.Tensor, mask: torch.Tensor = None):
+        if mask is not None:
+            mask_ = (~mask.bool()).float() * (-x.max()).float()
+            x = torch.sum(x + mask_, dim=1, keepdim=True)
         x_out = x.max(1, keepdim=True)[0]
         return x_out
 
@@ -45,12 +53,11 @@ class TemporalAttentionPooling(nn.Module):
         )
         self.attention_pooling.apply(outer_init)
 
-    def forward(self, features):
+    def forward(self, x: torch.Tensor, mask: torch.Tensor = None):
         """
-        :param features: [batch_size, history_len, feature_size]
+        :param x: [batch_size, history_len, feature_size]
         :return:
         """
-        x = features
         batch_size, history_len, feature_size = x.shape
 
         x = x.view(batch_size, history_len, -1)
@@ -67,7 +74,7 @@ class TemporalConcatPooling(nn.Module):
         self.features_in = features_in
         self.features_out = features_in * history_len
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor, mask: torch.Tensor = None):
         """
         :param x: [batch_size, history_len, feature_size]
         :return:
@@ -81,7 +88,7 @@ class TemporalDropLastWrapper(nn.Module):
         super().__init__()
         self.net = net
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor, mask: torch.Tensor = None):
         x = x[:, :-1, :]
         x_out = self.net(x)
         return x_out
@@ -137,7 +144,7 @@ class LamaPooling(nn.Module):
 
         self.groups = nn.ModuleDict(groups)
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor, mask: torch.Tensor = None):
         """
         :param x: [batch_size, history_len, feature_size]
         :return:
@@ -146,7 +153,7 @@ class LamaPooling(nn.Module):
 
         x_ = []
         for pooling_fn in self.groups.values():
-            features_ = pooling_fn(x)
+            features_ = pooling_fn(x, mask)
             x_.append(features_)
         x = torch.cat(x_, dim=1)
         x = x.view(batch_size, -1)

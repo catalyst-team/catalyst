@@ -1,5 +1,6 @@
 import argparse
 import json
+from pathlib import Path
 
 import pandas as pd
 
@@ -9,12 +10,14 @@ from catalyst.utils.pandas import folds_to_list, split_dataframe
 def build_args(parser):
     parser.add_argument(
         "--in-csv",
-        type=str,
+        type=Path,
         dest="in_csv",
         help="Path to the csv to split",
         required=True
     )
-
+    parser.add_argument(
+        "-n", "--num-folds", type=int, default=5, help="Number of result folds"
+    )
     parser.add_argument(
         "-t",
         "--train-folds",
@@ -23,7 +26,6 @@ def build_args(parser):
         help="Numbers separated by commas. They represent train folds",
         required=True
     )
-
     parser.add_argument(
         "-v",
         "--valid-folds",
@@ -32,7 +34,6 @@ def build_args(parser):
         default=None,
         help="Numbers separated by commas. They represent valid folds"
     )
-
     parser.add_argument(
         "-i",
         "--infer-folds",
@@ -45,7 +46,6 @@ def build_args(parser):
     parser.add_argument(
         "--out-csv",
         type=str,
-        dest="out_csv",
         help="Output CSV path for train and valid parts",
         required=True
     )
@@ -56,7 +56,6 @@ def build_args(parser):
         default=None,
         help="Path to YAML or JSON of label mappings"
     )
-
     parser.add_argument(
         "--tag-column",
         type=str,
@@ -64,7 +63,6 @@ def build_args(parser):
         dest="tag_column",
         help="Column of labels (works in pair with `--tag2class` flag)"
     )
-
     parser.add_argument(
         "--class-column",
         type=str,
@@ -75,10 +73,6 @@ def build_args(parser):
 
     parser.add_argument(
         "--seed", type=int, default=42, help="Random seed for split folds"
-    )
-
-    parser.add_argument(
-        "-n", "--n-folds", type=int, default=5, help="Number of result folds"
     )
 
     return parser
@@ -116,7 +110,7 @@ def main(args, uargs=None):
         tag_column=args.tag_column,
         class_column=args.class_column,
         seed=args.seed,
-        n_folds=args.n_folds
+        n_folds=args.num_folds
     )
 
     out_csv: str = args.out_csv
