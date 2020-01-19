@@ -2,7 +2,7 @@ model_params:
   model: SimpleNet
 
 runner_params:
-  input_key: image
+  input_key: &input_key image
 
 args:
   expdir: "mnist_simple"
@@ -51,6 +51,7 @@ stages:
     callbacks_params:
       loss:
         callback: MixupCallback
+        fields: [*input_key]
       optimizer:
         callback: OptimizerCallback
       accuracy:
