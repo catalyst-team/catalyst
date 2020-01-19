@@ -30,6 +30,9 @@ before_install_rl: &before_install_rl
 install_dl: &requirements_dl
   pip install -r requirements/requirements.txt
 
+install_cv: &requirements_cv
+  pip install -r requirements/requirements-cv.txt
+
 install_nlp: &requirements_nlp
   pip install -r requirements/requirements-nlp.txt
 
@@ -50,6 +53,7 @@ jobs:
     - stage: Tests
       install:
         - *requirements_dl
+        - *requirements_cv
         - *requirements_nlp
         - *requirements_rl
         - *requirements_dev
@@ -61,6 +65,7 @@ jobs:
       name: "Examples: CV, NLP, RL"
       install:
         - *requirements_dl
+        - *requirements_cv
         - *requirements_nlp
         - *requirements_rl
       script:
@@ -133,6 +138,7 @@ jobs:
       if: branch = master
       install:
         - *requirements_dl
+        - *requirements_cv
         - *requirements_nlp
         - *requirements_rl
         - *requirements_docs
