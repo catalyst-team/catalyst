@@ -1,6 +1,9 @@
 model_params:
   model: SimpleNet
 
+runner_params:
+  input_key: image
+
 args:
   expdir: "mnist_simple"
   logdir: "./logs/mnist_simple"
@@ -12,20 +15,15 @@ stages:
     num_workers: 0
 
   transform_params:
-    train:
+    train: &transform
       transform: Compose
       transforms:
+        - transform: TensorToImage
         - transform: Normalize
           mean: [0.1307]
           std: [0.3081]
-        - transform: ToTensorV2
-    valid:
-      transform: Compose
-      transforms:
-        - transform: Normalize
-          mean: [0.1307]
-          std: [0.3081]
-        - transform: ToTensorV2
+        - transform: ToTensor
+    valid: *transform
 
   criterion_params:
       criterion: CrossEntropyLoss

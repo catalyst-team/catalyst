@@ -19,7 +19,7 @@ class Experiment(ConfigExperiment):
     def get_datasets(self, stage: str, **kwargs):
         datasets = OrderedDict()
         for mode in ("train", "valid"):
-            datasets[mode] = torchvision.datasets.MNIST(
+            datasets[mode] = MNIST(
                 "./data",
                 train=False,
                 download=True,

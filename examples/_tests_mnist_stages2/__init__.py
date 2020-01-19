@@ -1,9 +1,9 @@
 # flake8: noqa
-from albumentations.pytorch import ToTensorV2
-
 from catalyst.dl import registry, SupervisedRunner as Runner
 from .experiment import Experiment
 from .model import SimpleNet
+from .transform import TensorToImage, ToTensor
 
 registry.Model(SimpleNet)
-registry.Transform(ToTensorV2)
+registry.Transform(TensorToImage)
+registry.Transform(ToTensor)
