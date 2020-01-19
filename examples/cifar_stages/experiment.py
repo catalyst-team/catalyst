@@ -8,7 +8,7 @@ from catalyst import utils
 from catalyst.dl import ConfigExperiment
 
 
-class Cifar10(torchvision.datasets.CIFAR10):
+class CIFAR10(torchvision.datasets.CIFAR10):
     def __getitem__(self, index: int):
         image, target = self.data[index], self.targets[index]
 
@@ -33,7 +33,7 @@ class Experiment(ConfigExperiment):
     def get_datasets(self, stage: str, **kwargs):
         datasets = OrderedDict()
         for mode in ("train", "valid"):
-            datasets[mode] = Cifar10(
+            datasets[mode] = CIFAR10(
                 root="./data",
                 train=(mode == "train"),
                 download=True,

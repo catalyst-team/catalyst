@@ -11,6 +11,22 @@ stages:
     batch_size: 64
     num_workers: 0
 
+  transform_params:
+    train:
+      transform: Compose
+      transforms:
+        - transform: Normalize
+          mean: [0.1307]
+          std: [0.3081]
+        - transform: ToTensorV2
+    valid:
+      transform: Compose
+      transforms:
+        - transform: Normalize
+          mean: [0.1307]
+          std: [0.3081]
+        - transform: ToTensorV2
+
   state_params:
     main_metric: &reduce_metric accuracy01
     minimize_metric: False
