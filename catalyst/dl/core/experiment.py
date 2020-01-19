@@ -88,7 +88,6 @@ class Experiment(ABC):
         """Returns the callbacks for a given stage"""
         pass
 
-    @abstractmethod
     def get_datasets(
         self,
         stage: str,
