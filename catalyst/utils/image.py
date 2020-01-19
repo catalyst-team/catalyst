@@ -85,7 +85,6 @@ imsave = imageio.imsave
 
 def mimread(
     uri,
-    clip_range: Tuple[int, int] = None,
     expand_dims: bool = True,
     rootpath: Union[str, pathlib.Path] = None,
     **kwargs
@@ -96,8 +95,6 @@ def mimread(
         uri: {str, pathlib.Path, bytes, file}
         The resource to load the mask from, e.g. a filename, pathlib.Path,
         http address or file object, see the docs for more info.
-        clip_range (Tuple[int, int]): lower and upper interval edges,
-            image values outside the interval are clipped to the interval edges
         expand_dims (bool): if True, append channel axis to grayscale images
         rootpath (Union[str, pathlib.Path]): path to an image
             (allows to use relative path)
@@ -110,8 +107,7 @@ def mimread(
         uri = uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
 
     image = np.dstack(imageio.mimread(uri, **kwargs))
-    if clip_range is not None:
-        image = np.clip(image, *clip_range)
+    image = np.clip(image, 0, 1).astype(np.float32)
 
     if expand_dims and len(image.shape) < 3:  # grayscale
         image = np.expand_dims(image, -1)

@@ -107,9 +107,7 @@ class MaskReader(ReaderSpec):
             np.ndarray: Mask
         """
         mask_name = str(row[self.input_key])
-        mask = mimread(
-            mask_name, rootpath=self.datapath, clip_range=(0, 1)
-        ).astype("float32")
+        mask = mimread(mask_name, rootpath=self.datapath)
 
         result = {self.output_key: mask}
         return result
