@@ -8,8 +8,10 @@ from utils.typing import Model, Device
 
 class BaseGANRunner(Runner):
     """
-    TODO: general easily extendable interface;
-    TODO 2: more general name to this class (generative models, not just GANs)"""
+    TODO: separate this class into 2 separate:
+        base class MultiPhaseRunner and child class BaseGANRunner
+
+    TODO 2: make constants usage/redefinition more comfortable"""
 
     class InjectedBatchInputs:
         # fancy constants
@@ -34,6 +36,7 @@ class BaseGANRunner(Runner):
         device: Device = None,
         data_key: str = "data",
         condition_keys: Optional[Union[str, List[str]]] = None,
+        input_batch_keys: Optional[List[str]] = None,
         registered_phases: Tuple = (
             (StatePhaseNames.GeneratorTrain, "_generator_train_phase"),
             (StatePhaseNames.DiscriminatorTrain, "_discriminator_train_phase"),
@@ -48,6 +51,8 @@ class BaseGANRunner(Runner):
         # self.condition_keys is always a list
         condition_keys = condition_keys or []
         self.condition_keys = [condition_keys] if isinstance(condition_keys, str) else condition_keys
+
+        self.input_batch_keys = input_batch_keys or [self.data_key]
 
         self.generator_key = generator_key
         self.discriminator_key = discriminator_key
@@ -67,33 +72,30 @@ class BaseGANRunner(Runner):
 
     def _batch2device(self, batch: Mapping[str, Any], device):
         if isinstance(batch, (list, tuple)):
-            batch = {self.data_key: batch[0]}
+            assert len(batch) >= len(self.input_batch_keys)
+            batch = {key: value for key, value in zip(self.input_batch_keys, batch)}
         return super()._batch2device(batch, device)
+
+    def forward(self, batch):
+        if self.state.phase not in self.registered_phases:
+            raise ValueError(f"Unknown phase: '{self.state.phase}'")
+
+        return self.registered_phases[self.state.phase]()
 
     def _prepare_for_stage(self, stage: str):
         super()._prepare_for_stage(stage)
+        self._memorize_models(stage=stage)
+
+    def _memorize_models(self, stage: str):
         self.generator = self.model[self.generator_key]
         self.discriminator = self.model[self.discriminator_key]
-
-        # for key in ["noise_dim"] + list(filter(lambda x: x is not None, self.registered_phases.keys())):
-        #     assert hasattr(self.state, key) \
-        #         and getattr(self.state, key) is not None
-
-    def _modify_input_batch(self, batch):
-        real_data = batch[self.data_key]
-        batch_size = real_data.shape[0]
-
-        real_targets = torch.ones((batch_size, 1), device=self.device)
-        fake_targets = torch.zeros((batch_size, 1), device=self.device)
-        self.state.input[self.InjectedBatchInputs.RealTargets] = real_targets
-        self.state.input[self.InjectedBatchInputs.FakeTargets] = fake_targets
-        z = torch.randn((batch_size, self.state.noise_dim), device=self.device)
-        self.state.input[self.InjectedBatchInputs.NoiseInput] = z
 
     def _get_noise_and_conditions(self):
         z = self.state.input[self.InjectedBatchInputs.NoiseInput]
         conditions = [self.state.input[key] for key in self.condition_keys]  # TODO: maybe as dict?
         return z, conditions
+
+    # concrete phase methods
 
     def _generator_train_phase(self):
         z, conditions = self._get_noise_and_conditions()
@@ -116,16 +118,6 @@ class BaseGANRunner(Runner):
             self.BatchOutputs.FakeLogits: fake_logits,
             self.BatchOutputs.RealLogits: real_logits
         }
-
-    def forward(self, batch):
-        # modify input batch
-        # self._modify_input_batch(batch)
-
-        # run phases
-        if self.state.phase not in self.registered_phases:
-            raise ValueError(f"Unknown phase: '{self.state.phase}'")
-
-        return self.registered_phases[self.state.phase]()
 
 
 class GANRunner(BaseGANRunner):
