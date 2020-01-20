@@ -45,7 +45,7 @@ stages:
       train_phases:
         *discriminator_train_phase: 5
         *generator_train_phase: 1
-        
+
     prepare_batch_noise:
       callback: AddBatchNoiseCallback
       noise_shape: *noise_dim

@@ -22,6 +22,7 @@ class PrepareBatchInputCallback(Callback):
         raise NotImplementedError()  # should be implemented in descendants
 
     def get_batch_size(self, state):
+        assert self.data_key in state.input
         return state.input[self.data_key].size(0)
 
 @registry.Callback
@@ -71,6 +72,64 @@ class AddRealFakeTargetsCallback(PrepareBatchInputCallback):
             real_targets = zeros
         state.input[self.real_targets_key] = real_targets
         state.input[self.fake_targets_key] = fake_targets
+
+
+@registry.Callback
+class OneHotTransformCallback(PrepareBatchInputCallback):
+
+    def __init__(self,
+                 n_classes: int = 10,
+                 data_key: str = "data",
+                 target_key: str = "target",
+                 one_hot_target_key: str = "one_hot_target"):
+        super().__init__(data_key)
+        self.n_classes = n_classes
+        self.target_key = target_key
+        self.one_hot_target_key = one_hot_target_key
+
+    def on_batch_start(self, state: RunnerState):
+        batch_size = self.get_batch_size(state)
+        assert self.target_key in state.input
+        assert self.one_hot_target_key not in state.input
+        targets = state.input[self.target_key]
+        if targets.ndim > 1:
+            raise NotImplementedError()
+        targets_one_hot = torch.zeros(
+            (batch_size, self.n_classes), device=targets.device)
+        targets_one_hot[
+            torch.arange(batch_size, device=targets.device), targets] = 1
+        state.input[self.one_hot_target_key] = targets_one_hot
+
+
+@registry.Callback
+class SameClassFeaturesRepeatCallback(PrepareBatchInputCallback):
+
+    def __init__(self, data_key: str = "data",
+                 same_class_data_key: str = "same_class_data",
+                 targets_key: str = "class_targets"):
+        super().__init__(data_key)
+        self.same_class_data_key = same_class_data_key
+        self.targets_key = targets_key
+
+    def on_batch_start(self, state: RunnerState):
+        batch_size = self.get_batch_size(state)
+        if self.targets_key is not None:
+            # sanity check for data to come in correct form
+            assert self.targets_key in state.input
+            target = state.input[self.targets_key]
+            assert target.size(0) == batch_size
+            assert batch_size % 2 == 0, "batch size must be evenly divisible"
+            assert torch.equal(
+                target[:batch_size // 2],
+                target[batch_size // 2:]
+            ), "Batch targets sanity check failed; check your DataLoader"
+
+        data = state.input[self.data_key]
+        assert self.same_class_data_key not in state.input
+        same_class_data = torch.cat(
+            (data[:batch_size // 2], data[batch_size // 2:]), dim=0
+        )
+        state.input[self.same_class_data_key] = same_class_data
 
 
 # TODO: implement abstract class and move to core catalyst
