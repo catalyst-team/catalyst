@@ -1,4 +1,4 @@
-from typing import Any, Mapping  # isort:skip
+from typing import Any, Mapping, Optional, Union, List, Tuple, Callable, Dict  # isort:skip
 
 import torch
 
@@ -10,23 +10,64 @@ class BaseGANRunner(Runner):
     """
     TODO: general easily extendable interface;
     TODO 2: more general name to this class (generative models, not just GANs)"""
+
+    class InjectedBatchInputs:
+        # fancy constants
+        FakeTargets = "fake_targets"
+        RealTargets = "real_targets"
+
+        NoiseInput = "noise"
+
+    class BatchOutputs:
+        FakeLogits = "fake_logits"
+        RealLogits = "real_logits"
+
+        FakeData = "fake_data"
+
+    class StatePhaseNames:
+        DiscriminatorTrain = "discriminator_train"
+        GeneratorTrain = "generator_train"
+
     def __init__(
         self,
-        model=None,
-        device=None,
-        features_key="features",
-        generator_key="generator",
-        discriminator_key="discriminator"
+        model: Dict[str, Model] = None,
+        device: Device = None,
+        data_key: str = "data",
+        condition_keys: Optional[Union[str, List[str]]] = None,
+        registered_phases: Tuple = (
+            (StatePhaseNames.GeneratorTrain, "_generator_train_phase"),
+            (StatePhaseNames.DiscriminatorTrain, "_discriminator_train_phase"),
+            (None, "_discriminator_train_phase")
+        ),
+        generator_key: str = "generator",
+        discriminator_key: str = "discriminator"
     ):
         super().__init__(model, device)
 
-        self.features_key = features_key
+        self.data_key = data_key
+        # self.condition_keys is always a list
+        condition_keys = condition_keys or []
+        self.condition_keys = [condition_keys] if isinstance(condition_keys, str) else condition_keys
+
         self.generator_key = generator_key
         self.discriminator_key = discriminator_key
 
+        self.registered_phases = dict()
+        for phase_name, phase_batch_forward_fn in registered_phases:
+            if not (isinstance(phase_name, str) or phase_name is None):
+                raise ValueError(f"phase '{phase_name}' of type '{type(phase_name)}' "
+                                 f"not supported, must be str of None")
+            if phase_name in self.registered_phases:
+                raise ValueError(f"phase '{phase_name}' already registered")
+            if isinstance(phase_batch_forward_fn, str):
+                assert hasattr(self, phase_batch_forward_fn)
+                phase_batch_forward_fn = getattr(self, phase_batch_forward_fn)
+            assert isinstance(phase_batch_forward_fn, Callable), "must be callable"
+            self.registered_phases[phase_name] = phase_batch_forward_fn
+
     def _batch2device(self, batch: Mapping[str, Any], device):
         if isinstance(batch, (list, tuple)):
-            batch = {self.features_key: batch[0]}
+            batch = {self.data_key: batch[0]}
         return super()._batch2device(batch, device)
 
     def _prepare_for_stage(self, stage: str):
@@ -34,93 +75,188 @@ class BaseGANRunner(Runner):
         self.generator = self.model[self.generator_key]
         self.discriminator = self.model[self.discriminator_key]
 
-        for key in [
-            "noise_dim",
-            "discriminator_train_phase",
-            "generator_train_phase"
-        ]:
-            assert hasattr(self.state, key) \
-                and getattr(self.state, key) is not None
+        # for key in ["noise_dim"] + list(filter(lambda x: x is not None, self.registered_phases.keys())):
+        #     assert hasattr(self.state, key) \
+        #         and getattr(self.state, key) is not None
 
-    def forward(self, batch):
-        real_features = batch[self.features_key]
-        batch_size = real_features.shape[0]
+    def _modify_input_batch(self, batch):
+        real_data = batch[self.data_key]
+        batch_size = real_data.shape[0]
 
         real_targets = torch.ones((batch_size, 1), device=self.device)
         fake_targets = torch.zeros((batch_size, 1), device=self.device)
-        self.state.input["real_targets"] = real_targets
-        self.state.input["fake_targets"] = fake_targets
+        self.state.input[self.InjectedBatchInputs.RealTargets] = real_targets
+        self.state.input[self.InjectedBatchInputs.FakeTargets] = fake_targets
         z = torch.randn((batch_size, self.state.noise_dim), device=self.device)
+        self.state.input[self.InjectedBatchInputs.NoiseInput] = z
 
-        if (
-            self.state.phase is None
-            or self.state.phase == self.state.discriminator_train_phase
-        ):
-            # (None for validation mode)
-            fake_features = self.generator(z)
-            fake_logits = self.discriminator(fake_features.detach())
-            real_logits = self.discriminator(real_features)
-            # --> d_loss
-            # (fake logits + FAKE targets) + (real logits + real targets)
-            return {
-                "fake_features": fake_features,  # visualization purposes only
-                "fake_logits": fake_logits,
-                "real_logits": real_logits
-            }
-        elif self.state.phase == self.state.generator_train_phase:
-            fake_features = self.generator(z)
-            fake_logits = self.discriminator(fake_features)
-            # --> g_loss (fake logits + REAL targets)
-            return {
-                "fake_features": fake_features,  # visualization purposes only
-                "fake_logits": fake_logits
-            }
-        else:
-            raise NotImplementedError(f"Unknown phase: self.state.phase")
+    def _get_noise_and_conditions(self):
+        z = self.state.input[self.InjectedBatchInputs.NoiseInput]
+        conditions = [self.state.input[key] for key in self.condition_keys]  # TODO: maybe as dict?
+        return z, conditions
 
+    def _generator_train_phase(self):
+        z, conditions = self._get_noise_and_conditions()
 
-class GanRunner(BaseGANRunner):
-    """TODO:
-        vanilla noise2image GAN
-        z (noise) -> generator_model -> g_image
-        image -> discriminator_model -> logit confidence (of g_image vs d_image)
-    """
+        fake_data = self.generator(z, *conditions)
+        fake_logits = self.discriminator(fake_data, *conditions)
+        return {
+            self.BatchOutputs.FakeData: fake_data,
+            self.BatchOutputs.FakeLogits: fake_logits
+        }
+
+    def _discriminator_train_phase(self):
+        z, conditions = self._get_noise_and_conditions()
+
+        fake_data = self.generator(z, *conditions)
+        fake_logits = self.discriminator(fake_data.detach(), *conditions)
+        real_logits = self.discriminator(self.state.input[self.data_key], *conditions)
+        return {
+            self.BatchOutputs.FakeData: fake_data,
+            self.BatchOutputs.FakeLogits: fake_logits,
+            self.BatchOutputs.RealLogits: real_logits
+        }
 
     def forward(self, batch):
-        real_features = batch[self.features_key]
-        batch_size = real_features.shape[0]
+        # modify input batch
+        # self._modify_input_batch(batch)
 
-        real_targets = torch.ones((batch_size, 1), device=self.device)
-        fake_targets = torch.zeros((batch_size, 1), device=self.device)
-        self.state.input["real_targets"] = real_targets
-        self.state.input["fake_targets"] = fake_targets
-        z = torch.randn((batch_size, self.state.noise_dim), device=self.device)
+        # run phases
+        if self.state.phase not in self.registered_phases:
+            raise ValueError(f"Unknown phase: '{self.state.phase}'")
 
-        if (
-            self.state.phase is None
-            or self.state.phase == self.state.discriminator_train_phase
-        ):
-            # (None for validation mode)
-            fake_features = self.generator(z)
-            fake_logits = self.discriminator(fake_features.detach())
-            real_logits = self.discriminator(real_features)
-            # --> d_loss
-            # (fake logits + FAKE targets) + (real logits + real targets)
-            return {
-                "fake_features": fake_features,  # visualization purposes only
-                "fake_logits": fake_logits,
-                "real_logits": real_logits
-            }
-        elif self.state.phase == self.state.generator_train_phase:
-            fake_features = self.generator(z)
-            fake_logits = self.discriminator(fake_features)
-            # --> g_loss (fake logits + REAL targets)
-            return {
-                "fake_features": fake_features,  # visualization purposes only
-                "fake_logits": fake_logits
-            }
-        else:
-            raise NotImplementedError(f"Unknown phase: self.state.phase")
+        return self.registered_phases[self.state.phase]()
+
+
+class GANRunner(BaseGANRunner):
+
+    def __init__(self, model: Dict[str, Model] = None, device: Device = None, data_key: str = "data",
+                 condition_keys: Optional[Union[str, List[str]]] = None,
+                 registered_phases: Tuple = (
+                    (BaseGANRunner.StatePhaseNames.GeneratorTrain, "_generator_train_phase"),
+                    (BaseGANRunner.StatePhaseNames.DiscriminatorTrain, "_discriminator_train_phase"),
+                    (None, "_discriminator_train_phase")
+                 ),
+                 generator_key: str = "generator",
+                 discriminator_key: str = "discriminator"):
+        super().__init__(model, device, data_key, condition_keys, registered_phases, generator_key, discriminator_key)
+
+
+# class BaseGANRunner(Runner):
+#     """
+#     TODO: general easily extendable interface;
+#     TODO 2: more general name to this class (generative models, not just GANs)"""
+#     def __init__(
+#         self,
+#         model=None,
+#         device=None,
+#         features_key="features",
+#         generator_key="generator",
+#         discriminator_key="discriminator"
+#     ):
+#         super().__init__(model, device)
+#
+#         self.features_key = features_key
+#         self.generator_key = generator_key
+#         self.discriminator_key = discriminator_key
+#
+#     def _batch2device(self, batch: Mapping[str, Any], device):
+#         if isinstance(batch, (list, tuple)):
+#             batch = {self.features_key: batch[0]}
+#         return super()._batch2device(batch, device)
+#
+#     def _prepare_for_stage(self, stage: str):
+#         super()._prepare_for_stage(stage)
+#         self.generator = self.model[self.generator_key]
+#         self.discriminator = self.model[self.discriminator_key]
+#
+#         for key in [
+#             "noise_dim",
+#             "discriminator_train_phase",
+#             "generator_train_phase"
+#         ]:
+#             assert hasattr(self.state, key) \
+#                 and getattr(self.state, key) is not None
+#
+#     def forward(self, batch):
+#         real_features = batch[self.features_key]
+#         batch_size = real_features.shape[0]
+#
+#         real_targets = torch.ones((batch_size, 1), device=self.device)
+#         fake_targets = torch.zeros((batch_size, 1), device=self.device)
+#         self.state.input["real_targets"] = real_targets
+#         self.state.input["fake_targets"] = fake_targets
+#         z = torch.randn((batch_size, self.state.noise_dim), device=self.device)
+#
+#         if (
+#             self.state.phase is None
+#             or self.state.phase == self.state.discriminator_train_phase
+#         ):
+#             # (None for validation mode)
+#             fake_features = self.generator(z)
+#             fake_logits = self.discriminator(fake_features.detach())
+#             real_logits = self.discriminator(real_features)
+#             # --> d_loss
+#             # (fake logits + FAKE targets) + (real logits + real targets)
+#             return {
+#                 "fake_features": fake_features,  # visualization purposes only
+#                 "fake_logits": fake_logits,
+#                 "real_logits": real_logits
+#             }
+#         elif self.state.phase == self.state.generator_train_phase:
+#             fake_features = self.generator(z)
+#             fake_logits = self.discriminator(fake_features)
+#             # --> g_loss (fake logits + REAL targets)
+#             return {
+#                 "fake_features": fake_features,  # visualization purposes only
+#                 "fake_logits": fake_logits
+#             }
+#         else:
+#             raise NotImplementedError(f"Unknown phase: self.state.phase")
+
+
+# class GanRunner(BaseGANRunner):
+#     """TODO:
+#         vanilla noise2image GAN
+#         z (noise) -> generator_model -> g_image
+#         image -> discriminator_model -> logit confidence (of g_image vs d_image)
+#     """
+#
+#     def forward(self, batch):
+#         real_features = batch[self.features_key]
+#         batch_size = real_features.shape[0]
+#
+#         real_targets = torch.ones((batch_size, 1), device=self.device)
+#         fake_targets = torch.zeros((batch_size, 1), device=self.device)
+#         self.state.input["real_targets"] = real_targets
+#         self.state.input["fake_targets"] = fake_targets
+#         z = torch.randn((batch_size, self.state.noise_dim), device=self.device)
+#
+#         if (
+#             self.state.phase is None
+#             or self.state.phase == self.state.discriminator_train_phase
+#         ):
+#             # (None for validation mode)
+#             fake_features = self.generator(z)
+#             fake_logits = self.discriminator(fake_features.detach())
+#             real_logits = self.discriminator(real_features)
+#             # --> d_loss
+#             # (fake logits + FAKE targets) + (real logits + real targets)
+#             return {
+#                 "fake_features": fake_features,  # visualization purposes only
+#                 "fake_logits": fake_logits,
+#                 "real_logits": real_logits
+#             }
+#         elif self.state.phase == self.state.generator_train_phase:
+#             fake_features = self.generator(z)
+#             fake_logits = self.discriminator(fake_features)
+#             # --> g_loss (fake logits + REAL targets)
+#             return {
+#                 "fake_features": fake_features,  # visualization purposes only
+#                 "fake_logits": fake_logits
+#             }
+#         else:
+#             raise NotImplementedError(f"Unknown phase: self.state.phase")
 
 
 class WGANRunner(BaseGANRunner):

@@ -23,7 +23,7 @@ stages:
     main_metric: &reduce_metric loss_g
     minimize_metric: True
     batch_consistant_metrics: False
-    noise_dim: *noise_dim
+#    noise_dim: *noise_dim
     discriminator_train_phase: &discriminator_train_phase discriminator_train
     generator_train_phase: &generator_train_phase generator_train
 
@@ -38,6 +38,13 @@ stages:
       train_phases:
         *discriminator_train_phase: 1
         *generator_train_phase: 1
+
+    prepare_batch_noise:
+      callback: AddBatchNoiseCallback
+      noise_shape: *noise_dim
+
+    prepare_batch_targets:
+      callback: AddRealFakeTargetsCallback
 
     loss_g:
       _wrapper: &g_train_wrapper
@@ -82,7 +89,7 @@ stages:
 
     visualizer:
       callback: VisualizationCallback
-      output_keys: "fake_features"
+      output_keys: "fake_data"
       n_row: 5
       max_images: 25
 

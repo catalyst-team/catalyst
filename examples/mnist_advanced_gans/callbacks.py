@@ -1,4 +1,4 @@
-from typing import Union, List, Any, Dict, Callable, Optional
+from typing import Union, List, Any, Dict, Callable, Optional, Tuple
 
 import torch
 import torchvision.utils
@@ -8,6 +8,70 @@ from catalyst.dl import registry
 from catalyst.dl.callbacks import CriterionAggregatorCallback, OptimizerCallback, CriterionCallback
 from catalyst.dl.core import Callback, CallbackOrder, MetricCallback
 from catalyst.utils.tensorboard import SummaryWriter
+
+@registry.Callback
+class PrepareBatchInputCallback(Callback):
+    """Used to update state.input batch (e.g. add noise, additional random condition, etc.)"""
+
+    def __init__(self, data_key: str = "data"):
+        super().__init__(order=CallbackOrder.Internal)  # TODO: what is the proper order?
+        self.data_key = data_key
+
+    def on_batch_start(self, state: RunnerState):
+        # Note: it is assumed that state.input is already moved to proper device
+        raise NotImplementedError()  # should be implemented in descendants
+
+    def get_batch_size(self, state):
+        return state.input[self.data_key].size(0)
+
+@registry.Callback
+class AddBatchNoiseCallback(PrepareBatchInputCallback):
+
+    def __init__(self,
+                 noise_shape: Union[int, Tuple[int]],
+                 data_key: str = "data",
+                 injected_noise_key: str = "noise"):
+        super().__init__(data_key)
+        self.noise_shape = tuple(noise_shape) if isinstance(noise_shape, (tuple, list)) else (noise_shape,)
+        self.injected_noise_key = injected_noise_key
+
+    def on_batch_start(self, state: RunnerState):
+        batch_size = self.get_batch_size(state)
+        assert self.injected_noise_key not in state.input
+        z_shape = (batch_size, ) + self.noise_shape
+        state.input[self.injected_noise_key] = torch.randn(z_shape, device=state.device)
+
+
+@registry.Callback
+class AddRealFakeTargetsCallback(PrepareBatchInputCallback):
+
+    def __init__(self,
+                 data_key: str = "data",
+                 real_targets_key: str = "real_targets",
+                 fake_targets_key: str = "fake_targets",
+                 fake_targets_zero: bool = True):
+        super().__init__(data_key)
+        self.real_targets_key = real_targets_key
+        self.fake_targets_key = fake_targets_key
+        self.fake_targets_zero = fake_targets_zero
+
+    def on_batch_start(self, state: RunnerState):
+        assert self.real_targets_key not in state.input
+        assert self.fake_targets_key not in state.input
+
+        batch_size = self.get_batch_size(state)
+
+        ones = torch.ones((batch_size, 1), device=state.device)
+        zeros = torch.zeros((batch_size, 1), device=state.device)
+        if self.fake_targets_zero:
+            fake_targets = zeros
+            real_targets = ones
+        else:
+            fake_targets = ones
+            real_targets = zeros
+        state.input[self.real_targets_key] = real_targets
+        state.input[self.fake_targets_key] = fake_targets
+
 
 # TODO: implement abstract class and move to core catalyst
 @registry.Callback
@@ -66,7 +130,6 @@ class WassersteinDistanceCallback(MultiKeyMetricCallback):
         real_validity = outputs[self.real_validity_key]
         fake_validity = outputs[self.fake_validity_key]
         return real_validity.mean() - fake_validity.mean()
-
 
 
 @registry.Callback
