@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Contrib &#8212; Catalyst 20.01 documentation</title>
+    <title>Contrib &#8212; Catalyst 20.01.2 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -482,13 +482,24 @@ Maxim Berman 2018 ESAT-PSI KU Leuven (MIT License)</p>
 
 </dd></dl>
 
+<dl class="class">
+<dt id="catalyst.contrib.modules.common.Normalize">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.modules.common.</code><code class="sig-name descname">Normalize</code><span class="sig-paren">(</span><em class="sig-param">**normalize_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/common.html#Normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.common.Normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="method">
+<dt id="catalyst.contrib.modules.common.Normalize.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/common.html#Normalize.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.common.Normalize.forward" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <span class="target" id="module-catalyst.contrib.modules.lama"></span><dl class="class">
 <dt id="catalyst.contrib.modules.lama.TemporalLastPooling">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.modules.lama.</code><code class="sig-name descname">TemporalLastPooling</code><a class="reference internal" href="../_modules/catalyst/contrib/modules/lama.html#TemporalLastPooling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.lama.TemporalLastPooling" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <dl class="method">
 <dt id="catalyst.contrib.modules.lama.TemporalLastPooling.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/lama.html#TemporalLastPooling.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.lama.TemporalLastPooling.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em>, <em class="sig-param">mask: torch.Tensor = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/lama.html#TemporalLastPooling.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.lama.TemporalLastPooling.forward" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -499,7 +510,7 @@ Maxim Berman 2018 ESAT-PSI KU Leuven (MIT License)</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <dl class="method">
 <dt id="catalyst.contrib.modules.lama.TemporalAvgPooling.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/lama.html#TemporalAvgPooling.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.lama.TemporalAvgPooling.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em>, <em class="sig-param">mask: torch.Tensor = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/lama.html#TemporalAvgPooling.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.lama.TemporalAvgPooling.forward" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -510,7 +521,7 @@ Maxim Berman 2018 ESAT-PSI KU Leuven (MIT License)</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <dl class="method">
 <dt id="catalyst.contrib.modules.lama.TemporalMaxPooling.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/lama.html#TemporalMaxPooling.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.lama.TemporalMaxPooling.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em>, <em class="sig-param">mask: torch.Tensor = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/lama.html#TemporalMaxPooling.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.lama.TemporalMaxPooling.forward" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -521,7 +532,7 @@ Maxim Berman 2018 ESAT-PSI KU Leuven (MIT License)</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <dl class="method">
 <dt id="catalyst.contrib.modules.lama.TemporalDropLastWrapper.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/lama.html#TemporalDropLastWrapper.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.lama.TemporalDropLastWrapper.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em>, <em class="sig-param">mask: torch.Tensor = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/lama.html#TemporalDropLastWrapper.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.lama.TemporalDropLastWrapper.forward" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -532,10 +543,10 @@ Maxim Berman 2018 ESAT-PSI KU Leuven (MIT License)</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <dl class="method">
 <dt id="catalyst.contrib.modules.lama.TemporalAttentionPooling.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">features</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/lama.html#TemporalAttentionPooling.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.lama.TemporalAttentionPooling.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em>, <em class="sig-param">mask: torch.Tensor = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/lama.html#TemporalAttentionPooling.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.lama.TemporalAttentionPooling.forward" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>features</strong> – [batch_size, history_len, feature_size]</p>
+<dd class="field-odd"><p><strong>x</strong> – [batch_size, history_len, feature_size]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p></p>
@@ -556,7 +567,7 @@ Maxim Berman 2018 ESAT-PSI KU Leuven (MIT License)</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <dl class="method">
 <dt id="catalyst.contrib.modules.lama.TemporalConcatPooling.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/lama.html#TemporalConcatPooling.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.lama.TemporalConcatPooling.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em>, <em class="sig-param">mask: torch.Tensor = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/lama.html#TemporalConcatPooling.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.lama.TemporalConcatPooling.forward" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>x</strong> – [batch_size, history_len, feature_size]</p>
@@ -580,7 +591,7 @@ Maxim Berman 2018 ESAT-PSI KU Leuven (MIT License)</p>
 
 <dl class="method">
 <dt id="catalyst.contrib.modules.lama.LamaPooling.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/lama.html#LamaPooling.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.lama.LamaPooling.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em>, <em class="sig-param">mask: torch.Tensor = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/lama.html#LamaPooling.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.lama.LamaPooling.forward" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>x</strong> – [batch_size, history_len, feature_size]</p>

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.callbacks.optimizer &#8212; Catalyst 20.01 documentation</title>
+    <title>catalyst.dl.callbacks.optimizer &#8212; Catalyst 20.01.2 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -57,7 +57,8 @@
         <span class="n">accumulation_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">optimizer_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">loss_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
-        <span class="n">decouple_weight_decay</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">decouple_weight_decay</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">save_model_grads</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
@@ -69,6 +70,9 @@
 <span class="sd">            loss_key (str): key to get loss from ``state.loss``</span>
 <span class="sd">            decouple_weight_decay (bool): If True - decouple weight decay</span>
 <span class="sd">                regularization.</span>
+<span class="sd">            save_model_grads (bool): If True - RunnerState.model_grads will</span>
+<span class="sd">                contain gradients calculated on backward propagation on current</span>
+<span class="sd">                batch</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Optimizer</span><span class="p">)</span>
         <span class="n">grad_clip_params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">grad_clip_params</span> <span class="ow">or</span> <span class="p">{}</span>
@@ -78,8 +82,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">optimizer_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loss_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">loss_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">decouple_weight_decay</span> <span class="o">=</span> <span class="n">decouple_weight_decay</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_model_grads</span> <span class="o">=</span> <span class="n">save_model_grads</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer_wd</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_accumulation_counter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span></div>
+
 
 <div class="viewcode-block" id="OptimizerCallback.grad_step"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.optimizer.OptimizerCallback.grad_step">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">grad_step</span><span class="p">(</span>
@@ -199,6 +206,12 @@
                 <span class="n">optimizer_wds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer_wd</span><span class="p">,</span>
                 <span class="n">grad_clip_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grad_clip_fn</span>
             <span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_model_grads</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+                    <span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+                    <span class="n">state</span><span class="o">.</span><span class="n">model_grads</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
             <span class="n">maybe_recursive_call</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;zero_grad&quot;</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_accumulation_counter</span> <span class="o">=</span> <span class="mi">0</span></div>

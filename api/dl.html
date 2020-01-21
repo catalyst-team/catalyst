@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>DL &#8212; Catalyst 20.01 documentation</title>
+    <title>DL &#8212; Catalyst 20.01.2 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -1152,12 +1152,12 @@ for validation.</p></li>
 
 <span class="target" id="module-catalyst.dl.callbacks.optimizer"></span><dl class="class">
 <dt id="catalyst.dl.callbacks.optimizer.OptimizerCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.optimizer.</code><code class="sig-name descname">OptimizerCallback</code><span class="sig-paren">(</span><em class="sig-param">grad_clip_params: Dict = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">loss_key: str = 'loss'</em>, <em class="sig-param">decouple_weight_decay: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/optimizer.html#OptimizerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.optimizer.OptimizerCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.optimizer.</code><code class="sig-name descname">OptimizerCallback</code><span class="sig-paren">(</span><em class="sig-param">grad_clip_params: Dict = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">loss_key: str = 'loss'</em>, <em class="sig-param">decouple_weight_decay: bool = True</em>, <em class="sig-param">save_model_grads: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/optimizer.html#OptimizerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.optimizer.OptimizerCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.dl.core.callback.Callback" title="catalyst.dl.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.core.callback.Callback</span></code></a></p>
 <p>Optimizer callback, abstraction over optimizer step.</p>
 <dl class="method">
 <dt id="catalyst.dl.callbacks.optimizer.OptimizerCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">grad_clip_params: Dict = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">loss_key: str = 'loss'</em>, <em class="sig-param">decouple_weight_decay: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/optimizer.html#OptimizerCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.optimizer.OptimizerCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">grad_clip_params: Dict = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">loss_key: str = 'loss'</em>, <em class="sig-param">decouple_weight_decay: bool = True</em>, <em class="sig-param">save_model_grads: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/optimizer.html#OptimizerCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.optimizer.OptimizerCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1169,6 +1169,9 @@ there are several of them and they are in a dictionary format.</p></li>
 <li><p><strong>loss_key</strong> (<em>str</em>) – key to get loss from <code class="docutils literal notranslate"><span class="pre">state.loss</span></code></p></li>
 <li><p><strong>decouple_weight_decay</strong> (<em>bool</em>) – If True - decouple weight decay
 regularization.</p></li>
+<li><p><strong>save_model_grads</strong> (<em>bool</em>) – If True - RunnerState.model_grads will
+contain gradients calculated on backward propagation on current
+batch</p></li>
 </ul>
 </dd>
 </dl>
