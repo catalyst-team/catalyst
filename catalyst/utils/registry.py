@@ -145,10 +145,7 @@ class Registry(collections.MutableMapping):
         if prefix is None:
             prefix = ""
 
-        to_add = {
-            f"{prefix}{name}": factories[name]
-            for name in names_to_add
-        }
+        to_add = {f"{prefix}{name}": factories[name] for name in names_to_add}
         self.add(**to_add)
 
     def get(self, name: str) -> Optional[Factory]:
