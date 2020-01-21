@@ -84,6 +84,7 @@ class RunnerState(FrozenClass):
         # other
         self.need_backward = False
         self.early_stop = False
+        self.model_grads = {}
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -156,10 +157,10 @@ class RunnerState(FrozenClass):
         pass
 
     def on_loader_end_pre(self):
-        pass
+        self.metrics.end_loader()
 
     def on_loader_end_post(self):
-        self.metrics.end_loader()
+        pass
 
     def on_batch_start_pre(self):
         self.metrics.begin_batch()

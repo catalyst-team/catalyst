@@ -30,7 +30,7 @@
     - results visualization.
 
 #### Usage examples
-4. [features – classification](./notebooks/notebook-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/notebook-example.ipynb)
+4. [features – classification](./notebooks/classification-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-example.ipynb)
     - cifar10 classification model
     - Runner usage example
 5. [features – segmentation](./notebooks/segmentation-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-example.ipynb)
@@ -41,6 +41,12 @@
 ----
 
 ### DL pipelines
+
+Full description of configs with comments:
+- [Eng](configs/config-description-eng.yml)
+- [Rus](configs/config-description-rus.yml)
+
+Link to the pipelines
 1. [features – model training](cifar_simple)
     - configuration files usage example
     - local and docker runs
@@ -59,6 +65,12 @@
     - different augmentations and stages usage
     - metrics visualization with tensorboard
 
+----
+
+### NLP pipelines
+1. [features - Text classification with DistilBert](distilbert_text_classification)
+    - DistilBERT model
+    - Kaggle kernel with the same example
 ----
 
 ### RL pipelines

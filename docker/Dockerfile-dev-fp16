@@ -25,7 +25,6 @@ CMD mkdir -p /workspace
 COPY requirements/ /workspace/
 RUN pip install -r /workspace/requirements.txt --no-cache-dir \
     && pip install -r /workspace/requirements-rl.txt --no-cache-dir \
-    && pip install -r /workspace/requirements-dl.txt --no-cache-dir \
     && pip install -r /workspace/requirements-contrib.txt --no-cache-dir \
     && pip install -r /workspace/requirements-dev.txt --no-cache-dir
 

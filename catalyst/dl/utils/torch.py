@@ -89,7 +89,6 @@ def get_loader(
     data_source: Iterable[dict],
     open_fn: Callable,
     dict_transform: Callable = None,
-    dataset_cache_prob: float = -1,
     sampler=None,
     collate_fn: Callable = default_collate_fn,
     batch_size: int = 32,
@@ -110,8 +109,6 @@ def get_loader(
             (for example open image by path, or tokenize read string)
         dict_transform (callable): transforms to use on dict
             (for example normalize image, add blur, crop/resize/etc)
-        dataset_cache_prob (float): probability of saving opened dict to RAM
-            for speedup
         sampler (Sampler, optional): defines the strategy to draw samples from
             the dataset
         collate_fn (callable, optional): merges a list of samples to form a
@@ -135,10 +132,9 @@ def get_loader(
     from catalyst.data import ListDataset
 
     dataset = ListDataset(
-        data_source,
+        list_data=data_source,
         open_fn=open_fn,
         dict_transform=dict_transform,
-        cache_prob=dataset_cache_prob
     )
     loader = torch.utils.data.DataLoader(
         dataset=dataset,

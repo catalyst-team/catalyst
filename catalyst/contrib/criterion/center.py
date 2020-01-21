@@ -51,3 +51,6 @@ class CenterLossFunc(Function):
         grad_centers = grad_centers / counts.view(-1, 1)
 
         return Variable(-grad_output.data * diff), None, Variable(grad_centers)
+
+
+__all__ = ["CenterLoss", "CenterLossFunc"]

@@ -28,16 +28,16 @@ class SupervisedRunner(Runner):
         self,
         model: Model = None,
         device: Device = None,
-        input_key: str = "features",
-        output_key: str = "logits",
+        input_key: Any = "features",
+        output_key: Any = "logits",
         input_target_key: str = "targets",
     ):
         """
         Args:
-            model (Model): Torch model object
+            model (Module): Torch model object
             device (Device): Torch device
-            input_key (str): Key in batch dict mapping for model input
-            output_key (str): Key in output dict model output
+            input_key (Any): Key in batch dict mapping for model input
+            output_key (Any): Key in output dict model output
                 will be stored under
             input_target_key (str): Key in batch dict mapping for target
         """
@@ -154,8 +154,9 @@ class SupervisedRunner(Runner):
                 See https://nvidia.github.io/apex/amp.html#properties
                 if fp16=True, params by default will be ``{"opt_level": "O1"}``
             monitoring_params (dict): If not None, then create monitoring
-                through Weights&Biases. This params is used for ``wandb.init``
-                see https://docs.wandb.com/wandb/init
+                through Alchemy or Weights&Biases.
+                For example,
+                ``{"token": "api_token", "experiment": "experiment_name"}``
             check (bool): if True, then only checks that pipeline is working
                 (3 epochs only)
         """
@@ -172,7 +173,7 @@ class SupervisedRunner(Runner):
             self.model = model
 
         if resume is not None:
-            callbacks = callbacks or OrderedDict()
+            callbacks = utils.process_callbacks(callbacks)
             checkpoint_callback_flag = any([
                 isinstance(x, CheckpointCallback)
                 for x in callbacks.values()

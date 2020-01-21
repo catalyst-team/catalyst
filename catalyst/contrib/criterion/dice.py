@@ -63,3 +63,6 @@ class BCEDiceLoss(nn.Module):
         dice = self.dice_weight * self.dice_loss(outputs, targets)
         bce = self.bce_weight * self.bce_loss(outputs, targets)
         return dice + bce
+
+
+__all__ = ["BCEDiceLoss", "DiceLoss"]
