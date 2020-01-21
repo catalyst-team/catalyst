@@ -252,8 +252,39 @@ class CriterionAggregatorCallback(Callback):
         _add_loss_to_state(self.prefix, state, loss)
 
 
+class WeightedCriterionAggregatorCallback(CriterionAggregatorCallback):
+    """
+    Weighted criterion aggregation
+    """
+
+    def __init__(self,
+                 prefix: str,
+                 loss_keys: Union[str, List[str]] = None,
+                 loss_aggregate_fn: str = "mean",
+                 weights: List[float] = None,
+                 multiplier: float = 1.0) -> None:
+        super().__init__(prefix, loss_keys, loss_aggregate_fn="sum",
+                         multiplier=multiplier)
+        # note that we passed `loss_aggregate_fn="sum"` always
+        # to reuse parent's `on_batch_end` method unchanged
+        # we use "sum" as after `_preprocess_loss` individual losses
+        # are already weighted and we need to sum them
+
+        assert self.loss_keys is not None
+        assert weights is not None and len(weights) == len(self.loss_keys)
+        self.weights = weights
+        if loss_aggregate_fn == "mean":
+            self.weights = [w / sum(weights) for w in weights]
+
+    def _preprocess_loss(self, loss: Any) -> List[torch.Tensor]:
+        assert isinstance(loss, dict)
+        return [loss[key] * self.weights[i] for i, key in
+                enumerate(self.loss_keys)]
+
+
 __all__ = [
     "CriterionCallback",
     "CriterionOutputOnlyCallback",
     "CriterionAggregatorCallback",
+    "WeightedCriterionAggregatorCallback"
 ]
