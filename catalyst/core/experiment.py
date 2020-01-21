@@ -91,13 +91,18 @@ class Experiment(ABC):
     def get_datasets(
         self,
         stage: str,
+        epoch: int = None,
         **kwargs,
     ) -> "OrderedDict[str, Dataset]":
         """Returns the datasets for a given stage and kwargs"""
         raise NotImplementedError
 
     @abstractmethod
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(
+        self,
+        stage: str,
+        epoch: int = None,
+    ) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage"""
         raise NotImplementedError
 

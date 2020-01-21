@@ -198,10 +198,7 @@ class Runner(ABC):
     def _prepare_for_epoch(self, stage: str, epoch: int):
         pass
 
-    def _batch2device(self, batch: Mapping[str, Any], device: Device):
-        output = utils.any2device(batch, device)
-        return output
-
+    # @TODO: too complicated -> rewrite
     def _run_event(self, event: str, moment: Optional[str]):
         fn_name = f"on_{event}"
         if moment is not None:
@@ -229,6 +226,11 @@ class Runner(ABC):
         if self.state is not None:
             getattr(self.state, f"{fn_name}_post")()
 
+    def _batch2device(self, batch: Mapping[str, Any], device: Device):
+        output = utils.any2device(batch, device)
+        return output
+
+    @torch.no_grad()
     def predict_batch(
         self,
         batch: Mapping[str, Any],
@@ -249,16 +251,21 @@ class Runner(ABC):
         output = self.forward(batch, **kwargs)
         return output
 
-    def _run_batch(self, batch):
+    def _run_batch_step(self, batch: Mapping[str, Any]):
+        self.state.output = self.forward(batch)
+
+    def _run_batch(self, batch: Mapping[str, Any]):
         self.state.step += self.state.batch_size
         batch = self._batch2device(batch, self.device)
         self.state.input = batch
         self.state.timer.stop("_timers/data_time")
 
         self._run_event("batch", moment="start")
+
         self.state.timer.start("_timers/model_time")
-        self.state.output = self.forward(batch)
+        self._run_batch_step(batch=batch)
         self.state.timer.stop("_timers/model_time")
+
         self.state.timer.stop("_timers/batch_time")
         self._run_event("batch", moment="end")
 

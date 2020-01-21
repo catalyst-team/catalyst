@@ -14,16 +14,21 @@ function gdrive_download () {
 # @TODO: fix macos fail with sed
 set -e
 
+# imports check
 (set -e; for f in examples/_tests_scripts/dl_*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
 (set -e; for f in examples/_tests_scripts/z_*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
 
-LOGFILE=./examples/logs/_tests_mnist_stages1/checkpoints/_metrics.json
+
+# pipeline 1
+EXPDIR=./examples/_tests_mnist_stages
+LOGDIR=./examples/logs/_tests_mnist_stages1
+LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
-  --expdir=./examples/_tests_mnist_stages \
-  --config=./examples/_tests_mnist_stages/config1.yml \
-  --logdir=./examples/logs/_tests_mnist_stages1 \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config1.yml \
+  --logdir=${LOGDIR} \
   --check
 
 if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
@@ -37,18 +42,24 @@ metrics = Safict.load('$LOGFILE')
 assert metrics.get('stage1.3', 'loss') < metrics.get('stage1.1', 'loss')
 assert metrics.get('stage1.3', 'loss') < 2.0
 """
-
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/trace.py \
-  ./examples/logs/_tests_mnist_stages1
-rm -rf ./examples/logs/_tests_mnist_stages1
+  ${LOGDIR}
+
+rm -rf $LOGDIR
+
+
+# pipeline 2
+EXPDIR=./examples/_tests_mnist_stages
+LOGDIR=./examples/logs/_tests_mnist_stages1
+LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
-  --expdir=./examples/_tests_mnist_stages \
-  --config=./examples/_tests_mnist_stages/config2.yml \
-  --logdir=./examples/logs/_tests_mnist_stages1 \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config2.yml \
+  --logdir=${LOGDIR} \
   --check
 
 if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
@@ -66,99 +77,155 @@ assert metrics.get('stage1.3', 'loss') < 2.0
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
-  --expdir=./examples/_tests_mnist_stages \
-  --config=./examples/_tests_mnist_stages/config3.yml \
-  --resume=./examples/logs/_tests_mnist_stages1/checkpoints/best.pth \
-  --out_dir=./examples/logs/_tests_mnist_stages1/:str \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config3.yml \
+  --resume=${LOGDIR}/checkpoints/best.pth \
+  --out_dir=${LOGDIR}/:str \
   --out_prefix="/predictions/":str
 
 python -c """
 import numpy as np
-data = np.load('examples/logs/_tests_mnist_stages1/predictions/infer.logits.npy')
+data = np.load('${LOGDIR}/predictions/infer.logits.npy')
 assert data.shape == (10000, 10)
 """
-rm -rf ./examples/logs/_tests_mnist_stages1
 
+rm -rf $LOGDIR
+
+
+# pipeline 3
+EXPDIR=./examples/_tests_mnist_stages
+LOGDIR=./examples/logs/_tests_mnist_stages1
+LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
-  --expdir=./examples/_tests_mnist_stages \
-  --config=./examples/_tests_mnist_stages/config4.yml \
-  --logdir=./examples/logs/_tests_mnist_stages1 \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config4.yml \
+  --logdir=${LOGDIR} \
   --check
-rm -rf ./examples/logs/_tests_mnist_stages1
 
+rm -rf ${LOGDIR}
+
+
+# pipeline 4
+EXPDIR=./examples/_tests_mnist_stages
+LOGDIR=./examples/logs/_tests_mnist_stages1
+LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
-  --expdir=./examples/_tests_mnist_stages \
-  --config=./examples/_tests_mnist_stages/config5.yml \
-  --logdir=./examples/logs/_tests_mnist_stages1 \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config5.yml \
+  --logdir=${LOGDIR} \
   --check
-rm -rf ./examples/logs/_tests_mnist_stages1
+
+rm -rf ${LOGDIR}
+
+
+# pipeline 5
+EXPDIR=./examples/_tests_mnist_stages
+LOGDIR=./examples/logs/_tests_mnist_stages1
+LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
-  --expdir=./examples/_tests_mnist_stages \
-  --config=./examples/_tests_mnist_stages/config6.yml \
-  --logdir=./examples/logs/_tests_mnist_stages1 \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config6.yml \
+  --logdir=${LOGDIR} \
   --check
-rm -rf ./examples/logs/_tests_mnist_stages1
+
+rm -rf ${LOGDIR}
+
+
+# pipeline 6
+EXPDIR=./examples/_tests_mnist_stages
+LOGDIR=./examples/logs/_tests_mnist_stages_finder
+LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
-  --expdir=./examples/_tests_mnist_stages \
-  --config=./examples/_tests_mnist_stages/config_finder.yml \
-  --logdir=./examples/logs/_tests_mnist_stages_finder &
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config_finder.yml \
+  --logdir=${LOGDIR} &
+
 sleep 30
 kill %1
-rm -rf ./examples/logs/_tests_mnist_stages_finder
 
+rm -rf ${LOGDIR}
+
+
+# pipeline 7
+EXPDIR=./examples/_tests_mnist_stages2
+LOGDIR=./examples/logs/_tests_mnist_stages2
+LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
-  --expdir=./examples/_tests_mnist_stages2 \
-  --config=./examples/_tests_mnist_stages2/config1.yml \
-  --logdir=./examples/logs/_tests_mnist_stages2 \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config1.yml \
+  --logdir=${LOGDIR} \
   --check
-rm -rf ./examples/logs/_tests_mnist_stages2
 
+rm -rf ${LOGDIR}
+
+
+# pipeline 8
+EXPDIR=./examples/_tests_mnist_stages2
+LOGDIR=./examples/logs/_tests_mnist_stages2
+LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
-  --expdir=./examples/_tests_mnist_stages2 \
-  --config=./examples/_tests_mnist_stages2/config2.yml \
-  --logdir=./examples/logs/_tests_mnist_stages2 \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config2.yml \
+  --logdir=${LOGDIR} \
   --check
-rm -rf ./examples/logs/_tests_mnist_stages2
 
+rm -rf ${LOGDIR}
+
+
+# pipeline 9
+EXPDIR=./examples/_tests_mnist_stages2
+LOGDIR=./examples/logs/_tests_mnist_stages2
+LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
-  --expdir=./examples/_tests_mnist_stages2 \
-  --config=./examples/_tests_mnist_stages2/config3.yml \
-  --logdir=./examples/logs/_tests_mnist_stages2 \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config3.yml \
+  --logdir=${LOGDIR} \
   --check
-rm -rf ./examples/logs/_tests_mnist_stages2
 
+rm -rf ${LOGDIR}
+
+
+# pipeline 10
+EXPDIR=./examples/_tests_mnist_stages2
+LOGDIR=./examples/logs/_tests_mnist_stages_finder
+LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
-  --expdir=./examples/_tests_mnist_stages2 \
-  --config=./examples/_tests_mnist_stages2/config_finder.yml \
-  --logdir=./examples/logs/_tests_mnist_stages_finder &
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config_finder.yml \
+  --logdir=${LOGDIR} &
+
 sleep 30
 kill %1
-rm -rf ./examples/logs/_tests_mnist_stages_finder
+
+rm -rf ${LOGDIR}
 
 
-LOGFILE=./examples/logs/mnist_gan/checkpoints/_metrics.json
+# pipeline 11
+EXPDIR=./examples/mnist_gan
+LOGDIR=./examples/logs/mnist_gan
+LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
-  --expdir=./examples/mnist_gan \
-  --config=./examples/mnist_gan/config.yml \
-  --logdir=./examples/logs/mnist_gan \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config.yml \
+  --logdir=${LOGDIR} \
   --stages/state_params/num_epochs=11:int
 
 if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
@@ -189,3 +256,5 @@ assert loss_d_real < 0.9
 assert loss_d_fake < 0.9
 assert loss_d < 0.9
 """
+
+rm -rf ${LOGDIR}

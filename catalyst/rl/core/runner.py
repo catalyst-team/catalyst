@@ -30,8 +30,9 @@ class RLRunner(Runner):
         loaders = self.experiment.get_loaders(stage=stage, epoch=epoch)
         self.loaders = loaders
 
-    def forward(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
-        # should implement different training steps for different algorithms
+    def _run_batch_step(self, batch: Mapping[str, Any]):
+        # todo: should implement different training steps
+        #  for different algorithms
         metrics: Dict = self.algorithm.train_on_batch(
             batch,
             actor_update=(self.state.step % self.state.actor_grad_period == 0),
@@ -42,21 +43,10 @@ class RLRunner(Runner):
         metrics.update(**metrics_)
         self.state.metric_manager.add_batch_value(metrics_dict=metrics)
 
-    def forward_infer(
-        self,
-        batch: Mapping[str, Any],
-        **kwargs
-    ) -> Mapping[str, Any]:
+    def forward(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
+        # todo: should implement different policy -> action
+        #  for different use-cases: discrete, continuous action spaces
         pass
-
-    def predict_batch(
-        self,
-        batch: Mapping[str, Any],
-        **kwargs
-    ) -> Mapping[str, Any]:
-        batch = self._batch2device(batch, self.device)
-        output = self.forward_infer(batch, **kwargs)
-        return output
 
     @torch.no_grad()
     def inference(

@@ -1,17 +1,27 @@
 from typing import Dict, Optional  # isort:skip
-from collections import OrderedDict
+from collections import defaultdict, OrderedDict
 from pathlib import Path
 
 import numpy as np
 
 from catalyst.utils.frozen import FrozenClass
 from catalyst.utils.metric_manager import MetricManager, TimerManager
+from catalyst.utils.typing import (
+    Model, Criterion, Optimizer, Scheduler, Device,
+)
 
 
+# TODO Deep refactoring
+#  - lr/loss/momentum bypass (how to deal when multiple optimizers?)
 class State(FrozenClass):
     def __init__(
         self,
         *,
+        device: Device = None,
+        model: Model = None,
+        criterion: Criterion = None,
+        optimizer: Optimizer = None,
+        scheduler: Scheduler = None,
         logdir: str = None,
         stage: str = "infer",
         num_epochs: int = None,
@@ -23,6 +33,24 @@ class State(FrozenClass):
         batch_consistant_metrics: bool = True,
         **kwargs
     ):
+        # main part
+        self.model = model
+        self.criterion = criterion
+        self.optimizer = optimizer
+        self.scheduler = scheduler
+        self.device = device
+
+        # main metrics
+        single_optimizer = isinstance(optimizer, Optimizer)
+        self.lr = None if single_optimizer else defaultdict(lambda: None)
+        self.momentum = None if single_optimizer else defaultdict(lambda: None)
+        self.loss = None
+
+        # data pipeline
+        self.input = None
+        self.output = None
+
+        # logging
         self.logdir = Path(logdir) if logdir is not None else None
 
         # special info
@@ -88,6 +116,15 @@ class State(FrozenClass):
 
     def _handle_runner_metrics(self):
         values = {}
+        for key, value in zip(
+            ["_base/lr", "_base/momentum"], [self.lr, self.momentum]
+        ):
+            if value is not None:
+                if isinstance(value, dict):
+                    for k, v in value.items():
+                        values[f"{key}/{k}"] = v
+                else:
+                    values[key] = value
 
         values.update(self.timer.elapsed)
 
