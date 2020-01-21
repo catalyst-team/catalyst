@@ -124,13 +124,14 @@ class Registry(collections.MutableMapping):
         """
         self._late_add_callbacks.append(cb)
 
-    def add_from_module(self, module) -> None:
+    def add_from_module(self, module, prefix: str = None) -> None:
         """
         Adds all factories present in module.
         If ``__all__`` attribute is present, takes ony what mentioned in it
 
         Args:
             module: module to scan
+            prefix (str): prefix string for all the module's factories
         """
         factories = {
             k: v
@@ -141,7 +142,13 @@ class Registry(collections.MutableMapping):
         # Filter by __all__ if present
         names_to_add = getattr(module, "__all__", list(factories.keys()))
 
-        to_add = {name: factories[name] for name in names_to_add}
+        if prefix is None:
+            prefix = ""
+
+        to_add = {
+            f"{prefix}{name}": factories[name]
+            for name in names_to_add
+        }
         self.add(**to_add)
 
     def get(self, name: str) -> Optional[Factory]:

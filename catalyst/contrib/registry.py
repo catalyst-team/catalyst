@@ -38,6 +38,12 @@ def _model_loader(r: Registry):
     from catalyst.contrib import models as m
     r.add_from_module(m)
 
+    try:
+        import segmentation_models_pytorch as smp
+        r.add_from_module(smp, prefix="smp.")
+    except ImportError:
+        pass
+
 
 MODELS = Registry("model")
 MODELS.late_add(_model_loader)
