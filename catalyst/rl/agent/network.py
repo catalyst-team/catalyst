@@ -133,7 +133,7 @@ class StateNet(nn.Module):
             else:
                 raise NotImplementedError()
 
-            main_net_in_features = aggregation_net.features_out
+            main_net_in_features = aggregation_net.out_features
         else:
             aggregation_net = None
 
@@ -252,7 +252,7 @@ class StateActionNet(nn.Module):
             else:
                 raise NotImplementedError()
 
-            main_net_in_features = aggregation_net.features_out
+            main_net_in_features = aggregation_net.out_features
         else:
             aggregation_net = None
 
