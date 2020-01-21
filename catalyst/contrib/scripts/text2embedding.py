@@ -1,6 +1,6 @@
 import argparse
+from functools import partial
 from pathlib import Path
-from typing import Dict
 
 import numpy as np
 import pandas as pd
@@ -9,14 +9,13 @@ from tqdm import tqdm
 import torch
 from transformers import BertConfig, BertModel, BertTokenizer
 
-from catalyst.contrib.modules import LamaPooling
 from catalyst.data.reader import LambdaReader
 from catalyst.dl import utils
 
 
 def build_args(parser):
     parser.add_argument(
-        "--in-csv", type=str, help="Path to csv with photos", required=True
+        "--in-csv", type=str, help="Path to csv with text", required=True
     )
     parser.add_argument(
         "--txt-col",
@@ -34,6 +33,9 @@ def build_args(parser):
     parser.add_argument("--max-length", type=int, default=512)
     utils.boolean_flag(parser, "mask-for-max-length", default=False)
     utils.boolean_flag(parser, "output-hidden-states", default=False)
+    utils.boolean_flag(parser, "strip", default=True)
+    utils.boolean_flag(parser, "lowercase", default=True)
+    utils.boolean_flag(parser, "remove-punctuation", default=True)
     parser.add_argument("--pooling", type=str, default="avg")
     parser.add_argument(
         "--num-workers",
@@ -78,36 +80,11 @@ def parse_args():
     return args
 
 
-def get_features(
-    text: str,
-    tokenizer: BertTokenizer,
-    max_length: int
-) -> Dict[str, np.array]:
-    text = text.lower()
-    inputs = tokenizer.encode_plus(
-        text, "",
-        add_special_tokens=True,
-        max_length=max_length
-    )
-    input_ids, token_type_ids = inputs["input_ids"], inputs["token_type_ids"]
-    attention_mask = [1] * len(input_ids)
-
-    padding_length = max_length - len(input_ids)
-    input_ids = input_ids + ([0] * padding_length)
-    attention_mask = attention_mask + ([0] * padding_length)
-    token_type_ids = token_type_ids + ([0] * padding_length)
-
-    return {
-        "input_ids": np.array(input_ids),
-        "token_type_ids": np.array(token_type_ids),
-        "attention_mask": np.array(attention_mask),
-    }
-
-
 def _detach(tensor):
     return tensor.cpu().detach().numpy()
 
 
+@torch.no_grad()
 def main(args, _=None):
     batch_size = args.batch_size
     num_workers = args.num_workers
@@ -140,7 +117,12 @@ def main(args, _=None):
     open_fn = LambdaReader(
         input_key=args.txt_col,
         output_key=None,
-        lambda_fn=get_features,
+        lambda_fn=partial(
+            utils.tokenize_text,
+            strip=args.strip,
+            lowercase=args.lowercase,
+            remove_punctuation=args.remove_punctuation,
+        ),
         tokenizer=tokenizer,
         max_length=max_length,
     )
@@ -153,47 +135,29 @@ def main(args, _=None):
     )
 
     features = {}
-    poolings = {}
     dataloader = tqdm(dataloader) if args.verbose else dataloader
     with torch.no_grad():
         for idx, batch in enumerate(dataloader):
             batch = utils.any2device(batch, device)
-            features_ = model(**batch)
+            bert_output = model(**batch)
+            mask = batch["attention_mask"].unsqueeze(-1) \
+                if args.mask_for_max_length \
+                else None
+            features_ = utils.process_bert_output(
+                bert_output=bert_output,
+                hidden_size=model.config.hidden_size,
+                output_hidden_states=model.config.output_hidden_states,
+                pooling_groups=pooling_groups,
+                mask=mask,
+            )
 
             # create storage based on network output
             if idx == 0:
-                # class
-                _, embedding_size = features_[1].shape
-                features["class"] = np.memmap(
-                    f"{args.out_prefix}.class.npy",
-                    dtype=np.float32,
-                    mode="w+",
-                    shape=(num_samples, embedding_size),
-                )
-                if args.output_hidden_states:
-                    # all embeddings
-                    for i, feature_ in enumerate(features_[2]):
-                        name_ = f"embeddings_{i + 1:02d}"
-                        _, _, embedding_size = feature_.shape
-                        poolings[name_] = LamaPooling(
-                            features_in=embedding_size,
-                            groups=pooling_groups,
-                        )
-                        features[name_] = np.memmap(
-                            f"{args.out_prefix}.{name_}.npy",
-                            dtype=np.float32,
-                            mode="w+",
-                            shape=(num_samples, embedding_size),
-                        )
-                else:
-                    # last
-                    _, _, embedding_size = features_[0].shape
-                    poolings["last"] = LamaPooling(
-                        features_in=embedding_size,
-                        groups=pooling_groups,
-                    )
-                    features["last"] = np.memmap(
-                        f"{args.out_prefix}.last.npy",
+                for key, value in features_.items():
+                    name_ = key if isinstance(key, str) else f"{key:02d}"
+                    _, embedding_size = value.shape
+                    features[name_] = np.memmap(
+                        f"{args.out_prefix}.{name_}.npy",
                         dtype=np.float32,
                         mode="w+",
                         shape=(num_samples, embedding_size),
@@ -203,25 +167,9 @@ def main(args, _=None):
                 idx * batch_size,
                 min((idx + 1) * batch_size, num_samples)
             )
-            features["class"][indices] = _detach(features_[1])
-            mask = batch["attention_mask"].unsqueeze(-1) \
-                if args.mask_for_max_length \
-                else None
-            if args.output_hidden_states:
-                # all embeddings
-                for i, feature_ in enumerate(features_[2]):
-                    name_ = f"embeddings_{i + 1:02d}"
-                    feature_ = poolings[name_](
-                        feature_,
-                        mask=mask
-                    )
-                    features[name_][indices] = _detach(feature_)
-            else:
-                feature_ = poolings[name_](
-                    features_[0],
-                    mask=mask
-                )
-                features["last"][indices] = _detach(feature_)
+            for key, value in features_.items():
+                name_ = key if isinstance(key, str) else f"{key:02d}"
+                features[name_][indices] = _detach(value)
 
 
 if __name__ == "__main__":
