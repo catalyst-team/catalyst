@@ -1,10 +1,10 @@
-from typing import Dict, List  # isort:skip
+from typing import Dict, List, Union  # isort:skip
 import string
 
 import numpy as np
 
 import torch
-from transformers import BertModel, BertTokenizer
+from transformers import BertTokenizer
 
 from catalyst.contrib.modules import LamaPooling
 
@@ -46,14 +46,16 @@ def tokenize_text(
 
 def process_bert_output(
     bert_output,
-    bert_model: BertModel,
+    hidden_size: int,
+    output_hidden_states: bool = False,
     pooling_groups: List[str] = None,
     mask: torch.Tensor = None,
+    level: Union[int, str] = None
 ):
     # @TODO: make this functional
     pooling = LamaPooling(
         groups=pooling_groups,
-        in_features=bert_model.config.hidden_size
+        in_features=hidden_size
     ) if pooling_groups is not None else None
 
     def _process_features(features):
@@ -61,12 +63,21 @@ def process_bert_output(
             features = pooling(features, mask=mask)
         return features
 
+    if isinstance(level, str):
+        assert level in ("pooling", "class")
+        if level == "pooling":
+            return _process_features(bert_output[0])
+        else:
+            return bert_output[1]
+    elif isinstance(level, int):
+        return _process_features(bert_output[2][level])
+
     output = {
         "pooling": _process_features(bert_output[0]),
         "class": bert_output[1],
     }
 
-    if bert_model.config.output_hidden_states:
+    if output_hidden_states:
         for i, feature_ in enumerate(bert_output[2]):
             output[i] = _process_features(feature_)
 
