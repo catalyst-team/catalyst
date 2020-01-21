@@ -1,7 +1,7 @@
 common_hyperparams:
   noise_dim: &noise_dim 16
   # ensure the names below are the same as in your runner ("discriminator_train" & "generator_train")
-  discriminator_train_phase: &discriminator_train_phase discriminator_train
+  discriminator_train_phase: &discriminator_train_phase critic_train
   generator_train_phase: &generator_train_phase generator_train
 
 model_params:
@@ -9,7 +9,7 @@ model_params:
   generator:
     model: SimpleGenerator
     noise_dim: *noise_dim
-  discriminator:
+  critic:
     model: SimpleDiscriminator
 
 
@@ -120,5 +120,5 @@ stages:
         lr: 0.00005
       discriminator:
         optimizer: Adam
-        _model: ["discriminator"]
+        _model: ["critic"]
         lr: 0.00005

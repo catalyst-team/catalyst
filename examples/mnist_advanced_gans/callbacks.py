@@ -181,7 +181,8 @@ class WassersteinDistanceCallback(MultiKeyMetricCallback):
         super().__init__(prefix,
                          metric_fn=self.get_wasserstein_distance,
                          input_key=None,
-                         output_key=[real_validity_output_key, fake_validity_output_key])
+                         output_key=[real_validity_output_key,
+                                     fake_validity_output_key])
         self.real_validity_key = real_validity_output_key
         self.fake_validity_key = fake_validity_output_key
 

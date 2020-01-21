@@ -1,7 +1,7 @@
 common_hyperparams:
   noise_dim: &noise_dim 16
   # ensure the names below are the same as in your runner ("discriminator_train" & "generator_train")
-  discriminator_train_phase: &discriminator_train_phase discriminator_train
+  discriminator_train_phase: &discriminator_train_phase critic_train
   generator_train_phase: &generator_train_phase generator_train
 
 model_params:
@@ -9,7 +9,7 @@ model_params:
   generator:
     model: SimpleGenerator
     noise_dim: *noise_dim
-  discriminator:
+  critic:
     model: SimpleDiscriminator
 
 
@@ -83,6 +83,7 @@ stages:
       input_key: "data"
       output_key: "fake_data"
       criterion_key: gradient_penalty
+      discriminator_model_key: critic
       prefix: "loss_d_gp"
     loss_d:
       _wrapper: *d_train_wrapper
@@ -138,7 +139,7 @@ stages:
           - 0.9
       discriminator:
         optimizer: Adam
-        _model: ["discriminator"]
+        _model: ["critic"]
         lr: 0.0001
         betas:
           - 0.5
