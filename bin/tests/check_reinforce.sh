@@ -1,35 +1,43 @@
 #!/usr/bin/env bash
 # set -e
 
+echo "start redis"
 redis-server --port 12000 &
 sleep 3
 
+echo "run trainers"
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_trainer.py \
     --config=./examples/_tests_rl_gym/config_reinforce_discrete.yml \
     --logdir=./examples/logs/_tests_rl_gym_reinforce_discrete &
 sleep 10
 
+echo "run samplers"
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_samplers.py \
     --config=./examples/_tests_rl_gym/config_reinforce_discrete.yml \
     --logdir=./examples/logs/_tests_rl_gym_reinforce_discrete &
 sleep 600
 
+echo "kill python processeses"
 killall -9 python
 sleep 3
 killall -9 catalyst-rl
 sleep 3
 
+echo "dump Redis Database to file"
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/dump_db.py \
     --db="redis" \
     --chunk-size=100 \
     --out-pkl="./db.dump.out.{suffix}.pkl"
+
+echo "kill reids server"
 killall -9 redis-server
 sleep 3
 
+echo "check results"
 python -c """
 import pathlib
 import numpy as np
@@ -42,27 +50,31 @@ print('mean reward', np.mean(checkpoint['reward']))
 assert np.mean(checkpoint['reward']) > reward_goal
 """
 
-
+echo "start redis"
 redis-server --port 12000 &
 sleep 3
 
+echo "run trainers"
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_trainer.py \
     --config=./examples/_tests_rl_gym/config_reinforce_continuous.yml \
     --logdir=./examples/logs/_tests_rl_gym_reinforce_continuous &
 sleep 10
 
+echo "run samplers"
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_samplers.py \
     --config=./examples/_tests_rl_gym/config_reinforce_continuous.yml \
     --logdir=./examples/logs/_tests_rl_gym_reinforce_continuous &
 sleep 600
 
+echo "kill python processeses"
 killall -9 python
 sleep 3
 killall -9 catalyst-rl
 sleep 3
 
+echo "dump Redis Database to file"
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/dump_db.py \
@@ -72,6 +84,7 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
 killall -9 redis-server
 sleep 3
 
+echo "check results"
 python -c """
 import pathlib
 import numpy as np
