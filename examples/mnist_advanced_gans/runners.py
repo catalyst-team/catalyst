@@ -14,7 +14,7 @@ class MultiPhaseRunner(Runner):
             self,
             model: Union[Model, Dict[str, Model]] = None,
             device: Device = None,
-            input_batch_keys: Optional[List[str]] = None,
+            input_batch_keys: List[str] = None,
             registered_phases: Tuple[
                 Tuple[str, Union[str, Callable]], ...] = None
     ):
@@ -33,7 +33,7 @@ class MultiPhaseRunner(Runner):
         """
         super().__init__(model, device)
 
-        self.input_batch_keys = input_batch_keys
+        self.input_batch_keys = input_batch_keys or []
 
         self.registered_phases = dict()
         for phase_name, phase_batch_forward_fn in registered_phases:
@@ -155,7 +155,7 @@ class GANRunner(MultiPhaseRunner):
             (generator_train_phase, "_generator_train_phase"),
             (discriminator_train_phase, "_discriminator_train_phase"),
             (None, "_discriminator_train_phase")
-        )  # TODO: я где-то налажал в typing что ли?
+        )
         super().__init__(model, device, input_batch_keys, registered_phases)
 
         # input keys
@@ -254,7 +254,7 @@ class GANRunner(MultiPhaseRunner):
         """returns generator inputs"""
         z = self.state.input[self.noise_input_key]
         conditions = [self.state.input[key] for key in
-                      self.condition_keys]  # TODO: maybe as dict?
+                      self.condition_keys]
         return z, conditions
 
     def _get_real_data_conditions(self):

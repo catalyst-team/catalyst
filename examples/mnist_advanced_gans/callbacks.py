@@ -233,23 +233,7 @@ CriterionCallback extended
 """
 
 
-class CriterionWithAdditionalArgsCallback(CriterionCallback):
-    """TODO: merge with CriterionCallback
-    """
-
-    def _get_additional_criterion_args(self, state: RunnerState):
-        return {}
-
-    def _compute_loss(self, state: RunnerState, criterion):
-        output = self._get(state.output, self.output_key)
-        input = self._get(state.input, self.input_key)
-
-        kwargs = self._get_additional_criterion_args(state)
-        loss = criterion(output, input, **kwargs)
-        return loss
-
-
-class CriterionWithDiscriminatorCallback(CriterionWithAdditionalArgsCallback):
+class CriterionWithDiscriminatorCallback(CriterionCallback):
     """Callback to handle Criterion which has additional argument (model)
     as input.
     So imagine you have CRITERION with
@@ -290,8 +274,10 @@ class CriterionWithDiscriminatorCallback(CriterionWithAdditionalArgsCallback):
             discriminator_model_criterion_key
 
     def _get_additional_criterion_args(self, state: RunnerState):
-        return {self.discriminator_model_criterion_key: state.model[
-            self.discriminator_model_key]}
+        return {
+            self.discriminator_model_criterion_key:
+                state.model[self.discriminator_model_key]
+        }
 
 
 """
@@ -520,7 +506,6 @@ __all__ = [
     "SameClassFeaturesRepeatCallback",
     "MultiKeyMetricCallback",
     "WassersteinDistanceCallback",
-    "CriterionWithAdditionalArgsCallback",
     "CriterionWithDiscriminatorCallback",
     "WeightClampingOptimizerCallback",
     "WeightedCriterionAggregatorCallback",

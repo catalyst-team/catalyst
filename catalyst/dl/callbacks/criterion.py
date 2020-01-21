@@ -76,18 +76,25 @@ class CriterionCallback(Callback):
         else:
             raise NotImplementedError()
 
+    def _get_additional_criterion_args(self, state: RunnerState):
+        return {}
+
     def _compute_loss_value(self, state: RunnerState, criterion):
         output = self._get_output(state.output, self.output_key)
         input = self._get_input(state.input, self.input_key)
 
-        loss = criterion(output, input)
+        criterion_kwargs = self._get_additional_criterion_args(state)
+
+        loss = criterion(output, input, **criterion_kwargs)
         return loss
 
     def _compute_loss_key_value(self, state: RunnerState, criterion):
         output = self._get_output(state.output, self.output_key)
         input = self._get_input(state.input, self.input_key)
 
-        loss = criterion(**output, **input)
+        criterion_kwargs = self._get_additional_criterion_args(state)
+
+        loss = criterion(**output, **input, **criterion_kwargs)
         return loss
 
     def on_stage_start(self, state: RunnerState):

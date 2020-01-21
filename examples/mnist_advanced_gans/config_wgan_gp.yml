@@ -3,6 +3,7 @@ common_hyperparams:
   # ensure the names below are the same as in your runner ("discriminator_train" & "generator_train")
   discriminator_train_phase: &discriminator_train_phase critic_train
   generator_train_phase: &generator_train_phase generator_train
+  dummy_input_key: &dummy_input_key "data"
 
 model_params:
   _key_value: True
@@ -55,7 +56,7 @@ stages:
         callback: PhaseBatchWrapperCallback
         active_phases: [*generator_train_phase]
       callback: CriterionCallback
-      input_key:  # input key does not matter
+      input_key: *dummy_input_key # input key does not matter
       output_key: "fake_validity"
       criterion_key: mean_output_loss
       prefix: loss_g
@@ -66,14 +67,14 @@ stages:
         callback: PhaseBatchWrapperCallback
         active_phases: [*discriminator_train_phase]
       callback: CriterionCallback
-      input_key:  # input key does not matter
+      input_key: *dummy_input_key # input key does not matter
       output_key: "real_validity"
       criterion_key: mean_output_loss
       prefix: loss_d_real
     loss_d_fake:
       _wrapper: *d_train_wrapper
       callback: CriterionCallback
-      input_key:  # input key does not matter
+      input_key: *dummy_input_key # input key does not matter
       output_key: "fake_validity"
       criterion_key: mean_output_loss
       prefix: loss_d_fake
