@@ -3,7 +3,7 @@
 ### Local run
 
 ```bash
-catalyst-dl run --config=./mnist_gan/config.yml --verbose
+catalyst-dl run --config=./mnist_advanced_gan/config.yml --verbose
 ```
 
 ### Docker run

@@ -3,19 +3,18 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from catalyst.contrib import registry
+
 # TODO: add conv models
 # TODO: refactor the entire file
 
 
-@registry.Model
 class SimpleGenerator(nn.Module):
     def __init__(
-        self,
-        noise_dim=10,
-        hidden_dim=256,
-        image_resolution=(28, 28),
-        channels=1
+            self,
+            noise_dim=10,
+            hidden_dim=256,
+            image_resolution=(28, 28),
+            channels=1
     ):
         super().__init__()
         self.noise_dim = noise_dim
@@ -35,7 +34,6 @@ class SimpleGenerator(nn.Module):
         return x
 
 
-@registry.Model
 class SimpleDiscriminator(nn.Module):
     def __init__(self, image_resolution=(28, 28), channels=1, hidden_dim=100):
         super().__init__()
@@ -55,11 +53,12 @@ class SimpleDiscriminator(nn.Module):
         return x
 
 
-@registry.Model
 class SimpleCGenerator(SimpleGenerator):
 
-    def __init__(self, noise_dim=10, n_classes=10, hidden_dim=256, image_resolution=(28, 28), channels=1):
-        super().__init__(noise_dim + n_classes, hidden_dim, image_resolution, channels)
+    def __init__(self, noise_dim=10, n_classes=10, hidden_dim=256,
+                 image_resolution=(28, 28), channels=1):
+        super().__init__(noise_dim + n_classes, hidden_dim, image_resolution,
+                         channels)
         self.n_classes = n_classes
 
     def forward(self, z, c_one_hot):
@@ -67,9 +66,9 @@ class SimpleCGenerator(SimpleGenerator):
         return super().forward(x)
 
 
-@registry.Model
 class SimpleCDiscriminator(nn.Module):
-    def __init__(self, n_classes=10, image_resolution=(28, 28), channels=1, hidden_dim=100):
+    def __init__(self, n_classes=10, image_resolution=(28, 28), channels=1,
+                 hidden_dim=100):
         super().__init__()
         self.image_resolution = image_resolution
         self.channels = channels
@@ -89,18 +88,18 @@ class SimpleCDiscriminator(nn.Module):
         return x
 
 
-@registry.Model
 class SimpleCImageGenerator(SimpleGenerator):
 
-    def __init__(self, noise_dim=10, hidden_dim=256, image_resolution=(28, 28), channels=1):
-        super().__init__(noise_dim + np.prod(image_resolution) * channels, hidden_dim, image_resolution, channels)
+    def __init__(self, noise_dim=10, hidden_dim=256, image_resolution=(28, 28),
+                 channels=1):
+        super().__init__(noise_dim + np.prod(image_resolution) * channels,
+                         hidden_dim, image_resolution, channels)
 
     def forward(self, z, c_image):
         x = torch.cat((z, c_image.reshape(c_image.size(0), -1)), dim=1)
         return super().forward(x)
 
 
-@registry.Model
 class SimpleCImageDiscriminator(SimpleDiscriminator):
 
     def __init__(self, image_resolution=(28, 28), channels=1, hidden_dim=100):
@@ -108,3 +107,13 @@ class SimpleCImageDiscriminator(SimpleDiscriminator):
 
     def forward(self, x, c_image):
         return super().forward(torch.cat((x, c_image), dim=1))
+
+
+__all__ = [
+    "SimpleGenerator",
+    "SimpleDiscriminator",
+    "SimpleCGenerator",
+    "SimpleCDiscriminator",
+    "SimpleCImageDiscriminator",
+    "SimpleCImageGenerator"
+]

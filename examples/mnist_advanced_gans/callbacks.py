@@ -1,20 +1,38 @@
+"""
+All custom callbacks
+"""
 from typing import Union, List, Any, Dict, Callable, Optional, Tuple
 
 import torch
 import torchvision.utils
 
 from catalyst.dl import RunnerState
-from catalyst.dl import registry
-from catalyst.dl.callbacks import CriterionAggregatorCallback, OptimizerCallback, CriterionCallback
-from catalyst.dl.core import Callback, CallbackOrder, MetricCallback
+from catalyst.dl.callbacks import CriterionAggregatorCallback, \
+    OptimizerCallback, CriterionCallback
+from catalyst.dl.core import Callback, CallbackOrder
 from catalyst.utils.tensorboard import SummaryWriter
 
-@registry.Callback
-class PrepareBatchInputCallback(Callback):
-    """Used to update state.input batch (e.g. add noise, additional random condition, etc.)"""
+"""
+InputBatchTransform functions,
+e.g.:
+- add noise to batch: state.input["noise"] = z
+- add real/fake targets (zeros/ones) 
+- transform targets to/from one-hot encoding
+Note: these transforms are different from dataset transforms as they transform
+the entire batch which may be more efficient/simple than custom batch_collate
+"""
+
+
+class InputBatchTransformCallback(Callback):
+    """Used to update state.input batch
+    (e.g. add noise, additional random condition, etc.)"""
 
     def __init__(self, data_key: str = "data"):
-        super().__init__(order=CallbackOrder.Internal)  # TODO: what is the proper order?
+        # TODO(help wanted):
+        #  what will be the proper order?
+        #  as it seems to do not matter
+        super().__init__(
+            order=CallbackOrder.Internal)
         self.data_key = data_key
 
     def on_batch_start(self, state: RunnerState):
@@ -25,26 +43,29 @@ class PrepareBatchInputCallback(Callback):
         assert self.data_key in state.input
         return state.input[self.data_key].size(0)
 
-@registry.Callback
-class AddBatchNoiseCallback(PrepareBatchInputCallback):
+
+class AddBatchNoiseCallback(InputBatchTransformCallback):
 
     def __init__(self,
                  noise_shape: Union[int, Tuple[int]],
                  data_key: str = "data",
                  injected_noise_key: str = "noise"):
         super().__init__(data_key)
-        self.noise_shape = tuple(noise_shape) if isinstance(noise_shape, (tuple, list)) else (noise_shape,)
+        self.noise_shape = (
+            tuple(noise_shape) if isinstance(noise_shape, (tuple, list))
+            else (noise_shape,)
+        )
         self.injected_noise_key = injected_noise_key
 
     def on_batch_start(self, state: RunnerState):
         batch_size = self.get_batch_size(state)
         assert self.injected_noise_key not in state.input
-        z_shape = (batch_size, ) + self.noise_shape
-        state.input[self.injected_noise_key] = torch.randn(z_shape, device=state.device)
+        z_shape = (batch_size,) + self.noise_shape
+        state.input[self.injected_noise_key] = \
+            torch.randn(z_shape, device=state.device)
 
 
-@registry.Callback
-class AddRealFakeTargetsCallback(PrepareBatchInputCallback):
+class AddRealFakeTargetsCallback(InputBatchTransformCallback):
 
     def __init__(self,
                  data_key: str = "data",
@@ -74,8 +95,7 @@ class AddRealFakeTargetsCallback(PrepareBatchInputCallback):
         state.input[self.fake_targets_key] = fake_targets
 
 
-@registry.Callback
-class OneHotTransformCallback(PrepareBatchInputCallback):
+class OneHotTransformCallback(InputBatchTransformCallback):
 
     def __init__(self,
                  n_classes: int = 10,
@@ -101,8 +121,21 @@ class OneHotTransformCallback(PrepareBatchInputCallback):
         state.input[self.one_hot_target_key] = targets_one_hot
 
 
-@registry.Callback
-class SameClassFeaturesRepeatCallback(PrepareBatchInputCallback):
+class SameClassFeaturesRepeatCallback(InputBatchTransformCallback):
+    """
+    This is a bit tricky transform. It assumes that
+    batch[targets_key] has equal labels in first and second half, i.e.
+    batch[targets_key][:batch_size//2] == batch[targets_key][batch_size//2:]
+
+    The transform itself adds extra input:
+        batch[same_class_data_key] = torch.cat(
+            (data[:batch_size // 2], data[batch_size // 2:]), dim=0
+        )
+
+    The use-case is to not override Dataset, only batch_sampler
+    Used to have 2 input images of same class in batch, which can help with
+    image-conditioned GAN training
+    """
 
     def __init__(self, data_key: str = "data",
                  same_class_data_key: str = "same_class_data",
@@ -132,21 +165,25 @@ class SameClassFeaturesRepeatCallback(PrepareBatchInputCallback):
         state.input[self.same_class_data_key] = same_class_data
 
 
-# TODO: implement abstract class and move to core catalyst
-@registry.Callback
+"""
+MetricCallbacks alternatives for input/output keys
+"""
+
+
 class MultiKeyMetricCallback(Callback):
     """
     A callback that returns single metric on `state.on_batch_end`
     """
+
     # TODO: merge it with MetricCallback in catalyst.core
     # TODO: move _get to catalyst.utils
     def __init__(
-        self,
-        prefix: str,
-        metric_fn: Callable,
-        input_key: Optional[Union[str, List[str]]] = "targets",
-        output_key: Optional[Union[str, List[str]]] = "logits",
-        **metric_params
+            self,
+            prefix: str,
+            metric_fn: Callable,
+            input_key: Optional[Union[str, List[str]]] = "targets",
+            output_key: Optional[Union[str, List[str]]] = "logits",
+            **metric_params
     ):
         super().__init__(CallbackOrder.Metric)
         self.prefix = prefix
@@ -172,7 +209,6 @@ class MultiKeyMetricCallback(Callback):
         state.metrics.add_batch_value(name=self.prefix, value=metric)
 
 
-@registry.Callback
 class WassersteinDistanceCallback(MultiKeyMetricCallback):
 
     def __init__(self, prefix: str = "wasserstein_distance",
@@ -192,7 +228,11 @@ class WassersteinDistanceCallback(MultiKeyMetricCallback):
         return real_validity.mean() - fake_validity.mean()
 
 
-@registry.Callback
+"""
+CriterionCallback extended
+"""
+
+
 class CriterionWithAdditionalArgsCallback(CriterionCallback):
     """TODO: merge with CriterionCallback
     """
@@ -209,23 +249,57 @@ class CriterionWithAdditionalArgsCallback(CriterionCallback):
         return loss
 
 
-@registry.Callback
 class CriterionWithDiscriminatorCallback(CriterionWithAdditionalArgsCallback):
-    """TODO: docs"""
+    """Callback to handle Criterion which has additional argument (model)
+    as input.
+    So imagine you have CRITERION with
+        forward(self, outputs, inputs, discriminator)
+    This callback will add discriminator to criterion forward arguments
+    """
 
-    def __init__(self, input_key: Union[str, List[str]] = "targets", output_key: Union[str, List[str]] = "logits",
-                 prefix: str = "loss", criterion_key: str = None, multiplier: float = 1.0,
-                 discriminator_model_key="discriminator", discriminator_model_criterion_key="discriminator"):
-        super().__init__(input_key, output_key, prefix, criterion_key, multiplier)
-        self.discriminator_model_key = discriminator_model_key
-        self.discriminator_model_criterion_key = discriminator_model_criterion_key
+    def __init__(self,
+                 input_key: Union[str, List[str]] = "targets",
+                 output_key: Union[str, List[str]] = "logits",
+                 prefix: str = "loss", criterion_key: str = None,
+                 multiplier: float = 1.0,
+                 discriminator_model_key="discriminator",
+                 discriminator_model_criterion_key="discriminator"):
+        """
+
+        :param input_key:
+        :param output_key:
+        :param prefix:
+        :param criterion_key:
+        :param multiplier:
+        :param discriminator_model_key:
+            discriminator key to extract from state.model
+        :param discriminator_model_criterion_key:
+            discriminator key in criterion forward
+            Example 1:
+                forward(self, outputs, inputs, discriminator)
+                (here discriminator_model_criterion_key is "discriminator")
+            Example 2:
+                forward(self, outputs, inputs, d_model)
+                (here discriminator_model_criterion_key is "d_model")
+        """
+        super().__init__(input_key, output_key, prefix, criterion_key,
+                         multiplier)
+        self.discriminator_model_key = \
+            discriminator_model_key
+        self.discriminator_model_criterion_key = \
+            discriminator_model_criterion_key
 
     def _get_additional_criterion_args(self, state: RunnerState):
-        return {self.discriminator_model_criterion_key: state.model[self.discriminator_model_key]}
+        return {self.discriminator_model_criterion_key: state.model[
+            self.discriminator_model_key]}
 
 
-@registry.Callback
-class LipzOptimizerCallback(OptimizerCallback):
+"""
+Optimizer Callback with weights clamp after update
+"""
+
+
+class WeightClampingOptimizerCallback(OptimizerCallback):
     """
     Optimizer callback + weights clipping after step is finished
     """
@@ -239,6 +313,17 @@ class LipzOptimizerCallback(OptimizerCallback):
             decouple_weight_decay: bool = True,
             weight_clamp_value: float = 0.1
     ):
+        """
+
+        :param grad_clip_params:
+        :param accumulation_steps:
+        :param optimizer_key:
+        :param loss_key:
+        :param decouple_weight_decay:
+        :param weight_clamp_value:
+            value to clamp weights after each optimization iteration
+            Attention: will clamp WEIGHTS, not GRADIENTS
+        """
         super().__init__(
             grad_clip_params=grad_clip_params,
             accumulation_steps=accumulation_steps,
@@ -264,22 +349,28 @@ class LipzOptimizerCallback(OptimizerCallback):
         if need_gradient_step:
             for group in optimizer.param_groups:
                 for param in group["params"]:
-                    param.data.clamp_(min=-self.weight_clamp_value, max=self.weight_clamp_value)
+                    param.data.clamp_(min=-self.weight_clamp_value,
+                                      max=self.weight_clamp_value)
 
 
-@registry.Callback
 class WeightedCriterionAggregatorCallback(CriterionAggregatorCallback):
     """
     Weighted criterion aggregation
     """
 
-    def __init__(self, prefix: str, loss_keys: Union[str, List[str]] = None,
+    # TODO: move to catalyst.dl.criterion
+    def __init__(self,
+                 prefix: str,
+                 loss_keys: Union[str, List[str]] = None,
                  loss_aggregate_fn: str = "mean",
                  weights: List[float] = None,
                  multiplier: float = 1.0) -> None:
-        super().__init__(prefix, loss_keys, loss_aggregate_fn="sum", multiplier=multiplier)
-        # note that we passed `loss_aggregate_fn="sum"` always to reuse parent's `on_batch_end` method unchanged
-        # we use "sum" as after `_preprocess_loss` individual losses are already weighted and we need to sum them
+        super().__init__(prefix, loss_keys, loss_aggregate_fn="sum",
+                         multiplier=multiplier)
+        # note that we passed `loss_aggregate_fn="sum"` always
+        # to reuse parent's `on_batch_end` method unchanged
+        # we use "sum" as after `_preprocess_loss` individual losses
+        # are already weighted and we need to sum them
 
         assert self.loss_keys is not None
         assert weights is not None and len(weights) == len(self.loss_keys)
@@ -289,10 +380,15 @@ class WeightedCriterionAggregatorCallback(CriterionAggregatorCallback):
 
     def _preprocess_loss(self, loss: Any) -> List[torch.Tensor]:
         assert isinstance(loss, dict)
-        return [loss[key] * self.weights[i] for i, key in enumerate(self.loss_keys)]
+        return [loss[key] * self.weights[i] for i, key in
+                enumerate(self.loss_keys)]
 
 
-@registry.Callback
+"""
+Visualization utilities
+"""
+
+
 class VisualizationCallback(Callback):
     TENSORBOARD_LOGGER_KEY = "tensorboard"
 
@@ -414,3 +510,19 @@ class VisualizationCallback(Callback):
         self._loader_batch_count += 1
         if self._loader_batch_count % self.batch_frequency:
             self.visualize(state)
+
+
+__all__ = [
+    "InputBatchTransformCallback",
+    "AddBatchNoiseCallback",
+    "AddRealFakeTargetsCallback",
+    "OneHotTransformCallback",
+    "SameClassFeaturesRepeatCallback",
+    "MultiKeyMetricCallback",
+    "WassersteinDistanceCallback",
+    "CriterionWithAdditionalArgsCallback",
+    "CriterionWithDiscriminatorCallback",
+    "WeightClampingOptimizerCallback",
+    "WeightedCriterionAggregatorCallback",
+    "VisualizationCallback"
+]

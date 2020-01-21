@@ -1,23 +1,27 @@
+"""
+All custom criterion modules
+"""
 import torch
 from torch import nn
 
-from catalyst.contrib import registry
 
-
-@registry.Criterion
 class MeanOutputLoss(nn.Module):
-    """Criterion which compute simple mean of the output, completely ignoring target
-    (maybe useful e.g. for WGAN real/fake validity averaging"""
+    """
+    Criterion to compute simple mean of the output, completely ignoring target
+    (maybe useful e.g. for WGAN real/fake validity averaging
+    """
 
     def forward(self, output, target):
         return output.mean()
 
 
-@registry.Criterion
 class GradientPenaltyLoss(nn.Module):
     """Criterion to compute gradient penalty
-    WARN: SHOULD NOT BE RUN WITH CriterionCallback, use special MultiKeyCriterionCallback instead
+
+    WARN: SHOULD NOT BE RUN WITH CriterionCallback,
+        use special MultiKeyCriterionCallback instead
     """
+
     def forward(self, fake_data, real_data, discriminator):
         device = real_data.device
         # Random weight term for interpolation between real and fake samples
@@ -27,11 +31,14 @@ class GradientPenaltyLoss(nn.Module):
         interpolates.requires_grad_(True)
         d_interpolates = discriminator(interpolates)
         if not d_interpolates.requires_grad:
-            # TODO: deal with it (outputs does not require grad in validation mode)
-            # raise ValueError("Why the hell??? one of D inputs has requires_grad=True,"
-            #                  "so output should also have requires_grad=False")
+            # TODO:
+            #  deal with it (outputs does not require grad in validation mode)
+            # raise ValueError("Why the hell??? one of D inputs "
+            #                  "has requires_grad=True, so output "
+            #                  "should also have requires_grad=True")
             return torch.zeros((real_data.size(0), 1), device=device).mean()
-        fake = torch.ones((real_data.size(0), 1), device=device, requires_grad=False)
+        fake = torch.ones((real_data.size(0), 1), device=device,
+                          requires_grad=False)
         # Get gradient w.r.t. interpolates
         gradients = torch.autograd.grad(
             outputs=d_interpolates,

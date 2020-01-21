@@ -89,7 +89,7 @@ stages:
       loss_key: loss_g
     optim_d:
       _wrapper: *d_train_wrapper
-      callback: LipzOptimizerCallback
+      callback: WeightClampingOptimizerCallback
       optimizer_key: discriminator
       loss_key: loss_d
       weight_clamp_value: 0.01
