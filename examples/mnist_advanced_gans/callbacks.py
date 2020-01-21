@@ -177,8 +177,8 @@ class MultiKeyMetricCallback(Callback):
 
     # TODO:
     #  merge it with MetricCallback in catalyst.core
-    #  this integration looks a bit more complicated than CriterionCallback
-    #  I tried but failed, maybe refactor later
+    #  maybe after the changes with CriterionCallback will be finalized
+    #  in the main repo
     def __init__(
             self,
             prefix: str,
