@@ -1,22 +1,22 @@
 """
 All custom callbacks
 """
-from typing import Union, List, Any, Dict, Callable, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import torch
 import torchvision.utils
 
 from catalyst.dl import RunnerState
-from catalyst.dl.callbacks import CriterionAggregatorCallback, \
-    OptimizerCallback, CriterionCallback
+from catalyst.dl.callbacks import CriterionCallback, OptimizerCallback
 from catalyst.dl.core import Callback, CallbackOrder
 from catalyst.utils.tensorboard import SummaryWriter
+
 
 """
 InputBatchTransform functions,
 e.g.:
 - add noise to batch: state.input["noise"] = z
-- add real/fake targets (zeros/ones) 
+- add real/fake targets (zeros/ones)
 - transform targets to/from one-hot encoding
 Note: these transforms are different from dataset transforms as they transform
 the entire batch which may be more efficient/simple than custom batch_collate
@@ -25,18 +25,22 @@ the entire batch which may be more efficient/simple than custom batch_collate
 
 class InputBatchTransformCallback(Callback):
     """Used to update state.input batch
-    (e.g. add noise, additional random condition, etc.)"""
-
+    (e.g. add noise, additional random condition, etc.)
+    """
     def __init__(self, data_key: str = "data"):
+        """
+
+        :param data_key:
+        """
         # TODO(help wanted):
         #  what will be the proper order?
         #  as it seems to do not matter
-        super().__init__(
-            order=CallbackOrder.Internal)
+        super().__init__(order=CallbackOrder.Internal)
         self.data_key = data_key
 
     def on_batch_start(self, state: RunnerState):
-        # Note: it is assumed that state.input is already moved to proper device
+        # Note: it is assumed that state.input
+        # is already moved to proper device
         raise NotImplementedError()  # should be implemented in descendants
 
     def get_batch_size(self, state):
@@ -45,33 +49,35 @@ class InputBatchTransformCallback(Callback):
 
 
 class AddBatchNoiseCallback(InputBatchTransformCallback):
-
-    def __init__(self,
-                 noise_shape: Union[int, Tuple[int]],
-                 data_key: str = "data",
-                 injected_noise_key: str = "noise"):
+    def __init__(
+        self,
+        noise_shape: Union[int, Tuple[int]],
+        data_key: str = "data",
+        injected_noise_key: str = "noise"
+    ):
         super().__init__(data_key)
-        self.noise_shape = (
-            tuple(noise_shape) if isinstance(noise_shape, (tuple, list))
-            else (noise_shape,)
-        )
+        if isinstance(noise_shape, int):
+            noise_shape = (noise_shape, )
+        assert isinstance(noise_shape, (list, tuple))
+        self.noise_shape = tuple(noise_shape)
         self.injected_noise_key = injected_noise_key
 
     def on_batch_start(self, state: RunnerState):
         batch_size = self.get_batch_size(state)
         assert self.injected_noise_key not in state.input
-        z_shape = (batch_size,) + self.noise_shape
+        z_shape = (batch_size, ) + self.noise_shape
         state.input[self.injected_noise_key] = \
             torch.randn(z_shape, device=state.device)
 
 
 class AddRealFakeTargetsCallback(InputBatchTransformCallback):
-
-    def __init__(self,
-                 data_key: str = "data",
-                 real_targets_key: str = "real_targets",
-                 fake_targets_key: str = "fake_targets",
-                 fake_targets_zero: bool = True):
+    def __init__(
+        self,
+        data_key: str = "data",
+        real_targets_key: str = "real_targets",
+        fake_targets_key: str = "fake_targets",
+        fake_targets_zero: bool = True
+    ):
         super().__init__(data_key)
         self.real_targets_key = real_targets_key
         self.fake_targets_key = fake_targets_key
@@ -96,12 +102,13 @@ class AddRealFakeTargetsCallback(InputBatchTransformCallback):
 
 
 class OneHotTransformCallback(InputBatchTransformCallback):
-
-    def __init__(self,
-                 n_classes: int = 10,
-                 data_key: str = "data",
-                 target_key: str = "target",
-                 one_hot_target_key: str = "one_hot_target"):
+    def __init__(
+        self,
+        n_classes: int = 10,
+        data_key: str = "data",
+        target_key: str = "target",
+        one_hot_target_key: str = "one_hot_target"
+    ):
         super().__init__(data_key)
         self.n_classes = n_classes
         self.target_key = target_key
@@ -115,9 +122,10 @@ class OneHotTransformCallback(InputBatchTransformCallback):
         if targets.ndim > 1:
             raise NotImplementedError()
         targets_one_hot = torch.zeros(
-            (batch_size, self.n_classes), device=targets.device)
-        targets_one_hot[
-            torch.arange(batch_size, device=targets.device), targets] = 1
+            (batch_size, self.n_classes), device=targets.device
+        )
+        targets_one_hot[torch.arange(batch_size, device=targets.device),
+                        targets] = 1
         state.input[self.one_hot_target_key] = targets_one_hot
 
 
@@ -136,10 +144,12 @@ class SameClassFeaturesRepeatCallback(InputBatchTransformCallback):
     Used to have 2 input images of same class in batch, which can help with
     image-conditioned GAN training
     """
-
-    def __init__(self, data_key: str = "data",
-                 same_class_data_key: str = "same_class_data",
-                 targets_key: str = "class_targets"):
+    def __init__(
+        self,
+        data_key: str = "data",
+        same_class_data_key: str = "same_class_data",
+        targets_key: str = "class_targets"
+    ):
         super().__init__(data_key)
         self.same_class_data_key = same_class_data_key
         self.targets_key = targets_key
@@ -153,8 +163,7 @@ class SameClassFeaturesRepeatCallback(InputBatchTransformCallback):
             assert target.size(0) == batch_size
             assert batch_size % 2 == 0, "batch size must be evenly divisible"
             assert torch.equal(
-                target[:batch_size // 2],
-                target[batch_size // 2:]
+                target[:batch_size // 2], target[batch_size // 2:]
             ), "Batch targets sanity check failed; check your DataLoader"
 
         data = state.input[self.data_key]
@@ -180,12 +189,12 @@ class MultiKeyMetricCallback(Callback):
     #  maybe after the changes with CriterionCallback will be finalized
     #  in the main repo
     def __init__(
-            self,
-            prefix: str,
-            metric_fn: Callable,
-            input_key: Optional[Union[str, List[str]]] = "targets",
-            output_key: Optional[Union[str, List[str]]] = "logits",
-            **metric_params
+        self,
+        prefix: str,
+        metric_fn: Callable,
+        input_key: Optional[Union[str, List[str]]] = "targets",
+        output_key: Optional[Union[str, List[str]]] = "logits",
+        **metric_params
     ):
         super().__init__(CallbackOrder.Metric)
         self.prefix = prefix
@@ -212,15 +221,18 @@ class MultiKeyMetricCallback(Callback):
 
 
 class WassersteinDistanceCallback(MultiKeyMetricCallback):
-
-    def __init__(self, prefix: str = "wasserstein_distance",
-                 real_validity_output_key: str = "real_validity",
-                 fake_validity_output_key: str = "fake_validity"):
-        super().__init__(prefix,
-                         metric_fn=self.get_wasserstein_distance,
-                         input_key=None,
-                         output_key=[real_validity_output_key,
-                                     fake_validity_output_key])
+    def __init__(
+        self,
+        prefix: str = "wasserstein_distance",
+        real_validity_output_key: str = "real_validity",
+        fake_validity_output_key: str = "fake_validity"
+    ):
+        super().__init__(
+            prefix,
+            metric_fn=self.get_wasserstein_distance,
+            input_key=None,
+            output_key=[real_validity_output_key, fake_validity_output_key]
+        )
         self.real_validity_key = real_validity_output_key
         self.fake_validity_key = fake_validity_output_key
 
@@ -242,14 +254,16 @@ class CriterionWithDiscriminatorCallback(CriterionCallback):
         forward(self, outputs, inputs, discriminator)
     This callback will add discriminator to criterion forward arguments
     """
-
-    def __init__(self,
-                 input_key: Union[str, List[str]] = "targets",
-                 output_key: Union[str, List[str]] = "logits",
-                 prefix: str = "loss", criterion_key: str = None,
-                 multiplier: float = 1.0,
-                 discriminator_model_key="discriminator",
-                 discriminator_model_criterion_key="discriminator"):
+    def __init__(
+        self,
+        input_key: Union[str, List[str]] = "targets",
+        output_key: Union[str, List[str]] = "logits",
+        prefix: str = "loss",
+        criterion_key: str = None,
+        multiplier: float = 1.0,
+        discriminator_model_key="discriminator",
+        discriminator_model_criterion_key="discriminator"
+    ):
         """
 
         :param input_key:
@@ -268,8 +282,9 @@ class CriterionWithDiscriminatorCallback(CriterionCallback):
                 forward(self, outputs, inputs, d_model)
                 (here discriminator_model_criterion_key is "d_model")
         """
-        super().__init__(input_key, output_key, prefix, criterion_key,
-                         multiplier)
+        super().__init__(
+            input_key, output_key, prefix, criterion_key, multiplier
+        )
         self.discriminator_model_key = \
             discriminator_model_key
         self.discriminator_model_criterion_key = \
@@ -277,8 +292,8 @@ class CriterionWithDiscriminatorCallback(CriterionCallback):
 
     def _get_additional_criterion_args(self, state: RunnerState):
         return {
-            self.discriminator_model_criterion_key:
-                state.model[self.discriminator_model_key]
+            self.discriminator_model_criterion_key: state.model[
+                self.discriminator_model_key]
         }
 
 
@@ -291,15 +306,14 @@ class WeightClampingOptimizerCallback(OptimizerCallback):
     """
     Optimizer callback + weights clipping after step is finished
     """
-
     def __init__(
-            self,
-            grad_clip_params: Dict = None,
-            accumulation_steps: int = 1,
-            optimizer_key: str = None,
-            loss_key: str = "loss",
-            decouple_weight_decay: bool = True,
-            weight_clamp_value: float = 0.1
+        self,
+        grad_clip_params: Dict = None,
+        accumulation_steps: int = 1,
+        optimizer_key: str = None,
+        loss_key: str = "loss",
+        decouple_weight_decay: bool = True,
+        weight_clamp_value: float = 0.1
     ):
         """
 
@@ -337,8 +351,10 @@ class WeightClampingOptimizerCallback(OptimizerCallback):
         if need_gradient_step:
             for group in optimizer.param_groups:
                 for param in group["params"]:
-                    param.data.clamp_(min=-self.weight_clamp_value,
-                                      max=self.weight_clamp_value)
+                    param.data.clamp_(
+                        min=-self.weight_clamp_value,
+                        max=self.weight_clamp_value
+                    )
 
 
 """
@@ -350,14 +366,14 @@ class VisualizationCallback(Callback):
     TENSORBOARD_LOGGER_KEY = "tensorboard"
 
     def __init__(
-            self,
-            input_keys=None,
-            output_keys=None,
-            batch_frequency=25,
-            concat_images=True,
-            max_images=20,
-            n_row=1,
-            denorm="default"
+        self,
+        input_keys=None,
+        output_keys=None,
+        batch_frequency=25,
+        concat_images=True,
+        max_images=20,
+        n_row=1,
+        denorm="default"
     ):
         super().__init__(CallbackOrder.Other)
         if input_keys is None:
@@ -412,8 +428,8 @@ class VisualizationCallback(Callback):
     def _get_tensorboard_logger(state: RunnerState) -> SummaryWriter:
         tb_key = VisualizationCallback.TENSORBOARD_LOGGER_KEY
         if (
-                tb_key in state.loggers
-                and state.loader_name in state.loggers[tb_key].loggers
+            tb_key in state.loggers
+            and state.loader_name in state.loggers[tb_key].loggers
         ):
             return state.loggers[tb_key].loggers[state.loader_name]
         raise RuntimeError(
@@ -470,14 +486,9 @@ class VisualizationCallback(Callback):
 
 
 __all__ = [
-    "InputBatchTransformCallback",
-    "AddBatchNoiseCallback",
-    "AddRealFakeTargetsCallback",
-    "OneHotTransformCallback",
-    "SameClassFeaturesRepeatCallback",
-    "MultiKeyMetricCallback",
-    "WassersteinDistanceCallback",
-    "CriterionWithDiscriminatorCallback",
-    "WeightClampingOptimizerCallback",
-    "VisualizationCallback"
+    "InputBatchTransformCallback", "AddBatchNoiseCallback",
+    "AddRealFakeTargetsCallback", "OneHotTransformCallback",
+    "SameClassFeaturesRepeatCallback", "MultiKeyMetricCallback",
+    "WassersteinDistanceCallback", "CriterionWithDiscriminatorCallback",
+    "WeightClampingOptimizerCallback", "VisualizationCallback"
 ]

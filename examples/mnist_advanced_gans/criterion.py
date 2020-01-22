@@ -10,7 +10,6 @@ class MeanOutputLoss(nn.Module):
     Criterion to compute simple mean of the output, completely ignoring target
     (maybe useful e.g. for WGAN real/fake validity averaging
     """
-
     def forward(self, output, target):
         return output.mean()
 
@@ -21,7 +20,6 @@ class GradientPenaltyLoss(nn.Module):
     WARN: SHOULD NOT BE RUN WITH CriterionCallback,
         use special MultiKeyCriterionCallback instead
     """
-
     def forward(self, fake_data, real_data, discriminator):
         device = real_data.device
         # Random weight term for interpolation between real and fake samples
@@ -37,8 +35,9 @@ class GradientPenaltyLoss(nn.Module):
             #                  "has requires_grad=True, so output "
             #                  "should also have requires_grad=True")
             return torch.zeros((real_data.size(0), 1), device=device).mean()
-        fake = torch.ones((real_data.size(0), 1), device=device,
-                          requires_grad=False)
+        fake = torch.ones(
+            (real_data.size(0), 1), device=device, requires_grad=False
+        )
         # Get gradient w.r.t. interpolates
         gradients = torch.autograd.grad(
             outputs=d_interpolates,
@@ -49,7 +48,7 @@ class GradientPenaltyLoss(nn.Module):
             only_inputs=True,
         )[0]
         gradients = gradients.view(gradients.size(0), -1)
-        gradient_penalty = ((gradients.norm(2, dim=1) - 1) ** 2).mean()
+        gradient_penalty = ((gradients.norm(2, dim=1) - 1)**2).mean()
         return gradient_penalty
 
 

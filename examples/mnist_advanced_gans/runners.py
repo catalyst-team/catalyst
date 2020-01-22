@@ -1,22 +1,21 @@
-from typing import Any, Mapping, Optional, Union, List, Tuple, Callable, \
-    Dict  # isort:skip
+from typing import Any, Callable, List, Mapping, Optional, Tuple, Union
+from typing import Dict  # isort:skip
+
+from utils.typing import Device, Model
 
 from catalyst.dl import Runner
-from utils.typing import Model, Device
 
 
 class MultiPhaseRunner(Runner):
     """
     Base Runner with multiple phases
     """
-
     def __init__(
-            self,
-            model: Union[Model, Dict[str, Model]] = None,
-            device: Device = None,
-            input_batch_keys: List[str] = None,
-            registered_phases: Tuple[
-                Tuple[str, Union[str, Callable]], ...] = None
+        self,
+        model: Union[Model, Dict[str, Model]] = None,
+        device: Device = None,
+        input_batch_keys: List[str] = None,
+        registered_phases: Tuple[Tuple[str, Union[str, Callable]], ...] = None
     ):
         """
 
@@ -40,21 +39,25 @@ class MultiPhaseRunner(Runner):
             if not (isinstance(phase_name, str) or phase_name is None):
                 raise ValueError(
                     f"phase '{phase_name}' of type '{type(phase_name)}' "
-                    f"not supported, must be str of None")
+                    f"not supported, must be str of None"
+                )
             if phase_name in self.registered_phases:
                 raise ValueError(f"phase '{phase_name}' already registered")
             if isinstance(phase_batch_forward_fn, str):
                 assert hasattr(self, phase_batch_forward_fn)
                 phase_batch_forward_fn = getattr(self, phase_batch_forward_fn)
-            assert isinstance(phase_batch_forward_fn,
-                              Callable), "must be callable"
+            assert isinstance(
+                phase_batch_forward_fn, Callable
+            ), "must be callable"
             self.registered_phases[phase_name] = phase_batch_forward_fn
 
     def _batch2device(self, batch: Mapping[str, Any], device):
         if isinstance(batch, (list, tuple)):
             assert len(batch) >= len(self.input_batch_keys)
-            batch = {key: value for key, value in
-                     zip(self.input_batch_keys, batch)}
+            batch = {
+                key: value
+                for key, value in zip(self.input_batch_keys, batch)
+            }
         return super()._batch2device(batch, device)
 
     def forward(self, batch, **kwargs):
@@ -81,30 +84,29 @@ class GANRunner(MultiPhaseRunner):
     Various conditioning types, penalties and regularization (such as WGAN-GP)
     can be easily derived from this class
     """
-
     def __init__(
-            self,
-            model: Union[Model, Dict[str, Model]] = None,
-            device: Device = None,
-            input_batch_keys: Optional[List[str]] = None,
-            # input keys
-            data_input_key: str = "data",
-            class_input_key: str = "class_targets",
-            noise_input_key: str = "noise",
-            # output keys
-            fake_logits_output_key: str = "fake_logits",
-            real_logits_output_key: str = "real_logits",
-            fake_data_output_key: str = "fake_data",
-            # condition_keys
-            condition_keys: Union[str, List[str]] = None,
-            d_fake_condition_keys: List[str] = None,
-            d_real_condition_keys: List[str] = None,
-            # phases:
-            generator_train_phase: str = "generator_train",
-            discriminator_train_phase: str = "discriminator_train",
-            # model keys:
-            generator_model_key: str = "generator",
-            discriminator_model_key: str = "discriminator"
+        self,
+        model: Union[Model, Dict[str, Model]] = None,
+        device: Device = None,
+        input_batch_keys: Optional[List[str]] = None,
+        # input keys
+        data_input_key: str = "data",
+        class_input_key: str = "class_targets",
+        noise_input_key: str = "noise",
+        # output keys
+        fake_logits_output_key: str = "fake_logits",
+        real_logits_output_key: str = "real_logits",
+        fake_data_output_key: str = "fake_data",
+        # condition_keys
+        condition_keys: Union[str, List[str]] = None,
+        d_fake_condition_keys: List[str] = None,
+        d_real_condition_keys: List[str] = None,
+        # phases:
+        generator_train_phase: str = "generator_train",
+        discriminator_train_phase: str = "discriminator_train",
+        # model keys:
+        generator_model_key: str = "generator",
+        discriminator_model_key: str = "discriminator"
     ):
         """
 
@@ -167,17 +169,17 @@ class GANRunner(MultiPhaseRunner):
         self.real_logits_output_key = real_logits_output_key
         self.fake_data_output_key = fake_data_output_key
         # condition keys
-        self.__init_condition_keys(condition_keys,
-                                   d_real_condition_keys,
-                                   d_fake_condition_keys)
+        self.__init_condition_keys(
+            condition_keys, d_real_condition_keys, d_fake_condition_keys
+        )
 
         # model keys
         self.generator_key = generator_model_key
         self.discriminator_key = discriminator_model_key
 
-    def __init_condition_keys(self, condition_keys,
-                              d_real_condition_keys,
-                              d_fake_condition_keys):
+    def __init_condition_keys(
+        self, condition_keys, d_real_condition_keys, d_fake_condition_keys
+    ):
         """
         Condition keys initialization
         :param condition_keys:
@@ -189,8 +191,8 @@ class GANRunner(MultiPhaseRunner):
         # make self.condition_keys to be a list
         condition_keys = condition_keys or []
         self.condition_keys = (
-            [condition_keys] if isinstance(condition_keys, str)
-            else condition_keys
+            [condition_keys]
+            if isinstance(condition_keys, str) else condition_keys
         )
 
         assert (
@@ -253,8 +255,7 @@ class GANRunner(MultiPhaseRunner):
     def _get_noise_and_conditions(self):
         """returns generator inputs"""
         z = self.state.input[self.noise_input_key]
-        conditions = [self.state.input[key] for key in
-                      self.condition_keys]
+        conditions = [self.state.input[key] for key in self.condition_keys]
         return z, conditions
 
     def _get_real_data_conditions(self):
@@ -286,9 +287,12 @@ class GANRunner(MultiPhaseRunner):
         d_real_conditions = self._get_real_data_conditions()
 
         fake_data = self.generator(z, *g_conditions)
-        fake_logits = self.discriminator(fake_data.detach(), *d_fake_conditions)
-        real_logits = self.discriminator(self.state.input[self.data_input_key],
-                                         *d_real_conditions)
+        fake_logits = self.discriminator(
+            fake_data.detach(), *d_fake_conditions
+        )
+        real_logits = self.discriminator(
+            self.state.input[self.data_input_key], *d_real_conditions
+        )
         return {
             self.fake_data_output_key: fake_data,
             self.fake_logits_output_key: fake_logits,
@@ -304,23 +308,25 @@ class WGANRunner(GANRunner):
     Also this runner may be used unchanged for WGAN-GP
         (just add gradient penalty loss in yaml config)
     """
-
-    def __init__(self, model: Union[Model, Dict[str, Model]] = None,
-                 device: Device = None,
-                 input_batch_keys: Optional[List[str]] = None,
-                 data_input_key: str = "data",
-                 class_input_key: str = "class_targets",
-                 noise_input_key: str = "noise",
-                 fake_logits_output_key: str = "fake_validity",
-                 real_logits_output_key: str = "real_validity",
-                 fake_data_output_key: str = "fake_data",
-                 condition_keys: Optional[Union[str, List[str]]] = None,
-                 d_fake_condition_keys: List[str] = None,
-                 d_real_condition_keys: List[str] = None,
-                 generator_train_phase: str = "generator_train",
-                 discriminator_train_phase: str = "critic_train",
-                 generator_model_key: str = "generator",
-                 discriminator_model_key: str = "critic"):
+    def __init__(
+        self,
+        model: Union[Model, Dict[str, Model]] = None,
+        device: Device = None,
+        input_batch_keys: Optional[List[str]] = None,
+        data_input_key: str = "data",
+        class_input_key: str = "class_targets",
+        noise_input_key: str = "noise",
+        fake_logits_output_key: str = "fake_validity",
+        real_logits_output_key: str = "real_validity",
+        fake_data_output_key: str = "fake_data",
+        condition_keys: Optional[Union[str, List[str]]] = None,
+        d_fake_condition_keys: List[str] = None,
+        d_real_condition_keys: List[str] = None,
+        generator_train_phase: str = "generator_train",
+        discriminator_train_phase: str = "critic_train",
+        generator_model_key: str = "generator",
+        discriminator_model_key: str = "critic"
+    ):
         super().__init__(
             model=model,
             device=device,
@@ -337,7 +343,8 @@ class WGANRunner(GANRunner):
             generator_train_phase=generator_train_phase,
             discriminator_train_phase=discriminator_train_phase,
             generator_model_key=generator_model_key,
-            discriminator_model_key=discriminator_model_key)
+            discriminator_model_key=discriminator_model_key
+        )
 
 
 class CGanRunner(GANRunner):
@@ -345,21 +352,23 @@ class CGanRunner(GANRunner):
     (Class) Conditional GAN
         both generator and discriminator are conditioned on one-hot class target
     """
-
-    def __init__(self, model: Union[Model, Dict[str, Model]] = None,
-                 device: Device = None,
-                 data_input_key: str = "data",
-                 class_input_key: str = "class_targets",
-                 noise_input_key: str = "noise",
-                 fake_logits_output_key: str = "fake_logits",
-                 real_logits_output_key: str = "real_logits",
-                 fake_data_output_key: str = "fake_data",
-                 d_fake_condition_key: str = "class_targets_one_hot",
-                 d_real_condition_key: str = "class_targets_one_hot",
-                 generator_train_phase: str = "generator_train",
-                 discriminator_train_phase: str = "discriminator_train",
-                 generator_model_key: str = "generator",
-                 discriminator_model_key: str = "discriminator"):
+    def __init__(
+        self,
+        model: Union[Model, Dict[str, Model]] = None,
+        device: Device = None,
+        data_input_key: str = "data",
+        class_input_key: str = "class_targets",
+        noise_input_key: str = "noise",
+        fake_logits_output_key: str = "fake_logits",
+        real_logits_output_key: str = "real_logits",
+        fake_data_output_key: str = "fake_data",
+        d_fake_condition_key: str = "class_targets_one_hot",
+        d_real_condition_key: str = "class_targets_one_hot",
+        generator_train_phase: str = "generator_train",
+        discriminator_train_phase: str = "discriminator_train",
+        generator_model_key: str = "generator",
+        discriminator_model_key: str = "discriminator"
+    ):
         input_batch_keys = [data_input_key, class_input_key]
         condition_keys = [d_fake_condition_key]
         d_fake_condition_keys = [d_fake_condition_key]
@@ -380,7 +389,8 @@ class CGanRunner(GANRunner):
             generator_train_phase=generator_train_phase,
             discriminator_train_phase=discriminator_train_phase,
             generator_model_key=generator_model_key,
-            discriminator_model_key=discriminator_model_key)
+            discriminator_model_key=discriminator_model_key
+        )
 
 
 class ICGanRunner(CGanRunner):
@@ -392,31 +402,36 @@ class ICGanRunner(CGanRunner):
             real_score = discriminator(image1_class_c, image2_class_c)
             fake_score = discriminator(gen_image_class_c, image2_class_c)
     """
-
-    def __init__(self, model: Union[Model, Dict[str, Model]] = None,
-                 device: Device = None, data_input_key: str = "data",
-                 class_input_key: str = "class_targets",
-                 noise_input_key: str = "noise",
-                 fake_logits_output_key: str = "fake_logits",
-                 real_logits_output_key: str = "real_logits",
-                 fake_data_output_key: str = "fake_data",
-                 d_fake_condition_key: str = "same_class_data",
-                 d_real_condition_key: str = "same_class_data",
-                 generator_train_phase: str = "generator_train",
-                 discriminator_train_phase: str = "discriminator_train",
-                 generator_model_key: str = "generator",
-                 discriminator_model_key: str = "discriminator"):
-        super().__init__(model=model,
-                         device=device,
-                         data_input_key=data_input_key,
-                         class_input_key=class_input_key,
-                         noise_input_key=noise_input_key,
-                         fake_logits_output_key=fake_logits_output_key,
-                         real_logits_output_key=real_logits_output_key,
-                         fake_data_output_key=fake_data_output_key,
-                         d_fake_condition_key=d_fake_condition_key,
-                         d_real_condition_key=d_real_condition_key,
-                         generator_train_phase=generator_train_phase,
-                         discriminator_train_phase=discriminator_train_phase,
-                         generator_model_key=generator_model_key,
-                         discriminator_model_key=discriminator_model_key)
+    def __init__(
+        self,
+        model: Union[Model, Dict[str, Model]] = None,
+        device: Device = None,
+        data_input_key: str = "data",
+        class_input_key: str = "class_targets",
+        noise_input_key: str = "noise",
+        fake_logits_output_key: str = "fake_logits",
+        real_logits_output_key: str = "real_logits",
+        fake_data_output_key: str = "fake_data",
+        d_fake_condition_key: str = "same_class_data",
+        d_real_condition_key: str = "same_class_data",
+        generator_train_phase: str = "generator_train",
+        discriminator_train_phase: str = "discriminator_train",
+        generator_model_key: str = "generator",
+        discriminator_model_key: str = "discriminator"
+    ):
+        super().__init__(
+            model=model,
+            device=device,
+            data_input_key=data_input_key,
+            class_input_key=class_input_key,
+            noise_input_key=noise_input_key,
+            fake_logits_output_key=fake_logits_output_key,
+            real_logits_output_key=real_logits_output_key,
+            fake_data_output_key=fake_data_output_key,
+            d_fake_condition_key=d_fake_condition_key,
+            d_real_condition_key=d_real_condition_key,
+            generator_train_phase=generator_train_phase,
+            discriminator_train_phase=discriminator_train_phase,
+            generator_model_key=generator_model_key,
+            discriminator_model_key=discriminator_model_key
+        )

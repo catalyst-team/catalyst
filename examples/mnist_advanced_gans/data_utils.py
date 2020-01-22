@@ -2,11 +2,12 @@
 Utility functions and classes for working with data
 (datasets, loaders, samplers)
 """
-import random
 from collections import defaultdict
+import random
 from typing import Sized
 
 import numpy as np
+
 from torch.utils.data import Sampler
 
 
@@ -15,13 +16,14 @@ class SameClassBatchSampler(Sampler):
     BatchSampler which samples same classes in first and second batch halves
     (i.e. batch[target][:batch_size//2] == batch[target][batch_size//2:])
     """
-
-    def __init__(self,
-                 data_source: Sized,
-                 batch_size: int = 64,
-                 drop_odd_class_elements: bool = False,
-                 drop_last_batch: bool = False,
-                 shuffle: bool = False):
+    def __init__(
+        self,
+        data_source: Sized,
+        batch_size: int = 64,
+        drop_odd_class_elements: bool = False,
+        drop_last_batch: bool = False,
+        shuffle: bool = False
+    ):
         """
 
         :param data_source: torch dataset which returns (data, class_id)
@@ -56,8 +58,10 @@ class SameClassBatchSampler(Sampler):
 
         # compute len (number of batches)
         add_one = 1 if self.drop_odd_class_elements else 0
-        self.len = sum((len(v) + add_one) // 2 * 2 for k, v in
-                       self.class_id2samples.items())
+        self.len = sum(
+            (len(v) + add_one) // 2 * 2
+            for k, v in self.class_id2samples.items()
+        )
         add_one = 0
         if self.len % self.batch_size > 0 and not self.drop_last_batch:
             add_one = 1
@@ -74,8 +78,9 @@ class SameClassBatchSampler(Sampler):
         return self.len
 
     def _get_batch_indices(self):
-        indices_lists = [indices.copy() for indices in
-                         self.class_id2samples.values()]
+        indices_lists = [
+            indices.copy() for indices in self.class_id2samples.values()
+        ]
         if self.shuffle:
             for l in indices_lists:
                 random.shuffle(l)
@@ -91,8 +96,8 @@ class SameClassBatchSampler(Sampler):
 
             n_samples = len(curr_class_indices) // 2
             if (
-                    not self.drop_odd_class_elements
-                    and len(curr_class_indices) % 2 == 1
+                not self.drop_odd_class_elements
+                and len(curr_class_indices) % 2 == 1
             ):
                 n_samples += 1
             first_halves += curr_class_indices[:n_samples]
@@ -106,10 +111,7 @@ class SameClassBatchSampler(Sampler):
             for idx in range(self.len)
         ]
 
-        sample_ids = np.array([
-            first_halves,
-            second_halves
-        ])
+        sample_ids = np.array([first_halves, second_halves])
         all_batches = [
             np.concatenate(sample_ids[:, curr_batch_indices])
             for curr_batch_indices in batch_indices
