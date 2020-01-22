@@ -121,8 +121,8 @@ class NumpyDataset(Dataset):
                 (for example normalize vector, etc)
         """
         super().__init__()
-        self.numpy_data = numpy_data
-        self.numpy_key = numpy_key
+        self.data = numpy_data
+        self.key = numpy_key
         self.dict_transform = (
             dict_transform if dict_transform is not None else lambda x: x
         )
@@ -136,9 +136,16 @@ class NumpyDataset(Dataset):
         Returns:
             Single element by index
         """
-        dict_ = {self.numpy_key: np.copy(self.numpy_data[index])}
+        dict_ = {self.key: np.copy(self.data[index])}
         dict_ = self.dict_transform(dict_)
         return dict_
+
+    def __len__(self) -> int:
+        """
+        Returns:
+            int: length of the dataset
+        """
+        return len(self.data)
 
 
 class PathsDataset(ListDataset):

@@ -1,8 +1,8 @@
 Catalyst
 ======================================
 
-.. image:: https://travis-ci.com/catalyst-team/catalyst.svg?branch=master
-    :target: https://travis-ci.com/catalyst-team/catalyst
+.. image:: http://66.248.205.49:8111/app/rest/builds/buildType:id:Catalyst_Deploy/statusIcon.svg
+    :target: http://66.248.205.49:8111/project.html?projectId=Catalyst&tab=projectOverview&guest=1
     :alt: Build Status
 
 .. image:: https://img.shields.io/github/license/catalyst-team/catalyst.svg

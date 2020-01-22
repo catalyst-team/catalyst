@@ -2,6 +2,7 @@
 numpy>=1.16.4
 torch>=1.0.0
 torchvision>=0.2.1
+Pillow<7
 imageio
 opencv-python
 scikit-image>=0.14.2

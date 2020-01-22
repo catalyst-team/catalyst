@@ -30,6 +30,9 @@ class BalanceClassSampler(Sampler):
             for label in set(labels)
         }
 
+        if isinstance(mode, str):
+            assert mode in ["downsampling", "upsampling"]
+
         if isinstance(mode, int) or mode == "upsampling":
             samples_per_class = mode \
                 if isinstance(mode, int) \

@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 
+from .functional import triplet_loss
+
 
 class TripletLoss(nn.Module):
     """
@@ -17,7 +19,7 @@ class TripletLoss(nn.Module):
         Args:
             margin: margin parameter.
         """
-        super(TripletLoss, self).__init__()
+        super().__init__()
         self.margin = margin
         self.ranking_loss = nn.MarginRankingLoss(margin=margin)
 
@@ -167,6 +169,29 @@ class TripletLoss(nn.Module):
             triplet_loss: scalar tensor containing the triplet loss
         """
         return self._batch_hard_triplet_loss(embeddings, targets, self.margin)
+
+
+class TripletLossV2(nn.Module):
+    """
+    Args:
+        margin (float): margin for triplet.
+    """
+
+    def __init__(self, margin=0.3):
+        """
+        Constructor method for the TripletLoss class.
+        Args:
+            margin: margin parameter.
+        """
+        super().__init__()
+        self.margin = margin
+
+    def forward(self, embeddings, targets):
+        return triplet_loss(
+            embeddings,
+            targets,
+            margin=self.margin,
+        )
 
 
 class TripletPairwiseEmbeddingLoss(nn.Module):
