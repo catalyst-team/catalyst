@@ -85,16 +85,26 @@ class MaskReader(ReaderSpec):
     """
     Mask reader abstraction. Reads masks from a `csv` dataset.
     """
-    def __init__(self, input_key: str, output_key: str, datapath: str = None):
+    def __init__(
+        self,
+        input_key: str,
+        output_key: str,
+        datapath: str = None,
+        clip_range: Tuple[Union[int, float], Union[int, float]] = (0, 1)
+    ):
         """
         Args:
             input_key (str): key to use from annotation dict
             output_key (str): key to use to store the result
             datapath (str): path to images dataset
                 (so your can use relative paths in annotations)
+            clip_range (Tuple[int, int]): lower and upper interval edges,
+                image values outside the interval are clipped
+                to the interval edges
         """
         super().__init__(input_key, output_key)
         self.datapath = datapath
+        self.clip = clip_range
 
     def __call__(self, element):
         """Reads a row from your annotations dict with filename and
@@ -107,7 +117,7 @@ class MaskReader(ReaderSpec):
             np.ndarray: Mask
         """
         mask_name = str(element[self.input_key])
-        mask = mimread(mask_name, rootpath=self.datapath)
+        mask = mimread(mask_name, rootpath=self.datapath, clip_range=self.clip)
 
         output = {self.output_key: mask}
         return output
