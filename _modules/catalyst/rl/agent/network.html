@@ -167,7 +167,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-            <span class="n">main_net_in_features</span> <span class="o">=</span> <span class="n">aggregation_net</span><span class="o">.</span><span class="n">features_out</span>
+            <span class="n">main_net_in_features</span> <span class="o">=</span> <span class="n">aggregation_net</span><span class="o">.</span><span class="n">out_features</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">aggregation_net</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -286,7 +286,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-            <span class="n">main_net_in_features</span> <span class="o">=</span> <span class="n">aggregation_net</span><span class="o">.</span><span class="n">features_out</span>
+            <span class="n">main_net_in_features</span> <span class="o">=</span> <span class="n">aggregation_net</span><span class="o">.</span><span class="n">out_features</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">aggregation_net</span> <span class="o">=</span> <span class="kc">None</span>
 

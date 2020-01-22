@@ -582,7 +582,7 @@ Maxim Berman 2018 ESAT-PSI KU Leuven (MIT License)</p>
 
 <dl class="class">
 <dt id="catalyst.contrib.modules.lama.LamaPooling">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.modules.lama.</code><code class="sig-name descname">LamaPooling</code><span class="sig-paren">(</span><em class="sig-param">features_in</em>, <em class="sig-param">groups=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/lama.html#LamaPooling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.lama.LamaPooling" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.modules.lama.</code><code class="sig-name descname">LamaPooling</code><span class="sig-paren">(</span><em class="sig-param">in_features</em>, <em class="sig-param">groups=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/modules/lama.html#LamaPooling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.modules.lama.LamaPooling" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <dl class="attribute">
 <dt id="catalyst.contrib.modules.lama.LamaPooling.available_groups">
@@ -914,6 +914,117 @@ Cannot be set together with <code class="docutils literal notranslate"><span cla
 </dd></dl>
 
 </div>
+<div class="section" id="module-catalyst.contrib.runner.alchemy">
+<span id="runner"></span><h2>Runner<a class="headerlink" href="#module-catalyst.contrib.runner.alchemy" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.contrib.runner.alchemy.AlchemyRunner">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.runner.alchemy.</code><code class="sig-name descname">AlchemyRunner</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/runner/alchemy.html#AlchemyRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.runner.alchemy.AlchemyRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dl.html#catalyst.dl.core.runner.Runner" title="catalyst.dl.core.runner.Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.core.runner.Runner</span></code></a></p>
+<p>Runner wrapper with Alchemy integration hooks.
+Read about Alchemy here <a class="reference external" href="https://alchemy.host">https://alchemy.host</a>
+Powered by Catalyst.Ecosystem</p>
+<p class="rubric">Example</p>
+<p>from catalyst.dl import SupervisedAlchemyRunner</p>
+<p>runner = SupervisedAlchemyRunner()</p>
+<dl>
+<dt>runner.train(</dt><dd><p>model=model,
+criterion=criterion,
+optimizer=optimizer,
+loaders=loaders,
+logdir=logdir,
+num_epochs=num_epochs,
+verbose=True,
+monitoring_params={</p>
+<blockquote>
+<div><p>“token”: “…”, # your Alchemy token
+“experiment”: “your_experiment_name”,
+“group”: “your_experiment_group_name”</p>
+</div></blockquote>
+<p>}</p>
+</dd>
+</dl>
+<p>)</p>
+<dl class="method">
+<dt id="catalyst.contrib.runner.alchemy.AlchemyRunner.run_experiment">
+<code class="sig-name descname">run_experiment</code><span class="sig-paren">(</span><em class="sig-param">experiment: catalyst.dl.core.experiment.Experiment</em>, <em class="sig-param">check: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/runner/alchemy.html#AlchemyRunner.run_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.runner.alchemy.AlchemyRunner.run_experiment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.runner.alchemy.SupervisedAlchemyRunner">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.runner.alchemy.</code><code class="sig-name descname">SupervisedAlchemyRunner</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">input_key: Any = 'features'</em>, <em class="sig-param">output_key: Any = 'logits'</em>, <em class="sig-param">input_target_key: str = 'targets'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/runner/alchemy.html#SupervisedAlchemyRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.runner.alchemy.SupervisedAlchemyRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.runner.alchemy.AlchemyRunner" title="catalyst.contrib.runner.alchemy.AlchemyRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.runner.alchemy.AlchemyRunner</span></code></a>, <a class="reference internal" href="dl.html#catalyst.dl.runner.supervised.SupervisedRunner" title="catalyst.dl.runner.supervised.SupervisedRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.runner.supervised.SupervisedRunner</span></code></a></p>
+</dd></dl>
+
+<span class="target" id="module-catalyst.contrib.runner.neptune"></span><dl class="class">
+<dt id="catalyst.contrib.runner.neptune.NeptuneRunner">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.runner.neptune.</code><code class="sig-name descname">NeptuneRunner</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/runner/neptune.html#NeptuneRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.runner.neptune.NeptuneRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dl.html#catalyst.dl.core.runner.Runner" title="catalyst.dl.core.runner.Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.core.runner.Runner</span></code></a></p>
+<p>Runner wrapper with Neptune integration hooks.
+Read about Neptune here <a class="reference external" href="https://neptune.ml">https://neptune.ml</a></p>
+<p class="rubric">Examples</p>
+<p>Initialize runner:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst.contrib.runner.neptune</span> <span class="kn">import</span> <span class="n">SupervisedNeptuneRunner</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedNeptuneRunner</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Pass <cite>monitoring_params</cite> and train model:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+    <span class="n">logdir</span><span class="o">=</span><span class="n">logdir</span><span class="p">,</span>
+    <span class="n">num_epochs</span><span class="o">=</span><span class="n">num_epochs</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">monitoring_params</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;project_qualified_name&quot;</span><span class="p">:</span> <span class="s2">&quot;hapyp-user/examples&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;api_token&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># api key, keep in NEPTUNE_API_TOKEN</span>
+    <span class="p">},</span>
+        <span class="s2">&quot;create_experiment&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;catalyst-example&quot;</span><span class="p">,</span> <span class="c1"># experiment name</span>
+            <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;epoch_nr&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">},</span> <span class="c1"># immutable</span>
+            <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;data_source&quot;</span><span class="p">:</span> <span class="s2">&quot;cifar10&quot;</span><span class="p">}</span> <span class="p">,</span> <span class="c1"># mutable</span>
+            <span class="s2">&quot;tags&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;resnet&quot;</span><span class="p">,</span> <span class="s2">&quot;no-augmentations&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;upload_source_files&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;**/*.py&quot;</span><span class="p">]</span> <span class="c1"># grep-like</span>
+        <span class="p">}</span>
+    <span class="p">})</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="catalyst.contrib.runner.neptune.NeptuneRunner.run_experiment">
+<code class="sig-name descname">run_experiment</code><span class="sig-paren">(</span><em class="sig-param">experiment: catalyst.dl.core.experiment.Experiment</em>, <em class="sig-param">check: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/runner/neptune.html#NeptuneRunner.run_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.runner.neptune.NeptuneRunner.run_experiment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.runner.neptune.SupervisedNeptuneRunner">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.runner.neptune.</code><code class="sig-name descname">SupervisedNeptuneRunner</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">input_key: Any = 'features'</em>, <em class="sig-param">output_key: Any = 'logits'</em>, <em class="sig-param">input_target_key: str = 'targets'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/runner/neptune.html#SupervisedNeptuneRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.runner.neptune.SupervisedNeptuneRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.runner.neptune.NeptuneRunner" title="catalyst.contrib.runner.neptune.NeptuneRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.runner.neptune.NeptuneRunner</span></code></a>, <a class="reference internal" href="dl.html#catalyst.dl.runner.supervised.SupervisedRunner" title="catalyst.dl.runner.supervised.SupervisedRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.runner.supervised.SupervisedRunner</span></code></a></p>
+</dd></dl>
+
+<span class="target" id="module-catalyst.contrib.runner.wandb"></span><dl class="class">
+<dt id="catalyst.contrib.runner.wandb.WandbRunner">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.runner.wandb.</code><code class="sig-name descname">WandbRunner</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/runner/wandb.html#WandbRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.runner.wandb.WandbRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="dl.html#catalyst.dl.core.runner.Runner" title="catalyst.dl.core.runner.Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.core.runner.Runner</span></code></a></p>
+<p>Runner wrapper with wandb integration hooks.</p>
+<dl class="method">
+<dt id="catalyst.contrib.runner.wandb.WandbRunner.run_experiment">
+<code class="sig-name descname">run_experiment</code><span class="sig-paren">(</span><em class="sig-param">experiment: catalyst.dl.core.experiment.Experiment</em>, <em class="sig-param">check: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/runner/wandb.html#WandbRunner.run_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.runner.wandb.WandbRunner.run_experiment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.runner.wandb.SupervisedWandbRunner">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.runner.wandb.</code><code class="sig-name descname">SupervisedWandbRunner</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">input_key: Any = 'features'</em>, <em class="sig-param">output_key: Any = 'logits'</em>, <em class="sig-param">input_target_key: str = 'targets'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/runner/wandb.html#SupervisedWandbRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.runner.wandb.SupervisedWandbRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.runner.wandb.WandbRunner" title="catalyst.contrib.runner.wandb.WandbRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.runner.wandb.WandbRunner</span></code></a>, <a class="reference internal" href="dl.html#catalyst.dl.runner.supervised.SupervisedRunner" title="catalyst.dl.runner.supervised.SupervisedRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.runner.supervised.SupervisedRunner</span></code></a></p>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -950,6 +1061,7 @@ Cannot be set together with <code class="docutils literal notranslate"><span cla
 <li class="toctree-l2"><a class="reference internal" href="#module-catalyst.contrib.modules.common">Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-catalyst.contrib.optimizers">Optimizers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-catalyst.contrib.schedulers.base">Schedulers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-catalyst.contrib.runner.alchemy">Runner</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
