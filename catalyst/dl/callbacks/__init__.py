@@ -3,7 +3,7 @@
 from .checkpoint import CheckpointCallback, IterationCheckpointCallback
 from .criterion import (
     CriterionAggregatorCallback, CriterionCallback,
-    CriterionOutputOnlyCallback, WeightedCriterionAggregatorCallback
+    CriterionOutputOnlyCallback
 )
 from .inference import InferCallback, InferMaskCallback
 from .logging import (

@@ -193,20 +193,35 @@ class CriterionAggregatorCallback(Callback):
         self.loss_keys = loss_keys
 
         self.multiplier = multiplier
-        if loss_aggregate_fn == "sum":
-            self.loss_fn = lambda x: torch.sum(torch.stack(x)) * multiplier
-        elif loss_aggregate_fn == "weighted_sum":
+
+        if loss_keys in ("sum", "mean"):
+            if loss_keys is not None and not isinstance(loss_keys, list):
+                raise ValueError(
+                    "For `sum` or `mean` mode the loss_keys must be "
+                    "None or list or str (not dict)"
+                )
+        elif loss_keys in ("weighted_sum", "weighted_mean"):
             if loss_keys is None or not isinstance(loss_keys, dict):
                 raise ValueError(
-                    "For `weighted_sum` mode the loss_keys must be specified "
+                    "For `weighted_sum` or `weighted_mean` mode "
+                    "the loss_keys must be specified "
                     "and must be a dict"
                 )
+
+        if loss_aggregate_fn in ("sum", "weighted_sum", "weighted_mean"):
             self.loss_fn = lambda x: torch.sum(torch.stack(x)) * multiplier
+            if loss_aggregate_fn == "weighted_mean":
+                weights_sum = sum(loss_keys.items())
+                self.loss_keys = {
+                    key: weight / weights_sum
+                    for key, weight in loss_keys.items()
+                }
         elif loss_aggregate_fn == "mean":
             self.loss_fn = lambda x: torch.mean(torch.stack(x)) * multiplier
         else:
             raise ValueError(
-                "loss_aggregate_fn must be `sum`, `mean` or weighted_sum`"
+                "loss_aggregate_fn must be `sum`, `mean` "
+                "or `weighted_sum` or `weighted_mean`"
             )
 
         self.loss_aggregate_name = loss_aggregate_fn
@@ -252,39 +267,8 @@ class CriterionAggregatorCallback(Callback):
         _add_loss_to_state(self.prefix, state, loss)
 
 
-class WeightedCriterionAggregatorCallback(CriterionAggregatorCallback):
-    """
-    Weighted criterion aggregation
-    """
-
-    def __init__(self,
-                 prefix: str,
-                 loss_keys: Union[str, List[str]] = None,
-                 loss_aggregate_fn: str = "mean",
-                 weights: List[float] = None,
-                 multiplier: float = 1.0) -> None:
-        super().__init__(prefix, loss_keys, loss_aggregate_fn="sum",
-                         multiplier=multiplier)
-        # note that we passed `loss_aggregate_fn="sum"` always
-        # to reuse parent's `on_batch_end` method unchanged
-        # we use "sum" as after `_preprocess_loss` individual losses
-        # are already weighted and we need to sum them
-
-        assert self.loss_keys is not None
-        assert weights is not None and len(weights) == len(self.loss_keys)
-        self.weights = weights
-        if loss_aggregate_fn == "mean":
-            self.weights = [w / sum(weights) for w in weights]
-
-    def _preprocess_loss(self, loss: Any) -> List[torch.Tensor]:
-        assert isinstance(loss, dict)
-        return [loss[key] * self.weights[i] for i, key in
-                enumerate(self.loss_keys)]
-
-
 __all__ = [
     "CriterionCallback",
     "CriterionOutputOnlyCallback",
-    "CriterionAggregatorCallback",
-    "WeightedCriterionAggregatorCallback"
+    "CriterionAggregatorCallback"
 ]
