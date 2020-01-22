@@ -25,16 +25,11 @@ class GradientPenaltyLoss(nn.Module):
         # Random weight term for interpolation between real and fake samples
         alpha = torch.rand((real_data.size(0), 1, 1, 1), device=device)
         # Get random interpolation between real and fake samples
-        interpolates = (alpha * real_data + ((1 - alpha) * fake_data))
+        interpolates = (alpha * real_data + ((1 - alpha) * fake_data)).detach()
         interpolates.requires_grad_(True)
-        d_interpolates = discriminator(interpolates)
-        if not d_interpolates.requires_grad:
-            # TODO:
-            #  deal with it (outputs does not require grad in validation mode)
-            # raise ValueError("Why the hell??? one of D inputs "
-            #                  "has requires_grad=True, so output "
-            #                  "should also have requires_grad=True")
-            return torch.zeros((real_data.size(0), 1), device=device).mean()
+        with torch.set_grad_enabled(True):  # to compute in validation mode
+            d_interpolates = discriminator(interpolates)
+
         fake = torch.ones(
             (real_data.size(0), 1), device=device, requires_grad=False
         )
