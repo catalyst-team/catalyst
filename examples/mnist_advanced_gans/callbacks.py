@@ -10,8 +10,6 @@ from catalyst.dl import RunnerState
 from catalyst.dl.callbacks import CriterionCallback, OptimizerCallback
 from catalyst.dl.core import Callback, CallbackOrder
 from catalyst.utils.tensorboard import SummaryWriter
-
-
 """
 InputBatchTransform functions,
 e.g.:

@@ -68,9 +68,6 @@ class SameClassBatchSampler(Sampler):
         self.len = self.len // self.batch_size + add_one
 
     def __iter__(self):
-        # TODO:
-        #  check if it does not fail with multiple workers
-        #  (I can't right now: windows =( )
         all_batches = self._get_batch_indices()
         return iter(all_batches)
 
