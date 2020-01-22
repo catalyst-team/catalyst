@@ -112,8 +112,6 @@ class ConsoleLogger(LoggerCallback):
         logger = logging.getLogger("metrics_logger")
         logger.setLevel(logging.INFO)
 
-        fh = logging.FileHandler(f"{logdir}/log.txt")
-        fh.setLevel(logging.INFO)
         ch = logging.StreamHandler(sys.stdout)
         ch.setLevel(logging.INFO)
         # @TODO: fix json logger
@@ -122,20 +120,25 @@ class ConsoleLogger(LoggerCallback):
 
         txt_formatter = TxtMetricsFormatter()
         # json_formatter = JsonMetricsFormatter()
-        fh.setFormatter(txt_formatter)
         ch.setFormatter(txt_formatter)
         # jh.setFormatter(json_formatter)
 
         # add the handlers to the logger
-        logger.addHandler(fh)
         logger.addHandler(ch)
+
+        if logdir:
+            fh = logging.FileHandler(f"{logdir}/log.txt")
+            fh.setLevel(logging.INFO)
+            fh.setFormatter(txt_formatter)
+            logger.addHandler(fh)
+
         # logger.addHandler(jh)
         return logger
 
     def on_stage_start(self, state: RunnerState):
         """Prepare ``state.logdir`` for the current stage"""
-        assert state.logdir is not None
-        state.logdir.mkdir(parents=True, exist_ok=True)
+        if state.logdir:
+            state.logdir.mkdir(parents=True, exist_ok=True)
         self.logger = self._get_logger(state.logdir)
 
     def on_stage_end(self, state):
@@ -196,6 +199,9 @@ class TensorboardLogger(LoggerCallback):
 
     def on_loader_start(self, state):
         """Prepare tensorboard writers for the current stage"""
+        if state.logdir is None:
+            return
+
         lm = state.loader_name
         if lm not in self.loggers:
             log_dir = os.path.join(state.logdir, f"{lm}_log")
@@ -203,6 +209,9 @@ class TensorboardLogger(LoggerCallback):
 
     def on_batch_end(self, state: RunnerState):
         """Translate batch metrics to tensorboard"""
+        if state.logdir is None:
+            return
+
         if self.log_on_batch_end:
             mode = state.loader_name
             metrics_ = state.metrics.batch_values
@@ -212,6 +221,9 @@ class TensorboardLogger(LoggerCallback):
 
     def on_loader_end(self, state: RunnerState):
         """Translate epoch metrics to tensorboard"""
+        if state.logdir is None:
+            return
+
         if self.log_on_epoch_end:
             mode = state.loader_name
             metrics_ = state.metrics.epoch_values[mode]
@@ -226,6 +238,9 @@ class TensorboardLogger(LoggerCallback):
 
     def on_stage_end(self, state: RunnerState):
         """Close opened tensorboard writers"""
+        if state.logdir is None:
+            return
+
         for logger in self.loggers.values():
             logger.close()
 
