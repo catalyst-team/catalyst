@@ -1,4 +1,4 @@
-from typing import Callable, List, Type  # isort:skip
+from typing import Callable, List, Type, Tuple, Union  # isort:skip
 import functools
 
 import numpy as np
