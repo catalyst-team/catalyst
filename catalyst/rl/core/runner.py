@@ -5,11 +5,13 @@ import numpy as np
 import torch
 
 from catalyst.core import Runner
-from catalyst.rl import utils, EnvironmentSpec
+from catalyst.rl import utils
+from .algorithm import AlgorithmSpec
+from .environment import EnvironmentSpec
 from .experiment import RLExperiment
 from .state import RLRunnerState
 
-# RLRunner has only one stage - endless training
+# RLRunner has only one stage (?) - endless training
 # each Epoch we recalculate training loader based on current Replay buffer
 # then -> typical training on loader with selected algorithm
 #
@@ -22,6 +24,14 @@ class RLRunner(Runner):
     def _fetch_rollouts(self):
         pass
 
+    def _prepare_for_stage(self, stage: str):
+        super()._prepare_for_stage(stage=stage)
+
+        self.algorithm: AlgorithmSpec = \
+            self.experiment.get_algorithm(stage=stage)
+        self.environment: EnvironmentSpec = \
+            self.experiment.get_environment(stage=stage)
+
     def _prepare_for_epoch(self, stage: str, epoch: int):
         super()._prepare_for_epoch(stage=stage, epoch=epoch)
 
@@ -30,7 +40,7 @@ class RLRunner(Runner):
         loaders = self.experiment.get_loaders(stage=stage, epoch=epoch)
         self.loaders = loaders
 
-    def _run_batch_step(self, batch: Mapping[str, Any]):
+    def _run_batch_train_step(self, batch: Mapping[str, Any]):
         # todo: should implement different training steps
         #  for different algorithms
         metrics: Dict = self.algorithm.train_on_batch(
@@ -61,14 +71,3 @@ class RLRunner(Runner):
         batch = None
         actions = self.predict_batch(batch)
         return actions
-
-    def run(self):
-        pass
-
-    @classmethod
-    def get_from_params(
-        cls,
-        algorithm_params: Dict,
-        env_spec: EnvironmentSpec,
-    ):
-        pass

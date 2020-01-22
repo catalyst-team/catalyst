@@ -230,6 +230,9 @@ class Runner(ABC):
         output = utils.any2device(batch, device)
         return output
 
+    def _run_batch_train_step(self, batch: Mapping[str, Any]):
+        self.state.output = self.forward(batch)
+
     @torch.no_grad()
     def predict_batch(
         self,
@@ -251,9 +254,6 @@ class Runner(ABC):
         output = self.forward(batch, **kwargs)
         return output
 
-    def _run_batch_step(self, batch: Mapping[str, Any]):
-        self.state.output = self.forward(batch)
-
     def _run_batch(self, batch: Mapping[str, Any]):
         self.state.step += self.state.batch_size
         batch = self._batch2device(batch, self.device)
@@ -263,7 +263,7 @@ class Runner(ABC):
         self._run_event("batch", moment="start")
 
         self.state.timer.start("_timers/model_time")
-        self._run_batch_step(batch=batch)
+        self._run_batch_train_step(batch=batch)
         self.state.timer.stop("_timers/model_time")
 
         self.state.timer.stop("_timers/batch_time")
@@ -357,12 +357,12 @@ class Runner(ABC):
         # jupyter source code logging hack
         # + hack to prevent cycle imports
         # @TODO: remove hack to catalyst.dl only, not core
-        from catalyst.dl.experiment import BaseDLExperiment
-        if isinstance(self.experiment, BaseDLExperiment) \
-                and self.experiment.logdir is not None:
-            expdir = Path(os.getcwd())
-            logdir = Path(self.experiment.logdir)
-            utils.dump_base_experiment_code(expdir, logdir)
+        # from catalyst.dl.experiment import BaseDLExperiment
+        # if isinstance(self.experiment, BaseDLExperiment) \
+        #         and self.experiment.logdir is not None:
+        #     expdir = Path(os.getcwd())
+        #     logdir = Path(self.experiment.logdir)
+        #     utils.dump_base_experiment_code(expdir, logdir)
 
         try:
             for stage in self.experiment.stages:
