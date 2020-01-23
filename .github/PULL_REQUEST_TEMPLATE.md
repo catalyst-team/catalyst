@@ -22,6 +22,7 @@
 
 - [ ] I have read the [Code of Conduct](https://github.com/catalyst-team/catalyst/blob/master/CODE_OF_CONDUCT.md) document.
 - [ ] I have read the [Contributing](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md) guide.
+- [ ] I have read I need to click 'Login as guest' to see Teamcity build logs
 - [ ] I have checked the code-style using `make check-style`.
 - [ ] I have written the docstring in Google format for all the methods and classes that I used.
 - [ ] I have checked the docs using `make check-docs`.
