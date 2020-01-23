@@ -15,22 +15,13 @@ stages:
     num_workers: 0
 
   transform_params:
-    train:
-      transform: Compose
-      transforms:
-        - transform: TensorToImage
-        - transform: Normalize
-          mean: [0.1307]
-          std: [0.3081]
-        - transform: ToTensor
-    valid:
-      transform: Compose
-      transforms:
-        - transform: TensorToImage
-        - transform: Normalize
-          mean: [0.1307]
-          std: [0.3081]
-        - transform: ToTensor
+    transform: Compose
+    transforms:
+      - transform: TensorToImage
+      - transform: Normalize
+        mean: [0.1307]
+        std: [0.3081]
+      - transform: ToTensor
 
   state_params:
     main_metric: &reduce_metric accuracy01

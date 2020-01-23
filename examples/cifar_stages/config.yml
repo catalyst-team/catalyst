@@ -28,12 +28,16 @@ stages:
         shuffle: per_epoch
 
   transform_params:
+    _key_value: True
+
     train:
       transform: Compose
       transforms:
         - transform: Normalize
         - transform: ToTensorV2
     valid:
+      _key_value: True
+
       transform: Compose
       transforms:
         - transform: Normalize

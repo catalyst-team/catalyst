@@ -15,7 +15,20 @@ stages:
     num_workers: 0
 
   transform_params:
+    _key_value: True
+
     train: &transform
+      _key_value: True
+
+      image:
+        transform: Compose
+        transforms:
+          - transform: TensorToImage
+          - transform: Normalize
+            mean: [0.1307]
+            std: [0.3081]
+          - transform: ToTensor
+    valid:
       transform: Compose
       transforms:
         - transform: TensorToImage
@@ -23,7 +36,6 @@ stages:
           mean: [0.1307]
           std: [0.3081]
         - transform: ToTensor
-    valid: *transform
 
   criterion_params:
       criterion: CrossEntropyLoss
