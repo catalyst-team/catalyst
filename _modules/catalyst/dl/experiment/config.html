@@ -32,7 +32,7 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.dl.experiment.config</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 
@@ -44,6 +44,7 @@
     <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DistributedSampler</span>
 <span class="p">)</span>
 
+<span class="kn">from</span> <span class="nn">catalyst.data</span> <span class="kn">import</span> <span class="n">Augmentor</span><span class="p">,</span> <span class="n">AugmentorCompose</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.callbacks</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">CheckpointCallback</span><span class="p">,</span> <span class="n">ConsoleLogger</span><span class="p">,</span> <span class="n">CriterionCallback</span><span class="p">,</span> <span class="n">OptimizerCallback</span><span class="p">,</span>
@@ -52,7 +53,8 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">Experiment</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.registry</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">CALLBACKS</span><span class="p">,</span> <span class="n">CRITERIONS</span><span class="p">,</span> <span class="n">MODELS</span><span class="p">,</span> <span class="n">OPTIMIZERS</span><span class="p">,</span> <span class="n">SAMPLERS</span><span class="p">,</span> <span class="n">SCHEDULERS</span>
+    <span class="n">CALLBACKS</span><span class="p">,</span> <span class="n">CRITERIONS</span><span class="p">,</span> <span class="n">MODELS</span><span class="p">,</span> <span class="n">OPTIMIZERS</span><span class="p">,</span> <span class="n">SAMPLERS</span><span class="p">,</span> <span class="n">SCHEDULERS</span><span class="p">,</span>
+    <span class="n">TRANSFORMS</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
 
@@ -66,6 +68,7 @@
         <span class="s2">&quot;optimizer_params&quot;</span><span class="p">,</span>
         <span class="s2">&quot;scheduler_params&quot;</span><span class="p">,</span>
         <span class="s2">&quot;data_params&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;transform_params&quot;</span><span class="p">,</span>
         <span class="s2">&quot;state_params&quot;</span><span class="p">,</span>
         <span class="s2">&quot;callbacks_params&quot;</span><span class="p">,</span>
     <span class="p">]</span>
@@ -352,6 +355,68 @@
             <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">scheduler_params</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">scheduler</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_transform</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+        <span class="n">key_value_flag</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_key_value&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">key_value_flag</span><span class="p">:</span>
+            <span class="n">transforms_composition</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="n">ConfigExperiment</span><span class="o">.</span><span class="n">_get_transform</span><span class="p">(</span><span class="o">**</span><span class="n">params_</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">params_</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+
+            <span class="n">transform</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="n">Augmentor</span><span class="p">(</span>
+                    <span class="n">dict_key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
+                    <span class="n">augment_fn</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
+                    <span class="n">input_key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
+                    <span class="n">output_key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">transform</span> <span class="ow">in</span> <span class="n">transforms_composition</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;transforms&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+                <span class="n">transforms_composition</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">ConfigExperiment</span><span class="o">.</span><span class="n">_get_transform</span><span class="p">(</span><span class="o">**</span><span class="n">transform_params</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">transform_params</span> <span class="ow">in</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;transforms&quot;</span><span class="p">]</span>
+                <span class="p">]</span>
+                <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">transforms</span><span class="o">=</span><span class="n">transforms_composition</span><span class="p">)</span>
+
+            <span class="n">transform</span> <span class="o">=</span> <span class="n">TRANSFORMS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">transform</span>
+
+<div class="viewcode-block" id="ConfigExperiment.get_transforms"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_transforms">[docs]</a>    <span class="k">def</span> <span class="nf">get_transforms</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns transform for a given stage &amp; mode</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            stage (str): stage name</span>
+<span class="sd">            dataset (str): dataset name (e.g. &quot;train&quot;, &quot;valid&quot;),</span>
+<span class="sd">                will be used only if the value of `_key_value`` is ``True``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">transform_params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;transform_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="p">)</span>
+
+        <span class="n">key_value_flag</span> <span class="o">=</span> <span class="n">transform_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_key_value&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key_value_flag</span><span class="p">:</span>
+            <span class="n">transform_params</span> <span class="o">=</span> <span class="n">transform_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="n">transform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_transform</span><span class="p">(</span><span class="o">**</span><span class="n">transform_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">transform</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="n">dict_</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">dict_</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">AugmentorCompose</span><span class="p">):</span>
+            <span class="n">transform_</span> <span class="o">=</span> <span class="n">transform</span>
+
+            <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="n">dict_</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">transform_</span><span class="p">(</span><span class="o">**</span><span class="n">dict_</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">transform</span></div>
 
 <div class="viewcode-block" id="ConfigExperiment.get_loaders"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_loaders">[docs]</a>    <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the loaders for a given stage&quot;&quot;&quot;</span>

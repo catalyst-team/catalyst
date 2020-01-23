@@ -32,7 +32,7 @@
           <div class="body" role="main">
             
   <h1>Source code for catalyst.data.reader</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Type</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -119,16 +119,26 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Mask reader abstraction. Reads masks from a `csv` dataset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">datapath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">datapath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">clip_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            input_key (str): key to use from annotation dict</span>
 <span class="sd">            output_key (str): key to use to store the result</span>
 <span class="sd">            datapath (str): path to images dataset</span>
 <span class="sd">                (so your can use relative paths in annotations)</span>
+<span class="sd">            clip_range (Tuple[int, int]): lower and upper interval edges,</span>
+<span class="sd">                image values outside the interval are clipped</span>
+<span class="sd">                to the interval edges</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_key</span><span class="p">,</span> <span class="n">output_key</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">datapath</span> <span class="o">=</span> <span class="n">datapath</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clip</span> <span class="o">=</span> <span class="n">clip_range</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reads a row from your annotations dict with filename and</span>
@@ -141,7 +151,7 @@
 <span class="sd">            np.ndarray: Mask</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mask_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">])</span>
-        <span class="n">mask</span> <span class="o">=</span> <span class="n">mimread</span><span class="p">(</span><span class="n">mask_name</span><span class="p">,</span> <span class="n">rootpath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">datapath</span><span class="p">,</span> <span class="n">clip_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">mimread</span><span class="p">(</span><span class="n">mask_name</span><span class="p">,</span> <span class="n">rootpath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">datapath</span><span class="p">,</span> <span class="n">clip_range</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clip</span><span class="p">)</span>
 
         <span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">:</span> <span class="n">mask</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">output</span>

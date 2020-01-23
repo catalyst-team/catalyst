@@ -1733,7 +1733,7 @@ for monitoring services</p></li>
 <p>Experiment created from a configuration file</p>
 <dl class="attribute">
 <dt id="catalyst.dl.experiment.config.ConfigExperiment.STAGE_KEYWORDS">
-<code class="sig-name descname">STAGE_KEYWORDS</code><em class="property"> = ['criterion_params', 'optimizer_params', 'scheduler_params', 'data_params', 'state_params', 'callbacks_params']</em><a class="headerlink" href="#catalyst.dl.experiment.config.ConfigExperiment.STAGE_KEYWORDS" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">STAGE_KEYWORDS</code><em class="property"> = ['criterion_params', 'optimizer_params', 'scheduler_params', 'data_params', 'transform_params', 'state_params', 'callbacks_params']</em><a class="headerlink" href="#catalyst.dl.experiment.config.ConfigExperiment.STAGE_KEYWORDS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1800,6 +1800,21 @@ for monitoring services</p></li>
 <dt id="catalyst.dl.experiment.config.ConfigExperiment.get_state_params">
 <code class="sig-name descname">get_state_params</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; Mapping[str, Any]<a class="reference internal" href="../_modules/catalyst/dl/experiment/config.html#ConfigExperiment.get_state_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.config.ConfigExperiment.get_state_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the state parameters for a given stage</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiment.config.ConfigExperiment.get_transforms">
+<code class="sig-name descname">get_transforms</code><span class="sig-paren">(</span><em class="sig-param">stage: str = None</em>, <em class="sig-param">dataset: str = None</em><span class="sig-paren">)</span> &#x2192; Callable<a class="reference internal" href="../_modules/catalyst/dl/experiment/config.html#ConfigExperiment.get_transforms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.config.ConfigExperiment.get_transforms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns transform for a given stage &amp; mode</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stage</strong> (<em>str</em>) – stage name</p></li>
+<li><p><strong>dataset</strong> (<em>str</em>) – dataset name (e.g. “train”, “valid”),
+will be used only if the value of <cite>_key_value`</cite> is <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">

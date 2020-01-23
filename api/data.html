@@ -113,17 +113,19 @@ or image directory with specified neural net architecture</p>
 For modern Catalyst use <a class="reference external" href="https://github.com/albu/albumentations">albumentations</a>.</p>
 <span class="target" id="module-catalyst.data.augmentor"></span><dl class="class">
 <dt id="catalyst.data.augmentor.Augmentor">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.augmentor.</code><code class="sig-name descname">Augmentor</code><span class="sig-paren">(</span><em class="sig-param">dict_key: str</em>, <em class="sig-param">augment_fn: Callable</em>, <em class="sig-param">default_kwargs: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/augmentor.html#Augmentor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.augmentor.Augmentor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.augmentor.</code><code class="sig-name descname">Augmentor</code><span class="sig-paren">(</span><em class="sig-param">dict_key: str</em>, <em class="sig-param">augment_fn: Callable</em>, <em class="sig-param">input_key: str = None</em>, <em class="sig-param">output_key: str = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/augmentor.html#Augmentor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.augmentor.Augmentor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Augmentation abstraction to use with data dictionaries.</p>
 <dl class="method">
 <dt id="catalyst.data.augmentor.Augmentor.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">dict_key: str</em>, <em class="sig-param">augment_fn: Callable</em>, <em class="sig-param">default_kwargs: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/augmentor.html#Augmentor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.augmentor.Augmentor.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">dict_key: str</em>, <em class="sig-param">augment_fn: Callable</em>, <em class="sig-param">input_key: str = None</em>, <em class="sig-param">output_key: str = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/augmentor.html#Augmentor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.augmentor.Augmentor.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dict_key</strong> – key to transform</p></li>
-<li><p><strong>augment_fn</strong> – augmentation function to use</p></li>
-<li><p><strong>default_kwargs</strong> – default kwargs for augmentations function</p></li>
+<li><p><strong>dict_key</strong> (<em>str</em>) – key to transform</p></li>
+<li><p><strong>augment_fn</strong> (<em>Callable</em>) – augmentation function to use</p></li>
+<li><p><strong>input_key</strong> (<em>str</em>) – <code class="docutils literal notranslate"><span class="pre">augment_fn</span></code> input key</p></li>
+<li><p><strong>output_key</strong> (<em>str</em>) – <code class="docutils literal notranslate"><span class="pre">augment_fn</span></code> output key</p></li>
+<li><p><strong>**kwargs</strong> – default kwargs for augmentations function</p></li>
 </ul>
 </dd>
 </dl>
