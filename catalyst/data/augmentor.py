@@ -11,7 +11,7 @@ class Augmentor:
         augment_fn: Callable,
         input_key: str = None,
         output_key: str = None,
-        default_kwargs: Dict = None,
+        **kwargs,
     ):
         """
         Args:
@@ -19,24 +19,22 @@ class Augmentor:
             augment_fn (Callable): augmentation function to use
             input_key (str): ``augment_fn`` input key
             output_key (str): ``augment_fn`` output key
-            default_kwargs: default kwargs for augmentations function
+            **kwargs: default kwargs for augmentations function
         """
         self.dict_key = dict_key
         self.augment_fn = augment_fn
         self.input_key = input_key
         self.output_key = output_key
-        self.default_kwargs = default_kwargs or {}
+        self.kwargs = kwargs
 
     def __call__(self, dict_: dict):
         """Applies the augmentation"""
         if self.input_key is not None:
             output = self.augment_fn(
-                **{self.input_key: dict_[self.dict_key]}, **self.default_kwargs
+                **{self.input_key: dict_[self.dict_key]}, **self.kwargs
             )
         else:
-            output = self.augment_fn(
-                dict_[self.dict_key], **self.default_kwargs
-            )
+            output = self.augment_fn(dict_[self.dict_key], **self.kwargs)
 
         if self.output_key is not None:
             dict_[self.dict_key] = output[self.output_key]
