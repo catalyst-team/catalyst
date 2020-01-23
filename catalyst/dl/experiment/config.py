@@ -353,14 +353,16 @@ class ConfigExperiment(Experiment):
 
         return transform
 
-    def get_transforms(self, stage: str = None, mode: str = None) -> Callable:
+    def get_transforms(
+        self, stage: str = None, dataset: str = None
+    ) -> Callable:
         """
         Returns transform for a given stage & mode
 
         Args:
             stage (str): stage name
-            mode (str): mode name, will be used only if the value of
-                `_key_value`` is ``True``
+            dataset (str): dataset name (e.g. "train", "valid"),
+                will be used only if the value of `_key_value`` is ``True``
         """
         transform_params = deepcopy(
             self.stages_config[stage].get("transform_params", {})
@@ -368,7 +370,7 @@ class ConfigExperiment(Experiment):
 
         key_value_flag = transform_params.pop("_key_value", False)
         if key_value_flag:
-            transform_params = transform_params.get(mode, {})
+            transform_params = transform_params.get(dataset, {})
 
         transform = self._get_transform(**transform_params)
         if transform is None:

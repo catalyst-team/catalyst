@@ -37,7 +37,7 @@ class Experiment(ConfigExperiment):
                 root="./data",
                 train=(mode == "train"),
                 download=True,
-                transform=self.get_transforms(stage=stage, mode=mode),
+                transform=self.get_transforms(stage=stage, dataset=mode),
             )
 
         return datasets

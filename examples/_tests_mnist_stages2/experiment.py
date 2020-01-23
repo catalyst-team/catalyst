@@ -23,7 +23,7 @@ class Experiment(ConfigExperiment):
                 "./data",
                 train=False,
                 download=True,
-                transform=self.get_transforms(mode=mode, stage=stage)
+                transform=self.get_transforms(stage=stage, dataset=mode)
             )
 
         return datasets
