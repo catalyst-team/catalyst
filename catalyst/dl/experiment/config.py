@@ -10,6 +10,7 @@ from torch.utils.data import (  # noqa F401
     DataLoader, Dataset, DistributedSampler
 )
 
+from catalyst.data import Augmentor, AugmentorCompose
 from catalyst.dl import utils
 from catalyst.dl.callbacks import (
     CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
@@ -323,32 +324,63 @@ class ConfigExperiment(Experiment):
 
     @staticmethod
     def _get_transform(**params) -> Callable:
-        if "transforms" in params:
-            transforms_composition = [
-                ConfigExperiment._get_transform(**transform_params)
-                for transform_params in params["transforms"]
-            ]
-            params.update(transforms=transforms_composition)
+        key_value_flag = params.pop("_key_value", False)
 
-        transform = TRANSFORMS.get_from_params(**params)
+        if key_value_flag:
+            transforms_composition = {
+                key: ConfigExperiment._get_transform(**params_)
+                for key, params_ in params.items()
+            }
+
+            transform = {
+                key: Augmentor(
+                    dict_key=key,
+                    augment_fn=transform,
+                    input_key=key,
+                    output_key=key,
+                )
+                for key, transform in transforms_composition.items()
+            }
+        else:
+            if "transforms" in params:
+                transforms_composition = [
+                    ConfigExperiment._get_transform(**transform_params)
+                    for transform_params in params["transforms"]
+                ]
+                params.update(transforms=transforms_composition)
+
+            transform = TRANSFORMS.get_from_params(**params)
 
         return transform
 
     def get_transforms(self, stage: str = None, mode: str = None) -> Callable:
+        """
+        Returns transform for a given stage & mode
+
+        Args:
+            stage (str): stage name
+            mode (str): mode name, will be used only if the value of
+                `_key_value`` is ``True``
+        """
         transform_params = deepcopy(
-            self.stages_config[stage]["transform_params"].get(mode, {})
+            self.stages_config[stage].get("transform_params", {})
         )
 
-        transform = self._get_transform(**transform_params)
-        if transform is not None:
-            def process(dict_):
-                result = transform(**dict_)
-                return result
-        else:
-            def process(dict_):
-                return dict_
+        key_value_flag = transform_params.pop("_key_value", False)
+        if key_value_flag:
+            transform_params = transform_params.get(mode, {})
 
-        return process
+        transform = self._get_transform(**transform_params)
+        if transform is None:
+            def transform(dict_):
+                return dict_
+        elif not isinstance(transform, AugmentorCompose):
+            transform_ = transform
+
+            def transform(dict_):
+                return transform_(**dict_)
+
+        return transform
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage"""
