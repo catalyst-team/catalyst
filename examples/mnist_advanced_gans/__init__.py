@@ -1,8 +1,7 @@
 # flake8: noqa
 from catalyst.dl import registry
-# from catalyst.dl.runner import GanRunner as Runner
-from runners import GANRunner as Runner  # vanilla GAN
-# from runners import WGANRunner as Runner  # WGAN/WGAN-GP
+from catalyst.dl.runner import GanRunner as Runner  # vanilla GAN
+# from runners import WGanRunner as Runner  # WGAN/WGAN-GP
 # from runners import CGanRunner as Runner  # vanilla GAN + one-hot class condition
 # from runners import ICGanRunner as Runner  # vanilla GAN + same class image condition
 from .experiment import MnistGanExperiment as Experiment
