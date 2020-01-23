@@ -1,6 +1,5 @@
-from typing import Union, Dict  # isort:skip
-
 import torch
+from typing import Union  # isort:skip
 from torch import nn, optim
 from torch.utils import data
 

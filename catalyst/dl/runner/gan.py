@@ -1,16 +1,11 @@
-import torch
 from collections import OrderedDict
-from typing import Any, Mapping, Dict  # isort: skip
-from catalyst.dl.callbacks import (
-    PhaseBatchWrapperCallback,
-    PhaseManagerCallback,
-    CriterionAggregatorCallback,
-)
+from typing import Any, Mapping, Dict, List, Union  # isort: skip
+
+import torch
+
 from catalyst.dl import (
     Runner,
     Callback,
-    OptimizerCallback,
-    CriterionCallback,
 )
 from catalyst.dl.experiment import GanExperiment
 from catalyst.utils.typing import (
@@ -19,7 +14,6 @@ from catalyst.utils.typing import (
     Optimizer,
     Criterion,
     DataLoader,
-    Dataset
 )
 
 
@@ -29,13 +23,6 @@ class GanRunner(Runner):
     """
 
     _default_experiment = GanExperiment
-    TRAIN_PARAMS = {
-        "main_metric": "loss_g",
-        "minimize_metric": True,
-        "batch_consistant_metrics": False,
-        "discriminator_train_phase": "discriminator_train",
-        "generator_train_phase": "generator_train",
-    }
 
     def __init__(
         self,
@@ -72,10 +59,12 @@ class GanRunner(Runner):
             "discriminator_train_phase",
             "generator_train_phase",
         ]:
-            assert hasattr(self.state, key) \
-                   and getattr(self.state, key) is not None
+            assert (
+                hasattr(self.state, key)
+                and getattr(self.state, key) is not None
+            )
 
-    def forward(self, batch):
+    def forward(self, batch, **kwargs):
         real_features = batch[self.features_key]
         batch_size = real_features.shape[0]
         real_targets = torch.ones((batch_size, 1), device=self.device)
@@ -109,175 +98,125 @@ class GanRunner(Runner):
         else:
             raise NotImplementedError(f"Unknown phase: self.state.phase")
 
-    def validate_models(self, models: Dict[str, Model]) -> None:
+    def validate_models(self, model: Dict[str, Model]) -> None:
+        """Validate model dict to have generator and discriminator model"""
         assert isinstance(
-            models, dict
-        ), "models must be of Dict[str, torch.nn.Module] type"
-        for key, model in models.items():
+            model, dict
+        ), "model must be of Dict[str, torch.nn.Module] type"
+        for key, submodel in model.items():
             assert isinstance(
-                model, Model
-            ), f"model {key} must be torch.nn.Module type"
-        discriminator_assert_message = \
-            f"models must have discriminator Module with {self.discriminator_key} key"  # noqa: E501
-        assert self.discriminator_key in models, discriminator_assert_message
+                submodel, Model
+            ), f'model item with key value "{key}" must be Model type'
+        discriminator_assert_message = f"model must have discriminator Model with {self.discriminator_key} key"  # noqa: E501
+        assert self.discriminator_key in model, discriminator_assert_message
         assert isinstance(
-            models[self.discriminator_key], torch.nn.Module
+            model[self.discriminator_key], torch.nn.Module
         ), discriminator_assert_message
-        generator_assert_message = \
-            f"models must have generator Module with {self.generator_key} key"  # noqa: E501
-        assert self.generator_key in models, generator_assert_message
+        generator_assert_message = f"model must have generator Model with {self.generator_key} key"  # noqa: E501
+        assert self.generator_key in model, generator_assert_message
         assert isinstance(
-            models[self.generator_key], torch.nn.Module
+            model[self.generator_key], torch.nn.Module
         ), generator_assert_message
 
-    def prepare_state_params(
-        self, num_epochs: int, logdir: str, additional_state_params
-    ) -> Dict[str, Any]:
-        state_params = {
-            "num_epochs": num_epochs,
-            "logdir": logdir,
-            **self.TRAIN_PARAMS,
-        }
-        state_params.update(additional_state_params)
-        return state_params
-
-    @staticmethod
-    def prepare_experiment_params(
-        models,
-        criterion,
-        optimizers,
-        state_params,
-        callbacks,
-        datasets,
-        loaders,
-        train_stage_name="train",
-    ) -> Dict:
-        experiment_params = {
-            "models": {train_stage_name: models},
-            "criterions": {train_stage_name: criterion},
-            "optimizers": {train_stage_name: optimizers},
-            "stages": [train_stage_name],
-            "state_params": {train_stage_name: state_params},
-            "callbacks": {train_stage_name: callbacks},
-            "datasets": {train_stage_name: datasets},
-            "loaders": {train_stage_name: loaders},
-        }
-        return experiment_params
-
-    def prepare_callbacks(
-        self, callbacks, discriminator_phase_num, generator_phase_num
-    ) -> OrderedDict:
+    def validate_optimizers(self, optimizer: Dict[str, Optimizer]) -> None:
         """
-            Catalyst can't take several optimizer callbacks for generator
-            and discriminator and process them raw
-            Therefore, phase manager, criterion callbacks and wrappers
-            will be created to manage training order
+            Validate model dict to have optimizer
+            for generator and discriminator model
         """
-        assert isinstance(
-            callbacks, dict
-        ), "callbacks should be of dict[str, Callback] type"
-        discriminator_phase = self.TRAIN_PARAMS["discriminator_train_phase"]
-        generator_phase = self.TRAIN_PARAMS["generator_train_phase"]
-        callbacks["phase_manager"] = PhaseManagerCallback(
-            train_phases=OrderedDict(
-                [
-                    (discriminator_phase, discriminator_phase_num),
-                    (generator_phase, generator_phase_num),
-                ]
-            ),
-            valid_mode="all",
-        )
-        callbacks["loss_g"] = PhaseBatchWrapperCallback(
-            base_callback=CriterionCallback(
-                input_key="real_targets",
-                output_key="fake_logits",
-                prefix="loss_g",
-            ),
-            active_phases=[generator_phase],
-        )
-        callbacks["loss_d_real"] = PhaseBatchWrapperCallback(
-            base_callback=CriterionCallback(
-                input_key="real_targets",
-                output_key="real_logits",
-                prefix="loss_d_real",
-            ),
-            active_phases=[discriminator_phase],
-        )
-        callbacks["loss_d_fake"] = PhaseBatchWrapperCallback(
-            base_callback=CriterionCallback(
-                input_key="fake_targets",
-                output_key="fake_logits",
-                prefix="loss_d_fake",
-            ),
-            active_phases=[discriminator_phase],
-        )
-        callbacks["loss_d"] = PhaseBatchWrapperCallback(
-            base_callback=CriterionAggregatorCallback(
-                loss_keys=["loss_d_real", "loss_d_fake"],
-                loss_aggregate_fn="mean",
-                prefix="loss_d",
-            ),
-            active_phases=[discriminator_phase],
-        )
-        callbacks["optim_g"] = PhaseBatchWrapperCallback(
-            base_callback=OptimizerCallback(
-                loss_key="loss_g", optimizer_key=self.generator_key,
-            ),
-            active_phases=[generator_phase],
-        )
-        callbacks["optim_d"] = PhaseBatchWrapperCallback(
-            base_callback=OptimizerCallback(
-                loss_key="loss_d", optimizer_key=self.discriminator_key,
-            ),
-            active_phases=[discriminator_phase],
-        )
-        return OrderedDict(callbacks)
+        assert (
+            self.generator_key in optimizer.keys()
+        ), f"optimizer dict must have optimizer with {self.generator_key} key"  # noqa: E501
+        assert (
+            self.discriminator_key in optimizer.keys()
+        ), f"optimizer dict must have optimizer with {self.discriminator_key} key"  # noqa: E501
 
     def train(
         self,
-        models: Dict[str, Model],
-        criterion: Criterion,
-        optimizers: Dict[str, Optimizer],
-        datasets: Dict[str, Dataset],
-        loaders: Dict[str, DataLoader],
-        callbacks: Dict[str, Callback] = {},
-        discriminator_phase_num: int = 1,
-        generator_phase_num: int = 1,
+        model: Union[Model, Dict[str, Model]],
+        loaders: "OrderedDict[str, DataLoader]",
+        callbacks: "OrderedDict[str, Callback]" = None,
+        logdir: str = None,
+        criterion: Criterion = None,
+        optimizer: Optimizer = None,
         num_epochs: int = 1,
-        additional_state_params: Dict[str, Any] = {},
-        logdir: str = "./logs",
+        main_metric: str = "loss",
+        minimize_metric: bool = True,
         verbose: bool = False,
+        state_kwargs: Dict = None,
+        checkpoint_data: Dict = None,
+        distributed_params: Dict = None,
+        monitoring_params: Dict = None,
+        initial_seed: int = 42,
+        phase2callbacks: Dict[str, List[str]] = None,
         check: bool = False,
-    ):
-        # Validate models type and its items
-        self.validate_models(models)
+    ) -> None:
+        """
+        Args:
+            model (Model or Dict[str, Model]): models,
+                usually generator and discriminator
+            loaders (dict): dictionary containing one or several
+                ``torch.utils.data.DataLoader`` for training and validation
+            callbacks (List[catalyst.dl.Callback]): list of callbacks
+            logdir (str): path to output directory
+            stage (str): current stage
+            criterion (Criterion): criterion function
+            optimizer (Optimizer): optimizer
+            scheduler (Scheduler): scheduler
+            num_epochs (int): number of experiment's epochs
+            valid_loader (str): loader name used to calculate
+                the metrics and save the checkpoints. For example,
+                you can pass `train` and then
+                the metrics will be taken from `train` loader.
+            main_metric (str): the key to the name of the metric
+                by which the checkpoints will be selected.
+            minimize_metric (bool): flag to indicate whether
+                the ``main_metric`` should be minimized.
+            verbose (bool): ff true, it displays the status of the training
+                to the console.
+            state_kwargs (dict): additional state params to ``RunnerState``
+            checkpoint_data (dict): additional data to save in checkpoint,
+                for example: ``class_names``, ``date_of_training``, etc
+            distributed_params (dict): dictionary with the parameters
+                for distributed and FP16 method
+            monitoring_params (dict): dict with the parameters
+                for monitoring services
+            initial_seed (int): experiment's initial seed value
+            phase2callbacks (dict): dictionary with lists of callback names
+                which should be wrapped for appropriate phase
+                for example: {"generator_train": "loss_g", "optim_g"}
+                "loss_g" and "optim_g" callbacks from callbacks dict
+                will be wrapped for "generator_train" phase
+                in wrap_callbacks method
+            check (bool): if True, then only checks that pipeline is working
+                (3 epochs only)
+        """
+        # Validate model type and its items
+        self.validate_models(model)
         # Check for optimizers
-        assert (
-            self.generator_key in optimizers.keys()
-        ), f"optimizers must have optimizer with {self.generator_key} key"
-        assert (
-            self.discriminator_key in optimizers.keys()
-        ), f"optimizers must have optimizer with {self.discriminator_key} key"
-        # Init from parameters and set default state params
-        state_params = self.prepare_state_params(
-            num_epochs, logdir, additional_state_params
-        )
-        callbacks = self.prepare_callbacks(
-            callbacks, discriminator_phase_num, generator_phase_num
-        )
-        # Prepare parameters of one-stage experiment
-        experiment_stage_params = self.prepare_experiment_params(
-            models=models,
-            criterion=criterion,
-            optimizers=optimizers,
-            state_params=state_params,
-            callbacks=callbacks,
-            datasets=datasets,
-            loaders=loaders,
-        )
+        self.validate_optimizers(optimizer)
+        # Check phase parameters in state_kwargs
+        consistent_metrics_param_key = "batch_consistant_metrics"
+        if consistent_metrics_param_key not in state_kwargs:
+            state_kwargs[consistent_metrics_param_key] = False
+        # @TODO: self.validate_state_kwargs(state_kwargs)
         # Initialize and run experiment
         experiment = self._default_experiment(
-            **experiment_stage_params, logdir=logdir, verbose=verbose
+            model=model,
+            loaders=loaders,
+            callbacks=callbacks,
+            logdir=logdir,
+            criterion=criterion,
+            optimizer=optimizer,
+            num_epochs=num_epochs,
+            main_metric=main_metric,
+            minimize_metric=minimize_metric,
+            verbose=verbose,
+            state_kwargs=state_kwargs,
+            checkpoint_data=checkpoint_data,
+            distributed_params=distributed_params,
+            monitoring_params=monitoring_params,
+            initial_seed=initial_seed,
+            phase2callbacks=phase2callbacks,
         )
         self.run_experiment(experiment=experiment, check=check)
 
