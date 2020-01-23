@@ -1,6 +1,9 @@
 echo "pip install -r requirements/requirements.txt"
 pip install -r requirements/requirements.txt
 
+echo "pip install -r requirements/requirements-cv.txt"
+pip install -r requirements/requirements-cv.txt
+
 echo "pip install -r requirements/requirements-nlp.txt"
 pip install -r requirements/requirements-nlp.txt
 

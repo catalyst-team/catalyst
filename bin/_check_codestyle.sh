@@ -10,6 +10,9 @@ while getopts ":s" flag; do
   esac
 done
 
+echo "isort -rc --check-only --settings-path ./setup.cfg"
+isort -rc --check-only --settings-path ./setup.cfg
+
 echo './bin/flake8.sh'
 # stop the build if there are any unexpected flake8 issues
 bash ./bin/flake8.sh --count \

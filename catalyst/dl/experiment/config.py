@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Mapping, Union  # isort:skip
+from typing import Any, Callable, Dict, List, Mapping, Union  # isort:skip
 from collections import OrderedDict
 from copy import deepcopy
 
@@ -10,6 +10,7 @@ from torch.utils.data import (  # noqa F401
     DataLoader, Dataset, DistributedSampler
 )
 
+from catalyst.data import Augmentor, AugmentorCompose
 from catalyst.dl import utils
 from catalyst.dl.callbacks import (
     CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
@@ -18,7 +19,8 @@ from catalyst.dl.callbacks import (
 )
 from catalyst.dl.core import Callback, Experiment
 from catalyst.dl.registry import (
-    CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS
+    CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS,
+    TRANSFORMS
 )
 from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
 
@@ -32,6 +34,7 @@ class ConfigExperiment(Experiment):
         "optimizer_params",
         "scheduler_params",
         "data_params",
+        "transform_params",
         "state_params",
         "callbacks_params",
     ]
@@ -318,6 +321,68 @@ class ConfigExperiment(Experiment):
             optimizer=optimizer, **scheduler_params
         )
         return scheduler
+
+    @staticmethod
+    def _get_transform(**params) -> Callable:
+        key_value_flag = params.pop("_key_value", False)
+
+        if key_value_flag:
+            transforms_composition = {
+                key: ConfigExperiment._get_transform(**params_)
+                for key, params_ in params.items()
+            }
+
+            transform = {
+                key: Augmentor(
+                    dict_key=key,
+                    augment_fn=transform,
+                    input_key=key,
+                    output_key=key,
+                )
+                for key, transform in transforms_composition.items()
+            }
+        else:
+            if "transforms" in params:
+                transforms_composition = [
+                    ConfigExperiment._get_transform(**transform_params)
+                    for transform_params in params["transforms"]
+                ]
+                params.update(transforms=transforms_composition)
+
+            transform = TRANSFORMS.get_from_params(**params)
+
+        return transform
+
+    def get_transforms(
+        self, stage: str = None, dataset: str = None
+    ) -> Callable:
+        """
+        Returns transform for a given stage & mode
+
+        Args:
+            stage (str): stage name
+            dataset (str): dataset name (e.g. "train", "valid"),
+                will be used only if the value of `_key_value`` is ``True``
+        """
+        transform_params = deepcopy(
+            self.stages_config[stage].get("transform_params", {})
+        )
+
+        key_value_flag = transform_params.pop("_key_value", False)
+        if key_value_flag:
+            transform_params = transform_params.get(dataset, {})
+
+        transform = self._get_transform(**transform_params)
+        if transform is None:
+            def transform(dict_):
+                return dict_
+        elif not isinstance(transform, AugmentorCompose):
+            transform_ = transform
+
+            def transform(dict_):
+                return transform_(**dict_)
+
+        return transform
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage"""
