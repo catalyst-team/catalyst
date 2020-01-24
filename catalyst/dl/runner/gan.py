@@ -99,9 +99,8 @@ class GanRunner(MultiPhaseRunner):
         real_logits_output_key: str = "real_logits",
         fake_data_output_key: str = "fake_data",
         # condition_keys
-        condition_keys: Union[str, List[str]] = None,
-        d_fake_condition_keys: List[str] = None,
-        d_real_condition_keys: List[str] = None,
+        fake_condition_keys: List[str] = None,
+        real_condition_keys: List[str] = None,
         # phases:
         generator_train_phase: str = "generator_train",
         discriminator_train_phase: str = "discriminator_train",
@@ -131,12 +130,10 @@ class GanRunner(MultiPhaseRunner):
         :param fake_data_output_key: generated data
 
         CONDITIONS:
-        :param condition_keys: list of all conditional inputs of generator
-            (appear in same order as in generator model forward() call)
-        :param d_fake_condition_keys: list of all conditional inputs of
+        :param fake_condition_keys: list of all conditional inputs of
             discriminator (fake data conditions)
             (appear in same order as in generator model forward() call)
-        :param d_real_condition_keys: list of all conditional inputs of
+        :param real_condition_keys: list of all conditional inputs of
             discriminator (real data conditions)
             (appear in same order as in generator model forward() call)
         Note: THIS RUNNER SUPPORTS ONLY EQUALLY CONDITIONED generator and
@@ -170,82 +167,41 @@ class GanRunner(MultiPhaseRunner):
         self.real_logits_output_key = real_logits_output_key
         self.fake_data_output_key = fake_data_output_key
         # condition keys
-        self.__init_condition_keys(
-            condition_keys, d_real_condition_keys, d_fake_condition_keys
-        )
+        self.fake_condition_keys = fake_condition_keys or []
+        self.real_condition_keys = real_condition_keys or []
+        # check that discriminator will have
+        # same number of arguments for real/fake data
+        assert (
+            len(self.fake_condition_keys) == len(self.real_condition_keys)
+        ), "Number of real/fake conditions should be the same"
+        # Note: this generator supports only
+        # EQUALLY CONDITIONED generator (G) and discriminator (D)
+        # below are some thoughts why:
+        #
+        # 1. G is more conditioned than D.
+        #
+        # it would be strange if G is conditioned on something
+        # and D is NOT conditioned on same variable
+        # which will most probably lead to interpreting that variable
+        # as additional noise
+        #
+        # 2. D is more conditioned than G.
+        #
+        # imagine D to have additional condition 'cond_var' which is not
+        # condition of G. now you have:
+        #   fake_data = G(z, *other_conditions)
+        #   fake_score = D(fake_data, cond_var, *other_conditions)
+        # in the above example fake_data and cond_var are ~independent?
+        # if they are not independent (e.g. cond_var represents
+        # class condition which is fixed to the single "cat" class,
+        # which may be used for finetuning pretrained GAN for specific
+        # class) such configuration may have some sense
+        # so they case #2 may have some sense, however for simplicity
+        # it is not implemented in this Runner
 
         # model keys
         self.generator_key = generator_model_key
         self.discriminator_key = discriminator_model_key
-
-    def __init_condition_keys(
-        self, condition_keys, d_real_condition_keys, d_fake_condition_keys
-    ):
-        """
-        Condition keys initialization
-        :param condition_keys:
-        :param d_real_condition_keys:
-        :param d_fake_condition_keys:
-        :return:
-        """
-
-        # make self.condition_keys to be a list
-        condition_keys = condition_keys or []
-        self.condition_keys = (
-            [condition_keys]
-            if isinstance(condition_keys, str) else condition_keys
-        )
-
-        assert (
-                (d_fake_condition_keys is None)
-                == (d_real_condition_keys is None)
-        ), "'d_fake_condition_keys' and 'd_real_condition_keys' " \
-           "should be either None or not None at same time"
-
-        if d_fake_condition_keys is not None:
-            # this generator supports only
-            # SAME CONDITIONED generator (G) and discriminator (D)
-            # below are some thoughts why:
-            #
-            # 1. G is more conditioned than D.
-            #
-            # it would be strange if G is conditioned on something
-            # and D is NOT conditioned on same variable
-            # which will most probably lead to interpreting that variable
-            # as additional noise
-            #
-            # 2. D is more conditioned than G.
-            #
-            # imagine D to have additional condition 'cond_var' which is not
-            # condition of G. now you have:
-            #   fake_data = G(z, *other_conditions)
-            #   fake_score = D(fake_data, cond_var, *other_conditions)
-            # in the above example fake_data and cond_var are ~independent?
-            # if they are not independent (e.g. cond_var represents
-            # class condition which is fixed to the single "cat" class,
-            # which may be used for finetuning pretrained GAN for specific
-            # class) such configuration may have some sense
-            # so they case #2 may have some sense, however for simplicity
-            # it is not implemented in this Runner
-
-            assert all(
-                key in self.condition_keys for key in d_fake_condition_keys
-            ), "all discriminator conditions must be generator conditions"
-            assert all(
-                key in d_fake_condition_keys for key in self.condition_keys
-            ), "all generator conditions must be discriminator conditions"
-            # additional check that discriminator will have
-            # same number of arguments for real/fake data
-            assert len(d_fake_condition_keys) == len(d_real_condition_keys), \
-                "Not the same number of real/fake conditions"
-
-        if not self.condition_keys:
-            # simple case: no condition
-            d_real_condition_keys = []
-            d_fake_condition_keys = []
-
-        self.d_real_condition_keys = d_real_condition_keys
-        self.d_fake_condition_keys = d_fake_condition_keys
 
     def _alias_inner_params(self, stage: str):
         self.generator = self.model[self.generator_key]
@@ -256,16 +212,18 @@ class GanRunner(MultiPhaseRunner):
     def _get_noise_and_conditions(self):
         """returns generator inputs"""
         z = self.state.input[self.noise_input_key]
-        conditions = [self.state.input[key] for key in self.condition_keys]
+        conditions = [
+            self.state.input[key] for key in self.fake_condition_keys
+        ]
         return z, conditions
 
     def _get_real_data_conditions(self):
         """returns discriminator conditions (for real data)"""
-        return [self.state.input[key] for key in self.d_real_condition_keys]
+        return [self.state.input[key] for key in self.real_condition_keys]
 
     def _get_fake_data_conditions(self):
         """returns discriminator conditions (for fake data)"""
-        return [self.state.input[key] for key in self.d_fake_condition_keys]
+        return [self.state.input[key] for key in self.fake_condition_keys]
 
     # concrete phase methods
 

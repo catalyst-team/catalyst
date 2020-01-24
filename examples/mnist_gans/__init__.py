@@ -1,6 +1,6 @@
 # flake8: noqa
 from catalyst.dl import registry
-from catalyst.dl.runner import GanRunner as Runner  # vanilla GAN
+from catalyst.dl.runner import GanRunner as Runner
 from experiment import MnistGanExperiment as Experiment
 import transforms
 from . import callbacks, criterion, models

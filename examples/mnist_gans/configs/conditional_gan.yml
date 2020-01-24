@@ -11,12 +11,8 @@ runner_params:
   fake_data_output_key: &fake_data "fake_image"
 
   # condition keys (as this is conditional gan)
-  # Note:
-  #   conditions for `condition_keys` and `d_fake_condition_keys`
-  #   are supposed to be the same
-  condition_keys: [&class_targets_one_hot "class_targets_one_hot"]
-  d_fake_condition_keys: [*class_targets_one_hot]
-  d_real_condition_keys: ["class_targets_one_hot"]
+  fake_condition_keys: [&class_targets_one_hot "class_targets_one_hot"]
+  real_condition_keys: ["class_targets_one_hot"]
 
   # phases
   generator_train_phase: &generator_train_phase generator_train
