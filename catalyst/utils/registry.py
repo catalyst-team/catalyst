@@ -190,7 +190,7 @@ class Registry(collections.MutableMapping):
             **kwargs: kwargs to pass to the factory
 
         Returns:
-             created instance
+            created instance
         """
         meta_factory = meta_factory or self.meta_factory
         f = self.get(name)
@@ -217,7 +217,7 @@ class Registry(collections.MutableMapping):
             **kwargs: additional kwargs for factory
 
         Returns:
-             result of calling ``instantiate_fn(factory, **config)``
+            result of calling ``instantiate_fn(factory, **config)``
         """
         name = kwargs.pop(self._name_key, None)
         if name:

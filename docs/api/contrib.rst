@@ -133,3 +133,22 @@ Schedulers
     :members:
     :undoc-members:
     :show-inheritance:
+
+
+Runner
+--------------------
+
+.. automodule:: catalyst.contrib.runner.alchemy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.runner.neptune
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.runner.wandb
+    :members:
+    :undoc-members:
+    :show-inheritance:
