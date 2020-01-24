@@ -113,7 +113,6 @@ class MultiMetricCallback(Callback):
     """
     A callback that returns multiple metrics on `state.on_batch_end`
     """
-
     def __init__(
         self,
         prefix: str,
@@ -150,6 +149,6 @@ class MultiMetricCallback(Callback):
 
 
 __all__ = [
-    "CallbackOrder", "Callable", "LoggerCallback",
-    "MetricCallback", "MultiMetricCallback"
+    "CallbackOrder", "Callable", "LoggerCallback", "MetricCallback",
+    "MultiMetricCallback"
 ]

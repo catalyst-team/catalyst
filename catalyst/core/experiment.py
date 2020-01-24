@@ -15,7 +15,6 @@ class Experiment(ABC):
 
     Abstract, look for implementations
     """
-
     @property
     @abstractmethod
     def initial_seed(self) -> int:

@@ -65,9 +65,9 @@ class Runner(ABC):
         if isinstance(value, nn.Module):
             model = value
         elif isinstance(value, dict):
-            values_are_models = all([
-                isinstance(v, nn.Module) for v in value.values()
-            ])
+            values_are_models = all(
+                [isinstance(v, nn.Module) for v in value.values()]
+            )
             if not values_are_models:
                 raise TypeError(
                     "Invalid dict value type, must be `torch.nn.Module`"
@@ -178,16 +178,20 @@ class Runner(ABC):
         callbacks = self.experiment.get_callbacks(stage)
 
         loggers = utils.process_callbacks(
-            OrderedDict([
-                (k, v) for k, v in callbacks.items()
-                if isinstance(v, LoggerCallback)
-            ])
+            OrderedDict(
+                [
+                    (k, v) for k, v in callbacks.items()
+                    if isinstance(v, LoggerCallback)
+                ]
+            )
         )
         callbacks = utils.process_callbacks(
-            OrderedDict([
-                (k, v) for k, v in callbacks.items()
-                if not isinstance(v, LoggerCallback)
-            ])
+            OrderedDict(
+                [
+                    (k, v) for k, v in callbacks.items()
+                    if not isinstance(v, LoggerCallback)
+                ]
+            )
         )
 
         self.state.loggers = loggers
@@ -234,9 +238,7 @@ class Runner(ABC):
 
     @torch.no_grad()
     def predict_batch(
-        self,
-        batch: Mapping[str, Any],
-        **kwargs
+        self, batch: Mapping[str, Any], **kwargs
     ) -> Mapping[str, Any]:
         """
         Run model for a batch of elements
