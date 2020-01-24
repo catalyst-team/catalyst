@@ -179,7 +179,7 @@ class ScalarReader(ReaderSpec):
 
 class LambdaReader(ReaderSpec):
     """
-    Reader abstraction with an lambda encoder.
+    Reader abstraction with an lambda encoders.
     Can read an elem from dataset and apply `encode_fn` function to it
     """
     def __init__(

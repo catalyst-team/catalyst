@@ -2,7 +2,7 @@ import safitty
 
 import torch
 
-from catalyst.contrib.schedulers import BatchScheduler, OneCycleLRWithWarmup
+from catalyst.contrib.nn.schedulers import BatchScheduler, OneCycleLRWithWarmup
 from catalyst.core import Callback, CallbackOrder, State, utils
 
 

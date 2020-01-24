@@ -242,7 +242,7 @@ runner.train(
 
 from catalyst.dl.runner import SupervisedDLRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
-from catalyst.contrib.schedulers import OneCycleLRWithWarmup
+from catalyst.contrib.nn.schedulers import OneCycleLRWithWarmup
 
 # experiment setup
 num_epochs = NUM_EPOCHS

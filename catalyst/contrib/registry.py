@@ -25,7 +25,7 @@ GRAD_CLIPPERS.late_add(_grad_clip_loader)
 
 
 def _criterion_loader(r: Registry):
-    from catalyst.contrib import criterion as m
+    from catalyst.contrib.nn import criterion as m
     r.add_from_module(m)
 
 
@@ -45,7 +45,7 @@ Model = MODELS.add
 
 
 def _modules_loader(r: Registry):
-    from catalyst.contrib import modules as m
+    from catalyst.contrib.nn import modules as m
     r.add_from_module(m)
 
 
@@ -55,7 +55,7 @@ Module = MODULES.add
 
 
 def _optimizers_loader(r: Registry):
-    from catalyst.contrib import optimizers as m
+    from catalyst.contrib.nn import optimizers as m
     r.add_from_module(m)
 
 
@@ -65,7 +65,7 @@ Optimizer = OPTIMIZERS.add
 
 
 def _schedulers_loader(r: Registry):
-    from catalyst.contrib import schedulers as m
+    from catalyst.contrib.nn import schedulers as m
     r.add_from_module(m)
 
 

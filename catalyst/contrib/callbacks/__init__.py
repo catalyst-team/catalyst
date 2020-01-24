@@ -1,2 +1,0 @@
-
-from .knn import KNNMetricCallback

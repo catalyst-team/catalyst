@@ -3,4 +3,4 @@
 from .gan import GanDLRunner
 from .supervised import SupervisedDLRunner
 
-from catalyst.contrib.runner import *  # isort:skip
+from catalyst.contrib.dl.runner import *  # isort:skip

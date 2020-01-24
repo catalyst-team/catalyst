@@ -9,7 +9,7 @@ from tqdm import tqdm
 import torch
 from torchvision import transforms
 
-from catalyst.contrib.models.encoder import ResnetEncoder
+from catalyst.contrib.models.cv import ResnetEncoder
 from catalyst.data.reader import ImageReader
 from catalyst.dl import utils
 

@@ -1,7 +1,7 @@
 # flake8: noqa
 # pylint: disable=unused-import
 
-from catalyst.contrib.models.nlp.bert.distil_classify import BertClassifier
+from catalyst.contrib.models.nlp import BertClassifier
 from catalyst.dl import registry, SupervisedDLRunner as Runner
 from .experiment import Experiment
 

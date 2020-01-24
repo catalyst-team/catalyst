@@ -36,7 +36,7 @@ import torchvision
 import torchvision.transforms as transforms
 from catalyst.data import Augmentor
 from catalyst.dl import utils
-from catalyst.contrib.criterion import LovaszLossBinary, \
+from catalyst.contrib.nn.criterion import LovaszLossBinary, \
     LovaszLossMultiLabel, \
     LovaszLossMultiClass
 
@@ -95,7 +95,7 @@ loaders = get_loaders(data_transform)
 
 # In[ ]:
 
-from catalyst.contrib.models.segmentation import Unet
+from catalyst.contrib.models.cv import Unet
 
 # # Train
 
