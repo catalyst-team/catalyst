@@ -37,14 +37,14 @@ class TemporalAttentionPooling(nn.Module):
         "sigmoid": nn.Sigmoid()
     }
 
-    def __init__(self, features_in, activation=None, kernel_size=1, **params):
+    def __init__(self, in_features, activation=None, kernel_size=1, **params):
         super().__init__()
-        self.features_in = features_in
+        self.in_features = in_features
         activation = activation or "softmax"
 
         self.attention_pooling = nn.Sequential(
             nn.Conv1d(
-                in_channels=features_in,
+                in_channels=in_features,
                 out_channels=1,
                 kernel_size=kernel_size,
                 **params
@@ -69,10 +69,10 @@ class TemporalAttentionPooling(nn.Module):
 
 
 class TemporalConcatPooling(nn.Module):
-    def __init__(self, features_in, history_len=1):
+    def __init__(self, in_features, history_len=1):
         super().__init__()
-        self.features_in = features_in
-        self.features_out = features_in * history_len
+        self.in_features = in_features
+        self.out_features = in_features * history_len
 
     def forward(self, x: torch.Tensor, mask: torch.Tensor = None):
         """
@@ -94,7 +94,7 @@ class TemporalDropLastWrapper(nn.Module):
         return x_out
 
 
-def get_pooling(key, features_in, **params):
+def get_pooling(key, in_features, **params):
     key_ = key.split("_", 1)[0]
 
     if key_ == "last":
@@ -105,7 +105,7 @@ def get_pooling(key, features_in, **params):
         layer = TemporalMaxPooling()
     elif key_ in ["softmax", "tanh", "sigmoid"]:
         layer = TemporalAttentionPooling(
-            features_in=features_in, activation=key_, **params)
+            in_features=in_features, activation=key_, **params)
     else:
         raise NotImplementedError()
 
@@ -125,20 +125,20 @@ class LamaPooling(nn.Module):
         "tanh", "tanh_droplast",
     ]
 
-    def __init__(self, features_in, groups=None):
+    def __init__(self, in_features, groups=None):
         super().__init__()
-        self.features_in = features_in
+        self.in_features = in_features
         self.groups = groups \
             or ["last", "avg_droplast", "max_droplast", "softmax_droplast"]
-        self.features_out = features_in * len(self.groups)
+        self.out_features = in_features * len(self.groups)
 
         groups = {}
         for key in self.groups:
             if isinstance(key, str):
-                groups[key] = get_pooling(key, self.features_in)
+                groups[key] = get_pooling(key, self.in_features)
             elif isinstance(key, dict):
                 key_ = key.pop("key")
-                groups[key_] = get_pooling(key_, features_in, **key)
+                groups[key_] = get_pooling(key_, in_features, **key)
             else:
                 raise NotImplementedError()
 

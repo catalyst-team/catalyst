@@ -21,7 +21,7 @@ class StateNet(nn.Module):
         and outputs some representation tensor R
         of shape [bs; representation_size]
 
-        input_T [bs; history_len; features_in]
+        input_T [bs; history_len; in_features]
 
         -> observation_net (aka observation_encoder) ->
 
@@ -88,8 +88,8 @@ class StateNet(nn.Module):
         assert main_net_params is not None
         # @TODO: refactor, too complicated; fast&furious development
 
-        main_net_features_in = 0
-        observation_net_features_out = 0
+        main_net_in_features = 0
+        observation_net_out_features = 0
 
         # observation net
         if observation_net_params is not None:
@@ -98,25 +98,25 @@ class StateNet(nn.Module):
             if key_value_flag:
                 observation_net = collections.OrderedDict()
                 for key in observation_net_params:
-                    net_, features_out_ = \
+                    net_, out_features_ = \
                         utils.get_observation_net(
                             state_shape[key],
                             **observation_net_params[key]
                         )
                     observation_net[key] = net_
-                    observation_net_features_out += features_out_
+                    observation_net_out_features += out_features_
                 observation_net = nn.ModuleDict(observation_net)
             else:
-                observation_net, observation_net_features_out = \
+                observation_net, observation_net_out_features = \
                     utils.get_observation_net(
                         state_shape,
                         **observation_net_params
                     )
-            main_net_features_in += observation_net_features_out
+            main_net_in_features += observation_net_out_features
         else:
-            observation_net, observation_net_features_out = \
+            observation_net, observation_net_out_features = \
                 utils.get_observation_net(state_shape)
-            main_net_features_in += observation_net_features_out
+            main_net_in_features += observation_net_out_features
 
         # aggregation net
         if aggregation_net_params is not None:
@@ -125,20 +125,20 @@ class StateNet(nn.Module):
 
             if aggregation_type == "concat":
                 aggregation_net = TemporalConcatPooling(
-                    observation_net_features_out, **aggregation_net_params)
+                    observation_net_out_features, **aggregation_net_params)
             elif aggregation_type == "lama":
                 aggregation_net = LamaPooling(
-                    observation_net_features_out,
+                    observation_net_out_features,
                     **aggregation_net_params)
             else:
                 raise NotImplementedError()
 
-            main_net_features_in = aggregation_net.features_out
+            main_net_in_features = aggregation_net.out_features
         else:
             aggregation_net = None
 
         # main net
-        main_net_params["features_in"] = main_net_features_in
+        main_net_params["in_features"] = main_net_in_features
         main_net = get_linear_net(**main_net_params)
 
         net = cls(
@@ -208,8 +208,8 @@ class StateActionNet(nn.Module):
         assert main_net_params is not None
         # @TODO: refactor, too complicated; fast&furious development
 
-        main_net_features_in = 0
-        observation_net_features_out = 0
+        main_net_in_features = 0
+        observation_net_out_features = 0
 
         # observation net
         if observation_net_params is not None:
@@ -218,24 +218,24 @@ class StateActionNet(nn.Module):
             if key_value_flag:
                 observation_net = collections.OrderedDict()
                 for key in observation_net_params:
-                    net_, features_out_ = \
+                    net_, out_features_ = \
                         utils.get_observation_net(
                             state_shape[key],
                             **observation_net_params[key]
                         )
                     observation_net[key] = net_
-                    observation_net_features_out += features_out_
+                    observation_net_out_features += out_features_
                 observation_net = nn.ModuleDict(observation_net)
             else:
-                observation_net, observation_net_features_out = \
+                observation_net, observation_net_out_features = \
                     utils.get_observation_net(
                         state_shape,
                         **observation_net_params
                     )
         else:
-            observation_net, observation_net_features_out = \
+            observation_net, observation_net_out_features = \
                 utils.get_observation_net(state_shape)
-        main_net_features_in += observation_net_features_out
+        main_net_in_features += observation_net_out_features
 
         # aggregation net
         if aggregation_net_params is not None:
@@ -244,15 +244,15 @@ class StateActionNet(nn.Module):
 
             if aggregation_type == "concat":
                 aggregation_net = TemporalConcatPooling(
-                    observation_net_features_out, **aggregation_net_params)
+                    observation_net_out_features, **aggregation_net_params)
             elif aggregation_type == "lama":
                 aggregation_net = LamaPooling(
-                    observation_net_features_out,
+                    observation_net_out_features,
                     **aggregation_net_params)
             else:
                 raise NotImplementedError()
 
-            main_net_features_in = aggregation_net.features_out
+            main_net_in_features = aggregation_net.out_features
         else:
             aggregation_net = None
 
@@ -260,15 +260,15 @@ class StateActionNet(nn.Module):
         if action_net_params is not None:
             # @TODO: hacky solution for code reuse
             action_shape = (1, ) + action_shape
-            action_net, action_net_features_out = \
+            action_net, action_net_out_features = \
                 utils.get_observation_net(action_shape, **action_net_params)
         else:
-            action_net, action_net_features_out = \
+            action_net, action_net_out_features = \
                 utils.get_observation_net(action_shape)
-        main_net_features_in += action_net_features_out
+        main_net_in_features += action_net_out_features
 
         # main net
-        main_net_params["features_in"] = main_net_features_in
+        main_net_params["in_features"] = main_net_in_features
         main_net = get_linear_net(**main_net_params)
 
         net = cls(

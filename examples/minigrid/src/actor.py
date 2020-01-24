@@ -68,9 +68,9 @@ class ConvActor(ActorSpec):
         # @TODO: any better solution?
         action_space = env_spec.action_space
         if isinstance(action_space, Box):
-            policy_head_params["features_out"] = action_space.shape[0]
+            policy_head_params["out_features"] = action_space.shape[0]
         elif isinstance(action_space, Discrete):
-            policy_head_params["features_out"] = action_space.n
+            policy_head_params["out_features"] = action_space.n
         else:
             raise NotImplementedError()
 

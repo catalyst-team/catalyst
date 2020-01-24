@@ -28,18 +28,18 @@ class MobileNetV2Encoder(nn.Module):
             pooling_kwargs = pooling_kwargs or {}
             pooling_layer_fn = MODULES.get(pooling)
             pooling_layer = pooling_layer_fn(
-                features_in=self.last_channel, **pooling_kwargs) \
+                in_features=self.last_channel, **pooling_kwargs) \
                 if "attn" in pooling.lower() \
                 else pooling_layer_fn(**pooling_kwargs)
             self.encoder.append(pooling_layer)
 
-            features_out = pooling_layer.features_out(
-                features_in=net.output_channel
+            out_features = pooling_layer.out_features(
+                in_features=net.output_channel
             )
         else:
-            features_out = net.output_channel
+            out_features = net.output_channel
 
-        self.features_out = features_out
+        self.out_features = out_features
         # make it torch.Sequential
         self.encoder = nn.Sequential(*self.encoder)
 

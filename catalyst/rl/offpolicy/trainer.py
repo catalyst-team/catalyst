@@ -64,10 +64,10 @@ class OffpolicyTrainer(TrainerSpec):
         self.last_epoch_transitions = 0
 
         self.replay_buffer = utils.OffpolicyReplayBuffer(
-            observation_space=self.environment_spec.observation_space,
-            action_space=self.environment_spec.action_space,
+            observation_space=self.env_spec.observation_space,
+            action_space=self.env_spec.action_space,
             capacity=replay_buffer_size,
-            history_len=self.environment_spec.history_len,
+            history_len=self.env_spec.history_len,
             n_step=self.algorithm.n_step,
             gamma=self.algorithm.gamma,
             mode=replay_buffer_mode,
@@ -104,7 +104,7 @@ class OffpolicyTrainer(TrainerSpec):
     def _update_target_weights(self, update_step) -> Dict:
         output = {}
 
-        if not self.environment_spec.discrete_actions:
+        if not self.env_spec.discrete_actions:
             if update_step % self.actor_update_period == 0:
                 self.algorithm.target_actor_update()
                 self.actor_updates += 1

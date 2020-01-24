@@ -57,22 +57,22 @@ class ResnetEncoder(nn.Module):
             pooling_kwargs = pooling_kwargs or {}
             pooling_layer_fn = MODULES.get(pooling)
             pooling_layer = pooling_layer_fn(
-                features_in=resnet.fc.features_in, **pooling_kwargs) \
+                in_features=resnet.fc.in_features, **pooling_kwargs) \
                 if "attn" in pooling.lower() \
                 else pooling_layer_fn(**pooling_kwargs)
             modules += [pooling_layer]
 
-            if hasattr(pooling_layer, "features_out"):
-                features_out = pooling_layer.features_out(
-                    features_in=resnet.fc.features_in
+            if hasattr(pooling_layer, "out_features"):
+                out_features = pooling_layer.out_features(
+                    in_features=resnet.fc.in_features
                 )
             else:
-                features_out = None
+                out_features = None
         else:
-            features_out = resnet.fc.features_in
+            out_features = resnet.fc.in_features
 
         modules += [Flatten()]
-        self.features_out = features_out
+        self.out_features = out_features
 
         self.encoder = nn.Sequential(*modules)
 

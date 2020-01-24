@@ -44,7 +44,7 @@ class ConvCritic(CriticSpec):
 
     @property
     def num_outputs(self) -> int:
-        return self.head_net.features_out
+        return self.head_net.out_features
 
     @property
     def num_atoms(self) -> int:
@@ -115,6 +115,6 @@ class ConvQCritic(ConvCritic):
     ):
         action_space = env_spec.action_space
         assert isinstance(action_space, Discrete)
-        value_head_params["features_out"] = action_space.n
+        value_head_params["out_features"] = action_space.n
         net = super().get_from_params(value_head_params, env_spec)
         return net

@@ -20,7 +20,7 @@ class StateCritic(CriticSpec):
 
     @property
     def num_outputs(self) -> int:
-        return self.head_net.features_out
+        return self.head_net.out_features
 
     @property
     def num_atoms(self) -> int:
@@ -85,7 +85,7 @@ class ActionCritic(StateCritic):
         # @TODO: any better solution?
         action_space = env_spec.action_space
         assert isinstance(action_space, spaces.Discrete)
-        value_head_params["features_out"] = action_space.n
+        value_head_params["out_features"] = action_space.n
         net = super().get_from_params(
             state_net_params=state_net_params,
             value_head_params=value_head_params,
@@ -111,7 +111,7 @@ class StateActionCritic(CriticSpec):
 
     @property
     def num_outputs(self) -> int:
-        return self.head_net.features_out
+        return self.head_net.out_features
 
     @property
     def num_atoms(self) -> int:
@@ -157,7 +157,7 @@ class StateActionCritic(CriticSpec):
             **state_action_net_params
         )
 
-        value_head_params["features_out"] = 1
+        value_head_params["out_features"] = 1
         head_net = ValueHead(**value_head_params)
 
         net = cls(state_action_net=state_action_net, head_net=head_net)
@@ -165,4 +165,4 @@ class StateActionCritic(CriticSpec):
         return net
 
 
-__all__ = ["StateCritic", "ActionCritic", "StateActionCritic"]
+__all__ = ["CriticSpec", "StateCritic", "ActionCritic", "StateActionCritic"]

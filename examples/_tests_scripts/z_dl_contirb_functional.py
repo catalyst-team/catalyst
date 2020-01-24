@@ -5,7 +5,7 @@
 from catalyst.contrib.models import get_convolution_net, get_linear_net
 
 net = get_linear_net(
-    features_in=32,
+    in_features=32,
     features=[128, 64, 64],
     use_bias=[True, False, False],
     normalization=[None, "BatchNorm1d", "LayerNorm"],

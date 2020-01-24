@@ -142,4 +142,10 @@ class RealNVPPolicy(nn.Module):
             return action
 
 
-__all__ = ["CategoricalPolicy", "SquashingGaussPolicy", "RealNVPPolicy"]
+__all__ = [
+    "CategoricalPolicy",
+    "BernoulliPolicy",
+    "DiagonalGaussPolicy",
+    "SquashingGaussPolicy",
+    "RealNVPPolicy"
+]

@@ -91,8 +91,8 @@ class OnpolicyTrainer(TrainerSpec):
 
         rollout_spec = self.algorithm.get_rollout_spec()
         self.replay_buffer = utils.OnpolicyRolloutBuffer(
-            state_space=self.environment_spec.state_space,
-            action_space=self.environment_spec.action_space,
+            state_space=self.env_spec.state_space,
+            action_space=self.env_spec.action_space,
             capacity=self.max_num_transitions,
             **rollout_spec
         )
@@ -134,7 +134,7 @@ class OnpolicyTrainer(TrainerSpec):
 
             observations, actions, rewards, dones = trajectory
             states = _get_states_from_observations(
-                observations, self.environment_spec.history_len
+                observations, self.env_spec.history_len
             )
             rollout = self._get_rollout_in_batches(
                 states, actions, rewards, dones

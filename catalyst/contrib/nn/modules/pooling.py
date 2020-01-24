@@ -14,8 +14,8 @@ class GlobalAvgPool2d(nn.Module):
         return F.avg_pool2d(input=x, kernel_size=(h, w))
 
     @staticmethod
-    def features_out(features_in):
-        return features_in
+    def out_features(in_features):
+        return in_features
 
 
 class GlobalMaxPool2d(nn.Module):
@@ -27,8 +27,8 @@ class GlobalMaxPool2d(nn.Module):
         return F.max_pool2d(input=x, kernel_size=(h, w))
 
     @staticmethod
-    def features_out(features_in):
-        return features_in
+    def out_features(in_features):
+        return in_features
 
 
 class GlobalConcatPool2d(nn.Module):
@@ -41,18 +41,18 @@ class GlobalConcatPool2d(nn.Module):
         return torch.cat([self.avg(x), self.max(x)], 1)
 
     @staticmethod
-    def features_out(features_in):
-        return features_in * 2
+    def out_features(in_features):
+        return in_features * 2
 
 
 class GlobalAttnPool2d(nn.Module):
-    def __init__(self, features_in, activation_fn="Sigmoid"):
+    def __init__(self, in_features, activation_fn="Sigmoid"):
         super().__init__()
 
         activation_fn = MODULES.get_if_str(activation_fn)
         self.attn = nn.Sequential(
             nn.Conv2d(
-                features_in, 1, kernel_size=1, stride=1, padding=0, bias=False
+                in_features, 1, kernel_size=1, stride=1, padding=0, bias=False
             ), activation_fn()
         )
 
@@ -63,48 +63,48 @@ class GlobalAttnPool2d(nn.Module):
         return x
 
     @staticmethod
-    def features_out(features_in):
-        return features_in
+    def out_features(in_features):
+        return in_features
 
 
 class GlobalAvgAttnPool2d(nn.Module):
-    def __init__(self, features_in, activation_fn="Sigmoid"):
+    def __init__(self, in_features, activation_fn="Sigmoid"):
         super().__init__()
         self.avg = GlobalAvgPool2d()
-        self.attn = GlobalAttnPool2d(features_in, activation_fn)
+        self.attn = GlobalAttnPool2d(in_features, activation_fn)
 
     def forward(self, x):
         return torch.cat([self.avg(x), self.attn(x)], 1)
 
     @staticmethod
-    def features_out(features_in):
-        return features_in * 2
+    def out_features(in_features):
+        return in_features * 2
 
 
 class GlobalMaxAttnPool2d(nn.Module):
-    def __init__(self, features_in, activation_fn="Sigmoid"):
+    def __init__(self, in_features, activation_fn="Sigmoid"):
         super().__init__()
         self.max = GlobalMaxPool2d()
-        self.attn = GlobalAttnPool2d(features_in, activation_fn)
+        self.attn = GlobalAttnPool2d(in_features, activation_fn)
 
     def forward(self, x):
         return torch.cat([self.max(x), self.attn(x)], 1)
 
     @staticmethod
-    def features_out(features_in):
-        return features_in * 2
+    def out_features(in_features):
+        return in_features * 2
 
 
 class GlobalConcatAttnPool2d(nn.Module):
-    def __init__(self, features_in, activation_fn="Sigmoid"):
+    def __init__(self, in_features, activation_fn="Sigmoid"):
         super().__init__()
         self.avg = GlobalAvgPool2d()
         self.max = GlobalMaxPool2d()
-        self.attn = GlobalAttnPool2d(features_in, activation_fn)
+        self.attn = GlobalAttnPool2d(in_features, activation_fn)
 
     def forward(self, x):
         return torch.cat([self.avg(x), self.max(x), self.attn(x)], 1)
 
     @staticmethod
-    def features_out(features_in):
-        return features_in * 3
+    def out_features(in_features):
+        return in_features * 3

@@ -6,23 +6,23 @@ import torch.nn.functional as F
 
 
 class NoisyLinear(nn.Linear):
-    def __init__(self, features_in, features_out, sigma_init=0.017, bias=True):
-        super().__init__(features_in, features_out, bias=bias)
+    def __init__(self, in_features, out_features, sigma_init=0.017, bias=True):
+        super().__init__(in_features, out_features, bias=bias)
         self.sigma_weight = nn.Parameter(
-            torch.Tensor(features_out, features_in).fill_(sigma_init)
+            torch.Tensor(out_features, in_features).fill_(sigma_init)
         )
         self.register_buffer(
-            "epsilon_weight", torch.zeros(features_out, features_in)
+            "epsilon_weight", torch.zeros(out_features, in_features)
         )
         if bias:
             self.sigma_bias = nn.Parameter(
-                torch.Tensor(features_out).fill_(sigma_init)
+                torch.Tensor(out_features).fill_(sigma_init)
             )
-            self.register_buffer("epsilon_bias", torch.zeros(features_out))
+            self.register_buffer("epsilon_bias", torch.zeros(out_features))
         self.reset_parameters()
 
     def reset_parameters(self):
-        std = math.sqrt(3 / self.features_in)
+        std = math.sqrt(3 / self.in_features)
         nn.init.uniform(self.weight, -std, std)
         nn.init.uniform(self.bias, -std, std)
 
@@ -44,17 +44,17 @@ class NoisyFactorizedLinear(nn.Linear):
     N.B. torch.Linear already initializes weight and bias to
     """
 
-    def __init__(self, features_in, features_out, sigma_zero=0.4, bias=True):
-        super().__init__(features_in, features_out, bias=bias)
-        sigma_init = sigma_zero / math.sqrt(features_in)
+    def __init__(self, in_features, out_features, sigma_zero=0.4, bias=True):
+        super().__init__(in_features, out_features, bias=bias)
+        sigma_init = sigma_zero / math.sqrt(in_features)
         self.sigma_weight = nn.Parameter(
-            torch.Tensor(features_out, features_in).fill_(sigma_init)
+            torch.Tensor(out_features, in_features).fill_(sigma_init)
         )
-        self.register_buffer("epsilon_input", torch.zeros(1, features_in))
-        self.register_buffer("epsilon_output", torch.zeros(features_out, 1))
+        self.register_buffer("epsilon_input", torch.zeros(1, in_features))
+        self.register_buffer("epsilon_output", torch.zeros(out_features, 1))
         if bias:
             self.sigma_bias = nn.Parameter(
-                torch.Tensor(features_out).fill_(sigma_init)
+                torch.Tensor(out_features).fill_(sigma_init)
             )
 
     def forward(self, input):

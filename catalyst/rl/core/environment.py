@@ -32,7 +32,6 @@ class EnvironmentSpec(ABC):
         pass
 
     @property
-    @abstractmethod
     def reward_space(self) -> Space:
         return Space(shape=(1,), dtype=np.float32)
 
