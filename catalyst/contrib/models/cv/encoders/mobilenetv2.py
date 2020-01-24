@@ -2,7 +2,7 @@ import math
 
 import torch.nn as nn
 
-from catalyst.contrib.models.cv import MobileNetV2
+from ._mobilenetv2 import MobileNetV2
 from catalyst.contrib.registry import MODULES
 
 
@@ -28,18 +28,18 @@ class MobileNetV2Encoder(nn.Module):
             pooling_kwargs = pooling_kwargs or {}
             pooling_layer_fn = MODULES.get(pooling)
             pooling_layer = pooling_layer_fn(
-                in_features=self.last_channel, **pooling_kwargs) \
+                features_in=self.last_channel, **pooling_kwargs) \
                 if "attn" in pooling.lower() \
                 else pooling_layer_fn(**pooling_kwargs)
             self.encoder.append(pooling_layer)
 
-            out_features = pooling_layer.out_features(
-                in_features=net.output_channel
+            features_out = pooling_layer.features_out(
+                features_in=net.output_channel
             )
         else:
-            out_features = net.output_channel
+            features_out = net.output_channel
 
-        self.out_features = out_features
+        self.features_out = features_out
         # make it torch.Sequential
         self.encoder = nn.Sequential(*self.encoder)
 

@@ -13,18 +13,18 @@ from .policy import (
 
 class ValueHead(nn.Module):
     @staticmethod
-    def _build_head(in_features, out_features, num_atoms, bias):
+    def _build_head(features_in, features_out, num_atoms, bias):
         head = nn.Linear(
-            in_features=in_features,
-            out_features=out_features * num_atoms,
+            features_in=features_in,
+            features_out=features_out * num_atoms,
             bias=bias
         )
         return head
 
     def __init__(
         self,
-        in_features: int,
-        out_features: int,
+        features_in: int,
+        features_out: int,
         bias: bool = True,
         num_atoms: int = 1,
         use_state_value_head: bool = False,
@@ -35,8 +35,8 @@ class ValueHead(nn.Module):
     ):
         super().__init__()
 
-        self.in_features = in_features
-        self.out_features = out_features
+        self.features_in = features_in
+        self.features_out = features_out
         self.bias = bias
         self.num_atoms = num_atoms
         self.use_state_value_head = use_state_value_head
@@ -59,15 +59,15 @@ class ValueHead(nn.Module):
             raise NotImplementedError()
 
         value_heads = [
-            self._build_head(in_features, out_features, num_atoms, bias)
+            self._build_head(features_in, features_out, num_atoms, bias)
             for _ in range(num_heads)
         ]
         self.value_heads = nn.ModuleList(value_heads)
 
         if self.use_state_value_head:
-            assert self.out_features > 1, "Not implemented behaviour"
+            assert self.features_out > 1, "Not implemented behaviour"
             state_value_heads = [
-                self._build_head(in_features, 1, num_atoms, bias)
+                self._build_head(features_in, 1, num_atoms, bias)
                 for _ in range(num_heads)
             ]
             self.state_value_heads = nn.ModuleList(state_value_heads)
@@ -77,7 +77,7 @@ class ValueHead(nn.Module):
     def forward(self, state: torch.Tensor):
         x: List[torch.Tensor] = []
         for net in self.value_heads:
-            x.append(net(state).view(-1, self.out_features, self.num_atoms))
+            x.append(net(state).view(-1, self.features_out, self.num_atoms))
         # batch_size(0) x num_heads(1) x num_outputs(2) x num_atoms(3)
         x = torch.stack(x, dim=1)
 
@@ -98,8 +98,8 @@ class ValueHead(nn.Module):
 class PolicyHead(nn.Module):
     def __init__(
         self,
-        in_features: int,
-        out_features: int,
+        features_in: int,
+        features_out: int,
         policy_type: str = None,
         out_activation: nn.Module = None
     ):
@@ -118,38 +118,38 @@ class PolicyHead(nn.Module):
 
         if policy_type == "categorical":
             assert out_activation is None
-            head_size = out_features
+            head_size = features_out
             policy_net = CategoricalPolicy()
         elif policy_type == "bernoulli":
             assert out_activation is None
-            head_size = out_features
+            head_size = features_out
             policy_net = BernoulliPolicy()
         elif policy_type == "diagonal-gauss":
-            head_size = out_features * 2
+            head_size = features_out * 2
             policy_net = DiagonalGaussPolicy()
         elif policy_type == "squashing-gauss":
             out_activation = None
-            head_size = out_features * 2
+            head_size = features_out * 2
             policy_net = SquashingGaussPolicy(squashing_fn)
         elif policy_type == "real-nvp":
             out_activation = None
-            head_size = out_features * 2
+            head_size = features_out * 2
             policy_net = RealNVPPolicy(
-                action_size=out_features,
+                action_size=features_out,
                 layer_fn=layer_fn,
                 activation_fn=activation_fn,
                 squashing_fn=squashing_fn,
                 bias=bias
             )
         else:
-            head_size = out_features
+            head_size = features_out
             policy_net = None
             policy_type = "logits"
 
         self.policy_type = policy_type
 
         head_net = SequentialNet(
-            hiddens=[in_features, head_size],
+            hiddens=[features_in, head_size],
             layer_fn={"module": layer_fn, "bias": True},
             activation_fn=out_activation,
             norm_fn=None,

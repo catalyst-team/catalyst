@@ -9,8 +9,9 @@
 
 from .state import State
 from .callback import (
-    Callback, CallbackOrder, LoggerCallback, MetricCallback,
-    MultiMetricCallback
+    Callback, CallbackOrder,
+    LoggerCallback,
+    MetricCallback, MultiMetricCallback,
 )
 from .callbacks import *
 from .experiment import Experiment

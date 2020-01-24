@@ -55,7 +55,7 @@ def process_bert_output(
     # @TODO: make this functional
     pooling = LamaPooling(
         groups=pooling_groups,
-        in_features=hidden_size
+        features_in=hidden_size
     ) if pooling_groups is not None else None
 
     def _process_features(features):

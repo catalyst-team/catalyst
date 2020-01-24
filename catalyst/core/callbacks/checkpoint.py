@@ -5,7 +5,8 @@ from pathlib import Path
 
 import safitty
 
-from catalyst.core import Callback, CallbackOrder, State, utils
+from catalyst import utils
+from catalyst.core import Callback, CallbackOrder, State
 
 
 class BaseCheckpointCallback(Callback):

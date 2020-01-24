@@ -62,7 +62,7 @@ def get_convolution_net(
 
 
 def get_linear_net(
-    in_features: int,
+    features_in: int,
     history_len: int = 1,
     features: List = None,
     use_bias: Union[bool, List] = False,
@@ -87,7 +87,7 @@ def get_linear_net(
     else:
         dropout_fn = None
 
-    features.insert(0, history_len * in_features)
+    features.insert(0, history_len * features_in)
     net = SequentialNet(
         hiddens=features,
         layer_fn=layer_fn,

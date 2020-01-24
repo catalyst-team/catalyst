@@ -46,10 +46,10 @@ class Actor(ActorSpec):
         action_space = env_spec.action_space
         if isinstance(action_space, spaces.Box):
             # continuous control
-            policy_head_params["out_features"] = action_space.shape[0]
+            policy_head_params["features_out"] = action_space.shape[0]
         elif isinstance(action_space, spaces.Discrete):
             # discrete control
-            policy_head_params["out_features"] = action_space.n
+            policy_head_params["features_out"] = action_space.n
         else:
             raise NotImplementedError()
 

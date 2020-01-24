@@ -125,12 +125,12 @@ class LamaPooling(nn.Module):
         "tanh", "tanh_droplast",
     ]
 
-    def __init__(self, in_features, groups=None):
+    def __init__(self, features_in, groups=None):
         super().__init__()
-        self.features_in = in_features
+        self.features_in = features_in
         self.groups = groups \
             or ["last", "avg_droplast", "max_droplast", "softmax_droplast"]
-        self.out_features = in_features * len(self.groups)
+        self.features_out = features_in * len(self.groups)
 
         groups = {}
         for key in self.groups:
@@ -138,7 +138,7 @@ class LamaPooling(nn.Module):
                 groups[key] = get_pooling(key, self.features_in)
             elif isinstance(key, dict):
                 key_ = key.pop("key")
-                groups[key_] = get_pooling(key_, in_features, **key)
+                groups[key_] = get_pooling(key_, features_in, **key)
             else:
                 raise NotImplementedError()
 

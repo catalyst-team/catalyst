@@ -3,7 +3,8 @@ import safitty
 import torch
 
 from catalyst.contrib.nn.schedulers import BatchScheduler, OneCycleLRWithWarmup
-from catalyst.core import Callback, CallbackOrder, State, utils
+from catalyst import utils
+from catalyst.core import Callback, CallbackOrder, State
 
 
 class SchedulerCallback(Callback):

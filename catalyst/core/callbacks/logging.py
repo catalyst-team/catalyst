@@ -7,7 +7,9 @@ from urllib.request import Request, urlopen
 
 from tqdm import tqdm
 
-from catalyst.core import LoggerCallback, State, utils
+from catalyst import  utils
+from catalyst.core import LoggerCallback, State
+from . import formatters
 
 
 class VerboseLogger(LoggerCallback):
@@ -114,7 +116,7 @@ class ConsoleLogger(LoggerCallback):
         # jh = logging.FileHandler(f"{logdir}/metrics.json")
         # jh.setLevel(logging.INFO)
 
-        txt_formatter = utils.TxtMetricsFormatter()
+        txt_formatter = formatters.TxtMetricsFormatter()
         # json_formatter = JsonMetricsFormatter()
         ch.setFormatter(txt_formatter)
         # jh.setFormatter(json_formatter)

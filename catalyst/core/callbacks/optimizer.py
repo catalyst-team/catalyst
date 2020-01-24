@@ -5,7 +5,8 @@ import safitty
 
 import torch
 
-from catalyst.core import Callback, CallbackOrder, registry, State, utils
+from catalyst import utils
+from catalyst.core import Callback, CallbackOrder, registry, State
 from catalyst.utils.typing import Optimizer
 
 logger = logging.getLogger(__name__)

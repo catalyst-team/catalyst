@@ -19,7 +19,7 @@ def _get_observation_net(state_shape, **observation_net_params):
         # 0 - history len
         observation_size = reduce(
             lambda x, y: x * y, state_shape[1:])
-        observation_net_params["in_features"] = observation_size
+        observation_net_params["features_in"] = observation_size
         observation_net = get_linear_net(**observation_net_params)
     elif observation_net_type == "convolution":
         # 0 - history len
@@ -32,7 +32,7 @@ def _get_observation_net(state_shape, **observation_net_params):
     return observation_net
 
 
-def _get_observation_net_out_features(
+def _get_observation_net_features_out(
     observation_net,
     state_shape,
     **observation_net_params
@@ -61,13 +61,13 @@ def get_observation_net(state_shape, **observation_net_params):
     if len(observation_net_params) == 0:
         # no observation net required
         observation_net = nn.Sequential()
-        observation_net_out_features = 0
+        observation_net_features_out = 0
         if isinstance(state_shape, dict):
             for value in state_shape.values():
-                observation_net_out_features += reduce(
+                observation_net_features_out += reduce(
                     lambda x, y: x * y, state_shape)
         else:
-            observation_net_out_features = reduce(
+            observation_net_features_out = reduce(
                 lambda x, y: x * y, state_shape)
     elif len(observation_net_params) == 2:
         # _network_type and history_len
@@ -75,7 +75,7 @@ def get_observation_net(state_shape, **observation_net_params):
         assert network_type == "linear"
         history_len = observation_net_params["history_len"]
         observation_net = nn.Sequential()
-        observation_net_out_features = reduce(
+        observation_net_features_out = reduce(
             lambda x, y: x * y, state_shape[1:]) * history_len
     else:
         observation_net: nn.Module = \
@@ -83,13 +83,13 @@ def get_observation_net(state_shape, **observation_net_params):
                 state_shape,
                 **observation_net_params
             )
-        observation_net_out_features = \
-            _get_observation_net_out_features(
+        observation_net_features_out = \
+            _get_observation_net_features_out(
                 observation_net,
                 state_shape,
                 **observation_net_params
             )
-    return observation_net, observation_net_out_features
+    return observation_net, observation_net_features_out
 
 
 def process_state_ff(state: torch.Tensor, observation_net: nn.Module):

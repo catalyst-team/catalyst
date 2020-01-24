@@ -1,5 +1,5 @@
 # flake8: noqa
 
-from .classification import *
 from .encoders import *
+from .classification import *
 from .segmentation import *

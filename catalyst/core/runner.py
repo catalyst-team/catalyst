@@ -9,7 +9,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, DistributedSampler
 
-from catalyst.core import utils
+from catalyst import utils
 from catalyst.utils.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
