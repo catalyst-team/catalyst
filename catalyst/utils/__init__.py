@@ -40,7 +40,10 @@ from .plotly import plot_tensorboard_log
 from .scripts import import_module, dump_code, dump_python_files
 from .seed import Seeder, set_global_seed
 from .serialization import deserialize, serialize
-from .tensorboard import *
+from .tensorboard import (
+    EventReadingError, EventsFileReader,
+    SummaryItem, SummaryReader, SummaryWriter,
+)
 from .torch import (
     any2device, assert_fp16_available, ce_with_logits, detach,
     get_activation_fn, get_available_gpus, get_device, get_network_output,

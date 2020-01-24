@@ -5,11 +5,9 @@ import numpy as np
 import torch
 
 from catalyst.core import Runner
-from catalyst.rl import utils
-from .algorithm import AlgorithmSpec
-from .environment import EnvironmentSpec
-from .experiment import RLExperiment
-from .state import RLRunnerState
+from catalyst.rl2 import (
+    utils, AlgorithmSpec, EnvironmentSpec, RLExperiment, RLRunnerState
+)
 
 # RLRunner has only one stage (?) - endless training
 # each Epoch we recalculate training loader based on current Replay buffer

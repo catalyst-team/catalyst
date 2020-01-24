@@ -4,8 +4,8 @@ import argparse
 import os
 
 from catalyst import utils
-from catalyst.rl.offpolicy.trainer import Trainer as OffpolicyTrainer
-from catalyst.rl.onpolicy.trainer import Trainer as OnpolicyTrainer
+from catalyst.rl.offpolicy.trainer import OffpolicyTrainer as OffpolicyTrainer
+from catalyst.rl.onpolicy.trainer import OnpolicyTrainer as OnpolicyTrainer
 from catalyst.rl.registry import (
     DATABASES, ENVIRONMENTS, OFFPOLICY_ALGORITHMS, ONPOLICY_ALGORITHMS
 )
@@ -14,9 +14,8 @@ from catalyst.rl.scripts.misc import (
 )
 from catalyst.utils import (
     boolean_flag, dump_environment, parse_args_uargs, prepare_cudnn,
-    set_global_seed
+    set_global_seed, dump_code, import_module
 )
-from catalyst.utils.scripts import dump_code, import_module
 
 
 def build_args(parser):

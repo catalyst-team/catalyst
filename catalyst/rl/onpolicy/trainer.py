@@ -43,7 +43,7 @@ def _get_states_from_observations(observations: np.ndarray, history_len=1):
     return states
 
 
-class Trainer(TrainerSpec):
+class OnpolicyTrainer(TrainerSpec):
     def _init(
         self,
         num_mini_epochs: int = 1,

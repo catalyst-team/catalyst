@@ -39,7 +39,7 @@ def _db2buffer_loop(
             trajectory = None
 
 
-class Trainer(TrainerSpec):
+class OffpolicyTrainer(TrainerSpec):
     def _init(
         self,
         target_update_period: int = 1,

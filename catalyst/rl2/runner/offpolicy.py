@@ -1,6 +1,6 @@
 import time
 
-from catalyst.rl import RLRunner
+from catalyst.rl2 import RLRunner
 
 
 class OffpolicyRLRunner(RLRunner):

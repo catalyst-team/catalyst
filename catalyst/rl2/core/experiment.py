@@ -2,7 +2,7 @@ from typing import Union  # isort:skip
 from abc import abstractmethod
 
 from catalyst.core import Experiment
-from catalyst.rl import AlgorithmSpec, EnvironmentSpec
+from catalyst.rl2 import AlgorithmSpec, EnvironmentSpec
 
 
 class RLExperiment(Experiment):
