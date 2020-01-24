@@ -24,7 +24,7 @@ class UnetMetaSpec(nn.Module):
         self.bridge = bridge or (lambda x: x)
         self.decoder = decoder
         self.head = head or (lambda x: x)
-        
+
         if state_dict is not None:
             if isinstance(state_dict, (Path, str)):
                 state_dict = torch.load(str(state_dict))
