@@ -24,6 +24,9 @@ def _transforms_loader(r: Registry):
     try:
         import albumentations as m
         r.add_from_module(m)
+
+        from catalyst.contrib import transforms as t
+        r.add_from_module(t, prefix="catalsyt.")
     except ImportError as ex:
         logger.warning(
             "albumentations not available, to install albumentations, "

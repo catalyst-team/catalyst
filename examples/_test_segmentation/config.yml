@@ -1,0 +1,61 @@
+model_params:
+  model: smp.Unet
+  encoder_name: resnext50_32x4d
+  classes: 1
+
+runner_params:
+  input_key: image
+  input_target_key: mask
+
+args:
+  expdir: "_test_segmentation"
+  logdir: "./logs/_test_segmentation"
+  seed: &seed 42
+
+stages:
+
+  data_params:
+    batch_size: 8
+    num_workers: 0
+    image_path: ./_test_segmentation/data/segmentation_data/train
+    mask_path: ./_test_segmentation/data/segmentation_data/train_masks
+    valid_size: 0.2
+
+  state_params:
+    main_metric: &reduce_metric iou
+    minimize_metric: False
+
+  criterion_params:
+    criterion: DiceLoss
+
+  optimizer_params:
+    optimizer: Adam
+    layerwise_params:
+      "encoder*":
+        lr: 0.0005
+        weight_decay: 0.00003
+    lr: 0.001
+    weight_decay: 0.0003
+    no_bias_weight_decay: True
+
+  scheduler_params:
+    scheduler: MultiStepLR
+    milestones: [10]
+    gamma: 0.3
+
+  stage1:
+    state_params:
+      num_epochs: &num_epochs 10
+
+    callbacks_params:
+      dice:
+        callback: DiceCallback
+        input_key: mask
+      iou:
+        callback: IouCallback
+        input_key: mask
+      scheduler:
+        callback: SchedulerCallback
+        reduce_metric: *reduce_metric
+      saver:
+        callback: CheckpointCallback

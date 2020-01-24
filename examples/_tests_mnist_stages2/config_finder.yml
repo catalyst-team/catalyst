@@ -23,19 +23,19 @@ stages:
       image:
         transform: Compose
         transforms:
-          - transform: TensorToImage
+          - transform: catalsyt.TensorToImage
           - transform: Normalize
             mean: [0.1307]
             std: [0.3081]
-          - transform: ToTensor
+          - transform: catalsyt.ToTensor
     valid:
       transform: Compose
       transforms:
-        - transform: TensorToImage
+        - transform: catalsyt.TensorToImage
         - transform: Normalize
           mean: [0.1307]
           std: [0.3081]
-        - transform: ToTensor
+        - transform: catalsyt.ToTensor
 
   criterion_params:
       criterion: CrossEntropyLoss

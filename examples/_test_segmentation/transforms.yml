@@ -1,0 +1,37 @@
+shared:
+  image_size: &image_size 224
+  resize_size: &resize_size 336 # int(image_size * 1.5)
+
+stages:
+  transform_params:
+    _key_value: True
+
+    train:
+      transform: Compose
+      transforms:
+        - transform: catalsyt.TensorToImage
+        - transform: SmallestMaxSize
+          max_size: *resize_size
+          p: 1.0
+        - transform: RandomCrop
+          height: *image_size
+          width: *image_size
+          p: 1.0
+        - transform: RandomRotate90
+        - transform: Cutout
+        - transform: RandomBrightnessContrast
+          brightness_limit: 0.2
+          contrast_limit: 0.2
+          p: 0.3
+        - transform: GridDistortion
+          p: 0.3
+        - transform: HueSaturationValue
+          p: 0.3
+        - transform: Normalize
+        - transform: catalsyt.ToTensor
+    valid:
+      transform: Compose
+      transforms:
+        - transform: catalsyt.TensorToImage
+        - transform: Normalize
+        - transform: catalsyt.ToTensor

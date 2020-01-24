@@ -18,3 +18,8 @@ class ToTensor(ImageOnlyTransform):
 
     def apply(self, img, **params):
         return torch.from_numpy(img)
+
+__all__ = [
+    "TensorToImage",
+    "ToTensor"
+]

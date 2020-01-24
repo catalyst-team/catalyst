@@ -20,11 +20,11 @@ stages:
     train: &transform
       transform: Compose
       transforms:
-        - transform: TensorToImage
+        - transform: catalsyt.TensorToImage
         - transform: Normalize
           mean: [0.1307]
           std: [0.3081]
-        - transform: ToTensor
+        - transform: catalsyt.ToTensor
     valid: *transform
 
   state_params:
