@@ -1,4 +1,4 @@
-from ..tag2label import prepare_df_from_dirs
+from catalyst.data.scripts.tag2label import prepare_df_from_dirs
 
 
 def _setup_dataset_fs(tmp_path):
