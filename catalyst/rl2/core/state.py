@@ -1,5 +1,5 @@
 from catalyst.core import State
 
 
-class RLRunnerState(State):
+class RLState(State):
     pass

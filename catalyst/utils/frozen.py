@@ -3,7 +3,7 @@ class FrozenClass:
     Class which prohibit ``__setattr__`` on existing attributes
 
     Examples:
-        >>> class RunnerState(FrozenClass):
+        >>> class State(FrozenClass):
     """
     __isfrozen = False
 

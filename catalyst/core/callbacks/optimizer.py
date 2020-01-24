@@ -34,7 +34,7 @@ class OptimizerCallback(Callback):
             loss_key (str): key to get loss from ``state.loss``
             decouple_weight_decay (bool): If True - decouple weight decay
                 regularization.
-            save_model_grads (bool): If True - RunnerState.model_grads will
+            save_model_grads (bool): If True - State.model_grads will
                 contain gradients calculated on backward propagation on current
                 batch
         """

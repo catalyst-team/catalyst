@@ -147,7 +147,7 @@ class SupervisedDLRunner(DLRunner):
                 the ``main_metric`` should be minimized.
             verbose (bool): ff true, it displays the status of the training
                 to the console.
-            state_kwargs (dict): additional state params to ``RunnerState``
+            state_kwargs (dict): additional state params to ``State``
             checkpoint_data (dict): additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
             fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
@@ -224,7 +224,7 @@ class SupervisedDLRunner(DLRunner):
             callbacks (List[catalyst.dl.Callback]): list of inference callbacks
             verbose (bool): ff true, it displays the status of the inference
                 to the console.
-            state_kwargs (dict): additional state params to ``RunnerState``
+            state_kwargs (dict): additional state params to ``State``
             fp16 (Union[Dict, bool]): If not None, then sets inference to FP16.
                 See https://nvidia.github.io/apex/amp.html#properties
                 if fp16=True, params by default will be ``{"opt_level": "O1"}``
@@ -268,7 +268,7 @@ class SupervisedDLRunner(DLRunner):
             resume (str): path to checkpoint for model
             verbose (bool): ff true, it displays the status of the inference
                 to the console.
-            state_kwargs (dict): additional state params to ``RunnerState``
+            state_kwargs (dict): additional state params to ``State``
             fp16 (Union[Dict, bool]): If not None, then sets inference to FP16.
                 See https://nvidia.github.io/apex/amp.html#properties
                 if fp16=True, params by default will be ``{"opt_level": "O1"}``

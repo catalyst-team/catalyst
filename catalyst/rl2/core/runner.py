@@ -6,7 +6,7 @@ import torch
 
 from catalyst.core import Runner
 from catalyst.rl2 import (
-    AlgorithmSpec, EnvironmentSpec, RLExperiment, RLRunnerState, utils
+    AlgorithmSpec, EnvironmentSpec, RLExperiment, RLState, utils
 )
 
 # RLRunner has only one stage (?) - endless training
@@ -17,7 +17,7 @@ from catalyst.rl2 import (
 
 class RLRunner(Runner):
     experiment: RLExperiment
-    state: RLRunnerState
+    state: RLState
 
     def _fetch_rollouts(self):
         pass

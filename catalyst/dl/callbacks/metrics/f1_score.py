@@ -1,5 +1,5 @@
 from catalyst.dl.core import MetricCallback
-from catalyst.dl.utils import criterion
+from catalyst.utils import criterion
 
 
 class F1ScoreCallback(MetricCallback):

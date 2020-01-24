@@ -1,6 +1,6 @@
 import torch
 
-from catalyst.dl.meters.ppv_tpr_f1_meter import (
+from catalyst.utils.meters.ppv_tpr_f1_meter import (
     f1score, precision, PrecisionRecallF1ScoreMeter, recall
 )
 

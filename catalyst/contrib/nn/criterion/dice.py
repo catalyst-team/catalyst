@@ -2,7 +2,7 @@ from functools import partial
 
 import torch.nn as nn
 
-from catalyst.dl.utils import criterion
+from catalyst.utils import criterion
 
 
 class DiceLoss(nn.Module):

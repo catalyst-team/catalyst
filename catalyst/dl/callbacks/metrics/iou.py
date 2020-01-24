@@ -1,7 +1,7 @@
 from typing import List  # isort:skip
 
 from catalyst.dl.core import MetricCallback, MultiMetricCallback
-from catalyst.dl.utils import criterion
+from catalyst.utils import criterion
 
 
 class IouCallback(MetricCallback):

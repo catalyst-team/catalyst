@@ -56,7 +56,7 @@ class BaseDLExperiment(DLExperiment):
                 the ``main_metric`` should be minimized.
             verbose (bool): ff true, it displays the status of the training
                 to the console.
-            state_kwargs (dict): additional state params to ``RunnerState``
+            state_kwargs (dict): additional state params to ``State``
             checkpoint_data (dict): additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
             distributed_params (dict): dictionary with the parameters

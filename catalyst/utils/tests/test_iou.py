@@ -1,6 +1,6 @@
 import torch
 
-from catalyst.dl.utils import iou
+from catalyst.utils.criterion import iou
 
 
 def test_iou():
