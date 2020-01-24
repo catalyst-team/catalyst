@@ -3,8 +3,8 @@
 import logging
 import os
 
-from catalyst.utils import *
 from catalyst.core.utils import *
+from catalyst.utils import *
 # from .trace import *
 from .criterion import (
     accuracy, average_accuracy, dice, f1_score, iou, jaccard,

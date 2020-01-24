@@ -1,14 +1,14 @@
-from typing import (
-    Any, Callable, Mapping, Optional, Dict, Tuple, Union
-)  # isort:skip
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 import os
 from pathlib import Path
+from typing import (  # isort:skip
+    Any, Callable, Dict, Mapping, Optional, Tuple, Union
+)
 
 import torch
 from torch import nn
-from torch.utils.data import DistributedSampler, DataLoader
+from torch.utils.data import DataLoader, DistributedSampler
 
 from catalyst.core import utils
 from catalyst.utils.typing import (

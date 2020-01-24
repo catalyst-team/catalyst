@@ -11,13 +11,12 @@ from torch.utils.data import (  # noqa F401
 )
 
 from catalyst.data import Augmentor, AugmentorCompose
-from catalyst.dl import utils
+from catalyst.dl import Callback, DLExperiment, utils
 from catalyst.dl.callbacks import (
     CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
     PhaseWrapperCallback, RaiseExceptionCallback, SchedulerCallback,
     TensorboardLogger, VerboseLogger
 )
-from catalyst.dl import Callback, DLExperiment
 from catalyst.dl.registry import (
     CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS,
     TRANSFORMS

@@ -6,7 +6,7 @@ import shutil
 import wandb
 
 from catalyst.dl import utils
-from catalyst.dl.core import Experiment, DLRunner
+from catalyst.dl.core import DLRunner, Experiment
 from catalyst.dl.experiment import ConfigDLExperiment
 from catalyst.dl.runner.supervised import SupervisedDLRunner
 

@@ -7,7 +7,7 @@ from urllib.request import Request, urlopen
 
 from tqdm import tqdm
 
-from catalyst.core import utils, LoggerCallback, State
+from catalyst.core import LoggerCallback, State, utils
 
 
 class VerboseLogger(LoggerCallback):

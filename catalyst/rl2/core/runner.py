@@ -1,4 +1,4 @@
-from typing import Any, Dict, Mapping, List
+from typing import Any, Dict, List, Mapping
 
 import numpy as np
 
@@ -6,7 +6,7 @@ import torch
 
 from catalyst.core import Runner
 from catalyst.rl2 import (
-    utils, AlgorithmSpec, EnvironmentSpec, RLExperiment, RLRunnerState
+    AlgorithmSpec, EnvironmentSpec, RLExperiment, RLRunnerState, utils
 )
 
 # RLRunner has only one stage (?) - endless training

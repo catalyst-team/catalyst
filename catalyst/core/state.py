@@ -7,7 +7,7 @@ import numpy as np
 from catalyst.utils.frozen import FrozenClass
 from catalyst.utils.metric_manager import MetricManager, TimerManager
 from catalyst.utils.typing import (
-    Model, Criterion, Optimizer, Scheduler, Device,
+    Criterion, Device, Model, Optimizer, Scheduler
 )
 
 

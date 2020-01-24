@@ -4,7 +4,7 @@ from collections import OrderedDict
 from torch import nn
 from torch.utils.data import DataLoader
 
-from catalyst.dl import utils, Callback, DLExperiment
+from catalyst.dl import Callback, DLExperiment, utils
 from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
 
 

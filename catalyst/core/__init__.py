@@ -5,12 +5,11 @@
 # experiment
 # runner
 
-from .state import State
 from .callback import (
-    CallbackOrder, Callback, LoggerCallback,
-    MetricCallback, MultiMetricCallback
+    Callback, CallbackOrder, LoggerCallback, MetricCallback,
+    MultiMetricCallback
 )
 from .callbacks import *
 from .experiment import Experiment
 from .runner import Runner
-
+from .state import State

@@ -7,7 +7,7 @@ import safitty
 
 import torch
 
-from catalyst.dl import utils, DLExperiment
+from catalyst.dl import DLExperiment, utils
 from catalyst.utils.typing import Device
 
 

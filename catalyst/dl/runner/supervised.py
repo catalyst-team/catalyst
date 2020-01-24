@@ -7,9 +7,9 @@ import torch
 from torch.jit import ScriptModule
 from torch.utils.data import DataLoader
 
-from catalyst.dl import utils
 from catalyst.dl import (
-    DLRunner, SupervisedDLExperiment, Callback, CheckpointCallback, InferCallback
+    Callback, CheckpointCallback, DLRunner, InferCallback,
+    SupervisedDLExperiment, utils
 )
 from catalyst.utils.typing import (
     Criterion, Device, Model, Optimizer, Scheduler

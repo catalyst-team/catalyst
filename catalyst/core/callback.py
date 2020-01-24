@@ -1,5 +1,5 @@
-from typing import Callable, List
 from enum import IntFlag
+from typing import Callable, List
 
 from .state import State
 

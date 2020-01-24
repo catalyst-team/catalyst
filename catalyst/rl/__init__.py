@@ -1,17 +1,10 @@
 # flake8: noqa
 
-# core stuff
 from catalyst.core import *
-
-# base stuff
-from .core import *
-from .callbacks import *
-
-# RL stuff
 from .agent import *
 from .algorithm import *
+from .callbacks import *
+from .core import *
+from .db import *
 from .environment import *
 from .exploration import *
-
-# distributed stuff
-from .db import *

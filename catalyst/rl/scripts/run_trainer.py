@@ -13,8 +13,8 @@ from catalyst.rl.scripts.misc import (
     OFFPOLICY_ALGORITHMS_NAMES, ONPOLICY_ALGORITHMS_NAMES
 )
 from catalyst.utils import (
-    boolean_flag, dump_environment, parse_args_uargs, prepare_cudnn,
-    set_global_seed, dump_code, import_module
+    boolean_flag, dump_code, dump_environment, import_module, parse_args_uargs,
+    prepare_cudnn, set_global_seed
 )
 
 

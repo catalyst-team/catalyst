@@ -3,7 +3,7 @@ from datetime import datetime
 import json
 import logging
 
-from catalyst.core import utils, State
+from catalyst.core import State, utils
 
 
 class MetricsFormatter(ABC, logging.Formatter):

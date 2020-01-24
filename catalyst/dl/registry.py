@@ -5,8 +5,8 @@ from catalyst.contrib.registry import (
     Criterion, CRITERIONS, GRAD_CLIPPERS, Model, MODELS, Module, MODULES,
     Optimizer, OPTIMIZERS, Sampler, SAMPLERS, Scheduler, SCHEDULERS
 )
+from catalyst.core.registry import Callback, CALLBACKS
 from catalyst.utils.registry import Registry
-from catalyst.core.registry import CALLBACKS, Callback
 
 logger = logging.getLogger(__name__)
 

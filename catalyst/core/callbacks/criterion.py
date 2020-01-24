@@ -3,7 +3,7 @@ import logging
 
 import torch
 
-from catalyst.core import utils, Callback, CallbackOrder, State
+from catalyst.core import Callback, CallbackOrder, State, utils
 
 logger = logging.getLogger(__name__)
 

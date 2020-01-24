@@ -8,7 +8,7 @@ from skimage.color import label2rgb
 import torch
 import torch.nn.functional as F
 
-from catalyst.dl import utils, Callback, CallbackOrder, DLState
+from catalyst.dl import Callback, CallbackOrder, DLState, utils
 
 
 # @TODO: refactor

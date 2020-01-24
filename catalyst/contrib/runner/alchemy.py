@@ -2,7 +2,7 @@ from typing import Dict  # isort:skip
 
 from alchemy import Logger
 
-from catalyst.dl.core import Experiment, DLRunner
+from catalyst.dl.core import DLRunner, Experiment
 from catalyst.dl.runner.supervised import SupervisedDLRunner
 
 

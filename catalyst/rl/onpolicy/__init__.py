@@ -1,5 +1,4 @@
 # flake8: noqa
 
-from .trainer import OnpolicyTrainer
-
 from .algorithms import *
+from .trainer import OnpolicyTrainer

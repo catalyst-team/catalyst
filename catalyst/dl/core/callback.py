@@ -3,7 +3,7 @@ from collections import defaultdict
 
 import numpy as np
 
-from catalyst.core import CallbackOrder, Callback
+from catalyst.core import Callback, CallbackOrder
 from catalyst.utils import get_activation_fn
 from .state import DLState
 

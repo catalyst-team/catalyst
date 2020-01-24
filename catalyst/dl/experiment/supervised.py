@@ -1,11 +1,11 @@
 from collections import OrderedDict
 
+from catalyst.dl import Callback
 from catalyst.dl.callbacks import (
     CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
     RaiseExceptionCallback, SchedulerCallback, TensorboardLogger,
     VerboseLogger
 )
-from catalyst.dl import Callback
 from .base import BaseDLExperiment
 
 

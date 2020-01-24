@@ -2,12 +2,13 @@
 
 from .checkpoint import CheckpointCallback, IterationCheckpointCallback
 from .criterion import (
-    CriterionCallback, CriterionOutputOnlyCallback, CriterionAggregatorCallback
+    CriterionAggregatorCallback, CriterionCallback,
+    CriterionOutputOnlyCallback
 )
 from .logging import (
     ConsoleLogger, TelegramLogger, TensorboardLogger, VerboseLogger
 )
 from .optimizer import OptimizerCallback
 from .phase import PhaseManagerCallback
-from .scheduler import SchedulerCallback, LRUpdater
-from .wrappers import PhaseWrapperCallback, PhaseBatchWrapperCallback
+from .scheduler import LRUpdater, SchedulerCallback
+from .wrappers import PhaseBatchWrapperCallback, PhaseWrapperCallback
