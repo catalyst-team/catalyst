@@ -1,7 +1,7 @@
 # flake8: noqa
 
 from .actor import Actor, ActorSpec
-from .critic import ActionCritic, StateActionCritic, StateCritic, CriticSpec
+from .critic import ActionCritic, CriticSpec, StateActionCritic, StateCritic
 from .head import PolicyHead, ValueHead
 from .network import StateActionNet, StateNet
 from .policy import (
