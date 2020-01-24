@@ -1,13 +1,14 @@
+# flake8: noqa
 import numpy as np
 
 import torch
 import torch.nn as nn
 
 # TODO: add conv models
-# TODO: refactor the entire file
 
 
 class SimpleGenerator(nn.Module):
+    """Simple fully-connected generator"""
     def __init__(
         self,
         noise_dim=10,
@@ -15,6 +16,13 @@ class SimpleGenerator(nn.Module):
         image_resolution=(28, 28),
         channels=1
     ):
+        """
+
+        :param noise_dim:
+        :param hidden_dim:
+        :param image_resolution:
+        :param channels:
+        """
         super().__init__()
         self.noise_dim = noise_dim
         self.image_resolution = image_resolution
@@ -99,8 +107,6 @@ class SimpleCDiscriminator(nn.Module):
 
 
 __all__ = [
-    "SimpleGenerator",
-    "SimpleDiscriminator",
-    "SimpleCGenerator",
+    "SimpleGenerator", "SimpleDiscriminator", "SimpleCGenerator",
     "SimpleCDiscriminator"
 ]

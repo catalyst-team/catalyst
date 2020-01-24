@@ -1,7 +1,4 @@
-"""
-All custom callbacks
-"""
-
+# flake8: noqa
 import torch
 import torchvision.utils
 
@@ -138,6 +135,4 @@ class VisualizationCallback(Callback):
             self.visualize(state)
 
 
-__all__ = [
-    "VisualizationCallback"
-]
+__all__ = ["VisualizationCallback"]

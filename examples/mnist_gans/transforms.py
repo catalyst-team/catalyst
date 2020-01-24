@@ -1,9 +1,11 @@
+# flake8: noqa
 from typing import Tuple, Union
 
 import numpy as np
-import torch
+
 from albumentations.core.transforms_interface import ImageOnlyTransform
 from albumentations.pytorch import ToTensorV2
+import torch
 
 from catalyst.dl import registry
 
@@ -22,7 +24,6 @@ class AsImage(ImageOnlyTransform):
 
 
 class AdditionalValue:
-
     def __init__(self, output_key: str = None, **kwargs):
         self.output_key = output_key
 
@@ -35,15 +36,9 @@ class AdditionalValue:
     def _compute_output(self, dict_):
         raise NotImplementedError()
 
-    def add_targets(self, additional_targets):
-        pass  # compatibility with albumentations
-
 
 class AdditionalNoiseTensor(AdditionalValue):
-
-    def __init__(self,
-                 tensor_size: Tuple[int, ...],
-                 output_key: str = None):
+    def __init__(self, tensor_size: Tuple[int, ...], output_key: str = None):
         super().__init__(output_key)
         self.tensor_size = tensor_size
 
@@ -52,10 +47,7 @@ class AdditionalNoiseTensor(AdditionalValue):
 
 
 class AdditionalScalar(AdditionalValue):
-
-    def __init__(self,
-                 value: Union[int, float],
-                 output_key: str = None):
+    def __init__(self, value: Union[int, float], output_key: str = None):
         super().__init__(output_key)
         self.value = value
 
@@ -64,6 +56,9 @@ class AdditionalScalar(AdditionalValue):
 
 
 class OneHotTargetTransform:
+    """Adds one-hot encoded target to input dict
+    i.e. dict_[output_key] = one_hot_encode(dict_[input_key])
+    """
     def __init__(self, input_key: str, output_key: str, n_classes: int):
         self.input_key = input_key
         self.output_key = output_key
@@ -74,7 +69,7 @@ class OneHotTargetTransform:
         assert self.output_key not in dict_, \
             "Output key is supposed not to be present in dict"
 
-        target = np.zeros((self.n_classes,), dtype=np.int64)
+        target = np.zeros((self.n_classes, ), dtype=np.int64)
         target[class_id] = 1
         dict_[self.output_key] = target
 
