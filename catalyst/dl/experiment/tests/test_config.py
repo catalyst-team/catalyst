@@ -45,8 +45,9 @@ registry.MODELS.add(SomeModel)
 
 def test_defaults():
     """
-    Test on ConfigDLExperiment defaults. It's pretty similar to BaseDLExperiment's
-    test but the thing is that those two are very different classes and
+    Test on ConfigDLExperiment defaults.
+    It's pretty similar to BaseDLExperiment's test
+    but the thing is that those two are very different classes and
     inherit from different parent classes.
     Also very important to check which callbacks are added by default
     """

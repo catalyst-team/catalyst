@@ -1,4 +1,4 @@
-from typing import Any, Dict, Iterable, Mapping, Tuple, Union  # isort:skip
+from typing import Any, Dict, Iterable, Mapping, Tuple  # isort:skip
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 

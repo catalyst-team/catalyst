@@ -34,7 +34,7 @@ class EnvironmentSpec(ABC):
     @property
     @abstractmethod
     def reward_space(self) -> Space:
-        return gym.spaces.Space(shape=(1,), dtype=np.float32)
+        return Space(shape=(1,), dtype=np.float32)
 
     @property
     def discrete_actions(self) -> int:

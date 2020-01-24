@@ -4,8 +4,6 @@ from catalyst.rl2 import RLRunner
 
 
 class OffpolicyRLRunner(RLRunner):
-    pass
-
 
     def _fetch_initial_buffer(self):
         replay_buffer = self.state.replay_buffer

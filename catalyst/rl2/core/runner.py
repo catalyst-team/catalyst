@@ -44,7 +44,9 @@ class RLRunner(Runner):
         metrics: Dict = self.algorithm.train_on_batch(
             batch,
             actor_update=(self.state.step % self.state.actor_grad_period == 0),
-            critic_update=(self.state.step % self.state.critic_grad_period == 0),
+            critic_update=(
+                    self.state.step % self.state.critic_grad_period == 0
+            ),
         ) or {}
 
         metrics_ = self._update_target_weights(self.state.step) or {}

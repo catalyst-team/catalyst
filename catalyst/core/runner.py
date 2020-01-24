@@ -1,7 +1,9 @@
+from typing import (   # isort:skip
+    Any, Callable, Dict, Mapping, Optional, Tuple, Union  # isort:skip
+)   # isort:skip
+
 from abc import ABC, abstractmethod
 from collections import OrderedDict
-import os
-from pathlib import Path
 
 import torch
 from torch import nn
@@ -14,12 +16,6 @@ from catalyst.utils.typing import (
 from .callback import Callback, LoggerCallback
 from .experiment import Experiment
 from .state import State
-
-from typing import (  # isort:skip
-    Any, Callable, Dict, Mapping, Optional, Tuple, Union
-)
-
-
 
 
 class Runner(ABC):

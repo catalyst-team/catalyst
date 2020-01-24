@@ -1,4 +1,3 @@
-from typing import Union  # isort:skip
 from abc import abstractmethod
 
 from catalyst.core import Experiment

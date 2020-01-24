@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, Iterable, Callable  # isort:skip
+from typing import Dict, Tuple  # isort:skip
 import copy
 
 import torch

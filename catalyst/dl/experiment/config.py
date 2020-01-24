@@ -328,7 +328,7 @@ class ConfigDLExperiment(DLExperiment):
 
         if key_value_flag:
             transforms_composition = {
-                key: ConfigExperiment._get_transform(**params_)
+                key: ConfigDLExperiment._get_transform(**params_)
                 for key, params_ in params.items()
             }
 
@@ -344,7 +344,7 @@ class ConfigDLExperiment(DLExperiment):
         else:
             if "transforms" in params:
                 transforms_composition = [
-                    ConfigExperiment._get_transform(**transform_params)
+                    ConfigDLExperiment._get_transform(**transform_params)
                     for transform_params in params["transforms"]
                 ]
                 params.update(transforms=transforms_composition)
