@@ -12,16 +12,17 @@ pip install tifffile #TODO: check if really required
 #tar -xf ./data/isbi.tar.gz -C ./data/
 
 # aws
-#mkdir -p data
-#wget https://catalyst-ai.s3-eu-west-1.amazonaws.com/isbi.tar.gz -O ./data/isbi.tar.gz
-#tar -xf ./data/isbi.tar.gz -C ./data/
+mkdir -p data
+wget https://catalyst-ai.s3-eu-west-1.amazonaws.com/isbi.tar.gz -O ./data/isbi.tar.gz
+tar -xf ./data/isbi.tar.gz -C ./data/
 
 # @TODO: fix macos fail with sed
 set -e
 
 # imports check
-(set -e; for f in examples/_tests_scripts/dl_*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
-(set -e; for f in examples/_tests_scripts/z_*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
+(set -e; for f in examples/_tests_scripts/*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
+#(set -e; for f in examples/_tests_scripts/dl_*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
+#(set -e; for f in examples/_tests_scripts/z_*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
 
 
 # pipeline 1
@@ -263,3 +264,5 @@ assert loss_d < 0.9
 """
 
 rm -rf ${LOGDIR}
+
+rm -rf ./examples/logs
