@@ -8,6 +8,9 @@ runner_params:
   fake_logits_output_key: &fake_validity "fake_validity"
   real_logits_output_key: &real_validity "real_validity"
   fake_data_output_key: &fake_data "fake_image"
+  # condition keys (as this is conditional gan)
+  fake_condition_keys: [&class_targets_one_hot "class_targets_one_hot"]
+  real_condition_keys: ["class_targets_one_hot"]
   # phases
   generator_train_phase: &generator_train_phase generator_train
   discriminator_train_phase: &discriminator_train_phase discriminator_train
@@ -21,10 +24,12 @@ common_hyperparams:
 model_params:
   _key_value: True
   generator:
-    model: SimpleGenerator
+    model: SimpleCGenerator
     noise_dim: &noise_dim 16
+    n_classes: &n_classes 10
   critic:
-    model: SimpleDiscriminator
+    model: SimpleCDiscriminator
+    n_classes: *n_classes
 
 
 args:
@@ -45,6 +50,10 @@ stages:
       - transform: AdditionalNoiseTensor
         tensor_size: [*noise_dim]
         output_key: *noise_input
+      - transform: OneHotTargetTransform
+        n_classes: *n_classes
+        input_key: *class_targets
+        output_key: *class_targets_one_hot
 
   data_params:
     batch_size: 64
@@ -108,7 +117,7 @@ stages:
       real_input_key: *real_data
       fake_output_key: *fake_data
       critic_model_key: *critic_model_name
-      condition_keys:  # None
+      condition_keys: [*class_targets_one_hot] # None
       criterion_key: gradient_penalty
       prefix: "loss_d_gp"
     loss_d:

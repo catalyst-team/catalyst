@@ -1,6 +1,3 @@
-"""
-All custom criterion modules
-"""
 import torch
 from torch import nn
 
@@ -18,9 +15,9 @@ class GradientPenaltyLoss(nn.Module):
     """Criterion to compute gradient penalty
 
     WARN: SHOULD NOT BE RUN WITH CriterionCallback,
-        use special MultiKeyCriterionCallback instead
+        use special GradientPenaltyCallback instead
     """
-    def forward(self, fake_data, real_data, discriminator):
+    def forward(self, fake_data, real_data, critic, critic_condition_args):
         device = real_data.device
         # Random weight term for interpolation between real and fake samples
         alpha = torch.rand((real_data.size(0), 1, 1, 1), device=device)
@@ -28,7 +25,7 @@ class GradientPenaltyLoss(nn.Module):
         interpolates = (alpha * real_data + ((1 - alpha) * fake_data)).detach()
         interpolates.requires_grad_(True)
         with torch.set_grad_enabled(True):  # to compute in validation mode
-            d_interpolates = discriminator(interpolates)
+            d_interpolates = critic(interpolates, *critic_condition_args)
 
         fake = torch.ones(
             (real_data.size(0), 1), device=device, requires_grad=False
