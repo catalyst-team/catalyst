@@ -1,7 +1,7 @@
 """
 All custom callbacks
 """
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import torch
 import torchvision.utils
@@ -10,166 +10,6 @@ from catalyst.dl import RunnerState
 from catalyst.dl.callbacks import CriterionCallback, OptimizerCallback
 from catalyst.dl.core import Callback, CallbackOrder
 from catalyst.utils.tensorboard import SummaryWriter
-"""
-InputBatchTransform functions,
-e.g.:
-- add noise to batch: state.input["noise"] = z
-- add real/fake targets (zeros/ones)
-- transform targets to/from one-hot encoding
-Note: these transforms are different from dataset transforms as they transform
-the entire batch which may be more efficient/simple than custom batch_collate
-"""
-
-
-class InputBatchTransformCallback(Callback):
-    """Used to update state.input batch
-    (e.g. add noise, additional random condition, etc.)
-    """
-    def __init__(self, data_key: str = "data"):
-        """
-
-        :param data_key:
-        """
-        # TODO(help wanted):
-        #  what will be the proper order?
-        #  as it seems to do not matter
-        super().__init__(order=CallbackOrder.Internal)
-        self.data_key = data_key
-
-    def on_batch_start(self, state: RunnerState):
-        # Note: it is assumed that state.input
-        # is already moved to proper device
-        raise NotImplementedError()  # should be implemented in descendants
-
-    def get_batch_size(self, state):
-        assert self.data_key in state.input
-        return state.input[self.data_key].size(0)
-
-
-class AddBatchNoiseCallback(InputBatchTransformCallback):
-    def __init__(
-        self,
-        noise_shape: Union[int, Tuple[int]],
-        data_key: str = "data",
-        injected_noise_key: str = "noise"
-    ):
-        super().__init__(data_key)
-        if isinstance(noise_shape, int):
-            noise_shape = (noise_shape, )
-        assert isinstance(noise_shape, (list, tuple))
-        self.noise_shape = tuple(noise_shape)
-        self.injected_noise_key = injected_noise_key
-
-    def on_batch_start(self, state: RunnerState):
-        batch_size = self.get_batch_size(state)
-        assert self.injected_noise_key not in state.input
-        z_shape = (batch_size, ) + self.noise_shape
-        state.input[self.injected_noise_key] = \
-            torch.randn(z_shape, device=state.device)
-
-
-class AddRealFakeTargetsCallback(InputBatchTransformCallback):
-    def __init__(
-        self,
-        data_key: str = "data",
-        real_targets_key: str = "real_targets",
-        fake_targets_key: str = "fake_targets",
-        fake_targets_zero: bool = True
-    ):
-        super().__init__(data_key)
-        self.real_targets_key = real_targets_key
-        self.fake_targets_key = fake_targets_key
-        self.fake_targets_zero = fake_targets_zero
-
-    def on_batch_start(self, state: RunnerState):
-        assert self.real_targets_key not in state.input
-        assert self.fake_targets_key not in state.input
-
-        batch_size = self.get_batch_size(state)
-
-        ones = torch.ones((batch_size, 1), device=state.device)
-        zeros = torch.zeros((batch_size, 1), device=state.device)
-        if self.fake_targets_zero:
-            fake_targets = zeros
-            real_targets = ones
-        else:
-            fake_targets = ones
-            real_targets = zeros
-        state.input[self.real_targets_key] = real_targets
-        state.input[self.fake_targets_key] = fake_targets
-
-
-class OneHotTransformCallback(InputBatchTransformCallback):
-    def __init__(
-        self,
-        n_classes: int = 10,
-        data_key: str = "data",
-        target_key: str = "target",
-        one_hot_target_key: str = "one_hot_target"
-    ):
-        super().__init__(data_key)
-        self.n_classes = n_classes
-        self.target_key = target_key
-        self.one_hot_target_key = one_hot_target_key
-
-    def on_batch_start(self, state: RunnerState):
-        batch_size = self.get_batch_size(state)
-        assert self.target_key in state.input
-        assert self.one_hot_target_key not in state.input
-        targets = state.input[self.target_key]
-        if targets.ndim > 1:
-            raise NotImplementedError()
-        targets_one_hot = torch.zeros(
-            (batch_size, self.n_classes), device=targets.device
-        )
-        targets_one_hot[torch.arange(batch_size, device=targets.device),
-                        targets] = 1
-        state.input[self.one_hot_target_key] = targets_one_hot
-
-
-class SameClassFeaturesRepeatCallback(InputBatchTransformCallback):
-    """
-    This is a bit tricky transform. It assumes that
-    batch[targets_key] has equal labels in first and second half, i.e.
-    batch[targets_key][:batch_size//2] == batch[targets_key][batch_size//2:]
-
-    The transform itself adds extra input:
-        batch[same_class_data_key] = torch.cat(
-            (data[:batch_size // 2], data[batch_size // 2:]), dim=0
-        )
-
-    The use-case is to not override Dataset, only batch_sampler
-    Used to have 2 input images of same class in batch, which can help with
-    image-conditioned GAN training
-    """
-    def __init__(
-        self,
-        data_key: str = "data",
-        same_class_data_key: str = "same_class_data",
-        targets_key: str = "class_targets"
-    ):
-        super().__init__(data_key)
-        self.same_class_data_key = same_class_data_key
-        self.targets_key = targets_key
-
-    def on_batch_start(self, state: RunnerState):
-        batch_size = self.get_batch_size(state)
-        if self.targets_key is not None:
-            # sanity check for data to come in correct form
-            assert self.targets_key in state.input
-            target = state.input[self.targets_key]
-            assert target.size(0) == batch_size
-            assert batch_size % 2 == 0, "batch size must be evenly divisible"
-            assert torch.equal(
-                target[:batch_size // 2], target[batch_size // 2:]
-            ), "Batch targets sanity check failed; check your DataLoader"
-
-        data = state.input[self.data_key]
-        assert self.same_class_data_key not in state.input
-        same_class_data = torch.cat(
-            (data[:batch_size // 2], data[batch_size // 2:]), dim=0
-        )
-        state.input[self.same_class_data_key] = same_class_data
 
 
 """
@@ -484,9 +324,7 @@ class VisualizationCallback(Callback):
 
 
 __all__ = [
-    "InputBatchTransformCallback", "AddBatchNoiseCallback",
-    "AddRealFakeTargetsCallback", "OneHotTransformCallback",
-    "SameClassFeaturesRepeatCallback", "MultiKeyMetricCallback",
+    "MultiKeyMetricCallback",
     "WassersteinDistanceCallback", "CriterionWithDiscriminatorCallback",
     "WeightClampingOptimizerCallback", "VisualizationCallback"
 ]

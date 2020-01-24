@@ -37,8 +37,8 @@ model_params:
 
 
 args:
-  expdir: "mnist_advanced_gans"
-  baselogdir: "./logs/mnist_advanced_gans/vanilla_cgan_onehot"
+  expdir: "mnist_gans"
+  baselogdir: "./logs/mnist_gans/conditional_gan"
 
 
 stages:
