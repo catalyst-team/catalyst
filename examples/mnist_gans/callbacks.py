@@ -1,15 +1,10 @@
 # flake8: noqa
+# isort: skip_file
 import torch
 import torchvision.utils
 
-from catalyst.dl import RunnerState
-from catalyst.dl.core import Callback, CallbackOrder
+from catalyst.dl.core import Callback, CallbackOrder, RunnerState
 from catalyst.utils.tensorboard import SummaryWriter
-
-
-"""
-Visualization utilities
-"""
 
 
 class VisualizationCallback(Callback):

@@ -1,11 +1,8 @@
-"""
-All custom callbacks
-"""
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union  # isort:skip
 
-from ..core import RunnerState, Callback, CallbackOrder
-from .optimizer import OptimizerCallback
+from catalyst.dl.core import Callback, CallbackOrder, RunnerState
 from .criterion import CriterionCallback
+from .optimizer import OptimizerCallback
 
 
 """
@@ -30,6 +27,14 @@ class MultiKeyMetricCallback(Callback):
         output_key: Optional[Union[str, List[str]]] = "logits",
         **metric_params
     ):
+        """
+
+        :param prefix:
+        :param metric_fn:
+        :param input_key:
+        :param output_key:
+        :param metric_params:
+        """
         super().__init__(CallbackOrder.Metric)
         self.prefix = prefix
         self.metric_fn = metric_fn
@@ -48,6 +53,7 @@ class MultiKeyMetricCallback(Callback):
         return result
 
     def on_batch_end(self, state: RunnerState):
+        """On batch end call"""
         outputs = self._get(state.output, self.output_key)
         targets = self._get(state.input, self.input_key)
         metric = self.metric_fn(outputs, targets, **self.metric_params)
@@ -55,12 +61,21 @@ class MultiKeyMetricCallback(Callback):
 
 
 class WassersteinDistanceCallback(MultiKeyMetricCallback):
+    """
+    Callback to compute Wasserstein distance metric
+    """
     def __init__(
         self,
         prefix: str = "wasserstein_distance",
         real_validity_output_key: str = "real_validity",
         fake_validity_output_key: str = "fake_validity"
     ):
+        """
+
+        :param prefix:
+        :param real_validity_output_key:
+        :param fake_validity_output_key:
+        """
         super().__init__(
             prefix,
             metric_fn=self.get_wasserstein_distance,
@@ -71,6 +86,12 @@ class WassersteinDistanceCallback(MultiKeyMetricCallback):
         self.fake_validity_key = fake_validity_output_key
 
     def get_wasserstein_distance(self, outputs, targets):
+        """
+        Computes Wasserstein distance
+        :param outputs:
+        :param targets:
+        :return:
+        """
         real_validity = outputs[self.real_validity_key]
         fake_validity = outputs[self.fake_validity_key]
         return real_validity.mean() - fake_validity.mean()
@@ -82,6 +103,9 @@ CriterionCallback extended
 
 
 class GradientPenaltyCallback(CriterionCallback):
+    """
+    Criterion Callback to compute Gradient Penalty
+    """
 
     def __init__(self,
                  real_input_key: str = "data",
@@ -95,6 +119,21 @@ class GradientPenaltyCallback(CriterionCallback):
                  prefix: str = "loss",
                  criterion_key: str = None,
                  multiplier: float = 1.0):
+        """
+
+        :param real_input_key: real data key in state.input
+        :param fake_output_key: fake data key in state.output
+        :param condition_keys: all condition keys in state.input for critic
+        :param critic_model_key: key for critic model in state.model
+        :param critic_criterion_key: key for critic model in criterion
+        :param real_data_criterion_key: key for real data in criterion
+        :param fake_data_criterion_key: key for fake data in criterion
+        :param condition_args_criterion_key: key for all condition args
+            in criterion
+        :param prefix:
+        :param criterion_key:
+        :param multiplier:
+        """
         super().__init__(
             input_key=real_input_key,
             output_key=fake_output_key,

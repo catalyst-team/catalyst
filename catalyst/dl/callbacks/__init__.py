@@ -5,11 +5,11 @@ from .criterion import (
     CriterionAggregatorCallback, CriterionCallback,
     CriterionOutputOnlyCallback
 )
-from .inference import InferCallback, InferMaskCallback
 from .gan import (
-    WassersteinDistanceCallback, GradientPenaltyCallback,
+    GradientPenaltyCallback, WassersteinDistanceCallback,
     WeightClampingOptimizerCallback
 )
+from .inference import InferCallback, InferMaskCallback
 from .logging import (
     ConsoleLogger, TelegramLogger, TensorboardLogger, VerboseLogger
 )

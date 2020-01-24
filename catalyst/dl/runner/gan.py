@@ -1,10 +1,9 @@
-from typing import (
-    Any, Callable, List, Mapping, Optional, Tuple, Union, Dict
-)  # isort:skip
-
-from utils.typing import Device, Model
+from typing import (  # isort:skip
+    Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
+)
 
 from catalyst.dl import Runner
+from catalyst.utils.typing import Device, Model
 
 
 class MultiPhaseRunner(Runner):
@@ -25,7 +24,8 @@ class MultiPhaseRunner(Runner):
         :param input_batch_keys: list of strings of keys for batch elements,
             e.g. input_batch_keys = ["features", "targets"] and your
             DataLoader returns 2 tensors (images and targets)
-            when state.input will be {"features": batch[0], "targets": batch[1]}
+            when state.input will be
+            {"features": batch[0], "targets": batch[1]}
         :param registered_phases:
             Tuple of pairs (phase_name, phase_forward_function)
             phase_forward_function's may be also str, in that case Runner
@@ -62,6 +62,7 @@ class MultiPhaseRunner(Runner):
         return super()._batch2device(batch, device)
 
     def forward(self, batch, **kwargs):
+        """Forward call"""
         if self.state.phase not in self.registered_phases:
             raise ValueError(f"Unknown phase: '{self.state.phase}'")
 
@@ -115,7 +116,8 @@ class GanRunner(MultiPhaseRunner):
         :param input_batch_keys: list of strings of keys for batch elements,
             e.g. input_batch_keys = ["features", "targets"] and
             your DataLoader returns 2 tensors (images and targets)
-            when state.input will be {"features": batch[0], "targets": batch[1]}
+            when state.input will be
+            {"features": batch[0], "targets": batch[1]}
 
         INPUT KEYS:
         :param data_input_key: real distribution to fit
@@ -207,10 +209,10 @@ class GanRunner(MultiPhaseRunner):
         self.generator = self.model[self.generator_key]
         self.discriminator = self.model[self.discriminator_key]
 
-    # common utility functions
+    # Common utility functions
 
     def _get_noise_and_conditions(self):
-        """returns generator inputs"""
+        """Returns generator inputs"""
         z = self.state.input[self.noise_input_key]
         conditions = [
             self.state.input[key] for key in self.fake_condition_keys
@@ -218,17 +220,17 @@ class GanRunner(MultiPhaseRunner):
         return z, conditions
 
     def _get_real_data_conditions(self):
-        """returns discriminator conditions (for real data)"""
+        """Returns discriminator conditions (for real data)"""
         return [self.state.input[key] for key in self.real_condition_keys]
 
     def _get_fake_data_conditions(self):
-        """returns discriminator conditions (for fake data)"""
+        """Returns discriminator conditions (for fake data)"""
         return [self.state.input[key] for key in self.fake_condition_keys]
 
     # concrete phase methods
 
     def _generator_train_phase(self):
-        """forward() on generator training phase"""
+        """Forward call on generator training phase"""
         z, g_conditions = self._get_noise_and_conditions()
         d_fake_conditions = self._get_fake_data_conditions()
 
@@ -240,7 +242,7 @@ class GanRunner(MultiPhaseRunner):
         }
 
     def _discriminator_train_phase(self):
-        """forward() on discriminator training phase"""
+        """Forward call on discriminator training phase"""
         z, g_conditions = self._get_noise_and_conditions()
         d_fake_conditions = self._get_fake_data_conditions()
         d_real_conditions = self._get_real_data_conditions()

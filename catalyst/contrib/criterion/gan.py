@@ -8,6 +8,7 @@ class MeanOutputLoss(nn.Module):
     (maybe useful e.g. for WGAN real/fake validity averaging
     """
     def forward(self, output, target):
+        """Compute criterion"""
         return output.mean()
 
 
@@ -18,6 +19,7 @@ class GradientPenaltyLoss(nn.Module):
         use special GradientPenaltyCallback instead
     """
     def forward(self, fake_data, real_data, critic, critic_condition_args):
+        """Compute gradient penalty"""
         device = real_data.device
         # Random weight term for interpolation between real and fake samples
         alpha = torch.rand((real_data.size(0), 1, 1, 1), device=device)
