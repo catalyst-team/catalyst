@@ -214,8 +214,10 @@ class TripletPairwiseEmbeddingLoss(nn.Module):
         """
         Work in progress.
         Args:
-            embeddings_pred: predicted embeddings with shape [batch_size, embedding_size]
-            embeddings_true: true embeddings with shape [batch_size, embedding_size]
+            embeddings_pred: predicted embeddings
+                with shape [batch_size, embedding_size]
+            embeddings_true: true embeddings
+                with shape [batch_size, embedding_size]
 
         Returns:
             loss
