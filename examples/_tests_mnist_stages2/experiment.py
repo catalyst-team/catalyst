@@ -1,38 +1,29 @@
 from collections import OrderedDict
 
 import torchvision
-from torchvision import transforms
 
 from catalyst.dl.experiment import ConfigDLExperiment
 
 
-class Experiment(ConfigDLExperiment):
-    @staticmethod
-    def get_transforms(stage: str = None, mode: str = None):
-        return transforms.Compose(
-            [
-                transforms.ToTensor(),
-                transforms.Normalize((0.1307, ), (0.3081, ))
-            ]
-        )
+class MNIST(torchvision.datasets.MNIST):
+    def __getitem__(self, index: int):
+        image, target = self.data[index], self.targets[index]
 
+        if self.transform is not None:
+            image = self.transform({"image": image})["image"]
+
+        return image, target
+
+
+class Experiment(ConfigDLExperiment):
     def get_datasets(self, stage: str, **kwargs):
         datasets = OrderedDict()
-
-        trainset = torchvision.datasets.MNIST(
-            "./data",
-            train=False,
-            download=True,
-            transform=Experiment.get_transforms(mode="train", stage=stage)
-        )
-        testset = torchvision.datasets.MNIST(
-            "./data",
-            train=False,
-            download=True,
-            transform=Experiment.get_transforms(mode="train", stage=stage)
-        )
-
-        datasets["train"] = trainset
-        datasets["valid"] = testset
+        for mode in ("train", "valid"):
+            datasets[mode] = MNIST(
+                "./data",
+                train=False,
+                download=True,
+                transform=self.get_transforms(stage=stage, dataset=mode)
+            )
 
         return datasets
