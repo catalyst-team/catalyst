@@ -1,6 +1,5 @@
 # flake8: noqa
 
-# folders
 from .abn import *
 from .blocks import *
 from .bridge import *

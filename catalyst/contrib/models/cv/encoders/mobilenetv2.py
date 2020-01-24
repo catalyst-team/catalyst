@@ -2,8 +2,8 @@ import math
 
 import torch.nn as nn
 
-from catalyst.contrib.registry import MODULES
 from catalyst.contrib.models.cv import MobileNetV2
+from catalyst.contrib.registry import MODULES
 
 
 class MobileNetV2Encoder(nn.Module):

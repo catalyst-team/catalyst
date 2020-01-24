@@ -79,7 +79,8 @@ import os
 
 from catalyst.__version__ import __version__
 from catalyst.data.scripts import (
-    process_images, tag2label, image2embedding, split_dataframe, project_embeddings
+    image2embedding, process_images, project_embeddings, split_dataframe,
+    tag2label
 )
 
 logger = logging.getLogger(__name__)
