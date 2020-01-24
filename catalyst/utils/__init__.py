@@ -39,8 +39,11 @@ from .parallel import (
 from .plotly import plot_tensorboard_log
 # from .registry import *
 from .scripts import (
-    import_module, dump_code, dump_python_files,
-    import_experiment_and_runner, dump_base_experiment_code,
+    import_module,
+    dump_code,
+    dump_python_files,
+    import_experiment_and_runner,
+    dump_base_experiment_code,
 )
 from .seed import Seeder, set_global_seed
 from .serialization import deserialize, serialize

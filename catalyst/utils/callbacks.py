@@ -2,9 +2,7 @@ from typing import Union  # isort:skip
 from collections import OrderedDict
 
 
-def process_callbacks(
-    callbacks: Union[list, OrderedDict]
-) -> OrderedDict:
+def process_callbacks(callbacks: Union[list, OrderedDict]) -> OrderedDict:
     """
     Creates an sequence of callbacks and sort them
     Args:
@@ -20,10 +18,7 @@ def process_callbacks(
         result = OrderedDict(result)
     elif isinstance(callbacks, list):
         result = sorted(callbacks, key=lambda x: x.order)
-        result = OrderedDict([
-            (i, value)
-            for i, value in enumerate(result)
-        ])
+        result = OrderedDict([(i, value) for i, value in enumerate(result)])
     else:
         raise TypeError(
             f"Callbacks must be either OrderedDict or list, "
@@ -33,6 +28,4 @@ def process_callbacks(
     return result
 
 
-__all__ = [
-    "process_callbacks"
-]
+__all__ = ["process_callbacks"]

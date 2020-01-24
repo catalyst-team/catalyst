@@ -7,7 +7,7 @@ from urllib.request import Request, urlopen
 
 from tqdm import tqdm
 
-from catalyst import  utils
+from catalyst import utils
 from catalyst.core import LoggerCallback, State
 from . import formatters
 

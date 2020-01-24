@@ -4,9 +4,9 @@ import logging
 import os
 
 from catalyst.utils import *
+# from .trace import get_trace_name, load_traced_model, trace_model
 from .pipelines import clone_pipeline
 from .torch import get_loader
-# from .trace import get_trace_name, load_traced_model, trace_model
 from .visualization import plot_metrics
 from .wizard import run_wizard, Wizard
 
