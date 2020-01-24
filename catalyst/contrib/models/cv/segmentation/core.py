@@ -70,7 +70,7 @@ class UnetSpec(UnetMetaSpec):
         )
 
         super().__init__(
-            encoder=encoder, bridge=bridge, decoder=decoder, head=head, 
+            encoder=encoder, bridge=bridge, decoder=decoder, head=head,
             state_dict=state_dict
         )
 
@@ -111,7 +111,7 @@ class ResnetUnetSpec(UnetMetaSpec):
         )
 
         super().__init__(
-            encoder=encoder, bridge=bridge, decoder=decoder, head=head, 
+            encoder=encoder, bridge=bridge, decoder=decoder, head=head,
             state_dict=state_dict
         )
 

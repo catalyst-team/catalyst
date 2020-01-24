@@ -54,7 +54,6 @@ class OptimizerCallback(Callback):
         self._optimizer_wd: List[float] = [0.0]
         self._accumulation_counter: int = 0
 
-
     @staticmethod
     def grad_step(
         *,
