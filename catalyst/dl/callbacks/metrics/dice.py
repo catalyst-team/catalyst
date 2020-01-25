@@ -7,7 +7,6 @@ from catalyst.utils import criterion
 from catalyst.utils.confusion_matrix import (
     calculate_confusion_matrix_from_tensors, calculate_tp_fp_fn
 )
-
 from .functional import calculate_dice
 
 
