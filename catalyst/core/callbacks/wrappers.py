@@ -1,6 +1,6 @@
 from typing import List  # isort:skip
 
-from catalyst.core import Callback, State
+from catalyst.core import Callback, _State
 
 
 class PhaseWrapperCallback(Callback):
@@ -47,7 +47,7 @@ class PhaseWrapperCallback(Callback):
             return True
         return False
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, state: _State):
         if self.is_active_on_phase(
             phase=state.phase,
             level=self.LEVEL_STAGE,
@@ -55,7 +55,7 @@ class PhaseWrapperCallback(Callback):
         ):
             self.callback.on_stage_start(state)
 
-    def on_stage_end(self, state: State):
+    def on_stage_end(self, state: _State):
         if self.is_active_on_phase(
             phase=state.phase,
             level=self.LEVEL_STAGE,
@@ -63,7 +63,7 @@ class PhaseWrapperCallback(Callback):
         ):
             self.callback.on_stage_end(state)
 
-    def on_epoch_start(self, state: State):
+    def on_epoch_start(self, state: _State):
         if self.is_active_on_phase(
             phase=state.phase,
             level=self.LEVEL_EPOCH,
@@ -71,7 +71,7 @@ class PhaseWrapperCallback(Callback):
         ):
             self.callback.on_epoch_start(state)
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, state: _State):
         if self.is_active_on_phase(
             phase=state.phase,
             level=self.LEVEL_EPOCH,
@@ -79,7 +79,7 @@ class PhaseWrapperCallback(Callback):
         ):
             self.callback.on_epoch_end(state)
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, state: _State):
         if self.is_active_on_phase(
             phase=state.phase,
             level=self.LEVEL_LOADER,
@@ -87,7 +87,7 @@ class PhaseWrapperCallback(Callback):
         ):
             self.callback.on_loader_start(state)
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, state: _State):
         if self.is_active_on_phase(
             phase=state.phase,
             level=self.LEVEL_LOADER,
@@ -95,7 +95,7 @@ class PhaseWrapperCallback(Callback):
         ):
             self.callback.on_loader_end(state)
 
-    def on_batch_start(self, state: State):
+    def on_batch_start(self, state: _State):
         if self.is_active_on_phase(
             phase=state.phase,
             level=self.LEVEL_BATCH,
@@ -103,7 +103,7 @@ class PhaseWrapperCallback(Callback):
         ):
             self.callback.on_batch_start(state)
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _State):
         if self.is_active_on_phase(
             phase=state.phase,
             level=self.LEVEL_BATCH,
@@ -111,7 +111,7 @@ class PhaseWrapperCallback(Callback):
         ):
             self.callback.on_batch_end(state)
 
-    def on_exception(self, state: State):
+    def on_exception(self, state: _State):
         self.callback.on_exception(state)
 
 

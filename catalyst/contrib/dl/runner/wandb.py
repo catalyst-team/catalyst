@@ -6,11 +6,11 @@ import shutil
 import wandb
 
 from catalyst.dl import (
-    ConfigDLExperiment, DLExperiment, DLRunner, SupervisedDLRunner, utils
+    ConfigExperiment, Experiment, Runner, SupervisedRunner, utils
 )
 
 
-class WandbDLRunner(DLRunner):
+class WandbRunner(Runner):
     """
     Runner wrapper with wandb integration hooks.
     """
@@ -54,7 +54,7 @@ class WandbDLRunner(DLRunner):
             self.batch_log_suffix = "_batch"
             self.epoch_log_suffix = "_epoch"
 
-    def _pre_experiment_hook(self, experiment: DLExperiment):
+    def _pre_experiment_hook(self, experiment: Experiment):
         monitoring_params = experiment.monitoring_params
         monitoring_params["dir"] = str(Path(experiment.logdir).absolute())
 
@@ -69,13 +69,13 @@ class WandbDLRunner(DLRunner):
             log_on_epoch_end=log_on_epoch_end,
             checkpoints_glob=checkpoints_glob,
         )
-        if isinstance(experiment, ConfigDLExperiment):
+        if isinstance(experiment, ConfigExperiment):
             exp_config = utils.flatten_dict(experiment.stages_config)
             wandb.init(**monitoring_params, config=exp_config)
         else:
             wandb.init(**monitoring_params)
 
-    def _post_experiment_hook(self, experiment: DLExperiment):
+    def _post_experiment_hook(self, experiment: Experiment):
         logdir_src = Path(experiment.logdir)
         logdir_dst = wandb.run.dir
 
@@ -134,7 +134,7 @@ class WandbDLRunner(DLRunner):
 
     def run_experiment(
         self,
-        experiment: DLExperiment,
+        experiment: Experiment,
         check: bool = False
     ):
         self._pre_experiment_hook(experiment=experiment)
@@ -142,8 +142,8 @@ class WandbDLRunner(DLRunner):
         self._post_experiment_hook(experiment=experiment)
 
 
-class SupervisedWandbDLRunner(WandbDLRunner, SupervisedDLRunner):
+class SupervisedWandbRunner(WandbRunner, SupervisedRunner):
     pass
 
 
-__all__ = ["WandbDLRunner", "SupervisedWandbDLRunner"]
+__all__ = ["WandbRunner", "SupervisedWandbRunner"]

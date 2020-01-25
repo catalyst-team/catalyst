@@ -8,7 +8,7 @@ from urllib.request import Request, urlopen
 from tqdm import tqdm
 
 from catalyst import utils
-from catalyst.core import LoggerCallback, State
+from catalyst.core import LoggerCallback, _State
 from . import formatters
 
 
@@ -55,7 +55,7 @@ class VerboseLogger(LoggerCallback):
 
         return result
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, state: _State):
         """Init tqdm progress bar"""
         self.step = 0
         self.tqdm = tqdm(
@@ -67,7 +67,7 @@ class VerboseLogger(LoggerCallback):
             file=sys.stdout,
         )
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _State):
         """Update tqdm progress bar at the end of each batch"""
         self.tqdm.set_postfix(
             **{
@@ -78,13 +78,13 @@ class VerboseLogger(LoggerCallback):
         )
         self.tqdm.update()
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, state: _State):
         """Cleanup and close tqdm progress bar"""
         self.tqdm.close()
         self.tqdm = None
         self.step = 0
 
-    def on_exception(self, state: State):
+    def on_exception(self, state: _State):
         """Called if an Exception was raised"""
         exception = state.exception
         if not utils.is_exception(exception):
@@ -133,7 +133,7 @@ class ConsoleLogger(LoggerCallback):
         # logger.addHandler(jh)
         return logger
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, state: _State):
         """Prepare ``state.logdir`` for the current stage"""
         if state.logdir:
             state.logdir.mkdir(parents=True, exist_ok=True)
@@ -205,7 +205,7 @@ class TensorboardLogger(LoggerCallback):
             log_dir = os.path.join(state.logdir, f"{lm}_log")
             self.loggers[lm] = utils.SummaryWriter(log_dir)
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _State):
         """Translate batch metrics to tensorboard"""
         if state.logdir is None:
             return
@@ -217,7 +217,7 @@ class TensorboardLogger(LoggerCallback):
                 metrics=metrics_, step=state.step, mode=mode, suffix="/batch"
             )
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, state: _State):
         """Translate epoch metrics to tensorboard"""
         if state.logdir is None:
             return
@@ -234,7 +234,7 @@ class TensorboardLogger(LoggerCallback):
         for logger in self.loggers.values():
             logger.flush()
 
-    def on_stage_end(self, state: State):
+    def on_stage_end(self, state: _State):
         """Close opened tensorboard writers"""
         if state.logdir is None:
             return
@@ -305,21 +305,21 @@ class TelegramLogger(LoggerCallback):
         except Exception as e:
             logging.getLogger(__name__).warning(f"telegram.send.error:{e}")
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, state: _State):
         """Notify about starting a new stage"""
         if self.log_on_stage_start:
             text = f"{state.stage} stage was started"
 
             self._send_text(text)
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, state: _State):
         """Notify about starting running the new loader"""
         if self.log_on_loader_start:
             text = f"{state.loader_name} {state.epoch} epoch was started"
 
             self._send_text(text)
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, state: _State):
         """Translate ``state.metrics`` to telegram channel"""
         if self.log_on_loader_end:
             metrics = state.metric_manager.epoch_values[state.loader_name]
@@ -341,14 +341,14 @@ class TelegramLogger(LoggerCallback):
 
             self._send_text(text)
 
-    def on_stage_end(self, state: State):
+    def on_stage_end(self, state: _State):
         """Notify about finishing a stage"""
         if self.log_on_stage_end:
             text = f"{state.stage} stage was finished"
 
             self._send_text(text)
 
-    def on_exception(self, state: State):
+    def on_exception(self, state: _State):
         """Notify about raised Exception"""
         if self.log_on_exception:
             exception = state.exception

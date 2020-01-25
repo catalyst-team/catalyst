@@ -5,7 +5,7 @@ import torch.nn as nn
 import torchvision
 
 from catalyst import utils
-from catalyst.dl import ConfigDLExperiment
+from catalyst.dl import ConfigExperiment
 
 
 class CIFAR10(torchvision.datasets.CIFAR10):
@@ -18,7 +18,7 @@ class CIFAR10(torchvision.datasets.CIFAR10):
         return image, target
 
 
-class Experiment(ConfigDLExperiment):
+class Experiment(ConfigExperiment):
     def _postprocess_model_for_stage(self, stage: str, model: nn.Module):
         model_ = model
         if isinstance(model, torch.nn.DataParallel):

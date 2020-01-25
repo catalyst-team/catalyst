@@ -4,11 +4,11 @@ from pathlib import Path
 import neptune
 
 from catalyst.dl import (
-    ConfigDLExperiment, DLExperiment, DLRunner, SupervisedDLRunner, utils
+    ConfigExperiment, Experiment, Runner, SupervisedRunner, utils
 )
 
 
-class NeptuneDLRunner(DLRunner):
+class NeptuneRunner(Runner):
     """
     Runner wrapper with Neptune integration hooks.
     Read about Neptune here https://neptune.ml
@@ -55,7 +55,7 @@ class NeptuneDLRunner(DLRunner):
         self.log_on_epoch_end = log_on_epoch_end
         self.checkpoints_glob = checkpoints_glob
 
-    def _pre_experiment_hook(self, experiment: DLExperiment):
+    def _pre_experiment_hook(self, experiment: Experiment):
         monitoring_params = experiment.monitoring_params
         monitoring_params["dir"] = str(Path(experiment.logdir).absolute())
 
@@ -90,12 +90,12 @@ class NeptuneDLRunner(DLRunner):
             self.checkpoints_glob
         )
 
-        if isinstance(experiment, ConfigDLExperiment):
+        if isinstance(experiment, ConfigExperiment):
             exp_config = utils.flatten_dict(experiment.stages_config)
             for name, value in exp_config.items():
                 self._neptune_experiment.set_property(name, value)
 
-    def _post_experiment_hook(self, experiment: DLExperiment):
+    def _post_experiment_hook(self, experiment: Experiment):
         logdir_src = Path(experiment.logdir)
         self._neptune_experiment.set_property("logdir", logdir_src)
 
@@ -129,7 +129,7 @@ class NeptuneDLRunner(DLRunner):
 
     def run_experiment(
         self,
-        experiment: DLExperiment,
+        experiment: Experiment,
         check: bool = False
     ):
         self._pre_experiment_hook(experiment=experiment)
@@ -137,8 +137,8 @@ class NeptuneDLRunner(DLRunner):
         self._post_experiment_hook(experiment=experiment)
 
 
-class SupervisedNeptuneDLRunner(NeptuneDLRunner, SupervisedDLRunner):
+class SupervisedNeptuneRunner(NeptuneRunner, SupervisedRunner):
     pass
 
 
-__all__ = ["NeptuneDLRunner", "SupervisedNeptuneDLRunner"]
+__all__ = ["NeptuneRunner", "SupervisedNeptuneRunner"]

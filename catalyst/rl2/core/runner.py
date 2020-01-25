@@ -4,7 +4,7 @@ import numpy as np
 
 import torch
 
-from catalyst.core import Runner
+from catalyst.core import _Runner
 from catalyst.rl2 import (
     AlgorithmSpec, EnvironmentSpec, RLExperiment, RLState, utils
 )
@@ -15,7 +15,7 @@ from catalyst.rl2 import (
 #
 
 
-class RLRunner(Runner):
+class RLRunner(_Runner):
     experiment: RLExperiment
     state: RLState
 

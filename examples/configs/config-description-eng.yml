@@ -14,7 +14,7 @@ model_params:  # REQUIRED KEYWORD, model(s) parameters
 
 args:  # REQUIRED KEYWORD, various arguments for Catalyst
   logdir: /path/to/logdir  # KEYWORD, the path to which the logs will be saved (can be empty if `baselogdir` is passed)
-  baselogdir: /path/to/baselogdir  # KEYWORD optional argument -- path for the root with logs (if it is specified but not logdir, then the logdir will be generated as `{baselogdir}/{ConfigDLExperiment._get_logdir(config)}`)
+  baselogdir: /path/to/baselogdir  # KEYWORD optional argument -- path for the root with logs (if it is specified but not logdir, then the logdir will be generated as `{baselogdir}/{ConfigExperiment._get_logdir(config)}`)
   expdir: "src"  # REQUIRED KEYWORD, the path to your experiment, with the file `__init__` in which you import Experiment, Runner, and optionally all additional entities are registered: model, callback, criterion, etc
   seed: 42  # KEYWORD, training seed for PyTorch, Numpy, Python and Tensorflow (Default is 42)
   deterministic: True  # KEYWORD, whether to use deterministic CuDNN (Default is True)
@@ -24,7 +24,7 @@ args:  # REQUIRED KEYWORD, various arguments for Catalyst
 
 
 runner_params:  # OPTIONAL KEYWORD, params for Runner's init
-  # For example for SupervisedDLRunner
+  # For example for SupervisedRunner
   input_key: "features"  # Example
   output_key: null  # Example
 
@@ -43,7 +43,7 @@ monitoring_params: # OPTIONAL KEYWORD, parameters for monitoring. Only Weights &
 
 
 stages:  # REQUIRED KEYWORD, dictionary of all stages of Catalyst, for training and/or infer. Contain keywords with parameters that apply to all the stages, as well as the names of the stages
-  data_params:  # KEYWORD, parameters passed to `ConfigDLExperiment.get_datasets(...)` (for all the stages)
+  data_params:  # KEYWORD, parameters passed to `ConfigExperiment.get_datasets(...)` (for all the stages)
     batch_size: 1  # KEYWORD, batch size for all the stages
     num_workers: 1  # KEYWORD, Number of parallel processes for DataLoader
     drop_last: False  # KEYWORD, parameter for DataLoader (Default is False)

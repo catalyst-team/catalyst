@@ -7,7 +7,7 @@
 # experiment
 # runner
 
-from .state import State
+from .state import _State
 from .callback import (
     Callback,
     CallbackOrder,
@@ -16,5 +16,5 @@ from .callback import (
     MultiMetricCallback,
 )
 from .callbacks import *
-from .experiment import Experiment
-from .runner import Runner
+from .experiment import _Experiment
+from .runner import _Runner

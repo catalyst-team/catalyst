@@ -13,7 +13,7 @@ from catalyst.utils.typing import (
 
 # TODO Deep refactoring
 #  - lr/loss/momentum bypass (how to deal when multiple optimizers?)
-class State(FrozenClass):
+class _State(FrozenClass):
     def __init__(
         self,
         *,

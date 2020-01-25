@@ -2,8 +2,8 @@
 # isort:skip_file
 
 from catalyst.core import *
-from .state import DLState
+from .state import State
 from .callback import MeterMetricsCallback
-from .experiment import DLExperiment
-from .runner import DLRunner
+from .experiment import Experiment
+from .runner import Runner
 

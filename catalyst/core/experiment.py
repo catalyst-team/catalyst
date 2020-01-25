@@ -9,7 +9,7 @@ from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
 from .callback import Callback
 
 
-class Experiment(ABC):
+class _Experiment(ABC):
     """
     Object containing all information required to run the experiment
 
@@ -111,4 +111,4 @@ class Experiment(ABC):
         raise NotImplementedError
 
 
-__all__ = ["Experiment"]
+__all__ = ["_Experiment"]

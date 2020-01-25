@@ -2,10 +2,10 @@ from typing import Any, Mapping  # isort:skip
 
 import torch
 
-from catalyst.dl import DLRunner
+from catalyst.dl import Runner
 
 
-class GanDLRunner(DLRunner):
+class GanRunner(Runner):
     def __init__(
         self,
         model=None,
@@ -75,4 +75,4 @@ class GanDLRunner(DLRunner):
             raise NotImplementedError(f"Unknown phase: self.state.phase")
 
 
-__all__ = ["GanDLRunner"]
+__all__ = ["GanRunner"]

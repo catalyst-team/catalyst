@@ -1,6 +1,6 @@
 # flake8: noqa
 
-from .gan import GanDLRunner
-from .supervised import SupervisedDLRunner
+from .gan import GanRunner
+from .supervised import SupervisedRunner
 
 from catalyst.contrib.dl.runner import *  # isort:skip

@@ -6,7 +6,7 @@ from catalyst.dl.callbacks import (
     CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
     RaiseExceptionCallback, TensorboardLogger
 )
-from catalyst.dl.experiment.supervised import SupervisedDLExperiment
+from catalyst.dl.experiment.supervised import SupervisedExperiment
 
 DEFAULT_CALLBACKS = OrderedDict([
     ("_criterion", CriterionCallback),
@@ -19,8 +19,8 @@ DEFAULT_CALLBACKS = OrderedDict([
 
 def test_defaults():
     """
-    Test on defaults for SupervisedDLExperiment class, which is child class of
-    BaseDLExperiment.  That's why we check only default callbacks functionality
+    Test on defaults for SupervisedExperiment class, which is child class of
+    BaseExperiment.  That's why we check only default callbacks functionality
     here
     """
     model = torch.nn.Module()
@@ -29,7 +29,7 @@ def test_defaults():
     loaders = OrderedDict()
     loaders["train"] = dataloader
 
-    exp = SupervisedDLExperiment(model=model, loaders=loaders)
+    exp = SupervisedExperiment(model=model, loaders=loaders)
 
     assert exp.get_callbacks("train").keys() == DEFAULT_CALLBACKS.keys()
     cbs = zip(exp.get_callbacks("train").values(), DEFAULT_CALLBACKS.values())

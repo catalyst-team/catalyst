@@ -3,10 +3,10 @@ from collections import OrderedDict
 import torchvision
 from torchvision import transforms
 
-from catalyst.dl import ConfigDLExperiment
+from catalyst.dl import ConfigExperiment
 
 
-class Experiment(ConfigDLExperiment):
+class Experiment(ConfigExperiment):
     @staticmethod
     def get_transforms(stage: str = None, mode: str = None):
         return transforms.Compose(

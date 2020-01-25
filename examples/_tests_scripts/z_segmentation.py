@@ -103,7 +103,7 @@ from catalyst.contrib.models.cv import Unet
 
 import torch
 import torch.nn as nn
-from catalyst.dl.runner import SupervisedDLRunner
+from catalyst.dl.runner import SupervisedRunner
 
 # experiment setup
 num_epochs = 2
@@ -118,7 +118,7 @@ scheduler = torch.optim.lr_scheduler.MultiStepLR(
 )
 
 # model runner
-runner = SupervisedDLRunner()
+runner = SupervisedRunner()
 
 # model training
 runner.train(

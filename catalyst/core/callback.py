@@ -1,7 +1,7 @@
 from enum import IntFlag
 from typing import Callable, List
 
-from .state import State
+from .state import _State
 
 
 class CallbackOrder(IntFlag):
@@ -44,31 +44,31 @@ class Callback:
         """
         self.order = order
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, state: _State):
         pass
 
-    def on_stage_end(self, state: State):
+    def on_stage_end(self, state: _State):
         pass
 
-    def on_epoch_start(self, state: State):
+    def on_epoch_start(self, state: _State):
         pass
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, state: _State):
         pass
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, state: _State):
         pass
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, state: _State):
         pass
 
-    def on_batch_start(self, state: State):
+    def on_batch_start(self, state: _State):
         pass
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _State):
         pass
 
-    def on_exception(self, state: State):
+    def on_exception(self, state: _State):
         pass
 
 
@@ -102,7 +102,7 @@ class MetricCallback(Callback):
         self.output_key = output_key
         self.metric_params = metric_params
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _State):
         outputs = state.output[self.output_key]
         targets = state.input[self.input_key]
         metric = self.metric_fn(outputs, targets, **self.metric_params)
@@ -130,7 +130,7 @@ class MultiMetricCallback(Callback):
         self.output_key = output_key
         self.metric_params = metric_params
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _State):
         outputs = state.output[self.output_key]
         targets = state.input[self.input_key]
 

@@ -1,10 +1,10 @@
 from abc import abstractmethod
 
-from catalyst.core import Experiment
+from catalyst.core import _Experiment
 from catalyst.rl2 import AlgorithmSpec, EnvironmentSpec
 
 
-class RLExperiment(Experiment):
+class RLExperiment(_Experiment):
 
     @property
     @abstractmethod

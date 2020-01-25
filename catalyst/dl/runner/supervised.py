@@ -8,8 +8,8 @@ from torch.jit import ScriptModule
 from torch.utils.data import DataLoader
 
 from catalyst.dl import (
-    Callback, CheckpointCallback, DLRunner, InferCallback,
-    SupervisedDLExperiment, utils
+    Callback, CheckpointCallback, Runner, InferCallback,
+    SupervisedExperiment, utils
 )
 from catalyst.dl.utils import trace
 from catalyst.utils.typing import (
@@ -19,11 +19,11 @@ from catalyst.utils.typing import (
 logger = logging.getLogger(__name__)
 
 
-class SupervisedDLRunner(DLRunner):
+class SupervisedRunner(Runner):
     """
     Runner for experiments with supervised model
     """
-    _default_experiment = SupervisedDLExperiment
+    _default_experiment = SupervisedExperiment
 
     def __init__(
         self,
@@ -386,4 +386,4 @@ class SupervisedDLRunner(DLRunner):
         return result
 
 
-__all__ = ["SupervisedDLRunner"]
+__all__ = ["SupervisedRunner"]

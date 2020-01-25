@@ -14,17 +14,17 @@ from catalyst.utils.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
 from .callback import Callback, LoggerCallback
-from .experiment import Experiment
-from .state import State
+from .experiment import _Experiment
+from .state import _State
 
 
-class Runner(ABC):
+class _Runner(ABC):
     """
     Abstract class for all runners inherited from
     """
 
-    experiment_fn: Callable = Experiment
-    state_fn: callable = State
+    experiment_fn: Callable = _Experiment
+    state_fn: callable = _State
 
     def __init__(
         self,
@@ -40,8 +40,8 @@ class Runner(ABC):
         self._model: Model = model
         self._device: Device = device
 
-        self.experiment: Experiment = None
-        self.state: State = None
+        self.experiment: _Experiment = None
+        self.state: _State = None
 
         self.callbacks: OrderedDict[str, Callback] = None
         self.loggers: OrderedDict[str, LoggerCallback] = None
@@ -352,7 +352,7 @@ class Runner(ABC):
             self.state.epoch += 1
         self._run_event("stage", moment="end")
 
-    def run_experiment(self, experiment: Experiment, check: bool = False):
+    def run_experiment(self, experiment: _Experiment, check: bool = False):
         """
         Starts the experiment
         """
@@ -362,8 +362,8 @@ class Runner(ABC):
         # jupyter source code logging hack
         # + hack to prevent cycle imports
         # @TODO: remove hack to catalyst.dl only, not core
-        # from catalyst.dl.experiment import BaseDLExperiment
-        # if isinstance(self.experiment, BaseDLExperiment) \
+        # from catalyst.dl.experiment import BaseExperiment
+        # if isinstance(self.experiment, BaseExperiment) \
         #         and self.experiment.logdir is not None:
         #     expdir = Path(os.getcwd())
         #     logdir = Path(self.experiment.logdir)
@@ -384,4 +384,4 @@ class Runner(ABC):
         return self
 
 
-__all__ = ["Runner"]
+__all__ = ["_Runner"]

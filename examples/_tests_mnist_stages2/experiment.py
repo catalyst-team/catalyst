@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 import torchvision
 
-from catalyst.dl.experiment import ConfigDLExperiment
+from catalyst.dl.experiment import ConfigExperiment
 
 
 class MNIST(torchvision.datasets.MNIST):
@@ -15,7 +15,7 @@ class MNIST(torchvision.datasets.MNIST):
         return image, target
 
 
-class Experiment(ConfigDLExperiment):
+class Experiment(ConfigExperiment):
     def get_datasets(self, stage: str, **kwargs):
         datasets = OrderedDict()
         for mode in ("train", "valid"):

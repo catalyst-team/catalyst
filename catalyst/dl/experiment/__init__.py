@@ -1,5 +1,5 @@
 # flake8: noqa
 
-from .base import BaseDLExperiment
-from .config import ConfigDLExperiment
-from .supervised import SupervisedDLExperiment
+from .base import BaseExperiment
+from .config import ConfigExperiment
+from .supervised import SupervisedExperiment

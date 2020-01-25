@@ -1,9 +1,9 @@
 from typing import Union  # isort:skip
 
-from catalyst.core import Experiment
+from catalyst.core import _Experiment
 
 
-class DLExperiment(Experiment):
+class Experiment(_Experiment):
 
     def get_native_batch(
         self,
@@ -35,4 +35,4 @@ class DLExperiment(Experiment):
         return sample
 
 
-__all__ = ["DLExperiment"]
+__all__ = ["Experiment"]

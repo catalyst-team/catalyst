@@ -5,14 +5,14 @@ from catalyst.dl import (
     OptimizerCallback, RaiseExceptionCallback, SchedulerCallback,
     TensorboardLogger, VerboseLogger
 )
-from .base import BaseDLExperiment
+from .base import BaseExperiment
 
 
-class SupervisedDLExperiment(BaseDLExperiment):
+class SupervisedExperiment(BaseExperiment):
     """
     Supervised experiment
 
-    The main difference with BaseDLExperiment that it will
+    The main difference with BaseExperiment that it will
     add several callbacks by default if you haven't.
 
     Here are list of callbacks by default:
@@ -37,7 +37,7 @@ class SupervisedDLExperiment(BaseDLExperiment):
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """
-        Override of ``BaseDLExperiment.get_callbacks`` method.
+        Override of ``BaseExperiment.get_callbacks`` method.
         Will add several of callbacks by default in case they missed.
 
         Args:
@@ -70,4 +70,4 @@ class SupervisedDLExperiment(BaseDLExperiment):
         return callbacks
 
 
-__all__ = ["SupervisedDLExperiment"]
+__all__ = ["SupervisedExperiment"]

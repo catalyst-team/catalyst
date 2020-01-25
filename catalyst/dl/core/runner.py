@@ -1,17 +1,17 @@
 from typing import Callable  # isort:skip
 
-from catalyst.core import Runner
+from catalyst.core import _Runner
 from catalyst.dl import utils
-from .experiment import DLExperiment
-from .state import DLState
+from .experiment import Experiment
+from .state import State
 
 
-class DLRunner(Runner):
-    experiment: DLExperiment
-    state: DLState
+class Runner(_Runner):
+    experiment: Experiment
+    state: State
 
-    experiment_fn: Callable = DLExperiment
-    state_fn: callable = DLState
+    experiment_fn: Callable = Experiment
+    state_fn: callable = State
 
     def _prepare_for_stage(self, stage: str):
         super()._prepare_for_stage(stage=stage)
@@ -22,4 +22,4 @@ class DLRunner(Runner):
         self.loaders = loaders
 
 
-__all__ = ["DLRunner"]
+__all__ = ["Runner"]

@@ -1,5 +1,5 @@
 from catalyst.core.callbacks import LRUpdater
-from catalyst.dl import DLState
+from catalyst.dl import State
 
 
 class LRFinder(LRUpdater):
@@ -51,7 +51,7 @@ class LRFinder(LRUpdater):
         self.find_iter += 1
         return res
 
-    def on_loader_start(self, state: DLState):
+    def on_loader_start(self, state: State):
         if state.need_backward:
             lr_ = self.final_lr / self.init_lr
             self.num_steps = self.num_steps or state.loader_len
@@ -60,7 +60,7 @@ class LRFinder(LRUpdater):
 
         super().on_loader_start(state=state)
 
-    def on_batch_end(self, state: DLState):
+    def on_batch_end(self, state: State):
         super().on_batch_end(state=state)
         if self.find_iter > self.num_steps:
             raise NotImplementedError("End of LRFinder")

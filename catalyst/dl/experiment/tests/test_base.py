@@ -2,12 +2,12 @@ from collections import OrderedDict
 
 import torch
 
-from catalyst.dl.experiment.base import BaseDLExperiment
+from catalyst.dl.experiment.base import BaseExperiment
 
 
 def test_defaults():
     """
-    Test on defaults for BaseDLExperiment. It will be useful if we decide to
+    Test on defaults for BaseExperiment. It will be useful if we decide to
     change anything in those values as it could make breaking change.
     """
     model = torch.nn.Module()
@@ -16,7 +16,7 @@ def test_defaults():
     loaders = OrderedDict()
     loaders["train"] = dataloader
 
-    exp = BaseDLExperiment(model=model, loaders=loaders)
+    exp = BaseExperiment(model=model, loaders=loaders)
 
     assert exp.initial_seed == 42
     assert exp.logdir is None

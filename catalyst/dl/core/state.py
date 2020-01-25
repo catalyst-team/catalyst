@@ -1,12 +1,12 @@
 from typing import Dict  # isort:skip
 
-from catalyst.core import State
+from catalyst.core import _State
 from catalyst.utils.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
 
 
-class DLState(State):
+class State(_State):
     """
     An object that is used to pass internal state during train/valid/infer.
     """
@@ -53,4 +53,4 @@ class DLState(State):
         )
 
 
-__all__ = ["DLState"]
+__all__ = ["State"]

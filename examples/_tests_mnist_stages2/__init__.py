@@ -1,5 +1,5 @@
 # flake8: noqa
-from catalyst.dl import registry, SupervisedDLRunner as Runner
+from catalyst.dl import registry, SupervisedRunner as Runner
 from .experiment import Experiment
 from .model import SimpleNet
 from .transform import TensorToImage, ToTensor

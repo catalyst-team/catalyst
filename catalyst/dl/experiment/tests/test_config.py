@@ -9,7 +9,7 @@ from catalyst.dl.callbacks import (
     CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
     PhaseWrapperCallback, RaiseExceptionCallback, TensorboardLogger
 )
-from catalyst.dl.experiment.config import ConfigDLExperiment
+from catalyst.dl.experiment.config import ConfigExperiment
 
 DEFAULT_MINIMAL_CONFIG = {
     "model_params": {
@@ -45,13 +45,13 @@ registry.MODELS.add(SomeModel)
 
 def test_defaults():
     """
-    Test on ConfigDLExperiment defaults.
-    It's pretty similar to BaseDLExperiment's test
+    Test on ConfigExperiment defaults.
+    It's pretty similar to BaseExperiment's test
     but the thing is that those two are very different classes and
     inherit from different parent classes.
     Also very important to check which callbacks are added by default
     """
-    exp = ConfigDLExperiment(config=DEFAULT_MINIMAL_CONFIG)
+    exp = ConfigExperiment(config=DEFAULT_MINIMAL_CONFIG)
 
     assert exp.initial_seed == 42
     assert exp.logdir is None
@@ -82,7 +82,7 @@ def test_when_callback_defined():
             "callback": "CriterionCallback"
         }
     }
-    exp = ConfigDLExperiment(config=config)
+    exp = ConfigExperiment(config=config)
 
     assert "_criterion" not in exp.get_callbacks("train").keys()
     assert "my_criterion" in exp.get_callbacks("train").keys()
@@ -103,7 +103,7 @@ def test_when_callback_wrapped():
             "callback": "CriterionCallback"
         }
     }
-    exp = ConfigDLExperiment(config=config)
+    exp = ConfigExperiment(config=config)
 
     assert "_criterion" not in exp.get_callbacks("train").keys()
     callback = exp.get_callbacks("train")["my_wrapped_criterion"]
@@ -115,7 +115,7 @@ def test_not_implemented_datasets():
     Test on ``get_datasets`` method, which should be implememnted by user.
     Method ``get_loaders`` will call ``get_dataset``.
     """
-    exp = ConfigDLExperiment(config=DEFAULT_MINIMAL_CONFIG)
+    exp = ConfigExperiment(config=DEFAULT_MINIMAL_CONFIG)
 
     with pytest.raises(NotImplementedError):
         exp.get_loaders("train")

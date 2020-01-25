@@ -61,7 +61,7 @@ Catalyst is compatible with: Python 3.6+. PyTorch 1.0.0+.
 
 ```python
 import torch
-from catalyst.dl import SupervisedDLRunner
+from catalyst.dl import SupervisedRunner
 
 # experiment setup
 logdir = "./logdir"
@@ -77,7 +77,7 @@ optimizer = torch.optim.Adam(model.parameters())
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer)
 
 # model runner
-runner = SupervisedDLRunner()
+runner = SupervisedRunner()
 
 # model training
 runner.train(

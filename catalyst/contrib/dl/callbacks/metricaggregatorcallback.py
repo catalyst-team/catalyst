@@ -1,7 +1,7 @@
 from typing import Any, List, Dict, Union  # isort:skip
 import logging
 
-from catalyst.dl import Callback, CallbackOrder, State
+from catalyst.dl import Callback, CallbackOrder, _State
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +80,7 @@ class MetricAggregatorCallback(Callback):
 
         return result
 
-    def on_batch_end(self, state: State) -> None:
+    def on_batch_end(self, state: _State) -> None:
         """
         Computes the metric and add it to the metrics
         """

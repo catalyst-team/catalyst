@@ -2,7 +2,7 @@ from typing import Dict
 
 import numpy as np
 
-from catalyst.dl.core import Callback, CallbackOrder, DLState, MetricCallback
+from catalyst.dl.core import Callback, CallbackOrder, State, MetricCallback
 from catalyst.utils import criterion
 from catalyst.utils.confusion_matrix import (
     calculate_confusion_matrix_from_tensors, calculate_tp_fp_fn
@@ -64,7 +64,7 @@ class MulticlassDiceMetricCallback(Callback):
     def _reset_stats(self):
         self.confusion_matrix = None
 
-    def on_batch_end(self, state: DLState):
+    def on_batch_end(self, state: State):
         outputs = state.output[self.output_key]
         targets = state.input[self.input_key]
 
@@ -77,7 +77,7 @@ class MulticlassDiceMetricCallback(Callback):
         else:
             self.confusion_matrix += confusion_matrix
 
-    def on_loader_end(self, state: DLState):
+    def on_loader_end(self, state: State):
         tp_fp_fn_dict = calculate_tp_fp_fn(self.confusion_matrix)
 
         batch_metrics: Dict = calculate_dice(**tp_fp_fn_dict)

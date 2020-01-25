@@ -2,10 +2,10 @@ from typing import Dict  # isort:skip
 
 from alchemy import Logger
 
-from catalyst.dl import DLExperiment, DLRunner, SupervisedDLRunner
+from catalyst.dl import Experiment, Runner, SupervisedRunner
 
 
-class AlchemyDLRunner(DLRunner):
+class AlchemyRunner(Runner):
     """
     Runner wrapper with Alchemy integration hooks.
     Read about Alchemy here https://alchemy.host
@@ -54,7 +54,7 @@ class AlchemyDLRunner(DLRunner):
             metric_name = f"{key}/{mode}{suffix}"
             self.logger.log_scalar(metric_name, value)
 
-    def _pre_experiment_hook(self, experiment: DLExperiment):
+    def _pre_experiment_hook(self, experiment: Experiment):
         monitoring_params = experiment.monitoring_params
 
         log_on_batch_end: bool = \
@@ -68,7 +68,7 @@ class AlchemyDLRunner(DLRunner):
         )
         self.logger = Logger(**monitoring_params)
 
-    def _post_experiment_hook(self, experiment: DLExperiment):
+    def _post_experiment_hook(self, experiment: Experiment):
         self.logger.close()
 
     def _run_batch(self, batch):
@@ -95,7 +95,7 @@ class AlchemyDLRunner(DLRunner):
 
     def run_experiment(
         self,
-        experiment: DLExperiment,
+        experiment: Experiment,
         check: bool = False
     ):
         self._pre_experiment_hook(experiment=experiment)
@@ -103,8 +103,8 @@ class AlchemyDLRunner(DLRunner):
         self._post_experiment_hook(experiment=experiment)
 
 
-class SupervisedAlchemyDLRunner(AlchemyDLRunner, SupervisedDLRunner):
+class SupervisedAlchemyRunner(AlchemyRunner, SupervisedRunner):
     pass
 
 
-__all__ = ["AlchemyDLRunner", "SupervisedAlchemyDLRunner"]
+__all__ = ["AlchemyRunner", "SupervisedAlchemyRunner"]

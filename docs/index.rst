@@ -164,7 +164,7 @@ Getting started: 30 seconds with Catalyst
 .. code:: python
 
     import torch
-    from catalyst.dl.experiments import SupervisedDLRunner
+    from catalyst.dl.experiments import SupervisedRunner
 
     # experiment setup
     logdir = "./logdir"
@@ -180,7 +180,7 @@ Getting started: 30 seconds with Catalyst
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer)
 
     # model runner
-    runner = SupervisedDLRunner()
+    runner = SupervisedRunner()
 
     # model training
     runner.train(

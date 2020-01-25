@@ -11,7 +11,7 @@ from torch.utils.data import (  # noqa F401
 )
 
 from catalyst.data import Augmentor, AugmentorCompose
-from catalyst.dl import Callback, DLExperiment, utils
+from catalyst.dl import Callback, Experiment, utils
 from catalyst.dl.callbacks import (
     CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
     PhaseWrapperCallback, RaiseExceptionCallback, SchedulerCallback,
@@ -24,7 +24,7 @@ from catalyst.dl.registry import (
 from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
 
 
-class ConfigDLExperiment(DLExperiment):
+class ConfigExperiment(Experiment):
     """
     Experiment created from a configuration file
     """
@@ -146,7 +146,7 @@ class ConfigDLExperiment(DLExperiment):
         if key_value_flag:
             model = {}
             for key, params_ in params.items():
-                model[key] = ConfigDLExperiment._get_model(**params_)
+                model[key] = ConfigExperiment._get_model(**params_)
             model = nn.ModuleDict(model)
         else:
             model = MODELS.get_from_params(**params)
@@ -168,7 +168,7 @@ class ConfigDLExperiment(DLExperiment):
         if key_value_flag:
             criterion = {}
             for key, params_ in params.items():
-                criterion[key] = ConfigDLExperiment._get_criterion(**params_)
+                criterion[key] = ConfigExperiment._get_criterion(**params_)
         else:
             criterion = CRITERIONS.get_from_params(**params)
             if criterion is not None and torch.cuda.is_available():
@@ -304,7 +304,7 @@ class ConfigDLExperiment(DLExperiment):
         if key_value_flag:
             scheduler = {}
             for key, params_ in params.items():
-                scheduler[key] = ConfigDLExperiment._get_scheduler(
+                scheduler[key] = ConfigExperiment._get_scheduler(
                     optimizer=optimizer, **params_
                 )
         else:
@@ -328,7 +328,7 @@ class ConfigDLExperiment(DLExperiment):
 
         if key_value_flag:
             transforms_composition = {
-                key: ConfigDLExperiment._get_transform(**params_)
+                key: ConfigExperiment._get_transform(**params_)
                 for key, params_ in params.items()
             }
 
@@ -344,7 +344,7 @@ class ConfigDLExperiment(DLExperiment):
         else:
             if "transforms" in params:
                 transforms_composition = [
-                    ConfigDLExperiment._get_transform(**transform_params)
+                    ConfigExperiment._get_transform(**transform_params)
                     for transform_params in params["transforms"]
                 ]
                 params.update(transforms=transforms_composition)
@@ -495,7 +495,7 @@ class ConfigDLExperiment(DLExperiment):
         callback = CALLBACKS.get_from_params(**params)
         if wrapper_params is not None:
             wrapper_params["base_callback"] = callback
-            return ConfigDLExperiment._get_callback(**wrapper_params)
+            return ConfigExperiment._get_callback(**wrapper_params)
         return callback
 
     def get_callbacks(self, stage: str) -> "OrderedDict[Callback]":
@@ -538,4 +538,4 @@ class ConfigDLExperiment(DLExperiment):
         return callbacks
 
 
-__all__ = ["ConfigDLExperiment"]
+__all__ = ["ConfigExperiment"]

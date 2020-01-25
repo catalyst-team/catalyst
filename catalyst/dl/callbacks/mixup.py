@@ -4,7 +4,7 @@ import numpy as np
 
 import torch
 
-from catalyst.dl import CriterionCallback, DLState
+from catalyst.dl import CriterionCallback, State
 
 
 class MixupCallback(CriterionCallback):
@@ -52,7 +52,7 @@ class MixupCallback(CriterionCallback):
         self.index = None
         self.is_needed = True
 
-    def _compute_loss(self, state: DLState, criterion):
+    def _compute_loss(self, state: State, criterion):
         if not self.is_needed:
             return super()._compute_loss(state, criterion)
 
@@ -64,11 +64,11 @@ class MixupCallback(CriterionCallback):
             (1 - self.lam) * criterion(pred, y_b)
         return loss
 
-    def on_loader_start(self, state: DLState):
+    def on_loader_start(self, state: State):
         self.is_needed = not self.on_train_only or \
             state.loader_name.startswith("train")
 
-    def on_batch_start(self, state: DLState):
+    def on_batch_start(self, state: State):
         if not self.is_needed:
             return
 

@@ -4,7 +4,7 @@ import torch
 
 from catalyst import utils
 from catalyst.contrib.nn.schedulers import BatchScheduler, OneCycleLRWithWarmup
-from catalyst.core import Callback, CallbackOrder, State
+from catalyst.core import Callback, CallbackOrder, _State
 
 
 class SchedulerCallback(Callback):
@@ -19,7 +19,7 @@ class SchedulerCallback(Callback):
         self.mode = mode
         self.reduce_metric = reduce_metric
 
-    def step(self, state: State):
+    def step(self, state: _State):
         scheduler = state.get_key(
             key="scheduler", inner_key=self.scheduler_key
         )
@@ -33,7 +33,7 @@ class SchedulerCallback(Callback):
         state.set_key(lr, key="lr", inner_key=self.scheduler_key)
         state.set_key(momentum, key="momentum", inner_key=self.scheduler_key)
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, state: _State):
         scheduler = state.get_key(
             key="scheduler", inner_key=self.scheduler_key
         )
@@ -49,7 +49,7 @@ class SchedulerCallback(Callback):
                 self.mode == "batch":
             scheduler.reset()
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, state: _State):
         scheduler = state.get_key(
             key="scheduler", inner_key=self.scheduler_key
         )
@@ -60,11 +60,11 @@ class SchedulerCallback(Callback):
                 loader_len=state.loader_len, current_step=state.stage_epoch
             )
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _State):
         if self.mode == "batch":
             self.step(state=state)
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, state: _State):
         if self.mode == "epoch":
             self.step(state=state)
 
@@ -131,7 +131,7 @@ class LRUpdater(Callback):
 
         return new_lr, new_momentum
 
-    def update_optimizer(self, state: State):
+    def update_optimizer(self, state: _State):
         if not state.need_backward:
             return
 
@@ -142,17 +142,17 @@ class LRUpdater(Callback):
         state.set_key(lr, key="lr", inner_key=self.optimizer_key)
         state.set_key(momentum, key="momentum", inner_key=self.optimizer_key)
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, state: _State):
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
         )
         self.init_lr = optimizer.defaults["lr"]
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, state: _State):
         if state.need_backward:
             self.update_optimizer(state=state)
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _State):
         if state.need_backward:
             self.update_optimizer(state=state)
 

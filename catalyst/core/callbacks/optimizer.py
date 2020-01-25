@@ -6,7 +6,7 @@ import safitty
 import torch
 
 from catalyst import utils
-from catalyst.core import Callback, CallbackOrder, registry, State
+from catalyst.core import Callback, CallbackOrder, registry, _State
 from catalyst.utils.typing import Optimizer
 
 logger = logging.getLogger(__name__)
@@ -80,7 +80,7 @@ class OptimizerCallback(Callback):
                 grad_clip_fn(group["params"])
         optimizer.step()
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, state: _State):
         """On stage start event"""
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
@@ -91,7 +91,7 @@ class OptimizerCallback(Callback):
         state.set_key(lr, "lr", inner_key=self.optimizer_key)
         state.set_key(momentum, "momentum", inner_key=self.optimizer_key)
 
-    def on_epoch_start(self, state: State):
+    def on_epoch_start(self, state: _State):
         """On epoch start event"""
         optimizer = state.get_key(
             key="optimizer", inner_key=self.optimizer_key
@@ -107,7 +107,7 @@ class OptimizerCallback(Callback):
         else:
             self._optimizer_wd = [0.0] * len(optimizer.param_groups)
 
-    def _get_loss(self, state: State) -> torch.Tensor:
+    def _get_loss(self, state: _State) -> torch.Tensor:
         loss = state.get_key(key="loss", inner_key=self.loss_key)
 
         if isinstance(loss, list):
@@ -127,11 +127,11 @@ class OptimizerCallback(Callback):
             raise ValueError(error)
         return loss
 
-    def on_batch_start(self, state: State):
+    def on_batch_start(self, state: _State):
         """On batch start event"""
         state.loss = None
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _State):
         """On batch end event"""
         if not state.need_backward:
             return
@@ -182,7 +182,7 @@ class OptimizerCallback(Callback):
 
             self._accumulation_counter = 0
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, state: _State):
         """On epoch end event"""
         if self.decouple_weight_decay:
             optimizer = state.get_key(
