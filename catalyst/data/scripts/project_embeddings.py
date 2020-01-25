@@ -41,7 +41,7 @@ def build_args(parser):
         help="column in the table that contains image paths"
     )
     parser.add_argument(
-        "--img-datapath", type=str, help="path to photos directory"
+        "--img-rootpath", type=str, help="path to photos directory"
     )
     parser.add_argument(
         "--img-size",
@@ -96,7 +96,7 @@ def main(args, _=None):
 
     if args.img_col is not None:
         image_names = [
-            path.join(args.img_datapath, name)
+            path.join(args.img_rootpath, name)
             for name in df[args.img_col].values
         ]
         img_data = np.stack(

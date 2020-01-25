@@ -40,9 +40,9 @@ def build_args(parser):
         "--in-csv", type=str, dest="in_csv", help="Path to csv with photos"
     )
     parser.add_argument(
-        "--img-datapath",
+        "--img-rootpath",
         type=str,
-        dest="datapath",
+        dest="rootpath",
         help="Path to photos directory"
     )
     parser.add_argument(
@@ -150,7 +150,7 @@ def main(args, _=None):
     df = list(df.to_dict("index").values())
 
     open_fn = ImageReader(
-        input_key=args.img_col, output_key="image", datapath=args.datapath
+        input_key=args.img_col, output_key="image", rootpath=args.rootpath
     )
 
     dataloader = utils.get_loader(

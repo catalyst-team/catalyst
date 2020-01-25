@@ -36,7 +36,7 @@ Examples:
 
         $ catalyst-data check-images \\
             --in-csv=./data/dataset_raw.csv \\
-            --img-datapath=./data/dataset \\
+            --img-rootpath=./data/dataset \\
             --img-col="tag" \\
             --out-csv=./data/dataset_checked.csv \\
             --n-cpu=4
