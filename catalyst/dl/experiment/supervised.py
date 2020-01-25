@@ -27,8 +27,8 @@ class SupervisedExperiment(BaseExperiment):
             saves model and optimizer state each epoch callback to save/restore
             your model/criterion/optimizer/metrics.
         ConsoleLogger:
-            standard Catalyst logger, translates ``state.metric_manager`` to console
-            and text file
+            standard Catalyst logger,
+            translates ``state.metric_manager`` to console and text file
         TensorboardLogger:
             will write ``state.metric_manager`` to tensorboard
         RaiseExceptionCallback:
