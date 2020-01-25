@@ -97,7 +97,8 @@ class VerboseLogger(LoggerCallback):
 
 class ConsoleLogger(LoggerCallback):
     """
-    Logger callback, translates ``state.metric_manager`` to console and text file
+    Logger callback,
+    translates ``state.metric_manager`` to console and text file
     """
 
     def __init__(self):
