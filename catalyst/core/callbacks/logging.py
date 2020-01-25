@@ -8,7 +8,7 @@ from urllib.request import Request, urlopen
 from tqdm import tqdm
 
 from catalyst import utils
-from catalyst.core import LoggerCallback, _State
+from catalyst.core import _State, LoggerCallback
 from . import formatters
 
 
@@ -97,7 +97,7 @@ class VerboseLogger(LoggerCallback):
 
 class ConsoleLogger(LoggerCallback):
     """
-    Logger callback, translates ``state.metrics`` to console and text file
+    Logger callback, translates ``state.metric_manager`` to console and text file
     """
 
     def __init__(self):
@@ -147,7 +147,7 @@ class ConsoleLogger(LoggerCallback):
 
     def on_epoch_end(self, state):
         """
-        Translate ``state.metrics`` to console and text file
+        Translate ``state.metric_manager`` to console and text file
         at the end of an epoch
         """
         self.logger.info("", extra={"state": state})
@@ -155,7 +155,7 @@ class ConsoleLogger(LoggerCallback):
 
 class TensorboardLogger(LoggerCallback):
     """
-    Logger callback, translates ``state.metrics`` to tensorboard
+    Logger callback, translates ``state.metric_manager`` to tensorboard
     """
 
     def __init__(
@@ -245,7 +245,7 @@ class TensorboardLogger(LoggerCallback):
 
 class TelegramLogger(LoggerCallback):
     """
-    Logger callback, translates ``state.metrics`` to telegram channel
+    Logger callback, translates ``state.metric_manager`` to telegram channel
     """
 
     def __init__(
@@ -320,7 +320,7 @@ class TelegramLogger(LoggerCallback):
             self._send_text(text)
 
     def on_loader_end(self, state: _State):
-        """Translate ``state.metrics`` to telegram channel"""
+        """Translate ``state.metric_manager`` to telegram channel"""
         if self.log_on_loader_end:
             metrics = state.metric_manager.epoch_values[state.loader_name]
 

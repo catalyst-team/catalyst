@@ -8,8 +8,8 @@ from torch.jit import ScriptModule
 from torch.utils.data import DataLoader
 
 from catalyst.dl import (
-    Callback, CheckpointCallback, Runner, InferCallback,
-    SupervisedExperiment, utils
+    Callback, CheckpointCallback, InferCallback, Runner, SupervisedExperiment,
+    utils
 )
 from catalyst.dl.utils import trace
 from catalyst.utils.typing import (

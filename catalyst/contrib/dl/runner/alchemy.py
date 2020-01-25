@@ -2,7 +2,8 @@ from typing import Dict  # isort:skip
 
 from alchemy import Logger
 
-from catalyst.dl import Experiment, Runner, SupervisedRunner
+from catalyst.dl.core import Experiment, Runner
+from catalyst.dl.runner import SupervisedRunner
 
 
 class AlchemyRunner(Runner):

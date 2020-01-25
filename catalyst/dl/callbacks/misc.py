@@ -3,7 +3,7 @@ from typing import Dict, List  # isort:skip
 import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 
-from catalyst.dl import Callback, CallbackOrder, State, LoggerCallback, utils
+from catalyst.dl import Callback, CallbackOrder, LoggerCallback, State, utils
 from catalyst.utils.meters import ConfusionMeter
 
 

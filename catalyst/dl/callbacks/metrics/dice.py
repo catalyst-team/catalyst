@@ -2,7 +2,7 @@ from typing import Dict
 
 import numpy as np
 
-from catalyst.dl.core import Callback, CallbackOrder, State, MetricCallback
+from catalyst.dl.core import Callback, CallbackOrder, MetricCallback, State
 from catalyst.utils import criterion
 from catalyst.utils.confusion_matrix import (
     calculate_confusion_matrix_from_tensors, calculate_tp_fp_fn
