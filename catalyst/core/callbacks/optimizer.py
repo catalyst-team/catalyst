@@ -178,7 +178,7 @@ class OptimizerCallback(Callback):
                     tag = tag.replace(".", "/")
                     state.model_grads[tag] = value.grad.cpu().numpy()
 
-            model.zero_grad()
+            utils.maybe_recursive_call(model, "zero_grad")
 
             self._accumulation_counter = 0
 

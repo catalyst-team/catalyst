@@ -83,7 +83,9 @@ class Runner(ABC):
             )
 
         if self._device is not None:
-            model.to(device=self._device)
+            model: Model = utils.maybe_recursive_call(
+                model, "to", device=self._device
+            )
 
         self._model = model
 
@@ -109,7 +111,9 @@ class Runner(ABC):
             )
 
         if self._model is not None:
-            self._model.to(device=self._device)
+            self._model = utils.maybe_recursive_call(
+                self._model, "to", device=self._device
+            )
 
     @abstractmethod
     def forward(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:

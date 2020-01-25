@@ -313,7 +313,7 @@ def process_components(
     if device is None:
         device = utils.get_device()
 
-    model.to(device=device)
+    model: Model = utils.maybe_recursive_call(model, "to", device=device)
 
     if utils.is_wrapped_with_ddp(model):
         pass
@@ -354,7 +354,7 @@ def process_components(
         elif isinstance(model, dict):
             model = {k: torch.nn.DataParallel(v) for k, v in model.items()}
 
-    model.to(device=device)
+    model: Model = utils.maybe_recursive_call(model, "to", device=device)
 
     return model, criterion, optimizer, scheduler, device
 
