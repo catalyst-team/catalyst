@@ -8,7 +8,10 @@ tar -xf ./data/isbi.tar.gz -C ./data/
 # @TODO: fix macos fail with sed
 set -e
 
-(set -e; for f in examples/_tests_scripts/*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
+for f in examples/_tests_scripts/*.py
+do
+  PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"
+done
 
 LOGFILE=./examples/logs/_tests_mnist_stages1/checkpoints/_metrics.json
 
