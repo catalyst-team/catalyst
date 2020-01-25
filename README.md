@@ -11,6 +11,7 @@
 [![License](https://img.shields.io/github/license/catalyst-team/catalyst.svg)](LICENSE)
 
 [![Build Status](http://66.248.205.49:8111/app/rest/builds/buildType:id:Catalyst_Deploy/statusIcon.svg)](http://66.248.205.49:8111/project.html?projectId=Catalyst&tab=projectOverview&guest=1)
+[![Twitter Follow](https://img.shields.io/twitter/follow/catalyst_core?label=Twitter&style=social)](https://twitter.com/catalyst_core)
 [![Telegram](https://img.shields.io/badge/news-on%20telegram-blue)](https://t.me/catalyst_team)
 [![Gitter](https://badges.gitter.im/catalyst-team/community.svg)](https://gitter.im/catalyst-team/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Spectrum](https://img.shields.io/badge/chat-on%20spectrum-blueviolet)](https://spectrum.chat/catalyst)
