@@ -47,12 +47,12 @@ stages:
 
   scheduler_params:
     scheduler: MultiStepLR
-    milestones: [10]
+    milestones: [3]
     gamma: 0.3
 
   stage1:
     state_params:
-      num_epochs: &num_epochs 10
+      num_epochs: &num_epochs 4
 
     callbacks_params:
       loss_dice:
