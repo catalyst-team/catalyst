@@ -45,24 +45,6 @@ def pack_checkpoint(
     return checkpoint
 
 
-def save_checkpoint(
-    checkpoint: Dict,
-    logdir: Union[Path, str],
-    suffix: str,
-    is_best: bool = False,
-    is_last: bool = False,
-    special_suffix: str = ""
-):
-    os.makedirs(logdir, exist_ok=True)
-    filename = f"{logdir}/{suffix}.pth"
-    torch.save(checkpoint, filename)
-    if is_best:
-        shutil.copyfile(filename, f"{logdir}/best{special_suffix}.pth")
-    if is_last:
-        shutil.copyfile(filename, f"{logdir}/last{special_suffix}.pth")
-    return filename
-
-
 def unpack_checkpoint(
     checkpoint, model=None, criterion=None, optimizer=None, scheduler=None
 ):
@@ -89,6 +71,24 @@ def unpack_checkpoint(
         else:
             name2load = f"{name2load}_state_dict"
             dict2load.load_state_dict(checkpoint[name2load])
+
+
+def save_checkpoint(
+    checkpoint: Dict,
+    logdir: Union[Path, str],
+    suffix: str,
+    is_best: bool = False,
+    is_last: bool = False,
+    special_suffix: str = ""
+):
+    os.makedirs(logdir, exist_ok=True)
+    filename = f"{logdir}/{suffix}.pth"
+    torch.save(checkpoint, filename)
+    if is_best:
+        shutil.copyfile(filename, f"{logdir}/best{special_suffix}.pth")
+    if is_last:
+        shutil.copyfile(filename, f"{logdir}/last{special_suffix}.pth")
+    return filename
 
 
 def load_checkpoint(filepath):
