@@ -9,7 +9,6 @@ stages:
     train:
       transform: Compose
       transforms:
-        - transform: catalsyt.TensorToImage
         - transform: SmallestMaxSize
           max_size: *resize_size
           p: 1.0
@@ -28,10 +27,9 @@ stages:
         - transform: HueSaturationValue
           p: 0.3
         - transform: Normalize
-        - transform: catalsyt.ToTensor
+        - transform: ToTensor
     valid:
       transform: Compose
       transforms:
-        - transform: catalsyt.TensorToImage
         - transform: Normalize
-        - transform: catalsyt.ToTensor
+        - transform: ToTensor

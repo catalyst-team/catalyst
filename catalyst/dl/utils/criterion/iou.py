@@ -1,4 +1,5 @@
 from typing import List, Union  # isort:skip
+from functools import partial
 
 import torch
 
@@ -33,11 +34,15 @@ def iou(
     if threshold is not None:
         outputs = (outputs > threshold).float()
 
-    # if classes are specified we reduce across all dims except channels
-    red_dim = list(range(len(targets.shape))) if classes is None else [0, 2, 3]
+    # ! fix backward compatibility
+    if classes is not None:
+        # if classes are specified we reduce across all dims except channels
+        _sum = partial(torch.sum, dim=[0, 2, 3])
+    else:
+        _sum = torch.sum
 
-    intersection = torch.sum(targets * outputs, red_dim)
-    union = torch.sum(targets, red_dim) + torch.sum(outputs, red_dim)
+    intersection = _sum(targets * outputs)
+    union = _sum(targets) + _sum(outputs)
     # this looks a bit awkward but `eps * (union == 0)` term
     # makes sure that if I and U are both 0, than IoU == 1
     # and if U != 0 and I == 0 the eps term in numerator is zeroed out

@@ -25,6 +25,9 @@ def _transforms_loader(r: Registry):
         import albumentations as m
         r.add_from_module(m)
 
+        from albumentations import pytorch as p
+        r.add_from_module(p)
+
         from catalyst.contrib import transforms as t
         r.add_from_module(t, prefix="catalsyt.")
     except ImportError as ex:
