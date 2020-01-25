@@ -17,7 +17,7 @@ def test_should_have_cls_id_as_first_token_for_input_ids():
 def test_input_ids_should_be_padded():
     dataset = TextClassificationDataset(texts, labels)
     features = dataset[0]["features"]
-    assert features.size(0) ==  512
+    assert features.size(0) == 512
 
 
 def test_mask_sum_should_be_eq_to_seq_len():

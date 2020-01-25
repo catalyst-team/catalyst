@@ -4,13 +4,11 @@ from collections import OrderedDict
 from catalyst.__version__ import __version__
 from .scripts import init, run, trace
 
-COMMANDS = OrderedDict(
-    [
-        ("init", init),
-        ("run", run),
-        ("trace", trace),
-    ]
-)
+COMMANDS = OrderedDict([
+    ("init", init),
+    ("run", run),
+    ("trace", trace),
+])
 
 
 def build_parser() -> ArgumentParser:

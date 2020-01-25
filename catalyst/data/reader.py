@@ -250,9 +250,6 @@ class ReaderCompose(object):
 
 
 __all__ = [
-    "ReaderSpec",
-    "ImageReader",
-    "ScalarReader",
-    "LambdaReader",
+    "ReaderSpec", "ImageReader", "ScalarReader", "LambdaReader",
     "ReaderCompose"
 ]
