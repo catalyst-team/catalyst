@@ -384,7 +384,11 @@ class ConfigDLExperiment(DLExperiment):
 
         return transform
 
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(
+        self,
+        stage: str,
+        epoch: int = None,
+    ) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage"""
         data_params = dict(self.stages_config[stage]["data_params"])
 

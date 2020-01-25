@@ -145,7 +145,11 @@ class BaseDLExperiment(DLExperiment):
         """Returns the callbacks for a given stage"""
         return self._callbacks
 
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(
+        self,
+        stage: str,
+        epoch: int = None,
+    ) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage"""
         return self._loaders
 

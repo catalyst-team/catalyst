@@ -4,7 +4,7 @@ from catalyst.core.callback import *
 from catalyst.core.callbacks import *
 from .inference import InferCallback, InferMaskCallback
 from .metrics import (
-    AccuracyCallback, AUCCallback, ClasswiseIouCallback,
+    AccuracyCallback, MapKCallback, AUCCallback, ClasswiseIouCallback,
     ClasswiseJaccardCallback, DiceCallback, F1ScoreCallback, IouCallback,
     JaccardCallback, MapKCallback, PrecisionRecallF1ScoreCallback
 )

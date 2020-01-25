@@ -11,6 +11,7 @@ from catalyst.dl import (
     Callback, CheckpointCallback, DLRunner, InferCallback,
     SupervisedDLExperiment, utils
 )
+from catalyst.dl.utils import trace
 from catalyst.utils.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
@@ -354,7 +355,7 @@ class SupervisedDLRunner(DLRunner):
                 self.device = utils.get_device()
             device = self.device
 
-        result = utils.trace_model(
+        result = trace.trace_model(
             model=self.model,
             runner=self,
             batch=batch,
@@ -367,7 +368,7 @@ class SupervisedDLRunner(DLRunner):
         )
 
         if logdir is not None:
-            filename = utils.get_trace_name(
+            filename = trace.get_trace_name(
                 method_name=method_name,
                 mode=mode,
                 requires_grad=requires_grad,

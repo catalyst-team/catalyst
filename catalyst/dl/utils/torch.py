@@ -3,6 +3,8 @@ from typing import Iterable, Callable  # isort:skip
 import torch
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
+from catalyst.data import ListDataset
+
 
 def get_loader(
     data_source: Iterable[dict],
@@ -48,7 +50,6 @@ def get_loader(
     Returns:
         DataLoader with ``catalyst.data.ListDataset``
     """
-    from catalyst.data import ListDataset
 
     dataset = ListDataset(
         list_data=data_source,

@@ -9,7 +9,6 @@ COMMANDS = OrderedDict(
         ("init", init),
         ("run", run),
         ("trace", trace),
-        # ("make-report", make_report),
     ]
 )
 

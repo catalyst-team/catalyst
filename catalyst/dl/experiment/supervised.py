@@ -1,17 +1,16 @@
 from collections import OrderedDict
 
-from catalyst.dl import Callback
-from catalyst.dl.callbacks import (
-    CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
-    RaiseExceptionCallback, SchedulerCallback, TensorboardLogger,
-    VerboseLogger
+from catalyst.dl import (
+    Callback, CheckpointCallback, ConsoleLogger, CriterionCallback,
+    OptimizerCallback, RaiseExceptionCallback, SchedulerCallback,
+    TensorboardLogger, VerboseLogger
 )
 from .base import BaseDLExperiment
 
 
 class SupervisedDLExperiment(BaseDLExperiment):
     """
-    Supervised experiment used mostly in Notebook API
+    Supervised experiment
 
     The main difference with BaseDLExperiment that it will
     add several callbacks by default if you haven't.
