@@ -24,11 +24,11 @@ def _transforms_loader(r: Registry):
         import albumentations as m
         r.add_from_module(m)
     except ImportError as ex:
-        logger.warning(
-            "albumentations not available, to install albumentations, "
-            "run `pip install albumentations`."
-        )
         if os.environ.get("USE_ALBUMENTATIONS", "0") == "1":
+            logger.warning(
+                "albumentations not available, to install albumentations, "
+                "run `pip install albumentations`."
+            )
             raise ex
 
 
