@@ -22,7 +22,7 @@ stages:
     valid_size: 0.2
 
   state_params:
-    main_metric: &main_metric iou
+    main_metric: iou
     minimize_metric: False
 
   criterion_params:
@@ -45,14 +45,9 @@ stages:
     weight_decay: 0.0003
     no_bias_weight_decay: True
 
-  scheduler_params:
-    scheduler: MultiStepLR
-    milestones: [3]
-    gamma: 0.3
-
   stage1:
     state_params:
-      num_epochs: &num_epochs 4
+      num_epochs: 3
 
     callbacks_params:
       loss_dice:
@@ -82,8 +77,6 @@ stages:
       iou:
         callback: IouCallback
         input_key: mask
-      scheduler:
-        callback: SchedulerCallback
-        reduce_metric: *main_metric
+
       saver:
         callback: CheckpointCallback

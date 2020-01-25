@@ -144,7 +144,50 @@ sleep 30
 kill %1
 rm -rf ./examples/logs/_tests_mnist_stages_finder
 
+# SEGMENTATION
+LOGFILE=./examples/logs/_test_segmentation/checkpoints/_metrics.json
 
+## load the data
+mkdir -p ./examples/_test_segmentation/data
+cd ./examples/_test_segmentation/data/
+download-gdrive 1iYaNijLmzsrMlAdMoUEhhJuo-5bkeAuj segmentation_data.zip
+extract-archive segmentation_data.zip
+cd ../../..
+
+## train
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=./examples/_test_segmentation \
+  --configs \
+    ./examples/_test_segmentation/config.yml \
+    ./examples/_test_segmentation/transforms.yml \
+  --logdir=./examples/logs/_test_segmentation \
+  --check
+
+## check metrics
+if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
+    echo "File $LOGFILE does not exist"
+    exit 1
+fi
+
+python -c """
+from safitty import Safict
+metrics = Safict.load('$LOGFILE')
+
+iou = metrics.get('last', 'iou')
+loss = metrics.get('last', 'loss')
+
+print('iou', iou)
+print('loss', loss)
+
+assert iou > 0.8, f'iou must be > 0.8, got {iou}'
+assert loss < 0.2, f'loss must be < 0.2, got {loss}'
+"""
+
+## remove logs
+rm -rf ./examples/logs/_test_segmentation
+
+# GAN
 LOGFILE=./examples/logs/mnist_gan/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
