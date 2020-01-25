@@ -3,13 +3,12 @@ from pathlib import Path
 
 import neptune
 
-from catalyst.dl import utils
-from catalyst.dl.core import Experiment, Runner
-from catalyst.dl.experiment import ConfigExperiment
-from catalyst.dl.runner.supervised import SupervisedRunner
+from catalyst.dl import (
+    ConfigDLExperiment, DLExperiment, DLRunner, SupervisedDLRunner, utils
+)
 
 
-class NeptuneRunner(Runner):
+class NeptuneDLRunner(DLRunner):
     """
     Runner wrapper with Neptune integration hooks.
     Read about Neptune here https://neptune.ml
@@ -46,17 +45,17 @@ class NeptuneRunner(Runner):
     """
 
     def _init(
-            self,
-            log_on_batch_end: bool = True,
-            log_on_epoch_end: bool = True,
-            checkpoints_glob: List = None
+        self,
+        log_on_batch_end: bool = True,
+        log_on_epoch_end: bool = True,
+        checkpoints_glob: List = None
     ):
 
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
-        self.checkpoints_glob = checkpoints_glob or ["best.pth", "last.pth"]
+        self.checkpoints_glob = checkpoints_glob
 
-    def _pre_experiment_hook(self, experiment: Experiment):
+    def _pre_experiment_hook(self, experiment: DLExperiment):
         monitoring_params = experiment.monitoring_params
         monitoring_params["dir"] = str(Path(experiment.logdir).absolute())
 
@@ -91,12 +90,12 @@ class NeptuneRunner(Runner):
             self.checkpoints_glob
         )
 
-        if isinstance(experiment, ConfigExperiment):
+        if isinstance(experiment, ConfigDLExperiment):
             exp_config = utils.flatten_dict(experiment.stages_config)
             for name, value in exp_config.items():
                 self._neptune_experiment.set_property(name, value)
 
-    def _post_experiment_hook(self, experiment: Experiment):
+    def _post_experiment_hook(self, experiment: DLExperiment):
         logdir_src = Path(experiment.logdir)
         self._neptune_experiment.set_property("logdir", logdir_src)
 
@@ -108,7 +107,7 @@ class NeptuneRunner(Runner):
         super()._run_batch(batch=batch)
         if self.log_on_batch_end:
             mode = self.state.loader_name
-            metrics = self.state.metrics.batch_values
+            metrics = self.state.metric_manager.batch_values
 
             for name, value in metrics.items():
                 self._neptune_experiment.log_metric(
@@ -116,11 +115,11 @@ class NeptuneRunner(Runner):
                     value
                 )
 
-    def _run_epoch(self, loaders):
-        super()._run_epoch(loaders=loaders)
+    def _run_epoch(self, stage: str, epoch: int):
+        super()._run_epoch(stage=stage, epoch=epoch)
         if self.log_on_epoch_end:
             mode = self.state.loader_name
-            metrics = self.state.metrics.batch_values
+            metrics = self.state.metric_manager.batch_values
 
             for name, value in metrics.items():
                 self._neptune_experiment.log_metric(
@@ -129,17 +128,17 @@ class NeptuneRunner(Runner):
                 )
 
     def run_experiment(
-            self,
-            experiment: Experiment,
-            check: bool = False
+        self,
+        experiment: DLExperiment,
+        check: bool = False
     ):
         self._pre_experiment_hook(experiment=experiment)
         super().run_experiment(experiment=experiment, check=check)
         self._post_experiment_hook(experiment=experiment)
 
 
-class SupervisedNeptuneRunner(NeptuneRunner, SupervisedRunner):
+class SupervisedNeptuneDLRunner(NeptuneDLRunner, SupervisedDLRunner):
     pass
 
 
-__all__ = ["NeptuneRunner", "SupervisedNeptuneRunner"]
+__all__ = ["NeptuneDLRunner", "SupervisedNeptuneDLRunner"]

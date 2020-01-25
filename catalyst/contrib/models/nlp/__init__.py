@@ -1,5 +1,6 @@
 # flake8: noqa
+# isort:skip_file
 
-from .classification import *
 from .encoders import *
+from .classification import *
 from .segmentation import *

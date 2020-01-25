@@ -1,7 +1,7 @@
 from typing import Any, List, Dict, Union  # isort:skip
 import logging
 
-from catalyst.dl.core import Callback, CallbackOrder, State
+from catalyst.dl import Callback, CallbackOrder, State
 
 logger = logging.getLogger(__name__)
 

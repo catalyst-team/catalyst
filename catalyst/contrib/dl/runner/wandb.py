@@ -5,13 +5,12 @@ import shutil
 
 import wandb
 
-from catalyst.dl import utils
-from catalyst.dl.core import DLRunner, Experiment
-from catalyst.dl.experiment import ConfigDLExperiment
-from catalyst.dl.runner.supervised import SupervisedDLRunner
+from catalyst.dl import (
+    ConfigDLExperiment, DLExperiment, DLRunner, SupervisedDLRunner, utils
+)
 
 
-class WandbRunner(DLRunner):
+class WandbDLRunner(DLRunner):
     """
     Runner wrapper with wandb integration hooks.
     """
@@ -45,7 +44,7 @@ class WandbRunner(DLRunner):
     ):
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
-        self.checkpoints_glob = checkpoints_glob or ["best.pth", "last.pth"]
+        self.checkpoints_glob = checkpoints_glob
 
         if (self.log_on_batch_end and not self.log_on_epoch_end) \
                 or (not self.log_on_batch_end and self.log_on_epoch_end):
@@ -55,7 +54,7 @@ class WandbRunner(DLRunner):
             self.batch_log_suffix = "_batch"
             self.epoch_log_suffix = "_epoch"
 
-    def _pre_experiment_hook(self, experiment: Experiment):
+    def _pre_experiment_hook(self, experiment: DLExperiment):
         monitoring_params = experiment.monitoring_params
         monitoring_params["dir"] = str(Path(experiment.logdir).absolute())
 
@@ -76,7 +75,7 @@ class WandbRunner(DLRunner):
         else:
             wandb.init(**monitoring_params)
 
-    def _post_experiment_hook(self, experiment: Experiment):
+    def _post_experiment_hook(self, experiment: DLExperiment):
         logdir_src = Path(experiment.logdir)
         logdir_dst = wandb.run.dir
 
@@ -122,8 +121,8 @@ class WandbRunner(DLRunner):
                 suffix=self.batch_log_suffix
             )
 
-    def _run_epoch(self, loaders):
-        super()._run_epoch(loaders=loaders)
+    def _run_epoch(self, stage: str, epoch: int):
+        super()._run_epoch(stage=stage, epoch=epoch)
         if self.log_on_epoch_end:
             for mode, metrics in \
                     self.state.metric_manager.epoch_values.items():
@@ -135,7 +134,7 @@ class WandbRunner(DLRunner):
 
     def run_experiment(
         self,
-        experiment: Experiment,
+        experiment: DLExperiment,
         check: bool = False
     ):
         self._pre_experiment_hook(experiment=experiment)
@@ -143,8 +142,8 @@ class WandbRunner(DLRunner):
         self._post_experiment_hook(experiment=experiment)
 
 
-class SupervisedWandbRunner(WandbRunner, SupervisedDLRunner):
+class SupervisedWandbDLRunner(WandbDLRunner, SupervisedDLRunner):
     pass
 
 
-__all__ = ["WandbRunner", "SupervisedWandbRunner"]
+__all__ = ["WandbDLRunner", "SupervisedWandbDLRunner"]

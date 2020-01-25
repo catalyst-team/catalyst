@@ -10,7 +10,7 @@ from sklearn.neighbors import NearestNeighbors
 
 import torch
 
-from catalyst.dl.core import Callback, CallbackOrder, DLState
+from catalyst.dl import Callback, CallbackOrder, DLState
 
 
 class KNNMetricCallback(Callback):

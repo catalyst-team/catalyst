@@ -2,11 +2,10 @@ from typing import Dict  # isort:skip
 
 from alchemy import Logger
 
-from catalyst.dl.core import DLRunner, Experiment
-from catalyst.dl.runner.supervised import SupervisedDLRunner
+from catalyst.dl import DLExperiment, DLRunner, SupervisedDLRunner
 
 
-class AlchemyRunner(DLRunner):
+class AlchemyDLRunner(DLRunner):
     """
     Runner wrapper with Alchemy integration hooks.
     Read about Alchemy here https://alchemy.host
@@ -55,7 +54,7 @@ class AlchemyRunner(DLRunner):
             metric_name = f"{key}/{mode}{suffix}"
             self.logger.log_scalar(metric_name, value)
 
-    def _pre_experiment_hook(self, experiment: Experiment):
+    def _pre_experiment_hook(self, experiment: DLExperiment):
         monitoring_params = experiment.monitoring_params
 
         log_on_batch_end: bool = \
@@ -69,7 +68,7 @@ class AlchemyRunner(DLRunner):
         )
         self.logger = Logger(**monitoring_params)
 
-    def _post_experiment_hook(self, experiment: Experiment):
+    def _post_experiment_hook(self, experiment: DLExperiment):
         self.logger.close()
 
     def _run_batch(self, batch):
@@ -83,8 +82,8 @@ class AlchemyRunner(DLRunner):
                 suffix=self.batch_log_suffix
             )
 
-    def _run_epoch(self, loaders):
-        super()._run_epoch(loaders=loaders)
+    def _run_epoch(self, stage: str, epoch: int):
+        super()._run_epoch(stage=stage, epoch=epoch)
         if self.log_on_epoch_end:
             for mode, metrics in \
                     self.state.metric_manager.epoch_values.items():
@@ -96,7 +95,7 @@ class AlchemyRunner(DLRunner):
 
     def run_experiment(
         self,
-        experiment: Experiment,
+        experiment: DLExperiment,
         check: bool = False
     ):
         self._pre_experiment_hook(experiment=experiment)
@@ -104,8 +103,8 @@ class AlchemyRunner(DLRunner):
         self._post_experiment_hook(experiment=experiment)
 
 
-class SupervisedAlchemyRunner(AlchemyRunner, SupervisedDLRunner):
+class SupervisedAlchemyDLRunner(AlchemyDLRunner, SupervisedDLRunner):
     pass
 
 
-__all__ = ["AlchemyRunner", "SupervisedAlchemyRunner"]
+__all__ = ["AlchemyDLRunner", "SupervisedAlchemyDLRunner"]

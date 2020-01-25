@@ -1,5 +1,3 @@
-import unittest
-
 from catalyst.contrib.data.nlp.classification import TextClassificationDataset
 
 texts = [
@@ -10,29 +8,27 @@ texts = [
 labels = ["negative", "positive"]
 
 
-class TextClassificationDatasetTests(unittest.TestCase):
-
-    def test_should_have_cls_id_as_first_token_for_input_ids(self):
-        dataset = TextClassificationDataset(texts, labels)
-        features = dataset[0]["features"]
-        self.assertEqual(dataset.cls_vid, features[0])
-
-    def test_input_ids_should_be_padded(self):
-        dataset = TextClassificationDataset(texts, labels)
-        features = dataset[0]["features"]
-        self.assertEqual(512, features.size(0))
-
-    def test_mask_sum_should_be_eq_to_seq_len(self):
-        dataset = TextClassificationDataset(texts, labels)
-        mask = dataset[0]["attention_mask"]
-        self.assertEqual(512, mask.size(0))
-        self.assertEqual(14, mask.sum())
-        self.assertEqual(14, mask[:14].sum())
-
-    def test_label_dict(self):
-        dataset = TextClassificationDataset(texts, labels)
-        label_dict = dataset.label_dict
-        self.assertEqual({"negative": 0, "positive": 1}, label_dict)
+def test_should_have_cls_id_as_first_token_for_input_ids():
+    dataset = TextClassificationDataset(texts, labels)
+    features = dataset[0]["features"]
+    assert features[0] == dataset.cls_vid
 
 
-__all__ = ["TextClassificationDatasetTests"]
+def test_input_ids_should_be_padded():
+    dataset = TextClassificationDataset(texts, labels)
+    features = dataset[0]["features"]
+    assert features.size(0) ==  512
+
+
+def test_mask_sum_should_be_eq_to_seq_len():
+    dataset = TextClassificationDataset(texts, labels)
+    mask = dataset[0]["attention_mask"]
+    assert mask.size(0) == 512
+    assert mask.sum() == 14
+    assert mask[:14].sum() == 14
+
+
+def test_label_dict():
+    dataset = TextClassificationDataset(texts, labels)
+    label_dict = dataset.label_dict
+    assert label_dict == {"negative": 0, "positive": 1}

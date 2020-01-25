@@ -1,5 +1,5 @@
 """
-catalyst.dl subpackage registries
+catalyst subpackage registries
 """
 
 from catalyst.utils.registry import Registry

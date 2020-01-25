@@ -4,7 +4,6 @@ from torch.nn.modules.loss import *
 from .ce import (
     MaskCrossEntropyLoss, NaiveCrossEntropyLoss, SymmetricCrossEntropyLoss
 )
-from .center import CenterLoss
 from .contrastive import (
     ContrastiveDistanceLoss, ContrastiveEmbeddingLoss,
     ContrastivePairwiseEmbeddingLoss

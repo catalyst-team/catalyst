@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 try:
     import alchemy
-    from .alchemy import AlchemyRunner, SupervisedAlchemyRunner
+    from .alchemy import AlchemyDLRunner, SupervisedAlchemyDLRunner
 except ImportError as ex:
     logger.warning(
         "alchemy not available, to install alchemy, "
@@ -17,7 +17,7 @@ except ImportError as ex:
 
 try:
     import neptune
-    from .neptune import NeptuneRunner, SupervisedNeptuneRunner
+    from .neptune import NeptuneDLDLRunner, SupervisedNeptuneDLDLRunner
 except ImportError as ex:
     if os.environ.get("USE_NEPTUNE", "0") == "1":
         logger.warning(
@@ -28,7 +28,7 @@ except ImportError as ex:
 
 try:
     import wandb
-    from .wandb import WandbRunner, SupervisedWandbRunner
+    from .wandb import WandbDLDLRunner, SupervisedWandbDLDLRunner
 except ImportError as ex:
     if os.environ.get("USE_WANDB", "0") == "1":
         logger.warning(
