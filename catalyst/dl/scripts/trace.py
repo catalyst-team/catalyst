@@ -47,6 +47,7 @@ def trace_model_from_checkpoint(
     checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
     print("Load config")
     config: Dict[str, dict] = safitty.load(config_path)
+    runner_params = config.pop("runner_params", {}) or {}
 
     # Get expdir name
     config_expdir = safitty.get(config, "args", "expdir", apply=Path)
@@ -65,7 +66,7 @@ def trace_model_from_checkpoint(
     checkpoint = utils.load_checkpoint(checkpoint_path)
     utils.unpack_checkpoint(checkpoint, model=model)
 
-    runner: RunnerType = RunnerType()
+    runner: RunnerType = RunnerType(**runner_params)
     runner.model, runner.device = model, device
 
     if loader is None:
@@ -74,9 +75,9 @@ def trace_model_from_checkpoint(
 
     print("Tracing")
     traced = trace_model(
-        model,
-        runner,
-        batch,
+        model=model,
+        runner=runner,
+        batch=batch,
         method_name=method_name,
         mode=mode,
         requires_grad=requires_grad,

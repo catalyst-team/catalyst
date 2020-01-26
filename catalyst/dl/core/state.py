@@ -84,6 +84,7 @@ class RunnerState(FrozenClass):
         # other
         self.need_backward = False
         self.early_stop = False
+        self.model_grads = {}
         for k, v in kwargs.items():
             setattr(self, k, v)
 

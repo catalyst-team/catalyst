@@ -1,8 +1,8 @@
 Catalyst
 ======================================
 
-.. image:: https://travis-ci.com/catalyst-team/catalyst.svg?branch=master
-    :target: https://travis-ci.com/catalyst-team/catalyst
+.. image:: http://66.248.205.49:8111/app/rest/builds/buildType:id:Catalyst_Deploy/statusIcon.svg
+    :target: http://66.248.205.49:8111/project.html?projectId=Catalyst&tab=projectOverview&guest=1
     :alt: Build Status
 
 .. image:: https://img.shields.io/github/license/catalyst-team/catalyst.svg
@@ -67,6 +67,7 @@ More specific with additional requirements:
     pip install catalyst[rl] # installs DL+RL based catalyst
     pip install catalyst[drl] # installs DL+RL based catalyst with Weights & Biases support
     pip install catalyst[contrib] # installs DL+contrib based catalyst
+    pip install catalyst[nlp] # installs DL+NLP based catalyst
     pip install catalyst[all] # installs everything. Very convenient to deploy on a new server
 
 

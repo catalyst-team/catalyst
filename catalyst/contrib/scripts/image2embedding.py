@@ -91,14 +91,14 @@ def build_args(parser):
         type=int,
         dest="num_workers",
         help="Count of workers for dataloader",
-        default=4
+        default=0
     )
     parser.add_argument(
         "--batch-size",
         type=int,
         dest="batch_size",
         help="Dataloader batch size",
-        default=128
+        default=32
     )
     parser.add_argument(
         "--verbose",
@@ -145,16 +145,16 @@ def main(args, _=None):
         model = model.eval()
         model, _, _, _, device = utils.process_components(model=model)
 
-    images_df = pd.read_csv(args.in_csv)
-    images_df = images_df.reset_index().drop("index", axis=1)
-    images_df = list(images_df.to_dict("index").values())
+    df = pd.read_csv(args.in_csv)
+    df = df.reset_index().drop("index", axis=1)
+    df = list(df.to_dict("index").values())
 
     open_fn = ImageReader(
         input_key=args.img_col, output_key="image", datapath=args.datapath
     )
 
     dataloader = utils.get_loader(
-        images_df,
+        df,
         open_fn,
         batch_size=args.batch_size,
         num_workers=args.num_workers,

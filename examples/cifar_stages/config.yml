@@ -1,5 +1,12 @@
+# Refer to configs/config-description-eng.yml
+# for detailed comments on this configuration file
+
 model_params:
   model: SimpleNet
+
+
+runner_params:
+  input_key: image
 
 
 args:
@@ -12,9 +19,32 @@ stages:
   data_params:
     batch_size: 64
     num_workers: 1
+    samplers_params:
+      train:
+        sampler: MiniEpochSampler
+        data_len: 50000
+        mini_epoch_len: 35000
+        drop_last: True
+        shuffle: per_epoch
+
+  transform_params:
+    _key_value: True
+
+    train:
+      transform: Compose
+      transforms:
+        - transform: Normalize
+        - transform: ToTensorV2
+    valid:
+      _key_value: True
+
+      transform: Compose
+      transforms:
+        - transform: Normalize
+        - transform: ToTensorV2
 
   state_params:
-    num_epochs: 2
+    num_epochs: 3
     main_metric: &reduce_metric accuracy01
     minimize_metric: False
 
@@ -41,9 +71,8 @@ stages:
       callback: CheckpointCallback
 
   stage1:
-
     optimizer_params:
-      optimizer: Adam
+      optimizer: Ralamb
 
       layerwise_params:
         conv1.*:
@@ -65,7 +94,7 @@ stages:
 
     optimizer_params:
       load_from_previous_stage: True
-      optimizer: Adam
+      optimizer: Ralamb
       lr_linear_scaling:
         lr: 0.0001
         base_batch_size: 64
