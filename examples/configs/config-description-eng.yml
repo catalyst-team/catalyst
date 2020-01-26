@@ -23,6 +23,12 @@ args:  # REQUIRED KEYWORD, various arguments for Catalyst
   check: False  # KEYWORD, if True, then Catalyst does only 3 epochs (to check the performance of the pipeline, by default False)
 
 
+runner_params:  # OPTIONAL KEYWORD, params for Runner's init
+  # For example for SupervisedRunner
+  input_key: "features"  # Example
+  output_key: null  # Example
+
+
 distributed_params:  # OPTIONAL KEYWORD, params for distributed training and NVIDIA Apex
   rank: -1  # Rank for distributed training
   opt_level: O1  # Example for NVIDIA Apex
@@ -49,6 +55,15 @@ stages:  # REQUIRED KEYWORD, dictionary of all stages of Catalyst, for training 
         drop_last: True
       valid:  # Overrides the value for valid loader
         batch_size: 32
+    samplers_params:  # KEYWORD, per-loader params for samplers, the same API as in loaders_params
+     # Example
+      train:  # only for train loader
+        sampler: MiniEpochSampler  # KEYWORD, name of the sampler
+        # At this level, the parameters for __init__ of the sampler can be found, for example
+        data_len: 50000  # Example
+        mini_epoch_len: 40000  # Example
+        drop_last: True  # Example
+        shuffle: per_epoch  # Example
     # at this level may contain kwargs parameters for `get_datasets`
     key_for_data: value  # Example
 

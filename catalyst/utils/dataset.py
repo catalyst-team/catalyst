@@ -1,3 +1,4 @@
+from typing import Callable, Dict, Tuple  # isort:skip
 from collections import defaultdict
 import glob
 import itertools
@@ -8,15 +9,14 @@ import pandas as pd
 from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.utils import shuffle
 
-from typing import Callable, Dict, Tuple  # isort:skip
-
 DictDataset = Dict[str, object]
 
 
 def create_dataset(
     dirs: str,
     extension: str = None,
-    process_fn: Callable[[str], object] = None
+    process_fn: Callable[[str], object] = None,
+    recursive: bool = False,
 ) -> DictDataset:
     """
     Create dataset (dict like `{key: [values]}`) from vctk-like dataset::
@@ -28,10 +28,11 @@ def create_dataset(
                 *.ext
 
     Args:
-        dirs: path to dirs, for example /home/user/data/**
-        extension: data extension you are looking for
-        process_fn: function(path_to_file) -> object
+        dirs (str): path to dirs, for example /home/user/data/**
+        extension (str): data extension you are looking for
+        process_fn (Callable[[str], object]): function(path_to_file) -> object
             process function for found files, by default
+        recursive (bool): enables recursive globbing
     Returns:
         dict: dataset
     """
@@ -44,7 +45,9 @@ def create_dataset(
 
     for d in sorted(dirs):
         label = os.path.basename(d.rstrip("/"))
-        files = sorted(glob.glob(d + "/" + extension))
+        pathname = d + ("/**/" if recursive else "/") + extension
+        files = glob.iglob(pathname, recursive=recursive)
+        files = sorted(filter(os.path.isfile, files))
         if process_fn is None:
             dataset[label].extend(files)
         else:
@@ -358,10 +361,10 @@ def separate_tags(
         tag_delim: delimiter to separate values
 
     Returns:
-
+        pd.DataFrame: new dataframe
     """
     df_new = []
-    for i, row in dataframe.iterrows():
+    for _, row in dataframe.iterrows():
         for class_name in row[tag_column].split(tag_delim):
             df_new.append({**row, **{tag_column: class_name}})
     df_new = pd.DataFrame(df_new)

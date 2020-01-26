@@ -1,6 +1,9 @@
 model_params:
   model: SimpleNet
 
+runner_params:
+  input_key: image
+
 args:
   expdir: "mnist_simple"
   logdir: "./logs/mnist_simple"
@@ -10,6 +13,15 @@ stages:
   data_params:
     batch_size: 64
     num_workers: 0
+
+  transform_params:
+    transform: Compose
+    transforms:
+      - transform: TensorToImage
+      - transform: Normalize
+        mean: [0.1307]
+        std: [0.3081]
+      - transform: ToTensor
 
   state_params:
     main_metric: &reduce_metric accuracy01

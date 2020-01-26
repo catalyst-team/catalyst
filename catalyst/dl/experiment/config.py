@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Mapping, Union  # isort:skip
+from typing import Any, Callable, Dict, List, Mapping, Union  # isort:skip
 from collections import OrderedDict
 from copy import deepcopy
 
@@ -10,6 +10,7 @@ from torch.utils.data import (  # noqa F401
     DataLoader, Dataset, DistributedSampler
 )
 
+from catalyst.data import Augmentor, AugmentorCompose
 from catalyst.dl import utils
 from catalyst.dl.callbacks import (
     CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
@@ -18,7 +19,8 @@ from catalyst.dl.callbacks import (
 )
 from catalyst.dl.core import Callback, Experiment
 from catalyst.dl.registry import (
-    CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SCHEDULERS
+    CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS,
+    TRANSFORMS
 )
 from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
 
@@ -32,6 +34,7 @@ class ConfigExperiment(Experiment):
         "optimizer_params",
         "scheduler_params",
         "data_params",
+        "transform_params",
         "state_params",
         "callbacks_params",
     ]
@@ -240,7 +243,7 @@ class ConfigExperiment(Experiment):
         optimizer_key = params.pop("optimizer_key", None)
         optimizer = OPTIMIZERS.get_from_params(**params, params=model_params)
 
-        if load_from_previous_stage:
+        if load_from_previous_stage and self.stages.index(stage) != 0:
             checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
             checkpoint = utils.load_checkpoint(checkpoint_path)
 
@@ -319,6 +322,68 @@ class ConfigExperiment(Experiment):
         )
         return scheduler
 
+    @staticmethod
+    def _get_transform(**params) -> Callable:
+        key_value_flag = params.pop("_key_value", False)
+
+        if key_value_flag:
+            transforms_composition = {
+                key: ConfigExperiment._get_transform(**params_)
+                for key, params_ in params.items()
+            }
+
+            transform = {
+                key: Augmentor(
+                    dict_key=key,
+                    augment_fn=transform,
+                    input_key=key,
+                    output_key=key,
+                )
+                for key, transform in transforms_composition.items()
+            }
+        else:
+            if "transforms" in params:
+                transforms_composition = [
+                    ConfigExperiment._get_transform(**transform_params)
+                    for transform_params in params["transforms"]
+                ]
+                params.update(transforms=transforms_composition)
+
+            transform = TRANSFORMS.get_from_params(**params)
+
+        return transform
+
+    def get_transforms(
+        self, stage: str = None, dataset: str = None
+    ) -> Callable:
+        """
+        Returns transform for a given stage & mode
+
+        Args:
+            stage (str): stage name
+            dataset (str): dataset name (e.g. "train", "valid"),
+                will be used only if the value of `_key_value`` is ``True``
+        """
+        transform_params = deepcopy(
+            self.stages_config[stage].get("transform_params", {})
+        )
+
+        key_value_flag = transform_params.pop("_key_value", False)
+        if key_value_flag:
+            transform_params = transform_params.get(dataset, {})
+
+        transform = self._get_transform(**transform_params)
+        if transform is None:
+            def transform(dict_):
+                return dict_
+        elif not isinstance(transform, AugmentorCompose):
+            transform_ = transform
+
+            def transform(dict_):
+                return transform_(**dict_)
+
+        return transform
+
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage"""
         data_params = dict(self.stages_config[stage]["data_params"])
@@ -333,8 +398,14 @@ class ConfigExperiment(Experiment):
         datasets = self.get_datasets(stage=stage, **data_params)
 
         overridden_loaders_params = data_params.pop("loaders_params", {})
-        assert isinstance(overridden_loaders_params, dict), \
-            f"{overridden_loaders_params} should be Dict"
+        assert isinstance(overridden_loaders_params, dict), (
+            f"`overridden_loaders_params` should be a Dict. "
+            f"Got: {overridden_loaders_params}"
+        )
+
+        samplers_params = data_params.pop("samplers_params", {})
+        assert isinstance(samplers_params, dict), \
+            f"`samplers_params` should be a Dict. Got: {samplers_params}"
 
         loaders = OrderedDict()
         for name, ds_ in datasets.items():
@@ -344,6 +415,17 @@ class ConfigExperiment(Experiment):
             overridden_loader_params = overridden_loaders_params.pop(name, {})
             assert isinstance(overridden_loader_params, dict), \
                 f"{overridden_loader_params} should be Dict"
+
+            sampler_params = samplers_params.pop(name, None)
+            if sampler_params is None:
+                if isinstance(ds_, dict) and "sampler" in ds_:
+                    sampler = ds_.pop("sampler", None)
+                else:
+                    sampler = None
+            else:
+                sampler = SAMPLERS.get_from_params(**sampler_params)
+                if isinstance(ds_, dict) and "sampler" in ds_:
+                    ds_.pop("sampler", None)
 
             batch_size = overridden_loader_params.pop("batch_size", batch_size)
             num_workers = overridden_loader_params.\
@@ -372,18 +454,18 @@ class ConfigExperiment(Experiment):
                 raise NotImplementedError
 
             if distributed:
-                sampler = loader_params.get("sampler")
                 if sampler is not None:
                     assert isinstance(sampler, DistributedSampler)
                 else:
-                    loader_params["sampler"] = DistributedSampler(
+                    sampler = DistributedSampler(
                         dataset=loader_params["dataset"]
                     )
 
             loader_params["shuffle"] = (
-                name.startswith("train")
-                and loader_params.get("sampler") is None
+                name.startswith("train") and sampler is None
             )
+
+            loader_params["sampler"] = sampler
 
             if "batch_sampler" in loader_params:
                 if distributed:

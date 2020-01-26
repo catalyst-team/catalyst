@@ -1,2 +1,2 @@
-albumentations
+neptune-client
 wandb

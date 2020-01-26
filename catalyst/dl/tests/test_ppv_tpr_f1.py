@@ -28,20 +28,26 @@ def test_precision_recall_f1score():
     # case 1
     tp, fp, fn = (10, 0, 0)
     ppv, tpr, f1 = precision_recall_f1(tp, fp, fn)
-    assert ppv == tpr == f1 == 1., \
+    assert ppv == tpr == f1 == 1, \
         "No fp and fn means everything should be =1"
 
     # case 2
     tp, fp, fn = (0, 0, 0)
     ppv, tpr, f1 = precision_recall_f1(tp, fp, fn)
-    assert ppv == tpr == f1 == 0, \
-        "Epsilon should make sure that there's no ZeroDivisionError"
+    assert ppv == tpr == f1 == 1, \
+        "No tp, fp and fn means there weren't any objects (everything =1)"
 
     # case 3
     tp, fp, fn = (10, 10, 10)
     ppv, tpr, f1 = precision_recall_f1(tp, fp, fn)
     assert ppv == tpr == 0.5, \
         "Example where ppv and tpr should be =0.5."
+
+    # case 4
+    tp, fp, fn = (0, 1, 1)
+    ppv, tpr, f1 = precision_recall_f1(tp, fp, fn)
+    assert ppv == tpr == f1 == 0, \
+        "No tp means everything should be =0"
 
 
 def create_dummy_tensors_single():

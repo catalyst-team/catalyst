@@ -32,7 +32,11 @@ def dice(
 
     intersection = torch.sum(targets * outputs)
     union = torch.sum(targets) + torch.sum(outputs)
-    dice = 2 * intersection / (union + eps)
+    # this looks a bit awkward but `eps * (union == 0)` term
+    # makes sure that if I and U are both 0, than Dice == 1
+    # and if U != 0 and I == 0 the eps term in numerator is zeroed out
+    # i.e. (0 + eps) / (U - 0 + eps) doesn't happen
+    dice = 2 * (intersection + eps * (union == 0)) / (union + eps)
 
     return dice
 
