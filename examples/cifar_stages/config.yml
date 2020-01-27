@@ -28,9 +28,9 @@ stages:
         shuffle: per_epoch
 
   transform_params:
-    transform: Compose
+    transform: A.Compose
     transforms:
-      - transform: Normalize
+      - transform: A.Normalize
       - transform: catalyst.ToTensor
 
   state_params:

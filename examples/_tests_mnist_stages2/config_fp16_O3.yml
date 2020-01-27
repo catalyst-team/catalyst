@@ -18,10 +18,10 @@ stages:
     num_workers: 0
 
   transform_params:
-    transform: Compose
+    transform: A.Compose
     transforms:
       - transform: catalsyt.TensorToImage
-      - transform: Normalize
+      - transform: A.Normalize
         mean: [0.1307]
         std: [0.3081]
       - transform: catalsyt.ToTensor

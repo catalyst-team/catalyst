@@ -7,29 +7,29 @@ stages:
     _key_value: True
 
     train:
-      transform: Compose
+      transform: A.Compose
       transforms:
-        - transform: SmallestMaxSize
+        - transform: A.SmallestMaxSize
           max_size: *resize_size
           p: 1.0
-        - transform: RandomCrop
+        - transform: A.RandomCrop
           height: *image_size
           width: *image_size
           p: 1.0
-        - transform: RandomRotate90
-        - transform: Cutout
-        - transform: RandomBrightnessContrast
+        - transform: A.RandomRotate90
+        - transform: A.Cutout
+        - transform: A.RandomBrightnessContrast
           brightness_limit: 0.2
           contrast_limit: 0.2
           p: 0.3
-        - transform: GridDistortion
+        - transform: A.GridDistortion
           p: 0.3
-        - transform: HueSaturationValue
+        - transform: A.HueSaturationValue
           p: 0.3
-        - transform: Normalize
-        - transform: ToTensor
+        - transform: A.Normalize
+        - transform: A.ToTensor
     valid:
-      transform: Compose
+      transform: A.Compose
       transforms:
-        - transform: Normalize
-        - transform: ToTensor
+        - transform: A.Normalize
+        - transform: A.ToTensor
