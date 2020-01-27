@@ -68,16 +68,6 @@ class MultiPhaseRunner(Runner):
 
         return self.registered_phases[self.state.phase]()
 
-    def _prepare_for_stage(self, stage: str):
-        super()._prepare_for_stage(stage)
-        self._alias_inner_params(stage=stage)
-
-    def _alias_inner_params(self, stage: str):
-        """Maybe useful to memorize something for convenience
-        e.g. self.generator = self.models["generator"]
-        """
-        pass
-
 
 class GanRunner(MultiPhaseRunner):
     """
@@ -205,7 +195,8 @@ class GanRunner(MultiPhaseRunner):
         self.generator_key = generator_model_key
         self.discriminator_key = discriminator_model_key
 
-    def _alias_inner_params(self, stage: str):
+    def _prepare_for_stage(self, stage: str):
+        super()._prepare_for_stage(stage)
         self.generator = self.model[self.generator_key]
         self.discriminator = self.model[self.discriminator_key]
 
