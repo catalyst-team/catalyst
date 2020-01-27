@@ -2,6 +2,16 @@
 
 This example is needed for CI test of Catalyst.DL.
 
+### Requirements
+
+Install additional packages: `albumentations` and `smp`
+
+```bash
+pip install -U catalyst[cv] # for bash
+
+pip install -U "catalyst[cv]" # for zsh
+```
+
 ### Get dataset
 
 ```bash
@@ -10,14 +20,6 @@ cd ./_test_segmentation/data/
 download-gdrive 1iYaNijLmzsrMlAdMoUEhhJuo-5bkeAuj segmentation_data.zip
 extract-archive segmentation_data.zip
 cd ../..
-```
-
-### Install packages
-
-```bash
-pip install -U catalyst[cv] # for bash
-
-pip install -U "catalyst[cv]" # for zsh
 ```
 
 ### Local run
