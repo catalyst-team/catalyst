@@ -8,8 +8,8 @@ from urllib.request import Request, urlopen
 from tqdm import tqdm
 
 from catalyst import utils
-from catalyst.utils.tools.tensorboard import SummaryWriter
 from catalyst.core import _State, LoggerCallback
+from catalyst.utils.tools.tensorboard import SummaryWriter
 from . import formatters
 
 
