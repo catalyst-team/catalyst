@@ -21,7 +21,7 @@ stages:
       - transform: A.Normalize
         mean: [0.1307]
         std: [0.3081]
-      - transform: catalsyt.ToTensor
+      - transform: catalsyt.ToTensor # the same as `C.ToTensor`
 
   state_params:
     main_metric: &reduce_metric accuracy01

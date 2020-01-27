@@ -124,14 +124,18 @@ class Registry(collections.MutableMapping):
         """
         self._late_add_callbacks.append(cb)
 
-    def add_from_module(self, module, prefix: str = None) -> None:
+    def add_from_module(
+        self, module, prefix: Union[str, List[str]] = None
+    ) -> None:
         """
         Adds all factories present in module.
         If ``__all__`` attribute is present, takes ony what mentioned in it
 
         Args:
             module: module to scan
-            prefix (str): prefix string for all the module's factories
+            prefix (Union[str, List[str]]): prefix string for all the module's
+                factories. If prefix is a list, all values will be treated
+                as aliases.
         """
         factories = {
             k: v
@@ -144,8 +148,20 @@ class Registry(collections.MutableMapping):
 
         if prefix is None:
             prefix = ""
+        elif isinstance(prefix, str):
+            prefix = [prefix]
+        elif isinstance(prefix, list):
+            if any([(not isinstance(p, str)) for p in prefix]):
+                raise TypeError(f"All prefix in list must be strings.")
+        else:
+            raise TypeError(
+                f"Prefix must be a list or a string, got {type(prefix)}."
+            )
 
-        to_add = {f"{prefix}{name}": factories[name] for name in names_to_add}
+        to_add = {
+            f"{p}{name}": factories[name]
+            for p in prefix for name in names_to_add
+        }
         self.add(**to_add)
 
     def get(self, name: str) -> Optional[Factory]:

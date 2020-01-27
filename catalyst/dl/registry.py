@@ -23,13 +23,13 @@ Callback = CALLBACKS.add
 def _transforms_loader(r: Registry):
     try:
         import albumentations as m
-        r.add_from_module(m, prefix="A.")
+        r.add_from_module(m, prefix=["A.", "albu.", "albumentations."])
 
         from albumentations import pytorch as p
-        r.add_from_module(p, prefix="A.")
+        r.add_from_module(p, prefix=["A.", "albu.", "albumentations."])
 
         from catalyst.contrib import transforms as t
-        r.add_from_module(t, prefix="catalsyt.")
+        r.add_from_module(t, prefix=["catalsyt.", "C."])
     except ImportError as ex:
         logger.warning(
             "albumentations not available, to install albumentations, "

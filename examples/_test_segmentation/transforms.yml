@@ -9,7 +9,7 @@ stages:
     train:
       transform: A.Compose
       transforms:
-        - transform: A.SmallestMaxSize
+        - transform: A.SmallestMaxSize # also `albu.SmallestMaxSize` is allowed
           max_size: *resize_size
           p: 1.0
         - transform: A.RandomCrop
