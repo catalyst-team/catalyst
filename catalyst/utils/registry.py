@@ -147,7 +147,7 @@ class Registry(collections.MutableMapping):
         names_to_add = getattr(module, "__all__", list(factories.keys()))
 
         if prefix is None:
-            prefix = ""
+            prefix = [""]
         elif isinstance(prefix, str):
             prefix = [prefix]
         elif isinstance(prefix, list):
