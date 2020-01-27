@@ -18,13 +18,30 @@ stages:
     num_workers: 0
 
   transform_params:
-    transform: Compose
-    transforms:
-      - transform: catalsyt.TensorToImage
-      - transform: Normalize
-        mean: [0.1307]
-        std: [0.3081]
-      - transform: catalsyt.ToTensor
+    _key_value: True
+
+    train:
+      _key_value: True
+
+      image:
+        transform: Compose
+        transforms:
+          - transform: catalsyt.TensorToImage
+          - transform: Normalize
+            mean: [0.1307]
+            std: [0.3081]
+          - transform: catalsyt.ToTensor
+    valid:
+      _key_value: True
+
+      image:
+        transform: Compose
+        transforms:
+          - transform: catalsyt.TensorToImage
+          - transform: Normalize
+            mean: [0.1307]
+            std: [0.3081]
+          - transform: catalsyt.ToTensor
 
   state_params:
     main_metric: &reduce_metric accuracy01

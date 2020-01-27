@@ -15,27 +15,13 @@ stages:
     num_workers: 0
 
   transform_params:
-    _key_value: True
-
-    train: &transform
-      _key_value: True
-
-      image:
-        transform: Compose
-        transforms:
-          - transform: catalsyt.TensorToImage
-          - transform: Normalize
-            mean: [0.1307]
-            std: [0.3081]
-          - transform: catalsyt.ToTensor
-    valid:
-      transform: Compose
-      transforms:
-        - transform: catalsyt.TensorToImage
-        - transform: Normalize
-          mean: [0.1307]
-          std: [0.3081]
-        - transform: catalsyt.ToTensor
+    transform: Compose
+    transforms:
+      - transform: catalsyt.TensorToImage
+      - transform: Normalize
+        mean: [0.1307]
+        std: [0.3081]
+      - transform: catalsyt.ToTensor
 
   criterion_params:
       criterion: CrossEntropyLoss
