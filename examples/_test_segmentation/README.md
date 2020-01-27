@@ -2,7 +2,7 @@
 
 This example is needed for CI test of Catalyst.DL.
 
-Get dataset
+### Get dataset
 
 ```bash
 mkdir -p data
@@ -10,6 +10,14 @@ cd ./_test_segmentation/data/
 download-gdrive 1iYaNijLmzsrMlAdMoUEhhJuo-5bkeAuj segmentation_data.zip
 extract-archive segmentation_data.zip
 cd ../..
+```
+
+### Install packages
+
+```bash
+pip install -U catalyst[cv] # for bash
+
+pip install -U "catalyst[cv]" # for zsh
 ```
 
 ### Local run
