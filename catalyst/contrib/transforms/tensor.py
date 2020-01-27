@@ -4,22 +4,43 @@ from albumentations import ImageOnlyTransform
 from albumentations.pytorch import ToTensorV2
 import torch
 
+from catalyst.utils.image import tensor_to_ndimage
+
 
 class TensorToImage(ImageOnlyTransform):
     """
     Casts torch.tensor to numpy array
     """
-    def __init__(self, always_apply=False, p=1.0):
+    def __init__(
+        self,
+        denormalize: bool = False,
+        move_channels_dim: bool = True,
+        always_apply: bool = False,
+        p: float = 1.0
+    ):
         """
         Args:
+            denormalize (bool): if True, multiply image(s) by ImageNet std and
+                add ImageNet mean
+            move_channels_dim (bool): if True, convert [B]xCxHxW tensor
+                to [B]xHxWxC format
             always_apply (bool): need to apply this transform anyway
             p (float): probability for this transform
         """
         super().__init__(always_apply, p)
+        self.denormalize = denormalize
+        self.move_channels_dim = move_channels_dim
 
-    def apply(self, img, **params):
+    def apply(self, img: torch.Tensor, **params) -> np.ndarray:
         """Apply the transform to the image"""
-        return np.expand_dims(img.numpy(), axis=0)
+        if len(img.shape) == 2:
+            img = img.unsqueeze(0)
+
+        return tensor_to_ndimage(
+            img,
+            denormalize=self.denormalize,
+            move_channels_dim=self.move_channels_dim
+        )
 
 
 class ToTensor(ToTensorV2):
@@ -42,12 +63,11 @@ class ToTensor(ToTensorV2):
         super().__init__(always_apply, p)
         self.move_channels_dim = move_channels_dim
 
-    def apply(self, img, **params):
+    def apply(self, img: np.ndarray, **params) -> torch.Tensor:
         """Apply the transform to the image"""
         if self.move_channels_dim:
             return super().apply(img, **params)
-        else:
-            return torch.from_numpy(img)
+        return torch.from_numpy(img)
 
     def apply_to_mask(self, mask: np.ndarray, **params) -> torch.Tensor:
         """Apply the transform to the mask"""
@@ -55,7 +75,7 @@ class ToTensor(ToTensorV2):
             mask = mask.transpose(2, 0, 1)
         return super().apply_to_mask(mask.astype(np.float32), **params)
 
-    def get_transform_init_args_names(self):
+    def get_transform_init_args_names(self) -> tuple:
         return ("move_channels_dim",)
 
 

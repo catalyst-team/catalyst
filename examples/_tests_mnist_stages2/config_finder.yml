@@ -22,7 +22,6 @@ stages:
         mean: [0.1307]
         std: [0.3081]
       - transform: catalsyt.ToTensor
-        move_channels_dim: False
 
   criterion_params:
       criterion: CrossEntropyLoss

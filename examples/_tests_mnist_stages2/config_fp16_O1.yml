@@ -32,7 +32,6 @@ stages:
             mean: [0.1307]
             std: [0.3081]
           - transform: catalsyt.ToTensor
-            move_channels_dim: False
     valid:
       transform: Compose
       transforms:
@@ -41,7 +40,6 @@ stages:
           mean: [0.1307]
           std: [0.3081]
         - transform: catalyst.ToTensor
-          move_channels_dim: False
 
   state_params:
     main_metric: &reduce_metric accuracy01
