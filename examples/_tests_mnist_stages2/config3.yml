@@ -18,10 +18,10 @@ stages:
     _key_value: True
 
     train: &transform
-      transform: Compose
+      transform: A.Compose
       transforms:
         - transform: catalsyt.TensorToImage
-        - transform: Normalize
+        - transform: A.Normalize
           mean: [0.1307]
           std: [0.3081]
         - transform: catalsyt.ToTensor

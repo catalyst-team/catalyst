@@ -23,10 +23,10 @@ Callback = CALLBACKS.add
 def _transforms_loader(r: Registry):
     try:
         import albumentations as m
-        r.add_from_module(m)
+        r.add_from_module(m, prefix="A.")
 
         from albumentations import pytorch as p
-        r.add_from_module(p)
+        r.add_from_module(p, prefix="A.")
 
         from catalyst.contrib import transforms as t
         r.add_from_module(t, prefix="catalsyt.")
