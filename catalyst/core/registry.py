@@ -2,7 +2,7 @@ from catalyst.contrib.registry import (
     Criterion, CRITERIONS, GRAD_CLIPPERS, Model, MODELS, Module, MODULES,
     Optimizer, OPTIMIZERS, Sampler, SAMPLERS, Scheduler, SCHEDULERS
 )
-from catalyst.utils.registry import Registry
+from catalyst.utils.tools.registry import Registry
 
 
 def _callbacks_loader(r: Registry):

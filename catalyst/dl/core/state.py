@@ -1,7 +1,7 @@
 from typing import Dict  # isort:skip
 
 from catalyst.core import _State
-from catalyst.utils.typing import (
+from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
 

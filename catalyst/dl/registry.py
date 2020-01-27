@@ -6,7 +6,7 @@ from catalyst.contrib.registry import (
     Optimizer, OPTIMIZERS, Sampler, SAMPLERS, Scheduler, SCHEDULERS
 )
 from catalyst.core.registry import Callback, CALLBACKS
-from catalyst.utils.registry import Registry
+from catalyst.utils.tools.registry import Registry
 
 logger = logging.getLogger(__name__)
 

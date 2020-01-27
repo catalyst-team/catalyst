@@ -1,6 +1,6 @@
 import numpy as np
 
-from catalyst.utils.metric_manager import MetricManager
+from catalyst.utils.tools.metric_manager import MetricManager
 
 
 def test_to_value():

@@ -12,7 +12,7 @@ from torch import nn
 import torch.backends.cudnn as cudnn
 
 from catalyst import utils
-from catalyst.utils.typing import (
+from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
 

@@ -5,7 +5,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 
 from catalyst.dl import Callback, Experiment, utils
-from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
+from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
 class BaseExperiment(Experiment):

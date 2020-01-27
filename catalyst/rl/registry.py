@@ -2,7 +2,7 @@ from catalyst.contrib.registry import (
     Criterion, CRITERIONS, GRAD_CLIPPERS, Module, MODULES, Optimizer,
     OPTIMIZERS, Scheduler, SCHEDULERS
 )
-from ..utils.registry import Registry
+from catalyst.utils.tools.registry import Registry
 
 
 def _dbs_late_add(r: Registry):

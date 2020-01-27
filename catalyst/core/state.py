@@ -4,9 +4,9 @@ from pathlib import Path
 
 import numpy as np
 
-from catalyst.utils.frozen import FrozenClass
-from catalyst.utils.metric_manager import MetricManager, TimerManager
-from catalyst.utils.typing import (
+from catalyst.utils.tools.frozen_class import FrozenClass
+from catalyst.utils.tools.metric_manager import MetricManager, TimerManager
+from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
 

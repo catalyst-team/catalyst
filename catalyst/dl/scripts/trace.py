@@ -9,7 +9,7 @@ import torch
 
 from catalyst.dl import Experiment, utils
 from catalyst.dl.utils import trace
-from catalyst.utils.typing import Device
+from catalyst.utils.tools.typing import Device
 
 
 def trace_model_from_checkpoint(

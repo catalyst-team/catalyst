@@ -21,7 +21,7 @@ from catalyst.dl.registry import (
     CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS,
     TRANSFORMS
 )
-from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
+from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
 class ConfigExperiment(Experiment):

@@ -10,7 +10,7 @@ from torch import nn
 from torch.utils.data import DataLoader, DistributedSampler
 
 from catalyst import utils
-from catalyst.utils.typing import (
+from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
 from .callback import Callback, LoggerCallback

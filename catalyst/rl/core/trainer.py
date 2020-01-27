@@ -12,8 +12,9 @@ import numpy as np
 from torch.utils.data import DataLoader
 
 from catalyst import utils
-from catalyst.utils.seed import Seeder, set_global_seed
-from catalyst.utils.tensorboard import SummaryWriter
+from catalyst.utils.seed import set_global_seed
+from catalyst.utils.tools.seeder import Seeder
+from catalyst.utils.tools.tensorboard import SummaryWriter
 from .algorithm import AlgorithmSpec
 from .db import DBSpec
 from .environment import EnvironmentSpec

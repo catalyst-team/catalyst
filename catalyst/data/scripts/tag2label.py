@@ -3,9 +3,9 @@ import json
 
 import pandas as pd
 
-from catalyst.utils import boolean_flag
-from catalyst.utils.dataset import (
-    create_dataframe, create_dataset, prepare_dataset_labeling, separate_tags
+from catalyst.utils import (
+    boolean_flag, create_dataframe, create_dataset, get_dataset_labeling,
+    separate_tags
 )
 
 
@@ -108,7 +108,7 @@ def main(args, _=None):
             df, tag_column=args.tag_column, tag_delim=args.tag_delim
         )
 
-    tag2lbl = prepare_dataset_labeling(df, args.tag_column)
+    tag2lbl = get_dataset_labeling(df, args.tag_column)
     print("Num classes: ", len(tag2lbl))
 
     with open(args.out_labeling, "w") as fout:

@@ -2,7 +2,7 @@
 catalyst subpackage registries
 """
 
-from catalyst.utils.registry import Registry
+from catalyst.utils.tools.registry import Registry
 
 
 class _GradClipperWrap:

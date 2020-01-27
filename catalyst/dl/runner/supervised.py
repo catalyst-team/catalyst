@@ -12,7 +12,7 @@ from catalyst.dl import (
     utils
 )
 from catalyst.dl.utils import trace
-from catalyst.utils.typing import (
+from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
 

@@ -6,7 +6,7 @@ import shutil
 
 import torch
 
-from .ddp import get_real_module
+from .ddp import get_nn_from_ddp_module
 from .misc import maybe_recursive_call
 
 
@@ -18,7 +18,7 @@ def pack_checkpoint(
     if isinstance(model, OrderedDict):
         raise NotImplementedError()
     else:
-        model_ = get_real_module(model)
+        model_ = get_nn_from_ddp_module(model)
         checkpoint["model_state_dict"] = maybe_recursive_call(
             model_, "state_dict"
         )
@@ -49,7 +49,7 @@ def unpack_checkpoint(
     checkpoint, model=None, criterion=None, optimizer=None, scheduler=None
 ):
     if model is not None:
-        model = get_real_module(model)
+        model = get_nn_from_ddp_module(model)
         maybe_recursive_call(
             model,
             "load_state_dict",

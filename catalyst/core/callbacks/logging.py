@@ -8,6 +8,7 @@ from urllib.request import Request, urlopen
 from tqdm import tqdm
 
 from catalyst import utils
+from catalyst.utils.tools.tensorboard import SummaryWriter
 from catalyst.core import _State, LoggerCallback
 from . import formatters
 
@@ -204,7 +205,7 @@ class TensorboardLogger(LoggerCallback):
         lm = state.loader_name
         if lm not in self.loggers:
             log_dir = os.path.join(state.logdir, f"{lm}_log")
-            self.loggers[lm] = utils.SummaryWriter(log_dir)
+            self.loggers[lm] = SummaryWriter(log_dir)
 
     def on_batch_end(self, state: _State):
         """Translate batch metrics to tensorboard"""
