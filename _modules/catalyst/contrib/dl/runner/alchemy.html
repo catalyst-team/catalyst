@@ -135,12 +135,19 @@
         <span class="n">experiment</span><span class="p">:</span> <span class="n">Experiment</span><span class="p">,</span>
         <span class="n">check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Starts experiment</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            experiment (Experiment): experiment class</span>
+<span class="sd">            check (bool): if ``True`` takes only 3 steps</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pre_experiment_hook</span><span class="p">(</span><span class="n">experiment</span><span class="o">=</span><span class="n">experiment</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">(</span><span class="n">experiment</span><span class="o">=</span><span class="n">experiment</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_post_experiment_hook</span><span class="p">(</span><span class="n">experiment</span><span class="o">=</span><span class="n">experiment</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="SupervisedAlchemyRunner"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.runner.alchemy.SupervisedAlchemyRunner">[docs]</a><span class="k">class</span> <span class="nc">SupervisedAlchemyRunner</span><span class="p">(</span><span class="n">AlchemyRunner</span><span class="p">,</span> <span class="n">SupervisedRunner</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;SupervisedRunner with Alchemy&quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 
 

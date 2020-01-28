@@ -1245,12 +1245,27 @@ empty/classification/segmentation</p></li>
 <span class="target" id="module-catalyst.dl.utils.text"></span><dl class="function">
 <dt id="catalyst.dl.utils.text.process_bert_output">
 <code class="sig-prename descclassname">catalyst.dl.utils.text.</code><code class="sig-name descname">process_bert_output</code><span class="sig-paren">(</span><em class="sig-param">bert_output</em>, <em class="sig-param">hidden_size: int</em>, <em class="sig-param">output_hidden_states: bool = False</em>, <em class="sig-param">pooling_groups: List[str] = None</em>, <em class="sig-param">mask: torch.Tensor = None</em>, <em class="sig-param">level: Union[int</em>, <em class="sig-param">str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils/text.html#process_bert_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.text.process_bert_output" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Processed the output</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="catalyst.dl.utils.text.tokenize_text">
 <code class="sig-prename descclassname">catalyst.dl.utils.text.</code><code class="sig-name descname">tokenize_text</code><span class="sig-paren">(</span><em class="sig-param">text: str</em>, <em class="sig-param">tokenizer</em>, <em class="sig-param">max_length: int</em>, <em class="sig-param">strip: bool = True</em>, <em class="sig-param">lowercase: bool = True</em>, <em class="sig-param">remove_punctuation: bool = True</em><span class="sig-paren">)</span> &#x2192; Dict[str, numpy.array]<a class="reference internal" href="../_modules/catalyst/dl/utils/text.html#tokenize_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.text.tokenize_text" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Tokenizes givin text</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – text to tokenize</p></li>
+<li><p><strong>tokenizer</strong> – Tokenizer instance from HuggingFace</p></li>
+<li><p><strong>max_length</strong> (<em>int</em>) – maximum length of tokens</p></li>
+<li><p><strong>strip</strong> (<em>bool</em>) – if true strips text before tokenizing</p></li>
+<li><p><strong>lowercase</strong> (<em>bool</em>) – if true makes text lowercase before tokenizing</p></li>
+<li><p><strong>remove_punctuation</strong> (<em>bool</em>) – if true
+removes <code class="docutils literal notranslate"><span class="pre">string.punctuation</span></code> from text before tokenizing</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <span class="target" id="module-catalyst.dl.utils.torch"></span><dl class="function">
 <dt id="catalyst.dl.utils.torch.get_loader">

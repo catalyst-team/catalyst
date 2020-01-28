@@ -856,11 +856,11 @@ is being copied and which is being transformed.</p>
 <dt id="catalyst.contrib.nn.optimizers.lamb.Lamb">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.lamb.</code><code class="sig-name descname">Lamb</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">lr=0.001</em>, <em class="sig-param">betas=(0.9</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">eps=1e-06</em>, <em class="sig-param">weight_decay=0</em>, <em class="sig-param">adam=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/lamb.html#Lamb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.lamb.Lamb" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.optim.optimizer.Optimizer</span></code></p>
+<p>Lamb optimizer</p>
 <dl class="method">
 <dt id="catalyst.contrib.nn.optimizers.lamb.Lamb.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">lr=0.001</em>, <em class="sig-param">betas=(0.9</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">eps=1e-06</em>, <em class="sig-param">weight_decay=0</em>, <em class="sig-param">adam=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/lamb.html#Lamb.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.lamb.Lamb.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Implements Lamb algorithm from <a class="reference external" href="https://arxiv.org/abs/1904.00962">Large Batch Optimization for
-Deep Learning: Training BERT in 76 minutes</a>.</p>
+<dd><p>Implements Lamb algorithm from <a class="reference external" href="https://arxiv.org/abs/1904.00962">Training BERT in 76 minutes</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -884,7 +884,8 @@ this into Adam. Useful for comparison purposes.</p></li>
 <dl class="method">
 <dt id="catalyst.contrib.nn.optimizers.lamb.Lamb.step">
 <code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param">closure=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/lamb.html#Lamb.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.lamb.Lamb.step" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Makes optimizer step</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -1259,7 +1260,16 @@ Powered by Catalyst.Ecosystem</p>
 <dl class="method">
 <dt id="catalyst.contrib.dl.runner.alchemy.AlchemyRunner.run_experiment">
 <code class="sig-name descname">run_experiment</code><span class="sig-paren">(</span><em class="sig-param">experiment: catalyst.dl.core.experiment.Experiment</em>, <em class="sig-param">check: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/runner/alchemy.html#AlchemyRunner.run_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.runner.alchemy.AlchemyRunner.run_experiment" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Starts experiment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>experiment</strong> (<a class="reference internal" href="dl.html#catalyst.dl.core.experiment.Experiment" title="catalyst.dl.core.experiment.Experiment"><em>Experiment</em></a>) – experiment class</p></li>
+<li><p><strong>check</strong> (<em>bool</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> takes only 3 steps</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -1267,6 +1277,7 @@ Powered by Catalyst.Ecosystem</p>
 <dt id="catalyst.contrib.dl.runner.alchemy.SupervisedAlchemyRunner">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.runner.alchemy.</code><code class="sig-name descname">SupervisedAlchemyRunner</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">input_key: Any = 'features'</em>, <em class="sig-param">output_key: Any = 'logits'</em>, <em class="sig-param">input_target_key: str = 'targets'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/runner/alchemy.html#SupervisedAlchemyRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.runner.alchemy.SupervisedAlchemyRunner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.dl.runner.alchemy.AlchemyRunner" title="catalyst.contrib.dl.runner.alchemy.AlchemyRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.dl.runner.alchemy.AlchemyRunner</span></code></a>, <a class="reference internal" href="dl.html#catalyst.dl.runner.supervised.SupervisedRunner" title="catalyst.dl.runner.supervised.SupervisedRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.runner.supervised.SupervisedRunner</span></code></a></p>
+<p>SupervisedRunner with Alchemy</p>
 </dd></dl>
 
 <span class="target" id="module-catalyst.contrib.dl.runner.neptune"></span><dl class="class">

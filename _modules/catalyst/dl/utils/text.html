@@ -36,6 +36,7 @@
 <span class="kn">import</span> <span class="nn">string</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.contrib.nn.modules</span> <span class="k">import</span> <span class="n">LamaPooling</span>
@@ -43,12 +44,23 @@
 
 <div class="viewcode-block" id="tokenize_text"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.text.tokenize_text">[docs]</a><span class="k">def</span> <span class="nf">tokenize_text</span><span class="p">(</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">tokenizer</span><span class="p">,</span> <span class="c1"># BertTokenizer</span>
+    <span class="n">tokenizer</span><span class="p">,</span>  <span class="c1"># HuggingFace tokenizer, ex: BertTokenizer</span>
     <span class="n">max_length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">strip</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">lowercase</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">remove_punctuation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Tokenizes givin text</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text (str): text to tokenize</span>
+<span class="sd">        tokenizer: Tokenizer instance from HuggingFace</span>
+<span class="sd">        max_length (int): maximum length of tokens</span>
+<span class="sd">        strip (bool): if true strips text before tokenizing</span>
+<span class="sd">        lowercase (bool): if true makes text lowercase before tokenizing</span>
+<span class="sd">        remove_punctuation (bool): if true</span>
+<span class="sd">            removes ``string.punctuation`` from text before tokenizing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">strip</span><span class="p">:</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">lowercase</span><span class="p">:</span>
@@ -84,6 +96,7 @@
     <span class="n">mask</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">level</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Processed the output&quot;&quot;&quot;</span>
     <span class="c1"># @TODO: make this functional</span>
     <span class="n">pooling</span> <span class="o">=</span> <span class="n">LamaPooling</span><span class="p">(</span>
         <span class="n">groups</span><span class="o">=</span><span class="n">pooling_groups</span><span class="p">,</span>
