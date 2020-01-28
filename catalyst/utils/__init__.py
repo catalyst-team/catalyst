@@ -44,6 +44,7 @@ from .pandas import (
     get_dataset_labeling, split_dataframe, merge_multiple_fold_csv,
     read_multiple_dataframes, read_csv_data, balance_classes
 )
+from .parallel import parallel_imap, tqdm_parallel_imap, get_pool
 from .plotly import plot_tensorboard_log
 # from .registry import *
 from .scripts import (
