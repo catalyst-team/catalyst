@@ -2,11 +2,11 @@
 
 from catalyst.core.callback import *
 from catalyst.core.callbacks import *
-from .inference import InferCallback, InferMaskCallback
 from .gan import (
     GradientPenaltyCallback, WassersteinDistanceCallback,
     WeightClampingOptimizerCallback
 )
+from .inference import InferCallback, InferMaskCallback
 from .metrics import (
     AccuracyCallback, AUCCallback, ClasswiseIouCallback,
     ClasswiseJaccardCallback, DiceCallback, F1ScoreCallback, IouCallback,

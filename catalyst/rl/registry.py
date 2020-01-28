@@ -1,5 +1,9 @@
-from catalyst.contrib.registry import *
-from catalyst.core.registry import *
+from catalyst.contrib.registry import (
+    Criterion, CRITERIONS, GRAD_CLIPPERS, Model, MODELS, Module, MODULES,
+    Optimizer, OPTIMIZERS, Sampler, SAMPLERS, Scheduler, SCHEDULERS, Transform,
+    TRANSFORMS
+)
+from catalyst.core.registry import Callback, CALLBACKS
 from catalyst.utils.tools.registry import Registry
 
 
@@ -61,7 +65,6 @@ def _exploration_late_add(r: Registry):
 EXPLORATION = Registry("exploration")
 EXPLORATION.late_add(_exploration_late_add)
 Exploration = EXPLORATION.add
-
 
 __all__ = [
     "Agent",

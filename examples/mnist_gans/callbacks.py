@@ -109,7 +109,9 @@ class VisualizationCallback(Callback):
         tb_logger = self._get_tensorboard_logger(state)
         for key, batch_images in visualizations.items():
             batch_images = batch_images[:self.max_images]
-            image = torchvision.utils.make_grid(batch_images, nrow=self._num_rows)
+            image = torchvision.utils.make_grid(
+                batch_images, nrow=self._num_rows
+            )
             tb_logger.add_image(key, image, global_step=state.step)
 
     def visualize(self, state):

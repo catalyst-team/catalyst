@@ -1,5 +1,9 @@
-from catalyst.contrib.registry import *
-from catalyst.core.registry import *
+from catalyst.contrib.registry import (
+    Criterion, CRITERIONS, GRAD_CLIPPERS, Model, MODELS, Module, MODULES,
+    Optimizer, OPTIMIZERS, Sampler, SAMPLERS, Scheduler, SCHEDULERS, Transform,
+    TRANSFORMS
+)
+from catalyst.core.registry import Callback, CALLBACKS
 from catalyst.utils.tools.registry import Registry
 
 
@@ -9,7 +13,6 @@ def _callbacks_loader(r: Registry):
 
 
 CALLBACKS.late_add(_callbacks_loader)
-
 
 __all__ = [
     "Callback",

@@ -1,8 +1,8 @@
 """
 catalyst subpackage registries
 """
-import os
 import logging
+import os
 
 from catalyst.utils.tools.registry import Registry
 
@@ -122,7 +122,6 @@ def _schedulers_loader(r: Registry):
 SCHEDULERS = Registry("scheduler")
 SCHEDULERS.late_add(_schedulers_loader)
 Scheduler = SCHEDULERS.add
-
 
 __all__ = [
     "Criterion",
