@@ -4,45 +4,40 @@ import numpy as np
 class DynamicArray:
     """
     Dynamically growable numpy array.
-
-    Parameters
-    ----------
-
-    array_or_shape: numpy array or tuple
-        If an array, a growable array with the same shape, dtype,
-        and a copy of the data will be created. The array will grow
-        along the first dimension.
-        If a tuple, en empty array of the specified shape will be created.
-        The first element needs to be None to denote that the array will
-        grow along the first dimension.
-    dtype: optional, array dtype
-        The dtype the array should have.
-    capacity: optional, int
-        The initial capacity of the array.
-    allow_views_on_resize: optional, boolean
-        If False, an exception will be thrown if the array is resized
-        while there are live references to the array"s contents. When
-        the array is resized, these will point at old data. Set to
-        True if you want to silence the exception.
-
-    Examples
-    --------
-
-    Create a multidimensional array and append rows:
-
-    >>> from dynarray import DynamicArray
-    >>> # The leading dimension is None to denote that this is
-    >>> # the dynamic dimension
-    >>> array = DynamicArray((None, 20, 10))
-    >>> array.append(np.random.random((20, 10)))
-    >>> array.extend(np.random.random((100, 20, 10)))
-
-    Slice and perform arithmetic like with normal numpy arrays:
-
-    >>> array[:2]
-
-
     Credits to https://github.com/maciejkula/dynarray
+
+    Args:
+        array_or_shape (numpy array or tuple):
+            If an array, a growable array with the same shape, dtype,
+            and a copy of the data will be created. The array will grow
+            along the first dimension.
+            If a tuple, en empty array of the specified shape will be created.
+            The first element needs to be None to denote that the array will
+            grow along the first dimension.
+        dtype (optional, array dtype):
+            The dtype the array should have.
+        capacity (int, optional):
+            The initial capacity of the array.
+        allow_views_on_resize (boolean, optional):
+            If False, an exception will be thrown if the array is resized
+            while there are live references to the array"s contents. When
+            the array is resized, these will point at old data. Set to
+            True if you want to silence the exception.
+
+    Examples:
+
+        Create a multidimensional array and append rows:
+
+        >>> from dynarray import DynamicArray
+        >>> # The leading dimension is None to denote that this is
+        >>> # the dynamic dimension
+        >>> array = DynamicArray((None, 20, 10))
+        >>> array.append(np.random.random((20, 10)))
+        >>> array.extend(np.random.random((100, 20, 10)))
+
+        Slice and perform arithmetic like with normal numpy arrays:
+
+        >>> array[:2]
     """
 
     MAGIC_METHODS = (
@@ -70,7 +65,7 @@ class DynamicArray:
         capacity=64,
         allow_views_on_resize=False
     ):
-
+        """Init"""
         if isinstance(array_or_shape, tuple):
             if not len(array_or_shape) or array_or_shape[0] is not None:
                 raise ValueError(
@@ -101,9 +96,11 @@ class DynamicArray:
         return self._shape[1:]
 
     def __getitem__(self, idx):
+        """Get magic methods"""
         return self._data[:self._size][idx]
 
     def __setitem__(self, idx, value):
+        """Set magic methods"""
         self._data[:self._size][idx] = value
 
     def _grow(self, new_size):
@@ -210,20 +207,25 @@ class DynamicArray:
 
     @property
     def shape(self):
+        """Shape of the array"""
         return (self._size, ) + self._get_trailing_dimensions()
 
     @property
     def capacity(self):
+        """Capacity of the array"""
         return self._capacity
 
     @property
     def dtype(self):
+        """Dtype of the array"""
         return self._dtype
 
     def __len__(self):
+        """Length of the array"""
         return self.shape[0]
 
     def __repr__(self):
+        """String representation of the array"""
         return (
             self._data[:self._size].__repr__().replace(
                 "array", "DynamicArray(size={}, capacity={})".format(

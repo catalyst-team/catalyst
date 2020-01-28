@@ -12,6 +12,7 @@ def get_key_str(
 ) -> Any:
     """
     Takes value from dict by key.
+
     Args:
         dictionary: dict
         key: key
@@ -28,6 +29,7 @@ def get_key_list(
 ) -> Dict:
     """
     Takes sub-dict from dict by list of keys.
+
     Args:
         dictionary: dict
         key: list of keys
@@ -45,6 +47,7 @@ def get_key_dict(
 ) -> Dict:
     """
     Takes sub-dict from dict by dict-mapping of keys.
+
     Args:
         dictionary: dict
         key: dict-mapping of keys
@@ -75,7 +78,8 @@ def get_key_none(
 def get_dictkey_auto_fn(key: Optional[Union[str, List[str]]]) -> Callable:
     """
     Function generator for sub-dict preparation from dict
-        based on predefined keys.
+    based on predefined keys.
+
     Args:
         key: keys
 

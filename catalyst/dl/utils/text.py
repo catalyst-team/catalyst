@@ -4,19 +4,29 @@ import string
 import numpy as np
 
 import torch
-from transformers import BertTokenizer
 
 from catalyst.contrib.nn.modules import LamaPooling
 
 
 def tokenize_text(
     text: str,
-    tokenizer: BertTokenizer,
+    tokenizer,  # HuggingFace tokenizer, ex: BertTokenizer
     max_length: int,
     strip: bool = True,
     lowercase: bool = True,
     remove_punctuation: bool = True,
 ) -> Dict[str, np.array]:
+    """Tokenizes givin text
+
+    Args:
+        text (str): text to tokenize
+        tokenizer: Tokenizer instance from HuggingFace
+        max_length (int): maximum length of tokens
+        strip (bool): if true strips text before tokenizing
+        lowercase (bool): if true makes text lowercase before tokenizing
+        remove_punctuation (bool): if true
+            removes ``string.punctuation`` from text before tokenizing
+    """
     if strip:
         text = text.strip()
     if lowercase:
@@ -52,6 +62,7 @@ def process_bert_output(
     mask: torch.Tensor = None,
     level: Union[int, str] = None
 ):
+    """Processed the output"""
     # @TODO: make this functional
     pooling = LamaPooling(
         groups=pooling_groups,

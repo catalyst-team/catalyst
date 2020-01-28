@@ -18,18 +18,18 @@ class MultiPhaseRunner(Runner):
         registered_phases: Tuple[Tuple[str, Union[str, Callable]], ...] = None
     ):
         """
-
-        :param model:
-        :param device:
-        :param input_batch_keys: list of strings of keys for batch elements,
-            e.g. input_batch_keys = ["features", "targets"] and your
-            DataLoader returns 2 tensors (images and targets)
-            when state.input will be
-            {"features": batch[0], "targets": batch[1]}
-        :param registered_phases:
-            Tuple of pairs (phase_name, phase_forward_function)
-            phase_forward_function's may be also str, in that case Runner
-            should have method with same name, which will be called
+        Args:
+            model: gan models
+            device: runner's device
+            input_batch_keys: list of strings of keys for batch elements,
+                e.g. ``input_batch_keys = ["features", "targets"]`` and your
+                DataLoader returns 2 tensors (images and targets)
+                when state.input will be
+                ``{"features": batch[0], "targets": batch[1]}``
+            registered_phases: Tuple of pairs
+                (phase_name, phase_forward_function)
+                phase_forward_function's may be also str, in that case Runner
+                should have method with same name, which will be called
         """
         super().__init__(model, device)
 
@@ -100,47 +100,39 @@ class GanRunner(MultiPhaseRunner):
         discriminator_model_key: str = "discriminator"
     ):
         """
+        Args:
+            model: Model
+            device: Device
+            input_batch_keys: list of strings of keys for batch elements,
+                e.g. ``input_batch_keys = ["features", "targets"]`` and
+                your DataLoader returns 2 tensors (images and targets)
+                when state.input will be
+                ``{"features": batch[0], "targets": batch[1]}``
+            data_input_key: real distribution to fit
+            class_input_key: labels for real distribution
+            noise_input_key: noise
+            fake_logits_output_key:  prediction scores of discriminator for
+                fake data
+            real_logits_output_key: prediction scores of discriminator for
+                real data
+            fake_data_output_key: generated data
+            fake_condition_keys: list of all conditional inputs of
+                discriminator (fake data conditions)
+                (appear in same order as in generator model forward() call)
+            real_condition_keys: list of all conditional inputs of
+                discriminator (real data conditions)
+                (appear in same order as in generator model forward() call)
+            generator_train_phase(str): name for generator training phase
+            discriminator_train_phase(str): name for discriminator
+                training phase
+            generator_model_key: name for generator model, e.g. "generator"
+            discriminator_model_key: name for discriminator model,
+                e.g. "discriminator"
 
-        :param model:
-        :param device:
-        :param input_batch_keys: list of strings of keys for batch elements,
-            e.g. input_batch_keys = ["features", "targets"] and
-            your DataLoader returns 2 tensors (images and targets)
-            when state.input will be
-            {"features": batch[0], "targets": batch[1]}
-
-        INPUT KEYS:
-        :param data_input_key: real distribution to fit
-        :param class_input_key: labels for real distribution
-        :param noise_input_key: noise
-
-        OUTPUT KEYS:
-        :param fake_logits_output_key:  prediction scores of discriminator for
-            fake data
-        :param real_logits_output_key: prediction scores of discriminator for
-            real data
-        :param fake_data_output_key: generated data
-
-        CONDITIONS:
-        :param fake_condition_keys: list of all conditional inputs of
-            discriminator (fake data conditions)
-            (appear in same order as in generator model forward() call)
-        :param real_condition_keys: list of all conditional inputs of
-            discriminator (real data conditions)
-            (appear in same order as in generator model forward() call)
-        Note: THIS RUNNER SUPPORTS ONLY EQUALLY CONDITIONED generator and
+        Note:
+            THIS RUNNER SUPPORTS ONLY EQUALLY CONDITIONED generator and
             discriminator (i.e. if generator is conditioned on 3 variables,
             discriminator must be conditioned on same 3 variables)
-
-        PHASES:
-        :param generator_train_phase(str): name for generator training phase
-        :param discriminator_train_phase(str): name for discriminator
-            training phase
-
-        MODEL KEYS:
-        :param generator_model_key: name for generator model, e.g. "generator"
-        :param discriminator_model_key: name for discriminator model,
-            e.g. "discriminator"
         """
         input_batch_keys = input_batch_keys or [data_input_key]
         registered_phases = (
