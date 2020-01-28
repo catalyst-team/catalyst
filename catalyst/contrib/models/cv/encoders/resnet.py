@@ -22,7 +22,7 @@ class ResnetEncoder(nn.Module):
         state_dict: Union[dict, str, Path] = None,
     ):
         """
-        Specifies an encoders for classification network
+        Specifies encoders for classification network
         Args:
             arch (str): Name for resnet. Have to be one of
                 resnet18, resnet34, resnet50, resnet101, resnet152
