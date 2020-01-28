@@ -1,8 +1,7 @@
 from typing import Any, Callable, Dict, List, Optional, Union  # isort:skip
 
-from catalyst.dl.core import Callback, CallbackOrder, RunnerState
-from .criterion import CriterionCallback
-from .optimizer import OptimizerCallback
+from catalyst.core import CriterionCallback, OptimizerCallback
+from catalyst.dl import Callback, CallbackOrder, State
 
 
 """
@@ -52,7 +51,7 @@ class MultiKeyMetricCallback(Callback):
             result = dictionary[keys]
         return result
 
-    def on_batch_end(self, state: RunnerState):
+    def on_batch_end(self, state: State):
         """On batch end call"""
         outputs = self._get(state.output, self.output_key)
         targets = self._get(state.input, self.input_key)
@@ -107,18 +106,20 @@ class GradientPenaltyCallback(CriterionCallback):
     Criterion Callback to compute Gradient Penalty
     """
 
-    def __init__(self,
-                 real_input_key: str = "data",
-                 fake_output_key: str = "fake_data",
-                 condition_keys: List[str] = None,
-                 critic_model_key: str = "critic",
-                 critic_criterion_key: str = "critic",
-                 real_data_criterion_key: str = "real_data",
-                 fake_data_criterion_key: str = "fake_data",
-                 condition_args_criterion_key: str = "critic_condition_args",
-                 prefix: str = "loss",
-                 criterion_key: str = None,
-                 multiplier: float = 1.0):
+    def __init__(
+        self,
+        real_input_key: str = "data",
+        fake_output_key: str = "fake_data",
+        condition_keys: List[str] = None,
+        critic_model_key: str = "critic",
+        critic_criterion_key: str = "critic",
+        real_data_criterion_key: str = "real_data",
+        fake_data_criterion_key: str = "fake_data",
+        condition_args_criterion_key: str = "critic_condition_args",
+        prefix: str = "loss",
+        criterion_key: str = None,
+        multiplier: float = 1.0,
+    ):
         """
 
         :param real_input_key: real data key in state.input
@@ -148,7 +149,7 @@ class GradientPenaltyCallback(CriterionCallback):
         self.fake_data_criterion_key = fake_data_criterion_key
         self.condition_args_criterion_key = condition_args_criterion_key
 
-    def _compute_loss(self, state: RunnerState, criterion):
+    def _compute_loss(self, state: State, criterion):
         criterion_kwargs = {
             self.real_data_criterion_key: state.input[self.input_key],
             self.fake_data_criterion_key: state.output[self.output_key],
@@ -198,7 +199,7 @@ class WeightClampingOptimizerCallback(OptimizerCallback):
         )
         self.weight_clamp_value = weight_clamp_value
 
-    def on_batch_end(self, state):
+    def on_batch_end(self, state: State):
         """On batch end event"""
         super().on_batch_end(state)
         if not state.need_backward:

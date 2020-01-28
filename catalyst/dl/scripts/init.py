@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 
-from catalyst.dl.utils import clone_pipeline, run_wizard
+from catalyst.dl import utils
 
 
 def build_args(parser):
@@ -27,9 +27,9 @@ def build_args(parser):
 
 def main(args, _):
     if args.interactive:
-        run_wizard()
+        utils.run_wizard()
     else:
-        clone_pipeline(args.pipeline, args.out_dir)
+        utils.clone_pipeline(args.pipeline, args.out_dir)
 
 
 def parse_args():

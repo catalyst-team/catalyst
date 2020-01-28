@@ -3,4 +3,4 @@
 from .gan import GanRunner, MultiPhaseRunner
 from .supervised import SupervisedRunner
 
-from catalyst.contrib.runner import *  # isort:skip
+from catalyst.contrib.dl.runner import *  # isort:skip

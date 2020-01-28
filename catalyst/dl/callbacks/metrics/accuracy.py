@@ -1,7 +1,7 @@
 from typing import List  # isort:skip
 
 from catalyst.dl.core import MultiMetricCallback
-from catalyst.dl.utils import criterion
+from catalyst.utils import criterion
 
 
 def _get_default_accuracy_args(num_classes: int) -> List[int]:

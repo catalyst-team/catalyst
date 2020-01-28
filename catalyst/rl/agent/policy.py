@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from catalyst.contrib.modules import CouplingLayer, SquashingLayer
+from catalyst.contrib.nn.modules import CouplingLayer, SquashingLayer
 from catalyst.contrib.registry import MODULES
 from catalyst.utils import normal_logprob, normal_sample
 
@@ -142,4 +142,10 @@ class RealNVPPolicy(nn.Module):
             return action
 
 
-__all__ = ["CategoricalPolicy", "SquashingGaussPolicy", "RealNVPPolicy"]
+__all__ = [
+    "CategoricalPolicy",
+    "BernoulliPolicy",
+    "DiagonalGaussPolicy",
+    "SquashingGaussPolicy",
+    "RealNVPPolicy"
+]

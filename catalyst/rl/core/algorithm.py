@@ -22,12 +22,14 @@ class AlgorithmSpec(ABC):
 
     @abstractmethod
     def pack_checkpoint(self, with_optimizer: bool = True, **kwargs):
+        # @TODO: remove
         pass
 
     @abstractmethod
     def unpack_checkpoint(
         self, checkpoint, with_optimizer: bool = True, **kwargs
     ):
+        # @TODO: remove
         pass
 
     @abstractmethod
@@ -37,6 +39,7 @@ class AlgorithmSpec(ABC):
     @classmethod
     @abstractmethod
     def prepare_for_trainer(cls, env_spec: EnvironmentSpec, config: Dict):
+        # @TODO: remove
         pass
 
     @classmethod
@@ -44,4 +47,5 @@ class AlgorithmSpec(ABC):
     def prepare_for_sampler(
         cls, env_spec: EnvironmentSpec, config: Dict
     ) -> Union[ActorSpec, CriticSpec]:
+        # @TODO: remove
         pass

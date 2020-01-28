@@ -1,4 +1,4 @@
-from typing import Callable, Dict  # isort:skip
+from typing import Callable, Dict, List, Union  # isort:skip
 
 
 class Augmentor:
@@ -43,11 +43,41 @@ class Augmentor:
         return dict_
 
 
+class AugmentorCompose:
+    """
+    Compose augmentors
+    """
+    def __init__(self, key2augment_fn: Dict[str, Callable]):
+        """
+        Args:
+            key2augment_fn (Dict[str, Callable]): mapping from input key
+                to augmentation function to apply
+        """
+        self.key2augment_fn = key2augment_fn
+
+    def __call__(self, dictionary: dict) -> dict:
+        """
+        Args:
+            dictionary (dict): item from dataset
+
+        Returns:
+            dict: dictionaty with augmented data
+        """
+        results = {}
+        for key, augment_fn in self.key2augment_fn.items():
+            results = {**results, **augment_fn({key: dictionary[key]})}
+
+        return {**dictionary, **results}
+
+
 class AugmentorKeys:
     """
     Augmentation abstraction to match input and augmentations keys
     """
-    def __init__(self, dict2fn_dict: Dict[str, str], augment_fn: Callable):
+    def __init__(
+        self, dict2fn_dict: Union[Dict[str, str], List[str]],
+        augment_fn: Callable
+    ):
         """
         Args:
             dict2fn_dict (Dict[str, str]): keys matching dict
@@ -55,6 +85,9 @@ class AugmentorKeys:
                 ``{"image": "image", "mask": "mask"}``
             augment_fn: augmentation function
         """
+        if isinstance(dict2fn_dict, list):
+            dict2fn_dict = {key: key for key in dict2fn_dict}
+
         self.dict2fn_dict = dict2fn_dict
         self.augment_fn = augment_fn
 
@@ -83,31 +116,4 @@ class AugmentorKeys:
         return {**dictionary, **results}
 
 
-class AugmentorCompose:
-    """
-    Compose augmentors
-    """
-    def __init__(self, key2augment_fn: Dict[str, Callable]):
-        """
-        Args:
-            key2augment_fn (Dict[str, Callable]): mapping from input key
-                to augmentation function to apply
-        """
-        self.key2augment_fn = key2augment_fn
-
-    def __call__(self, dictionary: dict) -> dict:
-        """
-        Args:
-            dictionary (dict): item from dataset
-
-        Returns:
-            dict: dictionaty with augmented data
-        """
-        results = {}
-        for key, augment_fn in self.key2augment_fn.items():
-            results = {**results, **augment_fn({key: dictionary[key]})}
-
-        return {**dictionary, **results}
-
-
-__all__ = ["Augmentor", "AugmentorKeys"]
+__all__ = ["Augmentor", "AugmentorCompose", "AugmentorKeys"]

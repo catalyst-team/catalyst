@@ -13,5 +13,5 @@ pip install -r requirements/requirements-rl.txt
 echo "pip install -r requirements/requirements-dev.txt"
 pip install -r requirements/requirements-dev.txt
 
-echo "make check-style"
-make check-style
+echo "make check-codestyle"
+make check-codestyle

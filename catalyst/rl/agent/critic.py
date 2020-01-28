@@ -165,4 +165,4 @@ class StateActionCritic(CriticSpec):
         return net
 
 
-__all__ = ["StateCritic", "ActionCritic", "StateActionCritic"]
+__all__ = ["CriticSpec", "StateCritic", "ActionCritic", "StateActionCritic"]

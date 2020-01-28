@@ -1,13 +1,13 @@
-.PHONY: check-style codestyle check-docs docker docker-fp16 docker-dev docker-dev-fp16 install-from-source clean
+.PHONY: check-codestyle check-docs codestyle docker docker-fp16 docker-dev docker-dev-fp16 install-from-source clean
 
-check-style:
+check-codestyle:
 	bash ./bin/_check_codestyle.sh -s
-
-codestyle:
-	pre-commit run
 
 check-docs:
 	bash ./bin/_check_docs.sh
+
+codestyle:
+	pre-commit run
 
 docker: ./requirements/
 	echo building $${REPO_NAME:-catalyst-base}:$${TAG:-latest} ...

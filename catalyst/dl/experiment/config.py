@@ -11,18 +11,17 @@ from torch.utils.data import (  # noqa F401
 )
 
 from catalyst.data import Augmentor, AugmentorCompose
-from catalyst.dl import utils
+from catalyst.dl import Callback, Experiment, utils
 from catalyst.dl.callbacks import (
     CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
     PhaseWrapperCallback, RaiseExceptionCallback, SchedulerCallback,
     TensorboardLogger, VerboseLogger
 )
-from catalyst.dl.core import Callback, Experiment
 from catalyst.dl.registry import (
     CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS,
     TRANSFORMS
 )
-from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
+from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
 class ConfigExperiment(Experiment):
@@ -148,6 +147,7 @@ class ConfigExperiment(Experiment):
             model = {}
             for key, params_ in params.items():
                 model[key] = ConfigExperiment._get_model(**params_)
+            model = nn.ModuleDict(model)
         else:
             model = MODELS.get_from_params(**params)
         return model
@@ -189,7 +189,7 @@ class ConfigExperiment(Experiment):
         **params
     ) -> Optimizer:
         # @TODO 1: refactoring; this method is too long
-        # @TODO 2: load state dicts for schedulers & criteria
+        # @TODO 2: load state dicts for schedulers & criterion
         layerwise_params = \
             params.pop("layerwise_params", OrderedDict())
         no_bias_weight_decay = \
@@ -384,7 +384,11 @@ class ConfigExperiment(Experiment):
 
         return transform
 
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(
+        self,
+        stage: str,
+        epoch: int = None,
+    ) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage"""
         data_params = dict(self.stages_config[stage]["data_params"])
 

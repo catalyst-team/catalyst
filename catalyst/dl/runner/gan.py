@@ -3,7 +3,7 @@ from typing import (  # isort:skip
 )
 
 from catalyst.dl import Runner
-from catalyst.utils.typing import Device, Model
+from catalyst.utils.tools.typing import Device, Model
 
 
 class MultiPhaseRunner(Runner):

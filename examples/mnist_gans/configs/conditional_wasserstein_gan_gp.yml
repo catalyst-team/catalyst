@@ -151,7 +151,7 @@ stages:
     visualizer:
       callback: VisualizationCallback
       output_keys: *fake_data
-      n_row: 5
+      num_rows: 5
       max_images: 25
 
     saver:
