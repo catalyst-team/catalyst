@@ -64,7 +64,7 @@ class GanRunner(Runner):
                 and getattr(self.state, key) is not None
             )
 
-    def forward(self, batch, **kwargs):
+    def forward(self, batch):
         real_features = batch[self.features_key]
         batch_size = real_features.shape[0]
         real_targets = torch.ones((batch_size, 1), device=self.device)
