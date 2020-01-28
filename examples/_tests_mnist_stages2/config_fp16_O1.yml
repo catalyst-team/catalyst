@@ -25,21 +25,21 @@ stages:
       _key_value: True
 
       image:
-        transform: Compose
+        transform: A.Compose
         transforms:
-          - transform: TensorToImage
-          - transform: Normalize
+          - transform: catalyst.TensorToImage
+          - transform: A.Normalize
             mean: [0.1307]
             std: [0.3081]
-          - transform: ToTensor
+          - transform: catalyst.ToTensor
     valid:
-      transform: Compose
+      transform: A.Compose
       transforms:
-        - transform: TensorToImage
-        - transform: Normalize
+        - transform: catalyst.TensorToImage
+        - transform: A.Normalize
           mean: [0.1307]
           std: [0.3081]
-        - transform: ToTensor
+        - transform: catalyst.ToTensor
 
   state_params:
     main_metric: &reduce_metric accuracy01
