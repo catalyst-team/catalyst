@@ -29,13 +29,13 @@ class OptimizerCallback(Callback):
         Args:
             grad_clip_params (dict): params for gradient clipping
             accumulation_steps (int): number of steps before
-                ``model.zero_grad()``
+                ``optimizer.zero_grad()``
             optimizer_key (str): A key to take a optimizer in case
                 there are several of them and they are in a dictionary format.
             loss_key (str): key to get loss from ``state.loss``
             decouple_weight_decay (bool): If True - decouple weight decay
                 regularization.
-            save_model_grads (bool): If True - State.model_grads will
+            save_model_grads (bool): If True - state.model_grads will
                 contain gradients calculated on backward propagation on current
                 batch
         """
@@ -173,15 +173,14 @@ class OptimizerCallback(Callback):
             )
 
             if self.save_model_grads:
-                for tag, value in model.named_parameters():
+                for tag, value in state.model.named_parameters():
                     tag = tag.replace(".", "/")
                     state.model_grads[tag] = value.grad.cpu().numpy()
 
-            # don't do `model.zero_grad()`
-            # because there can be several optimizers
-            # or not all model parameters update by this optimizer
+            # don't do `state.model.zero_grad()`
+            # because not all model parameters is updated by this optimizer
             optimizer.zero_grad()
-            # utils.maybe_recursive_call(model, "zero_grad")
+            # utils.maybe_recursive_call(state.model, "zero_grad")
 
             self._accumulation_counter = 0
 
