@@ -29,13 +29,13 @@ def _transforms_loader(r: Registry):
         r.add_from_module(p, prefix=["A.", "albu.", "albumentations."])
 
         from catalyst.contrib import transforms as t
-        r.add_from_module(t, prefix=["catalsyt.", "C."])
+        r.add_from_module(t, prefix=["catalyst.", "C."])
     except ImportError as ex:
-        logger.warning(
-            "albumentations not available, to install albumentations, "
-            "run `pip install albumentations`."
-        )
         if os.environ.get("USE_ALBUMENTATIONS", "0") == "1":
+            logger.warning(
+                "albumentations not available, to install albumentations, "
+                "run `pip install albumentations`."
+            )
             raise ex
 
 

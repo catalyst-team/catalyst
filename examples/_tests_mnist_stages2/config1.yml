@@ -17,11 +17,11 @@ stages:
   transform_params:
     transform: A.Compose
     transforms:
-      - transform: catalsyt.TensorToImage
+      - transform: catalyst.TensorToImage
       - transform: A.Normalize
         mean: [0.1307]
         std: [0.3081]
-      - transform: catalsyt.ToTensor # the same as `C.ToTensor`
+      - transform: catalyst.ToTensor # the same as `C.ToTensor`
 
   state_params:
     main_metric: &reduce_metric accuracy01

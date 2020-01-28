@@ -26,22 +26,22 @@ stages:
       image:
         transform: A.Compose
         transforms:
-          - transform: catalsyt.TensorToImage
+          - transform: catalyst.TensorToImage
           - transform: A.Normalize
             mean: [0.1307]
             std: [0.3081]
-          - transform: catalsyt.ToTensor
+          - transform: catalyst.ToTensor
     valid:
       _key_value: True
 
       image:
         transform: A.Compose
         transforms:
-          - transform: catalsyt.TensorToImage
+          - transform: catalyst.TensorToImage
           - transform: A.Normalize
             mean: [0.1307]
             std: [0.3081]
-          - transform: catalsyt.ToTensor
+          - transform: catalyst.ToTensor
 
   state_params:
     main_metric: &reduce_metric accuracy01
