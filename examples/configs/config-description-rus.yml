@@ -74,7 +74,7 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
     train:  # трансформация только для train датасета
       _key_value: False  # KEYWORD, если False, то трансформация будет применяться сразу ко всему data-sample
 
-      transform: Compose  # KEYWORD, имя трансформации
+      transform: A.Compose  # KEYWORD, имя трансформации
       # на этом уровне могут лежать параметры для __init__ данного transform, например
       transforms:  # KEYWORD, список трансформаций (нужно обернуть еще в key-value) который будет передан как параметр
         - transform: SomeTransform  # Пример
@@ -85,7 +85,7 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
       _key_value: True  # KEYWORD, если True, то для каждого key-value в data-sample можно определить свои трансформации и тогда их нужно обернуть еще в key-value, note: трансформации будут применяться отдельно для каждого key-value в data-sample
 
       image:
-        transform: Compose
+        transform: A.Compose
         transforms:
           - transform: SomeTransform
             param: value

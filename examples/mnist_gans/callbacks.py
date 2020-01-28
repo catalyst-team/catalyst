@@ -1,12 +1,12 @@
+# flake8: noqa
+# isort: skip_file
 import torch
 import torchvision.utils
 
-from catalyst.dl import registry
 from catalyst.dl.core import Callback, CallbackOrder, RunnerState
 from catalyst.utils.tensorboard import SummaryWriter
 
 
-@registry.Callback
 class VisualizationCallback(Callback):
     TENSORBOARD_LOGGER_KEY = "tensorboard"
 
@@ -128,3 +128,6 @@ class VisualizationCallback(Callback):
         self._loader_batch_count += 1
         if self._loader_batch_count % self.batch_frequency:
             self.visualize(state)
+
+
+__all__ = ["VisualizationCallback"]

@@ -67,7 +67,9 @@ class CriterionCallback(Callback):
         self._get_output = utils.get_dictkey_auto_fn(self.output_key)
         kv_types = (dict, tuple, list, type(None))
         # @TODO: fix to only KV usage
-        if isinstance(self.input_key, str) \
+        if hasattr(self, "_compute_loss"):
+            pass  # overridden in descendants
+        elif isinstance(self.input_key, str) \
                 and isinstance(self.output_key, str):
             self._compute_loss = self._compute_loss_value
         elif isinstance(self.input_key, kv_types) \
@@ -186,20 +188,35 @@ class CriterionAggregatorCallback(Callback):
         self.loss_keys = loss_keys
 
         self.multiplier = multiplier
-        if loss_aggregate_fn == "sum":
-            self.loss_fn = lambda x: torch.sum(torch.stack(x)) * multiplier
-        elif loss_aggregate_fn == "weighted_sum":
+
+        if loss_keys in ("sum", "mean"):
+            if loss_keys is not None and not isinstance(loss_keys, list):
+                raise ValueError(
+                    "For `sum` or `mean` mode the loss_keys must be "
+                    "None or list or str (not dict)"
+                )
+        elif loss_keys in ("weighted_sum", "weighted_mean"):
             if loss_keys is None or not isinstance(loss_keys, dict):
                 raise ValueError(
-                    "For `weighted_sum` mode the loss_keys must be specified "
+                    "For `weighted_sum` or `weighted_mean` mode "
+                    "the loss_keys must be specified "
                     "and must be a dict"
                 )
+
+        if loss_aggregate_fn in ("sum", "weighted_sum", "weighted_mean"):
             self.loss_fn = lambda x: torch.sum(torch.stack(x)) * multiplier
+            if loss_aggregate_fn == "weighted_mean":
+                weights_sum = sum(loss_keys.items())
+                self.loss_keys = {
+                    key: weight / weights_sum
+                    for key, weight in loss_keys.items()
+                }
         elif loss_aggregate_fn == "mean":
             self.loss_fn = lambda x: torch.mean(torch.stack(x)) * multiplier
         else:
             raise ValueError(
-                "loss_aggregate_fn must be `sum`, `mean` or weighted_sum`"
+                "loss_aggregate_fn must be `sum`, `mean` "
+                "or `weighted_sum` or `weighted_mean`"
             )
 
         self.loss_aggregate_name = loss_aggregate_fn
@@ -248,5 +265,5 @@ class CriterionAggregatorCallback(Callback):
 __all__ = [
     "CriterionCallback",
     "CriterionOutputOnlyCallback",
-    "CriterionAggregatorCallback",
+    "CriterionAggregatorCallback"
 ]
