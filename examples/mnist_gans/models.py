@@ -64,15 +64,15 @@ class SimpleCGenerator(SimpleGenerator):
     def __init__(
         self,
         noise_dim=10,
-        n_classes=10,
+        num_classes=10,
         hidden_dim=256,
         image_resolution=(28, 28),
         channels=1
     ):
         super().__init__(
-            noise_dim + n_classes, hidden_dim, image_resolution, channels
+            noise_dim + num_classes, hidden_dim, image_resolution, channels
         )
-        self.n_classes = n_classes
+        self.num_classes = num_classes
 
     def forward(self, z, c_one_hot):
         x = torch.cat((z, c_one_hot.float()), dim=1)
@@ -82,7 +82,7 @@ class SimpleCGenerator(SimpleGenerator):
 class SimpleCDiscriminator(nn.Module):
     def __init__(
         self,
-        n_classes=10,
+        num_classes=10,
         image_resolution=(28, 28),
         channels=1,
         hidden_dim=100
@@ -98,7 +98,7 @@ class SimpleCDiscriminator(nn.Module):
             nn.LeakyReLU(0.05), nn.Linear(hidden_dim, hidden_dim),
             nn.LeakyReLU(0.05)
         )
-        self.classifier = nn.Linear(hidden_dim + n_classes, 1)
+        self.classifier = nn.Linear(hidden_dim + num_classes, 1)
 
     def forward(self, x, c_one_hot):
         x = self.embedder(x.reshape(x.size(0), -1))

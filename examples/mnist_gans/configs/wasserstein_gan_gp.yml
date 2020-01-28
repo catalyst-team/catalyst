@@ -35,13 +35,13 @@ args:
 stages:
 
   transform_params:
-    transform: Compose
+    transform: A.Compose
     transforms:
       - transform: AsImage
-      - transform: Normalize
+      - transform: A.Normalize
         mean: [0.5]
         std: [0.5]
-      - transform: ToTensorV2
+      - transform: A.ToTensorV2
       - transform: AdditionalNoiseTensor
         tensor_size: [*noise_dim]
         output_key: *noise_input

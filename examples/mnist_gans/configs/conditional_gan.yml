@@ -26,10 +26,10 @@ model_params:
   generator:
     model: SimpleCGenerator
     noise_dim: &noise_dim 16
-    n_classes: &n_classes 10
+    num_classes: &n_classes 10
   discriminator:
     model: SimpleCDiscriminator
-    n_classes: *n_classes
+    num_classes: *n_classes
 
 
 args:
@@ -40,13 +40,13 @@ args:
 stages:
 
   transform_params:
-    transform: Compose
+    transform: A.Compose
     transforms:
       - transform: AsImage
-      - transform: Normalize
+      - transform: A.Normalize
         mean: [0.5]
         std: [0.5]
-      - transform: ToTensorV2
+      - transform: A.ToTensorV2
       - transform: AdditionalNoiseTensor
         tensor_size: [*noise_dim]
         output_key: *noise_input
@@ -57,7 +57,7 @@ stages:
         value: 0.
         output_key: &fake_targets "fake_targets"
       - transform: OneHotTargetTransform
-        n_classes: *n_classes
+        num_classes: *n_classes
         input_key: *class_targets
         output_key: *class_targets_one_hot
 
@@ -92,7 +92,7 @@ stages:
 #
 #    prepare_targets_onehot:  TODO
 #      callback: OneHotTransformCallback
-#      n_classes: *n_classes
+#      num_classes: *n_classes
 #      target_key: "class_targets"
 #      one_hot_target_key: "class_targets_one_hot"
 #

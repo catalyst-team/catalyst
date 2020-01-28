@@ -4,7 +4,6 @@ from typing import Tuple, Union
 import numpy as np
 
 from albumentations.core.transforms_interface import ImageOnlyTransform
-from albumentations.pytorch import ToTensorV2
 import torch
 
 from catalyst.dl import registry
@@ -59,24 +58,23 @@ class OneHotTargetTransform:
     """Adds one-hot encoded target to input dict
     i.e. dict_[output_key] = one_hot_encode(dict_[input_key])
     """
-    def __init__(self, input_key: str, output_key: str, n_classes: int):
+    def __init__(self, input_key: str, output_key: str, num_classes: int):
         self.input_key = input_key
         self.output_key = output_key
-        self.n_classes = n_classes
+        self.num_classes = num_classes
 
     def __call__(self, force_apply=False, **dict_):
         class_id = dict_[self.input_key]
         assert self.output_key not in dict_, \
             "Output key is supposed not to be present in dict"
 
-        target = np.zeros((self.n_classes, ), dtype=np.int64)
+        target = np.zeros((self.num_classes, ), dtype=np.int64)
         target[class_id] = 1
         dict_[self.output_key] = target
 
         return dict_
 
 
-registry.Transform(ToTensorV2)
 registry.Transform(AsImage)
 
 registry.Transform(AdditionalNoiseTensor)
