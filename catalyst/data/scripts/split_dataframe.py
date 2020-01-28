@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from catalyst.utils.pandas import folds_to_list, split_dataframe
+from catalyst.utils import folds_to_list, split_dataframe
 
 
 def build_args(parser):

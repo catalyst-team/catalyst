@@ -11,6 +11,7 @@
 from typing import List  # isort:skip
 import argparse
 from functools import wraps
+from multiprocessing.pool import Pool
 import os
 from pathlib import Path
 
@@ -18,7 +19,7 @@ import cv2
 import numpy as np
 
 from catalyst.utils import (
-    boolean_flag, get_pool, has_image_extension, imread, imwrite, Pool,
+    boolean_flag, get_pool, has_image_extension, imread, imwrite,
     tqdm_parallel_imap
 )
 
