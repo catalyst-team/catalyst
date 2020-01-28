@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 import pytest
 
-from catalyst.utils.tensorboard import (
+from catalyst.utils.tools.tensorboard import (
     EventReadingError, EventsFileReader, SummaryReader
 )
 

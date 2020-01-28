@@ -1,8 +1,7 @@
 import pytest
 
-from catalyst.utils.registry import RegistryException
+from catalyst.utils.tools.registry import Registry, RegistryException
 from . import registery_foo as module
-from ..registry import Registry
 from .registery_foo import foo
 
 

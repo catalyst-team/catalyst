@@ -1,9 +1,13 @@
 from typing import Dict, List, Optional, Tuple, Union  # isort:skip
+from collections import defaultdict
+
+import numpy as np
 import pandas as pd
+from sklearn.model_selection import StratifiedKFold, train_test_split
+from sklearn.utils import shuffle
 from tqdm.auto import tqdm
 
 from catalyst.utils import args_are_not_none
-from catalyst.utils.dataset import default_fold_split, stratified_fold_split
 
 tqdm.pandas()
 
@@ -49,6 +53,133 @@ def folds_to_list(folds: Union[list, str, pd.Series]) -> List[int]:
     return list(sorted(list({int(x) for x in folds})))
 
 
+def split_dataframe_train_test(
+    dataframe: pd.DataFrame, **train_test_split_args
+) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Split dataframe in train and test part.
+
+    Args:
+        dataframe: pd.DataFrame to split
+        **train_test_split_args:
+            test_size : float, int, or None (default is None)
+                If float, should be between 0.0 and 1.0 and represent the
+                proportion of the dataset to include in the test split. If
+                int, represents the absolute number of test samples. If None,
+                the value is automatically set
+                to the complement of the train size.
+                If train size is also None, test size is set to 0.25.
+
+            train_size : float, int, or None (default is None)
+                If float, should be between 0.0 and 1.0 and represent the
+                proportion of the dataset to include in the train split. If
+                int, represents the absolute number of train samples. If None,
+                the value is automatically set
+                to the complement of the test size.
+
+            random_state : int or RandomState
+                Pseudo-random number generator state used for random sampling.
+
+            stratify : array-like or None (default is None)
+                If not None, data is split in a stratified fashion,
+                using this as the class labels.
+
+    Returns:
+        train and test DataFrames
+
+
+    PS. It exist cause sklearn `split` is overcomplicated.
+    """
+    df_train, df_test = train_test_split(dataframe, **train_test_split_args)
+    return df_train, df_test
+
+
+def split_dataframe_on_folds(
+    dataframe: pd.DataFrame, random_state: int = 42, n_folds: int = 5
+) -> pd.DataFrame:
+    """
+    Splits DataFrame into `N` folds.
+
+    Args:
+        dataframe: a dataset
+        random_state: seed for random shuffle
+        n_folds: number of result folds
+
+    Returns:
+        pd.DataFrame: new dataframe with `fold` column
+    """
+    dataframe = shuffle(dataframe, random_state=random_state)
+
+    df_tmp = []
+    for i, df_el in enumerate(np.array_split(dataframe, n_folds)):
+        df_el["fold"] = i
+        df_tmp.append(df_el)
+    dataframe = pd.concat(df_tmp)
+    return dataframe
+
+
+def split_dataframe_on_stratified_folds(
+    dataframe: pd.DataFrame,
+    class_column: str,
+    random_state: int = 42,
+    n_folds: int = 5
+) -> pd.DataFrame:
+    """
+    Splits DataFrame into `N` stratified folds.
+
+    Also see :class:`catalyst.data.sampler.BalanceClassSampler`
+
+    Args:
+        dataframe: a dataset
+        class_column: which column to use for split
+        random_state: seed for random shuffle
+        n_folds: number of result folds
+
+    Returns:
+        pd.DataFrame: new dataframe with `fold` column
+    """
+    skf = StratifiedKFold(
+        n_splits=n_folds, shuffle=True, random_state=random_state
+    )
+    fold_column = np.zeros(len(dataframe), dtype=int)
+    for i, (_, test_index) in enumerate(
+        skf.split(range(len(dataframe)), dataframe[class_column])
+    ):
+        fold_column[test_index] = i
+    dataframe["fold"] = fold_column
+    return dataframe
+
+
+def split_dataframe_on_column_folds(
+    dataframe: pd.DataFrame,
+    column: str,
+    random_state: int = 42,
+    n_folds: int = 5
+) -> pd.DataFrame:
+    """
+    Splits DataFrame into `N` folds.
+
+    Args:
+        dataframe: a dataset
+        column: which column to use
+        random_state: seed for random shuffle
+        n_folds: number of result folds
+
+    Returns:
+        pd.DataFrame: new dataframe with `fold` column
+    """
+    df_tmp = []
+    labels = shuffle(
+        sorted(dataframe[column].unique()), random_state=random_state
+    )
+    for i, fold_labels in enumerate(np.array_split(labels, n_folds)):
+        df_label = dataframe[dataframe[column].isin(fold_labels)]
+        df_label["fold"] = i
+        df_tmp.append(df_label)
+    dataframe = pd.concat(df_tmp)
+    return dataframe
+
+
 def map_dataframe(
     dataframe: pd.DataFrame,
     tag_column: str,
@@ -81,6 +212,58 @@ def map_dataframe(
 
     dataframe.loc[series.index, class_column] = series
     return dataframe
+
+
+def separate_tags(
+    dataframe: pd.DataFrame, tag_column: str = "tag", tag_delim: str = ","
+) -> pd.DataFrame:
+    """
+    Separates values in ``class_column`` column
+
+    Args:
+        dataframe: a dataset
+        tag_column: column name to separate values
+        tag_delim: delimiter to separate values
+
+    Returns:
+        pd.DataFrame: new dataframe
+    """
+    df_new = []
+    for _, row in dataframe.iterrows():
+        for class_name in row[tag_column].split(tag_delim):
+            df_new.append({**row, **{tag_column: class_name}})
+    df_new = pd.DataFrame(df_new)
+    return df_new
+
+
+def get_dataset_labeling(
+    dataframe: pd.DataFrame, tag_column: str
+) -> Dict[str, int]:
+    """
+    Prepares a mapping using unique values from ``tag_column``
+
+    .. code-block:: javascript
+
+        {
+            "class_name_0": 0,
+            "class_name_1": 1,
+            ...
+            "class_name_N": N
+        }
+
+    Args:
+        dataframe: a dataset
+        tag_column: which column to use
+
+    Returns:
+        Dict[str, int]: mapping from tag to labels
+    """
+    tag_to_labels = {
+        str(class_name): label
+        for label, class_name in
+        enumerate(sorted(dataframe[tag_column].unique()))
+    }
+    return tag_to_labels
 
 
 def split_dataframe(
@@ -120,14 +303,14 @@ def split_dataframe(
         )
 
     if class_column is not None:
-        result_dataframe = stratified_fold_split(
+        result_dataframe = split_dataframe_on_stratified_folds(
             dataframe,
             class_column=class_column,
             random_state=seed,
             n_folds=n_folds
         )
     else:
-        result_dataframe = default_fold_split(
+        result_dataframe = split_dataframe_on_folds(
             dataframe, random_state=seed, n_folds=n_folds
         )
 
@@ -190,20 +373,38 @@ def read_multiple_dataframes(
         (tuple): tuple with 4 dataframes
             whole dataframe, train part, valid part and infer part
     """
-    df_train = merge_multiple_fold_csv(fold_name="train", paths=in_csv_train)
-    df_valid = merge_multiple_fold_csv(fold_name="valid", paths=in_csv_valid)
-    df_infer = merge_multiple_fold_csv(fold_name="infer", paths=in_csv_infer)
+    assert any(
+        [x is not None for x in (in_csv_train, in_csv_valid, in_csv_infer)]
+    )
 
-    if args_are_not_none(tag2class, tag_column, class_column):
-        df_train = map_dataframe(df_train, tag_column, class_column, tag2class)
-        df_valid = map_dataframe(df_valid, tag_column, class_column, tag2class)
-        df_infer = map_dataframe(df_infer, tag_column, class_column, tag2class)
+    result_df = None
+    fold_dfs = {}
+    for fold_df, fold_name in zip(
+        (in_csv_train, in_csv_valid, in_csv_infer),
+        ("train", "valid", "infer")
+    ):
+        if fold_df is not None:
+            fold_df = merge_multiple_fold_csv(
+                fold_name=fold_name, paths=fold_df
+            )
+            if args_are_not_none(tag2class, tag_column, class_column):
+                fold_df = map_dataframe(
+                    fold_df, tag_column, class_column, tag2class
+                )
+            fold_dfs[fold_name] = fold_df
 
-    result_dataframe = df_train. \
-        append(df_valid, ignore_index=True). \
-        append(df_infer, ignore_index=True)
+            result_df = fold_df \
+                if result_df is None \
+                else result_df.append(fold_df, ignore_index=True)
 
-    return result_dataframe, df_train, df_valid, df_infer
+    output = (
+        result_df,
+        fold_dfs.get("train", None),
+        fold_dfs.get("valid", None),
+        fold_dfs.get("infer", None),
+    )
+
+    return output
 
 
 def read_csv_data(
@@ -298,12 +499,78 @@ def read_csv_data(
         )
 
     for data in [df_train, df_valid, df_infer]:
-        if "fold" in data.columns:
+        if data is not None and "fold" in data.columns:
             del data["fold"]
 
     result = (
-        dataframe, dataframe_to_list(df_train), dataframe_to_list(df_valid),
-        dataframe_to_list(df_infer)
+        dataframe,
+        dataframe_to_list(df_train) if df_train is not None else None,
+        dataframe_to_list(df_valid) if df_valid is not None else None,
+        dataframe_to_list(df_infer) if df_infer is not None else None,
     )
 
     return result
+
+
+def balance_classes(
+    dataframe: pd.DataFrame,
+    class_column: str = "label",
+    random_state: int = 42,
+    how: str = "downsampling"
+) -> pd.DataFrame:
+    """
+    Balance classes in dataframe by ``class_column``
+
+    See also :class:`catalyst.data.sampler.BalanceClassSampler`
+
+    Args:
+        dataframe: a dataset
+        class_column: which column to use for split
+        random_state: seed for random shuffle
+        how: strategy to sample
+            must be one on ["downsampling", "upsampling"]
+
+    Returns:
+        pd.DataFrame: new dataframe with balanced ``class_column``
+    """
+    cnt = defaultdict(lambda: 0.0)
+    for label in sorted(dataframe[class_column].unique()):
+        cnt[label] = len(dataframe[dataframe[class_column] == label])
+
+    if isinstance(how, int) or how == "upsampling":
+        samples_per_class = how if isinstance(how, int) else max(cnt.values())
+
+        balanced_dfs = {}
+        for label in sorted(dataframe[class_column].unique()):
+            df_class_column = dataframe[dataframe[class_column] == label]
+            if samples_per_class <= len(df_class_column):
+                balanced_dfs[label] = df_class_column.sample(
+                    samples_per_class, replace=True, random_state=random_state
+                )
+            else:
+                df_class_column_additional = df_class_column.sample(
+                    samples_per_class - len(df_class_column),
+                    replace=True,
+                    random_state=random_state
+                )
+                balanced_dfs[label] = pd.concat(
+                    (df_class_column, df_class_column_additional)
+                )
+    elif how == "downsampling":
+        samples_per_class = min(cnt.values())
+
+        balanced_dfs = {}
+        for label in sorted(dataframe[class_column].unique()):
+            balanced_dfs[label] = (
+                dataframe[dataframe[class_column] == label].sample(
+                    samples_per_class,
+                    replace=False,
+                    random_state=random_state
+                )
+            )
+    else:
+        raise NotImplementedError()
+
+    balanced_df = pd.concat(balanced_dfs.values())
+
+    return balanced_df

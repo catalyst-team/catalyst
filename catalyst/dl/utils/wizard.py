@@ -15,7 +15,7 @@ yaml.add_representer(
         dumper.represent_mapping("tag:yaml.org,2002:map", data.items()))
 
 
-class Wizard():
+class Wizard:
     """
     Class for Catalyst Config API Wizard.
 

@@ -1,15 +1,12 @@
 from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
 
-from catalyst.contrib.scripts import (
-    check_index_model, create_index_model, project_embeddings
-)
+from catalyst.contrib.scripts import check_index_model, create_index_model
 
 COMMANDS = OrderedDict(
     [
         ("check-index-model", check_index_model),
         ("create-index-model", create_index_model),
-        ("project-embeddings", project_embeddings)
     ]
 )
 

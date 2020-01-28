@@ -1,6 +1,9 @@
 model_params:
   model: SimpleNet
 
+runner_params:
+  input_key: &input_key image
+
 args:
   expdir: "mnist_simple"
   logdir: "./logs/mnist_simple"
@@ -10,6 +13,19 @@ stages:
   data_params:
     batch_size: 64
     num_workers: 0
+
+  transform_params:
+    _key_value: True
+
+    train: &transform
+      transform: A.Compose
+      transforms:
+        - transform: catalyst.TensorToImage
+        - transform: A.Normalize
+          mean: [0.1307]
+          std: [0.3081]
+        - transform: catalyst.ToTensor
+    valid: *transform
 
   state_params:
     main_metric: &reduce_metric accuracy01
@@ -37,6 +53,7 @@ stages:
     callbacks_params:
       loss:
         callback: MixupCallback
+        fields: [*input_key]
       optimizer:
         callback: OptimizerCallback
       accuracy:

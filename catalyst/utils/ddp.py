@@ -18,7 +18,7 @@ def is_wrapped_with_ddp(model: nn.Module) -> bool:
     return isinstance(model, parallel_wrappers)
 
 
-def get_real_module(model: nn.Module) -> nn.Module:
+def get_nn_from_ddp_module(model: nn.Module) -> nn.Module:
     """
     Return a real model from a torch.nn.DataParallel,
     torch.nn.parallel.DistributedDataParallel, or

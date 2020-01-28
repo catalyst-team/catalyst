@@ -4,8 +4,7 @@ import numpy as np
 
 import torch
 
-from catalyst.dl.callbacks import CriterionCallback
-from catalyst.dl.core.state import RunnerState
+from catalyst.dl import CriterionCallback, State
 
 
 class MixupCallback(CriterionCallback):
@@ -53,11 +52,23 @@ class MixupCallback(CriterionCallback):
         self.index = None
         self.is_needed = True
 
-    def on_loader_start(self, state: RunnerState):
+    def _compute_loss(self, state: State, criterion):
+        if not self.is_needed:
+            return super()._compute_loss(state, criterion)
+
+        pred = state.output[self.output_key]
+        y_a = state.input[self.input_key]
+        y_b = state.input[self.input_key][self.index]
+
+        loss = self.lam * criterion(pred, y_a) + \
+            (1 - self.lam) * criterion(pred, y_b)
+        return loss
+
+    def on_loader_start(self, state: State):
         self.is_needed = not self.on_train_only or \
             state.loader_name.startswith("train")
 
-    def on_batch_start(self, state: RunnerState):
+    def on_batch_start(self, state: State):
         if not self.is_needed:
             return
 
@@ -72,18 +83,6 @@ class MixupCallback(CriterionCallback):
         for f in self.fields:
             state.input[f] = self.lam * state.input[f] + \
                 (1 - self.lam) * state.input[f][self.index]
-
-    def _compute_loss(self, state: RunnerState, criterion):
-        if not self.is_needed:
-            return super()._compute_loss(state, criterion)
-
-        pred = state.output[self.output_key]
-        y_a = state.input[self.input_key]
-        y_b = state.input[self.input_key][self.index]
-
-        loss = self.lam * criterion(pred, y_a) + \
-            (1 - self.lam) * criterion(pred, y_b)
-        return loss
 
 
 __all__ = ["MixupCallback"]

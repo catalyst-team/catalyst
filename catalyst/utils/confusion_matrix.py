@@ -3,6 +3,17 @@ import numpy as np
 import torch
 
 
+def calculate_tp_fp_fn(confusion_matrix: np.array) -> np.array:
+    true_positives = np.diag(confusion_matrix)
+    false_positives = confusion_matrix.sum(axis=0) - true_positives
+    false_negatives = confusion_matrix.sum(axis=1) - true_positives
+    return {
+        "true_positives": true_positives,
+        "false_positives": false_positives,
+        "false_negatives": false_negatives
+    }
+
+
 def calculate_confusion_matrix_from_arrays(
     ground_truth: np.array, prediction: np.array, num_classes: int
 ) -> np.array:
@@ -29,17 +40,6 @@ def calculate_confusion_matrix_from_arrays(
         range=[(0, num_classes), (0, num_classes)]
     )
     return confusion_matrix.astype(np.uint64)
-
-
-def calculate_tp_fp_fn(confusion_matrix: np.array) -> np.array:
-    true_positives = np.diag(confusion_matrix)
-    false_positives = confusion_matrix.sum(axis=0) - true_positives
-    false_negatives = confusion_matrix.sum(axis=1) - true_positives
-    return {
-        "true_positives": true_positives,
-        "false_positives": false_positives,
-        "false_negatives": false_negatives
-    }
 
 
 def calculate_confusion_matrix_from_tensors(

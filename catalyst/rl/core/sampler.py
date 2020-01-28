@@ -20,8 +20,9 @@ import torch  # noqa E402
 torch.set_num_threads(1)
 
 from catalyst import utils  # noqa E402
-from catalyst.utils.seed import Seeder, set_global_seed  # noqa E402
-from catalyst.utils.tensorboard import SummaryWriter  # noqa E402
+from catalyst.utils.seed import set_global_seed  # noqa E402
+from catalyst.utils.tools.seeder import Seeder  # noqa E402
+from catalyst.utils.tools.tensorboard import SummaryWriter  # noqa E402
 from .agent import ActorSpec, CriticSpec  # noqa E402
 from .db import DBSpec  # noqa E402
 from .environment import EnvironmentSpec  # noqa E402

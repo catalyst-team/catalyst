@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 
 from catalyst.contrib.models import get_linear_net
-from catalyst.contrib.modules import LamaPooling, TemporalConcatPooling
+from catalyst.contrib.nn.modules import LamaPooling, TemporalConcatPooling
 from catalyst.rl import utils
 
 
@@ -133,7 +133,7 @@ class StateNet(nn.Module):
             else:
                 raise NotImplementedError()
 
-            main_net_in_features = aggregation_net.features_out
+            main_net_in_features = aggregation_net.out_features
         else:
             aggregation_net = None
 
@@ -252,7 +252,7 @@ class StateActionNet(nn.Module):
             else:
                 raise NotImplementedError()
 
-            main_net_in_features = aggregation_net.features_out
+            main_net_in_features = aggregation_net.out_features
         else:
             aggregation_net = None
 

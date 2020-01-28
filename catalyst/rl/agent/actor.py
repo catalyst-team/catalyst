@@ -71,4 +71,4 @@ class Actor(ActorSpec):
         return net
 
 
-__all__ = ["Actor"]
+__all__ = ["ActorSpec", "Actor"]

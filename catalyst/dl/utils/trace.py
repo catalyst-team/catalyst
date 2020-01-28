@@ -6,9 +6,8 @@ import torch
 from torch import nn
 from torch.jit import ScriptModule
 
-from catalyst import utils
-from catalyst.dl.core import Runner
-from catalyst.utils.typing import Device, Model
+from catalyst.dl import Runner, utils
+from catalyst.utils.tools.typing import Device, Model
 
 
 class _ForwardOverrideModel(nn.Module):

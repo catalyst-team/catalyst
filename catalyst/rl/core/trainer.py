@@ -12,8 +12,9 @@ import numpy as np
 from torch.utils.data import DataLoader
 
 from catalyst import utils
-from catalyst.utils.seed import Seeder, set_global_seed
-from catalyst.utils.tensorboard import SummaryWriter
+from catalyst.utils.seed import set_global_seed
+from catalyst.utils.tools.seeder import Seeder
+from catalyst.utils.tools.tensorboard import SummaryWriter
 from .algorithm import AlgorithmSpec
 from .db import DBSpec
 from .environment import EnvironmentSpec
@@ -280,7 +281,7 @@ class TrainerSpec:
         if self.epoch % self._gc_period == 0:
             gc.collect()
 
-    def _run_train_loop(self):
+    def _run_train_stage(self):
         self.db_server.push_message(self.db_server.Message.ENABLE_TRAINING)
         epoch_limit = self._epoch_limit or np.iinfo(np.int32).max
         while self.epoch < epoch_limit:
@@ -293,7 +294,7 @@ class TrainerSpec:
         self.db_server.push_message(self.db_server.Message.DISABLE_TRAINING)
 
     def _start_train_loop(self):
-        self._run_train_loop()
+        self._run_train_stage()
 
     def run(self):
         self._update_sampler_weights()
