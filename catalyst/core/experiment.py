@@ -82,10 +82,9 @@ class _Experiment(ABC):
         scheduler = self.get_scheduler(stage, optimizer)
         return criterion, optimizer, scheduler
 
-    @abstractmethod
-    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
-        """Returns the callbacks for a given stage"""
-        pass
+    def get_transforms(self, stage: str = None, dataset: str = None):
+        """Returns the data transforms for a given stage and mode"""
+        raise NotImplementedError
 
     def get_datasets(
         self,
@@ -105,10 +104,10 @@ class _Experiment(ABC):
         """Returns the loaders for a given stage"""
         raise NotImplementedError
 
-    @staticmethod
-    def get_transforms(stage: str = None, mode: str = None):
-        """Returns the data transforms for a given stage and mode"""
-        raise NotImplementedError
+    @abstractmethod
+    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
+        """Returns the callbacks for a given stage"""
+        pass
 
 
 __all__ = ["_Experiment"]
