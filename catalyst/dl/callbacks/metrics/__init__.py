@@ -2,7 +2,7 @@
 
 from .accuracy import AccuracyCallback, MapKCallback
 from .auc import AUCCallback
-from .dice import DiceCallback
+from .dice import DiceCallback, MulticlassDiceMetricCallback
 from .f1_score import F1ScoreCallback
 from .iou import (
     ClasswiseIouCallback, ClasswiseJaccardCallback, IouCallback,

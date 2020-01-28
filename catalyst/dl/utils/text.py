@@ -6,7 +6,7 @@ import numpy as np
 import torch
 from transformers import BertTokenizer
 
-from catalyst.contrib.modules import LamaPooling
+from catalyst.contrib.nn.modules import LamaPooling
 
 
 def tokenize_text(

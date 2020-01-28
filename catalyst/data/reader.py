@@ -46,20 +46,20 @@ class ImageReader(ReaderSpec):
         self,
         input_key: str,
         output_key: str,
-        datapath: str = None,
+        rootpath: str = None,
         grayscale: bool = False
     ):
         """
         Args:
             input_key (str): key to use from annotation dict
             output_key (str): key to use to store the result
-            datapath (str): path to images dataset
+            rootpath (str): path to images dataset root directory
                 (so your can use relative paths in annotations)
             grayscale (bool): flag if you need to work only
                 with grayscale images
         """
         super().__init__(input_key, output_key)
-        self.datapath = datapath
+        self.rootpath = rootpath
         self.grayscale = grayscale
 
     def __call__(self, element):
@@ -74,7 +74,7 @@ class ImageReader(ReaderSpec):
         """
         image_name = str(element[self.input_key])
         img = imread(
-            image_name, rootpath=self.datapath, grayscale=self.grayscale
+            image_name, rootpath=self.rootpath, grayscale=self.grayscale
         )
 
         output = {self.output_key: img}
@@ -89,21 +89,21 @@ class MaskReader(ReaderSpec):
         self,
         input_key: str,
         output_key: str,
-        datapath: str = None,
+        rootpath: str = None,
         clip_range: Tuple[Union[int, float], Union[int, float]] = (0, 1)
     ):
         """
         Args:
             input_key (str): key to use from annotation dict
             output_key (str): key to use to store the result
-            datapath (str): path to images dataset
+            rootpath (str): path to images dataset root directory
                 (so your can use relative paths in annotations)
             clip_range (Tuple[int, int]): lower and upper interval edges,
                 image values outside the interval are clipped
                 to the interval edges
         """
         super().__init__(input_key, output_key)
-        self.datapath = datapath
+        self.rootpath = rootpath
         self.clip = clip_range
 
     def __call__(self, element):
@@ -117,7 +117,7 @@ class MaskReader(ReaderSpec):
             np.ndarray: Mask
         """
         mask_name = str(element[self.input_key])
-        mask = mimread(mask_name, rootpath=self.datapath, clip_range=self.clip)
+        mask = mimread(mask_name, rootpath=self.rootpath, clip_range=self.clip)
 
         output = {self.output_key: mask}
         return output
@@ -179,7 +179,7 @@ class ScalarReader(ReaderSpec):
 
 class LambdaReader(ReaderSpec):
     """
-    Reader abstraction with an lambda encoder.
+    Reader abstraction with an lambda encoders.
     Can read an elem from dataset and apply `encode_fn` function to it
     """
     def __init__(

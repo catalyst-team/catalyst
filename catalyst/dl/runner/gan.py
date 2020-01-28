@@ -1,224 +1,255 @@
-from collections import OrderedDict
-from typing import Any, Mapping, Dict, List, Union  # isort: skip
-
-import torch
-
-from catalyst.dl import (
-    Runner,
-    Callback,
-)
-from catalyst.dl.experiment import GanExperiment
-from catalyst.utils.typing import (
-    Model,
-    Device,
-    Optimizer,
-    Criterion,
-    DataLoader,
+from typing import (  # isort:skip
+    Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
 )
 
+from catalyst.dl import Runner
+from catalyst.utils.tools.typing import Device, Model
 
-class GanRunner(Runner):
+
+class MultiPhaseRunner(Runner):
     """
-    Runner for experiments with GANs
+    Base Runner with multiple phases
     """
-
-    _default_experiment = GanExperiment
-
     def __init__(
         self,
-        model: Dict[str, Model] = None,
+        model: Union[Model, Dict[str, Model]] = None,
         device: Device = None,
-        features_key: str = "features",
-        generator_key: str = "generator",
-        discriminator_key: str = "discriminator",
+        input_batch_keys: List[str] = None,
+        registered_phases: Tuple[Tuple[str, Union[str, Callable]], ...] = None
     ):
         """
-        Args:
-            model (Model): dict with two models: discriminator and generator
-            device (Device): Torch device to run model on
-            features_key (str): Key to extract features from batch
-            generator_key (str): Key in model dict for generator model
-            discriminator_key (str): Key in model dict for discriminator model
+
+        :param model:
+        :param device:
+        :param input_batch_keys: list of strings of keys for batch elements,
+            e.g. input_batch_keys = ["features", "targets"] and your
+            DataLoader returns 2 tensors (images and targets)
+            when state.input will be
+            {"features": batch[0], "targets": batch[1]}
+        :param registered_phases:
+            Tuple of pairs (phase_name, phase_forward_function)
+            phase_forward_function's may be also str, in that case Runner
+            should have method with same name, which will be called
         """
-        super().__init__(model=model, device=device)
-        self.features_key = features_key
-        self.generator_key = generator_key
-        self.discriminator_key = discriminator_key
+        super().__init__(model, device)
+
+        self.input_batch_keys = input_batch_keys or []
+
+        self.registered_phases = dict()
+        for phase_name, phase_batch_forward_fn in registered_phases:
+            if not (isinstance(phase_name, str) or phase_name is None):
+                raise ValueError(
+                    f"phase '{phase_name}' of type '{type(phase_name)}' "
+                    f"not supported, must be str of None"
+                )
+            if phase_name in self.registered_phases:
+                raise ValueError(f"phase '{phase_name}' already registered")
+            if isinstance(phase_batch_forward_fn, str):
+                assert hasattr(self, phase_batch_forward_fn)
+                phase_batch_forward_fn = getattr(self, phase_batch_forward_fn)
+            assert isinstance(
+                phase_batch_forward_fn, Callable
+            ), "must be callable"
+            self.registered_phases[phase_name] = phase_batch_forward_fn
 
     def _batch2device(self, batch: Mapping[str, Any], device):
         if isinstance(batch, (list, tuple)):
-            batch = {self.features_key: batch[0]}
+            assert len(batch) >= len(self.input_batch_keys)
+            batch = {
+                key: value
+                for key, value in zip(self.input_batch_keys, batch)
+            }
         return super()._batch2device(batch, device)
+
+    def forward(self, batch, **kwargs):
+        """Forward call"""
+        if self.state.phase not in self.registered_phases:
+            raise ValueError(f"Unknown phase: '{self.state.phase}'")
+
+        return self.registered_phases[self.state.phase]()
+
+
+class GanRunner(MultiPhaseRunner):
+    """
+    Runner with logic for single-generator single-discriminator GAN training
+
+    Various conditioning types, penalties and regularization (such as WGAN-GP)
+    can be easily derived from this class
+    """
+    def __init__(
+        self,
+        model: Union[Model, Dict[str, Model]] = None,
+        device: Device = None,
+        input_batch_keys: Optional[List[str]] = None,
+        # input keys
+        data_input_key: str = "data",
+        class_input_key: str = "class_targets",
+        noise_input_key: str = "noise",
+        # output keys
+        fake_logits_output_key: str = "fake_logits",
+        real_logits_output_key: str = "real_logits",
+        fake_data_output_key: str = "fake_data",
+        # condition_keys
+        fake_condition_keys: List[str] = None,
+        real_condition_keys: List[str] = None,
+        # phases:
+        generator_train_phase: str = "generator_train",
+        discriminator_train_phase: str = "discriminator_train",
+        # model keys:
+        generator_model_key: str = "generator",
+        discriminator_model_key: str = "discriminator"
+    ):
+        """
+
+        :param model:
+        :param device:
+        :param input_batch_keys: list of strings of keys for batch elements,
+            e.g. input_batch_keys = ["features", "targets"] and
+            your DataLoader returns 2 tensors (images and targets)
+            when state.input will be
+            {"features": batch[0], "targets": batch[1]}
+
+        INPUT KEYS:
+        :param data_input_key: real distribution to fit
+        :param class_input_key: labels for real distribution
+        :param noise_input_key: noise
+
+        OUTPUT KEYS:
+        :param fake_logits_output_key:  prediction scores of discriminator for
+            fake data
+        :param real_logits_output_key: prediction scores of discriminator for
+            real data
+        :param fake_data_output_key: generated data
+
+        CONDITIONS:
+        :param fake_condition_keys: list of all conditional inputs of
+            discriminator (fake data conditions)
+            (appear in same order as in generator model forward() call)
+        :param real_condition_keys: list of all conditional inputs of
+            discriminator (real data conditions)
+            (appear in same order as in generator model forward() call)
+        Note: THIS RUNNER SUPPORTS ONLY EQUALLY CONDITIONED generator and
+            discriminator (i.e. if generator is conditioned on 3 variables,
+            discriminator must be conditioned on same 3 variables)
+
+        PHASES:
+        :param generator_train_phase(str): name for generator training phase
+        :param discriminator_train_phase(str): name for discriminator
+            training phase
+
+        MODEL KEYS:
+        :param generator_model_key: name for generator model, e.g. "generator"
+        :param discriminator_model_key: name for discriminator model,
+            e.g. "discriminator"
+        """
+        input_batch_keys = input_batch_keys or [data_input_key]
+        registered_phases = (
+            (generator_train_phase, "_generator_train_phase"),
+            (discriminator_train_phase, "_discriminator_train_phase"),
+            (None, "_discriminator_train_phase")
+        )
+        super().__init__(model, device, input_batch_keys, registered_phases)
+
+        # input keys
+        self.data_input_key = data_input_key
+        self.class_input_key = class_input_key
+        self.noise_input_key = noise_input_key
+        # output keys
+        self.fake_logits_output_key = fake_logits_output_key
+        self.real_logits_output_key = real_logits_output_key
+        self.fake_data_output_key = fake_data_output_key
+        # condition keys
+        self.fake_condition_keys = fake_condition_keys or []
+        self.real_condition_keys = real_condition_keys or []
+        # check that discriminator will have
+        # same number of arguments for real/fake data
+        assert (
+            len(self.fake_condition_keys) == len(self.real_condition_keys)
+        ), "Number of real/fake conditions should be the same"
+        # Note: this generator supports only
+        # EQUALLY CONDITIONED generator (G) and discriminator (D)
+        # below are some thoughts why:
+        #
+        # 1. G is more conditioned than D.
+        #
+        # it would be strange if G is conditioned on something
+        # and D is NOT conditioned on same variable
+        # which will most probably lead to interpreting that variable
+        # as additional noise
+        #
+        # 2. D is more conditioned than G.
+        #
+        # imagine D to have additional condition 'cond_var' which is not
+        # condition of G. now you have:
+        #   fake_data = G(z, *other_conditions)
+        #   fake_score = D(fake_data, cond_var, *other_conditions)
+        # in the above example fake_data and cond_var are ~independent?
+        # if they are not independent (e.g. cond_var represents
+        # class condition which is fixed to the single "cat" class,
+        # which may be used for finetuning pretrained GAN for specific
+        # class) such configuration may have some sense
+        # so they case #2 may have some sense, however for simplicity
+        # it is not implemented in this Runner
+
+        # model keys
+        self.generator_key = generator_model_key
+        self.discriminator_key = discriminator_model_key
 
     def _prepare_for_stage(self, stage: str):
         super()._prepare_for_stage(stage)
         self.generator = self.model[self.generator_key]
         self.discriminator = self.model[self.discriminator_key]
-        for key in [
-            "noise_dim",
-            "discriminator_train_phase",
-            "generator_train_phase",
-        ]:
-            assert (
-                hasattr(self.state, key)
-                and getattr(self.state, key) is not None
-            )
 
-    def forward(self, batch):
-        real_features = batch[self.features_key]
-        batch_size = real_features.shape[0]
-        real_targets = torch.ones((batch_size, 1), device=self.device)
-        fake_targets = torch.zeros((batch_size, 1), device=self.device)
-        self.state.input["real_targets"] = real_targets
-        self.state.input["fake_targets"] = fake_targets
-        z = torch.randn((batch_size, self.state.noise_dim), device=self.device)
-        if (
-            self.state.phase is None
-            or self.state.phase == self.state.discriminator_train_phase
-        ):
-            # (None for validation mode)
-            fake_features = self.generator(z)
-            fake_logits = self.discriminator(fake_features.detach())
-            real_logits = self.discriminator(real_features)
-            # --> d_loss
-            # (fake logits + FAKE targets) + (real logits + real targets)
-            return {
-                "fake_features": fake_features,  # visualization purposes only
-                "fake_logits": fake_logits,
-                "real_logits": real_logits,
-            }
-        elif self.state.phase == self.state.generator_train_phase:
-            fake_features = self.generator(z)
-            fake_logits = self.discriminator(fake_features)
-            # --> g_loss (fake logits + REAL targets)
-            return {
-                "fake_features": fake_features,  # visualization purposes only
-                "fake_logits": fake_logits,
-            }
-        else:
-            raise NotImplementedError(f"Unknown phase: self.state.phase")
+    # Common utility functions
 
-    def validate_models(self, model: Dict[str, Model]) -> None:
-        """Validate model dict to have generator and discriminator model"""
-        assert isinstance(
-            model, dict
-        ), "model must be of Dict[str, torch.nn.Module] type"
-        for key, submodel in model.items():
-            assert isinstance(
-                submodel, Model
-            ), f'model item with key value "{key}" must be Model type'
-        discriminator_assert_message = f"model must have discriminator Model with {self.discriminator_key} key"  # noqa: E501
-        assert self.discriminator_key in model, discriminator_assert_message
-        assert isinstance(
-            model[self.discriminator_key], torch.nn.Module
-        ), discriminator_assert_message
-        generator_assert_message = f"model must have generator Model with {self.generator_key} key"  # noqa: E501
-        assert self.generator_key in model, generator_assert_message
-        assert isinstance(
-            model[self.generator_key], torch.nn.Module
-        ), generator_assert_message
+    def _get_noise_and_conditions(self):
+        """Returns generator inputs"""
+        z = self.state.input[self.noise_input_key]
+        conditions = [
+            self.state.input[key] for key in self.fake_condition_keys
+        ]
+        return z, conditions
 
-    def validate_optimizers(self, optimizer: Dict[str, Optimizer]) -> None:
-        """
-            Validate model dict to have optimizer
-            for generator and discriminator model
-        """
-        assert (
-            self.generator_key in optimizer.keys()
-        ), f"optimizer dict must have optimizer with {self.generator_key} key"  # noqa: E501
-        assert (
-            self.discriminator_key in optimizer.keys()
-        ), f"optimizer dict must have optimizer with {self.discriminator_key} key"  # noqa: E501
+    def _get_real_data_conditions(self):
+        """Returns discriminator conditions (for real data)"""
+        return [self.state.input[key] for key in self.real_condition_keys]
 
-    def train(
-        self,
-        model: Union[Model, Dict[str, Model]],
-        loaders: "OrderedDict[str, DataLoader]",
-        callbacks: "OrderedDict[str, Callback]" = None,
-        logdir: str = None,
-        criterion: Criterion = None,
-        optimizer: Optimizer = None,
-        num_epochs: int = 1,
-        main_metric: str = "loss",
-        minimize_metric: bool = True,
-        verbose: bool = False,
-        state_kwargs: Dict = None,
-        checkpoint_data: Dict = None,
-        distributed_params: Dict = None,
-        monitoring_params: Dict = None,
-        initial_seed: int = 42,
-        phase2callbacks: Dict[str, List[str]] = None,
-        check: bool = False,
-    ) -> None:
-        """
-        Args:
-            model (Model or Dict[str, Model]): models,
-                usually generator and discriminator
-            loaders (dict): dictionary containing one or several
-                ``torch.utils.data.DataLoader`` for training and validation
-            callbacks (List[catalyst.dl.Callback]): list of callbacks
-            logdir (str): path to output directory
-            stage (str): current stage
-            criterion (Criterion): criterion function
-            optimizer (Optimizer): optimizer
-            scheduler (Scheduler): scheduler
-            num_epochs (int): number of experiment's epochs
-            valid_loader (str): loader name used to calculate
-                the metrics and save the checkpoints. For example,
-                you can pass `train` and then
-                the metrics will be taken from `train` loader.
-            main_metric (str): the key to the name of the metric
-                by which the checkpoints will be selected.
-            minimize_metric (bool): flag to indicate whether
-                the ``main_metric`` should be minimized.
-            verbose (bool): ff true, it displays the status of the training
-                to the console.
-            state_kwargs (dict): additional state params to ``RunnerState``
-            checkpoint_data (dict): additional data to save in checkpoint,
-                for example: ``class_names``, ``date_of_training``, etc
-            distributed_params (dict): dictionary with the parameters
-                for distributed and FP16 method
-            monitoring_params (dict): dict with the parameters
-                for monitoring services
-            initial_seed (int): experiment's initial seed value
-            phase2callbacks (dict): dictionary with lists of callback names
-                which should be wrapped for appropriate phase
-                for example: {"generator_train": "loss_g", "optim_g"}
-                "loss_g" and "optim_g" callbacks from callbacks dict
-                will be wrapped for "generator_train" phase
-                in wrap_callbacks method
-            check (bool): if True, then only checks that pipeline is working
-                (3 epochs only)
-        """
-        # Validate model type and its items
-        self.validate_models(model)
-        # Check for optimizers
-        self.validate_optimizers(optimizer)
-        # Check phase parameters in state_kwargs
-        consistent_metrics_param_key = "batch_consistant_metrics"
-        if consistent_metrics_param_key not in state_kwargs:
-            state_kwargs[consistent_metrics_param_key] = False
-        # @TODO: self.validate_state_kwargs(state_kwargs)
-        # Initialize and run experiment
-        experiment = self._default_experiment(
-            model=model,
-            loaders=loaders,
-            callbacks=callbacks,
-            logdir=logdir,
-            criterion=criterion,
-            optimizer=optimizer,
-            num_epochs=num_epochs,
-            main_metric=main_metric,
-            minimize_metric=minimize_metric,
-            verbose=verbose,
-            state_kwargs=state_kwargs,
-            checkpoint_data=checkpoint_data,
-            distributed_params=distributed_params,
-            monitoring_params=monitoring_params,
-            initial_seed=initial_seed,
-            phase2callbacks=phase2callbacks,
+    def _get_fake_data_conditions(self):
+        """Returns discriminator conditions (for fake data)"""
+        return [self.state.input[key] for key in self.fake_condition_keys]
+
+    # concrete phase methods
+
+    def _generator_train_phase(self):
+        """Forward call on generator training phase"""
+        z, g_conditions = self._get_noise_and_conditions()
+        d_fake_conditions = self._get_fake_data_conditions()
+
+        fake_data = self.generator(z, *g_conditions)
+        fake_logits = self.discriminator(fake_data, *d_fake_conditions)
+        return {
+            self.fake_data_output_key: fake_data,
+            self.fake_logits_output_key: fake_logits
+        }
+
+    def _discriminator_train_phase(self):
+        """Forward call on discriminator training phase"""
+        z, g_conditions = self._get_noise_and_conditions()
+        d_fake_conditions = self._get_fake_data_conditions()
+        d_real_conditions = self._get_real_data_conditions()
+
+        fake_data = self.generator(z, *g_conditions)
+        fake_logits = self.discriminator(
+            fake_data.detach(), *d_fake_conditions
         )
-        self.run_experiment(experiment=experiment, check=check)
+        real_logits = self.discriminator(
+            self.state.input[self.data_input_key], *d_real_conditions
+        )
+        return {
+            self.fake_data_output_key: fake_data,
+            self.fake_logits_output_key: fake_logits,
+            self.real_logits_output_key: real_logits
+        }
 
 
-__all__ = ["GanRunner"]
+__all__ = ["MultiPhaseRunner", "GanRunner"]

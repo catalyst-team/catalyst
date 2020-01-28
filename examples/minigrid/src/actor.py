@@ -3,7 +3,7 @@ from gym.spaces import Box, Discrete
 import torch
 import torch.nn as nn
 
-from catalyst.contrib.modules import Flatten
+from catalyst.contrib.nn.modules import Flatten
 from catalyst.rl.agent.head import PolicyHead  # , StateNet
 from catalyst.rl.core import ActorSpec, EnvironmentSpec
 from catalyst.utils.initialization import create_optimal_inner_init

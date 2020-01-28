@@ -36,7 +36,7 @@ Examples:
 
         $ catalyst-data check-images \\
             --in-csv=./data/dataset_raw.csv \\
-            --img-datapath=./data/dataset \\
+            --img-rootpath=./data/dataset \\
             --img-col="tag" \\
             --out-csv=./data/dataset_checked.csv \\
             --n-cpu=4
@@ -78,8 +78,9 @@ import logging
 import os
 
 from catalyst.__version__ import __version__
-from catalyst.contrib.scripts import (
-    image2embedding, process_images, split_dataframe, tag2label
+from catalyst.data.scripts import (
+    image2embedding, process_images, project_embeddings, split_dataframe,
+    tag2label
 )
 
 logger = logging.getLogger(__name__)
@@ -90,12 +91,14 @@ COMMANDS = OrderedDict(
         ("process-images", process_images),
         ("split-dataframe", split_dataframe),
         ("image2embedding", image2embedding),
+        ("project-embeddings", project_embeddings),
     ]
 )
 
 try:
     import transformers  # noqa: F401
-    from catalyst.contrib.scripts import text2embedding
+    from catalyst.data.scripts import text2embedding
+
     COMMANDS["text2embedding"] = text2embedding
 except ImportError as ex:
     if os.environ.get("USE_TRANSFORMERS", "0") == "1":

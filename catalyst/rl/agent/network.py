@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 
 from catalyst.contrib.models import get_linear_net
-from catalyst.contrib.modules import LamaPooling, TemporalConcatPooling
+from catalyst.contrib.nn.modules import LamaPooling, TemporalConcatPooling
 from catalyst.rl import utils
 
 

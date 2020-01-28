@@ -24,10 +24,9 @@ from catalyst.rl.scripts.misc import (  # noqa E402
     OFFPOLICY_ALGORITHMS_NAMES, ONPOLICY_ALGORITHMS_NAMES
 )
 from catalyst.utils import (  # noqa E402
-    boolean_flag, prepare_cudnn, set_global_seed
+    boolean_flag, prepare_cudnn, set_global_seed, parse_args_uargs,
+    import_module
 )
-from catalyst.utils.config import parse_args_uargs  # noqa E402
-from catalyst.utils.scripts import import_module  # noqa E402
 
 
 def build_args(parser):

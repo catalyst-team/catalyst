@@ -4,9 +4,8 @@ from collections import OrderedDict
 from torch import nn
 from torch.utils.data import DataLoader
 
-from catalyst.dl.core import Callback, Experiment
-from catalyst.dl.utils import process_callbacks
-from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
+from catalyst.dl import Callback, Experiment, utils
+from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
 class BaseExperiment(Experiment):
@@ -58,7 +57,7 @@ class BaseExperiment(Experiment):
                 the ``main_metric`` should be minimized.
             verbose (bool): ff true, it displays the status of the training
                 to the console.
-            state_kwargs (dict): additional state params to ``RunnerState``
+            state_kwargs (dict): additional state params to ``State``
             checkpoint_data (dict): additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
             distributed_params (dict): dictionary with the parameters
@@ -69,7 +68,7 @@ class BaseExperiment(Experiment):
         """
         self._model = model
         self._loaders = loaders
-        self._callbacks = process_callbacks(callbacks)
+        self._callbacks = utils.process_callbacks(callbacks)
 
         self._criterion = criterion
         self._optimizer = optimizer
@@ -143,13 +142,17 @@ class BaseExperiment(Experiment):
         """Returns the scheduler for a given stage"""
         return self._scheduler
 
+    def get_loaders(
+        self,
+        stage: str,
+        epoch: int = None,
+    ) -> "OrderedDict[str, DataLoader]":
+        """Returns the loaders for a given stage"""
+        return self._loaders
+
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """Returns the callbacks for a given stage"""
         return self._callbacks
-
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
-        """Returns the loaders for a given stage"""
-        return self._loaders
 
 
 __all__ = ["BaseExperiment"]
