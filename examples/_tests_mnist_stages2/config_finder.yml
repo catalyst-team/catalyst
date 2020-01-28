@@ -15,13 +15,13 @@ stages:
     num_workers: 0
 
   transform_params:
-    transform: Compose
+    transform: A.Compose
     transforms:
-      - transform: TensorToImage
-      - transform: Normalize
+      - transform: catalyst.TensorToImage
+      - transform: A.Normalize
         mean: [0.1307]
         std: [0.3081]
-      - transform: ToTensor
+      - transform: catalyst.ToTensor
 
   criterion_params:
       criterion: CrossEntropyLoss
