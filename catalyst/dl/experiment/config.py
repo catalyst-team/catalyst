@@ -332,7 +332,7 @@ class ConfigExperiment(Experiment):
                 for key, params_ in params.items()
             }
 
-            transform = {
+            transform = AugmentorCompose({
                 key: Augmentor(
                     dict_key=key,
                     augment_fn=transform,
@@ -340,7 +340,7 @@ class ConfigExperiment(Experiment):
                     output_key=key,
                 )
                 for key, transform in transforms_composition.items()
-            }
+            })
         else:
             if "transforms" in params:
                 transforms_composition = [

@@ -51,7 +51,7 @@ def build_args(parser):
         "then images will be resized to (img-size, img-size, 3)"
     )
     parser.add_argument(
-        "--n-rows",
+        "--num-rows",
         type=int,
         default=None,
         help="count of rows to use in csv "
@@ -91,8 +91,8 @@ def main(args, _=None):
 
     features = np.load(args.in_npy, mmap_mode="r")
 
-    if args.n_rows is not None:
-        df = df.sample(n=args.n_rows)
+    if args.num_rows is not None:
+        df = df.sample(n=args.num_rows)
 
     if args.img_col is not None:
         image_names = [

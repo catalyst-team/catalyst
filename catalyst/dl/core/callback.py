@@ -30,7 +30,7 @@ class MeterMetricsCallback(Callback):
                 Make sure that they are in the same order that metrics
                 are outputted by the meters in `meter_list`
             meter_list (list-like): List of meters.meter.Meter instances
-                len(meter_list) == n_classes
+                len(meter_list) == num_classes
             input_key (str): input key to use for metric calculation
                 specifies our ``y_true``.
             output_key (str): output key to use for metric calculation;

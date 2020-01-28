@@ -1,7 +1,5 @@
-from catalyst.contrib.registry import (
-    Criterion, CRITERIONS, GRAD_CLIPPERS, Module, MODULES, Optimizer,
-    OPTIMIZERS, Scheduler, SCHEDULERS
-)
+from catalyst.contrib.registry import *
+from catalyst.core.registry import *
 from catalyst.utils.tools.registry import Registry
 
 
@@ -64,24 +62,35 @@ EXPLORATION = Registry("exploration")
 EXPLORATION.late_add(_exploration_late_add)
 Exploration = EXPLORATION.add
 
+
 __all__ = [
     "Agent",
-    "AGENTS",
+    "Callback",
     "Criterion",
-    "CRITERIONS",
+    "Database",
     "Environment",
-    "ENVIRONMENTS",
     "Exploration",
-    "EXPLORATION",
-    "GRAD_CLIPPERS",
-    "Module",
-    "MODULES",
     "OffpolicyAlgorithm",
-    "OFFPOLICY_ALGORITHMS",
     "OnpolicyAlgorithm",
-    "ONPOLICY_ALGORITHMS",
     "Optimizer",
-    "OPTIMIZERS",
     "Scheduler",
+    "Module",
+    "Model",
+    "Sampler",
+    "Transform",
+    "AGENTS",
+    "CALLBACKS",
+    "CRITERIONS",
+    "DATABASES",
+    "GRAD_CLIPPERS",
+    "ENVIRONMENTS",
+    "EXPLORATION",
+    "MODELS",
+    "MODULES",
+    "OFFPOLICY_ALGORITHMS",
+    "ONPOLICY_ALGORITHMS",
+    "OPTIMIZERS",
+    "SAMPLERS",
     "SCHEDULERS",
+    "TRANSFORMS",
 ]

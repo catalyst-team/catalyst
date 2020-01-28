@@ -1,12 +1,12 @@
+# flake8: noqa
+# isort: skip_file
 import torch
 import torchvision.utils
 
-from catalyst.dl import registry
 from catalyst.dl.core import Callback, CallbackOrder, State
 from catalyst.utils.tools.tensorboard import SummaryWriter
 
 
-@registry.Callback
 class VisualizationCallback(Callback):
     TENSORBOARD_LOGGER_KEY = "tensorboard"
 
@@ -17,7 +17,7 @@ class VisualizationCallback(Callback):
         batch_frequency=25,
         concat_images=True,
         max_images=20,
-        n_row=1,
+        num_rows=1,
         denorm="default"
     ):
         super().__init__(CallbackOrder.Other)
@@ -62,7 +62,7 @@ class VisualizationCallback(Callback):
             self.denorm = lambda x: x
         else:
             raise ValueError("unknown denorm fn")
-        self._n_row = n_row
+        self._num_rows = num_rows
         self._reset()
 
     def _reset(self):
@@ -109,7 +109,7 @@ class VisualizationCallback(Callback):
         tb_logger = self._get_tensorboard_logger(state)
         for key, batch_images in visualizations.items():
             batch_images = batch_images[:self.max_images]
-            image = torchvision.utils.make_grid(batch_images, nrow=self._n_row)
+            image = torchvision.utils.make_grid(batch_images, nrow=self._num_rows)
             tb_logger.add_image(key, image, global_step=state.step)
 
     def visualize(self, state):
@@ -128,3 +128,6 @@ class VisualizationCallback(Callback):
         self._loader_batch_count += 1
         if self._loader_batch_count % self.batch_frequency:
             self.visualize(state)
+
+
+__all__ = ["VisualizationCallback"]

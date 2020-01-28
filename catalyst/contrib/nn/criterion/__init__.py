@@ -10,6 +10,7 @@ from .contrastive import (
 )
 from .dice import BCEDiceLoss, DiceLoss
 from .focal import FocalLossBinary, FocalLossMultiClass
+from .gan import GradientPenaltyLoss, MeanOutputLoss
 from .huber import HuberLoss
 from .iou import BCEIoULoss, IoULoss
 from .lovasz import (
