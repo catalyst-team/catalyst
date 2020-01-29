@@ -1,3 +1,5 @@
+set -e
+
 echo "pip install -r requirements/requirements.txt"
 pip install -r requirements/requirements.txt
 
@@ -38,4 +40,9 @@ git config --global user.email "teamcity@catalyst.github"
 git config --global user.name "Teamcity"
 git add .
 git commit -m "$COMMENT"
-git push
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+if [ $BRANCH == 'master' ]; then
+  git push
+fi
