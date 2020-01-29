@@ -1,7 +1,8 @@
 import torch
-from typing import Union  # isort:skip
 from torch import nn, optim
 from torch.utils import data
+
+from typing import Union  # isort:skip
 
 Model = nn.Module
 Criterion = nn.Module
