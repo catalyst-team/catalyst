@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>catalyst.rl.db.mongo &#8212; Catalyst 20.01.2 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for catalyst.rl.db.mongo</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">gridfs</span>
+<span class="kn">import</span> <span class="nn">pymongo</span>
+<span class="kn">import</span> <span class="nn">safitty</span>
+
+<span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl.core</span> <span class="kn">import</span> <span class="n">DBSpec</span>
+
+
+<div class="viewcode-block" id="MongoDB"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.mongo.MongoDB">[docs]</a><span class="k">class</span> <span class="nc">MongoDB</span><span class="p">(</span><span class="n">DBSpec</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span>
+        <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12000</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">sync_epoch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">reconnect_timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_server</span> <span class="o">=</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">MongoClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">prefix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reconnect_timeout</span> <span class="o">=</span> <span class="n">reconnect_timeout</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shared_db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="p">[</span><span class="s2">&quot;shared&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;agent_</span><span class="si">{self._prefix}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_collection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shared_db</span><span class="p">[</span><span class="s2">&quot;trajectories&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw_trajectory_collection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shared_db</span><span class="p">[</span><span class="s2">&quot;raw_trajectories&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_collection</span> <span class="o">=</span>\
+            <span class="n">gridfs</span><span class="o">.</span><span class="n">GridFS</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent_db</span><span class="p">,</span> <span class="n">collection</span><span class="o">=</span><span class="s2">&quot;checkpoints&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_message_collection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_db</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_datetime</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">min</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sync_epoch</span> <span class="o">=</span> <span class="n">sync_epoch</span>
+
+    <span class="k">def</span> <span class="nf">_set_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_message_collection</span><span class="o">.</span><span class="n">replace_one</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">},</span>
+                <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">},</span>
+                <span class="n">upsert</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">AutoReconnect</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reconnect_timeout</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_flag</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">flag_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_message_collection</span><span class="o">.</span><span class="n">find_one</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;$eq&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">}}</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">AutoReconnect</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reconnect_timeout</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_flag</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="n">safitty</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">flag_obj</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">flag</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">training_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_flag</span><span class="p">(</span><span class="s2">&quot;training_flag&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># enabled by default</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">flag</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sampling_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_flag</span><span class="p">(</span><span class="s2">&quot;sampling_flag&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># disabled by default</span>
+        <span class="n">flag</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">flag</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">num_trajectories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">num_trajectories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_collection</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">num_trajectories</span>
+
+<div class="viewcode-block" id="MongoDB.push_message"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.mongo.MongoDB.push_message">[docs]</a>    <span class="k">def</span> <span class="nf">push_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="n">DBSpec</span><span class="o">.</span><span class="n">Message</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">message</span> <span class="o">==</span> <span class="n">DBSpec</span><span class="o">.</span><span class="n">Message</span><span class="o">.</span><span class="n">ENABLE_SAMPLING</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_flag</span><span class="p">(</span><span class="s2">&quot;sampling_flag&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">message</span> <span class="o">==</span> <span class="n">DBSpec</span><span class="o">.</span><span class="n">Message</span><span class="o">.</span><span class="n">DISABLE_SAMPLING</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_flag</span><span class="p">(</span><span class="s2">&quot;sampling_flag&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">message</span> <span class="o">==</span> <span class="n">DBSpec</span><span class="o">.</span><span class="n">Message</span><span class="o">.</span><span class="n">DISABLE_TRAINING</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_flag</span><span class="p">(</span><span class="s2">&quot;sampling_flag&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_flag</span><span class="p">(</span><span class="s2">&quot;training_flag&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">message</span> <span class="o">==</span> <span class="n">DBSpec</span><span class="o">.</span><span class="n">Message</span><span class="o">.</span><span class="n">ENABLE_TRAINING</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_flag</span><span class="p">(</span><span class="s2">&quot;training_flag&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;unknown message&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MongoDB.put_trajectory"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.mongo.MongoDB.put_trajectory">[docs]</a>    <span class="k">def</span> <span class="nf">put_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">trajectory_</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">structed2dict_trajectory</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span>
+            <span class="n">trajectory_</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">trajectory_</span><span class="p">)</span>
+            <span class="n">collection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw_trajectory_collection</span> <span class="k">if</span> <span class="n">raw</span> \
+                <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_collection</span>
+
+            <span class="n">collection</span><span class="o">.</span><span class="n">insert_one</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;trajectory&quot;</span><span class="p">:</span> <span class="n">trajectory_</span><span class="p">,</span>
+                    <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">(),</span>
+                    <span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">AutoReconnect</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reconnect_timeout</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">put_trajectory</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">raw</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MongoDB.get_trajectory"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.mongo.MongoDB.get_trajectory">[docs]</a>    <span class="k">def</span> <span class="nf">get_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">trajectory_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_collection</span><span class="o">.</span><span class="n">find_one</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;$gt&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_datetime</span>
+                <span class="p">}}</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">AutoReconnect</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reconnect_timeout</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_trajectory</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">trajectory_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_last_datetime</span> <span class="o">=</span> <span class="n">trajectory_obj</span><span class="p">[</span><span class="s2">&quot;date&quot;</span><span class="p">]</span>
+
+            <span class="n">trajectory</span><span class="p">,</span> <span class="n">trajectory_epoch</span> <span class="o">=</span> \
+                <span class="n">utils</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">trajectory_obj</span><span class="p">[</span><span class="s2">&quot;trajectory&quot;</span><span class="p">]),</span> \
+                <span class="n">trajectory_obj</span><span class="p">[</span><span class="s2">&quot;epoch&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sync_epoch</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span> <span class="o">!=</span> <span class="n">trajectory_epoch</span><span class="p">:</span>
+                <span class="n">trajectory</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">trajectory</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">dict2structed_trajectory</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">trajectory</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">trajectory</span></div>
+
+<div class="viewcode-block" id="MongoDB.del_trajectory"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.mongo.MongoDB.del_trajectory">[docs]</a>    <span class="k">def</span> <span class="nf">del_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_trajectory_collection</span><span class="o">.</span><span class="n">drop</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">AutoReconnect</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reconnect_timeout</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">del_trajectory</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="MongoDB.put_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.mongo.MongoDB.put_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">put_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span> <span class="o">=</span> <span class="n">epoch</span>
+            <span class="n">checkpoint_</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_collection</span><span class="o">.</span><span class="n">exists</span><span class="p">({</span><span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="s2">&quot;checkpoint&quot;</span><span class="p">}):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">del_checkpoint</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_collection</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                <span class="n">checkpoint_</span><span class="p">,</span>
+                <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;ascii&quot;</span><span class="p">,</span>
+                <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;checkpoint&quot;</span><span class="p">,</span>
+                <span class="n">epoch</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span>
+            <span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">AutoReconnect</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reconnect_timeout</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">put_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MongoDB.get_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.mongo.MongoDB.get_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">get_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">checkpoint_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_collection</span><span class="o">.</span><span class="n">find_one</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="s2">&quot;checkpoint&quot;</span><span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">AutoReconnect</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reconnect_timeout</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_checkpoint</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">checkpoint_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">checkpoint_obj</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_epoch</span> <span class="o">=</span> <span class="n">checkpoint_obj</span><span class="o">.</span><span class="n">epoch</span>
+            <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">checkpoint</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">checkpoint</span></div>
+
+<div class="viewcode-block" id="MongoDB.del_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.mongo.MongoDB.del_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">del_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">id_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_collection</span><span class="o">.</span><span class="n">find_one</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="s2">&quot;checkpoint&quot;</span><span class="p">}</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_collection</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">id_</span><span class="p">)</span></div></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MongoDB&quot;</span><span class="p">]</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">Catalyst</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/contributing.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/license.html">Apache License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/rl.html">RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utils</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Scitator.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
