@@ -1,17 +1,14 @@
 from collections import OrderedDict
-from typing import Dict, Union, List
+from typing import Dict, List, Union
+
+from torch.utils.data import DataLoader
 
 from catalyst.dl import Callback
-from torch.utils.data import DataLoader
 from catalyst.dl.callbacks import (
-    CheckpointCallback,
-    ConsoleLogger,
-    RaiseExceptionCallback,
-    VerboseLogger,
-    PhaseBatchWrapperCallback,
-    PhaseManagerCallback,
+    CheckpointCallback, ConsoleLogger, PhaseBatchWrapperCallback,
+    PhaseManagerCallback, RaiseExceptionCallback, VerboseLogger
 )
-from catalyst.utils.typing import Model, Criterion, Optimizer, Scheduler
+from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 from .base import BaseExperiment
 
 
@@ -152,10 +149,9 @@ class GanExperiment(BaseExperiment):
                 callbacks[callback_name] = callback_fn()
         return callbacks
 
-    @staticmethod
-    def get_transforms(stage: str = None, mode: str = None):
+    def get_transforms(self, stage: str = None, dataset: str = None):
         raise NotImplementedError(
-            "No static transforms are used in GAN experiment"
+            "No transforms are used in GAN experiment"
         )
 
 

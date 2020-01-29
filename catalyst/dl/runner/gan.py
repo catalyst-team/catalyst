@@ -2,8 +2,8 @@ from typing import (  # isort:skip
     Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
 )
 
-from catalyst.dl import Runner
-from catalyst.utils.tools.typing import Device, Model
+from catalyst.dl import GanExperiment, Runner
+from catalyst.utils.tools.typing import Criterion, Device, Model, Optimizer
 
 
 class MultiPhaseRunner(Runner):
@@ -76,6 +76,8 @@ class GanRunner(MultiPhaseRunner):
     Various conditioning types, penalties and regularization (such as WGAN-GP)
     can be easily derived from this class
     """
+    _default_experiment = GanExperiment
+
     def __init__(
         self,
         model: Union[Model, Dict[str, Model]] = None,
@@ -250,6 +252,86 @@ class GanRunner(MultiPhaseRunner):
             self.fake_logits_output_key: fake_logits,
             self.real_logits_output_key: real_logits
         }
+
+    def train(
+        self,
+        model: Union[Model, Dict[str, Model]],
+        loaders: "OrderedDict[str, DataLoader]",  # noqa: F821
+        callbacks: "OrderedDict[str, Callback]" = None,  # noqa: F821
+        phase2callbacks: Dict[str, List[str]] = None,
+        criterion: Criterion = None,
+        optimizer: Optimizer = None,
+        num_epochs: int = 1,
+        main_metric: str = "loss",
+        minimize_metric: bool = True,
+        checkpoint_data: Dict = None,
+        state_kwargs: Dict = None,
+        distributed_params: Dict = None,
+        monitoring_params: Dict = None,
+        logdir: str = None,
+        verbose: bool = False,
+        initial_seed: int = 42,
+        check: bool = False,
+    ) -> None:
+        """
+        :param model: models, usually generator and discriminator
+        :param loaders: dictionary containing one or several
+            ``torch.utils.data.DataLoader`` for training and validation
+        :param callbacks: list of callbacks
+        :param phase2callbacks: dictionary with lists of callback names
+            which should be wrapped for appropriate phase
+            for example: {"generator_train": "loss_g", "optim_g"}
+            "loss_g" and "optim_g" callbacks from callbacks dict
+            will be wrapped for "generator_train" phase
+            in wrap_callbacks method
+        :param criterion: criterion function
+        :param optimizer: optimize
+        :param num_epochs: number of experiment's epochs
+            the metrics and save the checkpoints. For example,
+            you can pass `train` and then
+            the metrics will be taken from `train` loader.
+        :param main_metric: the key to the name of the metric
+            by which the checkpoints will be selected.
+        :param minimize_metric: flag to indicate whether
+            the ``main_metric`` should be minimized.
+        :param state_kwargs: additional state params to ``RunnerState``
+        :param checkpoint_data: additional data to save in checkpoint,
+            for example: ``class_names``, ``date_of_training``, etc
+        :param distributed_params: dictionary with the parameters
+            for distributed and FP16 method
+        :param monitoring_params: dict with the parameters
+            for monitoring services
+        :param logdir: path to output directory
+        :param verbose: if true, it displays the status of the training
+            to the console.
+        :param initial_seed: experiment's initial seed value
+        :param check: if True, then only checks that pipeline is working
+            (3 epochs only)
+        """
+        # Check phase parameters in state_kwargs
+        consistent_metrics_param_key = "batch_consistant_metrics"
+        if consistent_metrics_param_key not in state_kwargs:
+            state_kwargs[consistent_metrics_param_key] = False
+        # Initialize and run experiment
+        experiment = self._default_experiment(
+            model=model,
+            loaders=loaders,
+            callbacks=callbacks,
+            logdir=logdir,
+            criterion=criterion,
+            optimizer=optimizer,
+            num_epochs=num_epochs,
+            main_metric=main_metric,
+            minimize_metric=minimize_metric,
+            verbose=verbose,
+            state_kwargs=state_kwargs,
+            checkpoint_data=checkpoint_data,
+            distributed_params=distributed_params,
+            monitoring_params=monitoring_params,
+            initial_seed=initial_seed,
+            phase2callbacks=phase2callbacks,
+        )
+        self.run_experiment(experiment=experiment, check=check)
 
 
 __all__ = ["MultiPhaseRunner", "GanRunner"]
