@@ -56,7 +56,7 @@ class MultiKeyMetricCallback(Callback):
         outputs = self._get(state.output, self.output_key)
         targets = self._get(state.input, self.input_key)
         metric = self.metric_fn(outputs, targets, **self.metric_params)
-        state.metrics.add_batch_value(name=self.prefix, value=metric)
+        state.metric_manager.add_batch_value(name=self.prefix, value=metric)
 
 
 class WassersteinDistanceCallback(MultiKeyMetricCallback):
