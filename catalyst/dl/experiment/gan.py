@@ -15,14 +15,13 @@ from .base import BaseExperiment
 class GanExperiment(BaseExperiment):
     """
     One-staged GAN experiment
-    Mainly used in notebooks
     """
 
     def __init__(
         self,
-        model: Union[Model, Dict[str, Model]],
+        model: Dict[str, Model],
         loaders: "OrderedDict[str, DataLoader]",
-        callbacks: "OrderedDict[str, Callback]" = None,
+        callbacks: Union["OrderedDict[str, Callback]", List[Callback]] = None,
         logdir: str = None,
         stage: str = "train",
         criterion: Criterion = None,
