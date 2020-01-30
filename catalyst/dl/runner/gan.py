@@ -256,8 +256,8 @@ class GanRunner(MultiPhaseRunner):
         num_epochs: int = 1,
         main_metric: str = "loss",
         minimize_metric: bool = True,
-        checkpoint_data: Dict = None,
         state_kwargs: Dict = None,
+        checkpoint_data: Dict = None,
         distributed_params: Dict = None,
         monitoring_params: Dict = None,
         logdir: str = None,
@@ -266,38 +266,37 @@ class GanRunner(MultiPhaseRunner):
         check: bool = False,
     ) -> None:
         """
-        :param model: models, usually generator and discriminator
-        :param loaders: dictionary containing one or several
-            ``torch.utils.data.DataLoader`` for training and validation
-        :param callbacks: list of callbacks
-        :param phase2callbacks: dictionary with lists of callback names
-            which should be wrapped for appropriate phase
-            for example: {"generator_train": "loss_g", "optim_g"}
-            "loss_g" and "optim_g" callbacks from callbacks dict
-            will be wrapped for "generator_train" phase
-            in wrap_callbacks method
-        :param criterion: criterion function
-        :param optimizer: optimize
-        :param num_epochs: number of experiment's epochs
-            the metrics and save the checkpoints. For example,
-            you can pass `train` and then
-            the metrics will be taken from `train` loader.
-        :param main_metric: the key to the name of the metric
-            by which the checkpoints will be selected.
-        :param minimize_metric: flag to indicate whether
-            the ``main_metric`` should be minimized.
-        :param state_kwargs: additional state params to ``RunnerState``
-        :param checkpoint_data: additional data to save in checkpoint,
-            for example: ``class_names``, ``date_of_training``, etc
-        :param distributed_params: dictionary with the parameters
-            for distributed and FP16 method
-        :param monitoring_params: dict with the parameters
-            for monitoring services
-        :param logdir: path to output directory
-        :param verbose: if true, it displays the status of the training
-            to the console.
-        :param initial_seed: experiment's initial seed value
-        :param check: if True, then only checks that pipeline is working
+        Args:
+            model: models, usually generator and discriminator
+            loaders: dictionary containing one or several
+                ``torch.utils.data.DataLoader`` for training and validation
+            callbacks: list of callbacks
+            phase2callbacks: dictionary with lists of callback names
+                which should be wrapped for appropriate phase
+                for example: {"generator_train": "loss_g", "optim_g"}
+                "loss_g" and "optim_g" callbacks from callbacks dict
+                will be wrapped for "generator_train" phase
+                in wrap_callbacks method
+            criterion: criterion function
+            optimizer: optimize
+            num_epochs: number of experiment's epochs
+                the metrics and save the checkpoints.
+            main_metric: the key to the name of the metric
+                by which the checkpoints will be selected.
+            minimize_metric: flag to indicate whether
+                the ``main_metric`` should be minimized.
+            state_kwargs: additional state params to ``RunnerState``
+            checkpoint_data: additional data to save in checkpoint,
+                for example: ``class_names``, ``date_of_training``, etc
+            distributed_params: dictionary with the parameters
+                for distributed and FP16 method
+            monitoring_params: dict with the parameters
+                for monitoring services
+            logdir: path to output directory
+            verbose: if true, it displays the status of the training
+                to the console.
+            initial_seed: experiment's initial seed value
+            check: if True, then only checks that pipeline is working
             (3 epochs only)
         """
         # Check phase parameters in state_kwargs
