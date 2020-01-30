@@ -319,7 +319,7 @@ class _Runner(ABC):
             self.state.loader_len = len(loader)
             self.state.need_backward = loader_name.startswith("train")
             if isinstance(self.model, dict):
-                for model in self.model.items():
+                for model in self.model.values():
                     model.train(self.state.need_backward)
             else:
                 self.model.train(self.state.need_backward)
