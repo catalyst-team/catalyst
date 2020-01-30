@@ -19,11 +19,6 @@ Core
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.dl.core.metric_manager
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 .. automodule:: catalyst.dl.core.runner
     :members:
     :undoc-members:
@@ -38,22 +33,12 @@ Core
 Callbacks
 --------------------
 
-.. automodule:: catalyst.dl.callbacks.checkpoint
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.callbacks.criterion
+.. automodule:: catalyst.dl.callbacks.gan
     :members:
     :undoc-members:
     :show-inheritance:
 
 .. automodule:: catalyst.dl.callbacks.inference
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.callbacks.logging
     :members:
     :undoc-members:
     :show-inheritance:
@@ -64,11 +49,6 @@ Callbacks
     :show-inheritance:
 
 .. automodule:: catalyst.dl.callbacks.mixup
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.callbacks.optimizer
     :members:
     :undoc-members:
     :show-inheritance:
@@ -106,6 +86,11 @@ Metrics
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: catalyst.dl.callbacks.metrics.ppv_tpr_f1
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Experiment
 --------------------
@@ -135,17 +120,21 @@ Runner
     :show-inheritance:
 
 
+.. automodule:: catalyst.dl.runner.gan
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 
 Utils
 --------------------
 
-.. automodule:: catalyst.dl.utils.formatters
+.. automodule:: catalyst.dl.utils.pipelines
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.dl.utils.scripts
+.. automodule:: catalyst.dl.utils.text
     :members:
     :undoc-members:
     :show-inheritance:
@@ -165,81 +154,16 @@ Utils
     :undoc-members:
     :show-inheritance:
 
-Criterion
-~~~~~~~~~~~~~~~~
-
-.. automodule:: catalyst.dl.utils.criterion.accuracy
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.utils.criterion.dice
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.utils.criterion.f1_score
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.utils.criterion.focal
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.utils.criterion.iou
+.. automodule:: catalyst.dl.utils.wizard
     :members:
     :undoc-members:
     :show-inheritance:
 
 
-Meters
+Registry
 --------------------
 
-The meters from torchnet.meters
-
-.. automodule:: catalyst.dl.meters.meter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.meters.apmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.meters.aucmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.meters.averagevaluemeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.meters.classerrormeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.meters.confusionmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.meters.mapmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.meters.movingaveragevaluemeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.meters.msemeter
+.. automodule:: catalyst.dl.registry
     :members:
     :undoc-members:
     :show-inheritance:

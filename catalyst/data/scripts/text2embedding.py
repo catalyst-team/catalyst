@@ -9,7 +9,7 @@ from tqdm import tqdm
 import torch
 from transformers import BertConfig, BertModel, BertTokenizer
 
-from catalyst.data.reader import LambdaReader
+from catalyst.data import LambdaReader
 from catalyst.dl import utils
 
 

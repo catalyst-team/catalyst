@@ -9,6 +9,7 @@ class TripletLoss(nn.Module):
     Triplet loss with hard positive/negative mining.
     Reference:
     Code imported from https://github.com/NegatioN/OnlineMiningTripletLoss.
+
     Args:
         margin (float): margin for triplet.
     """
@@ -16,6 +17,7 @@ class TripletLoss(nn.Module):
     def __init__(self, margin=0.3):
         """
         Constructor method for the TripletLoss class.
+
         Args:
             margin: margin parameter.
         """
@@ -26,6 +28,7 @@ class TripletLoss(nn.Module):
     def _pairwise_distances(self, embeddings, squared=False):
         """
         Compute the 2D matrix of distances between all the embeddings.
+
         Args:
             embeddings: tensor of shape (batch_size, embed_dim)
             squared: Boolean. If true, output is the pairwise
@@ -66,8 +69,10 @@ class TripletLoss(nn.Module):
         """
         Return a 2D mask where mask[a, p] is True
         if a and p are distinct and have same label.
+
         Args:
             labels: tf.int32 `Tensor` with shape [batch_size]
+
         Returns:
             mask: tf.bool `Tensor` with shape [batch_size, batch_size]
         """
@@ -90,8 +95,10 @@ class TripletLoss(nn.Module):
     def _get_anchor_negative_triplet_mask(self, labels):
         """
         Return 2D mask where mask[a, n] is True if a and n have same label.
+
         Args:
             labels: tf.int32 `Tensor` with shape [batch_size]
+
         Returns:
             mask: tf.bool `Tensor` with shape [batch_size, batch_size]
         """
@@ -111,6 +118,7 @@ class TripletLoss(nn.Module):
         Build the triplet loss over a batch of embeddings.
         For each anchor, we get the hardest positive and
         hardest negative to form a triplet.
+
         Args:
             labels: labels of the batch, of size (batch_size,)
             embeddings: tensor of shape (batch_size, embed_dim)
@@ -118,6 +126,7 @@ class TripletLoss(nn.Module):
             squared: Boolean. If true, output is the pairwise squared
                      euclidean distance matrix. If false, output is the
                      pairwise euclidean distance matrix.
+
         Returns:
             triplet_loss: scalar tensor containing the triplet loss
         """
@@ -162,9 +171,11 @@ class TripletLoss(nn.Module):
     def forward(self, embeddings, targets):
         """
         Forward propagation method for the triplet loss.
+
         Args:
             embeddings: tensor of shape (batch_size, embed_dim)
             targets: labels of the batch, of size (batch_size,)
+
         Returns:
             triplet_loss: scalar tensor containing the triplet loss
         """
@@ -180,6 +191,7 @@ class TripletLossV2(nn.Module):
     def __init__(self, margin=0.3):
         """
         Constructor method for the TripletLoss class.
+
         Args:
             margin: margin parameter.
         """
@@ -202,6 +214,7 @@ class TripletPairwiseEmbeddingLoss(nn.Module):
     def __init__(self, margin=0.3, reduction="mean"):
         """
         Constructor method for the TripletPairwiseEmbeddingLoss class.
+
         Args:
             margin: margin parameter.
             reduction: criterion reduction type.
@@ -213,6 +226,7 @@ class TripletPairwiseEmbeddingLoss(nn.Module):
     def forward(self, embeddings_pred, embeddings_true):
         """
         Work in progress.
+
         Args:
             embeddings_pred: predicted embeddings
                 with shape [batch_size, embedding_size]
@@ -220,7 +234,7 @@ class TripletPairwiseEmbeddingLoss(nn.Module):
                 with shape [batch_size, embedding_size]
 
         Returns:
-            loss
+            torch.Tensor: loss
         """
         device = embeddings_pred.device
         # s - state space

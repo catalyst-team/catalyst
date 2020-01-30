@@ -10,7 +10,7 @@ import torch
 from torchvision import transforms
 
 from catalyst.contrib.models.cv import ResnetEncoder
-from catalyst.data.reader import ImageReader
+from catalyst.data import ImageReader
 from catalyst.dl import utils
 
 cv2.setNumThreads(0)

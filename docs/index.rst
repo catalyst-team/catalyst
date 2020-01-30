@@ -199,6 +199,7 @@ Getting started: 30 seconds with Catalyst
    :maxdepth: 2
    :caption: API
 
+   api/core
    api/dl
    api/rl
 

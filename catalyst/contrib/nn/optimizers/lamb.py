@@ -23,6 +23,7 @@ def log_lamb_rs(
 
 
 class Lamb(Optimizer):
+    """Lamb optimizer"""
     def __init__(
         self,
         params,
@@ -32,9 +33,9 @@ class Lamb(Optimizer):
         weight_decay=0,
         adam=False
     ):
-        """Implements Lamb algorithm from `Large Batch Optimization for
-        Deep Learning: Training BERT in 76 minutes`_.
-        Arguments:
+        """Implements Lamb algorithm from `Training BERT in 76 minutes`_.
+
+        Args:
             params (iterable): iterable of parameters to optimize or dicts
                 defining parameter groups
             lr (float, optional): learning rate (default: 1e-3)
@@ -47,8 +48,8 @@ class Lamb(Optimizer):
                 (default: 0)
             adam (bool, optional): always use trust ratio = 1, which turns
                 this into Adam. Useful for comparison purposes.
-        .. _Large Batch Optimization for Deep Learning:
-            Training BERT in 76 minutes:
+
+        .. _`Training BERT in 76 minutes`:
             https://arxiv.org/abs/1904.00962
         """
         if not 0.0 <= lr:
@@ -65,6 +66,7 @@ class Lamb(Optimizer):
         super(Lamb, self).__init__(params, defaults)
 
     def step(self, closure=None):
+        """Makes optimizer step"""
         loss = None
         if closure is not None:
             loss = closure()

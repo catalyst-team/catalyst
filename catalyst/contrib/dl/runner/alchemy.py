@@ -14,24 +14,26 @@ class AlchemyRunner(Runner):
 
     Example:
 
-        from catalyst.dl import SupervisedAlchemyRunner
+        .. code-block:: python
 
-        runner = SupervisedAlchemyRunner()
+            from catalyst.dl import SupervisedAlchemyRunner
 
-        runner.train(
-            model=model,
-            criterion=criterion,
-            optimizer=optimizer,
-            loaders=loaders,
-            logdir=logdir,
-            num_epochs=num_epochs,
-            verbose=True,
-            monitoring_params={
-                "token": "...", # your Alchemy token
-                "experiment": "your_experiment_name",
-                "group": "your_experiment_group_name"
-            }
-        )
+            runner = SupervisedAlchemyRunner()
+
+            runner.train(
+                model=model,
+                criterion=criterion,
+                optimizer=optimizer,
+                loaders=loaders,
+                logdir=logdir,
+                num_epochs=num_epochs,
+                verbose=True,
+                monitoring_params={
+                    "token": "...", # your Alchemy token
+                    "experiment": "your_experiment_name",
+                    "group": "your_experiment_group_name"
+                }
+            )
     """
 
     def _init(
@@ -99,12 +101,19 @@ class AlchemyRunner(Runner):
         experiment: Experiment,
         check: bool = False
     ):
+        """Starts experiment
+
+        Args:
+            experiment (Experiment): experiment class
+            check (bool): if ``True`` takes only 3 steps
+        """
         self._pre_experiment_hook(experiment=experiment)
         super().run_experiment(experiment=experiment, check=check)
         self._post_experiment_hook(experiment=experiment)
 
 
 class SupervisedAlchemyRunner(AlchemyRunner, SupervisedRunner):
+    """SupervisedRunner with Alchemy"""
     pass
 
 
