@@ -319,8 +319,8 @@ class _Runner(ABC):
             self.state.loader_len = len(loader)
             self.state.need_backward = loader_name.startswith("train")
             if isinstance(self.model, dict):
-                for submodel in self.model:
-                    self.model[submodel].train(self.state.need_backward)
+                for model in self.model.items():
+                    model.train(self.state.need_backward)
             else:
                 self.model.train(self.state.need_backward)
 
