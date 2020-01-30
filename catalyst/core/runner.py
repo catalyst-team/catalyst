@@ -318,13 +318,11 @@ class _Runner(ABC):
             self.state.loader_name = loader_name
             self.state.loader_len = len(loader)
             self.state.need_backward = loader_name.startswith("train")
-            if isinstance(self.model, nn.Module):
-                self.model.train(self.state.need_backward)
-            elif isinstance(self.model, dict):
+            if isinstance(self.model, dict):
                 for submodel in self.model:
                     self.model[submodel].train(self.state.need_backward)
             else:
-                raise NotImplementedError
+                self.model.train(self.state.need_backward)
 
             if isinstance(loader.sampler, DistributedSampler) \
                     and loader_name.startswith("train"):
