@@ -53,10 +53,7 @@ class MnistGanExperiment(ConfigExperiment):
     Simple MNIST experiment
     """
     def get_datasets(
-        self,
-        stage: str,
-        image_key: str = "image",
-        target_key: str = "target"
+        self, stage: str, image_key: str = "image", target_key: str = "target"
     ):
         """
 
