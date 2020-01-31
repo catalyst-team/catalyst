@@ -131,7 +131,7 @@ class GanExperiment(BaseExperiment):
                 )
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
-        callbacks = super().get_callbacks(stage="")
+        callbacks = super().get_callbacks(stage=stage)
         default_callbacks = []
         if self._verbose:
             default_callbacks.append(("verbose", VerboseLogger))
@@ -150,7 +150,7 @@ class GanExperiment(BaseExperiment):
 
     def get_transforms(self, stage: str = None, dataset: str = None):
         raise NotImplementedError(
-            "No transforms are used in GAN experiment"
+            "No transforms are used in GanExperiment"
         )
 
 
