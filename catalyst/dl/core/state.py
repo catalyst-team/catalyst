@@ -30,6 +30,9 @@ class State(_State):
         batch_consistant_metrics: bool = True,
         **kwargs
     ):
+        # @TODO: remove GAN hack
+        self.phase = None
+
         super().__init__(
             device=device,
             model=model,
