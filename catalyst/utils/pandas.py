@@ -95,7 +95,9 @@ def split_dataframe_train_test(
 
 
 def split_dataframe_on_folds(
-    dataframe: pd.DataFrame, random_state: int = 42, n_folds: int = 5
+    dataframe: pd.DataFrame,
+    random_state: int = 42,
+    n_folds: int = 5
 ) -> pd.DataFrame:
     """
     Splits DataFrame into `N` folds.
@@ -215,7 +217,9 @@ def map_dataframe(
 
 
 def separate_tags(
-    dataframe: pd.DataFrame, tag_column: str = "tag", tag_delim: str = ","
+    dataframe: pd.DataFrame,
+    tag_column: str = "tag",
+    tag_delim: str = ","
 ) -> pd.DataFrame:
     """
     Separates values in ``class_column`` column
@@ -236,9 +240,8 @@ def separate_tags(
     return df_new
 
 
-def get_dataset_labeling(
-    dataframe: pd.DataFrame, tag_column: str
-) -> Dict[str, int]:
+def get_dataset_labeling(dataframe: pd.DataFrame,
+                         tag_column: str) -> Dict[str, int]:
     """
     Prepares a mapping using unique values from ``tag_column``
 
