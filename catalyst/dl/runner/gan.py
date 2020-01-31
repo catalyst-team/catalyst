@@ -3,6 +3,7 @@ from typing import (  # isort:skip
 )
 
 from catalyst.dl import GanExperiment, Runner
+from catalyst.dl.core import GanState
 from catalyst.utils.tools.typing import Criterion, Device, Model, Optimizer
 
 
@@ -77,6 +78,7 @@ class GanRunner(MultiPhaseRunner):
     can be easily derived from this class
     """
     _default_experiment = GanExperiment
+    state: GanState
 
     def __init__(
         self,
@@ -247,7 +249,7 @@ class GanRunner(MultiPhaseRunner):
 
     def train(
         self,
-        model: Union[Model, Dict[str, Model]],
+        model: Model,
         loaders: "OrderedDict[str, DataLoader]",  # noqa: F821
         callbacks: "OrderedDict[str, Callback]" = None,  # noqa: F821
         phase2callbacks: Dict[str, List[str]] = None,

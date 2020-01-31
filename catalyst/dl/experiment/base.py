@@ -16,7 +16,7 @@ class BaseExperiment(Experiment):
 
     def __init__(
         self,
-        model: Union[Model, Dict[str, Model]],
+        model: Model,
         loaders: "OrderedDict[str, DataLoader]",
         callbacks: "Union[OrderedDict[str, Callback], List[Callback]]" = None,
         logdir: str = None,
