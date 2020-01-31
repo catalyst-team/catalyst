@@ -1,4 +1,4 @@
-from catalyst.data.scripts.tag2label import prepare_df_from_dirs
+from catalyst.data.scripts.tag2label import _prepare_df_from_dirs
 
 
 def _setup_dataset_fs(tmp_path):
@@ -36,7 +36,7 @@ def test_prepare_df_from_dirs_one(tmp_path):
 
     _setup_dataset_fs(tmp_path)
     root_path = tmp_path / "datasets/root1"
-    df = prepare_df_from_dirs(str(root_path), "label")
+    df = _prepare_df_from_dirs(str(root_path), "label")
 
     assert df.shape[0] == 3
     assert df.filepath.apply(check_filepath).sum().all()
@@ -53,7 +53,7 @@ def test_prepare_df_from_dirs_multi(tmp_path):
     _setup_dataset_fs(tmp_path)
     ds_path = tmp_path / "datasets"
     root_paths = ",".join([str(ds_path / "root1"), str(ds_path / "root2")])
-    df = prepare_df_from_dirs(root_paths, "label")
+    df = _prepare_df_from_dirs(root_paths, "label")
 
     assert df.shape[0] == 6
     assert df.filepath.apply(check_filepath).sum().all()
