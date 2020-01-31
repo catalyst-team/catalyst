@@ -299,10 +299,6 @@ class GanRunner(MultiPhaseRunner):
             check: if True, then only checks that pipeline is working
             (3 epochs only)
         """
-        # Check phase parameters in state_kwargs
-        consistent_metrics_param_key = "batch_consistant_metrics"
-        if consistent_metrics_param_key not in state_kwargs:
-            state_kwargs[consistent_metrics_param_key] = False
         # Initialize and run experiment
         experiment = self._default_experiment(
             model=model,
