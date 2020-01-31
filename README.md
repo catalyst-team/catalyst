@@ -17,7 +17,7 @@
 
 </div>
 
-PyTorch framework for DL & RL research.
+PyTorch framework for DL & RL research and development.
 It was developed with a focus on reproducibility,
 fast experimentation and code/ideas reusing.
 Being able to research/develop something new,
