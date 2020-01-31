@@ -148,10 +148,5 @@ class GanExperiment(BaseExperiment):
                 callbacks[callback_name] = callback_fn()
         return callbacks
 
-    def get_transforms(self, stage: str = None, dataset: str = None):
-        raise NotImplementedError(
-            "No transforms are used in GanExperiment"
-        )
-
 
 __all__ = ["GanExperiment"]
