@@ -127,7 +127,8 @@ class _Runner(ABC):
         pass
 
     def _get_experiment_components(
-        self, stage: str = None
+        self,
+        stage: str = None
     ) -> Tuple[Model, Criterion, Optimizer, Scheduler, Device]:
         """
         Inner method for children's classes for model specific initialization.
@@ -241,9 +242,8 @@ class _Runner(ABC):
         self.state.output = self.forward(batch)
 
     @torch.no_grad()
-    def predict_batch(
-        self, batch: Mapping[str, Any], **kwargs
-    ) -> Mapping[str, Any]:
+    def predict_batch(self, batch: Mapping[str, Any],
+                      **kwargs) -> Mapping[str, Any]:
         """
         Run model for a batch of elements
         WARN: You should not override this method. If you need specific model
@@ -318,12 +318,9 @@ class _Runner(ABC):
             self.state.loader_name = loader_name
             self.state.loader_len = len(loader)
             self.state.need_backward = loader_name.startswith("train")
-            if isinstance(self.model, dict):
-                for model in self.model.values():
-                    model.train(self.state.need_backward)
-            else:
-                self.model.train(self.state.need_backward)
-
+            utils.maybe_recursive_call(
+                self.model, "train", mode=self.state.need_backward
+            )
             if isinstance(loader.sampler, DistributedSampler) \
                     and loader_name.startswith("train"):
                 loader.sampler.set_epoch(self.state.stage_epoch)
