@@ -318,9 +318,8 @@ class _Runner(ABC):
             self.state.loader_name = loader_name
             self.state.loader_len = len(loader)
             self.state.need_backward = loader_name.startswith("train")
-            utils.maybe_recursive_call(
-                self.model, "train", mode=self.state.need_backward
-            )
+            self.model.train(self.state.need_backward)
+
             if isinstance(loader.sampler, DistributedSampler) \
                     and loader_name.startswith("train"):
                 loader.sampler.set_epoch(self.state.stage_epoch)

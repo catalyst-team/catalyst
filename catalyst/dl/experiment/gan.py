@@ -19,7 +19,7 @@ class GanExperiment(BaseExperiment):
 
     def __init__(
         self,
-        model: Dict[str, Model],
+        model: Model,
         loaders: "OrderedDict[str, DataLoader]",
         callbacks: Union["OrderedDict[str, Callback]", List[Callback]] = None,
         logdir: str = None,
