@@ -31,6 +31,8 @@ class GanState(State):
         batch_consistant_metrics: bool = False,
         **kwargs
     ):
+        self.phase = None
+
         super().__init__(
             device=device,
             model=model,
