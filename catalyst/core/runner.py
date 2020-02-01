@@ -4,6 +4,7 @@ from typing import (   # isort:skip
 
 from abc import ABC, abstractmethod
 from collections import OrderedDict
+import os
 
 import torch
 from torch import nn
@@ -336,11 +337,12 @@ class _Runner(ABC):
         self._prepare_for_stage(stage)
 
         self._run_event("stage", moment="start")
-        for epoch in range(self.state.num_epochs):
-            self.state.stage_epoch = epoch
-
+        while self.state.stage_epoch < self.state.num_epochs:
             self._run_event("epoch", moment="start")
-            self._run_epoch(stage=stage, epoch=epoch)
+            utils.set_global_seed(
+                self.experiment.initial_seed + self.state.epoch + 1
+            )
+            self._run_epoch(stage=stage, epoch=self.state.stage_epoch)
             self._run_event("epoch", moment="end")
 
             if self._check_run and self.state.epoch >= 3:
@@ -350,7 +352,20 @@ class _Runner(ABC):
                 break
 
             self.state.epoch += 1
+            self.state.stage_epoch += 1
         self._run_event("stage", moment="end")
+
+    def get_start_stage(self):
+        resume, resume_dir = [getattr(self.state, key, None)
+                              for key in ["resume", "resume_dir"]]
+
+        if resume_dir is not None:
+            resume = str(resume_dir) + "/" + str(resume)
+
+        if resume is not None and os.path.isfile(resume):
+            checkpoint = utils.load_checkpoint(resume)
+            return checkpoint['stage']
+        return self.experiment.stages[0]
 
     def run_experiment(self, experiment: _Experiment, check: bool = False):
         """
@@ -370,7 +385,11 @@ class _Runner(ABC):
         #     utils.dump_base_experiment_code(expdir, logdir)
 
         try:
-            for stage in self.experiment.stages:
+            start_stage = self.get_start_stage()
+            stages = list(self.experiment.stages)
+            stages = stages[stages.index(start_stage):]
+
+            for stage in stages:
                 self._run_stage(stage)
         except (Exception, KeyboardInterrupt) as ex:
             # if an exception had been raised
