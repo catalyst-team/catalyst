@@ -126,7 +126,7 @@ class CheckpointCallback(BaseCheckpointCallback):
 
                 print(
                     f"loaded checkpoint {filename} (epoch {checkpoint['epoch']}, "
-                    f"stage {checkpoint['stage']}, stage_epoch {checkpoint['stage_epoch']})"
+                    f"stage_epoch {checkpoint['stage_epoch']}, stage {checkpoint['stage']})"
                 )
         else:
             raise Exception(f"No checkpoint found at {filename}")
