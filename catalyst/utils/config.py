@@ -1,15 +1,16 @@
-from typing import Any, Dict, List, Union  # isort:skip
-from collections import OrderedDict
 import copy
 import json
-from logging import getLogger
 import os
-from pathlib import Path
 import platform
 import re
 import shutil
 import subprocess
 import sys
+from collections import OrderedDict
+from itertools import chain
+from logging import getLogger
+from pathlib import Path
+from typing import Any, Dict, List, Union  # isort:skip
 
 import safitty
 import yaml
@@ -257,6 +258,39 @@ def parse_config_args(*, config, args, unknown_args):
     return config, args
 
 
+def load_config(fin, config_path):
+    if config_path.endswith("json"):
+        config_ = json.load(fin, object_pairs_hook=OrderedDict)
+    elif config_path.endswith("yml"):
+        config_ = load_ordered_yaml(fin)
+    else:
+        raise Exception("Unknown file format")
+    return config_
+
+
+def get_recursive_configs(config_path):
+    configs = []
+    with open(config_path, "r") as fin:
+        config_ = load_config(fin, config_path)
+        base_dir = os.path.dirname(config_path)
+
+        if 'pre_configs' in config_:
+            pre_configs = config_['pre_configs']
+            for pre_config in pre_configs:
+                pre_config = os.path.join(base_dir, pre_config)
+                configs += get_recursive_configs(pre_config)
+
+        configs += [config_path]
+
+        if 'post_configs' in config_:
+            post_configs = config_['post_configs']
+            for post_config in post_configs:
+                post_config = os.path.join(base_dir, post_config)
+                configs += [get_recursive_configs(post_config)]
+
+    return configs
+
+
 def parse_args_uargs(args, unknown_args):
     """
     Function for parsing configuration files
@@ -269,17 +303,14 @@ def parse_args_uargs(args, unknown_args):
         tuple: updated arguments, dict with config
     """
     args_ = copy.deepcopy(args)
+    args_.configs = [get_recursive_configs(config_path) for config_path in args_.configs]
+    args_.configs = list(chain(*args_.configs))
 
     # load params
     config = {}
     for config_path in args_.configs:
         with open(config_path, "r") as fin:
-            if config_path.endswith("json"):
-                config_ = json.load(fin, object_pairs_hook=OrderedDict)
-            elif config_path.endswith("yml"):
-                config_ = load_ordered_yaml(fin)
-            else:
-                raise Exception("Unknown file format")
+            config_ = load_config(fin, config_path)
         config = utils.merge_dicts(config, config_)
 
     config, args_ = parse_config_args(
