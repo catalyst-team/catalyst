@@ -44,6 +44,11 @@ def build_args(parser: ArgumentParser):
         metavar="PATH",
         help="path to latest checkpoint"
     )
+    parser.add_argument(
+        "--autoresume",
+        action="store_true",
+        help="try automatically resume from logdir//last_full.pth if --resume is empty"
+    )
     parser.add_argument("--seed", type=int, default=42)
     utils.boolean_flag(parser, "verbose", default=None)
     utils.boolean_flag(parser, "check", default=None)

@@ -254,6 +254,13 @@ def parse_config_args(*, config, args, unknown_args):
                 continue
             config["args"][key] = value
 
+    if 'autoresume' in config['args'] and \
+            'logdir' in config['args'] and \
+            'resume' not in config['args']:
+        log_dir = config['args']['logdir']
+        checkpoint_filename = os.path.join(log_dir, 'checkpoints', 'last_full.pth')
+        if os.path.isfile(checkpoint_filename):
+            config['resume'] = checkpoint_filename
     return config, args
 
 
