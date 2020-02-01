@@ -77,7 +77,10 @@ class GanRunner(MultiPhaseRunner):
     Various conditioning types, penalties and regularization (such as WGAN-GP)
     can be easily derived from this class
     """
-    _default_experiment = GanExperiment
+    experiment: GanExperiment
+    state: GanState
+
+    experiment_fn: Callable = GanExperiment
     state_fn: callable = GanState
 
     def __init__(
@@ -302,7 +305,7 @@ class GanRunner(MultiPhaseRunner):
             (3 epochs only)
         """
         # Initialize and run experiment
-        experiment = self._default_experiment(
+        self.experiment = self.experiment_fn(
             model=model,
             loaders=loaders,
             callbacks=callbacks,
@@ -320,7 +323,7 @@ class GanRunner(MultiPhaseRunner):
             initial_seed=initial_seed,
             phase2callbacks=phase2callbacks,
         )
-        self.run_experiment(experiment=experiment, check=check)
+        self.run_experiment(experiment=self.experiment, check=check)
 
 
 __all__ = ["MultiPhaseRunner", "GanRunner"]
