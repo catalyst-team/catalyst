@@ -108,22 +108,26 @@ class CheckpointCallback(BaseCheckpointCallback):
     @staticmethod
     def load_checkpoint(*, filename, state: _State):
         if os.path.isfile(filename):
-            print(f"=> loading checkpoint {filename}")
             checkpoint = utils.load_checkpoint(filename)
+            if checkpoint["epoch"] > state.epoch:
+                print(f"=> loading checkpoint {filename}")
 
-            state.epoch = checkpoint["epoch"]
+                state.epoch = checkpoint["epoch"]
+                state.stage_epoch = checkpoint["stage_epoch"]
+                state.stage = checkpoint["stage"]
 
-            utils.unpack_checkpoint(
-                checkpoint,
-                model=state.model,
-                criterion=state.criterion,
-                optimizer=state.optimizer,
-                scheduler=state.scheduler
-            )
+                utils.unpack_checkpoint(
+                    checkpoint,
+                    model=state.model,
+                    criterion=state.criterion,
+                    optimizer=state.optimizer,
+                    scheduler=state.scheduler
+                )
 
-            print(
-                f"loaded checkpoint {filename} (epoch {checkpoint['epoch']})"
-            )
+                print(
+                    f"loaded checkpoint {filename} (epoch {checkpoint['epoch']}, "
+                    f"stage {checkpoint['stage']}, stage_epoch {checkpoint['stage_epoch']})"
+                )
         else:
             raise Exception(f"No checkpoint found at {filename}")
 
@@ -231,6 +235,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             stage=state.stage,
             stage_epoch=state.stage_epoch_log,
             epoch=state.epoch_log,
+            stage_epoch=state.stage_epoch_log,
             checkpoint_data=state.checkpoint_data
         )
         self.process_checkpoint(
