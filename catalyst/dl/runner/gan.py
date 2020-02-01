@@ -3,7 +3,7 @@ from typing import (  # isort:skip
 )
 
 from catalyst.dl import GanExperiment, Runner
-from catalyst.dl.core import GanState
+from catalyst.dl.state import GanState
 from catalyst.utils.tools.typing import Criterion, Device, Model, Optimizer
 
 

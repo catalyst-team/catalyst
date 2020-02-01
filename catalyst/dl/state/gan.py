@@ -1,14 +1,14 @@
 from typing import Dict  # isort:skip
 
-from catalyst.core import _State
+from catalyst.dl.core import State
 from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
 
 
-class State(_State):
+class GanState(State):
     """
-    An object that is used to pass internal state during train/valid/infer.
+    An object that is used to pass internal state during train/valid/infer in GAN Runners.
     """
 
     def __init__(
@@ -27,12 +27,9 @@ class State(_State):
         valid_loader: str = "valid",
         verbose: bool = False,
         checkpoint_data: Dict = None,
-        batch_consistant_metrics: bool = True,
+        batch_consistant_metrics: bool = False,
         **kwargs
     ):
-        # @TODO: remove GAN hack
-        self.phase = None
-
         super().__init__(
             device=device,
             model=model,
@@ -52,4 +49,4 @@ class State(_State):
         )
 
 
-__all__ = ["State"]
+__all__ = ["GanState"]
