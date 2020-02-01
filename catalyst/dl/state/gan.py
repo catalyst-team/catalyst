@@ -8,7 +8,8 @@ from catalyst.utils.tools.typing import (
 
 class GanState(State):
     """
-    An object that is used to pass internal state during train/valid/infer in GAN Runners.
+    An object that is used to pass internal state during
+    train/valid/infer in GAN Runners.
     """
 
     def __init__(
