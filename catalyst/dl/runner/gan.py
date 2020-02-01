@@ -2,7 +2,7 @@ from typing import (  # isort:skip
     Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
 )
 
-from catalyst.dl import GanExperiment, Runner, GanState
+from catalyst.dl import GanExperiment, GanState, Runner
 from catalyst.utils.tools.typing import Criterion, Device, Model, Optimizer
 
 
