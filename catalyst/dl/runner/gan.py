@@ -78,7 +78,7 @@ class GanRunner(MultiPhaseRunner):
     can be easily derived from this class
     """
     _default_experiment = GanExperiment
-    state: GanState
+    state_fn: callable = GanState
 
     def __init__(
         self,
