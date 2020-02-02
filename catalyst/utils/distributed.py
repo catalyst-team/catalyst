@@ -1,23 +1,23 @@
+from collections import OrderedDict
 import copy
 import inspect
+from operator import itemgetter
 import os
 import socket
 import subprocess
 import sys
-from collections import OrderedDict
-from operator import itemgetter
 from typing import Dict, Tuple
 
 import torch
-import torch.distributed
 from torch import nn
+import torch.distributed
 from torch.utils.data import Dataset
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data.sampler import Sampler
 
 from catalyst import utils
 from catalyst.utils.tools.typing import (
-    Model, Criterion, Optimizer, Scheduler, Device
+    Criterion, Device, Model, Optimizer, Scheduler
 )
 
 __author__ = "Andrey Sheka"
@@ -268,9 +268,7 @@ def process_components(
     return model, criterion, optimizer, scheduler, device
 
 
-
 __all__ = [
     "DistributedSamplerOverSampler", "get_rank", "process_components",
     "is_apex_available", "assert_fp16_available", "distributed_run"
 ]
-
