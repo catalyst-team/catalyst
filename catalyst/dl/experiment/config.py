@@ -11,7 +11,7 @@ from torch.utils.data import (  # noqa F401
 )
 
 from catalyst.data import Augmentor, AugmentorCompose
-from catalyst.dl import Callback, Experiment, utils
+from catalyst.dl import Callback, Experiment, utils, LoggerCallback, ConfusionMatrixCallback
 from catalyst.dl.callbacks import (
     CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
     PhaseWrapperCallback, RaiseExceptionCallback, SchedulerCallback,
@@ -21,6 +21,7 @@ from catalyst.dl.registry import (
     CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS,
     TRANSFORMS
 )
+from catalyst.utils import DistributedSamplerOverSampler, get_rank
 from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
@@ -92,7 +93,7 @@ class ConfigExperiment(Experiment):
         timestamp = utils.get_utcnow_time()
         config_hash = utils.get_short_hash(config)
         logdir = f"{timestamp}.{config_hash}"
-        distributed_rank = self.distributed_params.get("rank", -1)
+        distributed_rank = get_rank()
         if distributed_rank > -1:
             logdir = f"{logdir}.rank{distributed_rank:02d}"
         return logdir
@@ -201,7 +202,7 @@ class ConfigExperiment(Experiment):
             data_params = dict(self.stages_config[stage]["data_params"])
             batch_size = data_params.get("batch_size")
             per_gpu_scaling = data_params.get("per_gpu_scaling", False)
-            distributed_rank = self.distributed_params.get("rank", -1)
+            distributed_rank = get_rank()
             distributed = distributed_rank > -1
             if per_gpu_scaling and not distributed:
                 num_gpus = max(1, torch.cuda.device_count())
@@ -396,7 +397,7 @@ class ConfigExperiment(Experiment):
         num_workers = data_params.pop("num_workers")
         drop_last = data_params.pop("drop_last", False)
         per_gpu_scaling = data_params.pop("per_gpu_scaling", False)
-        distributed_rank = self.distributed_params.get("rank", -1)
+        distributed_rank = get_rank()
         distributed = distributed_rank > -1
 
         datasets = self.get_datasets(stage=stage, **data_params)
@@ -459,7 +460,10 @@ class ConfigExperiment(Experiment):
 
             if distributed:
                 if sampler is not None:
-                    assert isinstance(sampler, DistributedSampler)
+                    if not isinstance(sampler, DistributedSampler):
+                        loader_params["sampler"] = DistributedSamplerOverSampler(
+                            sampler=sampler
+                        )
                 else:
                     sampler = DistributedSampler(
                         dataset=loader_params["dataset"]
