@@ -3,6 +3,7 @@ from collections import defaultdict
 from numbers import Number
 from time import time
 
+from catalyst.utils.distributed import distributed_mean
 from catalyst.utils.meters import AverageValueMeter
 
 
@@ -135,7 +136,9 @@ class MetricManager:
             metrics_dict[name] = value
 
         for name, value in metrics_dict.items():
-            self._batch_values[name] = self._to_single_value(value)
+            value = self._to_single_value(value)
+            value = distributed_mean(value)
+            self._batch_values[name] = value
 
 
 __all__ = ["TimerManager", "MetricManager"]
