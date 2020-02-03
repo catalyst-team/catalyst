@@ -1,22 +1,25 @@
+from collections import OrderedDict
 import copy
+from itertools import chain
 import json
+from logging import getLogger
 import os
+from pathlib import Path
 import platform
 import re
 import shutil
 import subprocess
 import sys
-from collections import OrderedDict
-from itertools import chain
-from logging import getLogger
-from pathlib import Path
-from typing import Any, Dict, List, Union  # isort:skip
 
 import safitty
 import yaml
 
 from catalyst import utils
 from catalyst.utils.tools.tensorboard import SummaryWriter
+
+from typing import Any, Dict, List, Union  # isort:skip
+
+
 
 LOG = getLogger(__name__)
 
