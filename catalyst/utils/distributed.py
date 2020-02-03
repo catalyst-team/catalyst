@@ -58,10 +58,12 @@ def assert_fp16_available() -> None:
 
 def distributed_mean(value: float):
     if torch.distributed.is_initialized():
-        value = torch.tensor(value,
-                             dtype=torch.float,
-                             device=f'cuda:{torch.cuda.current_device()}',
-                             requires_grad=False)
+        value = torch.tensor(
+            value,
+            dtype=torch.float,
+            device=f'cuda:{torch.cuda.current_device()}',
+            requires_grad=False
+        )
         torch.distributed.all_reduce(value)
         value = float(value.item() / torch.distributed.get_world_size())
     return value
@@ -75,7 +77,9 @@ def get_default_params(fn, exclude=None):
     :return:
     """
     argspec = inspect.getfullargspec(fn)
-    default_params = zip(argspec.args[-len(argspec.defaults):], argspec.defaults)
+    default_params = zip(
+        argspec.args[-len(argspec.defaults):], argspec.defaults
+    )
     if exclude is not None:
         default_params = filter(lambda x: x[0] not in exclude, default_params)
     default_params = dict(default_params)
@@ -233,17 +237,15 @@ def process_components(
 
         if use_apex:
             import apex
-            amp_params = get_default_params(apex.amp.initialize, ["models", "optimizers"])
+            amp_params = get_default_params(
+                apex.amp.initialize, ["models", "optimizers"]
+            )
             amp_params['opt_level'] = 'O0'
             for dp in distributed_params:
                 if dp in amp_params:
                     amp_params[dp] = distributed_params[dp]
 
-            amp_result = apex.amp.initialize(
-                model,
-                optimizer,
-                **amp_params
-            )
+            amp_result = apex.amp.initialize(model, optimizer, **amp_params)
             if optimizer is not None:
                 model, optimizer = amp_result
             else:
@@ -254,9 +256,9 @@ def process_components(
             if syncbn:
                 model = apex.parallel.convert_syncbn_model(model)
         else:
-            model = torch.nn.parallel.DistributedDataParallel(model,
-                                                              device_ids=[local_rank],
-                                                              output_device=local_rank)
+            model = torch.nn.parallel.DistributedDataParallel(
+                model, device_ids=[local_rank], output_device=local_rank
+            )
     elif torch.cuda.device_count() > 1:
         if isinstance(model, nn.Module):
             model = torch.nn.DataParallel(model)

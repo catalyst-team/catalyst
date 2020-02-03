@@ -463,9 +463,8 @@ class ConfigExperiment(Experiment):
             if distributed:
                 if sampler is not None:
                     if not isinstance(sampler, DistributedSampler):
-                        loader_params["sampler"] = DistributedSamplerOverSampler(
-                            sampler=sampler
-                        )
+                        loader_params["sampler"] = \
+                            DistributedSamplerOverSampler(sampler=sampler)
                 else:
                     sampler = DistributedSampler(
                         dataset=loader_params["dataset"]
@@ -544,7 +543,9 @@ class ConfigExperiment(Experiment):
         # Remove LoggerCallback on slave nodes
         if get_rank() > 0:
             to_del = (LoggerCallback, ConfusionMatrixCallback)
-            for k in list(filter(lambda c: isinstance(callbacks[c], to_del), callbacks)):
+            for k in list(
+                filter(lambda c: isinstance(callbacks[c], to_del), callbacks)
+            ):
                 del callbacks[k]
 
         return callbacks
