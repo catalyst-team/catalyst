@@ -186,10 +186,7 @@ class ConfigExperiment(Experiment):
         return criterion
 
     def _get_optimizer(
-        self,
-        stage: str,
-        model: Union[Model, Dict[str, Model]],
-        **params
+        self, stage: str, model: Union[Model, Dict[str, Model]], **params
     ) -> Optimizer:
         # @TODO 1: refactoring; this method is too long
         # @TODO 2: load state dicts for schedulers & criterion
@@ -271,9 +268,7 @@ class ConfigExperiment(Experiment):
         return optimizer
 
     def get_optimizer(
-        self,
-        stage: str,
-        model: Union[Model, Dict[str, Model]]
+        self, stage: str, model: Union[Model, Dict[str, Model]]
     ) -> Union[Optimizer, Dict[str, Optimizer]]:
         """
         Returns the optimizer for a given stage
@@ -335,15 +330,17 @@ class ConfigExperiment(Experiment):
                 for key, params_ in params.items()
             }
 
-            transform = AugmentorCompose({
-                key: Augmentor(
-                    dict_key=key,
-                    augment_fn=transform,
-                    input_key=key,
-                    output_key=key,
-                )
-                for key, transform in transforms_composition.items()
-            })
+            transform = AugmentorCompose(
+                {
+                    key: Augmentor(
+                        dict_key=key,
+                        augment_fn=transform,
+                        input_key=key,
+                        output_key=key,
+                    )
+                    for key, transform in transforms_composition.items()
+                }
+            )
         else:
             if "transforms" in params:
                 transforms_composition = [
@@ -377,6 +374,7 @@ class ConfigExperiment(Experiment):
 
         transform = self._get_transform(**transform_params)
         if transform is None:
+
             def transform(dict_):
                 return dict_
         elif not isinstance(transform, AugmentorCompose):

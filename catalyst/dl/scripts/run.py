@@ -47,12 +47,14 @@ def build_args(parser: ArgumentParser):
     )
     parser.add_argument("--seed", type=int, default=42)
     utils.boolean_flag(
-        parser, "apex",
+        parser,
+        "apex",
         default=True,
         help="Enable/disable using of Apex extension"
     )
     utils.boolean_flag(
-        parser, "data-parallel",
+        parser,
+        "data-parallel",
         shorthand="dp",
         default=False,
         help="Force using of DataParallel"
@@ -60,14 +62,13 @@ def build_args(parser: ArgumentParser):
     utils.boolean_flag(parser, "verbose", default=None)
     utils.boolean_flag(parser, "check", default=None)
     utils.boolean_flag(
-        parser, "deterministic",
+        parser,
+        "deterministic",
         default=None,
         help="Deterministic mode if running in CuDNN backend"
     )
     utils.boolean_flag(
-        parser, "benchmark",
-        default=None,
-        help="Use CuDNN benchmark"
+        parser, "benchmark", default=None, help="Use CuDNN benchmark"
     )
 
     return parser

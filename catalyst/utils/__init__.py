@@ -64,10 +64,10 @@ from .serialization import deserialize, serialize
 #     SummaryWriter,
 # )
 from .torch import (
-    any2device, ce_with_logits, detach,
-    get_activation_fn, get_available_gpus, get_device, get_network_output,
-    get_optimizable_params, get_optimizer_momentum, log1p_exp, normal_logprob,
-    normal_sample, prepare_cudnn, process_model_params, set_optimizer_momentum,
+    any2device, ce_with_logits, detach, get_activation_fn, get_available_gpus,
+    get_device, get_network_output, get_optimizable_params,
+    get_optimizer_momentum, log1p_exp, normal_logprob, normal_sample,
+    prepare_cudnn, process_model_params, set_optimizer_momentum,
     set_requires_grad, soft_update
 )
 from .visualization import plot_confusion_matrix, render_figure_to_tensor

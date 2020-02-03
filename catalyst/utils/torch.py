@@ -317,7 +317,7 @@ def detach(tensor: torch.Tensor) -> np.ndarray:
 __all__ = [
     "ce_with_logits", "log1p_exp", "normal_sample", "normal_logprob",
     "soft_update", "get_optimizable_params", "get_optimizer_momentum",
-    "set_optimizer_momentum", "get_device",
-    "get_available_gpus", "get_activation_fn", "any2device", "prepare_cudnn",
-    "process_model_params", "set_requires_grad", "get_network_output", "detach"
+    "set_optimizer_momentum", "get_device", "get_available_gpus",
+    "get_activation_fn", "any2device", "prepare_cudnn", "process_model_params",
+    "set_requires_grad", "get_network_output", "detach"
 ]
