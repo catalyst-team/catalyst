@@ -19,8 +19,6 @@ from catalyst.utils.tools.tensorboard import SummaryWriter
 
 from typing import Any, Dict, List, Union  # isort:skip
 
-
-
 LOG = getLogger(__name__)
 
 
@@ -306,7 +304,9 @@ def parse_args_uargs(args, unknown_args):
         tuple: updated arguments, dict with config
     """
     args_ = copy.deepcopy(args)
-    args_.configs = [get_recursive_configs(config_path) for config_path in args_.configs]
+    args_.configs = [
+        get_recursive_configs(config_path) for config_path in args_.configs
+    ]
     args_.configs = list(chain(*args_.configs))
 
     # load params
