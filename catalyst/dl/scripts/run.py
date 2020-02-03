@@ -87,7 +87,7 @@ def main_worker(args, unknown_args):
     utils.set_global_seed(args.seed)
     utils.prepare_cudnn(args.deterministic, args.benchmark)
 
-    config.setdefault('distributed_params', {})['apex'] = args.apex
+    config.setdefault("distributed_params", {})["apex"] = args.apex
 
     Experiment, Runner = utils.import_experiment_and_runner(Path(args.expdir))
 

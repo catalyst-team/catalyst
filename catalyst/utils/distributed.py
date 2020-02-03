@@ -61,7 +61,7 @@ def distributed_mean(value: float):
         value = torch.tensor(
             value,
             dtype=torch.float,
-            device=f'cuda:{torch.cuda.current_device()}',
+            device=f"cuda:{torch.cuda.current_device()}",
             requires_grad=False
         )
         torch.distributed.all_reduce(value)
@@ -87,44 +87,44 @@ def get_default_params(fn, exclude=None):
 
 
 def get_slurm_params():
-    cmd = "scontrol show hostnames '%s'" % os.environ['SLURM_JOB_NODELIST']
+    cmd = "scontrol show hostnames '%s'" % os.environ["SLURM_JOB_NODELIST"]
     nodes = subprocess.getoutput(cmd).split()
-    num_nodes = int(os.environ['SLURM_JOB_NUM_NODES'])
-    current_node = os.environ['SLURMD_NODENAME']
+    num_nodes = int(os.environ["SLURM_JOB_NUM_NODES"])
+    current_node = os.environ["SLURMD_NODENAME"]
     master_node = socket.gethostbyname(nodes[0])
     cur_node_idx = nodes.index(current_node)
     return cur_node_idx, num_nodes, master_node
 
 
 def is_slurm():
-    return 'SLURM_JOB_NUM_NODES' in os.environ and 'SLURM_NODEID' in os.environ
+    return "SLURM_JOB_NUM_NODES" in os.environ and "SLURM_NODEID" in os.environ
 
 
 def get_distributed_params():
-    master_addr = '127.0.0.1'
+    master_addr = "127.0.0.1"
     cur_node, num_nodes = 0, 1
     if is_slurm():
         cur_node, num_nodes, master_addr = get_slurm_params()
 
-    os.environ['MASTER_ADDR'] = os.getenv('MASTER_ADDR', master_addr)
-    os.environ['MASTER_PORT'] = os.getenv('MASTER_PORT', '424242')
+    os.environ["MASTER_ADDR"] = os.getenv("MASTER_ADDR", master_addr)
+    os.environ["MASTER_PORT"] = os.getenv("MASTER_PORT", "424242")
 
     workers_per_node = torch.cuda.device_count()
     start_rank = cur_node * workers_per_node
     world_size = num_nodes * workers_per_node
 
-    local_rank = os.getenv('LOCAL_RANK', None)
-    rank = os.getenv('RANK', None)
+    local_rank = os.getenv("LOCAL_RANK", None)
+    rank = os.getenv("RANK", None)
     local_rank, rank = [v and int(v) for v in [local_rank, rank]]
-    world_size = int(os.getenv('WORLD_SIZE', world_size))
+    world_size = int(os.getenv("WORLD_SIZE", world_size))
 
     return OrderedDict(
         local_rank=local_rank,
         start_rank=start_rank,
         rank=rank,
         world_size=world_size,
-        master_addr=os.environ['MASTER_ADDR'],
-        master_port=os.environ['MASTER_PORT'],
+        master_addr=os.environ["MASTER_ADDR"],
+        master_port=os.environ["MASTER_PORT"],
     )
 
 
@@ -138,8 +138,8 @@ def get_distributed_env(local_rank, rank, world_size):
 
 def distributed_run(data_parallel, worker_fn, *args, **kwargs):
     distributed_params = get_distributed_params()
-    local_rank = distributed_params['local_rank']
-    world_size = distributed_params['world_size']
+    local_rank = distributed_params["local_rank"]
+    world_size = distributed_params["world_size"]
 
     if data_parallel or world_size <= 1:
         worker_fn(*args, **kwargs)
@@ -147,14 +147,14 @@ def distributed_run(data_parallel, worker_fn, *args, **kwargs):
         torch.cuda.set_device(int(local_rank))
 
         torch.distributed.init_process_group(
-            backend='nccl', init_method="env://"
+            backend="nccl", init_method="env://"
         )
         worker_fn(*args, **kwargs)
     else:
         workers = []
         try:
             for local_rank in range(torch.cuda.device_count()):
-                rank = distributed_params['start_rank'] + local_rank
+                rank = distributed_params["start_rank"] + local_rank
                 env = get_distributed_env(local_rank, rank, world_size)
                 cmd = [sys.executable] + sys.argv.copy()
                 workers.append(subprocess.Popen(cmd, env=env))
@@ -228,8 +228,8 @@ def process_components(
         pass
     elif get_rank() >= 0:
         assert isinstance(model, nn.Module)
-        local_rank = distributed_params.pop('local_rank', 0)
-        device = f'cuda:{local_rank}'
+        local_rank = distributed_params.pop("local_rank", 0)
+        device = f"cuda:{local_rank}"
         model = utils.maybe_recursive_call(model, "to", device=device)
 
         syncbn = distributed_params.pop("syncbn", False)
@@ -240,7 +240,7 @@ def process_components(
             amp_params = get_default_params(
                 apex.amp.initialize, ["models", "optimizers"]
             )
-            amp_params['opt_level'] = 'O0'
+            amp_params["opt_level"] = "O0"
             for dp in distributed_params:
                 if dp in amp_params:
                     amp_params[dp] = distributed_params[dp]
