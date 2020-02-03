@@ -7,7 +7,7 @@ from pathlib import Path
 import safitty
 
 from catalyst.dl import utils
-from catalyst.utils import get_rank, distributed_run
+from catalyst.utils import distributed_run, get_rank
 
 
 def build_args(parser: ArgumentParser):

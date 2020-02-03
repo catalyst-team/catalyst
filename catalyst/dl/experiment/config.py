@@ -11,7 +11,9 @@ from torch.utils.data import (  # noqa F401
 )
 
 from catalyst.data import Augmentor, AugmentorCompose
-from catalyst.dl import Callback, Experiment, utils, LoggerCallback, ConfusionMatrixCallback
+from catalyst.dl import (
+    Callback, ConfusionMatrixCallback, Experiment, LoggerCallback, utils
+)
 from catalyst.dl.callbacks import (
     CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
     PhaseWrapperCallback, RaiseExceptionCallback, SchedulerCallback,

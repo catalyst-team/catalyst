@@ -5,14 +5,13 @@ from typing import Dict, Iterable, List, Union
 
 import numpy as np
 import safitty
+
 import torch
-import torch.backends.cudnn as cudnn
 from torch import nn
+import torch.backends.cudnn as cudnn
 
 from catalyst import utils
-from catalyst.utils.tools.typing import (
-    Device, Model, Optimizer
-)
+from catalyst.utils.tools.typing import Device, Model, Optimizer
 
 
 def ce_with_logits(logits, target):
