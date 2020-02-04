@@ -94,6 +94,7 @@ For Catalyst.RL introduction, please follow [OpenAI Gym example](https://github.
 
 #### Docs and examples
 - Detailed [classification tutorial](./examples/notebooks/classification-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb)
+- Detailed [metric learning](./examples/notebooks/metric-learning-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]()
 - Advanced [segmentation tutorial](./examples/notebooks/segmentation-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb)
 - Comprehensive [classification pipeline](https://github.com/catalyst-team/classification)
 - Binary and semantic [segmentation pipeline](https://github.com/catalyst-team/segmentation)
