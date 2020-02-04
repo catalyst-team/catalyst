@@ -1,11 +1,11 @@
-from typing import Callable, Dict, List, Tuple
-from path import Path
-import json
 import argparse
+import json
+from pathlib import Path
+from pprint import pprint
+from typing import Callable, Dict, List, Tuple
+
 import numpy as np
 import pandas as pd
-from pprint import pprint
-
 from scipy.special import expit
 from sklearn import metrics
 from sklearn.model_selection import RepeatedStratifiedKFold
@@ -177,13 +177,12 @@ def optimize_thresholds(
 
     results = [
         find_best_threshold(
-            predictions_list_,
-            labels_list_,
+            y_pred_list,
+            y_true_list,
             metric_fn,
             num_splits,
             num_repeats
-        ) for predictions_list_, labels_list_ in \
-            zip(predictions_list, labels_list)
+        ) for y_pred_list, y_true_list in zip(predictions_list, labels_list)
     ]
 
     result_thresholds = [r[0] for r in results]
@@ -292,7 +291,7 @@ def main(args, _=None):
         pprint(class_thresholds)
 
     labels_scores = np.zeros(predictions.shape)
-    labels_scores[:,labels] = 1.0
+    labels_scores[:, labels] = 1.0
     for class_thresholds_ in [None, class_thresholds]:
         thresolds_used = class_thresholds_ is not None
 
@@ -306,12 +305,12 @@ def main(args, _=None):
             key: metrics.__dict__[key](labels_scores, confidences)
             for key in RANK_METRICS
         }
-        out_metrics = args.out_thresholds.replace(
-            ".json",
-            ".rank.metrics.json" \
-                if not thresolds_used \
-                else ".rank.metrics.thresholds.json"
+        postfix = (
+            ".rank.metrics.json"
+            if not thresolds_used
+            else ".rank.metrics.thresholds.json"
         )
+        out_metrics = args.out_thresholds.replace(".json", postfix)
         rank_metrics = _sort_dict_by_keys(
             {str(k): v for k, v in rank_metrics.items()}
         )
@@ -319,12 +318,12 @@ def main(args, _=None):
             json.dump(rank_metrics, fout, ensure_ascii=False, indent=4)
 
         coverage_metrics = score_model_coverage(confidences, labels)
-        out_metrics = args.out_thresholds.replace(
-            ".json",
-            ".coverage.metrics.json" \
-                if not thresolds_used \
-                else ".rank.coverage.thresholds.json"
+        postfix = (
+            ".coverage.metrics.json"
+            if not thresolds_used
+            else ".coverage.metrics.thresholds.json"
         )
+        out_metrics = args.out_thresholds.replace(".json", postfix)
         coverage_metrics = _sort_dict_by_keys(
             {str(k): v for k, v in coverage_metrics.items()}
         )
