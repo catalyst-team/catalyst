@@ -122,7 +122,7 @@ class KNNMetricCallback(Callback):
 
                 # fit nearest neighbors class on our train data
                 classifier = NearestNeighbors(
-                    num_neighbors=self.num_neighbors + int(leave_one_out),
+                    n_neighbors=self.num_neighbors + int(leave_one_out),
                     metric=self.knn_metric,
                     algorithm="brute")
                 classifier.fit(x_train, y_train)
