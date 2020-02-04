@@ -20,7 +20,7 @@ def test_defaults():
     """
     Test on defaults for GanExperiment class, which is child class of
     BaseExperiment.  That's why we check only default callbacks functionality
-    here
+    here.
     """
     model = torch.nn.Module()
     dataset = torch.utils.data.Dataset()
@@ -48,10 +48,6 @@ def test_defaults():
 def test_callback_wrapping():
     """
     Test on callback wrapping for GanExperiment class.
-    """
-    """
-    There should be no default callback of same kind of user defined wrapped
-    callback.
     """
     model = torch.nn.Module()
     dataset = torch.utils.data.Dataset()
