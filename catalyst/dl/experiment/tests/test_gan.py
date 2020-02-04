@@ -1,0 +1,95 @@
+from collections import OrderedDict
+
+import torch
+
+from catalyst.dl import (
+    CheckpointCallback, ConsoleLogger, OptimizerCallback, PhaseManagerCallback,
+    PhaseWrapperCallback, RaiseExceptionCallback, TensorboardLogger
+)
+from catalyst.dl.experiment.gan import GanExperiment
+
+DEFAULT_CALLBACKS = OrderedDict([
+    ("saver", CheckpointCallback),
+    ("console", ConsoleLogger),
+    ("exception", RaiseExceptionCallback)])
+
+
+def test_defaults():
+    """
+    Test on defaults for GanExperiment class, which is child class of
+    BaseExperiment.  That's why we check only default callbacks functionality
+    here
+    """
+    model = torch.nn.Module()
+    dataset = torch.utils.data.Dataset()
+    dataloader = torch.utils.data.DataLoader(dataset)
+    loaders = OrderedDict()
+    loaders["train"] = dataloader
+
+    exp = GanExperiment(model=model, loaders=loaders)
+
+    assert exp.get_callbacks("train").keys() == DEFAULT_CALLBACKS.keys()
+    cbs = zip(exp.get_callbacks("train").values(), DEFAULT_CALLBACKS.values())
+    for callback, klass in cbs:
+        assert isinstance(callback, klass)
+
+
+def test_callback_wrapping():
+    """
+    Test on callback wrapping for GanExperiment class.
+    """
+    """
+    There should be no default callback of same kind of user defined wrapped
+    callback.
+    """
+    model = torch.nn.Module()
+    dataset = torch.utils.data.Dataset()
+    dataloader = torch.utils.data.DataLoader(dataset)
+    loaders = OrderedDict()
+    loaders["train"] = dataloader
+    # Prepare callbacks and state kwargs
+    discriminator_loss_key = "loss_d"
+    generator_loss_key = "loss_g"
+    discriminator_key = "discriminator"
+    generator_key = "generator"
+    input_callbacks = OrderedDict({
+        "optim_d": OptimizerCallback(
+            loss_key=discriminator_loss_key,
+            optimizer_key=discriminator_key
+        ),
+        "optim_g": OptimizerCallback(
+            loss_key=generator_loss_key,
+            optimizer_key=generator_key
+        ),
+        "tensorboard": TensorboardLogger(),
+    })
+    state_kwargs = {
+        "discriminator_train_phase": "discriminator_train",
+        "discriminator_train_num": 1,
+        "generator_train_phase": "generator_train",
+        "generator_train_num": 5,
+    }
+    discriminator_phase_callbacks = ["optim_d"]
+    generator_phase_callbacks = ["optim_g"]
+    phase2callbacks = {
+        state_kwargs["discriminator_train_phase"]: discriminator_phase_callbacks,
+        state_kwargs["generator_train_phase"]: generator_phase_callbacks,
+    }
+
+    exp = GanExperiment(
+        model=model,
+        loaders=loaders,
+        callbacks=input_callbacks,
+        phase2callbacks=phase2callbacks,
+        state_kwargs=state_kwargs,
+    )
+
+    callbacks = exp.get_callbacks("train")
+    assert "phase_manager" in callbacks.keys()
+    assert "optim_d" in callbacks.keys()
+    assert "optim_g" in callbacks.keys()
+    assert "tensorboard" in callbacks.keys()
+    assert isinstance(callbacks["phase_manager"], PhaseManagerCallback)
+    assert isinstance(callbacks["optim_d"], PhaseWrapperCallback)
+    assert isinstance(callbacks["optim_g"], PhaseWrapperCallback)
+    assert isinstance(callbacks["tensorboard"], TensorboardLogger)
