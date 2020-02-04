@@ -16,7 +16,7 @@ class AlchemyRunner(Runner):
 
         .. code-block:: python
 
-            from catalyst.dl import SupervisedAlchemyRunner
+            from catalyst.contrib.dl.runner import SupervisedAlchemyRunner
 
             runner = SupervisedAlchemyRunner()
 
