@@ -17,7 +17,7 @@ class NeptuneRunner(Runner):
     Examples:
         Initialize runner::
 
-            from catalyst.contrib.dl.runner.neptune import SupervisedNeptuneRunner
+            from catalyst.dl import SupervisedNeptuneRunner
             runner = SupervisedNeptuneRunner()
 
         Pass `monitoring_params` and train model::
@@ -33,7 +33,7 @@ class NeptuneRunner(Runner):
                 monitoring_params={
                     "init": {
                     "project_qualified_name": "neptune-ai/catalyst",
-                    "api_token": os.getenv('NEPTUNE_API_TOKEN'), # api key, keep in NEPTUNE_API_TOKEN
+                    "api_token": os.getenv('NEPTUNE_API_TOKEN'), # api key
                 },
                     "create_experiment": {
                         "name": "catalyst-example", # experiment name
