@@ -362,7 +362,7 @@ class _Runner(ABC):
 
         if resume is not None and os.path.isfile(resume):
             checkpoint = utils.load_checkpoint(resume)
-            return checkpoint['stage']
+            return checkpoint["stage"]
         return self.experiment.stages[0]
 
     def run_experiment(self, experiment: _Experiment, check: bool = False):
