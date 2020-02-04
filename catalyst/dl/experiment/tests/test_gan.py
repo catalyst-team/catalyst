@@ -25,8 +25,17 @@ def test_defaults():
     dataloader = torch.utils.data.DataLoader(dataset)
     loaders = OrderedDict()
     loaders["train"] = dataloader
-
-    exp = GanExperiment(model=model, loaders=loaders)
+    state_kwargs = {
+        "discriminator_train_phase": "discriminator_train",
+        "discriminator_train_num": 1,
+        "generator_train_phase": "generator_train",
+        "generator_train_num": 5,
+    }
+    exp = GanExperiment(
+        model=model,
+        loaders=loaders,
+        state_kwargs=state_kwargs,
+    )
 
     assert exp.get_callbacks("train").keys() == DEFAULT_CALLBACKS.keys()
     cbs = zip(exp.get_callbacks("train").values(), DEFAULT_CALLBACKS.values())
