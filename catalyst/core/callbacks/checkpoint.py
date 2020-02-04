@@ -107,28 +107,27 @@ class CheckpointCallback(BaseCheckpointCallback):
     @staticmethod
     def load_checkpoint(*, filename, state: _State):
         if os.path.isfile(filename):
+            print(f"=> loading checkpoint {filename}")
             checkpoint = utils.load_checkpoint(filename)
-            if checkpoint["epoch"] > state.epoch:
-                print(f"=> loading checkpoint {filename}")
 
-                state.epoch = checkpoint["epoch"]
-                state.stage_epoch = checkpoint["stage_epoch"]
-                state.stage = checkpoint["stage"]
+            state.epoch = checkpoint["epoch"]
+            state.stage_epoch = checkpoint["stage_epoch"]
+            state.stage = checkpoint["stage"]
 
-                utils.unpack_checkpoint(
-                    checkpoint,
-                    model=state.model,
-                    criterion=state.criterion,
-                    optimizer=state.optimizer,
-                    scheduler=state.scheduler
-                )
+            utils.unpack_checkpoint(
+                checkpoint,
+                model=state.model,
+                criterion=state.criterion,
+                optimizer=state.optimizer,
+                scheduler=state.scheduler
+            )
 
-                print(
-                    f"loaded checkpoint {filename} "
-                    f"(epoch {checkpoint['epoch']}, "
-                    f"stage_epoch {checkpoint['stage_epoch']}, "
-                    f"stage {checkpoint['stage']})"
-                )
+            print(
+                f"loaded checkpoint {filename} "
+                f"(epoch {checkpoint['epoch']}, "
+                f"stage_epoch {checkpoint['stage_epoch']}, "
+                f"stage {checkpoint['stage']})"
+            )
         else:
             raise Exception(f"No checkpoint found at {filename}")
 
@@ -218,6 +217,7 @@ class CheckpointCallback(BaseCheckpointCallback):
 
         if self.resume is not None:
             self.load_checkpoint(filename=self.resume, state=state)
+            state.resume = None
 
     def on_epoch_end(self, state: _State):
         if state.stage.startswith("infer"):
