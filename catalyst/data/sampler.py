@@ -1,7 +1,12 @@
-from typing import Iterator, List  # isort:skip
+from operator import itemgetter
+from typing import Iterator, List
+
 import numpy as np
 
+from torch.utils.data import DistributedSampler
 from torch.utils.data.sampler import Sampler
+
+from catalyst.data.dataset import DatasetFromSampler
 
 
 class BalanceClassSampler(Sampler):
@@ -154,4 +159,22 @@ class MiniEpochSampler(Sampler):
         return self.mini_epoch_len
 
 
-__all__ = ["BalanceClassSampler", "MiniEpochSampler"]
+class DistributedSamplerOverSampler(DistributedSampler):
+    def __init__(self, sampler, num_replicas=None, rank=None, shuffle=True):
+        super(DistributedSamplerOverSampler, self).__init__(
+            DatasetFromSampler(sampler),
+            num_replicas=num_replicas,
+            rank=rank,
+            shuffle=shuffle
+        )
+        self.sampler = sampler
+
+    def __iter__(self):
+        self.dataset = DatasetFromSampler(self.sampler)
+        indexes_of_indexes = super().__iter__()
+        subsampler_indexes = self.dataset
+        return iter(itemgetter(*indexes_of_indexes)(subsampler_indexes))
+
+
+__all__ = ["BalanceClassSampler", "MiniEpochSampler",
+           "DistributedSamplerOverSampler"]

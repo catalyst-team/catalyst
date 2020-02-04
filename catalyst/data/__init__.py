@@ -7,4 +7,6 @@ from .reader import (
     ImageReader, LambdaReader, MaskReader, ReaderCompose, ReaderSpec,
     ScalarReader
 )
-from .sampler import BalanceClassSampler, MiniEpochSampler
+from .sampler import (
+    BalanceClassSampler, DistributedSamplerOverSampler, MiniEpochSampler
+)

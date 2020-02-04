@@ -3,7 +3,7 @@ from collections import defaultdict
 from numbers import Number
 from time import time
 
-from catalyst.utils.distributed import distributed_mean
+from catalyst.utils import distributed_mean
 from catalyst.utils.meters import AverageValueMeter
 
 

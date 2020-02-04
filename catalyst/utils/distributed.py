@@ -1,7 +1,6 @@
 from collections import OrderedDict
 import copy
 import inspect
-from operator import itemgetter
 import os
 import socket
 import subprocess
@@ -11,18 +10,11 @@ from typing import Dict, Tuple
 import torch
 from torch import nn
 import torch.distributed
-from torch.utils.data import Dataset
-from torch.utils.data.distributed import DistributedSampler
-from torch.utils.data.sampler import Sampler
 
 from catalyst import utils
 from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
-
-__author__ = "Andrey Sheka"
-__maintainer__ = "Andrey Sheka"
-__email__ = "andrey.sheka@gmail.com"
 
 
 def get_rank() -> int:
@@ -165,37 +157,6 @@ def distributed_run(data_parallel, worker_fn, *args, **kwargs):
                 worker.kill()
 
 
-class DatasetFromSampler(Dataset):
-    def __init__(self, sampler: Sampler):
-        self.sampler = sampler
-        self.sampler_list = None
-
-    def __getitem__(self, index: int):
-        if self.sampler_list is None:
-            self.sampler_list = list(self.sampler)
-        return self.sampler_list[index]
-
-    def __len__(self) -> int:
-        return len(self.sampler)
-
-
-class DistributedSamplerOverSampler(DistributedSampler):
-    def __init__(self, sampler, num_replicas=None, rank=None, shuffle=True):
-        super(DistributedSamplerOverSampler, self).__init__(
-            DatasetFromSampler(sampler),
-            num_replicas=num_replicas,
-            rank=rank,
-            shuffle=shuffle
-        )
-        self.sampler = sampler
-
-    def __iter__(self):
-        self.dataset = DatasetFromSampler(self.sampler)
-        indexes_of_indexes = super().__iter__()
-        subsampler_indexes = self.dataset
-        return iter(itemgetter(*indexes_of_indexes)(subsampler_indexes))
-
-
 def process_components(
     model: Model,
     criterion: Criterion = None,
@@ -271,6 +232,6 @@ def process_components(
 
 
 __all__ = [
-    "DistributedSamplerOverSampler", "get_rank", "process_components",
+    "get_rank", "process_components", "distributed_mean",
     "is_apex_available", "assert_fp16_available", "distributed_run"
 ]

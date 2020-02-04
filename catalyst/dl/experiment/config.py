@@ -11,6 +11,7 @@ from torch.utils.data import (  # noqa F401
 )
 
 from catalyst.data import Augmentor, AugmentorCompose
+from catalyst.data.sampler import DistributedSamplerOverSampler
 from catalyst.dl import (
     Callback, ConfusionMatrixCallback, Experiment, LoggerCallback, utils
 )
@@ -23,7 +24,7 @@ from catalyst.dl.registry import (
     CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS,
     TRANSFORMS
 )
-from catalyst.utils import DistributedSamplerOverSampler, get_rank
+from catalyst.utils import get_rank
 from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
@@ -538,7 +539,7 @@ class ConfigExperiment(Experiment):
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
 
-        # Remove LoggerCallback on slave nodes
+        # Remove LoggerCallback on workers nodes
         if get_rank() > 0:
             to_del = (LoggerCallback, ConfusionMatrixCallback)
             for k in list(

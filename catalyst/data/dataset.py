@@ -1,9 +1,9 @@
-from typing import Any, Callable, Dict, List, Union  # isort:skip
 from pathlib import Path
+from typing import Any, Callable, Dict, List, Union
 
 import numpy as np
 
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, Sampler
 
 from catalyst.utils import merge_dicts
 
@@ -191,4 +191,19 @@ class PathsDataset(ListDataset):
         )
 
 
-__all__ = ["ListDataset", "MergeDataset", "NumpyDataset", "PathsDataset"]
+class DatasetFromSampler(Dataset):
+    def __init__(self, sampler: Sampler):
+        self.sampler = sampler
+        self.sampler_list = None
+
+    def __getitem__(self, index: int):
+        if self.sampler_list is None:
+            self.sampler_list = list(self.sampler)
+        return self.sampler_list[index]
+
+    def __len__(self) -> int:
+        return len(self.sampler)
+
+
+__all__ = ["ListDataset", "MergeDataset", "NumpyDataset", "PathsDataset",
+           "DatasetFromSampler"]
