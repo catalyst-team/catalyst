@@ -37,7 +37,7 @@ class GanExperiment(BaseExperiment):
         distributed_params: Dict = None,
         monitoring_params: Dict = None,
         initial_seed: int = 42,
-        phase2callbacks: Dict[str, List[str]] = {},
+        phase2callbacks: Dict[str, List[str]] = None,
     ):
         """
         Args:
@@ -97,7 +97,7 @@ class GanExperiment(BaseExperiment):
             monitoring_params,
             initial_seed,
         )
-        self.wrap_callbacks(phase2callbacks)
+        self.wrap_callbacks(phase2callbacks or {})
 
     def wrap_callbacks(self, phase2callbacks) -> None:
         """Phase wrapping procedure for callbacks"""
