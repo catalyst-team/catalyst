@@ -16,7 +16,7 @@ class GanState(State):
         self.phase = None
         super().__init__(
             batch_consistant_metrics=batch_consistant_metrics,
-            **kwargs
+            **kwargs,
         )
 
 
