@@ -2,7 +2,7 @@ from collections import OrderedDict
 import copy
 from itertools import chain
 import json
-from logging import getLogger
+import logging
 import os
 from pathlib import Path
 import platform
@@ -10,6 +10,7 @@ import re
 import shutil
 import subprocess
 import sys
+from typing import Any, Dict, List, Union
 
 import safitty
 import yaml
@@ -17,9 +18,7 @@ import yaml
 from catalyst import utils
 from catalyst.utils.tools.tensorboard import SummaryWriter
 
-from typing import Any, Dict, List, Union  # isort:skip
-
-LOG = getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def load_ordered_yaml(
@@ -259,20 +258,10 @@ def parse_config_args(*, config, args, unknown_args):
     return config, args
 
 
-def load_config(fin, config_path):
-    if config_path.endswith("json"):
-        config_ = json.load(fin, object_pairs_hook=OrderedDict)
-    elif config_path.endswith("yml"):
-        config_ = load_ordered_yaml(fin)
-    else:
-        raise Exception("Unknown file format")
-    return config_
-
-
 def get_recursive_configs(config_path):
     configs = []
     with open(config_path, "r") as fin:
-        config_ = load_config(fin, config_path)
+        config_ = safitty.load(config_path)
         base_dir = os.path.dirname(config_path)
 
         if 'pre_configs' in config_:
@@ -312,8 +301,7 @@ def parse_args_uargs(args, unknown_args):
     # load params
     config = {}
     for config_path in args_.configs:
-        with open(config_path, "r") as fin:
-            config_ = load_config(fin, config_path)
+        config_ = safitty.load(config_path)
         config = utils.merge_dicts(config, config_)
 
     config, args_ = parse_config_args(
