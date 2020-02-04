@@ -1237,7 +1237,7 @@ Cannot be set together with <code class="docutils literal notranslate"><span cla
 Read about Alchemy here <a class="reference external" href="https://alchemy.host">https://alchemy.host</a>
 Powered by Catalyst.Ecosystem</p>
 <p class="rubric">Example</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">SupervisedAlchemyRunner</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst.contrib.dl.runner</span> <span class="kn">import</span> <span class="n">SupervisedAlchemyRunner</span>
 
 <span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedAlchemyRunner</span><span class="p">()</span>
 
@@ -1288,7 +1288,7 @@ Powered by Catalyst.Ecosystem</p>
 Read about Neptune here <a class="reference external" href="https://neptune.ai">https://neptune.ai</a></p>
 <p class="rubric">Examples</p>
 <p>Initialize runner:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst.contrib.dl.runner.neptune</span> <span class="kn">import</span> <span class="n">SupervisedNeptuneRunner</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst.contrib.dl.runner</span> <span class="kn">import</span> <span class="n">SupervisedNeptuneRunner</span>
 <span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedNeptuneRunner</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1304,7 +1304,7 @@ Read about Neptune here <a class="reference external" href="https://neptune.ai">
     <span class="n">monitoring_params</span><span class="o">=</span><span class="p">{</span>
         <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">&quot;project_qualified_name&quot;</span><span class="p">:</span> <span class="s2">&quot;neptune-ai/catalyst&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;api_token&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;NEPTUNE_API_TOKEN&#39;</span><span class="p">),</span> <span class="c1"># api key, keep in NEPTUNE_API_TOKEN</span>
+        <span class="s2">&quot;api_token&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;NEPTUNE_API_TOKEN&#39;</span><span class="p">),</span> <span class="c1"># api key</span>
     <span class="p">},</span>
         <span class="s2">&quot;create_experiment&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;catalyst-example&quot;</span><span class="p">,</span> <span class="c1"># experiment name</span>
