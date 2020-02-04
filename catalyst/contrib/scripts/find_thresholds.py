@@ -4,8 +4,6 @@ import json
 import argparse
 import numpy as np
 import pandas as pd
-from pathos.multiprocessing import ProcessingPool as Pool
-from itertools import repeat
 from pprint import pprint
 
 from scipy.special import expit
@@ -14,8 +12,14 @@ from sklearn.model_selection import RepeatedStratifiedKFold
 
 from catalyst.utils import boolean_flag
 
-BINARY_METRICS = [
-    "f1_score", "roc_auc_score", "precision_score", "recall_score"
+BINARY_PER_CLASS_METRICS = [
+    "accuracy_score", "precision_score", "recall_score",
+    "f1_score", "roc_auc_score",
+]
+
+RANK_METRICS = [
+    "ndcg_score", "coverage_error",
+    "label_ranking_loss", "label_ranking_average_precision_score",
 ]
 
 
@@ -64,6 +68,7 @@ def build_args(parser):
     )
 
     boolean_flag(parser, "verbose", default=False)
+    boolean_flag(parser, "use-sigmoid", default=False)
 
     return parser
 
@@ -78,7 +83,7 @@ def parse_args():
 def get_label_for_class(
     labels: np.array,
     cls: int,
-    ignore_label: bool = None
+    ignore_label: int = None
 ):
     is_correct = labels == cls
     if ignore_label is not None:
@@ -118,7 +123,7 @@ def find_best_threshold(
         random_state=random_state
     )
     fold_thresholds = []
-    fold_metrics = {k: [] for k in BINARY_METRICS}
+    fold_metrics = {k: [] for k in BINARY_PER_CLASS_METRICS}
 
     for train_index, test_index in rkf.split(y_true, y_true):
         y_pred_train, y_pred_test = y_pred[train_index], y_pred[test_index]
@@ -131,7 +136,7 @@ def find_best_threshold(
         )
         best_predictions = (y_pred_test >= best_threshold).astype(int)
 
-        for metric_name in BINARY_METRICS:
+        for metric_name in BINARY_PER_CLASS_METRICS:
             try:
                 metric_value = metrics.__dict__[metric_name](
                     y_true_test,
@@ -160,24 +165,16 @@ def optimize_thresholds(
     num_workers: int = 0,
     ignore_label: int = None
 ) -> Tuple[Dict, Dict]:
+    predictions_ = predictions.copy()
 
-    # pool = Pool(min(num_workers, len(classes)))
     predictions_list, labels_list = [], []
     for cls in classes:
-        predictions_list.append(predictions[:, cls])
+        predictions_list.append(predictions_[:, cls])
         labels_list.append(
             get_label_for_class(
                 labels, cls, ignore_label=ignore_label
             ))
 
-    # results = pool.map(
-    #     find_best_threshold,
-    #     predictions_list,
-    #     labels_list,
-    #     repeat(metric_fn),
-    #     repeat(num_splits),
-    #     repeat(num_repeats),
-    # )
     results = [
         find_best_threshold(
             predictions_list_,
@@ -185,79 +182,60 @@ def optimize_thresholds(
             metric_fn,
             num_splits,
             num_repeats
-        ) for predictions_list_, labels_list_ in zip(predictions_list, labels_list)
+        ) for predictions_list_, labels_list_ in \
+            zip(predictions_list, labels_list)
     ]
 
-    thresholds = [r[0] for r in results]
-    metrics = [r[1] for r in results]
-    class_thresholds = {c: t for (c, t) in zip(classes, thresholds)}
-    class_metrics = {c: m for (c, m) in zip(classes, metrics)}
+    result_thresholds = [r[0] for r in results]
+    result_metrics = [r[1] for r in results]
+    class_thresholds = {c: t for (c, t) in zip(classes, result_thresholds)}
+    class_metrics = {c: m for (c, m) in zip(classes, result_metrics)}
     return class_thresholds, class_metrics
 
 
-def get_model_predictions(
-    predictions: np.ndarray,
-    thresholds: Dict[int, float],
-    classes: List[int],
-    top_k: int = 3,
-    use_threshold: bool = False
+def get_model_confidences(
+    confidences: np.ndarray,
+    thresholds: Dict[int, float] = None,
+    classes: List[int] = None,
 ):
-    classes = np.array(classes)
-    predictions = predictions[:, classes]
-    assert predictions.shape[1] == len(thresholds)
-    thresholds = np.array(list(thresholds.values()))
+    """
+    Args:
+        confidences (np.ndarray): model predictions of shape
+            [dataset_len; class_confidences]
+        thresholds (Dict[int, float]): thresholds for each class
+        classes (List[int]): classes of interest for evaluation
+    """
+    if classes is not None:
+        classes = np.array(classes)
+        confidences = confidences[:, classes]
 
-    predictions_th = predictions - thresholds
-    args_th = np.argsort(-predictions_th, axis=1)
-    predictions_th = -np.sort(-predictions_th, axis=1)
+    confidences_th = confidences.copy()
+    if thresholds is not None:
+        assert confidences.shape[1] == len(thresholds)
+        thresholds = np.array(list(thresholds.values()))
+        confidences_th = confidences - thresholds
 
-    model_predictions = []
-    for i in range(predictions.shape[0]):
-        candidates = (
-            args_th[i, :][np.nonzero(predictions_th[i, :] > 0)]
-            if use_threshold
-            else args_th[i, :]
-        )
-        model_predictions.append(list(classes[candidates[:top_k]]))
-
-    return model_predictions
+    # candidates = np.argsort(-confidences_th, axis=1)
+    # confidences_th = -np.sort(-confidences_th, axis=1)
+    return confidences_th
 
 
-def score_model_predictions(
-    predictions: List[int],
-    labels: List[int]
+def score_model_coverage(
+    confidences: np.ndarray,
+    labels: np.ndarray,
 ):
-    overall_metrics = {
-        "Accuracy@1": 0.,
-        "Accuracy@3": 0.,
-        "Coverage": 0.
-    }
-    labels = np.array(labels)
-    top1_predictions = []
-    for p in predictions:
-        single_prediction = 0 if len(p) == 0 else p[0]
-        top1_predictions.append(single_prediction)
-    top1_predictions = np.array(top1_predictions)
+    candidates = np.argsort(-confidences, axis=1)
+    confidences = -np.sort(-confidences, axis=1)
+    candidates[confidences < 0] = -1
+    labels = labels[:, None]
 
-    positive_predictions_mask = top1_predictions > 0
+    coverage_metrics = {}
 
-    overall_metrics["Coverage"] = np.mean(np.array(top1_predictions) > 0)
-    overall_metrics["Accuracy@1"] = np.mean(
-        top1_predictions[positive_predictions_mask] ==
-        labels[positive_predictions_mask])
+    for top_k in [1, 3, 5]:
+        metric = (candidates[:, :top_k] == labels).sum(axis=1).mean()
+        coverage_metrics[f"Recall@{top_k:02d}"] = metric
 
-    top_n_predictions = np.zeros((len(predictions), 3), dtype=np.int)
-    for i, p in enumerate(predictions):
-        top_n_predictions[i, :len(p)] = np.array(p)
-
-    overall_metrics["Accuracy@3"] = np.mean(
-        np.any(
-            np.expand_dims(labels[positive_predictions_mask], axis=-1) ==
-            top_n_predictions[positive_predictions_mask, :],
-            axis=1
-        )
-    )
-    return overall_metrics
+    return coverage_metrics
 
 
 def _sort_dict_by_keys(disordered: Dict):
@@ -268,6 +246,8 @@ def _sort_dict_by_keys(disordered: Dict):
 
 def main(args, _=None):
     predictions = expit(np.load(args.in_npy))
+    if args.use_sigmoid:
+        predictions = expit(predictions)
     labels = pd.read_csv(args.in_csv)[args.in_label_column].values
     classes = list(set(labels) - set([args.ignore_label]))
 
@@ -290,29 +270,80 @@ def main(args, _=None):
         class_thresholds_ = {str(k): v for k, v in class_thresholds.items()}
         json.dump(class_thresholds_, fout, ensure_ascii=False, indent=4)
 
-    if not args.verbose:
-        return
+    class_metrics["_mean"] = {
+        key_metric: np.mean([
+            class_metrics[key_class][key_metric]
+            for key_class in class_metrics.keys()
+        ])
+        for key_metric in BINARY_PER_CLASS_METRICS
+    }
 
-    print("CLASS METRICS")
-    pprint(_sort_dict_by_keys(class_metrics))
-    print("CLASS THRESHOLDS")
-    pprint(_sort_dict_by_keys(class_thresholds))
+    out_metrics = args.out_thresholds.replace(".json", ".class.metrics.json")
+    class_metrics = _sort_dict_by_keys(
+        {str(k): v for k, v in class_metrics.items()}
+    )
+    with open(out_metrics, "w") as fout:
+        json.dump(class_metrics, fout, ensure_ascii=False, indent=4)
 
-    for use_threshold in [False, True]:
-        model_predictions = get_model_predictions(
-            predictions=predictions,
-            thresholds=class_thresholds,
+    if args.verbose:
+        print("CLASS METRICS")
+        pprint(class_metrics)
+        print("CLASS THRESHOLDS")
+        pprint(class_thresholds)
+
+    labels_scores = np.zeros(predictions.shape)
+    labels_scores[:,labels] = 1.0
+    for class_thresholds_ in [None, class_thresholds]:
+        thresolds_used = class_thresholds_ is not None
+
+        confidences = get_model_confidences(
+            confidences=predictions,
+            thresholds=class_thresholds_,
             classes=classes,
-            use_threshold=use_threshold
         )
-        model_metrics = score_model_predictions(model_predictions, labels)
 
-        print(
-            "MODEL METRICS WITH THRESHOLDS"
-            if use_threshold
-            else "MODEL METRICS WITHOUT THRESHOLDS"
+        rank_metrics = {
+            key: metrics.__dict__[key](labels_scores, confidences)
+            for key in RANK_METRICS
+        }
+        out_metrics = args.out_thresholds.replace(
+            ".json",
+            ".rank.metrics.json" \
+                if not thresolds_used \
+                else ".rank.metrics.thresholds.json"
         )
-        pprint(_sort_dict_by_keys(model_metrics))
+        rank_metrics = _sort_dict_by_keys(
+            {str(k): v for k, v in rank_metrics.items()}
+        )
+        with open(out_metrics, "w") as fout:
+            json.dump(rank_metrics, fout, ensure_ascii=False, indent=4)
+
+        coverage_metrics = score_model_coverage(confidences, labels)
+        out_metrics = args.out_thresholds.replace(
+            ".json",
+            ".coverage.metrics.json" \
+                if not thresolds_used \
+                else ".rank.coverage.thresholds.json"
+        )
+        coverage_metrics = _sort_dict_by_keys(
+            {str(k): v for k, v in coverage_metrics.items()}
+        )
+        with open(out_metrics, "w") as fout:
+            json.dump(coverage_metrics, fout, ensure_ascii=False, indent=4)
+
+        if args.verbose:
+            print(
+                "RANK METRICS"
+                if not thresolds_used
+                else "RANK METRICS WITH THRESHOLD"
+            )
+            pprint(rank_metrics)
+            print(
+                "COVERAGE METRICS"
+                if not thresolds_used
+                else "COVERAGE METRICS WITH THRESHOLD"
+            )
+            pprint(coverage_metrics)
 
 
 if __name__ == "__main__":
