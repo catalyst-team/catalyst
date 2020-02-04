@@ -37,7 +37,7 @@ class GanExperiment(BaseExperiment):
         distributed_params: Dict = None,
         monitoring_params: Dict = None,
         initial_seed: int = 42,
-        phase2callbacks: Dict[str, List[str]] = None,
+        phase2callbacks: Dict[str, List[str]] = {},
     ):
         """
         Args:
