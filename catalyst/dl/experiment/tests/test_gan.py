@@ -9,9 +9,11 @@ from catalyst.dl import (
 from catalyst.dl.experiment.gan import GanExperiment
 
 DEFAULT_CALLBACKS = OrderedDict([
+    ("phase_manager", PhaseManagerCallback),
     ("saver", CheckpointCallback),
     ("console", ConsoleLogger),
-    ("exception", RaiseExceptionCallback)])
+    ("exception", RaiseExceptionCallback),
+])
 
 
 def test_defaults():
@@ -94,7 +96,6 @@ def test_callback_wrapping():
     )
 
     callbacks = exp.get_callbacks("train")
-    assert "phase_manager" in callbacks.keys()
     assert "optim_d" in callbacks.keys()
     assert "optim_g" in callbacks.keys()
     assert "tensorboard" in callbacks.keys()
