@@ -263,16 +263,16 @@ def get_recursive_configs(config_path):
     config_ = safitty.load(config_path)
     base_dir = os.path.dirname(config_path)
 
-    if 'pre_configs' in config_:
-        pre_configs = config_['pre_configs']
+    if "pre_configs" in config_:
+        pre_configs = config_["pre_configs"]
         for pre_config in pre_configs:
             pre_config = os.path.join(base_dir, pre_config)
             configs += get_recursive_configs(pre_config)
 
     configs += [config_path]
 
-    if 'post_configs' in config_:
-        post_configs = config_['post_configs']
+    if "post_configs" in config_:
+        post_configs = config_["post_configs"]
         for post_config in post_configs:
             post_config = os.path.join(base_dir, post_config)
             configs += [get_recursive_configs(post_config)]
