@@ -69,19 +69,19 @@ def test_callback_wrapping():
         "generator_train_phase": "generator_train",
         "generator_train_num": 5,
     }
-    discriminator_phase_callbacks = ["optim_d"]
-    generator_phase_callbacks = ["optim_g"]
+    discriminator_callbacks = ["optim_d"]
+    generator_callbacks = ["optim_g"]
     phase2callbacks = {
-        state_kwargs["discriminator_train_phase"]: discriminator_phase_callbacks,
-        state_kwargs["generator_train_phase"]: generator_phase_callbacks,
+        state_kwargs["discriminator_train_phase"]: discriminator_callbacks,
+        state_kwargs["generator_train_phase"]: generator_callbacks,
     }
 
     exp = GanExperiment(
         model=model,
         loaders=loaders,
         callbacks=input_callbacks,
-        phase2callbacks=phase2callbacks,
         state_kwargs=state_kwargs,
+        phase2callbacks=phase2callbacks,
     )
 
     callbacks = exp.get_callbacks("train")
