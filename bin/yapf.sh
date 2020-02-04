@@ -8,7 +8,6 @@ builtin cd "$(dirname "${BASH_SOURCE:-$0}")"
 
 ROOT="$(git rev-parse --show-toplevel)"
 builtin cd "$ROOT" || exit 1
-UPSTREAM=$(git remote| grep "upstream")
 
 git remote add 'upstream' 'https://github.com/catalyst-team/catalyst' || true
 
@@ -72,11 +71,11 @@ else
 fi
 
 if ! git diff --quiet &>/dev/null; then
-    echo 'Reformatted changed files. Please review and stage the changes.' 1>&2
-    echo 'Files updated:' 1>&2
-    echo 1>&2
+    echo 'Reformatted changed files. Please review and stage the changes.'
+    echo 'Files updated:'
+    echo
 
-    git --no-pager diff --name-only 1>&2
+    git --no-pager diff --name-only
 
     exit 1
 fi
