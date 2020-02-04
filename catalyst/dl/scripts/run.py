@@ -45,6 +45,7 @@ def build_args(parser: ArgumentParser):
         help="path to latest checkpoint"
     )
     utils.boolean_flag(
+        parser,
         "autoresume",
         default=False,
         help=(
