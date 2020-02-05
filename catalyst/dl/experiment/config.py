@@ -1,6 +1,7 @@
 from typing import Any, Callable, Dict, List, Mapping, Union  # isort:skip
 from collections import OrderedDict
 from copy import deepcopy
+from pathlib import Path
 
 import safitty
 
@@ -537,5 +538,23 @@ class ConfigExperiment(Experiment):
 
         return callbacks
 
+    def get_start_stage(self):
+        """
+        Return start stage, which may differ from `stages[0]` resuming
+        from checkpoint
+        """
+        state_params = self.get_state_params(
+            self.stages[0]
+        )
+        resume, resume_dir = [state_params.get(key, None)
+                              for key in ["resume", "resume_dir"]]
+
+        if resume_dir is not None:
+            resume = resume_dir / str(resume)
+
+        if resume is not None and Path(resume).is_file():
+            checkpoint = utils.load_checkpoint(resume)
+            return checkpoint["stage"]
+        return self.stages[0]
 
 __all__ = ["ConfigExperiment"]
