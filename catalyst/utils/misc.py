@@ -1,6 +1,6 @@
 from typing import Any, Iterable, Optional  # isort:skip
-
 from datetime import datetime
+import inspect
 from itertools import tee
 from pathlib import Path
 import shutil
@@ -153,3 +153,20 @@ def args_are_not_none(*args: Optional[Any]) -> bool:
             return False
 
     return True
+
+
+def get_default_params(fn, exclude=None):
+    """
+
+    :param fn:
+    :param exclude:
+    :return:
+    """
+    argspec = inspect.getfullargspec(fn)
+    default_params = zip(
+        argspec.args[-len(argspec.defaults):], argspec.defaults
+    )
+    if exclude is not None:
+        default_params = filter(lambda x: x[0] not in exclude, default_params)
+    default_params = dict(default_params)
+    return default_params

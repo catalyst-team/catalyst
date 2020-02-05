@@ -1,6 +1,5 @@
 from collections import OrderedDict
 import copy
-import inspect
 import os
 import socket
 import subprocess
@@ -12,6 +11,7 @@ from torch import nn
 import torch.distributed
 
 from catalyst import utils
+from catalyst.utils.misc import get_default_params
 from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
@@ -59,23 +59,6 @@ def distributed_mean(value: float):
         torch.distributed.all_reduce(value)
         value = float(value.item() / torch.distributed.get_world_size())
     return value
-
-
-def get_default_params(fn, exclude=None):
-    """
-
-    :param fn:
-    :param exclude:
-    :return:
-    """
-    argspec = inspect.getfullargspec(fn)
-    default_params = zip(
-        argspec.args[-len(argspec.defaults):], argspec.defaults
-    )
-    if exclude is not None:
-        default_params = filter(lambda x: x[0] not in exclude, default_params)
-    default_params = dict(default_params)
-    return default_params
 
 
 def get_slurm_params():
