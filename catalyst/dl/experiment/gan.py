@@ -18,7 +18,7 @@ class GanExperiment(BaseExperiment):
         self,
         *,
         phase2callbacks: Dict[str, List[str]] = None,
-        **kwargs
+        **kwargs,
     ):
         """
         Args:
