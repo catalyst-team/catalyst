@@ -71,14 +71,14 @@ def get_slurm_params():
     return cur_node_idx, num_nodes, master_node
 
 
-def is_slurm():
+def is_slurm_available():
     return "SLURM_JOB_NUM_NODES" in os.environ and "SLURM_NODEID" in os.environ
 
 
 def get_distributed_params():
     master_addr = "127.0.0.1"
     cur_node, num_nodes = 0, 1
-    if is_slurm():
+    if is_slurm_available():
         cur_node, num_nodes, master_addr = get_slurm_params()
 
     os.environ["MASTER_ADDR"] = os.getenv("MASTER_ADDR", master_addr)
