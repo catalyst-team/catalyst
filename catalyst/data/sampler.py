@@ -160,6 +160,26 @@ class MiniEpochSampler(Sampler):
 
 
 class DistributedSamplerWrapper(DistributedSampler):
+    """
+    Wrapper over `Sampler` for distributed training.
+    Allows you to use any sampler in distributed mode.
+
+    It is especially useful in conjunction with
+    :class:`torch.nn.parallel.DistributedDataParallel`. In such case, each
+    process can pass a DistributedSamplerWrapper instance as a DataLoader
+    sampler, and load a subset of subsampled data of the original dataset
+    that is exclusive to it.
+
+    .. note::
+        Sampler is assumed to be of constant size.
+
+    Arguments:
+        sampler: Sampler used for subsampling.
+        num_replicas (optional): Number of processes participating in
+            distributed training.
+        rank (optional): Rank of the current process within num_replicas.
+        shuffle (optional): If true (default), sampler will shuffle the indices
+    """
     def __init__(self, sampler, num_replicas=None, rank=None, shuffle=True):
         super(DistributedSamplerWrapper, self).__init__(
             DatasetFromSampler(sampler),
