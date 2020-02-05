@@ -19,25 +19,9 @@ class GanExperiment(BaseExperiment):
 
     def __init__(
         self,
-        model: Model,
-        loaders: "OrderedDict[str, DataLoader]",
-        callbacks: Union["OrderedDict[str, Callback]", List[Callback]] = None,
-        logdir: str = None,
-        stage: str = "train",
-        criterion: Criterion = None,
-        optimizer: Optimizer = None,
-        scheduler: Scheduler = None,
-        num_epochs: int = 1,
-        valid_loader: str = "valid",
-        main_metric: str = "loss",
-        minimize_metric: bool = True,
-        verbose: bool = False,
-        state_kwargs: Dict = None,
-        checkpoint_data: Dict = None,
-        distributed_params: Dict = None,
-        monitoring_params: Dict = None,
-        initial_seed: int = 42,
+        *,
         phase2callbacks: Dict[str, List[str]] = None,
+        **kwargs,
     ):
         """
         Args:
@@ -77,26 +61,7 @@ class GanExperiment(BaseExperiment):
                 will be wrapped for "generator_train" phase
                 in wrap_callbacks method
         """
-        super().__init__(
-            model,
-            loaders,
-            callbacks,
-            logdir,
-            stage,
-            criterion,
-            optimizer,
-            scheduler,
-            num_epochs,
-            valid_loader,
-            main_metric,
-            minimize_metric,
-            verbose,
-            state_kwargs,
-            checkpoint_data,
-            distributed_params,
-            monitoring_params,
-            initial_seed,
-        )
+        super().__init__(**kwargs)
         self.wrap_callbacks(phase2callbacks or {})
 
     def wrap_callbacks(self, phase2callbacks) -> None:
