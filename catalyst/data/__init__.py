@@ -10,5 +10,5 @@ from .reader import (
     ScalarReader
 )
 from .sampler import (
-    BalanceClassSampler, DistributedSamplerOverSampler, MiniEpochSampler
+    BalanceClassSampler, DistributedSamplerWrapper, MiniEpochSampler
 )

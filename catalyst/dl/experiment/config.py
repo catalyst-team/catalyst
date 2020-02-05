@@ -11,7 +11,7 @@ from torch.utils.data import (  # noqa F401
 )
 
 from catalyst.data import Augmentor, AugmentorCompose
-from catalyst.data.sampler import DistributedSamplerOverSampler
+from catalyst.data.sampler import DistributedSamplerWrapper
 from catalyst.dl import (
     Callback, ConfusionMatrixCallback, Experiment, LoggerCallback, utils
 )
@@ -465,7 +465,7 @@ class ConfigExperiment(Experiment):
                 if sampler is not None:
                     if not isinstance(sampler, DistributedSampler):
                         loader_params["sampler"] = \
-                            DistributedSamplerOverSampler(sampler=sampler)
+                            DistributedSamplerWrapper(sampler=sampler)
                 else:
                     sampler = DistributedSampler(
                         dataset=loader_params["dataset"]

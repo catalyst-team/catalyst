@@ -159,9 +159,9 @@ class MiniEpochSampler(Sampler):
         return self.mini_epoch_len
 
 
-class DistributedSamplerOverSampler(DistributedSampler):
+class DistributedSamplerWrapper(DistributedSampler):
     def __init__(self, sampler, num_replicas=None, rank=None, shuffle=True):
-        super(DistributedSamplerOverSampler, self).__init__(
+        super(DistributedSamplerWrapper, self).__init__(
             DatasetFromSampler(sampler),
             num_replicas=num_replicas,
             rank=rank,
@@ -177,4 +177,4 @@ class DistributedSamplerOverSampler(DistributedSampler):
 
 
 __all__ = ["BalanceClassSampler", "MiniEpochSampler",
-           "DistributedSamplerOverSampler"]
+           "DistributedSamplerWrapper"]
