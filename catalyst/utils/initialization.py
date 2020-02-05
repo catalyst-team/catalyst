@@ -22,9 +22,8 @@ def _nonlinearity2name(nonlinearity):
     return nonlinearity
 
 
-def create_optimal_inner_init(
-    nonlinearity: nn.Module, **kwargs
-) -> Callable[[nn.Module], None]:
+def create_optimal_inner_init(nonlinearity: nn.Module,
+                              **kwargs) -> Callable[[nn.Module], None]:
     """
     Create initializer for inner layers
     based on their activation function (nonlinearity).
@@ -106,7 +105,11 @@ def xavier_init(module, gain=1, bias=0, distribution="normal"):
 
 
 def kaiming_init(
-    module, mode="fan_out", nonlinearity="relu", bias=0, distribution="normal"
+    module,
+    mode="fan_out",
+    nonlinearity="relu",
+    bias=0,
+    distribution="normal"
 ):
     """
     Initialize the module with he initialization
