@@ -19,8 +19,11 @@ from catalyst.utils.tools.typing import (
 
 def get_rank() -> int:
     """
-    If torch.distributed is initialized returns ``rank``, otherwise ``-1``
-    :return:
+    Returns the rank of the current worker.
+
+    Returns:
+         int: ``rank`` if torch.distributed is initialized,
+              otherwise ``-1``
     """
     if torch.distributed.is_initialized():
         return torch.distributed.get_rank()
