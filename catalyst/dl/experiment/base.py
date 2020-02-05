@@ -13,6 +13,7 @@ class BaseExperiment(Experiment):
     Super-simple one-staged experiment
         you can use to declare experiment in code
     """
+
     def __init__(
         self,
         model: Model,
@@ -60,7 +61,7 @@ class BaseExperiment(Experiment):
             checkpoint_data (dict): additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
             distributed_params (dict): dictionary with the parameters
-                for distributed and FP16 methond
+                for distributed and FP16 method
             monitoring_params (dict): dict with the parameters
                 for monitoring services
             initial_seed (int): experiment's initial seed value
@@ -103,7 +104,7 @@ class BaseExperiment(Experiment):
 
     @property
     def distributed_params(self) -> Dict:
-        """Dict with the parameters for distributed and FP16 methond"""
+        """Dict with the parameters for distributed and FP16 method"""
         return self._distributed_params
 
     @property
@@ -120,7 +121,7 @@ class BaseExperiment(Experiment):
             main_metric=self._main_metric,
             verbose=self._verbose,
             minimize_metric=self._minimize_metric,
-            checkpoint_data=self.checkpoint_data
+            checkpoint_data=self.checkpoint_data,
         )
         state_params = {**default_params, **self._additional_state_kwargs}
         return state_params
