@@ -1,8 +1,8 @@
+from typing import Any, Dict, List, Union  # isort:skip
 from collections import OrderedDict
 import copy
-from itertools import chain
+import itertools
 import json
-import logging
 import os
 from pathlib import Path
 import platform
@@ -10,15 +10,12 @@ import re
 import shutil
 import subprocess
 import sys
-from typing import Any, Dict, List, Union
 
 import safitty
 import yaml
 
 from catalyst import utils
 from catalyst.utils.tools.tensorboard import SummaryWriter
-
-logger = logging.getLogger(__name__)
 
 
 def load_ordered_yaml(
@@ -260,22 +257,22 @@ def parse_config_args(*, config, args, unknown_args):
 
 def get_recursive_configs(config_path):
     configs = []
-    config_ = safitty.load(config_path)
-    base_dir = os.path.dirname(config_path)
+    config_ = safitty.load(config_path, ordered=True)
+    base_dir = Path(config_path).parent
 
     if "pre_configs" in config_:
         pre_configs = config_["pre_configs"]
         for pre_config in pre_configs:
-            pre_config = os.path.join(base_dir, pre_config)
-            configs += get_recursive_configs(pre_config)
+            pre_config = base_dir / pre_config
+            configs.extend(get_recursive_configs(pre_config))
 
-    configs += [config_path]
+    configs.append(config_path)
 
     if "post_configs" in config_:
         post_configs = config_["post_configs"]
         for post_config in post_configs:
-            post_config = os.path.join(base_dir, post_config)
-            configs += [get_recursive_configs(post_config)]
+            post_config = base_dir / post_config
+            configs.extend(get_recursive_configs(post_config))
 
     return configs
 
@@ -295,12 +292,12 @@ def parse_args_uargs(args, unknown_args):
     args_.configs = [
         get_recursive_configs(config_path) for config_path in args_.configs
     ]
-    args_.configs = list(chain(*args_.configs))
+    args_.configs = list(itertools.chain(*args_.configs))
 
     # load params
     config = {}
     for config_path in args_.configs:
-        config_ = safitty.load(config_path)
+        config_ = safitty.load(config_path, ordered=True)
         config = utils.merge_dicts(config, config_)
 
     config, args_ = parse_config_args(
