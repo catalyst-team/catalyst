@@ -197,7 +197,6 @@ def optimize_thresholds(
         ),
         pool
     )
-    results.sort(key=lambda x: x[0])
     results = [(r[1],r[2]) for r in sorted(results, key=lambda x: x[0])]
 
     result_thresholds = [r[0] for r in results]
