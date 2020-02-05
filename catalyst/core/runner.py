@@ -5,6 +5,7 @@ from typing import (  # isort:skip
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 import os
+from pathlib import Path
 
 import torch
 from torch import nn
@@ -358,13 +359,16 @@ class _Runner(ABC):
         self._run_event("stage", moment="end")
 
     def get_start_stage(self):
-        resume, resume_dir = [getattr(self.state, key, None)
+        state_params = self.experiment.get_state_params(
+            self.experiment.stages[0]
+        )
+        resume, resume_dir = [state_params.get(key, None)
                               for key in ["resume", "resume_dir"]]
 
         if resume_dir is not None:
-            resume = str(resume_dir) + "/" + str(resume)
+            resume = resume_dir / str(resume)
 
-        if resume is not None and os.path.isfile(resume):
+        if resume is not None and Path(resume).is_file():
             checkpoint = utils.load_checkpoint(resume)
             return checkpoint["stage"]
         return self.experiment.stages[0]
