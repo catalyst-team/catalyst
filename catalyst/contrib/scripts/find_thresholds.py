@@ -243,6 +243,15 @@ def _sort_dict_by_keys(disordered: Dict):
     return sorted_dict
 
 
+def _save_json(dct: Dict, outpath:Path, posfix: str=None):
+    outpath = str(outpath)
+    if posfix is not None:
+        outpath = outpath.replace(".json", f"{posfix}.json")
+    dct = _sort_dict_by_keys({str(k): v for k, v in dct.copy().items()})
+    with open(outpath, "w") as fout:
+        json.dump(dct, fout, ensure_ascii=False, indent=4)
+
+
 def main(args, _=None):
     predictions = expit(np.load(args.in_npy))
     if args.use_sigmoid:
@@ -263,11 +272,7 @@ def main(args, _=None):
         ignore_label=args.ignore_label,
         num_workers=args.num_workers
     )
-    class_thresholds = _sort_dict_by_keys(class_thresholds)
-
-    with open(args.out_thresholds, "w") as fout:
-        class_thresholds_ = {str(k): v for k, v in class_thresholds.items()}
-        json.dump(class_thresholds_, fout, ensure_ascii=False, indent=4)
+    _save_json(class_thresholds, outpath=args.out_thresholds)
 
     class_metrics["_mean"] = {
         key_metric: np.mean([
@@ -277,12 +282,7 @@ def main(args, _=None):
         for key_metric in BINARY_PER_CLASS_METRICS
     }
 
-    out_metrics = args.out_thresholds.replace(".json", ".class.metrics.json")
-    class_metrics = _sort_dict_by_keys(
-        {str(k): v for k, v in class_metrics.items()}
-    )
-    with open(out_metrics, "w") as fout:
-        json.dump(class_metrics, fout, ensure_ascii=False, indent=4)
+    _save_json(class_metrics, args.out_thresholds, posfix=".class.metrics")
 
     if args.verbose:
         print("CLASS METRICS")
@@ -306,16 +306,11 @@ def main(args, _=None):
             for key in RANK_METRICS
         }
         postfix = (
-            ".rank.metrics.json"
+            ".rank.metrics"
             if not thresolds_used
-            else ".rank.metrics.thresholds.json"
+            else ".rank.metrics.thresholds"
         )
-        out_metrics = args.out_thresholds.replace(".json", postfix)
-        rank_metrics = _sort_dict_by_keys(
-            {str(k): v for k, v in rank_metrics.items()}
-        )
-        with open(out_metrics, "w") as fout:
-            json.dump(rank_metrics, fout, ensure_ascii=False, indent=4)
+        _save_json(rank_metrics, args.out_thresholds, posfix=postfix)
 
         coverage_metrics = score_model_coverage(confidences, labels)
         postfix = (
@@ -323,12 +318,7 @@ def main(args, _=None):
             if not thresolds_used
             else ".coverage.metrics.thresholds.json"
         )
-        out_metrics = args.out_thresholds.replace(".json", postfix)
-        coverage_metrics = _sort_dict_by_keys(
-            {str(k): v for k, v in coverage_metrics.items()}
-        )
-        with open(out_metrics, "w") as fout:
-            json.dump(coverage_metrics, fout, ensure_ascii=False, indent=4)
+        _save_json(coverage_metrics, args.out_thresholds, posfix=postfix)
 
         if args.verbose:
             print(
