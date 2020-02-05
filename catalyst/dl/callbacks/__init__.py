@@ -10,7 +10,8 @@ from .inference import InferCallback, InferMaskCallback
 from .metrics import (
     AccuracyCallback, AUCCallback, ClasswiseIouCallback,
     ClasswiseJaccardCallback, DiceCallback, F1ScoreCallback, IouCallback,
-    JaccardCallback, MapKCallback, PrecisionRecallF1ScoreCallback
+    JaccardCallback, MapKCallback, PrecisionRecallF1ScoreCallback,
+    MulticlassDiceMetricCallback
 )
 from .misc import (
     ConfusionMatrixCallback, EarlyStoppingCallback, RaiseExceptionCallback
