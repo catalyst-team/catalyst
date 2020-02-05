@@ -77,7 +77,7 @@ def main(args, unknown_args):
 
     Experiment, Runner = utils.import_experiment_and_runner(Path(args.expdir))
 
-    runner_params = config.pop("runner_params", {}) or {}
+    runner_params = safitty.get(config, "runner_params", default={})
     experiment = Experiment(config)
     runner = Runner(**runner_params)
 
