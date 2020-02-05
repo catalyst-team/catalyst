@@ -192,6 +192,9 @@ class PathsDataset(ListDataset):
 
 
 class DatasetFromSampler(Dataset):
+    """
+    Dataset of indexes from `Sampler`
+    """
     def __init__(self, sampler: Sampler):
         self.sampler = sampler
         self.sampler_list = None
