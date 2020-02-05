@@ -260,7 +260,7 @@ def parse_config_args(*, config, args, unknown_args):
         logdir = Path(safitty.get(config, "args", "logdir"))
         checkpoint_filename = logdir / "checkpoints" / "last_full.pth"
         if checkpoint_filename.is_file():
-            config["resume"] = str(checkpoint_filename)
+            config["args"]["resume"] = str(checkpoint_filename)
     return config, args
 
 
