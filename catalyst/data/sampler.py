@@ -6,7 +6,7 @@ import numpy as np
 from torch.utils.data import DistributedSampler
 from torch.utils.data.sampler import Sampler
 
-from catalyst.data.dataset import DatasetFromSampler
+from catalyst.data import DatasetFromSampler
 
 
 class BalanceClassSampler(Sampler):
