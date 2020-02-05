@@ -257,8 +257,8 @@ def parse_config_args(*, config, args, unknown_args):
     if safitty.get(config, "args", "autoresume", default=False) and \
             safitty.get(config, "args", "logdir") is not None and \
             safitty.get(config, "args", "resume") is None:
-        log_dir = Path(safitty.get(config, "args", "logdir"))
-        checkpoint_filename = log_dir / "checkpoints" / "last_full.pth"
+        logdir = Path(safitty.get(config, "args", "logdir"))
+        checkpoint_filename = logdir / "checkpoints" / "last_full.pth"
         if checkpoint_filename.is_file():
             config["resume"] = str(checkpoint_filename)
     return config, args
