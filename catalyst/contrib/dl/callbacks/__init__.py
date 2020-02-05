@@ -1,5 +1,5 @@
 # flake8: noqa
 
-from .cutmixcallback import CutmixCallback
+from .cutmix_callback import CutmixCallback
 from .knn import KNNMetricCallback
-from .metricaggregatorcallback import MetricAggregatorCallback
+from .metric_aggregator_callback import MetricAggregatorCallback

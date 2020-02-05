@@ -1,5 +1,7 @@
-from typing import List  # isort:skip
+from typing import List
+
 import numpy as np
+
 import torch
 
 from catalyst.dl import CriterionCallback, State
@@ -17,6 +19,7 @@ class CutmixCallback(CriterionCallback):
 
         You may not use them together.
     """
+
     def __init__(
             self,
             fields: List[str] = ("features",),
@@ -47,7 +50,8 @@ class CutmixCallback(CriterionCallback):
 
     def _rand_bbox(self, size, lam):
         """
-        Generates top-left and bottom-right coordinates of the box of the given size.
+        Generates top-left and bottom-right coordinates of the box
+        of the given size.
         :param size: size of the box
         :param lam: lambda parameter
         :return: top-left and bottom-right coordinates of the box
@@ -75,7 +79,7 @@ class CutmixCallback(CriterionCallback):
         :return: void
         """
         self.is_needed = not self.on_train_only or \
-                         state.loader_name.startswith("train")
+            state.loader_name.startswith("train")
 
     def on_batch_start(self, state: State):
         """
@@ -108,7 +112,8 @@ class CutmixCallback(CriterionCallback):
     def _compute_loss(self, state: State, criterion):
         """
         Computes loss.
-        If self.is_needed is False then calls _compute_loss from CriterionCallback,
+        If self.is_needed is False then calls _compute_loss
+        from CriterionCallback,
         otherwise computes loss value.
         :param state: current state
         :param criterion: that is used to compute loss
@@ -121,5 +126,5 @@ class CutmixCallback(CriterionCallback):
         y_a = state.input[self.input_key]
         y_b = state.input[self.input_key][self.index]
         loss = self.lam * criterion(pred, y_a) + \
-               (1 - self.lam) * criterion(pred, y_b)
+            (1 - self.lam) * criterion(pred, y_b)
         return loss
