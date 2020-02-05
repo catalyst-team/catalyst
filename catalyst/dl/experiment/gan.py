@@ -1,14 +1,11 @@
 from collections import OrderedDict
-from typing import Dict, List, Union
-
-from torch.utils.data import DataLoader
+from typing import Dict, List
 
 from catalyst.dl import Callback
 from catalyst.dl.callbacks import (
     CheckpointCallback, ConsoleLogger, PhaseBatchWrapperCallback,
     PhaseManagerCallback, RaiseExceptionCallback, VerboseLogger
 )
-from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 from .base import BaseExperiment
 
 
