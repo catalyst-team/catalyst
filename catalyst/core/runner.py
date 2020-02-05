@@ -4,7 +4,6 @@ from typing import (  # isort:skip
 
 from abc import ABC, abstractmethod
 from collections import OrderedDict
-import os
 from pathlib import Path
 
 import torch
