@@ -10,8 +10,9 @@ from torch.utils.data import (  # noqa F401
     DataLoader, Dataset, DistributedSampler
 )
 
-from catalyst.data import Augmentor, AugmentorCompose
-from catalyst.data.sampler import DistributedSamplerWrapper
+from catalyst.data import (
+    Augmentor, AugmentorCompose, DistributedSamplerWrapper
+)
 from catalyst.dl import (
     Callback, ConfusionMatrixCallback, Experiment, LoggerCallback, utils
 )
