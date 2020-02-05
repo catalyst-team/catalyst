@@ -2,7 +2,8 @@ import argparse
 import json
 from pathlib import Path
 from pprint import pprint
-from typing import Callable, Dict, List, Tuple
+from itertools import repeat
+from typing import Callable, Dict, List, Tuple, Any
 
 import numpy as np
 import pandas as pd
@@ -11,6 +12,7 @@ from sklearn import metrics
 from sklearn.model_selection import RepeatedStratifiedKFold
 
 from catalyst.utils import boolean_flag
+from catalyst.utils.parallel import tqdm_parallel_imap, get_pool
 
 BINARY_PER_CLASS_METRICS = [
     "accuracy_score", "precision_score", "recall_score",
@@ -155,6 +157,12 @@ def find_best_threshold(
     return fold_best_threshold, fold_metrics
 
 
+def wrap_find_best_threshold(args: Tuple[Any]):
+    class_id, function_args = args[0], args[1:]
+    threshold, metrics = find_best_threshold(*function_args)
+    return class_id, threshold, metrics
+
+
 def optimize_thresholds(
     predictions: np.ndarray,
     labels: np.ndarray,
@@ -165,6 +173,8 @@ def optimize_thresholds(
     num_workers: int = 0,
     ignore_label: int = None
 ) -> Tuple[Dict, Dict]:
+    pool = get_pool(num_workers)
+
     predictions_ = predictions.copy()
 
     predictions_list, labels_list = [], []
@@ -175,15 +185,20 @@ def optimize_thresholds(
                 labels, cls, ignore_label=ignore_label
             ))
 
-    results = [
-        find_best_threshold(
-            y_pred_list,
-            y_true_list,
-            metric_fn,
-            num_splits,
-            num_repeats
-        ) for y_pred_list, y_true_list in zip(predictions_list, labels_list)
-    ]
+    results = tqdm_parallel_imap(
+        wrap_find_best_threshold,
+        zip(
+            classes,
+            predictions_list,
+            labels_list,
+            repeat(metric_fn),
+            repeat(num_splits),
+            repeat(num_repeats)
+        ),
+        pool
+    )
+    results.sort(key=lambda x: x[0])
+    results = [(r[1],r[2]) for r in sorted(results, key=lambda x: x[0])]
 
     result_thresholds = [r[0] for r in results]
     result_metrics = [r[1] for r in results]
