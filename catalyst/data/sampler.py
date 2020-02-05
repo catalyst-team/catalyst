@@ -1,5 +1,5 @@
+from typing import Iterator, List  # isort:skip
 from operator import itemgetter
-from typing import Iterator, List
 
 import numpy as np
 

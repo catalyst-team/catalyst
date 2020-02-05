@@ -62,13 +62,14 @@ def build_args(parser: ArgumentParser):
     utils.boolean_flag(parser, "verbose", default=None)
     utils.boolean_flag(parser, "check", default=None)
     utils.boolean_flag(
-        parser,
-        "deterministic",
+        parser, "deterministic",
         default=None,
         help="Deterministic mode if running in CuDNN backend"
     )
     utils.boolean_flag(
-        parser, "benchmark", default=None, help="Use CuDNN benchmark"
+        parser, "benchmark",
+        default=None,
+        help="Use CuDNN benchmark"
     )
 
     return parser

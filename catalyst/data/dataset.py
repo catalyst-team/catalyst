@@ -1,5 +1,5 @@
+from typing import Any, Callable, Dict, List, Union  # isort:skip
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Union
 
 import numpy as np
 

@@ -1,7 +1,8 @@
+from typing import Dict, Iterable, List, Tuple, Union  # isort:skip
 import collections
+import copy
 import os
 import re
-from typing import Dict, Iterable, List, Union
 
 import numpy as np
 import safitty
@@ -11,7 +12,9 @@ from torch import nn
 import torch.backends.cudnn as cudnn
 
 from catalyst import utils
-from catalyst.utils.tools.typing import Device, Model, Optimizer
+from catalyst.utils.tools.typing import (
+    Criterion, Device, Model, Optimizer, Scheduler
+)
 
 
 def ce_with_logits(logits, target):
