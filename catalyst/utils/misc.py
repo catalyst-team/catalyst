@@ -1,4 +1,4 @@
-from typing import Any, Iterable, Optional  # isort:skip
+from typing import Any, Callable, Iterable, List, Optional  # isort:skip
 from datetime import datetime
 import inspect
 from itertools import tee
@@ -155,12 +155,14 @@ def args_are_not_none(*args: Optional[Any]) -> bool:
     return True
 
 
-def get_default_params(fn, exclude=None):
+def get_default_params(fn: Callable[..., Any], exclude: List[str] = None):
     """
-
-    :param fn:
-    :param exclude:
-    :return:
+    Return default parameters of Callable.
+    Args:
+        fn (Callable[..., Any]): target Callable
+        exclude (List[str]): exclude list of parameters
+    Returns:
+        dict: contains default parameters of `fn`
     """
     argspec = inspect.getfullargspec(fn)
     default_params = zip(
