@@ -357,20 +357,6 @@ class _Runner(ABC):
             self.state.stage_epoch += 1
         self._run_event("stage", moment="end")
 
-    def get_start_stage(self):
-        state_params = self.experiment.get_state_params(
-            self.experiment.stages[0]
-        )
-        resume, resume_dir = [state_params.get(key, None)
-                              for key in ["resume", "resume_dir"]]
-
-        if resume_dir is not None:
-            resume = resume_dir / str(resume)
-
-        if resume is not None and Path(resume).is_file():
-            checkpoint = utils.load_checkpoint(resume)
-            return checkpoint["stage"]
-        return self.experiment.stages[0]
 
     def run_experiment(self, experiment: _Experiment, check: bool = False):
         """
@@ -390,9 +376,10 @@ class _Runner(ABC):
         #     utils.dump_base_experiment_code(expdir, logdir)
 
         try:
-            start_stage = self.get_start_stage()
             stages = list(self.experiment.stages)
-            stages = stages[stages.index(start_stage):]
+            if hasattr(self.experiment, "get_start_stage"):
+                start_stage = self.experiment.get_start_stage()
+                stages = stages[stages.index(start_stage):]
 
             for stage in stages:
                 self._run_stage(stage)
