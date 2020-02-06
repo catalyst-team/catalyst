@@ -43,28 +43,49 @@ class DiceCallback(MetricCallback):
 
 
 class MulticlassDiceMetricCallback(Callback):
+    """
+    Global Multi-Class Dice Metric Callback: calculates the exact
+    dice score across multiple batches. This callback is good for getting
+    the dice score with small batch sizes where the batchwise dice is noisier.
+    """
+
     def __init__(
         self,
-        prefix: str = "dice",
         input_key: str = "targets",
         output_key: str = "logits",
+        prefix: str = "dice",
         class_names=None,
-        class_prefix="",
-        **metric_params
     ):
+        """
+        Args:
+            input_key (str): input key to use for dice calculation;
+                specifies our `y_true`.
+            output_key (str): output key to use for dice calculation;
+                specifies our `y_pred`.
+            prefix (str): prefix for printing the metric
+            class_names (dict/List):
+                if dictionary, should be:
+                    {class_id: class_name, ...} where class_id is an integer
+                This allows you to ignore class indices.
+                if list, make sure it corresponds to the number of classes
+        """
         super().__init__(CallbackOrder.Metric)
-        self.prefix = prefix
         self.input_key = input_key
         self.output_key = output_key
-        self.metric_params = metric_params
+        self.prefix = prefix
         self.confusion_matrix = None
-        self.class_names = class_names  # dictionary {class_id: class_name}
-        self.class_prefix = class_prefix
+        self.class_names = class_names
 
     def _reset_stats(self):
+        """
+        Resets the confusion matrix holding the epoch-wise stats.
+        """
         self.confusion_matrix = None
 
     def on_batch_end(self, state: State):
+        """
+        Records the confusion matrix at the end of each batch.
+        """
         outputs = state.output[self.output_key]
         targets = state.input[self.input_key]
 
@@ -78,22 +99,25 @@ class MulticlassDiceMetricCallback(Callback):
             self.confusion_matrix += confusion_matrix
 
     def on_loader_end(self, state: State):
+        """
+        Calculates the dice epoch-wise using the running confusion matrix.
+        """
         tp_fp_fn_dict = calculate_tp_fp_fn(self.confusion_matrix)
 
-        batch_metrics: Dict = calculate_dice(**tp_fp_fn_dict)
+        dice_scores: np.ndarray = calculate_dice(**tp_fp_fn_dict)
+        loader_values = state.metric_manager.epoch_values[state.loader_name]
 
-        for metric_id, dice_value in batch_metrics.items():
-            if metric_id not in self.class_names:
+        # logging the dice scores in the state
+        for i, dice in enumerate(dice_scores):
+            if (isinstance(self.class_names, dict) and \
+                not i in list(self.class_names.keys())):
                 continue
+            postfix = self.class_names[i] \
+                if self.class_names is not None \
+                else str(i)
+            loader_values[f"{self.prefix}_{postfix}"] = dice
 
-            metric_name = self.class_names[metric_id]
-            state.metric_manager.epoch_values[state.loader_name][
-                f"{self.class_prefix}_{metric_name}"
-            ] = dice_value
-
-        state.metric_manager.epoch_values[state.loader_name]["mean"] = np.mean(
-            [x for x in batch_metrics.values()]
-        )
+        loader_values[f"{self.prefix}_mean"] = np.mean(dice_scores)
 
         self._reset_stats()
 
