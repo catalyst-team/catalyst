@@ -13,7 +13,10 @@ class SegmentationDataset(Dataset):
     Returns a dict with ``image``, ``mask`` and ``filename`` keys
     """
     def __init__(
-        self, images: List[Path], masks: List[Path] = None, transforms=None
+        self,
+        images: List[Path],
+        masks: List[Path] = None,
+        transforms=None
     ) -> None:
         """
         Args:
