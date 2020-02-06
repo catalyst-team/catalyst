@@ -36,8 +36,8 @@
     <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">Runner</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.tools.typing</span> <span class="kn">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">GanExperiment</span><span class="p">,</span> <span class="n">GanState</span><span class="p">,</span> <span class="n">Runner</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.tools.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span>
 
 
 <div class="viewcode-block" id="MultiPhaseRunner"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.gan.MultiPhaseRunner">[docs]</a><span class="k">class</span> <span class="nc">MultiPhaseRunner</span><span class="p">(</span><span class="n">Runner</span><span class="p">):</span>
@@ -110,6 +110,12 @@
 <span class="sd">    Various conditioning types, penalties and regularization (such as WGAN-GP)</span>
 <span class="sd">    can be easily derived from this class</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">experiment</span><span class="p">:</span> <span class="n">GanExperiment</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">GanState</span>
+
+    <span class="n">experiment_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">GanExperiment</span>
+    <span class="n">state_fn</span><span class="p">:</span> <span class="n">callable</span> <span class="o">=</span> <span class="n">GanState</span>
+
 <div class="viewcode-block" id="GanRunner.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.gan.GanRunner.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Model</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Model</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -275,7 +281,82 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">fake_data_output_key</span><span class="p">:</span> <span class="n">fake_data</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fake_logits_output_key</span><span class="p">:</span> <span class="n">fake_logits</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">real_logits_output_key</span><span class="p">:</span> <span class="n">real_logits</span>
-        <span class="p">}</span></div>
+        <span class="p">}</span>
+
+<div class="viewcode-block" id="GanRunner.train"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.gan.GanRunner.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+        <span class="n">loaders</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">,</span>  <span class="c1"># noqa: F821</span>
+        <span class="n">callbacks</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># noqa: F821</span>
+        <span class="n">phase2callbacks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">criterion</span><span class="p">:</span> <span class="n">Criterion</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">main_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+        <span class="n">minimize_metric</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">distributed_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">monitoring_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">initial_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+        <span class="n">check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            model: models, usually generator and discriminator</span>
+<span class="sd">            loaders: dictionary containing one or several</span>
+<span class="sd">                ``torch.utils.data.DataLoader`` for training and validation</span>
+<span class="sd">            callbacks: list of callbacks</span>
+<span class="sd">            phase2callbacks: dictionary with lists of callback names</span>
+<span class="sd">                which should be wrapped for appropriate phase</span>
+<span class="sd">                for example: {&quot;generator_train&quot;: &quot;loss_g&quot;, &quot;optim_g&quot;}</span>
+<span class="sd">                &quot;loss_g&quot; and &quot;optim_g&quot; callbacks from callbacks dict</span>
+<span class="sd">                will be wrapped for &quot;generator_train&quot; phase</span>
+<span class="sd">                in wrap_callbacks method</span>
+<span class="sd">            criterion: criterion function</span>
+<span class="sd">            optimizer: optimize</span>
+<span class="sd">            num_epochs: number of experiment&#39;s epochs</span>
+<span class="sd">                the metrics and save the checkpoints.</span>
+<span class="sd">            main_metric: the key to the name of the metric</span>
+<span class="sd">                by which the checkpoints will be selected.</span>
+<span class="sd">            minimize_metric: flag to indicate whether</span>
+<span class="sd">                the ``main_metric`` should be minimized.</span>
+<span class="sd">            state_kwargs: additional state params to ``RunnerState``</span>
+<span class="sd">            checkpoint_data: additional data to save in checkpoint,</span>
+<span class="sd">                for example: ``class_names``, ``date_of_training``, etc</span>
+<span class="sd">            distributed_params: dictionary with the parameters</span>
+<span class="sd">                for distributed and FP16 method</span>
+<span class="sd">            monitoring_params: dict with the parameters</span>
+<span class="sd">                for monitoring services</span>
+<span class="sd">            logdir: path to output directory</span>
+<span class="sd">            verbose: if true, it displays the status of the training</span>
+<span class="sd">                to the console.</span>
+<span class="sd">            initial_seed: experiment&#39;s initial seed value</span>
+<span class="sd">            check: if True, then only checks that pipeline is working</span>
+<span class="sd">            (3 epochs only)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Initialize and run experiment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment_fn</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+            <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
+            <span class="n">logdir</span><span class="o">=</span><span class="n">logdir</span><span class="p">,</span>
+            <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+            <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+            <span class="n">num_epochs</span><span class="o">=</span><span class="n">num_epochs</span><span class="p">,</span>
+            <span class="n">main_metric</span><span class="o">=</span><span class="n">main_metric</span><span class="p">,</span>
+            <span class="n">minimize_metric</span><span class="o">=</span><span class="n">minimize_metric</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">state_kwargs</span><span class="o">=</span><span class="n">state_kwargs</span><span class="p">,</span>
+            <span class="n">checkpoint_data</span><span class="o">=</span><span class="n">checkpoint_data</span><span class="p">,</span>
+            <span class="n">distributed_params</span><span class="o">=</span><span class="n">distributed_params</span><span class="p">,</span>
+            <span class="n">monitoring_params</span><span class="o">=</span><span class="n">monitoring_params</span><span class="p">,</span>
+            <span class="n">initial_seed</span><span class="o">=</span><span class="n">initial_seed</span><span class="p">,</span>
+            <span class="n">phase2callbacks</span><span class="o">=</span><span class="n">phase2callbacks</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">(</span><span class="n">experiment</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span></div></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MultiPhaseRunner&quot;</span><span class="p">,</span> <span class="s2">&quot;GanRunner&quot;</span><span class="p">]</span>

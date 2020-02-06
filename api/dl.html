@@ -730,7 +730,7 @@ to the console.</p></li>
 <li><p><strong>checkpoint_data</strong> (<em>dict</em>) – additional data to save in checkpoint,
 for example: <code class="docutils literal notranslate"><span class="pre">class_names</span></code>, <code class="docutils literal notranslate"><span class="pre">date_of_training</span></code>, etc</p></li>
 <li><p><strong>distributed_params</strong> (<em>dict</em>) – dictionary with the parameters
-for distributed and FP16 methond</p></li>
+for distributed and FP16 method</p></li>
 <li><p><strong>monitoring_params</strong> (<em>dict</em>) – dict with the parameters
 for monitoring services</p></li>
 <li><p><strong>initial_seed</strong> (<em>int</em>) – experiment’s initial seed value</p></li>
@@ -742,7 +742,7 @@ for monitoring services</p></li>
 <dl class="method">
 <dt id="catalyst.dl.experiment.base.BaseExperiment.distributed_params">
 <em class="property">property </em><code class="sig-name descname">distributed_params</code><a class="headerlink" href="#catalyst.dl.experiment.base.BaseExperiment.distributed_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dict with the parameters for distributed and FP16 methond</p>
+<dd><p>Dict with the parameters for distributed and FP16 method</p>
 </dd></dl>
 
 <dl class="method">
@@ -1216,6 +1216,60 @@ e.g. “discriminator”</p></li>
 discriminator (i.e. if generator is conditioned on 3 variables,
 discriminator must be conditioned on same 3 variables)</p>
 </div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.runner.gan.GanRunner.experiment_fn">
+<code class="sig-name descname">experiment_fn</code><a class="headerlink" href="#catalyst.dl.runner.gan.GanRunner.experiment_fn" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.experiment.gan.GanExperiment</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.runner.gan.GanRunner.state_fn">
+<code class="sig-name descname">state_fn</code><a class="headerlink" href="#catalyst.dl.runner.gan.GanRunner.state_fn" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.state.gan.GanState</span></code></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.runner.gan.GanRunner.train">
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, loaders: OrderedDict[str, DataLoader], callbacks: OrderedDict[str, Callback] = None, phase2callbacks: Dict[str, List[str]] = None, criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, num_epochs: int = 1, main_metric: str = 'loss', minimize_metric: bool = True, state_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, monitoring_params: Dict = None, logdir: str = None, verbose: bool = False, initial_seed: int = 42, check: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/runner/gan.html#GanRunner.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.gan.GanRunner.train" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – models, usually generator and discriminator</p></li>
+<li><p><strong>loaders</strong> – dictionary containing one or several
+<code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code> for training and validation</p></li>
+<li><p><strong>callbacks</strong> – list of callbacks</p></li>
+<li><p><strong>phase2callbacks</strong> – dictionary with lists of callback names
+which should be wrapped for appropriate phase
+for example: {“generator_train”: “loss_g”, “optim_g”}
+“loss_g” and “optim_g” callbacks from callbacks dict
+will be wrapped for “generator_train” phase
+in wrap_callbacks method</p></li>
+<li><p><strong>criterion</strong> – criterion function</p></li>
+<li><p><strong>optimizer</strong> – optimize</p></li>
+<li><p><strong>num_epochs</strong> – number of experiment’s epochs
+the metrics and save the checkpoints.</p></li>
+<li><p><strong>main_metric</strong> – the key to the name of the metric
+by which the checkpoints will be selected.</p></li>
+<li><p><strong>minimize_metric</strong> – flag to indicate whether
+the <code class="docutils literal notranslate"><span class="pre">main_metric</span></code> should be minimized.</p></li>
+<li><p><strong>state_kwargs</strong> – additional state params to <code class="docutils literal notranslate"><span class="pre">RunnerState</span></code></p></li>
+<li><p><strong>checkpoint_data</strong> – additional data to save in checkpoint,
+for example: <code class="docutils literal notranslate"><span class="pre">class_names</span></code>, <code class="docutils literal notranslate"><span class="pre">date_of_training</span></code>, etc</p></li>
+<li><p><strong>distributed_params</strong> – dictionary with the parameters
+for distributed and FP16 method</p></li>
+<li><p><strong>monitoring_params</strong> – dict with the parameters
+for monitoring services</p></li>
+<li><p><strong>logdir</strong> – path to output directory</p></li>
+<li><p><strong>verbose</strong> – if true, it displays the status of the training
+to the console.</p></li>
+<li><p><strong>initial_seed</strong> – experiment’s initial seed value</p></li>
+<li><p><strong>check</strong> – if True, then only checks that pipeline is working</p></li>
+<li><p><strong>epochs only</strong><strong>)</strong> (<em>(</em><em>3</em>) – </p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

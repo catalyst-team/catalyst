@@ -2232,6 +2232,25 @@ returns the loss. Optional for most optimizers.</p>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.optim.lr_scheduler._LRScheduler</span></code></p>
 </dd></dl>
 
+<dl class="class">
+<dt id="catalyst.utils.tools.typing.Dataset">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.utils.tools.typing.</code><code class="sig-name descname">Dataset</code><a class="reference internal" href="../_modules/torch/utils/data/dataset.html#Dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.typing.Dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>An abstract class representing a <a class="reference internal" href="#catalyst.utils.tools.typing.Dataset" title="catalyst.utils.tools.typing.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>.</p>
+<p>All datasets that represent a map from keys to data samples should subclass
+it. All subclasses should overwrite <code class="xref py py-meth docutils literal notranslate"><span class="pre">__getitem__()</span></code>, supporting fetching a
+data sample for a given key. Subclasses could also optionally overwrite
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">__len__()</span></code>, which is expected to return the size of the dataset by many
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code> implementations and the default options
+of <code class="xref py py-class docutils literal notranslate"><span class="pre">DataLoader</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataLoader</span></code> by default constructs a index
+sampler that yields integral indices.  To make it work with a map-style
+dataset with non-integral indices/keys, a custom sampler must be provided.</p>
+</div>
+</dd></dl>
+
 </div>
 <div class="section" id="module-catalyst.utils.criterion.accuracy">
 <span id="criterion"></span><h2>Criterion<a class="headerlink" href="#module-catalyst.utils.criterion.accuracy" title="Permalink to this headline">¶</a></h2>

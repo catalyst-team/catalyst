@@ -50,7 +50,7 @@
 
 <span class="sd">        .. code-block:: python</span>
 
-<span class="sd">            from catalyst.contrib.dl.runner import SupervisedAlchemyRunner</span>
+<span class="sd">            from catalyst.dl import SupervisedAlchemyRunner</span>
 
 <span class="sd">            runner = SupervisedAlchemyRunner()</span>
 
@@ -64,6 +64,7 @@
 <span class="sd">                verbose=True,</span>
 <span class="sd">                monitoring_params={</span>
 <span class="sd">                    &quot;token&quot;: &quot;...&quot;, # your Alchemy token</span>
+<span class="sd">                    &quot;project&quot;: &quot;your_project_name&quot;,</span>
 <span class="sd">                    &quot;experiment&quot;: &quot;your_experiment_name&quot;,</span>
 <span class="sd">                    &quot;group&quot;: &quot;your_experiment_group_name&quot;</span>
 <span class="sd">                }</span>
