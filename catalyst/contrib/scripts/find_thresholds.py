@@ -1,9 +1,9 @@
+from typing import Any, Callable, Dict, List, Tuple  # isort:skip
 import argparse
+from itertools import repeat
 import json
 from pathlib import Path
 from pprint import pprint
-from itertools import repeat
-from typing import Callable, Dict, List, Tuple, Any
 
 import numpy as np
 import pandas as pd
@@ -12,7 +12,7 @@ from sklearn import metrics
 from sklearn.model_selection import RepeatedStratifiedKFold
 
 from catalyst.utils import boolean_flag
-from catalyst.utils.parallel import tqdm_parallel_imap, get_pool
+from catalyst.utils.parallel import get_pool, tqdm_parallel_imap
 
 BINARY_PER_CLASS_METRICS = [
     "accuracy_score", "precision_score", "recall_score",
@@ -45,18 +45,19 @@ def build_args(parser):
 
     parser.add_argument(
         "--metric", type=str,
-        help="Metric to use ['f1_score', 'roc_auc_score']", required=False,
+        help="Metric to use", required=False,
+        choices=BINARY_PER_CLASS_METRICS,
         default="roc_auc_score"
     )
-    parser.add_argument(
-        "--ignore-label", type=int,
-        required=False,
-        default=None
-    )
+    # parser.add_argument(
+    #     "--ignore-label", type=int,
+    #     required=False,
+    #     default=None
+    # )
     parser.add_argument(
         "--num-splits", type=int,
         help="NUM_SPLITS", required=False,
-        default=2
+        default=5
     )
     parser.add_argument(
         "--num-repeats", type=int,
@@ -70,7 +71,7 @@ def build_args(parser):
     )
 
     boolean_flag(parser, "verbose", default=False)
-    boolean_flag(parser, "use-sigmoid", default=False)
+    boolean_flag(parser, "sigmoid", default=False)
 
     return parser
 
@@ -82,15 +83,11 @@ def parse_args():
     return args
 
 
-def get_label_for_class(
-    labels: np.array,
-    cls: int,
-    ignore_label: int = None
-):
-    is_correct = labels == cls
+def get_binary_labels(labels: np.array, label: int, ignore_label: int = None):
+    binary_labels = labels == label
     if ignore_label is not None:
-        is_correct[labels == ignore_label] = 0
-    return (is_correct).astype(int)
+        binary_labels[labels == ignore_label] = 0
+    return (binary_labels).astype(int)
 
 
 def find_best_split_threshold(
@@ -181,9 +178,8 @@ def optimize_thresholds(
     for cls in classes:
         predictions_list.append(predictions_[:, cls])
         labels_list.append(
-            get_label_for_class(
-                labels, cls, ignore_label=ignore_label
-            ))
+            get_binary_labels(labels, cls, ignore_label=ignore_label)
+        )
 
     results = tqdm_parallel_imap(
         wrap_find_best_threshold,
@@ -193,11 +189,11 @@ def optimize_thresholds(
             labels_list,
             repeat(metric_fn),
             repeat(num_splits),
-            repeat(num_repeats)
+            repeat(num_repeats),
         ),
         pool
     )
-    results = [(r[1],r[2]) for r in sorted(results, key=lambda x: x[0])]
+    results = [(r[1], r[2]) for r in sorted(results, key=lambda x: x[0])]
 
     result_thresholds = [r[0] for r in results]
     result_metrics = [r[1] for r in results]
@@ -228,8 +224,6 @@ def get_model_confidences(
         thresholds = np.array(list(thresholds.values()))
         confidences_th = confidences - thresholds
 
-    # candidates = np.argsort(-confidences_th, axis=1)
-    # confidences_th = -np.sort(-confidences_th, axis=1)
     return confidences_th
 
 
@@ -257,10 +251,10 @@ def _sort_dict_by_keys(disordered: Dict):
     return sorted_dict
 
 
-def _save_json(dct: Dict, outpath:Path, posfix: str=None):
+def _save_json(dct: Dict, outpath: Path, suffix: str = None):
     outpath = str(outpath)
-    if posfix is not None:
-        outpath = outpath.replace(".json", f"{posfix}.json")
+    if suffix is not None:
+        outpath = outpath.replace(".json", f"{suffix}.json")
     dct = _sort_dict_by_keys({str(k): v for k, v in dct.copy().items()})
     with open(outpath, "w") as fout:
         json.dump(dct, fout, ensure_ascii=False, indent=4)
@@ -268,10 +262,10 @@ def _save_json(dct: Dict, outpath:Path, posfix: str=None):
 
 def main(args, _=None):
     predictions = expit(np.load(args.in_npy))
-    if args.use_sigmoid:
+    if args.sigmoid:
         predictions = expit(predictions)
     labels = pd.read_csv(args.in_csv)[args.in_label_column].values
-    classes = list(set(labels) - set([args.ignore_label]))
+    classes = list(set(labels))  # - set([args.ignore_label]))
 
     assert args.metric in metrics.__dict__.keys()
     metric_fn = metrics.__dict__[args.metric]
@@ -283,7 +277,7 @@ def main(args, _=None):
         metric_fn=metric_fn,
         num_splits=args.num_splits,
         num_repeats=args.num_repeats,
-        ignore_label=args.ignore_label,
+        ignore_label=None,  # args.ignore_label,
         num_workers=args.num_workers
     )
     _save_json(class_thresholds, outpath=args.out_thresholds)
@@ -296,7 +290,7 @@ def main(args, _=None):
         for key_metric in BINARY_PER_CLASS_METRICS
     }
 
-    _save_json(class_metrics, args.out_thresholds, posfix=".class.metrics")
+    _save_json(class_metrics, args.out_thresholds, suffix=".class.metrics")
 
     if args.verbose:
         print("CLASS METRICS")
@@ -307,7 +301,7 @@ def main(args, _=None):
     labels_scores = np.zeros(predictions.shape)
     labels_scores[:, labels] = 1.0
     for class_thresholds_ in [None, class_thresholds]:
-        thresolds_used = class_thresholds_ is not None
+        thresholds_used = class_thresholds_ is not None
 
         confidences = get_model_confidences(
             confidences=predictions,
@@ -321,29 +315,29 @@ def main(args, _=None):
         }
         postfix = (
             ".rank.metrics"
-            if not thresolds_used
+            if not thresholds_used
             else ".rank.metrics.thresholds"
         )
-        _save_json(rank_metrics, args.out_thresholds, posfix=postfix)
+        _save_json(rank_metrics, args.out_thresholds, suffix=postfix)
 
         coverage_metrics = score_model_coverage(confidences, labels)
         postfix = (
             ".coverage.metrics.json"
-            if not thresolds_used
+            if not thresholds_used
             else ".coverage.metrics.thresholds.json"
         )
-        _save_json(coverage_metrics, args.out_thresholds, posfix=postfix)
+        _save_json(coverage_metrics, args.out_thresholds, suffix=postfix)
 
         if args.verbose:
             print(
                 "RANK METRICS"
-                if not thresolds_used
+                if not thresholds_used
                 else "RANK METRICS WITH THRESHOLD"
             )
             pprint(rank_metrics)
             print(
                 "COVERAGE METRICS"
-                if not thresolds_used
+                if not thresholds_used
                 else "COVERAGE METRICS WITH THRESHOLD"
             )
             pprint(coverage_metrics)
