@@ -17,7 +17,7 @@ class NeptuneRunner(Runner):
     Examples:
         Initialize runner::
 
-            from catalyst.contrib.dl.runner import SupervisedNeptuneRunner
+            from catalyst.dl import SupervisedNeptuneRunner
             runner = SupervisedNeptuneRunner()
 
         Pass `monitoring_params` and train model::
