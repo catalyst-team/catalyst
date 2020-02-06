@@ -218,6 +218,6 @@ def process_components(
 
 
 __all__ = [
-    "get_rank", "process_components", "distributed_mean",
-    "is_apex_available", "assert_fp16_available", "distributed_run"
+    "get_rank", "process_components", "distributed_mean", "is_apex_available",
+    "assert_fp16_available", "distributed_run"
 ]

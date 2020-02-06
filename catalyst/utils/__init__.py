@@ -73,6 +73,6 @@ from .torch import (
 from .visualization import plot_confusion_matrix, render_figure_to_tensor
 
 from .distributed import (
-    get_rank, is_apex_available, distributed_mean,
-    process_components, assert_fp16_available, distributed_run
+    get_rank, is_apex_available, distributed_mean, process_components,
+    assert_fp16_available, distributed_run
 )

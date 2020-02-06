@@ -208,5 +208,7 @@ class DatasetFromSampler(Dataset):
         return len(self.sampler)
 
 
-__all__ = ["ListDataset", "MergeDataset", "NumpyDataset", "PathsDataset",
-           "DatasetFromSampler"]
+__all__ = [
+    "ListDataset", "MergeDataset", "NumpyDataset", "PathsDataset",
+    "DatasetFromSampler"
+]

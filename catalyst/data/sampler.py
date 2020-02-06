@@ -196,5 +196,6 @@ class DistributedSamplerWrapper(DistributedSampler):
         return iter(itemgetter(*indexes_of_indexes)(subsampler_indexes))
 
 
-__all__ = ["BalanceClassSampler", "MiniEpochSampler",
-           "DistributedSamplerWrapper"]
+__all__ = [
+    "BalanceClassSampler", "MiniEpochSampler", "DistributedSamplerWrapper"
+]

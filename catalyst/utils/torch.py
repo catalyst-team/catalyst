@@ -1,6 +1,5 @@
-from typing import Dict, Iterable, List, Tuple, Union  # isort:skip
+from typing import Dict, Iterable, List, Union  # isort:skip
 import collections
-import copy
 import os
 import re
 
@@ -12,9 +11,7 @@ from torch import nn
 import torch.backends.cudnn as cudnn
 
 from catalyst import utils
-from catalyst.utils.tools.typing import (
-    Criterion, Device, Model, Optimizer, Scheduler
-)
+from catalyst.utils.tools.typing import Device, Model, Optimizer
 
 
 def ce_with_logits(logits, target):
