@@ -64,7 +64,7 @@ class WandbRunner(Runner):
         log_on_epoch_end: bool = \
             monitoring_params.pop("log_on_epoch_end", True)
         checkpoints_glob: List[str] = \
-            monitoring_params.pop("checkpoints_glob", ["best.pth", "last.pth"])
+            monitoring_params.pop("checkpoints_glob", [])
         self._init(
             log_on_batch_end=log_on_batch_end,
             log_on_epoch_end=log_on_epoch_end,

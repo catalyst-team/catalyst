@@ -100,8 +100,7 @@ class TrainerSpec:
         if WANDB_ENABLED:
             if self.monitoring_params is not None:
                 self.checkpoints_glob: List[str] = \
-                    self.monitoring_params.pop(
-                        "checkpoints_glob", ["best.pth", "last.pth"])
+                    self.monitoring_params.pop("checkpoints_glob", [])
 
                 wandb.init(**self.monitoring_params)
 
