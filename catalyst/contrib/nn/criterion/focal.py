@@ -70,6 +70,10 @@ class FocalLossMultiClass(FocalLossBinary):
         """
         num_classes = logits.size(1)
         loss = 0
+
+        if len(targets.size()) == 2:
+            targets = targets.argmax(dim=1)
+
         targets = targets.view(-1)
         logits = logits.view(-1, num_classes)
 
