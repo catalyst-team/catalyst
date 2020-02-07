@@ -725,6 +725,24 @@ decimal chars are not enough (metric value lower than 1e-4)</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="catalyst.utils.misc.get_default_params">
+<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">get_default_params</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[..., Any], exclude: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#get_default_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.get_default_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return default parameters of Callable.
+:param fn: target Callable
+:type fn: Callable[…, Any]
+:param exclude: exclude list of parameters
+:type exclude: List[str]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>contains default parameters of <cite>fn</cite></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="catalyst.utils.misc.get_utcnow_time">
 <code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">get_utcnow_time</code><span class="sig-paren">(</span><em class="sig-param">format: str = None</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/catalyst/utils/misc.html#get_utcnow_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.get_utcnow_time" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return string with current utc time in chosen format</p>
@@ -1484,12 +1502,6 @@ default is 0</p></li>
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.utils.torch.assert_fp16_available">
-<code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">assert_fp16_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/torch.html#assert_fp16_available"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.assert_fp16_available" title="Permalink to this definition">¶</a></dt>
-<dd><p>Asserts for installed and available Apex FP16</p>
 </dd></dl>
 
 <dl class="function">

@@ -407,6 +407,13 @@ a part of file path)</p>
 
 </dd></dl>
 
+<dl class="class">
+<dt id="catalyst.data.dataset.DatasetFromSampler">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.dataset.</code><code class="sig-name descname">DatasetFromSampler</code><span class="sig-paren">(</span><em class="sig-param">sampler: torch.utils.data.sampler.Sampler</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#DatasetFromSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.DatasetFromSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
+<p>Dataset of indexes from <cite>Sampler</cite></p>
+</dd></dl>
+
 </div>
 <div class="section" id="reader">
 <h2>Reader<a class="headerlink" href="#reader" title="Permalink to this headline">¶</a></h2>
@@ -693,6 +700,38 @@ The sampler will shuffle indices
 <dl class="method">
 <dt id="catalyst.data.sampler.MiniEpochSampler.shuffle">
 <code class="sig-name descname">shuffle</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#MiniEpochSampler.shuffle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.MiniEpochSampler.shuffle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.data.sampler.DistributedSamplerWrapper">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler.</code><code class="sig-name descname">DistributedSamplerWrapper</code><span class="sig-paren">(</span><em class="sig-param">sampler</em>, <em class="sig-param">num_replicas=None</em>, <em class="sig-param">rank=None</em>, <em class="sig-param">shuffle=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#DistributedSamplerWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.DistributedSamplerWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper over <cite>Sampler</cite> for distributed training.
+Allows you to use any sampler in distributed mode.</p>
+<p>It is especially useful in conjunction with
+<code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.parallel.DistributedDataParallel</span></code>. In such case, each
+process can pass a DistributedSamplerWrapper instance as a DataLoader
+sampler, and load a subset of subsampled data of the original dataset
+that is exclusive to it.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Sampler is assumed to be of constant size.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sampler</strong> – Sampler used for subsampling.</p></li>
+<li><p><strong>num_replicas</strong> (<em>optional</em>) – Number of processes participating in
+distributed training.</p></li>
+<li><p><strong>rank</strong> (<em>optional</em>) – Rank of the current process within num_replicas.</p></li>
+<li><p><strong>shuffle</strong> (<em>optional</em>) – If true (default), sampler will shuffle the indices</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="catalyst.data.sampler.DistributedSamplerWrapper.__iter__">
+<code class="sig-name descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#DistributedSamplerWrapper.__iter__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.DistributedSamplerWrapper.__iter__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
