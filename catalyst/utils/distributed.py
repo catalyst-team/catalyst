@@ -107,10 +107,7 @@ def get_distributed_params():
 
 
 def get_distributed_env(
-        local_rank,
-        rank,
-        world_size,
-        use_cuda_visible_devices=True
+    local_rank, rank, world_size, use_cuda_visible_devices=True
 ):
     env = os.environ.copy()
     env["RANK"] = str(rank)
