@@ -545,9 +545,9 @@ class ConfigExperiment(Experiment):
         # Remove LoggerCallback on worker nodes
         if get_rank() > 0:
             to_del = (LoggerCallback, ConfusionMatrixCallback)
-            for k in filter(
+            for k in list(filter(
                     lambda c: isinstance(callbacks[c], to_del), callbacks
-            ):
+            )):
                 del callbacks[k]
 
         return callbacks

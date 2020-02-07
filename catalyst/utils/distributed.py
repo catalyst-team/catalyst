@@ -106,11 +106,20 @@ def get_distributed_params():
     )
 
 
-def get_distributed_env(local_rank, rank, world_size):
+def get_distributed_env(
+        local_rank,
+        rank,
+        world_size,
+        use_cuda_visible_devices=True
+):
     env = os.environ.copy()
-    env["LOCAL_RANK"] = str(local_rank)
     env["RANK"] = str(rank)
     env["WORLD_SIZE"] = str(world_size)
+    env["LOCAL_RANK"] = str(local_rank)
+    available_gpus = utils.get_available_gpus()
+    if use_cuda_visible_devices:
+        env["LOCAL_RANK"] = "0"
+        env["CUDA_VISIBLE_DEVICES"] = str(available_gpus[local_rank])
     return env
 
 
