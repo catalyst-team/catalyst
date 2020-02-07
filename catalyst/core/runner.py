@@ -154,7 +154,8 @@ class _Runner(ABC):
     def _prepare_for_stage(self, stage: str):
         utils.set_global_seed(self.experiment.initial_seed)
         migrating_params = {}
-        if self.state is not None:
+        migrate = self.experiment.get_state_params(stage).get("migrate", True)
+        if self.state is not None and migrate:
             migrating_params.update(
                 {
                     "step": self.state.step,
