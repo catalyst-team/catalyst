@@ -7,6 +7,7 @@ from pathlib import Path
 import safitty
 
 from catalyst.dl import utils
+from catalyst.utils import distributed_run, get_rank
 
 
 def build_args(parser: ArgumentParser):
@@ -45,6 +46,19 @@ def build_args(parser: ArgumentParser):
         help="path to latest checkpoint"
     )
     parser.add_argument("--seed", type=int, default=42)
+    utils.boolean_flag(
+        parser,
+        "apex",
+        default=True,
+        help="Enable/disable using of Apex extension"
+    )
+    utils.boolean_flag(
+        parser,
+        "data-parallel",
+        shorthand="dp",
+        default=False,
+        help="Force using of DataParallel"
+    )
     utils.boolean_flag(parser, "verbose", default=None)
     utils.boolean_flag(parser, "check", default=None)
     utils.boolean_flag(
@@ -69,11 +83,12 @@ def parse_args():
     return args, unknown_args
 
 
-def main(args, unknown_args):
-    """Run the ``catalyst-dl run`` script"""
+def main_worker(args, unknown_args):
     args, config = utils.parse_args_uargs(args, unknown_args)
     utils.set_global_seed(args.seed)
     utils.prepare_cudnn(args.deterministic, args.benchmark)
+
+    config.setdefault("distributed_params", {})["apex"] = args.apex
 
     Experiment, Runner = utils.import_experiment_and_runner(Path(args.expdir))
 
@@ -81,12 +96,17 @@ def main(args, unknown_args):
     experiment = Experiment(config)
     runner = Runner(**runner_params)
 
-    if experiment.logdir is not None:
+    if experiment.logdir is not None and get_rank() <= 0:
         utils.dump_environment(config, experiment.logdir, args.configs)
         utils.dump_code(args.expdir, experiment.logdir)
 
     check_run = safitty.get(config, "args", "check", default=False)
     runner.run_experiment(experiment, check=check_run)
+
+
+def main(args, unknown_args):
+    """Run the ``catalyst-dl run`` script"""
+    distributed_run(args.data_parallel, main_worker, args, unknown_args)
 
 
 if __name__ == "__main__":
