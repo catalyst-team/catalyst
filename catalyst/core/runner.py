@@ -1,6 +1,6 @@
-from typing import (   # isort:skip
+from typing import (  # isort:skip
     Any, Callable, Dict, Mapping, Optional, Tuple, Union  # isort:skip
-)   # isort:skip
+)  # isort:skip
 
 from abc import ABC, abstractmethod
 from collections import OrderedDict
