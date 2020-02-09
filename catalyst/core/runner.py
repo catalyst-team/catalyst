@@ -1,6 +1,6 @@
-from typing import (   # isort:skip
+from typing import (  # isort:skip
     Any, Callable, Dict, Mapping, Optional, Tuple, Union  # isort:skip
-)   # isort:skip
+)  # isort:skip
 
 from abc import ABC, abstractmethod
 from collections import OrderedDict
@@ -127,8 +127,7 @@ class _Runner(ABC):
         pass
 
     def _get_experiment_components(
-        self,
-        stage: str = None
+        self, stage: str = None
     ) -> Tuple[Model, Criterion, Optimizer, Scheduler, Device]:
         """
         Inner method for children's classes for model specific initialization.
@@ -242,8 +241,9 @@ class _Runner(ABC):
         self.state.output = self.forward(batch)
 
     @torch.no_grad()
-    def predict_batch(self, batch: Mapping[str, Any],
-                      **kwargs) -> Mapping[str, Any]:
+    def predict_batch(
+        self, batch: Mapping[str, Any], **kwargs
+    ) -> Mapping[str, Any]:
         """
         Run model for a batch of elements
         WARN: You should not override this method. If you need specific model

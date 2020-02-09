@@ -48,6 +48,26 @@ class CutmixCallback(CriterionCallback):
         self.index = None
         self.is_needed = True
 
+    def _compute_loss(self, state: State, criterion):
+        """
+        Computes loss.
+        If self.is_needed is False then calls _compute_loss
+        from CriterionCallback,
+        otherwise computes loss value.
+        :param state: current state
+        :param criterion: that is used to compute loss
+        :return: loss value
+        """
+        if not self.is_needed:
+            return super()._compute_loss(state, criterion)
+
+        pred = state.output[self.output_key]
+        y_a = state.input[self.input_key]
+        y_b = state.input[self.input_key][self.index]
+        loss = self.lam * criterion(pred, y_a) + \
+            (1 - self.lam) * criterion(pred, y_b)
+        return loss
+
     def _rand_bbox(self, size, lam):
         """
         Generates top-left and bottom-right coordinates of the box
@@ -108,23 +128,3 @@ class CutmixCallback(CriterionCallback):
         self.lam = 1 - ((bbx2 - bbx1) * (bby2 - bby1)
                         / (state.input[self.fields[0]].shape[-1]
                            * state.input[self.fields[0]].shape[-2]))
-
-    def _compute_loss(self, state: State, criterion):
-        """
-        Computes loss.
-        If self.is_needed is False then calls _compute_loss
-        from CriterionCallback,
-        otherwise computes loss value.
-        :param state: current state
-        :param criterion: that is used to compute loss
-        :return: loss value
-        """
-        if not self.is_needed:
-            return super()._compute_loss(state, criterion)
-
-        pred = state.output[self.output_key]
-        y_a = state.input[self.input_key]
-        y_b = state.input[self.input_key][self.index]
-        loss = self.lam * criterion(pred, y_a) + \
-            (1 - self.lam) * criterion(pred, y_b)
-        return loss
