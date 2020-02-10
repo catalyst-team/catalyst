@@ -7,6 +7,7 @@ import safitty
 
 from catalyst import utils
 from catalyst.core import _State, Callback, CallbackOrder
+from catalyst.utils import get_rank
 
 
 class BaseCheckpointCallback(Callback):
@@ -214,7 +215,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             self.load_checkpoint(filename=self.resume, state=state)
 
     def on_epoch_end(self, state: _State):
-        if state.stage.startswith("infer"):
+        if state.stage.startswith("infer") or get_rank() > 0:
             return
 
         valid_metrics = dict(state.metric_manager.valid_values)

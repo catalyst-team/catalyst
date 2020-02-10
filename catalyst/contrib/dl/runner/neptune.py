@@ -12,12 +12,12 @@ from catalyst.dl.runner import SupervisedRunner
 class NeptuneRunner(Runner):
     """
     Runner wrapper with Neptune integration hooks.
-    Read about Neptune here https://neptune.ml
+    Read about Neptune here https://neptune.ai
 
     Examples:
         Initialize runner::
 
-            from catalyst.contrib.runner.neptune import SupervisedNeptuneRunner
+            from catalyst.dl import SupervisedNeptuneRunner
             runner = SupervisedNeptuneRunner()
 
         Pass `monitoring_params` and train model::
@@ -32,8 +32,8 @@ class NeptuneRunner(Runner):
                 verbose=True,
                 monitoring_params={
                     "init": {
-                    "project_qualified_name": "hapyp-user/examples",
-                    "api_token": None, # api key, keep in NEPTUNE_API_TOKEN
+                    "project_qualified_name": "neptune-ai/catalyst",
+                    "api_token": os.getenv('NEPTUNE_API_TOKEN'), # api key
                 },
                     "create_experiment": {
                         "name": "catalyst-example", # experiment name

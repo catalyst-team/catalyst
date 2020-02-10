@@ -10,14 +10,14 @@
 [![PyPI Status](https://pepy.tech/badge/catalyst)](https://pepy.tech/project/catalyst)
 [![Github contributors](https://img.shields.io/github/contributors/catalyst-team/catalyst.svg?logo=github&logoColor=white)](https://github.com/catalyst-team/catalyst/graphs/contributors)
 
-[![Twitter](https://img.shields.io/badge/news-on%20twitter-499feb)](https://t.me/catalyst_team)
+[![Twitter](https://img.shields.io/badge/news-on%20twitter-499feb)](https://twitter.com/catalyst_core)
 [![Telegram](https://img.shields.io/badge/channel-on%20telegram-blue)](https://t.me/catalyst_team)
 [![Spectrum](https://img.shields.io/badge/chat-on%20spectrum-blueviolet)](https://spectrum.chat/catalyst)
 [![Slack](https://img.shields.io/badge/ODS-slack-red)](https://opendatascience.slack.com/messages/CGK4KQBHD)
 
 </div>
 
-PyTorch framework for DL & RL research.
+PyTorch framework for DL & RL research and development.
 It was developed with a focus on reproducibility,
 fast experimentation and code/ideas reusing.
 Being able to research/develop something new,

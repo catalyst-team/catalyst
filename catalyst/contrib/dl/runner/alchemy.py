@@ -30,6 +30,7 @@ class AlchemyRunner(Runner):
                 verbose=True,
                 monitoring_params={
                     "token": "...", # your Alchemy token
+                    "project": "your_project_name",
                     "experiment": "your_experiment_name",
                     "group": "your_experiment_group_name"
                 }
