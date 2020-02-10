@@ -1,22 +1,33 @@
 #!/usr/bin/env bash
 # set -e
 
+# REINFORCE - 12010
+# PPO       - 12011
+# DQN       - 12020
+# DDOG      - 12021
+# SAC       - 12022
+# TD3       - 12023
+PORT=12020
+
 echo "start redis"
-redis-server --port 12000 &
+redis-server --port $PORT &
 sleep 3
 
 echo "run trainers"
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_trainer.py \
     --config=./examples/_tests_rl_gym/config_dqn_base.yml \
+    --db/port="$PORT":str \
     --logdir=./examples/logs/_tests_rl_gym_dqn_base &
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_trainer.py \
     --config=./examples/_tests_rl_gym/config_dqn_categorical.yml \
+    --db/port="$PORT":str \
     --logdir=./examples/logs/_tests_rl_gym_dqn_categorical &
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_trainer.py \
     --config=./examples/_tests_rl_gym/config_dqn_quantile.yml \
+    --db/port="$PORT":str \
     --logdir=./examples/logs/_tests_rl_gym_dqn_quantile &
 sleep 10
 
@@ -24,14 +35,17 @@ echo "run samplers"
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_samplers.py \
     --config=./examples/_tests_rl_gym/config_dqn_base.yml \
+    --db/port="$PORT":str \
     --logdir=./examples/logs/_tests_rl_gym_dqn_base &
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_samplers.py \
     --config=./examples/_tests_rl_gym/config_dqn_categorical.yml \
+    --db/port="$PORT":str \
     --logdir=./examples/logs/_tests_rl_gym_dqn_categorical &
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_samplers.py \
     --config=./examples/_tests_rl_gym/config_dqn_quantile.yml \
+    --db/port="$PORT":str \
     --logdir=./examples/logs/_tests_rl_gym_dqn_quantile &
 sleep 600
 
@@ -46,6 +60,7 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/dump_db.py \
     --db="redis" \
+    --port=$PORT \
     --min-reward=2 \
     --out-pkl=./db.dump.out.pkl
 
