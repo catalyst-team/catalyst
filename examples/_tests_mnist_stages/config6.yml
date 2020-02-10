@@ -41,7 +41,7 @@ stages:
   stage1:
 
     state_params:
-      num_epochs: &num_epochs 2
+      num_epochs: 100
 
     optimizer_params:
       optimizer: Adam
@@ -55,7 +55,7 @@ stages:
 
   stage2:
     state_params:
-      num_epochs: 1
+      num_epochs: 100
 
     optimizer_params:
       load_from_previous_stage: True

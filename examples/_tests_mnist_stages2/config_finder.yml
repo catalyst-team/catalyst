@@ -33,7 +33,7 @@ stages:
 
   stage1:
     state_params:
-      num_epochs: &num_epochs 100
+      num_epochs: 100
 
     callbacks_params:
       loss:
