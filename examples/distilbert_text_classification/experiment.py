@@ -4,7 +4,7 @@ from typing import Dict
 
 import pandas as pd
 
-from catalyst.data.nlp.classify import TextClassificationDataset
+from catalyst.contrib.data.nlp.classification import TextClassificationDataset
 from catalyst.dl import ConfigExperiment
 
 

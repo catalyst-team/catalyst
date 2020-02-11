@@ -1,7 +1,12 @@
 from typing import List  # isort:skip
 
 from catalyst.dl.core import MetricCallback, MultiMetricCallback
-from catalyst.dl.utils import criterion
+from catalyst.utils import criterion
+
+
+def _get_default_classwise_iou_args(num_classes: int) -> List[int]:
+    assert num_classes > 0, "num_classes must be greater than 0"
+    return [str(i) for i in range(num_classes)]
 
 
 class IouCallback(MetricCallback):
@@ -42,11 +47,6 @@ class IouCallback(MetricCallback):
 
 
 JaccardCallback = IouCallback
-
-
-def _get_default_classwise_iou_args(num_classes: int) -> List[int]:
-    assert num_classes > 0, "num_classes must be greater than 0"
-    return [str(i) for i in range(num_classes)]
 
 
 class ClasswiseIouCallback(MultiMetricCallback):

@@ -15,7 +15,7 @@ import safitty
 import yaml
 
 from catalyst import utils
-from catalyst.utils.tensorboard import SummaryWriter
+from catalyst.utils.tools.tensorboard import SummaryWriter
 
 LOG = getLogger(__name__)
 

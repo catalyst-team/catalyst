@@ -136,9 +136,11 @@ def tensor_from_rgb_image(image: np.ndarray) -> torch.Tensor:
 
 def tensor_to_ndimage(
     images: torch.Tensor,
+    denormalize: bool = True,
     mean: Tuple[float, float, float] = _IMAGENET_MEAN,
     std: Tuple[float, float, float] = _IMAGENET_STD,
-    dtype=np.float32
+    move_channels_dim: bool = True,
+    dtype=np.float32,
 ) -> np.ndarray:
     """
     Convert float image(s) with standard normalization to
@@ -146,28 +148,31 @@ def tensor_to_ndimage(
     when dtype is `np.uint8`.
 
     Args:
-        images: [B]xCxHxW float tensor
-        mean: mean to add
-        std: std to multiply
+        images (torch.Tensor): [B]xCxHxW float tensor
+        denormalize (bool): if True, multiply image(s) by std and add mean
+        mean (Tuple[float, float, float]): per channel mean to add
+        std (Tuple[float, float, float]): per channel std to multiply
+        move_channels_dim (bool): if True, convert tensor to [B]xHxWxC format
         dtype: result ndarray dtype. Only float32 and uint8 are supported.
     Returns:
         [B]xHxWxC np.ndarray of dtype
     """
-    has_batch_dim = len(images.shape) == 4
+    if denormalize:
+        has_batch_dim = len(images.shape) == 4
 
-    num_shape = (3, 1, 1)
+        mean = images.new_tensor(mean).view(
+            *((1, ) if has_batch_dim else ()), len(mean), 1, 1
+        )
+        std = images.new_tensor(std).view(
+            *((1, ) if has_batch_dim else ()), len(std), 1, 1
+        )
 
-    if has_batch_dim:
-        num_shape = (1, ) + num_shape
-
-    mean = images.new_tensor(mean).view(*num_shape)
-    std = images.new_tensor(std).view(*num_shape)
-
-    images = images * std + mean
+        images = images * std + mean
 
     images = images.clamp(0, 1).numpy()
 
-    images = np.moveaxis(images, -3, -1)
+    if move_channels_dim:
+        images = np.moveaxis(images, -3, -1)
 
     if dtype == np.uint8:
         images = (images * 255).round().astype(dtype)

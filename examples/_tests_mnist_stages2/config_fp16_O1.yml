@@ -24,23 +24,22 @@ stages:
     train:
       _key_value: True
 
-      transform: Compose
-      transforms:
-        - transform: TensorToImage
-        - transform: Normalize
-          mean: [0.1307]
-          std: [0.3081]
-        - transform: ToTensorV2
+      image:
+        transform: A.Compose
+        transforms:
+          - transform: catalyst.TensorToImage
+          - transform: A.Normalize
+            mean: [0.1307]
+            std: [0.3081]
+          - transform: catalyst.ToTensor
     valid:
-      _key_value: True
-
-      transform: Compose
+      transform: A.Compose
       transforms:
-        - transform: TensorToImage
-        - transform: Normalize
+        - transform: catalyst.TensorToImage
+        - transform: A.Normalize
           mean: [0.1307]
           std: [0.3081]
-        - transform: ToTensorV2
+        - transform: catalyst.ToTensor
 
   state_params:
     main_metric: &reduce_metric accuracy01
@@ -61,7 +60,7 @@ stages:
 
   stage1:
     state_params:
-      num_epochs: &num_epochs 3
+      num_epochs: 100
 
     callbacks_params:
       loss:

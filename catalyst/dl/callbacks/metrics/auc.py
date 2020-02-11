@@ -1,7 +1,7 @@
 from typing import List  # isort:skip
 
 from catalyst.dl.core import MeterMetricsCallback
-from catalyst.dl.meters import AUCMeter
+from catalyst.utils.meters import AUCMeter
 
 
 class AUCCallback(MeterMetricsCallback):

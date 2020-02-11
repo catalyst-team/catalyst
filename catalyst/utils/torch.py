@@ -11,7 +11,7 @@ from torch import nn
 import torch.backends.cudnn as cudnn
 
 from catalyst import utils
-from catalyst.utils.typing import Device, Model, Optimizer
+from catalyst.utils.tools.typing import Device, Model, Optimizer
 
 
 def ce_with_logits(logits, target):
@@ -102,22 +102,6 @@ def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
         )
     elif momentum is not None:
         safitty.set(optimizer.param_groups, index, "momentum", value=value)
-
-
-def assert_fp16_available() -> None:
-    """
-    Asserts for installed and available Apex FP16
-    """
-    assert torch.backends.cudnn.enabled, \
-        "fp16 mode requires cudnn backend to be enabled."
-
-    try:
-        import apex  # noqa: F401
-        from apex import amp  # noqa: F401
-    except ImportError:
-        assert False, \
-            "NVidia Apex package must be installed. " \
-            "See https://github.com/NVIDIA/apex."
 
 
 def get_device() -> torch.device:
@@ -333,7 +317,7 @@ def detach(tensor: torch.Tensor) -> np.ndarray:
 __all__ = [
     "ce_with_logits", "log1p_exp", "normal_sample", "normal_logprob",
     "soft_update", "get_optimizable_params", "get_optimizer_momentum",
-    "set_optimizer_momentum", "assert_fp16_available", "get_device",
-    "get_available_gpus", "get_activation_fn", "any2device", "prepare_cudnn",
-    "process_model_params", "set_requires_grad", "get_network_output", "detach"
+    "set_optimizer_momentum", "get_device", "get_available_gpus",
+    "get_activation_fn", "any2device", "prepare_cudnn", "process_model_params",
+    "set_requires_grad", "get_network_output", "detach"
 ]

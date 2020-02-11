@@ -4,8 +4,7 @@ import numpy as np
 
 import torch
 
-from catalyst.dl.callbacks import CriterionCallback
-from catalyst.dl.core.state import RunnerState
+from catalyst.dl import CriterionCallback, State
 
 
 class MixupCallback(CriterionCallback):
@@ -23,6 +22,8 @@ class MixupCallback(CriterionCallback):
 
     def __init__(
         self,
+        input_key: str = "targets",
+        output_key: str = "logits",
         fields: List[str] = ("features", ),
         alpha=1.0,
         on_train_only=True,
@@ -40,11 +41,12 @@ class MixupCallback(CriterionCallback):
                 So, if on_train_only is True, use a standard output/metric
                 for validation.
         """
+        assert isinstance(input_key, str) and isinstance(output_key, str)
         assert len(fields) > 0, \
             "At least one field for MixupCallback is required"
         assert alpha >= 0, "alpha must be>=0"
 
-        super().__init__(**kwargs)
+        super().__init__(input_key=input_key, output_key=output_key, **kwargs)
 
         self.on_train_only = on_train_only
         self.fields = fields
@@ -53,11 +55,23 @@ class MixupCallback(CriterionCallback):
         self.index = None
         self.is_needed = True
 
-    def on_loader_start(self, state: RunnerState):
+    def _compute_loss_value(self, state: State, criterion):
+        if not self.is_needed:
+            return super()._compute_loss_value(state, criterion)
+
+        pred = state.output[self.output_key]
+        y_a = state.input[self.input_key]
+        y_b = state.input[self.input_key][self.index]
+
+        loss = self.lam * criterion(pred, y_a) + \
+            (1 - self.lam) * criterion(pred, y_b)
+        return loss
+
+    def on_loader_start(self, state: State):
         self.is_needed = not self.on_train_only or \
             state.loader_name.startswith("train")
 
-    def on_batch_start(self, state: RunnerState):
+    def on_batch_start(self, state: State):
         if not self.is_needed:
             return
 
@@ -72,18 +86,6 @@ class MixupCallback(CriterionCallback):
         for f in self.fields:
             state.input[f] = self.lam * state.input[f] + \
                 (1 - self.lam) * state.input[f][self.index]
-
-    def _compute_loss(self, state: RunnerState, criterion):
-        if not self.is_needed:
-            return super()._compute_loss(state, criterion)
-
-        pred = state.output[self.output_key]
-        y_a = state.input[self.input_key]
-        y_b = state.input[self.input_key][self.index]
-
-        loss = self.lam * criterion(pred, y_a) + \
-            (1 - self.lam) * criterion(pred, y_b)
-        return loss
 
 
 __all__ = ["MixupCallback"]

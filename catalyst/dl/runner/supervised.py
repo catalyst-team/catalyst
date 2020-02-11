@@ -7,11 +7,12 @@ import torch
 from torch.jit import ScriptModule
 from torch.utils.data import DataLoader
 
-from catalyst.dl import utils
-from catalyst.dl.callbacks import CheckpointCallback, InferCallback
-from catalyst.dl.core import Callback, Runner
-from catalyst.dl.experiment import SupervisedExperiment
-from catalyst.utils.typing import (
+from catalyst.dl import (
+    Callback, CheckpointCallback, InferCallback, Runner, SupervisedExperiment,
+    utils
+)
+from catalyst.dl.utils import trace
+from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
 
@@ -147,7 +148,7 @@ class SupervisedRunner(Runner):
                 the ``main_metric`` should be minimized.
             verbose (bool): ff true, it displays the status of the training
                 to the console.
-            state_kwargs (dict): additional state params to ``RunnerState``
+            state_kwargs (dict): additional state params to ``State``
             checkpoint_data (dict): additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
             fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
@@ -224,7 +225,7 @@ class SupervisedRunner(Runner):
             callbacks (List[catalyst.dl.Callback]): list of inference callbacks
             verbose (bool): ff true, it displays the status of the inference
                 to the console.
-            state_kwargs (dict): additional state params to ``RunnerState``
+            state_kwargs (dict): additional state params to ``State``
             fp16 (Union[Dict, bool]): If not None, then sets inference to FP16.
                 See https://nvidia.github.io/apex/amp.html#properties
                 if fp16=True, params by default will be ``{"opt_level": "O1"}``
@@ -268,7 +269,7 @@ class SupervisedRunner(Runner):
             resume (str): path to checkpoint for model
             verbose (bool): ff true, it displays the status of the inference
                 to the console.
-            state_kwargs (dict): additional state params to ``RunnerState``
+            state_kwargs (dict): additional state params to ``State``
             fp16 (Union[Dict, bool]): If not None, then sets inference to FP16.
                 See https://nvidia.github.io/apex/amp.html#properties
                 if fp16=True, params by default will be ``{"opt_level": "O1"}``
@@ -354,7 +355,7 @@ class SupervisedRunner(Runner):
                 self.device = utils.get_device()
             device = self.device
 
-        result = utils.trace_model(
+        result = trace.trace_model(
             model=self.model,
             runner=self,
             batch=batch,
@@ -367,7 +368,7 @@ class SupervisedRunner(Runner):
         )
 
         if logdir is not None:
-            filename = utils.get_trace_name(
+            filename = trace.get_trace_name(
                 method_name=method_name,
                 mode=mode,
                 requires_grad=requires_grad,

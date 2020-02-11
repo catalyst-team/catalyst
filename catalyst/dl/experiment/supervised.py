@@ -1,16 +1,16 @@
 from collections import OrderedDict
 
-from catalyst.dl.callbacks import (
-    CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
-    RaiseExceptionCallback, SchedulerCallback, TensorboardLogger,
-    VerboseLogger
+from catalyst.dl import (
+    Callback, CheckpointCallback, ConsoleLogger, CriterionCallback,
+    OptimizerCallback, RaiseExceptionCallback, SchedulerCallback,
+    TensorboardLogger, VerboseLogger
 )
-from catalyst.dl.core import Callback
 from .base import BaseExperiment
 
 
 class SupervisedExperiment(BaseExperiment):
-    """Supervised experiment used mostly in Notebook API
+    """
+    Supervised experiment
 
     The main difference with BaseExperiment that it will
     add several callbacks by default if you haven't.
@@ -27,10 +27,10 @@ class SupervisedExperiment(BaseExperiment):
             saves model and optimizer state each epoch callback to save/restore
             your model/criterion/optimizer/metrics.
         ConsoleLogger:
-            standard Catalyst logger, translates ``state.metrics`` to console
-            and text file
+            standard Catalyst logger,
+            translates ``state.metric_manager`` to console and text file
         TensorboardLogger:
-            will write ``state.metrics`` to tensorboard
+            will write ``state.metric_manager`` to tensorboard
         RaiseExceptionCallback:
             will raise exception if needed
     """

@@ -3,9 +3,9 @@ from pathlib import Path
 
 import numpy as np
 
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, Sampler
 
-from catalyst.utils.misc import merge_dicts
+from catalyst.utils import merge_dicts
 
 _Path = Union[str, Path]
 
@@ -191,4 +191,24 @@ class PathsDataset(ListDataset):
         )
 
 
-__all__ = ["ListDataset", "MergeDataset", "NumpyDataset", "PathsDataset"]
+class DatasetFromSampler(Dataset):
+    """
+    Dataset of indexes from `Sampler`
+    """
+    def __init__(self, sampler: Sampler):
+        self.sampler = sampler
+        self.sampler_list = None
+
+    def __getitem__(self, index: int):
+        if self.sampler_list is None:
+            self.sampler_list = list(self.sampler)
+        return self.sampler_list[index]
+
+    def __len__(self) -> int:
+        return len(self.sampler)
+
+
+__all__ = [
+    "ListDataset", "MergeDataset", "NumpyDataset", "PathsDataset",
+    "DatasetFromSampler"
+]

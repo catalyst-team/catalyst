@@ -13,6 +13,9 @@ pip install -r requirements/requirements-nlp.txt
 echo 'pip install -r requirements/requirements-rl.txt'
 pip install -r requirements/requirements-rl.txt
 
+echo 'pip install alchemy-catalyst'
+pip install alchemy-catalyst
+
 echo './bin/tests/check_dl.sh'
 ./bin/tests/check_dl.sh
 

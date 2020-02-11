@@ -39,7 +39,7 @@ def _db2buffer_loop(
             trajectory = None
 
 
-class Trainer(TrainerSpec):
+class OffpolicyTrainer(TrainerSpec):
     def _init(
         self,
         target_update_period: int = 1,
@@ -182,4 +182,4 @@ class Trainer(TrainerSpec):
         self.db_server.push_message(self.db_server.Message.ENABLE_TRAINING)
         self.db_server.push_message(self.db_server.Message.ENABLE_SAMPLING)
         self._fetch_initial_buffer()
-        self._run_train_loop()
+        self._run_train_stage()

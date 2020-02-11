@@ -4,9 +4,8 @@ from collections import OrderedDict
 from torch import nn
 from torch.utils.data import DataLoader
 
-from catalyst.dl.core import Callback, Experiment
-from catalyst.dl.utils import process_callbacks
-from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
+from catalyst.dl import Callback, Experiment, utils
+from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
 class BaseExperiment(Experiment):
@@ -14,6 +13,7 @@ class BaseExperiment(Experiment):
     Super-simple one-staged experiment
         you can use to declare experiment in code
     """
+
     def __init__(
         self,
         model: Model,
@@ -57,18 +57,18 @@ class BaseExperiment(Experiment):
                 the ``main_metric`` should be minimized.
             verbose (bool): ff true, it displays the status of the training
                 to the console.
-            state_kwargs (dict): additional state params to ``RunnerState``
+            state_kwargs (dict): additional state params to ``State``
             checkpoint_data (dict): additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
             distributed_params (dict): dictionary with the parameters
-                for distributed and FP16 methond
+                for distributed and FP16 method
             monitoring_params (dict): dict with the parameters
                 for monitoring services
             initial_seed (int): experiment's initial seed value
         """
         self._model = model
         self._loaders = loaders
-        self._callbacks = process_callbacks(callbacks)
+        self._callbacks = utils.process_callbacks(callbacks)
 
         self._criterion = criterion
         self._optimizer = optimizer
@@ -104,7 +104,7 @@ class BaseExperiment(Experiment):
 
     @property
     def distributed_params(self) -> Dict:
-        """Dict with the parameters for distributed and FP16 methond"""
+        """Dict with the parameters for distributed and FP16 method"""
         return self._distributed_params
 
     @property
@@ -121,7 +121,7 @@ class BaseExperiment(Experiment):
             main_metric=self._main_metric,
             verbose=self._verbose,
             minimize_metric=self._minimize_metric,
-            checkpoint_data=self.checkpoint_data
+            checkpoint_data=self.checkpoint_data,
         )
         state_params = {**default_params, **self._additional_state_kwargs}
         return state_params
@@ -142,13 +142,17 @@ class BaseExperiment(Experiment):
         """Returns the scheduler for a given stage"""
         return self._scheduler
 
+    def get_loaders(
+        self,
+        stage: str,
+        epoch: int = None,
+    ) -> "OrderedDict[str, DataLoader]":
+        """Returns the loaders for a given stage"""
+        return self._loaders
+
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """Returns the callbacks for a given stage"""
         return self._callbacks
-
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
-        """Returns the loaders for a given stage"""
-        return self._loaders
 
 
 __all__ = ["BaseExperiment"]

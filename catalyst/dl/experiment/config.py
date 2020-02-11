@@ -10,19 +10,23 @@ from torch.utils.data import (  # noqa F401
     DataLoader, Dataset, DistributedSampler
 )
 
-from catalyst.data import Augmentor, AugmentorCompose
-from catalyst.dl import utils
+from catalyst.data import (
+    Augmentor, AugmentorCompose, DistributedSamplerWrapper
+)
+from catalyst.dl import (
+    Callback, ConfusionMatrixCallback, Experiment, LoggerCallback, utils
+)
 from catalyst.dl.callbacks import (
     CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
     PhaseWrapperCallback, RaiseExceptionCallback, SchedulerCallback,
     TensorboardLogger, VerboseLogger
 )
-from catalyst.dl.core import Callback, Experiment
 from catalyst.dl.registry import (
     CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS,
     TRANSFORMS
 )
-from catalyst.utils.typing import Criterion, Model, Optimizer, Scheduler
+from catalyst.utils import get_rank
+from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
 class ConfigExperiment(Experiment):
@@ -93,7 +97,7 @@ class ConfigExperiment(Experiment):
         timestamp = utils.get_utcnow_time()
         config_hash = utils.get_short_hash(config)
         logdir = f"{timestamp}.{config_hash}"
-        distributed_rank = self.distributed_params.get("rank", -1)
+        distributed_rank = get_rank()
         if distributed_rank > -1:
             logdir = f"{logdir}.rank{distributed_rank:02d}"
         return logdir
@@ -148,6 +152,7 @@ class ConfigExperiment(Experiment):
             model = {}
             for key, params_ in params.items():
                 model[key] = ConfigExperiment._get_model(**params_)
+            model = nn.ModuleDict(model)
         else:
             model = MODELS.get_from_params(**params)
         return model
@@ -189,7 +194,7 @@ class ConfigExperiment(Experiment):
         **params
     ) -> Optimizer:
         # @TODO 1: refactoring; this method is too long
-        # @TODO 2: load state dicts for schedulers & criteria
+        # @TODO 2: load state dicts for schedulers & criterion
         layerwise_params = \
             params.pop("layerwise_params", OrderedDict())
         no_bias_weight_decay = \
@@ -201,7 +206,7 @@ class ConfigExperiment(Experiment):
             data_params = dict(self.stages_config[stage]["data_params"])
             batch_size = data_params.get("batch_size")
             per_gpu_scaling = data_params.get("per_gpu_scaling", False)
-            distributed_rank = self.distributed_params.get("rank", -1)
+            distributed_rank = get_rank()
             distributed = distributed_rank > -1
             if per_gpu_scaling and not distributed:
                 num_gpus = max(1, torch.cuda.device_count())
@@ -332,7 +337,7 @@ class ConfigExperiment(Experiment):
                 for key, params_ in params.items()
             }
 
-            transform = {
+            transform = AugmentorCompose({
                 key: Augmentor(
                     dict_key=key,
                     augment_fn=transform,
@@ -340,7 +345,7 @@ class ConfigExperiment(Experiment):
                     output_key=key,
                 )
                 for key, transform in transforms_composition.items()
-            }
+            })
         else:
             if "transforms" in params:
                 transforms_composition = [
@@ -384,7 +389,11 @@ class ConfigExperiment(Experiment):
 
         return transform
 
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(
+        self,
+        stage: str,
+        epoch: int = None,
+    ) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage"""
         data_params = dict(self.stages_config[stage]["data_params"])
 
@@ -392,7 +401,7 @@ class ConfigExperiment(Experiment):
         num_workers = data_params.pop("num_workers")
         drop_last = data_params.pop("drop_last", False)
         per_gpu_scaling = data_params.pop("per_gpu_scaling", False)
-        distributed_rank = self.distributed_params.get("rank", -1)
+        distributed_rank = get_rank()
         distributed = distributed_rank > -1
 
         datasets = self.get_datasets(stage=stage, **data_params)
@@ -455,7 +464,9 @@ class ConfigExperiment(Experiment):
 
             if distributed:
                 if sampler is not None:
-                    assert isinstance(sampler, DistributedSampler)
+                    if not isinstance(sampler, DistributedSampler):
+                        loader_params["sampler"] = \
+                            DistributedSamplerWrapper(sampler=sampler)
                 else:
                     sampler = DistributedSampler(
                         dataset=loader_params["dataset"]
@@ -530,6 +541,14 @@ class ConfigExperiment(Experiment):
                     break
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
+
+        # Remove LoggerCallback on worker nodes
+        if get_rank() > 0:
+            to_del = (LoggerCallback, ConfusionMatrixCallback)
+            for k in list(filter(
+                    lambda c: isinstance(callbacks[c], to_del), callbacks
+            )):
+                del callbacks[k]
 
         return callbacks
 

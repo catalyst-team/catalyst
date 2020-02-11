@@ -1,14 +1,23 @@
 #!/usr/bin/env bash
 # set -e
 
+# REINFORCE - 12010
+# PPO       - 12011
+# DQN       - 12020
+# DDOG      - 12021
+# SAC       - 12022
+# TD3       - 12023
+PORT=12011
+
 echo "start redis"
-redis-server --port 12000 &
+redis-server --port $PORT &
 sleep 3
 
 echo "run trainers"
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_trainer.py \
     --config=./examples/_tests_rl_gym/config_ppo_discrete.yml \
+    --db/port="$PORT":str \
     --logdir=./examples/logs/_tests_rl_gym_ppo_discrete &
 sleep 10
 
@@ -16,6 +25,7 @@ echo "run samplers"
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_samplers.py \
     --config=./examples/_tests_rl_gym/config_ppo_discrete.yml \
+    --db/port="$PORT":str \
     --logdir=./examples/logs/_tests_rl_gym_ppo_discrete &
 sleep 600
 
@@ -30,6 +40,7 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/dump_db.py \
     --db="redis" \
+    --port=$PORT \
     --min-reward=2 \
     --chunk-size=100 \
     --out-pkl="./db.dump.out.{suffix}.pkl"
@@ -59,6 +70,7 @@ echo "run trainers"
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_trainer.py \
     --config=./examples/_tests_rl_gym/config_ppo_continuous.yml \
+    --db/port="$PORT":str \
     --logdir=./examples/logs/_tests_rl_gym_ppo_continuous &
 sleep 10
 
@@ -66,6 +78,7 @@ echo "run samplers"
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/run_samplers.py \
     --config=./examples/_tests_rl_gym/config_ppo_continuous.yml \
+    --db/port="$PORT":str \
     --logdir=./examples/logs/_tests_rl_gym_ppo_continuous &
 sleep 600
 
@@ -80,6 +93,7 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
     python catalyst/rl/scripts/dump_db.py \
     --db="redis" \
+    --port=$PORT \
     --min-reward=2 \
     --chunk-size=100 \
     --out-pkl="./db.dump.out.{suffix}.pkl"

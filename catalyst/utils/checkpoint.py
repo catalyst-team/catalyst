@@ -6,7 +6,7 @@ import shutil
 
 import torch
 
-from .ddp import get_real_module
+from .ddp import get_nn_from_ddp_module
 from .misc import maybe_recursive_call
 
 
@@ -18,7 +18,7 @@ def pack_checkpoint(
     if isinstance(model, OrderedDict):
         raise NotImplementedError()
     else:
-        model_ = get_real_module(model)
+        model_ = get_nn_from_ddp_module(model)
         checkpoint["model_state_dict"] = maybe_recursive_call(
             model_, "state_dict"
         )
@@ -45,29 +45,11 @@ def pack_checkpoint(
     return checkpoint
 
 
-def save_checkpoint(
-    checkpoint: Dict,
-    logdir: Union[Path, str],
-    suffix: str,
-    is_best: bool = False,
-    is_last: bool = False,
-    special_suffix: str = ""
-):
-    os.makedirs(logdir, exist_ok=True)
-    filename = f"{logdir}/{suffix}.pth"
-    torch.save(checkpoint, filename)
-    if is_best:
-        shutil.copyfile(filename, f"{logdir}/best{special_suffix}.pth")
-    if is_last:
-        shutil.copyfile(filename, f"{logdir}/last{special_suffix}.pth")
-    return filename
-
-
 def unpack_checkpoint(
     checkpoint, model=None, criterion=None, optimizer=None, scheduler=None
 ):
     if model is not None:
-        model = get_real_module(model)
+        model = get_nn_from_ddp_module(model)
         maybe_recursive_call(
             model,
             "load_state_dict",
@@ -89,6 +71,24 @@ def unpack_checkpoint(
         else:
             name2load = f"{name2load}_state_dict"
             dict2load.load_state_dict(checkpoint[name2load])
+
+
+def save_checkpoint(
+    checkpoint: Dict,
+    logdir: Union[Path, str],
+    suffix: str,
+    is_best: bool = False,
+    is_last: bool = False,
+    special_suffix: str = ""
+):
+    os.makedirs(logdir, exist_ok=True)
+    filename = f"{logdir}/{suffix}.pth"
+    torch.save(checkpoint, filename)
+    if is_best:
+        shutil.copyfile(filename, f"{logdir}/best{special_suffix}.pth")
+    if is_last:
+        shutil.copyfile(filename, f"{logdir}/last{special_suffix}.pth")
+    return filename
 
 
 def load_checkpoint(filepath):

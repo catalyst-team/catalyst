@@ -1,13 +1,9 @@
-from typing import Any, Iterable, Optional, Dict  # isort:skip
-
-import collections
-import copy
+from typing import Any, Callable, Iterable, List, Optional  # isort:skip
 from datetime import datetime
+import inspect
 from itertools import tee
 from pathlib import Path
 import shutil
-
-import numpy as np
 
 
 def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:
@@ -44,74 +40,6 @@ def make_tuple(tuple_like):
         (tuple_like, tuple_like)
     )
     return tuple_like
-
-
-def merge_dicts(*dicts: dict) -> dict:
-    """
-    Recursive dict merge.
-    Instead of updating only top-level keys,
-    ``merge_dicts`` recurses down into dicts nested
-    to an arbitrary depth, updating keys.
-
-    Args:
-        *dicts: several dictionaries to merge
-
-    Returns:
-        dict: deep-merged dictionary
-    """
-    assert len(dicts) > 1
-
-    dict_ = copy.deepcopy(dicts[0])
-
-    for merge_dict in dicts[1:]:
-        merge_dict = merge_dict or {}
-        for k, v in merge_dict.items():
-            if (
-                k in dict_ and isinstance(dict_[k], dict)
-                and isinstance(merge_dict[k], collections.Mapping)
-            ):
-                dict_[k] = merge_dicts(dict_[k], merge_dict[k])
-            else:
-                dict_[k] = merge_dict[k]
-
-    return dict_
-
-
-def append_dict(dict1, dict2):
-    """
-    Appends dict2 with the same keys as dict1 to dict1
-    """
-    for key in dict1.keys():
-        dict1[key] = np.concatenate((dict1[key], dict2[key]))
-    return dict1
-
-
-def flatten_dict(
-    dictionary: Dict[str, Any], parent_key: str = "", separator: str = "/"
-) -> "collections.OrderedDict":
-    """
-    Make the given dictionary flatten
-
-    Args:
-        dictionary (dict): giving dictionary
-        parent_key (str, optional): prefix nested keys with
-            string ``parent_key``
-        separator (str, optional): delimiter between
-            ``parent_key`` and ``key`` to use
-
-    Returns:
-        collections.OrderedDict: ordered dictionary with flatten keys
-    """
-    items = []
-    for key, value in dictionary.items():
-        new_key = parent_key + separator + key if parent_key else key
-        if isinstance(value, collections.MutableMapping):
-            items.extend(
-                flatten_dict(value, new_key, separator=separator).items()
-            )
-        else:
-            items.append((new_key, value))
-    return collections.OrderedDict(items)
 
 
 def maybe_recursive_call(
@@ -225,3 +153,22 @@ def args_are_not_none(*args: Optional[Any]) -> bool:
             return False
 
     return True
+
+
+def get_default_params(fn: Callable[..., Any], exclude: List[str] = None):
+    """
+    Return default parameters of Callable.
+    Args:
+        fn (Callable[..., Any]): target Callable
+        exclude (List[str]): exclude list of parameters
+    Returns:
+        dict: contains default parameters of `fn`
+    """
+    argspec = inspect.getfullargspec(fn)
+    default_params = zip(
+        argspec.args[-len(argspec.defaults):], argspec.defaults
+    )
+    if exclude is not None:
+        default_params = filter(lambda x: x[0] not in exclude, default_params)
+    default_params = dict(default_params)
+    return default_params
