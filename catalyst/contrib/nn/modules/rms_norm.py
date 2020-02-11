@@ -4,23 +4,18 @@ import torch.nn as nn
 
 class RMSNorm(nn.Module):
     """
-    An implementation of [RMS Normalization](
-    https://openreview.net/pdf?id=SygkZ3MTJE.
-    RMS Normalization stabilises the training of deep neural networks by
-    normalising the outputs of neurons from a particular layer. It computes:
-    output = (scale * (tensor / (std(tensor) + epsilon)) + bias
-    where std denotes standard-deviation
-    # Parameters
-    dimension : `int`, required.
-    The dimension of the layer output to normalize.
-    epsilon : `float`, optional, (default = 1e-8)
-    An epsilon to prevent dividing by zero in the case
-    the layer has zero variance.
-    is_bias : `bool`, optional, (default = False)
-    A boolean value whether to include bias term while normalization.
-    # Returns
-    The normalized layer output.
-    """  # noqa
+    An implementation of RMS Normalization
+
+    Args:
+        dimension (int, required): The dimension of the layer
+            output to normalize
+        epsilon (float, optional): An epsilon to prevent dividing by
+            zero in case the layer has zero variance. (default = 1e-8)
+        is_bias (bool, optional) :  A boolean value whether to include
+            bias term while normalization (default = False)
+    Returns:
+        tensor: The normalized layer output
+    """
     def __init__(self, dimension, epsilon=1e-8, is_bias=False):
         super().__init__()
         self.dimension = dimension
