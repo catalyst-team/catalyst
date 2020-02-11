@@ -62,7 +62,7 @@ assert np.mean(checkpoint['reward']) > reward_goal
 """
 
 echo "start redis"
-redis-server --port 12000 &
+redis-server --port $PORT &
 sleep 3
 
 echo "run trainers"
