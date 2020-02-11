@@ -45,6 +45,15 @@ def build_args(parser: ArgumentParser):
         metavar="PATH",
         help="path to latest checkpoint"
     )
+    utils.boolean_flag(
+        parser,
+        "autoresume",
+        default=False,
+        help=(
+            "try automatically resume from logdir//last_full.pth "
+            "if --resume is empty"
+        )
+    )
     parser.add_argument("--seed", type=int, default=42)
     utils.boolean_flag(
         parser,
@@ -62,14 +71,13 @@ def build_args(parser: ArgumentParser):
     utils.boolean_flag(parser, "verbose", default=None)
     utils.boolean_flag(parser, "check", default=None)
     utils.boolean_flag(
-        parser, "deterministic",
+        parser,
+        "deterministic",
         default=None,
         help="Deterministic mode if running in CuDNN backend"
     )
     utils.boolean_flag(
-        parser, "benchmark",
-        default=None,
-        help="Use CuDNN benchmark"
+        parser, "benchmark", default=None, help="Use CuDNN benchmark"
     )
 
     return parser
