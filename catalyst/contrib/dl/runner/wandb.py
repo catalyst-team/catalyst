@@ -16,7 +16,8 @@ class WandbRunner(Runner):
     Runner wrapper with wandb integration hooks.
     """
     @staticmethod
-    def _log_metrics(metrics: Dict, mode: str, suffix: str = ""):
+    def _log_metrics(metrics: Dict, mode: str,
+                     step: dict = {}, suffix: str = ""):
         def key_locate(key: str):
             """
             Wandb uses first symbol _ for it service purposes
@@ -35,6 +36,7 @@ class WandbRunner(Runner):
             f"{key_locate(key)}/{mode}{suffix}": value
             for key, value in metrics.items()
         }
+        metrics.update(step)
         wandb.log(metrics)
 
     def _init(
@@ -75,6 +77,9 @@ class WandbRunner(Runner):
             wandb.init(**monitoring_params, config=exp_config)
         else:
             wandb.init(**monitoring_params)
+
+        model = self.model
+        wandb.watch(model)
 
     def _post_experiment_hook(self, experiment: Experiment):
         logdir_src = Path(experiment.logdir)
@@ -127,9 +132,11 @@ class WandbRunner(Runner):
         if self.log_on_epoch_end:
             for mode, metrics in \
                     self.state.metric_manager.epoch_values.items():
+                step = {'_epoch': self.state.epoch_log}
                 self._log_metrics(
                     metrics=metrics,
                     mode=mode,
+                    step=step,
                     suffix=self.epoch_log_suffix
                 )
 
