@@ -31,5 +31,9 @@ stages:
     valid:
       transform: A.Compose
       transforms:
+        - transform: A.CenterCrop
+          height: *image_size
+          width: *image_size
+          p: 1.0
         - transform: A.Normalize
         - transform: A.ToTensor

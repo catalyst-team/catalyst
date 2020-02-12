@@ -102,7 +102,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         self._keys_from_state = ["resume", "resume_dir"]
 
     def get_checkpoint_suffix(self, checkpoint: dict) -> str:
-        result = f"{checkpoint['stage']}.{checkpoint['epoch']}"
+        result = f"{checkpoint['stage']}.{checkpoint['stage_epoch']}"
         return result
 
     @staticmethod
@@ -229,6 +229,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             epoch_metrics=epoch_metrics,
             valid_metrics=valid_metrics,
             stage=state.stage,
+            stage_epoch=state.stage_epoch_log,
             epoch=state.epoch_log,
             checkpoint_data=state.checkpoint_data
         )

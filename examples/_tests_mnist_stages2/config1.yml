@@ -37,7 +37,7 @@ stages:
 
   stage1:
     state_params:
-      num_epochs: &num_epochs 4
+      num_epochs: &num_epochs 100
 
     scheduler_params:
       scheduler: OneCycleLRWithWarmup
