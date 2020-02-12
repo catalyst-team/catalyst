@@ -132,7 +132,7 @@ class WandbRunner(Runner):
         if self.log_on_epoch_end:
             for mode, metrics in \
                     self.state.metric_manager.epoch_values.items():
-                step = {'_epoch': self.state.epoch_log}
+                step = {"_epoch": self.state.epoch_log}
                 self._log_metrics(
                     metrics=metrics,
                     mode=mode,
