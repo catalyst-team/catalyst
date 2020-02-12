@@ -178,7 +178,8 @@ class OptimizerCallback(Callback):
                         if v is None or v in memo:
                             continue
                         memo.add(v)
-                        tag = "{}/{}/{}".format(module_prefix.replace(".", "/"), module_name, k)
+                        tag = "{}/{}/{}".format(
+                            module_prefix.replace(".", "/"), module_name, k)
                         state.model_grads[tag] = v.grad
 
             utils.maybe_recursive_call(model, "zero_grad")
