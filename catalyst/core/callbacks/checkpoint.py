@@ -112,6 +112,8 @@ class CheckpointCallback(BaseCheckpointCallback):
             checkpoint = utils.load_checkpoint(filename)
 
             state.epoch = checkpoint["epoch"]
+            state.stage_epoch = checkpoint["stage_epoch"]
+            state.stage = checkpoint["stage"]
 
             utils.unpack_checkpoint(
                 checkpoint,
@@ -122,7 +124,10 @@ class CheckpointCallback(BaseCheckpointCallback):
             )
 
             print(
-                f"loaded checkpoint {filename} (epoch {checkpoint['epoch']})"
+                f"loaded checkpoint {filename} "
+                f"(epoch {checkpoint['epoch']}, "
+                f"stage_epoch {checkpoint['stage_epoch']}, "
+                f"stage {checkpoint['stage']})"
             )
         else:
             raise Exception(f"No checkpoint found at {filename}")
@@ -213,6 +218,7 @@ class CheckpointCallback(BaseCheckpointCallback):
 
         if self.resume is not None:
             self.load_checkpoint(filename=self.resume, state=state)
+            state.resume = None
 
     def on_epoch_end(self, state: _State):
         if state.stage.startswith("infer") or get_rank() > 0:

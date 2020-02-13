@@ -153,15 +153,16 @@ class _Runner(ABC):
 
     def _prepare_for_stage(self, stage: str):
         utils.set_global_seed(self.experiment.initial_seed)
-        migrating_params = {}
-        stage_state_params = self.experiment.get_state_params(stage)
+
+        migrating_params = dict(**self.experiment.get_state_params(stage))
         migrate_from_previous_stage = \
-            stage_state_params.get("migrate_from_previous_stage", True)
+            migrating_params.get("migrate_from_previous_stage", True)
         if self.state is not None and migrate_from_previous_stage:
             migrating_params.update(
                 {
                     "step": self.state.step,
-                    "epoch": self.state.epoch
+                    "epoch": self.state.epoch,
+                    "resume": getattr(self.state, "resume", None),
                 }
             )
 
@@ -177,7 +178,6 @@ class _Runner(ABC):
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
-            **stage_state_params,
             **migrating_params
         )
 
@@ -339,11 +339,12 @@ class _Runner(ABC):
         self._prepare_for_stage(stage)
 
         self._run_event("stage", moment="start")
-        for epoch in range(self.state.num_epochs):
-            self.state.stage_epoch = epoch
-
+        while self.state.stage_epoch < self.state.num_epochs:
             self._run_event("epoch", moment="start")
-            self._run_epoch(stage=stage, epoch=epoch)
+            utils.set_global_seed(
+                self.experiment.initial_seed + self.state.epoch + 1
+            )
+            self._run_epoch(stage=stage, epoch=self.state.stage_epoch)
             self._run_event("epoch", moment="end")
 
             if self._check_run and self.state.stage_epoch >= 2:
@@ -353,6 +354,7 @@ class _Runner(ABC):
                 break
 
             self.state.epoch += 1
+            self.state.stage_epoch += 1
         self._run_event("stage", moment="end")
 
     def run_experiment(self, experiment: _Experiment, check: bool = False):
