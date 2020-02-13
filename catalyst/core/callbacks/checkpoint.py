@@ -237,7 +237,6 @@ class CheckpointCallback(BaseCheckpointCallback):
             stage=state.stage,
             stage_epoch=state.stage_epoch_log,
             epoch=state.epoch_log,
-            stage_epoch=state.stage_epoch_log,
             checkpoint_data=state.checkpoint_data
         )
         self.process_checkpoint(
