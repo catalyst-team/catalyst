@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-# @TODO: fix macos fail with sed
-set -e
+# Cause the script to exit if a single command fails
+set -eo pipefail -v
+
 
 echo "check distilbert_text_classification"
 LOGFILE=./examples/logs/_tests_nlp_classification/checkpoints/_metrics.json
