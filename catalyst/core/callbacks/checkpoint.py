@@ -111,9 +111,10 @@ class CheckpointCallback(BaseCheckpointCallback):
             print(f"=> loading checkpoint {filename}")
             checkpoint = utils.load_checkpoint(filename)
 
-            state.epoch = checkpoint["epoch"]
-            state.stage_epoch = checkpoint["stage_epoch"]
-            state.stage = checkpoint["stage"]
+            if not state.stage.startswith("infer"):
+                state.epoch = checkpoint["epoch"]
+                state.stage_epoch = checkpoint["stage_epoch"]
+                state.stage = checkpoint["stage"]
 
             utils.unpack_checkpoint(
                 checkpoint,

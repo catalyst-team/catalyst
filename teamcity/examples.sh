@@ -22,10 +22,10 @@ echo 'pip install alchemy-catalyst'
 pip install alchemy-catalyst
 
 echo './bin/tests/check_dl.sh'
-./bin/tests/check_dl.sh
+bash ./bin/tests/check_dl.sh
 
 echo './bin/tests/check_cv.sh'
-./bin/tests/check_cv.sh
+bash ./bin/tests/check_cv.sh
 
 echo './bin/tests/check_nlp.sh'
-./bin/tests/check_nlp.sh
+bash ./bin/tests/check_nlp.sh

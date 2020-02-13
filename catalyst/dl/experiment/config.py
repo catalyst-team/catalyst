@@ -120,8 +120,9 @@ class ConfigExperiment(Experiment):
 
         # Change start `stages_keys` if resume data were founded
         state_params = self.get_state_params(stages_keys[0])
-        resume, resume_dir = [state_params.get(key, None)
-                              for key in ["resume", "resume_dir"]]
+        resume, resume_dir = [
+            state_params.get(key, None) for key in ["resume", "resume_dir"]
+        ]
 
         if resume_dir is not None:
             resume = resume_dir / str(resume)
