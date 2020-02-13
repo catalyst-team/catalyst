@@ -26,10 +26,10 @@ model_params:
   generator:
     model: SimpleCGenerator
     noise_dim: &noise_dim 16
-    num_classes: &n_classes 10
+    num_classes: &num_classes 10
   discriminator:
     model: SimpleCDiscriminator
-    num_classes: *n_classes
+    num_classes: *num_classes
 
 
 args:
@@ -57,7 +57,7 @@ stages:
         value: 0.
         output_key: &fake_targets "fake_targets"
       - transform: OneHotTargetTransform
-        num_classes: *n_classes
+        num_classes: *num_classes
         input_key: *class_targets
         output_key: *class_targets_one_hot
 

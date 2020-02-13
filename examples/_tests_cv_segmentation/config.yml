@@ -8,8 +8,8 @@ runner_params:
   input_target_key: mask
 
 args:
-  expdir: "_test_segmentation"
-  logdir: "./logs/_test_segmentation"
+  expdir: "_tests_cv_segmentation"
+  logdir: "./logs/_tests_cv_segmentation"
   seed: &seed 42
 
 stages:
@@ -17,8 +17,8 @@ stages:
   data_params:
     batch_size: 8
     num_workers: 0
-    image_path: ./_test_segmentation/data/segmentation_data/train
-    mask_path: ./_test_segmentation/data/segmentation_data/train_masks
+    image_path: ./_tests_cv_segmentation/data/segmentation_data/train
+    mask_path: ./_tests_cv_segmentation/data/segmentation_data/train_masks
     valid_size: 0.2
 
   state_params:

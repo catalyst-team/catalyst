@@ -11,9 +11,9 @@ model_params:
 
 args:
   # where to look for __init__.py file
-  expdir: '_tests_distilbert_text_classification'
+  expdir: '_tests_nlp_classification'
   # store logs in this subfolder
-  baselogdir: './logs/_tests_distilbert_text_classification'
+  baselogdir: './logs/_tests_nlp_classification'
 
 # common settings for all stages
 stages:
@@ -21,7 +21,7 @@ stages:
   data_params:
     batch_size: 24
     num_workers: 1
-    path_to_data: './examples/_tests_distilbert_text_classification/input'
+    path_to_data: './examples/_tests_nlp_classification/input'
     train_filename: "train.csv"
     valid_filename: "valid.csv"
     text_field: "text"
