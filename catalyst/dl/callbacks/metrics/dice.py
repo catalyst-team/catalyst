@@ -1,5 +1,3 @@
-from typing import Dict
-
 import numpy as np
 
 from catalyst.dl.core import Callback, CallbackOrder, MetricCallback, State
@@ -109,12 +107,13 @@ class MulticlassDiceMetricCallback(Callback):
 
         # logging the dice scores in the state
         for i, dice in enumerate(dice_scores):
-            if (isinstance(self.class_names, dict) and \
-                not i in list(self.class_names.keys())):
+            if (isinstance(self.class_names, dict) and
+                    i not in list(self.class_names.keys())):
                 continue
             postfix = self.class_names[i] \
                 if self.class_names is not None \
                 else str(i)
+
             loader_values[f"{self.prefix}_{postfix}"] = dice
 
         loader_values[f"{self.prefix}_mean"] = np.mean(dice_scores)
