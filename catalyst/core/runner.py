@@ -4,7 +4,6 @@ from typing import (   # isort:skip
 
 from abc import ABC, abstractmethod
 from collections import OrderedDict
-from pathlib import Path
 
 import torch
 from torch import nn
@@ -353,7 +352,6 @@ class _Runner(ABC):
             self.state.stage_epoch += 1
         self._run_event("stage", moment="end")
 
-
     def run_experiment(self, experiment: _Experiment, check: bool = False):
         """
         Starts the experiment
@@ -372,12 +370,7 @@ class _Runner(ABC):
         #     utils.dump_base_experiment_code(expdir, logdir)
 
         try:
-            stages = list(self.experiment.stages)
-            if hasattr(self.experiment, "get_start_stage"):
-                start_stage = self.experiment.get_start_stage()
-                stages = stages[stages.index(start_stage):]
-
-            for stage in stages:
+            for stage in self.experiment.stages:
                 self._run_stage(stage)
         except (Exception, KeyboardInterrupt) as ex:
             # if an exception had been raised
