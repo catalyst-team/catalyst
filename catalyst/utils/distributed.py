@@ -149,6 +149,24 @@ def distributed_run(data_parallel, worker_fn, *args, **kwargs):
                 worker.kill()
 
 
+def initialize_apex(model, optimizer=None, **distributed_params):
+    import apex
+    amp_params = get_default_params(
+        apex.amp.initialize, ["models", "optimizers"]
+    )
+    amp_params["opt_level"] = "O0"
+    for dp in distributed_params:
+        if dp in amp_params:
+            amp_params[dp] = distributed_params[dp]
+
+    amp_result = apex.amp.initialize(model, optimizer, **amp_params)
+    if optimizer is not None:
+        model, optimizer = amp_result
+    else:
+        model = amp_result
+    return model, optimizer
+
+
 def process_components(
     model: Model,
     criterion: Criterion = None,
@@ -175,6 +193,8 @@ def process_components(
     if device is None:
         device = utils.get_device()
 
+    use_apex = distributed_params.pop("apex", True) and is_apex_available()
+
     model: Model = utils.maybe_recursive_call(model, "to", device=device)
 
     if utils.is_wrapped_with_ddp(model):
@@ -186,24 +206,12 @@ def process_components(
         model = utils.maybe_recursive_call(model, "to", device=device)
 
         syncbn = distributed_params.pop("syncbn", False)
-        use_apex = distributed_params.pop("apex", True) and is_apex_available()
 
         if use_apex:
             import apex
-            amp_params = get_default_params(
-                apex.amp.initialize, ["models", "optimizers"]
+            model, optimizer = initialize_apex(
+                model, optimizer, **distributed_params
             )
-            amp_params["opt_level"] = "O0"
-            for dp in distributed_params:
-                if dp in amp_params:
-                    amp_params[dp] = distributed_params[dp]
-
-            amp_result = apex.amp.initialize(model, optimizer, **amp_params)
-            if optimizer is not None:
-                model, optimizer = amp_result
-            else:
-                model = amp_result
-
             model = apex.parallel.DistributedDataParallel(model)
 
             if syncbn:
@@ -217,6 +225,10 @@ def process_components(
             model = torch.nn.DataParallel(model)
         elif isinstance(model, dict):
             model = {k: torch.nn.DataParallel(v) for k, v in model.items()}
+    elif use_apex:
+        model, optimizer = initialize_apex(
+            model, optimizer, **distributed_params
+        )
 
     model: Model = utils.maybe_recursive_call(model, "to", device=device)
 
