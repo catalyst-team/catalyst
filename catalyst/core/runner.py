@@ -153,6 +153,7 @@ class _Runner(ABC):
 
     def _prepare_for_stage(self, stage: str):
         utils.set_global_seed(self.experiment.initial_seed)
+
         migrating_params = dict(**self.experiment.get_state_params(stage))
         migrate_from_previous_stage = \
             migrating_params.get("migrate_from_previous_stage", True)
