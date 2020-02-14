@@ -172,7 +172,9 @@ for i, (input, output) in enumerate(zip(valid_data, runner_out)):
 
 # lovasz LovaszLossBinary criterion
 
+model = Unet(num_classes=1, in_channels=1, num_channels=32, num_blocks=2)
 criterion = LovaszLossBinary()
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
 runner.train(
     model=model,
@@ -185,8 +187,6 @@ runner.train(
 )
 
 # Multiclasses checks
-model = Unet(num_classes=2, in_channels=1, num_channels=32, num_blocks=2)
-
 # lovasz LovaszLossMultiClass criterion
 
 data_transform = transforms.Compose([
@@ -210,7 +210,9 @@ data_transform = transforms.Compose([
 
 loaders = get_loaders(data_transform)
 
+model = Unet(num_classes=2, in_channels=1, num_channels=32, num_blocks=2)
 criterion = LovaszLossMultiClass()
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
 runner.train(
     model=model,
@@ -251,7 +253,9 @@ data_transform = transforms.Compose([
 
 loaders = get_loaders(data_transform)
 
+model = Unet(num_classes=2, in_channels=1, num_channels=32, num_blocks=2)
 criterion = LovaszLossMultiLabel()
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
 runner.train(
     model=model,
