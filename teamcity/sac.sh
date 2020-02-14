@@ -8,4 +8,4 @@ echo "pip install -r requirements/requirements-rl.txt"
 pip install -r requirements/requirements-rl.txt
 
 echo "./bin/tests/check_sac.sh"
-./bin/tests/check_sac.sh
+OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" bash ./bin/tests/check_sac.sh

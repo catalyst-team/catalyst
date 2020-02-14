@@ -21,11 +21,50 @@ pip install -r requirements/requirements-rl.txt
 echo 'pip install alchemy-catalyst'
 pip install alchemy-catalyst
 
+
+####################################  DL  ####################################
 echo './bin/tests/check_dl.sh'
-bash ./bin/tests/check_dl.sh
+OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" CUDA_VISIBLE_DEVICES="" \
+    bash ./bin/tests/check_dl.sh
 
-echo './bin/tests/check_cv.sh'
-bash ./bin/tests/check_cv.sh
+OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" CUDA_VISIBLE_DEVICES="0" \
+    bash ./bin/tests/check_dl.sh
 
-echo './bin/tests/check_nlp.sh'
-bash ./bin/tests/check_nlp.sh
+OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" CUDA_VISIBLE_DEVICES="0,1" \
+    bash ./bin/tests/check_dl.sh
+
+
+####################################  CV  ####################################
+echo './bin/tests/check_dl_cv.sh'
+OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" CUDA_VISIBLE_DEVICES="" \
+    bash ./bin/tests/check_dl_cv.sh
+
+OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" CUDA_VISIBLE_DEVICES="0" \
+    bash ./bin/tests/check_dl_cv.sh
+
+OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" CUDA_VISIBLE_DEVICES="0,1" \
+    bash ./bin/tests/check_dl_cv.sh
+
+
+####################################  GAN  ###################################
+echo './bin/tests/check_dl_gan.sh'
+OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" CUDA_VISIBLE_DEVICES="" \
+    bash ./bin/tests/check_dl_gan.sh
+
+OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" CUDA_VISIBLE_DEVICES="0" \
+    bash ./bin/tests/check_dl_gan.sh
+
+OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" CUDA_VISIBLE_DEVICES="0,1" \
+    bash ./bin/tests/check_dl_gan.sh
+
+
+####################################  NLP  ###################################
+echo './bin/tests/check_dl_nlp.sh'
+OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" CUDA_VISIBLE_DEVICES=""  \
+    bash ./bin/tests/check_dl_nlp.sh
+
+OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" CUDA_VISIBLE_DEVICES="0"  \
+    bash ./bin/tests/check_dl_nlp.sh
+
+OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" CUDA_VISIBLE_DEVICES="0,1"  \
+    bash ./bin/tests/check_dl_nlp.sh

@@ -7,6 +7,11 @@ set -eo pipefail -v
 ################################  pipeline 00  ################################
 rm -rf ./examples/logs
 
+# load the data
+mkdir -p data
+bash bin/scripts/download-gdrive 1iYaNijLmzsrMlAdMoUEhhJuo-5bkeAuj ./data/segmentation_data.zip
+unzip -qqo ./data/segmentation_data.zip -d ./data 2> /dev/null || true
+
 
 ################################  pipeline 01  ################################
 echo 'pipeline 01'
@@ -322,21 +327,14 @@ EXPDIR=./examples/_tests_cv_segmentation
 LOGDIR=./examples/logs/_tests_cv_segmentation
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-# load the data
-mkdir -p ./examples/_tests_cv_segmentation/data
-cd ./examples/_tests_cv_segmentation/data/
-download-gdrive 1iYaNijLmzsrMlAdMoUEhhJuo-5bkeAuj segmentation_data.zip
-extract-archive segmentation_data.zip
-cd ../../..
-
 ## train
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --configs ${EXPDIR}/config.yml ${EXPDIR}/transforms.yml \
   --logdir=${LOGDIR} \
-  --stages/data_params/image_path=./examples/_tests_cv_segmentation/data/segmentation_data/train:str \
-  --stages/data_params/mask_path=./examples/_tests_cv_segmentation/data/segmentation_data/train_masks:str \
+  --stages/data_params/image_path=./data/segmentation_data/train:str \
+  --stages/data_params/mask_path=./data/segmentation_data/train_masks:str \
   --check
 
 ## check metrics
@@ -364,52 +362,7 @@ assert loss < 0.32, f'loss must be < 0.32, got {loss}'
 ## remove logs
 rm -rf ./examples/logs/_tests_cv_segmentation
 
-################################  pipeline 31  ################################
-# GAN
-echo 'pipeline 31 -  GAN'
-EXPDIR=./examples/mnist_gans
-LOGDIR=./examples/logs/mnist_gans
-LOGFILE=${LOGDIR}/checkpoints/_metrics.json
-
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-  python catalyst/dl/scripts/run.py \
-  --expdir=${EXPDIR} \
-  --config=${EXPDIR}/configs/vanilla_gan.yml \
-  --logdir=${LOGDIR} \
-  --stages/state_params/num_epochs=11:int
-
-if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-    echo "File $LOGFILE does not exist"
-    exit 1
-fi
-
-cat $LOGFILE
-echo 'pipeline 31 -  GAN'
-python -c """
-from safitty import Safict
-metrics=Safict.load('$LOGFILE')
-
-loss_g = metrics.get('last', 'loss_g')
-loss_d_real = metrics.get('last', 'loss_d_real')
-loss_d_fake = metrics.get('last', 'loss_d_fake')
-loss_d = metrics.get('last', 'loss_d')
-
-print('loss_g', loss_g)
-print('loss_d_real', loss_d_real)
-print('loss_d_fake', loss_d_fake)
-print('loss_d', loss_d)
-
-# assert 0.9 < loss_g < 1.5
-# assert 0.3 < loss_d_real < 0.6
-# assert 0.28 < loss_d_fake < 0.58
-# assert 0.3 < loss_d < 0.6
-assert loss_g < 2.0
-assert loss_d_real < 0.9
-assert loss_d_fake < 0.9
-assert loss_d < 0.9
-"""
-
-rm -rf ${LOGDIR}
 
 ################################  pipeline 99  ################################
 rm -rf ./examples/logs
+rm -rf ./data
