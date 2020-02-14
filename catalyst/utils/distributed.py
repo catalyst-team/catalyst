@@ -32,12 +32,13 @@ def get_rank() -> int:
 
 
 def is_apex_available() -> bool:
+    env_apex = os.getenv("USE_APEX", "1") == "1"
     try:
         import apex  # noqa: F401
         from apex import amp  # noqa: F401
-        return True
+        return True and env_apex
     except ImportError:
-        return False
+        return False and env_apex
 
 
 def assert_fp16_available() -> None:
@@ -96,7 +97,7 @@ def get_distributed_params():
     local_rank, rank = [v and int(v) for v in [local_rank, rank]]
     world_size = int(os.getenv("WORLD_SIZE", world_size))
 
-    return OrderedDict(
+    output = OrderedDict(
         local_rank=local_rank,
         start_rank=start_rank,
         rank=rank,
@@ -104,6 +105,8 @@ def get_distributed_params():
         master_addr=os.environ["MASTER_ADDR"],
         master_port=os.environ["MASTER_PORT"],
     )
+
+    return output
 
 
 def get_distributed_env(
@@ -120,12 +123,12 @@ def get_distributed_env(
     return env
 
 
-def distributed_run(data_parallel, worker_fn, *args, **kwargs):
+def distributed_run(distributed, worker_fn, *args, **kwargs):
     distributed_params = get_distributed_params()
     local_rank = distributed_params["local_rank"]
     world_size = distributed_params["world_size"]
 
-    if data_parallel or world_size <= 1:
+    if not distributed or world_size <= 1:
         worker_fn(*args, **kwargs)
     elif local_rank is not None:
         torch.cuda.set_device(int(local_rank))
@@ -199,8 +202,11 @@ def process_components(
 
     if utils.is_wrapped_with_ddp(model):
         pass
+    # distributed data parallel run (ddp) (with apex support)
     elif get_rank() >= 0:
-        assert isinstance(model, nn.Module)
+        assert isinstance(model, nn.Module), \
+            "No support for dixtributed KV model yet"
+
         local_rank = distributed_params.pop("local_rank", 0)
         device = f"cuda:{local_rank}"
         model = utils.maybe_recursive_call(model, "to", device=device)
@@ -217,18 +223,32 @@ def process_components(
             if syncbn:
                 model = apex.parallel.convert_syncbn_model(model)
         else:
-            model = torch.nn.parallel.DistributedDataParallel(
+            model = nn.parallel.DistributedDataParallel(
                 model, device_ids=[local_rank], output_device=local_rank
             )
-    elif torch.cuda.device_count() > 1:
-        if isinstance(model, nn.Module):
-            model = torch.nn.DataParallel(model)
-        elif isinstance(model, dict):
-            model = {k: torch.nn.DataParallel(v) for k, v in model.items()}
-    elif use_apex:
-        model, optimizer = initialize_apex(
-            model, optimizer, **distributed_params
-        )
+    # data parallel run (dp) (with apex support)
+    else:
+        # apex issue https://github.com/deepset-ai/FARM/issues/210
+        can_use_apex = \
+            (use_apex and torch.cuda.device_count() == 1) \
+            or (
+                    torch.cuda.device_count() > 1
+                    and distributed_params.get("opt_level", "O0") == "O1"
+            )
+
+        if can_use_apex:
+            assert isinstance(model, nn.Module), \
+                "No support for apex KV model yet"
+
+            model, optimizer = initialize_apex(
+                model, optimizer, **distributed_params
+            )
+
+        if torch.cuda.device_count() > 1:
+            if isinstance(model, nn.Module):
+                model = nn.DataParallel(model)
+            elif isinstance(model, dict):
+                model = {k: nn.DataParallel(v) for k, v in model.items()}
 
     model: Model = utils.maybe_recursive_call(model, "to", device=device)
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import argparse
 from argparse import ArgumentParser
 from pathlib import Path
@@ -60,15 +61,15 @@ def build_args(parser: ArgumentParser):
     utils.boolean_flag(
         parser,
         "apex",
-        default=True,
+        default=os.getenv("USE_APEX", "1") == "1",
         help="Enable/disable using of Apex extension"
     )
     utils.boolean_flag(
         parser,
-        "data-parallel",
-        shorthand="dp",
-        default=False,
-        help="Force using of DataParallel"
+        "distributed",
+        shorthand="ddp",
+        default=os.getenv("USE_DDP", "0") == "1",
+        help="Run inn distributed mode"
     )
     utils.boolean_flag(parser, "verbose", default=None)
     utils.boolean_flag(parser, "check", default=None)
@@ -116,7 +117,7 @@ def main_worker(args, unknown_args):
 
 def main(args, unknown_args):
     """Run the ``catalyst-dl run`` script"""
-    distributed_run(args.data_parallel, main_worker, args, unknown_args)
+    distributed_run(args.distributed, main_worker, args, unknown_args)
 
 
 if __name__ == "__main__":

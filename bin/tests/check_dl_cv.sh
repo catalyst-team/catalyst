@@ -76,24 +76,26 @@ assert metrics.get('stage1.3', 'loss') < metrics.get('stage1.1', 'loss')
 assert metrics.get('stage1.3', 'loss') < 2.1
 """
 
+if [[ "$USE_DDP" == "0" ]]; then
+    PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+      python catalyst/dl/scripts/run.py \
+      --expdir=${EXPDIR} \
+      --config=${EXPDIR}/config2_infer.yml \
+      --resume=${LOGDIR}/checkpoints/best.pth \
+      --out_dir=${LOGDIR}/:str \
+      --out_prefix="/predictions/":str
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-  python catalyst/dl/scripts/run.py \
-  --expdir=${EXPDIR} \
-  --config=${EXPDIR}/config2_infer.yml \
-  --resume=${LOGDIR}/checkpoints/best.pth \
-  --out_dir=${LOGDIR}/:str \
-  --out_prefix="/predictions/":str
+    cat $LOGFILE
+    echo 'pipeline 02 - infer'
+    python -c """
+    import numpy as np
+    data = np.load('${LOGDIR}/predictions/infer.logits.npy')
+    print(data.shape)
+    assert data.shape == (10000, 10)
+    """
 
-cat $LOGFILE
-echo 'pipeline 02 - infer'
-python -c """
-import numpy as np
-data = np.load('${LOGDIR}/predictions/infer.logits.npy')
-assert data.shape == (10000, 10)
-"""
-
-rm -rf $LOGDIR
+    rm -rf $LOGDIR
+fi
 
 
 ################################  pipeline 03  ################################
@@ -187,26 +189,28 @@ rm -rf ${LOGDIR}
 
 
 ################################  pipeline 06  ################################
-echo 'pipeline 06 - LrFinder'
-EXPDIR=./examples/_tests_cv_classification
-LOGDIR=./examples/logs/_tests_cv_classification
-LOGFILE=${LOGDIR}/checkpoints/_metrics.json
+if [[ "$USE_DDP" == "0" ]]; then
+    echo 'pipeline 06 - LrFinder'
+    EXPDIR=./examples/_tests_cv_classification
+    LOGDIR=./examples/logs/_tests_cv_classification
+    LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-  python catalyst/dl/scripts/run.py \
-  --expdir=${EXPDIR} \
-  --config=${EXPDIR}/config6_finder.yml \
-  --logdir=${LOGDIR} &
+    PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+      python catalyst/dl/scripts/run.py \
+      --expdir=${EXPDIR} \
+      --config=${EXPDIR}/config6_finder.yml \
+      --logdir=${LOGDIR} &
 
-sleep 30
-kill %1
+    sleep 30
+    kill %1
 
-if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-    echo "File $LOGFILE does not exist"
-    exit 1
+    if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
+        echo "File $LOGFILE does not exist"
+        exit 1
+    fi
+
+    rm -rf ${LOGDIR}
 fi
-
-rm -rf ${LOGDIR}
 
 
 ################################  pipeline 11  ################################
@@ -300,26 +304,28 @@ rm -rf ${LOGDIR}
 
 
 ################################  pipeline 14  ################################
-echo 'pipeline 14'
-EXPDIR=./examples/_tests_cv_classification_transforms
-LOGDIR=./examples/logs/_tests_cv_classification_transforms
-LOGFILE=${LOGDIR}/checkpoints/_metrics.json
+if [[ "$USE_DDP" == "0" ]]; then
+    echo 'pipeline 14'
+    EXPDIR=./examples/_tests_cv_classification_transforms
+    LOGDIR=./examples/logs/_tests_cv_classification_transforms
+    LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-  python catalyst/dl/scripts/run.py \
-  --expdir=${EXPDIR} \
-  --config=${EXPDIR}/config4_finder.yml \
-  --logdir=${LOGDIR} &
+    PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+      python catalyst/dl/scripts/run.py \
+      --expdir=${EXPDIR} \
+      --config=${EXPDIR}/config4_finder.yml \
+      --logdir=${LOGDIR} &
 
-sleep 30
-kill %1
+    sleep 30
+    kill %1
 
-if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-    echo "File $LOGFILE does not exist"
-    exit 1
+    if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
+        echo "File $LOGFILE does not exist"
+        exit 1
+    fi
+
+    rm -rf ${LOGDIR}
 fi
-
-rm -rf ${LOGDIR}
 
 
 ################################  pipeline 15  ################################
@@ -391,7 +397,7 @@ LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
-  --config=${EXPDIR}/config6_fp16.yml \
+  --config=${EXPDIR}/config7_fp16.yml \
   --logdir=${LOGDIR} \
   --check
 
