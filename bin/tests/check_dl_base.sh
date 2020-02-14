@@ -7,6 +7,9 @@ set -eo pipefail -v
 ################################  pipeline 00  ################################
 pip install tifffile  #TODO: check if really required
 
+rm -rf ./examples/logs
+rm -rf ./data
+
 # load the data
 mkdir -p data
 bash bin/scripts/download-gdrive 1N82zh0kzmnzqRvUyMgVOGsCoS1kHf3RP ./data/isbi.tar.gz
