@@ -328,64 +328,64 @@ if [[ "$USE_DDP" == "0" ]]; then
 fi
 
 
-################################  pipeline 15  ################################
-echo 'pipeline 15'
-EXPDIR=./examples/_tests_cv_classification_transforms
-LOGDIR=./examples/logs/_tests_cv_classification_transforms
-LOGFILE=${LOGDIR}/checkpoints/_metrics.json
+#################################  pipeline 15  ################################
+#echo 'pipeline 15'
+#EXPDIR=./examples/_tests_cv_classification_transforms
+#LOGDIR=./examples/logs/_tests_cv_classification_transforms
+#LOGFILE=${LOGDIR}/checkpoints/_metrics.json
+#
+#PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+#  python catalyst/dl/scripts/run.py \
+#  --expdir=${EXPDIR} \
+#  --config=${EXPDIR}/config5_fp16.yml \
+#  --logdir=${LOGDIR} \
+#  --check
+#
+#if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
+#    echo "File $LOGFILE does not exist"
+#    exit 1
+#fi
+#
+#cat $LOGFILE
+#echo 'pipeline 15'
+#python -c """
+#from safitty import Safict
+#metrics = Safict.load('$LOGFILE')
+## assert metrics.get('stage1.3', 'loss') < metrics.get('stage1.1', 'loss')
+#assert metrics.get('stage1.3', 'loss') < 2.33
+#"""
+#
+#rm -rf ${LOGDIR}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-  python catalyst/dl/scripts/run.py \
-  --expdir=${EXPDIR} \
-  --config=${EXPDIR}/config5_fp16.yml \
-  --logdir=${LOGDIR} \
-  --check
 
-if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-    echo "File $LOGFILE does not exist"
-    exit 1
-fi
-
-cat $LOGFILE
-echo 'pipeline 15'
-python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
-# assert metrics.get('stage1.3', 'loss') < metrics.get('stage1.1', 'loss')
-assert metrics.get('stage1.3', 'loss') < 2.33
-"""
-
-rm -rf ${LOGDIR}
-
-
-################################  pipeline 16  ################################
-echo 'pipeline 16'
-EXPDIR=./examples/_tests_cv_classification_transforms
-LOGDIR=./examples/logs/_tests_cv_classification_transforms
-LOGFILE=${LOGDIR}/checkpoints/_metrics.json
-
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-  python catalyst/dl/scripts/run.py \
-  --expdir=${EXPDIR} \
-  --config=${EXPDIR}/config6_fp16.yml \
-  --logdir=${LOGDIR} \
-  --check
-
-if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-    echo "File $LOGFILE does not exist"
-    exit 1
-fi
-
-cat $LOGFILE
-echo 'pipeline 16'
-python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
-# assert metrics.get('stage1.3', 'loss') < metrics.get('stage1.1', 'loss')
-assert metrics.get('stage1.3', 'loss') < 2.33
-"""
-
-rm -rf ${LOGDIR}
+#################################  pipeline 16  ################################
+#echo 'pipeline 16'
+#EXPDIR=./examples/_tests_cv_classification_transforms
+#LOGDIR=./examples/logs/_tests_cv_classification_transforms
+#LOGFILE=${LOGDIR}/checkpoints/_metrics.json
+#
+#PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+#  python catalyst/dl/scripts/run.py \
+#  --expdir=${EXPDIR} \
+#  --config=${EXPDIR}/config6_fp16.yml \
+#  --logdir=${LOGDIR} \
+#  --check
+#
+#if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
+#    echo "File $LOGFILE does not exist"
+#    exit 1
+#fi
+#
+#cat $LOGFILE
+#echo 'pipeline 16'
+#python -c """
+#from safitty import Safict
+#metrics = Safict.load('$LOGFILE')
+## assert metrics.get('stage1.3', 'loss') < metrics.get('stage1.1', 'loss')
+#assert metrics.get('stage1.3', 'loss') < 2.33
+#"""
+#
+#rm -rf ${LOGDIR}
 
 
 ################################  pipeline 17  ################################
