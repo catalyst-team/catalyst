@@ -25,7 +25,7 @@ class EarlyStoppingCallback(Callback):
         if minimize:
             self.is_better = lambda score, best: score <= (best - min_delta)
         else:
-            self.is_better = lambda score, best: score >= (best - min_delta)
+            self.is_better = lambda score, best: score >= (best + min_delta)
 
     def on_epoch_end(self, state: State) -> None:
         if state.stage.startswith("infer"):
