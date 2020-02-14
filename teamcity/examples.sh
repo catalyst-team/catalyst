@@ -34,9 +34,12 @@ MKL_NUM_THREADS="1"
 
 
 ###################################  APEX  ####################################
-git clone https://github.com/NVIDIA/apex apex_last
+#git clone https://github.com/NVIDIA/apex apex_last
+#pip install -v --no-cache-dir \
+#    --global-option="--cpp_ext" --global-option="--cuda_ext" ./apex_last
 pip install -v --no-cache-dir \
-    --global-option="--cpp_ext" --global-option="--cuda_ext" ./apex_last
+    --global-option="--cpp_ext" --global-option="--cuda_ext" \
+    git+https://github.com/NVIDIA/apex
 
 
 ###################################  CPU ######################################
