@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-import os
 import argparse
 from argparse import ArgumentParser
+import os
 from pathlib import Path
 
 import safitty
