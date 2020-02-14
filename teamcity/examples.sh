@@ -6,26 +6,26 @@ set -eo pipefail -v
 
 ###################################  LINUX  ###################################
 
-#echo 'apt-get update && apt-get install wget'
-#apt-get update && apt-get install wget
+echo 'apt-get update && apt-get install wget'
+apt-get update && apt-get install wget
 
 
 ###################################  PYTHON  ##################################
 
-#echo 'pip install -r requirements/requirements.txt'
-#pip install -r requirements/requirements.txt
-#
-#echo "pip install -r requirements/requirements-cv.txt"
-#pip install -r requirements/requirements-cv.txt
-#
-#echo 'pip install -r requirements/requirements-nlp.txt'
-#pip install -r requirements/requirements-nlp.txt
-#
-#echo 'pip install -r requirements/requirements-rl.txt'
-#pip install -r requirements/requirements-rl.txt
-#
-#echo 'pip install alchemy-catalyst'
-#pip install alchemy-catalyst
+echo 'pip install -r requirements/requirements.txt'
+pip install -r requirements/requirements.txt
+
+echo "pip install -r requirements/requirements-cv.txt"
+pip install -r requirements/requirements-cv.txt
+
+echo 'pip install -r requirements/requirements-nlp.txt'
+pip install -r requirements/requirements-nlp.txt
+
+echo 'pip install -r requirements/requirements-rl.txt'
+pip install -r requirements/requirements-rl.txt
+
+echo 'pip install alchemy-catalyst'
+pip install alchemy-catalyst
 
 
 ###################################  ENV  #####################################
@@ -34,9 +34,9 @@ MKL_NUM_THREADS="1"
 
 
 ###################################  APEX  ####################################
-# git clone https://github.com/NVIDIA/apex
-# pip install -v --no-cache-dir \
-#    --global-option="--cpp_ext" --global-option="--cuda_ext" ./apex
+git clone https://github.com/NVIDIA/apex
+pip install -v --no-cache-dir \
+    --global-option="--cpp_ext" --global-option="--cuda_ext" ./apex
 
 
 ###################################  CPU ######################################
