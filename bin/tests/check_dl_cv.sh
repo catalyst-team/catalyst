@@ -6,12 +6,6 @@ set -eo pipefail -v
 
 ################################  pipeline 00  ################################
 rm -rf ./examples/logs
-rm -rf ./data
-
-# load the data
-# mkdir -p data
-# bash bin/scripts/download-gdrive 1iYaNijLmzsrMlAdMoUEhhJuo-5bkeAuj ./data/segmentation_data.zip
-# unzip -qqo ./data/segmentation_data.zip -d ./data 2> /dev/null || true
 
 
 ################################  pipeline 01  ################################
@@ -88,11 +82,11 @@ if [[ "$USE_DDP" == "0" ]]; then
     cat $LOGFILE
     echo 'pipeline 02 - infer'
     python -c """
-    import numpy as np
-    data = np.load('${LOGDIR}/predictions/infer.logits.npy')
-    print(data.shape)
-    assert data.shape == (10000, 10)
-    """
+import numpy as np
+data = np.load('${LOGDIR}/predictions/infer.logits.npy')
+print(data.shape)
+assert data.shape == (10000, 10)
+"""
 
     rm -rf $LOGDIR
 fi
@@ -463,4 +457,3 @@ fi
 
 ################################  pipeline 99  ################################
 rm -rf ./examples/logs
-rm -rf ./data
