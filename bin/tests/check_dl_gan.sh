@@ -30,28 +30,28 @@ if [[ "$USE_APEX" == "0" ]]; then
     cat $LOGFILE
     echo 'pipeline 01 -  GAN'
     python -c """
-    from safitty import Safict
-    metrics=Safict.load('$LOGFILE')
+from safitty import Safict
+metrics=Safict.load('$LOGFILE')
 
-    loss_g = metrics.get('last', 'loss_g')
-    loss_d_real = metrics.get('last', 'loss_d_real')
-    loss_d_fake = metrics.get('last', 'loss_d_fake')
-    loss_d = metrics.get('last', 'loss_d')
+loss_g = metrics.get('last', 'loss_g')
+loss_d_real = metrics.get('last', 'loss_d_real')
+loss_d_fake = metrics.get('last', 'loss_d_fake')
+loss_d = metrics.get('last', 'loss_d')
 
-    print('loss_g', loss_g)
-    print('loss_d_real', loss_d_real)
-    print('loss_d_fake', loss_d_fake)
-    print('loss_d', loss_d)
+print('loss_g', loss_g)
+print('loss_d_real', loss_d_real)
+print('loss_d_fake', loss_d_fake)
+print('loss_d', loss_d)
 
-    # assert 0.9 < loss_g < 1.5
-    # assert 0.3 < loss_d_real < 0.6
-    # assert 0.28 < loss_d_fake < 0.58
-    # assert 0.3 < loss_d < 0.6
-    assert loss_g < 2.7
-    assert loss_d_real < 1.0
-    assert loss_d_fake < 1.0
-    assert loss_d < 1.0
-    """
+# assert 0.9 < loss_g < 1.5
+# assert 0.3 < loss_d_real < 0.6
+# assert 0.28 < loss_d_fake < 0.58
+# assert 0.3 < loss_d < 0.6
+assert loss_g < 2.7
+assert loss_d_real < 1.0
+assert loss_d_fake < 1.0
+assert loss_d < 1.0
+"""
 
     rm -rf ${LOGDIR}
 fi
