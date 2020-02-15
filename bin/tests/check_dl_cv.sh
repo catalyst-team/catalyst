@@ -419,9 +419,10 @@ EXPDIR=./examples/_tests_cv_segmentation
 LOGDIR=./examples/logs/_tests_cv_segmentation
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-ls ./data
-ls ./data/segmentation_data/train | wc -l
-ls ./data/segmentation_data/train_masks | wc -l
+echo $(ls ./data)
+echo $(ls ./data/segmentation_data)
+echo $(ls ./data/segmentation_data/train | wc -l)
+echo $(ls ./data/segmentation_data/train_masks | wc -l)
 ## train
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
