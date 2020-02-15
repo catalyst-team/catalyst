@@ -135,7 +135,7 @@ def get_available_gpus():
     """
     if "CUDA_VISIBLE_DEVICES" in os.environ:
         result = os.environ["CUDA_VISIBLE_DEVICES"].split(",")
-        result = [int(id_) for id_ in result if id_ != ""]
+        result = [id_ for id_ in result if id_ != ""]
         # invisible GPUs
         # https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#env-vars
         if -1 in result:

@@ -2,7 +2,7 @@ model_params:
   model: SimpleNet
 
 args:
-  expdir: "_tests_mnist_stages"
+  expdir: "_tests_cv_classification"
 
 stages:
 

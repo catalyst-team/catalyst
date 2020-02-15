@@ -2,11 +2,11 @@ model_params:
   model: SimpleNet
 
 runner_params:
-  input_key: image
+  input_key: &input_key image
 
 args:
-  expdir: "mnist_simple"
-  logdir: "./logs/mnist_simple"
+  expdir: "cv_classification"
+  logdir: "./logs/cv_classification"
 
 stages:
 
@@ -17,7 +17,7 @@ stages:
   transform_params:
     _key_value: True
 
-    train:
+    train: &transform
       transform: A.Compose
       transforms:
         - transform: catalyst.TensorToImage
@@ -25,14 +25,7 @@ stages:
           mean: [0.1307]
           std: [0.3081]
         - transform: catalyst.ToTensor
-    valid:
-      transform: A.Compose
-      transforms:
-        - transform: catalyst.TensorToImage
-        - transform: A.Normalize
-          mean: [0.1307]
-          std: [0.3081]
-        - transform: catalyst.ToTensor
+    valid: *transform
 
   state_params:
     main_metric: &reduce_metric accuracy01
@@ -46,18 +39,21 @@ stages:
     lr: 0.001
     weight_decay: 0.0001
 
-  scheduler_params:
-    scheduler: MultiStepLR
-    milestones: [1]
-    gamma: 0.3
-
   stage1:
     state_params:
-      num_epochs: 100
+      num_epochs: &num_epochs 100
+
+    scheduler_params:
+      scheduler: OneCycleLRWithWarmup
+      num_steps: *num_epochs
+      lr_range: [0.005, 0.00005]
+      warmup_steps: 1
+      momentum_range: [0.85, 0.95]
 
     callbacks_params:
       loss:
-        callback: CriterionCallback
+        callback: MixupCallback
+        fields: [*input_key]
       optimizer:
         callback: OptimizerCallback
       accuracy:

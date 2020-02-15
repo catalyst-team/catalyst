@@ -338,7 +338,9 @@ class _Runner(ABC):
     def _run_stage(self, stage: str):
         self._prepare_for_stage(stage)
 
+        # checkpoint loading
         self._run_event("stage", moment="start")
+
         while self.state.stage_epoch < self.state.num_epochs:
             self._run_event("epoch", moment="start")
             utils.set_global_seed(

@@ -2,8 +2,8 @@ model_params:
   model: SimpleNet
 
 args:
-  expdir: "_tests_mnist_stages"
-  logdir: "./logs/mnist_simple"
+  expdir: "_tests_cv_classification"
+  logdir: "./logs/cv_classification"
 
 stages:
 
@@ -16,14 +16,23 @@ stages:
     minimize_metric: False
 
   criterion_params:
-      criterion: SymmetricCrossEntropyLoss
+      criterion: CrossEntropyLoss
+
+  optimizer_params:
+    optimizer: Adam
+    lr: 0.001
+    weight_decay: 0.0001
 
   scheduler_params:
     scheduler: MultiStepLR
     milestones: [1]
     gamma: 0.3
 
-  callbacks_params:
+  stage1:
+    state_params:
+      num_epochs: 100
+
+    callbacks_params:
       loss:
         callback: CriterionCallback
       optimizer:
@@ -37,29 +46,3 @@ stages:
       saver:
         callback: CheckpointCallback
         save_n_best: 3
-
-  stage1:
-
-    state_params:
-      num_epochs: 100
-
-    optimizer_params:
-      optimizer: Adam
-      layerwise_params:
-        conv1.*:
-          lr: 0.001
-          weight_decay: 0.0003
-      lr: 0.001
-      weight_decay: 0.0001
-      no_bias_weight_decay: True
-
-  stage2:
-    state_params:
-      num_epochs: 100
-
-    optimizer_params:
-      load_from_previous_stage: True
-      optimizer: Adam
-      lr: 0.001
-      weight_decay: 0.0001
-      no_bias_weight_decay: False

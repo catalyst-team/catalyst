@@ -7,5 +7,5 @@ pip install -r requirements/requirements.txt
 echo "pip install -r requirements/requirements-rl.txt"
 pip install -r requirements/requirements-rl.txt
 
-echo "./bin/tests/check_ddpg.sh"
-./bin/tests/check_ddpg.sh
+echo "./bin/tests/check_rl_ddpg.sh"
+OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" bash ./bin/tests/check_rl_ddpg.sh

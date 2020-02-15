@@ -5,12 +5,11 @@ runner_params:
   input_key: image
 
 args:
-  expdir: "mnist_simple"
-  logdir: "./logs/mnist_simple"
+  expdir: "cv_classification"
+  logdir: "./logs/cv_classification"
 
 distributed_params:
-  opt_level: O1
-  syncbn: True
+  opt_level: O2
 
 stages:
 
@@ -33,13 +32,16 @@ stages:
             std: [0.3081]
           - transform: catalyst.ToTensor
     valid:
-      transform: A.Compose
-      transforms:
-        - transform: catalyst.TensorToImage
-        - transform: A.Normalize
-          mean: [0.1307]
-          std: [0.3081]
-        - transform: catalyst.ToTensor
+      _key_value: True
+
+      image:
+        transform: A.Compose
+        transforms:
+          - transform: catalyst.TensorToImage
+          - transform: A.Normalize
+            mean: [0.1307]
+            std: [0.3081]
+          - transform: catalyst.ToTensor
 
   state_params:
     main_metric: &reduce_metric accuracy01

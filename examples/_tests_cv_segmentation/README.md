@@ -16,7 +16,7 @@ pip install -U "catalyst[cv]" # for zsh
 
 ```bash
 mkdir -p data
-cd ./_test_segmentation/data/
+cd ./_tests_cv_segmentation/data/
 download-gdrive 1iYaNijLmzsrMlAdMoUEhhJuo-5bkeAuj segmentation_data.zip
 extract-archive segmentation_data.zip
 cd ../..
@@ -26,8 +26,8 @@ cd ../..
 
 ```bash
 catalyst-dl run --configs \
-    ./_test_segmentation/config.yml \
-    ./_test_segmentation/transforms.yml \
+    ./_tests_cv_segmentation/config.yml \
+    ./_tests_cv_segmentation/transforms.yml \
     --verbose
 ```
 
@@ -36,13 +36,13 @@ catalyst-dl run --configs \
 For more information about docker image goto `catalyst/docker`.
 
 ```bash
-export LOGDIR=$(pwd)/logs/_test_segmentation
+export LOGDIR=$(pwd)/logs/_tests_cv_segmentation
 docker run -it --rm \
    -v $(pwd):/workspace \
    -v $LOGDIR:/logdir/ \
    catalyst-base \
    catalyst-dl run --configs \
-    ./_test_segmentation/config.yml \
-    ./_test_segmentation/transforms.yml \
+    ./_tests_cv_segmentation/config.yml \
+    ./_tests_cv_segmentation/transforms.yml \
     --verbose --logdir=/logdir
 ```
