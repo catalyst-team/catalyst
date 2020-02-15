@@ -419,6 +419,7 @@ EXPDIR=./examples/_tests_cv_segmentation
 LOGDIR=./examples/logs/_tests_cv_segmentation
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
+ls ./data
 ls ./data/segmentation_data/train | wc -l
 ls ./data/segmentation_data/train_masks | wc -l
 ## train
