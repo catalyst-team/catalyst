@@ -6,8 +6,8 @@ set -eo pipefail -v
 
 ###################################  LINUX  ###################################
 
-echo 'apt-get update && apt-get install wget'
-apt-get update && apt-get install wget
+echo 'apt-get update && apt-get install wget && apt-get install unzip'
+apt-get update && apt-get install wget && apt-get install unzip
 
 
 ###################################  PYTHON  ##################################
