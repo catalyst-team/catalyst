@@ -116,7 +116,10 @@ class MulticlassDiceMetricCallback(Callback):
 
             loader_values[f"{self.prefix}_{postfix}"] = dice
 
-        loader_values[f"{self.prefix}_mean"] = np.mean(dice_scores)
+        # For supporting averaging of only classes specified in `class_names`
+        values_to_avg = [value for key, value in loader_values.items()
+                         if key.startswith(f"{self.prefix}_")]
+        loader_values[f"{self.prefix}_mean"] = np.mean(values_to_avg)
 
         self._reset_stats()
 
