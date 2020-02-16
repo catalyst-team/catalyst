@@ -51,7 +51,7 @@ tar -xf ./data/isbi.tar.gz -C ./data/
 
 # mkdir -p data
 bash bin/scripts/download-gdrive 1iYaNijLmzsrMlAdMoUEhhJuo-5bkeAuj ./data/segmentation_data.zip
-unzip -qqo ./data/segmentation_data.zip -d ./data/
+unzip -qqo ./data/segmentation_data.zip -d ./data/ 2> /dev/null || true
 
 
 ###################################  CPU ######################################
