@@ -23,7 +23,6 @@ class OptimizerCallback(Callback):
         optimizer_key: str = None,
         loss_key: str = "loss",
         decouple_weight_decay: bool = True,
-        save_model_grads: bool = False
     ):
         """
         Args:
@@ -35,9 +34,6 @@ class OptimizerCallback(Callback):
             loss_key (str): key to get loss from ``state.loss``
             decouple_weight_decay (bool): If True - decouple weight decay
                 regularization.
-            save_model_grads (bool): If True - State.model_grads will
-                contain gradients calculated on backward propagation on current
-                batch
         """
         super().__init__(CallbackOrder.Optimizer)
         grad_clip_params: dict = grad_clip_params or {}
@@ -49,7 +45,6 @@ class OptimizerCallback(Callback):
         self.optimizer_key: str = optimizer_key
         self.loss_key: str = loss_key
         self.decouple_weight_decay = decouple_weight_decay
-        self.save_model_grads = save_model_grads
 
         self._optimizer_wd: List[float] = [0.0]
         self._accumulation_counter: int = 0
@@ -173,10 +168,19 @@ class OptimizerCallback(Callback):
                 grad_clip_fn=self.grad_clip_fn
             )
 
-            if self.save_model_grads:
-                for tag, value in model.named_parameters():
-                    tag = tag.replace(".", "/")
-                    state.model_grads[tag] = value.grad.cpu().numpy()
+            if hasattr(state, "model_grads"):
+                memo = set()
+                modules = model.named_modules()
+                for module_prefix, module in modules:
+                    module_name = module._get_name()
+                    members = module._parameters.items()
+                    for k, v in members:
+                        if v is None or v in memo:
+                            continue
+                        memo.add(v)
+                        tag = "{}/{}/{}".format(
+                            module_prefix.replace(".", "/"), module_name, k)
+                        state.model_grads[tag] = v.grad
 
             utils.maybe_recursive_call(model, "zero_grad")
 
