@@ -45,6 +45,7 @@ class _TracingModelWrapper(nn.Module):
         self.tracing_result = torch.jit.trace(
             method_model, *args, **kwargs
         )
+        return self.model.forward(*args, **kwargs)
 
 
 def trace_model(
