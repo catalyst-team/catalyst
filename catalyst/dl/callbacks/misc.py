@@ -1,10 +1,10 @@
-from typing import List, Dict
+from typing import Dict, List  # isort:skip
+
 import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 
-from catalyst.dl.meters import ConfusionMeter
-from catalyst.dl.core import Callback, RunnerState, CallbackOrder
-from catalyst.dl import utils
+from catalyst.dl import Callback, CallbackOrder, LoggerCallback, State, utils
+from catalyst.utils.meters import ConfusionMeter
 
 
 class EarlyStoppingCallback(Callback):
@@ -15,7 +15,7 @@ class EarlyStoppingCallback(Callback):
         minimize: bool = True,
         min_delta: float = 1e-6
     ):
-        super().__init__(CallbackOrder.Logger)
+        super().__init__(CallbackOrder.External)
         self.best_score = None
         self.metric = metric
         self.patience = patience
@@ -25,13 +25,13 @@ class EarlyStoppingCallback(Callback):
         if minimize:
             self.is_better = lambda score, best: score <= (best - min_delta)
         else:
-            self.is_better = lambda score, best: score >= (best - min_delta)
+            self.is_better = lambda score, best: score >= (best + min_delta)
 
-    def on_epoch_end(self, state: RunnerState) -> None:
+    def on_epoch_end(self, state: State) -> None:
         if state.stage.startswith("infer"):
             return
 
-        score = state.metrics.valid_values[self.metric]
+        score = state.metric_manager.valid_values[self.metric]
         if self.best_score is None:
             self.best_score = score
         if self.is_better(score, self.best_score):
@@ -116,16 +116,16 @@ class ConfusionMatrixCallback(Callback):
         fig = utils.render_figure_to_tensor(fig)
         logger.add_image(f"{self.prefix}/epoch", fig, global_step=epoch)
 
-    def on_loader_start(self, state: RunnerState):
+    def on_loader_start(self, state: State):
         self._reset_stats()
 
-    def on_batch_end(self, state: RunnerState):
+    def on_batch_end(self, state: State):
         self._add_to_stats(
             state.output[self.output_key].detach(),
             state.input[self.input_key].detach()
         )
 
-    def on_loader_end(self, state: RunnerState):
+    def on_loader_end(self, state: State):
         class_names = \
             self.class_names or \
             [str(i) for i in range(self.num_classes)]
@@ -138,4 +138,22 @@ class ConfusionMatrixCallback(Callback):
         )
 
 
-__all__ = ["EarlyStoppingCallback", "ConfusionMatrixCallback"]
+class RaiseExceptionCallback(LoggerCallback):
+    def __init__(self):
+        order = CallbackOrder.Other + 1
+        super().__init__(order=order)
+
+    def on_exception(self, state: State):
+        exception = state.exception
+        if not utils.is_exception(exception):
+            return
+
+        if state.need_reraise_exception:
+            raise exception
+
+
+__all__ = [
+    "EarlyStoppingCallback",
+    "ConfusionMatrixCallback",
+    "RaiseExceptionCallback"
+]

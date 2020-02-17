@@ -1,87 +1,38 @@
-from abc import abstractmethod, ABC
-from typing import Iterable, Mapping, Any, Tuple, Dict
-from collections import OrderedDict
+from typing import Union  # isort:skip
 
-from torch import nn
-from torch.utils.data import Dataset, DataLoader
-
-from .callback import Callback
-from catalyst.dl.utils.torch import _Model, _Criterion, _Optimizer, _Scheduler
+from catalyst.core import _Experiment
 
 
-class Experiment(ABC):
-    """
-    Object containing all information required to run the experiment
+class Experiment(_Experiment):
 
-    Abstract, look for implementations
-    """
-
-    @property
-    @abstractmethod
-    def logdir(self) -> str:
-        pass
-
-    @property
-    @abstractmethod
-    def stages(self) -> Iterable[str]:
-        pass
-
-    @property
-    @abstractmethod
-    def distributed_params(self) -> Dict:
-        pass
-
-    @property
-    @abstractmethod
-    def monitoring_params(self) -> Dict:
-        pass
-
-    @abstractmethod
-    def get_state_params(self, stage: str) -> Mapping[str, Any]:
-        pass
-
-    @abstractmethod
-    def get_model(self, stage: str) -> _Model:
-        pass
-
-    @abstractmethod
-    def get_criterion(self, stage: str) -> _Criterion:
-        pass
-
-    @abstractmethod
-    def get_optimizer(self, stage: str, model: nn.Module) -> _Optimizer:
-        pass
-
-    @abstractmethod
-    def get_scheduler(self, stage: str, optimizer) -> _Scheduler:
-        pass
-
-    def get_experiment_components(
-        self, model: nn.Module, stage: str
-    ) -> Tuple[_Criterion, _Optimizer, _Scheduler]:
-        criterion = self.get_criterion(stage)
-        optimizer = self.get_optimizer(stage, model)
-        scheduler = self.get_scheduler(stage, optimizer)
-        return criterion, optimizer, scheduler
-
-    @abstractmethod
-    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
-        pass
-
-    def get_datasets(
+    def get_native_batch(
         self,
         stage: str,
-        **kwargs,
-    ) -> "OrderedDict[str, Dataset]":
-        raise NotImplementedError
+        loader: Union[str, int] = 0,
+        data_index: int = 0
+    ):
+        """Returns a batch from experiment loader
 
-    @abstractmethod
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
-        raise NotImplementedError
+        Args:
+            stage (str): stage name
+            loader (Union[str, int]): loader name or its index,
+                default is the first loader
+            data_index (int): index in dataset from the loader
+        """
+        loaders = self.get_loaders(stage)
+        if isinstance(loader, str):
+            _loader = loaders[loader]
+        elif isinstance(loader, int):
+            _loader = list(loaders.values())[loader]
+        else:
+            raise TypeError("Loader parameter must be a string or an integer")
 
-    @staticmethod
-    def get_transforms(stage: str = None, mode: str = None):
-        raise NotImplementedError
+        dataset = _loader.dataset
+        collate_fn = _loader.collate_fn
+
+        sample = collate_fn([dataset[data_index]])
+
+        return sample
 
 
 __all__ = ["Experiment"]

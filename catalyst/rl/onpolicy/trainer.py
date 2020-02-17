@@ -1,13 +1,14 @@
-from typing import Dict
+from typing import Dict  # isort:skip
 
 import time
+
 import numpy as np
 
 import torch
 from torch.utils.data import DataLoader
 
-from catalyst.rl.core import TrainerSpec
 from catalyst.rl import utils
+from catalyst.rl.core import TrainerSpec
 
 
 def _get_states_from_observations(observations: np.ndarray, history_len=1):
@@ -42,7 +43,7 @@ def _get_states_from_observations(observations: np.ndarray, history_len=1):
     return states
 
 
-class Trainer(TrainerSpec):
+class OnpolicyTrainer(TrainerSpec):
     def _init(
         self,
         num_mini_epochs: int = 1,
@@ -185,7 +186,7 @@ class Trainer(TrainerSpec):
         )
         return metrics
 
-    def _run_train_loop(self):
+    def _run_train_stage(self):
         self.db_server.push_message(self.db_server.Message.ENABLE_TRAINING)
         epoch_limit = self._epoch_limit or np.iinfo(np.int32).max
         while self.epoch < epoch_limit:

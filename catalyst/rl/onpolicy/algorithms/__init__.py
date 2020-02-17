@@ -1,4 +1,6 @@
 # flake8: noqa
 
-from .reinforce import REINFORCE
+from .actor import OnpolicyActor
+from .actor_critic import OnpolicyActorCritic
 from .ppo import PPO
+from .reinforce import REINFORCE

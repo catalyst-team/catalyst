@@ -1,87 +1,60 @@
-from typing import Tuple, Dict
-import copy
+from typing import Iterable, Callable  # isort:skip
 
 import torch
-from torch import nn, optim
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
-from catalyst.dl import utils
-
-_Model = nn.Module
-_Criterion = nn.Module
-_Optimizer = optim.Optimizer
-# noinspection PyProtectedMember
-_Scheduler = optim.lr_scheduler._LRScheduler
-
-
-def process_components(
-    model: _Model,
-    criterion: _Criterion = None,
-    optimizer: _Optimizer = None,
-    scheduler: _Scheduler = None,
-    distributed_params: Dict = None
-) -> Tuple[_Model, _Criterion, _Optimizer, _Scheduler, torch.device]:
-    distributed_params = distributed_params or {}
-    distributed_params = copy.deepcopy(distributed_params)
-    device = utils.get_device()
-
-    model = model.to(device)
-
-    if utils.is_wrapped_with_ddp(model):
-        pass
-    elif len(distributed_params) > 0:
-        utils.assert_fp16_available()
-        from apex import amp
-        from apex.parallel import convert_syncbn_model
-
-        distributed_rank = distributed_params.pop("rank", -1)
-        syncbn = distributed_params.pop("syncbn", False)
-
-        if distributed_rank > -1:
-            torch.cuda.set_device(distributed_rank)
-            torch.distributed.init_process_group(
-                backend="nccl", init_method="env://"
-            )
-
-        model, optimizer = amp.initialize(
-            model, optimizer, **distributed_params
-        )
-
-        if distributed_rank > -1:
-            from apex.parallel import DistributedDataParallel
-            model = DistributedDataParallel(model)
-
-            if syncbn:
-                model = convert_syncbn_model(model)
-        elif torch.cuda.device_count() > 1:
-            model = torch.nn.DataParallel(model)
-    elif torch.cuda.device_count() > 1:
-        model = torch.nn.DataParallel(model)
-
-    model = model.to(device)
-
-    return model, criterion, optimizer, scheduler, device
+from catalyst.data import ListDataset
 
 
 def get_loader(
-    data_source,
-    open_fn,
-    dict_transform=None,
-    dataset_cache_prob=-1,
+    data_source: Iterable[dict],
+    open_fn: Callable,
+    dict_transform: Callable = None,
     sampler=None,
-    collate_fn=default_collate_fn,
-    batch_size=32,
-    num_workers=4,
-    shuffle=False,
-    drop_last=False
+    collate_fn: Callable = default_collate_fn,
+    batch_size: int = 32,
+    num_workers: int = 4,
+    shuffle: bool = False,
+    drop_last: bool = False
 ):
-    from catalyst.data import ListDataset
+    """
+    Creates a DataLoader from given source and its open/transform params
+
+    Args:
+        data_source (Iterable[dict]): and iterable containing your
+            data annotations,
+            (for example path to images, labels, bboxes, etc)
+        open_fn (Callable): function, that can open your
+            annotations dict and
+            transfer it to data, needed by your network
+            (for example open image by path, or tokenize read string)
+        dict_transform (callable): transforms to use on dict
+            (for example normalize image, add blur, crop/resize/etc)
+        sampler (Sampler, optional): defines the strategy to draw samples from
+            the dataset
+        collate_fn (callable, optional): merges a list of samples to form a
+            mini-batch of Tensor(s).  Used when using batched loading from a
+            map-style dataset
+        batch_size (int, optional): how many samples per batch to load
+        num_workers (int, optional): how many subprocesses to use for data
+            loading. ``0`` means that the data will be loaded
+            in the main process
+        shuffle (bool, optional): set to ``True`` to have the data reshuffled
+            at every epoch (default: ``False``).
+        drop_last (bool, optional): set to ``True`` to drop
+            the last incomplete batch, if the dataset size is not divisible
+            by the batch size. If ``False`` and the size of dataset
+            is not divisible by the batch size, then the last batch
+            will be smaller. (default: ``False``)
+
+    Returns:
+        DataLoader with ``catalyst.data.ListDataset``
+    """
 
     dataset = ListDataset(
-        data_source,
+        list_data=data_source,
         open_fn=open_fn,
         dict_transform=dict_transform,
-        cache_prob=dataset_cache_prob
     )
     loader = torch.utils.data.DataLoader(
         dataset=dataset,
@@ -96,7 +69,4 @@ def get_loader(
     return loader
 
 
-__all__ = [
-    "process_components", "get_loader",
-    "_Model", "_Criterion", "_Optimizer", "_Scheduler"
-]
+__all__ = ["get_loader"]

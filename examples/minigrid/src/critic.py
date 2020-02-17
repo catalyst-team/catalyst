@@ -1,10 +1,9 @@
-from typing import Dict
+from typing import Dict  # isort:skip
 from gym.spaces import Discrete
-
 import torch
 import torch.nn as nn
-from catalyst.contrib.modules import Flatten
 
+from catalyst.contrib.nn.modules import Flatten
 from catalyst.rl.agent.head import ValueHead  # , StateNet
 from catalyst.rl.core import CriticSpec, EnvironmentSpec
 from catalyst.utils.initialization import create_optimal_inner_init

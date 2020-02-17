@@ -1,11 +1,13 @@
-from typing import Dict
-import os
-import shutil
+from typing import Dict, Union  # isort:skip
 from collections import OrderedDict
+import os
+from pathlib import Path
+import shutil
 
 import torch
 
-from .ddp import get_real_module
+from .ddp import get_nn_from_ddp_module
+from .misc import maybe_recursive_call
 
 
 def pack_checkpoint(
@@ -16,8 +18,10 @@ def pack_checkpoint(
     if isinstance(model, OrderedDict):
         raise NotImplementedError()
     else:
-        model_ = get_real_module(model)
-        checkpoint["model_state_dict"] = model_.state_dict()
+        model_ = get_nn_from_ddp_module(model)
+        checkpoint["model_state_dict"] = maybe_recursive_call(
+            model_, "state_dict"
+        )
 
     for dict2save, name2save in zip(
         [criterion, optimizer, scheduler],
@@ -25,6 +29,7 @@ def pack_checkpoint(
     ):
         if dict2save is None:
             continue
+        # @TODO refactor with maybe_recursive_call
         if isinstance(dict2save, dict):
             for key, value in dict2save.items():
                 if value is not None:
@@ -40,30 +45,16 @@ def pack_checkpoint(
     return checkpoint
 
 
-def save_checkpoint(
-    checkpoint: Dict,
-    logdir: str,
-    suffix: str,
-    is_best: bool = False,
-    is_last: bool = False,
-    special_suffix: str = ""
-):
-    os.makedirs(logdir, exist_ok=True)
-    filename = f"{logdir}/{suffix}.pth"
-    torch.save(checkpoint, filename)
-    if is_best:
-        shutil.copyfile(filename, f"{logdir}/best{special_suffix}.pth")
-    if is_last:
-        shutil.copyfile(filename, f"{logdir}/last{special_suffix}.pth")
-    return filename
-
-
 def unpack_checkpoint(
     checkpoint, model=None, criterion=None, optimizer=None, scheduler=None
 ):
     if model is not None:
-        model = get_real_module(model)
-        model.load_state_dict(checkpoint["model_state_dict"])
+        model = get_nn_from_ddp_module(model)
+        maybe_recursive_call(
+            model,
+            "load_state_dict",
+            recursive_args=checkpoint["model_state_dict"]
+        )
 
     for dict2load, name2load in zip(
         [criterion, optimizer, scheduler],
@@ -80,6 +71,24 @@ def unpack_checkpoint(
         else:
             name2load = f"{name2load}_state_dict"
             dict2load.load_state_dict(checkpoint[name2load])
+
+
+def save_checkpoint(
+    checkpoint: Dict,
+    logdir: Union[Path, str],
+    suffix: str,
+    is_best: bool = False,
+    is_last: bool = False,
+    special_suffix: str = ""
+):
+    os.makedirs(logdir, exist_ok=True)
+    filename = f"{logdir}/{suffix}.pth"
+    torch.save(checkpoint, filename)
+    if is_best:
+        shutil.copyfile(filename, f"{logdir}/best{special_suffix}.pth")
+    if is_last:
+        shutil.copyfile(filename, f"{logdir}/last{special_suffix}.pth")
+    return filename
 
 
 def load_checkpoint(filepath):

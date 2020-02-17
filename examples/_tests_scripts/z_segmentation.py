@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 # flake8: noqa
+# isort:skip_file
 
 # # Data
 
@@ -35,7 +36,7 @@ import torchvision
 import torchvision.transforms as transforms
 from catalyst.data import Augmentor
 from catalyst.dl import utils
-from catalyst.contrib.criterion import LovaszLossBinary, \
+from catalyst.contrib.nn.criterion import LovaszLossBinary, \
     LovaszLossMultiLabel, \
     LovaszLossMultiClass
 
@@ -94,7 +95,7 @@ loaders = get_loaders(data_transform)
 
 # In[ ]:
 
-from catalyst.contrib.models.segmentation import Unet
+from catalyst.contrib.models.cv import Unet
 
 # # Train
 
@@ -171,7 +172,9 @@ for i, (input, output) in enumerate(zip(valid_data, runner_out)):
 
 # lovasz LovaszLossBinary criterion
 
+model = Unet(num_classes=1, in_channels=1, num_channels=32, num_blocks=2)
 criterion = LovaszLossBinary()
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
 runner.train(
     model=model,
@@ -184,8 +187,6 @@ runner.train(
 )
 
 # Multiclasses checks
-model = Unet(num_classes=2, in_channels=1, num_channels=32, num_blocks=2)
-
 # lovasz LovaszLossMultiClass criterion
 
 data_transform = transforms.Compose([
@@ -209,7 +210,9 @@ data_transform = transforms.Compose([
 
 loaders = get_loaders(data_transform)
 
+model = Unet(num_classes=2, in_channels=1, num_channels=32, num_blocks=2)
 criterion = LovaszLossMultiClass()
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
 runner.train(
     model=model,
@@ -250,7 +253,9 @@ data_transform = transforms.Compose([
 
 loaders = get_loaders(data_transform)
 
+model = Unet(num_classes=2, in_channels=1, num_channels=32, num_blocks=2)
 criterion = LovaszLossMultiLabel()
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
 runner.train(
     model=model,

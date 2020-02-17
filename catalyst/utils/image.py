@@ -1,9 +1,11 @@
-from typing import List, Tuple
+from typing import List, Tuple, Union  # isort:skip
 import logging
 import os
+import pathlib
 import tempfile
-import numpy as np
+
 import imageio
+import numpy as np
 from skimage.color import label2rgb, rgb2gray
 
 import torch
@@ -37,7 +39,13 @@ if os.environ.get("FORCE_JPEG_TURBO", False):
         )
 
 
-def imread(uri, grayscale=False, expand_dims=True, rootpath=None, **kwargs):
+def imread(
+    uri,
+    grayscale: bool = False,
+    expand_dims: bool = True,
+    rootpath: Union[str, pathlib.Path] = None,
+    **kwargs,
+):
     """
 
     Args:
@@ -51,17 +59,19 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None, **kwargs):
     Returns:
 
     """
+    uri = str(uri)
+
     if rootpath is not None:
-        uri = (
-            uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
-        )
+        rootpath = str(rootpath)
+        uri = uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
 
     if JPEG4PY_ENABLED and uri.endswith(("jpg", "JPG", "jpeg", "JPEG")):
         img = jpeg.JPEG(uri).decode()
-        if grayscale:
-            img = rgb2gray(img)
     else:
+        # @TODO: add tiff support, currently – jpg and png
         img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB", **kwargs)
+    if grayscale:
+        img = rgb2gray(img)
 
     if expand_dims and len(img.shape) < 3:  # grayscale
         img = np.expand_dims(img, -1)
@@ -71,6 +81,42 @@ def imread(uri, grayscale=False, expand_dims=True, rootpath=None, **kwargs):
 
 imwrite = imageio.imwrite
 imsave = imageio.imsave
+
+
+def mimread(
+    uri,
+    clip_range: Tuple[int, int] = None,
+    expand_dims: bool = True,
+    rootpath: Union[str, pathlib.Path] = None,
+    **kwargs
+):
+    """
+
+    Args:
+        uri: {str, pathlib.Path, bytes, file}
+        The resource to load the mask from, e.g. a filename, pathlib.Path,
+        http address or file object, see the docs for more info.
+        clip_range (Tuple[int, int]): lower and upper interval edges,
+            image values outside the interval are clipped to the interval edges
+        expand_dims (bool): if True, append channel axis to grayscale images
+        rootpath (Union[str, pathlib.Path]): path to an image
+            (allows to use relative path)
+
+    Returns:
+        np.ndarray: Image
+
+    """
+    if rootpath is not None:
+        uri = uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
+
+    image = np.dstack(imageio.mimread(uri, **kwargs))
+    if clip_range is not None:
+        image = np.clip(image, *clip_range)
+
+    if expand_dims and len(image.shape) < 3:  # grayscale
+        image = np.expand_dims(image, -1)
+
+    return image
 
 
 def mimwrite_with_meta(uri, ims, meta, **kwargs):
@@ -90,9 +136,11 @@ def tensor_from_rgb_image(image: np.ndarray) -> torch.Tensor:
 
 def tensor_to_ndimage(
     images: torch.Tensor,
+    denormalize: bool = True,
     mean: Tuple[float, float, float] = _IMAGENET_MEAN,
     std: Tuple[float, float, float] = _IMAGENET_STD,
-    dtype=np.float32
+    move_channels_dim: bool = True,
+    dtype=np.float32,
 ) -> np.ndarray:
     """
     Convert float image(s) with standard normalization to
@@ -100,28 +148,31 @@ def tensor_to_ndimage(
     when dtype is `np.uint8`.
 
     Args:
-        images: [B]xCxHxW float tensor
-        mean: mean to add
-        std: std to multiply
+        images (torch.Tensor): [B]xCxHxW float tensor
+        denormalize (bool): if True, multiply image(s) by std and add mean
+        mean (Tuple[float, float, float]): per channel mean to add
+        std (Tuple[float, float, float]): per channel std to multiply
+        move_channels_dim (bool): if True, convert tensor to [B]xHxWxC format
         dtype: result ndarray dtype. Only float32 and uint8 are supported.
     Returns:
         [B]xHxWxC np.ndarray of dtype
     """
-    has_batch_dim = len(images.shape) == 4
+    if denormalize:
+        has_batch_dim = len(images.shape) == 4
 
-    num_shape = (3, 1, 1)
+        mean = images.new_tensor(mean).view(
+            *((1, ) if has_batch_dim else ()), len(mean), 1, 1
+        )
+        std = images.new_tensor(std).view(
+            *((1, ) if has_batch_dim else ()), len(std), 1, 1
+        )
 
-    if has_batch_dim:
-        num_shape = (1, ) + num_shape
-
-    mean = images.new_tensor(mean).view(*num_shape)
-    std = images.new_tensor(std).view(*num_shape)
-
-    images = images * std + mean
+        images = images * std + mean
 
     images = images.clamp(0, 1).numpy()
 
-    images = np.moveaxis(images, -3, -1)
+    if move_channels_dim:
+        images = np.moveaxis(images, -3, -1)
 
     if dtype == np.uint8:
         images = (images * 255).round().astype(dtype)
@@ -164,3 +215,18 @@ def mask_to_overlay_image(
     )
 
     return image_with_overlay
+
+
+def has_image_extension(uri) -> bool:
+    """
+    Check that file has image extension
+
+    Args:
+        uri (Union[str, pathlib.Path]): The resource to load the file from
+
+    Returns:
+        bool: True if file has image extension, False otherwise
+
+    """
+    _, ext = os.path.splitext(uri)
+    return ext.lower() in {".bmp", ".png", ".jpeg", ".jpg", ".tif", ".tiff"}

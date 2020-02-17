@@ -1,12 +1,14 @@
-from typing import Union
-import numpy as np
+from typing import Union  # isort:skip
 from ctypes import c_bool
 import multiprocessing as mp
+
+import numpy as np
+
 import torch
 
 from catalyst.rl import utils
 from catalyst.rl.utils.buffer import get_buffer
-from catalyst.utils.dynamic_array import DynamicArray
+from catalyst.utils.tools.dynamic_array import DynamicArray
 from .agent import ActorSpec, CriticSpec
 from .environment import EnvironmentSpec
 from .policy_handler import PolicyHandler

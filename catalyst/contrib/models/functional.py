@@ -1,8 +1,8 @@
-from typing import List, Union
+from typing import List, Union  # isort:skip
 
 import torch.nn as nn
 
-from .sequential import SequentialNet, _process_additional_params
+from .sequential import _process_additional_params, SequentialNet
 
 
 def get_convolution_net(

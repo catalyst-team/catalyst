@@ -1,8 +1,9 @@
 import numpy as np
+
 import torch
 
-from .actor_critic import OnpolicyActorCritic
 from catalyst.rl import utils
+from .actor_critic import OnpolicyActorCritic
 
 
 class PPO(OnpolicyActorCritic):
@@ -77,8 +78,21 @@ class PPO(OnpolicyActorCritic):
     def _base_value_loss(
         self, states_t, values_t, returns_t, states_tp1, done_t
     ):
+        # [bs; num_heads; 1, num_atoms=1] ->
+        # [bs; num_heads; num_atoms=1] -> many-heads view transform
+        # [{bs * num_heads}; num_atoms=1]
         values_tp0 = self.critic(states_t).squeeze_(dim=2)
+
+        # [bs; num_heads; num_atoms=1] -> many-heads view transform
+        # [{bs * num_heads}; num_atoms=1]
+        values_t = values_t.view(-1, 1)
+
+        # [bs; num_heads; num_atoms=1] -> many-heads view transform
+        # [{bs * num_heads}; num_atoms=1]
+        returns_t = returns_t.view(-1, 1)
+
         value_loss = self._value_loss(values_tp0, values_t, returns_t)
+
         return value_loss
 
     def _categorical_value_loss(
@@ -102,7 +116,8 @@ class PPO(OnpolicyActorCritic):
         value_loss += 0.5 * utils.categorical_loss(
             logits_tp0.view(-1, self.num_atoms),
             logits_tp1.view(-1, self.num_atoms),
-            atoms_target_t.view(-1, self.num_atoms), self.z, self.delta_z,
+            atoms_target_t.view(-1, self.num_atoms),
+            self.z, self.delta_z,
             self.v_min, self.v_max
         )
 
@@ -237,6 +252,7 @@ class PPO(OnpolicyActorCritic):
         ).unsqueeze_(-1)
         states_tp1 = utils.any2device(states_tp1, device=self._device)
         done_t = utils.any2device(done_t, device=self._device)[:, None, None]
+        # done_t = done_t[:, None, :]  # [bs; 1; 1]
 
         values_t = utils.any2device(values_t, device=self._device)
         advantages_t = utils.any2device(advantages_t, device=self._device)
@@ -245,6 +261,11 @@ class PPO(OnpolicyActorCritic):
         )
 
         # critic loss
+        # states_t - [bs; {state_shape}]
+        # values_t - [bs; num_heads; num_atoms]
+        # returns_t - [bs; num_heads; 1]
+        # states_tp1 - [bs; {state_shape}]
+        # done_t - [bs; 1; 1]
         value_loss = self._value_loss_fn(
             states_t, values_t, returns_t, states_tp1, done_t
         )

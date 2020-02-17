@@ -1,8 +1,9 @@
 import torch
 import torch.nn as nn
+
+from catalyst.contrib.nn.modules import CouplingLayer, SquashingLayer
 from catalyst.contrib.registry import MODULES
-from catalyst.contrib.modules import SquashingLayer, CouplingLayer
-from catalyst.utils import normal_sample, normal_logprob
+from catalyst.utils import normal_logprob, normal_sample
 
 # log_sigma of Gaussian policy are capped at (LOG_SIG_MIN, LOG_SIG_MAX)
 LOG_SIG_MAX = 2
@@ -141,4 +142,10 @@ class RealNVPPolicy(nn.Module):
             return action
 
 
-__all__ = ["CategoricalPolicy", "SquashingGaussPolicy", "RealNVPPolicy"]
+__all__ = [
+    "CategoricalPolicy",
+    "BernoulliPolicy",
+    "DiagonalGaussPolicy",
+    "SquashingGaussPolicy",
+    "RealNVPPolicy"
+]

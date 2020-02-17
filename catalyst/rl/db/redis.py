@@ -1,4 +1,5 @@
 from redis import Redis
+
 from catalyst.rl import utils
 from catalyst.rl.core import DBSpec
 

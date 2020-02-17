@@ -1,11 +1,9 @@
-from typing import Iterable, Any
-
-import copy
-import collections
-import numpy as np
+from typing import Any, Callable, Iterable, List, Optional  # isort:skip
+from datetime import datetime
+import inspect
 from itertools import tee
-import shutil
 from pathlib import Path
+import shutil
 
 
 def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:
@@ -31,6 +29,12 @@ def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:
 
 
 def make_tuple(tuple_like):
+    """
+    Creates a tuple if given ``tuple_like`` value isn't list or tuple
+
+    Returns:
+        tuple or list
+    """
     tuple_like = (
         tuple_like if isinstance(tuple_like, (list, tuple)) else
         (tuple_like, tuple_like)
@@ -38,55 +42,44 @@ def make_tuple(tuple_like):
     return tuple_like
 
 
-def merge_dicts(*dicts: dict) -> dict:
+def maybe_recursive_call(
+    object_or_dict,
+    method: str,
+    recursive_args=None,
+    recursive_kwargs=None,
+    **kwargs,
+):
     """
-    Recursive dict merge.
-    Instead of updating only top-level keys,
-    ``merge_dicts`` recurses down into dicts nested
-    to an arbitrary depth, updating keys.
+    Calls the ``method`` recursively for the object_or_dict
 
     Args:
-        *dicts: several dictionaries to merge
-
-    Returns:
-        dict: deep-merged dictionary
+        object_or_dict (Any): some object or a dictinary of objects
+        method (str): method name to call
+        recursive_args: list of arguments to pass to the ``method``
+        recursive_kwargs: list of key-arguments to pass to the ``method``
+        **kwargs: Arbitrary keyword arguments
     """
-    assert len(dicts) > 1
+    if isinstance(object_or_dict, dict):
+        result = type(object_or_dict)()
+        for k, v in object_or_dict.items():
+            r_args = \
+                None if recursive_args is None else recursive_args[k]
+            r_kwargs = \
+                None if recursive_kwargs is None else recursive_kwargs[k]
+            result[k] = maybe_recursive_call(
+                v,
+                method,
+                recursive_args=r_args,
+                recursive_kwargs=r_kwargs,
+                **kwargs,
+            )
+        return result
 
-    dict_ = copy.deepcopy(dicts[0])
-
-    for merge_dict in dicts[1:]:
-        merge_dict = merge_dict or {}
-        for k, v in merge_dict.items():
-            if (
-                k in dict_ and isinstance(dict_[k], dict)
-                and isinstance(merge_dict[k], collections.Mapping)
-            ):
-                dict_[k] = merge_dicts(dict_[k], merge_dict[k])
-            else:
-                dict_[k] = merge_dict[k]
-
-    return dict_
-
-
-def append_dict(dict1, dict2):
-    """
-    Appends dict2 with the same keys as dict1 to dict1
-    """
-    for key in dict1.keys():
-        dict1[key] = np.concatenate((dict1[key], dict2[key]))
-    return dict1
-
-
-def flatten_dict(d, parent_key="", sep="/"):
-    items = []
-    for k, v in d.items():
-        new_key = parent_key + sep + k if parent_key else k
-        if isinstance(v, collections.MutableMapping):
-            items.extend(flatten_dict(v, new_key, sep=sep).items())
-        else:
-            items.append((new_key, v))
-    return collections.OrderedDict(items)
+    r_args = recursive_args or []
+    if not isinstance(r_args, (list, tuple)):
+        r_args = [r_args]
+    r_kwargs = recursive_kwargs or {}
+    return getattr(object_or_dict, method)(*r_args, **r_kwargs, **kwargs)
 
 
 def is_exception(ex: Any) -> bool:
@@ -112,3 +105,70 @@ def copy_directory(input_dir: Path, output_dir: Path) -> None:
             copy_directory(path, output_dir / path_name)
         else:
             shutil.copy2(path, output_dir)
+
+
+def get_utcnow_time(format: str = None) -> str:
+    """
+    Return string with current utc time in chosen format
+
+    Args:
+        format (str): format string. if None "%y%m%d.%H%M%S" will be used.
+
+    Returns:
+        str: formatted utc time string
+    """
+    if format is None:
+        format = "%y%m%d.%H%M%S"
+    result = datetime.utcnow().strftime(format)
+    return result
+
+
+def format_metric(name: str, value: float) -> str:
+    """
+    Format metric. Metric will be returned in the scientific format if 4
+    decimal chars are not enough (metric value lower than 1e-4)
+
+    Args:
+        name (str): metric name
+        value (float): value of metric
+    """
+    if value < 1e-4:
+        return f"{name}={value:1.3e}"
+    return f"{name}={value:.4f}"
+
+
+def args_are_not_none(*args: Optional[Any]) -> bool:
+    """
+    Check that all arguments are not None
+    Args:
+        *args (Any): values
+    Returns:
+         bool: True if all value were not None, False otherwise
+    """
+    if args is None:
+        return False
+
+    for arg in args:
+        if arg is None:
+            return False
+
+    return True
+
+
+def get_default_params(fn: Callable[..., Any], exclude: List[str] = None):
+    """
+    Return default parameters of Callable.
+    Args:
+        fn (Callable[..., Any]): target Callable
+        exclude (List[str]): exclude list of parameters
+    Returns:
+        dict: contains default parameters of `fn`
+    """
+    argspec = inspect.getfullargspec(fn)
+    default_params = zip(
+        argspec.args[-len(argspec.defaults):], argspec.defaults
+    )
+    if exclude is not None:
+        default_params = filter(lambda x: x[0] not in exclude, default_params)
+    default_params = dict(default_params)
+    return default_params

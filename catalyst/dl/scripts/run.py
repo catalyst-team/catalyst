@@ -2,15 +2,17 @@
 
 import argparse
 from argparse import ArgumentParser
+import os
 from pathlib import Path
 
-from catalyst.utils import set_global_seed, boolean_flag, prepare_cudnn
-from catalyst.utils.config import parse_args_uargs, dump_environment
-from catalyst.utils.scripts import dump_code
-from catalyst.dl.utils.scripts import import_experiment_and_runner
+import safitty
+
+from catalyst.dl import utils
+from catalyst.utils import distributed_run, get_rank
 
 
 def build_args(parser: ArgumentParser):
+    """Constructs the command-line arguments for ``catalyst-dl run``"""
     parser.add_argument(
         "--config",
         "--configs",
@@ -44,45 +46,78 @@ def build_args(parser: ArgumentParser):
         metavar="PATH",
         help="path to latest checkpoint"
     )
+    parser.add_argument(
+        "--autoresume",
+        type=str,
+        help=(
+            "try automatically resume from logdir//{best,last}_full.pth "
+            "if --resume is empty"
+        ),
+        required=False,
+        choices=["best", "last"],
+        default=None
+    )
     parser.add_argument("--seed", type=int, default=42)
-    boolean_flag(parser, "verbose", default=False)
-    boolean_flag(parser, "check", default=False)
-    boolean_flag(
-        parser, "deterministic",
+    utils.boolean_flag(
+        parser,
+        "apex",
+        default=os.getenv("USE_APEX", "1") == "1",
+        help="Enable/disable using of Apex extension"
+    )
+    utils.boolean_flag(
+        parser,
+        "distributed",
+        shorthand="ddp",
+        default=os.getenv("USE_DDP", "0") == "1",
+        help="Run inn distributed mode"
+    )
+    utils.boolean_flag(parser, "verbose", default=None)
+    utils.boolean_flag(parser, "check", default=None)
+    utils.boolean_flag(
+        parser,
+        "deterministic",
         default=None,
         help="Deterministic mode if running in CuDNN backend"
     )
-    boolean_flag(
-        parser, "benchmark",
-        default=None,
-        help="Use CuDNN benchmark"
+    utils.boolean_flag(
+        parser, "benchmark", default=None, help="Use CuDNN benchmark"
     )
 
     return parser
 
 
 def parse_args():
+    """Parses the command line arguments and returns arguments and config"""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args, unknown_args = parser.parse_known_args()
     return args, unknown_args
 
 
-def main(args, unknown_args):
-    args, config = parse_args_uargs(args, unknown_args)
-    set_global_seed(args.seed)
-    prepare_cudnn(args.deterministic, args.benchmark)
+def main_worker(args, unknown_args):
+    args, config = utils.parse_args_uargs(args, unknown_args)
+    utils.set_global_seed(args.seed)
+    utils.prepare_cudnn(args.deterministic, args.benchmark)
 
-    Experiment, Runner = import_experiment_and_runner(Path(args.expdir))
+    config.setdefault("distributed_params", {})["apex"] = args.apex
 
+    Experiment, Runner = utils.import_experiment_and_runner(Path(args.expdir))
+
+    runner_params = safitty.get(config, "runner_params", default={})
     experiment = Experiment(config)
-    runner = Runner()
+    runner = Runner(**runner_params)
 
-    if experiment.logdir is not None:
-        dump_environment(config, experiment.logdir, args.configs)
-        dump_code(args.expdir, experiment.logdir)
+    if experiment.logdir is not None and get_rank() <= 0:
+        utils.dump_environment(config, experiment.logdir, args.configs)
+        utils.dump_code(args.expdir, experiment.logdir)
 
-    runner.run_experiment(experiment, check=args.check)
+    check_run = safitty.get(config, "args", "check", default=False)
+    runner.run_experiment(experiment, check=check_run)
+
+
+def main(args, unknown_args):
+    """Run the ``catalyst-dl run`` script"""
+    distributed_run(args.distributed, main_worker, args, unknown_args)
 
 
 if __name__ == "__main__":

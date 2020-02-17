@@ -7,50 +7,135 @@ Contrib
     :show-inheritance:
 
 
-Criterion
+NN
 --------------------
 
-.. automodule:: catalyst.contrib.criterion.ce
+Criterion
+~~~~~~~~~~~~~~~~
+
+.. automodule:: catalyst.contrib.nn.criterion.ce
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.criterion.center
+.. automodule:: catalyst.contrib.nn.criterion.contrastive
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.criterion.contrastive
+.. automodule:: catalyst.contrib.nn.criterion.dice
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.criterion.dice
+.. automodule:: catalyst.contrib.nn.criterion.focal
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.criterion.focal
+.. automodule:: catalyst.contrib.nn.criterion.gan
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.criterion.huber
+.. automodule:: catalyst.contrib.nn.criterion.huber
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.criterion.iou
+.. automodule:: catalyst.contrib.nn.criterion.iou
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.criterion.lovasz
+.. automodule:: catalyst.contrib.nn.criterion.lovasz
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.criterion.wing
+.. automodule:: catalyst.contrib.nn.criterion.margin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.nn.criterion.triplet
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.nn.criterion.wing
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Modules
+~~~~~~~~~~~~~~~~
+
+.. automodule:: catalyst.contrib.nn.modules.common
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.nn.modules.lama
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.nn.modules.noisy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.nn.modules.pooling
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.nn.modules.real_nvp
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Optimizers
+~~~~~~~~~~~~~~~~
+
+.. automodule:: catalyst.contrib.nn.optimizers.lamb
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.nn.optimizers.lookahead
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.nn.optimizers.qhadamw
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.nn.optimizers.radam
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.nn.optimizers.ralamb
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Schedulers
+~~~~~~~~~~~~~~~~
+
+.. automodule:: catalyst.contrib.nn.schedulers.base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.nn.schedulers.onecycle
     :members:
     :undoc-members:
     :show-inheritance:
@@ -62,74 +147,53 @@ Models
 Segmentation
 ~~~~~~~~~~~~~~~~
 
-.. automodule:: catalyst.contrib.models.segmentation.unet
+.. automodule:: catalyst.contrib.models.cv.segmentation.unet
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.models.segmentation.linknet
+.. automodule:: catalyst.contrib.models.cv.segmentation.linknet
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.models.segmentation.fpn
+.. automodule:: catalyst.contrib.models.cv.segmentation.fpn
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.models.segmentation.psp
+.. automodule:: catalyst.contrib.models.cv.segmentation.psp
     :members:
     :undoc-members:
     :show-inheritance:
 
-
-Modules
+DL
 --------------------
 
-.. automodule:: catalyst.contrib.modules.common
+
+Runner
+~~~~~~~~~~~~~~~~
+
+.. automodule:: catalyst.contrib.dl.runner.alchemy
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.modules.lama
+.. automodule:: catalyst.contrib.dl.runner.neptune
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.modules.noisy
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.modules.pooling
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.modules.real_nvp
+.. automodule:: catalyst.contrib.dl.runner.wandb
     :members:
     :undoc-members:
     :show-inheritance:
 
 
-Optimizers
+Registry
 --------------------
 
-.. automodule:: catalyst.contrib.optimizers
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Schedulers
---------------------
-
-.. automodule:: catalyst.contrib.schedulers.base
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.schedulers.onecycle
+.. automodule:: catalyst.contrib.registry
     :members:
     :undoc-members:
     :show-inheritance:

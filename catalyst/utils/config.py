@@ -1,20 +1,21 @@
+from typing import Any, Dict, List, Union  # isort:skip
+from collections import OrderedDict
 import copy
 import json
+from logging import getLogger
 import os
+from pathlib import Path
 import platform
+import re
 import shutil
 import subprocess
 import sys
-from collections import OrderedDict
-from logging import getLogger
-from pathlib import Path
-from typing import List, Any, Dict, Union
 
 import safitty
 import yaml
-from tensorboardX import SummaryWriter
 
 from catalyst import utils
+from catalyst.utils.tools.tensorboard import SummaryWriter
 
 LOG = getLogger(__name__)
 
@@ -42,6 +43,18 @@ def load_ordered_yaml(
 
     OrderedLoader.add_constructor(
         yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_mapping
+    )
+    OrderedLoader.add_implicit_resolver(
+        "tag:yaml.org,2002:float",
+        re.compile(
+            u"""^(?:
+            [-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+]?[0-9]+)?
+            |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)
+            |\\.[0-9_]+(?:[eE][-+][0-9]+)?
+            |[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*
+            |[-+]?\\.(?:inf|Inf|INF)
+            |\\.(?:nan|NaN|NAN))$""", re.X
+        ), list(u"-+0123456789.")
     )
     return yaml.load(stream, OrderedLoader)
 
@@ -130,7 +143,7 @@ def list_conda_packages() -> str:
     result = ""
     conda_meta_path = Path(sys.prefix) / "conda-meta"
     if conda_meta_path.exists():
-        # We are currently in conda venv
+        # We are currently in conda virtual env
         with open(os.devnull, "w") as devnull:
             try:
                 result = subprocess.check_output(
@@ -140,7 +153,9 @@ def list_conda_packages() -> str:
                 pass
             except subprocess.CalledProcessError as e:
                 raise Exception(
-                    "Running from conda env, but failed to list conda packages"
+                    f"Running from conda env, "
+                    f"but failed to list conda packages. "
+                    f"Conda Output: {e.output}"
                 ) from e
     return result
 
@@ -239,6 +254,14 @@ def parse_config_args(*, config, args, unknown_args):
                 continue
             config["args"][key] = value
 
+    autoresume = safitty.get(config, "args", "autoresume")
+    if autoresume is not None and \
+            safitty.get(config, "args", "logdir") is not None and \
+            safitty.get(config, "args", "resume") is None:
+        logdir = Path(safitty.get(config, "args", "logdir"))
+        checkpoint_filename = logdir / "checkpoints" / f"{autoresume}_full.pth"
+        if checkpoint_filename.is_file():
+            config["args"]["resume"] = str(checkpoint_filename)
     return config, args
 
 

@@ -12,10 +12,10 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os
 import datetime
-import sys
+import os
 import re
+import sys
 
 catalyst_root_path = "../"
 sys.path.insert(0, os.path.abspath(catalyst_root_path))
@@ -79,7 +79,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.githubpages",
     "sphinx.ext.napoleon",
-    "releases",
+    # "releases",
 ]
 
 autodoc_inherit_docstrings = False
@@ -112,6 +112,12 @@ language = None
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
+# Ignoring Third-party packages
+
+autodoc_mock_imports = [
+    "alchemy", "neptune", "wandb", "gym", "gridfs", "pymongo", "redis"
+]
+
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
 
@@ -120,18 +126,19 @@ pygments_style = None
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "sphinx_rtd_theme"
+html_theme = "alabaster"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-html_theme_options = {
-    "display_version": True,
-    "prev_next_buttons_location": "bottom",
-    "collapse_navigation": True,
-    "sticky_navigation": True
-}
+html_theme_options = {}
+# html_theme_options = {
+#     "display_version": True,
+#     "prev_next_buttons_location": "bottom",
+#     "collapse_navigation": True,
+#     "sticky_navigation": True
+# }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

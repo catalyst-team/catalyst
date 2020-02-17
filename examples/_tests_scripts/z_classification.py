@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 # flake8: noqa
+# isort:skip_file
 
 # # Data
 
@@ -241,7 +242,7 @@ runner.train(
 
 from catalyst.dl.runner import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
-from catalyst.contrib.schedulers import OneCycleLR
+from catalyst.contrib.nn.schedulers import OneCycleLRWithWarmup
 
 # experiment setup
 num_epochs = NUM_EPOCHS
@@ -251,7 +252,7 @@ logdir = "./logs/cifar_simple_notebook_5"
 model = Net()
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters())
-scheduler = OneCycleLR(
+scheduler = OneCycleLRWithWarmup(
     optimizer,
     num_steps=num_epochs,
     lr_range=(0.005, 0.00005),

@@ -1,5 +1,5 @@
 from catalyst.dl.core import MetricCallback
-from catalyst.dl.utils import criterion
+from catalyst.utils import criterion
 
 
 class F1ScoreCallback(MetricCallback):
@@ -30,7 +30,6 @@ class F1ScoreCallback(MetricCallback):
             activation (str): An torch.nn activation applied to the outputs.
                 Must be one of ['none', 'Sigmoid', 'Softmax2d']
         """
-
         super().__init__(
             prefix=prefix,
             metric_fn=criterion.f1_score,

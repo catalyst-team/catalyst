@@ -1,8 +1,10 @@
 from catalyst.contrib.registry import (
-    MODULES, CRITERIONS, OPTIMIZERS, SCHEDULERS, GRAD_CLIPPERS, Module,
-    Optimizer, Scheduler, Criterion
+    Criterion, CRITERIONS, GRAD_CLIPPERS, Model, MODELS, Module, MODULES,
+    Optimizer, OPTIMIZERS, Sampler, SAMPLERS, Scheduler, SCHEDULERS, Transform,
+    TRANSFORMS
 )
-from ..utils.registry import Registry
+from catalyst.core.registry import Callback, CALLBACKS
+from catalyst.utils.tools.registry import Registry
 
 
 def _dbs_late_add(r: Registry):
@@ -66,22 +68,32 @@ Exploration = EXPLORATION.add
 
 __all__ = [
     "Agent",
-    "AGENTS",
+    "Callback",
     "Criterion",
-    "CRITERIONS",
+    "Database",
     "Environment",
-    "ENVIRONMENTS",
     "Exploration",
-    "EXPLORATION",
-    "GRAD_CLIPPERS",
-    "Module",
-    "MODULES",
     "OffpolicyAlgorithm",
-    "OFFPOLICY_ALGORITHMS",
     "OnpolicyAlgorithm",
-    "ONPOLICY_ALGORITHMS",
     "Optimizer",
-    "OPTIMIZERS",
     "Scheduler",
+    "Module",
+    "Model",
+    "Sampler",
+    "Transform",
+    "AGENTS",
+    "CALLBACKS",
+    "CRITERIONS",
+    "DATABASES",
+    "GRAD_CLIPPERS",
+    "ENVIRONMENTS",
+    "EXPLORATION",
+    "MODELS",
+    "MODULES",
+    "OFFPOLICY_ALGORITHMS",
+    "ONPOLICY_ALGORITHMS",
+    "OPTIMIZERS",
+    "SAMPLERS",
     "SCHEDULERS",
+    "TRANSFORMS",
 ]

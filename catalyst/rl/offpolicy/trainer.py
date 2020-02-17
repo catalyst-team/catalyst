@@ -1,33 +1,45 @@
-from typing import Dict
-import time
+from typing import Dict  # isort:skip
 import threading
+import time
+
 import numpy as np
 
 import torch
 from torch.utils.data import DataLoader
 
-from catalyst.rl.core import TrainerSpec, DBSpec
 from catalyst.rl import utils
+from catalyst.rl.core import DBSpec, TrainerSpec
 
 
-def _db2buffer_loop(db_server: DBSpec, buffer: utils.OffpolicyReplayBuffer):
+def _db2buffer_loop(
+    db_server: DBSpec,
+    buffer: utils.OffpolicyReplayBuffer,
+):
     trajectory = None
     while True:
-        if trajectory is None:
-            trajectory = db_server.get_trajectory()
+        try:
+            if trajectory is None:
+                trajectory = db_server.get_trajectory()
 
-        if trajectory is not None:
-            if buffer.push_trajectory(trajectory):
-                trajectory = None
+            if trajectory is not None:
+                if buffer.push_trajectory(trajectory):
+                    trajectory = None
+                else:
+                    time.sleep(1.0)
             else:
+                if not db_server.training_enabled:
+                    return
                 time.sleep(1.0)
-        else:
-            if not db_server.training_enabled:
-                return
-            time.sleep(1.0)
+        except Exception as ex:
+            print("=" * 80)
+            print("Something go wrong with trajectory:")
+            print(ex)
+            print(trajectory)
+            print("=" * 80)
+            trajectory = None
 
 
-class Trainer(TrainerSpec):
+class OffpolicyTrainer(TrainerSpec):
     def _init(
         self,
         target_update_period: int = 1,
@@ -170,4 +182,4 @@ class Trainer(TrainerSpec):
         self.db_server.push_message(self.db_server.Message.ENABLE_TRAINING)
         self.db_server.push_message(self.db_server.Message.ENABLE_SAMPLING)
         self._fetch_initial_buffer()
-        self._run_train_loop()
+        self._run_train_stage()
