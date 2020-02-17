@@ -45,6 +45,7 @@ class _TracingModelWrapper(nn.Module):
                 method_model,
                 *args, **kwargs
             )
+        return method_model(*args, **kwargs)
 
 
 def _get_native_batch(experiment: Experiment, stage: str):
