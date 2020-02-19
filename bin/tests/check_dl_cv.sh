@@ -176,7 +176,7 @@ python -c """
 from safitty import Safict
 metrics = Safict.load('$LOGFILE')
 # assert metrics.get('stage2.2', 'loss') < metrics.get('stage2.1', 'loss')
-assert metrics.get('stage2.2', 'loss') < 30.0
+assert metrics.get('stage2.2', 'loss') < 32.0
 """
 
 rm -rf ${LOGDIR}
