@@ -151,6 +151,39 @@ class _Runner(ABC):
 
         return model, criterion, optimizer, scheduler, device
 
+    def _process_callbacks_for_stage(self, callbacks:):
+        loggers = utils.process_callbacks(
+            OrderedDict(
+                [
+                    (k, v) for k, v in callbacks.items()
+                    if isinstance(v, LoggerCallback)
+                ]
+            )
+        )
+        callbacks = utils.process_callbacks(
+            OrderedDict(
+                [
+                    (k, v) for k, v in callbacks.items()
+                    if not isinstance(v, LoggerCallback)
+                ]
+            )
+        )
+        self.state.loggers = loggers
+        self.loggers = loggers
+        self.callbacks = callbacks
+        # Prepare events dictionary
+        start_callbacks = OrderedDict(**loggers, **callbacks)
+        end_callbacks = OrderedDict(**callbacks, **loggers)
+        start_events = ["stage_start", "epoch_start", "batch_start", "loader_start"]
+        end_events = ["stage_end", "epoch_end", "batch_end", "loader_end", "exception"]
+        stage_callbacks = {}
+        for event in start_events:
+            stage_callbacks[event] = start_callbacks
+        for event in end_events:
+            stage_callbacks[event] = end_callbacks
+        return stage_callbacks
+
+
     def _prepare_for_stage(self, stage: str):
         utils.set_global_seed(self.experiment.initial_seed)
 
@@ -184,57 +217,19 @@ class _Runner(ABC):
         utils.set_global_seed(self.experiment.initial_seed)
         callbacks = self.experiment.get_callbacks(stage)
 
-        loggers = utils.process_callbacks(
-            OrderedDict(
-                [
-                    (k, v) for k, v in callbacks.items()
-                    if isinstance(v, LoggerCallback)
-                ]
-            )
-        )
-        callbacks = utils.process_callbacks(
-            OrderedDict(
-                [
-                    (k, v) for k, v in callbacks.items()
-                    if not isinstance(v, LoggerCallback)
-                ]
-            )
-        )
-
-        self.state.loggers = loggers
-        self.loggers = loggers
-        self.callbacks = callbacks
+        self.stage_callbacks = self._process_callbacks_for_stage(callbacks)
 
     def _prepare_for_epoch(self, stage: str, epoch: int):
         pass
 
-    # @TODO: too complicated -> rewrite
-    def _run_event(self, event: str, moment: Optional[str]):
+    def _run_event(self, event: str):
         fn_name = f"on_{event}"
-        if moment is not None:
-            fn_name = f"{fn_name}_{moment}"
-
-        # before callbacks
-        if self.state is not None:
-            getattr(self.state, f"{fn_name}_pre")()
-
-        if self.loggers is not None and moment == "start":
-            for logger in self.loggers.values():
-                getattr(logger, fn_name)(self.state)
-
-        # running callbacks
-        if self.callbacks is not None:
-            for callback in self.callbacks.values():
-                getattr(callback, fn_name)(self.state)
-
-        # after callbacks
-        if self.loggers is not None and \
-                (moment == "end" or moment is None):  # for on_exception case
-            for logger in self.loggers.values():
-                getattr(logger, fn_name)(self.state)
-
-        if self.state is not None:
-            getattr(self.state, f"{fn_name}_post")()
+        state_pre_fn_name = f"{fn_name}_pre"
+        state_post_fn_name = f"{fn_name}_post"
+        getattr(self.state, state_pre_fn_name)()
+        for callback in self.stage_callbacks[event].values():
+            getattr(callback, fn_name)(self.state)
+        getattr(self.state, state_post_fn_name)()
 
     def _batch2device(self, batch: Mapping[str, Any], device: Device):
         output = utils.any2device(batch, device)
@@ -268,14 +263,14 @@ class _Runner(ABC):
         self.state.input = batch
         self.state.timer.stop("_timers/data_time")
 
-        self._run_event("batch", moment="start")
+        self._run_event("batch_start")
 
         self.state.timer.start("_timers/model_time")
         self._run_batch_train_step(batch=batch)
         self.state.timer.stop("_timers/model_time")
 
         self.state.timer.stop("_timers/batch_time")
-        self._run_event("batch", moment="end")
+        self._run_event("batch_end")
 
     def _run_loader(self, loader: DataLoader):
         self.state.batch_size = (
@@ -330,24 +325,24 @@ class _Runner(ABC):
             utils.set_global_seed(
                 self.experiment.initial_seed + self.state.epoch + 1
             )
-            self._run_event("loader", moment="start")
+            self._run_event("loader_start")
             with torch.set_grad_enabled(self.state.need_backward):
                 self._run_loader(loader)
-            self._run_event("loader", moment="end")
+            self._run_event("loader_end")
 
     def _run_stage(self, stage: str):
         self._prepare_for_stage(stage)
 
         # checkpoint loading
-        self._run_event("stage", moment="start")
+        self._run_event("stage_start")
 
         while self.state.stage_epoch < self.state.num_epochs:
-            self._run_event("epoch", moment="start")
+            self._run_event("epoch_start")
             utils.set_global_seed(
                 self.experiment.initial_seed + self.state.epoch + 1
             )
             self._run_epoch(stage=stage, epoch=self.state.stage_epoch)
-            self._run_event("epoch", moment="end")
+            self._run_event("epoch_end")
 
             if self._check_run and self.state.stage_epoch >= 2:
                 break
@@ -357,7 +352,7 @@ class _Runner(ABC):
 
             self.state.epoch += 1
             self.state.stage_epoch += 1
-        self._run_event("stage", moment="end")
+        self._run_event("stage_end")
 
     def run_experiment(self, experiment: _Experiment, check: bool = False):
         """
@@ -386,7 +381,7 @@ class _Runner(ABC):
                 raise ex
             else:
                 self.state.exception = ex
-                self._run_event("exception", moment=None)
+                self._run_event("exception")
 
         return self
 
