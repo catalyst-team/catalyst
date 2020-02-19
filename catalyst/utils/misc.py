@@ -155,7 +155,7 @@ def args_are_not_none(*args: Optional[Any]) -> bool:
     return True
 
 
-def get_default_params(fn: Callable[..., Any], exclude: List[str] = None):
+def get_fn_default_params(fn: Callable[..., Any], exclude: List[str] = None):
     """
     Return default parameters of Callable.
     Args:
@@ -172,3 +172,19 @@ def get_default_params(fn: Callable[..., Any], exclude: List[str] = None):
         default_params = filter(lambda x: x[0] not in exclude, default_params)
     default_params = dict(default_params)
     return default_params
+
+
+def get_fn_argsnames(fn: Callable[..., Any], exclude: List[str] = None):
+    """
+    Return parameter names of Callable.
+    Args:
+        fn (Callable[..., Any]): target Callable
+        exclude (List[str]): exclude list of parameters
+    Returns:
+        list: contains parameter names of `fn`
+    """
+    argspec = inspect.getfullargspec(fn)
+    params = argspec.args + argspec.kwonlyargs
+    if exclude is not None:
+        params = list(filter(lambda x: x not in exclude, params))
+    return params

@@ -153,7 +153,7 @@ def distributed_run(distributed, worker_fn, *args, **kwargs):
 
 def initialize_apex(model, optimizer=None, **distributed_params):
     import apex
-    amp_params = utils.get_default_params(
+    amp_params = utils.get_fn_default_params(
         apex.amp.initialize, ["models", "optimizers"]
     )
     amp_params["opt_level"] = "O0"
