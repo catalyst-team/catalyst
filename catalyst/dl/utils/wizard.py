@@ -4,10 +4,7 @@ import pathlib
 from prompt_toolkit import prompt
 import yaml
 
-from catalyst.dl import registry
-from catalyst.dl.utils import clone_pipeline
-from catalyst.dl.utils.pipelines import URL as pipeline_urls
-from catalyst.utils.scripts import import_module
+from catalyst.dl import registry, utils
 
 yaml.add_representer(
     OrderedDict,
@@ -311,7 +308,7 @@ class Wizard:
             expdir = self._cfg["args"]["expdir"]
             if not isinstance(expdir, pathlib.Path):
                 expdir = pathlib.Path(expdir)
-            import_module(expdir)
+            utils.import_module(expdir)
             self.__res(f"Modules from {expdir} exported")
         except OSError:
             print(f"There is no modules to import found: {expdir}")
@@ -349,7 +346,7 @@ class Wizard:
         Then pipeline will be copied in requested directory
         """
         self.__sep("Pipeline templates")
-        opts = list(pipeline_urls.keys()) + ["empty"]
+        opts = list(utils.pipelines.URL.keys()) + ["empty"]
         opts = [opt.capitalize() for opt in opts]
         msg = "0: Skip this step\n"
         msg += "\n".join([f"{n + 1}: {v}" for n, v in enumerate(opts)])
@@ -364,7 +361,7 @@ class Wizard:
         out_dir = prompt(f"Where we need to copy {pipeline} "
                          "template files?: ", default="./")
         self.pipeline_path = pathlib.Path(out_dir)
-        clone_pipeline(pipeline.lower(), self.pipeline_path)
+        utils.clone_pipeline(pipeline.lower(), self.pipeline_path)
         self.__res(f"{pipeline} cloned to {self.pipeline_path}")
 
     def run(self):

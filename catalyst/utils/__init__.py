@@ -32,7 +32,7 @@ from .initialization import (
 )
 from .misc import (
     args_are_not_none, copy_directory, format_metric, get_utcnow_time,
-    is_exception, make_tuple, maybe_recursive_call, pairwise
+    is_exception, make_tuple, maybe_recursive_call, pairwise, get_default_params
 )
 from .numpy import (
     dict2structed, geometric_cumsum, get_one_hot, np_softmax, structed2dict

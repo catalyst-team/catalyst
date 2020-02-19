@@ -14,18 +14,15 @@ from catalyst.data import (
     Augmentor, AugmentorCompose, DistributedSamplerWrapper
 )
 from catalyst.dl import (
-    Callback, ConfusionMatrixCallback, Experiment, LoggerCallback, utils
-)
-from catalyst.dl.callbacks import (
-    CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
+    Callback, CheckpointCallback, ConfusionMatrixCallback, ConsoleLogger,
+    CriterionCallback, Experiment, LoggerCallback, OptimizerCallback,
     PhaseWrapperCallback, RaiseExceptionCallback, SchedulerCallback,
-    TensorboardLogger, VerboseLogger
+    TensorboardLogger, utils, VerboseLogger
 )
 from catalyst.dl.registry import (
     CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS,
     TRANSFORMS
 )
-from catalyst.utils import get_rank
 from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
@@ -97,7 +94,7 @@ class ConfigExperiment(Experiment):
         timestamp = utils.get_utcnow_time()
         config_hash = utils.get_short_hash(config)
         logdir = f"{timestamp}.{config_hash}"
-        distributed_rank = get_rank()
+        distributed_rank = utils.get_rank()
         if distributed_rank > -1:
             logdir = f"{logdir}.rank{distributed_rank:02d}"
         return logdir
@@ -223,7 +220,7 @@ class ConfigExperiment(Experiment):
             data_params = dict(self.stages_config[stage]["data_params"])
             batch_size = data_params.get("batch_size")
             per_gpu_scaling = data_params.get("per_gpu_scaling", False)
-            distributed_rank = get_rank()
+            distributed_rank = utils.get_rank()
             distributed = distributed_rank > -1
             if per_gpu_scaling and not distributed:
                 num_gpus = max(1, torch.cuda.device_count())
@@ -418,7 +415,7 @@ class ConfigExperiment(Experiment):
         num_workers = data_params.pop("num_workers")
         drop_last = data_params.pop("drop_last", False)
         per_gpu_scaling = data_params.pop("per_gpu_scaling", False)
-        distributed_rank = get_rank()
+        distributed_rank = utils.get_rank()
         distributed = distributed_rank > -1
 
         datasets = self.get_datasets(stage=stage, **data_params)
@@ -560,7 +557,7 @@ class ConfigExperiment(Experiment):
                 callbacks[callback_name] = callback_fn()
 
         # Remove LoggerCallback on worker nodes
-        if get_rank() > 0:
+        if utils.get_rank() > 0:
             to_del = (LoggerCallback, ConfusionMatrixCallback)
             for k in list(filter(
                     lambda c: isinstance(callbacks[c], to_del), callbacks

@@ -5,7 +5,7 @@ import os
 import numpy as np
 from six import string_types
 
-from catalyst.utils.serialization import deserialize, serialize
+from .serialization import deserialize, serialize
 
 logger = logging.getLogger(__name__)
 

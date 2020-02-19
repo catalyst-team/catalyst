@@ -11,8 +11,7 @@ from scipy.special import expit
 from sklearn import metrics
 from sklearn.model_selection import RepeatedStratifiedKFold
 
-from catalyst.utils import boolean_flag
-from catalyst.utils.parallel import get_pool, tqdm_parallel_imap
+from catalyst import utils
 
 BINARY_PER_CLASS_METRICS = [
     "accuracy_score", "precision_score", "recall_score",
@@ -70,8 +69,8 @@ def build_args(parser):
         default=1
     )
 
-    boolean_flag(parser, "verbose", default=False)
-    boolean_flag(parser, "sigmoid", default=False)
+    utils.boolean_flag(parser, "verbose", default=False)
+    utils.boolean_flag(parser, "sigmoid", default=False)
 
     return parser
 
@@ -170,7 +169,7 @@ def optimize_thresholds(
     num_workers: int = 0,
     ignore_label: int = None
 ) -> Tuple[Dict, Dict]:
-    pool = get_pool(num_workers)
+    pool = utils.get_pool(num_workers)
 
     predictions_ = predictions.copy()
 
@@ -181,7 +180,7 @@ def optimize_thresholds(
             get_binary_labels(labels, cls, ignore_label=ignore_label)
         )
 
-    results = tqdm_parallel_imap(
+    results = utils.tqdm_parallel_imap(
         wrap_find_best_threshold,
         zip(
             classes,

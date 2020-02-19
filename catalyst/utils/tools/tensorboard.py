@@ -37,7 +37,7 @@ def _masked_crc32c(data):
     return _u32(((x >> 15) | _u32(x << 17)) + 0xa282ead8)
 
 
-class EventReadingError(Exception):
+class EventReadingException(Exception):
     """
     An exception that correspond to an event file reading error
     """
@@ -74,7 +74,7 @@ class EventsFileReader(Iterable):
                 "Reading of a stream in non-blocking mode"
             )
         if 0 < len(data) < size:
-            raise EventReadingError(
+            raise EventReadingException(
                 "The size of read data is less than requested size"
             )
         if len(data) == 0:
@@ -98,7 +98,7 @@ class EventsFileReader(Iterable):
         checksum = struct.unpack("I", self._read(checksum_size))[0]
         checksum_computed = _masked_crc32c(data)
         if checksum != checksum_computed:
-            raise EventReadingError(
+            raise EventReadingException(
                 "Invalid checksum. {checksum} != {crc32}".format(
                     checksum=checksum, crc32=checksum_computed
                 )
@@ -120,7 +120,7 @@ class EventsFileReader(Iterable):
             event_size = struct.unpack("Q", header)[0]
             event_raw = self._read_and_check(event_size)
             if event_raw is None:
-                raise EventReadingError("Unexpected end of events file")
+                raise EventReadingException("Unexpected end of events file")
             event = Event()
             event.ParseFromString(event_raw)
             yield event

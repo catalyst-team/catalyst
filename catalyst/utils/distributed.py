@@ -11,7 +11,6 @@ from torch import nn
 import torch.distributed
 
 from catalyst import utils
-from catalyst.utils.misc import get_default_params
 from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
@@ -154,7 +153,7 @@ def distributed_run(distributed, worker_fn, *args, **kwargs):
 
 def initialize_apex(model, optimizer=None, **distributed_params):
     import apex
-    amp_params = get_default_params(
+    amp_params = utils.get_default_params(
         apex.amp.initialize, ["models", "optimizers"]
     )
     amp_params["opt_level"] = "O0"

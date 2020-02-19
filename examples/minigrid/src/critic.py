@@ -3,10 +3,10 @@ from gym.spaces import Discrete
 import torch
 import torch.nn as nn
 
+from catalyst import utils
 from catalyst.contrib.nn.modules import Flatten
 from catalyst.rl.agent.head import ValueHead  # , StateNet
 from catalyst.rl.core import CriticSpec, EnvironmentSpec
-from catalyst.utils.initialization import create_optimal_inner_init
 
 
 class ConvCritic(CriticSpec):
@@ -31,7 +31,9 @@ class ConvCritic(CriticSpec):
             nn.Conv2d(32, 64, kernel_size=3, groups=4),
             # Flatten()
         )
-        self.observation_net.apply(create_optimal_inner_init(nn.LeakyReLU))
+        self.observation_net.apply(
+            utils.create_optimal_inner_init(nn.LeakyReLU)
+        )
         self.aggregation_net = nn.Sequential(
             Flatten(),
             nn.Linear(64, 64),
@@ -39,7 +41,9 @@ class ConvCritic(CriticSpec):
             nn.Dropout(p=0.1),
             nn.LeakyReLU(),
         )
-        self.aggregation_net.apply(create_optimal_inner_init(nn.LeakyReLU))
+        self.aggregation_net.apply(
+            utils.create_optimal_inner_init(nn.LeakyReLU)
+        )
         self.head_net = head_net
 
     @property
