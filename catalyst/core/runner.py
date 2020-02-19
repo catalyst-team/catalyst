@@ -317,7 +317,10 @@ class _Runner(ABC):
             assert not any(x.startswith("train") for x in loaders.keys()), \
                 "for inference no train loader should be passed"
 
+        self.state.loaders = loaders
+
         for loader_name, loader in loaders.items():
+            self.state.loader = loader
             self.state.loader_name = loader_name
             self.state.loader_len = len(loader)
             self.state.need_backward = loader_name.startswith("train")

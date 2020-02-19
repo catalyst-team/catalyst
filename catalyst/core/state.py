@@ -34,6 +34,7 @@ class _State(FrozenClass):
         **kwargs
     ):
         # main part
+        self.loaders = None
         self.model = model
         self.criterion = criterion
         self.optimizer = optimizer
@@ -56,7 +57,7 @@ class _State(FrozenClass):
         # special info
         self.stage = stage
         self.loader_name = None
-        self.loaders = None
+        self.loader = None
 
         # counters
         self.loader_len = 0
