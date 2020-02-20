@@ -151,7 +151,7 @@ class _Runner(ABC):
 
         return model, criterion, optimizer, scheduler, device
 
-    def _process_callbacks_for_stage(self, callbacks:):
+    def _process_callbacks_for_stage(self, callbacks):
         loggers = utils.process_callbacks(
             OrderedDict(
                 [
