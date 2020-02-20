@@ -4,15 +4,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.utils.misc &#8212; Catalyst 20.02 documentation</title>
+    <title>catalyst.utils.misc &#8212; Catalyst 20.02.3 documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
    
@@ -189,7 +189,7 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="get_default_params"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_default_params">[docs]</a><span class="k">def</span> <span class="nf">get_default_params</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">exclude</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="get_fn_default_params"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_fn_default_params">[docs]</a><span class="k">def</span> <span class="nf">get_fn_default_params</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">exclude</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return default parameters of Callable.</span>
 <span class="sd">    Args:</span>
@@ -206,6 +206,22 @@
         <span class="n">default_params</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">,</span> <span class="n">default_params</span><span class="p">)</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">default_params</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">default_params</span></div>
+
+
+<div class="viewcode-block" id="get_fn_argsnames"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_fn_argsnames">[docs]</a><span class="k">def</span> <span class="nf">get_fn_argsnames</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">exclude</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return parameter names of Callable.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        fn (Callable[..., Any]): target Callable</span>
+<span class="sd">        exclude (List[str]): exclude list of parameters</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        list: contains parameter names of `fn`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">argspec</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">argspec</span><span class="o">.</span><span class="n">args</span> <span class="o">+</span> <span class="n">argspec</span><span class="o">.</span><span class="n">kwonlyargs</span>
+    <span class="k">if</span> <span class="n">exclude</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">,</span> <span class="n">params</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">params</span></div>
 </pre></div>
 
           </div>
@@ -259,7 +275,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -276,7 +292,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

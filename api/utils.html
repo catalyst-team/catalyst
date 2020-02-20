@@ -4,15 +4,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Utils &#8212; Catalyst 20.02 documentation</title>
+    <title>Utils &#8212; Catalyst 20.02.3 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="Data" href="data.html" />
@@ -725,8 +725,26 @@ decimal chars are not enough (metric value lower than 1e-4)</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.misc.get_default_params">
-<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">get_default_params</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[..., Any], exclude: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#get_default_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.get_default_params" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.misc.get_fn_argsnames">
+<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">get_fn_argsnames</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[..., Any], exclude: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#get_fn_argsnames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.get_fn_argsnames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return parameter names of Callable.
+:param fn: target Callable
+:type fn: Callable[…, Any]
+:param exclude: exclude list of parameters
+:type exclude: List[str]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>contains parameter names of <cite>fn</cite></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.misc.get_fn_default_params">
+<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">get_fn_default_params</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[..., Any], exclude: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#get_fn_default_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.get_fn_default_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return default parameters of Callable.
 :param fn: target Callable
 :type fn: Callable[…, Any]
@@ -1672,17 +1690,17 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
 <span id="tools"></span><h2>Tools<a class="headerlink" href="#module-catalyst.utils.tools.metric_manager" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.utils.tools.metric_manager.TimerManager">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.utils.tools.metric_manager.</code><code class="sig-name descname">TimerManager</code><a class="reference internal" href="../_modules/catalyst/utils/tools/metric_manager.html#TimerManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.metric_manager.TimerManager" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.utils.tools.metric_manager.</code><code class="sig-name descname">TimerManager</code><a class="headerlink" href="#catalyst.utils.tools.metric_manager.TimerManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="method">
 <dt id="catalyst.utils.tools.metric_manager.TimerManager.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/tools/metric_manager.html#TimerManager.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.metric_manager.TimerManager.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#catalyst.utils.tools.metric_manager.TimerManager.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset all previous timers</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.utils.tools.metric_manager.TimerManager.start">
-<code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/tools/metric_manager.html#TimerManager.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.metric_manager.TimerManager.start" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#catalyst.utils.tools.metric_manager.TimerManager.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Starts timer <code class="docutils literal notranslate"><span class="pre">name</span></code>
 :param name: name of a timer
 :type name: str</p>
@@ -1690,7 +1708,7 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
 
 <dl class="method">
 <dt id="catalyst.utils.tools.metric_manager.TimerManager.stop">
-<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/tools/metric_manager.html#TimerManager.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.metric_manager.TimerManager.stop" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#catalyst.utils.tools.metric_manager.TimerManager.stop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stops timer <code class="docutils literal notranslate"><span class="pre">name</span></code>
 :param name: name of a timer
 :type name: str</p>
@@ -1700,11 +1718,11 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
 
 <dl class="class">
 <dt id="catalyst.utils.tools.metric_manager.MetricManager">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.utils.tools.metric_manager.</code><code class="sig-name descname">MetricManager</code><span class="sig-paren">(</span><em class="sig-param">valid_loader: str = 'valid'</em>, <em class="sig-param">main_metric: str = 'loss'</em>, <em class="sig-param">minimize: bool = True</em>, <em class="sig-param">batch_consistant_metrics: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tools/metric_manager.html#MetricManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.metric_manager.MetricManager" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.utils.tools.metric_manager.</code><code class="sig-name descname">MetricManager</code><span class="sig-paren">(</span><em class="sig-param">valid_loader: str = 'valid'</em>, <em class="sig-param">main_metric: str = 'loss'</em>, <em class="sig-param">minimize: bool = True</em>, <em class="sig-param">batch_consistant_metrics: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.tools.metric_manager.MetricManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="method">
 <dt id="catalyst.utils.tools.metric_manager.MetricManager.add_batch_value">
-<code class="sig-name descname">add_batch_value</code><span class="sig-paren">(</span><em class="sig-param">name: str = None</em>, <em class="sig-param">value: Any = None</em>, <em class="sig-param">metrics_dict: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tools/metric_manager.html#MetricManager.add_batch_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.metric_manager.MetricManager.add_batch_value" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_batch_value</code><span class="sig-paren">(</span><em class="sig-param">name: str = None</em>, <em class="sig-param">value: Any = None</em>, <em class="sig-param">metrics_dict: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.tools.metric_manager.MetricManager.add_batch_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1714,32 +1732,32 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
 
 <dl class="method">
 <dt id="catalyst.utils.tools.metric_manager.MetricManager.begin_batch">
-<code class="sig-name descname">begin_batch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tools/metric_manager.html#MetricManager.begin_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.metric_manager.MetricManager.begin_batch" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">begin_batch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.tools.metric_manager.MetricManager.begin_batch" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="catalyst.utils.tools.metric_manager.MetricManager.begin_epoch">
-<code class="sig-name descname">begin_epoch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tools/metric_manager.html#MetricManager.begin_epoch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.metric_manager.MetricManager.begin_epoch" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">begin_epoch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.tools.metric_manager.MetricManager.begin_epoch" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="catalyst.utils.tools.metric_manager.MetricManager.begin_loader">
-<code class="sig-name descname">begin_loader</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tools/metric_manager.html#MetricManager.begin_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.metric_manager.MetricManager.begin_loader" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">begin_loader</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.tools.metric_manager.MetricManager.begin_loader" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="catalyst.utils.tools.metric_manager.MetricManager.end_batch">
-<code class="sig-name descname">end_batch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tools/metric_manager.html#MetricManager.end_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.metric_manager.MetricManager.end_batch" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">end_batch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.tools.metric_manager.MetricManager.end_batch" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="catalyst.utils.tools.metric_manager.MetricManager.end_epoch_train">
-<code class="sig-name descname">end_epoch_train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tools/metric_manager.html#MetricManager.end_epoch_train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.metric_manager.MetricManager.end_epoch_train" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">end_epoch_train</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.tools.metric_manager.MetricManager.end_epoch_train" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="catalyst.utils.tools.metric_manager.MetricManager.end_loader">
-<code class="sig-name descname">end_loader</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tools/metric_manager.html#MetricManager.end_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.metric_manager.MetricManager.end_loader" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">end_loader</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.tools.metric_manager.MetricManager.end_loader" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2058,8 +2076,8 @@ numbers. It does not affect the RandomState in <code class="docutils literal not
 </dd></dl>
 
 <span class="target" id="module-catalyst.utils.tools.tensorboard"></span><dl class="exception">
-<dt id="catalyst.utils.tools.tensorboard.EventReadingError">
-<em class="property">exception </em><code class="sig-prename descclassname">catalyst.utils.tools.tensorboard.</code><code class="sig-name descname">EventReadingError</code><a class="reference internal" href="../_modules/catalyst/utils/tools/tensorboard.html#EventReadingError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.tensorboard.EventReadingError" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.utils.tools.tensorboard.EventReadingException">
+<em class="property">exception </em><code class="sig-prename descclassname">catalyst.utils.tools.tensorboard.</code><code class="sig-name descname">EventReadingException</code><a class="reference internal" href="../_modules/catalyst/utils/tools/tensorboard.html#EventReadingException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.tensorboard.EventReadingException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>An exception that correspond to an event file reading error</p>
 </dd></dl>
@@ -2841,7 +2859,7 @@ each sample.</p>
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -2858,7 +2876,7 @@ each sample.</p>
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

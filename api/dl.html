@@ -4,15 +4,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>DL &#8212; Catalyst 20.02 documentation</title>
+    <title>DL &#8212; Catalyst 20.02.3 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="RL" href="rl.html" />
@@ -113,10 +113,20 @@ default is the first loader</p></li>
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.core.runner.</code><code class="sig-name descname">Runner</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/core/runner.html#Runner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.core.runner.Runner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.runner._Runner</span></code></p>
 <dl class="attribute">
+<dt id="catalyst.dl.core.runner.Runner.experiment">
+<code class="sig-name descname">experiment</code><em class="property">: Experiment</em><em class="property"> = None</em><a class="headerlink" href="#catalyst.dl.core.runner.Runner.experiment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="catalyst.dl.core.runner.Runner.experiment_fn">
 <code class="sig-name descname">experiment_fn</code><a class="headerlink" href="#catalyst.dl.core.runner.Runner.experiment_fn" title="Permalink to this definition">¶</a></dt>
 <dd><p>alias of <a class="reference internal" href="#catalyst.dl.core.experiment.Experiment" title="catalyst.dl.core.experiment.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.core.experiment.Experiment</span></code></a></p>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.core.runner.Runner.state">
+<code class="sig-name descname">state</code><em class="property">: State</em><em class="property"> = None</em><a class="headerlink" href="#catalyst.dl.core.runner.Runner.state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="catalyst.dl.core.runner.Runner.state_fn">
@@ -319,7 +329,7 @@ Attention: will clamp WEIGHTS, not GRADIENTS</p></li>
 
 <span class="target" id="module-catalyst.dl.callbacks.mixup"></span><dl class="class">
 <dt id="catalyst.dl.callbacks.mixup.MixupCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.mixup.</code><code class="sig-name descname">MixupCallback</code><span class="sig-paren">(</span><em class="sig-param">fields: List[str] = ('features'</em>, <em class="sig-param">)</em>, <em class="sig-param">alpha=1.0</em>, <em class="sig-param">on_train_only=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/mixup.html#MixupCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.mixup.MixupCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.mixup.</code><code class="sig-name descname">MixupCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">fields: List[str] = ('features'</em>, <em class="sig-param">)</em>, <em class="sig-param">alpha=1.0</em>, <em class="sig-param">on_train_only=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/mixup.html#MixupCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.mixup.MixupCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.criterion.CriterionCallback" title="catalyst.core.callbacks.criterion.CriterionCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.criterion.CriterionCallback</span></code></a></p>
 <p>Callback to do mixup augmentation.</p>
 <p>Paper: <a class="reference external" href="https://arxiv.org/abs/1710.09412">https://arxiv.org/abs/1710.09412</a></p>
@@ -331,7 +341,7 @@ does its work.</p>
 </div>
 <dl class="method">
 <dt id="catalyst.dl.callbacks.mixup.MixupCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">fields: List[str] = ('features'</em>, <em class="sig-param">)</em>, <em class="sig-param">alpha=1.0</em>, <em class="sig-param">on_train_only=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/mixup.html#MixupCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.mixup.MixupCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">fields: List[str] = ('features'</em>, <em class="sig-param">)</em>, <em class="sig-param">alpha=1.0</em>, <em class="sig-param">on_train_only=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/mixup.html#MixupCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.mixup.MixupCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1006,6 +1016,11 @@ will be stored under</p></li>
 </dl>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="catalyst.dl.runner.supervised.SupervisedRunner.experiment">
+<code class="sig-name descname">experiment</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.dl.runner.supervised.SupervisedRunner.experiment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="catalyst.dl.runner.supervised.SupervisedRunner.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">batch</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/runner/supervised.html#SupervisedRunner.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.supervised.SupervisedRunner.forward" title="Permalink to this definition">¶</a></dt>
@@ -1060,6 +1075,11 @@ if fp16=True, params by default will be <code class="docutils literal notranslat
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.runner.supervised.SupervisedRunner.state">
+<code class="sig-name descname">state</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.dl.runner.supervised.SupervisedRunner.state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="catalyst.dl.runner.supervised.SupervisedRunner.trace">
@@ -1159,11 +1179,21 @@ should have method with same name, which will be called</p></li>
 </dl>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="catalyst.dl.runner.gan.MultiPhaseRunner.experiment">
+<code class="sig-name descname">experiment</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.dl.runner.gan.MultiPhaseRunner.experiment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="catalyst.dl.runner.gan.MultiPhaseRunner.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">batch</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/runner/gan.html#MultiPhaseRunner.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.gan.MultiPhaseRunner.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Forward call</p>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.runner.gan.MultiPhaseRunner.state">
+<code class="sig-name descname">state</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.dl.runner.gan.MultiPhaseRunner.state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1219,10 +1249,20 @@ discriminator must be conditioned on same 3 variables)</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="catalyst.dl.runner.gan.GanRunner.experiment">
+<code class="sig-name descname">experiment</code><em class="property">: GanExperiment</em><em class="property"> = None</em><a class="headerlink" href="#catalyst.dl.runner.gan.GanRunner.experiment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="catalyst.dl.runner.gan.GanRunner.experiment_fn">
 <code class="sig-name descname">experiment_fn</code><a class="headerlink" href="#catalyst.dl.runner.gan.GanRunner.experiment_fn" title="Permalink to this definition">¶</a></dt>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.experiment.gan.GanExperiment</span></code></p>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.runner.gan.GanRunner.state">
+<code class="sig-name descname">state</code><em class="property">: GanState</em><em class="property"> = None</em><a class="headerlink" href="#catalyst.dl.runner.gan.GanRunner.state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="catalyst.dl.runner.gan.GanRunner.state_fn">
@@ -1739,7 +1779,7 @@ single instance.</p></li>
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -1756,7 +1796,7 @@ single instance.</p></li>
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

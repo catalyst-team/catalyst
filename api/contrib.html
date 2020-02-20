@@ -4,15 +4,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Contrib &#8212; Catalyst 20.02 documentation</title>
+    <title>Contrib &#8212; Catalyst 20.02.3 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data" href="data.html" />
@@ -1258,6 +1258,11 @@ Powered by Catalyst.Ecosystem</p>
 <span class="p">)</span>
 </pre></div>
 </div>
+<dl class="attribute">
+<dt id="catalyst.contrib.dl.runner.alchemy.AlchemyRunner.experiment">
+<code class="sig-name descname">experiment</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.contrib.dl.runner.alchemy.AlchemyRunner.experiment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="catalyst.contrib.dl.runner.alchemy.AlchemyRunner.run_experiment">
 <code class="sig-name descname">run_experiment</code><span class="sig-paren">(</span><em class="sig-param">experiment: catalyst.dl.core.experiment.Experiment</em>, <em class="sig-param">check: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/runner/alchemy.html#AlchemyRunner.run_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.runner.alchemy.AlchemyRunner.run_experiment" title="Permalink to this definition">¶</a></dt>
@@ -1272,6 +1277,11 @@ Powered by Catalyst.Ecosystem</p>
 </dl>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="catalyst.contrib.dl.runner.alchemy.AlchemyRunner.state">
+<code class="sig-name descname">state</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.contrib.dl.runner.alchemy.AlchemyRunner.state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -1279,6 +1289,16 @@ Powered by Catalyst.Ecosystem</p>
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.runner.alchemy.</code><code class="sig-name descname">SupervisedAlchemyRunner</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">input_key: Any = 'features'</em>, <em class="sig-param">output_key: Any = 'logits'</em>, <em class="sig-param">input_target_key: str = 'targets'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/runner/alchemy.html#SupervisedAlchemyRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.runner.alchemy.SupervisedAlchemyRunner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.dl.runner.alchemy.AlchemyRunner" title="catalyst.contrib.dl.runner.alchemy.AlchemyRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.dl.runner.alchemy.AlchemyRunner</span></code></a>, <a class="reference internal" href="dl.html#catalyst.dl.runner.supervised.SupervisedRunner" title="catalyst.dl.runner.supervised.SupervisedRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.runner.supervised.SupervisedRunner</span></code></a></p>
 <p>SupervisedRunner with Alchemy</p>
+<dl class="attribute">
+<dt id="catalyst.contrib.dl.runner.alchemy.SupervisedAlchemyRunner.experiment">
+<code class="sig-name descname">experiment</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.contrib.dl.runner.alchemy.SupervisedAlchemyRunner.experiment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.contrib.dl.runner.alchemy.SupervisedAlchemyRunner.state">
+<code class="sig-name descname">state</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.contrib.dl.runner.alchemy.SupervisedAlchemyRunner.state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <span class="target" id="module-catalyst.contrib.dl.runner.neptune"></span><dl class="class">
@@ -1317,9 +1337,19 @@ Read about Neptune here <a class="reference external" href="https://neptune.ai">
     <span class="p">})</span>
 </pre></div>
 </div>
+<dl class="attribute">
+<dt id="catalyst.contrib.dl.runner.neptune.NeptuneRunner.experiment">
+<code class="sig-name descname">experiment</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.contrib.dl.runner.neptune.NeptuneRunner.experiment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="catalyst.contrib.dl.runner.neptune.NeptuneRunner.run_experiment">
 <code class="sig-name descname">run_experiment</code><span class="sig-paren">(</span><em class="sig-param">experiment: catalyst.dl.core.experiment.Experiment</em>, <em class="sig-param">check: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/runner/neptune.html#NeptuneRunner.run_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.runner.neptune.NeptuneRunner.run_experiment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.contrib.dl.runner.neptune.NeptuneRunner.state">
+<code class="sig-name descname">state</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.contrib.dl.runner.neptune.NeptuneRunner.state" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1328,6 +1358,16 @@ Read about Neptune here <a class="reference external" href="https://neptune.ai">
 <dt id="catalyst.contrib.dl.runner.neptune.SupervisedNeptuneRunner">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.runner.neptune.</code><code class="sig-name descname">SupervisedNeptuneRunner</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">input_key: Any = 'features'</em>, <em class="sig-param">output_key: Any = 'logits'</em>, <em class="sig-param">input_target_key: str = 'targets'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/runner/neptune.html#SupervisedNeptuneRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.runner.neptune.SupervisedNeptuneRunner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.dl.runner.neptune.NeptuneRunner" title="catalyst.contrib.dl.runner.neptune.NeptuneRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.dl.runner.neptune.NeptuneRunner</span></code></a>, <a class="reference internal" href="dl.html#catalyst.dl.runner.supervised.SupervisedRunner" title="catalyst.dl.runner.supervised.SupervisedRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.runner.supervised.SupervisedRunner</span></code></a></p>
+<dl class="attribute">
+<dt id="catalyst.contrib.dl.runner.neptune.SupervisedNeptuneRunner.experiment">
+<code class="sig-name descname">experiment</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.contrib.dl.runner.neptune.SupervisedNeptuneRunner.experiment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.contrib.dl.runner.neptune.SupervisedNeptuneRunner.state">
+<code class="sig-name descname">state</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.contrib.dl.runner.neptune.SupervisedNeptuneRunner.state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <span class="target" id="module-catalyst.contrib.dl.runner.wandb"></span><dl class="class">
@@ -1335,9 +1375,19 @@ Read about Neptune here <a class="reference external" href="https://neptune.ai">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.runner.wandb.</code><code class="sig-name descname">WandbRunner</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/runner/wandb.html#WandbRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.runner.wandb.WandbRunner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="dl.html#catalyst.dl.core.runner.Runner" title="catalyst.dl.core.runner.Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.core.runner.Runner</span></code></a></p>
 <p>Runner wrapper with wandb integration hooks.</p>
+<dl class="attribute">
+<dt id="catalyst.contrib.dl.runner.wandb.WandbRunner.experiment">
+<code class="sig-name descname">experiment</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.contrib.dl.runner.wandb.WandbRunner.experiment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="catalyst.contrib.dl.runner.wandb.WandbRunner.run_experiment">
 <code class="sig-name descname">run_experiment</code><span class="sig-paren">(</span><em class="sig-param">experiment: catalyst.dl.core.experiment.Experiment</em>, <em class="sig-param">check: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/runner/wandb.html#WandbRunner.run_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.runner.wandb.WandbRunner.run_experiment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.contrib.dl.runner.wandb.WandbRunner.state">
+<code class="sig-name descname">state</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.contrib.dl.runner.wandb.WandbRunner.state" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1346,6 +1396,16 @@ Read about Neptune here <a class="reference external" href="https://neptune.ai">
 <dt id="catalyst.contrib.dl.runner.wandb.SupervisedWandbRunner">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.runner.wandb.</code><code class="sig-name descname">SupervisedWandbRunner</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">input_key: Any = 'features'</em>, <em class="sig-param">output_key: Any = 'logits'</em>, <em class="sig-param">input_target_key: str = 'targets'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/runner/wandb.html#SupervisedWandbRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.runner.wandb.SupervisedWandbRunner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.dl.runner.wandb.WandbRunner" title="catalyst.contrib.dl.runner.wandb.WandbRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.dl.runner.wandb.WandbRunner</span></code></a>, <a class="reference internal" href="dl.html#catalyst.dl.runner.supervised.SupervisedRunner" title="catalyst.dl.runner.supervised.SupervisedRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.runner.supervised.SupervisedRunner</span></code></a></p>
+<dl class="attribute">
+<dt id="catalyst.contrib.dl.runner.wandb.SupervisedWandbRunner.experiment">
+<code class="sig-name descname">experiment</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.contrib.dl.runner.wandb.SupervisedWandbRunner.experiment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.contrib.dl.runner.wandb.SupervisedWandbRunner.state">
+<code class="sig-name descname">state</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.contrib.dl.runner.wandb.SupervisedWandbRunner.state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>
@@ -1582,7 +1642,7 @@ single instance.</p></li>
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -1599,7 +1659,7 @@ single instance.</p></li>
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

@@ -4,15 +4,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.utils.visualization &#8212; Catalyst 20.02 documentation</title>
+    <title>catalyst.dl.utils.visualization &#8212; Catalyst 20.02.3 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
    
@@ -35,7 +35,7 @@
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.utils.plotly</span> <span class="kn">import</span> <span class="n">plot_tensorboard_log</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
 
 
 <div class="viewcode-block" id="plot_metrics"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.visualization.plot_metrics">[docs]</a><span class="k">def</span> <span class="nf">plot_metrics</span><span class="p">(</span>
@@ -62,7 +62,7 @@
     <span class="k">assert</span> <span class="n">step</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;batch&quot;</span><span class="p">,</span> <span class="s2">&quot;epoch&quot;</span><span class="p">],</span> \
         <span class="sa">f</span><span class="s2">&quot;Step should be either &#39;batch&#39; or &#39;epoch&#39;, got &#39;</span><span class="si">{step}</span><span class="s2">&#39;&quot;</span>
     <span class="n">metrics</span> <span class="o">=</span> <span class="n">metrics</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">]</span>
-    <span class="n">plot_tensorboard_log</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span></div>
+    <span class="n">utils</span><span class="o">.</span><span class="n">plot_tensorboard_log</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;plot_metrics&quot;</span><span class="p">]</span>
@@ -119,7 +119,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -136,7 +136,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

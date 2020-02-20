@@ -4,15 +4,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.callbacks.metrics.auc &#8212; Catalyst 20.02 documentation</title>
+    <title>catalyst.dl.callbacks.metrics.auc &#8212; Catalyst 20.02.3 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" />
    
@@ -35,7 +35,7 @@
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="kn">import</span> <span class="n">MeterMetricsCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.meters</span> <span class="kn">import</span> <span class="n">AUCMeter</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="n">meters</span>
 
 
 <div class="viewcode-block" id="AUCCallback"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.auc.AUCCallback">[docs]</a><span class="k">class</span> <span class="nc">AUCCallback</span><span class="p">(</span><span class="n">MeterMetricsCallback</span><span class="p">):</span>
@@ -69,11 +69,11 @@
             <span class="k">if</span> <span class="n">class_names</span> <span class="ow">is</span> <span class="kc">None</span> \
             <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="n">class_names</span><span class="p">)</span>
 
-        <span class="n">meters</span> <span class="o">=</span> <span class="p">[</span><span class="n">AUCMeter</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_classes</span><span class="p">)]</span>
+        <span class="n">meter_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">meters</span><span class="o">.</span><span class="n">AUCMeter</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_classes</span><span class="p">)]</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">metric_names</span><span class="o">=</span><span class="p">[</span><span class="n">prefix</span><span class="p">],</span>
-            <span class="n">meter_list</span><span class="o">=</span><span class="n">meters</span><span class="p">,</span>
+            <span class="n">meter_list</span><span class="o">=</span><span class="n">meter_list</span><span class="p">,</span>
             <span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span>
             <span class="n">output_key</span><span class="o">=</span><span class="n">output_key</span><span class="p">,</span>
             <span class="n">class_names</span><span class="o">=</span><span class="n">class_names</span><span class="p">,</span>
@@ -136,7 +136,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -153,7 +153,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

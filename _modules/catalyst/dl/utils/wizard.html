@@ -4,15 +4,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.utils.wizard &#8212; Catalyst 20.02 documentation</title>
+    <title>catalyst.dl.utils.wizard &#8212; Catalyst 20.02.3 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
    
@@ -38,10 +38,7 @@
 <span class="kn">from</span> <span class="nn">prompt_toolkit</span> <span class="kn">import</span> <span class="n">prompt</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">registry</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="kn">import</span> <span class="n">clone_pipeline</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.utils.pipelines</span> <span class="kn">import</span> <span class="n">URL</span> <span class="k">as</span> <span class="n">pipeline_urls</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.scripts</span> <span class="kn">import</span> <span class="n">import_module</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">registry</span><span class="p">,</span> <span class="n">utils</span>
 
 <span class="n">yaml</span><span class="o">.</span><span class="n">add_representer</span><span class="p">(</span>
     <span class="n">OrderedDict</span><span class="p">,</span>
@@ -345,7 +342,7 @@
             <span class="n">expdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfg</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">][</span><span class="s2">&quot;expdir&quot;</span><span class="p">]</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expdir</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
                 <span class="n">expdir</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
-            <span class="n">import_module</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
+            <span class="n">utils</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__res</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Modules from </span><span class="si">{expdir}</span><span class="s2"> exported&quot;</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;There is no modules to import found: </span><span class="si">{expdir}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -383,7 +380,7 @@
 <span class="sd">        Then pipeline will be copied in requested directory</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__sep</span><span class="p">(</span><span class="s2">&quot;Pipeline templates&quot;</span><span class="p">)</span>
-        <span class="n">opts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pipeline_urls</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;empty&quot;</span><span class="p">]</span>
+        <span class="n">opts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">pipelines</span><span class="o">.</span><span class="n">URL</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;empty&quot;</span><span class="p">]</span>
         <span class="n">opts</span> <span class="o">=</span> <span class="p">[</span><span class="n">opt</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="k">for</span> <span class="n">opt</span> <span class="ow">in</span> <span class="n">opts</span><span class="p">]</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;0: Skip this step</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;{n + 1}: </span><span class="si">{v}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">opts</span><span class="p">)])</span>
@@ -398,7 +395,7 @@
         <span class="n">out_dir</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Where we need to copy </span><span class="si">{pipeline}</span><span class="s2"> &quot;</span>
                          <span class="s2">&quot;template files?: &quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
-        <span class="n">clone_pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_path</span><span class="p">)</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">clone_pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__res</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{pipeline}</span><span class="s2"> cloned to </span><span class="si">{self.pipeline_path}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Wizard.run"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.wizard.Wizard.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -481,7 +478,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -498,7 +495,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

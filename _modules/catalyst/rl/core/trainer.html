@@ -4,15 +4,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.rl.core.trainer &#8212; Catalyst 20.02 documentation</title>
+    <title>catalyst.rl.core.trainer &#8212; Catalyst 20.02.3 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
    
@@ -46,9 +46,7 @@
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 
 <span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.seed</span> <span class="kn">import</span> <span class="n">set_global_seed</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.tools.seeder</span> <span class="kn">import</span> <span class="n">Seeder</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.tools.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="n">tools</span>
 <span class="kn">from</span> <span class="nn">.algorithm</span> <span class="kn">import</span> <span class="n">AlgorithmSpec</span>
 <span class="kn">from</span> <span class="nn">.db</span> <span class="kn">import</span> <span class="n">DBSpec</span>
 <span class="kn">from</span> <span class="nn">.environment</span> <span class="kn">import</span> <span class="n">EnvironmentSpec</span>
@@ -94,7 +92,7 @@
         <span class="c1"># logging</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logdir</span> <span class="o">=</span> <span class="n">logdir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_logger</span><span class="p">(</span><span class="n">logdir</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_seeder</span> <span class="o">=</span> <span class="n">Seeder</span><span class="p">(</span><span class="n">init_seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seeder</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">Seeder</span><span class="p">(</span><span class="n">init_seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
 
         <span class="c1"># updates &amp; counters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
@@ -134,8 +132,7 @@
         <span class="k">if</span> <span class="n">WANDB_ENABLED</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitoring_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">checkpoints_glob</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> \
-                    <span class="bp">self</span><span class="o">.</span><span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
-                        <span class="s2">&quot;checkpoints_glob&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;best.pth&quot;</span><span class="p">,</span> <span class="s2">&quot;last.pth&quot;</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;checkpoints_glob&quot;</span><span class="p">,</span> <span class="p">[])</span>
 
                 <span class="n">wandb</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">monitoring_params</span><span class="p">)</span>
 
@@ -164,11 +161,11 @@
         <span class="n">timestamp</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_utcnow_time</span><span class="p">()</span>
         <span class="n">logpath</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">/trainer.</span><span class="si">{timestamp}</span><span class="s2">&quot;</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">logpath</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">logpath</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">SummaryWriter</span><span class="p">(</span><span class="n">logpath</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_prepare_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_seeder</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">set_global_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">set_global_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_log_to_console</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">fps</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">updates_per_sample</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">num_trajectories</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -387,7 +384,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -404,7 +401,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
