@@ -6,7 +6,6 @@ class F1ScoreCallback(MetricCallback):
     """
     F1 score metric callback.
     """
-
     def __init__(
         self,
         input_key: str = "targets",

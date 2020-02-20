@@ -16,7 +16,6 @@ class _ForwardOverrideModel(nn.Module):
 
     (Workaround, single method tracing is not supported)
     """
-
     def __init__(self, model, method_name):
         super().__init__()
         self.model = model
@@ -32,7 +31,6 @@ class _TracingModelWrapper(nn.Module):
 
     (Workaround, to use native model batch handler)
     """
-
     def __init__(self, model, method_name):
         super().__init__()
         self.method_name = method_name
@@ -42,9 +40,7 @@ class _TracingModelWrapper(nn.Module):
     def __call__(self, *args, **kwargs):
         method_model = _ForwardOverrideModel(self.model, self.method_name)
 
-        self.tracing_result = torch.jit.trace(
-            method_model, *args, **kwargs
-        )
+        self.tracing_result = torch.jit.trace(method_model, *args, **kwargs)
         return self.model.forward(*args, **kwargs)
 
 

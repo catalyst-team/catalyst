@@ -1,7 +1,7 @@
 from typing import List  # isort:skip
 
 from catalyst.dl.core import MeterMetricsCallback
-from catalyst.utils.meters import AUCMeter
+from catalyst.utils import meters
 
 
 class AUCCallback(MeterMetricsCallback):
@@ -35,11 +35,11 @@ class AUCCallback(MeterMetricsCallback):
             if class_names is None \
             else len(class_names)
 
-        meters = [AUCMeter() for _ in range(num_classes)]
+        meter_list = [meters.AUCMeter() for _ in range(num_classes)]
 
         super().__init__(
             metric_names=[prefix],
-            meter_list=meters,
+            meter_list=meter_list,
             input_key=input_key,
             output_key=output_key,
             class_names=class_names,

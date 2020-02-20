@@ -105,7 +105,6 @@ class GradientPenaltyCallback(CriterionCallback):
     """
     Criterion Callback to compute Gradient Penalty
     """
-
     def __init__(
         self,
         real_input_key: str = "data",
@@ -222,7 +221,6 @@ class WeightClampingOptimizerCallback(OptimizerCallback):
 
 
 __all__ = [
-    "WassersteinDistanceCallback",
-    "GradientPenaltyCallback",
+    "WassersteinDistanceCallback", "GradientPenaltyCallback",
     "WeightClampingOptimizerCallback"
 ]

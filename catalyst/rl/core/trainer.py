@@ -12,9 +12,7 @@ import numpy as np
 from torch.utils.data import DataLoader
 
 from catalyst import utils
-from catalyst.utils.seed import set_global_seed
-from catalyst.utils.tools.seeder import Seeder
-from catalyst.utils.tools.tensorboard import SummaryWriter
+from catalyst.utils import tools
 from .algorithm import AlgorithmSpec
 from .db import DBSpec
 from .environment import EnvironmentSpec
@@ -60,7 +58,7 @@ class TrainerSpec:
         # logging
         self.logdir = logdir
         self._prepare_logger(logdir)
-        self._seeder = Seeder(init_seed=seed)
+        self._seeder = tools.Seeder(init_seed=seed)
 
         # updates & counters
         self.batch_size = batch_size
@@ -112,7 +110,8 @@ class TrainerSpec:
                 shutil.rmtree(f"{logdir_dst}/{configs_src.name}")
                 shutil.copytree(
                     f"{str(configs_src.absolute())}",
-                    f"{logdir_dst}/{configs_src.name}")
+                    f"{logdir_dst}/{configs_src.name}"
+                )
 
                 code_src = logdir_src.joinpath("code")
                 if code_src.exists():
@@ -120,7 +119,8 @@ class TrainerSpec:
                     shutil.rmtree(f"{logdir_dst}/{code_src.name}")
                     shutil.copytree(
                         f"{str(code_src.absolute())}",
-                        f"{logdir_dst}/{code_src.name}")
+                        f"{logdir_dst}/{code_src.name}"
+                    )
             else:
                 WANDB_ENABLED = False
         self.wandb_mode = "trainer"
@@ -129,11 +129,11 @@ class TrainerSpec:
         timestamp = utils.get_utcnow_time()
         logpath = f"{logdir}/trainer.{timestamp}"
         os.makedirs(logpath, exist_ok=True)
-        self.logger = SummaryWriter(logpath)
+        self.logger = tools.SummaryWriter(logpath)
 
     def _prepare_seed(self):
         seed = self._seeder()[0]
-        set_global_seed(seed)
+        utils.set_global_seed(seed)
 
     def _log_to_console(
         self, fps: float, updates_per_sample: float, num_trajectories: int,
@@ -170,10 +170,7 @@ class TrainerSpec:
 
     @staticmethod
     def _log_wandb_metrics(
-        metrics: Dict,
-        step: int,
-        mode: str,
-        suffix: str = ""
+        metrics: Dict, step: int, mode: str, suffix: str = ""
     ):
         metrics = {
             f"{mode}/{key}{suffix}": value
@@ -185,7 +182,8 @@ class TrainerSpec:
     def _log_to_wandb(self, *, step, suffix="", **metrics):
         if WANDB_ENABLED:
             self._log_wandb_metrics(
-                metrics, step=step, mode=self.wandb_mode, suffix=suffix)
+                metrics, step=step, mode=self.wandb_mode, suffix=suffix
+            )
 
     def _save_wandb(self):
         if WANDB_ENABLED:
@@ -198,7 +196,8 @@ class TrainerSpec:
                 os.makedirs(f"{logdir_dst}/{logdir_src.name}", exist_ok=True)
                 shutil.copy2(
                     f"{str(events_src.absolute())}",
-                    f"{logdir_dst}/{logdir_src.name}/{events_src.name}")
+                    f"{logdir_dst}/{logdir_src.name}/{events_src.name}"
+                )
 
     def _save_checkpoint(self):
         if self.epoch % self.save_period == 0:
@@ -245,15 +244,15 @@ class TrainerSpec:
             metrics.update(**metrics_)
 
             metrics = dict(
-                (key, value)
-                for key, value in metrics.items()
+                (key, value) for key, value in metrics.items()
                 if isinstance(value, (float, int))
             )
 
             for key, value in metrics.items():
                 self.logger.add_scalar(key, value, self.update_step)
             self._log_to_wandb(
-                step=self.update_step, suffix="_batch", **metrics)
+                step=self.update_step, suffix="_batch", **metrics
+            )
 
         elapsed_time = time.time() - start_time
         elapsed_num_updates = len(loader) * loader.batch_size
@@ -288,7 +287,8 @@ class TrainerSpec:
                 self._run_epoch_loop()
             except Exception as ex:
                 self.db_server.push_message(
-                    self.db_server.Message.DISABLE_TRAINING)
+                    self.db_server.Message.DISABLE_TRAINING
+                )
                 raise ex
         self.db_server.push_message(self.db_server.Message.DISABLE_TRAINING)
 

@@ -3,7 +3,6 @@ from enum import Enum
 
 
 class DBSpec(ABC):
-
     class Message(Enum):
         ENABLE_TRAINING = 0
         DISABLE_TRAINING = 1

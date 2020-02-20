@@ -20,7 +20,6 @@ class OneCycleLRWithWarmup(BatchScheduler):
 
     Third, optional, lr decay.
     """
-
     def __init__(
         self,
         optimizer: Optimizer,

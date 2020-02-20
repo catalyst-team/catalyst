@@ -1,3 +1,9 @@
+#!/usr/bin/env bash
+
+# Cause the script to exit if a single command fails
+set -eo pipefail -v
+
+
 echo "apt update && apt install -y redis-server"
 apt update && apt install -y redis-server
 
@@ -6,6 +12,3 @@ pip install -r requirements/requirements.txt
 
 echo "pip install -r requirements/requirements-rl.txt"
 pip install -r requirements/requirements-rl.txt
-
-echo "./bin/tests/check_rl_ddpg.sh"
-OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" bash ./bin/tests/check_rl_ddpg.sh

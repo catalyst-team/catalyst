@@ -2,8 +2,7 @@ import numpy as np
 
 
 def calculate_dice(
-    true_positives: np.array,
-    false_positives: np.array,
+    true_positives: np.array, false_positives: np.array,
     false_negatives: np.array
 ) -> np.array:
     """Calculate list of Dice coefficients.

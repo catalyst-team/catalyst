@@ -62,9 +62,7 @@ def parse_args():
     return args
 
 
-def _prepare_df_from_dirs(
-    in_dirs, tag_column_name, recursive: bool = False
-):
+def _prepare_df_from_dirs(in_dirs, tag_column_name, recursive: bool = False):
     dfs = []
     splitted_dirs = in_dirs.strip(",").split(",")
 

@@ -11,7 +11,6 @@ class MetricsFormatter(ABC, logging.Formatter):
     """
     Abstract metrics formatter
     """
-
     def __init__(self, message_prefix):
         """
         Args:
@@ -47,7 +46,6 @@ class TxtMetricsFormatter(MetricsFormatter):
         This is inner class used by Logger callback,
         no need to use it directly!
     """
-
     def __init__(self):
         """
         Initializes the ``TxtMetricsFormatter``
@@ -90,7 +88,6 @@ class JsonMetricsFormatter(MetricsFormatter):
         This is inner class used by Logger callback,
         no need to use it directly!
     """
-
     def __init__(self):
         """
         Initializes the ``JsonMetricsFormatter``

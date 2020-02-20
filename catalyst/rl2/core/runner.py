@@ -45,7 +45,7 @@ class RLRunner(_Runner):
             batch,
             actor_update=(self.state.step % self.state.actor_grad_period == 0),
             critic_update=(
-                    self.state.step % self.state.critic_grad_period == 0
+                self.state.step % self.state.critic_grad_period == 0
             ),
         ) or {}
 
