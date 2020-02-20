@@ -10,9 +10,9 @@ def euclidean_distance(
     x: torch.Tensor,
     y: torch.Tensor = None,
 ) -> torch.Tensor:
-    x_norm = (x ** 2).sum(1).unsqueeze(1)
+    x_norm = (x**2).sum(1).unsqueeze(1)
     if y is not None:
-        y_norm = (y ** 2).sum(1).unsqueeze(0)
+        y_norm = (y**2).sum(1).unsqueeze(0)
     else:
         y = x
         y_norm = x_norm.t()
@@ -75,8 +75,7 @@ def batch_all(
 
 
 def create_negative_mask(
-    labels: torch.Tensor,
-    neg_label: int = -1
+    labels: torch.Tensor, neg_label: int = -1
 ) -> torch.Tensor:
 
     neg_labels = torch.ge(labels, neg_label)
@@ -97,9 +96,7 @@ def create_negative_mask(
 
 
 def triplet_loss(
-    embeddings: torch.Tensor,
-    labels: torch.Tensor,
-    margin: float = 0.3
+    embeddings: torch.Tensor, labels: torch.Tensor, margin: float = 0.3
 ) -> torch.Tensor:
 
     cosine_dists = cosine_distance(embeddings)
@@ -126,8 +123,7 @@ def _create_margin_mask(labels: torch.Tensor) -> torch.Tensor:
 
 
 def _skip_labels_mask(
-    labels: torch.Tensor,
-    skip_labels: Union[int, List[int]]
+    labels: torch.Tensor, skip_labels: Union[int, List[int]]
 ) -> torch.Tensor:
     skip_labels = torch.tensor(
         skip_labels, dtype=labels.dtype, device=labels.device

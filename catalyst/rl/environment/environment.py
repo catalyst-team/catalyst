@@ -37,7 +37,8 @@ class EnvironmentWrapper(EnvironmentSpec):
             from pyvirtualdisplay import Display
             from pyvirtualdisplay.randomize import Randomizer
             self.display = Display(
-                visible=0, size=(1366, 768), randomizer=Randomizer())
+                visible=0, size=(1366, 768), randomizer=Randomizer()
+            )
             self.display.start()
 
         self.env = env

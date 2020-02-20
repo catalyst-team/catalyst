@@ -105,9 +105,8 @@ class PolicyHead(nn.Module):
     ):
         super().__init__()
         assert policy_type in [
-            "categorical", "bernoulli", "diagonal-gauss",
-            "squashing-gauss", "real-nvp",
-            "logits", None
+            "categorical", "bernoulli", "diagonal-gauss", "squashing-gauss",
+            "real-nvp", "logits", None
         ]
 
         # @TODO: refactor
@@ -150,7 +149,10 @@ class PolicyHead(nn.Module):
 
         head_net = SequentialNet(
             hiddens=[in_features, head_size],
-            layer_fn={"module": layer_fn, "bias": True},
+            layer_fn={
+                "module": layer_fn,
+                "bias": True
+            },
             activation_fn=out_activation,
             norm_fn=None,
         )

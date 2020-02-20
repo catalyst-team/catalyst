@@ -144,10 +144,8 @@ class CheckpointCallback(BaseCheckpointCallback):
         ]
         best_valid_metrics = top_best_checkpoints[0][1]
         metrics = OrderedDict(
-            [("best", best_valid_metrics)] +
-            [("last", last_valid_metrics)] +
-            top_best_checkpoints +
-            all_epochs_metrics
+            [("best", best_valid_metrics)] + [("last", last_valid_metrics)] +
+            top_best_checkpoints + all_epochs_metrics
         )
 
         self.metrics = metrics
@@ -163,7 +161,8 @@ class CheckpointCallback(BaseCheckpointCallback):
             last_item = self.top_best_metrics.pop(-1)
             last_filepath = Path(last_item[0])
             last_filepaths = last_filepath.parent.glob(
-                last_filepath.name.replace(".pth", "*"))
+                last_filepath.name.replace(".pth", "*")
+            )
             for filepath in last_filepaths:
                 os.remove(filepath)
 
@@ -304,10 +303,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
             for (order_index, valid_metric) in enumerate(self.epochs_metrics)
         ]
 
-        metrics = OrderedDict(
-            n_last_checkpoints +
-            all_epochs_metrics
-        )
+        metrics = OrderedDict(n_last_checkpoints + all_epochs_metrics)
         self.metrics = metrics
         return self.metrics
 
@@ -318,10 +314,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
             os.remove(top_filepath)
 
     def process_checkpoint(
-        self,
-        logdir: str,
-        checkpoint: Dict,
-        batch_values: Dict[str, float]
+        self, logdir: str, checkpoint: Dict, batch_values: Dict[str, float]
     ):
         filepath = utils.save_checkpoint(
             logdir=Path(f"{logdir}/checkpoints/"),

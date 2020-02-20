@@ -14,37 +14,53 @@ from sklearn.model_selection import RepeatedStratifiedKFold
 from catalyst import utils
 
 BINARY_PER_CLASS_METRICS = [
-    "accuracy_score", "precision_score", "recall_score",
-    "f1_score", "roc_auc_score",
+    "accuracy_score",
+    "precision_score",
+    "recall_score",
+    "f1_score",
+    "roc_auc_score",
 ]
 
 RANK_METRICS = [
-    "ndcg_score", "coverage_error",
-    "label_ranking_loss", "label_ranking_average_precision_score",
+    "ndcg_score",
+    "coverage_error",
+    "label_ranking_loss",
+    "label_ranking_average_precision_score",
 ]
 
 
 def build_args(parser):
     parser.add_argument(
-        "--in-csv", type=Path,
-        help="Path to .csv with labels column", required=True
+        "--in-csv",
+        type=Path,
+        help="Path to .csv with labels column",
+        required=True
     )
     parser.add_argument(
-        "--in-label-column", type=str,
-        help="Column to get labels", required=False, default="labels",
+        "--in-label-column",
+        type=str,
+        help="Column to get labels",
+        required=False,
+        default="labels",
     )
     parser.add_argument(
-        "--in-npy", type=Path,
-        help="Path to .npy with class logits", required=True
+        "--in-npy",
+        type=Path,
+        help="Path to .npy with class logits",
+        required=True
     )
     parser.add_argument(
-        "--out-thresholds", type=Path,
-        help="Path to save .json with thresholds", required=True
+        "--out-thresholds",
+        type=Path,
+        help="Path to save .json with thresholds",
+        required=True
     )
 
     parser.add_argument(
-        "--metric", type=str,
-        help="Metric to use", required=False,
+        "--metric",
+        type=str,
+        help="Metric to use",
+        required=False,
         choices=BINARY_PER_CLASS_METRICS,
         default="roc_auc_score"
     )
@@ -54,18 +70,20 @@ def build_args(parser):
     #     default=None
     # )
     parser.add_argument(
-        "--num-splits", type=int,
-        help="NUM_SPLITS", required=False,
-        default=5
+        "--num-splits", type=int, help="NUM_SPLITS", required=False, default=5
     )
     parser.add_argument(
-        "--num-repeats", type=int,
-        help="NUM_REPEATS", required=False,
+        "--num-repeats",
+        type=int,
+        help="NUM_REPEATS",
+        required=False,
         default=1
     )
     parser.add_argument(
-        "--num-workers", type=int,
-        help="CPU pool size", required=False,
+        "--num-workers",
+        type=int,
+        help="CPU pool size",
+        required=False,
         default=1
     )
 
@@ -116,9 +134,7 @@ def find_best_threshold(
     random_state: int = 42,
 ):
     rkf = RepeatedStratifiedKFold(
-        n_splits=num_splits,
-        n_repeats=num_repeats,
-        random_state=random_state
+        n_splits=num_splits, n_repeats=num_repeats, random_state=random_state
     )
     fold_thresholds = []
     fold_metrics = {k: [] for k in BINARY_PER_CLASS_METRICS}
@@ -128,17 +144,14 @@ def find_best_threshold(
         y_true_train, y_true_test = y_true[train_index], y_true[test_index]
 
         best_threshold = find_best_split_threshold(
-            y_pred_train,
-            y_true_train,
-            metric=metric_fn
+            y_pred_train, y_true_train, metric=metric_fn
         )
         best_predictions = (y_pred_test >= best_threshold).astype(int)
 
         for metric_name in BINARY_PER_CLASS_METRICS:
             try:
                 metric_value = metrics.__dict__[metric_name](
-                    y_true_test,
-                    best_predictions
+                    y_true_test, best_predictions
                 )
             except ValueError:
                 metric_value = 0.
@@ -189,8 +202,7 @@ def optimize_thresholds(
             repeat(metric_fn),
             repeat(num_splits),
             repeat(num_repeats),
-        ),
-        pool
+        ), pool
     )
     results = [(r[1], r[2]) for r in sorted(results, key=lambda x: x[0])]
 
@@ -282,10 +294,12 @@ def main(args, _=None):
     _save_json(class_thresholds, outpath=args.out_thresholds)
 
     class_metrics["_mean"] = {
-        key_metric: np.mean([
-            class_metrics[key_class][key_metric]
-            for key_class in class_metrics.keys()
-        ])
+        key_metric: np.mean(
+            [
+                class_metrics[key_class][key_metric]
+                for key_class in class_metrics.keys()
+            ]
+        )
         for key_metric in BINARY_PER_CLASS_METRICS
     }
 
@@ -314,30 +328,26 @@ def main(args, _=None):
         }
         postfix = (
             ".rank.metrics"
-            if not thresholds_used
-            else ".rank.metrics.thresholds"
+            if not thresholds_used else ".rank.metrics.thresholds"
         )
         _save_json(rank_metrics, args.out_thresholds, suffix=postfix)
 
         coverage_metrics = score_model_coverage(confidences, labels)
         postfix = (
             ".coverage.metrics.json"
-            if not thresholds_used
-            else ".coverage.metrics.thresholds.json"
+            if not thresholds_used else ".coverage.metrics.thresholds.json"
         )
         _save_json(coverage_metrics, args.out_thresholds, suffix=postfix)
 
         if args.verbose:
             print(
                 "RANK METRICS"
-                if not thresholds_used
-                else "RANK METRICS WITH THRESHOLD"
+                if not thresholds_used else "RANK METRICS WITH THRESHOLD"
             )
             pprint(rank_metrics)
             print(
                 "COVERAGE METRICS"
-                if not thresholds_used
-                else "COVERAGE METRICS WITH THRESHOLD"
+                if not thresholds_used else "COVERAGE METRICS WITH THRESHOLD"
             )
             pprint(coverage_metrics)
 

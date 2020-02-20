@@ -10,6 +10,10 @@ from .policy import (
 )
 
 __all__ = [
-    "ActorSpec", "Actor",
-    "CriticSpec", "ActionCritic", "StateCritic", "StateActionCritic",
+    "ActorSpec",
+    "Actor",
+    "CriticSpec",
+    "ActionCritic",
+    "StateCritic",
+    "StateActionCritic",
 ]

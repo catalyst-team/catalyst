@@ -54,7 +54,6 @@ class AccuracyCallback(MultiMetricCallback):
     There is no need to choose a type (multi-class/multi label).
     An appropriate type will be chosen automatically via shape of tensors.
     """
-
     def __init__(
         self,
         input_key: str = "targets",
@@ -99,7 +98,6 @@ class MapKCallback(MultiMetricCallback):
     """
     mAP@k metric callback.
     """
-
     def __init__(
         self,
         input_key: str = "targets",

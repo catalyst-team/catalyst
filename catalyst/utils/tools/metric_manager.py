@@ -135,10 +135,10 @@ class MetricManager:
         if name:
             metrics_dict[name] = value
 
-        for name, value in metrics_dict.items():
-            value = self._to_single_value(value)
-            value = utils.distributed_mean(value)
-            self._batch_values[name] = value
+        for metric_name, metric_value in metrics_dict.items():
+            metric_value = self._to_single_value(metric_value)
+            metric_value = utils.distributed_mean(metric_value)
+            self._batch_values[metric_name] = metric_value
 
 
 __all__ = ["TimerManager", "MetricManager"]

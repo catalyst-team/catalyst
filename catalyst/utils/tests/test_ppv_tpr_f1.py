@@ -72,8 +72,8 @@ def create_dummy_tensors_seg(batch_size=16, channels=1):
     Binary: 1 actual, 1 predicted (tp: 1, fp: 0, fn: 0)
     """
     base_shape = (channels, 15, 15)
-    label = torch.ones((batch_size,)+base_shape)
-    pred = torch.ones((batch_size,)+base_shape)
+    label = torch.ones((batch_size, ) + base_shape)
+    pred = torch.ones((batch_size, ) + base_shape)
     return (label, pred)
 
 
@@ -122,4 +122,6 @@ def test_meter():
     batch_size = 16
     binary_y, binary_pred = create_dummy_tensors_seg(batch_size)
     meter.add(binary_pred, binary_y)
-    runs_tests_on_meter_counts_and_value(meter, num_tp_check=batch_size*15*15)
+    runs_tests_on_meter_counts_and_value(
+        meter, num_tp_check=batch_size * 15 * 15
+    )

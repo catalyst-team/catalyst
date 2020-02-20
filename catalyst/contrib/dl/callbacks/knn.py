@@ -18,16 +18,16 @@ class KNNMetricCallback(Callback):
     A callback that returns single metric on `state.on_loader_end`
     """
     def __init__(
-            self,
-            input_key: str = "logits",
-            output_key: str = "targets",
-            prefix: str = "knn",
-            num_classes: int = 2,
-            class_names: dict = None,
-            cv_loader_names: Dict[str, List[str]] = None,
-            metric_fn: str = "f1-score",
-            knn_metric: str = "euclidean",
-            num_neighbors: int = 5
+        self,
+        input_key: str = "logits",
+        output_key: str = "targets",
+        prefix: str = "knn",
+        num_classes: int = 2,
+        class_names: dict = None,
+        cv_loader_names: Dict[str, List[str]] = None,
+        metric_fn: str = "f1-score",
+        knn_metric: str = "euclidean",
+        num_neighbors: int = 5
     ):
         """
         Returns metric value calculated using kNN algorithm.
@@ -124,7 +124,8 @@ class KNNMetricCallback(Callback):
                 classifier = NearestNeighbors(
                     num_neighbors=self.num_neighbors + int(leave_one_out),
                     metric=self.knn_metric,
-                    algorithm="brute")
+                    algorithm="brute"
+                )
                 classifier.fit(x_train, y_train)
 
                 # data could be evaluated in num_folds in order to avoid OOM
@@ -133,7 +134,7 @@ class KNNMetricCallback(Callback):
 
                     end_idx = min(start_idx + batch_size, size)
 
-                    x = x_test[start_idx: end_idx]
+                    x = x_test[start_idx:end_idx]
 
                     knn_ids = classifier.kneighbors(x, return_distance=False)
 
@@ -216,16 +217,20 @@ class KNNMetricCallback(Callback):
 
                 # checking for presence of subset
                 if k not in self.sets:
-                    print(f"Set `{k}` not found in the sets. "
-                          f"Please change `cv_loader_names` parameter.")
+                    print(
+                        f"Set `{k}` not found in the sets. "
+                        f"Please change `cv_loader_names` parameter."
+                    )
                     continue
 
                 for v in vs:
 
                     # checking for presence of subset
                     if v not in self.sets:
-                        print(f"Set `{v}` not found in the sets. "
-                              f"Please change `cv_loader_names` parameter.")
+                        print(
+                            f"Set `{v}` not found in the sets. "
+                            f"Please change `cv_loader_names` parameter."
+                        )
                         continue
 
                     y_true, y_pred = \

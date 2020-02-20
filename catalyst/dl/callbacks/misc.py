@@ -153,7 +153,6 @@ class RaiseExceptionCallback(LoggerCallback):
 
 
 __all__ = [
-    "EarlyStoppingCallback",
-    "ConfusionMatrixCallback",
+    "EarlyStoppingCallback", "ConfusionMatrixCallback",
     "RaiseExceptionCallback"
 ]

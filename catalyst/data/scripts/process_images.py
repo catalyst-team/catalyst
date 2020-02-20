@@ -32,47 +32,44 @@ cv2.ocl.setUseOpenCL(False)
 
 def build_args(parser):
     parser.add_argument(
-        "--in-dir",
-        required=True,
-        type=Path,
-        help="Raw data folder path")
+        "--in-dir", required=True, type=Path, help="Raw data folder path"
+    )
 
     parser.add_argument(
         "--out-dir",
         required=True,
         type=Path,
-        help="Processed images folder path")
+        help="Processed images folder path"
+    )
 
     parser.add_argument(
-        "--num-workers", "-j",
+        "--num-workers",
+        "-j",
         default=1,
         type=int,
-        help="Number of workers to parallel the processing")
+        help="Number of workers to parallel the processing"
+    )
 
     parser.add_argument(
         "--max-size",
         default=None,
         required=False,
         type=int,
-        help="Output images size. E.g. 224, 448")
+        help="Output images size. E.g. 224, 448"
+    )
+
+    boolean_flag(parser, "clear-exif", default=True, help="Clear EXIF data")
 
     boolean_flag(
-        parser,
-        "clear-exif",
-        default=True,
-        help="Clear EXIF data")
-
-    boolean_flag(
-        parser,
-        "grayscale",
-        default=False,
-        help="Read images in grayscale")
+        parser, "grayscale", default=False, help="Read images in grayscale"
+    )
 
     boolean_flag(
         parser,
         "expand-dims",
         default=True,
-        help="Expand array shape for grayscale images")
+        help="Expand array shape for grayscale images"
+    )
 
     return parser
 
@@ -85,6 +82,7 @@ def parse_args():
 
 
 # <--- taken from albumentations - https://github.com/albu/albumentations --->
+
 
 def py3round(number):
     """Unified rounding in all python versions."""
@@ -122,6 +120,7 @@ def _func_max_size(img, max_size, interpolation, func):
 def longest_max_size(img, max_size, interpolation):
     return _func_max_size(img, max_size, interpolation, max)
 
+
 # <--- taken from albumentations - https://github.com/albu/albumentations --->
 
 
@@ -148,7 +147,8 @@ class Preprocessor:
         try:
             _, extension = os.path.splitext(image_path)
             kwargs = {
-                "grayscale": self.grayscale, "expand_dims": self.expand_dims
+                "grayscale": self.grayscale,
+                "expand_dims": self.expand_dims
             }
             if extension.lower() in {"jpg", "jpeg"}:
                 # imread does not have exifrotate for non-jpeg type
@@ -172,10 +172,12 @@ class Preprocessor:
         images: List[Path] = []
         for root, dirs, files in os.walk(self.in_dir):
             root = Path(root)
-            images.extend([
-                root / filename for filename in files
-                if has_image_extension(filename)
-            ])
+            images.extend(
+                [
+                    root / filename for filename in files
+                    if has_image_extension(filename)
+                ]
+            )
 
         tqdm_parallel_imap(self.preprocess, images, pool)
 
