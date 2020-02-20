@@ -58,15 +58,12 @@ def build_args(parser):
     parser.add_argument("--sampler-id", type=int, default=0)
 
     boolean_flag(
-        parser, "deterministic",
+        parser,
+        "deterministic",
         default=None,
         help="Deterministic mode if running in CuDNN backend"
     )
-    boolean_flag(
-        parser, "benchmark",
-        default=None,
-        help="Use CuDNN benchmark"
-    )
+    boolean_flag(parser, "benchmark", default=None, help="Use CuDNN benchmark")
 
     return parser
 

@@ -39,9 +39,10 @@ class MongoDB(DBSpec):
     def _set_flag(self, key, value):
         try:
             self._message_collection.replace_one(
-                {"key": key},
-                {"key": key, "value": value},
-                upsert=True
+                {"key": key}, {
+                    "key": key,
+                    "value": value
+                }, upsert=True
             )
         except pymongo.errors.AutoReconnect:
             time.sleep(self._reconnect_timeout)
@@ -49,9 +50,7 @@ class MongoDB(DBSpec):
 
     def _get_flag(self, key, default=None):
         try:
-            flag_obj = self._message_collection.find_one(
-                {"key": {"$eq": key}}
-            )
+            flag_obj = self._message_collection.find_one({"key": {"$eq": key}})
         except pymongo.errors.AutoReconnect:
             time.sleep(self._reconnect_timeout)
             return self._get_flag(key, default)
@@ -182,7 +181,9 @@ class MongoDB(DBSpec):
 
     def del_checkpoint(self):
         id_ = self._checkpoint_collection.find_one(
-            {"filename": "checkpoint"}
+            {
+                "filename": "checkpoint"
+            }
         )._id
         self._checkpoint_collection.delete(id_)
 

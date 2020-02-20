@@ -76,10 +76,7 @@ class ToTensor(ToTensorV2):
         return super().apply_to_mask(mask.astype(np.float32), **params)
 
     def get_transform_init_args_names(self) -> tuple:
-        return ("move_channels_dim",)
+        return ("move_channels_dim", )
 
 
-__all__ = [
-    "TensorToImage",
-    "ToTensor"
-]
+__all__ = ["TensorToImage", "ToTensor"]

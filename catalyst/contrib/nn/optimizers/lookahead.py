@@ -6,12 +6,7 @@ from torch.optim import Optimizer
 
 
 class Lookahead(Optimizer):
-    def __init__(
-        self,
-        optimizer: Optimizer,
-        k: int = 5,
-        alpha: float = 0.5
-    ):
+    def __init__(self, optimizer: Optimizer, k: int = 5, alpha: float = 0.5):
         """
         Taken from: https://github.com/alphadl/lookahead.pytorch
         """
@@ -90,6 +85,7 @@ class Lookahead(Optimizer):
         from catalyst.dl.registry import OPTIMIZERS
 
         base_optimizer = OPTIMIZERS.get_from_params(
-            params=params, **base_optimizer_params)
+            params=params, **base_optimizer_params
+        )
         optimizer = cls(optimizer=base_optimizer, **kwargs)
         return optimizer

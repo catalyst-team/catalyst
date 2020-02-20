@@ -66,7 +66,9 @@ class UploadCommand(Command):
 
         self.status("Building Source and Wheel (universal) distribution…")
         os.system(
-            "{0} setup.py sdist bdist_wheel --universal".format(sys.executable)
+            "{0} setup.py sdist bdist_wheel --universal".format(
+                sys.executable
+            )
         )
 
         self.status("Uploading the package to PyPI via Twine…")
@@ -91,13 +93,11 @@ extras = {
 }
 extras["contrib"] += extras["ecosystem"] + extras["cv"] + extras["nlp"]
 
-
 # Meta dependency groups.
 all_deps = []
 for group_name in extras:
     all_deps += extras[group_name]
 extras["all"] = all_deps
-
 
 setup(
     name=NAME,
@@ -117,7 +117,7 @@ setup(
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    packages=find_packages(exclude=("tests",)),
+    packages=find_packages(exclude=("tests", )),
     entry_points={
         "console_scripts": [
             "catalyst-dl=catalyst.dl.__main__:main",

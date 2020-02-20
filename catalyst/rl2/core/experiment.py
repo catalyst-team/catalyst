@@ -5,7 +5,6 @@ from catalyst.rl2 import AlgorithmSpec, EnvironmentSpec
 
 
 class RLExperiment(_Experiment):
-
     @property
     @abstractmethod
     def min_num_transitions(self) -> int:

@@ -12,7 +12,6 @@ class DiceCallback(MetricCallback):
     """
     Dice metric callback.
     """
-
     def __init__(
         self,
         input_key: str = "targets",
@@ -86,8 +85,7 @@ class MulticlassDiceMetricCallback(Callback):
 
             metric_name = self.class_names[metric_id]
             state.metric_manager.epoch_values[state.loader_name][
-                f"{self.class_prefix}_{metric_name}"
-            ] = dice_value
+                f"{self.class_prefix}_{metric_name}"] = dice_value
 
         state.metric_manager.epoch_values[state.loader_name]["mean"] = np.mean(
             [x for x in batch_metrics.values()]

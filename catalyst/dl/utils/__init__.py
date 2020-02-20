@@ -12,7 +12,6 @@ from .wizard import run_wizard, Wizard
 
 logger = logging.getLogger(__name__)
 
-
 try:
     import transformers  # noqa: F401
     from .text import tokenize_text, process_bert_output

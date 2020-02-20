@@ -19,13 +19,12 @@ class CutmixCallback(CriterionCallback):
 
         You may not use them together.
     """
-
     def __init__(
-            self,
-            fields: List[str] = ("features",),
-            alpha=1.0,
-            on_train_only=True,
-            **kwargs
+        self,
+        fields: List[str] = ("features", ),
+        alpha=1.0,
+        on_train_only=True,
+        **kwargs
     ):
         """
         Args:
@@ -125,6 +124,9 @@ class CutmixCallback(CriterionCallback):
             state.input[f][:, :, bbx1:bbx2, bby1:bby2] = \
                 state.input[f][self.index, :, bbx1:bbx2, bby1:bby2]
 
-        self.lam = 1 - ((bbx2 - bbx1) * (bby2 - bby1)
-                        / (state.input[self.fields[0]].shape[-1]
-                           * state.input[self.fields[0]].shape[-2]))
+        self.lam = 1 - (
+            (bbx2 - bbx1) * (bby2 - bby1) / (
+                state.input[self.fields[0]].shape[-1] *
+                state.input[self.fields[0]].shape[-2]
+            )
+        )

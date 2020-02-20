@@ -72,7 +72,6 @@ class ParameterSpaceNoise(ExplorationStrategy):
     forcing it to produce more diverse actions.
     Paper: https://arxiv.org/abs/1706.01905
     """
-
     def __init__(self, target_sigma, tolerance=1e-3, max_steps=1000):
         super().__init__()
 

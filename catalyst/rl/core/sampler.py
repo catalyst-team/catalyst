@@ -27,7 +27,6 @@ from .environment import EnvironmentSpec  # noqa E402
 from .exploration import ExplorationHandler  # noqa E402
 from .trajectory_sampler import TrajectorySampler  # noqa E402
 
-
 logger = logging.getLogger(__name__)
 
 if os.environ.get("USE_WANDB", "1") == "1":
@@ -172,8 +171,8 @@ class Sampler:
 
     def _get_seed(self):
         if self.trajectory_seeds is not None:
-            seed = self.trajectory_seeds[
-                self.trajectory_index % len(self.trajectory_seeds)]
+            seed = self.trajectory_seeds[self.trajectory_index %
+                                         len(self.trajectory_seeds)]
         else:
             seed = self._seeder()[0]
         utils.set_global_seed(seed)
@@ -226,10 +225,7 @@ class Sampler:
 
     @staticmethod
     def _log_wandb_metrics(
-        metrics: Dict,
-        step: int,
-        mode: str,
-        suffix: str = ""
+        metrics: Dict, step: int, mode: str, suffix: str = ""
     ):
         metrics = {
             f"{mode}/{key}{suffix}": value
@@ -241,7 +237,8 @@ class Sampler:
     def _log_to_wandb(self, *, step, suffix="", **metrics):
         if WANDB_ENABLED:
             self._log_wandb_metrics(
-                metrics, step=step, mode=self.wandb_mode, suffix=suffix)
+                metrics, step=step, mode=self.wandb_mode, suffix=suffix
+            )
 
     def _save_wandb(self):
         if WANDB_ENABLED:
@@ -254,7 +251,8 @@ class Sampler:
                 os.makedirs(f"{logdir_dst}/{logdir_src.name}", exist_ok=True)
                 shutil.copy2(
                     f"{str(events_src.absolute())}",
-                    f"{logdir_dst}/{logdir_src.name}/{events_src.name}")
+                    f"{logdir_dst}/{logdir_src.name}/{events_src.name}"
+                )
 
     @torch.no_grad()
     def _run_trajectory_loop(self):
@@ -402,7 +400,8 @@ class ValidSampler(Sampler):
             for checkpoint_path in checkpoint_paths:
                 shutil.copy2(
                     f"{str(checkpoint_path.absolute())}",
-                    f"{checkpoints_dst}/{checkpoint_path.name}")
+                    f"{checkpoints_dst}/{checkpoint_path.name}"
+                )
 
     def save_checkpoint(
         self,
@@ -455,25 +454,25 @@ class ValidSampler(Sampler):
                 trajectories_reward.append(trajectory_info["reward"])
                 trajectories_raw_reward.append(
                     trajectory_info.get(
-                        "raw_reward",
-                        trajectory_info["reward"]
+                        "raw_reward", trajectory_info["reward"]
                     )
                 )
                 trajectory_info.pop("raw_trajectory", None)
                 self._log_to_console(**trajectory_info)
                 self._log_to_tensorboard(**trajectory_info)
                 self._log_to_wandb(
-                    step=self.trajectory_index, **trajectory_info)
+                    step=self.trajectory_index, **trajectory_info
+                )
                 self.trajectory_index += 1
 
                 if self.trajectory_index % self._gc_period == 0:
                     gc.collect()
 
             loop_metrics = {
-                "trajectory/_mean_valid_reward":
-                    self.rewards2metric(trajectories_reward),
-                "trajectory/_mean_valid_raw_reward":
-                    self.rewards2metric(trajectories_raw_reward),
+                "trajectory/_mean_valid_reward": self.
+                rewards2metric(trajectories_reward),
+                "trajectory/_mean_valid_raw_reward": self.
+                rewards2metric(trajectories_raw_reward),
             }
 
             if self.logger is not None:

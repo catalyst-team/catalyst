@@ -24,7 +24,6 @@ class AUCMeter(meter.Meter):
     signoid function); and (2) the `target` contains only values 0 (for
     negative examples) and 1 (for positive examples).
     """
-
     def __init__(self):
         super(AUCMeter, self).__init__()
         self.reset()
@@ -58,8 +57,9 @@ class AUCMeter(meter.Meter):
             return 0.5
 
         # sorting the arrays
-        scores, sortind = torch.sort(torch.from_numpy(
-            self.scores), dim=0, descending=True)
+        scores, sortind = torch.sort(
+            torch.from_numpy(self.scores), dim=0, descending=True
+        )
         scores = scores.numpy()
         sortind = sortind.numpy()
 

@@ -13,7 +13,6 @@ class ConvCritic(CriticSpec):
     """
     Critic that learns state value functions, like V(s).
     """
-
     def __init__(
         self,
         # state_net: StateNet,
@@ -109,7 +108,6 @@ class ConvQCritic(ConvCritic):
     """
     Critic that learns state qvalue functions, like Q(s,a).
     """
-
     @classmethod
     def get_from_params(
         cls,

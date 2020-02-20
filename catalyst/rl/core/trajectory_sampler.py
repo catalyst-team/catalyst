@@ -128,7 +128,8 @@ class TrajectorySampler:
 
             if isinstance(exploration_strategy, OrnsteinUhlenbeckProcess):
                 exploration_strategy.reset_state(
-                    self.env.action_space.shape[0])
+                    self.env.action_space.shape[0]
+                )
 
             if isinstance(exploration_strategy, ParameterSpaceNoise) \
                     and len(self.observations) > 1:
