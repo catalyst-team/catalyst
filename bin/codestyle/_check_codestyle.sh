@@ -16,15 +16,15 @@ echo 'isort: `isort -rc --check-only --settings-path ./setup.cfg`'
 isort -rc --check-only --settings-path ./setup.cfg
 
 # stop the build if there are any unexpected flake8 issues
-echo 'flake8: `bash ./bin/_flake8.sh`'
-bash ./bin/_flake8.sh --count \
+echo 'flake8: `bash ./bin/codestyle/_flake8.sh`'
+bash ./bin/codestyle/_flake8.sh --count \
     --config=./setup.cfg \
     --show-source \
     --statistics
 
 # exit-zero treats all errors as warnings.
-echo 'flake8 (warnings): `bash ./bin/_flake8.sh`'
-bash ./bin/_flake8.sh --count \
+echo 'flake8 (warnings): `bash ./bin/codestyle/_flake8.sh`'
+bash ./bin/codestyle/_flake8.sh --count \
     --config=./setup.cfg \
     --show-source \
     --statistics \
@@ -32,11 +32,11 @@ bash ./bin/_flake8.sh --count \
 
 # test to make sure the code is yapf compliant
 if [[ -f ${skip_inplace} ]]; then
-    echo 'yapf: `bash ./bin/_yapf.sh --all`'
-    bash ./bin/_yapf.sh --all
+    echo 'yapf: `bash ./bin/codestyle/_yapf.sh --all`'
+    bash ./bin/codestyle/_yapf.sh --all
 else
-    echo 'yapf: `bash ./bin/_yapf.sh --all-in-place`'
-    bash ./bin/_yapf.sh --all-in-place
+    echo 'yapf: `bash ./bin/codestyle/_yapf.sh --all-in-place`'
+    bash ./bin/codestyle/_yapf.sh --all-in-place
 fi
 
 echo 'pytest: `pytest`'

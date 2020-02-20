@@ -9,7 +9,7 @@
   hooks:
     - id: yapf
       name: yapf
-      entry: bash ./bin/_yapf.sh --all-in-place
+      entry: bash ./bin/codestyle/_yapf.sh --all-in-place
       language: system
       files: \.py$
       require_serial: true
