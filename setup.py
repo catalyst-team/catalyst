@@ -164,7 +164,6 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: Implementation :: CPython",
-
     ],
     # $ setup.py publish support.
     cmdclass={

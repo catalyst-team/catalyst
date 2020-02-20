@@ -41,7 +41,6 @@ class EventReadingException(Exception):
     """
     An exception that correspond to an event file reading error
     """
-    pass
 
 
 class EventsFileReader(Iterable):
