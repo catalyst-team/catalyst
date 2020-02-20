@@ -178,11 +178,21 @@ class _Runner(ABC):
         end_events = ["stage_end", "epoch_end", "batch_end", "loader_end", "exception"]
         stage_callbacks = {}
         for event in start_events:
-            stage_callbacks[event] = start_callbacks
+            fn_name = f"on_{event}"
+            filtered_callbacks = OrderedDict([
+                (k, v) for k, v in start_callbacks.items()
+                if not getattr(v.__class__, fn_name).__code__ is getattr(Callback, fn_name).__code__
+            ])
+            stage_callbacks[event] = filtered_callbacks
         for event in end_events:
-            stage_callbacks[event] = end_callbacks
+            fn_name = f"on_{event}"
+            filtered_callbacks = OrderedDict([
+                (k, v) for k, v in end_callbacks.items()
+                if not getattr(v.__class__, fn_name).__code__ is getattr(Callback, fn_name).__code__
+            ])
+            stage_callbacks[event] = filtered_callbacks
+        print(stage_callbacks)
         return stage_callbacks
-
 
     def _prepare_for_stage(self, stage: str):
         utils.set_global_seed(self.experiment.initial_seed)
