@@ -87,7 +87,7 @@ class Ralamb(Optimizer):
                     N_sma, radam_step_size = buffered[1], buffered[2]
                 else:
                     buffered[0] = state["step"]
-                    beta2_t = beta2 ** state["step"]
+                    beta2_t = beta2**state["step"]
                     N_sma_max = 2 / (1 - beta2) - 1
                     N_sma = N_sma_max - \
                         2 * state["step"] * beta2_t / (1 - beta2_t)
@@ -102,7 +102,7 @@ class Ralamb(Optimizer):
                                 * N_sma_max / (N_sma_max - 2)
                             ) / (1 - beta1 ** state["step"])
                     else:
-                        radam_step_size = 1.0 / (1 - beta1 ** state["step"])
+                        radam_step_size = 1.0 / (1 - beta1**state["step"])
                     buffered[2] = radam_step_size
 
                 if group["weight_decay"] != 0:
@@ -133,8 +133,7 @@ class Ralamb(Optimizer):
 
                 if N_sma >= 5:
                     p_data_fp32.addcdiv_(
-                        -radam_step_size * group["lr"] * trust_ratio,
-                        exp_avg,
+                        -radam_step_size * group["lr"] * trust_ratio, exp_avg,
                         denom
                     )
                 else:

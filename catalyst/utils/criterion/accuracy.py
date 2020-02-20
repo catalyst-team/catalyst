@@ -6,7 +6,7 @@ from catalyst.utils import get_activation_fn
 def accuracy(
     outputs,
     targets,
-    topk=(1,),
+    topk=(1, ),
     threshold: float = None,
     activation: str = None
 ):
@@ -37,7 +37,8 @@ def accuracy(
     # multi-label classification
     if len(targets.shape) > 1 and targets.size(1) > 1:
         res = (targets.long() == outputs.long()).sum().float() / np.prod(
-            targets.shape)
+            targets.shape
+        )
         return [res]
 
     max_k = max(topk)
@@ -87,7 +88,7 @@ def average_accuracy(outputs, targets, k=10):
     return score / min(len(targets), k)
 
 
-def mean_average_accuracy(outputs, targets, topk=(1,)):
+def mean_average_accuracy(outputs, targets, topk=(1, )):
     """
     Computes the mean average accuracy at k.
     This function computes the mean average accuracy at k between two lists

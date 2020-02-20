@@ -40,10 +40,7 @@ def wing_loss(
 
 class WingLoss(nn.Module):
     def __init__(
-        self,
-        width: int = 5,
-        curvature: float = 0.5,
-        reduction: str = "mean"
+        self, width: int = 5, curvature: float = 0.5, reduction: str = "mean"
     ):
         super().__init__()
         self.loss_fn = partial(

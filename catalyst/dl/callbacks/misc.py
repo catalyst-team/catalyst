@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 
 from catalyst.dl import Callback, CallbackOrder, LoggerCallback, State, utils
-from catalyst.utils.meters import ConfusionMeter
+from catalyst.utils import meters
 
 
 class EarlyStoppingCallback(Callback):
@@ -75,7 +75,7 @@ class ConfusionMatrixCallback(Callback):
 
     def _reset_stats(self):
         if self._version == "tnt":
-            self.confusion_matrix = ConfusionMeter(self.num_classes)
+            self.confusion_matrix = meters.ConfusionMeter(self.num_classes)
         elif self._version == "sklearn":
             self.outputs = []
             self.targets = []
@@ -153,7 +153,6 @@ class RaiseExceptionCallback(LoggerCallback):
 
 
 __all__ = [
-    "EarlyStoppingCallback",
-    "ConfusionMatrixCallback",
+    "EarlyStoppingCallback", "ConfusionMatrixCallback",
     "RaiseExceptionCallback"
 ]

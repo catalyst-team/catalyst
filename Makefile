@@ -1,10 +1,10 @@
 .PHONY: check-codestyle check-docs codestyle docker docker-fp16 docker-dev docker-dev-fp16 install-from-source clean
 
 check-codestyle:
-	bash ./bin/_check_codestyle.sh -s
+	bash ./bin/codestyle/_check_codestyle.sh -s
 
 check-docs:
-	bash ./bin/_check_docs.sh
+	bash ./bin/codestyle/_check_docs.sh
 
 codestyle:
 	pre-commit run

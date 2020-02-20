@@ -164,8 +164,8 @@ class SupervisedRunner(Runner):
         if len(loaders) == 1:
             valid_loader = list(loaders.keys())[0]
             logger.warning(
-                "Attention, there is only one data loader - "
-                + str(valid_loader)
+                "Attention, there is only one data loader - " +
+                str(valid_loader)
             )
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
@@ -175,10 +175,12 @@ class SupervisedRunner(Runner):
 
         if resume is not None:
             callbacks = utils.process_callbacks(callbacks)
-            checkpoint_callback_flag = any([
-                isinstance(x, CheckpointCallback)
-                for x in callbacks.values()
-            ])
+            checkpoint_callback_flag = any(
+                [
+                    isinstance(x, CheckpointCallback)
+                    for x in callbacks.values()
+                ]
+            )
             if not checkpoint_callback_flag:
                 callbacks["loader"] = CheckpointCallback(resume=resume)
             else:

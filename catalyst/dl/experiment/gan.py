@@ -13,7 +13,6 @@ class GanExperiment(BaseExperiment):
     """
     One-staged GAN experiment
     """
-
     def __init__(
         self,
         *,
@@ -64,17 +63,13 @@ class GanExperiment(BaseExperiment):
     def wrap_callbacks(self, phase2callbacks) -> None:
         """Phase wrapping procedure for callbacks"""
         discriminator_phase_name = self._additional_state_kwargs[
-            "discriminator_train_phase"
-        ]
+            "discriminator_train_phase"]
         discriminator_phase_num = self._additional_state_kwargs[
-            "discriminator_train_num"
-        ]
+            "discriminator_train_num"]
         generator_phase_name = self._additional_state_kwargs[
-            "generator_train_phase"
-        ]
+            "generator_train_phase"]
         generator_phase_num = self._additional_state_kwargs[
-            "generator_train_num"
-        ]
+            "generator_train_num"]
         self._callbacks["phase_manager"] = PhaseManagerCallback(
             train_phases=OrderedDict(
                 [
@@ -89,7 +84,8 @@ class GanExperiment(BaseExperiment):
             for callback_name in callback_name_list:
                 callback = self._callbacks.pop(callback_name)
                 self._callbacks[callback_name] = PhaseBatchWrapperCallback(
-                    base_callback=callback, active_phases=[phase_name],
+                    base_callback=callback,
+                    active_phases=[phase_name],
                 )
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":

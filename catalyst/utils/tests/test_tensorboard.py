@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 
 from catalyst.utils.tools.tensorboard import (
-    EventReadingError, EventsFileReader, SummaryReader
+    EventReadingException, EventsFileReader, SummaryReader
 )
 
 
@@ -119,13 +119,13 @@ def test_events_reader_invalid_data():
     data1 = bytearray(data)
     data1[0] = (data1[0] + 1) % 256
     reader = EventsFileReader(BytesIO(data1))
-    with pytest.raises(EventReadingError):
+    with pytest.raises(EventReadingException):
         list(reader)
 
     data2 = bytearray(data)
     data2[123] = (data2[123] + 1) % 256
     reader = EventsFileReader(BytesIO(data2))
-    with pytest.raises(EventReadingError):
+    with pytest.raises(EventReadingException):
         list(reader)
 
 
@@ -133,7 +133,7 @@ def test_events_reader_unexpected_end():
     data, _ = _get_test_data()
     data = data[:-5]
     reader = EventsFileReader(BytesIO(data))
-    with pytest.raises(EventReadingError):
+    with pytest.raises(EventReadingException):
         list(reader)
 
 

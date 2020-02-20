@@ -7,7 +7,6 @@ class BertClassifier(nn.Module):
     Simplified version of the same class by HuggingFace.
     See transformers/modeling_distilbert.py in the transformers repository.
     """
-
     def __init__(self, pretrained_model_name: str, num_classes: int = None):
         """
         Args:
@@ -19,14 +18,15 @@ class BertClassifier(nn.Module):
         super().__init__()
 
         config = AutoConfig.from_pretrained(
-            pretrained_model_name, num_labels=num_classes)
+            pretrained_model_name, num_labels=num_classes
+        )
 
         self.distilbert = AutoModel.from_pretrained(
-            pretrained_model_name, config=config)
+            pretrained_model_name, config=config
+        )
         self.pre_classifier = nn.Linear(config.dim, config.dim)
         self.classifier = nn.Sequential(
-            nn.ReLU(),
-            nn.Dropout(config.seq_classif_dropout),
+            nn.ReLU(), nn.Dropout(config.seq_classif_dropout),
             nn.Linear(config.dim, num_classes)
         )
 

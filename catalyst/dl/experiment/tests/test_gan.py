@@ -8,12 +8,14 @@ from catalyst.dl import (
 )
 from catalyst.dl.experiment.gan import GanExperiment
 
-DEFAULT_CALLBACKS = OrderedDict([
-    ("phase_manager", PhaseManagerCallback),
-    ("saver", CheckpointCallback),
-    ("console", ConsoleLogger),
-    ("exception", RaiseExceptionCallback),
-])
+DEFAULT_CALLBACKS = OrderedDict(
+    [
+        ("phase_manager", PhaseManagerCallback),
+        ("saver", CheckpointCallback),
+        ("console", ConsoleLogger),
+        ("exception", RaiseExceptionCallback),
+    ]
+)
 
 
 def test_defaults():
@@ -59,17 +61,18 @@ def test_callback_wrapping():
     generator_loss_key = "loss_g"
     discriminator_key = "discriminator"
     generator_key = "generator"
-    input_callbacks = OrderedDict({
-        "optim_d": OptimizerCallback(
-            loss_key=discriminator_loss_key,
-            optimizer_key=discriminator_key
-        ),
-        "optim_g": OptimizerCallback(
-            loss_key=generator_loss_key,
-            optimizer_key=generator_key
-        ),
-        "tensorboard": TensorboardLogger(),
-    })
+    input_callbacks = OrderedDict(
+        {
+            "optim_d": OptimizerCallback(
+                loss_key=discriminator_loss_key,
+                optimizer_key=discriminator_key
+            ),
+            "optim_g": OptimizerCallback(
+                loss_key=generator_loss_key, optimizer_key=generator_key
+            ),
+            "tensorboard": TensorboardLogger(),
+        }
+    )
     state_kwargs = {
         "discriminator_train_phase": "discriminator_train",
         "discriminator_train_num": 1,

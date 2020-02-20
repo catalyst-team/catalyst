@@ -116,8 +116,7 @@ class PPO(OnpolicyActorCritic):
         value_loss += 0.5 * utils.categorical_loss(
             logits_tp0.view(-1, self.num_atoms),
             logits_tp1.view(-1, self.num_atoms),
-            atoms_target_t.view(-1, self.num_atoms),
-            self.z, self.delta_z,
+            atoms_target_t.view(-1, self.num_atoms), self.z, self.delta_z,
             self.v_min, self.v_max
         )
 
@@ -247,9 +246,8 @@ class PPO(OnpolicyActorCritic):
 
         states_t = utils.any2device(states_t, device=self._device)
         actions_t = utils.any2device(actions_t, device=self._device)
-        returns_t = utils.any2device(
-            returns_t, device=self._device
-        ).unsqueeze_(-1)
+        returns_t = utils.any2device(returns_t,
+                                     device=self._device).unsqueeze_(-1)
         states_tp1 = utils.any2device(states_tp1, device=self._device)
         done_t = utils.any2device(done_t, device=self._device)[:, None, None]
         # done_t = done_t[:, None, :]  # [bs; 1; 1]
@@ -280,12 +278,12 @@ class PPO(OnpolicyActorCritic):
         policy_loss_clipped = advantages_t * torch.clamp(
             ratio, 1.0 - self.clip_eps, 1.0 + self.clip_eps
         )
-        policy_loss = -torch.min(
-            policy_loss_unclipped, policy_loss_clipped).mean()
+        policy_loss = -torch.min(policy_loss_unclipped,
+                                 policy_loss_clipped).mean()
 
         if self.entropy_regularization is not None:
-            entropy = -(
-                torch.exp(action_logprobs_tp0) * action_logprobs_tp0).mean()
+            entropy = -(torch.exp(action_logprobs_tp0) *
+                        action_logprobs_tp0).mean()
             entropy_loss = self.entropy_regularization * entropy
             policy_loss = policy_loss + entropy_loss
 

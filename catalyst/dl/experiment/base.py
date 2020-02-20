@@ -13,7 +13,6 @@ class BaseExperiment(Experiment):
     Super-simple one-staged experiment
         you can use to declare experiment in code
     """
-
     def __init__(
         self,
         model: Model,

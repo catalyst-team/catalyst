@@ -197,6 +197,7 @@ class OnpolicyTrainer(TrainerSpec):
                 self._run_epoch_loop()
             except Exception as ex:
                 self.db_server.push_message(
-                    self.db_server.Message.DISABLE_TRAINING)
+                    self.db_server.Message.DISABLE_TRAINING
+                )
                 raise ex
         self.db_server.push_message(self.db_server.Message.DISABLE_TRAINING)

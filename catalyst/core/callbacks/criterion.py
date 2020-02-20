@@ -10,9 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 def _add_loss_to_state(
-    loss_key: Optional[str],
-    state: _State,
-    loss: torch.Tensor
+    loss_key: Optional[str], state: _State, loss: torch.Tensor
 ):
     if loss_key is None:
         if state.loss is not None:
@@ -123,11 +121,7 @@ class CriterionOutputOnlyCallback(CriterionCallback):
     Based on model output only.
     @TODO: merge logic with CriterionCallback.
     """
-    def __init__(
-        self,
-        output_key: Union[Dict[str, str], List[str]],
-        **kwargs
-    ):
+    def __init__(self, output_key: Union[Dict[str, str], List[str]], **kwargs):
         """
 
         Args:
@@ -136,11 +130,7 @@ class CriterionOutputOnlyCallback(CriterionCallback):
                 If None, the whole output will be passed to the criterion.
             **kwargs: CriterionCallback init parameters
         """
-        super().__init__(
-            input_key=None,
-            output_key=output_key,
-            **kwargs
-        )
+        super().__init__(input_key=None, output_key=output_key, **kwargs)
 
     def _compute_loss_value(self, state: _State, criterion):
         output = self._get_output(state.output, self.output_key)
@@ -263,7 +253,6 @@ class CriterionAggregatorCallback(Callback):
 
 
 __all__ = [
-    "CriterionCallback",
-    "CriterionOutputOnlyCallback",
+    "CriterionCallback", "CriterionOutputOnlyCallback",
     "CriterionAggregatorCallback"
 ]
