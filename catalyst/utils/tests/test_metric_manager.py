@@ -1,14 +1,14 @@
 import numpy as np
 
-from catalyst.utils.tools.metric_manager import MetricManager
+from catalyst.utils import tools
 
 
 def test_to_value():
-    MetricManager._to_single_value(np.float32(1.0))
+    tools.MetricManager._to_single_value(np.float32(1.0))
 
 
 def test_epoch_metrics():
-    metrics = MetricManager("valid", "test", True)
+    metrics = tools.MetricManager("valid", "test", True)
 
     metrics.begin_epoch()
     metrics.begin_loader("train")
@@ -40,7 +40,7 @@ def test_epoch_metrics():
 
 
 def test_best():
-    metrics = MetricManager("valid", "test", True)
+    metrics = tools.MetricManager("valid", "test", True)
 
     metrics.begin_epoch()
     metrics.begin_loader("valid")
@@ -65,7 +65,7 @@ def test_best():
     assert metrics.is_best
     assert metrics.best_main_metric_value == 0
 
-    metrics = MetricManager("valid", "test", False)
+    metrics = tools.MetricManager("valid", "test", False)
 
     metrics.begin_epoch()
     metrics.begin_loader("valid")

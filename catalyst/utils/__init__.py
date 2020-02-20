@@ -31,8 +31,9 @@ from .initialization import (
     kaiming_init, normal_init, outer_init, uniform_init, xavier_init
 )
 from .misc import (
-    args_are_not_none, copy_directory, format_metric, get_utcnow_time,
-    is_exception, make_tuple, maybe_recursive_call, pairwise
+    args_are_not_none, copy_directory, format_metric,
+    get_fn_default_params, get_fn_argsnames, get_utcnow_time,
+    is_exception, make_tuple, maybe_recursive_call, pairwise,
 )
 from .numpy import (
     dict2structed, geometric_cumsum, get_one_hot, np_softmax, structed2dict

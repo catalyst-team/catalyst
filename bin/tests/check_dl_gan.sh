@@ -20,7 +20,7 @@ if [[ "$USE_APEX" == "0" ]]; then
       --expdir=${EXPDIR} \
       --config=${EXPDIR}/configs/vanilla_gan.yml \
       --logdir=${LOGDIR} \
-      --stages/state_params/num_epochs=11:int
+      --check
 
     if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
         echo "File $LOGFILE does not exist"

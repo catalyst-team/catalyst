@@ -1,7 +1,7 @@
 from typing import List, Optional, Union  # isort:skip
 from pathlib import Path
 
-from catalyst.utils.plotly import plot_tensorboard_log
+from catalyst import utils
 
 
 def plot_metrics(
@@ -28,7 +28,7 @@ def plot_metrics(
     assert step in ["batch", "epoch"], \
         f"Step should be either 'batch' or 'epoch', got '{step}'"
     metrics = metrics or ["loss"]
-    plot_tensorboard_log(logdir, step, metrics, height, width)
+    utils.plot_tensorboard_log(logdir, step, metrics, height, width)
 
 
 __all__ = ["plot_metrics"]

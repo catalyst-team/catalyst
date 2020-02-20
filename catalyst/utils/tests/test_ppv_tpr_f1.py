@@ -1,8 +1,7 @@
 import torch
 
-from catalyst.utils.meters.ppv_tpr_f1_meter import (
-    f1score, precision, PrecisionRecallF1ScoreMeter, recall
-)
+from catalyst.utils import meters
+from catalyst.utils.meters.ppv_tpr_f1_meter import f1score, precision, recall
 
 
 def precision_recall_f1(tp, fp, fn):
@@ -100,7 +99,7 @@ def test_meter():
         * .add()
         * .value()
     """
-    meter = PrecisionRecallF1ScoreMeter()
+    meter = meters.PrecisionRecallF1ScoreMeter()
     # tests the .reset() method, which happens to be called in initialization
     for key in ["tp", "fp", "fn"]:
         assert meter.tp_fp_fn_counts[key] == 0, \

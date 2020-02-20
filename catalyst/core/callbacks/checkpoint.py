@@ -219,7 +219,7 @@ class CheckpointCallback(BaseCheckpointCallback):
 
         if self.resume is not None:
             self.load_checkpoint(filename=self.resume, state=state)
-            state.resume = None
+            self.resume = None
 
     def on_epoch_end(self, state: _State):
         if state.stage.startswith("infer") or get_rank() > 0:

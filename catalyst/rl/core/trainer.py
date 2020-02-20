@@ -12,9 +12,7 @@ import numpy as np
 from torch.utils.data import DataLoader
 
 from catalyst import utils
-from catalyst.utils.seed import set_global_seed
-from catalyst.utils.tools.seeder import Seeder
-from catalyst.utils.tools.tensorboard import SummaryWriter
+from catalyst.utils import tools
 from .algorithm import AlgorithmSpec
 from .db import DBSpec
 from .environment import EnvironmentSpec
@@ -60,7 +58,7 @@ class TrainerSpec:
         # logging
         self.logdir = logdir
         self._prepare_logger(logdir)
-        self._seeder = Seeder(init_seed=seed)
+        self._seeder = tools.Seeder(init_seed=seed)
 
         # updates & counters
         self.batch_size = batch_size
@@ -129,11 +127,11 @@ class TrainerSpec:
         timestamp = utils.get_utcnow_time()
         logpath = f"{logdir}/trainer.{timestamp}"
         os.makedirs(logpath, exist_ok=True)
-        self.logger = SummaryWriter(logpath)
+        self.logger = tools.SummaryWriter(logpath)
 
     def _prepare_seed(self):
         seed = self._seeder()[0]
-        set_global_seed(seed)
+        utils.set_global_seed(seed)
 
     def _log_to_console(
         self, fps: float, updates_per_sample: float, num_trajectories: int,

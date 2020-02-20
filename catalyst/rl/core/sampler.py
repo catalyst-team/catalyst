@@ -20,9 +20,7 @@ import torch  # noqa E402
 torch.set_num_threads(1)
 
 from catalyst import utils  # noqa E402
-from catalyst.utils.seed import set_global_seed  # noqa E402
-from catalyst.utils.tools.seeder import Seeder  # noqa E402
-from catalyst.utils.tools.tensorboard import SummaryWriter  # noqa E402
+from catalyst.utils import tools  # noqa E402
 from .agent import ActorSpec, CriticSpec  # noqa E402
 from .db import DBSpec  # noqa E402
 from .environment import EnvironmentSpec  # noqa E402
@@ -73,7 +71,7 @@ class Sampler:
             if deterministic is not None \
             else mode in ["valid", "infer"]
         self.trajectory_seeds = trajectory_seeds
-        self._seeder = Seeder(init_seed=sampler_seed)
+        self._seeder = tools.Seeder(init_seed=sampler_seed)
 
         # logging
         self._prepare_logger(logdir, mode)
@@ -127,7 +125,7 @@ class Sampler:
                 f"sampler.{mode}.{self._sampler_id}.{timestamp}"
             os.makedirs(logpath, exist_ok=True)
             self.logdir = logpath
-            self.logger = SummaryWriter(logpath)
+            self.logger = tools.SummaryWriter(logpath)
         else:
             self.logdir = None
             self.logger = None
@@ -178,7 +176,7 @@ class Sampler:
                 self.trajectory_index % len(self.trajectory_seeds)]
         else:
             seed = self._seeder()[0]
-        set_global_seed(seed)
+        utils.set_global_seed(seed)
         return seed
 
     def _log_to_console(

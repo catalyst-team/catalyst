@@ -3,8 +3,8 @@ from collections import defaultdict
 from numbers import Number
 from time import time
 
-from catalyst.utils import distributed_mean
-from catalyst.utils.meters import AverageValueMeter
+from catalyst import utils
+from catalyst.utils import meters
 
 
 class TimerManager:
@@ -59,7 +59,7 @@ class MetricManager:
         self._minimize = minimize
         self._batch_consistant_metrics = batch_consistant_metrics
 
-        self._meters: Dict[str, AverageValueMeter] = None
+        self._meters: Dict[str, meters.AverageValueMeter] = None
         self._batch_values: Dict[str, float] = None
         self.epoch_values: Dict[str, Dict[str:float]] = None
         self.valid_values: Dict[str, float] = None
@@ -105,7 +105,7 @@ class MetricManager:
 
     def begin_loader(self, name: str):
         self._current_loader_name = name
-        self._meters = defaultdict(AverageValueMeter)
+        self._meters = defaultdict(meters.AverageValueMeter)
 
     def end_loader(self):
         for name, meter in self._meters.items():
@@ -137,7 +137,7 @@ class MetricManager:
 
         for name, value in metrics_dict.items():
             value = self._to_single_value(value)
-            value = distributed_mean(value)
+            value = utils.distributed_mean(value)
             self._batch_values[name] = value
 
 

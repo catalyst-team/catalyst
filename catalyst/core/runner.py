@@ -296,7 +296,7 @@ class _Runner(ABC):
             self._run_batch(batch)
 
             self.state.timer.reset()
-            if self._check_run and i >= 2:
+            if self._check_run and i >= 1:
                 break
 
             self.state.timer.start("_timers/batch_time")
@@ -317,7 +317,10 @@ class _Runner(ABC):
             assert not any(x.startswith("train") for x in loaders.keys()), \
                 "for inference no train loader should be passed"
 
+        self.state.loaders = loaders
+
         for loader_name, loader in loaders.items():
+            self.state.loader = loader
             self.state.loader_name = loader_name
             self.state.loader_len = len(loader)
             self.state.need_backward = loader_name.startswith("train")
@@ -349,7 +352,7 @@ class _Runner(ABC):
             self._run_epoch(stage=stage, epoch=self.state.stage_epoch)
             self._run_event("epoch", moment="end")
 
-            if self._check_run and self.state.stage_epoch >= 2:
+            if self._check_run and self.state.stage_epoch >= 1:
                 break
             if self.state.early_stop:
                 self.state.early_stop = False
