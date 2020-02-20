@@ -13,7 +13,8 @@ from setuptools import Command, find_packages, setup
 
 # Package meta-data.
 NAME = "catalyst"
-DESCRIPTION = "Catalyst. PyTorch framework for DL & RL research and development."
+DESCRIPTION = \
+    "Catalyst. PyTorch framework for DL & RL research and development."
 URL = "https://github.com/catalyst-team/catalyst"
 EMAIL = "scitator@gmail.com"
 AUTHOR = "Sergey Kolesnikov"
