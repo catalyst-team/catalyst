@@ -26,11 +26,7 @@ class PhaseManager:
     By calling `.step(...)` method current phase is updated by step-size
     and if current phase is finished, the next phase becomes current
     """
-    def __init__(
-        self,
-        train_phases: List[Phase],
-        valid_phases: List[Phase]
-    ):
+    def __init__(self, train_phases: List[Phase], valid_phases: List[Phase]):
         self.train_phases = train_phases
         self.valid_phases = valid_phases
 
@@ -105,8 +101,7 @@ class PhaseManagerCallback(Callback):
                 valid_phases = [Phase(name=None, steps=None)]
             elif valid_mode == self.VALIDATION_MODE_SAME:
                 valid_phases = [
-                    Phase(name=p.name, steps=p.steps)
-                    for p in train_phases
+                    Phase(name=p.name, steps=p.steps) for p in train_phases
                 ]
             else:
                 raise ValueError(
@@ -115,8 +110,7 @@ class PhaseManagerCallback(Callback):
                 )
 
         return PhaseManager(
-            train_phases=train_phases,
-            valid_phases=valid_phases
+            train_phases=train_phases, valid_phases=valid_phases
         )
 
     def on_batch_start(self, state):

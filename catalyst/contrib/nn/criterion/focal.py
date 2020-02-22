@@ -61,7 +61,6 @@ class FocalLossMultiClass(FocalLossBinary):
     Compute focal loss for multi-class problem.
     Ignores targets having -1 label
     """
-
     def forward(self, logits, targets):
         """
         Args:

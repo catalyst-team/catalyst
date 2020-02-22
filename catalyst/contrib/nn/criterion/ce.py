@@ -46,9 +46,8 @@ class SymmetricCrossEntropyLoss(nn.Module):
         input = torch.clamp(input, min=1e-7, max=1.0)
         target_one_hot = torch.clamp(target_one_hot, min=1e-4, max=1.0)
 
-        cross_entropy = (
-            -torch.sum(target_one_hot * torch.log(input), dim=1)
-        ).mean()
+        cross_entropy = (-torch.sum(target_one_hot * torch.log(input),
+                                    dim=1)).mean()
         reverse_cross_entropy = (
             -torch.sum(input * torch.log(target_one_hot), dim=1)
         ).mean()
@@ -58,11 +57,11 @@ class SymmetricCrossEntropyLoss(nn.Module):
 
 class MaskCrossEntropyLoss(torch.nn.CrossEntropyLoss):
     def __init__(
-            self,
-            *args,
-            target_name: str = "targets",
-            mask_name: str = "mask",
-            **kwargs
+        self,
+        *args,
+        target_name: str = "targets",
+        mask_name: str = "mask",
+        **kwargs
     ):
         super().__init__(*args, **kwargs)
         self.target_name = target_name

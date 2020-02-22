@@ -34,7 +34,6 @@ class SupervisedExperiment(BaseExperiment):
         RaiseExceptionCallback:
             will raise exception if needed
     """
-
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """
         Override of ``BaseExperiment.get_callbacks`` method.

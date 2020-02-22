@@ -16,7 +16,7 @@ class AlchemyRunner(Runner):
 
         .. code-block:: python
 
-            from catalyst.contrib.dl.runner import SupervisedAlchemyRunner
+            from catalyst.dl import SupervisedAlchemyRunner
 
             runner = SupervisedAlchemyRunner()
 
@@ -30,12 +30,12 @@ class AlchemyRunner(Runner):
                 verbose=True,
                 monitoring_params={
                     "token": "...", # your Alchemy token
+                    "project": "your_project_name",
                     "experiment": "your_experiment_name",
                     "group": "your_experiment_group_name"
                 }
             )
     """
-
     def _init(
         self,
         log_on_batch_end: bool = False,
@@ -80,9 +80,7 @@ class AlchemyRunner(Runner):
             mode = self.state.loader_name
             metrics = self.state.metric_manager.batch_values
             self._log_metrics(
-                metrics=metrics,
-                mode=mode,
-                suffix=self.batch_log_suffix
+                metrics=metrics, mode=mode, suffix=self.batch_log_suffix
             )
 
     def _run_epoch(self, stage: str, epoch: int):
@@ -91,16 +89,10 @@ class AlchemyRunner(Runner):
             for mode, metrics in \
                     self.state.metric_manager.epoch_values.items():
                 self._log_metrics(
-                    metrics=metrics,
-                    mode=mode,
-                    suffix=self.epoch_log_suffix
+                    metrics=metrics, mode=mode, suffix=self.epoch_log_suffix
                 )
 
-    def run_experiment(
-        self,
-        experiment: Experiment,
-        check: bool = False
-    ):
+    def run_experiment(self, experiment: Experiment, check: bool = False):
         """Starts experiment
 
         Args:

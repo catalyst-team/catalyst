@@ -116,7 +116,7 @@ tmp/
 logs/
 # Examples - mock data
 !examples/distilbert_text_classification/input/*.csv
-!examples/_tests_distilbert_text_classification/input/*.csv
+!examples/_tests_nlp_classification/input/*.csv
 examples/logs/
 notebooks/
 
@@ -135,4 +135,4 @@ _nogit*
 
 # End of https://www.gitignore.io/api/visualstudiocode
 
-
+presets/

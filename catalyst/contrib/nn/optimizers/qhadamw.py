@@ -89,7 +89,8 @@ class QHAdamW(Optimizer):
                 d_p = p.grad.data
                 if d_p.is_sparse:
                     raise RuntimeError(
-                        "QHAdamW does not support sparse gradients")
+                        "QHAdamW does not support sparse gradients"
+                    )
 
                 param_state = self.state[p]
 

@@ -13,7 +13,6 @@ class IouCallback(MetricCallback):
     """
     IoU (Jaccard) metric callback.
     """
-
     def __init__(
         self,
         input_key: str = "targets",
@@ -53,7 +52,6 @@ class ClasswiseIouCallback(MultiMetricCallback):
     """
     Classwise IoU (Jaccard) metric callback.
     """
-
     def __init__(
         self,
         input_key: str = "targets",
@@ -99,8 +97,7 @@ class ClasswiseIouCallback(MultiMetricCallback):
 
 ClasswiseJaccardCallback = ClasswiseIouCallback
 
-
 __all__ = [
-    "IouCallback", "JaccardCallback",
-    "ClasswiseIouCallback", "ClasswiseJaccardCallback"
+    "IouCallback", "JaccardCallback", "ClasswiseIouCallback",
+    "ClasswiseJaccardCallback"
 ]

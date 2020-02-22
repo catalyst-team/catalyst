@@ -10,7 +10,6 @@ class State(_State):
     """
     An object that is used to pass internal state during train/valid/infer.
     """
-
     def __init__(
         self,
         *,
@@ -30,10 +29,6 @@ class State(_State):
         batch_consistant_metrics: bool = True,
         **kwargs
     ):
-
-        # @TODO: remove GAN hack
-        self.phase = None
-
         super().__init__(
             device=device,
             model=model,

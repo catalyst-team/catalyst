@@ -10,12 +10,14 @@ from torch.utils.data import (  # noqa F401
     DataLoader, Dataset, DistributedSampler
 )
 
-from catalyst.data import Augmentor, AugmentorCompose
-from catalyst.dl import Callback, Experiment, utils
-from catalyst.dl.callbacks import (
-    CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
+from catalyst.data import (
+    Augmentor, AugmentorCompose, DistributedSamplerWrapper
+)
+from catalyst.dl import (
+    Callback, CheckpointCallback, ConfusionMatrixCallback, ConsoleLogger,
+    CriterionCallback, Experiment, LoggerCallback, OptimizerCallback,
     PhaseWrapperCallback, RaiseExceptionCallback, SchedulerCallback,
-    TensorboardLogger, VerboseLogger
+    TensorboardLogger, utils, VerboseLogger
 )
 from catalyst.dl.registry import (
     CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS,
@@ -92,7 +94,7 @@ class ConfigExperiment(Experiment):
         timestamp = utils.get_utcnow_time()
         config_hash = utils.get_short_hash(config)
         logdir = f"{timestamp}.{config_hash}"
-        distributed_rank = self.distributed_params.get("rank", -1)
+        distributed_rank = utils.get_rank()
         if distributed_rank > -1:
             logdir = f"{logdir}.rank{distributed_rank:02d}"
         return logdir
@@ -111,6 +113,23 @@ class ConfigExperiment(Experiment):
     def stages(self) -> List[str]:
         """Experiment's stage names"""
         stages_keys = list(self.stages_config.keys())
+
+        # @TODO: return the feature
+        # # Change start `stages_keys` if resume data were founded
+        # state_params = self.get_state_params(stages_keys[0])
+        # resume, resume_dir = [
+        #     state_params.get(key, None) for key in ["resume", "resume_dir"]
+        # ]
+        #
+        # if resume_dir is not None:
+        #     resume = resume_dir / str(resume)
+        #
+        # if resume is not None and Path(resume).is_file():
+        #     checkpoint = utils.load_checkpoint(resume)
+        #     start_stage = checkpoint["stage"]
+        #     start_idx = stages_keys.index(start_stage)
+        #     stages_keys = stages_keys[start_idx:]
+
         return stages_keys
 
     @property
@@ -183,10 +202,7 @@ class ConfigExperiment(Experiment):
         return criterion
 
     def _get_optimizer(
-        self,
-        stage: str,
-        model: Union[Model, Dict[str, Model]],
-        **params
+        self, stage: str, model: Union[Model, Dict[str, Model]], **params
     ) -> Optimizer:
         # @TODO 1: refactoring; this method is too long
         # @TODO 2: load state dicts for schedulers & criterion
@@ -201,7 +217,7 @@ class ConfigExperiment(Experiment):
             data_params = dict(self.stages_config[stage]["data_params"])
             batch_size = data_params.get("batch_size")
             per_gpu_scaling = data_params.get("per_gpu_scaling", False)
-            distributed_rank = self.distributed_params.get("rank", -1)
+            distributed_rank = utils.get_rank()
             distributed = distributed_rank > -1
             if per_gpu_scaling and not distributed:
                 num_gpus = max(1, torch.cuda.device_count())
@@ -268,9 +284,7 @@ class ConfigExperiment(Experiment):
         return optimizer
 
     def get_optimizer(
-        self,
-        stage: str,
-        model: Union[Model, Dict[str, Model]]
+        self, stage: str, model: Union[Model, Dict[str, Model]]
     ) -> Union[Optimizer, Dict[str, Optimizer]]:
         """
         Returns the optimizer for a given stage
@@ -332,15 +346,17 @@ class ConfigExperiment(Experiment):
                 for key, params_ in params.items()
             }
 
-            transform = AugmentorCompose({
-                key: Augmentor(
-                    dict_key=key,
-                    augment_fn=transform,
-                    input_key=key,
-                    output_key=key,
-                )
-                for key, transform in transforms_composition.items()
-            })
+            transform = AugmentorCompose(
+                {
+                    key: Augmentor(
+                        dict_key=key,
+                        augment_fn=transform,
+                        input_key=key,
+                        output_key=key,
+                    )
+                    for key, transform in transforms_composition.items()
+                }
+            )
         else:
             if "transforms" in params:
                 transforms_composition = [
@@ -374,6 +390,7 @@ class ConfigExperiment(Experiment):
 
         transform = self._get_transform(**transform_params)
         if transform is None:
+
             def transform(dict_):
                 return dict_
         elif not isinstance(transform, AugmentorCompose):
@@ -396,7 +413,7 @@ class ConfigExperiment(Experiment):
         num_workers = data_params.pop("num_workers")
         drop_last = data_params.pop("drop_last", False)
         per_gpu_scaling = data_params.pop("per_gpu_scaling", False)
-        distributed_rank = self.distributed_params.get("rank", -1)
+        distributed_rank = utils.get_rank()
         distributed = distributed_rank > -1
 
         datasets = self.get_datasets(stage=stage, **data_params)
@@ -459,7 +476,9 @@ class ConfigExperiment(Experiment):
 
             if distributed:
                 if sampler is not None:
-                    assert isinstance(sampler, DistributedSampler)
+                    if not isinstance(sampler, DistributedSampler):
+                        loader_params["sampler"] = \
+                            DistributedSamplerWrapper(sampler=sampler)
                 else:
                     sampler = DistributedSampler(
                         dataset=loader_params["dataset"]
@@ -534,6 +553,14 @@ class ConfigExperiment(Experiment):
                     break
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
+
+        # Remove LoggerCallback on worker nodes
+        if utils.get_rank() > 0:
+            to_del = (LoggerCallback, ConfusionMatrixCallback)
+            for k in list(
+                filter(lambda c: isinstance(callbacks[c], to_del), callbacks)
+            ):
+                del callbacks[k]
 
         return callbacks
 

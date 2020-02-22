@@ -186,9 +186,8 @@ class OffpolicyActorCritic(AlgorithmSpec):
 
         states_t = utils.any2device(states_t, device=self._device)
         actions_t = utils.any2device(actions_t, device=self._device)
-        rewards_t = utils.any2device(
-            rewards_t, device=self._device
-        ).unsqueeze(1)
+        rewards_t = utils.any2device(rewards_t,
+                                     device=self._device).unsqueeze(1)
         states_tp1 = utils.any2device(states_tp1, device=self._device)
         done_t = utils.any2device(done_t, device=self._device).unsqueeze(1)
         """

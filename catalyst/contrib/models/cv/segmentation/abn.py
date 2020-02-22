@@ -8,7 +8,6 @@ class ABN(nn.Module):
     Activated Batch Normalization
     This gathers a `BatchNorm2d` and an activation function in a single module
     """
-
     def __init__(
         self,
         num_features,

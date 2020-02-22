@@ -91,18 +91,13 @@ def build_args(parser: ArgumentParser):
     """
     Builds the command line parameters
     """
+    parser.add_argument("logdir", type=Path, help="Path to model logdir")
     parser.add_argument(
-        "logdir",
-        type=Path,
-        help="Path to model logdir"
+        "--method", "-m", default="forward", help="Model method to trace"
     )
     parser.add_argument(
-        "--method", "-m",
-        default="forward",
-        help="Model method to trace"
-    )
-    parser.add_argument(
-        "--checkpoint", "-c",
+        "--checkpoint",
+        "-c",
         default="best",
         help="Checkpoint's name to trace",
         metavar="CHECKPOINT_NAME"
@@ -185,7 +180,8 @@ def main(args, _):
         device = "cpu"
 
     traced = trace_model_from_checkpoint(
-        logdir, method_name,
+        logdir,
+        method_name,
         checkpoint_name=checkpoint_name,
         stage=args.stage,
         loader=args.loader,

@@ -48,8 +48,7 @@ class TemporalAttentionPooling(nn.Module):
                 out_channels=1,
                 kernel_size=kernel_size,
                 **params
-            ),
-            TemporalAttentionPooling.name2activation[activation]
+            ), TemporalAttentionPooling.name2activation[activation]
         )
         self.attention_pooling.apply(outer_init)
 
@@ -105,7 +104,8 @@ def get_pooling(key, in_features, **params):
         layer = TemporalMaxPooling()
     elif key_ in ["softmax", "tanh", "sigmoid"]:
         layer = TemporalAttentionPooling(
-            in_features=in_features, activation=key_, **params)
+            in_features=in_features, activation=key_, **params
+        )
     else:
         raise NotImplementedError()
 
@@ -118,11 +118,16 @@ def get_pooling(key, in_features, **params):
 class LamaPooling(nn.Module):
     available_groups = [
         "last",
-        "avg", "avg_droplast",
-        "max", "max_droplast",
-        "sigmoid", "sigmoid_droplast",
-        "softmax", "softmax_droplast",
-        "tanh", "tanh_droplast",
+        "avg",
+        "avg_droplast",
+        "max",
+        "max_droplast",
+        "sigmoid",
+        "sigmoid_droplast",
+        "softmax",
+        "softmax_droplast",
+        "tanh",
+        "tanh_droplast",
     ]
 
     def __init__(self, in_features, groups=None):

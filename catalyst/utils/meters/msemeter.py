@@ -20,7 +20,7 @@ class MSEMeter(meter.Meter):
             output = torch.from_numpy(output)
             target = torch.from_numpy(target)
         self.n += output.numel()
-        self.sesum += torch.sum((output - target) ** 2)
+        self.sesum += torch.sum((output - target)**2)
 
     def value(self):
         mse = self.sesum / max(1, self.n)

@@ -1,6 +1,6 @@
-from typing import (   # isort:skip
+from typing import (  # isort:skip
     Any, Callable, Dict, Mapping, Optional, Tuple, Union  # isort:skip
-)   # isort:skip
+)  # isort:skip
 
 from abc import ABC, abstractmethod
 from collections import OrderedDict
@@ -153,12 +153,16 @@ class _Runner(ABC):
 
     def _prepare_for_stage(self, stage: str):
         utils.set_global_seed(self.experiment.initial_seed)
-        migrating_params = {}
-        if self.state is not None:
+
+        migrating_params = dict(**self.experiment.get_state_params(stage))
+        migrate_from_previous_stage = \
+            migrating_params.get("migrate_from_previous_stage", True)
+        if self.state is not None and migrate_from_previous_stage:
             migrating_params.update(
                 {
                     "step": self.state.step,
-                    "epoch": self.state.epoch
+                    "epoch": self.state.epoch,
+                    "resume": getattr(self.state, "resume", None),
                 }
             )
 
@@ -174,7 +178,6 @@ class _Runner(ABC):
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
-            **self.experiment.get_state_params(stage),
             **migrating_params
         )
 
@@ -293,7 +296,7 @@ class _Runner(ABC):
             self._run_batch(batch)
 
             self.state.timer.reset()
-            if self._check_run and i >= 3:
+            if self._check_run and i >= 1:
                 break
 
             self.state.timer.start("_timers/batch_time")
@@ -314,7 +317,10 @@ class _Runner(ABC):
             assert not any(x.startswith("train") for x in loaders.keys()), \
                 "for inference no train loader should be passed"
 
+        self.state.loaders = loaders
+
         for loader_name, loader in loaders.items():
+            self.state.loader = loader
             self.state.loader_name = loader_name
             self.state.loader_len = len(loader)
             self.state.need_backward = loader_name.startswith("train")
@@ -335,21 +341,25 @@ class _Runner(ABC):
     def _run_stage(self, stage: str):
         self._prepare_for_stage(stage)
 
+        # checkpoint loading
         self._run_event("stage", moment="start")
-        for epoch in range(self.state.num_epochs):
-            self.state.stage_epoch = epoch
 
+        while self.state.stage_epoch < self.state.num_epochs:
             self._run_event("epoch", moment="start")
-            self._run_epoch(stage=stage, epoch=epoch)
+            utils.set_global_seed(
+                self.experiment.initial_seed + self.state.epoch + 1
+            )
+            self._run_epoch(stage=stage, epoch=self.state.stage_epoch)
             self._run_event("epoch", moment="end")
 
-            if self._check_run and self.state.epoch >= 3:
+            if self._check_run and self.state.stage_epoch >= 1:
                 break
             if self.state.early_stop:
                 self.state.early_stop = False
                 break
 
             self.state.epoch += 1
+            self.state.stage_epoch += 1
         self._run_event("stage", moment="end")
 
     def run_experiment(self, experiment: _Experiment, check: bool = False):

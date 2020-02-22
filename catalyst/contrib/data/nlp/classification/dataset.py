@@ -41,13 +41,15 @@ class TextClassificationDataset(Dataset):
             # {'class1': 0, 'class2': 1, 'class3': 2, ...}
             # using this instead of `sklearn.preprocessing.LabelEncoder`
             # no easily handle unknown target values
-            self.label_dict = dict(zip(
-                sorted(set(labels)), range(len(set(labels)))))
+            self.label_dict = dict(
+                zip(sorted(set(labels)), range(len(set(labels))))
+            )
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         # suppresses tokenizer warnings
-        logging.getLogger(
-            "transformers.tokenization_utils").setLevel(logging.FATAL)
+        logging.getLogger("transformers.tokenization_utils").setLevel(
+            logging.FATAL
+        )
 
         # special tokens for transformers
         # in the simplest case a [CLS] token is added in the beginning
@@ -97,10 +99,7 @@ class TextClassificationDataset(Dataset):
         mask_pad = torch.zeros_like(pad_ids, dtype=torch.int8)
         mask = torch.cat((mask, mask_pad))
 
-        output_dict = {
-            "features": x_tensor,
-            "attention_mask": mask
-        }
+        output_dict = {"features": x_tensor, "attention_mask": mask}
 
         # encoding target
         if self.labels is not None:

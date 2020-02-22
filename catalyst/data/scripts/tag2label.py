@@ -9,37 +9,6 @@ from catalyst.utils import (
 )
 
 
-def prepare_df_from_dirs(
-    in_dirs, tag_column_name, recursive: bool = False
-):
-    dfs = []
-    splitted_dirs = in_dirs.strip(",").split(",")
-
-    def process_fn(x):
-        if len(splitted_dirs) == 1:
-            # remove all in_dir part from path
-            return x.replace(f"{in_dir}", "")
-        else:
-            # leaves last part of in_dir path,
-            #  which identifies separate in_dir
-            return x.replace(f"{in_dir}", f"{in_dir.split('/')[-2]}/")
-
-    for in_dir in splitted_dirs:
-        if not in_dir.endswith("/"):
-            in_dir = f"{in_dir}/"
-
-        dataset = create_dataset(
-            f"{in_dir}/**", process_fn=process_fn, recursive=recursive
-        )
-
-        dfs.append(
-            create_dataframe(dataset, columns=[tag_column_name, "filepath"])
-        )
-
-    df = pd.concat(dfs).reset_index(drop=True)
-    return df
-
-
 def build_args(parser):
     parser.add_argument(
         "--in-csv", type=str, default=None, help="Path to data in `.csv`."
@@ -93,11 +62,40 @@ def parse_args():
     return args
 
 
+def _prepare_df_from_dirs(in_dirs, tag_column_name, recursive: bool = False):
+    dfs = []
+    splitted_dirs = in_dirs.strip(",").split(",")
+
+    def process_fn(x):
+        if len(splitted_dirs) == 1:
+            # remove all in_dir part from path
+            return x.replace(f"{in_dir}", "")
+        else:
+            # leaves last part of in_dir path,
+            #  which identifies separate in_dir
+            return x.replace(f"{in_dir}", f"{in_dir.split('/')[-2]}/")
+
+    for in_dir in splitted_dirs:
+        if not in_dir.endswith("/"):
+            in_dir = f"{in_dir}/"
+
+        dataset = create_dataset(
+            f"{in_dir}/**", process_fn=process_fn, recursive=recursive
+        )
+
+        dfs.append(
+            create_dataframe(dataset, columns=[tag_column_name, "filepath"])
+        )
+
+    df = pd.concat(dfs).reset_index(drop=True)
+    return df
+
+
 def main(args, _=None):
     if args.in_csv is not None:
         df = pd.read_csv(args.in_csv)
     elif args.in_dir is not None:
-        df = prepare_df_from_dirs(
+        df = _prepare_df_from_dirs(
             args.in_dir, args.tag_column, recursive=args.recursive
         )
     else:

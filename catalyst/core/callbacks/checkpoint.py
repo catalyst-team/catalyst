@@ -7,6 +7,7 @@ import safitty
 
 from catalyst import utils
 from catalyst.core import _State, Callback, CallbackOrder
+from catalyst.utils import get_rank
 
 
 class BaseCheckpointCallback(Callback):
@@ -101,7 +102,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         self._keys_from_state = ["resume", "resume_dir"]
 
     def get_checkpoint_suffix(self, checkpoint: dict) -> str:
-        result = f"{checkpoint['stage']}.{checkpoint['epoch']}"
+        result = f"{checkpoint['stage']}.{checkpoint['stage_epoch']}"
         return result
 
     @staticmethod
@@ -110,7 +111,10 @@ class CheckpointCallback(BaseCheckpointCallback):
             print(f"=> loading checkpoint {filename}")
             checkpoint = utils.load_checkpoint(filename)
 
-            state.epoch = checkpoint["epoch"]
+            if not state.stage.startswith("infer"):
+                state.epoch = checkpoint["epoch"]
+                state.stage_epoch = checkpoint["stage_epoch"]
+                state.stage = checkpoint["stage"]
 
             utils.unpack_checkpoint(
                 checkpoint,
@@ -121,7 +125,10 @@ class CheckpointCallback(BaseCheckpointCallback):
             )
 
             print(
-                f"loaded checkpoint {filename} (epoch {checkpoint['epoch']})"
+                f"loaded checkpoint {filename} "
+                f"(epoch {checkpoint['epoch']}, "
+                f"stage_epoch {checkpoint['stage_epoch']}, "
+                f"stage {checkpoint['stage']})"
             )
         else:
             raise Exception(f"No checkpoint found at {filename}")
@@ -137,10 +144,8 @@ class CheckpointCallback(BaseCheckpointCallback):
         ]
         best_valid_metrics = top_best_checkpoints[0][1]
         metrics = OrderedDict(
-            [("best", best_valid_metrics)] +
-            [("last", last_valid_metrics)] +
-            top_best_checkpoints +
-            all_epochs_metrics
+            [("best", best_valid_metrics)] + [("last", last_valid_metrics)] +
+            top_best_checkpoints + all_epochs_metrics
         )
 
         self.metrics = metrics
@@ -156,7 +161,8 @@ class CheckpointCallback(BaseCheckpointCallback):
             last_item = self.top_best_metrics.pop(-1)
             last_filepath = Path(last_item[0])
             last_filepaths = last_filepath.parent.glob(
-                last_filepath.name.replace(".pth", "*"))
+                last_filepath.name.replace(".pth", "*")
+            )
             for filepath in last_filepaths:
                 os.remove(filepath)
 
@@ -212,9 +218,10 @@ class CheckpointCallback(BaseCheckpointCallback):
 
         if self.resume is not None:
             self.load_checkpoint(filename=self.resume, state=state)
+            self.resume = None
 
     def on_epoch_end(self, state: _State):
-        if state.stage.startswith("infer"):
+        if state.stage.startswith("infer") or get_rank() > 0:
             return
 
         valid_metrics = dict(state.metric_manager.valid_values)
@@ -228,6 +235,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             epoch_metrics=epoch_metrics,
             valid_metrics=valid_metrics,
             stage=state.stage,
+            stage_epoch=state.stage_epoch_log,
             epoch=state.epoch_log,
             checkpoint_data=state.checkpoint_data
         )
@@ -295,10 +303,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
             for (order_index, valid_metric) in enumerate(self.epochs_metrics)
         ]
 
-        metrics = OrderedDict(
-            n_last_checkpoints +
-            all_epochs_metrics
-        )
+        metrics = OrderedDict(n_last_checkpoints + all_epochs_metrics)
         self.metrics = metrics
         return self.metrics
 
@@ -309,10 +314,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
             os.remove(top_filepath)
 
     def process_checkpoint(
-        self,
-        logdir: str,
-        checkpoint: Dict,
-        batch_values: Dict[str, float]
+        self, logdir: str, checkpoint: Dict, batch_values: Dict[str, float]
     ):
         filepath = utils.save_checkpoint(
             logdir=Path(f"{logdir}/checkpoints/"),

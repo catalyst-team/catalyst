@@ -8,7 +8,6 @@ class DQN(OffpolicyCritic):
     """
     Swiss Army knife DQN algorithm.
     """
-
     def _init(self, entropy_regularization: float = None):
         self.entropy_regularization = entropy_regularization
 
@@ -52,7 +51,7 @@ class DQN(OffpolicyCritic):
 
     def _process_components(self, done_t, rewards_t):
         # Array of size [num_heads,]
-        gammas = self._gammas ** self._n_step
+        gammas = self._gammas**self._n_step
         gammas = gammas[None, :, None]  # [1; num_heads; 1]
         # We use the same done_t, rewards_t, actions_t for each head
         done_t = done_t[:, None, :]  # [bs; 1; 1]
@@ -89,9 +88,9 @@ class DQN(OffpolicyCritic):
 
         # [bs; num_heads; 1] -> many-heads view transform
         # [{bs * num_heads}; 1]
-        q_target_t = (
-            rewards_t + (1 - done_t) * gammas * q_values_tp1
-        ).view(-1, 1).detach()
+        q_target_t = (rewards_t +
+                      (1 - done_t) * gammas * q_values_tp1).view(-1,
+                                                                 1).detach()
 
         value_loss = \
             self.critic_criterion(action_q_values_t, q_target_t).mean()
@@ -119,8 +118,8 @@ class DQN(OffpolicyCritic):
         # [bs; num_heads; num_atoms] -> many-heads view transform
         # [{bs * num_heads}; num_atoms]
         logits_t = (
-            q_logits_t.gather(-2, indices_t).squeeze(-2)
-            .view(-1, self.num_atoms)
+            q_logits_t.gather(-2,
+                              indices_t).squeeze(-2).view(-1, self.num_atoms)
         )
 
         # [bs; num_heads; num_actions; num_atoms]
@@ -130,9 +129,8 @@ class DQN(OffpolicyCritic):
         # [bs; num_heads; num_actions] -> gathering best actions
         # [bs; num_heads; 1]
         actions_tp1 = (
-            (torch.softmax(q_logits_tp1, dim=-1) * self.z)
-            .sum(dim=-1)
-            .argmax(dim=-1, keepdim=True)
+            (torch.softmax(q_logits_tp1, dim=-1) *
+             self.z).sum(dim=-1).argmax(dim=-1, keepdim=True)
         )
         # [bs; num_heads; 1] ->
         # [bs; num_heads; 1; 1] ->
@@ -142,15 +140,15 @@ class DQN(OffpolicyCritic):
         # [bs; num_heads; num_atoms] -> many-heads view transform
         # [{bs * num_heads}; num_atoms]
         logits_tp1 = (
-            q_logits_tp1.gather(-2, indices_tp1).squeeze(-2)
-            .view(-1, self.num_atoms)
+            q_logits_tp1.gather(-2, indices_tp1).squeeze(-2).view(
+                -1, self.num_atoms
+            )
         ).detach()
 
         # [bs; num_heads; num_atoms] -> many-heads view transform
         # [{bs * num_heads}; num_atoms]
-        atoms_target_t = (
-            rewards_t + (1 - done_t) * gammas * self.z
-        ).view(-1, self.num_atoms).detach()
+        atoms_target_t = (rewards_t + (1 - done_t) * gammas *
+                          self.z).view(-1, self.num_atoms).detach()
 
         value_loss = utils.categorical_loss(
             # [{bs * num_heads}; num_atoms]
@@ -159,8 +157,10 @@ class DQN(OffpolicyCritic):
             logits_tp1,
             # [{bs * num_heads}; num_atoms]
             atoms_target_t,
-            self.z, self.delta_z,
-            self.v_min, self.v_max
+            self.z,
+            self.delta_z,
+            self.v_min,
+            self.v_max
         )
 
         if self.entropy_regularization is not None:
@@ -189,8 +189,8 @@ class DQN(OffpolicyCritic):
         # [bs; num_heads; num_atoms] -> many-heads view transform
         # [{bs * num_heads}; num_atoms]
         atoms_t = (
-            q_atoms_t.gather(-2, indices_t).squeeze(-2)
-            .view(-1, self.num_atoms)
+            q_atoms_t.gather(-2,
+                             indices_t).squeeze(-2).view(-1, self.num_atoms)
         )
 
         # [bs; num_heads; num_actions; num_atoms]
@@ -199,11 +199,7 @@ class DQN(OffpolicyCritic):
         # [bs; num_heads; num_actions; num_atoms] -> quantile value
         # [bs; num_heads; num_actions] -> gathering best actions
         # [bs; num_heads; 1]
-        actions_tp1 = (
-            q_atoms_tp1
-            .mean(dim=-1)
-            .argmax(dim=-1, keepdim=True)
-        )
+        actions_tp1 = (q_atoms_tp1.mean(dim=-1).argmax(dim=-1, keepdim=True))
         # [bs; num_heads; 1] ->
         # [bs; num_heads; 1; 1] ->
         # [bs; num_heads; 1; num_atoms]
@@ -214,16 +210,16 @@ class DQN(OffpolicyCritic):
 
         # [bs; num_heads; num_atoms] -> many-heads view transform
         # [{bs * num_heads}; num_atoms]
-        atoms_target_t = (
-            rewards_t + (1 - done_t) * gammas * atoms_tp1
-        ).view(-1, self.num_atoms).detach()
+        atoms_target_t = (rewards_t + (1 - done_t) * gammas *
+                          atoms_tp1).view(-1, self.num_atoms).detach()
 
         value_loss = utils.quantile_loss(
             # [{bs * num_heads}; num_atoms]
             atoms_t,
             # [{bs * num_heads}; num_atoms]
             atoms_target_t,
-            self.tau, self.num_atoms,
+            self.tau,
+            self.num_atoms,
             self.critic_criterion
         )
 

@@ -1,10 +1,8 @@
 import numpy as np
 
+from catalyst import utils
 from catalyst.dl.core import Callback, CallbackOrder, MetricCallback, State
 from catalyst.utils import criterion
-from catalyst.utils.confusion_matrix import (
-    calculate_confusion_matrix_from_tensors, calculate_tp_fp_fn
-)
 from .functional import calculate_dice
 
 
@@ -12,7 +10,6 @@ class DiceCallback(MetricCallback):
     """
     Dice metric callback.
     """
-
     def __init__(
         self,
         input_key: str = "targets",
@@ -87,7 +84,7 @@ class MulticlassDiceMetricCallback(Callback):
         outputs = state.output[self.output_key]
         targets = state.input[self.input_key]
 
-        confusion_matrix = calculate_confusion_matrix_from_tensors(
+        confusion_matrix = utils.calculate_confusion_matrix_from_tensors(
             outputs, targets
         )
 
@@ -97,10 +94,7 @@ class MulticlassDiceMetricCallback(Callback):
             self.confusion_matrix += confusion_matrix
 
     def on_loader_end(self, state: State):
-        """
-        Calculates the dice epoch-wise using the running confusion matrix.
-        """
-        tp_fp_fn_dict = calculate_tp_fp_fn(self.confusion_matrix)
+        tp_fp_fn_dict = utils.calculate_tp_fp_fn(self.confusion_matrix)
 
         dice_scores: np.ndarray = calculate_dice(**tp_fp_fn_dict)
         loader_values = state.metric_manager.epoch_values[state.loader_name]

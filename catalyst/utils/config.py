@@ -254,6 +254,14 @@ def parse_config_args(*, config, args, unknown_args):
                 continue
             config["args"][key] = value
 
+    autoresume = safitty.get(config, "args", "autoresume")
+    if autoresume is not None and \
+            safitty.get(config, "args", "logdir") is not None and \
+            safitty.get(config, "args", "resume") is None:
+        logdir = Path(safitty.get(config, "args", "logdir"))
+        checkpoint_filename = logdir / "checkpoints" / f"{autoresume}_full.pth"
+        if checkpoint_filename.is_file():
+            config["args"]["resume"] = str(checkpoint_filename)
     return config, args
 
 

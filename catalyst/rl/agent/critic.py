@@ -12,7 +12,6 @@ class StateCritic(CriticSpec):
     """
     Critic that learns state value functions, like V(s).
     """
-
     def __init__(self, state_net: StateNet, head_net: ValueHead):
         super().__init__()
         self.state_net = state_net
@@ -71,7 +70,6 @@ class ActionCritic(StateCritic):
     """
     Critic that learns state-action value functions, like Q(s).
     """
-
     @classmethod
     def get_from_params(
         cls,
@@ -98,7 +96,6 @@ class StateActionCritic(CriticSpec):
     """
     Critic which learns state-action value functions, like Q(s, a).
     """
-
     def __init__(self, state_action_net: StateActionNet, head_net: ValueHead):
         super().__init__()
         self.state_action_net = state_action_net

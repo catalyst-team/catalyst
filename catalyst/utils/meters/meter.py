@@ -6,7 +6,6 @@ class Meter(object):
     follow.
 
     """
-
     def reset(self):
         """Resets the meter to default settings."""
         pass

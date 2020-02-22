@@ -4,7 +4,7 @@ from albumentations import ImageOnlyTransform
 from albumentations.pytorch import ToTensorV2
 import torch
 
-from catalyst.utils.image import tensor_to_ndimage
+from catalyst import utils
 
 
 class TensorToImage(ImageOnlyTransform):
@@ -36,7 +36,7 @@ class TensorToImage(ImageOnlyTransform):
         if len(img.shape) == 2:
             img = img.unsqueeze(0)
 
-        return tensor_to_ndimage(
+        return utils.tensor_to_ndimage(
             img,
             denormalize=self.denormalize,
             move_channels_dim=self.move_channels_dim
@@ -76,10 +76,7 @@ class ToTensor(ToTensorV2):
         return super().apply_to_mask(mask.astype(np.float32), **params)
 
     def get_transform_init_args_names(self) -> tuple:
-        return ("move_channels_dim",)
+        return ("move_channels_dim", )
 
 
-__all__ = [
-    "TensorToImage",
-    "ToTensor"
-]
+__all__ = ["TensorToImage", "ToTensor"]

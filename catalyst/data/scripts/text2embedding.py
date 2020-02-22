@@ -18,9 +18,7 @@ def build_args(parser):
         "--in-csv", type=str, help="Path to csv with text", required=True
     )
     parser.add_argument(
-        "--txt-col",
-        type=str,
-        help="Column in table that contain text"
+        "--txt-col", type=str, help="Column in table that contain text"
     )
     parser.add_argument("--in-config", type=Path, required=True)
     parser.add_argument("--in-model", type=Path, required=True)
@@ -60,14 +58,13 @@ def build_args(parser):
     )
     parser.add_argument("--seed", type=int, default=42)
     utils.boolean_flag(
-        parser, "deterministic",
+        parser,
+        "deterministic",
         default=None,
         help="Deterministic mode if running in CuDNN backend"
     )
     utils.boolean_flag(
-        parser, "benchmark",
-        default=None,
-        help="Use CuDNN benchmark"
+        parser, "benchmark", default=None, help="Use CuDNN benchmark"
     )
 
     return parser
@@ -164,8 +161,7 @@ def main(args, _=None):
                     )
 
             indices = np.arange(
-                idx * batch_size,
-                min((idx + 1) * batch_size, num_samples)
+                idx * batch_size, min((idx + 1) * batch_size, num_samples)
             )
             for key, value in features_.items():
                 name_ = key if isinstance(key, str) else f"{key:02d}"

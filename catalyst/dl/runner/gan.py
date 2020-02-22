@@ -2,8 +2,8 @@ from typing import (  # isort:skip
     Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
 )
 
-from catalyst.dl import Runner
-from catalyst.utils.tools.typing import Device, Model
+from catalyst.dl import GanExperiment, GanState, Runner
+from catalyst.utils.tools.typing import Criterion, Device, Model, Optimizer
 
 
 class MultiPhaseRunner(Runner):
@@ -76,6 +76,12 @@ class GanRunner(MultiPhaseRunner):
     Various conditioning types, penalties and regularization (such as WGAN-GP)
     can be easily derived from this class
     """
+    experiment: GanExperiment
+    state: GanState
+
+    experiment_fn: Callable = GanExperiment
+    state_fn: callable = GanState
+
     def __init__(
         self,
         model: Union[Model, Dict[str, Model]] = None,
@@ -242,6 +248,81 @@ class GanRunner(MultiPhaseRunner):
             self.fake_logits_output_key: fake_logits,
             self.real_logits_output_key: real_logits
         }
+
+    def train(
+        self,
+        model: Model,
+        loaders: "OrderedDict[str, DataLoader]",  # noqa: F821
+        callbacks: "OrderedDict[str, Callback]" = None,  # noqa: F821
+        phase2callbacks: Dict[str, List[str]] = None,
+        criterion: Criterion = None,
+        optimizer: Optimizer = None,
+        num_epochs: int = 1,
+        main_metric: str = "loss",
+        minimize_metric: bool = True,
+        state_kwargs: Dict = None,
+        checkpoint_data: Dict = None,
+        distributed_params: Dict = None,
+        monitoring_params: Dict = None,
+        logdir: str = None,
+        verbose: bool = False,
+        initial_seed: int = 42,
+        check: bool = False,
+    ) -> None:
+        """
+        Args:
+            model: models, usually generator and discriminator
+            loaders: dictionary containing one or several
+                ``torch.utils.data.DataLoader`` for training and validation
+            callbacks: list of callbacks
+            phase2callbacks: dictionary with lists of callback names
+                which should be wrapped for appropriate phase
+                for example: {"generator_train": "loss_g", "optim_g"}
+                "loss_g" and "optim_g" callbacks from callbacks dict
+                will be wrapped for "generator_train" phase
+                in wrap_callbacks method
+            criterion: criterion function
+            optimizer: optimize
+            num_epochs: number of experiment's epochs
+                the metrics and save the checkpoints.
+            main_metric: the key to the name of the metric
+                by which the checkpoints will be selected.
+            minimize_metric: flag to indicate whether
+                the ``main_metric`` should be minimized.
+            state_kwargs: additional state params to ``RunnerState``
+            checkpoint_data: additional data to save in checkpoint,
+                for example: ``class_names``, ``date_of_training``, etc
+            distributed_params: dictionary with the parameters
+                for distributed and FP16 method
+            monitoring_params: dict with the parameters
+                for monitoring services
+            logdir: path to output directory
+            verbose: if true, it displays the status of the training
+                to the console.
+            initial_seed: experiment's initial seed value
+            check: if True, then only checks that pipeline is working
+            (3 epochs only)
+        """
+        # Initialize and run experiment
+        self.experiment = self.experiment_fn(
+            model=model,
+            loaders=loaders,
+            callbacks=callbacks,
+            logdir=logdir,
+            criterion=criterion,
+            optimizer=optimizer,
+            num_epochs=num_epochs,
+            main_metric=main_metric,
+            minimize_metric=minimize_metric,
+            verbose=verbose,
+            state_kwargs=state_kwargs,
+            checkpoint_data=checkpoint_data,
+            distributed_params=distributed_params,
+            monitoring_params=monitoring_params,
+            initial_seed=initial_seed,
+            phase2callbacks=phase2callbacks,
+        )
+        self.run_experiment(experiment=self.experiment, check=check)
 
 
 __all__ = ["MultiPhaseRunner", "GanRunner"]
