@@ -191,7 +191,8 @@ class _Runner(ABC):
         if utils.get_rank() > 0:
             for k in list(
                 filter(
-                    lambda c: isinstance(callbacks[c], MasterOnlyCallback),
+                    lambda c:
+                    issubclass(callbacks[c].__class__, MasterOnlyCallback),
                     callbacks
                 )
             ):
