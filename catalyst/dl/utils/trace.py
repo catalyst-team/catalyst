@@ -1,5 +1,6 @@
 from typing import Union  # isort:skip
 
+import inspect
 from pathlib import Path
 
 import torch
@@ -19,10 +20,10 @@ class _ForwardOverrideModel(nn.Module):
     def __init__(self, model, method_name):
         super().__init__()
         self.model = model
-        self.method = method_name
+        self.method_name = method_name
 
     def forward(self, *args, **kwargs):
-        return getattr(self.model, self.method)(*args, **kwargs)
+        return getattr(self.model, self.method_name)(*args, **kwargs)
 
 
 class _TracingModelWrapper(nn.Module):
@@ -33,15 +34,33 @@ class _TracingModelWrapper(nn.Module):
     """
     def __init__(self, model, method_name):
         super().__init__()
-        self.method_name = method_name
         self.model = model
+        self.method_name = method_name
         self.tracing_result: ScriptModule
 
     def __call__(self, *args, **kwargs):
         method_model = _ForwardOverrideModel(self.model, self.method_name)
 
-        self.tracing_result = torch.jit.trace(method_model, *args, **kwargs)
-        return self.model.forward(*args, **kwargs)
+        try:
+            assert len(args) == 0, "only KV support implemented"
+
+            fn = getattr(self.model, self.method_name)
+            argspec = inspect.getfullargspec(fn)
+            assert argspec.varargs is None and argspec.varkw is None, \
+                "not supported by PyTorch tracing"
+
+            method_argnames = utils.get_fn_argsnames(fn, exclude=["self"])
+            method_input = tuple(kwargs[name] for name in method_argnames)
+
+            self.tracing_result = torch.jit.trace(method_model, method_input)
+        except Exception:
+            # for backward compatibility
+            self.tracing_result = torch.jit.trace(
+                method_model, *args, **kwargs
+            )
+        output = self.model.forward(*args, **kwargs)
+
+        return output
 
 
 def trace_model(

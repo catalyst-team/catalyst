@@ -12,6 +12,7 @@ from .callback import (
     Callback,
     CallbackOrder,
     LoggerCallback,
+    MasterOnlyCallback,
     MetricCallback,
     MultiMetricCallback,
 )
