@@ -3,9 +3,10 @@ from pathlib import Path
 
 import neptune
 
-from catalyst.dl import (
-    ConfigExperiment, Experiment, Runner, SupervisedRunner, utils
-)
+from catalyst.dl import utils
+from catalyst.dl.core import Experiment, Runner
+from catalyst.dl.experiment import ConfigExperiment
+from catalyst.dl.runner import SupervisedRunner
 
 
 class NeptuneRunner(Runner):
