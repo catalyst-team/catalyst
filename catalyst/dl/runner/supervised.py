@@ -51,15 +51,19 @@ class SupervisedRunner(Runner):
             self._process_input = self._process_input_str
         elif isinstance(self.input_key, (list, tuple)):
             self._process_input = self._process_input_list
-        else:
+        elif self.input_key is None:
             self._process_input = self._process_input_none
+        else:
+            raise NotImplementedError()
 
         if isinstance(output_key, str):
             self._process_output = self._process_output_str
         elif isinstance(output_key, (list, tuple)):
             self._process_output = self._process_output_list
-        else:
+        elif self.output_key is None:
             self._process_output = self._process_output_none
+        else:
+            raise NotImplementedError()
 
     def _batch2device(self, batch: Mapping[str, Any], device: Device):
         if isinstance(batch, (tuple, list)):
