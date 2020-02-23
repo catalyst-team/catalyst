@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.rl.db.mongo &#8212; Catalyst 20.02.3 documentation</title>
+    <title>catalyst.rl.db.mongo &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -73,9 +73,10 @@
     <span class="k">def</span> <span class="nf">_set_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_message_collection</span><span class="o">.</span><span class="n">replace_one</span><span class="p">(</span>
-                <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">},</span>
-                <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">},</span>
-                <span class="n">upsert</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">},</span> <span class="p">{</span>
+                    <span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+                    <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span>
+                <span class="p">},</span> <span class="n">upsert</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">AutoReconnect</span><span class="p">:</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reconnect_timeout</span><span class="p">)</span>
@@ -83,9 +84,7 @@
 
     <span class="k">def</span> <span class="nf">_get_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">flag_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_message_collection</span><span class="o">.</span><span class="n">find_one</span><span class="p">(</span>
-                <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;$eq&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">}}</span>
-            <span class="p">)</span>
+            <span class="n">flag_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_message_collection</span><span class="o">.</span><span class="n">find_one</span><span class="p">({</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;$eq&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">}})</span>
         <span class="k">except</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">AutoReconnect</span><span class="p">:</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_reconnect_timeout</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_flag</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
@@ -216,7 +215,9 @@
 
 <div class="viewcode-block" id="MongoDB.del_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.db.mongo.MongoDB.del_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">del_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">id_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_collection</span><span class="o">.</span><span class="n">find_one</span><span class="p">(</span>
-            <span class="p">{</span><span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="s2">&quot;checkpoint&quot;</span><span class="p">}</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="s2">&quot;checkpoint&quot;</span>
+            <span class="p">}</span>
         <span class="p">)</span><span class="o">.</span><span class="n">_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_collection</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">id_</span><span class="p">)</span></div></div>
 
@@ -292,7 +293,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Core &#8212; Catalyst 20.02.3 documentation</title>
+    <title>Core &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -97,9 +97,15 @@ such function types are rarely used as callback types.</p>
 <dl class="class">
 <dt id="catalyst.core.callback.LoggerCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callback.</code><code class="sig-name descname">LoggerCallback</code><span class="sig-paren">(</span><em class="sig-param">order: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#LoggerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.LoggerCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.MasterOnlyCallback" title="catalyst.core.callback.MasterOnlyCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.MasterOnlyCallback</span></code></a></p>
 <p>Loggers are executed on <code class="docutils literal notranslate"><span class="pre">start</span></code> before all callbacks,
 and on <code class="docutils literal notranslate"><span class="pre">end</span></code> after all callbacks.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.core.callback.MasterOnlyCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callback.</code><code class="sig-name descname">MasterOnlyCallback</code><span class="sig-paren">(</span><em class="sig-param">order: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#MasterOnlyCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.MasterOnlyCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></p>
 </dd></dl>
 
 <dl class="class">
@@ -1142,7 +1148,7 @@ dependant on current phase and event type</p>
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

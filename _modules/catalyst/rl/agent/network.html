@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.rl.agent.network &#8212; Catalyst 20.02.3 documentation</title>
+    <title>catalyst.rl.agent.network &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -159,11 +159,12 @@
 
             <span class="k">if</span> <span class="n">aggregation_type</span> <span class="o">==</span> <span class="s2">&quot;concat&quot;</span><span class="p">:</span>
                 <span class="n">aggregation_net</span> <span class="o">=</span> <span class="n">TemporalConcatPooling</span><span class="p">(</span>
-                    <span class="n">observation_net_out_features</span><span class="p">,</span> <span class="o">**</span><span class="n">aggregation_net_params</span><span class="p">)</span>
+                    <span class="n">observation_net_out_features</span><span class="p">,</span> <span class="o">**</span><span class="n">aggregation_net_params</span>
+                <span class="p">)</span>
             <span class="k">elif</span> <span class="n">aggregation_type</span> <span class="o">==</span> <span class="s2">&quot;lama&quot;</span><span class="p">:</span>
                 <span class="n">aggregation_net</span> <span class="o">=</span> <span class="n">LamaPooling</span><span class="p">(</span>
-                    <span class="n">observation_net_out_features</span><span class="p">,</span>
-                    <span class="o">**</span><span class="n">aggregation_net_params</span><span class="p">)</span>
+                    <span class="n">observation_net_out_features</span><span class="p">,</span> <span class="o">**</span><span class="n">aggregation_net_params</span>
+                <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
@@ -178,7 +179,8 @@
         <span class="n">net</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">main_net</span><span class="o">=</span><span class="n">main_net</span><span class="p">,</span>
             <span class="n">aggregation_net</span><span class="o">=</span><span class="n">aggregation_net</span><span class="p">,</span>
-            <span class="n">observation_net</span><span class="o">=</span><span class="n">observation_net</span><span class="p">)</span>
+            <span class="n">observation_net</span><span class="o">=</span><span class="n">observation_net</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">net</span></div></div>
 
 
@@ -278,11 +280,12 @@
 
             <span class="k">if</span> <span class="n">aggregation_type</span> <span class="o">==</span> <span class="s2">&quot;concat&quot;</span><span class="p">:</span>
                 <span class="n">aggregation_net</span> <span class="o">=</span> <span class="n">TemporalConcatPooling</span><span class="p">(</span>
-                    <span class="n">observation_net_out_features</span><span class="p">,</span> <span class="o">**</span><span class="n">aggregation_net_params</span><span class="p">)</span>
+                    <span class="n">observation_net_out_features</span><span class="p">,</span> <span class="o">**</span><span class="n">aggregation_net_params</span>
+                <span class="p">)</span>
             <span class="k">elif</span> <span class="n">aggregation_type</span> <span class="o">==</span> <span class="s2">&quot;lama&quot;</span><span class="p">:</span>
                 <span class="n">aggregation_net</span> <span class="o">=</span> <span class="n">LamaPooling</span><span class="p">(</span>
-                    <span class="n">observation_net_out_features</span><span class="p">,</span>
-                    <span class="o">**</span><span class="n">aggregation_net_params</span><span class="p">)</span>
+                    <span class="n">observation_net_out_features</span><span class="p">,</span> <span class="o">**</span><span class="n">aggregation_net_params</span>
+                <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
@@ -385,7 +388,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

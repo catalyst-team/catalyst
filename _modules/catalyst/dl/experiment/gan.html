@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.experiment.gan &#8212; Catalyst 20.02.3 documentation</title>
+    <title>catalyst.dl.experiment.gan &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -47,7 +47,6 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    One-staged GAN experiment</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -98,17 +97,13 @@
     <span class="k">def</span> <span class="nf">wrap_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase2callbacks</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Phase wrapping procedure for callbacks&quot;&quot;&quot;</span>
         <span class="n">discriminator_phase_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_additional_state_kwargs</span><span class="p">[</span>
-            <span class="s2">&quot;discriminator_train_phase&quot;</span>
-        <span class="p">]</span>
+            <span class="s2">&quot;discriminator_train_phase&quot;</span><span class="p">]</span>
         <span class="n">discriminator_phase_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_additional_state_kwargs</span><span class="p">[</span>
-            <span class="s2">&quot;discriminator_train_num&quot;</span>
-        <span class="p">]</span>
+            <span class="s2">&quot;discriminator_train_num&quot;</span><span class="p">]</span>
         <span class="n">generator_phase_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_additional_state_kwargs</span><span class="p">[</span>
-            <span class="s2">&quot;generator_train_phase&quot;</span>
-        <span class="p">]</span>
+            <span class="s2">&quot;generator_train_phase&quot;</span><span class="p">]</span>
         <span class="n">generator_phase_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_additional_state_kwargs</span><span class="p">[</span>
-            <span class="s2">&quot;generator_train_num&quot;</span>
-        <span class="p">]</span>
+            <span class="s2">&quot;generator_train_num&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">[</span><span class="s2">&quot;phase_manager&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PhaseManagerCallback</span><span class="p">(</span>
             <span class="n">train_phases</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">(</span>
                 <span class="p">[</span>
@@ -123,7 +118,8 @@
             <span class="k">for</span> <span class="n">callback_name</span> <span class="ow">in</span> <span class="n">callback_name_list</span><span class="p">:</span>
                 <span class="n">callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">callback_name</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">[</span><span class="n">callback_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">PhaseBatchWrapperCallback</span><span class="p">(</span>
-                    <span class="n">base_callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span> <span class="n">active_phases</span><span class="o">=</span><span class="p">[</span><span class="n">phase_name</span><span class="p">],</span>
+                    <span class="n">base_callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span>
+                    <span class="n">active_phases</span><span class="o">=</span><span class="p">[</span><span class="n">phase_name</span><span class="p">],</span>
                 <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span><span class="p">:</span>
@@ -216,7 +212,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.rl.core.sampler &#8212; Catalyst 20.02.3 documentation</title>
+    <title>catalyst.rl.core.sampler &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -60,7 +60,6 @@
 <span class="kn">from</span> <span class="nn">.environment</span> <span class="kn">import</span> <span class="n">EnvironmentSpec</span>  <span class="c1"># noqa E402</span>
 <span class="kn">from</span> <span class="nn">.exploration</span> <span class="kn">import</span> <span class="n">ExplorationHandler</span>  <span class="c1"># noqa E402</span>
 <span class="kn">from</span> <span class="nn">.trajectory_sampler</span> <span class="kn">import</span> <span class="n">TrajectorySampler</span>  <span class="c1"># noqa E402</span>
-
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -206,8 +205,8 @@
 
     <span class="k">def</span> <span class="nf">_get_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_seeds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_seeds</span><span class="p">[</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_index</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectory_seeds</span><span class="p">)]</span>
+            <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_seeds</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectory_index</span> <span class="o">%</span>
+                                         <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectory_seeds</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_seeder</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">utils</span><span class="o">.</span><span class="n">set_global_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
@@ -260,10 +259,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_log_wandb_metrics</span><span class="p">(</span>
-        <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
-        <span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="p">):</span>
         <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{mode}</span><span class="s2">/</span><span class="si">{key}{suffix}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">value</span>
@@ -275,7 +271,8 @@
     <span class="k">def</span> <span class="nf">_log_to_wandb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">metrics</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">WANDB_ENABLED</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_log_wandb_metrics</span><span class="p">(</span>
-                <span class="n">metrics</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wandb_mode</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
+                <span class="n">metrics</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wandb_mode</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span>
+            <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_save_wandb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">WANDB_ENABLED</span><span class="p">:</span>
@@ -288,7 +285,8 @@
                 <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{logdir_dst}</span><span class="s2">/</span><span class="si">{logdir_src.name}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;{str(events_src.absolute())}&quot;</span><span class="p">,</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{logdir_dst}</span><span class="s2">/</span><span class="si">{logdir_src.name}</span><span class="s2">/</span><span class="si">{events_src.name}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{logdir_dst}</span><span class="s2">/</span><span class="si">{logdir_src.name}</span><span class="s2">/</span><span class="si">{events_src.name}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
 
     <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">_run_trajectory_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -436,7 +434,8 @@
             <span class="k">for</span> <span class="n">checkpoint_path</span> <span class="ow">in</span> <span class="n">checkpoint_paths</span><span class="p">:</span>
                 <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;{str(checkpoint_path.absolute())}&quot;</span><span class="p">,</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{checkpoints_dst}</span><span class="s2">/</span><span class="si">{checkpoint_path.name}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{checkpoints_dst}</span><span class="s2">/</span><span class="si">{checkpoint_path.name}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
 
 <div class="viewcode-block" id="ValidSampler.save_checkpoint"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.core.sampler.ValidSampler.save_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">save_checkpoint</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -489,25 +488,25 @@
                 <span class="n">trajectories_reward</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trajectory_info</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">])</span>
                 <span class="n">trajectories_raw_reward</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">trajectory_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                        <span class="s2">&quot;raw_reward&quot;</span><span class="p">,</span>
-                        <span class="n">trajectory_info</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">]</span>
+                        <span class="s2">&quot;raw_reward&quot;</span><span class="p">,</span> <span class="n">trajectory_info</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">]</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
                 <span class="n">trajectory_info</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;raw_trajectory&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_log_to_console</span><span class="p">(</span><span class="o">**</span><span class="n">trajectory_info</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_log_to_tensorboard</span><span class="p">(</span><span class="o">**</span><span class="n">trajectory_info</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_log_to_wandb</span><span class="p">(</span>
-                    <span class="n">step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectory_index</span><span class="p">,</span> <span class="o">**</span><span class="n">trajectory_info</span><span class="p">)</span>
+                    <span class="n">step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectory_index</span><span class="p">,</span> <span class="o">**</span><span class="n">trajectory_info</span>
+                <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_index</span> <span class="o">+=</span> <span class="mi">1</span>
 
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectory_index</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gc_period</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 
             <span class="n">loop_metrics</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;trajectory/_mean_valid_reward&quot;</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">rewards2metric</span><span class="p">(</span><span class="n">trajectories_reward</span><span class="p">),</span>
-                <span class="s2">&quot;trajectory/_mean_valid_raw_reward&quot;</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">rewards2metric</span><span class="p">(</span><span class="n">trajectories_raw_reward</span><span class="p">),</span>
+                <span class="s2">&quot;trajectory/_mean_valid_reward&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span>
+                <span class="n">rewards2metric</span><span class="p">(</span><span class="n">trajectories_reward</span><span class="p">),</span>
+                <span class="s2">&quot;trajectory/_mean_valid_raw_reward&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span>
+                <span class="n">rewards2metric</span><span class="p">(</span><span class="n">trajectories_raw_reward</span><span class="p">),</span>
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -614,7 +613,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.callbacks.misc &#8212; Catalyst 20.02.3 documentation</title>
+    <title>catalyst.dl.callbacks.misc &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -37,7 +37,9 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">confusion_matrix</span> <span class="k">as</span> <span class="n">confusion_matrix_fn</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">LoggerCallback</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">LoggerCallback</span><span class="p">,</span> <span class="n">MasterOnlyCallback</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span> <span class="n">utils</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="n">meters</span>
 
 
@@ -79,7 +81,7 @@
             <span class="n">state</span><span class="o">.</span><span class="n">early_stop</span> <span class="o">=</span> <span class="kc">True</span></div></div>
 
 
-<div class="viewcode-block" id="ConfusionMatrixCallback"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.misc.ConfusionMatrixCallback">[docs]</a><span class="k">class</span> <span class="nc">ConfusionMatrixCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+<div class="viewcode-block" id="ConfusionMatrixCallback"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.misc.ConfusionMatrixCallback">[docs]</a><span class="k">class</span> <span class="nc">ConfusionMatrixCallback</span><span class="p">(</span><span class="n">MasterOnlyCallback</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span>
@@ -187,8 +189,7 @@
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;EarlyStoppingCallback&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ConfusionMatrixCallback&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;EarlyStoppingCallback&quot;</span><span class="p">,</span> <span class="s2">&quot;ConfusionMatrixCallback&quot;</span><span class="p">,</span>
     <span class="s2">&quot;RaiseExceptionCallback&quot;</span>
 <span class="p">]</span>
 </pre></div>
@@ -261,7 +262,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

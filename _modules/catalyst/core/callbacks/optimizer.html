@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.core.callbacks.optimizer &#8212; Catalyst 20.02.3 documentation</title>
+    <title>catalyst.core.callbacks.optimizer &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -107,9 +107,7 @@
         <span class="k">for</span> <span class="n">group</span><span class="p">,</span> <span class="n">wd</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">,</span> <span class="n">optimizer_wds</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">wd</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]:</span>
-                    <span class="n">param</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
-                        <span class="o">-</span><span class="n">wd</span> <span class="o">*</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">],</span> <span class="n">param</span><span class="o">.</span><span class="n">data</span>
-                    <span class="p">)</span>
+                    <span class="n">param</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">-</span><span class="n">wd</span> <span class="o">*</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">],</span> <span class="n">param</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">grad_clip_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">grad_clip_fn</span><span class="p">(</span><span class="n">group</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">])</span>
         <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span></div>
@@ -137,7 +135,8 @@
             <span class="p">]</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">)):</span>
                 <span class="n">safitty</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s2">&quot;weight_decay&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+                    <span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s2">&quot;weight_decay&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">0.0</span>
+                <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer_wd</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">)</span></div>
 
@@ -192,9 +191,7 @@
             <span class="c1"># https://nvidia.github.io/apex/advanced.html#gradient-accumulation-across-iterations</span>
             <span class="n">delay_unscale</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">need_gradient_step</span>
             <span class="k">with</span> <span class="n">amp</span><span class="o">.</span><span class="n">scale_loss</span><span class="p">(</span>
-                <span class="n">loss</span><span class="p">,</span>
-                <span class="n">optimizer</span><span class="p">,</span>
-                <span class="n">delay_unscale</span><span class="o">=</span><span class="n">delay_unscale</span>
+                <span class="n">loss</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">delay_unscale</span><span class="o">=</span><span class="n">delay_unscale</span>
             <span class="p">)</span> <span class="k">as</span> <span class="n">scaled_loss</span><span class="p">:</span>
                 <span class="n">scaled_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -224,7 +221,8 @@
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">wd</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer_wd</span><span class="p">):</span>
                 <span class="n">safitty</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-                    <span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s2">&quot;weight_decay&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">wd</span><span class="p">)</span></div></div>
+                    <span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s2">&quot;weight_decay&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">wd</span>
+                <span class="p">)</span></div></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;OptimizerCallback&quot;</span><span class="p">]</span>
@@ -298,7 +296,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

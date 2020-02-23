@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.contrib.nn.modules.lama &#8212; Catalyst 20.02.3 documentation</title>
+    <title>catalyst.contrib.nn.modules.lama &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
@@ -82,8 +82,7 @@
                 <span class="n">out_channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                 <span class="n">kernel_size</span><span class="o">=</span><span class="n">kernel_size</span><span class="p">,</span>
                 <span class="o">**</span><span class="n">params</span>
-            <span class="p">),</span>
-            <span class="n">TemporalAttentionPooling</span><span class="o">.</span><span class="n">name2activation</span><span class="p">[</span><span class="n">activation</span><span class="p">]</span>
+            <span class="p">),</span> <span class="n">TemporalAttentionPooling</span><span class="o">.</span><span class="n">name2activation</span><span class="p">[</span><span class="n">activation</span><span class="p">]</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">attention_pooling</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">outer_init</span><span class="p">)</span>
 
@@ -139,7 +138,8 @@
         <span class="n">layer</span> <span class="o">=</span> <span class="n">TemporalMaxPooling</span><span class="p">()</span>
     <span class="k">elif</span> <span class="n">key_</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;softmax&quot;</span><span class="p">,</span> <span class="s2">&quot;tanh&quot;</span><span class="p">,</span> <span class="s2">&quot;sigmoid&quot;</span><span class="p">]:</span>
         <span class="n">layer</span> <span class="o">=</span> <span class="n">TemporalAttentionPooling</span><span class="p">(</span>
-            <span class="n">in_features</span><span class="o">=</span><span class="n">in_features</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">key_</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">in_features</span><span class="o">=</span><span class="n">in_features</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">key_</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span>
+        <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
@@ -152,11 +152,16 @@
 <div class="viewcode-block" id="LamaPooling"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.modules.lama.LamaPooling">[docs]</a><span class="k">class</span> <span class="nc">LamaPooling</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="n">available_groups</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s2">&quot;last&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;avg&quot;</span><span class="p">,</span> <span class="s2">&quot;avg_droplast&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;max_droplast&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;sigmoid&quot;</span><span class="p">,</span> <span class="s2">&quot;sigmoid_droplast&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;softmax&quot;</span><span class="p">,</span> <span class="s2">&quot;softmax_droplast&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;tanh&quot;</span><span class="p">,</span> <span class="s2">&quot;tanh_droplast&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;avg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;avg_droplast&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;max&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;max_droplast&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;sigmoid&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;sigmoid_droplast&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;softmax&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;softmax_droplast&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;tanh&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;tanh_droplast&quot;</span><span class="p">,</span>
     <span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -274,7 +279,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

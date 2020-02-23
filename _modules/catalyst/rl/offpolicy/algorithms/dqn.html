@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.rl.offpolicy.algorithms.dqn &#8212; Catalyst 20.02.3 documentation</title>
+    <title>catalyst.rl.offpolicy.algorithms.dqn &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
@@ -42,7 +42,6 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Swiss Army knife DQN algorithm.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entropy_regularization</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">entropy_regularization</span> <span class="o">=</span> <span class="n">entropy_regularization</span>
 
@@ -86,7 +85,7 @@
 
     <span class="k">def</span> <span class="nf">_process_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">done_t</span><span class="p">,</span> <span class="n">rewards_t</span><span class="p">):</span>
         <span class="c1"># Array of size [num_heads,]</span>
-        <span class="n">gammas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gammas</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_step</span>
+        <span class="n">gammas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gammas</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_step</span>
         <span class="n">gammas</span> <span class="o">=</span> <span class="n">gammas</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">]</span>  <span class="c1"># [1; num_heads; 1]</span>
         <span class="c1"># We use the same done_t, rewards_t, actions_t for each head</span>
         <span class="n">done_t</span> <span class="o">=</span> <span class="n">done_t</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># [bs; 1; 1]</span>
@@ -123,9 +122,9 @@
 
         <span class="c1"># [bs; num_heads; 1] -&gt; many-heads view transform</span>
         <span class="c1"># [{bs * num_heads}; 1]</span>
-        <span class="n">q_target_t</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">rewards_t</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">done_t</span><span class="p">)</span> <span class="o">*</span> <span class="n">gammas</span> <span class="o">*</span> <span class="n">q_values_tp1</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="n">q_target_t</span> <span class="o">=</span> <span class="p">(</span><span class="n">rewards_t</span> <span class="o">+</span>
+                      <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">done_t</span><span class="p">)</span> <span class="o">*</span> <span class="n">gammas</span> <span class="o">*</span> <span class="n">q_values_tp1</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                                                                 <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
 
         <span class="n">value_loss</span> <span class="o">=</span> \
             <span class="bp">self</span><span class="o">.</span><span class="n">critic_criterion</span><span class="p">(</span><span class="n">action_q_values_t</span><span class="p">,</span> <span class="n">q_target_t</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
@@ -153,8 +152,8 @@
         <span class="c1"># [bs; num_heads; num_atoms] -&gt; many-heads view transform</span>
         <span class="c1"># [{bs * num_heads}; num_atoms]</span>
         <span class="n">logits_t</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">q_logits_t</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">indices_t</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">)</span>
+            <span class="n">q_logits_t</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span>
+                              <span class="n">indices_t</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="c1"># [bs; num_heads; num_actions; num_atoms]</span>
@@ -164,9 +163,8 @@
         <span class="c1"># [bs; num_heads; num_actions] -&gt; gathering best actions</span>
         <span class="c1"># [bs; num_heads; 1]</span>
         <span class="n">actions_tp1</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">q_logits_tp1</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">q_logits_tp1</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="c1"># [bs; num_heads; 1] -&gt;</span>
         <span class="c1"># [bs; num_heads; 1; 1] -&gt;</span>
@@ -176,15 +174,15 @@
         <span class="c1"># [bs; num_heads; num_atoms] -&gt; many-heads view transform</span>
         <span class="c1"># [{bs * num_heads}; num_atoms]</span>
         <span class="n">logits_tp1</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">q_logits_tp1</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">indices_tp1</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">)</span>
+            <span class="n">q_logits_tp1</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">indices_tp1</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span>
+                <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span>
+            <span class="p">)</span>
         <span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
 
         <span class="c1"># [bs; num_heads; num_atoms] -&gt; many-heads view transform</span>
         <span class="c1"># [{bs * num_heads}; num_atoms]</span>
-        <span class="n">atoms_target_t</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">rewards_t</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">done_t</span><span class="p">)</span> <span class="o">*</span> <span class="n">gammas</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="n">atoms_target_t</span> <span class="o">=</span> <span class="p">(</span><span class="n">rewards_t</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">done_t</span><span class="p">)</span> <span class="o">*</span> <span class="n">gammas</span> <span class="o">*</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
 
         <span class="n">value_loss</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">categorical_loss</span><span class="p">(</span>
             <span class="c1"># [{bs * num_heads}; num_atoms]</span>
@@ -193,8 +191,10 @@
             <span class="n">logits_tp1</span><span class="p">,</span>
             <span class="c1"># [{bs * num_heads}; num_atoms]</span>
             <span class="n">atoms_target_t</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_z</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">v_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_max</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delta_z</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">v_min</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">v_max</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">entropy_regularization</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -223,8 +223,8 @@
         <span class="c1"># [bs; num_heads; num_atoms] -&gt; many-heads view transform</span>
         <span class="c1"># [{bs * num_heads}; num_atoms]</span>
         <span class="n">atoms_t</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">q_atoms_t</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">indices_t</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">)</span>
+            <span class="n">q_atoms_t</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span>
+                             <span class="n">indices_t</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="c1"># [bs; num_heads; num_actions; num_atoms]</span>
@@ -233,11 +233,7 @@
         <span class="c1"># [bs; num_heads; num_actions; num_atoms] -&gt; quantile value</span>
         <span class="c1"># [bs; num_heads; num_actions] -&gt; gathering best actions</span>
         <span class="c1"># [bs; num_heads; 1]</span>
-        <span class="n">actions_tp1</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">q_atoms_tp1</span>
-            <span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">actions_tp1</span> <span class="o">=</span> <span class="p">(</span><span class="n">q_atoms_tp1</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
         <span class="c1"># [bs; num_heads; 1] -&gt;</span>
         <span class="c1"># [bs; num_heads; 1; 1] -&gt;</span>
         <span class="c1"># [bs; num_heads; 1; num_atoms]</span>
@@ -248,16 +244,16 @@
 
         <span class="c1"># [bs; num_heads; num_atoms] -&gt; many-heads view transform</span>
         <span class="c1"># [{bs * num_heads}; num_atoms]</span>
-        <span class="n">atoms_target_t</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">rewards_t</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">done_t</span><span class="p">)</span> <span class="o">*</span> <span class="n">gammas</span> <span class="o">*</span> <span class="n">atoms_tp1</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+        <span class="n">atoms_target_t</span> <span class="o">=</span> <span class="p">(</span><span class="n">rewards_t</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">done_t</span><span class="p">)</span> <span class="o">*</span> <span class="n">gammas</span> <span class="o">*</span>
+                          <span class="n">atoms_tp1</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
 
         <span class="n">value_loss</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">quantile_loss</span><span class="p">(</span>
             <span class="c1"># [{bs * num_heads}; num_atoms]</span>
             <span class="n">atoms_t</span><span class="p">,</span>
             <span class="c1"># [{bs * num_heads}; num_atoms]</span>
             <span class="n">atoms_target_t</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">critic_criterion</span>
         <span class="p">)</span>
 
@@ -349,7 +345,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

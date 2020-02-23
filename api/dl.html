@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>DL &#8212; Catalyst 20.02.3 documentation</title>
+    <title>DL &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -298,7 +298,7 @@ Attention: will clamp WEIGHTS, not GRADIENTS</p></li>
 <dl class="class">
 <dt id="catalyst.dl.callbacks.misc.ConfusionMatrixCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.misc.</code><code class="sig-name descname">ConfusionMatrixCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'confusion_matrix'</em>, <em class="sig-param">version: str = 'tnt'</em>, <em class="sig-param">class_names: List[str] = None</em>, <em class="sig-param">num_classes: int = None</em>, <em class="sig-param">plot_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/misc.html#ConfusionMatrixCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.misc.ConfusionMatrixCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.MasterOnlyCallback" title="catalyst.core.callback.MasterOnlyCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.MasterOnlyCallback</span></code></a></p>
 <dl class="method">
 <dt id="catalyst.dl.callbacks.misc.ConfusionMatrixCallback.on_batch_end">
 <code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.dl.core.state.State</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/misc.html#ConfusionMatrixCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.misc.ConfusionMatrixCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
@@ -1796,7 +1796,7 @@ single instance.</p></li>
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

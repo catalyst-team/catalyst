@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.contrib.nn.optimizers.ralamb &#8212; Catalyst 20.02.3 documentation</title>
+    <title>catalyst.contrib.nn.optimizers.ralamb &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
@@ -121,7 +121,7 @@
                     <span class="n">N_sma</span><span class="p">,</span> <span class="n">radam_step_size</span> <span class="o">=</span> <span class="n">buffered</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">buffered</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">buffered</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">]</span>
-                    <span class="n">beta2_t</span> <span class="o">=</span> <span class="n">beta2</span> <span class="o">**</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">]</span>
+                    <span class="n">beta2_t</span> <span class="o">=</span> <span class="n">beta2</span><span class="o">**</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">]</span>
                     <span class="n">N_sma_max</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
                     <span class="n">N_sma</span> <span class="o">=</span> <span class="n">N_sma_max</span> <span class="o">-</span> \
                         <span class="mi">2</span> <span class="o">*</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">beta2_t</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta2_t</span><span class="p">)</span>
@@ -136,7 +136,7 @@
                                 <span class="o">*</span> <span class="n">N_sma_max</span> <span class="o">/</span> <span class="p">(</span><span class="n">N_sma_max</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
                             <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta1</span> <span class="o">**</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">])</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">radam_step_size</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta1</span> <span class="o">**</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">])</span>
+                        <span class="n">radam_step_size</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta1</span><span class="o">**</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">])</span>
                     <span class="n">buffered</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">radam_step_size</span>
 
                 <span class="k">if</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;weight_decay&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
@@ -167,8 +167,7 @@
 
                 <span class="k">if</span> <span class="n">N_sma</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">:</span>
                     <span class="n">p_data_fp32</span><span class="o">.</span><span class="n">addcdiv_</span><span class="p">(</span>
-                        <span class="o">-</span><span class="n">radam_step_size</span> <span class="o">*</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">trust_ratio</span><span class="p">,</span>
-                        <span class="n">exp_avg</span><span class="p">,</span>
+                        <span class="o">-</span><span class="n">radam_step_size</span> <span class="o">*</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">trust_ratio</span><span class="p">,</span> <span class="n">exp_avg</span><span class="p">,</span>
                         <span class="n">denom</span>
                     <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -249,7 +248,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

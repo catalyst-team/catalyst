@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.rl.exploration.greedy &#8212; Catalyst 20.02.3 documentation</title>
+    <title>catalyst.rl.exploration.greedy &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -42,7 +42,6 @@
 <span class="sd">    For discrete environments only.</span>
 <span class="sd">    Selects greedy action (argmax_a Q(s,a)).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
 <div class="viewcode-block" id="Greedy.get_action"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.exploration.greedy.Greedy.get_action">[docs]</a>    <span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_values</span><span class="p">):</span>
         <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">q_values</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">action</span></div></div>
@@ -56,7 +55,6 @@
 <span class="sd">    Random action selection probability eps usually decreases</span>
 <span class="sd">    from 1 to 0.01-0.05 during the course of training.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eps_init</span><span class="p">,</span> <span class="n">eps_final</span><span class="p">,</span> <span class="n">annealing_steps</span><span class="p">,</span> <span class="n">eps_min</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
@@ -155,7 +153,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

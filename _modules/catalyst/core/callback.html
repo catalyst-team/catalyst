@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.core.callback &#8212; Catalyst 20.02.3 documentation</title>
+    <title>catalyst.core.callback &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
@@ -106,7 +106,11 @@
         <span class="k">pass</span>
 
 
-<div class="viewcode-block" id="LoggerCallback"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.LoggerCallback">[docs]</a><span class="k">class</span> <span class="nc">LoggerCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+<div class="viewcode-block" id="MasterOnlyCallback"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.MasterOnlyCallback">[docs]</a><span class="k">class</span> <span class="nc">MasterOnlyCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="LoggerCallback"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.LoggerCallback">[docs]</a><span class="k">class</span> <span class="nc">LoggerCallback</span><span class="p">(</span><span class="n">MasterOnlyCallback</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Loggers are executed on ``start`` before all callbacks,</span>
 <span class="sd">    and on ``end`` after all callbacks.</span>
@@ -183,8 +187,8 @@
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;CallbackOrder&quot;</span><span class="p">,</span> <span class="s2">&quot;Callable&quot;</span><span class="p">,</span> <span class="s2">&quot;LoggerCallback&quot;</span><span class="p">,</span> <span class="s2">&quot;MetricCallback&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;MultiMetricCallback&quot;</span>
+    <span class="s2">&quot;CallbackOrder&quot;</span><span class="p">,</span> <span class="s2">&quot;Callable&quot;</span><span class="p">,</span> <span class="s2">&quot;LoggerCallback&quot;</span><span class="p">,</span> <span class="s2">&quot;MasterOnlyCallback&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MetricCallback&quot;</span><span class="p">,</span> <span class="s2">&quot;MultiMetricCallback&quot;</span>
 <span class="p">]</span>
 </pre></div>
 
@@ -256,7 +260,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

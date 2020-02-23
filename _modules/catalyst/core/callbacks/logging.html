@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.core.callbacks.logging &#8212; Catalyst 20.02.3 documentation</title>
+    <title>catalyst.core.callbacks.logging &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -51,7 +51,6 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Logs the params into console</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
 <div class="viewcode-block" id="VerboseLogger.__init__"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.logging.VerboseLogger.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">always_show</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -135,7 +134,6 @@
 <span class="sd">    Logger callback,</span>
 <span class="sd">    translates ``state.metric_manager`` to console and text file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
 <div class="viewcode-block" id="ConsoleLogger.__init__"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.logging.ConsoleLogger.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init ``ConsoleLogger``&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -193,7 +191,6 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Logger callback, translates ``state.metric_manager`` to tensorboard</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
 <div class="viewcode-block" id="TensorboardLogger.__init__"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.logging.TensorboardLogger.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">metric_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -283,7 +280,6 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Logger callback, translates ``state.metric_manager`` to telegram channel</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
 <div class="viewcode-block" id="TelegramLogger.__init__"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.logging.TelegramLogger.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -404,7 +400,6 @@
     <span class="s2">&quot;TelegramLogger&quot;</span><span class="p">,</span>
     <span class="s2">&quot;TensorboardLogger&quot;</span><span class="p">,</span>
     <span class="s2">&quot;VerboseLogger&quot;</span><span class="p">,</span>
-
 <span class="p">]</span>
 </pre></div>
 
@@ -476,7 +471,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

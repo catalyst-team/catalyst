@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.contrib.nn.modules.real_nvp &#8212; Catalyst 20.02.3 documentation</title>
+    <title>catalyst.contrib.nn.modules.real_nvp &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
@@ -101,26 +101,38 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">scale_prenet</span> <span class="o">=</span> <span class="n">SequentialNet</span><span class="p">(</span>
             <span class="n">hiddens</span><span class="o">=</span><span class="p">[</span><span class="n">action_size</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_size</span><span class="p">,</span> <span class="n">action_size</span><span class="p">],</span>
-            <span class="n">layer_fn</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="n">layer_fn</span><span class="p">,</span> <span class="s2">&quot;bias&quot;</span><span class="p">:</span> <span class="n">bias</span><span class="p">},</span>
+            <span class="n">layer_fn</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="n">layer_fn</span><span class="p">,</span>
+                <span class="s2">&quot;bias&quot;</span><span class="p">:</span> <span class="n">bias</span>
+            <span class="p">},</span>
             <span class="n">activation_fn</span><span class="o">=</span><span class="n">activation_fn</span><span class="p">,</span>
             <span class="n">norm_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale_net</span> <span class="o">=</span> <span class="n">SequentialNet</span><span class="p">(</span>
             <span class="n">hiddens</span><span class="o">=</span><span class="p">[</span><span class="n">action_size</span><span class="p">,</span> <span class="n">action_size</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_size</span><span class="p">],</span>
-            <span class="n">layer_fn</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="n">layer_fn</span><span class="p">,</span> <span class="s2">&quot;bias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+            <span class="n">layer_fn</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="n">layer_fn</span><span class="p">,</span>
+                <span class="s2">&quot;bias&quot;</span><span class="p">:</span> <span class="kc">True</span>
+            <span class="p">},</span>
             <span class="n">activation_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">norm_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">translation_prenet</span> <span class="o">=</span> <span class="n">SequentialNet</span><span class="p">(</span>
             <span class="n">hiddens</span><span class="o">=</span><span class="p">[</span><span class="n">action_size</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_size</span><span class="p">,</span> <span class="n">action_size</span><span class="p">],</span>
-            <span class="n">layer_fn</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="n">layer_fn</span><span class="p">,</span> <span class="s2">&quot;bias&quot;</span><span class="p">:</span> <span class="n">bias</span><span class="p">},</span>
+            <span class="n">layer_fn</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="n">layer_fn</span><span class="p">,</span>
+                <span class="s2">&quot;bias&quot;</span><span class="p">:</span> <span class="n">bias</span>
+            <span class="p">},</span>
             <span class="n">activation_fn</span><span class="o">=</span><span class="n">activation_fn</span><span class="p">,</span>
             <span class="n">norm_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">translation_net</span> <span class="o">=</span> <span class="n">SequentialNet</span><span class="p">(</span>
             <span class="n">hiddens</span><span class="o">=</span><span class="p">[</span><span class="n">action_size</span><span class="p">,</span> <span class="n">action_size</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_size</span><span class="p">],</span>
-            <span class="n">layer_fn</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="n">layer_fn</span><span class="p">,</span> <span class="s2">&quot;bias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+            <span class="n">layer_fn</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="n">layer_fn</span><span class="p">,</span>
+                <span class="s2">&quot;bias&quot;</span><span class="p">:</span> <span class="kc">True</span>
+            <span class="p">},</span>
             <span class="n">activation_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">norm_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span>
@@ -231,7 +243,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.dl.experiment.config &#8212; Catalyst 20.02.3 documentation</title>
+    <title>catalyst.dl.experiment.config &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -48,10 +48,9 @@
     <span class="n">Augmentor</span><span class="p">,</span> <span class="n">AugmentorCompose</span><span class="p">,</span> <span class="n">DistributedSamplerWrapper</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Callback</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">,</span> <span class="n">ConfusionMatrixCallback</span><span class="p">,</span> <span class="n">ConsoleLogger</span><span class="p">,</span>
-    <span class="n">CriterionCallback</span><span class="p">,</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">LoggerCallback</span><span class="p">,</span> <span class="n">OptimizerCallback</span><span class="p">,</span>
-    <span class="n">PhaseWrapperCallback</span><span class="p">,</span> <span class="n">RaiseExceptionCallback</span><span class="p">,</span> <span class="n">SchedulerCallback</span><span class="p">,</span>
-    <span class="n">TensorboardLogger</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">VerboseLogger</span>
+    <span class="n">Callback</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">,</span> <span class="n">ConsoleLogger</span><span class="p">,</span> <span class="n">CriterionCallback</span><span class="p">,</span> <span class="n">Experiment</span><span class="p">,</span>
+    <span class="n">OptimizerCallback</span><span class="p">,</span> <span class="n">PhaseWrapperCallback</span><span class="p">,</span> <span class="n">RaiseExceptionCallback</span><span class="p">,</span>
+    <span class="n">SchedulerCallback</span><span class="p">,</span> <span class="n">TensorboardLogger</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">VerboseLogger</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.registry</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">CALLBACKS</span><span class="p">,</span> <span class="n">CRITERIONS</span><span class="p">,</span> <span class="n">MODELS</span><span class="p">,</span> <span class="n">OPTIMIZERS</span><span class="p">,</span> <span class="n">SAMPLERS</span><span class="p">,</span> <span class="n">SCHEDULERS</span><span class="p">,</span>
@@ -236,10 +235,7 @@
         <span class="k">return</span> <span class="n">criterion</span></div>
 
     <span class="k">def</span> <span class="nf">_get_optimizer</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Model</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Model</span><span class="p">]],</span>
-        <span class="o">**</span><span class="n">params</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Model</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Model</span><span class="p">]],</span> <span class="o">**</span><span class="n">params</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optimizer</span><span class="p">:</span>
         <span class="c1"># @TODO 1: refactoring; this method is too long</span>
         <span class="c1"># @TODO 2: load state dicts for schedulers &amp; criterion</span>
@@ -321,9 +317,7 @@
         <span class="k">return</span> <span class="n">optimizer</span>
 
 <div class="viewcode-block" id="ConfigExperiment.get_optimizer"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_optimizer">[docs]</a>    <span class="k">def</span> <span class="nf">get_optimizer</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Model</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Model</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Model</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Model</span><span class="p">]]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Optimizer</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the optimizer for a given stage</span>
@@ -385,15 +379,17 @@
                 <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">params_</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="p">}</span>
 
-            <span class="n">transform</span> <span class="o">=</span> <span class="n">AugmentorCompose</span><span class="p">({</span>
-                <span class="n">key</span><span class="p">:</span> <span class="n">Augmentor</span><span class="p">(</span>
-                    <span class="n">dict_key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
-                    <span class="n">augment_fn</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
-                    <span class="n">input_key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
-                    <span class="n">output_key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">transform</span> <span class="ow">in</span> <span class="n">transforms_composition</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="p">})</span>
+            <span class="n">transform</span> <span class="o">=</span> <span class="n">AugmentorCompose</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="n">key</span><span class="p">:</span> <span class="n">Augmentor</span><span class="p">(</span>
+                        <span class="n">dict_key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
+                        <span class="n">augment_fn</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
+                        <span class="n">input_key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
+                        <span class="n">output_key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">transform</span> <span class="ow">in</span> <span class="n">transforms_composition</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">&quot;transforms&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
                 <span class="n">transforms_composition</span> <span class="o">=</span> <span class="p">[</span>
@@ -427,6 +423,7 @@
 
         <span class="n">transform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_transform</span><span class="p">(</span><span class="o">**</span><span class="n">transform_params</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">transform</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
             <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="n">dict_</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">dict_</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">AugmentorCompose</span><span class="p">):</span>
@@ -590,14 +587,6 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">is_already_present</span><span class="p">:</span>
                 <span class="n">callbacks</span><span class="p">[</span><span class="n">callback_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">callback_fn</span><span class="p">()</span>
 
-        <span class="c1"># Remove LoggerCallback on worker nodes</span>
-        <span class="k">if</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">to_del</span> <span class="o">=</span> <span class="p">(</span><span class="n">LoggerCallback</span><span class="p">,</span> <span class="n">ConfusionMatrixCallback</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span>
-                    <span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callbacks</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="n">to_del</span><span class="p">),</span> <span class="n">callbacks</span>
-            <span class="p">)):</span>
-                <span class="k">del</span> <span class="n">callbacks</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-
         <span class="k">return</span> <span class="n">callbacks</span></div></div>
 
 
@@ -672,7 +661,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

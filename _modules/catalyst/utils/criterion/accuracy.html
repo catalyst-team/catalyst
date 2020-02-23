@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.utils.criterion.accuracy &#8212; Catalyst 20.02.3 documentation</title>
+    <title>catalyst.utils.criterion.accuracy &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -40,7 +40,7 @@
 <div class="viewcode-block" id="accuracy"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.criterion.accuracy.accuracy">[docs]</a><span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span>
     <span class="n">outputs</span><span class="p">,</span>
     <span class="n">targets</span><span class="p">,</span>
-    <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span>
+    <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">),</span>
     <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">activation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">):</span>
@@ -71,7 +71,8 @@
     <span class="c1"># multi-label classification</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">targets</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">=</span> <span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">long</span><span class="p">()</span> <span class="o">==</span> <span class="n">outputs</span><span class="o">.</span><span class="n">long</span><span class="p">())</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span>
-            <span class="n">targets</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">targets</span><span class="o">.</span><span class="n">shape</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">res</span><span class="p">]</span>
 
     <span class="n">max_k</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">topk</span><span class="p">)</span>
@@ -121,7 +122,7 @@
     <span class="k">return</span> <span class="n">score</span> <span class="o">/</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">),</span> <span class="n">k</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="mean_average_accuracy"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.criterion.accuracy.mean_average_accuracy">[docs]</a><span class="k">def</span> <span class="nf">mean_average_accuracy</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,)):</span>
+<div class="viewcode-block" id="mean_average_accuracy"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.criterion.accuracy.mean_average_accuracy">[docs]</a><span class="k">def</span> <span class="nf">mean_average_accuracy</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">)):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes the mean average accuracy at k.</span>
 <span class="sd">    This function computes the mean average accuracy at k between two lists</span>
@@ -225,7 +226,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

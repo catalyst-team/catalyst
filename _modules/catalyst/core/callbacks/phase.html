@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.core.callbacks.phase &#8212; Catalyst 20.02.3 documentation</title>
+    <title>catalyst.core.callbacks.phase &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -60,11 +60,7 @@
 <span class="sd">    By calling `.step(...)` method current phase is updated by step-size</span>
 <span class="sd">    and if current phase is finished, the next phase becomes current</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">train_phases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Phase</span><span class="p">],</span>
-        <span class="n">valid_phases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Phase</span><span class="p">]</span>
-    <span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_phases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Phase</span><span class="p">],</span> <span class="n">valid_phases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Phase</span><span class="p">]):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train_phases</span> <span class="o">=</span> <span class="n">train_phases</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">valid_phases</span> <span class="o">=</span> <span class="n">valid_phases</span>
 
@@ -139,8 +135,7 @@
                 <span class="n">valid_phases</span> <span class="o">=</span> <span class="p">[</span><span class="n">Phase</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="kc">None</span><span class="p">)]</span>
             <span class="k">elif</span> <span class="n">valid_mode</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">VALIDATION_MODE_SAME</span><span class="p">:</span>
                 <span class="n">valid_phases</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="n">Phase</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">train_phases</span>
+                    <span class="n">Phase</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">train_phases</span>
                 <span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -149,8 +144,7 @@
                 <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">PhaseManager</span><span class="p">(</span>
-            <span class="n">train_phases</span><span class="o">=</span><span class="n">train_phases</span><span class="p">,</span>
-            <span class="n">valid_phases</span><span class="o">=</span><span class="n">valid_phases</span>
+            <span class="n">train_phases</span><span class="o">=</span><span class="n">train_phases</span><span class="p">,</span> <span class="n">valid_phases</span><span class="o">=</span><span class="n">valid_phases</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="PhaseManagerCallback.on_batch_start"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.phase.PhaseManagerCallback.on_batch_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
@@ -231,7 +225,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

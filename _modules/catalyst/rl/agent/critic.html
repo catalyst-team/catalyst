@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.rl.agent.critic &#8212; Catalyst 20.02.3 documentation</title>
+    <title>catalyst.rl.agent.critic &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
@@ -46,7 +46,6 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Critic that learns state value functions, like V(s).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_net</span><span class="p">:</span> <span class="n">StateNet</span><span class="p">,</span> <span class="n">head_net</span><span class="p">:</span> <span class="n">ValueHead</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state_net</span> <span class="o">=</span> <span class="n">state_net</span>
@@ -105,7 +104,6 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Critic that learns state-action value functions, like Q(s).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
 <div class="viewcode-block" id="ActionCritic.get_from_params"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agent.critic.ActionCritic.get_from_params">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_from_params</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -132,7 +130,6 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Critic which learns state-action value functions, like Q(s, a).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_action_net</span><span class="p">:</span> <span class="n">StateActionNet</span><span class="p">,</span> <span class="n">head_net</span><span class="p">:</span> <span class="n">ValueHead</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state_action_net</span> <span class="o">=</span> <span class="n">state_action_net</span>
@@ -270,7 +267,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>catalyst.contrib.nn.criterion.triplet &#8212; Catalyst 20.02.3 documentation</title>
+    <title>catalyst.contrib.nn.criterion.triplet &#8212; Catalyst 20.02.4 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
@@ -47,7 +47,6 @@
 <span class="sd">    Args:</span>
 <span class="sd">        margin (float): margin for triplet.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
 <div class="viewcode-block" id="TripletLoss.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mf">0.3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor method for the TripletLoss class.</span>
@@ -170,8 +169,8 @@
         <span class="c1"># For each anchor, get the hardest positive</span>
         <span class="c1"># First, we need to get a mask for every valid</span>
         <span class="c1"># positive (they should have same label)</span>
-        <span class="n">mask_anchor_positive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_anchor_positive_triplet_mask</span><span class="p">(</span>
-            <span class="n">labels</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+        <span class="n">mask_anchor_positive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_anchor_positive_triplet_mask</span><span class="p">(</span><span class="n">labels</span>
+                                                                      <span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
 
         <span class="c1"># We put to 0 any element where (a, p) is not valid</span>
         <span class="c1"># (valid if a != p and label(a) == label(p))</span>
@@ -221,7 +220,6 @@
 <span class="sd">    Args:</span>
 <span class="sd">        margin (float): margin for triplet.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mf">0.3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor method for the TripletLoss class.</span>
@@ -277,15 +275,13 @@
         <span class="c1"># [batch_size, embedding_size] x [batch_size, embedding_size]</span>
         <span class="c1"># -&gt; [batch_size, batch_size]</span>
         <span class="n">pairwise_similarity</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span>
-            <span class="s2">&quot;se,ae-&gt;sa&quot;</span><span class="p">,</span>
-            <span class="n">embeddings_pred</span><span class="p">,</span>
-            <span class="n">embeddings_true</span>
+            <span class="s2">&quot;se,ae-&gt;sa&quot;</span><span class="p">,</span> <span class="n">embeddings_pred</span><span class="p">,</span> <span class="n">embeddings_true</span>
         <span class="p">)</span>
         <span class="n">bs</span> <span class="o">=</span> <span class="n">embeddings_pred</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">batch_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">bs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
         <span class="n">negative_similarity</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">pairwise_similarity</span>
-            <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">([</span><span class="n">bs</span><span class="p">],</span> <span class="o">-</span><span class="mi">10</span> <span class="o">**</span> <span class="mi">9</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">))</span>
+            <span class="n">pairwise_similarity</span> <span class="o">+</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">([</span><span class="n">bs</span><span class="p">],</span> <span class="o">-</span><span class="mi">10</span><span class="o">**</span><span class="mi">9</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">))</span>
         <span class="p">)</span>
         <span class="c1"># TODO argsort, take k worst</span>
         <span class="n">hard_negative_ids</span> <span class="o">=</span> <span class="n">negative_similarity</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
@@ -374,7 +370,7 @@
       &copy;2020, Scitator.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.3</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
