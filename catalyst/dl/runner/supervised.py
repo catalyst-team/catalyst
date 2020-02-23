@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Mapping, Union  # isort:skip
+from typing import Any, Dict, List, Mapping, Tuple, Union  # isort:skip
 from collections import OrderedDict
 import logging
 from pathlib import Path
@@ -48,18 +48,28 @@ class SupervisedRunner(Runner):
         self.target_key = input_target_key
 
         if isinstance(self.input_key, str):
+            # when model expects value
             self._process_input = self._process_input_str
         elif isinstance(self.input_key, (list, tuple)):
+            # when model expects tuple
             self._process_input = self._process_input_list
-        else:
+        elif self.input_key is None:
+            # when model expects dict
             self._process_input = self._process_input_none
+        else:
+            raise NotImplementedError()
 
         if isinstance(output_key, str):
+            # when model returns value
             self._process_output = self._process_output_str
         elif isinstance(output_key, (list, tuple)):
+            # when model returns tuple
             self._process_output = self._process_output_list
-        else:
+        elif self.output_key is None:
+            # when model returns dict
             self._process_output = self._process_output_none
+        else:
+            raise NotImplementedError()
 
     def _batch2device(self, batch: Mapping[str, Any], device: Device):
         if isinstance(batch, (tuple, list)):
@@ -81,11 +91,11 @@ class SupervisedRunner(Runner):
         output = self.model(**batch, **kwargs)
         return output
 
-    def _process_output_str(self, output: Mapping[str, Any]):
+    def _process_output_str(self, output: torch.Tensor):
         output = {self.output_key: output}
         return output
 
-    def _process_output_list(self, output: Mapping[str, Any]):
+    def _process_output_list(self, output: Union[Tuple, List]):
         output = dict(
             (key, value) for key, value in zip(self.output_key, output)
         )
