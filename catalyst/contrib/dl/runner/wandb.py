@@ -5,10 +5,9 @@ import shutil
 
 import wandb
 
-from catalyst.dl import utils
-from catalyst.dl.core import Experiment, Runner
-from catalyst.dl.experiment import ConfigExperiment
-from catalyst.dl.runner import SupervisedRunner
+from catalyst.dl import (
+    Experiment, ConfigExperiment, Runner, SupervisedRunner, utils
+)
 
 
 class WandbRunner(Runner):

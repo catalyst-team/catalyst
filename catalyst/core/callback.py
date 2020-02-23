@@ -72,7 +72,11 @@ class Callback:
         pass
 
 
-class LoggerCallback(Callback):
+class MasterOnlyCallback(Callback):
+    pass
+
+
+class LoggerCallback(Callback, MasterOnlyCallback):
     """
     Loggers are executed on ``start`` before all callbacks,
     and on ``end`` after all callbacks.
@@ -149,6 +153,6 @@ class MultiMetricCallback(Callback):
 
 
 __all__ = [
-    "CallbackOrder", "Callable", "LoggerCallback", "MetricCallback",
-    "MultiMetricCallback"
+    "CallbackOrder", "Callable", "LoggerCallback",
+    "MasterOnlyCallback", "MetricCallback", "MultiMetricCallback"
 ]

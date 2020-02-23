@@ -3,7 +3,9 @@ from typing import Dict, List  # isort:skip
 import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 
-from catalyst.dl import Callback, CallbackOrder, LoggerCallback, State, utils
+from catalyst.dl import (
+    Callback, CallbackOrder, LoggerCallback, MasterOnlyCallback, State, utils
+)
 from catalyst.utils import meters
 
 
@@ -45,7 +47,7 @@ class EarlyStoppingCallback(Callback):
             state.early_stop = True
 
 
-class ConfusionMatrixCallback(Callback):
+class ConfusionMatrixCallback(Callback, MasterOnlyCallback):
     def __init__(
         self,
         input_key: str = "targets",

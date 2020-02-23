@@ -13,7 +13,7 @@ from catalyst import utils
 from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
-from .callback import Callback, LoggerCallback
+from .callback import Callback, LoggerCallback, MasterOnlyCallback
 from .experiment import _Experiment
 from .state import _State
 
@@ -151,9 +151,15 @@ class _Runner(ABC):
 
         return model, criterion, optimizer, scheduler, device
 
-    def _prepare_for_stage(self, stage: str):
-        utils.set_global_seed(self.experiment.initial_seed)
-
+    def _get_state(
+        self,
+        stage: str,
+        model: Model,
+        criterion: Criterion,
+        optimizer: Optimizer,
+        scheduler: Scheduler,
+        device: Device,
+    ):
         migrating_params = dict(**self.experiment.get_state_params(stage))
         migrate_from_previous_stage = \
             migrating_params.get("migrate_from_previous_stage", True)
@@ -166,23 +172,28 @@ class _Runner(ABC):
                 }
             )
 
-        utils.set_global_seed(self.experiment.initial_seed)
-        self.model, criterion, optimizer, scheduler, self.device = \
-            self._get_experiment_components(stage)
-
-        utils.set_global_seed(self.experiment.initial_seed)
-        self.state = self.state_fn(
+        state = self.state_fn(
             stage=stage,
-            model=self.model,
-            device=self.device,
+            model=model,
+            device=device,
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
             **migrating_params
         )
 
-        utils.set_global_seed(self.experiment.initial_seed)
+        return state
+
+    def _get_callbacks(self, stage: str):
         callbacks = self.experiment.get_callbacks(stage)
+
+        # Remove master-only callbacks on worker nodes
+        if utils.get_rank() > 0:
+            for k in list(filter(
+                lambda c: isinstance(callbacks[c], MasterOnlyCallback),
+                callbacks
+            )):
+                del callbacks[k]
 
         loggers = utils.process_callbacks(
             OrderedDict(
@@ -201,9 +212,28 @@ class _Runner(ABC):
             )
         )
 
-        self.state.loggers = loggers
-        self.loggers = loggers
+        return callbacks, loggers
+
+    def _prepare_for_stage(self, stage: str):
+        utils.set_global_seed(self.experiment.initial_seed)
+        self.model, criterion, optimizer, scheduler, self.device = \
+            self._get_experiment_components(stage=stage)
+
+        utils.set_global_seed(self.experiment.initial_seed)
+        self.state = self._get_state(
+            stage=stage,
+            model=self.model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            device=self.device,
+        )
+
+        utils.set_global_seed(self.experiment.initial_seed)
+        callbacks, loggers = self._get_callbacks(stage)
         self.callbacks = callbacks
+        self.loggers = loggers
+        self.state.loggers = loggers
 
     def _prepare_for_epoch(self, stage: str, epoch: int):
         pass
@@ -314,6 +344,7 @@ class _Runner(ABC):
                 f"'{self.state.valid_loader}' " \
                 f"should be in provided loaders: {list(loaders.keys())}"
         else:
+            # @TODO: add check for non distributed run for inference
             assert not any(x.startswith("train") for x in loaders.keys()), \
                 "for inference no train loader should be passed"
 
@@ -368,16 +399,6 @@ class _Runner(ABC):
         """
         self._check_run = check
         self.experiment = experiment
-
-        # jupyter source code logging hack
-        # + hack to prevent cycle imports
-        # @TODO: remove hack to catalyst.dl only, not core
-        # from catalyst.dl.experiment import BaseExperiment
-        # if isinstance(self.experiment, BaseExperiment) \
-        #         and self.experiment.logdir is not None:
-        #     expdir = Path(os.getcwd())
-        #     logdir = Path(self.experiment.logdir)
-        #     utils.dump_base_experiment_code(expdir, logdir)
 
         try:
             for stage in self.experiment.stages:
