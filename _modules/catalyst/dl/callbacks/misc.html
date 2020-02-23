@@ -38,7 +38,7 @@
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">confusion_matrix</span> <span class="k">as</span> <span class="n">confusion_matrix_fn</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">LoggerCallback</span><span class="p">,</span> <span class="n">MasterOnlyCallback</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span> <span class="n">utils</span>
+    <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">MasterOnlyCallback</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span> <span class="n">utils</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="n">meters</span>
 
@@ -174,24 +174,7 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="RaiseExceptionCallback"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.misc.RaiseExceptionCallback">[docs]</a><span class="k">class</span> <span class="nc">RaiseExceptionCallback</span><span class="p">(</span><span class="n">LoggerCallback</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">order</span> <span class="o">=</span> <span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Other</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
-
-<div class="viewcode-block" id="RaiseExceptionCallback.on_exception"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.misc.RaiseExceptionCallback.on_exception">[docs]</a>    <span class="k">def</span> <span class="nf">on_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
-        <span class="n">exception</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">exception</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">is_exception</span><span class="p">(</span><span class="n">exception</span><span class="p">):</span>
-            <span class="k">return</span>
-
-        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">need_reraise_exception</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exception</span></div></div>
-
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;EarlyStoppingCallback&quot;</span><span class="p">,</span> <span class="s2">&quot;ConfusionMatrixCallback&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;RaiseExceptionCallback&quot;</span>
-<span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;EarlyStoppingCallback&quot;</span><span class="p">,</span> <span class="s2">&quot;ConfusionMatrixCallback&quot;</span><span class="p">]</span>
 </pre></div>
 
           </div>
