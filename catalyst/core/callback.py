@@ -76,7 +76,7 @@ class MasterOnlyCallback(Callback):
     pass
 
 
-class LoggerCallback(Callback, MasterOnlyCallback):
+class LoggerCallback(MasterOnlyCallback):
     """
     Loggers are executed on ``start`` before all callbacks,
     and on ``end`` after all callbacks.

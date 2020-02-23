@@ -47,7 +47,7 @@ class EarlyStoppingCallback(Callback):
             state.early_stop = True
 
 
-class ConfusionMatrixCallback(Callback, MasterOnlyCallback):
+class ConfusionMatrixCallback(MasterOnlyCallback):
     def __init__(
         self,
         input_key: str = "targets",
