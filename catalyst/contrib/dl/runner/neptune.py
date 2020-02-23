@@ -4,7 +4,7 @@ from pathlib import Path
 import neptune
 
 from catalyst.dl import (
-    Experiment, ConfigExperiment, Runner, SupervisedRunner, utils
+    ConfigExperiment, Experiment, Runner, SupervisedRunner, utils
 )
 
 

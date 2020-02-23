@@ -6,7 +6,7 @@ import shutil
 import wandb
 
 from catalyst.dl import (
-    Experiment, ConfigExperiment, Runner, SupervisedRunner, utils
+    ConfigExperiment, Experiment, Runner, SupervisedRunner, utils
 )
 
 
