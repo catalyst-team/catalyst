@@ -12,8 +12,6 @@ from .metrics import (
     ClasswiseJaccardCallback, DiceCallback, F1ScoreCallback, IouCallback,
     JaccardCallback, MapKCallback, PrecisionRecallF1ScoreCallback
 )
-from .misc import (
-    ConfusionMatrixCallback, EarlyStoppingCallback, RaiseExceptionCallback
-)
+from .misc import ConfusionMatrixCallback, EarlyStoppingCallback
 from .mixup import MixupCallback
 from .scheduler import LRFinder

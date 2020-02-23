@@ -4,10 +4,9 @@ import pytest
 
 import torch
 
-from catalyst.dl import registry
-from catalyst.dl.callbacks import (
+from catalyst.dl import (
     CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
-    PhaseWrapperCallback, RaiseExceptionCallback, TensorboardLogger
+    PhaseWrapperCallback, RaiseExceptionCallback, registry, TensorboardLogger
 )
 from catalyst.dl.experiment.config import ConfigExperiment
 

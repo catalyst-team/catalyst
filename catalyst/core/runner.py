@@ -13,7 +13,9 @@ from catalyst import utils
 from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
-from .callback import Callback, LoggerCallback, MasterOnlyCallback
+from .callback import (
+    Callback, LoggerCallback, MasterOnlyCallback, RaiseExceptionCallback
+)
 from .experiment import _Experiment
 from .state import _State
 
@@ -202,7 +204,7 @@ class _Runner(ABC):
             OrderedDict(
                 [
                     (k, v) for k, v in callbacks.items()
-                    if isinstance(v, LoggerCallback)
+                    if issubclass(v.__class__, LoggerCallback)
                 ]
             )
         )
@@ -210,7 +212,7 @@ class _Runner(ABC):
             OrderedDict(
                 [
                     (k, v) for k, v in callbacks.items()
-                    if not isinstance(v, LoggerCallback)
+                    if not issubclass(v.__class__, LoggerCallback)
                 ]
             )
         )
@@ -407,13 +409,20 @@ class _Runner(ABC):
             for stage in self.experiment.stages:
                 self._run_stage(stage)
         except (Exception, KeyboardInterrupt) as ex:
-            # if an exception had been raised
-            # before the exception-handlers were initialized
-            if self.loggers is None or self.callbacks is None:
-                raise ex
-            else:
+
+            def _exception_handler_check(callbacks: OrderedDict):
+                return (
+                    callbacks is not None and any(
+                        issubclass(x.__class__, RaiseExceptionCallback)
+                        for x in callbacks.values()
+                    )
+                )
+            if _exception_handler_check(self.loggers) \
+                    or _exception_handler_check(self.callbacks):
                 self.state.exception = ex
                 self._run_event("exception", moment=None)
+            else:
+                raise ex
 
         return self
 

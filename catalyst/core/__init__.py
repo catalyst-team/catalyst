@@ -15,6 +15,7 @@ from .callback import (
     MasterOnlyCallback,
     MetricCallback,
     MultiMetricCallback,
+    RaiseExceptionCallback,
 )
 from .callbacks import *
 from .experiment import _Experiment
