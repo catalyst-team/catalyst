@@ -5,6 +5,7 @@ from catalyst.dl import (
     OptimizerCallback, RaiseExceptionCallback, SchedulerCallback,
     TensorboardLogger, VerboseLogger
 )
+from catalyst.utils.tools.typing import Criterion, Optimizer, Scheduler
 from .base import BaseExperiment
 
 
@@ -51,9 +52,14 @@ class SupervisedExperiment(BaseExperiment):
         if self._verbose:
             default_callbacks.append(("verbose", VerboseLogger))
         if not stage.startswith("infer"):
-            default_callbacks.append(("_criterion", CriterionCallback))
-            default_callbacks.append(("_optimizer", OptimizerCallback))
-            if self._scheduler is not None:
+            if self._criterion is not None \
+                    and isinstance(self._criterion, Criterion):
+                default_callbacks.append(("_criterion", CriterionCallback))
+            if self._optimizer is not None \
+                    and isinstance(self._optimizer, Optimizer):
+                default_callbacks.append(("_optimizer", OptimizerCallback))
+            if self._scheduler is not None \
+                    and isinstance(self._scheduler, Scheduler):
                 default_callbacks.append(("_scheduler", SchedulerCallback))
             default_callbacks.append(("_saver", CheckpointCallback))
             default_callbacks.append(("console", ConsoleLogger))
