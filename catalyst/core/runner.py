@@ -418,7 +418,7 @@ class _Runner(ABC):
                     )
                 )
             if _exception_handler_check(self.loggers) \
-                or _exception_handler_check(self.callbacks):
+                    or _exception_handler_check(self.callbacks):
                 self.state.exception = ex
                 self._run_event("exception", moment=None)
             else:
