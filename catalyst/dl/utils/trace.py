@@ -53,10 +53,11 @@ class _TracingModelWrapper(nn.Module):
             method_input = tuple(kwargs[name] for name in method_argnames)
 
             self.tracing_result = torch.jit.trace(method_model, method_input)
-        except:
+        except Exception:
             # for backward compatibility
             self.tracing_result = torch.jit.trace(
-                method_model, *args, **kwargs)
+                method_model, *args, **kwargs
+            )
         output = self.model.forward(*args, **kwargs)
 
         return output

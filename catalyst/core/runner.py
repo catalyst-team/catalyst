@@ -189,10 +189,12 @@ class _Runner(ABC):
 
         # Remove master-only callbacks on worker nodes
         if utils.get_rank() > 0:
-            for k in list(filter(
-                lambda c: isinstance(callbacks[c], MasterOnlyCallback),
-                callbacks
-            )):
+            for k in list(
+                filter(
+                    lambda c: isinstance(callbacks[c], MasterOnlyCallback),
+                    callbacks
+                )
+            ):
                 del callbacks[k]
 
         loggers = utils.process_callbacks(
