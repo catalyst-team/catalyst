@@ -16,6 +16,13 @@ class CallbackOrder(IntFlag):
     Other = 200
 
 
+class CallbackNode(IntFlag):
+    Unknown = -1
+    All = 0
+    Master = 1
+    Worker = 2
+
+
 class Callback:
     """
     Abstract class that all callback (e.g., Logger) classes extends from.
@@ -39,11 +46,12 @@ class Callback:
 
     All callbacks has ``order`` value from ``CallbackOrder``
     """
-    def __init__(self, order: int):
+    def __init__(self, order: int, node: int):
         """
         For order see ``CallbackOrder`` class
         """
         self.order = order
+        self.node = node
 
     def on_stage_start(self, state: _State):
         pass
@@ -73,32 +81,27 @@ class Callback:
         pass
 
 
-class MasterOnlyCallback(Callback):
-    pass
-
-
-class LoggerCallback(MasterOnlyCallback):
+class LoggerCallback:
     """
     Loggers are executed on ``start`` before all callbacks,
     and on ``end`` after all callbacks.
     """
-    def __init__(self, order: int = None):
-        if order is None:
-            order = CallbackOrder.Internal
-        super().__init__(order=order)
+    def __init__(self, order: int = None, node: int = None):
+        self.order = order or CallbackOrder.Internal
+        self.node = node or CallbackNode.Master
 
 
-class RaiseExceptionCallback(LoggerCallback):
+class RaiseExceptionCallback(Callback):
     def __init__(self):
         order = CallbackOrder.Other + 1
-        super().__init__(order=order)
+        super().__init__(order=order, node=CallbackNode.All)
 
     def on_exception(self, state: _State):
         exception = state.exception
         if not utils.is_exception(exception):
             return
 
-        if state.need_reraise_exception:
+        if state.need_exception_reraise:
             raise exception
 
 

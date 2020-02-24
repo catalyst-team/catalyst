@@ -243,33 +243,11 @@ class _Runner(ABC):
     def _prepare_for_epoch(self, stage: str, epoch: int):
         pass
 
-    # @TODO: too complicated -> rewrite
-    def _run_event(self, event: str, moment: Optional[str]):
+    def _run_event(self, event: str):
         fn_name = f"on_{event}"
-        if moment is not None:
-            fn_name = f"{fn_name}_{moment}"
 
-        # before callbacks
-        if self.state is not None:
-            getattr(self.state, f"{fn_name}_pre")()
-
-        if self.loggers is not None and moment == "start":
-            for logger in self.loggers.values():
-                getattr(logger, fn_name)(self.state)
-
-        # running callbacks
-        if self.callbacks is not None:
-            for callback in self.callbacks.values():
-                getattr(callback, fn_name)(self.state)
-
-        # after callbacks
-        if self.loggers is not None and \
-                (moment == "end" or moment is None):  # for on_exception case
-            for logger in self.loggers.values():
-                getattr(logger, fn_name)(self.state)
-
-        if self.state is not None:
-            getattr(self.state, f"{fn_name}_post")()
+        for callback in self.callbacks.values():
+            callback.__dict__[fn_name](self.state)
 
     def _batch2device(self, batch: Mapping[str, Any], device: Device):
         output = utils.any2device(batch, device)
@@ -301,16 +279,10 @@ class _Runner(ABC):
         self.state.step += self.state.batch_size
         batch = self._batch2device(batch, self.device)
         self.state.input = batch
-        self.state.timer.stop("_timers/data_time")
 
-        self._run_event("batch", moment="start")
-
-        self.state.timer.start("_timers/model_time")
+        self._run_event("batch_start")
         self._run_batch_train_step(batch=batch)
-        self.state.timer.stop("_timers/model_time")
-
-        self.state.timer.stop("_timers/batch_time")
-        self._run_event("batch", moment="end")
+        self._run_event("batch_end")
 
     def _run_loader(self, loader: DataLoader):
         self.state.batch_size = (
@@ -321,21 +293,11 @@ class _Runner(ABC):
             self.state.step
             or self.state.epoch * len(loader) * self.state.batch_size
         )
-        # @TODO: remove time usage, use it under the hood
-        self.state.timer.reset()
-
-        self.state.timer.start("_timers/batch_time")
-        self.state.timer.start("_timers/data_time")
 
         for i, batch in enumerate(loader):
             self._run_batch(batch)
-
-            self.state.timer.reset()
             if self._check_run and i >= 1:
                 break
-
-            self.state.timer.start("_timers/batch_time")
-            self.state.timer.start("_timers/data_time")
 
     def _run_epoch(self, stage: str, epoch: int):
         self._prepare_for_epoch(stage=stage, epoch=epoch)
@@ -344,7 +306,8 @@ class _Runner(ABC):
         loaders = self.loaders
 
         # @TODO: better solution with train/inference handling ?
-        if not self.state.stage.startswith("infer"):
+        is_infer_stage = self.state.stage.startswith("infer")
+        if not is_infer_stage:
             assert self.state.valid_loader in loaders.keys(), \
                 f"'{self.state.valid_loader}' " \
                 f"should be in provided loaders: {list(loaders.keys())}"
@@ -356,37 +319,39 @@ class _Runner(ABC):
         self.state.loaders = loaders
 
         for loader_name, loader in loaders.items():
+            is_train_loader = loader_name.startswith("train")
+
             self.state.loader = loader
             self.state.loader_name = loader_name
             self.state.loader_len = len(loader)
-            self.state.need_backward = loader_name.startswith("train")
+            self.state.need_backward = is_train_loader
             self.model.train(self.state.need_backward)
 
             if isinstance(loader.sampler, DistributedSampler) \
-                    and loader_name.startswith("train"):
+                    and not is_infer_stage:
                 loader.sampler.set_epoch(self.state.stage_epoch)
 
             utils.set_global_seed(
                 self.experiment.initial_seed + self.state.epoch + 1
             )
-            self._run_event("loader", moment="start")
+            self._run_event("loader_start")
             with torch.set_grad_enabled(self.state.need_backward):
                 self._run_loader(loader)
-            self._run_event("loader", moment="end")
+            self._run_event("loader_end")
 
     def _run_stage(self, stage: str):
         self._prepare_for_stage(stage)
 
         # checkpoint loading
-        self._run_event("stage", moment="start")
+        self._run_event("stage_start")
 
         while self.state.stage_epoch < self.state.num_epochs:
-            self._run_event("epoch", moment="start")
             utils.set_global_seed(
                 self.experiment.initial_seed + self.state.epoch + 1
             )
+            self._run_event("epoch_start")
             self._run_epoch(stage=stage, epoch=self.state.stage_epoch)
-            self._run_event("epoch", moment="end")
+            self._run_event("epoch_end")
 
             if self._check_run and self.state.stage_epoch >= 1:
                 break
@@ -396,7 +361,7 @@ class _Runner(ABC):
 
             self.state.epoch += 1
             self.state.stage_epoch += 1
-        self._run_event("stage", moment="end")
+        self._run_event("stage_end")
 
     def run_experiment(self, experiment: _Experiment, check: bool = False):
         """
@@ -420,7 +385,7 @@ class _Runner(ABC):
             if _exception_handler_check(self.loggers) \
                     or _exception_handler_check(self.callbacks):
                 self.state.exception = ex
-                self._run_event("exception", moment=None)
+                self._run_event("exception")
             else:
                 raise ex
 

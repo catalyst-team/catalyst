@@ -92,7 +92,7 @@ class VerboseLogger(LoggerCallback):
 
         if isinstance(exception, KeyboardInterrupt):
             self.tqdm.write("Early exiting")
-            state.need_reraise_exception = False
+            state.need_exception_reraise = False
 
 
 class ConsoleLogger(LoggerCallback):
