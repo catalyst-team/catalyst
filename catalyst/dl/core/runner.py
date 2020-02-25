@@ -10,8 +10,8 @@ class Runner(_Runner):
     experiment: Experiment
     state: State
 
-    experiment_fn: Callable = Experiment
-    state_fn: callable = State
+    _experiment_fn: Callable = Experiment
+    _state_fn: callable = State
 
     def _prepare_for_stage(self, stage: str):
         super()._prepare_for_stage(stage=stage)
@@ -19,7 +19,7 @@ class Runner(_Runner):
         # @TODO: remove this trick
         utils.set_global_seed(self.experiment.initial_seed)
         loaders = self.experiment.get_loaders(stage=stage)
-        self.loaders = loaders
+        self.state.loaders = loaders
 
 
 __all__ = ["Runner"]

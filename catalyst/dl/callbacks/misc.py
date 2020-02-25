@@ -30,7 +30,7 @@ class EarlyStoppingCallback(Callback):
             self.is_better = lambda score, best: score >= (best + min_delta)
 
     def on_epoch_end(self, state: State) -> None:
-        if state.stage.startswith("infer"):
+        if state.stage_name.startswith("infer"):
             return
 
         score = state.metric_manager.valid_values[self.metric]
@@ -44,7 +44,7 @@ class EarlyStoppingCallback(Callback):
 
         if self.num_bad_epochs >= self.patience:
             print(f"Early stop at {state.stage_epoch} epoch")
-            state.early_stop = True
+            state.need_early_stop = True
 
 
 class ConfusionMatrixCallback(MasterOnlyCallback):
@@ -123,8 +123,8 @@ class ConfusionMatrixCallback(MasterOnlyCallback):
 
     def on_batch_end(self, state: State):
         self._add_to_stats(
-            state.output[self.output_key].detach(),
-            state.input[self.input_key].detach()
+            state.batch_out[self.output_key].detach(),
+            state.batch_in[self.input_key].detach()
         )
 
     def on_loader_end(self, state: State):

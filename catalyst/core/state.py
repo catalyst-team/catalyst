@@ -7,7 +7,7 @@ import numpy as np
 from catalyst.core import Callback
 from catalyst.utils.tools.frozen_class import FrozenClass
 from catalyst.utils.tools.typing import (
-    Criterion, Device, Model, Optimizer, Scheduler
+    Criterion, Device, Model, Optimizer, Scheduler, DataLoader
 )
 
 
@@ -28,65 +28,66 @@ class _State(FrozenClass):
         minimize_metric: bool = True,
         valid_loader: str = "train",
         checkpoint_data: Dict = None,
+        is_check_run: bool = False,
         **kwargs,
     ):
         # main part
-        self.loaders = None
-        self.model = model
-        self.criterion = criterion
-        self.optimizer = optimizer
-        self.scheduler = scheduler
-        self.device = device
-        self.callbacks = callbacks
+        ## data
+        self.loaders: OrderedDict[str, DataLoader] = None
+        ## components
+        self.model: Model = model
+        self.criterion: Criterion = criterion
+        self.optimizer: Optimizer = optimizer
+        self.scheduler: Scheduler = scheduler
+        ## extra components - PyTorch device
+        self.device: Device = device
+        ## extra components - callbacks
+        self.callbacks: OrderedDict[str, Callback] = callbacks
 
+        # dataflow - in, out, metrics
+        self.batch_in = None
+        self.batch_out = None
         # main metrics
         single_optimizer = isinstance(optimizer, Optimizer)
         single_criterion = isinstance(criterion, Criterion)
         self.batch_metrics = {
             "loss": None if single_criterion else defaultdict(lambda: None),
             "lr": None if single_optimizer else defaultdict(lambda: None),
-            "momentum": None if single_optimizer else defaultdict(lambda: None),
+            "momentum": None if single_optimizer else defaultdict(
+                lambda: None),
             "data_time": None,
             "model_time": None,
             "batch_time": None,
         }
 
-        # data pipeline
-        self.input = None
-        self.output = None
-
-        # logging
-        self.logdir = Path(logdir) if logdir is not None else None
-
-        # special info
-        self.stage = stage
-        self.loader_name = None
-        self.loader = None
-
-        # counters
-        self.loader_len = 0
-        self.batch_size = 0
-        self.step = 0
-        self.epoch = 0
-        self.stage_epoch = 0
-        self.num_epochs = num_epochs or np.iinfo(np.int32).max
+        # pipeline info
+        self.stage_name: str = stage
+        self.loader_name: str = None
+        self.loader_len: int = 0
+        self.batch_size: int = 0
+        self.step: int = 0
+        self.epoch: int = 0
+        self.stage_epoch: int = 0
+        self.num_epochs: int = num_epochs or np.iinfo(np.int32).max
 
         # metrics & logging
-        self.main_metric = main_metric
-        self.minimize_metric = minimize_metric
-        self.valid_loader = valid_loader
-
+        self.main_metric: str = main_metric
+        self.minimize_metric: bool = minimize_metric
+        self.valid_loader: str = valid_loader
+        self.logdir: Path = Path(logdir) if logdir is not None else None
         # extra checkpoint data for saving in checkpoint files
-        self.checkpoint_data = checkpoint_data or {}
+        self.checkpoint_data: Dict = checkpoint_data or {}
 
         # other
-        self.need_backward = False
-        self.early_stop = False
+        self.is_check_run: bool = is_check_run
+        self.need_backward_pass: bool = False
+        self.need_early_stop: bool = False
+        self.need_exception_reraise: bool = True
+        self.exception: Optional[Exception] = None
+
+        # kwargs
         for k, v in kwargs.items():
             setattr(self, k, v)
-
-        self.exception: Optional[Exception] = None
-        self.need_exception_reraise: bool = True
 
         self._freeze()
 
@@ -97,15 +98,3 @@ class _State(FrozenClass):
     @property
     def epoch_log(self):
         return self.epoch + 1
-
-    def get_key(self, key, inner_key=None):
-        if inner_key is None:
-            return getattr(self, key)
-        else:
-            return getattr(self, key)[inner_key]
-
-    def set_key(self, value, key, inner_key=None):
-        if inner_key is None:
-            setattr(self, key, value)
-        else:
-            getattr(self, key)[inner_key] = value

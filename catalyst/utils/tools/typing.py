@@ -9,6 +9,7 @@ Criterion = nn.Module
 Optimizer = optim.Optimizer
 Scheduler = optim.lr_scheduler._LRScheduler  # noinspection PyProtectedMember
 Dataset = data.Dataset
+DataLoader = data.DataLoader
 Device = Union[str, torch.device]
 
 __all__ = [
@@ -16,6 +17,7 @@ __all__ = [
     "Criterion",
     "Optimizer",
     "Scheduler",
-    "Device",
     "Dataset",
+    "DataLoader",
+    "Device",
 ]

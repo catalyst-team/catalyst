@@ -53,7 +53,7 @@ class BaseCheckpointCallback(Callback):
                 scheduler=state.scheduler,
                 epoch_metrics=epoch_metrics,
                 valid_metrics=valid_metrics,
-                stage=state.stage,
+                stage=state.stage_name,
                 epoch=state.epoch_log,
                 checkpoint_data=state.checkpoint_data
             )
@@ -111,10 +111,10 @@ class CheckpointCallback(BaseCheckpointCallback):
             print(f"=> loading checkpoint {filename}")
             checkpoint = utils.load_checkpoint(filename)
 
-            if not state.stage.startswith("infer"):
+            if not state.stage_name.startswith("infer"):
                 state.epoch = checkpoint["epoch"]
                 state.stage_epoch = checkpoint["stage_epoch"]
-                state.stage = checkpoint["stage"]
+                state.stage_name = checkpoint["stage"]
 
             utils.unpack_checkpoint(
                 checkpoint,
@@ -221,7 +221,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             self.resume = None
 
     def on_epoch_end(self, state: _State):
-        if state.stage.startswith("infer") or self.is_distributed_worker:
+        if state.stage_name.startswith("infer") or self.is_distributed_worker:
             return
 
         valid_metrics = dict(state.metric_manager.valid_values)
@@ -234,7 +234,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             scheduler=state.scheduler,
             epoch_metrics=epoch_metrics,
             valid_metrics=valid_metrics,
-            stage=state.stage,
+            stage=state.stage_name,
             stage_epoch=state.stage_epoch_log,
             epoch=state.epoch_log,
             checkpoint_data=state.checkpoint_data
@@ -347,7 +347,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
                 scheduler=state.scheduler,
                 epoch_metrics=None,
                 valid_metrics=None,
-                stage=state.stage,
+                stage=state.stage_name,
                 epoch=state.epoch_log
             )
             self.process_checkpoint(

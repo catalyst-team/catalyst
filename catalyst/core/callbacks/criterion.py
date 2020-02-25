@@ -77,15 +77,15 @@ class CriterionCallback(Callback):
             raise NotImplementedError()
 
     def _compute_loss_value(self, state: _State, criterion):
-        output = self._get_output(state.output, self.output_key)
-        input = self._get_input(state.input, self.input_key)
+        output = self._get_output(state.batch_out, self.output_key)
+        input = self._get_input(state.batch_in, self.input_key)
 
         loss = criterion(output, input)
         return loss
 
     def _compute_loss_key_value(self, state: _State, criterion):
-        output = self._get_output(state.output, self.output_key)
-        input = self._get_input(state.input, self.input_key)
+        output = self._get_output(state.batch_out, self.output_key)
+        input = self._get_input(state.batch_in, self.input_key)
 
         loss = criterion(**output, **input)
         return loss
@@ -133,13 +133,13 @@ class CriterionOutputOnlyCallback(CriterionCallback):
         super().__init__(input_key=None, output_key=output_key, **kwargs)
 
     def _compute_loss_value(self, state: _State, criterion):
-        output = self._get_output(state.output, self.output_key)
+        output = self._get_output(state.batch_out, self.output_key)
 
         loss = criterion(output)
         return loss
 
     def _compute_loss_key_value(self, state: _State, criterion):
-        output = self._get_output(state.output, self.output_key)
+        output = self._get_output(state.batch_out, self.output_key)
 
         loss = criterion(**output)
         return loss

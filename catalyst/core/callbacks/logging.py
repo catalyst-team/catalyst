@@ -306,7 +306,7 @@ class TelegramLogger(LoggerCallback):
     def on_stage_start(self, state: _State):
         """Notify about starting a new stage"""
         if self.log_on_stage_start:
-            text = f"{state.stage} stage was started"
+            text = f"{state.stage_name} stage was started"
 
             self._send_text(text)
 
@@ -342,7 +342,7 @@ class TelegramLogger(LoggerCallback):
     def on_stage_end(self, state: _State):
         """Notify about finishing a stage"""
         if self.log_on_stage_end:
-            text = f"{state.stage} stage was finished"
+            text = f"{state.stage_name} stage was finished"
 
             self._send_text(text)
 

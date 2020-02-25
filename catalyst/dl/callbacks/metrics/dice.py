@@ -62,8 +62,8 @@ class MulticlassDiceMetricCallback(Callback):
         self.confusion_matrix = None
 
     def on_batch_end(self, state: State):
-        outputs = state.output[self.output_key]
-        targets = state.input[self.input_key]
+        outputs = state.batch_out[self.output_key]
+        targets = state.batch_in[self.input_key]
 
         confusion_matrix = utils.calculate_confusion_matrix_from_tensors(
             outputs, targets

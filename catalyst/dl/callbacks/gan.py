@@ -53,8 +53,8 @@ class MultiKeyMetricCallback(Callback):
 
     def on_batch_end(self, state: State):
         """On batch end call"""
-        outputs = self._get(state.output, self.output_key)
-        targets = self._get(state.input, self.input_key)
+        outputs = self._get(state.batch_out, self.output_key)
+        targets = self._get(state.batch_in, self.input_key)
         metric = self.metric_fn(outputs, targets, **self.metric_params)
         state.metric_manager.add_batch_value(name=self.prefix, value=metric)
 
@@ -150,11 +150,11 @@ class GradientPenaltyCallback(CriterionCallback):
 
     def _compute_loss(self, state: State, criterion):
         criterion_kwargs = {
-            self.real_data_criterion_key: state.input[self.input_key],
-            self.fake_data_criterion_key: state.output[self.output_key],
+            self.real_data_criterion_key: state.batch_in[self.input_key],
+            self.fake_data_criterion_key: state.batch_out[self.output_key],
             self.critic_criterion_key: state.model[self.critic_model_key],
             self.condition_args_criterion_key: [
-                state.input[key] for key in self.condition_keys
+                state.batch_in[key] for key in self.condition_keys
             ]
         }
         return criterion(**criterion_kwargs)
@@ -201,7 +201,7 @@ class WeightClampingOptimizerCallback(OptimizerCallback):
     def on_batch_end(self, state: State):
         """On batch end event"""
         super().on_batch_end(state)
-        if not state.need_backward:
+        if not state.need_backward_pass:
             return
 
         optimizer = state.get_key(

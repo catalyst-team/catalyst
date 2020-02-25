@@ -169,9 +169,9 @@ class KNNMetricCallback(Callback):
         Batch end hook.
         """
         features: torch.Tensor = \
-            state.output[self.features_key].cpu().detach().numpy()
+            state.batch_out[self.features_key].cpu().detach().numpy()
         targets: torch.Tensor = \
-            state.input[self.targets_key].cpu().detach().numpy()
+            state.batch_in[self.targets_key].cpu().detach().numpy()
 
         self.features.extend(features)
         self.targets.extend(targets)

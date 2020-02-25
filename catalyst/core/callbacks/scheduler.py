@@ -131,7 +131,7 @@ class LRUpdater(Callback):
         return new_lr, new_momentum
 
     def update_optimizer(self, state: _State):
-        if not state.need_backward:
+        if not state.need_backward_pass:
             return
 
         optimizer = state.get_key(
@@ -148,11 +148,11 @@ class LRUpdater(Callback):
         self.init_lr = optimizer.defaults["lr"]
 
     def on_loader_start(self, state: _State):
-        if state.need_backward:
+        if state.need_backward_pass:
             self.update_optimizer(state=state)
 
     def on_batch_end(self, state: _State):
-        if state.need_backward:
+        if state.need_backward_pass:
             self.update_optimizer(state=state)
 
 

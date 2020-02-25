@@ -17,7 +17,6 @@ class CallbackOrder(IntFlag):
 
 
 class CallbackNode(IntFlag):
-    Unknown = -1
     All = 0
     Master = 1
     Worker = 2
@@ -125,8 +124,8 @@ class MetricCallback(Callback):
         self.metric_params = metric_params
 
     def on_batch_end(self, state: _State):
-        outputs = state.output[self.output_key]
-        targets = state.input[self.input_key]
+        outputs = state.batch_out[self.output_key]
+        targets = state.batch_in[self.input_key]
         metric = self.metric_fn(outputs, targets, **self.metric_params)
         state.metric_manager.add_batch_value(name=self.prefix, value=metric)
 
@@ -153,8 +152,8 @@ class MultiMetricCallback(Callback):
         self.metric_params = metric_params
 
     def on_batch_end(self, state: _State):
-        outputs = state.output[self.output_key]
-        targets = state.input[self.input_key]
+        outputs = state.batch_out[self.output_key]
+        targets = state.batch_in[self.input_key]
 
         metrics_ = self.metric_fn(
             outputs, targets, self.list_args, **self.metric_params

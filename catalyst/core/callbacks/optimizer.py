@@ -132,7 +132,7 @@ class OptimizerCallback(Callback):
 
     def on_batch_end(self, state: _State):
         """On batch end event"""
-        if not state.need_backward:
+        if not state.need_backward_pass:
             return
 
         loss = self._get_loss(state)
