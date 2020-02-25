@@ -22,7 +22,8 @@ class _Runner(ABC):
     """
     Abstract class for all runners inherited from
     """
-
+    experiment: _Experiment
+    state: _State
     _experiment_fn: Callable = _Experiment
     _state_fn: callable = _State
 
@@ -39,9 +40,6 @@ class _Runner(ABC):
         # main
         self._model: Model = model
         self._device: Device = device
-
-        self.experiment: _Experiment = None
-        self.state: _State = None
 
     @property
     def model(self) -> Model:

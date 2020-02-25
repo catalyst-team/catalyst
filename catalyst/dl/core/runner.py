@@ -7,16 +7,17 @@ from .state import State
 
 
 class Runner(_Runner):
+    """
+    Deep Learning Runner for different supervised, unsupervised, gan, etc runs
+    """
     experiment: Experiment
     state: State
-
     _experiment_fn: Callable = Experiment
     _state_fn: callable = State
 
     def _prepare_for_stage(self, stage: str):
         super()._prepare_for_stage(stage=stage)
 
-        # @TODO: remove this trick
         utils.set_global_seed(self.experiment.initial_seed)
         loaders = self.experiment.get_loaders(stage=stage)
         self.state.loaders = loaders

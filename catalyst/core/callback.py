@@ -44,8 +44,9 @@ class Callback:
         exception – if an Exception was raised
 
     All callbacks has ``order`` value from ``CallbackOrder``
+    and ``node`` value from ``CallbackNode``
     """
-    def __init__(self, order: int, node: int):
+    def __init__(self, order: int, node: int = CallbackNode.All):
         """
         For order see ``CallbackOrder`` class
         """
@@ -78,16 +79,6 @@ class Callback:
 
     def on_exception(self, state: _State):
         pass
-
-
-class LoggerCallback:
-    """
-    Loggers are executed on ``start`` before all callbacks,
-    and on ``end`` after all callbacks.
-    """
-    def __init__(self, order: int = None, node: int = None):
-        self.order = order or CallbackOrder.Internal
-        self.node = node or CallbackNode.Master
 
 
 class RaiseExceptionCallback(Callback):
@@ -170,6 +161,6 @@ class MultiMetricCallback(Callback):
 
 
 __all__ = [
-    "CallbackOrder", "Callable", "LoggerCallback", "MasterOnlyCallback",
+    "CallbackOrder", "Callable", 
     "MetricCallback", "MultiMetricCallback"
 ]

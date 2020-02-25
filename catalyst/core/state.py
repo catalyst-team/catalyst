@@ -1,6 +1,7 @@
 from typing import Dict, Optional  # isort:skip
 from collections import defaultdict, OrderedDict
 from pathlib import Path
+from copy import deepcopy
 
 import numpy as np
 
@@ -47,18 +48,19 @@ class _State(FrozenClass):
         # dataflow - in, out, metrics
         self.batch_in = None
         self.batch_out = None
-        # main metrics
-        single_optimizer = isinstance(optimizer, Optimizer)
-        single_criterion = isinstance(criterion, Criterion)
-        self.batch_metrics = {
-            "loss": None if single_criterion else defaultdict(lambda: None),
-            "lr": None if single_optimizer else defaultdict(lambda: None),
-            "momentum": None if single_optimizer else defaultdict(
-                lambda: None),
+        ## let's use flatten storage for metrics
+        defaulf_metrics = {
+            "loss": None,
+            "lr": None,
+            "momentum": None,
             "data_time": None,
             "model_time": None,
             "batch_time": None,
         }
+        self.batch_metrics = deepcopy(defaulf_metrics)
+        self.loader_metrics = deepcopy(defaulf_metrics)
+        self.epoch_metrics = deepcopy(defaulf_metrics)
+        self.stage_metrics = deepcopy(defaulf_metrics)
 
         # pipeline info
         self.stage_name: str = stage
