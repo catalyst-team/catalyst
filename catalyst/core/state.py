@@ -46,6 +46,7 @@ class _State(FrozenClass):
         self.lr = None if single_optimizer else defaultdict(lambda: None)
         self.momentum = None if single_optimizer else defaultdict(lambda: None)
         self.loss = None
+        self.model_grads = None
 
         # data pipeline
         self.input = None

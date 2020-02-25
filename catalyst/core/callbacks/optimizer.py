@@ -1,5 +1,6 @@
-from typing import Callable, Dict, List  # isort:skip
+from typing import Callable, Dict, List, Union  # isort:skip
 import logging
+from numbers import Number
 
 import safitty
 
@@ -10,6 +11,20 @@ from catalyst.core import _State, Callback, CallbackOrder, registry
 from catalyst.utils.tools.typing import Optimizer
 
 logger = logging.getLogger(__name__)
+
+
+def _add_model_grads_to_state(
+    grads_key: str,
+    grads_key_inner: str,
+    state: _State,
+    grads: Union[Number, torch.Tensor]
+):
+    if state.model_grads is not None:
+        assert isinstance(state.model_grads, dict)
+        assert isinstance(state.model_grads[grads_key], dict)
+        state.model_grads[grads_key][grads_key_inner] = grads
+    else:
+        state.model_grads = {grads_key: {grads_key_inner: grads}}
 
 
 class OptimizerCallback(Callback):
@@ -23,7 +38,8 @@ class OptimizerCallback(Callback):
         optimizer_key: str = None,
         loss_key: str = "loss",
         decouple_weight_decay: bool = True,
-        save_model_grads: bool = False
+        save_model_grads: bool = False,
+        model_grad_norm_prefix: str = "grad_norm"
     ):
         """
         Args:
@@ -36,20 +52,24 @@ class OptimizerCallback(Callback):
             decouple_weight_decay (bool): If True - decouple weight decay
                 regularization.
             save_model_grads (bool): If True - State.model_grads will
-                contain gradients calculated on backward propagation on current
-                batch
+                contain gradients calculated on backward propagation
+                on current batch
+            model_grad_norm_prefix (str): prefix for metrics and output key
+                for gradient norms in State.model_grads dictionary
         """
         super().__init__(CallbackOrder.Optimizer)
         grad_clip_params: dict = grad_clip_params or {}
         self.grad_clip_fn = (
             registry.GRAD_CLIPPERS.get_from_params(**grad_clip_params)
         )
+        self.norm_type = grad_clip_params.get("norm_type", 2)
 
         self.accumulation_steps: int = accumulation_steps
         self.optimizer_key: str = optimizer_key
         self.loss_key: str = loss_key
         self.decouple_weight_decay = decouple_weight_decay
         self.save_model_grads = save_model_grads
+        self.model_grad_norm_prefix = model_grad_norm_prefix
 
         self._optimizer_wd: List[float] = [0.0]
         self._accumulation_counter: int = 0
@@ -126,9 +146,43 @@ class OptimizerCallback(Callback):
             raise ValueError(error)
         return loss
 
+    def _store_grad_norm(self, state: _State):
+        model = state.model
+        total_norm = 0.
+
+        for tag, value in model.named_parameters():
+            tag = tag.replace(".", "/")
+            metrics_tag = f"{self.model_grad_norm_prefix}/{tag}"
+            param_norm = value.grad.data.norm(self.norm_type).item()
+            total_norm += param_norm ** self.norm_type
+
+            state.metric_manager.add_batch_value(
+                metrics_dict={
+                    metrics_tag: param_norm
+                }
+            )
+
+            _add_model_grads_to_state(
+                self.model_grad_norm_prefix, tag, state, param_norm
+            )
+
+        total_norm = total_norm ** (1. / self.norm_type)
+        tag = "total"
+        metrics_tag = f"{self.model_grad_norm_prefix}/{tag}"
+        state.metric_manager.add_batch_value(
+            metrics_dict={
+                metrics_tag: total_norm
+            }
+        )
+
+        _add_model_grads_to_state(
+            self.model_grad_norm_prefix, tag, state, total_norm
+        )
+
     def on_batch_start(self, state: _State):
         """On batch start event"""
         state.loss = None
+        state.model_grads = None
 
     def on_batch_end(self, state: _State):
         """On batch end event"""
@@ -171,9 +225,7 @@ class OptimizerCallback(Callback):
             )
 
             if self.save_model_grads:
-                for tag, value in model.named_parameters():
-                    tag = tag.replace(".", "/")
-                    state.model_grads[tag] = value.grad.cpu().numpy()
+                self._store_grad_norm(state)
 
             utils.maybe_recursive_call(model, "zero_grad")
 
