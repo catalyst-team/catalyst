@@ -1,18 +1,19 @@
+from typing import Callable, List  # isort:skip
 from enum import IntFlag
-from typing import Callable, List
+from functools import partial
 
 from catalyst import utils
 from .state import _State
 
 
 class CallbackOrder(IntFlag):
-    Unknown = -100
     Internal = 0
     Criterion = 20
     Optimizer = 40
     Scheduler = 60
     Metric = 80
-    External = 100
+    Logging = 100
+    External = 120
     Other = 200
 
 
@@ -105,20 +106,19 @@ class MetricCallback(Callback):
         metric_fn: Callable,
         input_key: str = "targets",
         output_key: str = "logits",
-        **metric_params
+        **metric_params,
     ):
         super().__init__(CallbackOrder.Metric)
         self.prefix = prefix
-        self.metric_fn = metric_fn
+        self.metric_fn = partial(metric_fn, **metric_params)
         self.input_key = input_key
         self.output_key = output_key
-        self.metric_params = metric_params
 
     def on_batch_end(self, state: _State):
         outputs = state.batch_out[self.output_key]
         targets = state.batch_in[self.input_key]
-        metric = self.metric_fn(outputs, targets, **self.metric_params)
-        state.metric_manager.add_batch_value(name=self.prefix, value=metric)
+        metric = self.metric_fn(outputs, targets)
+        state.batch_metrics[self.prefix] = metric
 
 
 class MultiMetricCallback(Callback):
@@ -132,35 +132,31 @@ class MultiMetricCallback(Callback):
         list_args: List,
         input_key: str = "targets",
         output_key: str = "logits",
-        **metric_params
+        **metric_params,
     ):
         super().__init__(CallbackOrder.Metric)
         self.prefix = prefix
-        self.metric_fn = metric_fn
+        self.metric_fn = partial(metric_fn, **metric_params)
         self.list_args = list_args
         self.input_key = input_key
         self.output_key = output_key
-        self.metric_params = metric_params
 
     def on_batch_end(self, state: _State):
         outputs = state.batch_out[self.output_key]
         targets = state.batch_in[self.input_key]
 
-        metrics_ = self.metric_fn(
-            outputs, targets, self.list_args, **self.metric_params
-        )
+        metrics_ = self.metric_fn(outputs, targets, self.list_args)
 
-        batch_metrics = {}
         for arg, metric in zip(self.list_args, metrics_):
             if isinstance(arg, int):
                 key = f"{self.prefix}{arg:02}"
             else:
                 key = f"{self.prefix}_{arg}"
-            batch_metrics[key] = metric
-        state.metric_manager.add_batch_value(metrics_dict=batch_metrics)
+            state.batch_metrics[key] = metric
 
 
 __all__ = [
-    "CallbackOrder", "Callable", 
+    "CallbackOrder", "CallbackNode",
+    "Callable",
     "MetricCallback", "MultiMetricCallback"
 ]

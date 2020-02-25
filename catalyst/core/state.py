@@ -1,7 +1,6 @@
 from typing import Dict, Optional  # isort:skip
 from collections import defaultdict, OrderedDict
 from pathlib import Path
-from copy import deepcopy
 
 import numpy as np
 
@@ -49,18 +48,10 @@ class _State(FrozenClass):
         self.batch_in = None
         self.batch_out = None
         ## let's use flatten storage for metrics
-        defaulf_metrics = {
-            "loss": None,
-            "lr": None,
-            "momentum": None,
-            "data_time": None,
-            "model_time": None,
-            "batch_time": None,
-        }
-        self.batch_metrics = deepcopy(defaulf_metrics)
-        self.loader_metrics = deepcopy(defaulf_metrics)
-        self.epoch_metrics = deepcopy(defaulf_metrics)
-        self.stage_metrics = deepcopy(defaulf_metrics)
+        self.batch_metrics = defaultdict(None)
+        self.loader_metrics = defaultdict(None)
+        self.epoch_metrics = defaultdict(None)
+        self.stage_metrics = defaultdict(None)
 
         # pipeline info
         self.stage_name: str = stage

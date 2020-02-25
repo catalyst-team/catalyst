@@ -11,8 +11,7 @@ from .state import _State
 from .callback import (
     Callback,
     CallbackOrder,
-    LoggerCallback,
-    MasterOnlyCallback,
+    CallbackNode,
     MetricCallback,
     MultiMetricCallback,
     RaiseExceptionCallback,
