@@ -191,7 +191,6 @@ class _Runner(ABC):
                 if not getattr(v.__class__, fn_name).__code__ is getattr(Callback, fn_name).__code__
             ])
             stage_callbacks[event] = filtered_callbacks
-        print(stage_callbacks)
         return stage_callbacks
 
     def _prepare_for_stage(self, stage: str):
