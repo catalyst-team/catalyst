@@ -22,11 +22,7 @@ class Experiment(ConfigExperiment):
         return result
 
     def get_datasets(
-        self,
-        stage: str,
-        batch_size: int,
-        num_workers: int,
-        **kwargs
+        self, stage: str, batch_size: int, num_workers: int, **kwargs
     ):
         datasets = OrderedDict()
 

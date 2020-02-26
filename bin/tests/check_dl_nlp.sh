@@ -19,12 +19,13 @@ if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     exit 1
 fi
 
-echo "check results"
+cat $LOGFILE
+echo "check distilbert_text_classification"
 python -c """
 from safitty import Safict
 metrics = Safict.load('$LOGFILE')
-assert metrics.get('train_val.3', 'loss') < metrics.get('train_val.1', 'loss')
-assert metrics.get('train_val.3', 'loss') < 2.0
+assert metrics.get('train_val.2', 'loss') <= metrics.get('train_val.1', 'loss')
+assert metrics.get('train_val.2', 'loss') < 2.0
 """
 rm -rf ./examples/logs/_tests_nlp_classification
 

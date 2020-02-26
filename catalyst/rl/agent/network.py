@@ -125,11 +125,12 @@ class StateNet(nn.Module):
 
             if aggregation_type == "concat":
                 aggregation_net = TemporalConcatPooling(
-                    observation_net_out_features, **aggregation_net_params)
+                    observation_net_out_features, **aggregation_net_params
+                )
             elif aggregation_type == "lama":
                 aggregation_net = LamaPooling(
-                    observation_net_out_features,
-                    **aggregation_net_params)
+                    observation_net_out_features, **aggregation_net_params
+                )
             else:
                 raise NotImplementedError()
 
@@ -144,7 +145,8 @@ class StateNet(nn.Module):
         net = cls(
             main_net=main_net,
             aggregation_net=aggregation_net,
-            observation_net=observation_net)
+            observation_net=observation_net
+        )
         return net
 
 
@@ -244,11 +246,12 @@ class StateActionNet(nn.Module):
 
             if aggregation_type == "concat":
                 aggregation_net = TemporalConcatPooling(
-                    observation_net_out_features, **aggregation_net_params)
+                    observation_net_out_features, **aggregation_net_params
+                )
             elif aggregation_type == "lama":
                 aggregation_net = LamaPooling(
-                    observation_net_out_features,
-                    **aggregation_net_params)
+                    observation_net_out_features, **aggregation_net_params
+                )
             else:
                 raise NotImplementedError()
 

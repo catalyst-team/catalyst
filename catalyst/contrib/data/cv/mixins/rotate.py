@@ -57,8 +57,7 @@ class RotateMixin:
 
             if self.one_hot_classes is not None:
                 one_hot = utils.get_one_hot(
-                    class_rotation_factor,
-                    self.one_hot_classes
+                    class_rotation_factor, self.one_hot_classes
                 )
                 key = f"class_rotation_{self.targets_key}_one_hot"
                 dictionary[key] = one_hot

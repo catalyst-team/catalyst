@@ -1,8 +1,7 @@
 import torch
 
-from catalyst.utils.meters.ppv_tpr_f1_meter import (
-    f1score, precision, PrecisionRecallF1ScoreMeter, recall
-)
+from catalyst.utils import meters
+from catalyst.utils.meters.ppv_tpr_f1_meter import f1score, precision, recall
 
 
 def precision_recall_f1(tp, fp, fn):
@@ -73,8 +72,8 @@ def create_dummy_tensors_seg(batch_size=16, channels=1):
     Binary: 1 actual, 1 predicted (tp: 1, fp: 0, fn: 0)
     """
     base_shape = (channels, 15, 15)
-    label = torch.ones((batch_size,)+base_shape)
-    pred = torch.ones((batch_size,)+base_shape)
+    label = torch.ones((batch_size, ) + base_shape)
+    pred = torch.ones((batch_size, ) + base_shape)
     return (label, pred)
 
 
@@ -100,7 +99,7 @@ def test_meter():
         * .add()
         * .value()
     """
-    meter = PrecisionRecallF1ScoreMeter()
+    meter = meters.PrecisionRecallF1ScoreMeter()
     # tests the .reset() method, which happens to be called in initialization
     for key in ["tp", "fp", "fn"]:
         assert meter.tp_fp_fn_counts[key] == 0, \
@@ -123,4 +122,6 @@ def test_meter():
     batch_size = 16
     binary_y, binary_pred = create_dummy_tensors_seg(batch_size)
     meter.add(binary_pred, binary_y)
-    runs_tests_on_meter_counts_and_value(meter, num_tp_check=batch_size*15*15)
+    runs_tests_on_meter_counts_and_value(
+        meter, num_tp_check=batch_size * 15 * 15
+    )

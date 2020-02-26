@@ -13,7 +13,6 @@ class Actor(ActorSpec):
     """
     Actor which learns agents policy.
     """
-
     def __init__(
         self,
         state_net: StateNet,

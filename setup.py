@@ -13,7 +13,8 @@ from setuptools import Command, find_packages, setup
 
 # Package meta-data.
 NAME = "catalyst"
-DESCRIPTION = "Catalyst. High-level utils for PyTorch DL & RL research."
+DESCRIPTION = \
+    "Catalyst. PyTorch framework for DL & RL research and development."
 URL = "https://github.com/catalyst-team/catalyst"
 EMAIL = "scitator@gmail.com"
 AUTHOR = "Sergey Kolesnikov"
@@ -66,7 +67,9 @@ class UploadCommand(Command):
 
         self.status("Building Source and Wheel (universal) distribution…")
         os.system(
-            "{0} setup.py sdist bdist_wheel --universal".format(sys.executable)
+            "{0} setup.py sdist bdist_wheel --universal".format(
+                sys.executable
+            )
         )
 
         self.status("Uploading the package to PyPI via Twine…")
@@ -91,13 +94,11 @@ extras = {
 }
 extras["contrib"] += extras["ecosystem"] + extras["cv"] + extras["nlp"]
 
-
 # Meta dependency groups.
 all_deps = []
 for group_name in extras:
     all_deps += extras[group_name]
 extras["all"] = all_deps
-
 
 setup(
     name=NAME,
@@ -111,13 +112,22 @@ setup(
         "Deep Learning",
         "Reinforcement Learning",
         "Computer Vision",
+        "Natural Language Processing",
+        "Recommendation Systems",
+        "Information Retrieval",
         "PyTorch",
     ],
     author=AUTHOR,
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    packages=find_packages(exclude=("tests",)),
+    download_url=URL,
+    project_urls={
+        "Bug Tracker": "https://github.com/catalyst-team/catalyst/issues",
+        "Documentation": "https://catalyst-team.github.io/catalyst",
+        "Source Code": "https://github.com/catalyst-team/catalyst",
+    },
+    packages=find_packages(exclude=("tests", )),
     entry_points={
         "console_scripts": [
             "catalyst-dl=catalyst.dl.__main__:main",
@@ -137,14 +147,23 @@ setup(
     include_package_data=True,
     license="Apache License 2.0",
     classifiers=[
+        "Environment :: Console",
+        "Natural Language :: English",
+        "Development Status :: 4 - Beta",
+        "Operating System :: OS Independent",
         "License :: OSI Approved :: Apache Software License",
+        # Audience
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
+        # Topics
+        "Topic :: Scientific/Engineering :: Artificial Intelligence"
+        "Topic :: Scientific/Engineering :: Image Recognition",
+        "Topic :: Scientific/Engineering :: Information Analysis",
+        # Programming
         "Programming Language :: Python",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: Implementation :: CPython",
-        "Topic :: Scientific/Engineering :: Artificial Intelligence"
     ],
     # $ setup.py publish support.
     cmdclass={

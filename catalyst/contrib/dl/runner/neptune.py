@@ -44,7 +44,6 @@ class NeptuneRunner(Runner):
                     }
                 })
     """
-
     def _init(
         self,
         log_on_batch_end: bool = True,
@@ -63,7 +62,8 @@ class NeptuneRunner(Runner):
         neptune.init(**monitoring_params["init"])
 
         self._neptune_experiment = neptune.create_experiment(
-            **monitoring_params["create_experiment"])
+            **monitoring_params["create_experiment"]
+        )
 
         log_on_batch_end: bool = \
             monitoring_params.pop("log_on_batch_end", True)
@@ -79,16 +79,13 @@ class NeptuneRunner(Runner):
         )
 
         self._neptune_experiment.set_property(
-            "log_on_batch_end",
-            self.log_on_batch_end
+            "log_on_batch_end", self.log_on_batch_end
         )
         self._neptune_experiment.set_property(
-            "log_on_epoch_end",
-            self.log_on_epoch_end
+            "log_on_epoch_end", self.log_on_epoch_end
         )
         self._neptune_experiment.set_property(
-            "checkpoints_glob",
-            self.checkpoints_glob
+            "checkpoints_glob", self.checkpoints_glob
         )
 
         if isinstance(experiment, ConfigExperiment):
@@ -112,8 +109,7 @@ class NeptuneRunner(Runner):
 
             for name, value in metrics.items():
                 self._neptune_experiment.log_metric(
-                    f"batch_{mode}_{name}",
-                    value
+                    f"batch_{mode}_{name}", value
                 )
 
     def _run_epoch(self, stage: str, epoch: int):
@@ -124,15 +120,10 @@ class NeptuneRunner(Runner):
 
             for name, value in metrics.items():
                 self._neptune_experiment.log_metric(
-                    f"epoch_{mode}_{name}",
-                    value
+                    f"epoch_{mode}_{name}", value
                 )
 
-    def run_experiment(
-        self,
-        experiment: Experiment,
-        check: bool = False
-    ):
+    def run_experiment(self, experiment: Experiment, check: bool = False):
         self._pre_experiment_hook(experiment=experiment)
         super().run_experiment(experiment=experiment, check=check)
         self._post_experiment_hook(experiment=experiment)

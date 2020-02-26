@@ -22,12 +22,12 @@ class RMSNorm(nn.Module):
         self.epsilon = epsilon
         self.is_bias = is_bias
         self.scale = nn.Parameter(torch.ones(self.dimension))
-        if(self.is_bias):
+        if (self.is_bias):
             self.bias = nn.Parameter(torch.zeros(self.dimension))
 
     def forward(self, x: torch.Tensor):
         x_std = torch.sqrt(torch.mean(x**2, -1, keepdim=True))
         x_norm = x / (x_std + self.epsilon)
-        if(self.is_bias):
+        if (self.is_bias):
             return self.scale * x_norm + self.bias
         return self.scale * x_norm

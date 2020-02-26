@@ -8,13 +8,14 @@ from catalyst.dl.callbacks import (
 )
 from catalyst.dl.experiment.supervised import SupervisedExperiment
 
-DEFAULT_CALLBACKS = OrderedDict([
-    ("_criterion", CriterionCallback),
-    ("_optimizer", OptimizerCallback),
-    ("_saver", CheckpointCallback),
-    ("console", ConsoleLogger),
-    ("tensorboard", TensorboardLogger),
-    ("exception", RaiseExceptionCallback)])
+DEFAULT_CALLBACKS = OrderedDict(
+    [
+        ("_criterion", CriterionCallback), ("_optimizer", OptimizerCallback),
+        ("_saver", CheckpointCallback), ("console", ConsoleLogger),
+        ("tensorboard", TensorboardLogger),
+        ("exception", RaiseExceptionCallback)
+    ]
+)
 
 
 def test_defaults():

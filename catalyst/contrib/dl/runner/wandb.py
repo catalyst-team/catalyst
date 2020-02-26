@@ -82,21 +82,23 @@ class WandbRunner(Runner):
 
         exclude = ["wandb", "checkpoints"]
         logdir_files = list(logdir_src.glob("*"))
-        logdir_files = list(filter(
-            lambda x: all(z not in str(x) for z in exclude),
-            logdir_files))
+        logdir_files = list(
+            filter(
+                lambda x: all(z not in str(x) for z in exclude), logdir_files
+            )
+        )
 
         for subdir in logdir_files:
             if subdir.is_dir():
                 os.makedirs(f"{logdir_dst}/{subdir.name}", exist_ok=True)
                 shutil.rmtree(f"{logdir_dst}/{subdir.name}")
                 shutil.copytree(
-                    f"{str(subdir.absolute())}",
-                    f"{logdir_dst}/{subdir.name}")
+                    f"{str(subdir.absolute())}", f"{logdir_dst}/{subdir.name}"
+                )
             else:
                 shutil.copy2(
-                    f"{str(subdir.absolute())}",
-                    f"{logdir_dst}/{subdir.name}")
+                    f"{str(subdir.absolute())}", f"{logdir_dst}/{subdir.name}"
+                )
 
         checkpoints_src = logdir_src.joinpath("checkpoints")
         checkpoints_dst = Path(wandb.run.dir).joinpath("checkpoints")
@@ -109,7 +111,8 @@ class WandbRunner(Runner):
         for checkpoint_path in checkpoint_paths:
             shutil.copy2(
                 f"{str(checkpoint_path.absolute())}",
-                f"{checkpoints_dst}/{checkpoint_path.name}")
+                f"{checkpoints_dst}/{checkpoint_path.name}"
+            )
 
     def _run_batch(self, batch):
         super()._run_batch(batch=batch)
@@ -117,9 +120,7 @@ class WandbRunner(Runner):
             mode = self.state.loader_name
             metrics = self.state.metric_manager.batch_values
             self._log_metrics(
-                metrics=metrics,
-                mode=mode,
-                suffix=self.batch_log_suffix
+                metrics=metrics, mode=mode, suffix=self.batch_log_suffix
             )
 
     def _run_epoch(self, stage: str, epoch: int):
@@ -128,16 +129,10 @@ class WandbRunner(Runner):
             for mode, metrics in \
                     self.state.metric_manager.epoch_values.items():
                 self._log_metrics(
-                    metrics=metrics,
-                    mode=mode,
-                    suffix=self.epoch_log_suffix
+                    metrics=metrics, mode=mode, suffix=self.epoch_log_suffix
                 )
 
-    def run_experiment(
-        self,
-        experiment: Experiment,
-        check: bool = False
-    ):
+    def run_experiment(self, experiment: Experiment, check: bool = False):
         self._pre_experiment_hook(experiment=experiment)
         super().run_experiment(experiment=experiment, check=check)
         self._post_experiment_hook(experiment=experiment)

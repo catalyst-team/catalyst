@@ -10,7 +10,6 @@ class LRFinder(LRUpdater):
 
     https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html
     """
-
     def __init__(
         self, final_lr, scale="log", num_steps=None, optimizer_key=None
     ):

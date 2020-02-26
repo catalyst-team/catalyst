@@ -67,26 +67,38 @@ class CouplingLayer(nn.Module):
 
         self.scale_prenet = SequentialNet(
             hiddens=[action_size * 2 + self.copy_size, action_size],
-            layer_fn={"module": layer_fn, "bias": bias},
+            layer_fn={
+                "module": layer_fn,
+                "bias": bias
+            },
             activation_fn=activation_fn,
             norm_fn=None,
         )
         self.scale_net = SequentialNet(
             hiddens=[action_size, action_size - self.copy_size],
-            layer_fn={"module": layer_fn, "bias": True},
+            layer_fn={
+                "module": layer_fn,
+                "bias": True
+            },
             activation_fn=None,
             norm_fn=None,
         )
 
         self.translation_prenet = SequentialNet(
             hiddens=[action_size * 2 + self.copy_size, action_size],
-            layer_fn={"module": layer_fn, "bias": bias},
+            layer_fn={
+                "module": layer_fn,
+                "bias": bias
+            },
             activation_fn=activation_fn,
             norm_fn=None,
         )
         self.translation_net = SequentialNet(
             hiddens=[action_size, action_size - self.copy_size],
-            layer_fn={"module": layer_fn, "bias": True},
+            layer_fn={
+                "module": layer_fn,
+                "bias": True
+            },
             activation_fn=None,
             norm_fn=None,
         )

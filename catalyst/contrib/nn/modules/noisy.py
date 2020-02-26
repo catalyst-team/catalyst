@@ -43,7 +43,6 @@ class NoisyFactorizedLinear(nn.Linear):
 
     N.B. torch.Linear already initializes weight and bias to
     """
-
     def __init__(self, in_features, out_features, sigma_zero=0.4, bias=True):
         super().__init__(in_features, out_features, bias=bias)
         sigma_init = sigma_zero / math.sqrt(in_features)

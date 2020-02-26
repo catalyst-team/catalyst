@@ -87,7 +87,6 @@ class SchedulerCallback(Callback):
 
 class LRUpdater(Callback):
     """Basic class that all Lr updaters inherit from"""
-
     def __init__(self, optimizer_key: str = None):
         """
         Args:

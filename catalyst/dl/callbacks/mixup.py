@@ -19,7 +19,6 @@ class MixupCallback(CriterionCallback):
 
         You may not use them together.
     """
-
     def __init__(
         self,
         input_key: str = "targets",
