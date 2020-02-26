@@ -243,14 +243,33 @@ class _Runner(ABC):
     def _prepare_for_epoch(self, stage: str, epoch: int):
         pass
 
-    def _run_event(self, event: str):
+    # @TODO: too complicated -> rewrite
+    def _run_event(self, event: str, moment: Optional[str]):
         fn_name = f"on_{event}"
-        state_pre_fn_name = f"{fn_name}_pre"
-        state_post_fn_name = f"{fn_name}_post"
-        getattr(self.state, state_pre_fn_name)()
-        for callback in self.stage_callbacks[event].values():
-            getattr(callback, fn_name)(self.state)
-        getattr(self.state, state_post_fn_name)()
+        if moment is not None:
+            fn_name = f"{fn_name}_{moment}"
+
+        # before callbacks
+        if self.state is not None:
+            getattr(self.state, f"{fn_name}_pre")()
+
+        if self.loggers is not None and moment == "start":
+            for logger in self.loggers.values():
+                getattr(logger, fn_name)(self.state)
+
+        # running callbacks
+        if self.callbacks is not None:
+            for callback in self.callbacks.values():
+                getattr(callback, fn_name)(self.state)
+
+        # after callbacks
+        if self.loggers is not None and \
+                (moment == "end" or moment is None):  # for on_exception case
+            for logger in self.loggers.values():
+                getattr(logger, fn_name)(self.state)
+
+        if self.state is not None:
+            getattr(self.state, f"{fn_name}_post")()
 
     def _batch2device(self, batch: Mapping[str, Any], device: Device):
         output = utils.any2device(batch, device)
@@ -284,14 +303,14 @@ class _Runner(ABC):
         self.state.input = batch
         self.state.timer.stop("_timers/data_time")
 
-        self._run_event("batch_start")
+        self._run_event("batch", moment="start")
 
         self.state.timer.start("_timers/model_time")
         self._run_batch_train_step(batch=batch)
         self.state.timer.stop("_timers/model_time")
 
         self.state.timer.stop("_timers/batch_time")
-        self._run_event("batch_end")
+        self._run_event("batch", moment="end")
 
     def _run_loader(self, loader: DataLoader):
         self.state.batch_size = (
@@ -350,24 +369,24 @@ class _Runner(ABC):
             utils.set_global_seed(
                 self.experiment.initial_seed + self.state.epoch + 1
             )
-            self._run_event("loader_start")
+            self._run_event("loader", moment="start")
             with torch.set_grad_enabled(self.state.need_backward):
                 self._run_loader(loader)
-            self._run_event("loader_end")
+            self._run_event("loader", moment="end")
 
     def _run_stage(self, stage: str):
         self._prepare_for_stage(stage)
 
         # checkpoint loading
-        self._run_event("stage_start")
+        self._run_event("stage", moment="start")
 
         while self.state.stage_epoch < self.state.num_epochs:
-            self._run_event("epoch_start")
+            self._run_event("epoch", moment="start")
             utils.set_global_seed(
                 self.experiment.initial_seed + self.state.epoch + 1
             )
             self._run_epoch(stage=stage, epoch=self.state.stage_epoch)
-            self._run_event("epoch_end")
+            self._run_event("epoch", moment="end")
 
             if self._check_run and self.state.stage_epoch >= 1:
                 break
@@ -377,7 +396,7 @@ class _Runner(ABC):
 
             self.state.epoch += 1
             self.state.stage_epoch += 1
-        self._run_event("stage_end")
+        self._run_event("stage", moment="end")
 
     def run_experiment(self, experiment: _Experiment, check: bool = False):
         """
