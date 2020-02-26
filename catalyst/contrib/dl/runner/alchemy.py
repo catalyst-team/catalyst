@@ -2,6 +2,7 @@ from typing import Dict  # isort:skip
 
 from alchemy import Logger
 
+from catalyst.dl import utils
 from catalyst.dl.core import Experiment, Runner
 from catalyst.dl.runner import SupervisedRunner
 
@@ -43,6 +44,7 @@ class AlchemyRunner(Runner):
     ):
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
+        self.is_distributed_worker = utils.get_rank() > 0
 
         if (self.log_on_batch_end and not self.log_on_epoch_end) \
                 or (not self.log_on_batch_end and self.log_on_epoch_end):
@@ -76,7 +78,7 @@ class AlchemyRunner(Runner):
 
     def _run_batch(self, batch):
         super()._run_batch(batch=batch)
-        if self.log_on_batch_end:
+        if self.log_on_batch_end and not self.is_distributed_worker:
             mode = self.state.loader_name
             metrics = self.state.metric_manager.batch_values
             self._log_metrics(
@@ -85,7 +87,7 @@ class AlchemyRunner(Runner):
 
     def _run_epoch(self, stage: str, epoch: int):
         super()._run_epoch(stage=stage, epoch=epoch)
-        if self.log_on_epoch_end:
+        if self.log_on_epoch_end and not self.is_distributed_worker:
             for mode, metrics in \
                     self.state.metric_manager.epoch_values.items():
                 self._log_metrics(

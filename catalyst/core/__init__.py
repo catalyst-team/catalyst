@@ -12,8 +12,10 @@ from .callback import (
     Callback,
     CallbackOrder,
     LoggerCallback,
+    MasterOnlyCallback,
     MetricCallback,
     MultiMetricCallback,
+    RaiseExceptionCallback,
 )
 from .callbacks import *
 from .experiment import _Experiment

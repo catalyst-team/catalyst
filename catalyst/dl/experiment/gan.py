@@ -1,9 +1,8 @@
 from collections import OrderedDict
 from typing import Dict, List
 
-from catalyst.dl import Callback
-from catalyst.dl.callbacks import (
-    CheckpointCallback, ConsoleLogger, PhaseBatchWrapperCallback,
+from catalyst.dl import (
+    Callback, CheckpointCallback, ConsoleLogger, PhaseBatchWrapperCallback,
     PhaseManagerCallback, RaiseExceptionCallback, VerboseLogger
 )
 from .base import BaseExperiment
