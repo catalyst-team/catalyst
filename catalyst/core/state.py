@@ -1,4 +1,4 @@
-from typing import Dict, Optional  # isort:skip
+from typing import Dict, Optional, Union  # isort:skip
 from collections import defaultdict, OrderedDict
 from pathlib import Path
 
@@ -11,15 +11,21 @@ from catalyst.utils.tools.typing import (
 )
 
 
+STATE_MODEL = Union[Model, OrderedDict[str, Model]]
+STATE_CRITERION = Union[Criterion, OrderedDict[str, Criterion]]
+STATE_OPTIMIZER = Union[Optimizer, OrderedDict[str, Optimizer]]
+STATE_SCHEDULER = Union[Scheduler, OrderedDict[str, Scheduler]]
+
+
 class _State(FrozenClass):
     def __init__(
         self,
         *,
         device: Device = None,
-        model: Model = None,
-        criterion: Criterion = None,
-        optimizer: Optimizer = None,
-        scheduler: Scheduler = None,
+        model: STATE_MODEL = None,
+        criterion: STATE_CRITERION = None,
+        optimizer: STATE_OPTIMIZER = None,
+        scheduler: STATE_SCHEDULER = None,
         callbacks: OrderedDict[str, Callback]= None,
         logdir: str = None,
         stage: str = "infer",
@@ -35,10 +41,10 @@ class _State(FrozenClass):
         ## data
         self.loaders: OrderedDict[str, DataLoader] = None
         ## components
-        self.model: Model = model
-        self.criterion: Criterion = criterion
-        self.optimizer: Optimizer = optimizer
-        self.scheduler: Scheduler = scheduler
+        self.model: STATE_MODEL = model
+        self.criterion: STATE_CRITERION = criterion
+        self.optimizer: STATE_OPTIMIZER = optimizer
+        self.scheduler: STATE_SCHEDULER = scheduler
         ## extra components - PyTorch device
         self.device: Device = device
         ## extra components - callbacks
@@ -47,10 +53,22 @@ class _State(FrozenClass):
         # dataflow - in, out, metrics
         self.batch_in = None
         self.batch_out = None
-        ## let's use flatten storage for metrics
+        ## let's use flatten storage for batch metrics
+        ## batch_metrics = {'loss': ..., 'accuracy': ..., 'iou': ...}
         self.batch_metrics = defaultdict(None)
+        ## just aggregated (aka mean over all batches)
+        ## batch statistics for loader
+        ## and global loader metrics, like AUC
+        ## loader_metrics = {'loss': ..., 'accuracy': ..., `auc`: ...}
         self.loader_metrics = defaultdict(None)
+        ## summarized metrics for different loaders
+        ## and global epoch metrics, like lr, momentum
+        ## epoch_metrics = {
+        ## 'train': {'loss': ...}, 'valid': {'loss': ...},
+        ## 'lr': ..., 'momentum': ...,
+        ## }
         self.epoch_metrics = defaultdict(None)
+        ## #TODO: how to use stage metrics correctly? what for? best selection?
         self.stage_metrics = defaultdict(None)
 
         # pipeline info
@@ -63,10 +81,12 @@ class _State(FrozenClass):
         self.stage_epoch: int = 0
         self.num_epochs: int = num_epochs or np.iinfo(np.int32).max
 
-        # metrics & logging
+        # metrics & validation
         self.main_metric: str = main_metric
         self.minimize_metric: bool = minimize_metric
         self.valid_loader: str = valid_loader
+
+        # logging
         self.logdir: Path = Path(logdir) if logdir is not None else None
         # extra checkpoint data for saving in checkpoint files
         self.checkpoint_data: Dict = checkpoint_data or {}
@@ -91,3 +111,15 @@ class _State(FrozenClass):
     @property
     def epoch_log(self):
         return self.epoch + 1
+
+    def get_attr(self, key, inner_key=None):
+        if inner_key is None:
+            return getattr(self, key)
+        else:
+            return getattr(self, key)[inner_key]
+
+    def set_attr(self, value, key, inner_key=None):
+        if inner_key is None:
+            setattr(self, key, value)
+        else:
+            getattr(self, key)[inner_key] = value

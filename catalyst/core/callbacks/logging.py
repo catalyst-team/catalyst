@@ -7,7 +7,9 @@ import sys
 from tqdm import tqdm
 
 from catalyst import utils
+from catalyst.utils import meters
 from catalyst.core import _State, Callback, CallbackOrder, CallbackNode
+from catalyst.utils.tools.metric_manager import TimerManager
 from catalyst.utils.tools.tensorboard import SummaryWriter
 from . import formatters
 
@@ -21,6 +23,7 @@ class MetricManagerCallback(Callback):
             order=CallbackOrder.Logging - 1,
             node=CallbackNode.All
         )
+        self.meters: Dict[str, meters.AverageValueMeter] = None
 
     @staticmethod
     def _to_single_value(value: Any) -> float:
@@ -39,11 +42,56 @@ class MetricManagerCallback(Callback):
             output[key] = value
         return output
 
+    def on_stage_end(self, state: _State):
+        state.stage_metrics[state.stage_name] = state.epoch_metrics.copy()
+
+    def on_epoch_start(self, state: _State):
+        state.epoch_metrics = defaultdict(None)
+
+    def on_loader_start(self, state: _State):
+        self.meters = defaultdict(meters.AverageValueMeter)
+        state.loader_metrics = defaultdict(None)
+
+    def on_loader_end(self, state: _State):
+        for key, value in self.meters.items():
+            state.loader_metrics[key] = value.mean
+        state.epoch_metrics[state.loader_name] = state.loader_metrics.copy()
+
     def on_batch_start(self, state: _State):
         state.batch_metrics = defaultdict(None)
 
     def on_batch_end(self, state: _State):
         state.batch_metrics = self._process_metrics(state.batch_metrics)
+        for key, value in state.batch_metrics.items():
+            self.meters[key] = value
+
+
+class TimerCallback(Callback):
+    """
+    Logs pipeline execution time
+    """
+    def __init__(self):
+        super().__init__(order=CallbackOrder.Logging, node=CallbackNode.All)
+        self.timer = TimerManager()
+
+    def on_loader_start(self, state: _State):
+        self.timer.reset()
+        self.timer.start("_timers/batch_time")
+        self.timer.start("_timers/data_time")
+
+    def on_loader_end(self, state: _State):
+        self.timer.reset()
+
+    def on_batch_start(self, state: _State):
+        self.timer.stop("_timers/data_time")
+        self.timer.start("_timers/model_time")
+
+    def on_batch_end(self, state: _State):
+        self.timer.stop("_timers/model_time")
+        self.timer.stop("_timers/batch_time")
+        self.timer.reset()
+        self.timer.start("_timers/batch_time")
+        self.timer.start("_timers/data_time")
 
 
 class VerboseLogger(Callback):
@@ -131,7 +179,7 @@ class VerboseLogger(Callback):
 class ConsoleLogger(Callback):
     """
     Logger callback,
-    translates ``state.metric_manager`` to console and text file
+    translates ``state.*_metrics`` to console and text file
     """
     def __init__(self):
         """Init ``ConsoleLogger``"""

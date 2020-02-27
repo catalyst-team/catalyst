@@ -204,7 +204,7 @@ class WeightClampingOptimizerCallback(OptimizerCallback):
         if not state.need_backward_pass:
             return
 
-        optimizer = state.get_key(
+        optimizer = state.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
 

@@ -80,18 +80,18 @@ class OptimizerCallback(Callback):
 
     def on_stage_start(self, state: _State):
         """On stage start event"""
-        optimizer = state.get_key(
+        optimizer = state.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
         assert optimizer is not None
         lr = optimizer.defaults["lr"]
         momentum = utils.get_optimizer_momentum(optimizer)
-        state.set_key(lr, "lr", inner_key=self.optimizer_key)
-        state.set_key(momentum, "momentum", inner_key=self.optimizer_key)
+        state.set_attr(lr, "lr", inner_key=self.optimizer_key)
+        state.set_attr(momentum, "momentum", inner_key=self.optimizer_key)
 
     def on_epoch_start(self, state: _State):
         """On epoch start event"""
-        optimizer = state.get_key(
+        optimizer = state.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
         if self.decouple_weight_decay:
@@ -107,7 +107,7 @@ class OptimizerCallback(Callback):
             self._optimizer_wd = [0.0] * len(optimizer.param_groups)
 
     def _get_loss(self, state: _State) -> torch.Tensor:
-        loss = state.get_key(key="loss", inner_key=self.loss_key)
+        loss = state.get_attr(key="loss", inner_key=self.loss_key)
 
         if isinstance(loss, list):
             raise ValueError(
@@ -139,7 +139,7 @@ class OptimizerCallback(Callback):
 
         self._accumulation_counter += 1
         model = state.model
-        optimizer = state.get_key(
+        optimizer = state.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
 
@@ -182,7 +182,7 @@ class OptimizerCallback(Callback):
     def on_epoch_end(self, state: _State):
         """On epoch end event"""
         if self.decouple_weight_decay:
-            optimizer = state.get_key(
+            optimizer = state.get_attr(
                 key="optimizer", inner_key=self.optimizer_key
             )
             for i, wd in enumerate(self._optimizer_wd):

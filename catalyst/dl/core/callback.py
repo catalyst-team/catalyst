@@ -68,7 +68,7 @@ class MeterMetricsCallback(Callback):
 
     def on_loader_end(self, state: State):
         metrics_tracker = defaultdict(list)
-        loader_values = state.metric_manager.epoch_values[state.loader_name]
+        loader_values = state.loader_metrics
         # Computing metrics for each class
         for i, meter in enumerate(self.meters):
             metrics = meter.value()

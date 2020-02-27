@@ -80,7 +80,7 @@ class AlchemyRunner(Runner):
         super()._run_batch(batch=batch)
         if self.log_on_batch_end and not self.is_distributed_worker:
             mode = self.state.loader_name
-            metrics = self.state.metric_manager.batch_values
+            metrics = self.state.batch_metrics
             self._log_metrics(
                 metrics=metrics, mode=mode, suffix=self.batch_log_suffix
             )
@@ -89,7 +89,7 @@ class AlchemyRunner(Runner):
         super()._run_epoch(stage=stage, epoch=epoch)
         if self.log_on_epoch_end and not self.is_distributed_worker:
             for mode, metrics in \
-                    self.state.metric_manager.epoch_values.items():
+                    self.state.epoch_metrics.epoch_values.items():
                 self._log_metrics(
                     metrics=metrics, mode=mode, suffix=self.epoch_log_suffix
                 )

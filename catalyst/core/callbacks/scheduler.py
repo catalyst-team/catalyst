@@ -12,29 +12,48 @@ class SchedulerCallback(Callback):
         self,
         scheduler_key: str = None,
         mode: str = None,
-        reduce_metric: str = "loss"
+        reduced_metric: str = "loss"
     ):
         super().__init__(CallbackOrder.Scheduler)
         self.scheduler_key = scheduler_key
         self.mode = mode
-        self.reduce_metric = reduce_metric
+        self.reduced_metric = reduced_metric
+
+    @staticmethod
+    def _scheduler_step(
+        scheduler,
+        reduced_metric=None,
+    ):
+        if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+            scheduler.step(reduced_metric)
+            lr = scheduler.optimizer.param_groups[0]["lr"]
+        else:
+            scheduler.step()
+            lr = scheduler.get_lr()[0]
+
+        momentum = utils.get_optimizer_momentum(scheduler.optimizer)
+
+        return lr, momentum
 
     def step(self, state: _State):
-        scheduler = state.get_key(
+        scheduler = state.get_attr(
             key="scheduler", inner_key=self.scheduler_key
         )
-
-        valid_metric = \
-            safitty.get(state.metric_manager.valid_values, self.reduce_metric)
+        metrics = state.epoch_metrics
+        reduced_metric = metrics[state.valid_loader][self.reduced_metric]
         lr, momentum = self._scheduler_step(
-            scheduler=scheduler, valid_metric=valid_metric
+            scheduler=scheduler, reduced_metric=reduced_metric
         )
 
-        state.set_key(lr, key="lr", inner_key=self.scheduler_key)
-        state.set_key(momentum, key="momentum", inner_key=self.scheduler_key)
+        if self.scheduler_key is not None:
+            metrics[f"lr_{self.scheduler_key}"] = lr
+            metrics[f"momentum_{self.scheduler_key}"] = momentum
+        else:
+            metrics["lr"] = lr
+            metrics["momentum"] = momentum
 
     def on_stage_start(self, state: _State):
-        scheduler = state.get_key(
+        scheduler = state.get_attr(
             key="scheduler", inner_key=self.scheduler_key
         )
         assert scheduler is not None
@@ -50,7 +69,7 @@ class SchedulerCallback(Callback):
             scheduler.reset()
 
     def on_loader_start(self, state: _State):
-        scheduler = state.get_key(
+        scheduler = state.get_attr(
             key="scheduler", inner_key=self.scheduler_key
         )
         if state.loader_name.startswith("train") and \
@@ -67,22 +86,6 @@ class SchedulerCallback(Callback):
     def on_epoch_end(self, state: _State):
         if self.mode == "epoch":
             self.step(state=state)
-
-    @staticmethod
-    def _scheduler_step(
-        scheduler,
-        valid_metric=None,
-    ):
-        if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
-            scheduler.step(valid_metric)
-            lr = safitty.get(scheduler.optimizer.param_groups, 0, "lr")
-        else:
-            scheduler.step()
-            lr = scheduler.get_lr()[0]
-
-        momentum = utils.get_optimizer_momentum(scheduler.optimizer)
-
-        return lr, momentum
 
 
 class LRUpdater(Callback):
@@ -134,15 +137,15 @@ class LRUpdater(Callback):
         if not state.need_backward_pass:
             return
 
-        optimizer = state.get_key(
+        optimizer = state.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
         lr, momentum = self._update_optimizer(optimizer=optimizer)
-        state.set_key(lr, key="lr", inner_key=self.optimizer_key)
-        state.set_key(momentum, key="momentum", inner_key=self.optimizer_key)
+        state.set_attr(lr, key="lr", inner_key=self.optimizer_key)
+        state.set_attr(momentum, key="momentum", inner_key=self.optimizer_key)
 
     def on_stage_start(self, state: _State):
-        optimizer = state.get_key(
+        optimizer = state.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
         self.init_lr = optimizer.defaults["lr"]

@@ -156,7 +156,6 @@ class MultiMetricCallback(Callback):
 
 
 __all__ = [
-    "CallbackOrder", "CallbackNode",
-    "Callable",
+    "CallbackOrder", "CallbackNode", "Callback",
     "MetricCallback", "MultiMetricCallback"
 ]

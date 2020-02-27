@@ -100,7 +100,7 @@ class CriterionCallback(Callback):
         """
         Computes the loss and add it to the metrics
         """
-        criterion = state.get_key(
+        criterion = state.get_attr(
             key="criterion", inner_key=self.criterion_key
         )
 
@@ -145,114 +145,6 @@ class CriterionOutputOnlyCallback(CriterionCallback):
         return loss
 
 
-class CriterionAggregatorCallback(Callback):
-    """
-    This callback allows you to aggregate the values of the loss
-    (with different aggregation strategies)
-    and put the value back into ``state.loss``.
-    """
-    def __init__(
-        self,
-        prefix: str,
-        loss_keys: Union[str, List[str], Dict[str, float]] = None,
-        loss_aggregate_fn: str = "sum",
-        multiplier: float = 1.0
-    ) -> None:
-        """
-        Args:
-            prefix (str): new key for aggregated loss.
-            loss_keys (Union[str, List[str], Dict[str, float]]): If not empty,
-                it aggregates only the values from the loss by these keys.
-                for ``weighted_sum`` aggregation it must be a Dict[str, float].
-            loss_aggregate_fn (str): function for aggregation.
-                Must be either ``sum``, ``mean`` or ``weighted_sum``.
-            multiplier (float): scale factor for the aggregated loss.
-        """
-        super().__init__(CallbackOrder.Criterion + 1)
-        if prefix is None or not isinstance(prefix, str):
-            raise ValueError("prefix must be str")
-        self.prefix = prefix
-
-        if isinstance(loss_keys, str):
-            loss_keys = [loss_keys]
-        self.loss_keys = loss_keys
-
-        self.multiplier = multiplier
-
-        if loss_keys in ("sum", "mean"):
-            if loss_keys is not None and not isinstance(loss_keys, list):
-                raise ValueError(
-                    "For `sum` or `mean` mode the loss_keys must be "
-                    "None or list or str (not dict)"
-                )
-        elif loss_keys in ("weighted_sum", "weighted_mean"):
-            if loss_keys is None or not isinstance(loss_keys, dict):
-                raise ValueError(
-                    "For `weighted_sum` or `weighted_mean` mode "
-                    "the loss_keys must be specified "
-                    "and must be a dict"
-                )
-
-        if loss_aggregate_fn in ("sum", "weighted_sum", "weighted_mean"):
-            self.loss_fn = lambda x: torch.sum(torch.stack(x)) * multiplier
-            if loss_aggregate_fn == "weighted_mean":
-                weights_sum = sum(loss_keys.items())
-                self.loss_keys = {
-                    key: weight / weights_sum
-                    for key, weight in loss_keys.items()
-                }
-        elif loss_aggregate_fn == "mean":
-            self.loss_fn = lambda x: torch.mean(torch.stack(x)) * multiplier
-        else:
-            raise ValueError(
-                "loss_aggregate_fn must be `sum`, `mean` "
-                "or `weighted_sum` or `weighted_mean`"
-            )
-
-        self.loss_aggregate_name = loss_aggregate_fn
-
-    def _preprocess_loss(self, loss: Any) -> List[torch.Tensor]:
-        if isinstance(loss, list):
-            if self.loss_keys is not None:
-                logger.warning(
-                    f"Trying to get {self.loss_keys} keys from the losses, "
-                    "but the loss is a list. All values will be aggregated."
-                )
-            result = loss
-        elif isinstance(loss, dict):
-            if self.loss_keys is not None:
-                if self.loss_aggregate_name == "weighted_sum":
-                    result = [
-                        loss[key] * value
-                        for key, value in self.loss_keys.items()
-                    ]
-                else:
-                    result = [loss[key] for key in self.loss_keys]
-            else:
-                result = list(loss.values())
-        else:
-            result = [loss]
-
-        return result
-
-    def on_batch_end(self, state: _State) -> None:
-        """
-        Computes the loss and add it to the metrics
-        """
-        loss = state.get_key(key="loss")
-        loss = self._preprocess_loss(loss)
-        loss = self.loss_fn(loss)
-
-        state.metric_manager.add_batch_value(
-            metrics_dict={
-                self.prefix: loss.item(),
-            }
-        )
-
-        _add_loss_to_state(self.prefix, state, loss)
-
-
 __all__ = [
     "CriterionCallback", "CriterionOutputOnlyCallback",
-    "CriterionAggregatorCallback"
 ]
