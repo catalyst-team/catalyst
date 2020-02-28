@@ -41,6 +41,7 @@ from .misc import (
     make_tuple,
     maybe_recursive_call,
     pairwise,
+    fn_ends_with_pass,
 )
 from .numpy import (
     dict2structed, geometric_cumsum, get_one_hot, np_softmax, structed2dict

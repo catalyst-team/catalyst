@@ -181,14 +181,14 @@ class _Runner(ABC):
             fn_name = f"on_{event}"
             filtered_callbacks = OrderedDict([
                 (k, v) for k, v in start_callbacks.items()
-                if not getattr(v.__class__, fn_name).__code__ is getattr(Callback, fn_name).__code__
+                if not utils.fn_ends_with_pass(getattr(v.__class__, fn_name))
             ])
             stage_callbacks[event] = filtered_callbacks
         for event in end_events:
             fn_name = f"on_{event}"
             filtered_callbacks = OrderedDict([
                 (k, v) for k, v in end_callbacks.items()
-                if not getattr(v.__class__, fn_name).__code__ is getattr(Callback, fn_name).__code__
+                if not utils.fn_ends_with_pass(getattr(v.__class__, fn_name))
             ])
             stage_callbacks[event] = filtered_callbacks
         return stage_callbacks

@@ -53,7 +53,7 @@ def maybe_recursive_call(
     Calls the ``method`` recursively for the object_or_dict
 
     Args:
-        object_or_dict (Any): some object or a dictinary of objects
+        object_or_dict (Any): some object or a dictionary of objects
         method (str): method name to call
         recursive_args: list of arguments to pass to the ``method``
         recursive_kwargs: list of key-arguments to pass to the ``method``
@@ -188,3 +188,19 @@ def get_fn_argsnames(fn: Callable[..., Any], exclude: List[str] = None):
     if exclude is not None:
         params = list(filter(lambda x: x not in exclude, params))
     return params
+
+
+def fn_ends_with_pass(fn: Callable[..., Any]):
+    """
+    Check that function end with pass statement(probably does nothing in any way).
+    Mainly used to filter callbacks with empty on_{event} methods.
+    Args:
+        fn (Callable[..., Any]): target Callable
+    Returns:
+        bool: True if there is pass in the first indentation level of fn
+            and nothing happens before it, False in any other case.
+    """
+    source_lines = inspect.getsourcelines(fn)[0]
+    if source_lines[-1].strip() == "pass":
+        return True
+    return False

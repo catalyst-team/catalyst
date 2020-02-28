@@ -49,3 +49,43 @@ def test_get_fn_argsnames():
         )
     )
     assert params_predicted == params_true
+
+
+def test_fn_ends_with_pass():
+    def useless_fn():
+        pass
+
+    def useless_fn_with_newline_between_signature_and_pass():
+
+        pass
+
+    def useless_fn_with_docstring():
+        """
+            Docstring yay
+        """
+        pass
+
+    def useless_fn_with_multiline_signature(
+            first_arg=None,
+            second_arg: "Any" = None,
+    ):
+        pass
+
+    def useless_fn_with_multiline_signature_and_docstring(
+            first_arg=None,
+            second_arg: "Any" = None,
+    ):
+        """
+            Docstring yay
+        """
+        pass
+
+    def usefull_fn():
+        print("I am useful!")
+
+    assert utils.fn_ends_with_pass(useless_fn) is True
+    assert utils.fn_ends_with_pass(useless_fn_with_newline_between_signature_and_pass) is True
+    assert utils.fn_ends_with_pass(useless_fn_with_docstring) is True
+    assert utils.fn_ends_with_pass(useless_fn_with_multiline_signature) is True
+    assert utils.fn_ends_with_pass(useless_fn_with_multiline_signature_and_docstring) is True
+    assert utils.fn_ends_with_pass(usefull_fn) is False
