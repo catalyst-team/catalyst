@@ -8,7 +8,8 @@ from torch.jit import ScriptModule
 from torch.utils.data import DataLoader
 
 from catalyst.dl import (
-    Callback, CheckpointCallback, InferCallback, Runner, SupervisedExperiment,
+    Callback, CheckpointCallback, InferCallback, CheckRunCallback,
+    Runner, SupervisedExperiment,
     utils
 )
 from catalyst.dl.utils import trace
@@ -196,6 +197,19 @@ class SupervisedRunner(Runner):
             else:
                 raise NotImplementedError("CheckpointCallback already exist")
 
+        if check:
+            callbacks = utils.process_callbacks(callbacks)
+            checkrun_callback_flag = any(
+                [
+                    isinstance(x, CheckRunCallback)
+                    for x in callbacks.values()
+                ]
+            )
+            if not checkrun_callback_flag:
+                callbacks["check"] = CheckRunCallback()
+            else:
+                raise NotImplementedError("CheckRunCallback already exist")
+
         experiment = self._default_experiment(
             stage="train",
             model=model,
@@ -215,7 +229,7 @@ class SupervisedRunner(Runner):
             distributed_params=fp16,
             monitoring_params=monitoring_params
         )
-        self.run_experiment(experiment, check=check)
+        self.run_experiment(experiment)
 
     def infer(
         self,
@@ -250,6 +264,19 @@ class SupervisedRunner(Runner):
         if model is not None:
             self.model = model
 
+        if check:
+            callbacks = utils.process_callbacks(callbacks)
+            checkrun_callback_flag = any(
+                [
+                    isinstance(x, CheckRunCallback)
+                    for x in callbacks.values()
+                ]
+            )
+            if not checkrun_callback_flag:
+                callbacks["check"] = CheckRunCallback()
+            else:
+                raise NotImplementedError("CheckRunCallback already exist")
+
         experiment = self._default_experiment(
             stage="infer",
             model=model,
@@ -259,7 +286,7 @@ class SupervisedRunner(Runner):
             state_kwargs=state_kwargs,
             distributed_params=fp16
         )
-        self.run_experiment(experiment, check=check)
+        self.run_experiment(experiment)
 
     def predict_loader(
         self,

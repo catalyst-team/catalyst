@@ -278,7 +278,11 @@ class _Runner(ABC):
         )
 
         for i, batch in enumerate(loader):
+            self.state.loader_step = i
             self._run_batch(batch)
+            if self.state.need_early_stop:
+                self.state.need_early_stop = False
+                break
 
     def _run_epoch(self, stage: str, epoch: int):
         self._prepare_for_epoch(stage=stage, epoch=epoch)
@@ -339,7 +343,7 @@ class _Runner(ABC):
             state.stage_epoch += 1
         self._run_event("on_stage_end")
 
-    def run_experiment(self, experiment: _Experiment, check: bool = False):
+    def run_experiment(self, experiment: _Experiment):
         """
         Starts the experiment
         """

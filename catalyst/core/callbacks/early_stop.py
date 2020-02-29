@@ -5,6 +5,21 @@ if TYPE_CHECKING:
     from catalyst.core import _State
 
 
+class CheckRunCallback(Callback):
+    def __init__(self, num_loader_steps: int = 1, num_epoch_steps: int = 1):
+        super().__init__(CallbackOrder.External)
+        self.num_loader_steps = num_loader_steps
+        self.num_epoch_steps = num_epoch_steps
+
+    def on_epoch_end(self, state: "_State"):
+        if state.stage_epoch >= self.num_epoch_steps:
+            state.need_early_stop = True
+
+    def on_batch_end(self, state: "_State"):
+        if state.loader_step >= self.num_loader_steps:
+            state.need_early_stop = True
+
+
 class EarlyStoppingCallback(Callback):
     def __init__(
         self,
