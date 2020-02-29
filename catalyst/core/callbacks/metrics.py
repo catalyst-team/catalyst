@@ -1,11 +1,73 @@
-from typing import Any, List, Dict, Union  # isort:skip
+from typing import Any, Callable, List, Dict, Union, TYPE_CHECKING  # isort:skip
 import logging
+from functools import partial
 
 import torch
 
-from catalyst.dl import Callback, CallbackOrder, State
+from catalyst.core import Callback, CallbackOrder
+if TYPE_CHECKING:
+    from catalyst.core import _State
 
 logger = logging.getLogger(__name__)
+
+
+class MetricCallback(Callback):
+    """
+    A callback that returns single metric on `state.on_batch_end`
+    """
+    def __init__(
+        self,
+        prefix: str,
+        metric_fn: Callable,
+        input_key: str = "targets",
+        output_key: str = "logits",
+        **metric_params,
+    ):
+        super().__init__(CallbackOrder.Metric)
+        self.prefix = prefix
+        self.metric_fn = partial(metric_fn, **metric_params)
+        self.input_key = input_key
+        self.output_key = output_key
+
+    def on_batch_end(self, state: "_State"):
+        outputs = state.batch_out[self.output_key]
+        targets = state.batch_in[self.input_key]
+        metric = self.metric_fn(outputs, targets)
+        state.batch_metrics[self.prefix] = metric
+
+
+class MultiMetricCallback(Callback):
+    """
+    A callback that returns multiple metrics on `state.on_batch_end`
+    """
+    def __init__(
+        self,
+        prefix: str,
+        metric_fn: Callable,
+        list_args: List,
+        input_key: str = "targets",
+        output_key: str = "logits",
+        **metric_params,
+    ):
+        super().__init__(CallbackOrder.Metric)
+        self.prefix = prefix
+        self.metric_fn = partial(metric_fn, **metric_params)
+        self.list_args = list_args
+        self.input_key = input_key
+        self.output_key = output_key
+
+    def on_batch_end(self, state: "_State"):
+        outputs = state.batch_out[self.output_key]
+        targets = state.batch_in[self.input_key]
+
+        metrics_ = self.metric_fn(outputs, targets, self.list_args)
+
+        for arg, metric in zip(self.list_args, metrics_):
+            if isinstance(arg, int):
+                key = f"{self.prefix}{arg:02}"
+            else:
+                key = f"{self.prefix}_{arg}"
+            state.batch_metrics[key] = metric
 
 
 class MetricAggregatorCallback(Callback):
@@ -98,7 +160,7 @@ class MetricAggregatorCallback(Callback):
 
         return result
 
-    def on_batch_end(self, state: State) -> None:
+    def on_batch_end(self, state: "_State") -> None:
         """
         Computes the metric and add it to the metrics
         """

@@ -4,7 +4,7 @@ import torch
 
 from catalyst.dl import (
     CheckpointCallback, ConsoleLogger, OptimizerCallback, PhaseManagerCallback,
-    PhaseWrapperCallback, RaiseExceptionCallback, TensorboardLogger
+    PhaseWrapperCallback, ExceptionCallback, TensorboardLogger
 )
 from catalyst.dl.experiment.gan import GanExperiment
 
@@ -13,7 +13,7 @@ DEFAULT_CALLBACKS = OrderedDict(
         ("phase_manager", PhaseManagerCallback),
         ("saver", CheckpointCallback),
         ("console", ConsoleLogger),
-        ("exception", RaiseExceptionCallback),
+        ("exception", ExceptionCallback),
     ]
 )
 

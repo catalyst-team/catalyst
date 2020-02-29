@@ -13,7 +13,8 @@ from catalyst import utils
 from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
-from .callback import CallbackNode, RaiseExceptionCallback
+from .callback import CallbackNode
+from .callbacks import ExceptionCallback
 from .experiment import _Experiment
 from .state import _State
 
@@ -352,7 +353,7 @@ class _Runner(ABC):
             def _exception_handler_check(callbacks: OrderedDict):
                 return (
                     callbacks is not None and any(
-                        issubclass(x.__class__, RaiseExceptionCallback)
+                        issubclass(x.__class__, ExceptionCallback)
                         for x in callbacks.values()
                     )
                 )

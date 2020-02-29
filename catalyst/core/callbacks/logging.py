@@ -15,7 +15,7 @@ from . import formatters
 
 class MetricsManagerCallback(Callback):
     """
-    Prepares the metrics for the logging, transferring from PyTorch to numpy
+    Prepares metrics for logging, transferring values from PyTorch to numpy
     """
     def __init__(self):
         super().__init__(

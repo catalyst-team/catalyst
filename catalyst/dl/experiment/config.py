@@ -15,7 +15,7 @@ from catalyst.data import (
 )
 from catalyst.dl import (
     Callback, CheckpointCallback, ConsoleLogger, CriterionCallback, Experiment,
-    OptimizerCallback, PhaseWrapperCallback, RaiseExceptionCallback,
+    OptimizerCallback, PhaseWrapperCallback, ExceptionCallback,
     SchedulerCallback, TensorboardLogger, utils, VerboseLogger
 )
 from catalyst.dl.registry import (
@@ -540,7 +540,7 @@ class ConfigExperiment(Experiment):
             default_callbacks.append(("console", ConsoleLogger))
             default_callbacks.append(("tensorboard", TensorboardLogger))
 
-        default_callbacks.append(("exception", RaiseExceptionCallback))
+        default_callbacks.append(("exception", ExceptionCallback))
 
         for callback_name, callback_fn in default_callbacks:
             is_already_present = False

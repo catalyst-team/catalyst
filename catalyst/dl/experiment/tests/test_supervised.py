@@ -4,7 +4,7 @@ import torch
 
 from catalyst.dl import (
     CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
-    RaiseExceptionCallback, SchedulerCallback, TensorboardLogger
+    ExceptionCallback, SchedulerCallback, TensorboardLogger
 )
 from catalyst.dl.experiment.supervised import SupervisedExperiment
 
@@ -12,7 +12,7 @@ DEFAULT_CALLBACKS = OrderedDict(
     [
         ("_saver", CheckpointCallback), ("console", ConsoleLogger),
         ("tensorboard", TensorboardLogger),
-        ("exception", RaiseExceptionCallback)
+        ("exception", ExceptionCallback)
     ]
 )
 

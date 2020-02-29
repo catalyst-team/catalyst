@@ -9,44 +9,6 @@ from catalyst.dl import (
 from catalyst.utils import meters
 
 
-class EarlyStoppingCallback(Callback):
-    def __init__(
-        self,
-        patience: int,
-        metric: str = "loss",
-        minimize: bool = True,
-        min_delta: float = 1e-6
-    ):
-        super().__init__(CallbackOrder.External)
-        self.best_score = None
-        self.metric = metric
-        self.patience = patience
-        self.num_bad_epochs = 0
-        self.is_better = None
-
-        if minimize:
-            self.is_better = lambda score, best: score <= (best - min_delta)
-        else:
-            self.is_better = lambda score, best: score >= (best + min_delta)
-
-    def on_epoch_end(self, state: State) -> None:
-        if state.stage_name.startswith("infer"):
-            return
-
-        score = state.epoch_metrics[state.valid_loader][self.metric]
-        if self.best_score is None:
-            self.best_score = score
-        if self.is_better(score, self.best_score):
-            self.num_bad_epochs = 0
-            self.best_score = score
-        else:
-            self.num_bad_epochs += 1
-
-        if self.num_bad_epochs >= self.patience:
-            print(f"Early stop at {state.stage_epoch} epoch")
-            state.need_early_stop = True
-
-
 class ConfusionMatrixCallback(Callback):
     def __init__(
         self,

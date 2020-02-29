@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 from catalyst.dl import (
     Callback, CheckpointCallback, ConsoleLogger, CriterionCallback,
-    OptimizerCallback, RaiseExceptionCallback, SchedulerCallback,
+    OptimizerCallback, ExceptionCallback, SchedulerCallback,
     TensorboardLogger, VerboseLogger, MetricsManagerCallback, TimerCallback, ValidationManagerCallback
 )
 from catalyst.utils.tools.typing import Criterion, Optimizer, Scheduler
@@ -67,7 +67,7 @@ class SupervisedExperiment(BaseExperiment):
             default_callbacks.append(("_validation", ValidationManagerCallback))
             default_callbacks.append(("console", ConsoleLogger))
             default_callbacks.append(("tensorboard", TensorboardLogger))
-        default_callbacks.append(("_exception", RaiseExceptionCallback))
+        default_callbacks.append(("_exception", ExceptionCallback))
 
         for callback_name, callback_fn in default_callbacks:
             is_already_present = any(

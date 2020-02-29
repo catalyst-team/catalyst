@@ -6,7 +6,7 @@ import torch
 
 from catalyst.dl import (
     CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
-    PhaseWrapperCallback, RaiseExceptionCallback, registry, TensorboardLogger
+    PhaseWrapperCallback, ExceptionCallback, registry, TensorboardLogger
 )
 from catalyst.dl.experiment.config import ConfigExperiment
 
@@ -27,7 +27,7 @@ DEFAULT_CALLBACKS = OrderedDict(
         ("_criterion", CriterionCallback), ("_optimizer", OptimizerCallback),
         ("_saver", CheckpointCallback), ("console", ConsoleLogger),
         ("tensorboard", TensorboardLogger),
-        ("exception", RaiseExceptionCallback)
+        ("exception", ExceptionCallback)
     ]
 )
 

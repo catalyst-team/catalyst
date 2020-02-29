@@ -49,7 +49,7 @@ class _State(FrozenClass):
         self.scheduler: STATE_SCHEDULER = scheduler
         # extra components - PyTorch device
         self.device: Device = device
-        # extra components - callbacks
+        # extra components - Catalyst callbacks
         self.callbacks: Dict[str, "Callback"] = callbacks
 
         # dataflow - in, out, metrics
@@ -81,9 +81,10 @@ class _State(FrozenClass):
         self.is_distributed_worker = self.distributed_rank > 0
         self.stage_name: str = stage
         self.loader_name: str = None
-        self.loader_len: int = 0
         self.batch_size: int = 0
+        self.loader_len: int = 0
         self.step: int = 0
+        self.loader_step: int = 0
         self.epoch: int = 0
         self.stage_epoch: int = 0
         self.num_epochs: int = num_epochs or np.iinfo(np.int32).max

@@ -1,8 +1,6 @@
-from typing import Callable, List, TYPE_CHECKING  # isort:skip
+from typing import TYPE_CHECKING  # isort:skip
 from enum import IntFlag
-from functools import partial
 
-from catalyst import utils
 if TYPE_CHECKING:
     from .state import _State
 
@@ -83,80 +81,6 @@ class Callback:
         pass
 
 
-class RaiseExceptionCallback(Callback):
-    def __init__(self):
-        order = CallbackOrder.Other + 1
-        super().__init__(order=order, node=CallbackNode.All)
-
-    def on_exception(self, state: "_State"):
-        exception = state.exception
-        if not utils.is_exception(exception):
-            return
-
-        if state.need_exception_reraise:
-            raise exception
-
-
-class MetricCallback(Callback):
-    """
-    A callback that returns single metric on `state.on_batch_end`
-    """
-    def __init__(
-        self,
-        prefix: str,
-        metric_fn: Callable,
-        input_key: str = "targets",
-        output_key: str = "logits",
-        **metric_params,
-    ):
-        super().__init__(CallbackOrder.Metric)
-        self.prefix = prefix
-        self.metric_fn = partial(metric_fn, **metric_params)
-        self.input_key = input_key
-        self.output_key = output_key
-
-    def on_batch_end(self, state: "_State"):
-        outputs = state.batch_out[self.output_key]
-        targets = state.batch_in[self.input_key]
-        metric = self.metric_fn(outputs, targets)
-        state.batch_metrics[self.prefix] = metric
-
-
-class MultiMetricCallback(Callback):
-    """
-    A callback that returns multiple metrics on `state.on_batch_end`
-    """
-    def __init__(
-        self,
-        prefix: str,
-        metric_fn: Callable,
-        list_args: List,
-        input_key: str = "targets",
-        output_key: str = "logits",
-        **metric_params,
-    ):
-        super().__init__(CallbackOrder.Metric)
-        self.prefix = prefix
-        self.metric_fn = partial(metric_fn, **metric_params)
-        self.list_args = list_args
-        self.input_key = input_key
-        self.output_key = output_key
-
-    def on_batch_end(self, state: "_State"):
-        outputs = state.batch_out[self.output_key]
-        targets = state.batch_in[self.input_key]
-
-        metrics_ = self.metric_fn(outputs, targets, self.list_args)
-
-        for arg, metric in zip(self.list_args, metrics_):
-            if isinstance(arg, int):
-                key = f"{self.prefix}{arg:02}"
-            else:
-                key = f"{self.prefix}_{arg}"
-            state.batch_metrics[key] = metric
-
-
 __all__ = [
     "CallbackOrder", "CallbackNode", "Callback",
-    "MetricCallback", "MultiMetricCallback"
 ]
