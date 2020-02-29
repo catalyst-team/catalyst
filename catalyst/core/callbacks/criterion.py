@@ -35,7 +35,7 @@ class CriterionCallback(Callback):
                 there are several of them and they are in a dictionary format.
             multiplier (float): scale factor for the output loss.
         """
-        super().__init__(CallbackOrder.Criterion)
+        super().__init__(CallbackOrder.Metric)
         self.input_key = input_key
         self.output_key = output_key
         self.loss_key = loss_key

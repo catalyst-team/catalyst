@@ -9,10 +9,10 @@ if TYPE_CHECKING:
 
 class CallbackOrder(IntFlag):
     Internal = 0
-    Criterion = 20
-    Optimizer = 40
-    Scheduler = 60
-    Metric = 80
+    Metric = 20
+    MetricAggregation = 40
+    Optimizer = 60
+    Scheduler = 80
     Logging = 100
     External = 120
     Other = 200

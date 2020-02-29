@@ -36,18 +36,17 @@ class SchedulerCallback(Callback):
         return lr, momentum
 
     def step(self, state: _State):
-        metrics = state.epoch_metrics
-        reduced_metric = metrics[state.valid_loader][self.reduced_metric]
+        reduced_metric = state.valid_metrics[self.reduced_metric]
         lr, momentum = self._scheduler_step(
             scheduler=self._scheduler, reduced_metric=reduced_metric
         )
 
         if self.scheduler_key is not None:
-            metrics[f"lr_{self.scheduler_key}"] = lr
-            metrics[f"momentum_{self.scheduler_key}"] = momentum
+            state.epoch_metrics[f"lr_{self.scheduler_key}"] = lr
+            state.epoch_metrics[f"momentum_{self.scheduler_key}"] = momentum
         else:
-            metrics["lr"] = lr
-            metrics["momentum"] = momentum
+            state.epoch_metrics["lr"] = lr
+            state.epoch_metrics["momentum"] = momentum
 
     def on_stage_start(self, state: _State):
         scheduler = state.get_attr(

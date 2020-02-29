@@ -9,7 +9,7 @@ from tqdm import tqdm
 from catalyst import utils
 from catalyst.utils import meters
 from catalyst.core import _State, Callback, CallbackOrder, CallbackNode
-from catalyst.utils.tools.metric_manager import TimerManager
+from catalyst.utils.tools.time_manager import TimeManager
 from catalyst.utils.tools.tensorboard import SummaryWriter
 from . import formatters
 
@@ -23,7 +23,7 @@ class TimerCallback(Callback):
             order=CallbackOrder.Metric + 1,
             node=CallbackNode.All
         )
-        self.timer = TimerManager()
+        self.timer = TimeManager()
 
     def on_loader_start(self, state: _State):
         self.timer.reset()
@@ -52,36 +52,14 @@ class TimerCallback(Callback):
         self.timer.start("_timers/data_time")
 
 
-class MetricManagerCallback(Callback):
-    """
-    Prepares the metrics for the logging, transferring from PyTorch to numpy
-    """
+class ValidationManagerCallback(Callback):
     def __init__(self):
         super().__init__(
-            order=CallbackOrder.Logging - 1,
+            order=CallbackOrder.MetricAggregation + 1,
             node=CallbackNode.All,
         )
-        self.meters: Dict[str, meters.AverageValueMeter] = None
-
-    @staticmethod
-    def _to_single_value(value: Any) -> float:
-        if hasattr(value, "item"):
-            value = value.item()
-
-        value = float(value)
-        return value
-
-    @staticmethod
-    def _process_metrics(metrics: Dict[str, Any]):
-        output = {}
-        for key, value in metrics.items():
-            value = MetricManagerCallback._to_single_value(value)
-            value = utils.distributed_mean(value)
-            output[key] = value
-        return output
 
     def on_epoch_start(self, state: _State):
-        state.epoch_metrics = defaultdict(None)
         state.valid_metrics = defaultdict(None)
         state.is_best_valid = False
 
@@ -111,9 +89,41 @@ class MetricManagerCallback(Callback):
             self.is_best_epoch = True
             state.best_valid_metrics = state.valid_metrics.copy()
 
+
+class MetricsManagerCallback(Callback):
+    """
+    Prepares the metrics for the logging, transferring from PyTorch to numpy
+    """
+    def __init__(self):
+        super().__init__(
+            order=CallbackOrder.Logging - 1,
+            node=CallbackNode.All,
+        )
+        self.meters: Dict[str, meters.AverageValueMeter] = None
+
+    @staticmethod
+    def _to_single_value(value: Any) -> float:
+        if hasattr(value, "item"):
+            value = value.item()
+
+        value = float(value)
+        return value
+
+    @staticmethod
+    def _process_metrics(metrics: Dict[str, Any]):
+        output = {}
+        for key, value in metrics.items():
+            value = MetricsManagerCallback._to_single_value(value)
+            value = utils.distributed_mean(value)
+            output[key] = value
+        return output
+
+    def on_epoch_start(self, state: _State):
+        state.epoch_metrics = defaultdict(None)
+
     def on_loader_start(self, state: _State):
-        self.meters = defaultdict(meters.AverageValueMeter)
         state.loader_metrics = defaultdict(None)
+        self.meters = defaultdict(meters.AverageValueMeter)
 
     def on_loader_end(self, state: _State):
         for key, value in self.meters.items():
@@ -367,5 +377,5 @@ __all__ = [
     "TensorboardLogger",
     "VerboseLogger",
     "TimerCallback",
-    "MetricManagerCallback",
+    "MetricsManagerCallback",
 ]
