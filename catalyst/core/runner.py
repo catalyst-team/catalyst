@@ -300,7 +300,6 @@ class _Runner(ABC):
         for loader_name, loader in loaders.items():
             is_train_loader = loader_name.startswith("train")
 
-            # state.loader = loader
             state.loader_name = loader_name
             state.loader_len = len(loader)
             state.need_backward_pass = is_train_loader

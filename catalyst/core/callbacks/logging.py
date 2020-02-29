@@ -9,85 +9,8 @@ from tqdm import tqdm
 from catalyst import utils
 from catalyst.utils import meters
 from catalyst.core import _State, Callback, CallbackOrder, CallbackNode
-from catalyst.utils.tools.time_manager import TimeManager
 from catalyst.utils.tools.tensorboard import SummaryWriter
 from . import formatters
-
-
-class TimerCallback(Callback):
-    """
-    Logs pipeline execution time
-    """
-    def __init__(self):
-        super().__init__(
-            order=CallbackOrder.Metric + 1,
-            node=CallbackNode.All
-        )
-        self.timer = TimeManager()
-
-    def on_loader_start(self, state: _State):
-        self.timer.reset()
-        self.timer.start("_timers/batch_time")
-        self.timer.start("_timers/data_time")
-
-    def on_loader_end(self, state: _State):
-        self.timer.reset()
-
-    def on_batch_start(self, state: _State):
-        self.timer.stop("_timers/data_time")
-        self.timer.start("_timers/model_time")
-
-    def on_batch_end(self, state: _State):
-        self.timer.stop("_timers/model_time")
-        self.timer.stop("_timers/batch_time")
-
-        # @TODO: just a trick
-        self.timer.elapsed["_timers/_fps"] = \
-            state.batch_size / self.timer.elapsed["_timers/batch_time"]
-        for key, value in self.timer.elapsed.items():
-            state.batch_metrics[key] = value
-
-        self.timer.reset()
-        self.timer.start("_timers/batch_time")
-        self.timer.start("_timers/data_time")
-
-
-class ValidationManagerCallback(Callback):
-    def __init__(self):
-        super().__init__(
-            order=CallbackOrder.MetricAggregation + 1,
-            node=CallbackNode.All,
-        )
-
-    def on_epoch_start(self, state: _State):
-        state.valid_metrics = defaultdict(None)
-        state.is_best_valid = False
-
-    def on_epoch_end(self, state: "_State"):
-        if state.stage_name.startswith("infer") or state.is_distributed_worker:
-            return
-
-        state.valid_metrics = {
-            k.replace(f"{state.loader_name}_", ""): v
-            for k, v in state.epoch_metrics.items()
-            if k.startswith(state.valid_loader)
-        }
-        assert state.main_metric in state.valid_metrics, \
-            f"{state.main_metric} value is not available by the epoch end"
-
-        current_valid_metric = state.valid_metrics[state.main_metric]
-        if state.minimize_metric:
-            best_valid_metric = \
-                state.best_valid_metrics.get(state.main_metric, float("+inf"))
-            is_best = current_valid_metric < best_valid_metric
-        else:
-            best_valid_metric = \
-                state.best_valid_metrics.get(state.main_metric, float("-inf"))
-            is_best = current_valid_metric > best_valid_metric
-
-        if is_best:
-            self.is_best_epoch = True
-            state.best_valid_metrics = state.valid_metrics.copy()
 
 
 class MetricsManagerCallback(Callback):
@@ -152,7 +75,7 @@ class VerboseLogger(Callback):
         """
         Args:
             always_show (List[str]): list of metrics to always show
-                if None default is ``["_timers/_fps"]``
+                if None default is ``["_timer/_fps"]``
                 to remove always_show metrics set it to an empty list ``[]``
             never_show (List[str]): list of metrics which will not be shown
         """
@@ -160,7 +83,7 @@ class VerboseLogger(Callback):
         self.tqdm: tqdm = None
         self.step = 0
         self.always_show = (
-            always_show if always_show is not None else ["_timers/_fps"]
+            always_show if always_show is not None else ["_timer/_fps"]
         )
         self.never_show = never_show if never_show is not None else []
 
@@ -376,6 +299,5 @@ __all__ = [
     "ConsoleLogger",
     "TensorboardLogger",
     "VerboseLogger",
-    "TimerCallback",
     "MetricsManagerCallback",
 ]
