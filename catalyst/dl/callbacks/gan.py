@@ -56,7 +56,7 @@ class MultiKeyMetricCallback(Callback):
         outputs = self._get(state.batch_out, self.output_key)
         targets = self._get(state.batch_in, self.input_key)
         metric = self.metric_fn(outputs, targets, **self.metric_params)
-        state.metric_manager.add_batch_value(name=self.prefix, value=metric)
+        state.batch_metrics[self.prefix] = metric
 
 
 class WassersteinDistanceCallback(MultiKeyMetricCallback):
@@ -115,7 +115,7 @@ class GradientPenaltyCallback(CriterionCallback):
         real_data_criterion_key: str = "real_data",
         fake_data_criterion_key: str = "fake_data",
         condition_args_criterion_key: str = "critic_condition_args",
-        prefix: str = "loss",
+        loss_key: str = "loss",
         criterion_key: str = None,
         multiplier: float = 1.0,
     ):
@@ -130,14 +130,14 @@ class GradientPenaltyCallback(CriterionCallback):
         :param fake_data_criterion_key: key for fake data in criterion
         :param condition_args_criterion_key: key for all condition args
             in criterion
-        :param prefix:
+        :param loss_key:
         :param criterion_key:
         :param multiplier:
         """
         super().__init__(
             input_key=real_input_key,
             output_key=fake_output_key,
-            prefix=prefix,
+            loss_key=loss_key,
             criterion_key=criterion_key,
             multiplier=multiplier
         )

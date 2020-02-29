@@ -1,9 +1,10 @@
-from typing import Callable, List  # isort:skip
+from typing import Callable, List, TYPE_CHECKING  # isort:skip
 from enum import IntFlag
 from functools import partial
 
 from catalyst import utils
-from .state import _State
+if TYPE_CHECKING:
+    from .state import _State
 
 
 class CallbackOrder(IntFlag):
@@ -54,31 +55,31 @@ class Callback:
         self.order = order
         self.node = node
 
-    def on_stage_start(self, state: _State):
+    def on_stage_start(self, state: "_State"):
         pass
 
-    def on_stage_end(self, state: _State):
+    def on_stage_end(self, state: "_State"):
         pass
 
-    def on_epoch_start(self, state: _State):
+    def on_epoch_start(self, state: "_State"):
         pass
 
-    def on_epoch_end(self, state: _State):
+    def on_epoch_end(self, state: "_State"):
         pass
 
-    def on_loader_start(self, state: _State):
+    def on_loader_start(self, state: "_State"):
         pass
 
-    def on_loader_end(self, state: _State):
+    def on_loader_end(self, state: "_State"):
         pass
 
-    def on_batch_start(self, state: _State):
+    def on_batch_start(self, state: "_State"):
         pass
 
-    def on_batch_end(self, state: _State):
+    def on_batch_end(self, state: "_State"):
         pass
 
-    def on_exception(self, state: _State):
+    def on_exception(self, state: "_State"):
         pass
 
 
@@ -87,7 +88,7 @@ class RaiseExceptionCallback(Callback):
         order = CallbackOrder.Other + 1
         super().__init__(order=order, node=CallbackNode.All)
 
-    def on_exception(self, state: _State):
+    def on_exception(self, state: "_State"):
         exception = state.exception
         if not utils.is_exception(exception):
             return
@@ -114,7 +115,7 @@ class MetricCallback(Callback):
         self.input_key = input_key
         self.output_key = output_key
 
-    def on_batch_end(self, state: _State):
+    def on_batch_end(self, state: "_State"):
         outputs = state.batch_out[self.output_key]
         targets = state.batch_in[self.input_key]
         metric = self.metric_fn(outputs, targets)
@@ -141,7 +142,7 @@ class MultiMetricCallback(Callback):
         self.input_key = input_key
         self.output_key = output_key
 
-    def on_batch_end(self, state: _State):
+    def on_batch_end(self, state: "_State"):
         outputs = state.batch_out[self.output_key]
         targets = state.batch_in[self.input_key]
 

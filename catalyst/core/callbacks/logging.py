@@ -20,8 +20,8 @@ class MetricManagerCallback(Callback):
     """
     def __init__(self):
         super().__init__(
-            order=CallbackOrder.Logging - 1,
-            node=CallbackNode.All
+            order=CallbackOrder.Logging - 2,
+            node=CallbackNode.All,
         )
         self.meters: Dict[str, meters.AverageValueMeter] = None
 
@@ -43,10 +43,36 @@ class MetricManagerCallback(Callback):
         return output
 
     def on_stage_end(self, state: _State):
-        state.stage_metrics[state.stage_name] = state.epoch_metrics.copy()
+        pass
+        # state.stage_metrics[state.stage_name] = state.epoch_metrics.copy()
 
     def on_epoch_start(self, state: _State):
         state.epoch_metrics = defaultdict(None)
+        self.is_best_epoch = False
+
+    def on_epoch_end(self, state: "_State"):
+        if state.stage_name.startswith("infer") or state.is_distributed_worker:
+            return
+
+        valid_metrics = {
+            k: v for k, v in state.epoch_metrics
+            if k.startsiwth(state.valid_loader)
+        }
+
+        assert state.main_metric in valid_metrics, \
+            f"{state.main_metric} value is not available by the epoch end"
+        if state.minimize_metric:
+            current_best_metric = \
+                state.stage_best_metrics.get(state.main_metric, float("+inf"))
+            is_best = valid_metrics[state.main_metric] < current_best_metric
+        else:
+            current_best_metric = \
+                state.stage_best_metrics.get(state.main_metric, float("-inf"))
+            is_best = valid_metrics[state.main_metric] > current_best_metric
+
+        if is_best:
+            self.is_best_epoch = True
+            state.stage_best_metrics = state.epoch_metrics.copy()
 
     def on_loader_start(self, state: _State):
         self.meters = defaultdict(meters.AverageValueMeter)
@@ -71,7 +97,10 @@ class TimerCallback(Callback):
     Logs pipeline execution time
     """
     def __init__(self):
-        super().__init__(order=CallbackOrder.Logging, node=CallbackNode.All)
+        super().__init__(
+            order=CallbackOrder.Logging - 1,
+            node=CallbackNode.All
+        )
         self.timer = TimerManager()
 
     def on_loader_start(self, state: _State):
@@ -292,7 +321,7 @@ class TensorboardLogger(Callback):
 
         if self.log_on_batch_end:
             mode = state.loader_name
-            metrics_ = state.metric_manager.batch_values
+            metrics_ = state.batch_metrics
             self._log_metrics(
                 metrics=metrics_, step=state.step, mode=mode, suffix="/batch"
             )
@@ -304,7 +333,7 @@ class TensorboardLogger(Callback):
 
         if self.log_on_epoch_end:
             mode = state.loader_name
-            metrics_ = state.metric_manager.epoch_values[mode]
+            metrics_ = state.loader_metrics
             self._log_metrics(
                 metrics=metrics_,
                 step=state.epoch_log,
@@ -330,4 +359,6 @@ __all__ = [
     "ConsoleLogger",
     "TensorboardLogger",
     "VerboseLogger",
+    "TimerCallback",
+    "MetricManagerCallback",
 ]

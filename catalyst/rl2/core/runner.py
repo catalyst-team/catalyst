@@ -49,9 +49,9 @@ class RLRunner(_Runner):
             ),
         ) or {}
 
-        metrics_ = self._update_target_weights(self.state.step) or {}
-        metrics.update(**metrics_)
-        self.state.metric_manager.add_batch_value(metrics_dict=metrics)
+        # metrics_ = self._update_target_weights(self.state.step) or {}
+        # metrics.update(**metrics_)
+        # self.state.metric_manager.add_batch_value(metrics_dict=metrics)
 
     def forward(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
         # todo: should implement different policy -> action

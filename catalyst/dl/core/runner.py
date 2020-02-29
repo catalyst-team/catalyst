@@ -10,10 +10,12 @@ class Runner(_Runner):
     """
     Deep Learning Runner for different supervised, unsupervised, gan, etc runs
     """
-    experiment: Experiment
-    state: State
     _experiment_fn: Callable = Experiment
-    _state_fn: callable = State
+    _state_fn: Callable = State
+
+    def _init(self):
+        self.experiment: Experiment = None
+        self.state: State = None
 
     def _prepare_for_stage(self, stage: str):
         super()._prepare_for_stage(stage=stage)

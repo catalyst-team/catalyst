@@ -36,13 +36,10 @@ class SchedulerCallback(Callback):
         return lr, momentum
 
     def step(self, state: _State):
-        scheduler = state.get_attr(
-            key="scheduler", inner_key=self.scheduler_key
-        )
         metrics = state.epoch_metrics
         reduced_metric = metrics[state.valid_loader][self.reduced_metric]
         lr, momentum = self._scheduler_step(
-            scheduler=scheduler, reduced_metric=reduced_metric
+            scheduler=self._scheduler, reduced_metric=reduced_metric
         )
 
         if self.scheduler_key is not None:
@@ -57,6 +54,7 @@ class SchedulerCallback(Callback):
             key="scheduler", inner_key=self.scheduler_key
         )
         assert scheduler is not None
+        self._scheduler = scheduler
 
         if self.mode is None:
             if isinstance(scheduler, BatchScheduler):
@@ -69,13 +67,10 @@ class SchedulerCallback(Callback):
             scheduler.reset()
 
     def on_loader_start(self, state: _State):
-        scheduler = state.get_attr(
-            key="scheduler", inner_key=self.scheduler_key
-        )
         if state.loader_name.startswith("train") and \
-                isinstance(scheduler, OneCycleLRWithWarmup) and \
+                isinstance(self._scheduler, OneCycleLRWithWarmup) and \
                 self.mode == "batch":
-            scheduler.recalculate(
+            self._scheduler.recalculate(
                 loader_len=state.loader_len, current_step=state.stage_epoch
             )
 
@@ -137,10 +132,10 @@ class LRUpdater(Callback):
         if not state.need_backward_pass:
             return
 
-        optimizer = state.get_attr(
-            key="optimizer", inner_key=self.optimizer_key
-        )
-        lr, momentum = self._update_optimizer(optimizer=optimizer)
+        lr, momentum = self._update_optimizer(optimizer=self._optimizer)
+
+        raise NotImplementedError()
+
         state.set_attr(lr, key="lr", inner_key=self.optimizer_key)
         state.set_attr(momentum, key="momentum", inner_key=self.optimizer_key)
 
@@ -148,6 +143,8 @@ class LRUpdater(Callback):
         optimizer = state.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
+        assert optimizer is not None
+        self._optimizer = optimizer
         self.init_lr = optimizer.defaults["lr"]
 
     def on_loader_start(self, state: _State):

@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 
 from catalyst.dl import (
-    Callback, CallbackOrder, MasterOnlyCallback, State, utils
+    Callback, CallbackOrder, CallbackNode, State, utils
 )
 from catalyst.utils import meters
 
@@ -33,7 +33,7 @@ class EarlyStoppingCallback(Callback):
         if state.stage_name.startswith("infer"):
             return
 
-        score = state.metric_manager.valid_values[self.metric]
+        score = state.epoch_metrics[state.valid_loader][self.metric]
         if self.best_score is None:
             self.best_score = score
         if self.is_better(score, self.best_score):
@@ -47,7 +47,7 @@ class EarlyStoppingCallback(Callback):
             state.need_early_stop = True
 
 
-class ConfusionMatrixCallback(MasterOnlyCallback):
+class ConfusionMatrixCallback(Callback):
     def __init__(
         self,
         input_key: str = "targets",
@@ -58,7 +58,7 @@ class ConfusionMatrixCallback(MasterOnlyCallback):
         num_classes: int = None,
         plot_params: Dict = None
     ):
-        super().__init__(CallbackOrder.Metric)
+        super().__init__(CallbackOrder.Metric, CallbackNode.Master)
         self.prefix = prefix
         self.output_key = output_key
         self.input_key = input_key

@@ -22,10 +22,8 @@ class _Runner(ABC):
     """
     Abstract class for all runners inherited from
     """
-    experiment: _Experiment
-    state: _State
     _experiment_fn: Callable = _Experiment
-    _state_fn: callable = _State
+    _state_fn: Callable = _State
 
     def __init__(
         self,
@@ -37,9 +35,9 @@ class _Runner(ABC):
             model (Model): Torch model object
             device (Device): Torch device
         """
-        # main
         self._model: Model = model
         self._device: Device = device
+        self._init()
 
     @property
     def model(self) -> Model:
@@ -105,6 +103,10 @@ class _Runner(ABC):
             self._model = utils.maybe_recursive_call(
                 self._model, "to", device=self._device
             )
+
+    def _init(self):
+        self.experiment: _Experiment = None
+        self.state: _State = None
 
     @abstractmethod
     def forward(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
@@ -199,6 +201,8 @@ class _Runner(ABC):
             ):
                 del callbacks[k]
 
+        callbacks = utils.process_callbacks(callbacks)
+
         return callbacks
 
     def _prepare_for_stage(self, stage: str):
@@ -225,7 +229,7 @@ class _Runner(ABC):
 
     def _run_event(self, event: str):
         for callback in self.state.callbacks.values():
-            callback.__dict__[event](self.state)
+            getattr(callback, event)(self.state)
 
     def _batch2device(self, batch: Mapping[str, Any], device: Device):
         output = utils.any2device(batch, device)
@@ -274,8 +278,6 @@ class _Runner(ABC):
 
         for i, batch in enumerate(loader):
             self._run_batch(batch)
-            if self._check_run and i >= 1:
-                break
 
     def _run_epoch(self, stage: str, epoch: int):
         self._prepare_for_epoch(stage=stage, epoch=epoch)
@@ -298,7 +300,7 @@ class _Runner(ABC):
         for loader_name, loader in loaders.items():
             is_train_loader = loader_name.startswith("train")
 
-            state.loader = loader
+            # state.loader = loader
             state.loader_name = loader_name
             state.loader_len = len(loader)
             state.need_backward_pass = is_train_loader
@@ -329,8 +331,6 @@ class _Runner(ABC):
             self._run_epoch(stage=stage, epoch=state.stage_epoch)
             self._run_event("on_epoch_end")
 
-            if state.is_check_run and state.stage_epoch >= 1:
-                break
             if state.need_early_stop:
                 state.need_early_stop = False
                 break
@@ -343,7 +343,6 @@ class _Runner(ABC):
         """
         Starts the experiment
         """
-        self._check_run = check
         self.experiment = experiment
 
         try:
