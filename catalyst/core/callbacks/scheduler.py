@@ -35,7 +35,7 @@ class SchedulerCallback(Callback):
 
         return lr, momentum
 
-    def step(self, state: _State):
+    def step_epoch(self, state: _State):
         reduced_metric = state.valid_metrics[self.reduced_metric]
         lr, momentum = self._scheduler_step(
             scheduler=self._scheduler, reduced_metric=reduced_metric
@@ -47,6 +47,16 @@ class SchedulerCallback(Callback):
         else:
             state.epoch_metrics["lr"] = lr
             state.epoch_metrics["momentum"] = momentum
+
+    def step_batch(self, state: _State):
+        lr, momentum = self._scheduler_step(scheduler=self._scheduler)
+
+        if self.scheduler_key is not None:
+            state.batch_metrics[f"lr_{self.scheduler_key}"] = lr
+            state.batch_metrics[f"momentum_{self.scheduler_key}"] = momentum
+        else:
+            state.batch_metrics["lr"] = lr
+            state.batch_metrics["momentum"] = momentum
 
     def on_stage_start(self, state: _State):
         scheduler = state.get_attr(
@@ -65,6 +75,10 @@ class SchedulerCallback(Callback):
                 self.mode == "batch":
             scheduler.reset()
 
+    def on_epoch_end(self, state: _State):
+        if state.need_backward_pass and self.mode == "epoch":
+            self.step_epoch(state=state)
+
     def on_loader_start(self, state: _State):
         if state.loader_name.startswith("train") and \
                 isinstance(self._scheduler, OneCycleLRWithWarmup) and \
@@ -74,12 +88,8 @@ class SchedulerCallback(Callback):
             )
 
     def on_batch_end(self, state: _State):
-        if self.mode == "batch":
-            self.step(state=state)
-
-    def on_epoch_end(self, state: _State):
-        if self.mode == "epoch":
-            self.step(state=state)
+        if state.need_backward_pass and self.mode == "batch":
+            self.step_batch(state=state)
 
 
 class LRUpdater(Callback):
@@ -128,15 +138,14 @@ class LRUpdater(Callback):
         return new_lr, new_momentum
 
     def update_optimizer(self, state: _State):
-        if not state.need_backward_pass:
-            return
-
         lr, momentum = self._update_optimizer(optimizer=self._optimizer)
 
-        raise NotImplementedError()
-
-        state.set_attr(lr, key="lr", inner_key=self.optimizer_key)
-        state.set_attr(momentum, key="momentum", inner_key=self.optimizer_key)
+        if self.optimizer_key is not None:
+            state.batch_metrics[f"lr_{self.optimizer_key}"] = lr
+            state.batch_metrics[f"momentum_{self.optimizer_key}"] = momentum
+        else:
+            state.batch_metrics["lr"] = lr
+            state.batch_metrics["momentum"] = momentum
 
     def on_stage_start(self, state: _State):
         optimizer = state.get_attr(
