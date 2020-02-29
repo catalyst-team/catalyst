@@ -216,10 +216,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         if state.stage_name.startswith("infer") or state.is_distributed_worker:
             return
 
-        valid_metrics = {
-            k: v for k, v in state.epoch_metrics
-            if k.startsiwth(state.valid_loader)
-        }
+        valid_metrics = dict(state.valid_metrics)
         epoch_metrics = dict(state.epoch_metrics)
 
         checkpoint = utils.pack_checkpoint(
@@ -237,7 +234,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         self.process_checkpoint(
             logdir=state.logdir,
             checkpoint=checkpoint,
-            is_best=state.is_best_epoch,
+            is_best=state.is_best_valid,
             main_metric=state.main_metric,
             minimize_metric=state.minimize_metric
         )

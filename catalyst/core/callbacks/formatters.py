@@ -1,3 +1,5 @@
+from typing import Dict  # isort:skip
+
 from abc import ABC, abstractmethod
 from datetime import datetime
 import json
@@ -52,8 +54,7 @@ class TxtMetricsFormatter(MetricsFormatter):
         """
         super().__init__("[{asctime}] ")
 
-    def _format_metrics(self, metrics):
-        # metrics : dict[str: dict[str: float]]
+    def _format_metrics(self, metrics: Dict[str, Dict[str, float]]):
         metrics_formatted = {}
         for key, value in metrics.items():
             metrics_formatted_ = [
@@ -67,7 +68,25 @@ class TxtMetricsFormatter(MetricsFormatter):
 
     def _format_message(self, state: _State):
         message = [""]
-        metrics = self._format_metrics(state.epoch_metrics)
+        per_type_metrics = {}
+        base_metrics = {
+            k: v
+            for k, v in state.epoch_metrics.items()
+            if all(
+                not k.startswith(loader_name)
+                for loader_name in state.loaders.keys()
+            )
+        }
+        if len(base_metrics) > 0:
+            per_type_metrics["_base"] = base_metrics
+        for loader_name in state.loaders.keys():
+            per_type_metrics[loader_name] = {
+                k.replace(f"{loader_name}_", ""): v
+                for k, v in state.epoch_metrics.items()
+                if k.startswith(loader_name)
+            }
+
+        metrics = self._format_metrics(per_type_metrics)
         for key, value in metrics.items():
             message.append(
                 f"{state.stage_epoch_log}/{state.num_epochs} "

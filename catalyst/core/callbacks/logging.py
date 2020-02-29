@@ -14,13 +14,51 @@ from catalyst.utils.tools.tensorboard import SummaryWriter
 from . import formatters
 
 
+class TimerCallback(Callback):
+    """
+    Logs pipeline execution time
+    """
+    def __init__(self):
+        super().__init__(
+            order=CallbackOrder.Metric + 1,
+            node=CallbackNode.All
+        )
+        self.timer = TimerManager()
+
+    def on_loader_start(self, state: _State):
+        self.timer.reset()
+        self.timer.start("_timers/batch_time")
+        self.timer.start("_timers/data_time")
+
+    def on_loader_end(self, state: _State):
+        self.timer.reset()
+
+    def on_batch_start(self, state: _State):
+        self.timer.stop("_timers/data_time")
+        self.timer.start("_timers/model_time")
+
+    def on_batch_end(self, state: _State):
+        self.timer.stop("_timers/model_time")
+        self.timer.stop("_timers/batch_time")
+
+        # @TODO: just a trick
+        self.timer.elapsed["_timers/_fps"] = \
+            state.batch_size / self.timer.elapsed["_timers/batch_time"]
+        for key, value in self.timer.elapsed.items():
+            state.batch_metrics[key] = value
+
+        self.timer.reset()
+        self.timer.start("_timers/batch_time")
+        self.timer.start("_timers/data_time")
+
+
 class MetricManagerCallback(Callback):
     """
     Prepares the metrics for the logging, transferring from PyTorch to numpy
     """
     def __init__(self):
         super().__init__(
-            order=CallbackOrder.Logging - 2,
+            order=CallbackOrder.Logging - 1,
             node=CallbackNode.All,
         )
         self.meters: Dict[str, meters.AverageValueMeter] = None
@@ -42,37 +80,36 @@ class MetricManagerCallback(Callback):
             output[key] = value
         return output
 
-    def on_stage_end(self, state: _State):
-        pass
-        # state.stage_metrics[state.stage_name] = state.epoch_metrics.copy()
-
     def on_epoch_start(self, state: _State):
         state.epoch_metrics = defaultdict(None)
-        self.is_best_epoch = False
+        state.valid_metrics = defaultdict(None)
+        state.is_best_valid = False
 
     def on_epoch_end(self, state: "_State"):
         if state.stage_name.startswith("infer") or state.is_distributed_worker:
             return
 
-        valid_metrics = {
-            k: v for k, v in state.epoch_metrics
-            if k.startsiwth(state.valid_loader)
+        state.valid_metrics = {
+            k.replace(f"{state.loader_name}_", ""): v
+            for k, v in state.epoch_metrics.items()
+            if k.startswith(state.valid_loader)
         }
-
-        assert state.main_metric in valid_metrics, \
+        assert state.main_metric in state.valid_metrics, \
             f"{state.main_metric} value is not available by the epoch end"
+
+        current_valid_metric = state.valid_metrics[state.main_metric]
         if state.minimize_metric:
-            current_best_metric = \
-                state.stage_best_metrics.get(state.main_metric, float("+inf"))
-            is_best = valid_metrics[state.main_metric] < current_best_metric
+            best_valid_metric = \
+                state.best_valid_metrics.get(state.main_metric, float("+inf"))
+            is_best = current_valid_metric < best_valid_metric
         else:
-            current_best_metric = \
-                state.stage_best_metrics.get(state.main_metric, float("-inf"))
-            is_best = valid_metrics[state.main_metric] > current_best_metric
+            best_valid_metric = \
+                state.best_valid_metrics.get(state.main_metric, float("-inf"))
+            is_best = current_valid_metric > best_valid_metric
 
         if is_best:
             self.is_best_epoch = True
-            state.stage_best_metrics = state.epoch_metrics.copy()
+            state.best_valid_metrics = state.valid_metrics.copy()
 
     def on_loader_start(self, state: _State):
         self.meters = defaultdict(meters.AverageValueMeter)
@@ -80,8 +117,9 @@ class MetricManagerCallback(Callback):
 
     def on_loader_end(self, state: _State):
         for key, value in self.meters.items():
-            state.loader_metrics[key] = value.mean
-        state.epoch_metrics[state.loader_name] = state.loader_metrics.copy()
+            value = value.mean
+            state.loader_metrics[key] = value
+            state.epoch_metrics[f"{state.loader_name}_{key}"] = value
 
     def on_batch_start(self, state: _State):
         state.batch_metrics = defaultdict(None)
@@ -89,38 +127,7 @@ class MetricManagerCallback(Callback):
     def on_batch_end(self, state: _State):
         state.batch_metrics = self._process_metrics(state.batch_metrics)
         for key, value in state.batch_metrics.items():
-            self.meters[key] = value
-
-
-class TimerCallback(Callback):
-    """
-    Logs pipeline execution time
-    """
-    def __init__(self):
-        super().__init__(
-            order=CallbackOrder.Logging - 1,
-            node=CallbackNode.All
-        )
-        self.timer = TimerManager()
-
-    def on_loader_start(self, state: _State):
-        self.timer.reset()
-        self.timer.start("_timers/batch_time")
-        self.timer.start("_timers/data_time")
-
-    def on_loader_end(self, state: _State):
-        self.timer.reset()
-
-    def on_batch_start(self, state: _State):
-        self.timer.stop("_timers/data_time")
-        self.timer.start("_timers/model_time")
-
-    def on_batch_end(self, state: _State):
-        self.timer.stop("_timers/model_time")
-        self.timer.stop("_timers/batch_time")
-        self.timer.reset()
-        self.timer.start("_timers/batch_time")
-        self.timer.start("_timers/data_time")
+            self.meters[key].add(value)
 
 
 class VerboseLogger(Callback):
@@ -177,6 +184,12 @@ class VerboseLogger(Callback):
             file=sys.stdout,
         )
 
+    def on_loader_end(self, state: _State):
+        """Cleanup and close tqdm progress bar"""
+        self.tqdm.close()
+        self.tqdm = None
+        self.step = 0
+
     def on_batch_end(self, state: _State):
         """Update tqdm progress bar at the end of each batch"""
         self.tqdm.set_postfix(
@@ -187,12 +200,6 @@ class VerboseLogger(Callback):
             }
         )
         self.tqdm.update()
-
-    def on_loader_end(self, state: _State):
-        """Cleanup and close tqdm progress bar"""
-        self.tqdm.close()
-        self.tqdm = None
-        self.step = 0
 
     def on_exception(self, state: _State):
         """Called if an Exception was raised"""

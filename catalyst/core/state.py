@@ -71,8 +71,10 @@ class _State(FrozenClass):
         # }
         self.epoch_metrics = defaultdict(None)
 
-        self.is_best_epoch = False
-        self.stage_best_metrics = defaultdict(None)
+        # validation
+        self.is_best_valid = False
+        self.valid_metrics = defaultdict(None)
+        self.best_valid_metrics = defaultdict(None)
 
         # pipeline info
         self.distributed_rank = utils.get_rank()
