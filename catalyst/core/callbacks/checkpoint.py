@@ -6,7 +6,7 @@ from pathlib import Path
 import safitty
 
 from catalyst import utils
-from catalyst.core import _State, Callback, CallbackOrder
+from catalyst.core import _State, Callback, CallbackOrder, CallbackNode
 
 
 def _load_checkpoint(*, filename, state: _State):
@@ -29,8 +29,8 @@ def _load_checkpoint(*, filename, state: _State):
 
         print(
             f"loaded checkpoint {filename} "
-            f"(epoch {checkpoint['epoch']}, "
-            f"stage_epoch {checkpoint['stage_epoch']}, "
+            f"(epoch {checkpoint['epoch'] + 1}, "
+            f"stage_epoch {checkpoint['stage_epoch'] + 1}, "
             f"stage {checkpoint['stage']})"
         )
     else:
@@ -47,7 +47,10 @@ class BaseCheckpointCallback(Callback):
             metrics_filename (str): filename to save metrics
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
         """
-        super().__init__(CallbackOrder.External)
+        super().__init__(
+            order=CallbackOrder.External,
+            node=CallbackNode.Master
+        )
         self.metrics_filename = metrics_filename
         self.metrics: dict = {}
 
@@ -73,8 +76,9 @@ class BaseCheckpointCallback(Callback):
                 epoch_metrics=epoch_metrics,
                 valid_metrics=valid_metrics,
                 stage=state.stage_name,
-                epoch=state.epoch_log,
-                checkpoint_data=state.checkpoint_data
+                epoch=state.epoch,
+                stage_epoch=state.stage_epoch,
+                checkpoint_data=state.checkpoint_data,
             )
             suffix = self.get_checkpoint_suffix(checkpoint)
             suffix = f"{suffix}.exception_{exception.__class__.__name__}"
@@ -213,7 +217,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             self.resume = None
 
     def on_epoch_end(self, state: _State):
-        if state.stage_name.startswith("infer") or state.is_distributed_worker:
+        if state.stage_name.startswith("infer"):
             return
 
         valid_metrics = dict(state.valid_metrics)
@@ -227,8 +231,8 @@ class CheckpointCallback(BaseCheckpointCallback):
             epoch_metrics=epoch_metrics,
             valid_metrics=valid_metrics,
             stage=state.stage_name,
-            epoch=state.epoch_log,
-            stage_epoch=state.stage_epoch_log,
+            epoch=state.epoch,
+            stage_epoch=state.stage_epoch,
             checkpoint_data=state.checkpoint_data,
         )
         self.process_checkpoint(
@@ -240,6 +244,9 @@ class CheckpointCallback(BaseCheckpointCallback):
         )
 
     def on_stage_end(self, state: _State):
+        if state.stage_name.startswith("infer"):
+            return
+
         print("Top best models:")
         top_best_metrics_str = "\n".join(
             [

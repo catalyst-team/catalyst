@@ -40,7 +40,7 @@ class ValidationManagerCallback(Callback):
             is_best = current_valid_metric > best_valid_metric
 
         if is_best:
-            self.is_best_epoch = True
+            state.is_best_valid = True
             state.best_valid_metrics = state.valid_metrics.copy()
 
 
