@@ -2,8 +2,9 @@ from collections import OrderedDict
 
 from catalyst.dl import (
     Callback, CheckpointCallback, ConsoleLogger, CriterionCallback,
-    OptimizerCallback, ExceptionCallback, SchedulerCallback,
-    TensorboardLogger, VerboseLogger, MetricsManagerCallback, TimerCallback, ValidationManagerCallback
+    ExceptionCallback, MetricsManagerCallback, OptimizerCallback,
+    SchedulerCallback, TensorboardLogger, TimerCallback,
+    ValidationManagerCallback, VerboseLogger
 )
 from catalyst.utils.tools.typing import Criterion, Optimizer, Scheduler
 from .base import BaseExperiment

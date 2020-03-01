@@ -1,7 +1,8 @@
 from typing import TYPE_CHECKING  # isort:skip
 from collections import defaultdict
 
-from catalyst.core import Callback, CallbackOrder, CallbackNode
+from catalyst.core import Callback, CallbackNode, CallbackOrder
+
 if TYPE_CHECKING:
     from catalyst.core import _State
 

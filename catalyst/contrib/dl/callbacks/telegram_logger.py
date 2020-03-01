@@ -1,12 +1,11 @@
 from typing import List  # isort:skip
 import logging
 import os
-
 from urllib.parse import quote_plus
 from urllib.request import Request, urlopen
 
-from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
 from catalyst import utils
+from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
 
 
 class TelegramLogger(Callback):

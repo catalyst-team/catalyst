@@ -3,8 +3,8 @@ from collections import OrderedDict
 import torch
 
 from catalyst.dl import (
-    CheckpointCallback, ConsoleLogger, OptimizerCallback, PhaseManagerCallback,
-    PhaseWrapperCallback, ExceptionCallback, TensorboardLogger
+    CheckpointCallback, ConsoleLogger, ExceptionCallback, OptimizerCallback,
+    PhaseManagerCallback, PhaseWrapperCallback, TensorboardLogger
 )
 from catalyst.dl.experiment.gan import GanExperiment
 

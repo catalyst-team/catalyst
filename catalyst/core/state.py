@@ -7,8 +7,9 @@ import numpy as np
 from catalyst import utils
 from catalyst.utils.tools.frozen_class import FrozenClass
 from catalyst.utils.tools.typing import (
-    Criterion, Device, Model, Optimizer, Scheduler, DataLoader
+    Criterion, DataLoader, Device, Model, Optimizer, Scheduler
 )
+
 if TYPE_CHECKING:
     from .callback import Callback
 

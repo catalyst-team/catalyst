@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING  # isort:skip
 
-from catalyst.core import Callback, CallbackOrder, CallbackNode
+from catalyst.core import Callback, CallbackNode, CallbackOrder
 from catalyst.utils.tools.time_manager import TimeManager
 
 if TYPE_CHECKING:

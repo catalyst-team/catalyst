@@ -7,8 +7,8 @@ import sys
 from tqdm import tqdm
 
 from catalyst import utils
+from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
 from catalyst.utils import meters
-from catalyst.core import _State, Callback, CallbackOrder, CallbackNode
 from catalyst.utils.tools.tensorboard import SummaryWriter
 from . import formatters
 

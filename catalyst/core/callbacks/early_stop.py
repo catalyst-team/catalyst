@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING  # isort:skip
 
 from catalyst.core import Callback, CallbackOrder
+
 if TYPE_CHECKING:
     from catalyst.core import _State
 

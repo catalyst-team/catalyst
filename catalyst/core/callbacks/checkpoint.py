@@ -6,7 +6,7 @@ from pathlib import Path
 import safitty
 
 from catalyst import utils
-from catalyst.core import _State, Callback, CallbackOrder, CallbackNode
+from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
 
 
 def _load_checkpoint(*, filename, state: _State):

@@ -3,8 +3,8 @@ from collections import OrderedDict
 import torch
 
 from catalyst.dl import (
-    CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
-    ExceptionCallback, SchedulerCallback, TensorboardLogger
+    CheckpointCallback, ConsoleLogger, CriterionCallback, ExceptionCallback,
+    OptimizerCallback, SchedulerCallback, TensorboardLogger
 )
 from catalyst.dl.experiment.supervised import SupervisedExperiment
 

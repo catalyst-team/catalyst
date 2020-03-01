@@ -14,8 +14,8 @@ from catalyst.data import (
     Augmentor, AugmentorCompose, DistributedSamplerWrapper
 )
 from catalyst.dl import (
-    Callback, CheckpointCallback, ConsoleLogger, CriterionCallback, Experiment,
-    OptimizerCallback, PhaseWrapperCallback, ExceptionCallback,
+    Callback, CheckpointCallback, ConsoleLogger, CriterionCallback,
+    ExceptionCallback, Experiment, OptimizerCallback, PhaseWrapperCallback,
     SchedulerCallback, TensorboardLogger, utils, VerboseLogger
 )
 from catalyst.dl.registry import (

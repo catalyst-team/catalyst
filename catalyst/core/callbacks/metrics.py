@@ -1,10 +1,11 @@
 from typing import Any, Callable, List, Dict, Union, TYPE_CHECKING  # isort:skip
-import logging
 from functools import partial
+import logging
 
 import torch
 
 from catalyst.core import Callback, CallbackOrder
+
 if TYPE_CHECKING:
     from catalyst.core import _State
 
