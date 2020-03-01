@@ -2,8 +2,6 @@ from typing import Any, Callable, Dict, List, Mapping, Union  # isort:skip
 from collections import OrderedDict
 from copy import deepcopy
 
-import safitty
-
 import torch
 from torch import nn
 from torch.utils.data import (  # noqa F401
@@ -14,12 +12,14 @@ from catalyst.data import (
     Augmentor, AugmentorCompose, DistributedSamplerWrapper
 )
 from catalyst.dl import (
-    Callback, CheckpointCallback, ConsoleLogger, CriterionCallback,
-    ExceptionCallback, Experiment, OptimizerCallback, PhaseWrapperCallback,
-    SchedulerCallback, TensorboardLogger, utils, VerboseLogger
+    Callback, CheckpointCallback, CheckRunCallback, ConsoleLogger,
+    CriterionCallback, ExceptionCallback, Experiment, OptimizerCallback,
+    PhaseWrapperCallback, SchedulerCallback, TensorboardLogger, utils,
+    VerboseLogger
 )
 from catalyst.dl.registry import (
-    CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS, TRANSFORMS
+    CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS,
+    TRANSFORMS
 )
 from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
@@ -45,9 +45,8 @@ class ConfigExperiment(Experiment):
         """
         self._config = deepcopy(config)
         self._initial_seed = self._config.get("args", {}).get("seed", 42)
-        self._verbose = safitty.get(
-            self._config, "args", "verbose", default=False
-        )
+        self._verbose = self._config.get("args", {}).get("verbose", False)
+        self._check = self._config.get("args", {}).get("check", False)
         self.__prepare_logdir()
 
         self._config["stages"]["state_params"] = utils.merge_dicts(
@@ -530,6 +529,8 @@ class ConfigExperiment(Experiment):
         default_callbacks = []
         if self._verbose:
             default_callbacks.append(("verbose", VerboseLogger))
+        if self._check:
+            default_callbacks.append(("check", CheckRunCallback))
         if not stage.startswith("infer"):
             default_callbacks.append(("_criterion", CriterionCallback))
             default_callbacks.append(("_optimizer", OptimizerCallback))
