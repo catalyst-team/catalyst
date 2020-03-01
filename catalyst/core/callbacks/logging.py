@@ -292,9 +292,6 @@ class TensorboardLogger(Callback):
             logger.close()
 
 
-
-
-
 __all__ = [
     "ConsoleLogger",
     "TensorboardLogger",

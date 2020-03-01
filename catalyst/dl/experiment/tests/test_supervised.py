@@ -11,8 +11,7 @@ from catalyst.dl.experiment.supervised import SupervisedExperiment
 DEFAULT_CALLBACKS = OrderedDict(
     [
         ("_saver", CheckpointCallback), ("console", ConsoleLogger),
-        ("tensorboard", TensorboardLogger),
-        ("exception", ExceptionCallback)
+        ("tensorboard", TensorboardLogger), ("exception", ExceptionCallback)
     ]
 )
 

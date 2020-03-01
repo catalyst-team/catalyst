@@ -48,8 +48,7 @@ class BaseCheckpointCallback(Callback):
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
         """
         super().__init__(
-            order=CallbackOrder.External,
-            node=CallbackNode.Master
+            order=CallbackOrder.External, node=CallbackNode.Master
         )
         self.metrics_filename = metrics_filename
         self.metrics: dict = {}

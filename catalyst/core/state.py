@@ -11,8 +11,7 @@ from catalyst.utils.tools.typing import (
 )
 
 if TYPE_CHECKING:
-    from .callback import Callback
-
+    from .callback import Callback  # noqa: F401
 
 STATE_MODEL = Union[Model, Dict[str, Model]]
 STATE_CRITERION = Union[Criterion, Dict[str, Criterion]]
@@ -29,7 +28,7 @@ class _State(FrozenClass):
         criterion: STATE_CRITERION = None,
         optimizer: STATE_OPTIMIZER = None,
         scheduler: STATE_SCHEDULER = None,
-        callbacks: Dict[str, "Callback"]= None,
+        callbacks: Dict[str, "Callback"] = None,
         logdir: str = None,
         stage: str = "infer",
         num_epochs: int = None,

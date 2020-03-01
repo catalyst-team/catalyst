@@ -71,8 +71,7 @@ class TxtMetricsFormatter(MetricsFormatter):
         per_type_metrics = {}
         base_metrics = {
             k: v
-            for k, v in state.epoch_metrics.items()
-            if all(
+            for k, v in state.epoch_metrics.items() if all(
                 not k.startswith(loader_name)
                 for loader_name in state.loaders.keys()
             )

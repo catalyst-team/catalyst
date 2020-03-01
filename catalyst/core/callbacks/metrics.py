@@ -1,4 +1,6 @@
-from typing import Any, Callable, List, Dict, Union, TYPE_CHECKING  # isort:skip
+from typing import (  # isort:skip
+    Any, Callable, List, Dict, Union, TYPE_CHECKING  # isort:skip
+)  # isort:skip
 from functools import partial
 import logging
 

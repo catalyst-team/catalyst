@@ -93,11 +93,11 @@ class ConfusionMatrixCallback(Callback):
             [str(i) for i in range(self.num_classes)]
         confusion_matrix = self._compute_confusion_matrix()
         self._plot_confusion_matrix(
-            logger=state.loggers["tensorboard"].loggers[state.loader_name],
+            logger=state.callbacks["tensorboard"].loggers[state.loader_name],
             epoch=state.epoch,
             confusion_matrix=confusion_matrix,
             class_names=class_names
         )
 
 
-__all__ = ["EarlyStoppingCallback", "ConfusionMatrixCallback"]
+__all__ = ["ConfusionMatrixCallback"]

@@ -65,7 +65,9 @@ class SupervisedExperiment(BaseExperiment):
             default_callbacks.append(("_saver", CheckpointCallback))
             default_callbacks.append(("_timer", TimerCallback))
             default_callbacks.append(("_metrics", MetricsManagerCallback))
-            default_callbacks.append(("_validation", ValidationManagerCallback))
+            default_callbacks.append(
+                ("_validation", ValidationManagerCallback)
+            )
             default_callbacks.append(("console", ConsoleLogger))
             default_callbacks.append(("tensorboard", TensorboardLogger))
         default_callbacks.append(("_exception", ExceptionCallback))

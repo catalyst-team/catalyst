@@ -26,8 +26,7 @@ DEFAULT_CALLBACKS = OrderedDict(
     [
         ("_criterion", CriterionCallback), ("_optimizer", OptimizerCallback),
         ("_saver", CheckpointCallback), ("console", ConsoleLogger),
-        ("tensorboard", TensorboardLogger),
-        ("exception", ExceptionCallback)
+        ("tensorboard", TensorboardLogger), ("exception", ExceptionCallback)
     ]
 )
 

@@ -1,10 +1,6 @@
 from typing import Callable, Dict, List  # isort:skip
 import logging
 
-import safitty
-
-import torch
-
 from catalyst import utils
 from catalyst.core import _State, Callback, CallbackOrder, registry
 from catalyst.utils.tools.typing import Optimizer
@@ -20,11 +16,9 @@ class OptimizerCallback(Callback):
         self,
         loss_key: str = "loss",
         optimizer_key: str = None,
-        model_key: str = None,
         accumulation_steps: int = 1,
         grad_clip_params: Dict = None,
         decouple_weight_decay: bool = True,
-        zero_grad_mode: str = "model",
         # save_model_grads: bool = False,
     ):
         """
@@ -38,13 +32,13 @@ class OptimizerCallback(Callback):
             decouple_weight_decay (bool): If True - decouple weight decay
                 regularization.
             # save_model_grads (bool): If True - State.model_grads will
-            #     contain gradients calculated on backward propagation on current
+            #     contain gradients calculated
+            # on backward propagation on current
             #     batch
         """
         super().__init__(CallbackOrder.Optimizer)
         self.loss_key: str = loss_key
         self.optimizer_key: str = optimizer_key
-        self.model_key: str = model_key
 
         self.accumulation_steps: int = accumulation_steps
         self._accumulation_counter: int = 0
@@ -53,13 +47,10 @@ class OptimizerCallback(Callback):
         self.grad_clip_fn = (
             registry.GRAD_CLIPPERS.get_from_params(**grad_clip_params)
         )
-        
+
         self.decouple_weight_decay = decouple_weight_decay
         self._optimizer_wd: List[float] = [0.0]
         # self.save_model_grads = save_model_grads
-
-        assert zero_grad_mode in ["model", "optimizer"]
-        self.zero_grad_mode = zero_grad_mode
 
     @staticmethod
     def grad_step(
@@ -93,11 +84,7 @@ class OptimizerCallback(Callback):
             key="optimizer", inner_key=self.optimizer_key
         )
         assert optimizer is not None
-        model = state.get_attr(key="model", inner_key=self.model_key)
-        assert model is not None
-
         self._optimizer = optimizer
-        self._model = model
 
     def on_epoch_start(self, state: _State):
         """On epoch start event"""
@@ -127,7 +114,6 @@ class OptimizerCallback(Callback):
 
         loss = state.batch_metrics[self.loss_key]
         optimizer = self._optimizer
-        model = self._model
 
         self._accumulation_counter += 1
         need_gradient_step = \
@@ -162,10 +148,7 @@ class OptimizerCallback(Callback):
             #         tag = tag.replace(".", "/")
             #         state.model_grads[tag] = value.grad.cpu().numpy()
 
-            if self.zero_grad_mode == "model":
-                utils.maybe_recursive_call(model, "zero_grad")
-            else:
-                utils.maybe_recursive_call(optimizer, "zero_grad")
+            utils.maybe_recursive_call(optimizer, "zero_grad")
 
             self._accumulation_counter = 0
 

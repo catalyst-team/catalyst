@@ -199,10 +199,7 @@ class SupervisedRunner(Runner):
         if check:
             callbacks = utils.process_callbacks(callbacks)
             checkrun_callback_flag = any(
-                [
-                    isinstance(x, CheckRunCallback)
-                    for x in callbacks.values()
-                ]
+                [isinstance(x, CheckRunCallback) for x in callbacks.values()]
             )
             if not checkrun_callback_flag:
                 callbacks["check"] = CheckRunCallback()
@@ -266,10 +263,7 @@ class SupervisedRunner(Runner):
         if check:
             callbacks = utils.process_callbacks(callbacks)
             checkrun_callback_flag = any(
-                [
-                    isinstance(x, CheckRunCallback)
-                    for x in callbacks.values()
-                ]
+                [isinstance(x, CheckRunCallback) for x in callbacks.values()]
             )
             if not checkrun_callback_flag:
                 callbacks["check"] = CheckRunCallback()

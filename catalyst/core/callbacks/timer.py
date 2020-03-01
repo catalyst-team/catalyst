@@ -12,10 +12,7 @@ class TimerCallback(Callback):
     Logs pipeline execution time
     """
     def __init__(self):
-        super().__init__(
-            order=CallbackOrder.Metric + 1,
-            node=CallbackNode.All
-        )
+        super().__init__(order=CallbackOrder.Metric + 1, node=CallbackNode.All)
         self.timer = TimeManager()
 
     def on_loader_start(self, state: "_State"):

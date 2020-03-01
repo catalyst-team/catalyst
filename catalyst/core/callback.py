@@ -82,5 +82,7 @@ class Callback:
 
 
 __all__ = [
-    "CallbackOrder", "CallbackNode", "Callback",
+    "CallbackOrder",
+    "CallbackNode",
+    "Callback",
 ]

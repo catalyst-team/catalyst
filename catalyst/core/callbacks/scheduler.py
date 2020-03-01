@@ -1,5 +1,3 @@
-import safitty
-
 import torch
 
 from catalyst import utils
