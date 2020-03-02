@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.abspath(catalyst_root_path))
 # -- Project information -----------------------------------------------------
 
 project = "Catalyst"
-copyright = "{}, Scitator".format(datetime.datetime.now().year)
+copyright = "{}, Scitator".format(datetime.datetime.now().year)  # noqa: W0622
 author = "Sergey Kolesnikov"
 
 docs_repo = "catalyst"
