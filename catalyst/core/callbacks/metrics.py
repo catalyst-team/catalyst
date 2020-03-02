@@ -144,7 +144,7 @@ class MultiMetricCallback(MetricCallback):
             state.batch_metrics[key] = metric * self.multiplier
 
 
-class MetricAggregatorCallback(Callback):
+class MetricAggregationCallback(Callback):
     """
     A callback to aggregate several metrics in one value.
     """
@@ -282,6 +282,6 @@ class MetricManagerCallback(Callback):
 
 
 __all__ = [
-    "MetricCallback", "MultiMetricCallback", "MetricAggregatorCallback",
+    "MetricCallback", "MultiMetricCallback", "MetricAggregationCallback",
     "MetricManagerCallback"
 ]
