@@ -193,9 +193,6 @@ class _Runner(ABC):
             callbacks[event] = filtered_callbacks
         return callbacks, loggers
 
-    def _prepare_for_stage(self, stage: str):
-        utils.set_global_seed(self.experiment.initial_seed)
-
     def _get_state(
         self,
         stage: str,

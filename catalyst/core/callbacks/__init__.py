@@ -2,8 +2,7 @@
 
 from .checkpoint import CheckpointCallback, IterationCheckpointCallback
 from .criterion import (
-    CriterionAggregatorCallback, CriterionCallback,
-    CriterionOutputOnlyCallback
+    CriterionAggregatorCallback, CriterionCallback, CriterionOutputOnlyCallback
 )
 from .logging import (
     ConsoleLogger, TelegramLogger, TensorboardLogger, VerboseLogger

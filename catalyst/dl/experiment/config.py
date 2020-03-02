@@ -19,8 +19,7 @@ from catalyst.dl import (
     SchedulerCallback, TensorboardLogger, utils, VerboseLogger
 )
 from catalyst.dl.registry import (
-    CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS,
-    TRANSFORMS
+    CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS, TRANSFORMS
 )
 from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
