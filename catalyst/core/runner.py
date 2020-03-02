@@ -155,7 +155,7 @@ class _Runner(ABC):
 
         return model, criterion, optimizer, scheduler, device
 
-    def _process_callbacks_for_stage(self, callbacks):
+    def _process_callbacks(self, callbacks):
         loggers = utils.process_callbacks(
             OrderedDict(
                 [
@@ -225,7 +225,7 @@ class _Runner(ABC):
 
         utils.set_global_seed(self.experiment.initial_seed)
         callbacks = self.experiment.get_callbacks(stage)
-        self._process_callbacks_for_stage(callbacks)
+        self._process_callbacks(callbacks)
 
     def _prepare_for_epoch(self, stage: str, epoch: int):
         pass
