@@ -122,7 +122,7 @@ stages:
       prefix: "loss_d_gp"
     loss_d:
       _wrapper: *d_train_wrapper
-      callback: MetricAggregatorCallback
+      callback: MetricAggregationCallback
       mode: "weighted_sum"
       prefix: &loss_d loss_d
       metrics:

@@ -40,8 +40,8 @@ class _MetricCallback(ABC, Callback):
         is_kv_input = \
             isinstance(self.input_key, kv_types) or self.input_key == "__all__"
         is_kv_output = (
-                isinstance(self.output_key, kv_types)
-                or self.output_key == "__all__"
+            isinstance(self.output_key, kv_types)
+            or self.output_key == "__all__"
         )
 
         # @TODO: fix to only KV usage
@@ -214,8 +214,7 @@ class MetricAggregatorCallback(Callback):
         if self.metrics is not None:
             if self.mode == "weighted_sum":
                 result = [
-                    metrics[key] * value
-                    for key, value in self.metrics.items()
+                    metrics[key] * value for key, value in self.metrics.items()
                 ]
             else:
                 result = [metrics[key] for key in self.metrics]

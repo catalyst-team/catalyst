@@ -99,7 +99,7 @@ stages:
       prefix: loss_d_fake
     loss_d:
       _wrapper: *d_train_wrapper
-      callback: MetricAggregatorCallback
+      callback: MetricAggregationCallback
       metrics: [loss_d_real, loss_d_fake]
       mode: "mean"
       prefix: loss_d
