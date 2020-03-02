@@ -22,8 +22,8 @@ fi
 cat $LOGFILE
 echo "check distilbert_text_classification"
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
 assert metrics.get('train_val.2', 'loss') <= metrics.get('train_val.1', 'loss')
 assert metrics.get('train_val.2', 'loss') < 2.0
 """

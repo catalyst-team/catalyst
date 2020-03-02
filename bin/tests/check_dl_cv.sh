@@ -29,8 +29,8 @@ fi
 cat $LOGFILE
 echo 'pipeline 01'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
 assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
 assert metrics.get('stage1.2', 'loss') < 2.1
 """
@@ -64,8 +64,8 @@ fi
 cat $LOGFILE
 echo 'pipeline 02'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
 assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
 assert metrics.get('stage1.2', 'loss') < 2.1
 """
@@ -113,8 +113,8 @@ fi
 cat $LOGFILE
 echo 'pipeline 03'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
 assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
 assert metrics.get('stage1.2', 'loss') < 2.15
 """
@@ -143,8 +143,8 @@ fi
 cat $LOGFILE
 echo 'pipeline 04'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
 assert metrics.get('stage2.2', 'loss') < metrics.get('stage2.1', 'loss')
 assert metrics.get('stage2.2', 'loss') < 2.1
 """
@@ -173,8 +173,8 @@ fi
 cat $LOGFILE
 echo 'pipeline 05'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
 # assert metrics.get('stage2.2', 'loss') < metrics.get('stage2.1', 'loss')
 assert metrics.get('stage2.2', 'loss') < 32.0
 """
@@ -228,8 +228,8 @@ fi
 cat $LOGFILE
 echo 'pipeline 11'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
 # assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
 assert metrics.get('best', 'loss') < 2.35
 """
@@ -258,8 +258,8 @@ fi
 cat $LOGFILE
 echo 'pipeline 12'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
 # assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
 assert metrics.get('stage1.2', 'loss') < 2.35
 """
@@ -288,8 +288,8 @@ fi
 cat $LOGFILE
 echo 'pipeline 13'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
 # assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
 assert metrics.get('stage1.2', 'loss') < 2.33
 """
@@ -343,8 +343,8 @@ fi
 cat $LOGFILE
 echo 'pipeline 15'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
 # assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
 assert metrics.get('stage1.2', 'loss') < 2.33
 """
@@ -378,8 +378,8 @@ fi
 cat $LOGFILE
 echo 'pipeline 21 - SEGMENTATION'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
 
 iou = metrics.get('last', 'iou')
 loss = metrics.get('last', 'loss')
