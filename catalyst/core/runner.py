@@ -1,5 +1,5 @@
 from typing import (  # isort:skip
-    Any, Callable, Dict, Mapping, Optional, Tuple, Union  # isort:skip
+    Any, Callable, Dict, Mapping, Optional, Tuple, Union, List  # isort:skip
 )  # isort:skip
 
 from abc import ABC, abstractmethod
@@ -25,6 +25,11 @@ class _Runner(ABC):
 
     experiment_fn: Callable = _Experiment
     state_fn: callable = _State
+    events: List[str] = [
+        "stage_start", "epoch_start", "batch_start", "loader_start",
+        "stage_end", "epoch_end", "batch_end", "loader_end",
+        "exception"
+    ]
 
     def __init__(
         self,
@@ -170,28 +175,22 @@ class _Runner(ABC):
         )
         self.state.loggers = loggers
         self.loggers = loggers
-        self.callbacks = callbacks
         # Prepare events dictionary
         start_callbacks = OrderedDict(**loggers, **callbacks)
         end_callbacks = OrderedDict(**callbacks, **loggers)
-        start_events = ["stage_start", "epoch_start", "batch_start", "loader_start"]
-        end_events = ["stage_end", "epoch_end", "batch_end", "loader_end", "exception"]
-        stage_callbacks = {}
-        for event in start_events:
+        callbacks = {}
+        for event in self.events:
             fn_name = f"on_{event}"
+            if event.endswith("start"):
+                unfiltered_callbacks = start_callbacks
+            else:
+                unfiltered_callbacks = end_callbacks
             filtered_callbacks = OrderedDict([
-                (k, v) for k, v in start_callbacks.items()
-                if not utils.fn_ends_with_pass(getattr(v.__class__, fn_name))
+                (k, v) for k, v in unfiltered_callbacks.items()
+                if not utils.fn_ends_with_pass(getattr(v, fn_name))
             ])
-            stage_callbacks[event] = filtered_callbacks
-        for event in end_events:
-            fn_name = f"on_{event}"
-            filtered_callbacks = OrderedDict([
-                (k, v) for k, v in end_callbacks.items()
-                if not utils.fn_ends_with_pass(getattr(v.__class__, fn_name))
-            ])
-            stage_callbacks[event] = filtered_callbacks
-        return stage_callbacks
+            callbacks[event] = filtered_callbacks
+        self.callbacks = callbacks
 
     def _prepare_for_stage(self, stage: str):
         utils.set_global_seed(self.experiment.initial_seed)
@@ -225,8 +224,7 @@ class _Runner(ABC):
 
         utils.set_global_seed(self.experiment.initial_seed)
         callbacks = self.experiment.get_callbacks(stage)
-
-        self.stage_callbacks = self._process_callbacks_for_stage(callbacks)
+        self._process_callbacks_for_stage(callbacks)
 
     def _prepare_for_epoch(self, stage: str, epoch: int):
         pass
@@ -235,8 +233,9 @@ class _Runner(ABC):
         fn_name = f"on_{event}"
         state_pre_fn_name = f"{fn_name}_pre"
         state_post_fn_name = f"{fn_name}_post"
+        # State is frozen, therefore you can only getattr it's methods
         getattr(self.state, state_pre_fn_name)()
-        for callback in self.stage_callbacks[event].values():
+        for callback in self.callbacks[event].values():
             getattr(callback, fn_name)(self.state)
         getattr(self.state, state_post_fn_name)()
 
