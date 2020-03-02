@@ -7,7 +7,6 @@ import safitty
 
 from catalyst import utils
 from catalyst.core import _State, Callback, CallbackOrder
-from catalyst.utils import get_rank
 
 
 class BaseCheckpointCallback(Callback):
@@ -97,6 +96,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         self.save_n_best = save_n_best
         self.resume = resume
         self.resume_dir = resume_dir
+        self.is_distributed_worker = utils.get_rank() > 0
         self.top_best_metrics = []
         self.epochs_metrics = []
         self._keys_from_state = ["resume", "resume_dir"]
@@ -221,7 +221,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             self.resume = None
 
     def on_epoch_end(self, state: _State):
-        if state.stage.startswith("infer") or get_rank() > 0:
+        if state.stage.startswith("infer") or self.is_distributed_worker:
             return
 
         valid_metrics = dict(state.metric_manager.valid_values)

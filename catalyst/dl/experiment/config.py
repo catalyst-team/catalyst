@@ -14,10 +14,9 @@ from catalyst.data import (
     Augmentor, AugmentorCompose, DistributedSamplerWrapper
 )
 from catalyst.dl import (
-    Callback, CheckpointCallback, ConfusionMatrixCallback, ConsoleLogger,
-    CriterionCallback, Experiment, LoggerCallback, OptimizerCallback,
-    PhaseWrapperCallback, RaiseExceptionCallback, SchedulerCallback,
-    TensorboardLogger, utils, VerboseLogger
+    Callback, CheckpointCallback, ConsoleLogger, CriterionCallback, Experiment,
+    OptimizerCallback, PhaseWrapperCallback, RaiseExceptionCallback,
+    SchedulerCallback, TensorboardLogger, utils, VerboseLogger
 )
 from catalyst.dl.registry import (
     CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS, TRANSFORMS
@@ -552,14 +551,6 @@ class ConfigExperiment(Experiment):
                     break
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
-
-        # Remove LoggerCallback on worker nodes
-        if utils.get_rank() > 0:
-            to_del = (LoggerCallback, ConfusionMatrixCallback)
-            for k in list(
-                filter(lambda c: isinstance(callbacks[c], to_del), callbacks)
-            ):
-                del callbacks[k]
 
         return callbacks
 

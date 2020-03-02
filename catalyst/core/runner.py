@@ -13,7 +13,9 @@ from catalyst import utils
 from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
-from .callback import Callback, LoggerCallback
+from .callback import (
+    Callback, LoggerCallback, MasterOnlyCallback, RaiseExceptionCallback
+)
 from .experiment import _Experiment
 from .state import _State
 
@@ -160,7 +162,7 @@ class _Runner(ABC):
             OrderedDict(
                 [
                     (k, v) for k, v in callbacks.items()
-                    if isinstance(v, LoggerCallback)
+                    if issubclass(v.__class__, LoggerCallback)
                 ]
             )
         )
@@ -168,12 +170,10 @@ class _Runner(ABC):
             OrderedDict(
                 [
                     (k, v) for k, v in callbacks.items()
-                    if not isinstance(v, LoggerCallback)
+                    if not issubclass(v.__class__, LoggerCallback)
                 ]
             )
         )
-        self.state.loggers = loggers
-        self.loggers = loggers
         # Prepare events dictionary
         start_callbacks = OrderedDict(**loggers, **callbacks)
         end_callbacks = OrderedDict(**callbacks, **loggers)
@@ -191,11 +191,20 @@ class _Runner(ABC):
                 ]
             )
             callbacks[event] = filtered_callbacks
-        self.callbacks = callbacks
+        return callbacks, loggers
 
     def _prepare_for_stage(self, stage: str):
         utils.set_global_seed(self.experiment.initial_seed)
 
+    def _get_state(
+        self,
+        stage: str,
+        model: Model,
+        criterion: Criterion,
+        optimizer: Optimizer,
+        scheduler: Scheduler,
+        device: Device,
+    ):
         migrating_params = dict(**self.experiment.get_state_params(stage))
         migrate_from_previous_stage = \
             migrating_params.get("migrate_from_previous_stage", True)
@@ -208,24 +217,56 @@ class _Runner(ABC):
                 }
             )
 
-        utils.set_global_seed(self.experiment.initial_seed)
-        self.model, criterion, optimizer, scheduler, self.device = \
-            self._get_experiment_components(stage)
-
-        utils.set_global_seed(self.experiment.initial_seed)
-        self.state = self.state_fn(
+        state = self.state_fn(
             stage=stage,
-            model=self.model,
-            device=self.device,
+            model=model,
+            device=device,
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
             **migrating_params
         )
 
-        utils.set_global_seed(self.experiment.initial_seed)
+        return state
+
+    def _get_callbacks(self, stage: str):
         callbacks = self.experiment.get_callbacks(stage)
-        self._process_callbacks(callbacks)
+
+        # Remove master-only callbacks on worker nodes
+        if utils.get_rank() > 0:
+            for k in list(
+                filter(
+                    lambda c:
+                    issubclass(callbacks[c].__class__, MasterOnlyCallback),
+                    callbacks
+                )
+            ):
+                del callbacks[k]
+
+        callbacks, loggers = self._process_callbacks(callbacks)
+
+        return callbacks, loggers
+
+    def _prepare_for_stage(self, stage: str):
+        utils.set_global_seed(self.experiment.initial_seed)
+        self.model, criterion, optimizer, scheduler, self.device = \
+            self._get_experiment_components(stage=stage)
+
+        utils.set_global_seed(self.experiment.initial_seed)
+        self.state = self._get_state(
+            stage=stage,
+            model=self.model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            device=self.device,
+        )
+
+        utils.set_global_seed(self.experiment.initial_seed)
+        callbacks, loggers = self._get_callbacks(stage)
+        self.callbacks = callbacks
+        self.loggers = loggers
+        self.state.loggers = loggers
 
     def _prepare_for_epoch(self, stage: str, epoch: int):
         pass
@@ -318,6 +359,7 @@ class _Runner(ABC):
                 f"'{self.state.valid_loader}' " \
                 f"should be in provided loaders: {list(loaders.keys())}"
         else:
+            # @TODO: add check for non distributed run for inference
             assert not any(x.startswith("train") for x in loaders.keys()), \
                 "for inference no train loader should be passed"
 
@@ -373,28 +415,24 @@ class _Runner(ABC):
         self._check_run = check
         self.experiment = experiment
 
-        # jupyter source code logging hack
-        # + hack to prevent cycle imports
-        # @TODO: remove hack to catalyst.dl only, not core
-        # from catalyst.dl.experiment import BaseExperiment
-        # if isinstance(self.experiment, BaseExperiment) \
-        #         and self.experiment.logdir is not None:
-        #     expdir = Path(os.getcwd())
-        #     logdir = Path(self.experiment.logdir)
-        #     utils.dump_base_experiment_code(expdir, logdir)
-
         try:
             for stage in self.experiment.stages:
                 self._run_stage(stage)
         except (Exception, KeyboardInterrupt) as ex:
-            # if an exception had been raised
-            # before the exception-handlers were initialized
-            if self.loggers is None or self.callbacks is None:
-                raise ex
-            else:
+
+            def _exception_handler_check(callbacks: OrderedDict):
+                return (
+                    callbacks is not None and any(
+                        issubclass(x.__class__, RaiseExceptionCallback)
+                        for x in callbacks.values()
+                    )
+                )
+            if _exception_handler_check(self.loggers) \
+                    or _exception_handler_check(self.callbacks):
                 self.state.exception = ex
                 self._run_event("exception")
-
+            else:
+                raise ex
         return self
 
 

@@ -3,7 +3,9 @@ from typing import Dict, List  # isort:skip
 import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 
-from catalyst.dl import Callback, CallbackOrder, LoggerCallback, State, utils
+from catalyst.dl import (
+    Callback, CallbackOrder, MasterOnlyCallback, State, utils
+)
 from catalyst.utils import meters
 
 
@@ -45,7 +47,7 @@ class EarlyStoppingCallback(Callback):
             state.early_stop = True
 
 
-class ConfusionMatrixCallback(Callback):
+class ConfusionMatrixCallback(MasterOnlyCallback):
     def __init__(
         self,
         input_key: str = "targets",
@@ -138,21 +140,4 @@ class ConfusionMatrixCallback(Callback):
         )
 
 
-class RaiseExceptionCallback(LoggerCallback):
-    def __init__(self):
-        order = CallbackOrder.Other + 1
-        super().__init__(order=order)
-
-    def on_exception(self, state: State):
-        exception = state.exception
-        if not utils.is_exception(exception):
-            return
-
-        if state.need_reraise_exception:
-            raise exception
-
-
-__all__ = [
-    "EarlyStoppingCallback", "ConfusionMatrixCallback",
-    "RaiseExceptionCallback"
-]
+__all__ = ["EarlyStoppingCallback", "ConfusionMatrixCallback"]

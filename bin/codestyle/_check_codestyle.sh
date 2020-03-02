@@ -15,13 +15,15 @@ done
 
 
 # test to make sure the code is isort compliant
-if [[ -f ${skip_inplace} ]]; then
-    echo 'isort: `isort -rc --check-only --settings-path ./setup.cfg`'
-    isort -rc --check-only --settings-path ./setup.cfg
-else
-    echo 'isort: `isort -rc -y --settings-path ./setup.cfg`'
-    isort -rc -y --settings-path ./setup.cfg
-fi
+echo 'isort: `isort -rc --check-only --settings-path ./setup.cfg`'
+isort -rc --check-only --settings-path ./setup.cfg
+#if [[ -f ${skip_inplace} ]]; then
+#    echo 'isort: `isort -rc --check-only --settings-path ./setup.cfg`'
+#    isort -rc --check-only --settings-path ./setup.cfg
+#else
+#    echo 'isort: `isort -rc -y --settings-path ./setup.cfg`'
+#    isort -rc -y --settings-path ./setup.cfg
+#fi
 
 
 # stop the build if there are any unexpected flake8 issues

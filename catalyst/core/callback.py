@@ -1,6 +1,7 @@
 from enum import IntFlag
 from typing import Callable, List
 
+from catalyst import utils
 from .state import _State
 
 
@@ -72,7 +73,11 @@ class Callback:
         pass
 
 
-class LoggerCallback(Callback):
+class MasterOnlyCallback(Callback):
+    pass
+
+
+class LoggerCallback(MasterOnlyCallback):
     """
     Loggers are executed on ``start`` before all callbacks,
     and on ``end`` after all callbacks.
@@ -81,6 +86,20 @@ class LoggerCallback(Callback):
         if order is None:
             order = CallbackOrder.Internal
         super().__init__(order=order)
+
+
+class RaiseExceptionCallback(LoggerCallback):
+    def __init__(self):
+        order = CallbackOrder.Other + 1
+        super().__init__(order=order)
+
+    def on_exception(self, state: _State):
+        exception = state.exception
+        if not utils.is_exception(exception):
+            return
+
+        if state.need_reraise_exception:
+            raise exception
 
 
 class MetricCallback(Callback):
@@ -149,6 +168,6 @@ class MultiMetricCallback(Callback):
 
 
 __all__ = [
-    "CallbackOrder", "Callable", "LoggerCallback", "MetricCallback",
-    "MultiMetricCallback"
+    "CallbackOrder", "Callable", "LoggerCallback", "MasterOnlyCallback",
+    "MetricCallback", "MultiMetricCallback"
 ]
