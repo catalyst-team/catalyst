@@ -2,6 +2,8 @@ from typing import Any, Callable, Dict, List, Optional, Union  # isort:skip
 
 from catalyst.core import CriterionCallback, OptimizerCallback
 from catalyst.dl import Callback, CallbackOrder, State
+
+
 """
 MetricCallbacks alternatives for input/output keys
 """
