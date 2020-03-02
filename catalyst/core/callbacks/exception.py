@@ -1,10 +1,5 @@
-from typing import TYPE_CHECKING  # isort:skip
-
 from catalyst import utils
-from catalyst.core import Callback, CallbackNode, CallbackOrder
-
-if TYPE_CHECKING:
-    from catalyst.core import _State
+from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
 
 
 class ExceptionCallback(Callback):
@@ -12,7 +7,7 @@ class ExceptionCallback(Callback):
         order = CallbackOrder.Other + 1
         super().__init__(order=order, node=CallbackNode.All)
 
-    def on_exception(self, state: "_State"):
+    def on_exception(self, state: _State):
         exception = state.exception
         if not utils.is_exception(exception):
             return

@@ -1,10 +1,6 @@
-from typing import TYPE_CHECKING  # isort:skip
 from collections import defaultdict
 
-from catalyst.core import Callback, CallbackNode, CallbackOrder
-
-if TYPE_CHECKING:
-    from catalyst.core import _State
+from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
 
 
 class ValidationManagerCallback(Callback):
@@ -14,16 +10,16 @@ class ValidationManagerCallback(Callback):
             node=CallbackNode.All,
         )
 
-    def on_epoch_start(self, state: "_State"):
+    def on_epoch_start(self, state: _State):
         state.valid_metrics = defaultdict(None)
         state.is_best_valid = False
 
-    def on_epoch_end(self, state: "_State"):
+    def on_epoch_end(self, state: _State):
         if state.stage_name.startswith("infer") or state.is_distributed_worker:
             return
 
         state.valid_metrics = {
-            k.replace(f"{state.loader_name}_", ""): v
+            k.replace(f"{state.valid_loader}_", ""): v
             for k, v in state.epoch_metrics.items()
             if k.startswith(state.valid_loader)
         }

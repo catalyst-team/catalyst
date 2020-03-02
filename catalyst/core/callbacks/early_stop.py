@@ -1,9 +1,4 @@
-from typing import TYPE_CHECKING  # isort:skip
-
-from catalyst.core import Callback, CallbackOrder
-
-if TYPE_CHECKING:
-    from catalyst.core import _State
+from catalyst.core import _State, Callback, CallbackOrder
 
 
 class CheckRunCallback(Callback):
@@ -12,11 +7,11 @@ class CheckRunCallback(Callback):
         self.num_loader_steps = num_loader_steps
         self.num_epoch_steps = num_epoch_steps
 
-    def on_epoch_end(self, state: "_State"):
+    def on_epoch_end(self, state: _State):
         if state.stage_epoch >= self.num_epoch_steps:
             state.need_early_stop = True
 
-    def on_batch_end(self, state: "_State"):
+    def on_batch_end(self, state: _State):
         if state.loader_step >= self.num_loader_steps:
             state.need_early_stop = True
 
@@ -41,7 +36,7 @@ class EarlyStoppingCallback(Callback):
         else:
             self.is_better = lambda score, best: score >= (best + min_delta)
 
-    def on_epoch_end(self, state: "_State") -> None:
+    def on_epoch_end(self, state: _State) -> None:
         if state.stage_name.startswith("infer"):
             return
 

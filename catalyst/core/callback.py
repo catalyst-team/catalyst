@@ -10,8 +10,8 @@ class CallbackOrder(IntFlag):
     Metric = 20
     MetricAggregation = 40
     Optimizer = 60
-    Scheduler = 80
-    Logging = 100
+    Logging = 80
+    Scheduler = 100
     External = 120
     Other = 200
 

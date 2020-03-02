@@ -52,7 +52,7 @@ class _State(FrozenClass):
         # extra components - Catalyst callbacks
         self.callbacks: Dict[str, "Callback"] = callbacks
 
-        # dataflow - in, out, metrics
+        # dataflow - model input, model output, metrics
         self.batch_in = None
         self.batch_out = None
         # let's use flatten storage for batch metrics
