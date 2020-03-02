@@ -16,12 +16,14 @@ class ConfusionMatrixCallback(Callback):
         version: str = "tnt",
         class_names: List[str] = None,
         num_classes: int = None,
-        plot_params: Dict = None
+        plot_params: Dict = None,
+        tensorboard_callback_name: str = "_tensorboard",
     ):
         super().__init__(CallbackOrder.Metric, CallbackNode.Master)
         self.prefix = prefix
         self.output_key = output_key
         self.input_key = input_key
+        self.tensorboard_callback_name = tensorboard_callback_name
 
         assert version in ["tnt", "sklearn"]
         self._version = version
@@ -92,11 +94,12 @@ class ConfusionMatrixCallback(Callback):
             self.class_names or \
             [str(i) for i in range(self.num_classes)]
         confusion_matrix = self._compute_confusion_matrix()
+        tb_callback = state.callbacks[self.tensorboard_callback_name]
         self._plot_confusion_matrix(
-            logger=state.callbacks["tensorboard"].loggers[state.loader_name],
+            logger=tb_callback.loggers[state.loader_name],
             epoch=state.epoch,
             confusion_matrix=confusion_matrix,
-            class_names=class_names
+            class_names=class_names,
         )
 
 

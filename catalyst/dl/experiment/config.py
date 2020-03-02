@@ -13,8 +13,9 @@ from catalyst.data import (
 )
 from catalyst.dl import (
     Callback, CheckpointCallback, CheckRunCallback, ConsoleLogger,
-    CriterionCallback, ExceptionCallback, Experiment, OptimizerCallback,
-    PhaseWrapperCallback, SchedulerCallback, TensorboardLogger, utils,
+    CriterionCallback, ExceptionCallback, Experiment, MetricsManagerCallback,
+    OptimizerCallback, PhaseWrapperCallback, SchedulerCallback,
+    TensorboardLogger, TimerCallback, utils, ValidationManagerCallback,
     VerboseLogger
 )
 from catalyst.dl.registry import (
@@ -46,7 +47,7 @@ class ConfigExperiment(Experiment):
         self._config = deepcopy(config)
         self._initial_seed = self._config.get("args", {}).get("seed", 42)
         self._verbose = self._config.get("args", {}).get("verbose", False)
-        self._check = self._config.get("args", {}).get("check", False)
+        self._check_run = self._config.get("args", {}).get("check", False)
         self.__prepare_logdir()
 
         self._config["stages"]["state_params"] = utils.merge_dicts(
@@ -525,22 +526,29 @@ class ConfigExperiment(Experiment):
             callback = self._get_callback(**callback_params)
             callbacks[key] = callback
 
-        # ! For compatibility with previous versions.
         default_callbacks = []
         if self._verbose:
-            default_callbacks.append(("verbose", VerboseLogger))
-        if self._check:
-            default_callbacks.append(("check", CheckRunCallback))
+            default_callbacks.append(("_verbose", VerboseLogger))
+        if self._check_run:
+            default_callbacks.append(("_check", CheckRunCallback))
+
         if not stage.startswith("infer"):
-            default_callbacks.append(("_criterion", CriterionCallback))
-            default_callbacks.append(("_optimizer", OptimizerCallback))
+            if self.stages_config[stage].get("criterion_params", {}):
+                default_callbacks.append(("_criterion", CriterionCallback))
+            if self.stages_config[stage].get("optimier_params", {}):
+                default_callbacks.append(("_optimizer", OptimizerCallback))
             if self.stages_config[stage].get("scheduler_params", {}):
                 default_callbacks.append(("_scheduler", SchedulerCallback))
-            default_callbacks.append(("_saver", CheckpointCallback))
-            default_callbacks.append(("console", ConsoleLogger))
-            default_callbacks.append(("tensorboard", TensorboardLogger))
 
-        default_callbacks.append(("exception", ExceptionCallback))
+            default_callbacks.append(("_timer", TimerCallback))
+            default_callbacks.append(("_metrics", MetricsManagerCallback))
+            default_callbacks.append(
+                ("_validation", ValidationManagerCallback)
+            )
+            default_callbacks.append(("_saver", CheckpointCallback))
+            default_callbacks.append(("_console", ConsoleLogger))
+            default_callbacks.append(("_tensorboard", TensorboardLogger))
+        default_callbacks.append(("_exception", ExceptionCallback))
 
         for callback_name, callback_fn in default_callbacks:
             is_already_present = False

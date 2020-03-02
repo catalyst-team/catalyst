@@ -3,17 +3,27 @@ from collections import OrderedDict
 import torch
 
 from catalyst.dl import (
-    CheckpointCallback, ConsoleLogger, CriterionCallback, ExceptionCallback,
-    OptimizerCallback, SchedulerCallback, TensorboardLogger
+    CheckpointCallback, CheckRunCallback, ConsoleLogger, CriterionCallback,
+    ExceptionCallback, MetricsManagerCallback, OptimizerCallback,
+    SchedulerCallback, TensorboardLogger, TimerCallback,
+    ValidationManagerCallback, VerboseLogger
 )
 from catalyst.dl.experiment.supervised import SupervisedExperiment
 
-DEFAULT_CALLBACKS = OrderedDict(
-    [
-        ("_saver", CheckpointCallback), ("console", ConsoleLogger),
-        ("tensorboard", TensorboardLogger), ("exception", ExceptionCallback)
-    ]
-)
+
+def _test_callbacks(test_callbacks, exp, stage="train"):
+    exp_callbacks = exp.get_callbacks(stage)
+    exp_callbacks = OrderedDict(
+        sorted(exp_callbacks.items(), key=lambda t: t[0])
+    )
+    test_callbacks = OrderedDict(
+        sorted(test_callbacks.items(), key=lambda t: t[0])
+    )
+
+    assert exp_callbacks.keys() == test_callbacks.keys()
+    cbs = zip(exp_callbacks.values(), test_callbacks.values())
+    for callback, klass in cbs:
+        assert isinstance(callback, klass)
 
 
 def test_defaults():
@@ -28,19 +38,213 @@ def test_defaults():
     loaders = OrderedDict()
     loaders["train"] = dataloader
 
+    test_callbacks = OrderedDict(
+        [
+            ("_timer", TimerCallback),
+            ("_metrics", MetricsManagerCallback),
+            ("_validation", ValidationManagerCallback),
+            ("_saver", CheckpointCallback),
+            ("_console", ConsoleLogger),
+            ("_tensorboard", TensorboardLogger),
+            ("_exception", ExceptionCallback),
+        ]
+    )
+
     exp = SupervisedExperiment(model=model, loaders=loaders)
-
-    assert exp.get_callbacks("train").keys() == DEFAULT_CALLBACKS.keys()
-    cbs = zip(exp.get_callbacks("train").values(), DEFAULT_CALLBACKS.values())
-    for callback, klass in cbs:
-        assert isinstance(callback, klass)
+    _test_callbacks(test_callbacks, exp)
 
 
-def test_full():
-    FULL_CALLBACKS = DEFAULT_CALLBACKS.copy()
-    FULL_CALLBACKS["_criterion"] = CriterionCallback
-    FULL_CALLBACKS["_optimizer"] = OptimizerCallback
-    FULL_CALLBACKS["_scheduler"] = SchedulerCallback
+def test_defaults_verbose():
+    test_callbacks = OrderedDict(
+        [
+            ("_verbose", VerboseLogger),
+            ("_timer", TimerCallback),
+            ("_metrics", MetricsManagerCallback),
+            ("_validation", ValidationManagerCallback),
+            ("_saver", CheckpointCallback),
+            ("_console", ConsoleLogger),
+            ("_tensorboard", TensorboardLogger),
+            ("_exception", ExceptionCallback),
+        ]
+    )
+
+    model = torch.nn.Module()
+    dataset = torch.utils.data.Dataset()
+    dataloader = torch.utils.data.DataLoader(dataset)
+    loaders = OrderedDict()
+    loaders["train"] = dataloader
+
+    exp = SupervisedExperiment(model=model, loaders=loaders, verbose=True)
+    _test_callbacks(test_callbacks, exp)
+
+
+def test_defaults_check():
+    test_callbacks = OrderedDict(
+        [
+            ("_check", CheckRunCallback),
+            ("_timer", TimerCallback),
+            ("_metrics", MetricsManagerCallback),
+            ("_validation", ValidationManagerCallback),
+            ("_saver", CheckpointCallback),
+            ("_console", ConsoleLogger),
+            ("_tensorboard", TensorboardLogger),
+            ("_exception", ExceptionCallback),
+        ]
+    )
+
+    model = torch.nn.Module()
+    dataset = torch.utils.data.Dataset()
+    dataloader = torch.utils.data.DataLoader(dataset)
+    loaders = OrderedDict()
+    loaders["train"] = dataloader
+
+    exp = SupervisedExperiment(model=model, loaders=loaders, check_run=True)
+    _test_callbacks(test_callbacks, exp)
+
+
+def test_criterion():
+    test_callbacks = OrderedDict(
+        [
+            ("_timer", TimerCallback),
+            ("_metrics", MetricsManagerCallback),
+            ("_validation", ValidationManagerCallback),
+            ("_saver", CheckpointCallback),
+            ("_console", ConsoleLogger),
+            ("_tensorboard", TensorboardLogger),
+            ("_exception", ExceptionCallback),
+            ("_criterion", CriterionCallback),
+        ]
+    )
+
+    model = torch.nn.Linear(10, 10)
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = None
+    scheduler = None
+    dataset = torch.utils.data.Dataset()
+    dataloader = torch.utils.data.DataLoader(dataset)
+    loaders = OrderedDict()
+    loaders["train"] = dataloader
+
+    exp = SupervisedExperiment(
+        model=model,
+        loaders=loaders,
+        criterion=criterion,
+        optimizer=optimizer,
+        scheduler=scheduler,
+    )
+    _test_callbacks(test_callbacks, exp)
+
+
+def test_optimizer():
+    test_callbacks = OrderedDict(
+        [
+            ("_timer", TimerCallback),
+            ("_metrics", MetricsManagerCallback),
+            ("_validation", ValidationManagerCallback),
+            ("_saver", CheckpointCallback),
+            ("_console", ConsoleLogger),
+            ("_tensorboard", TensorboardLogger),
+            ("_exception", ExceptionCallback),
+            ("_optimizer", OptimizerCallback),
+        ]
+    )
+
+    model = torch.nn.Linear(10, 10)
+    criterion = None
+    optimizer = torch.optim.Adam(model.parameters())
+    scheduler = None
+    dataset = torch.utils.data.Dataset()
+    dataloader = torch.utils.data.DataLoader(dataset)
+    loaders = OrderedDict()
+    loaders["train"] = dataloader
+
+    exp = SupervisedExperiment(
+        model=model,
+        loaders=loaders,
+        criterion=criterion,
+        optimizer=optimizer,
+        scheduler=scheduler,
+    )
+    _test_callbacks(test_callbacks, exp)
+
+
+def test_scheduler():
+    test_callbacks = OrderedDict(
+        [
+            ("_timer", TimerCallback),
+            ("_metrics", MetricsManagerCallback),
+            ("_validation", ValidationManagerCallback),
+            ("_saver", CheckpointCallback),
+            ("_console", ConsoleLogger),
+            ("_tensorboard", TensorboardLogger),
+            ("_exception", ExceptionCallback),
+            ("_optimizer", OptimizerCallback),
+            ("_scheduler", SchedulerCallback),
+        ]
+    )
+
+    model = torch.nn.Linear(10, 10)
+    optimizer = torch.optim.Adam(model.parameters())
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 10)
+    dataset = torch.utils.data.Dataset()
+    dataloader = torch.utils.data.DataLoader(dataset)
+    loaders = OrderedDict()
+    loaders["train"] = dataloader
+
+    exp = SupervisedExperiment(
+        model=model,
+        loaders=loaders,
+        optimizer=optimizer,
+        scheduler=scheduler,
+    )
+    _test_callbacks(test_callbacks, exp)
+
+
+def test_all():
+    test_callbacks = OrderedDict(
+        [
+            ("_verbose", VerboseLogger),
+            ("_check", CheckRunCallback),
+            ("_timer", TimerCallback),
+            ("_metrics", MetricsManagerCallback),
+            ("_validation", ValidationManagerCallback),
+            ("_saver", CheckpointCallback),
+            ("_console", ConsoleLogger),
+            ("_tensorboard", TensorboardLogger),
+            ("_exception", ExceptionCallback),
+            ("_criterion", CriterionCallback),
+            ("_optimizer", OptimizerCallback),
+            ("_scheduler", SchedulerCallback),
+        ]
+    )
+
+    model = torch.nn.Linear(10, 10)
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters())
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 10)
+    dataset = torch.utils.data.Dataset()
+    dataloader = torch.utils.data.DataLoader(dataset)
+    loaders = OrderedDict()
+    loaders["train"] = dataloader
+
+    exp = SupervisedExperiment(
+        model=model,
+        loaders=loaders,
+        criterion=criterion,
+        optimizer=optimizer,
+        scheduler=scheduler,
+        verbose=True,
+        check_run=True,
+    )
+    _test_callbacks(test_callbacks, exp)
+
+
+def test_infer_defaults():
+    test_callbacks = OrderedDict(
+        [
+            ("_exception", ExceptionCallback),
+        ]
+    )
 
     model = torch.nn.Linear(10, 10)
     criterion = torch.nn.CrossEntropyLoss()
@@ -58,16 +262,34 @@ def test_full():
         optimizer=optimizer,
         scheduler=scheduler,
     )
+    _test_callbacks(test_callbacks, exp, "infer")
 
-    exp_callbacks = exp.get_callbacks("train")
-    exp_callbacks = OrderedDict(
-        sorted(exp_callbacks.items(), key=lambda t: t[0])
-    )
-    FULL_CALLBACKS = OrderedDict(
-        sorted(FULL_CALLBACKS.items(), key=lambda t: t[0])
+
+def test_infer_all():
+    test_callbacks = OrderedDict(
+        [
+            ("_verbose", VerboseLogger),
+            ("_check", CheckRunCallback),
+            ("_exception", ExceptionCallback),
+        ]
     )
 
-    assert exp_callbacks.keys() == FULL_CALLBACKS.keys()
-    cbs = zip(exp_callbacks.values(), FULL_CALLBACKS.values())
-    for callback, klass in cbs:
-        assert isinstance(callback, klass)
+    model = torch.nn.Linear(10, 10)
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters())
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 10)
+    dataset = torch.utils.data.Dataset()
+    dataloader = torch.utils.data.DataLoader(dataset)
+    loaders = OrderedDict()
+    loaders["train"] = dataloader
+
+    exp = SupervisedExperiment(
+        model=model,
+        loaders=loaders,
+        criterion=criterion,
+        optimizer=optimizer,
+        scheduler=scheduler,
+        verbose=True,
+        check_run=True,
+    )
+    _test_callbacks(test_callbacks, exp, "infer")
