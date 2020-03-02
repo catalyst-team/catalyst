@@ -89,6 +89,7 @@ class AccuracyCallback(MultiMetricCallback):
             list_args=list_args,
             input_key=input_key,
             output_key=output_key,
+            topk=list_args,
             threshold=threshold,
             activation=activation,
         )
@@ -129,7 +130,8 @@ class MapKCallback(MultiMetricCallback):
             metric_fn=metrics.mean_average_accuracy,
             list_args=list_args,
             input_key=input_key,
-            output_key=output_key
+            output_key=output_key,
+            topk=list_args,
         )
 
 

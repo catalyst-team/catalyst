@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 from catalyst.dl import (
     Callback, CheckpointCallback, CheckRunCallback, ConsoleLogger,
-    CriterionCallback, ExceptionCallback, MetricsManagerCallback,
+    CriterionCallback, ExceptionCallback, MetricManagerCallback,
     OptimizerCallback, SchedulerCallback, TensorboardLogger, TimerCallback,
     ValidationManagerCallback, VerboseLogger
 )
@@ -68,7 +68,7 @@ class SupervisedExperiment(BaseExperiment):
                 default_callbacks.append(("_scheduler", SchedulerCallback))
 
             default_callbacks.append(("_timer", TimerCallback))
-            default_callbacks.append(("_metrics", MetricsManagerCallback))
+            default_callbacks.append(("_metrics", MetricManagerCallback))
             default_callbacks.append(
                 ("_validation", ValidationManagerCallback)
             )

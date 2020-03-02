@@ -13,7 +13,7 @@ from catalyst.data import (
 )
 from catalyst.dl import (
     Callback, CheckpointCallback, CheckRunCallback, ConsoleLogger,
-    CriterionCallback, ExceptionCallback, Experiment, MetricsManagerCallback,
+    CriterionCallback, ExceptionCallback, Experiment, MetricManagerCallback,
     OptimizerCallback, PhaseWrapperCallback, SchedulerCallback,
     TensorboardLogger, TimerCallback, utils, ValidationManagerCallback,
     VerboseLogger
@@ -541,7 +541,7 @@ class ConfigExperiment(Experiment):
                 default_callbacks.append(("_scheduler", SchedulerCallback))
 
             default_callbacks.append(("_timer", TimerCallback))
-            default_callbacks.append(("_metrics", MetricsManagerCallback))
+            default_callbacks.append(("_metrics", MetricManagerCallback))
             default_callbacks.append(
                 ("_validation", ValidationManagerCallback)
             )

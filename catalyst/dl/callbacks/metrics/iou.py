@@ -89,6 +89,7 @@ class ClasswiseIouCallback(MultiMetricCallback):
             list_args=list_args,
             input_key=input_key,
             output_key=output_key,
+            classes=list_args,
             eps=eps,
             threshold=threshold,
             activation=activation,

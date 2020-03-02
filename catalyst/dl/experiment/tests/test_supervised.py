@@ -4,7 +4,7 @@ import torch
 
 from catalyst.dl import (
     CheckpointCallback, CheckRunCallback, ConsoleLogger, CriterionCallback,
-    ExceptionCallback, MetricsManagerCallback, OptimizerCallback,
+    ExceptionCallback, MetricManagerCallback, OptimizerCallback,
     SchedulerCallback, TensorboardLogger, TimerCallback,
     ValidationManagerCallback, VerboseLogger
 )
@@ -41,7 +41,7 @@ def test_defaults():
     test_callbacks = OrderedDict(
         [
             ("_timer", TimerCallback),
-            ("_metrics", MetricsManagerCallback),
+            ("_metrics", MetricManagerCallback),
             ("_validation", ValidationManagerCallback),
             ("_saver", CheckpointCallback),
             ("_console", ConsoleLogger),
@@ -59,7 +59,7 @@ def test_defaults_verbose():
         [
             ("_verbose", VerboseLogger),
             ("_timer", TimerCallback),
-            ("_metrics", MetricsManagerCallback),
+            ("_metrics", MetricManagerCallback),
             ("_validation", ValidationManagerCallback),
             ("_saver", CheckpointCallback),
             ("_console", ConsoleLogger),
@@ -83,7 +83,7 @@ def test_defaults_check():
         [
             ("_check", CheckRunCallback),
             ("_timer", TimerCallback),
-            ("_metrics", MetricsManagerCallback),
+            ("_metrics", MetricManagerCallback),
             ("_validation", ValidationManagerCallback),
             ("_saver", CheckpointCallback),
             ("_console", ConsoleLogger),
@@ -106,7 +106,7 @@ def test_criterion():
     test_callbacks = OrderedDict(
         [
             ("_timer", TimerCallback),
-            ("_metrics", MetricsManagerCallback),
+            ("_metrics", MetricManagerCallback),
             ("_validation", ValidationManagerCallback),
             ("_saver", CheckpointCallback),
             ("_console", ConsoleLogger),
@@ -139,7 +139,7 @@ def test_optimizer():
     test_callbacks = OrderedDict(
         [
             ("_timer", TimerCallback),
-            ("_metrics", MetricsManagerCallback),
+            ("_metrics", MetricManagerCallback),
             ("_validation", ValidationManagerCallback),
             ("_saver", CheckpointCallback),
             ("_console", ConsoleLogger),
@@ -172,7 +172,7 @@ def test_scheduler():
     test_callbacks = OrderedDict(
         [
             ("_timer", TimerCallback),
-            ("_metrics", MetricsManagerCallback),
+            ("_metrics", MetricManagerCallback),
             ("_validation", ValidationManagerCallback),
             ("_saver", CheckpointCallback),
             ("_console", ConsoleLogger),
@@ -206,7 +206,7 @@ def test_all():
             ("_verbose", VerboseLogger),
             ("_check", CheckRunCallback),
             ("_timer", TimerCallback),
-            ("_metrics", MetricsManagerCallback),
+            ("_metrics", MetricManagerCallback),
             ("_validation", ValidationManagerCallback),
             ("_saver", CheckpointCallback),
             ("_console", ConsoleLogger),

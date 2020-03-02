@@ -124,9 +124,9 @@ stages:
       prefix: loss_d_fake
     loss_d:
       _wrapper: *d_train_wrapper
-      callback: CriterionAggregatorCallback
-      loss_keys: [loss_d_real, loss_d_fake]
-      loss_aggregate_fn: "mean"
+      callback: MetricAggregatorCallback
+      metrics: [loss_d_real, loss_d_fake]
+      mode: "mean"
       prefix: loss_d
 
     optim_g:

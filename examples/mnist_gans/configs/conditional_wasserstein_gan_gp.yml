@@ -122,10 +122,10 @@ stages:
       prefix: "loss_d_gp"
     loss_d:
       _wrapper: *d_train_wrapper
-      callback: CriterionAggregatorCallback
-      loss_aggregate_fn: "weighted_sum"
+      callback: MetricAggregatorCallback
+      mode: "weighted_sum"
       prefix: &loss_d loss_d
-      loss_keys:
+      metrics:
         loss_d_real: -1.0
         loss_d_fake: 1.0
         loss_d_gp: 10.0  # gradient penalty multiplier

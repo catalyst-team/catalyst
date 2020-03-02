@@ -137,7 +137,7 @@ class GradientPenaltyCallback(CriterionCallback):
         super().__init__(
             input_key=real_input_key,
             output_key=fake_output_key,
-            loss_key=loss_key,
+            prefix=loss_key,
             criterion_key=criterion_key,
             multiplier=multiplier
         )

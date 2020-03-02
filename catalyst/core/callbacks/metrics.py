@@ -1,5 +1,5 @@
+from abc import ABC, abstractmethod
 from collections import defaultdict
-from functools import partial
 import logging
 from typing import Any, Callable, Dict, List, Union
 
@@ -12,7 +12,77 @@ from catalyst.utils import meters
 logger = logging.getLogger(__name__)
 
 
-class MetricCallback(Callback):
+class _MetricCallback(ABC, Callback):
+    def __init__(
+        self,
+        prefix: str,
+        input_key: Union[str, List[str], Dict[str, str]] = "targets",
+        output_key: Union[str, List[str], Dict[str, str]] = "logits",
+        multiplier: float = 1.0,
+        **metrics_kwargs,
+    ):
+        super().__init__(CallbackOrder.Metric)
+        self.prefix = prefix
+        # self.metric_fn = partial(metric_fn, **metric_params)
+        self.input_key = input_key
+        self.output_key = output_key
+        self.multiplier = multiplier
+        self.metrics_kwargs = metrics_kwargs
+
+        self._get_input = utils.get_dictkey_auto_fn(self.input_key)
+        self._get_output = utils.get_dictkey_auto_fn(self.output_key)
+        kv_types = (dict, tuple, list, type(None))
+
+        is_value_input = \
+            isinstance(self.input_key, str) and self.input_key != "__all__"
+        is_value_output = \
+            isinstance(self.output_key, str) and self.output_key != "__all__"
+        is_kv_input = \
+            isinstance(self.input_key, kv_types) or self.input_key == "__all__"
+        is_kv_output = (
+                isinstance(self.output_key, kv_types)
+                or self.output_key == "__all__"
+        )
+
+        # @TODO: fix to only KV usage
+        if hasattr(self, "_compute_metric"):
+            pass  # overridden in descendants
+        elif is_value_input and is_value_output:
+            self._compute_metric = self._compute_metric_value
+        elif is_kv_input and is_kv_output:
+            self._compute_metric = self._compute_metric_key_value
+        else:
+            raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def metric_fn(self):
+        pass
+
+    def _compute_metric_value(self, state: _State):
+        output = self._get_output(state.batch_out, self.output_key)
+        input = self._get_input(state.batch_in, self.input_key)
+
+        metric = self.metric_fn(output, input, **self.metrics_kwargs)
+        return metric
+
+    def _compute_metric_key_value(self, state: _State):
+        output = self._get_output(state.batch_out, self.output_key)
+        input = self._get_input(state.batch_in, self.input_key)
+
+        metric = self.metric_fn(**output, **input, **self.metrics_kwargs)
+        return metric
+
+    def on_batch_end(self, state: _State):
+        """
+        Computes the metric and add it to batch metrics
+        """
+
+        metric = self._compute_metric(state) * self.multiplier
+        state.batch_metrics[self.prefix] = metric
+
+
+class MetricCallback(_MetricCallback):
     """
     A callback that returns single metric on `state.on_batch_end`
     """
@@ -22,22 +92,24 @@ class MetricCallback(Callback):
         metric_fn: Callable,
         input_key: str = "targets",
         output_key: str = "logits",
-        **metric_params,
+        multiplier: float = 1.0,
+        **metric_kwargs,
     ):
-        super().__init__(CallbackOrder.Metric)
-        self.prefix = prefix
-        self.metric_fn = partial(metric_fn, **metric_params)
-        self.input_key = input_key
-        self.output_key = output_key
+        super().__init__(
+            prefix=prefix,
+            input_key=input_key,
+            output_key=output_key,
+            multiplier=multiplier,
+            **metric_kwargs,
+        )
+        self.metric = metric_fn
 
-    def on_batch_end(self, state: _State):
-        outputs = state.batch_out[self.output_key]
-        targets = state.batch_in[self.input_key]
-        metric = self.metric_fn(outputs, targets)
-        state.batch_metrics[self.prefix] = metric
+    @property
+    def metric_fn(self):
+        return self.metric
 
 
-class MultiMetricCallback(Callback):
+class MultiMetricCallback(MetricCallback):
     """
     A callback that returns multiple metrics on `state.on_batch_end`
     """
@@ -48,27 +120,28 @@ class MultiMetricCallback(Callback):
         list_args: List,
         input_key: str = "targets",
         output_key: str = "logits",
-        **metric_params,
+        multiplier: float = 1.0,
+        **metrics_kwargs,
     ):
-        super().__init__(CallbackOrder.Metric)
-        self.prefix = prefix
-        self.metric_fn = partial(metric_fn, **metric_params)
+        super().__init__(
+            prefix=prefix,
+            metric_fn=metric_fn,
+            input_key=input_key,
+            output_key=output_key,
+            multiplier=multiplier,
+            **metrics_kwargs,
+        )
         self.list_args = list_args
-        self.input_key = input_key
-        self.output_key = output_key
 
     def on_batch_end(self, state: _State):
-        outputs = state.batch_out[self.output_key]
-        targets = state.batch_in[self.input_key]
-
-        metrics_ = self.metric_fn(outputs, targets, self.list_args)
+        metrics_ = self._compute_metric(state)
 
         for arg, metric in zip(self.list_args, metrics_):
             if isinstance(arg, int):
                 key = f"{self.prefix}{arg:02}"
             else:
                 key = f"{self.prefix}_{arg}"
-            state.batch_metrics[key] = metric
+            state.batch_metrics[key] = metric * self.multiplier
 
 
 class MetricAggregatorCallback(Callback):
@@ -79,7 +152,7 @@ class MetricAggregatorCallback(Callback):
         self,
         prefix: str,
         metrics: Union[str, List[str], Dict[str, float]] = None,
-        mode: str = "sum",
+        mode: str = "mean",
         multiplier: float = 1.0
     ) -> None:
         """
@@ -138,27 +211,16 @@ class MetricAggregatorCallback(Callback):
                 lambda x: torch.mean(torch.stack(x)) * multiplier
 
     def _preprocess(self, metrics: Any) -> List[float]:
-        if isinstance(metrics, list):
-            if self.metrics is not None:
-                logger.warning(
-                    f"Trying to get {self.metrics} keys from the metrics, "
-                    "but the metric is a list. All values will be aggregated."
-                )
-            result = metrics
-        elif isinstance(metrics, dict):
-            if self.metrics is not None:
-                if self.mode == "weighted_sum":
-                    result = [
-                        metrics[key] * value
-                        for key, value in self.metrics.items()
-                    ]
-                else:
-                    result = [metrics[key] for key in self.metrics]
+        if self.metrics is not None:
+            if self.mode == "weighted_sum":
+                result = [
+                    metrics[key] * value
+                    for key, value in self.metrics.items()
+                ]
             else:
-                result = list(metrics.values())
+                result = [metrics[key] for key in self.metrics]
         else:
-            result = [metrics]
-
+            result = list(metrics.values())
         return result
 
     def on_batch_end(self, state: _State) -> None:
@@ -170,7 +232,7 @@ class MetricAggregatorCallback(Callback):
         state.batch_metrics[self.prefix] = metric
 
 
-class MetricsManagerCallback(Callback):
+class MetricManagerCallback(Callback):
     """
     Prepares metrics for logging, transferring values from PyTorch to numpy
     """
@@ -194,7 +256,7 @@ class MetricsManagerCallback(Callback):
         output = {}
         for key, value in metrics.items():
             value = utils.distributed_mean(value)
-            value = MetricsManagerCallback._to_single_value(value)
+            value = MetricManagerCallback._to_single_value(value)
             output[key] = value
         return output
 
@@ -222,5 +284,5 @@ class MetricsManagerCallback(Callback):
 
 __all__ = [
     "MetricCallback", "MultiMetricCallback", "MetricAggregatorCallback",
-    "MetricsManagerCallback"
+    "MetricManagerCallback"
 ]

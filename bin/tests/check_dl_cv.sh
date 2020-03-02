@@ -116,7 +116,7 @@ python -c """
 from catalyst import utils
 metrics = utils.load_config('$LOGFILE')
 assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
-assert metrics['stage1.2']['loss'] < 2.15
+assert metrics['stage1.2']['loss'] < 2.22
 """
 
 rm -rf ${LOGDIR}
