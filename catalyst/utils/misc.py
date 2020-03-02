@@ -192,7 +192,8 @@ def get_fn_argsnames(fn: Callable[..., Any], exclude: List[str] = None):
 
 def fn_ends_with_pass(fn: Callable[..., Any]):
     """
-    Check that function end with pass statement(probably does nothing in any way).
+    Check that function end with pass statement
+    (probably does nothing in any way).
     Mainly used to filter callbacks with empty on_{event} methods.
     Args:
         fn (Callable[..., Any]): target Callable

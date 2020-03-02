@@ -1,5 +1,5 @@
 from typing import (  # isort:skip
-    Any, Callable, Dict, Mapping, Optional, Tuple, Union, List  # isort:skip
+    Any, Callable, Dict, Mapping, Tuple, Union, List  # isort:skip
 )  # isort:skip
 
 from abc import ABC, abstractmethod
@@ -27,8 +27,7 @@ class _Runner(ABC):
     state_fn: callable = _State
     events: List[str] = [
         "stage_start", "epoch_start", "batch_start", "loader_start",
-        "stage_end", "epoch_end", "batch_end", "loader_end",
-        "exception"
+        "stage_end", "epoch_end", "batch_end", "loader_end", "exception"
     ]
 
     def __init__(
@@ -185,10 +184,12 @@ class _Runner(ABC):
                 unfiltered_callbacks = start_callbacks
             else:
                 unfiltered_callbacks = end_callbacks
-            filtered_callbacks = OrderedDict([
-                (k, v) for k, v in unfiltered_callbacks.items()
-                if not utils.fn_ends_with_pass(getattr(v, fn_name))
-            ])
+            filtered_callbacks = OrderedDict(
+                [
+                    (k, v) for k, v in unfiltered_callbacks.items()
+                    if not utils.fn_ends_with_pass(getattr(v, fn_name))
+                ]
+            )
             callbacks[event] = filtered_callbacks
         self.callbacks = callbacks
 

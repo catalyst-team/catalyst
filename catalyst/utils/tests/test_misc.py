@@ -55,39 +55,10 @@ def test_fn_ends_with_pass():
     def useless_fn():
         pass
 
-    def useless_fn_with_newline_between_signature_and_pass():
-
-        pass
-
-    def useless_fn_with_docstring():
-        """
-            Docstring yay
-        """
-        pass
-
-    def useless_fn_with_multiline_signature(
-            first_arg=None,
-            second_arg: "Any" = None,
-    ):
-        pass
-
-    def useless_fn_with_multiline_signature_and_docstring(
-            first_arg=None,
-            second_arg: "Any" = None,
-    ):
-        """
-            Docstring yay
-        """
-        pass
-
     def usefull_fn():
         print("I am useful!")
 
     assert utils.fn_ends_with_pass(useless_fn) is True
-    assert utils.fn_ends_with_pass(useless_fn_with_newline_between_signature_and_pass) is True
-    assert utils.fn_ends_with_pass(useless_fn_with_docstring) is True
-    assert utils.fn_ends_with_pass(useless_fn_with_multiline_signature) is True
-    assert utils.fn_ends_with_pass(useless_fn_with_multiline_signature_and_docstring) is True
     assert utils.fn_ends_with_pass(usefull_fn) is False
 
 
@@ -97,22 +68,27 @@ def test_fn_ends_with_pass_on_callback(
 ):
     for event in events["covered"]:
         fn_name = f"on_{event}"
-        assert utils.fn_ends_with_pass(getattr(callback.__class__, fn_name)) is False
+        assert utils.fn_ends_with_pass(
+            getattr(callback.__class__, fn_name)
+        ) is False
     for event in events["non-covered"]:
         fn_name = f"on_{event}"
-        assert utils.fn_ends_with_pass(getattr(callback.__class__, fn_name)) is True
+        assert utils.fn_ends_with_pass(
+            getattr(callback.__class__, fn_name)
+        ) is True
 
 
 def test_fn_ends_with_pass_on_callbacks():
     # Callback test
     from catalyst.dl import Callback
     callback = Callback(order=1)
-    start_events = ["stage_start", "epoch_start", "batch_start", "loader_start"]
-    end_events = ["stage_end", "epoch_end", "batch_end", "loader_end", "exception"]
-    events = {
-        "covered": [],
-        "non-covered": [*start_events, *end_events]
-    }
+    start_events = [
+        "stage_start", "epoch_start", "batch_start", "loader_start"
+    ]
+    end_events = [
+        "stage_end", "epoch_end", "batch_end", "loader_end", "exception"
+    ]
+    events = {"covered": [], "non-covered": [*start_events, *end_events]}
     test_fn_ends_with_pass_on_callback(callback=callback, events=events)
 
     # CriterionCallback test
@@ -120,7 +96,9 @@ def test_fn_ends_with_pass_on_callbacks():
     callback = CriterionCallback()
     covered_events = ["stage_start", "batch_end"]
     non_covered_start_events = ["epoch_start", "batch_start", "loader_start"]
-    non_covered_end_events = ["stage_end", "epoch_end", "loader_end", "exception"]
+    non_covered_end_events = [
+        "stage_end", "epoch_end", "loader_end", "exception"
+    ]
     events = {
         "covered": [*covered_events],
         "non-covered": [*non_covered_start_events, *non_covered_end_events],
