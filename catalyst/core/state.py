@@ -120,6 +120,14 @@ class _State(FrozenClass):
     def stage_epoch_log(self):
         return self.stage_epoch + 1
 
+    @property
+    def input(self):
+        return self.batch_in
+
+    @property
+    def output(self):
+        return self.batch_out
+
     def get_attr(self, key, inner_key=None):
         if inner_key is None:
             return getattr(self, key)

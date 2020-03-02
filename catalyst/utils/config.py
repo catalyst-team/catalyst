@@ -76,26 +76,26 @@ def load_config(
     assert suffix in [".json", ".yml", ".yaml"], \
         f"Unknown file format '{suffix}'"
 
-    storage = None
+    config = None
     with path.open(encoding=encoding) as stream:
         if suffix == ".json":
             object_pairs_hook = OrderedDict if ordered else None
             file = "\n".join(stream.readlines())
             if file != "":
-                storage = json.loads(file, object_pairs_hook=object_pairs_hook)
+                config = json.loads(file, object_pairs_hook=object_pairs_hook)
 
         elif suffix in [".yml", ".yaml"]:
             loader = OrderedLoader if ordered else yaml.Loader
-            storage = yaml.load(stream, loader)
+            config = yaml.load(stream, loader)
 
-    if storage is None:
+    if config is None:
         return dict()
 
-    return storage
+    return config
 
 
 def save_config(
-    storage: Union[Dict, List],
+    config: Union[Dict, List],
     path: Union[str, Path],
     data_format: str = None,
     encoding: str = "utf-8",
@@ -105,7 +105,7 @@ def save_config(
     """
     Saves config to file. Path must be either YAML or JSON
     Args:
-        storage (Storage): config to save
+        config (Union[Dict, List]): config to save
         path (Union[str, Path]): path to save
         data_format (str): ``yaml``, ``yml`` or ``json``.
         encoding (str): Encoding to write file. Default is ``utf-8``
@@ -126,10 +126,10 @@ def save_config(
     with path.open(encoding=encoding, mode="w") as stream:
         if suffix == ".json":
             json.dump(
-                storage, stream, indent=indent, ensure_ascii=ensure_ascii
+                config, stream, indent=indent, ensure_ascii=ensure_ascii
             )
         elif suffix in [".yml", ".yaml"]:
-            yaml.dump(storage, stream)
+            yaml.dump(config, stream)
 
 
 __all__ = [

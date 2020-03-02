@@ -43,7 +43,6 @@ class MulticlassDiceMetricCallback(Callback):
     dice score across multiple batches. This callback is good for getting
     the dice score with small batch sizes where the batchwise dice is noisier.
     """
-
     def __init__(
         self,
         input_key: str = "targets",
@@ -100,8 +99,10 @@ class MulticlassDiceMetricCallback(Callback):
 
         # logging the dice scores in the state
         for i, dice in enumerate(dice_scores):
-            if (isinstance(self.class_names, dict) and
-                    i not in list(self.class_names.keys())):
+            if (
+                isinstance(self.class_names, dict)
+                and i not in list(self.class_names.keys())
+            ):
                 continue
             postfix = self.class_names[i] \
                 if self.class_names is not None \
