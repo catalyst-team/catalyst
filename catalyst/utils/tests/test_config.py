@@ -5,6 +5,7 @@ import json
 
 import numpy as np
 
+from catalyst import utils
 from catalyst.utils import config
 
 
@@ -30,7 +31,7 @@ def test_parse_config_args():
         ]
     )
 
-    configuration, args = config.parse_config_args(
+    configuration, args = utils.parse_config_args(
         config=configuration, args=args, unknown_args=uargs
     )
 
@@ -66,7 +67,7 @@ def test_parse_numbers():
     buffer = io.StringIO()
     json.dump(configuration, buffer)
     buffer.seek(0)
-    yaml_config = config.load_ordered_yaml(buffer)
+    yaml_config = config._load_ordered_yaml(buffer)
 
     for key, item in configuration.items():
         assert np.isclose(yaml_config[key], item)

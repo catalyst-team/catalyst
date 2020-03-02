@@ -55,7 +55,7 @@ stages:
 
   state_params:
     num_epochs: 100
-    main_metric: &reduce_metric loss_g
+    main_metric: &reduced_metric loss_g
     minimize_metric: True
     batch_consistant_metrics: False
 

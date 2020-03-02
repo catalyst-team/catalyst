@@ -3,8 +3,6 @@ from collections import OrderedDict
 import os
 from pathlib import Path
 
-import safitty
-
 from catalyst import utils
 from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
 
@@ -57,7 +55,9 @@ class BaseCheckpointCallback(Callback):
         return "checkpoint"
 
     def save_metric(self, logdir: Union[str, Path], metrics: Dict) -> None:
-        safitty.save(metrics, f"{logdir}/checkpoints/{self.metrics_filename}")
+        utils.save_config(
+            metrics, f"{logdir}/checkpoints/{self.metrics_filename}"
+        )
 
     def on_exception(self, state: _State):
         exception = state.exception
