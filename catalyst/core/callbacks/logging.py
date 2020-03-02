@@ -1,5 +1,4 @@
-from typing import Any, Dict, List  # isort:skip
-from collections import defaultdict
+from typing import Dict, List  # isort:skip
 import logging
 import os
 import sys
@@ -8,59 +7,8 @@ from tqdm import tqdm
 
 from catalyst import utils
 from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
-from catalyst.utils import meters
 from catalyst.utils.tools.tensorboard import SummaryWriter
 from . import formatters
-
-
-class MetricsManagerCallback(Callback):
-    """
-    Prepares metrics for logging, transferring values from PyTorch to numpy
-    """
-    def __init__(self):
-        super().__init__(
-            order=CallbackOrder.Logging - 1,
-            node=CallbackNode.All,
-        )
-        self.meters: Dict[str, meters.AverageValueMeter] = None
-
-    @staticmethod
-    def _to_single_value(value: Any) -> float:
-        if hasattr(value, "item"):
-            value = value.item()
-
-        value = float(value)
-        return value
-
-    @staticmethod
-    def _process_metrics(metrics: Dict[str, Any]):
-        output = {}
-        for key, value in metrics.items():
-            value = MetricsManagerCallback._to_single_value(value)
-            value = utils.distributed_mean(value)
-            output[key] = value
-        return output
-
-    def on_epoch_start(self, state: _State):
-        state.epoch_metrics = defaultdict(None)
-
-    def on_loader_start(self, state: _State):
-        state.loader_metrics = defaultdict(None)
-        self.meters = defaultdict(meters.AverageValueMeter)
-
-    def on_loader_end(self, state: _State):
-        for key, value in self.meters.items():
-            value = value.mean
-            state.loader_metrics[key] = value
-            state.epoch_metrics[f"{state.loader_name}_{key}"] = value
-
-    def on_batch_start(self, state: _State):
-        state.batch_metrics = defaultdict(None)
-
-    def on_batch_end(self, state: _State):
-        state.batch_metrics = self._process_metrics(state.batch_metrics)
-        for key, value in state.batch_metrics.items():
-            self.meters[key].add(value)
 
 
 class VerboseLogger(Callback):
@@ -296,5 +244,4 @@ __all__ = [
     "ConsoleLogger",
     "TensorboardLogger",
     "VerboseLogger",
-    "MetricsManagerCallback",
 ]

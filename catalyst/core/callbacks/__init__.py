@@ -4,11 +4,10 @@ from .checkpoint import CheckpointCallback, IterationCheckpointCallback
 from .criterion import CriterionCallback
 from .early_stop import CheckRunCallback, EarlyStoppingCallback
 from .exception import ExceptionCallback
-from .logging import (
-    ConsoleLogger, MetricsManagerCallback, TensorboardLogger, VerboseLogger
-)
+from .logging import ConsoleLogger, TensorboardLogger, VerboseLogger
 from .metrics import (
-    MetricAggregatorCallback, MetricCallback, MultiMetricCallback
+    MetricAggregatorCallback, MetricCallback, MetricsManagerCallback,
+    MultiMetricCallback
 )
 from .optimizer import OptimizerCallback
 from .phase import PhaseManagerCallback
