@@ -23,15 +23,17 @@ DEFAULT_MINIMAL_CONFIG = {
     }
 }
 
-DEFAULT_CALLBACKS = OrderedDict([
-    ("_timer", TimerCallback),
-    ("_metrics", MetricsManagerCallback),
-    ("_validation", ValidationManagerCallback),
-    ("_saver", CheckpointCallback),
-    ("_console", ConsoleLogger),
-    ("_tensorboard", TensorboardLogger),
-    ("_exception", ExceptionCallback),
-])
+DEFAULT_CALLBACKS = OrderedDict(
+    [
+        ("_timer", TimerCallback),
+        ("_metrics", MetricsManagerCallback),
+        ("_validation", ValidationManagerCallback),
+        ("_saver", CheckpointCallback),
+        ("_console", ConsoleLogger),
+        ("_tensorboard", TensorboardLogger),
+        ("_exception", ExceptionCallback),
+    ]
+)
 
 
 class SomeModel(torch.nn.Module):
