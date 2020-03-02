@@ -240,11 +240,9 @@ def test_all():
 
 
 def test_infer_defaults():
-    test_callbacks = OrderedDict(
-        [
-            ("_exception", ExceptionCallback),
-        ]
-    )
+    test_callbacks = OrderedDict([
+        ("_exception", ExceptionCallback),
+    ])
 
     model = torch.nn.Linear(10, 10)
     criterion = torch.nn.CrossEntropyLoss()
