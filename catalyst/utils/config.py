@@ -125,9 +125,7 @@ def save_config(
 
     with path.open(encoding=encoding, mode="w") as stream:
         if suffix == ".json":
-            json.dump(
-                config, stream, indent=indent, ensure_ascii=ensure_ascii
-            )
+            json.dump(config, stream, indent=indent, ensure_ascii=ensure_ascii)
         elif suffix in [".yml", ".yaml"]:
             yaml.dump(config, stream)
 

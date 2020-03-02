@@ -2,7 +2,7 @@ import numpy as np
 
 from catalyst import utils
 from catalyst.dl.core import Callback, CallbackOrder, MetricCallback, State
-from catalyst.utils import criterion
+from catalyst.utils import metrics
 from .functional import calculate_dice
 
 
@@ -28,7 +28,7 @@ class DiceCallback(MetricCallback):
         """
         super().__init__(
             prefix=prefix,
-            metric_fn=criterion.dice,
+            metric_fn=metrics.dice,
             input_key=input_key,
             output_key=output_key,
             eps=eps,

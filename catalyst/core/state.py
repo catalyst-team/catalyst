@@ -13,10 +13,10 @@ from catalyst.utils.tools.typing import (
 if TYPE_CHECKING:
     from .callback import Callback  # noqa: F401
 
-STATE_MODEL = Union[Model, Dict[str, Model]]
-STATE_CRITERION = Union[Criterion, Dict[str, Criterion]]
-STATE_OPTIMIZER = Union[Optimizer, Dict[str, Optimizer]]
-STATE_SCHEDULER = Union[Scheduler, Dict[str, Scheduler]]
+StateModel = Union[Model, Dict[str, Model]]
+StateCriterion = Union[Criterion, Dict[str, Criterion]]
+StateOptimizer = Union[Optimizer, Dict[str, Optimizer]]
+StateScheduler = Union[Scheduler, Dict[str, Scheduler]]
 
 
 class _State(FrozenClass):
@@ -24,10 +24,10 @@ class _State(FrozenClass):
         self,
         *,
         device: Device = None,
-        model: STATE_MODEL = None,
-        criterion: STATE_CRITERION = None,
-        optimizer: STATE_OPTIMIZER = None,
-        scheduler: STATE_SCHEDULER = None,
+        model: StateModel = None,
+        criterion: StateCriterion = None,
+        optimizer: StateOptimizer = None,
+        scheduler: StateScheduler = None,
         callbacks: Dict[str, "Callback"] = None,
         logdir: str = None,
         stage: str = "infer",
@@ -43,10 +43,10 @@ class _State(FrozenClass):
         # data
         self.loaders: OrderedDict[str, DataLoader] = None
         # components
-        self.model: STATE_MODEL = model
-        self.criterion: STATE_CRITERION = criterion
-        self.optimizer: STATE_OPTIMIZER = optimizer
-        self.scheduler: STATE_SCHEDULER = scheduler
+        self.model: StateModel = model
+        self.criterion: StateCriterion = criterion
+        self.optimizer: StateOptimizer = optimizer
+        self.scheduler: StateScheduler = scheduler
         # extra components - PyTorch device
         self.device: Device = device
         # extra components - Catalyst callbacks
@@ -122,10 +122,12 @@ class _State(FrozenClass):
 
     @property
     def input(self):
+        # backward compatibility
         return self.batch_in
 
     @property
     def output(self):
+        # backward compatibility
         return self.batch_out
 
     def get_attr(self, key, inner_key=None):
