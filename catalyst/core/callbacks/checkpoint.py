@@ -13,8 +13,8 @@ def _load_checkpoint(*, filename, state: _State):
         checkpoint = utils.load_checkpoint(filename)
 
         if not state.stage_name.startswith("infer"):
-            state.epoch = checkpoint["epoch"]
-            state.stage_epoch = checkpoint["stage_epoch"]
+            state.epoch = checkpoint["epoch"] - 1
+            state.stage_epoch = checkpoint["stage_epoch"] - 1
             state.stage_name = checkpoint["stage"]
 
         utils.unpack_checkpoint(
@@ -27,8 +27,8 @@ def _load_checkpoint(*, filename, state: _State):
 
         print(
             f"loaded checkpoint {filename} "
-            f"(epoch {checkpoint['epoch'] + 1}, "
-            f"stage_epoch {checkpoint['stage_epoch'] + 1}, "
+            f"(epoch {checkpoint['epoch']}, "
+            f"stage_epoch {checkpoint['stage_epoch']}, "
             f"stage {checkpoint['stage']})"
         )
     else:
@@ -230,8 +230,8 @@ class CheckpointCallback(BaseCheckpointCallback):
             epoch_metrics=epoch_metrics,
             valid_metrics=valid_metrics,
             stage=state.stage_name,
-            epoch=state.epoch,
-            stage_epoch=state.stage_epoch,
+            epoch=state.epoch_log,
+            stage_epoch=state.stage_epoch_log,
             checkpoint_data=state.checkpoint_data,
         )
         self.process_checkpoint(

@@ -31,8 +31,8 @@ echo 'pipeline 01'
 python -c """
 from catalyst import utils
 metrics = utils.load_config('$LOGFILE')
-assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
-assert metrics.get('stage1.2', 'loss') < 2.1
+assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
+assert metrics['stage1.2']['loss'] < 2.1
 """
 
 echo 'pipeline 01 - trace'
@@ -66,8 +66,8 @@ echo 'pipeline 02'
 python -c """
 from catalyst import utils
 metrics = utils.load_config('$LOGFILE')
-assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
-assert metrics.get('stage1.2', 'loss') < 2.1
+assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
+assert metrics['stage1.2']['loss'] < 2.1
 """
 
 if [[ "$USE_DDP" == "0" ]]; then
@@ -115,8 +115,8 @@ echo 'pipeline 03'
 python -c """
 from catalyst import utils
 metrics = utils.load_config('$LOGFILE')
-assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
-assert metrics.get('stage1.2', 'loss') < 2.15
+assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
+assert metrics['stage1.2']['loss'] < 2.15
 """
 
 rm -rf ${LOGDIR}
@@ -145,8 +145,8 @@ echo 'pipeline 04'
 python -c """
 from catalyst import utils
 metrics = utils.load_config('$LOGFILE')
-assert metrics.get('stage2.2', 'loss') < metrics.get('stage2.1', 'loss')
-assert metrics.get('stage2.2', 'loss') < 2.1
+assert metrics['stage2.2']['loss'] < metrics['stage2.1']['loss']
+assert metrics['stage2.2']['loss'] < 2.1
 """
 
 rm -rf ${LOGDIR}
@@ -175,8 +175,8 @@ echo 'pipeline 05'
 python -c """
 from catalyst import utils
 metrics = utils.load_config('$LOGFILE')
-# assert metrics.get('stage2.2', 'loss') < metrics.get('stage2.1', 'loss')
-assert metrics.get('stage2.2', 'loss') < 32.0
+# assert metrics['stage2.2']['loss'] < metrics['stage2.1']['loss']
+assert metrics['stage2.2']['loss'] < 32.0
 """
 
 rm -rf ${LOGDIR}
@@ -230,8 +230,8 @@ echo 'pipeline 11'
 python -c """
 from catalyst import utils
 metrics = utils.load_config('$LOGFILE')
-# assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
-assert metrics.get('best', 'loss') < 2.35
+# assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
+assert metrics['best']['loss'] < 2.35
 """
 
 rm -rf ${LOGDIR}
@@ -260,8 +260,8 @@ echo 'pipeline 12'
 python -c """
 from catalyst import utils
 metrics = utils.load_config('$LOGFILE')
-# assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
-assert metrics.get('stage1.2', 'loss') < 2.35
+# assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
+assert metrics['stage1.2']['loss'] < 2.35
 """
 
 rm -rf ${LOGDIR}
@@ -290,8 +290,8 @@ echo 'pipeline 13'
 python -c """
 from catalyst import utils
 metrics = utils.load_config('$LOGFILE')
-# assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
-assert metrics.get('stage1.2', 'loss') < 2.33
+# assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
+assert metrics['stage1.2']['loss'] < 2.33
 """
 
 rm -rf ${LOGDIR}
@@ -345,8 +345,8 @@ echo 'pipeline 15'
 python -c """
 from catalyst import utils
 metrics = utils.load_config('$LOGFILE')
-# assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
-assert metrics.get('stage1.2', 'loss') < 2.33
+# assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
+assert metrics['stage1.2']['loss'] < 2.33
 """
 
 rm -rf ${LOGDIR}
@@ -381,8 +381,8 @@ python -c """
 from catalyst import utils
 metrics = utils.load_config('$LOGFILE')
 
-iou = metrics.get('last', 'iou')
-loss = metrics.get('last', 'loss')
+iou = metrics['last']['iou']
+loss = metrics['last']['loss']
 
 print('iou', iou)
 print('loss', loss)
