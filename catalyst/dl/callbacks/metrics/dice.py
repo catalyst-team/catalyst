@@ -43,6 +43,7 @@ class MulticlassDiceMetricCallback(Callback):
     dice score across multiple batches. This callback is good for getting
     the dice score with small batch sizes where the batchwise dice is noisier.
     """
+
     def __init__(
         self,
         input_key: str = "targets",
@@ -57,9 +58,8 @@ class MulticlassDiceMetricCallback(Callback):
             output_key (str): output key to use for dice calculation;
                 specifies our `y_pred`.
             prefix (str): prefix for printing the metric
-            class_names (dict/List):
-                if dictionary, should be:
-                    {class_id: class_name, ...} where class_id is an integer
+            class_names (dict/List): if dictionary, should be:
+                {class_id: class_name, ...} where class_id is an integer
                 This allows you to ignore class indices.
                 if list, make sure it corresponds to the number of classes
         """
