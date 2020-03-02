@@ -62,23 +62,22 @@ def test_fn_ends_with_pass():
     assert utils.fn_ends_with_pass(usefull_fn) is False
 
 
-def test_fn_ends_with_pass_on_callback(
-    callback,
-    events,
-):
-    for event in events["covered"]:
-        fn_name = f"on_{event}"
-        assert utils.fn_ends_with_pass(
-            getattr(callback.__class__, fn_name)
-        ) is False
-    for event in events["non-covered"]:
-        fn_name = f"on_{event}"
-        assert utils.fn_ends_with_pass(
-            getattr(callback.__class__, fn_name)
-        ) is True
-
-
 def test_fn_ends_with_pass_on_callbacks():
+    def test_fn_ends_with_pass_on_callback(
+        callback,
+        events,
+    ):
+        for event in events["covered"]:
+            fn_name = f"on_{event}"
+            assert utils.fn_ends_with_pass(
+                getattr(callback.__class__, fn_name)
+            ) is False
+        for event in events["non-covered"]:
+            fn_name = f"on_{event}"
+            assert utils.fn_ends_with_pass(
+                getattr(callback.__class__, fn_name)
+            ) is True
+
     # Callback test
     from catalyst.dl import Callback
     callback = Callback(order=1)
