@@ -15,7 +15,9 @@ class WandbRunner(Runner):
     Runner wrapper with wandb integration hooks.
     """
     @staticmethod
-    def _log_metrics(metrics: Dict, mode: str, suffix: str = "", epoch: int = None):
+    def _log_metrics(
+        metrics: Dict, mode: str, suffix: str = "", epoch: int = None
+    ):
         def key_locate(key: str):
             """
             Wandb uses first symbol _ for it service purposes
@@ -136,7 +138,10 @@ class WandbRunner(Runner):
             )
             for mode, metrics in mode_metrics.items():
                 self._log_metrics(
-                    metrics=metrics, mode=mode, suffix=self.epoch_log_suffix, epoch=epoch
+                    metrics=metrics,
+                    mode=mode,
+                    suffix=self.epoch_log_suffix,
+                    epoch=epoch
                 )
             wandb.log(commit=True)
 
