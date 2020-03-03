@@ -28,8 +28,8 @@ rm -rf ./data
 # load the data
 mkdir -p data
 
-if [ -f /mount/isibi ] && [ -f /mount/segmentation_data ]; then
-  cp -a /mount/isibi data/isibi
+if [ -f /mount/isbi ] && [ -f /mount/segmentation_data ]; then
+  cp -a /mount/isbi data/isbi
   cp -a /mount/segmentation_data data/segmentation_data
 else
   bash bin/scripts/download-gdrive 1N82zh0kzmnzqRvUyMgVOGsCoS1kHf3RP ./data/isbi.tar.gz
