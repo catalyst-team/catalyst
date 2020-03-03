@@ -58,9 +58,8 @@ class MulticlassDiceMetricCallback(Callback):
             output_key (str): output key to use for dice calculation;
                 specifies our `y_pred`.
             prefix (str): prefix for printing the metric
-            class_names (dict/List):
-                if dictionary, should be:
-                    {class_id: class_name, ...} where class_id is an integer
+            class_names (dict/List): if dictionary, should be:
+                {class_id: class_name, ...} where class_id is an integer
                 This allows you to ignore class indices.
                 if list, make sure it corresponds to the number of classes
         """
@@ -101,8 +100,10 @@ class MulticlassDiceMetricCallback(Callback):
 
         # logging the dice scores in the state
         for i, dice in enumerate(dice_scores):
-            if (isinstance(self.class_names, dict) and
-                    i not in list(self.class_names.keys())):
+            if (
+                isinstance(self.class_names, dict)
+                and i not in list(self.class_names.keys())
+            ):
                 continue
             postfix = self.class_names[i] \
                 if self.class_names is not None \
@@ -111,8 +112,10 @@ class MulticlassDiceMetricCallback(Callback):
             loader_values[f"{self.prefix}_{postfix}"] = dice
 
         # For supporting averaging of only classes specified in `class_names`
-        values_to_avg = [value for key, value in loader_values.items()
-                         if key.startswith(f"{self.prefix}_")]
+        values_to_avg = [
+            value for key, value in loader_values.items()
+            if key.startswith(f"{self.prefix}_")
+        ]
         loader_values[f"{self.prefix}_mean"] = np.mean(values_to_avg)
 
         self._reset_stats()
