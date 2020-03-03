@@ -8,7 +8,6 @@ bash ./teamcity/dl_.sh
 
 
 ###################################  GPU2  ####################################
-echo './bin/tests/check_dl_all.sh GPU2'
 USE_APEX="0" USE_DDP="0" CUDA_VISIBLE_DEVICES="0,1" \
     bash ./bin/tests/check_dl_all.sh
 USE_APEX="0" USE_DDP="1" CUDA_VISIBLE_DEVICES="0,1" \

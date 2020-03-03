@@ -8,6 +8,5 @@ bash ./teamcity/dl_.sh
 
 
 ###################################  GPU ######################################
-echo './bin/tests/check_dl_all.sh GPU'
 USE_APEX="0" CUDA_VISIBLE_DEVICES="0" bash ./bin/tests/check_dl_all.sh
 USE_APEX="1" CUDA_VISIBLE_DEVICES="0" bash ./bin/tests/check_dl_all.sh

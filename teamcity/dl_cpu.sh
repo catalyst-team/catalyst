@@ -8,5 +8,4 @@ bash ./teamcity/dl_.sh
 
 
 ###################################  CPU ######################################
-echo './bin/tests/check_dl_all.sh CPU'
 USE_APEX="0" CUDA_VISIBLE_DEVICES="" bash ./bin/tests/check_dl_all.sh
