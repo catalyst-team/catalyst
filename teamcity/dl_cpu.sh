@@ -5,7 +5,6 @@ set -eo pipefail -v
 
 
 bash ./teamcity/dl_.sh
-# bash ./teamcity/dl_apex.sh
 
 
 ###################################  CPU ######################################
