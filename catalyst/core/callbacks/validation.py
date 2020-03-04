@@ -4,6 +4,9 @@ from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
 
 
 class ValidationManagerCallback(Callback):
+    """
+    A callback to aggregate state.valid_metrics from state.epoch_metrics.
+    """
     def __init__(self):
         super().__init__(
             order=CallbackOrder.Validation,
