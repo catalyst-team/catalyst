@@ -2,8 +2,8 @@ import os
 
 from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
 
-_NUM_LOADER_STEPS = int(os.environ.get("NUM_LOADER_STEPS", 2))
-_NUM_EPOCH_STEPS = int(os.environ.get("NUM_EPOCH_STEPS", 2))
+_NUM_LOADER_STEPS = int(os.environ.get("CHECK_LOADER_STEPS", 2))
+_NUM_EPOCH_STEPS = int(os.environ.get("CHECK_EPOCH_STEPS", 2))
 
 
 class CheckRunCallback(Callback):
