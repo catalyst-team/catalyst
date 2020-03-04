@@ -28,7 +28,7 @@ rm -rf ./data
 # load the data
 mkdir -p data
 
-if [ -d /mount/isbi ] && [ -d /mount/segmentation_data ] && [ -d /mount/MNIST]; then
+if [ -d /mount/isbi ] && [ -d /mount/segmentation_data ] && [ -d /mount/MNIST ]; then
   cp -a /mount/isbi data/isbi
   cp -a /mount/segmentation_data data/segmentation_data
   cp -a /mount/MNIST data/MNIST
