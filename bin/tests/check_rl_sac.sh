@@ -29,7 +29,7 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     python catalyst/rl/scripts/load_db.py \
     --db="redis" \
     --port=$PORT \
-    --in-pkl=./db.dump.pointenv.190821.pkl
+    --in-pkl=data/db.dump.pointenv.190821.pkl
 
 echo "run trainers"
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
