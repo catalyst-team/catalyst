@@ -19,6 +19,7 @@ class OptimizerCallback(Callback):
         accumulation_steps: int = 1,
         grad_clip_params: Dict = None,
         decouple_weight_decay: bool = True,
+        # @TODO: add model grads support and visualization
         # save_model_grads: bool = False,
     ):
         """

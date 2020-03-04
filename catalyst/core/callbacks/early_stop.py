@@ -1,8 +1,17 @@
+import os
+
 from catalyst.core import _State, Callback, CallbackOrder
+
+_NUM_LOADER_STEPS = int(os.environ.get("NUM_LOADER_STEPS", 2))
+_NUM_EPOCH_STEPS = int(os.environ.get("NUM_EPOCH_STEPS", 2))
 
 
 class CheckRunCallback(Callback):
-    def __init__(self, num_loader_steps: int = 2, num_epoch_steps: int = 2):
+    def __init__(
+        self,
+        num_loader_steps: int = _NUM_LOADER_STEPS,
+        num_epoch_steps: int = _NUM_EPOCH_STEPS,
+    ):
         super().__init__(CallbackOrder.External)
         self.num_loader_steps = num_loader_steps
         self.num_epoch_steps = num_epoch_steps
