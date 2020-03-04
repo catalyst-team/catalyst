@@ -58,7 +58,7 @@ class VerboseLogger(Callback):
         self.step = 0
         self.tqdm = tqdm(
             total=state.loader_len,
-            desc=f"{state.stage_epoch_log}/{state.num_epochs}"
+            desc=f"{state.epoch}/{state.num_epochs}"
             f" * Epoch ({state.loader_name})",
             leave=True,
             ncols=0,
@@ -211,7 +211,7 @@ class TensorboardLogger(Callback):
             mode = state.loader_name
             metrics_ = state.batch_metrics
             self._log_metrics(
-                metrics=metrics_, step=state.step, mode=mode, suffix="/batch"
+                metrics=metrics_, step=state.global_step, mode=mode, suffix="/batch"
             )
 
     def on_loader_end(self, state: _State):
@@ -224,7 +224,7 @@ class TensorboardLogger(Callback):
             metrics_ = state.loader_metrics
             self._log_metrics(
                 metrics=metrics_,
-                step=state.epoch_log,
+                step=state.global_epoch,
                 mode=mode,
                 suffix="/epoch",
             )

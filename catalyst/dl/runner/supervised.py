@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Mapping, Tuple, Union  # isort:skip
+from typing import (  # isort:skip
+    Any, Callable, Dict, List, Mapping, Tuple, Union  # isort:skip
+)  # isort:skip
 from collections import OrderedDict
 import logging
 from pathlib import Path
@@ -8,8 +10,8 @@ from torch.jit import ScriptModule
 from torch.utils.data import DataLoader
 
 from catalyst.dl import (
-    Callback, CheckpointCallback, InferCallback, Runner, SupervisedExperiment,
-    utils
+    Callback, CheckpointCallback, InferCallback, Runner, State,
+    SupervisedExperiment, utils
 )
 from catalyst.dl.utils import trace
 from catalyst.utils.tools.typing import (
@@ -23,7 +25,7 @@ class SupervisedRunner(Runner):
     """
     Runner for experiments with supervised model
     """
-    _default_experiment = SupervisedExperiment
+    _experiment_fn: Callable = SupervisedExperiment
 
     def __init__(
         self,
@@ -70,6 +72,10 @@ class SupervisedRunner(Runner):
             self._process_output = self._process_output_none
         else:
             raise NotImplementedError()
+
+    def _init(self):
+        self.experiment: SupervisedExperiment = None
+        self.state: State = None
 
     def _batch2device(self, batch: Mapping[str, Any], device: Device):
         if isinstance(batch, (tuple, list)):
@@ -196,7 +202,7 @@ class SupervisedRunner(Runner):
             else:
                 raise NotImplementedError("CheckpointCallback already exist")
 
-        experiment = self._default_experiment(
+        experiment = self._experiment_fn(
             stage="train",
             model=model,
             loaders=loaders,
@@ -251,7 +257,7 @@ class SupervisedRunner(Runner):
         if model is not None:
             self.model = model
 
-        experiment = self._default_experiment(
+        experiment = self._experiment_fn(
             stage="infer",
             model=model,
             loaders=loaders,

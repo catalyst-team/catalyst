@@ -97,7 +97,7 @@ class ConfusionMatrixCallback(Callback):
         tb_callback = state.callbacks[self.tensorboard_callback_name]
         self._plot_confusion_matrix(
             logger=tb_callback.loggers[state.loader_name],
-            epoch=state.epoch,
+            epoch=state.global_epoch,
             confusion_matrix=confusion_matrix,
             class_names=class_names,
         )

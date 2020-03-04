@@ -82,7 +82,7 @@ class SchedulerCallback(Callback):
                 isinstance(self._scheduler, OneCycleLRWithWarmup) and \
                 self.mode == "batch":
             self._scheduler.recalculate(
-                loader_len=state.loader_len, current_step=state.stage_epoch
+                loader_len=state.loader_len, current_step=state.epoch
             )
 
     def on_batch_end(self, state: _State):

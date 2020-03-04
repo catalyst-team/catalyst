@@ -2,13 +2,13 @@ from catalyst.core import _State, Callback, CallbackOrder
 
 
 class CheckRunCallback(Callback):
-    def __init__(self, num_loader_steps: int = 1, num_epoch_steps: int = 1):
+    def __init__(self, num_loader_steps: int = 2, num_epoch_steps: int = 2):
         super().__init__(CallbackOrder.External)
         self.num_loader_steps = num_loader_steps
         self.num_epoch_steps = num_epoch_steps
 
     def on_epoch_end(self, state: _State):
-        if state.stage_epoch >= self.num_epoch_steps:
+        if state.epoch >= self.num_epoch_steps:
             state.need_early_stop = True
 
     def on_batch_end(self, state: _State):
@@ -50,5 +50,5 @@ class EarlyStoppingCallback(Callback):
             self.num_bad_epochs += 1
 
         if self.num_bad_epochs >= self.patience:
-            print(f"Early stop at {state.stage_epoch_log} epoch")
+            print(f"Early stop at {state.epoch} epoch")
             state.need_early_stop = True

@@ -7,15 +7,39 @@ from catalyst import utils
 from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
 
 
+def _pack_state(state: _State):
+    checkpoint = utils.pack_checkpoint(
+        model=state.model,
+        criterion=state.criterion,
+        optimizer=state.optimizer,
+        scheduler=state.scheduler,
+        epoch_metrics=dict(state.epoch_metrics),
+        valid_metrics=dict(state.valid_metrics),
+        stage_name=state.stage_name,
+        epoch=state.epoch,
+        loader_name=state.loader_name,
+        loader_step=state.loader_step,
+        global_epoch=state.global_epoch,
+        checkpoint_data=state.checkpoint_data,
+        main_metric=state.main_metric,
+        minimize_metric=state.minimize_metric,
+        valid_loader=state.valid_loader,
+    )
+    return checkpoint
+
+
 def _load_checkpoint(*, filename, state: _State):
     if os.path.isfile(filename):
         print(f"=> loading checkpoint {filename}")
         checkpoint = utils.load_checkpoint(filename)
 
         if not state.stage_name.startswith("infer"):
-            state.epoch = checkpoint["epoch"] - 1
-            state.stage_epoch = checkpoint["stage_epoch"] - 1
-            state.stage_name = checkpoint["stage"]
+            state.stage_name = checkpoint["stage_name"]
+            state.epoch = checkpoint["epoch"]
+            state.global_epoch = checkpoint["global_epoch"]
+            # @TODO: should we also load,
+            # checkpoint_data, main_metric, minimize_metric, valid_loader ?
+            # epoch_metrics, valid_metrics ?
 
         utils.unpack_checkpoint(
             checkpoint,
@@ -27,9 +51,9 @@ def _load_checkpoint(*, filename, state: _State):
 
         print(
             f"loaded checkpoint {filename} "
-            f"(epoch {checkpoint['epoch']}, "
-            f"stage_epoch {checkpoint['stage_epoch']}, "
-            f"stage {checkpoint['stage']})"
+            f"(global epoch {checkpoint['global_epoch']}, "
+            f"epoch {checkpoint['epoch']}, "
+            f"stage {checkpoint['stage_name']})"
         )
     else:
         raise Exception(f"No checkpoint found at {filename}")
@@ -65,20 +89,7 @@ class BaseCheckpointCallback(Callback):
             return
 
         try:
-            valid_metrics = state.epoch_metrics[state.valid_loader]
-            epoch_metrics = state.epoch_metrics
-            checkpoint = utils.pack_checkpoint(
-                model=state.model,
-                criterion=state.criterion,
-                optimizer=state.optimizer,
-                scheduler=state.scheduler,
-                epoch_metrics=epoch_metrics,
-                valid_metrics=valid_metrics,
-                stage=state.stage_name,
-                epoch=state.epoch,
-                stage_epoch=state.stage_epoch,
-                checkpoint_data=state.checkpoint_data,
-            )
+            checkpoint = _pack_state(state)
             suffix = self.get_checkpoint_suffix(checkpoint)
             suffix = f"{suffix}.exception_{exception.__class__.__name__}"
             utils.save_checkpoint(
@@ -89,7 +100,7 @@ class BaseCheckpointCallback(Callback):
                 is_last=False
             )
             metrics = self.metrics
-            metrics[suffix] = valid_metrics
+            metrics[suffix] = state.valid_metrics
             self.save_metric(state.logdir, metrics)
         except Exception:
             pass
@@ -125,7 +136,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         self._keys_from_state = ["resume", "resume_dir"]
 
     def get_checkpoint_suffix(self, checkpoint: dict) -> str:
-        result = f"{checkpoint['stage']}.{checkpoint['stage_epoch']}"
+        result = f"{checkpoint['stage_name']}.{checkpoint['epoch']}"
         return result
 
     def process_metrics(self, last_valid_metrics) -> Dict:
@@ -219,21 +230,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         if state.stage_name.startswith("infer"):
             return
 
-        valid_metrics = dict(state.valid_metrics)
-        epoch_metrics = dict(state.epoch_metrics)
-
-        checkpoint = utils.pack_checkpoint(
-            model=state.model,
-            criterion=state.criterion,
-            optimizer=state.optimizer,
-            scheduler=state.scheduler,
-            epoch_metrics=epoch_metrics,
-            valid_metrics=valid_metrics,
-            stage=state.stage_name,
-            epoch=state.epoch_log,
-            stage_epoch=state.stage_epoch_log,
-            checkpoint_data=state.checkpoint_data,
-        )
+        checkpoint = _pack_state(state)
         self.process_checkpoint(
             logdir=state.logdir,
             checkpoint=checkpoint,
@@ -285,7 +282,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         self.metrics_history = []
 
     def get_checkpoint_suffix(self, checkpoint: dict) -> str:
-        result = f"{checkpoint['stage']}." \
+        result = f"{checkpoint['stage_name']}." \
                  f"epoch.{checkpoint['epoch']}." \
                  f"iter.{self._iteration_counter}"
 
@@ -341,16 +338,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
     def on_batch_end(self, state: _State):
         self._iteration_counter += 1
         if self._iteration_counter % self.period == 0:
-            checkpoint = utils.pack_checkpoint(
-                model=state.model,
-                criterion=state.criterion,
-                optimizer=state.optimizer,
-                scheduler=state.scheduler,
-                epoch_metrics=None,
-                valid_metrics=None,
-                stage=state.stage_name,
-                epoch=state.epoch_log
-            )
+            checkpoint = _pack_state(state)
             self.process_checkpoint(
                 logdir=state.logdir,
                 checkpoint=checkpoint,

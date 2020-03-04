@@ -158,8 +158,8 @@ class _Runner(ABC):
         if self.state is not None and migrate_from_previous_stage:
             migrating_params.update(
                 {
-                    "step": self.state.step,
-                    "epoch": self.state.epoch,
+                    "step": self.state.global_step,
+                    "epoch": self.state.global_epoch,
                     "resume": getattr(self.state, "resume", None),
                 }
             )
@@ -257,7 +257,7 @@ class _Runner(ABC):
         return output
 
     def _run_batch(self, batch: Mapping[str, Any]):
-        self.state.step += self.state.batch_size
+        self.state.global_step += self.state.batch_size
         batch = self._batch2device(batch, self.device)
         self.state.batch_in = batch
 
@@ -270,13 +270,13 @@ class _Runner(ABC):
             loader.batch_sampler.batch_size
             if loader.batch_sampler is not None else loader.batch_size
         )
-        self.state.step = (
-            self.state.step
-            or self.state.epoch * len(loader) * self.state.batch_size
+        self.state.global_step = (
+                self.state.global_step
+                or self.state.global_epoch * len(loader) * self.state.batch_size
         )
 
         for i, batch in enumerate(loader):
-            self.state.loader_step = i
+            self.state.loader_step = i + 1
             self._run_batch(batch)
             if self.state.need_early_stop:
                 self.state.need_early_stop = False
@@ -310,10 +310,10 @@ class _Runner(ABC):
 
             if isinstance(loader.sampler, DistributedSampler) \
                     and not is_infer_stage:
-                loader.sampler.set_epoch(state.stage_epoch)
+                loader.sampler.set_epoch(state.epoch)
 
             utils.set_global_seed(
-                self.experiment.initial_seed + state.epoch + 1
+                self.experiment.initial_seed + state.global_epoch + 1
             )
             self._run_event("on_loader_start")
             with torch.set_grad_enabled(state.need_backward_pass):
@@ -325,20 +325,20 @@ class _Runner(ABC):
         state: _State = self.state
 
         self._run_event("on_stage_start")
-        while state.stage_epoch < state.num_epochs:
+        while state.epoch < state.num_epochs + 1:
             utils.set_global_seed(
-                self.experiment.initial_seed + state.epoch + 1
+                self.experiment.initial_seed + state.global_epoch + 1
             )
             self._run_event("on_epoch_start")
-            self._run_epoch(stage=stage, epoch=state.stage_epoch)
+            self._run_epoch(stage=stage, epoch=state.epoch)
             self._run_event("on_epoch_end")
 
             if state.need_early_stop:
                 state.need_early_stop = False
                 break
 
+            state.global_epoch += 1
             state.epoch += 1
-            state.stage_epoch += 1
         self._run_event("on_stage_end")
 
     def run_experiment(self, experiment: _Experiment):

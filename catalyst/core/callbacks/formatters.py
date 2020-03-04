@@ -88,8 +88,8 @@ class TxtMetricsFormatter(MetricsFormatter):
         metrics = self._format_metrics(per_type_metrics)
         for key, value in metrics.items():
             message.append(
-                f"{state.stage_epoch_log}/{state.num_epochs} "
-                f"* Epoch {state.epoch_log} ({key}): {value}"
+                f"{state.epoch}/{state.num_epochs} "
+                f"* Epoch {state.global_epoch} ({key}): {value}"
             )
         message = "\n".join(message)
         return message
@@ -115,7 +115,7 @@ class JsonMetricsFormatter(MetricsFormatter):
     def _format_message(self, state: _State):
         res = dict(
             metirics=state.epoch_metrics.copy(),
-            epoch=state.epoch,
+            epoch=state.global_epoch,
             time=datetime.now().isoformat()
         )
         return json.dumps(res, indent=True, ensure_ascii=False)

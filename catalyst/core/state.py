@@ -79,15 +79,19 @@ class _State(FrozenClass):
         # pipeline info
         self.distributed_rank = utils.get_rank()
         self.is_distributed_worker = self.distributed_rank > 0
+
         self.stage_name: str = stage
         self.loader_name: str = None
+
         self.batch_size: int = 0
         self.loader_len: int = 0
-        self.step: int = 0
         self.loader_step: int = 0
-        self.epoch: int = 0
-        self.stage_epoch: int = 0
+
+        self.epoch: int = 1
         self.num_epochs: int = num_epochs or np.iinfo(np.int32).max
+
+        self.global_step: int = 0
+        self.global_epoch: int = 1
 
         # metrics & validation
         self.main_metric: str = main_metric
@@ -111,14 +115,6 @@ class _State(FrozenClass):
             setattr(self, k, v)
 
         self._freeze()
-
-    @property
-    def epoch_log(self):
-        return self.epoch + 1
-
-    @property
-    def stage_epoch_log(self):
-        return self.stage_epoch + 1
 
     @property
     def input(self):
