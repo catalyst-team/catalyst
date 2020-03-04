@@ -211,7 +211,10 @@ class TensorboardLogger(Callback):
             mode = state.loader_name
             metrics_ = state.batch_metrics
             self._log_metrics(
-                metrics=metrics_, step=state.global_step, mode=mode, suffix="/batch"
+                metrics=metrics_,
+                step=state.global_step,
+                mode=mode,
+                suffix="/batch"
             )
 
     def on_loader_end(self, state: _State):

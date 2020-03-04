@@ -271,8 +271,8 @@ class _Runner(ABC):
             if loader.batch_sampler is not None else loader.batch_size
         )
         self.state.global_step = (
-                self.state.global_step
-                or self.state.global_epoch * len(loader) * self.state.batch_size
+            self.state.global_step
+            or self.state.global_epoch * len(loader) * self.state.batch_size
         )
 
         for i, batch in enumerate(loader):
