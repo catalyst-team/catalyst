@@ -2,7 +2,7 @@ import torch
 
 from catalyst import utils
 from catalyst.contrib.nn.schedulers import BatchScheduler, OneCycleLRWithWarmup
-from catalyst.core import _State, Callback, CallbackOrder
+from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
 
 
 class SchedulerCallback(Callback):
@@ -12,7 +12,7 @@ class SchedulerCallback(Callback):
         mode: str = None,
         reduced_metric: str = "loss"
     ):
-        super().__init__(CallbackOrder.Scheduler)
+        super().__init__(order=CallbackOrder.Scheduler, node=CallbackNode.All)
         self.scheduler_key = scheduler_key
         self.mode = mode
         self.reduced_metric = reduced_metric
@@ -98,7 +98,7 @@ class LRUpdater(Callback):
             optimizer_key: which optimizer key to use
                 for learning rate scheduling
         """
-        super().__init__(CallbackOrder.Scheduler)
+        super().__init__(order=CallbackOrder.Scheduler, node=CallbackNode.All)
         self.init_lr = 0
         self.optimizer_key = optimizer_key
 

@@ -6,7 +6,7 @@ from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
 class ValidationManagerCallback(Callback):
     def __init__(self):
         super().__init__(
-            order=CallbackOrder.MetricAggregation + 1,
+            order=CallbackOrder.Validation,
             node=CallbackNode.All,
         )
 

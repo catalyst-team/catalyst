@@ -4,8 +4,9 @@ from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
 
 class ExceptionCallback(Callback):
     def __init__(self):
-        order = CallbackOrder.Other + 1
-        super().__init__(order=order, node=CallbackNode.All)
+        super().__init__(
+            order=CallbackOrder.External + 1, node=CallbackNode.All
+        )
 
     def on_exception(self, state: _State):
         exception = state.exception

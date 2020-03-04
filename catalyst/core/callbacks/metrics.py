@@ -21,7 +21,7 @@ class _MetricCallback(ABC, Callback):
         multiplier: float = 1.0,
         **metrics_kwargs,
     ):
-        super().__init__(CallbackOrder.Metric)
+        super().__init__(order=CallbackOrder.Metric, node=CallbackNode.All)
         self.prefix = prefix
         # self.metric_fn = partial(metric_fn, **metric_params)
         self.input_key = input_key
@@ -165,7 +165,9 @@ class MetricAggregationCallback(Callback):
                 Must be either ``sum``, ``mean`` or ``weighted_sum``.
             multiplier (float): scale factor for the aggregated metric.
         """
-        super().__init__(CallbackOrder.Metric + 1)
+        super().__init__(
+            order=CallbackOrder.MetricAggregation, node=CallbackNode.All
+        )
 
         if prefix is None or not isinstance(prefix, str):
             raise ValueError("prefix must be str")

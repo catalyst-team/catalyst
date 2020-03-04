@@ -1,6 +1,6 @@
 import os
 
-from catalyst.core import _State, Callback, CallbackOrder
+from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
 
 _NUM_LOADER_STEPS = int(os.environ.get("NUM_LOADER_STEPS", 2))
 _NUM_EPOCH_STEPS = int(os.environ.get("NUM_EPOCH_STEPS", 2))
@@ -12,7 +12,7 @@ class CheckRunCallback(Callback):
         num_loader_steps: int = _NUM_LOADER_STEPS,
         num_epoch_steps: int = _NUM_EPOCH_STEPS,
     ):
-        super().__init__(CallbackOrder.External)
+        super().__init__(order=CallbackOrder.External, node=CallbackNode.All)
         self.num_loader_steps = num_loader_steps
         self.num_epoch_steps = num_epoch_steps
 
@@ -33,7 +33,7 @@ class EarlyStoppingCallback(Callback):
         minimize: bool = True,
         min_delta: float = 1e-6
     ):
-        super().__init__(CallbackOrder.External)
+        super().__init__(order=CallbackOrder.External, node=CallbackNode.All)
         self.best_score = None
         self.metric = metric
         self.patience = patience

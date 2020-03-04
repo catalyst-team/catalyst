@@ -6,14 +6,14 @@ if TYPE_CHECKING:
 
 
 class CallbackOrder(IntFlag):
-    Internal = 0
-    Metric = 20
-    MetricAggregation = 40
-    Optimizer = 60
-    Logging = 80
-    Scheduler = 100
-    External = 120
-    Other = 200
+    Internal = 0  # pytorch
+    Metric = 20  # pytorch
+    MetricAggregation = 40  # pytorch
+    Optimizer = 60  # pytorch
+    Validation = 80  # numpy
+    Logging = 100  # numpy
+    Scheduler = 120  # numpy
+    External = 200  # numpy
 
 
 class CallbackNode(IntFlag):

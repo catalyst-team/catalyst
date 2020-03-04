@@ -2,7 +2,9 @@ from typing import Callable, Dict, List  # isort:skip
 import logging
 
 from catalyst import utils
-from catalyst.core import _State, Callback, CallbackOrder, registry
+from catalyst.core import (
+    _State, Callback, CallbackNode, CallbackOrder, registry
+)
 from catalyst.utils.tools.typing import Optimizer
 
 logger = logging.getLogger(__name__)
@@ -37,7 +39,7 @@ class OptimizerCallback(Callback):
             # on backward propagation on current
             #     batch
         """
-        super().__init__(CallbackOrder.Optimizer)
+        super().__init__(order=CallbackOrder.Optimizer, node=CallbackNode.All)
         self.loss_key: str = loss_key
         self.optimizer_key: str = optimizer_key
 
