@@ -3,6 +3,9 @@
 # Cause the script to exit if a single command fails
 set -eo pipefail -v
 
+echo 'Error'
+exit 125
+
 pip install -r requirements/requirements.txt
 
 pip install -r requirements/requirements-cv.txt
