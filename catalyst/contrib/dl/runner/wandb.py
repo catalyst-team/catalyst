@@ -16,7 +16,7 @@ class WandbRunner(Runner):
     """
     @staticmethod
     def _log_metrics(
-        metrics: Dict, mode: str, suffix: str = "", epoch: int = None
+        metrics: Dict, mode: str, suffix: str = "", commit: bool = True
     ):
         def key_locate(key: str):
             """
@@ -36,7 +36,7 @@ class WandbRunner(Runner):
             f"{key_locate(key)}/{mode}{suffix}": value
             for key, value in metrics.items()
         }
-        wandb.log(metrics, step=epoch)
+        wandb.log(metrics, commit=commit)
 
     def _init(
         self,
@@ -125,7 +125,10 @@ class WandbRunner(Runner):
             mode = self.state.loader_name
             metrics = self.state.batch_metrics
             self._log_metrics(
-                metrics=metrics, mode=mode, suffix=self.batch_log_suffix
+                metrics=metrics,
+                mode=mode,
+                suffix=self.batch_log_suffix,
+                commit=True
             )
 
     def _run_epoch(self, stage: str, epoch: int):
@@ -141,7 +144,7 @@ class WandbRunner(Runner):
                     metrics=metrics,
                     mode=mode,
                     suffix=self.epoch_log_suffix,
-                    epoch=epoch
+                    commit=False
                 )
             wandb.log(commit=True)
 
