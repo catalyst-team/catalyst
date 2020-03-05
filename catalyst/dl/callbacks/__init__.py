@@ -16,3 +16,5 @@ from .metrics import (
 )
 from .mixup import MixupCallback
 from .scheduler import LRFinder
+
+from catalyst.contrib.dl.callbacks import *  # isort:skip
