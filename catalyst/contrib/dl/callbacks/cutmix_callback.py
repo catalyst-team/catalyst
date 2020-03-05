@@ -58,7 +58,7 @@ class CutmixCallback(CriterionCallback):
         :return: loss value
         """
         if not self.is_needed:
-            return super()._compute_loss(state, criterion)
+            return super()._compute_loss_value(state, criterion)
 
         pred = state.batch_out[self.output_key]
         y_a = state.batch_in[self.input_key]
