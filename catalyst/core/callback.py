@@ -22,6 +22,11 @@ class CallbackNode(IntFlag):
     Worker = 2
 
 
+class CallbackType(IntFlag):
+    Stage = 0
+    Experiment = 1
+
+
 class Callback:
     """
     Abstract class that all callback (e.g., Logger) classes extends from.
@@ -46,12 +51,18 @@ class Callback:
     All callbacks has ``order`` value from ``CallbackOrder``
     and ``node`` value from ``CallbackNode``
     """
-    def __init__(self, order: int, node: int = CallbackNode.All):
+    def __init__(
+            self,
+            order: int,
+            node: int = CallbackNode.All,
+            type: int = CallbackType.Stage,
+    ):
         """
         For order see ``CallbackOrder`` class
         """
         self.order = order
         self.node = node
+        self.type = type
 
     def on_stage_start(self, state: "_State"):
         pass

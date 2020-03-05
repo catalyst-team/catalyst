@@ -11,7 +11,7 @@ from catalyst import utils
 from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
-from .callback import CallbackNode
+from .callback import Callback, CallbackNode, CallbackType
 from .callbacks import ExceptionCallback
 from .experiment import _Experiment
 from .state import _State
@@ -151,15 +151,22 @@ class _Runner(ABC):
         optimizer: Optimizer,
         scheduler: Scheduler,
         device: Device,
+        callbacks: Dict[str, Callback],
     ):
         migrating_params = dict(**self.experiment.get_state_params(stage))
         migrate_from_previous_stage = \
             migrating_params.get("migrate_from_previous_stage", True)
+
+        if migrate_from_previous_stage and self.state.callbacks is not None:
+            for key, value in self.state.callbacks.items():
+                if value.type == CallbackType.Experiment:
+                    callbacks[key] = value
+
         if self.state is not None and migrate_from_previous_stage:
             migrating_params.update(
                 {
-                    "step": self.state.global_step,
-                    "epoch": self.state.global_epoch,
+                    "global_step": self.state.global_step,
+                    "global_epoch": self.state.global_epoch,
                     "resume": getattr(self.state, "resume", None),
                 }
             )
@@ -171,6 +178,7 @@ class _Runner(ABC):
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
+            callbacks=callbacks,
             **migrating_params
         )
 
@@ -210,6 +218,9 @@ class _Runner(ABC):
             self._get_experiment_components(stage=stage)
 
         utils.set_global_seed(self.experiment.initial_seed)
+        callbacks = self._get_callbacks(stage)
+
+        utils.set_global_seed(self.experiment.initial_seed)
         self.state = self._get_state(
             stage=stage,
             model=self.model,
@@ -217,11 +228,8 @@ class _Runner(ABC):
             optimizer=optimizer,
             scheduler=scheduler,
             device=self.device,
+            callbacks=callbacks,
         )
-
-        utils.set_global_seed(self.experiment.initial_seed)
-        callbacks = self._get_callbacks(stage)
-        self.state.callbacks = callbacks
 
     def _prepare_for_epoch(self, stage: str, epoch: int):
         pass
