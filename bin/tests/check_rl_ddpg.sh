@@ -13,8 +13,15 @@ echo "start redis"
 redis-server --port $PORT &
 sleep 3
 
-echo "download data"
-wget https://catalyst-ai.s3-eu-west-1.amazonaws.com/db.dump.pointenv.190821.pkl
+rm -rf data
+mkdir data
+
+if [[ -f /mount/db.dump.pointenv.190821.pkl ]]; then
+  cp -a /mount/db.dump.pointenv.190821.pkl data/db.dump.pointenv.190821.pkl
+else
+  echo "download data"
+  wget https://catalyst-ai.s3-eu-west-1.amazonaws.com/db.dump.pointenv.190821.pkl -O data/db.dump.pointenv.190821.pkl
+fi
 
 echo "load data to Redis Database"
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
@@ -22,7 +29,7 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     python catalyst/rl/scripts/load_db.py \
     --db="redis" \
     --port=$PORT \
-    --in-pkl=./db.dump.pointenv.190821.pkl
+    --in-pkl=data/db.dump.pointenv.190821.pkl
 
 echo "run trainers"
 OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
@@ -79,7 +86,7 @@ OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" \
     python catalyst/rl/scripts/dump_db.py \
     --db="redis" \
     --port=$PORT \
-    --out-pkl=./db.dump.pointenv.190821.out.pkl
+    --out-pkl=data/db.dump.pointenv.190821.out.pkl
 
 echo "kill redis server"
 killall -9 redis-server
