@@ -157,7 +157,7 @@ class _State(FrozenClass):
         num_epochs: int = None,
         main_metric: str = "loss",
         minimize_metric: bool = True,
-        valid_loader: str = "train",
+        valid_loader: str = "valid",
         checkpoint_data: Dict = None,
         is_check_run: bool = False,
         **kwargs,
