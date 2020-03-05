@@ -58,14 +58,10 @@ class MulticlassDiceMetricCallback(Callback):
             output_key (str): output key to use for dice calculation;
                 specifies our `y_pred`.
             prefix (str): prefix for printing the metric
-            class_names (dict/List):
-                if dictionary, should be:
-                    {class_id: class_name, ...} where class_id is an integer
-
-                    This allows you to ignore class indices.
-
-                if list:
-                    make sure it corresponds to the number of classes
+            class_names (dict/List): if dictionary, should be:
+                {class_id: class_name, ...} where class_id is an integer
+                This allows you to ignore class indices.
+                if list, make sure it corresponds to the number of classes
         """
         super().__init__(CallbackOrder.Metric)
         self.input_key = input_key
