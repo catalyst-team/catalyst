@@ -57,7 +57,6 @@ class AlchemyLogger(Callback):
             order=CallbackOrder.Logging,
             node=CallbackNode.Master,
             type=CallbackType.Experiment,
-
         )
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end

@@ -52,10 +52,10 @@ class Callback:
     and ``node`` value from ``CallbackNode``
     """
     def __init__(
-            self,
-            order: int,
-            node: int = CallbackNode.All,
-            type: int = CallbackType.Stage,
+        self,
+        order: int,
+        node: int = CallbackNode.All,
+        type: int = CallbackType.Stage,
     ):
         """
         For order see ``CallbackOrder`` class
