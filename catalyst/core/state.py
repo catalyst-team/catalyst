@@ -3,6 +3,7 @@ from collections import defaultdict, OrderedDict
 from pathlib import Path
 
 import numpy as np
+
 from torch.utils.data import DataLoader
 
 from catalyst import utils
