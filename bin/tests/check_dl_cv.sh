@@ -40,7 +40,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/trace.py \
   ${LOGDIR}
 
-rm -rf $LOGDIR
+rm -rf ${LOGDIR}
 
 
 ################################  pipeline 02  ################################
@@ -88,7 +88,7 @@ print(data.shape)
 assert data.shape == (10000, 10)
 """
 
-    rm -rf $LOGDIR
+    rm -rf ${LOGDIR}
 fi
 
 
@@ -387,8 +387,8 @@ loss = metrics['last']['loss']
 print('iou', iou)
 print('loss', loss)
 
-assert iou > 0.8, f'iou must be > 0.8, got {iou}'
-assert loss < 0.32, f'loss must be < 0.32, got {loss}'
+assert iou > 0.5, f'iou must be > 0.5, got {iou}'
+assert loss < 1.4, f'loss must be < 1.4, got {loss}'
 """
 
 ## remove logs
