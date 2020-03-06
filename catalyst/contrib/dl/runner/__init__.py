@@ -27,6 +27,17 @@ except ImportError as ex:
         raise ex
 
 try:
+    import visdom
+    from .visdom import VisdomRunner, SupervisedVisdomRunner
+except ImportError as ex:
+    logger.warning(
+        "visdom not available, to install visdom, "
+        "run `pip install visdom`."
+    )
+    if os.environ.get("USE_VISDOM", "0") == "1":
+        raise ex
+
+try:
     import wandb
     from .wandb import WandbRunner, SupervisedWandbRunner
 except ImportError as ex:
