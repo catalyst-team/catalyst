@@ -56,3 +56,9 @@ if [[ -f /mount/resnext50_32x4d-7cdf4587.pth ]]; then
 else
   wget https://download.pytorch.org/models/resnext50_32x4d-7cdf4587.pth -O ~/.cache/torch/checkpoints/resnext50_32x4d-7cdf4587.pth
 fi
+
+if [[ -f /mount/resnet18-5c106cde.pth ]]; then
+  cp -a /mount/resnet18-5c106cde.pth ~/.cache/torch/checkpoints/resnet18-5c106cde.pth
+else
+  wget https://download.pytorch.org/models/resnet18-5c106cde.pth -O ~/.cache/torch/checkpoints/resnet18-5c106cde.pth
+fi
