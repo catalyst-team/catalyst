@@ -16,7 +16,10 @@ from .dataset import (
     create_dataset, split_dataset_train_test, create_dataframe
 )
 from .ddp import get_nn_from_ddp_module, is_wrapped_with_ddp
-from .dict import append_dict, flatten_dict, merge_dicts, get_dictkey_auto_fn
+from .dict import (
+    append_dict, flatten_dict, merge_dicts, get_dictkey_auto_fn,
+    split_dict_to_subdicts
+)
 # from .frozen import *
 from .hash import get_hash, get_short_hash
 from .image import (

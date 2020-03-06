@@ -183,3 +183,20 @@ def flatten_dict(
         else:
             items.append((new_key, value))
     return collections.OrderedDict(items)
+
+
+def split_dict_to_subdicts(dct: Dict, prefixes: List, extra_key: str):
+    subdicts = {}
+    extra_subdict = {
+        k: v
+        for k, v in dct.items()
+        if all(not k.startswith(prefix) for prefix in prefixes)
+    }
+    if len(extra_subdict) > 0:
+        subdicts[extra_key] = extra_subdict
+    for prefix in prefixes:
+        subdicts[prefix] = {
+            k.replace(f"{prefix}_", ""): v
+            for k, v in dct.items() if k.startswith(prefix)
+        }
+    return subdicts

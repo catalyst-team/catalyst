@@ -272,6 +272,7 @@ class MetricManagerCallback(Callback):
         for key, value in self.meters.items():
             value = value.mean
             state.loader_metrics[key] = value
+        for key, value in state.loader_metrics.items():
             state.epoch_metrics[f"{state.loader_name}_{key}"] = value
 
     def on_batch_start(self, state: _State):

@@ -157,10 +157,13 @@ class _Runner(ABC):
         migrate_from_previous_stage = \
             migrating_params.get("migrate_from_previous_stage", True)
 
-        if migrate_from_previous_stage and self.state.callbacks is not None:
+        if migrate_from_previous_stage \
+                and self.state is not None \
+                and self.state.callbacks is not None:
             for key, value in self.state.callbacks.items():
                 if value.type == CallbackType.Experiment:
                     callbacks[key] = value
+            callbacks = utils.process_callbacks(callbacks)
 
         if self.state is not None and migrate_from_previous_stage:
             migrating_params.update(

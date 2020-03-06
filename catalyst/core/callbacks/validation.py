@@ -10,7 +10,7 @@ class ValidationManagerCallback(Callback):
     def __init__(self):
         super().__init__(
             order=CallbackOrder.Validation,
-            node=CallbackNode.All,
+            node=CallbackNode.Master,
         )
 
     def on_epoch_start(self, state: _State):
@@ -18,7 +18,7 @@ class ValidationManagerCallback(Callback):
         state.is_best_valid = False
 
     def on_epoch_end(self, state: _State):
-        if state.stage_name.startswith("infer") or state.is_distributed_worker:
+        if state.stage_name.startswith("infer"):
             return
 
         state.valid_metrics = {

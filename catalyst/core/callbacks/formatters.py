@@ -68,24 +68,12 @@ class TxtMetricsFormatter(MetricsFormatter):
 
     def _format_message(self, state: _State):
         message = [""]
-        per_type_metrics = {}
-        base_metrics = {
-            k: v
-            for k, v in state.epoch_metrics.items() if all(
-                not k.startswith(loader_name)
-                for loader_name in state.loaders.keys()
-            )
-        }
-        if len(base_metrics) > 0:
-            per_type_metrics["_base"] = base_metrics
-        for loader_name in state.loaders.keys():
-            per_type_metrics[loader_name] = {
-                k.replace(f"{loader_name}_", ""): v
-                for k, v in state.epoch_metrics.items()
-                if k.startswith(loader_name)
-            }
-
-        metrics = self._format_metrics(per_type_metrics)
+        mode_metrics = utils.split_dict_to_subdicts(
+            dct=state.epoch_metrics,
+            prefixes=list(state.loaders.keys()),
+            extra_key="_base",
+        )
+        metrics = self._format_metrics(mode_metrics)
         for key, value in metrics.items():
             message.append(
                 f"{state.epoch}/{state.num_epochs} "

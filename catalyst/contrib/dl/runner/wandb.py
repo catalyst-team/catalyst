@@ -1,5 +1,4 @@
 from typing import Dict, List  # isort:skip
-import os
 from pathlib import Path
 import shutil
 
@@ -43,6 +42,7 @@ class WandbRunner(Runner):
         log_on_epoch_end: bool = True,
         checkpoints_glob: List = None,
     ):
+        super()._init()
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
         self.checkpoints_glob = checkpoints_glob
@@ -77,32 +77,35 @@ class WandbRunner(Runner):
             wandb.init(**monitoring_params)
 
     def _post_experiment_hook(self, experiment: Experiment):
+        # @TODO: add params for artefacts logging
         logdir_src = Path(experiment.logdir)
-        logdir_dst = wandb.run.dir
-
-        exclude = ["wandb", "checkpoints"]
-        logdir_files = list(logdir_src.glob("*"))
-        logdir_files = list(
-            filter(
-                lambda x: all(z not in str(x) for z in exclude), logdir_files
-            )
-        )
-
-        for subdir in logdir_files:
-            if subdir.is_dir():
-                os.makedirs(f"{logdir_dst}/{subdir.name}", exist_ok=True)
-                shutil.rmtree(f"{logdir_dst}/{subdir.name}")
-                shutil.copytree(
-                    f"{str(subdir.absolute())}", f"{logdir_dst}/{subdir.name}"
-                )
-            else:
-                shutil.copy2(
-                    f"{str(subdir.absolute())}", f"{logdir_dst}/{subdir.name}"
-                )
-
+        # logdir_dst = wandb.run.dir
+        #
+        # exclude = ["wandb", "checkpoints"]
+        # logdir_files = list(logdir_src.glob("*"))
+        # logdir_files = list(
+        #     filter(
+        #         lambda x: all(z not in str(x) for z in exclude), logdir_files
+        #     )
+        # )
+        #
+        # for subdir in logdir_files:
+        #     if subdir.is_dir():
+        #         os.makedirs(f"{logdir_dst}/{subdir.name}", exist_ok=True)
+        #         shutil.rmtree(f"{logdir_dst}/{subdir.name}")
+        #         shutil.copytree(
+        #             f"{str(subdir.absolute())}",
+        #             f"{logdir_dst}/{subdir.name}"
+        #         )
+        #     else:
+        #         shutil.copy2(
+        #             f"{str(subdir.absolute())}",
+        #             f"{logdir_dst}/{subdir.name}"
+        #         )
+        #
         checkpoints_src = logdir_src.joinpath("checkpoints")
         checkpoints_dst = Path(wandb.run.dir).joinpath("checkpoints")
-        os.makedirs(checkpoints_dst, exist_ok=True)
+        # os.makedirs(checkpoints_dst, exist_ok=True)
 
         checkpoint_paths = []
         for glob in self.checkpoints_glob:
@@ -126,8 +129,12 @@ class WandbRunner(Runner):
     def _run_epoch(self, stage: str, epoch: int):
         super()._run_epoch(stage=stage, epoch=epoch)
         if self.log_on_epoch_end:
-            for mode, metrics in \
-                    self.state.epoch_metrics.items():
+            mode_metrics = utils.split_dict_to_subdicts(
+                dct=self.state.epoch_metrics,
+                prefixes=list(self.state.loaders.keys()),
+                extra_key="_base",
+            )
+            for mode, metrics in mode_metrics.items():
                 self._log_metrics(
                     metrics=metrics, mode=mode, suffix=self.epoch_log_suffix
                 )

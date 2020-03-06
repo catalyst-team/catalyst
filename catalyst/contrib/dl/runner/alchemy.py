@@ -42,9 +42,9 @@ class AlchemyRunner(Runner):
         log_on_batch_end: bool = False,
         log_on_epoch_end: bool = True,
     ):
+        super()._init()
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
-        self.is_distributed_worker = utils.get_rank() > 0
 
         if (self.log_on_batch_end and not self.log_on_epoch_end) \
                 or (not self.log_on_batch_end and self.log_on_epoch_end):
@@ -78,7 +78,7 @@ class AlchemyRunner(Runner):
 
     def _run_batch(self, batch):
         super()._run_batch(batch=batch)
-        if self.log_on_batch_end and not self.is_distributed_worker:
+        if self.log_on_batch_end and not self.state.is_distributed_worker:
             mode = self.state.loader_name
             metrics = self.state.batch_metrics
             self._log_metrics(
@@ -87,9 +87,13 @@ class AlchemyRunner(Runner):
 
     def _run_epoch(self, stage: str, epoch: int):
         super()._run_epoch(stage=stage, epoch=epoch)
-        if self.log_on_epoch_end and not self.is_distributed_worker:
-            for mode, metrics in \
-                    self.state.epoch_metrics.items():
+        if self.log_on_epoch_end and not self.state.is_distributed_worker:
+            mode_metrics = utils.split_dict_to_subdicts(
+                dct=self.state.epoch_metrics,
+                prefixes=list(self.state.loaders.keys()),
+                extra_key="_base",
+            )
+            for mode, metrics in mode_metrics.items():
                 self._log_metrics(
                     metrics=metrics, mode=mode, suffix=self.epoch_log_suffix
                 )

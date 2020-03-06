@@ -217,20 +217,27 @@ class TensorboardLogger(Callback):
                 suffix="/batch"
             )
 
-    def on_loader_end(self, state: _State):
+    def on_epoch_end(self, state: "_State"):
         """Translate epoch metrics to tensorboard"""
         if state.logdir is None:
             return
 
         if self.log_on_epoch_end:
-            mode = state.loader_name
-            metrics_ = state.loader_metrics
-            self._log_metrics(
-                metrics=metrics_,
-                step=state.global_epoch,
-                mode=mode,
-                suffix="/epoch",
+            mode_metrics = utils.split_dict_to_subdicts(
+                dct=state.epoch_metrics,
+                prefixes=list(state.loaders.keys()),
+                extra_key="_base",
             )
+
+            for key, metrics in mode_metrics.items():
+                suffix = "" if key == "_base" else "/epoch"
+                self._log_metrics(
+                    metrics=metrics,
+                    step=state.global_epoch,
+                    mode=key,
+                    suffix=suffix,
+                )
+
         for logger in self.loggers.values():
             logger.flush()
 
