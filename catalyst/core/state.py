@@ -3,11 +3,12 @@ from collections import defaultdict, OrderedDict
 from pathlib import Path
 
 import numpy as np
+from torch.utils.data import DataLoader
 
 from catalyst import utils
 from catalyst.utils.tools.frozen_class import FrozenClass
 from catalyst.utils.tools.typing import (
-    Criterion, DataLoader, Device, Model, Optimizer, Scheduler
+    Criterion, Device, Model, Optimizer, Scheduler
 )
 
 if TYPE_CHECKING:

@@ -110,7 +110,7 @@ def save_config(
         data_format (str): ``yaml``, ``yml`` or ``json``.
         encoding (str): Encoding to write file. Default is ``utf-8``
         ensure_ascii (bool): Used for JSON, if True non-ASCII
-            characters are escaped in JSON strings.
+        characters are escaped in JSON strings.
         indent (int): Used for JSON
     """
     path = Path(path)
