@@ -2,18 +2,18 @@ import os
 
 from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
 
-_NUM_LOADER_STEPS = int(os.environ.get("CHECK_LOADER_STEPS", 2))
+_NUM_BATCH_STEPS = int(os.environ.get("CHECK_BATCH_STEPS", 2))
 _NUM_EPOCH_STEPS = int(os.environ.get("CHECK_EPOCH_STEPS", 2))
 
 
 class CheckRunCallback(Callback):
     def __init__(
         self,
-        num_loader_steps: int = _NUM_LOADER_STEPS,
+        num_batch_steps: int = _NUM_BATCH_STEPS,
         num_epoch_steps: int = _NUM_EPOCH_STEPS,
     ):
         super().__init__(order=CallbackOrder.External, node=CallbackNode.All)
-        self.num_loader_steps = num_loader_steps
+        self.num_batch_steps = num_batch_steps
         self.num_epoch_steps = num_epoch_steps
 
     def on_epoch_end(self, state: _State):
@@ -21,7 +21,7 @@ class CheckRunCallback(Callback):
             state.need_early_stop = True
 
     def on_batch_end(self, state: _State):
-        if state.loader_step >= self.num_loader_steps:
+        if state.loader_step >= self.num_batch_steps:
             state.need_early_stop = True
 
 
