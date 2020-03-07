@@ -407,8 +407,8 @@ class ConfigExperiment(Experiment):
         """Returns the loaders for a given stage"""
         data_params = dict(self.stages_config[stage]["data_params"])
 
-        batch_size = data_params.pop("batch_size", 1)
-        num_workers = data_params.pop("num_workers")
+        default_batch_size = data_params.pop("batch_size", 1)
+        default_num_workers = data_params.pop("num_workers")
         drop_last = data_params.pop("drop_last", False)
         per_gpu_scaling = data_params.pop("per_gpu_scaling", False)
         distributed_rank = utils.get_rank()
@@ -446,9 +446,10 @@ class ConfigExperiment(Experiment):
                 if isinstance(ds_, dict) and "sampler" in ds_:
                     ds_.pop("sampler", None)
 
-            batch_size = overridden_loader_params.pop("batch_size", batch_size)
+            batch_size = overridden_loader_params.\
+                pop("batch_size", default_batch_size)
             num_workers = overridden_loader_params.\
-                pop("num_workers", num_workers)
+                pop("num_workers", default_num_workers)
 
             if per_gpu_scaling and not distributed:
                 num_gpus = max(1, torch.cuda.device_count())
