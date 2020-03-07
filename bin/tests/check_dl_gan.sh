@@ -30,13 +30,13 @@ if [[ "$USE_APEX" == "0" ]]; then
     cat $LOGFILE
     echo 'pipeline 01 -  GAN'
     python -c """
-from safitty import Safict
-metrics=Safict.load('$LOGFILE')
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
 
-loss_g = metrics.get('last', 'loss_g')
-loss_d_real = metrics.get('last', 'loss_d_real')
-loss_d_fake = metrics.get('last', 'loss_d_fake')
-loss_d = metrics.get('last', 'loss_d')
+loss_g = metrics['last']['loss_g']
+loss_d_real = metrics['last']['loss_d_real']
+loss_d_fake = metrics['last']['loss_d_fake']
+loss_d = metrics['last']['loss_d']
 
 print('loss_g', loss_g)
 print('loss_d_real', loss_d_real)

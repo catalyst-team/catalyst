@@ -148,7 +148,7 @@ stages:  # REQUIRED KEYWORD, dictionary of all stages of Catalyst, for training 
       scheduler:
         callback: SchedulerCallback
         # At this level, the parameters for any callback can be found, for example
-        reduce_metric: *main_metric
+        reduced_metric: *main_metric
       saver:
         callback: CheckpointCallback
         # At this level, the parameters for any callback can be found, for example

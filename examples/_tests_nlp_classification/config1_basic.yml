@@ -29,7 +29,7 @@ stages:
     max_sequence_length: 512
 
   state_params:
-    main_metric: &reduce_metric loss
+    main_metric: &reduced_metric loss
     minimize_metric: True
 
   # loss function for the classification task
@@ -52,7 +52,7 @@ stages:
       accumulation_steps: 4
     scheduler:
       callback: SchedulerCallback
-      reduce_metric: *reduce_metric
+      reduced_metric: *reduced_metric
     saver:
       callback: CheckpointCallback
       save_n_best: 3

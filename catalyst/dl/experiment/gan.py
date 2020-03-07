@@ -2,8 +2,8 @@ from collections import OrderedDict
 from typing import Dict, List
 
 from catalyst.dl import (
-    Callback, CheckpointCallback, ConsoleLogger, PhaseBatchWrapperCallback,
-    PhaseManagerCallback, RaiseExceptionCallback, VerboseLogger
+    Callback, CheckpointCallback, ConsoleLogger, ExceptionCallback,
+    PhaseBatchWrapperCallback, PhaseManagerCallback, VerboseLogger
 )
 from .base import BaseExperiment
 
@@ -95,7 +95,7 @@ class GanExperiment(BaseExperiment):
         if not stage.startswith("infer"):
             default_callbacks.append(("saver", CheckpointCallback))
             default_callbacks.append(("console", ConsoleLogger))
-        default_callbacks.append(("exception", RaiseExceptionCallback))
+        default_callbacks.append(("exception", ExceptionCallback))
         # Check for absent callbacks and add them
         for callback_name, callback_fn in default_callbacks:
             is_already_present = any(

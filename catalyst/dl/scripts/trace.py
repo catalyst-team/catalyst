@@ -3,8 +3,6 @@ import argparse
 from argparse import ArgumentParser
 from pathlib import Path
 
-import safitty
-
 import torch
 
 from catalyst.dl import Experiment, utils
@@ -44,11 +42,11 @@ def trace_model_from_checkpoint(
     config_path = logdir / "configs" / "_config.json"
     checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
     print("Load config")
-    config: Dict[str, dict] = safitty.load(config_path)
-    runner_params = config.pop("runner_params", {}) or {}
+    config: Dict[str, dict] = utils.load_config(config_path)
+    runner_params = config.get("runner_params", {}) or {}
 
     # Get expdir name
-    config_expdir = safitty.get(config, "args", "expdir", apply=Path)
+    config_expdir = Path(config["args"]["expdir"])
     # We will use copy of expdir from logs for reproducibility
     expdir = Path(logdir) / "code" / config_expdir.name
 

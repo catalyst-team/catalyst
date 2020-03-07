@@ -15,7 +15,7 @@ stages:
 
   state_params:
     num_epochs: 2
-    main_metric: &reduce_metric accuracy01
+    main_metric: &reduced_metric accuracy01
     minimize_metric: False
     checkpoint_data:
       exp: "this is my best experiments"
@@ -39,7 +39,7 @@ stages:
       accuracy_args: [1, 3, 5]
     scheduler:
       callback: SchedulerCallback
-      reduce_metric: *reduce_metric
+      reduced_metric: *reduced_metric
     saver:
       callback: CheckpointCallback
 

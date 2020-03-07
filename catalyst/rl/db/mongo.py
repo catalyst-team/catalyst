@@ -3,7 +3,6 @@ import time
 
 import gridfs
 import pymongo
-import safitty
 
 from catalyst.rl import utils
 from catalyst.rl.core import DBSpec
@@ -54,7 +53,7 @@ class MongoDB(DBSpec):
         except pymongo.errors.AutoReconnect:
             time.sleep(self._reconnect_timeout)
             return self._get_flag(key, default)
-        flag = safitty.get(flag_obj, "value", default=default)
+        flag = flag_obj.get("value", default)
         return flag
 
     @property

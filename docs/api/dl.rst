@@ -43,11 +43,6 @@ Callbacks
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.dl.callbacks.misc
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 .. automodule:: catalyst.dl.callbacks.mixup
     :members:
     :undoc-members:

@@ -1,7 +1,7 @@
 from typing import List  # isort:skip
 
 from catalyst.dl.core import MultiMetricCallback
-from catalyst.utils import criterion
+from catalyst.utils import metrics
 
 
 def _get_default_accuracy_args(num_classes: int) -> List[int]:
@@ -85,10 +85,11 @@ class AccuracyCallback(MultiMetricCallback):
 
         super().__init__(
             prefix=prefix,
-            metric_fn=criterion.accuracy,
+            metric_fn=metrics.accuracy,
             list_args=list_args,
             input_key=input_key,
             output_key=output_key,
+            topk=list_args,
             threshold=threshold,
             activation=activation,
         )
@@ -126,10 +127,11 @@ class MapKCallback(MultiMetricCallback):
 
         super().__init__(
             prefix=prefix,
-            metric_fn=criterion.mean_average_accuracy,
+            metric_fn=metrics.mean_average_accuracy,
             list_args=list_args,
             input_key=input_key,
-            output_key=output_key
+            output_key=output_key,
+            topk=list_args,
         )
 
 
