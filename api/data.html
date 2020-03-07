@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Data &mdash; Catalyst 20.02.4 documentation</title>
+  <title>Data &mdash; Catalyst 20.03 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                20.02
+                20.03
               </div>
             
           
@@ -263,7 +263,7 @@ For modern Catalyst use <a class="reference external" href="https://github.com/a
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dict_key</strong> (<em>str</em>) – key to transform</p></li>
-<li><p><strong>augment_fn</strong> (<a class="reference internal" href="core.html#catalyst.core.callback.Callable" title="catalyst.core.callback.Callable"><em>Callable</em></a>) – augmentation function to use</p></li>
+<li><p><strong>augment_fn</strong> (<em>Callable</em>) – augmentation function to use</p></li>
 <li><p><strong>input_key</strong> (<em>str</em>) – <code class="docutils literal notranslate"><span class="pre">augment_fn</span></code> input key</p></li>
 <li><p><strong>output_key</strong> (<em>str</em>) – <code class="docutils literal notranslate"><span class="pre">augment_fn</span></code> output key</p></li>
 <li><p><strong>**kwargs</strong> – default kwargs for augmentations function</p></li>
@@ -283,7 +283,7 @@ For modern Catalyst use <a class="reference external" href="https://github.com/a
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">key2augment_fn: Dict[str, Callable]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/augmentor.html#AugmentorCompose.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.augmentor.AugmentorCompose.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>key2augment_fn</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="core.html#catalyst.core.callback.Callable" title="catalyst.core.callback.Callable"><em>Callable</em></a><em>]</em>) – mapping from input key
+<dd class="field-odd"><p><strong>key2augment_fn</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Callable</em><em>]</em>) – mapping from input key
 to augmentation function to apply</p>
 </dd>
 </dl>

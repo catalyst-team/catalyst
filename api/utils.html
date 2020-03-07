@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utils &mdash; Catalyst 20.02.4 documentation</title>
+  <title>Utils &mdash; Catalyst 20.03 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                20.02
+                20.03
               </div>
             
           
@@ -276,78 +276,52 @@ while –no-&lt;name&gt; will disable it</p></li>
 <dd></dd></dl>
 
 <span class="target" id="module-catalyst.utils.config"></span><dl class="function">
-<dt id="catalyst.utils.config.load_ordered_yaml">
-<code class="sig-prename descclassname">catalyst.utils.config.</code><code class="sig-name descname">load_ordered_yaml</code><span class="sig-paren">(</span><em class="sig-param">stream</em>, <em class="sig-param">Loader=&lt;class 'yaml.loader.Loader'&gt;</em>, <em class="sig-param">object_pairs_hook=&lt;class 'collections.OrderedDict'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/config.html#load_ordered_yaml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.load_ordered_yaml" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loads <cite>yaml</cite> config into OrderedDict</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>stream</strong> – opened file with yaml</p></li>
-<li><p><strong>Loader</strong> – base class for yaml Loader</p></li>
-<li><p><strong>object_pairs_hook</strong> – type of mapping</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>configuration</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.utils.config.get_environment_vars">
-<code class="sig-prename descclassname">catalyst.utils.config.</code><code class="sig-name descname">get_environment_vars</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="reference internal" href="../_modules/catalyst/utils/config.html#get_environment_vars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.get_environment_vars" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a dictionary with environment variables</p>
+<dt id="catalyst.utils.config.load_config">
+<code class="sig-prename descclassname">catalyst.utils.config.</code><code class="sig-name descname">load_config</code><span class="sig-paren">(</span><em class="sig-param">path: Union[str, pathlib.Path], ordered: bool = False, data_format: str = None, encoding: str = 'utf-8'</em><span class="sig-paren">)</span> &#x2192; Union[Dict, List]<a class="reference internal" href="../_modules/catalyst/utils/config.html#load_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.load_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads config by giving path. Supports YAML and JSON files.
+:param path: path to config file (YAML or JSON)
+:type path: str
+:param ordered: if true the config will be loaded as <code class="docutils literal notranslate"><span class="pre">OrderedDict</span></code>
+:type ordered: bool
+:param data_format: <code class="docutils literal notranslate"><span class="pre">yaml</span></code>, <code class="docutils literal notranslate"><span class="pre">yml</span></code> or <code class="docutils literal notranslate"><span class="pre">json</span></code>.
+:type data_format: str
+:param encoding: encoding to read the config
+:type encoding: str</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>environment variables</p>
+<dd class="field-odd"><p>Config</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>dict</p>
+<dd class="field-even"><p>(Union[Dict, List])</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>Exception</strong> – if path <code class="docutils literal notranslate"><span class="pre">path</span></code> doesn’t exists
+    or file format is not YAML or JSON</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;./config.yml&quot;</span><span class="p">,</span> <span class="n">ordered</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.config.dump_environment">
-<code class="sig-prename descclassname">catalyst.utils.config.</code><code class="sig-name descname">dump_environment</code><span class="sig-paren">(</span><em class="sig-param">experiment_config: Dict</em>, <em class="sig-param">logdir: str</em>, <em class="sig-param">configs_path: List[str] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/config.html#dump_environment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.dump_environment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves config, environment variables and package list in JSON into logdir</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>experiment_config</strong> (<em>dict</em>) – experiment config</p></li>
-<li><p><strong>logdir</strong> (<em>str</em>) – path to logdir</p></li>
-<li><p><strong>configs_path</strong> – path(s) to config</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.utils.config.parse_config_args">
-<code class="sig-prename descclassname">catalyst.utils.config.</code><code class="sig-name descname">parse_config_args</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">config</em>, <em class="sig-param">args</em>, <em class="sig-param">unknown_args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/config.html#parse_config_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.parse_config_args" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="catalyst.utils.config.parse_args_uargs">
-<code class="sig-prename descclassname">catalyst.utils.config.</code><code class="sig-name descname">parse_args_uargs</code><span class="sig-paren">(</span><em class="sig-param">args</em>, <em class="sig-param">unknown_args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/config.html#parse_args_uargs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.parse_args_uargs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for parsing configuration files</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>args</strong> – recognized arguments</p></li>
-<li><p><strong>unknown_args</strong> – unrecognized arguments</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>updated arguments, dict with config</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple</p>
-</dd>
-</dl>
+<dt id="catalyst.utils.config.save_config">
+<code class="sig-prename descclassname">catalyst.utils.config.</code><code class="sig-name descname">save_config</code><span class="sig-paren">(</span><em class="sig-param">config: Union[Dict, List], path: Union[str, pathlib.Path], data_format: str = None, encoding: str = 'utf-8', ensure_ascii: bool = False, indent: int = 2</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/config.html#save_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.config.save_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves config to file. Path must be either YAML or JSON
+:param config: config to save
+:type config: Union[Dict, List]
+:param path: path to save
+:type path: Union[str, Path]
+:param data_format: <code class="docutils literal notranslate"><span class="pre">yaml</span></code>, <code class="docutils literal notranslate"><span class="pre">yml</span></code> or <code class="docutils literal notranslate"><span class="pre">json</span></code>.
+:type data_format: str
+:param encoding: Encoding to write file. Default is <code class="docutils literal notranslate"><span class="pre">utf-8</span></code>
+:type encoding: str
+:param ensure_ascii: Used for JSON, if True non-ASCII
+:type ensure_ascii: bool
+:param characters are escaped in JSON strings.:
+:param indent: Used for JSON
+:type indent: int</p>
 </dd></dl>
 
 <span class="target" id="module-catalyst.utils.confusion_matrix"></span><dl class="function">
@@ -424,7 +398,7 @@ np.arange(n) if no column labels are provided</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dirs</strong> (<em>str</em>) – path to dirs, for example /home/user/data/**</p></li>
 <li><p><strong>extension</strong> (<em>str</em>) – data extension you are looking for</p></li>
-<li><p><strong>process_fn</strong> (<a class="reference internal" href="core.html#catalyst.core.callback.Callable" title="catalyst.core.callback.Callable"><em>Callable</em></a><em>[</em><em>[</em><em>str</em><em>]</em><em>, </em><em>object</em><em>]</em>) – function(path_to_file) -&gt; object
+<li><p><strong>process_fn</strong> (<em>Callable</em><em>[</em><em>[</em><em>str</em><em>]</em><em>, </em><em>object</em><em>]</em>) – function(path_to_file) -&gt; object
 process function for found files, by default</p></li>
 <li><p><strong>recursive</strong> (<em>bool</em>) – enables recursive globbing</p></li>
 </ul>
@@ -542,9 +516,22 @@ based on predefined keys.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="catalyst.utils.dict.get_key_all">
+<code class="sig-prename descclassname">catalyst.utils.dict.</code><code class="sig-name descname">get_key_all</code><span class="sig-paren">(</span><em class="sig-param">dictionary: dict, key: Union[str, List[str], None]</em><span class="sig-paren">)</span> &#x2192; Dict<a class="reference internal" href="../_modules/catalyst/utils/dict.html#get_key_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.dict.get_key_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whole dict.
+:param dictionary: dict
+:param key: none</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="catalyst.utils.dict.get_key_dict">
 <code class="sig-prename descclassname">catalyst.utils.dict.</code><code class="sig-name descname">get_key_dict</code><span class="sig-paren">(</span><em class="sig-param">dictionary: dict, key: Union[str, List[str], None]</em><span class="sig-paren">)</span> &#x2192; Dict<a class="reference internal" href="../_modules/catalyst/utils/dict.html#get_key_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.dict.get_key_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes sub-dict from dict by dict-mapping of keys.</p>
+<dd><p>Returns sub-dict from dict by dict-mapping of keys.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -561,7 +548,7 @@ based on predefined keys.</p>
 <dl class="function">
 <dt id="catalyst.utils.dict.get_key_list">
 <code class="sig-prename descclassname">catalyst.utils.dict.</code><code class="sig-name descname">get_key_list</code><span class="sig-paren">(</span><em class="sig-param">dictionary: dict, key: Union[str, List[str], None]</em><span class="sig-paren">)</span> &#x2192; Dict<a class="reference internal" href="../_modules/catalyst/utils/dict.html#get_key_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.dict.get_key_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes sub-dict from dict by list of keys.</p>
+<dd><p>Returns sub-dict from dict by list of keys.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -578,7 +565,7 @@ based on predefined keys.</p>
 <dl class="function">
 <dt id="catalyst.utils.dict.get_key_none">
 <code class="sig-prename descclassname">catalyst.utils.dict.</code><code class="sig-name descname">get_key_none</code><span class="sig-paren">(</span><em class="sig-param">dictionary: dict, key: Union[str, List[str], None]</em><span class="sig-paren">)</span> &#x2192; Dict<a class="reference internal" href="../_modules/catalyst/utils/dict.html#get_key_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.dict.get_key_none" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes whole dict.
+<dd><p>Returns empty dict.
 :param dictionary: dict
 :param key: none</p>
 <dl class="field-list simple">
@@ -591,7 +578,7 @@ based on predefined keys.</p>
 <dl class="function">
 <dt id="catalyst.utils.dict.get_key_str">
 <code class="sig-prename descclassname">catalyst.utils.dict.</code><code class="sig-name descname">get_key_str</code><span class="sig-paren">(</span><em class="sig-param">dictionary: dict, key: Union[str, List[str], None]</em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="../_modules/catalyst/utils/dict.html#get_key_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.dict.get_key_str" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes value from dict by key.</p>
+<dd><p>Returns value from dict by key.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -624,6 +611,11 @@ to an arbitrary depth, updating keys.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.dict.split_dict_to_subdicts">
+<code class="sig-prename descclassname">catalyst.utils.dict.</code><code class="sig-name descname">split_dict_to_subdicts</code><span class="sig-paren">(</span><em class="sig-param">dct: Dict</em>, <em class="sig-param">prefixes: List</em>, <em class="sig-param">extra_key: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/dict.html#split_dict_to_subdicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.dict.split_dict_to_subdicts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <span class="target" id="module-catalyst.utils.hash"></span><dl class="function">
 <dt id="catalyst.utils.hash.get_hash">
@@ -1827,34 +1819,6 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
 <div class="section" id="module-catalyst.utils.tools.metric_manager">
 <span id="tools"></span><h2>Tools<a class="headerlink" href="#module-catalyst.utils.tools.metric_manager" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="catalyst.utils.tools.metric_manager.TimerManager">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.utils.tools.metric_manager.</code><code class="sig-name descname">TimerManager</code><a class="headerlink" href="#catalyst.utils.tools.metric_manager.TimerManager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="method">
-<dt id="catalyst.utils.tools.metric_manager.TimerManager.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#catalyst.utils.tools.metric_manager.TimerManager.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reset all previous timers</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.utils.tools.metric_manager.TimerManager.start">
-<code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#catalyst.utils.tools.metric_manager.TimerManager.start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Starts timer <code class="docutils literal notranslate"><span class="pre">name</span></code>
-:param name: name of a timer
-:type name: str</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.utils.tools.metric_manager.TimerManager.stop">
-<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#catalyst.utils.tools.metric_manager.TimerManager.stop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stops timer <code class="docutils literal notranslate"><span class="pre">name</span></code>
-:param name: name of a timer
-:type name: str</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="catalyst.utils.tools.metric_manager.MetricManager">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.utils.tools.metric_manager.</code><code class="sig-name descname">MetricManager</code><span class="sig-paren">(</span><em class="sig-param">valid_loader: str = 'valid'</em>, <em class="sig-param">main_metric: str = 'loss'</em>, <em class="sig-param">minimize: bool = True</em>, <em class="sig-param">batch_consistant_metrics: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.tools.metric_manager.MetricManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -2422,10 +2386,7 @@ dataset with non-integral indices/keys, a custom sampler must be provided.</p>
 </div>
 <div class="section" id="module-catalyst.utils.criterion.accuracy">
 <span id="criterion"></span><h2>Criterion<a class="headerlink" href="#module-catalyst.utils.criterion.accuracy" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="catalyst.utils.criterion.accuracy.accuracy">
-<code class="sig-prename descclassname">catalyst.utils.criterion.accuracy.</code><code class="sig-name descname">accuracy</code><span class="sig-paren">(</span><em class="sig-param">outputs</em>, <em class="sig-param">targets</em>, <em class="sig-param">topk=(1</em>, <em class="sig-param">)</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/criterion/accuracy.html#accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.criterion.accuracy.accuracy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the accuracy.</p>
+<p>Computes the accuracy.</p>
 <dl class="simple">
 <dt>It can be used either for:</dt><dd><ul class="simple">
 <li><dl class="simple">
@@ -2450,106 +2411,160 @@ multi-label classification).
 </ul>
 </dd>
 </dl>
-</dd></dl>
+<dl class="data">
+<dt id="catalyst.utils.criterion.accuracy.activation">
+<code class="sig-prename descclassname">catalyst.utils.criterion.accuracy.</code><code class="sig-name descname">activation</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.accuracy.activation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
-<dl class="function">
-<dt id="catalyst.utils.criterion.accuracy.average_accuracy">
-<code class="sig-prename descclassname">catalyst.utils.criterion.accuracy.</code><code class="sig-name descname">average_accuracy</code><span class="sig-paren">(</span><em class="sig-param">outputs</em>, <em class="sig-param">targets</em>, <em class="sig-param">k=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/criterion/accuracy.html#average_accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.criterion.accuracy.average_accuracy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the average accuracy at k.
-This function computes the average
-accuracy at k between two lists of items.</p>
+<dl class="data">
+<dt id="catalyst.utils.criterion.accuracy.threshold">
+<code class="sig-prename descclassname">catalyst.utils.criterion.accuracy.</code><code class="sig-name descname">threshold</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.accuracy.threshold" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-catalyst.utils.criterion.dice"></span><p>Computes the dice metric</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> (<em>list</em>) – A list of predicted elements</p></li>
-<li><p><strong>targets</strong> (<em>list</em>) – A list of elements that are to be predicted</p></li>
-<li><p><strong>k</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum number of predicted elements</p></li>
-</ul>
+<dt class="field-odd">param outputs</dt>
+<dd class="field-odd"><p>A list of predicted elements</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The average accuracy at k over the input lists</p>
+<dt class="field-even">type outputs</dt>
+<dd class="field-even"><p>list</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>double</p>
+<dt class="field-odd">param targets</dt>
+<dd class="field-odd"><p>A list of elements that are to be predicted</p>
+</dd>
+<dt class="field-even">type targets</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+<dt class="field-odd">param eps</dt>
+<dd class="field-odd"><p>epsilon</p>
+</dd>
+<dt class="field-even">type eps</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param threshold</dt>
+<dd class="field-odd"><p>threshold for outputs binarization</p>
+</dd>
+<dt class="field-even">type threshold</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param activation</dt>
+<dd class="field-odd"><p>An torch.nn activation applied to the outputs.
+Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p>
+</dd>
+<dt class="field-even">type activation</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><p>Dice score</p>
+</dd>
+<dt class="field-even">rtype</dt>
+<dd class="field-even"><p>double</p>
 </dd>
 </dl>
-</dd></dl>
+<dl class="data">
+<dt id="catalyst.utils.criterion.dice.activation">
+<code class="sig-prename descclassname">catalyst.utils.criterion.dice.</code><code class="sig-name descname">activation</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.dice.activation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
-<dl class="function">
-<dt id="catalyst.utils.criterion.accuracy.mean_average_accuracy">
-<code class="sig-prename descclassname">catalyst.utils.criterion.accuracy.</code><code class="sig-name descname">mean_average_accuracy</code><span class="sig-paren">(</span><em class="sig-param">outputs</em>, <em class="sig-param">targets</em>, <em class="sig-param">topk=(1</em>, <em class="sig-param">)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/criterion/accuracy.html#mean_average_accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.criterion.accuracy.mean_average_accuracy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the mean average accuracy at k.
-This function computes the mean average accuracy at k between two lists
-of lists of items.</p>
+<dl class="data">
+<dt id="catalyst.utils.criterion.dice.eps">
+<code class="sig-prename descclassname">catalyst.utils.criterion.dice.</code><code class="sig-name descname">eps</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.dice.eps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="catalyst.utils.criterion.dice.outputs">
+<code class="sig-prename descclassname">catalyst.utils.criterion.dice.</code><code class="sig-name descname">outputs</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.dice.outputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="catalyst.utils.criterion.dice.targets">
+<code class="sig-prename descclassname">catalyst.utils.criterion.dice.</code><code class="sig-name descname">targets</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.dice.targets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="catalyst.utils.criterion.dice.threshold">
+<code class="sig-prename descclassname">catalyst.utils.criterion.dice.</code><code class="sig-name descname">threshold</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.dice.threshold" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-catalyst.utils.criterion.f1_score"></span><p>Source <a class="reference external" href="https://github.com/qubvel/segmentation_models.pytorch">https://github.com/qubvel/segmentation_models.pytorch</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> (<em>list</em>) – A list of lists of predicted elements</p></li>
-<li><p><strong>targets</strong> (<em>list</em>) – A list of lists of elements that are to be predicted</p></li>
-<li><p><strong>topk</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum number of predicted elements</p></li>
-</ul>
+<dt class="field-odd">param outputs</dt>
+<dd class="field-odd"><p>A list of predicted elements</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The mean average accuracy at k over the input lists</p>
+<dt class="field-even">type outputs</dt>
+<dd class="field-even"><p>torch.Tensor</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>double</p>
+<dt class="field-odd">param targets</dt>
+<dd class="field-odd"><p>A list of elements that are to be predicted</p>
+</dd>
+<dt class="field-even">type targets</dt>
+<dd class="field-even"><p>torch.Tensor</p>
+</dd>
+<dt class="field-odd">param eps</dt>
+<dd class="field-odd"><p>epsilon to avoid zero division</p>
+</dd>
+<dt class="field-even">type eps</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param beta</dt>
+<dd class="field-odd"><p>beta param for f_score</p>
+</dd>
+<dt class="field-even">type beta</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param threshold</dt>
+<dd class="field-odd"><p>threshold for outputs binarization</p>
+</dd>
+<dt class="field-even">type threshold</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param activation</dt>
+<dd class="field-odd"><p>An torch.nn activation applied to the outputs.
+Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p>
+</dd>
+<dt class="field-even">type activation</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><p>F_1 score</p>
+</dd>
+<dt class="field-even">rtype</dt>
+<dd class="field-even"><p>float</p>
 </dd>
 </dl>
-</dd></dl>
+<dl class="data">
+<dt id="catalyst.utils.criterion.f1_score.activation">
+<code class="sig-prename descclassname">catalyst.utils.criterion.f1_score.</code><code class="sig-name descname">activation</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.f1_score.activation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
-<span class="target" id="module-catalyst.utils.criterion.dice"></span><dl class="function">
-<dt id="catalyst.utils.criterion.dice.dice">
-<code class="sig-prename descclassname">catalyst.utils.criterion.dice.</code><code class="sig-name descname">dice</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/criterion/dice.html#dice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.criterion.dice.dice" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the dice metric</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> (<em>list</em>) – A list of predicted elements</p></li>
-<li><p><strong>targets</strong> (<em>list</em>) – A list of elements that are to be predicted</p></li>
-<li><p><strong>eps</strong> (<em>float</em>) – epsilon</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
-Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Dice score</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>double</p>
-</dd>
-</dl>
-</dd></dl>
+<dl class="data">
+<dt id="catalyst.utils.criterion.f1_score.beta">
+<code class="sig-prename descclassname">catalyst.utils.criterion.f1_score.</code><code class="sig-name descname">beta</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.f1_score.beta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
-<span class="target" id="module-catalyst.utils.criterion.f1_score"></span><dl class="function">
-<dt id="catalyst.utils.criterion.f1_score.f1_score">
-<code class="sig-prename descclassname">catalyst.utils.criterion.f1_score.</code><code class="sig-name descname">f1_score</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">beta: float = 1.0</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/criterion/f1_score.html#f1_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.criterion.f1_score.f1_score" title="Permalink to this definition">¶</a></dt>
-<dd><p>Source <a class="reference external" href="https://github.com/qubvel/segmentation_models.pytorch">https://github.com/qubvel/segmentation_models.pytorch</a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – A list of predicted elements</p></li>
-<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – A list of elements that are to be predicted</p></li>
-<li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
-<li><p><strong>beta</strong> (<em>float</em>) – beta param for f_score</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
-Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>F_1 score</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
+<dl class="data">
+<dt id="catalyst.utils.criterion.f1_score.eps">
+<code class="sig-prename descclassname">catalyst.utils.criterion.f1_score.</code><code class="sig-name descname">eps</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.f1_score.eps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="catalyst.utils.criterion.f1_score.outputs">
+<code class="sig-prename descclassname">catalyst.utils.criterion.f1_score.</code><code class="sig-name descname">outputs</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.f1_score.outputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="catalyst.utils.criterion.f1_score.targets">
+<code class="sig-prename descclassname">catalyst.utils.criterion.f1_score.</code><code class="sig-name descname">targets</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.f1_score.targets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="catalyst.utils.criterion.f1_score.threshold">
+<code class="sig-prename descclassname">catalyst.utils.criterion.f1_score.</code><code class="sig-name descname">threshold</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.f1_score.threshold" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <span class="target" id="module-catalyst.utils.criterion.focal"></span><dl class="function">
 <dt id="catalyst.utils.criterion.focal.sigmoid_focal_loss">
-<code class="sig-prename descclassname">catalyst.utils.criterion.focal.</code><code class="sig-name descname">sigmoid_focal_loss</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">gamma: float = 2.0</em>, <em class="sig-param">alpha: float = 0.25</em>, <em class="sig-param">reduction: str = 'mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/criterion/focal.html#sigmoid_focal_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.criterion.focal.sigmoid_focal_loss" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.criterion.focal.</code><code class="sig-name descname">sigmoid_focal_loss</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">gamma: float = 2.0</em>, <em class="sig-param">alpha: float = 0.25</em>, <em class="sig-param">reduction: str = 'mean'</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.criterion.focal.sigmoid_focal_loss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute binary focal loss between target and output logits.</p>
 <p>Source <a class="reference external" href="https://github.com/BloodAxe/pytorch-toolbelt">https://github.com/BloodAxe/pytorch-toolbelt</a>
 See <code class="xref py py-class docutils literal notranslate"><span class="pre">losses</span></code> for details.</p>
@@ -2572,7 +2587,7 @@ elements in the output,
 
 <dl class="function">
 <dt id="catalyst.utils.criterion.focal.reduced_focal_loss">
-<code class="sig-prename descclassname">catalyst.utils.criterion.focal.</code><code class="sig-name descname">reduced_focal_loss</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">threshold: float = 0.5</em>, <em class="sig-param">gamma: float = 2.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/criterion/focal.html#reduced_focal_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.criterion.focal.reduced_focal_loss" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.criterion.focal.</code><code class="sig-name descname">reduced_focal_loss</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">threshold: float = 0.5</em>, <em class="sig-param">gamma: float = 2.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.utils.criterion.focal.reduced_focal_loss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute reduced focal loss between target and output logits.</p>
 <p>Source <a class="reference external" href="https://github.com/BloodAxe/pytorch-toolbelt">https://github.com/BloodAxe/pytorch-toolbelt</a>
 See <code class="xref py py-class docutils literal notranslate"><span class="pre">losses</span></code> for details.</p>
@@ -2600,51 +2615,79 @@ Default: “mean”</p>
 <p>See <a class="reference external" href="https://arxiv.org/abs/1903.01347">https://arxiv.org/abs/1903.01347</a></p>
 </dd></dl>
 
-<span class="target" id="module-catalyst.utils.criterion.iou"></span><dl class="function">
-<dt id="catalyst.utils.criterion.iou.iou">
-<code class="sig-prename descclassname">catalyst.utils.criterion.iou.</code><code class="sig-name descname">iou</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">classes: List[str] = None</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span> &#x2192; Union[float, List[float]]<a class="reference internal" href="../_modules/catalyst/utils/criterion/iou.html#iou"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.criterion.iou.iou" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – A list of predicted elements</p></li>
-<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – A list of elements that are to be predicted</p></li>
-<li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
-Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
-</ul>
+<span class="target" id="module-catalyst.utils.criterion.iou"></span><dl class="field-list simple">
+<dt class="field-odd">param outputs</dt>
+<dd class="field-odd"><p>A list of predicted elements</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>IoU (Jaccard) score(s)</p>
+<dt class="field-even">type outputs</dt>
+<dd class="field-even"><p>torch.Tensor</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Union[float, List[float]]</p>
+<dt class="field-odd">param targets</dt>
+<dd class="field-odd"><p>A list of elements that are to be predicted</p>
+</dd>
+<dt class="field-even">type targets</dt>
+<dd class="field-even"><p>torch.Tensor</p>
+</dd>
+<dt class="field-odd">param eps</dt>
+<dd class="field-odd"><p>epsilon to avoid zero division</p>
+</dd>
+<dt class="field-even">type eps</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param threshold</dt>
+<dd class="field-odd"><p>threshold for outputs binarization</p>
+</dd>
+<dt class="field-even">type threshold</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+<dt class="field-odd">param activation</dt>
+<dd class="field-odd"><p>An torch.nn activation applied to the outputs.
+Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p>
+</dd>
+<dt class="field-even">type activation</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><p>IoU (Jaccard) score(s)</p>
+</dd>
+<dt class="field-even">rtype</dt>
+<dd class="field-even"><p>Union[float, List[float]]</p>
 </dd>
 </dl>
-</dd></dl>
+<dl class="data">
+<dt id="catalyst.utils.criterion.iou.activation">
+<code class="sig-prename descclassname">catalyst.utils.criterion.iou.</code><code class="sig-name descname">activation</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.iou.activation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
-<dl class="function">
-<dt id="catalyst.utils.criterion.iou.jaccard">
-<code class="sig-prename descclassname">catalyst.utils.criterion.iou.</code><code class="sig-name descname">jaccard</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">classes: List[str] = None</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span> &#x2192; Union[float, List[float]]<a class="headerlink" href="#catalyst.utils.criterion.iou.jaccard" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – A list of predicted elements</p></li>
-<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – A list of elements that are to be predicted</p></li>
-<li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
-Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>IoU (Jaccard) score(s)</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Union[float, List[float]]</p>
-</dd>
-</dl>
-</dd></dl>
+<dl class="data">
+<dt id="catalyst.utils.criterion.iou.classes">
+<code class="sig-prename descclassname">catalyst.utils.criterion.iou.</code><code class="sig-name descname">classes</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.iou.classes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="catalyst.utils.criterion.iou.eps">
+<code class="sig-prename descclassname">catalyst.utils.criterion.iou.</code><code class="sig-name descname">eps</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.iou.eps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="catalyst.utils.criterion.iou.outputs">
+<code class="sig-prename descclassname">catalyst.utils.criterion.iou.</code><code class="sig-name descname">outputs</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.iou.outputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="catalyst.utils.criterion.iou.return">
+<code class="sig-prename descclassname">catalyst.utils.criterion.iou.</code><code class="sig-name descname">return</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.iou.return" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="catalyst.utils.criterion.iou.targets">
+<code class="sig-prename descclassname">catalyst.utils.criterion.iou.</code><code class="sig-name descname">targets</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.iou.targets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="data">
+<dt id="catalyst.utils.criterion.iou.threshold">
+<code class="sig-prename descclassname">catalyst.utils.criterion.iou.</code><code class="sig-name descname">threshold</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.utils.criterion.iou.threshold" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 <div class="section" id="meters">

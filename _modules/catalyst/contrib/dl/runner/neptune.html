@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.dl.runner.neptune &mdash; Catalyst 20.02.4 documentation</title>
+  <title>catalyst.contrib.dl.runner.neptune &mdash; Catalyst 20.03 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                20.02
+                20.03
               </div>
             
           
@@ -161,8 +161,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for catalyst.contrib.dl.runner.neptune</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span> <span class="nn">neptune</span>
 
@@ -209,14 +208,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">log_on_batch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">log_on_batch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">log_on_epoch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">checkpoints_glob</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">):</span>
-
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_init</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_on_batch_end</span> <span class="o">=</span> <span class="n">log_on_batch_end</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_on_epoch_end</span> <span class="o">=</span> <span class="n">log_on_epoch_end</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">checkpoints_glob</span> <span class="o">=</span> <span class="n">checkpoints_glob</span>
 
     <span class="k">def</span> <span class="nf">_pre_experiment_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment</span><span class="p">:</span> <span class="n">Experiment</span><span class="p">):</span>
         <span class="n">monitoring_params</span> <span class="o">=</span> <span class="n">experiment</span><span class="o">.</span><span class="n">monitoring_params</span>
@@ -229,16 +226,13 @@
         <span class="p">)</span>
 
         <span class="n">log_on_batch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> \
-            <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;log_on_batch_end&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;log_on_batch_end&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">log_on_epoch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> \
             <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;log_on_epoch_end&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">checkpoints_glob</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> \
-            <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;checkpoints_glob&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span>
             <span class="n">log_on_batch_end</span><span class="o">=</span><span class="n">log_on_batch_end</span><span class="p">,</span>
             <span class="n">log_on_epoch_end</span><span class="o">=</span><span class="n">log_on_epoch_end</span><span class="p">,</span>
-            <span class="n">checkpoints_glob</span><span class="o">=</span><span class="n">checkpoints_glob</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_neptune_experiment</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span>
@@ -247,9 +241,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_neptune_experiment</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span>
             <span class="s2">&quot;log_on_epoch_end&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_on_epoch_end</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_neptune_experiment</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span>
-            <span class="s2">&quot;checkpoints_glob&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkpoints_glob</span>
-        <span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">experiment</span><span class="p">,</span> <span class="n">ConfigExperiment</span><span class="p">):</span>
             <span class="n">exp_config</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flatten_dict</span><span class="p">(</span><span class="n">experiment</span><span class="o">.</span><span class="n">stages_config</span><span class="p">)</span>
@@ -257,18 +248,19 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_neptune_experiment</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_post_experiment_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment</span><span class="p">:</span> <span class="n">Experiment</span><span class="p">):</span>
-        <span class="n">logdir_src</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">experiment</span><span class="o">.</span><span class="n">logdir</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_neptune_experiment</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s2">&quot;logdir&quot;</span><span class="p">,</span> <span class="n">logdir_src</span><span class="p">)</span>
-
-        <span class="n">checkpoints_src</span> <span class="o">=</span> <span class="n">logdir_src</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;checkpoints&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_neptune_experiment</span><span class="o">.</span><span class="n">log_artifact</span><span class="p">(</span><span class="n">checkpoints_src</span><span class="p">)</span>
+        <span class="c1"># @TODO: add params for artefacts logging</span>
+        <span class="c1"># logdir_src = Path(experiment.logdir)</span>
+        <span class="c1"># self._neptune_experiment.set_property(&quot;logdir&quot;, logdir_src)</span>
+        <span class="c1">#</span>
+        <span class="c1"># checkpoints_src = logdir_src.joinpath(&quot;checkpoints&quot;)</span>
+        <span class="c1"># self._neptune_experiment.log_artifact(checkpoints_src)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_neptune_experiment</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_run_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_run_batch</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_on_batch_end</span><span class="p">:</span>
             <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">loader_name</span>
-            <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">metric_manager</span><span class="o">.</span><span class="n">batch_values</span>
+            <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">batch_metrics</span>
 
             <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_neptune_experiment</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span>
@@ -278,17 +270,20 @@
     <span class="k">def</span> <span class="nf">_run_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_run_epoch</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_on_epoch_end</span><span class="p">:</span>
-            <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">loader_name</span>
-            <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">metric_manager</span><span class="o">.</span><span class="n">batch_values</span>
+            <span class="n">mode_metrics</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">split_dict_to_subdicts</span><span class="p">(</span>
+                <span class="n">dct</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">epoch_metrics</span><span class="p">,</span>
+                <span class="n">prefixes</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">loaders</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+                <span class="n">extra_key</span><span class="o">=</span><span class="s2">&quot;_base&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">mode</span><span class="p">,</span> <span class="n">metrics</span> <span class="ow">in</span> <span class="n">mode_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_neptune_experiment</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;epoch_</span><span class="si">{mode}</span><span class="s2">_</span><span class="si">{name}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">value</span>
+                    <span class="p">)</span>
 
-            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_neptune_experiment</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;epoch_</span><span class="si">{mode}</span><span class="s2">_</span><span class="si">{name}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">value</span>
-                <span class="p">)</span>
-
-<div class="viewcode-block" id="NeptuneRunner.run_experiment"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.runner.neptune.NeptuneRunner.run_experiment">[docs]</a>    <span class="k">def</span> <span class="nf">run_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment</span><span class="p">:</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="NeptuneRunner.run_experiment"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.runner.neptune.NeptuneRunner.run_experiment">[docs]</a>    <span class="k">def</span> <span class="nf">run_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment</span><span class="p">:</span> <span class="n">Experiment</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pre_experiment_hook</span><span class="p">(</span><span class="n">experiment</span><span class="o">=</span><span class="n">experiment</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">(</span><span class="n">experiment</span><span class="o">=</span><span class="n">experiment</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">(</span><span class="n">experiment</span><span class="o">=</span><span class="n">experiment</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_post_experiment_hook</span><span class="p">(</span><span class="n">experiment</span><span class="o">=</span><span class="n">experiment</span><span class="p">)</span></div></div>
 
 

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.callbacks.formatters &mdash; Catalyst 20.02.4 documentation</title>
+  <title>catalyst.core.callbacks.formatters &mdash; Catalyst 20.03 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                20.02
+                20.03
               </div>
             
           
@@ -161,7 +161,9 @@
            <div itemprop="articleBody">
             
   <h1>Source code for catalyst.core.callbacks.formatters</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>  <span class="c1"># isort:skip</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -215,8 +217,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">{asctime}</span><span class="s2">] &quot;</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_format_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">):</span>
-        <span class="c1"># metrics : dict[str: dict[str: float]]</span>
+    <span class="k">def</span> <span class="nf">_format_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]):</span>
         <span class="n">metrics_formatted</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">metrics_formatted_</span> <span class="o">=</span> <span class="p">[</span>
@@ -230,11 +231,16 @@
 
     <span class="k">def</span> <span class="nf">_format_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">_State</span><span class="p">):</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
-        <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_metrics</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">metric_manager</span><span class="o">.</span><span class="n">epoch_values</span><span class="p">)</span>
+        <span class="n">mode_metrics</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">split_dict_to_subdicts</span><span class="p">(</span>
+            <span class="n">dct</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">epoch_metrics</span><span class="p">,</span>
+            <span class="n">prefixes</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">loaders</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+            <span class="n">extra_key</span><span class="o">=</span><span class="s2">&quot;_base&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_metrics</span><span class="p">(</span><span class="n">mode_metrics</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">message</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{state.stage_epoch_log}</span><span class="s2">/</span><span class="si">{state.num_epochs}</span><span class="s2"> &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;* Epoch </span><span class="si">{state.epoch_log}</span><span class="s2"> (</span><span class="si">{key}</span><span class="s2">): </span><span class="si">{value}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{state.epoch}</span><span class="s2">/</span><span class="si">{state.num_epochs}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;* Epoch </span><span class="si">{state.global_epoch}</span><span class="s2"> (</span><span class="si">{key}</span><span class="s2">): </span><span class="si">{value}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">message</span></div>
@@ -259,8 +265,8 @@
 
     <span class="k">def</span> <span class="nf">_format_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">_State</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">metirics</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">metric_manager</span><span class="o">.</span><span class="n">epoch_values</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
-            <span class="n">epoch</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span>
+            <span class="n">metirics</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">epoch_metrics</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+            <span class="n">epoch</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">global_epoch</span><span class="p">,</span>
             <span class="n">time</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>

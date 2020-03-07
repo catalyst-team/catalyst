@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.callbacks.scheduler &mdash; Catalyst 20.02.4 documentation</title>
+  <title>catalyst.dl.callbacks.scheduler &mdash; Catalyst 20.03 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                20.02
+                20.03
               </div>
             
           
@@ -214,7 +214,7 @@
         <span class="k">return</span> <span class="n">res</span></div>
 
 <div class="viewcode-block" id="LRFinder.on_loader_start"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.scheduler.LRFinder.on_loader_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">need_backward</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">need_backward_pass</span><span class="p">:</span>
             <span class="n">lr_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_lr</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span> <span class="ow">or</span> <span class="n">state</span><span class="o">.</span><span class="n">loader_len</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">=</span> <span class="n">lr_</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span><span class="p">)</span>

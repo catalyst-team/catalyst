@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.experiment.base &mdash; Catalyst 20.02.4 documentation</title>
+  <title>catalyst.dl.experiment.base &mdash; Catalyst 20.03 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                20.02
+                20.03
               </div>
             
           
@@ -191,6 +191,7 @@
         <span class="n">main_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
         <span class="n">minimize_metric</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">check_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">distributed_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -244,8 +245,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_main_metric</span> <span class="o">=</span> <span class="n">main_metric</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_minimize_metric</span> <span class="o">=</span> <span class="n">minimize_metric</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_run</span> <span class="o">=</span> <span class="n">check_run</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_additional_state_kwargs</span> <span class="o">=</span> <span class="n">state_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_data</span> <span class="o">=</span> <span class="n">checkpoint_data</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_data</span> <span class="o">=</span> <span class="n">checkpoint_data</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_distributed_params</span> <span class="o">=</span> <span class="n">distributed_params</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_monitoring_params</span> <span class="o">=</span> <span class="n">monitoring_params</span> <span class="ow">or</span> <span class="p">{}</span></div>
 
@@ -283,7 +285,7 @@
             <span class="n">main_metric</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_main_metric</span><span class="p">,</span>
             <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">,</span>
             <span class="n">minimize_metric</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_minimize_metric</span><span class="p">,</span>
-            <span class="n">checkpoint_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_data</span><span class="p">,</span>
+            <span class="n">checkpoint_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_data</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">state_params</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">default_params</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_additional_state_kwargs</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">state_params</span></div>

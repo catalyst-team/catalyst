@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.callbacks.metrics.iou &mdash; Catalyst 20.02.4 documentation</title>
+  <title>catalyst.dl.callbacks.metrics.iou &mdash; Catalyst 20.03 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                20.02
+                20.03
               </div>
             
           
@@ -164,7 +164,7 @@
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="kn">import</span> <span class="n">MetricCallback</span><span class="p">,</span> <span class="n">MultiMetricCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="n">criterion</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="n">metrics</span>
 
 
 <span class="k">def</span> <span class="nf">_get_default_classwise_iou_args</span><span class="p">(</span><span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
@@ -199,7 +199,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
-            <span class="n">metric_fn</span><span class="o">=</span><span class="n">criterion</span><span class="o">.</span><span class="n">iou</span><span class="p">,</span>
+            <span class="n">metric_fn</span><span class="o">=</span><span class="n">metrics</span><span class="o">.</span><span class="n">iou</span><span class="p">,</span>
             <span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span>
             <span class="n">output_key</span><span class="o">=</span><span class="n">output_key</span><span class="p">,</span>
             <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span>
@@ -248,10 +248,11 @@
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
-            <span class="n">metric_fn</span><span class="o">=</span><span class="n">criterion</span><span class="o">.</span><span class="n">iou</span><span class="p">,</span>
+            <span class="n">metric_fn</span><span class="o">=</span><span class="n">metrics</span><span class="o">.</span><span class="n">iou</span><span class="p">,</span>
             <span class="n">list_args</span><span class="o">=</span><span class="n">list_args</span><span class="p">,</span>
             <span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span>
             <span class="n">output_key</span><span class="o">=</span><span class="n">output_key</span><span class="p">,</span>
+            <span class="n">classes</span><span class="o">=</span><span class="n">list_args</span><span class="p">,</span>
             <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span>
             <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
             <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
