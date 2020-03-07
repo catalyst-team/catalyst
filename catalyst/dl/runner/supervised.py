@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Mapping, Union  # isort:skip
+from typing import (  # isort:skip
+    Any, Callable, Dict, List, Mapping, Tuple, Union  # isort:skip
+)  # isort:skip
 from collections import OrderedDict
 import logging
 from pathlib import Path
@@ -8,8 +10,8 @@ from torch.jit import ScriptModule
 from torch.utils.data import DataLoader
 
 from catalyst.dl import (
-    Callback, CheckpointCallback, InferCallback, Runner, SupervisedExperiment,
-    utils
+    Callback, CheckpointCallback, InferCallback, Runner, State,
+    SupervisedExperiment, utils
 )
 from catalyst.dl.utils import trace
 from catalyst.utils.tools.typing import (
@@ -23,7 +25,7 @@ class SupervisedRunner(Runner):
     """
     Runner for experiments with supervised model
     """
-    _default_experiment = SupervisedExperiment
+    _experiment_fn: Callable = SupervisedExperiment
 
     def __init__(
         self,
@@ -48,18 +50,32 @@ class SupervisedRunner(Runner):
         self.target_key = input_target_key
 
         if isinstance(self.input_key, str):
+            # when model expects value
             self._process_input = self._process_input_str
         elif isinstance(self.input_key, (list, tuple)):
+            # when model expects tuple
             self._process_input = self._process_input_list
-        else:
+        elif self.input_key is None:
+            # when model expects dict
             self._process_input = self._process_input_none
+        else:
+            raise NotImplementedError()
 
         if isinstance(output_key, str):
+            # when model returns value
             self._process_output = self._process_output_str
         elif isinstance(output_key, (list, tuple)):
+            # when model returns tuple
             self._process_output = self._process_output_list
-        else:
+        elif self.output_key is None:
+            # when model returns dict
             self._process_output = self._process_output_none
+        else:
+            raise NotImplementedError()
+
+    def _init(self):
+        self.experiment: SupervisedExperiment = None
+        self.state: State = None
 
     def _batch2device(self, batch: Mapping[str, Any], device: Device):
         if isinstance(batch, (tuple, list)):
@@ -81,11 +97,11 @@ class SupervisedRunner(Runner):
         output = self.model(**batch, **kwargs)
         return output
 
-    def _process_output_str(self, output: Mapping[str, Any]):
+    def _process_output_str(self, output: torch.Tensor):
         output = {self.output_key: output}
         return output
 
-    def _process_output_list(self, output: Mapping[str, Any]):
+    def _process_output_list(self, output: Union[Tuple, List]):
         output = dict(
             (key, value) for key, value in zip(self.output_key, output)
         )
@@ -164,8 +180,8 @@ class SupervisedRunner(Runner):
         if len(loaders) == 1:
             valid_loader = list(loaders.keys())[0]
             logger.warning(
-                "Attention, there is only one data loader - "
-                + str(valid_loader)
+                "Attention, there is only one data loader - " +
+                str(valid_loader)
             )
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
@@ -175,16 +191,18 @@ class SupervisedRunner(Runner):
 
         if resume is not None:
             callbacks = utils.process_callbacks(callbacks)
-            checkpoint_callback_flag = any([
-                isinstance(x, CheckpointCallback)
-                for x in callbacks.values()
-            ])
+            checkpoint_callback_flag = any(
+                [
+                    isinstance(x, CheckpointCallback)
+                    for x in callbacks.values()
+                ]
+            )
             if not checkpoint_callback_flag:
                 callbacks["loader"] = CheckpointCallback(resume=resume)
             else:
                 raise NotImplementedError("CheckpointCallback already exist")
 
-        experiment = self._default_experiment(
+        experiment = self._experiment_fn(
             stage="train",
             model=model,
             loaders=loaders,
@@ -198,12 +216,13 @@ class SupervisedRunner(Runner):
             main_metric=main_metric,
             minimize_metric=minimize_metric,
             verbose=verbose,
+            check_run=check,
             state_kwargs=state_kwargs,
             checkpoint_data=checkpoint_data,
             distributed_params=fp16,
             monitoring_params=monitoring_params
         )
-        self.run_experiment(experiment, check=check)
+        self.run_experiment(experiment)
 
     def infer(
         self,
@@ -238,16 +257,17 @@ class SupervisedRunner(Runner):
         if model is not None:
             self.model = model
 
-        experiment = self._default_experiment(
+        experiment = self._experiment_fn(
             stage="infer",
             model=model,
             loaders=loaders,
             callbacks=callbacks,
             verbose=verbose,
+            check_run=check,
             state_kwargs=state_kwargs,
             distributed_params=fp16
         )
-        self.run_experiment(experiment, check=check)
+        self.run_experiment(experiment)
 
     def predict_loader(
         self,

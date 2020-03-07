@@ -6,7 +6,6 @@ from gym.spaces import Discrete, Space
 
 
 class EnvironmentSpec(ABC):
-
     def __init__(self, visualize=False, mode="train", sampler_id=None):
         self._visualize = visualize
         self._mode = mode
@@ -33,7 +32,7 @@ class EnvironmentSpec(ABC):
 
     @property
     def reward_space(self) -> Space:
-        return Space(shape=(1,), dtype=np.float32)
+        return Space(shape=(1, ), dtype=np.float32)
 
     @property
     def discrete_actions(self) -> int:

@@ -20,8 +20,12 @@ def build_args(parser):
     parser.add_argument("--start-from", type=int, default=0)
     parser.add_argument("--min-reward", type=int, default=None)
     parser.add_argument(
-        "--db", type=str, choices=["redis", "mongo"],
-        default=None, required=True)
+        "--db",
+        type=str,
+        choices=["redis", "mongo"],
+        default=None,
+        required=True
+    )
 
     return parser
 

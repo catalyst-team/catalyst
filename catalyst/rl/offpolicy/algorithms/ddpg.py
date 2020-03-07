@@ -8,7 +8,6 @@ class DDPG(OffpolicyActorCritic):
     """
     Swiss Army knife DDPG algorithm.
     """
-
     def _init(self):
         # value distribution approximation
         critic_distribution = self.critic.distribution
@@ -48,7 +47,7 @@ class DDPG(OffpolicyActorCritic):
 
     def _process_components(self, done_t, rewards_t):
         # Array of size [num_heads,]
-        gammas = self._gammas ** self._n_step
+        gammas = self._gammas**self._n_step
         gammas = gammas[None, :, None]  # [1; num_heads; 1]
         # We use the same done_t, rewards_t, actions_t for each head
         done_t = done_t[:, None, :]  # [bs; 1; 1]
@@ -76,9 +75,9 @@ class DDPG(OffpolicyActorCritic):
 
         # [bs; num_heads; 1] -> many-heads view transform
         # [{bs * num_heads}; 1]
-        q_target_t = (
-            rewards_t + (1 - done_t) * gammas * q_values_tp1
-        ).view(-1, 1).detach()
+        q_target_t = (rewards_t +
+                      (1 - done_t) * gammas * q_values_tp1).view(-1,
+                                                                 1).detach()
 
         value_loss = self.critic_criterion(q_values_t, q_target_t).mean()
 
@@ -94,8 +93,9 @@ class DDPG(OffpolicyActorCritic):
         # [bs; num_heads; num_atoms] -> many-heads view transform
         # [{bs * num_heads}; num_atoms]
         logits_tp0 = (
-            self.critic(states_t, self.actor(states_t)).squeeze_(dim=2)
-            .view(-1, self.num_atoms)
+            self.critic(states_t, self.actor(states_t)).squeeze_(
+                dim=2
+            ).view(-1, self.num_atoms)
         )
         # [{bs * num_heads}; num_atoms]
         probs_tp0 = torch.softmax(logits_tp0, dim=-1)
@@ -107,8 +107,8 @@ class DDPG(OffpolicyActorCritic):
         # [bs; num_heads; num_atoms] -> many-heads view transform
         # [{bs * num_heads}; num_atoms]
         logits_t = (
-            self.critic(states_t, actions_t).squeeze_(dim=2)
-            .view(-1, self.num_atoms)
+            self.critic(states_t,
+                        actions_t).squeeze_(dim=2).view(-1, self.num_atoms)
         )
 
         # [bs; action_size]
@@ -116,15 +116,15 @@ class DDPG(OffpolicyActorCritic):
         # [bs; num_heads; num_atoms] -> many-heads view transform
         # [{bs * num_heads}; num_atoms]
         logits_tp1 = (
-            self.target_critic(states_tp1, actions_tp1).squeeze_(dim=2)
-            .view(-1, self.num_atoms)
+            self.target_critic(states_tp1, actions_tp1).squeeze_(
+                dim=2
+            ).view(-1, self.num_atoms)
         ).detach()
 
         # [bs; num_heads; num_atoms] -> many-heads view transform
         # [{bs * num_heads}; num_atoms]
-        atoms_target_t = (
-            rewards_t + (1 - done_t) * gammas * self.z
-        ).view(-1, self.num_atoms)
+        atoms_target_t = (rewards_t + (1 - done_t) * gammas *
+                          self.z).view(-1, self.num_atoms)
 
         value_loss = utils.categorical_loss(
             # [{bs * num_heads}; num_atoms]
@@ -133,8 +133,10 @@ class DDPG(OffpolicyActorCritic):
             logits_tp1,
             # [{bs * num_heads}; num_atoms]
             atoms_target_t,
-            self.z, self.delta_z,
-            self.v_min, self.v_max
+            self.z,
+            self.delta_z,
+            self.v_min,
+            self.v_max
         )
 
         return policy_loss, value_loss

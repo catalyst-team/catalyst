@@ -83,7 +83,6 @@ extensions = [
 ]
 
 autodoc_inherit_docstrings = False
-
 napoleon_google_docstring = True
 napoleon_include_init_with_doc = True
 napoleon_numpy_docstring = False
@@ -114,13 +113,9 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # Ignoring Third-party packages
 
-autodoc_mock_imports = ["alchemy",
-                        "neptune",
-                        "wandb",
-                        "gym",
-                        "gridfs",
-                        "pymongo",
-                        "redis"]
+autodoc_mock_imports = [
+    "alchemy", "neptune", "wandb", "gym", "gridfs", "pymongo", "redis"
+]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
@@ -130,7 +125,7 @@ pygments_style = None
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "alabaster"
+html_theme = "sphinx_rtd_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

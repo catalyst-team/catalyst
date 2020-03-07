@@ -20,7 +20,6 @@ class APMeter(meter.Meter):
     each sample.
 
     """
-
     def __init__(self):
         super(APMeter, self).__init__()
         self.reset()
@@ -62,12 +61,14 @@ class APMeter(meter.Meter):
             assert output.dim() == 2, \
                 "wrong output size (should be 1D or 2D with one column \
                 per class)"
+
         if target.dim() == 1:
             target = target.view(-1, 1)
         else:
             assert target.dim() == 2, \
                 "wrong target size (should be 1D or 2D with one column \
                 per class)"
+
         if weight is not None:
             assert weight.dim() == 1, "Weight dimension should be 1"
             assert weight.numel() == target.size(0), \
@@ -87,7 +88,8 @@ class APMeter(meter.Meter):
             self.targets.storage().resize_(int(new_size + output.numel()))
             if weight is not None:
                 self.weights.storage().resize_(
-                    int(new_weight_size + output.size(0)))
+                    int(new_weight_size + output.size(0))
+                )
 
         # store scores and targets
         offset = self.scores.size(0) if self.scores.dim() > 0 else 0

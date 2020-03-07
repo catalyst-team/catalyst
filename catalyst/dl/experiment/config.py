@@ -2,20 +2,21 @@ from typing import Any, Callable, Dict, List, Mapping, Union  # isort:skip
 from collections import OrderedDict
 from copy import deepcopy
 
-import safitty
-
 import torch
 from torch import nn
 from torch.utils.data import (  # noqa F401
     DataLoader, Dataset, DistributedSampler
 )
 
-from catalyst.data import Augmentor, AugmentorCompose
-from catalyst.dl import Callback, Experiment, utils
-from catalyst.dl.callbacks import (
-    CheckpointCallback, ConsoleLogger, CriterionCallback, OptimizerCallback,
-    PhaseWrapperCallback, RaiseExceptionCallback, SchedulerCallback,
-    TensorboardLogger, VerboseLogger
+from catalyst.data import (
+    Augmentor, AugmentorCompose, DistributedSamplerWrapper
+)
+from catalyst.dl import (
+    Callback, CheckpointCallback, CheckRunCallback, ConsoleLogger,
+    CriterionCallback, ExceptionCallback, Experiment, MetricManagerCallback,
+    OptimizerCallback, PhaseWrapperCallback, SchedulerCallback,
+    TensorboardLogger, TimerCallback, utils, ValidationManagerCallback,
+    VerboseLogger
 )
 from catalyst.dl.registry import (
     CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS,
@@ -45,9 +46,8 @@ class ConfigExperiment(Experiment):
         """
         self._config = deepcopy(config)
         self._initial_seed = self._config.get("args", {}).get("seed", 42)
-        self._verbose = safitty.get(
-            self._config, "args", "verbose", default=False
-        )
+        self._verbose = self._config.get("args", {}).get("verbose", False)
+        self._check_run = self._config.get("args", {}).get("check", False)
         self.__prepare_logdir()
 
         self._config["stages"]["state_params"] = utils.merge_dicts(
@@ -92,7 +92,7 @@ class ConfigExperiment(Experiment):
         timestamp = utils.get_utcnow_time()
         config_hash = utils.get_short_hash(config)
         logdir = f"{timestamp}.{config_hash}"
-        distributed_rank = self.distributed_params.get("rank", -1)
+        distributed_rank = utils.get_rank()
         if distributed_rank > -1:
             logdir = f"{logdir}.rank{distributed_rank:02d}"
         return logdir
@@ -111,6 +111,23 @@ class ConfigExperiment(Experiment):
     def stages(self) -> List[str]:
         """Experiment's stage names"""
         stages_keys = list(self.stages_config.keys())
+
+        # @TODO: return the feature
+        # # Change start `stages_keys` if resume data were founded
+        # state_params = self.get_state_params(stages_keys[0])
+        # resume, resume_dir = [
+        #     state_params.get(key, None) for key in ["resume", "resume_dir"]
+        # ]
+        #
+        # if resume_dir is not None:
+        #     resume = resume_dir / str(resume)
+        #
+        # if resume is not None and Path(resume).is_file():
+        #     checkpoint = utils.load_checkpoint(resume)
+        #     start_stage = checkpoint["stage"]
+        #     start_idx = stages_keys.index(start_stage)
+        #     stages_keys = stages_keys[start_idx:]
+
         return stages_keys
 
     @property
@@ -183,10 +200,7 @@ class ConfigExperiment(Experiment):
         return criterion
 
     def _get_optimizer(
-        self,
-        stage: str,
-        model: Union[Model, Dict[str, Model]],
-        **params
+        self, stage: str, model: Union[Model, Dict[str, Model]], **params
     ) -> Optimizer:
         # @TODO 1: refactoring; this method is too long
         # @TODO 2: load state dicts for schedulers & criterion
@@ -201,7 +215,7 @@ class ConfigExperiment(Experiment):
             data_params = dict(self.stages_config[stage]["data_params"])
             batch_size = data_params.get("batch_size")
             per_gpu_scaling = data_params.get("per_gpu_scaling", False)
-            distributed_rank = self.distributed_params.get("rank", -1)
+            distributed_rank = utils.get_rank()
             distributed = distributed_rank > -1
             if per_gpu_scaling and not distributed:
                 num_gpus = max(1, torch.cuda.device_count())
@@ -268,9 +282,7 @@ class ConfigExperiment(Experiment):
         return optimizer
 
     def get_optimizer(
-        self,
-        stage: str,
-        model: Union[Model, Dict[str, Model]]
+        self, stage: str, model: Union[Model, Dict[str, Model]]
     ) -> Union[Optimizer, Dict[str, Optimizer]]:
         """
         Returns the optimizer for a given stage
@@ -332,15 +344,17 @@ class ConfigExperiment(Experiment):
                 for key, params_ in params.items()
             }
 
-            transform = AugmentorCompose({
-                key: Augmentor(
-                    dict_key=key,
-                    augment_fn=transform,
-                    input_key=key,
-                    output_key=key,
-                )
-                for key, transform in transforms_composition.items()
-            })
+            transform = AugmentorCompose(
+                {
+                    key: Augmentor(
+                        dict_key=key,
+                        augment_fn=transform,
+                        input_key=key,
+                        output_key=key,
+                    )
+                    for key, transform in transforms_composition.items()
+                }
+            )
         else:
             if "transforms" in params:
                 transforms_composition = [
@@ -374,6 +388,7 @@ class ConfigExperiment(Experiment):
 
         transform = self._get_transform(**transform_params)
         if transform is None:
+
             def transform(dict_):
                 return dict_
         elif not isinstance(transform, AugmentorCompose):
@@ -392,11 +407,11 @@ class ConfigExperiment(Experiment):
         """Returns the loaders for a given stage"""
         data_params = dict(self.stages_config[stage]["data_params"])
 
-        batch_size = data_params.pop("batch_size", 1)
-        num_workers = data_params.pop("num_workers")
+        default_batch_size = data_params.pop("batch_size", 1)
+        default_num_workers = data_params.pop("num_workers")
         drop_last = data_params.pop("drop_last", False)
         per_gpu_scaling = data_params.pop("per_gpu_scaling", False)
-        distributed_rank = self.distributed_params.get("rank", -1)
+        distributed_rank = utils.get_rank()
         distributed = distributed_rank > -1
 
         datasets = self.get_datasets(stage=stage, **data_params)
@@ -431,9 +446,10 @@ class ConfigExperiment(Experiment):
                 if isinstance(ds_, dict) and "sampler" in ds_:
                     ds_.pop("sampler", None)
 
-            batch_size = overridden_loader_params.pop("batch_size", batch_size)
+            batch_size = overridden_loader_params.\
+                pop("batch_size", default_batch_size)
             num_workers = overridden_loader_params.\
-                pop("num_workers", num_workers)
+                pop("num_workers", default_num_workers)
 
             if per_gpu_scaling and not distributed:
                 num_gpus = max(1, torch.cuda.device_count())
@@ -459,7 +475,9 @@ class ConfigExperiment(Experiment):
 
             if distributed:
                 if sampler is not None:
-                    assert isinstance(sampler, DistributedSampler)
+                    if not isinstance(sampler, DistributedSampler):
+                        loader_params["sampler"] = \
+                            DistributedSamplerWrapper(sampler=sampler)
                 else:
                     sampler = DistributedSampler(
                         dataset=loader_params["dataset"]
@@ -509,20 +527,29 @@ class ConfigExperiment(Experiment):
             callback = self._get_callback(**callback_params)
             callbacks[key] = callback
 
-        # ! For compatibility with previous versions.
         default_callbacks = []
         if self._verbose:
-            default_callbacks.append(("verbose", VerboseLogger))
+            default_callbacks.append(("_verbose", VerboseLogger))
+        if self._check_run:
+            default_callbacks.append(("_check", CheckRunCallback))
+
         if not stage.startswith("infer"):
-            default_callbacks.append(("_criterion", CriterionCallback))
-            default_callbacks.append(("_optimizer", OptimizerCallback))
+            if self.stages_config[stage].get("criterion_params", {}):
+                default_callbacks.append(("_criterion", CriterionCallback))
+            if self.stages_config[stage].get("optimier_params", {}):
+                default_callbacks.append(("_optimizer", OptimizerCallback))
             if self.stages_config[stage].get("scheduler_params", {}):
                 default_callbacks.append(("_scheduler", SchedulerCallback))
-            default_callbacks.append(("_saver", CheckpointCallback))
-            default_callbacks.append(("console", ConsoleLogger))
-            default_callbacks.append(("tensorboard", TensorboardLogger))
 
-        default_callbacks.append(("exception", RaiseExceptionCallback))
+            default_callbacks.append(("_timer", TimerCallback))
+            default_callbacks.append(("_metrics", MetricManagerCallback))
+            default_callbacks.append(
+                ("_validation", ValidationManagerCallback)
+            )
+            default_callbacks.append(("_saver", CheckpointCallback))
+            default_callbacks.append(("_console", ConsoleLogger))
+            default_callbacks.append(("_tensorboard", TensorboardLogger))
+        default_callbacks.append(("_exception", ExceptionCallback))
 
         for callback_name, callback_fn in default_callbacks:
             is_already_present = False

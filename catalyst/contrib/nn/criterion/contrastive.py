@@ -9,7 +9,6 @@ class ContrastiveEmbeddingLoss(nn.Module):
 
     paper: http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf
     """
-
     def __init__(self, margin=1.0, reduction="mean"):
         """
         Constructor method for the ContrastiveEmbeddingLoss class.
@@ -40,8 +39,8 @@ class ContrastiveEmbeddingLoss(nn.Module):
         margin_distance = self.margin - distance_pred
         margin_distance_ = torch.clamp(margin_distance, min=0.0)
         loss = (
-            (1 - distance_true) * torch.pow(distance_pred, 2)
-            + distance_true * torch.pow(margin_distance_, 2)
+            (1 - distance_true) * torch.pow(distance_pred, 2) +
+            distance_true * torch.pow(margin_distance_, 2)
         )
 
         if self.reduction == "mean":
@@ -55,7 +54,6 @@ class ContrastiveDistanceLoss(nn.Module):
     """
     Contrastive distance loss
     """
-
     def __init__(self, margin=1.0, reduction="mean"):
         """
         Constructor method for the ContrastiveDistanceLoss class.
@@ -81,8 +79,8 @@ class ContrastiveDistanceLoss(nn.Module):
         margin_distance = self.margin - distance_pred
         margin_distance_ = torch.clamp(margin_distance, min=0.0)
         loss = (
-            (1 - distance_true) * torch.pow(distance_pred, 2)
-            + distance_true * torch.pow(margin_distance_, 2)
+            (1 - distance_true) * torch.pow(distance_pred, 2) +
+            distance_true * torch.pow(margin_distance_, 2)
         )
 
         if self.reduction == "mean":
@@ -123,22 +121,17 @@ class ContrastivePairwiseEmbeddingLoss(nn.Module):
         # d - embeddings space
         # a - action space
         pairwise_similarity = torch.einsum(
-            "se,ae->sa",
-            embeddings_pred,
-            embeddings_true
+            "se,ae->sa", embeddings_pred, embeddings_true
         )
         bs = embeddings_pred.shape[0]
         batch_idx = torch.arange(bs, device=device)
         loss = F.cross_entropy(
-            pairwise_similarity,
-            batch_idx,
-            reduction=self.reduction
+            pairwise_similarity, batch_idx, reduction=self.reduction
         )
         return loss
 
 
 __all__ = [
-    "ContrastiveEmbeddingLoss",
-    "ContrastiveDistanceLoss",
+    "ContrastiveEmbeddingLoss", "ContrastiveDistanceLoss",
     "ContrastivePairwiseEmbeddingLoss"
 ]

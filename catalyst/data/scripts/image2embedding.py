@@ -109,14 +109,13 @@ def build_args(parser):
     )
     parser.add_argument("--seed", type=int, default=42)
     utils.boolean_flag(
-        parser, "deterministic",
+        parser,
+        "deterministic",
         default=None,
         help="Deterministic mode if running in CuDNN backend"
     )
     utils.boolean_flag(
-        parser, "benchmark",
-        default=None,
-        help="Use CuDNN benchmark"
+        parser, "benchmark", default=None, help="Use CuDNN benchmark"
     )
 
     return parser

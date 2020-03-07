@@ -10,7 +10,6 @@ class LRFinder(LRUpdater):
 
     https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html
     """
-
     def __init__(
         self, final_lr, scale="log", num_steps=None, optimizer_key=None
     ):
@@ -52,7 +51,7 @@ class LRFinder(LRUpdater):
         return res
 
     def on_loader_start(self, state: State):
-        if state.need_backward:
+        if state.need_backward_pass:
             lr_ = self.final_lr / self.init_lr
             self.num_steps = self.num_steps or state.loader_len
             self.multiplier = lr_**(1 / self.num_steps)

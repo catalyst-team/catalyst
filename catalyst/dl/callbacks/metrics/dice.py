@@ -1,12 +1,8 @@
-from typing import Dict
-
 import numpy as np
 
+from catalyst import utils
 from catalyst.dl.core import Callback, CallbackOrder, MetricCallback, State
-from catalyst.utils import criterion
-from catalyst.utils.confusion_matrix import (
-    calculate_confusion_matrix_from_tensors, calculate_tp_fp_fn
-)
+from catalyst.utils import metrics
 from .functional import calculate_dice
 
 
@@ -14,7 +10,6 @@ class DiceCallback(MetricCallback):
     """
     Dice metric callback.
     """
-
     def __init__(
         self,
         input_key: str = "targets",
@@ -33,7 +28,7 @@ class DiceCallback(MetricCallback):
         """
         super().__init__(
             prefix=prefix,
-            metric_fn=criterion.dice,
+            metric_fn=metrics.dice,
             input_key=input_key,
             output_key=output_key,
             eps=eps,
@@ -43,32 +38,51 @@ class DiceCallback(MetricCallback):
 
 
 class MulticlassDiceMetricCallback(Callback):
+    """
+    Global Multi-Class Dice Metric Callback: calculates the exact
+    dice score across multiple batches. This callback is good for getting
+    the dice score with small batch sizes where the batchwise dice is noisier.
+    """
     def __init__(
         self,
-        prefix: str = "dice",
         input_key: str = "targets",
         output_key: str = "logits",
+        prefix: str = "dice",
         class_names=None,
-        class_prefix="",
-        **metric_params
     ):
+        """
+        Args:
+            input_key (str): input key to use for dice calculation;
+                specifies our `y_true`.
+            output_key (str): output key to use for dice calculation;
+                specifies our `y_pred`.
+            prefix (str): prefix for printing the metric
+            class_names (dict/List): if dictionary, should be:
+                {class_id: class_name, ...} where class_id is an integer
+                This allows you to ignore class indices.
+                if list, make sure it corresponds to the number of classes
+        """
         super().__init__(CallbackOrder.Metric)
-        self.prefix = prefix
         self.input_key = input_key
         self.output_key = output_key
-        self.metric_params = metric_params
+        self.prefix = prefix
         self.confusion_matrix = None
-        self.class_names = class_names  # dictionary {class_id: class_name}
-        self.class_prefix = class_prefix
+        self.class_names = class_names
 
     def _reset_stats(self):
+        """
+        Resets the confusion matrix holding the epoch-wise stats.
+        """
         self.confusion_matrix = None
 
     def on_batch_end(self, state: State):
-        outputs = state.output[self.output_key]
-        targets = state.input[self.input_key]
+        """
+        Records the confusion matrix at the end of each batch.
+        """
+        outputs = state.batch_out[self.output_key]
+        targets = state.batch_in[self.input_key]
 
-        confusion_matrix = calculate_confusion_matrix_from_tensors(
+        confusion_matrix = utils.calculate_confusion_matrix_from_tensors(
             outputs, targets
         )
 
@@ -78,22 +92,29 @@ class MulticlassDiceMetricCallback(Callback):
             self.confusion_matrix += confusion_matrix
 
     def on_loader_end(self, state: State):
-        tp_fp_fn_dict = calculate_tp_fp_fn(self.confusion_matrix)
+        tp_fp_fn_dict = utils.calculate_tp_fp_fn(self.confusion_matrix)
 
-        batch_metrics: Dict = calculate_dice(**tp_fp_fn_dict)
+        dice_scores: np.ndarray = calculate_dice(**tp_fp_fn_dict)
 
-        for metric_id, dice_value in batch_metrics.items():
-            if metric_id not in self.class_names:
+        # logging the dice scores in the state
+        for i, dice in enumerate(dice_scores):
+            if (
+                isinstance(self.class_names, dict)
+                and i not in list(self.class_names.keys())
+            ):
                 continue
+            postfix = self.class_names[i] \
+                if self.class_names is not None \
+                else str(i)
 
-            metric_name = self.class_names[metric_id]
-            state.metric_manager.epoch_values[state.loader_name][
-                f"{self.class_prefix}_{metric_name}"
-            ] = dice_value
+            state.loader_metrics[f"{self.prefix}_{postfix}"] = dice
 
-        state.metric_manager.epoch_values[state.loader_name]["mean"] = np.mean(
-            [x for x in batch_metrics.values()]
-        )
+        # For supporting averaging of only classes specified in `class_names`
+        values_to_avg = [
+            value for key, value in state.loader_metrics.items()
+            if key.startswith(f"{self.prefix}_")
+        ]
+        state.loader_metrics[f"{self.prefix}_mean"] = np.mean(values_to_avg)
 
         self._reset_stats()
 

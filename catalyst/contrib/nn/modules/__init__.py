@@ -10,3 +10,4 @@ from .pooling import (
     GlobalMaxPool2d
 )
 from .real_nvp import CouplingLayer, SquashingLayer
+from .rms_norm import RMSNorm

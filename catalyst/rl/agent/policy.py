@@ -143,9 +143,6 @@ class RealNVPPolicy(nn.Module):
 
 
 __all__ = [
-    "CategoricalPolicy",
-    "BernoulliPolicy",
-    "DiagonalGaussPolicy",
-    "SquashingGaussPolicy",
-    "RealNVPPolicy"
+    "CategoricalPolicy", "BernoulliPolicy", "DiagonalGaussPolicy",
+    "SquashingGaussPolicy", "RealNVPPolicy"
 ]

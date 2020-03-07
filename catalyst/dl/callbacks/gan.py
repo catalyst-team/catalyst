@@ -53,10 +53,10 @@ class MultiKeyMetricCallback(Callback):
 
     def on_batch_end(self, state: State):
         """On batch end call"""
-        outputs = self._get(state.output, self.output_key)
-        targets = self._get(state.input, self.input_key)
+        outputs = self._get(state.batch_out, self.output_key)
+        targets = self._get(state.batch_in, self.input_key)
         metric = self.metric_fn(outputs, targets, **self.metric_params)
-        state.metric_manager.add_batch_value(name=self.prefix, value=metric)
+        state.batch_metrics[self.prefix] = metric
 
 
 class WassersteinDistanceCallback(MultiKeyMetricCallback):
@@ -105,7 +105,6 @@ class GradientPenaltyCallback(CriterionCallback):
     """
     Criterion Callback to compute Gradient Penalty
     """
-
     def __init__(
         self,
         real_input_key: str = "data",
@@ -116,7 +115,7 @@ class GradientPenaltyCallback(CriterionCallback):
         real_data_criterion_key: str = "real_data",
         fake_data_criterion_key: str = "fake_data",
         condition_args_criterion_key: str = "critic_condition_args",
-        prefix: str = "loss",
+        loss_key: str = "loss",
         criterion_key: str = None,
         multiplier: float = 1.0,
     ):
@@ -131,14 +130,14 @@ class GradientPenaltyCallback(CriterionCallback):
         :param fake_data_criterion_key: key for fake data in criterion
         :param condition_args_criterion_key: key for all condition args
             in criterion
-        :param prefix:
+        :param loss_key:
         :param criterion_key:
         :param multiplier:
         """
         super().__init__(
             input_key=real_input_key,
             output_key=fake_output_key,
-            prefix=prefix,
+            prefix=loss_key,
             criterion_key=criterion_key,
             multiplier=multiplier
         )
@@ -151,11 +150,11 @@ class GradientPenaltyCallback(CriterionCallback):
 
     def _compute_loss(self, state: State, criterion):
         criterion_kwargs = {
-            self.real_data_criterion_key: state.input[self.input_key],
-            self.fake_data_criterion_key: state.output[self.output_key],
+            self.real_data_criterion_key: state.batch_in[self.input_key],
+            self.fake_data_criterion_key: state.batch_out[self.output_key],
             self.critic_criterion_key: state.model[self.critic_model_key],
             self.condition_args_criterion_key: [
-                state.input[key] for key in self.condition_keys
+                state.batch_in[key] for key in self.condition_keys
             ]
         }
         return criterion(**criterion_kwargs)
@@ -202,10 +201,10 @@ class WeightClampingOptimizerCallback(OptimizerCallback):
     def on_batch_end(self, state: State):
         """On batch end event"""
         super().on_batch_end(state)
-        if not state.need_backward:
+        if not state.need_backward_pass:
             return
 
-        optimizer = state.get_key(
+        optimizer = state.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
 
@@ -222,7 +221,6 @@ class WeightClampingOptimizerCallback(OptimizerCallback):
 
 
 __all__ = [
-    "WassersteinDistanceCallback",
-    "GradientPenaltyCallback",
+    "WassersteinDistanceCallback", "GradientPenaltyCallback",
     "WeightClampingOptimizerCallback"
 ]

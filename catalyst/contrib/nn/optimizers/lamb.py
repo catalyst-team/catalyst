@@ -4,11 +4,7 @@ import torch
 from torch.optim.optimizer import Optimizer
 
 
-def log_lamb_rs(
-    optimizer: Optimizer,
-    event_writer,
-    token_count: int
-):
+def log_lamb_rs(optimizer: Optimizer, event_writer, token_count: int):
     """Log a histogram of trust ratio scalars in across layers."""
     results = collections.defaultdict(list)
     for group in optimizer.param_groups:
@@ -60,8 +56,7 @@ class Lamb(Optimizer):
             raise ValueError(f"Invalid beta parameter at index 0: {betas[0]}")
         if not 0.0 <= betas[1] < 1.0:
             raise ValueError(f"Invalid beta parameter at index 1: {betas[1]}")
-        defaults = dict(lr=lr, betas=betas, eps=eps,
-                        weight_decay=weight_decay)
+        defaults = dict(lr=lr, betas=betas, eps=eps, weight_decay=weight_decay)
         self.adam = adam
         super(Lamb, self).__init__(params, defaults)
 
@@ -79,7 +74,8 @@ class Lamb(Optimizer):
                 if grad.is_sparse:
                     raise RuntimeError(
                         "Lamb does not support sparse gradients, "
-                        "consider SparseAdam instad.")
+                        "consider SparseAdam instad."
+                    )
 
                 state = self.state[p]
 

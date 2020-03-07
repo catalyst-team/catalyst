@@ -35,7 +35,7 @@ class InferCallback(Callback):
         self.predictions = defaultdict(lambda: [])
 
     def on_batch_end(self, state: State):
-        dct = state.output
+        dct = state.batch_out
         dct = {key: value.detach().cpu().numpy() for key, value in dct.items()}
         for key, value in dct.items():
             self.predictions[key].append(value)
@@ -100,12 +100,12 @@ class InferMaskCallback(Callback):
 
     def on_batch_end(self, state: State):
         lm = state.loader_name
-        names = state.input.get(self.name_key, [])
+        names = state.batch_in.get(self.name_key, [])
 
-        features = state.input[self.input_key].detach().cpu()
+        features = state.batch_in[self.input_key].detach().cpu()
         images = utils.tensor_to_ndimage(features)
 
-        logits = state.output[self.output_key]
+        logits = state.batch_out[self.output_key]
         logits = torch.unsqueeze_(logits, dim=1) \
             if len(logits.shape) < 4 \
             else logits

@@ -4,15 +4,12 @@ import pathlib
 from prompt_toolkit import prompt
 import yaml
 
-from catalyst.dl import registry
-from catalyst.dl.utils import clone_pipeline
-from catalyst.dl.utils.pipelines import URL as pipeline_urls
-from catalyst.utils.scripts import import_module
+from catalyst.dl import registry, utils
 
 yaml.add_representer(
-    OrderedDict,
-    lambda dumper, data:
-        dumper.represent_mapping("tag:yaml.org,2002:map", data.items()))
+    OrderedDict, lambda dumper, data: dumper.
+    represent_mapping("tag:yaml.org,2002:map", data.items())
+)
 
 
 class Wizard:
@@ -34,7 +31,8 @@ class Wizard:
         lists to ease the choice.
         """
         self.__sep("Welcome to Catalyst Config API wizard!")
-        print("""
+        print(
+            """
                        ___________
                       (_         _)
                         |       |
@@ -47,13 +45,15 @@ class Wizard:
                    /    #       #    \\
                   /      #######      \\
                  (_____________________)
-        \n""")
+        \n"""
+        )
 
-        self._cfg = OrderedDict([
-            ("model_params", OrderedDict()),
-            ("args", OrderedDict()),
-            ("stages", OrderedDict())
-        ])
+        self._cfg = OrderedDict(
+            [
+                ("model_params", OrderedDict()), ("args", OrderedDict()),
+                ("stages", OrderedDict())
+            ]
+        )
 
         self.pipeline_path = pathlib.Path("./")
         self.__before_export = {
@@ -70,20 +70,22 @@ class Wizard:
         Separator between Wizard sections
         """
         if step_name is None:
-            print("\n" + "="*100 + "\n")
+            print("\n" + "=" * 100 + "\n")
         else:
-            msg = "\n" + "="*100 + "\n"
-            msg += "="*10 + " " + step_name + " "
-            msg += "="*(100 - len(step_name) - 12)
-            msg += "\n" + "="*100 + "\n"
+            msg = "\n" + "=" * 100 + "\n"
+            msg += "=" * 10 + " " + step_name + " "
+            msg += "=" * (100 - len(step_name) - 12)
+            msg += "\n" + "=" * 100 + "\n"
             print(msg)
 
     @staticmethod
     def _export_step():
-        print("Config is complete. What is next?\n\n"
-              "1. Preview config in YAML format\n"
-              "2. Save config to file\n"
-              "3. Discard changes and exit\n")
+        print(
+            "Config is complete. What is next?\n\n"
+            "1. Preview config in YAML format\n"
+            "2. Save config to file\n"
+            "3. Discard changes and exit\n"
+        )
         return prompt("Enter the number: ")
 
     @staticmethod
@@ -131,26 +133,31 @@ class Wizard:
         common = None
         if param_name in self._cfg["stages"]:
             common = self._cfg["stages"][param_name]
-            print("You have common setting for all stages:\n" +
-                  yaml.dump(common, default_flow_style=False))
-            res = prompt("Do you want to override it? (y/N): ",
-                         default="N")
+            print(
+                "You have common setting for all stages:\n" +
+                yaml.dump(common, default_flow_style=False)
+            )
+            res = prompt("Do you want to override it? (y/N): ", default="N")
             self.__res(res)
             return res.upper() == "N"
         return False
 
     def _callbacks_step(self, stage):
         self.__sep(f"Callbacks")
-        print("Let's add some callbacks!\n\n"
-              "!!! Remember that Catalyst will add Criterion, Optimizer and "
-              "Checkpoint callbacks for you\n"
-              "with default settings if name of the step is NOT started "
-              "with ``infer``.\n")
+        print(
+            "Let's add some callbacks!\n\n"
+            "!!! Remember that Catalyst will add Criterion, Optimizer and "
+            "Checkpoint callbacks for you\n"
+            "with default settings if name of the step is NOT started "
+            "with ``infer``.\n"
+        )
         opts = OrderedDict()
         while True:
-            callback = prompt("Enter callback section name, e.g. "
-                              "'loss_aggregator'"
-                              "(or hit Enter to stop adding callbacks): ")
+            callback = prompt(
+                "Enter callback section name, e.g. "
+                "'loss_aggregator'"
+                "(or hit Enter to stop adding callbacks): "
+            )
             if not callback:
                 if opts:
                     stage["callbacks"] = opts
@@ -181,8 +188,10 @@ class Wizard:
                 msg += "0: Skip this param\n"
             msg += "\n".join([f"{n+1}: {m}" for n, m in enumerate(modules)])
             print(msg)
-            module = prompt("\nEnter number from list above or "
-                            f"class name of {param} you'll be using: ")
+            module = prompt(
+                "\nEnter number from list above or "
+                f"class name of {param} you'll be using: "
+            )
             if module.isdigit():
                 module = int(module)
                 if module == 0:
@@ -191,14 +200,18 @@ class Wizard:
                 module = modules[module - 1]
                 self.__res(module)
         else:
-            module = prompt(f"Enter class name of {param} "
-                            "you'll be using: ")
+            module = prompt(
+                f"Enter class name of {param} "
+                "you'll be using: "
+            )
             self.__res(module)
         opts[param] = module
-        res = prompt("If there are arguments you want to provide during "
-                     f"{param} initialization, provide them here in "
-                     "following format:\n\nlr=0.001,beta=3.41\n\n"
-                     "Or just skip this step (press Enter): ")
+        res = prompt(
+            "If there are arguments you want to provide during "
+            f"{param} initialization, provide them here in "
+            "following format:\n\nlr=0.001,beta=3.41\n\n"
+            "Or just skip this step (press Enter): "
+        )
         if res:
             res = [t.split("=") for t in res.split(",")]
             for k, val in res:
@@ -217,15 +230,20 @@ class Wizard:
         if self._skip_override_stages_common("state_params"):
             return
         opts = OrderedDict()
-        opts["num_epochs"] = int(prompt("How much epochs you want to run this "
-                                        "stage: ",
-                                        default="1"))
+        opts["num_epochs"] = int(
+            prompt(
+                "How much epochs you want to run this "
+                "stage: ", default="1"
+            )
+        )
         self.__res(opts["num_epochs"])
-        opts["main_metric"] = prompt("What is the main_metric?: ",
-                                     default="loss")
+        opts["main_metric"] = prompt(
+            "What is the main_metric?: ", default="loss"
+        )
         self.__res(opts["main_metric"])
-        minimize = bool(prompt("Will it be minimized (True/False): ",
-                               default="True"))
+        minimize = bool(
+            prompt("Will it be minimized (True/False): ", default="True")
+        )
         opts["minimize_metric"] = minimize
         self.__res(opts["minimize_metric"])
         stage["state_params"] = opts
@@ -242,11 +260,13 @@ class Wizard:
         if self._skip_override_stages_common("data_params"):
             return
         opts = OrderedDict()
-        opts["batch_size"] = int(prompt("What is the batch_size?: ",
-                                        default="1"))
+        opts["batch_size"] = int(
+            prompt("What is the batch_size?: ", default="1")
+        )
         self.__res(opts["batch_size"])
-        opts["num_workers"] = int(prompt("What is the num_workers?: ",
-                                         default="1"))
+        opts["num_workers"] = int(
+            prompt("What is the num_workers?: ", default="1")
+        )
         self.__res(opts["num_workers"])
         stage["data_params"] = opts
 
@@ -278,15 +298,20 @@ class Wizard:
         self.__res(cnt)
         cnt = int(cnt) or 1
         if cnt > 1:
-            res = prompt("Do you want to assign some common settings "
-                         "for all stages? (y/N): ", default="y")
+            res = prompt(
+                "Do you want to assign some common settings "
+                "for all stages? (y/N): ",
+                default="y"
+            )
             self.__res(res)
             if res.lower() == "y":
                 self._stage_step(self._cfg["stages"])
             print(f"\nNow we'll configure all {cnt} stages one-by-one\n")
         for stage_id in range(cnt):
-            name = prompt("What would be the name of this stage: ",
-                          default=f"stage{stage_id + 1}")
+            name = prompt(
+                "What would be the name of this stage: ",
+                default=f"stage{stage_id + 1}"
+            )
             self.__res(name)
             stage = OrderedDict()
             self._stage_step(stage)
@@ -311,13 +336,15 @@ class Wizard:
             expdir = self._cfg["args"]["expdir"]
             if not isinstance(expdir, pathlib.Path):
                 expdir = pathlib.Path(expdir)
-            import_module(expdir)
+            utils.import_module(expdir)
             self.__res(f"Modules from {expdir} exported")
         except OSError:
             print(f"There is no modules to import found: {expdir}")
         except Exception as err:
-            print("Unexpected error when tried to import modules from "
-                  f"{expdir}: {err}")
+            print(
+                "Unexpected error when tried to import modules from "
+                f"{expdir}: {err}"
+            )
 
     def _args_step(self):
         """
@@ -331,12 +358,14 @@ class Wizard:
         self._cfg["args"]["expdir"] = prompt(
             "Provide expdir for your experiment "
             "(where is the `__init__.py` with your modules stored): ",
-            default=str(self.pipeline_path/"src"))
+            default=str(self.pipeline_path / "src")
+        )
         self.__res(self._cfg["args"]["expdir"])
         self._cfg["args"]["logdir"] = prompt(
             "Provide logdir for your experiment "
             "(where Catalyst supposed to save its logs): ",
-            default=str(self.pipeline_path/"logs/experiment"))
+            default=str(self.pipeline_path / "logs/experiment")
+        )
         self.__res(self._cfg["args"]["logdir"])
 
         self.__export_user_modules()
@@ -349,22 +378,29 @@ class Wizard:
         Then pipeline will be copied in requested directory
         """
         self.__sep("Pipeline templates")
-        opts = list(pipeline_urls.keys()) + ["empty"]
+        opts = list(utils.pipelines.URL.keys()) + ["empty"]
         opts = [opt.capitalize() for opt in opts]
         msg = "0: Skip this step\n"
         msg += "\n".join([f"{n + 1}: {v}" for n, v in enumerate(opts)])
         print(msg)
-        res = int(prompt("\nChoose pipeline template you want to init "
-                         "your project from: "))
+        res = int(
+            prompt(
+                "\nChoose pipeline template you want to init "
+                "your project from: "
+            )
+        )
         if res == 0:
             self.__res("Skipped...")
             return
         pipeline = opts[res - 1]
         self.__res(pipeline)
-        out_dir = prompt(f"Where we need to copy {pipeline} "
-                         "template files?: ", default="./")
+        out_dir = prompt(
+            f"Where we need to copy {pipeline} "
+            "template files?: ",
+            default="./"
+        )
         self.pipeline_path = pathlib.Path(out_dir)
-        clone_pipeline(pipeline.lower(), self.pipeline_path)
+        utils.clone_pipeline(pipeline.lower(), self.pipeline_path)
         self.__res(f"{pipeline} cloned to {self.pipeline_path}")
 
     def run(self):

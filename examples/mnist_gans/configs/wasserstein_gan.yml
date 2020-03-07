@@ -55,7 +55,7 @@ stages:
 
   state_params:
     num_epochs: 100
-    main_metric: &reduce_metric loss_g
+    main_metric: &reduced_metric loss_g
     minimize_metric: True
     batch_consistant_metrics: False
 
@@ -97,10 +97,10 @@ stages:
       prefix: loss_d_fake
     loss_d:
       _wrapper: *d_train_wrapper
-      callback: CriterionAggregatorCallback
-      loss_aggregate_fn: "weighted_sum"
+      callback: MetricAggregationCallback
+      mode: "weighted_sum"
       prefix: &loss_d loss_d
-      loss_keys:
+      metrics:
         loss_d_real: -1.0
         loss_d_fake: 1.0
 

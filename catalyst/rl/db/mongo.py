@@ -3,7 +3,6 @@ import time
 
 import gridfs
 import pymongo
-import safitty
 
 from catalyst.rl import utils
 from catalyst.rl.core import DBSpec
@@ -39,9 +38,10 @@ class MongoDB(DBSpec):
     def _set_flag(self, key, value):
         try:
             self._message_collection.replace_one(
-                {"key": key},
-                {"key": key, "value": value},
-                upsert=True
+                {"key": key}, {
+                    "key": key,
+                    "value": value
+                }, upsert=True
             )
         except pymongo.errors.AutoReconnect:
             time.sleep(self._reconnect_timeout)
@@ -49,13 +49,11 @@ class MongoDB(DBSpec):
 
     def _get_flag(self, key, default=None):
         try:
-            flag_obj = self._message_collection.find_one(
-                {"key": {"$eq": key}}
-            )
+            flag_obj = self._message_collection.find_one({"key": {"$eq": key}})
         except pymongo.errors.AutoReconnect:
             time.sleep(self._reconnect_timeout)
             return self._get_flag(key, default)
-        flag = safitty.get(flag_obj, "value", default=default)
+        flag = flag_obj.get("value", default)
         return flag
 
     @property
@@ -182,7 +180,9 @@ class MongoDB(DBSpec):
 
     def del_checkpoint(self):
         id_ = self._checkpoint_collection.find_one(
-            {"filename": "checkpoint"}
+            {
+                "filename": "checkpoint"
+            }
         )._id
         self._checkpoint_collection.delete(id_)
 

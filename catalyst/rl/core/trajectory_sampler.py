@@ -8,7 +8,7 @@ import torch
 
 from catalyst.rl import utils
 from catalyst.rl.utils.buffer import get_buffer
-from catalyst.utils.tools.dynamic_array import DynamicArray
+from catalyst.utils import tools
 from .agent import ActorSpec, CriticSpec
 from .environment import EnvironmentSpec
 from .policy_handler import PolicyHandler
@@ -46,7 +46,7 @@ class TrajectorySampler:
         observations_shape = (None, ) \
             if observations_.dtype.fields is not None \
             else (None,) + tuple(self.env.observation_space.shape)
-        self.observations = DynamicArray(
+        self.observations = tools.DynamicArray(
             array_or_shape=observations_shape,
             capacity=int(self._initial_capacity),
             dtype=observations_dtype
@@ -58,18 +58,18 @@ class TrajectorySampler:
         actions_shape = (None,) \
             if actions_.dtype.fields is not None \
             else (None,) + tuple(self.env.action_space.shape)
-        self.actions = DynamicArray(
+        self.actions = tools.DynamicArray(
             array_or_shape=actions_shape,
             capacity=int(self._initial_capacity),
             dtype=actions_dtype
         )
 
-        self.rewards = DynamicArray(
+        self.rewards = tools.DynamicArray(
             array_or_shape=(None, ),
             dtype=np.float32,
             capacity=int(self._initial_capacity)
         )
-        self.dones = DynamicArray(
+        self.dones = tools.DynamicArray(
             array_or_shape=(None, ),
             dtype=np.bool,
             capacity=int(self._initial_capacity)
@@ -128,7 +128,8 @@ class TrajectorySampler:
 
             if isinstance(exploration_strategy, OrnsteinUhlenbeckProcess):
                 exploration_strategy.reset_state(
-                    self.env.action_space.shape[0])
+                    self.env.action_space.shape[0]
+                )
 
             if isinstance(exploration_strategy, ParameterSpaceNoise) \
                     and len(self.observations) > 1:
