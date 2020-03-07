@@ -124,7 +124,7 @@ class VisdomRunner(AlchemyRunner):
 
 
 class SupervisedVisdomRunner(VisdomRunner, SupervisedRunner):
-    """SupervisedRunner with Alchemy"""
+    """SupervisedRunner with Visdom"""
     pass
 
 
