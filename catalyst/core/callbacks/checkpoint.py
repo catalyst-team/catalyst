@@ -35,8 +35,8 @@ def _load_checkpoint(*, filename, state: _State):
 
         if not state.stage_name.startswith("infer"):
             state.stage_name = checkpoint["stage_name"]
-            state.epoch = checkpoint["epoch"]
-            state.global_epoch = checkpoint["global_epoch"]
+            state.epoch = checkpoint["epoch"] + 1
+            state.global_epoch = checkpoint["global_epoch"] + 1
             # @TODO: should we also load,
             # checkpoint_data, main_metric, minimize_metric, valid_loader ?
             # epoch_metrics, valid_metrics ?
