@@ -336,6 +336,12 @@ class _Runner(ABC):
         state: _State = self.state
 
         self._run_event("on_stage_start")
+
+        # CheckpointCallback has loaded next stage
+        if state.stage_name != stage:
+            self._run_event("on_stage_end")
+            return
+
         while state.epoch < state.num_epochs + 1:
             utils.set_global_seed(
                 self.experiment.initial_seed + state.global_epoch + 1
@@ -350,6 +356,7 @@ class _Runner(ABC):
 
             state.global_epoch += 1
             state.epoch += 1
+
         self._run_event("on_stage_end")
 
     def run_experiment(self, experiment: _Experiment):

@@ -107,6 +107,8 @@ class BaseCheckpointCallback(Callback):
 
 
 class CheckpointCallback(BaseCheckpointCallback):
+    resumed: bool = False
+
     """
     Checkpoint callback to save/restore your model/criterion/optimizer/metrics.
     """
@@ -222,9 +224,11 @@ class CheckpointCallback(BaseCheckpointCallback):
         if self.resume_dir is not None:
             self.resume = str(self.resume_dir) + "/" + str(self.resume)
 
-        if self.resume is not None:
+        if self.resume is not None and not CheckpointCallback.resumed:
+            stage_name = state.stage_name
             _load_checkpoint(filename=self.resume, state=state)
-            self.resume = None
+            if state.stage_name == stage_name:
+                CheckpointCallback.resumed = True
 
     def on_epoch_end(self, state: _State):
         if state.stage_name.startswith("infer"):
