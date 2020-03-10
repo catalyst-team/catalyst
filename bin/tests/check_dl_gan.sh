@@ -46,6 +46,7 @@ assert loss_d < 1.0
 
     rm -rf ${LOGDIR}
 fi
+
 ################################  pipeline 02  ################################
 if [[ "$USE_APEX" == "0" ]]; then
     # conditional Wasserstein GAN-GP (more complicated test)
