@@ -192,7 +192,7 @@
 <span class="sd">                Initial seed for generating random seeds. Default: ``0``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init_seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">init_seed</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> \
-            <span class="sa">f</span><span class="s2">&quot;expected non-negative integer, got </span><span class="si">{init_seed}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;expected non-negative integer, got </span><span class="si">{</span><span class="n">init_seed</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">init_seed</span><span class="p">)</span>
 

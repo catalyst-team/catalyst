@@ -241,12 +241,12 @@
             <span class="k">for</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">metric_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_names</span><span class="p">,</span> <span class="n">metrics</span><span class="p">):</span>
                 <span class="c1"># appending the per-class values</span>
                 <span class="n">metrics_tracker</span><span class="p">[</span><span class="n">prefix</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metric_</span><span class="p">)</span>
-                <span class="n">metric_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{prefix}</span><span class="s2">/class_</span><span class="si">{postfix}</span><span class="s2">&quot;</span>
+                <span class="n">metric_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">/class_</span><span class="si">{</span><span class="n">postfix</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="n">loader_values</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">metric_</span>
         <span class="c1"># averaging the per-class values for each metric</span>
         <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_names</span><span class="p">:</span>
             <span class="n">mean_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">metrics_tracker</span><span class="p">[</span><span class="n">prefix</span><span class="p">]))</span>
-            <span class="n">metric_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{prefix}</span><span class="s2">/_mean&quot;</span>
+            <span class="n">metric_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">/_mean&quot;</span>
             <span class="n">loader_values</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean_value</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_reset_stats</span><span class="p">()</span></div></div>

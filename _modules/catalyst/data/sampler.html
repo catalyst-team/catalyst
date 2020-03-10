@@ -290,7 +290,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">shuffle</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">shuffle</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;per_mini_epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;per_epoch&quot;</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Shuffle must be one of [&#39;per_mini_epoch&#39;, &#39;per_epoch&#39;]. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{shuffle}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="n">shuffle</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_type</span> <span class="o">=</span> <span class="n">shuffle</span>
 

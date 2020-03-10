@@ -229,7 +229,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="o">=</span> <span class="n">logdir</span>
         <span class="k">elif</span> <span class="n">baselogdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">baselogdir</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="n">EXCLUDE_TAG</span><span class="p">:</span>
             <span class="n">logdir_postfix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{baselogdir}</span><span class="s2">/</span><span class="si">{logdir_postfix}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">baselogdir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">logdir_postfix</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -254,10 +254,10 @@
     <span class="k">def</span> <span class="nf">_get_logdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">timestamp</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_utcnow_time</span><span class="p">()</span>
         <span class="n">config_hash</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_short_hash</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-        <span class="n">logdir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{timestamp}</span><span class="s2">.</span><span class="si">{config_hash}</span><span class="s2">&quot;</span>
+        <span class="n">logdir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">config_hash</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">distributed_rank</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">distributed_rank</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">logdir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{logdir}</span><span class="s2">.rank</span><span class="si">{distributed_rank:02d}</span><span class="s2">&quot;</span>
+            <span class="n">logdir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">logdir</span><span class="si">}</span><span class="s2">.rank</span><span class="si">{</span><span class="n">distributed_rank</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">logdir</span>
 
     <span class="nd">@property</span>
@@ -311,7 +311,7 @@
         <span class="n">stage_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">stage_index</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">checkpoint_path</span> <span class="o">=</span> \
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.logdir}</span><span class="s2">/checkpoints/best.pth&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/checkpoints/best.pth&quot;</span>
             <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="p">)</span>
             <span class="n">utils</span><span class="o">.</span><span class="n">unpack_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">model</span>
@@ -421,7 +421,7 @@
         <span class="n">optimizer</span> <span class="o">=</span> <span class="n">OPTIMIZERS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">model_params</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">load_from_previous_stage</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.logdir}</span><span class="s2">/checkpoints/best_full.pth&quot;</span>
+            <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/checkpoints/best_full.pth&quot;</span>
             <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="p">)</span>
 
             <span class="n">dict2load</span> <span class="o">=</span> <span class="n">optimizer</span>
@@ -570,8 +570,8 @@
         <span class="sd">&quot;&quot;&quot;Returns the loaders for a given stage&quot;&quot;&quot;</span>
         <span class="n">data_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;data_params&quot;</span><span class="p">])</span>
 
-        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">data_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;batch_size&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">num_workers</span> <span class="o">=</span> <span class="n">data_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;num_workers&quot;</span><span class="p">)</span>
+        <span class="n">default_batch_size</span> <span class="o">=</span> <span class="n">data_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;batch_size&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">default_num_workers</span> <span class="o">=</span> <span class="n">data_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;num_workers&quot;</span><span class="p">)</span>
         <span class="n">drop_last</span> <span class="o">=</span> <span class="n">data_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;drop_last&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">per_gpu_scaling</span> <span class="o">=</span> <span class="n">data_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;per_gpu_scaling&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">distributed_rank</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()</span>
@@ -582,21 +582,21 @@
         <span class="n">overridden_loaders_params</span> <span class="o">=</span> <span class="n">data_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;loaders_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">overridden_loaders_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;`overridden_loaders_params` should be a Dict. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Got: </span><span class="si">{overridden_loaders_params}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Got: </span><span class="si">{</span><span class="n">overridden_loaders_params</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
         <span class="n">samplers_params</span> <span class="o">=</span> <span class="n">data_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;samplers_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">samplers_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> \
-            <span class="sa">f</span><span class="s2">&quot;`samplers_params` should be a Dict. Got: </span><span class="si">{samplers_params}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;`samplers_params` should be a Dict. Got: </span><span class="si">{</span><span class="n">samplers_params</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="n">loaders</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">ds_</span> <span class="ow">in</span> <span class="n">datasets</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ds_</span><span class="p">,</span> <span class="p">(</span><span class="n">Dataset</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)),</span> \
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{ds_}</span><span class="s2"> should be Dataset or Dict&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ds_</span><span class="si">}</span><span class="s2"> should be Dataset or Dict&quot;</span>
 
             <span class="n">overridden_loader_params</span> <span class="o">=</span> <span class="n">overridden_loaders_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">{})</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">overridden_loader_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> \
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{overridden_loader_params}</span><span class="s2"> should be Dict&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">overridden_loader_params</span><span class="si">}</span><span class="s2"> should be Dict&quot;</span>
 
             <span class="n">sampler_params</span> <span class="o">=</span> <span class="n">samplers_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">sampler_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -609,9 +609,10 @@
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ds_</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;sampler&quot;</span> <span class="ow">in</span> <span class="n">ds_</span><span class="p">:</span>
                     <span class="n">ds_</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-            <span class="n">batch_size</span> <span class="o">=</span> <span class="n">overridden_loader_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;batch_size&quot;</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
+            <span class="n">batch_size</span> <span class="o">=</span> <span class="n">overridden_loader_params</span><span class="o">.</span>\
+                <span class="n">pop</span><span class="p">(</span><span class="s2">&quot;batch_size&quot;</span><span class="p">,</span> <span class="n">default_batch_size</span><span class="p">)</span>
             <span class="n">num_workers</span> <span class="o">=</span> <span class="n">overridden_loader_params</span><span class="o">.</span>\
-                <span class="n">pop</span><span class="p">(</span><span class="s2">&quot;num_workers&quot;</span><span class="p">,</span> <span class="n">num_workers</span><span class="p">)</span>
+                <span class="n">pop</span><span class="p">(</span><span class="s2">&quot;num_workers&quot;</span><span class="p">,</span> <span class="n">default_num_workers</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">per_gpu_scaling</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">distributed</span><span class="p">:</span>
                 <span class="n">num_gpus</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">())</span>
@@ -638,8 +639,7 @@
             <span class="k">if</span> <span class="n">distributed</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">sampler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">DistributedSampler</span><span class="p">):</span>
-                        <span class="n">loader_params</span><span class="p">[</span><span class="s2">&quot;sampler&quot;</span><span class="p">]</span> <span class="o">=</span> \
-                            <span class="n">DistributedSamplerWrapper</span><span class="p">(</span><span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">)</span>
+                        <span class="n">sampler</span> <span class="o">=</span> <span class="n">DistributedSamplerWrapper</span><span class="p">(</span><span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">sampler</span> <span class="o">=</span> <span class="n">DistributedSampler</span><span class="p">(</span>
                         <span class="n">dataset</span><span class="o">=</span><span class="n">loader_params</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>

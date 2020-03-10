@@ -264,7 +264,7 @@
 
             <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_neptune_experiment</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;batch_</span><span class="si">{mode}</span><span class="s2">_</span><span class="si">{name}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">value</span>
+                    <span class="sa">f</span><span class="s2">&quot;batch_</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">value</span>
                 <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_run_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
@@ -278,7 +278,7 @@
             <span class="k">for</span> <span class="n">mode</span><span class="p">,</span> <span class="n">metrics</span> <span class="ow">in</span> <span class="n">mode_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_neptune_experiment</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;epoch_</span><span class="si">{mode}</span><span class="s2">_</span><span class="si">{name}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">value</span>
+                        <span class="sa">f</span><span class="s2">&quot;epoch_</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">value</span>
                     <span class="p">)</span>
 
 <div class="viewcode-block" id="NeptuneRunner.run_experiment"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.runner.neptune.NeptuneRunner.run_experiment">[docs]</a>    <span class="k">def</span> <span class="nf">run_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment</span><span class="p">:</span> <span class="n">Experiment</span><span class="p">):</span>
