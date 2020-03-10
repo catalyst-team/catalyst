@@ -16,6 +16,15 @@ from catalyst.utils.tools.typing import (
 )
 
 
+def is_torch_distributed_initialized() -> bool:
+    """
+    Checks if torch.distributed is available and initialized
+    """
+    return (
+        torch.distributed.is_available() and torch.distributed.is_initialized()
+    )
+
+
 def get_rank() -> int:
     """
     Returns the rank of the current worker.
@@ -24,15 +33,16 @@ def get_rank() -> int:
          int: ``rank`` if torch.distributed is initialized,
               otherwise ``-1``
     """
-    if not torch.distributed.is_available():
-        return -1
-    if torch.distributed.is_initialized():
+    if is_torch_distributed_initialized():
         return torch.distributed.get_rank()
     else:
         return -1
 
 
 def is_apex_available() -> bool:
+    """
+    Checks if apex is available
+    """
     env_apex = os.getenv("USE_APEX", "1") == "1"
     try:
         import apex  # noqa: F401
@@ -54,8 +64,10 @@ def assert_fp16_available() -> None:
 
 
 def distributed_mean(value: float):
-    if torch.distributed.is_available() \
-            and torch.distributed.is_initialized():
+    """
+    Computes distributed mean among all nodes
+    """
+    if is_torch_distributed_initialized():
         value = torch.tensor(
             value,
             dtype=torch.float,
@@ -126,6 +138,14 @@ def get_distributed_env(
 
 
 def distributed_run(distributed, worker_fn, *args, **kwargs):
+    """
+    Distributed run
+    Args:
+        distributed:
+        worker_fn:
+        args:
+        kwargs:
+    """
     distributed_params = get_distributed_params()
     local_rank = distributed_params["local_rank"]
     world_size = distributed_params["world_size"]
