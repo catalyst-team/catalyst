@@ -90,8 +90,8 @@ class MetricCallback(_MetricCallback):
         self,
         prefix: str,
         metric_fn: Callable,
-        input_key: str = "targets",
-        output_key: str = "logits",
+        input_key: Union[str, List[str], Dict[str, str]] = "targets",
+        output_key: Union[str, List[str], Dict[str, str]] = "logits",
         multiplier: float = 1.0,
         **metric_kwargs,
     ):
@@ -118,8 +118,8 @@ class MultiMetricCallback(MetricCallback):
         prefix: str,
         metric_fn: Callable,
         list_args: List,
-        input_key: str = "targets",
-        output_key: str = "logits",
+        input_key: Union[str, List[str], Dict[str, str]] = "targets",
+        output_key: Union[str, List[str], Dict[str, str]] = "logits",
         multiplier: float = 1.0,
         **metrics_kwargs,
     ):

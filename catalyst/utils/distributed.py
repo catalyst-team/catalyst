@@ -24,6 +24,8 @@ def get_rank() -> int:
          int: ``rank`` if torch.distributed is initialized,
               otherwise ``-1``
     """
+    if not torch.distributed.is_available():
+        return -1
     if torch.distributed.is_initialized():
         return torch.distributed.get_rank()
     else:
@@ -52,7 +54,8 @@ def assert_fp16_available() -> None:
 
 
 def distributed_mean(value: float):
-    if torch.distributed.is_initialized():
+    if torch.distributed.is_available() \
+            and torch.distributed.is_initialized():
         value = torch.tensor(
             value,
             dtype=torch.float,
