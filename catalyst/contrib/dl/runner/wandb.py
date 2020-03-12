@@ -161,7 +161,6 @@ class WandbRunner(Runner):
 
 class SupervisedWandbRunner(WandbRunner, SupervisedRunner):
     """SupervisedRunner with WandB"""
-    pass
 
 
 __all__ = ["WandbRunner", "SupervisedWandbRunner"]
