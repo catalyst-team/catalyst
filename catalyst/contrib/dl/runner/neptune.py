@@ -53,7 +53,7 @@ class NeptuneRunner(Runner):
                 ...
                 monitoring_params={
                     "init": {
-                        "project_qualified_name": "shared/catalyst-integration",
+                       "project_qualified_name": "shared/catalyst-integration",
                         "api_token": "ANONYMOUS",  # api key,
                     },
                     ...

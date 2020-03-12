@@ -1,5 +1,6 @@
-import neptune
 from typing import Dict, List  # isort:skip
+
+import neptune
 
 from catalyst.core import (
     _State, Callback, CallbackNode, CallbackOrder, CallbackType
