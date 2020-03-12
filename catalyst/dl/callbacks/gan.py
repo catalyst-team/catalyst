@@ -1,7 +1,7 @@
-from typing import Any, Callable, Dict, List, Optional, Union  # isort:skip
+from typing import Dict, List  # isort:skip
 
 from catalyst.core import CriterionCallback, OptimizerCallback
-from catalyst.dl import Callback, CallbackOrder, State
+from catalyst.dl import MetricCallback, State
 
 
 """
@@ -9,57 +9,7 @@ MetricCallbacks alternatives for input/output keys
 """
 
 
-class MultiKeyMetricCallback(Callback):
-    """
-    A callback that returns single metric on `state.on_batch_end`
-    """
-
-    # TODO:
-    #  merge it with MetricCallback in catalyst.core
-    #  maybe after the changes with CriterionCallback will be finalized
-    #  in the main repo
-    def __init__(
-        self,
-        prefix: str,
-        metric_fn: Callable,
-        input_key: Optional[Union[str, List[str]]] = "targets",
-        output_key: Optional[Union[str, List[str]]] = "logits",
-        **metric_params
-    ):
-        """
-
-        :param prefix:
-        :param metric_fn:
-        :param input_key:
-        :param output_key:
-        :param metric_params:
-        """
-        super().__init__(CallbackOrder.Metric)
-        self.prefix = prefix
-        self.metric_fn = metric_fn
-        self.input_key = input_key
-        self.output_key = output_key
-        self.metric_params = metric_params
-
-    @staticmethod
-    def _get(dictionary: dict, keys: Optional[Union[str, List[str]]]) -> Any:
-        if keys is None:
-            result = dictionary
-        elif isinstance(keys, list):
-            result = {key: dictionary[key] for key in keys}
-        else:
-            result = dictionary[keys]
-        return result
-
-    def on_batch_end(self, state: State):
-        """On batch end call"""
-        outputs = self._get(state.batch_out, self.output_key)
-        targets = self._get(state.batch_in, self.input_key)
-        metric = self.metric_fn(outputs, targets, **self.metric_params)
-        state.batch_metrics[self.prefix] = metric
-
-
-class WassersteinDistanceCallback(MultiKeyMetricCallback):
+class WassersteinDistanceCallback(MetricCallback):
     """
     Callback to compute Wasserstein distance metric
     """
@@ -67,7 +17,8 @@ class WassersteinDistanceCallback(MultiKeyMetricCallback):
         self,
         prefix: str = "wasserstein_distance",
         real_validity_output_key: str = "real_validity",
-        fake_validity_output_key: str = "fake_validity"
+        fake_validity_output_key: str = "fake_validity",
+        multiplier: float = 1.0,
     ):
         """
 
@@ -78,21 +29,18 @@ class WassersteinDistanceCallback(MultiKeyMetricCallback):
         super().__init__(
             prefix,
             metric_fn=self.get_wasserstein_distance,
-            input_key=None,
-            output_key=[real_validity_output_key, fake_validity_output_key]
+            input_key={},
+            output_key={
+                real_validity_output_key: "real_validity",
+                fake_validity_output_key: "fake_validity"
+            },
+            multiplier=multiplier
         )
-        self.real_validity_key = real_validity_output_key
-        self.fake_validity_key = fake_validity_output_key
 
-    def get_wasserstein_distance(self, outputs, targets):
+    def get_wasserstein_distance(self, real_validity, fake_validity):
         """
         Computes Wasserstein distance
-        :param outputs:
-        :param targets:
-        :return:
         """
-        real_validity = outputs[self.real_validity_key]
-        fake_validity = outputs[self.fake_validity_key]
         return real_validity.mean() - fake_validity.mean()
 
 
@@ -115,7 +63,7 @@ class GradientPenaltyCallback(CriterionCallback):
         real_data_criterion_key: str = "real_data",
         fake_data_criterion_key: str = "fake_data",
         condition_args_criterion_key: str = "critic_condition_args",
-        loss_key: str = "loss",
+        prefix: str = "loss",
         criterion_key: str = None,
         multiplier: float = 1.0,
     ):
@@ -130,14 +78,14 @@ class GradientPenaltyCallback(CriterionCallback):
         :param fake_data_criterion_key: key for fake data in criterion
         :param condition_args_criterion_key: key for all condition args
             in criterion
-        :param loss_key:
+        :param prefix:
         :param criterion_key:
         :param multiplier:
         """
         super().__init__(
             input_key=real_input_key,
             output_key=fake_output_key,
-            prefix=loss_key,
+            prefix=prefix,
             criterion_key=criterion_key,
             multiplier=multiplier
         )
@@ -148,7 +96,7 @@ class GradientPenaltyCallback(CriterionCallback):
         self.fake_data_criterion_key = fake_data_criterion_key
         self.condition_args_criterion_key = condition_args_criterion_key
 
-    def _compute_loss(self, state: State, criterion):
+    def _compute_metric(self, state: State):
         criterion_kwargs = {
             self.real_data_criterion_key: state.batch_in[self.input_key],
             self.fake_data_criterion_key: state.batch_out[self.output_key],
@@ -157,6 +105,7 @@ class GradientPenaltyCallback(CriterionCallback):
                 state.batch_in[key] for key in self.condition_keys
             ]
         }
+        criterion = state.get_attr("criterion", self.criterion_key)
         return criterion(**criterion_kwargs)
 
 

@@ -476,8 +476,7 @@ class ConfigExperiment(Experiment):
             if distributed:
                 if sampler is not None:
                     if not isinstance(sampler, DistributedSampler):
-                        loader_params["sampler"] = \
-                            DistributedSamplerWrapper(sampler=sampler)
+                        sampler = DistributedSamplerWrapper(sampler=sampler)
                 else:
                     sampler = DistributedSampler(
                         dataset=loader_params["dataset"]
