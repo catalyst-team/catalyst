@@ -5,7 +5,6 @@ import os
 from .cutmix_callback import CutmixCallback
 from .knn import KNNMetricCallback
 from .telegram_logger import TelegramLogger
-from .neptune import NeptuneLogger
 
 logger = logging.getLogger(__name__)
 
