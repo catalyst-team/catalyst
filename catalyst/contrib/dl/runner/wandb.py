@@ -150,7 +150,7 @@ class WandbRunner(Runner):
 
     def run_experiment(self, experiment: Experiment):
         """Starts experiment
-        
+
         Args:
             experiment (Experiment): experiment class
         """
