@@ -31,8 +31,8 @@ class NeptuneRunner(Runner):
                 verbose=True,
                 monitoring_params={
                     "init": {
-                        "project_qualified_name": "shared/catalyst-integration",
-                        "api_token": "ANONYMOUS",  # api key,
+                       "project_qualified_name": "shared/catalyst-integration",
+                       "api_token": "ANONYMOUS",  # api key,
                     },
                     "create_experiment": {
                         "name": "catalyst-example", # experiment name

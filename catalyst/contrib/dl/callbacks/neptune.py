@@ -98,16 +98,16 @@ class NeptuneLogger(Callback):
             self.epoch_log_suffix = "_epoch"
 
         if offline_mode:
-            neptune.init(project_qualified_name='dry-run/project',
+            neptune.init(project_qualified_name="dry-run/project",
                          backend=neptune.OfflineBackend())
         else:
             neptune.init(
-                api_token=logging_params['api_token'],
-                project_qualified_name=logging_params['project_name'],
+                api_token=logging_params["api_token"],
+                project_qualified_name=logging_params["project_name"],
             )
 
-        logging_params.pop('api_token')
-        logging_params.pop('project_name')
+        logging_params.pop("api_token")
+        logging_params.pop("project_name")
 
         self.experiment = neptune.create_experiment(**logging_params)
 
