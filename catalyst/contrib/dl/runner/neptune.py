@@ -32,7 +32,7 @@ class NeptuneRunner(Runner):
                 monitoring_params={
                     "init": {
                         "project_qualified_name": "shared/catalyst-integration",
-                        "api_token": "ANONYMOUS",  # api key, keep in NEPTUNE_API_TOKEN
+                        "api_token": "ANONYMOUS",  # api key,
                     },
                     "create_experiment": {
                         "name": "catalyst-example", # experiment name
@@ -46,14 +46,15 @@ class NeptuneRunner(Runner):
         You can see an example experiment here:
         https://ui.neptune.ai/o/shared/org/catalyst-integration/e/CAT-3/logs
 
-        Also, you can log your experiments there without registering, just use "ANONYMOUS" token::
+        You can log your experiments there without registering.
+        Just use "ANONYMOUS" token::
 
             runner.train(
                 ...
                 monitoring_params={
                     "init": {
                         "project_qualified_name": "shared/catalyst-integration",
-                        "api_token": "ANONYMOUS",  # api key, keep in NEPTUNE_API_TOKEN
+                        "api_token": "ANONYMOUS",  # api key,
                     },
                     ...
                 })
