@@ -149,12 +149,18 @@ class WandbRunner(Runner):
             wandb.log(commit=True)
 
     def run_experiment(self, experiment: Experiment):
+        """Starts experiment
+        
+        Args:
+            experiment (Experiment): experiment class
+        """
         self._pre_experiment_hook(experiment=experiment)
         super().run_experiment(experiment=experiment)
         self._post_experiment_hook(experiment=experiment)
 
 
 class SupervisedWandbRunner(WandbRunner, SupervisedRunner):
+    """SupervisedRunner with WandB"""
     pass
 
 
