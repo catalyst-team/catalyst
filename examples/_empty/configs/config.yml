@@ -13,7 +13,7 @@ stages:
 
   state_params:
     num_epochs: 2  # CHANGE ME
-    main_metric: &reduce_metric loss  # loss for scheduler and checkpoint saver
+    main_metric: &reduced_metric loss  # loss for scheduler and checkpoint saver
     minimize_metric: True  # Change if you change `main_metric`
 
   criterion_params:
@@ -31,7 +31,7 @@ stages:
       callback: OptimizerCallback
     scheduler:
       callback: SchedulerCallback
-      reduce_metric: *reduce_metric
+      reduced_metric: *reduced_metric
     saver:
       callback: CheckpointCallback
 

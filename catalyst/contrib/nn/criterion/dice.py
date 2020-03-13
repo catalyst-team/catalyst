@@ -2,7 +2,7 @@ from functools import partial
 
 import torch.nn as nn
 
-from catalyst.utils import criterion
+from catalyst.utils import metrics
 
 
 class DiceLoss(nn.Module):
@@ -15,10 +15,7 @@ class DiceLoss(nn.Module):
         super().__init__()
 
         self.loss_fn = partial(
-            criterion.dice,
-            eps=eps,
-            threshold=threshold,
-            activation=activation
+            metrics.dice, eps=eps, threshold=threshold, activation=activation
         )
 
     def forward(self, logits, targets):

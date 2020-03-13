@@ -11,7 +11,7 @@ def get_key_str(
     key: Optional[Union[str, List[str]]],
 ) -> Any:
     """
-    Takes value from dict by key.
+    Returns value from dict by key.
 
     Args:
         dictionary: dict
@@ -28,7 +28,7 @@ def get_key_list(
     key: Optional[Union[str, List[str]]],
 ) -> Dict:
     """
-    Takes sub-dict from dict by list of keys.
+    Returns sub-dict from dict by list of keys.
 
     Args:
         dictionary: dict
@@ -46,7 +46,7 @@ def get_key_dict(
     key: Optional[Union[str, List[str]]],
 ) -> Dict:
     """
-    Takes sub-dict from dict by dict-mapping of keys.
+    Returns sub-dict from dict by dict-mapping of keys.
 
     Args:
         dictionary: dict
@@ -64,7 +64,23 @@ def get_key_none(
     key: Optional[Union[str, List[str]]],
 ) -> Dict:
     """
-    Takes whole dict.
+    Returns empty dict.
+    Args:
+        dictionary: dict
+        key: none
+
+    Returns:
+        dict
+    """
+    return {}
+
+
+def get_key_all(
+    dictionary: dict,
+    key: Optional[Union[str, List[str]]],
+) -> Dict:
+    """
+    Returns whole dict.
     Args:
         dictionary: dict
         key: none
@@ -87,13 +103,18 @@ def get_dictkey_auto_fn(key: Optional[Union[str, List[str]]]) -> Callable:
         function
     """
     if isinstance(key, str):
-        return get_key_str
+        if key == "__all__":
+            return get_key_all
+        else:
+            return get_key_str
     elif isinstance(key, (list, tuple)):
         return get_key_list
     elif isinstance(key, dict):
         return get_key_dict
-    else:
+    elif key is None:
         return get_key_none
+    else:
+        raise NotImplementedError()
 
 
 def merge_dicts(*dicts: dict) -> dict:
@@ -162,3 +183,20 @@ def flatten_dict(
         else:
             items.append((new_key, value))
     return collections.OrderedDict(items)
+
+
+def split_dict_to_subdicts(dct: Dict, prefixes: List, extra_key: str):
+    subdicts = {}
+    extra_subdict = {
+        k: v
+        for k, v in dct.items()
+        if all(not k.startswith(prefix) for prefix in prefixes)
+    }
+    if len(extra_subdict) > 0:
+        subdicts[extra_key] = extra_subdict
+    for prefix in prefixes:
+        subdicts[prefix] = {
+            k.replace(f"{prefix}_", ""): v
+            for k, v in dct.items() if k.startswith(prefix)
+        }
+    return subdicts

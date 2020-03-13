@@ -156,7 +156,7 @@ setup(
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
         # Topics
-        "Topic :: Scientific/Engineering :: Artificial Intelligence"
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "Topic :: Scientific/Engineering :: Image Recognition",
         "Topic :: Scientific/Engineering :: Information Analysis",
         # Programming

@@ -16,6 +16,6 @@ __all__ = [
     "Criterion",
     "Optimizer",
     "Scheduler",
-    "Device",
     "Dataset",
+    "Device",
 ]

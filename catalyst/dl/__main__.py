@@ -2,7 +2,7 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
 
 from catalyst.__version__ import __version__
-from .scripts import init, run, trace
+from catalyst.dl.scripts import init, run, trace
 
 COMMANDS = OrderedDict([
     ("init", init),

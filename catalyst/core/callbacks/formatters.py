@@ -1,3 +1,5 @@
+from typing import Dict  # isort:skip
+
 from abc import ABC, abstractmethod
 from datetime import datetime
 import json
@@ -52,8 +54,7 @@ class TxtMetricsFormatter(MetricsFormatter):
         """
         super().__init__("[{asctime}] ")
 
-    def _format_metrics(self, metrics):
-        # metrics : dict[str: dict[str: float]]
+    def _format_metrics(self, metrics: Dict[str, Dict[str, float]]):
         metrics_formatted = {}
         for key, value in metrics.items():
             metrics_formatted_ = [
@@ -67,11 +68,16 @@ class TxtMetricsFormatter(MetricsFormatter):
 
     def _format_message(self, state: _State):
         message = [""]
-        metrics = self._format_metrics(state.metric_manager.epoch_values)
+        mode_metrics = utils.split_dict_to_subdicts(
+            dct=state.epoch_metrics,
+            prefixes=list(state.loaders.keys()),
+            extra_key="_base",
+        )
+        metrics = self._format_metrics(mode_metrics)
         for key, value in metrics.items():
             message.append(
-                f"{state.stage_epoch_log}/{state.num_epochs} "
-                f"* Epoch {state.epoch_log} ({key}): {value}"
+                f"{state.epoch}/{state.num_epochs} "
+                f"* Epoch {state.global_epoch} ({key}): {value}"
             )
         message = "\n".join(message)
         return message
@@ -96,8 +102,8 @@ class JsonMetricsFormatter(MetricsFormatter):
 
     def _format_message(self, state: _State):
         res = dict(
-            metirics=state.metric_manager.epoch_values.copy(),
-            epoch=state.epoch,
+            metirics=state.epoch_metrics.copy(),
+            epoch=state.global_epoch,
             time=datetime.now().isoformat()
         )
         return json.dumps(res, indent=True, ensure_ascii=False)

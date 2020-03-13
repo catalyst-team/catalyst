@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Mapping
+from typing import Any, List, Mapping
 
 import numpy as np
 
@@ -41,17 +41,19 @@ class RLRunner(_Runner):
     def _run_batch_train_step(self, batch: Mapping[str, Any]):
         # todo: should implement different training steps
         #  for different algorithms
-        metrics: Dict = self.algorithm.train_on_batch(
-            batch,
-            actor_update=(self.state.step % self.state.actor_grad_period == 0),
-            critic_update=(
-                self.state.step % self.state.critic_grad_period == 0
-            ),
-        ) or {}
+        pass
+        # metrics: Dict = self.algorithm.train_on_batch(
+        #     batch,
+        #     actor_update=(
+        #     self.state.step % self.state.actor_grad_period == 0),
+        #     critic_update=(
+        #         self.state.step % self.state.critic_grad_period == 0
+        #     ),
+        # ) or {}
 
-        metrics_ = self._update_target_weights(self.state.step) or {}
-        metrics.update(**metrics_)
-        self.state.metric_manager.add_batch_value(metrics_dict=metrics)
+        # metrics_ = self._update_target_weights(self.state.step) or {}
+        # metrics.update(**metrics_)
+        # self.state.metric_manager.add_batch_value(metrics_dict=metrics)
 
     def forward(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
         # todo: should implement different policy -> action

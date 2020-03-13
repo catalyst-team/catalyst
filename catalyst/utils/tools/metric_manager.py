@@ -1,38 +1,9 @@
 from typing import Any, Dict  # isort:skip
 from collections import defaultdict
 from numbers import Number
-from time import time
 
 from catalyst import utils
 from catalyst.utils import meters
-
-
-class TimerManager:
-    def __init__(self):
-        self._starts = {}
-        self.elapsed = {}
-
-    def start(self, name: str) -> None:
-        """Starts timer ``name``
-        Args:
-            name (str): name of a timer
-        """
-        self._starts[name] = time()
-
-    def stop(self, name: str) -> None:
-        """Stops timer ``name``
-        Args:
-            name (str): name of a timer
-        """
-        assert name in self._starts, f"Timer '{name}' wasn't started"
-
-        self.elapsed[name] = time() - self._starts[name]
-        del self._starts[name]
-
-    def reset(self) -> None:
-        """Reset all previous timers"""
-        self.elapsed = {}
-        self._starts = {}
 
 
 class MetricManager:
@@ -141,4 +112,4 @@ class MetricManager:
             self._batch_values[metric_name] = metric_value
 
 
-__all__ = ["TimerManager", "MetricManager"]
+__all__ = ["MetricManager"]

@@ -66,10 +66,10 @@ stages:
         prefix: loss_bce
         criterion_key: bce
       loss_aggregator:
-        callback: CriterionAggregatorCallback
+        callback: MetricAggregationCallback
         prefix: loss
-        loss_aggregate_fn: weighted_sum
-        loss_keys: {"loss_dice": 1.0, "loss_iou": 1.0, "loss_bce": 0.8}
+        mode: weighted_sum
+        metrics: {"loss_dice": 1.0, "loss_iou": 1.0, "loss_bce": 0.8}
 
       dice:
         callback: DiceCallback

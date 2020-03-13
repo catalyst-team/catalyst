@@ -4,7 +4,6 @@ import os
 import re
 
 import numpy as np
-import safitty
 
 import torch
 from torch import nn
@@ -78,9 +77,9 @@ def get_optimizer_momentum(optimizer: Optimizer) -> float:
     Returns:
         float: momentum at first param group
     """
-    beta = safitty.get(optimizer.param_groups, 0, "betas", 0)
-    momentum = safitty.get(optimizer.param_groups, 0, "momentum")
-    return beta if beta is not None else momentum
+    betas = optimizer.param_groups[0].get("betas", None)
+    momentum = optimizer.param_groups[0].get("momentum", None)
+    return betas[0] if betas is not None else momentum
 
 
 def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
@@ -93,15 +92,13 @@ def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
         index (int, optional): integer index of optimizer's param groups,
             default is 0
     """
-    betas = safitty.get(optimizer.param_groups, index, "betas")
-    momentum = safitty.get(optimizer.param_groups, index, "momentum")
+    betas = optimizer.param_groups[0].get("betas", None)
+    momentum = optimizer.param_groups[0].get("momentum", None)
     if betas is not None:
         _, beta = betas
-        safitty.set(
-            optimizer.param_groups, index, "betas", value=(value, beta)
-        )
+        optimizer.param_groups[index]["betas"] = (value, beta)
     elif momentum is not None:
-        safitty.set(optimizer.param_groups, index, "momentum", value=value)
+        optimizer.param_groups[index]["momentum"] = value
 
 
 def get_device() -> torch.device:
