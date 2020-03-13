@@ -31,9 +31,9 @@ class NeptuneRunner(Runner):
                 verbose=True,
                 monitoring_params={
                     "init": {
-                    "project_qualified_name": "neptune-ai/catalyst",
-                    "api_token": os.getenv('NEPTUNE_API_TOKEN'), # api key
-                },
+                       "project_qualified_name": "shared/catalyst-integration",
+                       "api_token": "ANONYMOUS",  # api key,
+                    },
                     "create_experiment": {
                         "name": "catalyst-example", # experiment name
                         "params": {"epoch_nr":10}, # immutable
@@ -42,6 +42,23 @@ class NeptuneRunner(Runner):
                         "upload_source_files": ["**/*.py"] # grep-like
                     }
                 })
+
+        You can see an example experiment here:
+        https://ui.neptune.ai/o/shared/org/catalyst-integration/e/CAT-3/logs
+
+        You can log your experiments there without registering.
+        Just use "ANONYMOUS" token::
+
+            runner.train(
+                ...
+                monitoring_params={
+                    "init": {
+                       "project_qualified_name": "shared/catalyst-integration",
+                        "api_token": "ANONYMOUS",  # api key,
+                    },
+                    ...
+                })
+
     """
     def _init(
         self,

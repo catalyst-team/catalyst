@@ -18,3 +18,14 @@ except ImportError as ex:
     )
     if os.environ.get("USE_ALCHEMY", "0") == "1":
         raise ex
+
+try:
+    import neptune
+    from .neptune import NeptuneLogger
+except ImportError as ex:
+    if os.environ.get("USE_NEPTUNE", "0") == "1":
+        logger.warning(
+            "neptune not available, to install neptune, "
+            "run `pip install neptune-client`."
+        )
+        raise ex
