@@ -1452,9 +1452,9 @@ Read about Neptune here <a class="reference external" href="https://neptune.ai">
     <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">monitoring_params</span><span class="o">=</span><span class="p">{</span>
         <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;project_qualified_name&quot;</span><span class="p">:</span> <span class="s2">&quot;neptune-ai/catalyst&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;api_token&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;NEPTUNE_API_TOKEN&#39;</span><span class="p">),</span> <span class="c1"># api key</span>
-    <span class="p">},</span>
+           <span class="s2">&quot;project_qualified_name&quot;</span><span class="p">:</span> <span class="s2">&quot;shared/catalyst-integration&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;api_token&quot;</span><span class="p">:</span> <span class="s2">&quot;ANONYMOUS&quot;</span><span class="p">,</span>  <span class="c1"># api key,</span>
+        <span class="p">},</span>
         <span class="s2">&quot;create_experiment&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;catalyst-example&quot;</span><span class="p">,</span> <span class="c1"># experiment name</span>
             <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;epoch_nr&quot;</span><span class="p">:</span><span class="mi">10</span><span class="p">},</span> <span class="c1"># immutable</span>
@@ -1462,6 +1462,21 @@ Read about Neptune here <a class="reference external" href="https://neptune.ai">
             <span class="s2">&quot;tags&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;resnet&quot;</span><span class="p">,</span> <span class="s2">&quot;no-augmentations&quot;</span><span class="p">],</span>
             <span class="s2">&quot;upload_source_files&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;**/*.py&quot;</span><span class="p">]</span> <span class="c1"># grep-like</span>
         <span class="p">}</span>
+    <span class="p">})</span>
+</pre></div>
+</div>
+<p>You can see an example experiment here:
+<a class="reference external" href="https://ui.neptune.ai/o/shared/org/catalyst-integration/e/CAT-3/logs">https://ui.neptune.ai/o/shared/org/catalyst-integration/e/CAT-3/logs</a></p>
+<p>You can log your experiments there without registering.
+Just use “ANONYMOUS” token:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="o">...</span>
+    <span class="n">monitoring_params</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;init&quot;</span><span class="p">:</span> <span class="p">{</span>
+           <span class="s2">&quot;project_qualified_name&quot;</span><span class="p">:</span> <span class="s2">&quot;shared/catalyst-integration&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;api_token&quot;</span><span class="p">:</span> <span class="s2">&quot;ANONYMOUS&quot;</span><span class="p">,</span>  <span class="c1"># api key,</span>
+        <span class="p">},</span>
+        <span class="o">...</span>
     <span class="p">})</span>
 </pre></div>
 </div>

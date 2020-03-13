@@ -194,9 +194,9 @@
 <span class="sd">                verbose=True,</span>
 <span class="sd">                monitoring_params={</span>
 <span class="sd">                    &quot;init&quot;: {</span>
-<span class="sd">                    &quot;project_qualified_name&quot;: &quot;neptune-ai/catalyst&quot;,</span>
-<span class="sd">                    &quot;api_token&quot;: os.getenv(&#39;NEPTUNE_API_TOKEN&#39;), # api key</span>
-<span class="sd">                },</span>
+<span class="sd">                       &quot;project_qualified_name&quot;: &quot;shared/catalyst-integration&quot;,</span>
+<span class="sd">                       &quot;api_token&quot;: &quot;ANONYMOUS&quot;,  # api key,</span>
+<span class="sd">                    },</span>
 <span class="sd">                    &quot;create_experiment&quot;: {</span>
 <span class="sd">                        &quot;name&quot;: &quot;catalyst-example&quot;, # experiment name</span>
 <span class="sd">                        &quot;params&quot;: {&quot;epoch_nr&quot;:10}, # immutable</span>
@@ -205,6 +205,23 @@
 <span class="sd">                        &quot;upload_source_files&quot;: [&quot;**/*.py&quot;] # grep-like</span>
 <span class="sd">                    }</span>
 <span class="sd">                })</span>
+
+<span class="sd">        You can see an example experiment here:</span>
+<span class="sd">        https://ui.neptune.ai/o/shared/org/catalyst-integration/e/CAT-3/logs</span>
+
+<span class="sd">        You can log your experiments there without registering.</span>
+<span class="sd">        Just use &quot;ANONYMOUS&quot; token::</span>
+
+<span class="sd">            runner.train(</span>
+<span class="sd">                ...</span>
+<span class="sd">                monitoring_params={</span>
+<span class="sd">                    &quot;init&quot;: {</span>
+<span class="sd">                       &quot;project_qualified_name&quot;: &quot;shared/catalyst-integration&quot;,</span>
+<span class="sd">                        &quot;api_token&quot;: &quot;ANONYMOUS&quot;,  # api key,</span>
+<span class="sd">                    },</span>
+<span class="sd">                    ...</span>
+<span class="sd">                })</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
