@@ -70,7 +70,7 @@ assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
 assert metrics['stage1.2']['loss'] < 2.1
 """
 
-if [[ "$USE_DDP" == "0" ]]; then
+if [[ "$USE_DDP" != "1" ]]; then
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
       python catalyst/dl/scripts/run.py \
       --expdir=${EXPDIR} \
@@ -183,7 +183,7 @@ rm -rf ${LOGDIR}
 
 
 ################################  pipeline 06  ################################
-if [[ "$USE_DDP" == "0" ]]; then
+if [[ "$USE_DDP" != "1" ]]; then
     echo 'pipeline 06 - LrFinder'
     EXPDIR=./examples/_tests_cv_classification
     LOGDIR=./examples/logs/_tests_cv_classification
@@ -298,7 +298,7 @@ rm -rf ${LOGDIR}
 
 
 ################################  pipeline 14  ################################
-if [[ "$USE_DDP" == "0" ]]; then
+if [[ "$USE_DDP" != "1" ]]; then
     echo 'pipeline 14'
     EXPDIR=./examples/_tests_cv_classification_transforms
     LOGDIR=./examples/logs/_tests_cv_classification_transforms
