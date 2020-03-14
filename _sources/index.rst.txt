@@ -1,25 +1,6 @@
 Catalyst
 ======================================
 
-.. image:: http://66.248.205.49:8111/app/rest/builds/buildType:id:Catalyst_Deploy/statusIcon.svg
-    :target: http://66.248.205.49:8111/project.html?projectId=Catalyst&tab=projectOverview&guest=1
-    :alt: Build Status
-
-.. image:: https://img.shields.io/github/license/catalyst-team/catalyst.svg
-    :alt: License
-
-.. image:: https://img.shields.io/pypi/v/catalyst.svg
-    :target: https://pypi.org/project/catalyst/
-    :alt: Pipi version
-
-.. image:: https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v
-    :target: https://catalyst-team.github.io/catalyst/index.html
-    :alt: Docs
-
-.. image:: https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/third_party_pics/patreon.png
-    :target: https://www.patreon.com/catalyst_team
-    :alt: Donate
-
 .. image:: https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png
     :target: https://github.com/catalyst-team/catalyst
     :alt: Catalyst logo
@@ -75,17 +56,15 @@ Catalyst is compatible with: Python 3.6+. PyTorch 1.0.0+.
 
 Docs and examples
 ------------------------
-Detailed classification tutorial
+Detailed `classification tutorial`_
 
-.. image:: https://colab.research.google.com/assets/colab-badge.svg
-    :target: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb
-    :alt: Open In Colab
+.. _`classification tutorial`: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb
 
-Advanced segmentation tutorial
 
-.. image:: https://colab.research.google.com/assets/colab-badge.svg
-    :target: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb
-    :alt: Open In Colab
+Advanced `segmentation tutorial`_
+
+.. _`segmentation tutorial`: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb
+
 
 
 Comprehensive `classification pipeline`_
@@ -224,10 +203,6 @@ Please see the `contribution guide`_ for more information.
 By participating in this project, you agree to abide by its `Code of Conduct`_.
 
 .. _`Code of Conduct`: https://github.com/catalyst-team/catalyst/blob/master/CODE_OF_CONDUCT.md
-
-.. image:: https://c5.patreon.com/external/logo/become_a_patron_button.png
-    :target: https://www.patreon.com/catalyst_team
-    :alt: Donate
 
 
 License
