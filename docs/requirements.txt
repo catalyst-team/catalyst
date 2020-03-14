@@ -1,2 +1,2 @@
 sphinx
-sphinx_rtd_theme
+catalyst-sphinx-theme==0.0.1
