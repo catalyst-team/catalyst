@@ -60,11 +60,10 @@ class NeptuneRunner(Runner):
                 })
 
     """
-
     def _init(
-            self,
-            log_on_batch_end: bool = False,
-            log_on_epoch_end: bool = True,
+        self,
+        log_on_batch_end: bool = False,
+        log_on_epoch_end: bool = True,
     ):
         super()._init()
         self.log_on_batch_end = log_on_batch_end

@@ -59,14 +59,13 @@ class NeptuneLogger(Callback):
                     ]
                 )
     """
-
     def __init__(
-            self,
-            metric_names: List[str] = None,
-            log_on_batch_end: bool = True,
-            log_on_epoch_end: bool = True,
-            offline_mode: bool = False,
-            **logging_params,
+        self,
+        metric_names: List[str] = None,
+        log_on_batch_end: bool = True,
+        log_on_epoch_end: bool = True,
+        offline_mode: bool = False,
+        **logging_params,
     ):
         """
         Args:
@@ -98,8 +97,10 @@ class NeptuneLogger(Callback):
             self.epoch_log_suffix = "_epoch"
 
         if offline_mode:
-            neptune.init(project_qualified_name="dry-run/project",
-                         backend=neptune.OfflineBackend())
+            neptune.init(
+                project_qualified_name="dry-run/project",
+                backend=neptune.OfflineBackend()
+            )
         else:
             neptune.init(
                 api_token=logging_params["api_token"],
@@ -112,14 +113,12 @@ class NeptuneLogger(Callback):
         self.experiment = neptune.create_experiment(**logging_params)
 
     def __del__(self):
-        if hasattr(self, 'experiment'):
+        if hasattr(self, "experiment"):
             self.experiment.stop()
 
     def _log_metrics(
-            self,
-            metrics: Dict[str, float],
-            step: int,
-            mode: str, suffix=""):
+        self, metrics: Dict[str, float], step: int, mode: str, suffix=""
+    ):
         if self.metrics_to_log is None:
             metrics_to_log = sorted(list(metrics.keys()))
         else:
@@ -129,9 +128,7 @@ class NeptuneLogger(Callback):
             if name in metrics:
                 metric_name = f"{name}/{mode}{suffix}"
                 metric_value = metrics[name]
-                self.experiment.log_metric(metric_name,
-                                           y=metric_value,
-                                           x=step)
+                self.experiment.log_metric(metric_name, y=metric_value, x=step)
 
     def on_batch_end(self, state: _State):
         """Log batch metrics to Neptune"""
