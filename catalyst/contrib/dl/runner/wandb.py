@@ -1,6 +1,9 @@
 from typing import Dict, List  # isort:skip
 from pathlib import Path
 import shutil
+import warnings
+
+from deprecation import DeprecatedWarning
 
 import wandb
 
@@ -8,6 +11,8 @@ from catalyst.dl import utils
 from catalyst.dl.core import Experiment, Runner
 from catalyst.dl.experiment import ConfigExperiment
 from catalyst.dl.runner import SupervisedRunner
+
+warnings.simplefilter("always")
 
 
 class WandbRunner(Runner):
@@ -43,6 +48,13 @@ class WandbRunner(Runner):
         checkpoints_glob: List = None,
     ):
         super()._init()
+        the_warning = DeprecatedWarning(
+            self.__class__.__name__,
+            deprecated_in="20.03",
+            removed_in="20.04",
+            details="Use WandbLogger instead."
+        )
+        warnings.warn(the_warning, category=DeprecationWarning, stacklevel=2)
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
         self.checkpoints_glob = checkpoints_glob
