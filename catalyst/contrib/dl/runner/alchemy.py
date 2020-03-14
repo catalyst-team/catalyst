@@ -1,10 +1,15 @@
 from typing import Dict  # isort:skip
 
+import warnings
+
 from alchemy import Logger
+from deprecation import DeprecatedWarning
 
 from catalyst.dl import utils
 from catalyst.dl.core import Experiment, Runner
 from catalyst.dl.runner import SupervisedRunner
+
+warnings.simplefilter("always")
 
 
 class AlchemyRunner(Runner):
@@ -43,6 +48,13 @@ class AlchemyRunner(Runner):
         log_on_epoch_end: bool = True,
     ):
         super()._init()
+        the_warning = DeprecatedWarning(
+            self.__class__.__name__,
+            deprecated_in="20.03",
+            removed_in="20.04",
+            details="Use AlchemyLogger instead."
+        )
+        warnings.warn(the_warning, category=DeprecationWarning, stacklevel=2)
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
 

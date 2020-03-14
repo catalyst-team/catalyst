@@ -1,7 +1,8 @@
+from typing import Any, Callable, Dict, List, Union  # isort:skip
+
 from abc import ABC, abstractmethod
 from collections import defaultdict
 import logging
-from typing import Any, Callable, Dict, List, Union
 
 import torch
 
@@ -77,7 +78,6 @@ class _MetricCallback(ABC, Callback):
         """
         Computes the metric and add it to batch metrics
         """
-
         metric = self._compute_metric(state) * self.multiplier
         state.batch_metrics[self.prefix] = metric
 

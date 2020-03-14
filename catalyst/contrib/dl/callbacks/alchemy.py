@@ -2,6 +2,7 @@ from typing import Dict, List  # isort:skip
 
 from alchemy import Logger
 
+from catalyst import utils
 from catalyst.core import (
     _State, Callback, CallbackNode, CallbackOrder, CallbackType
 )
@@ -108,7 +109,7 @@ class AlchemyLogger(Callback):
             )
 
     def on_loader_end(self, state: _State):
-        """Translate epoch metrics to Alchemy"""
+        """Translate loader metrics to Alchemy"""
         if state.logdir is None:
             return
 
@@ -119,5 +120,25 @@ class AlchemyLogger(Callback):
                 metrics=metrics_,
                 step=state.global_epoch,
                 mode=mode,
+                suffix=self.epoch_log_suffix,
+            )
+
+    def on_epoch_end(self, state: _State):
+        """Translate epoch metrics to Alchemy"""
+        if state.logdir is None:
+            return
+
+        extra_mode = "_base"
+        splitted_epoch_metrics = utils.split_dict_to_subdicts(
+            dct=state.epoch_metrics,
+            prefixes=list(state.loaders.keys()),
+            extra_key=extra_mode,
+        )
+
+        if self.log_on_epoch_end:
+            self._log_metrics(
+                metrics=splitted_epoch_metrics[extra_mode],
+                step=state.global_epoch,
+                mode=extra_mode,
                 suffix=self.epoch_log_suffix,
             )
