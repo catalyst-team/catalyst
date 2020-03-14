@@ -17,15 +17,13 @@ def _get_observation_net(state_shape, **observation_net_params):
 
     if observation_net_type == "linear":
         # 0 - history len
-        observation_size = reduce(
-            lambda x, y: x * y, state_shape[1:])
+        observation_size = reduce(lambda x, y: x * y, state_shape[1:])
         observation_net_params["in_features"] = observation_size
         observation_net = get_linear_net(**observation_net_params)
     elif observation_net_type == "convolution":
         # 0 - history len
         observation_net_params["in_channels"] = state_shape[1]
-        observation_net = get_convolution_net(
-            **observation_net_params)
+        observation_net = get_convolution_net(**observation_net_params)
     else:
         raise NotImplementedError()
 
@@ -33,9 +31,7 @@ def _get_observation_net(state_shape, **observation_net_params):
 
 
 def _get_observation_net_out_features(
-    observation_net,
-    state_shape,
-    **observation_net_params
+    observation_net, state_shape, **observation_net_params
 ):
     if observation_net_params.get("history_len", 1) == 1:
         # we need to process each observation separately
@@ -65,10 +61,12 @@ def get_observation_net(state_shape, **observation_net_params):
         if isinstance(state_shape, dict):
             for value in state_shape.values():
                 observation_net_out_features += reduce(
-                    lambda x, y: x * y, state_shape)
+                    lambda x, y: x * y, state_shape
+                )
         else:
             observation_net_out_features = reduce(
-                lambda x, y: x * y, state_shape)
+                lambda x, y: x * y, state_shape
+            )
     elif len(observation_net_params) == 2:
         # _network_type and history_len
         network_type = observation_net_params["_network_type"]
@@ -76,7 +74,8 @@ def get_observation_net(state_shape, **observation_net_params):
         history_len = observation_net_params["history_len"]
         observation_net = nn.Sequential()
         observation_net_out_features = reduce(
-            lambda x, y: x * y, state_shape[1:]) * history_len
+            lambda x, y: x * y, state_shape[1:]
+        ) * history_len
     else:
         observation_net: nn.Module = \
             _get_observation_net(

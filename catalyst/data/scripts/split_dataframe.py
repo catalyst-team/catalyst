@@ -16,7 +16,11 @@ def build_args(parser):
         required=True
     )
     parser.add_argument(
-        "-n", "--num-folds", type=int, default=5, help="Number of result folds"
+        "-n",
+        "--num-folds",
+        type=int,
+        default=5,
+        help="Number of result folds"
     )
     parser.add_argument(
         "-t",

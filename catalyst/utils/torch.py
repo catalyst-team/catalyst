@@ -1,20 +1,16 @@
-from typing import Dict, Iterable, List, Tuple, Union  # isort:skip
+from typing import Dict, Iterable, List, Union  # isort:skip
 import collections
-import copy
 import os
 import re
 
 import numpy as np
-import safitty
 
 import torch
 from torch import nn
 import torch.backends.cudnn as cudnn
 
 from catalyst import utils
-from catalyst.utils.tools.typing import (
-    Criterion, Device, Model, Optimizer, Scheduler
-)
+from catalyst.utils.tools.typing import Device, Model, Optimizer
 
 
 def ce_with_logits(logits, target):
@@ -81,9 +77,9 @@ def get_optimizer_momentum(optimizer: Optimizer) -> float:
     Returns:
         float: momentum at first param group
     """
-    beta = safitty.get(optimizer.param_groups, 0, "betas", 0)
-    momentum = safitty.get(optimizer.param_groups, 0, "momentum")
-    return beta if beta is not None else momentum
+    betas = optimizer.param_groups[0].get("betas", None)
+    momentum = optimizer.param_groups[0].get("momentum", None)
+    return betas[0] if betas is not None else momentum
 
 
 def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
@@ -96,31 +92,13 @@ def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
         index (int, optional): integer index of optimizer's param groups,
             default is 0
     """
-    betas = safitty.get(optimizer.param_groups, index, "betas")
-    momentum = safitty.get(optimizer.param_groups, index, "momentum")
+    betas = optimizer.param_groups[0].get("betas", None)
+    momentum = optimizer.param_groups[0].get("momentum", None)
     if betas is not None:
         _, beta = betas
-        safitty.set(
-            optimizer.param_groups, index, "betas", value=(value, beta)
-        )
+        optimizer.param_groups[index]["betas"] = (value, beta)
     elif momentum is not None:
-        safitty.set(optimizer.param_groups, index, "momentum", value=value)
-
-
-def assert_fp16_available() -> None:
-    """
-    Asserts for installed and available Apex FP16
-    """
-    assert torch.backends.cudnn.enabled, \
-        "fp16 mode requires cudnn backend to be enabled."
-
-    try:
-        import apex  # noqa: F401
-        from apex import amp  # noqa: F401
-    except ImportError:
-        assert False, \
-            "NVidia Apex package must be installed. " \
-            "See https://github.com/NVIDIA/apex."
+        optimizer.param_groups[index]["momentum"] = value
 
 
 def get_device() -> torch.device:
@@ -154,7 +132,7 @@ def get_available_gpus():
     """
     if "CUDA_VISIBLE_DEVICES" in os.environ:
         result = os.environ["CUDA_VISIBLE_DEVICES"].split(",")
-        result = [int(id_) for id_ in result if id_ != ""]
+        result = [id_ for id_ in result if id_ != ""]
         # invisible GPUs
         # https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#env-vars
         if -1 in result:
@@ -288,77 +266,6 @@ def process_model_params(
     return model_params
 
 
-def process_components(
-    model: Model,
-    criterion: Criterion = None,
-    optimizer: Optimizer = None,
-    scheduler: Scheduler = None,
-    distributed_params: Dict = None,
-    device: Device = None,
-) -> Tuple[Model, Criterion, Optimizer, Scheduler, Device]:
-    """
-    Returns the processed model, criterion, optimizer, scheduler and device
-
-    Args:
-        model (Model): torch model
-        criterion (Criterion): criterion function
-        optimizer (Optimizer): optimizer
-        scheduler (Scheduler): scheduler
-        distributed_params (dict, optional): dict with the parameters
-            for distributed and FP16 methond
-        device (Device, optional): device
-    """
-    distributed_params = distributed_params or {}
-    distributed_params = copy.deepcopy(distributed_params)
-    if device is None:
-        device = utils.get_device()
-
-    model: Model = utils.maybe_recursive_call(model, "to", device=device)
-
-    if utils.is_wrapped_with_ddp(model):
-        pass
-    elif len(distributed_params) > 0:
-        assert isinstance(model, nn.Module)
-        distributed_rank = distributed_params.pop("rank", -1)
-        syncbn = distributed_params.pop("syncbn", False)
-
-        if distributed_rank > -1:
-            torch.cuda.set_device(distributed_rank)
-            torch.distributed.init_process_group(
-                backend="nccl", init_method="env://"
-            )
-
-        if "opt_level" in distributed_params:
-            utils.assert_fp16_available()
-            from apex import amp
-
-            amp_result = amp.initialize(model, optimizer, **distributed_params)
-            if optimizer is not None:
-                model, optimizer = amp_result
-            else:
-                model = amp_result
-
-            if distributed_rank > -1:
-                from apex.parallel import DistributedDataParallel
-                model = DistributedDataParallel(model)
-
-                if syncbn:
-                    from apex.parallel import convert_syncbn_model
-                    model = convert_syncbn_model(model)
-
-        if distributed_rank <= -1 and torch.cuda.device_count() > 1:
-            model = torch.nn.DataParallel(model)
-    elif torch.cuda.device_count() > 1:
-        if isinstance(model, nn.Module):
-            model = torch.nn.DataParallel(model)
-        elif isinstance(model, dict):
-            model = {k: torch.nn.DataParallel(v) for k, v in model.items()}
-
-    model: Model = utils.maybe_recursive_call(model, "to", device=device)
-
-    return model, criterion, optimizer, scheduler, device
-
-
 def set_requires_grad(model: Model, requires_grad: bool):
     """
     Sets the ``requires_grad`` value for all model parameters.
@@ -407,7 +314,7 @@ def detach(tensor: torch.Tensor) -> np.ndarray:
 __all__ = [
     "ce_with_logits", "log1p_exp", "normal_sample", "normal_logprob",
     "soft_update", "get_optimizable_params", "get_optimizer_momentum",
-    "set_optimizer_momentum", "assert_fp16_available", "get_device",
-    "get_available_gpus", "get_activation_fn", "any2device", "prepare_cudnn",
-    "process_model_params", "set_requires_grad", "get_network_output", "detach"
+    "set_optimizer_momentum", "get_device", "get_available_gpus",
+    "get_activation_fn", "any2device", "prepare_cudnn", "process_model_params",
+    "set_requires_grad", "get_network_output", "detach"
 ]

@@ -1,4 +1,5 @@
 pytest==5.3.1
+sphinx_rtd_theme
 Sphinx==2.2.1
 # git+https://github.com/bitprophet/releases/#egg=releases
 # git+https://github.com/readthedocs/sphinx_rtd_theme

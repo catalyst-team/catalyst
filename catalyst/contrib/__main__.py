@@ -1,14 +1,27 @@
 from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
+import logging
+import os
 
-from catalyst.contrib.scripts import check_index_model, create_index_model
+from catalyst.contrib.scripts import find_thresholds
 
-COMMANDS = OrderedDict(
-    [
-        ("check-index-model", check_index_model),
-        ("create-index-model", create_index_model),
-    ]
-)
+logger = logging.getLogger(__name__)
+
+COMMANDS = OrderedDict([("find-thresholds", find_thresholds)])
+
+try:
+    import nmslib  # noqa: F401
+    from catalyst.contrib.scripts import check_index_model, create_index_model
+
+    COMMANDS["check-index-model"] = check_index_model
+    COMMANDS["create-index-model"] = create_index_model
+except ImportError as ex:
+    if os.environ.get("USE_NMSLIB", "0") == "1":
+        logger.warning(
+            "nmslib not available, to install nmslib,"
+            " run `pip install nmslib`."
+        )
+        raise ex
 
 
 def build_parser() -> ArgumentParser:

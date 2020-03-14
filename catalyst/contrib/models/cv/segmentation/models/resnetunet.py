@@ -16,7 +16,6 @@ def get_channels(architecture):
 class ConvRelu(nn.Module):
     """3x3 convolution followed by ReLU activation building block.
     """
-
     def __init__(self, num_in, num_out):
         """Creates a `ConvReLU` building block.
 
@@ -47,7 +46,6 @@ class ConvRelu(nn.Module):
 class DecoderBlock(nn.Module):
     """Decoder building block upsampling resolution by a factor of two.
     """
-
     def __init__(self, num_in, num_out):
         """Creates a `DecoderBlock` building block.
 
@@ -79,7 +77,6 @@ class ResNetUnet(nn.Module):
     with a ResNet encoders as proposed by Alexander Buslaev.
     Also known as AlbuNet
     """
-
     def __init__(
         self, num_classes=1, num_channels=32, arch="resnet18", pretrained=True
     ):

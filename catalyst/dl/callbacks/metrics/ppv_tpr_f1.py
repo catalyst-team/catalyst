@@ -1,7 +1,7 @@
 from typing import List
 
 from catalyst.dl.core import MeterMetricsCallback
-from catalyst.utils.meters import PrecisionRecallF1ScoreMeter
+from catalyst.utils import meters
 
 
 class PrecisionRecallF1ScoreCallback(MeterMetricsCallback):
@@ -37,14 +37,14 @@ class PrecisionRecallF1ScoreCallback(MeterMetricsCallback):
             if class_names is None \
             else len(class_names)
 
-        meters = [
-            PrecisionRecallF1ScoreMeter(threshold)
+        meter_list = [
+            meters.PrecisionRecallF1ScoreMeter(threshold)
             for _ in range(num_classes)
         ]
 
         super().__init__(
             metric_names=["ppv", "tpr", "f1"],
-            meter_list=meters,
+            meter_list=meter_list,
             input_key=input_key,
             output_key=output_key,
             class_names=class_names,

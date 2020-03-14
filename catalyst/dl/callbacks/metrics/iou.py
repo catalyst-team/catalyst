@@ -1,7 +1,7 @@
 from typing import List  # isort:skip
 
 from catalyst.dl.core import MetricCallback, MultiMetricCallback
-from catalyst.utils import criterion
+from catalyst.utils import metrics
 
 
 def _get_default_classwise_iou_args(num_classes: int) -> List[int]:
@@ -13,7 +13,6 @@ class IouCallback(MetricCallback):
     """
     IoU (Jaccard) metric callback.
     """
-
     def __init__(
         self,
         input_key: str = "targets",
@@ -37,7 +36,7 @@ class IouCallback(MetricCallback):
         """
         super().__init__(
             prefix=prefix,
-            metric_fn=criterion.iou,
+            metric_fn=metrics.iou,
             input_key=input_key,
             output_key=output_key,
             eps=eps,
@@ -53,7 +52,6 @@ class ClasswiseIouCallback(MultiMetricCallback):
     """
     Classwise IoU (Jaccard) metric callback.
     """
-
     def __init__(
         self,
         input_key: str = "targets",
@@ -87,10 +85,11 @@ class ClasswiseIouCallback(MultiMetricCallback):
 
         super().__init__(
             prefix=prefix,
-            metric_fn=criterion.iou,
+            metric_fn=metrics.iou,
             list_args=list_args,
             input_key=input_key,
             output_key=output_key,
+            classes=list_args,
             eps=eps,
             threshold=threshold,
             activation=activation,
@@ -99,8 +98,7 @@ class ClasswiseIouCallback(MultiMetricCallback):
 
 ClasswiseJaccardCallback = ClasswiseIouCallback
 
-
 __all__ = [
-    "IouCallback", "JaccardCallback",
-    "ClasswiseIouCallback", "ClasswiseJaccardCallback"
+    "IouCallback", "JaccardCallback", "ClasswiseIouCallback",
+    "ClasswiseJaccardCallback"
 ]

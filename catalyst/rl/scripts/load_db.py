@@ -24,14 +24,15 @@ def build_args(parser):
         required=True
     )
     parser.add_argument(
-        "--db", type=str, choices=["redis", "mongo"],
-        default=None, required=True
+        "--db",
+        type=str,
+        choices=["redis", "mongo"],
+        default=None,
+        required=True
     )
     parser.add_argument("--min-reward", type=int, default=None)
     utils.boolean_flag(
-        parser, "use-sqil",
-        default=False,
-        help="Use SQIL – 0 reward"
+        parser, "use-sqil", default=False, help="Use SQIL – 0 reward"
     )
 
     return parser

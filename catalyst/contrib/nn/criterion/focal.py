@@ -2,7 +2,7 @@ from functools import partial
 
 from torch.nn.modules.loss import _Loss
 
-from catalyst.utils import criterion
+from catalyst.utils import metrics
 
 
 class FocalLossBinary(_Loss):
@@ -23,14 +23,14 @@ class FocalLossBinary(_Loss):
 
         if reduced:
             self.loss_fn = partial(
-                criterion.reduced_focal_loss,
+                metrics.reduced_focal_loss,
                 gamma=gamma,
                 threshold=threshold,
                 reduction=reduction
             )
         else:
             self.loss_fn = partial(
-                criterion.sigmoid_focal_loss,
+                metrics.sigmoid_focal_loss,
                 gamma=gamma,
                 alpha=alpha,
                 reduction=reduction
@@ -61,7 +61,6 @@ class FocalLossMultiClass(FocalLossBinary):
     Compute focal loss for multi-class problem.
     Ignores targets having -1 label
     """
-
     def forward(self, logits, targets):
         """
         Args:

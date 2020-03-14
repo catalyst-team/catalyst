@@ -28,6 +28,7 @@ class BaseExperiment(Experiment):
         main_metric: str = "loss",
         minimize_metric: bool = True,
         verbose: bool = False,
+        check_run: bool = False,
         state_kwargs: Dict = None,
         checkpoint_data: Dict = None,
         distributed_params: Dict = None,
@@ -60,7 +61,7 @@ class BaseExperiment(Experiment):
             checkpoint_data (dict): additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
             distributed_params (dict): dictionary with the parameters
-                for distributed and FP16 methond
+                for distributed and FP16 method
             monitoring_params (dict): dict with the parameters
                 for monitoring services
             initial_seed (int): experiment's initial seed value
@@ -81,8 +82,9 @@ class BaseExperiment(Experiment):
         self._main_metric = main_metric
         self._minimize_metric = minimize_metric
         self._verbose = verbose
+        self._check_run = check_run
         self._additional_state_kwargs = state_kwargs or {}
-        self.checkpoint_data = checkpoint_data or {}
+        self._checkpoint_data = checkpoint_data or {}
         self._distributed_params = distributed_params or {}
         self._monitoring_params = monitoring_params or {}
 
@@ -103,7 +105,7 @@ class BaseExperiment(Experiment):
 
     @property
     def distributed_params(self) -> Dict:
-        """Dict with the parameters for distributed and FP16 methond"""
+        """Dict with the parameters for distributed and FP16 method"""
         return self._distributed_params
 
     @property
@@ -120,7 +122,7 @@ class BaseExperiment(Experiment):
             main_metric=self._main_metric,
             verbose=self._verbose,
             minimize_metric=self._minimize_metric,
-            checkpoint_data=self.checkpoint_data
+            checkpoint_data=self._checkpoint_data,
         )
         state_params = {**default_params, **self._additional_state_kwargs}
         return state_params

@@ -8,7 +8,6 @@ class Greedy(ExplorationStrategy):
     For discrete environments only.
     Selects greedy action (argmax_a Q(s,a)).
     """
-
     def get_action(self, q_values):
         action = np.argmax(q_values)
         return action
@@ -22,7 +21,6 @@ class EpsilonGreedy(ExplorationStrategy):
     Random action selection probability eps usually decreases
     from 1 to 0.01-0.05 during the course of training.
     """
-
     def __init__(self, eps_init, eps_final, annealing_steps, eps_min=0.01):
         super().__init__()
 

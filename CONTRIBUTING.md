@@ -49,7 +49,7 @@ make codestyle
 ```
 and add new requirements in the `[isort]` section of a `setup.cfg` file.
 
-Make sure to have your python packages complied with requirements/requirements.txt and requirements/requirements-dev.txt to get codestyle run clean.
+Make sure to have your python packages complied with `requirements/requirements.txt` and `requirements/requirements-dev.txt` to get codestyle run clean.
 
 ## Documentation
 
@@ -62,7 +62,7 @@ make check-docs
 ```
 
 The command requires `Sphinx` and some sphinx-specific libraries.
-If you don't want to install them, you may make a catalyst-dev container
+If you don't want to install them, you may make a `catalyst-dev` container
 ```bash
 make docker-dev
 # and then run test

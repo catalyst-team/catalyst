@@ -35,15 +35,12 @@ def build_args(parser):
     parser.add_argument("--seed", type=int, default=42)
 
     boolean_flag(
-        parser, "deterministic",
+        parser,
+        "deterministic",
         default=None,
         help="Deterministic mode if running in CuDNN backend"
     )
-    boolean_flag(
-        parser, "benchmark",
-        default=None,
-        help="Use CuDNN benchmark"
-    )
+    boolean_flag(parser, "benchmark", default=None, help="Use CuDNN benchmark")
 
     return parser
 
@@ -95,8 +92,7 @@ def main(args, unknown_args):
         checkpoint = utils.load_checkpoint(filepath=args.resume)
         checkpoint = utils.any2device(checkpoint, utils.get_device())
         algorithm.unpack_checkpoint(
-            checkpoint=checkpoint,
-            with_optimizer=False
+            checkpoint=checkpoint, with_optimizer=False
         )
 
     monitoring_params = config.get("monitoring_params", None)

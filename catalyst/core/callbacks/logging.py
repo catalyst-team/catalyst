@@ -2,22 +2,19 @@ from typing import Dict, List  # isort:skip
 import logging
 import os
 import sys
-from urllib.parse import quote_plus
-from urllib.request import Request, urlopen
 
 from tqdm import tqdm
 
 from catalyst import utils
-from catalyst.core import _State, LoggerCallback
+from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
 from catalyst.utils.tools.tensorboard import SummaryWriter
 from . import formatters
 
 
-class VerboseLogger(LoggerCallback):
+class VerboseLogger(Callback):
     """
     Logs the params into console
     """
-
     def __init__(
         self,
         always_show: List[str] = None,
@@ -26,15 +23,15 @@ class VerboseLogger(LoggerCallback):
         """
         Args:
             always_show (List[str]): list of metrics to always show
-                if None default is ``["_timers/_fps"]``
+                if None default is ``["_timer/_fps"]``
                 to remove always_show metrics set it to an empty list ``[]``
             never_show (List[str]): list of metrics which will not be shown
         """
-        super().__init__()
+        super().__init__(order=CallbackOrder.Logging, node=CallbackNode.Master)
         self.tqdm: tqdm = None
         self.step = 0
         self.always_show = (
-            always_show if always_show is not None else ["_timers/_fps"]
+            always_show if always_show is not None else ["_timer/_fps"]
         )
         self.never_show = never_show if never_show is not None else []
 
@@ -61,29 +58,29 @@ class VerboseLogger(LoggerCallback):
         self.step = 0
         self.tqdm = tqdm(
             total=state.loader_len,
-            desc=f"{state.stage_epoch_log}/{state.num_epochs}"
+            desc=f"{state.epoch}/{state.num_epochs}"
             f" * Epoch ({state.loader_name})",
             leave=True,
             ncols=0,
             file=sys.stdout,
         )
 
-    def on_batch_end(self, state: _State):
-        """Update tqdm progress bar at the end of each batch"""
-        self.tqdm.set_postfix(
-            **{
-                k: "{:3.3f}".format(v) if v > 1e-3 else "{:1.3e}".format(v)
-                for k, v in sorted(state.metric_manager.batch_values.items())
-                if self._need_show(k)
-            }
-        )
-        self.tqdm.update()
-
     def on_loader_end(self, state: _State):
         """Cleanup and close tqdm progress bar"""
         self.tqdm.close()
         self.tqdm = None
         self.step = 0
+
+    def on_batch_end(self, state: _State):
+        """Update tqdm progress bar at the end of each batch"""
+        self.tqdm.set_postfix(
+            **{
+                k: "{:3.3f}".format(v) if v > 1e-3 else "{:1.3e}".format(v)
+                for k, v in sorted(state.batch_metrics.items())
+                if self._need_show(k)
+            }
+        )
+        self.tqdm.update()
 
     def on_exception(self, state: _State):
         """Called if an Exception was raised"""
@@ -93,18 +90,17 @@ class VerboseLogger(LoggerCallback):
 
         if isinstance(exception, KeyboardInterrupt):
             self.tqdm.write("Early exiting")
-            state.need_reraise_exception = False
+            state.need_exception_reraise = False
 
 
-class ConsoleLogger(LoggerCallback):
+class ConsoleLogger(Callback):
     """
     Logger callback,
-    translates ``state.metric_manager`` to console and text file
+    translates ``state.*_metrics`` to console and text file
     """
-
     def __init__(self):
         """Init ``ConsoleLogger``"""
-        super().__init__()
+        super().__init__(order=CallbackOrder.Logging, node=CallbackNode.Master)
         self.logger = None
 
     @staticmethod
@@ -155,11 +151,10 @@ class ConsoleLogger(LoggerCallback):
         self.logger.info("", extra={"state": state})
 
 
-class TensorboardLogger(LoggerCallback):
+class TensorboardLogger(Callback):
     """
     Logger callback, translates ``state.metric_manager`` to tensorboard
     """
-
     def __init__(
         self,
         metric_names: List[str] = None,
@@ -173,7 +168,7 @@ class TensorboardLogger(LoggerCallback):
             log_on_batch_end (bool): logs per-batch metrics if set True
             log_on_epoch_end (bool): logs per-epoch metrics if set True
         """
-        super().__init__()
+        super().__init__(order=CallbackOrder.Logging, node=CallbackNode.Master)
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
@@ -214,25 +209,35 @@ class TensorboardLogger(LoggerCallback):
 
         if self.log_on_batch_end:
             mode = state.loader_name
-            metrics_ = state.metric_manager.batch_values
+            metrics_ = state.batch_metrics
             self._log_metrics(
-                metrics=metrics_, step=state.step, mode=mode, suffix="/batch"
+                metrics=metrics_,
+                step=state.global_step,
+                mode=mode,
+                suffix="/batch"
             )
 
-    def on_loader_end(self, state: _State):
+    def on_epoch_end(self, state: "_State"):
         """Translate epoch metrics to tensorboard"""
         if state.logdir is None:
             return
 
         if self.log_on_epoch_end:
-            mode = state.loader_name
-            metrics_ = state.metric_manager.epoch_values[mode]
-            self._log_metrics(
-                metrics=metrics_,
-                step=state.epoch_log,
-                mode=mode,
-                suffix="/epoch",
+            mode_metrics = utils.split_dict_to_subdicts(
+                dct=state.epoch_metrics,
+                prefixes=list(state.loaders.keys()),
+                extra_key="_base",
             )
+
+            for key, metrics in mode_metrics.items():
+                suffix = "" if key == "_base" else "/epoch"
+                self._log_metrics(
+                    metrics=metrics,
+                    step=state.global_epoch,
+                    mode=key,
+                    suffix=suffix,
+                )
+
         for logger in self.loggers.values():
             logger.flush()
 
@@ -245,130 +250,8 @@ class TensorboardLogger(LoggerCallback):
             logger.close()
 
 
-class TelegramLogger(LoggerCallback):
-    """
-    Logger callback, translates ``state.metric_manager`` to telegram channel
-    """
-
-    def __init__(
-        self,
-        token: str = None,
-        chat_id: str = None,
-        metric_names: List[str] = None,
-        log_on_stage_start: bool = True,
-        log_on_loader_start: bool = True,
-        log_on_loader_end: bool = True,
-        log_on_stage_end: bool = True,
-        log_on_exception: bool = True,
-    ):
-        """
-        Args:
-            token (str): telegram bot's token,
-                see https://core.telegram.org/bots
-            chat_id (str): Chat unique identifier
-            metric_names: List of metric names to log.
-                if none - logs everything.
-            log_on_stage_start (bool): send notification on stage start
-            log_on_loader_start (bool): send notification on loader start
-            log_on_loader_end (bool): send notification on loader end
-            log_on_stage_end (bool): send notification on stage end
-            log_on_exception (bool): send notification on exception
-        """
-        super().__init__()
-        # @TODO: replace this logic with global catalyst config at ~/.catalyst
-        self._token = token or os.environ.get("CATALYST_TELEGRAM_TOKEN", None)
-        self._chat_id = (
-            chat_id or os.environ.get("CATALYST_TELEGRAM_CHAT_ID", None)
-        )
-        assert self._token is not None and self._chat_id is not None
-        self._base_url = (
-            f"https://api.telegram.org/bot{self._token}/sendMessage"
-        )
-
-        self.log_on_stage_start = log_on_stage_start
-        self.log_on_loader_start = log_on_loader_start
-        self.log_on_loader_end = log_on_loader_end
-        self.log_on_stage_end = log_on_stage_end
-        self.log_on_exception = log_on_exception
-
-        self.metrics_to_log = metric_names
-
-    def _send_text(self, text: str):
-        try:
-            url = (
-                f"{self._base_url}?"
-                f"chat_id={self._chat_id}&"
-                f"disable_web_page_preview=1&"
-                f"text={quote_plus(text, safe='')}"
-            )
-
-            request = Request(url)
-            urlopen(request)
-        except Exception as e:
-            logging.getLogger(__name__).warning(f"telegram.send.error:{e}")
-
-    def on_stage_start(self, state: _State):
-        """Notify about starting a new stage"""
-        if self.log_on_stage_start:
-            text = f"{state.stage} stage was started"
-
-            self._send_text(text)
-
-    def on_loader_start(self, state: _State):
-        """Notify about starting running the new loader"""
-        if self.log_on_loader_start:
-            text = f"{state.loader_name} {state.epoch} epoch was started"
-
-            self._send_text(text)
-
-    def on_loader_end(self, state: _State):
-        """Translate ``state.metric_manager`` to telegram channel"""
-        if self.log_on_loader_end:
-            metrics = state.metric_manager.epoch_values[state.loader_name]
-
-            if self.metrics_to_log is None:
-                metrics_to_log = sorted(list(metrics.keys()))
-            else:
-                metrics_to_log = self.metrics_to_log
-
-            rows: List[str] = [
-                f"{state.loader_name} {state.epoch} epoch was finished:"
-            ]
-
-            for name in metrics_to_log:
-                if name in metrics:
-                    rows.append(utils.format_metric(name, metrics[name]))
-
-            text = "\n".join(rows)
-
-            self._send_text(text)
-
-    def on_stage_end(self, state: _State):
-        """Notify about finishing a stage"""
-        if self.log_on_stage_end:
-            text = f"{state.stage} stage was finished"
-
-            self._send_text(text)
-
-    def on_exception(self, state: _State):
-        """Notify about raised Exception"""
-        if self.log_on_exception:
-            exception = state.exception
-            if utils.is_exception(exception) and not isinstance(
-                exception, KeyboardInterrupt
-            ):
-                text = (
-                    f"`{type(exception).__name__}` exception was raised:\n"
-                    f"{exception}"
-                )
-
-                self._send_text(text)
-
-
 __all__ = [
     "ConsoleLogger",
-    "TelegramLogger",
     "TensorboardLogger",
     "VerboseLogger",
-
 ]

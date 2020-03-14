@@ -35,9 +35,7 @@ def tokenize_text(
         text.replace(string.punctuation, "")
 
     inputs = tokenizer.encode_plus(
-        text, "",
-        add_special_tokens=True,
-        max_length=max_length
+        text, "", add_special_tokens=True, max_length=max_length
     )
     input_ids, token_type_ids = inputs["input_ids"], inputs["token_type_ids"]
     attention_mask = [1] * len(input_ids)
@@ -65,8 +63,7 @@ def process_bert_output(
     """Processed the output"""
     # @TODO: make this functional
     pooling = LamaPooling(
-        groups=pooling_groups,
-        in_features=hidden_size
+        groups=pooling_groups, in_features=hidden_size
     ) if pooling_groups is not None else None
 
     def _process_features(features):

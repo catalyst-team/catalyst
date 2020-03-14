@@ -1,8 +1,8 @@
 # flake8: noqa
-from catalyst.utils.misc import args_are_not_none
+from catalyst import utils
 
 
 def test_args_are_not_none():
-    assert args_are_not_none(1, 2, 3, "")
-    assert not args_are_not_none(-8, "", None, True)
-    assert not args_are_not_none(None)
+    assert utils.args_are_not_none(1, 2, 3, "")
+    assert not utils.args_are_not_none(-8, "", None, True)
+    assert not utils.args_are_not_none(None)

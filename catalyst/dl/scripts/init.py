@@ -6,20 +6,21 @@ from catalyst.dl import utils
 
 def build_args(parser):
     parser.add_argument(
-        "-p", "--pipeline",
-        type=str, default=None,
+        "-p",
+        "--pipeline",
+        type=str,
+        default=None,
         choices=["empty", "classification", "segmentation", "detection"],
         help="select a Catalyst pipeline"
     )
     parser.add_argument(
-        "-i", "--interactive",
+        "-i",
+        "--interactive",
         action="store_true",
         help="use interactive wizard to setup Catalyst pipeline"
     )
     parser.add_argument(
-        "-o", "--out-dir",
-        type=Path, default="./",
-        help="path where to init"
+        "-o", "--out-dir", type=Path, default="./", help="path where to init"
     )
 
     return parser

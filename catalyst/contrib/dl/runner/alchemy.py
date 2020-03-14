@@ -2,6 +2,7 @@ from typing import Dict  # isort:skip
 
 from alchemy import Logger
 
+from catalyst.dl import utils
 from catalyst.dl.core import Experiment, Runner
 from catalyst.dl.runner import SupervisedRunner
 
@@ -30,17 +31,18 @@ class AlchemyRunner(Runner):
                 verbose=True,
                 monitoring_params={
                     "token": "...", # your Alchemy token
+                    "project": "your_project_name",
                     "experiment": "your_experiment_name",
                     "group": "your_experiment_group_name"
                 }
             )
     """
-
     def _init(
         self,
         log_on_batch_end: bool = False,
         log_on_epoch_end: bool = True,
     ):
+        super()._init()
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
 
@@ -76,39 +78,34 @@ class AlchemyRunner(Runner):
 
     def _run_batch(self, batch):
         super()._run_batch(batch=batch)
-        if self.log_on_batch_end:
+        if self.log_on_batch_end and not self.state.is_distributed_worker:
             mode = self.state.loader_name
-            metrics = self.state.metric_manager.batch_values
+            metrics = self.state.batch_metrics
             self._log_metrics(
-                metrics=metrics,
-                mode=mode,
-                suffix=self.batch_log_suffix
+                metrics=metrics, mode=mode, suffix=self.batch_log_suffix
             )
 
     def _run_epoch(self, stage: str, epoch: int):
         super()._run_epoch(stage=stage, epoch=epoch)
-        if self.log_on_epoch_end:
-            for mode, metrics in \
-                    self.state.metric_manager.epoch_values.items():
+        if self.log_on_epoch_end and not self.state.is_distributed_worker:
+            mode_metrics = utils.split_dict_to_subdicts(
+                dct=self.state.epoch_metrics,
+                prefixes=list(self.state.loaders.keys()),
+                extra_key="_base",
+            )
+            for mode, metrics in mode_metrics.items():
                 self._log_metrics(
-                    metrics=metrics,
-                    mode=mode,
-                    suffix=self.epoch_log_suffix
+                    metrics=metrics, mode=mode, suffix=self.epoch_log_suffix
                 )
 
-    def run_experiment(
-        self,
-        experiment: Experiment,
-        check: bool = False
-    ):
+    def run_experiment(self, experiment: Experiment):
         """Starts experiment
 
         Args:
             experiment (Experiment): experiment class
-            check (bool): if ``True`` takes only 3 steps
         """
         self._pre_experiment_hook(experiment=experiment)
-        super().run_experiment(experiment=experiment, check=check)
+        super().run_experiment(experiment=experiment)
         self._post_experiment_hook(experiment=experiment)
 
 

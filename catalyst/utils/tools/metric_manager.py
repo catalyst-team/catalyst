@@ -1,37 +1,9 @@
 from typing import Any, Dict  # isort:skip
 from collections import defaultdict
 from numbers import Number
-from time import time
 
-from catalyst.utils.meters import AverageValueMeter
-
-
-class TimerManager:
-    def __init__(self):
-        self._starts = {}
-        self.elapsed = {}
-
-    def start(self, name: str) -> None:
-        """Starts timer ``name``
-        Args:
-            name (str): name of a timer
-        """
-        self._starts[name] = time()
-
-    def stop(self, name: str) -> None:
-        """Stops timer ``name``
-        Args:
-            name (str): name of a timer
-        """
-        assert name in self._starts, f"Timer '{name}' wasn't started"
-
-        self.elapsed[name] = time() - self._starts[name]
-        del self._starts[name]
-
-    def reset(self) -> None:
-        """Reset all previous timers"""
-        self.elapsed = {}
-        self._starts = {}
+from catalyst import utils
+from catalyst.utils import meters
 
 
 class MetricManager:
@@ -58,7 +30,7 @@ class MetricManager:
         self._minimize = minimize
         self._batch_consistant_metrics = batch_consistant_metrics
 
-        self._meters: Dict[str, AverageValueMeter] = None
+        self._meters: Dict[str, meters.AverageValueMeter] = None
         self._batch_values: Dict[str, float] = None
         self.epoch_values: Dict[str, Dict[str:float]] = None
         self.valid_values: Dict[str, float] = None
@@ -104,7 +76,7 @@ class MetricManager:
 
     def begin_loader(self, name: str):
         self._current_loader_name = name
-        self._meters = defaultdict(AverageValueMeter)
+        self._meters = defaultdict(meters.AverageValueMeter)
 
     def end_loader(self):
         for name, meter in self._meters.items():
@@ -134,8 +106,10 @@ class MetricManager:
         if name:
             metrics_dict[name] = value
 
-        for name, value in metrics_dict.items():
-            self._batch_values[name] = self._to_single_value(value)
+        for metric_name, metric_value in metrics_dict.items():
+            metric_value = self._to_single_value(metric_value)
+            metric_value = utils.distributed_mean(metric_value)
+            self._batch_values[metric_name] = metric_value
 
 
-__all__ = ["TimerManager", "MetricManager"]
+__all__ = ["MetricManager"]

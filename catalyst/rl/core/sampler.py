@@ -20,15 +20,12 @@ import torch  # noqa E402
 torch.set_num_threads(1)
 
 from catalyst import utils  # noqa E402
-from catalyst.utils.seed import set_global_seed  # noqa E402
-from catalyst.utils.tools.seeder import Seeder  # noqa E402
-from catalyst.utils.tools.tensorboard import SummaryWriter  # noqa E402
+from catalyst.utils import tools  # noqa E402
 from .agent import ActorSpec, CriticSpec  # noqa E402
 from .db import DBSpec  # noqa E402
 from .environment import EnvironmentSpec  # noqa E402
 from .exploration import ExplorationHandler  # noqa E402
 from .trajectory_sampler import TrajectorySampler  # noqa E402
-
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +70,7 @@ class Sampler:
             if deterministic is not None \
             else mode in ["valid", "infer"]
         self.trajectory_seeds = trajectory_seeds
-        self._seeder = Seeder(init_seed=sampler_seed)
+        self._seeder = tools.Seeder(init_seed=sampler_seed)
 
         # logging
         self._prepare_logger(logdir, mode)
@@ -113,8 +110,7 @@ class Sampler:
         if WANDB_ENABLED:
             if self.monitoring_params is not None:
                 self.checkpoints_glob: List[str] = \
-                    self.monitoring_params.pop(
-                        "checkpoints_glob", ["best.pth", "last.pth"])
+                    self.monitoring_params.pop("checkpoints_glob", [])
 
                 wandb.init(**self.monitoring_params)
             else:
@@ -128,7 +124,7 @@ class Sampler:
                 f"sampler.{mode}.{self._sampler_id}.{timestamp}"
             os.makedirs(logpath, exist_ok=True)
             self.logdir = logpath
-            self.logger = SummaryWriter(logpath)
+            self.logger = tools.SummaryWriter(logpath)
         else:
             self.logdir = None
             self.logger = None
@@ -175,11 +171,11 @@ class Sampler:
 
     def _get_seed(self):
         if self.trajectory_seeds is not None:
-            seed = self.trajectory_seeds[
-                self.trajectory_index % len(self.trajectory_seeds)]
+            seed = self.trajectory_seeds[self.trajectory_index %
+                                         len(self.trajectory_seeds)]
         else:
             seed = self._seeder()[0]
-        set_global_seed(seed)
+        utils.set_global_seed(seed)
         return seed
 
     def _log_to_console(
@@ -229,10 +225,7 @@ class Sampler:
 
     @staticmethod
     def _log_wandb_metrics(
-        metrics: Dict,
-        step: int,
-        mode: str,
-        suffix: str = ""
+        metrics: Dict, step: int, mode: str, suffix: str = ""
     ):
         metrics = {
             f"{mode}/{key}{suffix}": value
@@ -244,7 +237,8 @@ class Sampler:
     def _log_to_wandb(self, *, step, suffix="", **metrics):
         if WANDB_ENABLED:
             self._log_wandb_metrics(
-                metrics, step=step, mode=self.wandb_mode, suffix=suffix)
+                metrics, step=step, mode=self.wandb_mode, suffix=suffix
+            )
 
     def _save_wandb(self):
         if WANDB_ENABLED:
@@ -257,7 +251,8 @@ class Sampler:
                 os.makedirs(f"{logdir_dst}/{logdir_src.name}", exist_ok=True)
                 shutil.copy2(
                     f"{str(events_src.absolute())}",
-                    f"{logdir_dst}/{logdir_src.name}/{events_src.name}")
+                    f"{logdir_dst}/{logdir_src.name}/{events_src.name}"
+                )
 
     @torch.no_grad()
     def _run_trajectory_loop(self):
@@ -405,7 +400,8 @@ class ValidSampler(Sampler):
             for checkpoint_path in checkpoint_paths:
                 shutil.copy2(
                     f"{str(checkpoint_path.absolute())}",
-                    f"{checkpoints_dst}/{checkpoint_path.name}")
+                    f"{checkpoints_dst}/{checkpoint_path.name}"
+                )
 
     def save_checkpoint(
         self,
@@ -458,25 +454,25 @@ class ValidSampler(Sampler):
                 trajectories_reward.append(trajectory_info["reward"])
                 trajectories_raw_reward.append(
                     trajectory_info.get(
-                        "raw_reward",
-                        trajectory_info["reward"]
+                        "raw_reward", trajectory_info["reward"]
                     )
                 )
                 trajectory_info.pop("raw_trajectory", None)
                 self._log_to_console(**trajectory_info)
                 self._log_to_tensorboard(**trajectory_info)
                 self._log_to_wandb(
-                    step=self.trajectory_index, **trajectory_info)
+                    step=self.trajectory_index, **trajectory_info
+                )
                 self.trajectory_index += 1
 
                 if self.trajectory_index % self._gc_period == 0:
                     gc.collect()
 
             loop_metrics = {
-                "trajectory/_mean_valid_reward":
-                    self.rewards2metric(trajectories_reward),
-                "trajectory/_mean_valid_raw_reward":
-                    self.rewards2metric(trajectories_raw_reward),
+                "trajectory/_mean_valid_reward": self.
+                rewards2metric(trajectories_reward),
+                "trajectory/_mean_valid_raw_reward": self.
+                rewards2metric(trajectories_raw_reward),
             }
 
             if self.logger is not None:
