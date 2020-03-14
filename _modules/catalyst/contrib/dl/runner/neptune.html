@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.dl.runner.neptune &mdash; Catalyst 20.03 documentation</title>
+  <title>catalyst.contrib.dl.runner.neptune &mdash; Catalyst 20.03.1 documentation</title>
   
 
   
@@ -257,6 +257,9 @@
               
   <h1>Source code for catalyst.contrib.dl.runner.neptune</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">deprecation</span> <span class="kn">import</span> <span class="n">DeprecatedWarning</span>
 
 <span class="kn">import</span> <span class="nn">neptune</span>
 
@@ -264,6 +267,8 @@
 <span class="kn">from</span> <span class="nn">catalyst.dl.core</span> <span class="kn">import</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">Runner</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.experiment</span> <span class="kn">import</span> <span class="n">ConfigExperiment</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.runner</span> <span class="kn">import</span> <span class="n">SupervisedRunner</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;always&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="NeptuneRunner"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.runner.neptune.NeptuneRunner">[docs]</a><span class="k">class</span> <span class="nc">NeptuneRunner</span><span class="p">(</span><span class="n">Runner</span><span class="p">):</span>
@@ -324,6 +329,13 @@
         <span class="n">log_on_epoch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_init</span><span class="p">()</span>
+        <span class="n">the_warning</span> <span class="o">=</span> <span class="n">DeprecatedWarning</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="n">deprecated_in</span><span class="o">=</span><span class="s2">&quot;20.03&quot;</span><span class="p">,</span>
+            <span class="n">removed_in</span><span class="o">=</span><span class="s2">&quot;20.04&quot;</span><span class="p">,</span>
+            <span class="n">details</span><span class="o">=</span><span class="s2">&quot;Use NeptuneLogger instead.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">the_warning</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_on_batch_end</span> <span class="o">=</span> <span class="n">log_on_batch_end</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_on_epoch_end</span> <span class="o">=</span> <span class="n">log_on_epoch_end</span>
 
