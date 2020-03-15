@@ -930,6 +930,28 @@ used in deep reinforcement learning literature.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="catalyst.utils.misc.fn_ends_with_pass">
+<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">fn_ends_with_pass</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[..., Any]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#fn_ends_with_pass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.fn_ends_with_pass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that function end with pass statement
+(probably does nothing in any way).
+Mainly used to filter callbacks with empty on_{event} methods.
+:param fn: target Callable
+:type fn: Callable[…, Any]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>True if there is pass in the first indentation level of fn</dt><dd><p>and nothing happens before it, False in any other case.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="catalyst.utils.misc.format_metric">
 <code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">format_metric</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">value: float</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/catalyst/utils/misc.html#format_metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.format_metric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Format metric. Metric will be returned in the scientific format if 4
@@ -1021,7 +1043,7 @@ decimal chars are not enough (metric value lower than 1e-4)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>object_or_dict</strong> (<em>Any</em>) – some object or a dictinary of objects</p></li>
+<li><p><strong>object_or_dict</strong> (<em>Any</em>) – some object or a dictionary of objects</p></li>
 <li><p><strong>method</strong> (<em>str</em>) – method name to call</p></li>
 <li><p><strong>recursive_args</strong> – list of arguments to pass to the <code class="docutils literal notranslate"><span class="pre">method</span></code></p></li>
 <li><p><strong>recursive_kwargs</strong> – list of key-arguments to pass to the <code class="docutils literal notranslate"><span class="pre">method</span></code></p></li>
