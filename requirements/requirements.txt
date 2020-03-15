@@ -14,6 +14,7 @@ plotly>=4.1.0
 crc32c>=1.7
 ipython
 packaging
+deprecation
 
 # Used in scripts
 matplotlib
