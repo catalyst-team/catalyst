@@ -3,51 +3,11 @@ from typing import Dict, List  # isort:skip
 import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 
-from catalyst.dl import (
-    Callback, CallbackOrder, MasterOnlyCallback, State, utils
-)
+from catalyst.dl import Callback, CallbackNode, CallbackOrder, State, utils
 from catalyst.utils import meters
 
 
-class EarlyStoppingCallback(Callback):
-    def __init__(
-        self,
-        patience: int,
-        metric: str = "loss",
-        minimize: bool = True,
-        min_delta: float = 1e-6
-    ):
-        super().__init__(CallbackOrder.External)
-        self.best_score = None
-        self.metric = metric
-        self.patience = patience
-        self.num_bad_epochs = 0
-        self.is_better = None
-
-        if minimize:
-            self.is_better = lambda score, best: score <= (best - min_delta)
-        else:
-            self.is_better = lambda score, best: score >= (best + min_delta)
-
-    def on_epoch_end(self, state: State) -> None:
-        if state.stage.startswith("infer"):
-            return
-
-        score = state.metric_manager.valid_values[self.metric]
-        if self.best_score is None:
-            self.best_score = score
-        if self.is_better(score, self.best_score):
-            self.num_bad_epochs = 0
-            self.best_score = score
-        else:
-            self.num_bad_epochs += 1
-
-        if self.num_bad_epochs >= self.patience:
-            print(f"Early stop at {state.stage_epoch} epoch")
-            state.early_stop = True
-
-
-class ConfusionMatrixCallback(MasterOnlyCallback):
+class ConfusionMatrixCallback(Callback):
     def __init__(
         self,
         input_key: str = "targets",
@@ -56,12 +16,14 @@ class ConfusionMatrixCallback(MasterOnlyCallback):
         version: str = "tnt",
         class_names: List[str] = None,
         num_classes: int = None,
-        plot_params: Dict = None
+        plot_params: Dict = None,
+        tensorboard_callback_name: str = "_tensorboard",
     ):
-        super().__init__(CallbackOrder.Metric)
+        super().__init__(CallbackOrder.Metric, CallbackNode.Master)
         self.prefix = prefix
         self.output_key = output_key
         self.input_key = input_key
+        self.tensorboard_callback_name = tensorboard_callback_name
 
         assert version in ["tnt", "sklearn"]
         self._version = version
@@ -123,8 +85,8 @@ class ConfusionMatrixCallback(MasterOnlyCallback):
 
     def on_batch_end(self, state: State):
         self._add_to_stats(
-            state.output[self.output_key].detach(),
-            state.input[self.input_key].detach()
+            state.batch_out[self.output_key].detach(),
+            state.batch_in[self.input_key].detach()
         )
 
     def on_loader_end(self, state: State):
@@ -132,12 +94,13 @@ class ConfusionMatrixCallback(MasterOnlyCallback):
             self.class_names or \
             [str(i) for i in range(self.num_classes)]
         confusion_matrix = self._compute_confusion_matrix()
+        tb_callback = state.callbacks[self.tensorboard_callback_name]
         self._plot_confusion_matrix(
-            logger=state.loggers["tensorboard"].loggers[state.loader_name],
-            epoch=state.epoch,
+            logger=tb_callback.loggers[state.loader_name],
+            epoch=state.global_epoch,
             confusion_matrix=confusion_matrix,
-            class_names=class_names
+            class_names=class_names,
         )
 
 
-__all__ = ["EarlyStoppingCallback", "ConfusionMatrixCallback"]
+__all__ = ["ConfusionMatrixCallback"]

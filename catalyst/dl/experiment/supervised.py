@@ -1,9 +1,10 @@
 from collections import OrderedDict
 
 from catalyst.dl import (
-    Callback, CheckpointCallback, ConsoleLogger, CriterionCallback,
-    OptimizerCallback, RaiseExceptionCallback, SchedulerCallback,
-    TensorboardLogger, VerboseLogger
+    Callback, CheckpointCallback, CheckRunCallback, ConsoleLogger,
+    CriterionCallback, ExceptionCallback, MetricManagerCallback,
+    OptimizerCallback, SchedulerCallback, TensorboardLogger, TimerCallback,
+    ValidationManagerCallback, VerboseLogger
 )
 from catalyst.utils.tools.typing import Criterion, Optimizer, Scheduler
 from .base import BaseExperiment
@@ -29,9 +30,9 @@ class SupervisedExperiment(BaseExperiment):
             your model/criterion/optimizer/metrics.
         ConsoleLogger:
             standard Catalyst logger,
-            translates ``state.metric_manager`` to console and text file
+            translates ``state.*_metrics`` to console and text file
         TensorboardLogger:
-            will write ``state.metric_manager`` to tensorboard
+            will write ``state.*_metrics`` to tensorboard
         RaiseExceptionCallback:
             will raise exception if needed
     """
@@ -48,9 +49,13 @@ class SupervisedExperiment(BaseExperiment):
             List[Callback]: list of callbacks for experiment
         """
         callbacks = self._callbacks
+
         default_callbacks = []
         if self._verbose:
-            default_callbacks.append(("verbose", VerboseLogger))
+            default_callbacks.append(("_verbose", VerboseLogger))
+        if self._check_run:
+            default_callbacks.append(("_check", CheckRunCallback))
+
         if not stage.startswith("infer"):
             if self._criterion is not None \
                     and isinstance(self._criterion, Criterion):
@@ -61,10 +66,16 @@ class SupervisedExperiment(BaseExperiment):
             if self._scheduler is not None \
                     and isinstance(self._scheduler, Scheduler):
                 default_callbacks.append(("_scheduler", SchedulerCallback))
+
+            default_callbacks.append(("_timer", TimerCallback))
+            default_callbacks.append(("_metrics", MetricManagerCallback))
+            default_callbacks.append(
+                ("_validation", ValidationManagerCallback)
+            )
             default_callbacks.append(("_saver", CheckpointCallback))
-            default_callbacks.append(("console", ConsoleLogger))
-            default_callbacks.append(("tensorboard", TensorboardLogger))
-        default_callbacks.append(("exception", RaiseExceptionCallback))
+            default_callbacks.append(("_console", ConsoleLogger))
+            default_callbacks.append(("_tensorboard", TensorboardLogger))
+        default_callbacks.append(("_exception", ExceptionCallback))
 
         for callback_name, callback_fn in default_callbacks:
             is_already_present = any(

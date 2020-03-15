@@ -1,5 +1,5 @@
 from catalyst.dl.core import MetricCallback
-from catalyst.utils import criterion
+from catalyst.utils import metrics
 
 
 class F1ScoreCallback(MetricCallback):
@@ -31,7 +31,7 @@ class F1ScoreCallback(MetricCallback):
         """
         super().__init__(
             prefix=prefix,
-            metric_fn=criterion.f1_score,
+            metric_fn=metrics.f1_score,
             input_key=input_key,
             output_key=output_key,
             beta=beta,

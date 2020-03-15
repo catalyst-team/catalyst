@@ -5,8 +5,6 @@ from argparse import ArgumentParser
 import os
 from pathlib import Path
 
-import safitty
-
 from catalyst.dl import utils
 from catalyst.utils import distributed_run, get_rank
 
@@ -103,7 +101,7 @@ def main_worker(args, unknown_args):
 
     Experiment, Runner = utils.import_experiment_and_runner(Path(args.expdir))
 
-    runner_params = safitty.get(config, "runner_params", default={})
+    runner_params = config.get("runner_params", {})
     experiment = Experiment(config)
     runner = Runner(**runner_params)
 
@@ -111,8 +109,7 @@ def main_worker(args, unknown_args):
         utils.dump_environment(config, experiment.logdir, args.configs)
         utils.dump_code(args.expdir, experiment.logdir)
 
-    check_run = safitty.get(config, "args", "check", default=False)
-    runner.run_experiment(experiment, check=check_run)
+    runner.run_experiment(experiment)
 
 
 def main(args, unknown_args):
