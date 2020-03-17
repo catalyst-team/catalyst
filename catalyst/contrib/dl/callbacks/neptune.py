@@ -17,7 +17,7 @@ class NeptuneLogger(Callback):
         .. code-block:: python
 
             from catalyst.dl import SupervisedRunner
-            from catalyst.contrib.callbacks.neptune import NeptuneLogger
+            from catalyst.contrib.dl.callbacks.neptune import NeptuneLogger
 
             runner = SupervisedRunner()
 
@@ -31,32 +31,32 @@ class NeptuneLogger(Callback):
                 verbose=True,
                 callbacks=[
                     NeptuneLogger(
-                        "api_token": "...", # your Neptune token
-                        "project_name": "your_project_name",
-                        "offline_mode": False, # turn off neptune for debug
-                        "name": "your_experiment_name",
-                        "params": {...},  # your hyperparameters
-                        "tags": ["resnet", "no-augmentations"], # tags
-                        "upload_source_files" : ["*.py"], # files to save
+                        api_token="...", # your Neptune token
+                        project_name="your_project_name",
+                        offline_mode=False, # turn off neptune for debug
+                        name="your_experiment_name",
+                        params={...},  # your hyperparameters
+                        tags=["resnet", "no-augmentations"], # tags
+                        upload_source_files=["*.py"], # files to save
                          )
                     ]
                  )
 
         You can see an example experiment here:
-        https://ui.neptune.ai/o/shared/org/catalyst-integration/e/CAT-8/charts
+        https://ui.neptune.ai/o/shared/org/catalyst-integration/e/CAT-13/charts
 
         You can log your experiments without registering.
         Just use "ANONYMOUS" token::
 
             runner.train(
                 ...
-                callbacks={
-                    "logger": NeptuneLogger(
-                        "api_token": "ANONYMOUS",
-                        "project_name": "shared/catalyst-integration",
+                callbacks=[
+                    "NepuneLogger(
+                        api_token="ANONYMOUS",
+                        project_name="shared/catalyst-integration",
                         ...
                          )
-                    }
+                    ]
                 )
     """
     def __init__(
@@ -113,7 +113,8 @@ class NeptuneLogger(Callback):
         self.experiment = neptune.create_experiment(**logging_params)
 
     def __del__(self):
-        self.experiment.stop()
+        if hasattr(self, "experiment"):
+            self.experiment.stop()
 
     def _log_metrics(
         self, metrics: Dict[str, float], step: int, mode: str, suffix=""
