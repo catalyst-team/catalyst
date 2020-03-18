@@ -1,6 +1,6 @@
 # Framework must-haves
+abracadabra
 numpy>=1.16.4
-keras
 torch>=1.0.0
 torchvision>=0.2.1
 Pillow<7
