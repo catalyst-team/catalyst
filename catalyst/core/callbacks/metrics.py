@@ -256,7 +256,7 @@ class MetricManagerCallback(Callback):
     def _process_metrics(metrics: Dict[str, Any]):
         output = {}
         for key, value in metrics.items():
-            value = utils.distributed_mean(value)
+            value = utils.get_distributed_mean(value)
             value = MetricManagerCallback._to_single_value(value)
             output[key] = value
         return output

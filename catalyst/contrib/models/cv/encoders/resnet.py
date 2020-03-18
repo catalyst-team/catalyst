@@ -13,7 +13,7 @@ from catalyst.contrib.registry import MODULES
 class ResnetEncoder(nn.Module):
     def __init__(
         self,
-        arch: str = "resnet34",
+        arch: str = "resnet18",
         pretrained: bool = True,
         frozen: bool = True,
         pooling: str = None,

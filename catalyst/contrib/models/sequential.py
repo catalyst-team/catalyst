@@ -119,7 +119,7 @@ class SequentialNet(nn.Module):
             if block_.get("act", None) is not None:
                 activation = block_["act"]
                 activation_init = \
-                    utils.create_optimal_inner_init(nonlinearity=activation)
+                    utils.get_optimal_inner_init(nonlinearity=activation)
                 block.apply(activation_init)
 
             if residual == "hard" or (residual == "soft" and f_in == f_out):

@@ -74,15 +74,7 @@ Link to the pipelines
 ----
 
 ### RL pipelines
-1. [features – OpenAI Gym LunarLander](rl_gym)
-    - off-policy RL for continuous action space environment
-    - DDPG, SAC, TD3 benchmark
-    - async multi-cpu, multi-gpu training
-2. [features – Atari](atari)
-    - off-policy RL for discrete action space environment
-    - DQN
-    - image-based environment with various wrappers
-    - CNN-based agent with different distribution heads support
+For Reinforcement Learning examples check out our [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl)
 
 ----
 

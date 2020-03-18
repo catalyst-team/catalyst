@@ -14,7 +14,7 @@ from setuptools import Command, find_packages, setup
 # Package meta-data.
 NAME = "catalyst"
 DESCRIPTION = \
-    "Catalyst. PyTorch framework for DL & RL research and development."
+    "Catalyst. PyTorch framework for DL research and development."
 URL = "https://github.com/catalyst-team/catalyst"
 EMAIL = "scitator@gmail.com"
 AUTHOR = "Sergey Kolesnikov"
@@ -90,7 +90,6 @@ extras = {
     "ecosystem": load_requirements("requirements/requirements-ecosystem.txt"),
     "ml": load_requirements("requirements/requirements-ml.txt"),
     "nlp": load_requirements("requirements/requirements-nlp.txt"),
-    "rl": load_requirements("requirements/requirements-rl.txt"),
 }
 extras["contrib"] += extras["ecosystem"] + extras["cv"] + extras["nlp"]
 
@@ -110,7 +109,7 @@ setup(
         "Machine Learning",
         "Distributed Computing",
         "Deep Learning",
-        "Reinforcement Learning",
+        # "Reinforcement Learning",
         "Computer Vision",
         "Natural Language Processing",
         "Recommendation Systems",
