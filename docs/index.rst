@@ -180,7 +180,6 @@ Getting started: 30 seconds with Catalyst
 
    api/core
    api/dl
-   api/rl
 
    api/contrib
    api/data
