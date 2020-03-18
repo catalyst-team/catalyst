@@ -50,4 +50,6 @@ except ImportError as ex:
         )
         raise ex
 
-from .visualization import plot_confusion_matrix, render_figure_to_tensor
+from .visualization import (
+    plot_confusion_matrix, render_figure_to_tensor, plot_metrics
+)
