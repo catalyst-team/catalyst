@@ -5,7 +5,7 @@ from urllib.parse import quote_plus
 from urllib.request import Request, urlopen
 
 from catalyst import utils
-from catalyst.core import State, Callback, CallbackNode, CallbackOrder
+from catalyst.core import Callback, CallbackNode, CallbackOrder, State
 
 
 class TelegramLogger(Callback):

@@ -1,4 +1,4 @@
-from catalyst.core import State, Callback, CallbackNode, CallbackOrder
+from catalyst.core import Callback, CallbackNode, CallbackOrder, State
 from catalyst.utils.tools.time_manager import TimeManager
 
 

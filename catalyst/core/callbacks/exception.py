@@ -1,5 +1,5 @@
 from catalyst import utils
-from catalyst.core import State, Callback, CallbackNode, CallbackOrder
+from catalyst.core import Callback, CallbackNode, CallbackOrder, State
 
 
 class ExceptionCallback(Callback):

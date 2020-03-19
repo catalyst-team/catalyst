@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from catalyst.core import State, Callback, CallbackNode, CallbackOrder
+from catalyst.core import Callback, CallbackNode, CallbackOrder, State
 
 
 class ValidationManagerCallback(Callback):

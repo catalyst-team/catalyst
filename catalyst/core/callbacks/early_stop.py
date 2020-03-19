@@ -1,6 +1,6 @@
 import os
 
-from catalyst.core import State, Callback, CallbackNode, CallbackOrder
+from catalyst.core import Callback, CallbackNode, CallbackOrder, State
 
 _NUM_BATCH_STEPS = int(os.environ.get("CHECK_BATCH_STEPS", 2))
 _NUM_EPOCH_STEPS = int(os.environ.get("CHECK_EPOCH_STEPS", 2))

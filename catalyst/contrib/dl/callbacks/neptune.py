@@ -3,7 +3,7 @@ from typing import Dict, List  # isort:skip
 import neptune
 
 from catalyst.core import (
-    State, Callback, CallbackNode, CallbackOrder, CallbackType
+    Callback, CallbackNode, CallbackOrder, CallbackType, State
 )
 
 

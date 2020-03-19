@@ -1,6 +1,6 @@
 from typing import List  # isort:skip
 
-from catalyst.core import State, Callback
+from catalyst.core import Callback, State
 
 
 class PhaseWrapperCallback(Callback):

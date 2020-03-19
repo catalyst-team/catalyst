@@ -3,7 +3,7 @@ import logging
 
 from catalyst import utils
 from catalyst.core import (
-    State, Callback, CallbackNode, CallbackOrder, registry
+    Callback, CallbackNode, CallbackOrder, registry, State
 )
 from catalyst.utils.tools.typing import Optimizer
 

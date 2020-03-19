@@ -1,7 +1,7 @@
 from typing import List  # isort:skip
 from collections import OrderedDict
 
-from catalyst.core import State, Callback, CallbackNode, CallbackOrder
+from catalyst.core import Callback, CallbackNode, CallbackOrder, State
 
 
 class Phase:

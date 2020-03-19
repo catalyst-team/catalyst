@@ -4,7 +4,7 @@ from alchemy import Logger
 
 from catalyst import utils
 from catalyst.core import (
-    State, Callback, CallbackNode, CallbackOrder, CallbackType
+    Callback, CallbackNode, CallbackOrder, CallbackType, State
 )
 
 
