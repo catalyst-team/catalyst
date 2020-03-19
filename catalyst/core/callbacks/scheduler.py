@@ -2,7 +2,7 @@ import torch
 
 from catalyst import utils
 from catalyst.contrib.nn.schedulers import BatchScheduler, OneCycleLRWithWarmup
-from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
+from catalyst.core import Callback, CallbackNode, CallbackOrder, State
 
 
 class SchedulerCallback(Callback):
@@ -33,7 +33,7 @@ class SchedulerCallback(Callback):
 
         return lr, momentum
 
-    def step_epoch(self, state: _State):
+    def step_epoch(self, state: State):
         reduced_metric = state.valid_metrics[self.reduced_metric]
         lr, momentum = self._scheduler_step(
             scheduler=self._scheduler, reduced_metric=reduced_metric
@@ -46,7 +46,7 @@ class SchedulerCallback(Callback):
             state.epoch_metrics["lr"] = lr
             state.epoch_metrics["momentum"] = momentum
 
-    def step_batch(self, state: _State):
+    def step_batch(self, state: State):
         lr, momentum = self._scheduler_step(scheduler=self._scheduler)
 
         if self.scheduler_key is not None:
@@ -56,7 +56,7 @@ class SchedulerCallback(Callback):
             state.batch_metrics["lr"] = lr
             state.batch_metrics["momentum"] = momentum
 
-    def on_stage_start(self, state: _State):
+    def on_stage_start(self, state: State):
         scheduler = state.get_attr(
             key="scheduler", inner_key=self.scheduler_key
         )
@@ -73,11 +73,11 @@ class SchedulerCallback(Callback):
                 self.mode == "batch":
             scheduler.reset()
 
-    def on_epoch_end(self, state: _State):
+    def on_epoch_end(self, state: State):
         if state.need_backward_pass and self.mode == "epoch":
             self.step_epoch(state=state)
 
-    def on_loader_start(self, state: _State):
+    def on_loader_start(self, state: State):
         if state.loader_name.startswith("train") and \
                 isinstance(self._scheduler, OneCycleLRWithWarmup) and \
                 self.mode == "batch":
@@ -85,7 +85,7 @@ class SchedulerCallback(Callback):
                 loader_len=state.loader_len, current_step=state.epoch
             )
 
-    def on_batch_end(self, state: _State):
+    def on_batch_end(self, state: State):
         if state.need_backward_pass and self.mode == "batch":
             self.step_batch(state=state)
 
@@ -135,7 +135,7 @@ class LRUpdater(Callback):
 
         return new_lr, new_momentum
 
-    def update_optimizer(self, state: _State):
+    def update_optimizer(self, state: State):
         lr, momentum = self._update_optimizer(optimizer=self._optimizer)
 
         if self.optimizer_key is not None:
@@ -145,7 +145,7 @@ class LRUpdater(Callback):
             state.batch_metrics["lr"] = lr
             state.batch_metrics["momentum"] = momentum
 
-    def on_stage_start(self, state: _State):
+    def on_stage_start(self, state: State):
         optimizer = state.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
@@ -153,11 +153,11 @@ class LRUpdater(Callback):
         self._optimizer = optimizer
         self.init_lr = optimizer.defaults["lr"]
 
-    def on_loader_start(self, state: _State):
+    def on_loader_start(self, state: State):
         if state.need_backward_pass:
             self.update_optimizer(state=state)
 
-    def on_batch_end(self, state: _State):
+    def on_batch_end(self, state: State):
         if state.need_backward_pass:
             self.update_optimizer(state=state)
 

@@ -1,45 +1,8 @@
-from typing import Any, Callable, Iterable, List, Optional  # isort:skip
+from typing import Any, Callable, List  # isort:skip
 from datetime import datetime
 import inspect
-from itertools import tee
 from pathlib import Path
 import shutil
-
-
-def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:
-    """
-    Iterate sequences by pairs
-
-    Args:
-        iterable: Any iterable sequence
-
-    Returns:
-        pairwise iterator
-
-    Examples:
-        >>> for i in pairwise([1, 2, 5, -3]):
-        >>>     print(i)
-        (1, 2)
-        (2, 5)
-        (5, -3)
-    """
-    a, b = tee(iterable)
-    next(b, None)
-    return zip(a, b)
-
-
-def make_tuple(tuple_like):
-    """
-    Creates a tuple if given ``tuple_like`` value isn't list or tuple
-
-    Returns:
-        tuple or list
-    """
-    tuple_like = (
-        tuple_like if isinstance(tuple_like, (list, tuple)) else
-        (tuple_like, tuple_like)
-    )
-    return tuple_like
 
 
 def maybe_recursive_call(
@@ -135,24 +98,6 @@ def format_metric(name: str, value: float) -> str:
     if value < 1e-4:
         return f"{name}={value:1.3e}"
     return f"{name}={value:.4f}"
-
-
-def args_are_not_none(*args: Optional[Any]) -> bool:
-    """
-    Check that all arguments are not None
-    Args:
-        *args (Any): values
-    Returns:
-         bool: True if all value were not None, False otherwise
-    """
-    if args is None:
-        return False
-
-    for arg in args:
-        if arg is None:
-            return False
-
-    return True
 
 
 def get_fn_default_params(fn: Callable[..., Any], exclude: List[str] = None):

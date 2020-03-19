@@ -74,17 +74,3 @@ net = check_unet(ResnetFPNUnet)
 
 from catalyst.contrib.models.cv import ResnetPSPnet
 net = check_unet(ResnetPSPnet)
-
-# ---
-
-# # deprecated
-
-# In[ ]:
-
-from catalyst.contrib.models.cv import ResNetUnet
-net = check_unet(ResNetUnet)
-
-# In[ ]:
-
-from catalyst.contrib.models.cv import ResNetLinknet
-net = check_unet(ResNetLinknet)

@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING  # isort:skip
 from enum import IntFlag
 
 if TYPE_CHECKING:
-    from .state import _State
+    from .state import State
 
 
 class CallbackOrder(IntFlag):
@@ -64,36 +64,36 @@ class Callback:
         self.node = node
         self.type = type
 
-    def on_stage_start(self, state: "_State"):
+    def on_stage_start(self, state: "State"):
         pass
 
-    def on_stage_end(self, state: "_State"):
+    def on_stage_end(self, state: "State"):
         pass
 
-    def on_epoch_start(self, state: "_State"):
+    def on_epoch_start(self, state: "State"):
         pass
 
-    def on_epoch_end(self, state: "_State"):
+    def on_epoch_end(self, state: "State"):
         pass
 
-    def on_loader_start(self, state: "_State"):
+    def on_loader_start(self, state: "State"):
         pass
 
-    def on_loader_end(self, state: "_State"):
+    def on_loader_end(self, state: "State"):
         pass
 
-    def on_batch_start(self, state: "_State"):
+    def on_batch_start(self, state: "State"):
         pass
 
-    def on_batch_end(self, state: "_State"):
+    def on_batch_end(self, state: "State"):
         pass
 
-    def on_exception(self, state: "_State"):
+    def on_exception(self, state: "State"):
         pass
 
 
 __all__ = [
+    "Callback",
     "CallbackOrder",
     "CallbackNode",
-    "Callback",
 ]

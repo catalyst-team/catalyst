@@ -129,11 +129,6 @@ Utils
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.dl.utils.text
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 .. automodule:: catalyst.dl.utils.torch
     :members:
     :undoc-members:

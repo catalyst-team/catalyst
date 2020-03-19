@@ -16,6 +16,40 @@ from catalyst.utils.tools.typing import (
 )
 
 
+def is_wrapped_with_ddp(model: nn.Module) -> bool:
+    """
+    Checks whether model is wrapped with DataParallel/DistributedDataParallel.
+    """
+    parallel_wrappers = nn.DataParallel, nn.parallel.DistributedDataParallel
+
+    # Check whether Apex is installed and if it is,
+    # add Apex's DistributedDataParallel to list of checked types
+    try:
+        from apex.parallel import DistributedDataParallel as apex_DDP
+        parallel_wrappers = parallel_wrappers + (apex_DDP, )
+    except ImportError:
+        pass
+
+    return isinstance(model, parallel_wrappers)
+
+
+def get_nn_from_ddp_module(model: nn.Module) -> nn.Module:
+    """
+    Return a real model from a torch.nn.DataParallel,
+    torch.nn.parallel.DistributedDataParallel, or
+    apex.parallel.DistributedDataParallel.
+
+    Args:
+        model: A model, or DataParallel wrapper.
+
+    Returns:
+        A model
+    """
+    if is_wrapped_with_ddp(model):
+        model = model.module
+    return model
+
+
 def is_torch_distributed_initialized() -> bool:
     """
     Checks if torch.distributed is available and initialized
@@ -23,20 +57,6 @@ def is_torch_distributed_initialized() -> bool:
     return (
         torch.distributed.is_available() and torch.distributed.is_initialized()
     )
-
-
-def get_rank() -> int:
-    """
-    Returns the rank of the current worker.
-
-    Returns:
-         int: ``rank`` if torch.distributed is initialized,
-              otherwise ``-1``
-    """
-    if is_torch_distributed_initialized():
-        return torch.distributed.get_rank()
-    else:
-        return -1
 
 
 def is_apex_available() -> bool:
@@ -63,7 +83,21 @@ def assert_fp16_available() -> None:
                                 "See https://github.com/NVIDIA/apex."
 
 
-def distributed_mean(value: float):
+def get_rank() -> int:
+    """
+    Returns the rank of the current worker.
+
+    Returns:
+         int: ``rank`` if torch.distributed is initialized,
+              otherwise ``-1``
+    """
+    if is_torch_distributed_initialized():
+        return torch.distributed.get_rank()
+    else:
+        return -1
+
+
+def get_distributed_mean(value: float):
     """
     Computes distributed mean among all nodes
     """
@@ -79,6 +113,10 @@ def distributed_mean(value: float):
     return value
 
 
+def is_slurm_available():
+    return "SLURM_JOB_NUM_NODES" in os.environ and "SLURM_NODEID" in os.environ
+
+
 def get_slurm_params():
     cmd = "scontrol show hostnames '%s'" % os.environ["SLURM_JOB_NODELIST"]
     nodes = subprocess.getoutput(cmd).split()
@@ -87,10 +125,6 @@ def get_slurm_params():
     master_node = socket.gethostbyname(nodes[0])
     cur_node_idx = nodes.index(current_node)
     return cur_node_idx, num_nodes, master_node
-
-
-def is_slurm_available():
-    return "SLURM_JOB_NUM_NODES" in os.environ and "SLURM_NODEID" in os.environ
 
 
 def get_distributed_params():
@@ -278,6 +312,18 @@ def process_components(
 
 
 __all__ = [
-    "get_rank", "process_components", "distributed_mean", "is_apex_available",
-    "assert_fp16_available", "distributed_run"
+    "get_rank",
+    "process_components",
+    "get_distributed_mean",
+    "is_apex_available",
+    "assert_fp16_available",
+    "distributed_run",
+    "is_slurm_available",
+    "is_torch_distributed_initialized",
+    "initialize_apex",
+    "is_wrapped_with_ddp",
+    "get_distributed_env",
+    "get_distributed_params",
+    "get_nn_from_ddp_module",
+    "get_slurm_params",
 ]

@@ -1,25 +1,11 @@
 Examples
-=================
+========
 
-Run all examples from this dir.
 
---------------
+Tutorials
+---------
 
-DL notebooks
-
-1. `features – classification`_
-
-   -  cifar10 classification model
-   -  Runner usage example
-
-#. `features – segmentation`_
-
-   -  segmentation with unet
-   -  model training and inference
-   -  predictions visialization
-
-#. `tutorial – classification`_
-
+1. `classification tutorial`_
     - dataset preparation (raw images -> train/valid/infer splits)
     - augmentations usage example
     - pretrained model finetuning
@@ -29,74 +15,50 @@ DL notebooks
     - class imbalance handling
     - model inference
 
+#. `segmentation tutorial`_
+    - car segmentation dataset
+    - augmentations with `albumentations`_ library
+    - training in FP16 with `NVIDIA Apex`_
+    - using segmentation models from ``catalyst/contrib/models/cv/segmentation``
+    - training with multiple criterion (Dice + IoU + BCE) example
+    - Lookahead + RAdam optimizer usage example
+    - tensorboard logs visualization
+    - predictions visualization
+    - Test-time augmentations with `ttach`_ library
 
---------------
 
+Pipelines
+---------
 
-DL pipelines
+1. Full description of configs with comments:
+    - `Eng`_
+    - `Rus`_
 
-1. `features – model training`_
-
-    - configuration files usage example
-    - local and docker runs
-    - metrics visualization with tensorboard
-
-#. `features – model training with stages`_
-
-    - pipeline example with stages
-
-#. `tutorial – classification pipeline`_
-
+#. `classification pipeline`_
     - classification model training and inference
     - different augmentations and stages usage
-    - knn index model example
-    - embeddings projector
-    - LrFinder usage
-    - grid search metrics visualization
-
-#. `tutorial – autolabel`_ - WIP
-
-    - pseudolabeling for your dataset
-
-#. tutorial – segmentation - WIP
-
-#. tutorial – autounet - WIP
+    - metrics visualization with tensorboard
+#. `segmentation pipeline`_
+    - binary and semantic segmentation with U-Net
+    - model training and inference
+    - different augmentations and stages usage
+    - metrics visualization with tensorboard
 
 
---------------
+RL tutorials & pipelines
+------------------------
+
+For Reinforcement Learning examples check out our `Catalyst.RL repo`_.
 
 
-RL pipelines
+.. _classification tutorial: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb
+.. _segmentation tutorial: https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb
+.. _classification pipeline: https://github.com/catalyst-team/classification
+.. _segmentation pipeline: https://github.com/catalyst-team/segmentation
+.. _Eng: https://github.com/catalyst-team/catalyst/blob/master/examples/configs/config-description-eng.yml
+.. _Rus: https://github.com/catalyst-team/catalyst/blob/master/examples/configs/config-description-rus.yml
+.. _Catalyst.RL repo: https://github.com/catalyst-team/catalyst-rl
 
-1. `features – OpenAI Gym LunarLander`_
-
-    - off-policy RL for continuous action space environment
-    - DDPG, SAC, TD3 benchmark
-    - async multi-cpu, multi-gpu training
-
-
-#. `features – Atari`_
-
-    - off-policy RL for discrete action space environment
-    - DQN
-    - image-based environment with various wrappers
-    - CNN-based agent with different distribution heads support
-
-
---------------
-
-
-CI tests
-
-1. DL – Mnist with stages
-2. RL – OpenAI Gym MountainCarContinuous
-
-.. _features – classification: https://github.com/catalyst-team/catalyst/blob/master/examples/notebooks/classification-example.ipynb
-.. _features – segmentation: https://github.com/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-example.ipynb
-.. _tutorial – classification: https://github.com/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb
-.. _features – model training: https://github.com/catalyst-team/catalyst/tree/master/examples/cifar_simple
-.. _features – model training with stages: https://github.com/catalyst-team/catalyst/tree/master/examples/cifar_stages
-.. _tutorial – classification pipeline: https://github.com/catalyst-team/classification
-.. _tutorial – autolabel: https://github.com/catalyst-team/classification#2-autolabel
-.. _features – OpenAI Gym LunarLander: https://github.com/catalyst-team/catalyst/tree/master/examples/rl_gym
-.. _features – Atari: https://github.com/catalyst-team/catalyst/tree/master/examples/atari
+.. _albumentations: https://github.com/albu/albumentations
+.. _NVIDIA Apex: https://github.com/NVIDIA/apex
+.. _ttach: https://github.com/qubvel/ttach

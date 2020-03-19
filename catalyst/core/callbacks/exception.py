@@ -1,5 +1,5 @@
 from catalyst import utils
-from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
+from catalyst.core import Callback, CallbackNode, CallbackOrder, State
 
 
 class ExceptionCallback(Callback):
@@ -8,7 +8,7 @@ class ExceptionCallback(Callback):
             order=CallbackOrder.External + 1, node=CallbackNode.All
         )
 
-    def on_exception(self, state: _State):
+    def on_exception(self, state: State):
         exception = state.exception
         if not utils.is_exception(exception):
             return

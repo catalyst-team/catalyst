@@ -7,7 +7,7 @@ import logging
 import torch
 
 from catalyst import utils
-from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
+from catalyst.core import Callback, CallbackNode, CallbackOrder, State
 from catalyst.utils import meters
 
 logger = logging.getLogger(__name__)
@@ -60,21 +60,21 @@ class _MetricCallback(ABC, Callback):
     def metric_fn(self):
         pass
 
-    def _compute_metric_value(self, state: _State):
+    def _compute_metric_value(self, state: State):
         output = self._get_output(state.batch_out, self.output_key)
         input = self._get_input(state.batch_in, self.input_key)
 
         metric = self.metric_fn(output, input, **self.metrics_kwargs)
         return metric
 
-    def _compute_metric_key_value(self, state: _State):
+    def _compute_metric_key_value(self, state: State):
         output = self._get_output(state.batch_out, self.output_key)
         input = self._get_input(state.batch_in, self.input_key)
 
         metric = self.metric_fn(**output, **input, **self.metrics_kwargs)
         return metric
 
-    def on_batch_end(self, state: _State):
+    def on_batch_end(self, state: State):
         """
         Computes the metric and add it to batch metrics
         """
@@ -133,7 +133,7 @@ class MultiMetricCallback(MetricCallback):
         )
         self.list_args = list_args
 
-    def on_batch_end(self, state: _State):
+    def on_batch_end(self, state: State):
         metrics_ = self._compute_metric(state)
 
         for arg, metric in zip(self.list_args, metrics_):
@@ -224,7 +224,7 @@ class MetricAggregationCallback(Callback):
             result = list(metrics.values())
         return result
 
-    def on_batch_end(self, state: _State) -> None:
+    def on_batch_end(self, state: State) -> None:
         """
         Computes the metric and add it to the metrics
         """
@@ -256,29 +256,29 @@ class MetricManagerCallback(Callback):
     def _process_metrics(metrics: Dict[str, Any]):
         output = {}
         for key, value in metrics.items():
-            value = utils.distributed_mean(value)
+            value = utils.get_distributed_mean(value)
             value = MetricManagerCallback._to_single_value(value)
             output[key] = value
         return output
 
-    def on_epoch_start(self, state: _State):
+    def on_epoch_start(self, state: State):
         state.epoch_metrics = defaultdict(None)
 
-    def on_loader_start(self, state: _State):
+    def on_loader_start(self, state: State):
         state.loader_metrics = defaultdict(None)
         self.meters = defaultdict(meters.AverageValueMeter)
 
-    def on_loader_end(self, state: _State):
+    def on_loader_end(self, state: State):
         for key, value in self.meters.items():
             value = value.mean
             state.loader_metrics[key] = value
         for key, value in state.loader_metrics.items():
             state.epoch_metrics[f"{state.loader_name}_{key}"] = value
 
-    def on_batch_start(self, state: _State):
+    def on_batch_start(self, state: State):
         state.batch_metrics = defaultdict(None)
 
-    def on_batch_end(self, state: _State):
+    def on_batch_end(self, state: State):
         state.batch_metrics = self._process_metrics(state.batch_metrics)
         for key, value in state.batch_metrics.items():
             self.meters[key].add(value)

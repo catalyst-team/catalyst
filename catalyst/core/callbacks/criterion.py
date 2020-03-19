@@ -1,6 +1,6 @@
 from typing import Dict, List, Union  # isort:skip
 
-from catalyst.core import _State
+from catalyst.core import State
 from .metrics import _MetricCallback
 
 
@@ -47,7 +47,7 @@ class CriterionCallback(_MetricCallback):
     def metric_fn(self):
         return self._criterion
 
-    def on_stage_start(self, state: _State):
+    def on_stage_start(self, state: State):
         """
         Checks that the current stage has correct criterion
         """

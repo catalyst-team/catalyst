@@ -3,7 +3,7 @@ import logging
 
 from catalyst import utils
 from catalyst.core import (
-    _State, Callback, CallbackNode, CallbackOrder, registry
+    Callback, CallbackNode, CallbackOrder, registry, State
 )
 from catalyst.utils.tools.typing import Optimizer
 
@@ -79,7 +79,7 @@ class OptimizerCallback(Callback):
                 grad_clip_fn(group["params"])
         optimizer.step()
 
-    def on_stage_start(self, state: _State):
+    def on_stage_start(self, state: State):
         """
         Checks that the current stage has correct optimizer
         """
@@ -89,7 +89,7 @@ class OptimizerCallback(Callback):
         assert optimizer is not None
         self._optimizer = optimizer
 
-    def on_epoch_start(self, state: _State):
+    def on_epoch_start(self, state: State):
         """On epoch start event"""
         optimizer = self._optimizer
 
@@ -103,14 +103,14 @@ class OptimizerCallback(Callback):
         else:
             self._optimizer_wd = [0.0] * len(optimizer.param_groups)
 
-    def on_epoch_end(self, state: _State):
+    def on_epoch_end(self, state: State):
         """On epoch end event"""
         if self.decouple_weight_decay:
             optimizer = self._optimizer
             for i, wd in enumerate(self._optimizer_wd):
                 optimizer.param_groups[i]["weight_decay"] = wd
 
-    def on_batch_end(self, state: _State):
+    def on_batch_end(self, state: State):
         """On batch end event"""
         if not state.need_backward_pass:
             return

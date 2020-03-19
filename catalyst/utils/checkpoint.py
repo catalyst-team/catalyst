@@ -6,7 +6,7 @@ import shutil
 
 import torch
 
-from .ddp import get_nn_from_ddp_module
+from .distributed import get_nn_from_ddp_module
 from .misc import maybe_recursive_call
 
 
@@ -96,3 +96,11 @@ def load_checkpoint(filepath):
         filepath, map_location=lambda storage, loc: storage
     )
     return checkpoint
+
+
+__all__ = [
+    "pack_checkpoint",
+    "unpack_checkpoint",
+    "save_checkpoint",
+    "load_checkpoint",
+]

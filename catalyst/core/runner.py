@@ -7,14 +7,14 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, DistributedSampler
 
-from catalyst import utils
+from catalyst.core import utils
 from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
 from .callback import Callback, CallbackNode, CallbackType
 from .callbacks import ExceptionCallback
 from .experiment import _Experiment
-from .state import _State
+from .state import State
 
 
 class _Runner(ABC):
@@ -22,7 +22,7 @@ class _Runner(ABC):
     Abstract class for all runners inherited from
     """
     _experiment_fn: Callable = _Experiment
-    _state_fn: Callable = _State
+    _state_fn: Callable = State
 
     def __init__(
         self,
@@ -105,7 +105,7 @@ class _Runner(ABC):
 
     def _init(self):
         self.experiment: _Experiment = None
-        self.state: _State = None
+        self.state: State = None
 
     @abstractmethod
     def forward(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
@@ -295,7 +295,7 @@ class _Runner(ABC):
 
     def _run_epoch(self, stage: str, epoch: int):
         self._prepare_for_epoch(stage=stage, epoch=epoch)
-        state: _State = self.state
+        state: State = self.state
 
         assert state.loaders is not None
         loaders = state.loaders
@@ -333,7 +333,7 @@ class _Runner(ABC):
 
     def _run_stage(self, stage: str):
         self._prepare_for_stage(stage)
-        state: _State = self.state
+        state: State = self.state
 
         self._run_event("on_stage_start")
         while state.epoch < state.num_epochs + 1:

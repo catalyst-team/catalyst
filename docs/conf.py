@@ -135,8 +135,9 @@ html_theme_options = {}
 # html_theme_options = {
 #     "display_version": True,
 #     "prev_next_buttons_location": "bottom",
-#     "collapse_navigation": True,
-#     "sticky_navigation": True
+#     "collapse_navigation": False,
+#     "sticky_navigation": True,
+#     "navigation_depth": 4,
 # }
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -144,7 +145,7 @@ html_theme_options = {}
 # so a file named "default.css" will overwrite the builtin "default.css".
 # html_static_path = ["_static"]
 
-html_short_title = "Catalyst RL/DL"
+html_short_title = "Catalyst DL R&D"
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.

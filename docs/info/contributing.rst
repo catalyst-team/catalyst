@@ -37,13 +37,16 @@ guides:
 Contribution best practices
 '''''''''''''''''''''''''''
 
-1. Break your work into small, single-purpose updates if possible. It’s
-   much harder to merge in a large change with a lot of disjoint
-   features.
-2. Submit the update as a GitHub pull request against the ``dev``
-   branch.
-3. Make sure that your code passes the unit tests.
-4. Add new unit tests for your code.
+0. Install pre-commit hook:
+    .. code-block:: bash
+
+        pip install pre-commit
+
+1. Break your work into small, single-purpose updates if possible. It's much harder to merge in a large change with a lot of disjoint features.
+2. Submit the update as a GitHub pull request against the `master` branch.
+3. Make sure that you provide docstrings for all your new methods and classes
+4. Make sure that your code passes the unit tests.
+5. Add new unit tests for your code.
 
 Codestyle
 ^^^^^^^^^

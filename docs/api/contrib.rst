@@ -82,17 +82,7 @@ Modules
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.contrib.nn.modules.noisy
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 .. automodule:: catalyst.contrib.nn.modules.pooling
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.nn.modules.real_nvp
     :members:
     :undoc-members:
     :show-inheritance:

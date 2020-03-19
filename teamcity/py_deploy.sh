@@ -4,7 +4,6 @@ set -e -o xtrace
 pip install -r requirements/requirements.txt
 pip install -r requirements/requirements-cv.txt
 pip install -r requirements/requirements-nlp.txt
-pip install -r requirements/requirements-rl.txt
 pip install -r docs/requirements.txt
 
 REMOVE_BUILDS=0 make check-docs
