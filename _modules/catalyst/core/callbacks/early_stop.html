@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.rl.exploration.greedy &mdash; Catalyst 20.03.1 documentation</title>
+  <title>catalyst.core.callbacks.early_stop &mdash; Catalyst 20.03.2 documentation</title>
   
 
   
@@ -177,13 +177,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../info/examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../info/contributing.html">Contribution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../info/license.html">Apache License</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/core.html">Core</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/rl.html">RL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utils</a></li>
@@ -229,7 +227,7 @@
         
           <li><a href="../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.rl.exploration.greedy</li>
+      <li>catalyst.core.callbacks.early_stop</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -255,58 +253,70 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.rl.exploration.greedy</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+  <h1>Source code for catalyst.core.callbacks.early_stop</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.rl.core</span> <span class="kn">import</span> <span class="n">ExplorationStrategy</span>
+<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">State</span>
 
-
-<div class="viewcode-block" id="Greedy"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.exploration.greedy.Greedy">[docs]</a><span class="k">class</span> <span class="nc">Greedy</span><span class="p">(</span><span class="n">ExplorationStrategy</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    For discrete environments only.</span>
-<span class="sd">    Selects greedy action (argmax_a Q(s,a)).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="Greedy.get_action"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.exploration.greedy.Greedy.get_action">[docs]</a>    <span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_values</span><span class="p">):</span>
-        <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">q_values</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">action</span></div></div>
+<span class="n">_NUM_BATCH_STEPS</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CHECK_BATCH_STEPS&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">_NUM_EPOCH_STEPS</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CHECK_EPOCH_STEPS&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="EpsilonGreedy"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.exploration.greedy.EpsilonGreedy">[docs]</a><span class="k">class</span> <span class="nc">EpsilonGreedy</span><span class="p">(</span><span class="n">ExplorationStrategy</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    For discrete environments only.</span>
-<span class="sd">    Selects random action with probability eps and greedy action</span>
-<span class="sd">    (argmax_a Q(s,a)) with probability 1-eps.</span>
-<span class="sd">    Random action selection probability eps usually decreases</span>
-<span class="sd">    from 1 to 0.01-0.05 during the course of training.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eps_init</span><span class="p">,</span> <span class="n">eps_final</span><span class="p">,</span> <span class="n">annealing_steps</span><span class="p">,</span> <span class="n">eps_min</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+<div class="viewcode-block" id="CheckRunCallback"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.early_stop.CheckRunCallback">[docs]</a><span class="k">class</span> <span class="nc">CheckRunCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">num_batch_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_NUM_BATCH_STEPS</span><span class="p">,</span>
+        <span class="n">num_epoch_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_NUM_EPOCH_STEPS</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">External</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">All</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_batch_steps</span> <span class="o">=</span> <span class="n">num_batch_steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_epoch_steps</span> <span class="o">=</span> <span class="n">num_epoch_steps</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">eps_init</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">eps_init</span><span class="p">,</span> <span class="n">eps_min</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">eps_final</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">eps_final</span><span class="p">,</span> <span class="n">eps_min</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span> <span class="o">=</span> <span class="n">annealing_steps</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">delta_eps</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eps_init</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps_final</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">eps</span> <span class="o">=</span> <span class="n">eps_init</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">eps_min</span> <span class="o">=</span> <span class="n">eps_min</span>
+<div class="viewcode-block" id="CheckRunCallback.on_epoch_end"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.early_stop.CheckRunCallback.on_epoch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">epoch</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_epoch_steps</span><span class="p">:</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">need_early_stop</span> <span class="o">=</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="EpsilonGreedy.set_power"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.exploration.greedy.EpsilonGreedy.set_power">[docs]</a>    <span class="k">def</span> <span class="nf">set_power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_power</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">eps_init</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_power</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">eps_final</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_power</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">eps_final</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eps_final</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps_min</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">delta_eps</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eps_init</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps_final</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">eps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps_init</span></div>
+<div class="viewcode-block" id="CheckRunCallback.on_batch_end"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.early_stop.CheckRunCallback.on_batch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">loader_step</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_batch_steps</span><span class="p">:</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">need_early_stop</span> <span class="o">=</span> <span class="kc">True</span></div></div>
 
-<div class="viewcode-block" id="EpsilonGreedy.get_action"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.exploration.greedy.EpsilonGreedy.get_action">[docs]</a>    <span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_values</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">:</span>
-            <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">q_values</span><span class="p">))</span>
+
+<div class="viewcode-block" id="EarlyStoppingCallback"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.early_stop.EarlyStoppingCallback">[docs]</a><span class="k">class</span> <span class="nc">EarlyStoppingCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">patience</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+        <span class="n">minimize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">min_delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">External</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">All</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">=</span> <span class="n">metric</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">patience</span> <span class="o">=</span> <span class="n">patience</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_bad_epochs</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_better</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">minimize</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_better</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">score</span><span class="p">,</span> <span class="n">best</span><span class="p">:</span> <span class="n">score</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">best</span> <span class="o">-</span> <span class="n">min_delta</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">q_values</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">eps</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eps_final</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">delta_eps</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">action</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_better</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">score</span><span class="p">,</span> <span class="n">best</span><span class="p">:</span> <span class="n">score</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">best</span> <span class="o">+</span> <span class="n">min_delta</span><span class="p">)</span>
 
+<div class="viewcode-block" id="EarlyStoppingCallback.on_epoch_end"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.early_stop.EarlyStoppingCallback.on_epoch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">stage_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">):</span>
+            <span class="k">return</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Greedy&quot;</span><span class="p">,</span> <span class="s2">&quot;EpsilonGreedy&quot;</span><span class="p">]</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">valid_metrics</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span> <span class="o">=</span> <span class="n">score</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_better</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_bad_epochs</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span> <span class="o">=</span> <span class="n">score</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_bad_epochs</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_bad_epochs</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">patience</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Early stop at </span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">epoch</span><span class="si">}</span><span class="s2"> epoch&quot;</span><span class="p">)</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">need_early_stop</span> <span class="o">=</span> <span class="kc">True</span></div></div>
 </pre></div>
 
              </article>

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.numpy &mdash; Catalyst 20.03.1 documentation</title>
+  <title>catalyst.utils.numpy &mdash; Catalyst 20.03.2 documentation</title>
   
 
   
@@ -177,13 +177,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../info/examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../info/contributing.html">Contribution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../info/license.html">Apache License</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/rl.html">RL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data.html">Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utils</a></li>
@@ -256,74 +254,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.numpy</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>  <span class="c1"># isort:skip</span>
-
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">lfilter</span>
-
-
-<div class="viewcode-block" id="np_softmax"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.numpy.np_softmax">[docs]</a><span class="k">def</span> <span class="nf">np_softmax</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="n">e_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">e_x</span> <span class="o">/</span> <span class="n">e_x</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="geometric_cumsum"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.numpy.geometric_cumsum">[docs]</a><span class="k">def</span> <span class="nf">geometric_cumsum</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate future accumulated sums for each element</span>
-<span class="sd">    in a list with an exponential factor.</span>
-
-<span class="sd">    Given input data :math:`x_1, \dots, x_n`  # noqa: E501, W605</span>
-<span class="sd">    and exponential factor :math:`\alpha\in [0, 1]`,  # noqa: E501, W605</span>
-<span class="sd">    it returns an array :math:`y`</span>
-<span class="sd">    with the same length and each element is calculated as following</span>
-
-<span class="sd">    .. math::</span>
-<span class="sd">        y_i = x_i + \alpha x_{i+1} + \alpha^2 x_{i+2} + \dots + \alpha^{n-i-1}x_{n-1} + \alpha^{n-i}x_{n}  # noqa: E501, W605</span>
-
-<span class="sd">    .. note::</span>
-<span class="sd">        To gain the optimal runtime speed, we use ``scipy.signal.lfilter``</span>
-
-<span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; geometric_cumsum(0.1, [[1, 1], [2, 2], [3, 3], [4, 4]])</span>
-<span class="sd">        array([[1.234, 1.234], [2.34 , 2.34 ], [3.4  , 3.4  ], [4.   , 4.   ]])</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        alpha (float): exponential factor between zero and one.</span>
-<span class="sd">        x (np.ndarray): input data, [trajectory_len, num_atoms]</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        out (np.ndarray): calculated data</span>
-
-<span class="sd">    source: https://github.com/zuoxingdong/lagom</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span>
-    <span class="k">return</span> <span class="n">lfilter</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">alpha</span><span class="p">],</span> <span class="n">x</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span></div>
-
-
-<div class="viewcode-block" id="structed2dict"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.numpy.structed2dict">[docs]</a><span class="k">def</span> <span class="nf">structed2dict</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">void</span><span class="p">))</span> \
-            <span class="ow">and</span> <span class="n">array</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">fields</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">array</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">array</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">array</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
-    <span class="k">return</span> <span class="n">array</span></div>
-
-
-<div class="viewcode-block" id="dict2structed"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.numpy.dict2structed">[docs]</a><span class="k">def</span> <span class="nf">dict2structed</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="n">capacity</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">dtype</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">array</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">capacity</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-            <span class="n">dtype</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
-        <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
-
-        <span class="n">array_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">capacity</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">array</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">array_</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="n">array</span> <span class="o">=</span> <span class="n">array_</span>
-
-    <span class="k">return</span> <span class="n">array</span></div>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
 <div class="viewcode-block" id="get_one_hot"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.numpy.get_one_hot">[docs]</a><span class="k">def</span> <span class="nf">get_one_hot</span><span class="p">(</span>

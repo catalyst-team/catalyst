@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.misc &mdash; Catalyst 20.03.1 documentation</title>
+  <title>catalyst.utils.misc &mdash; Catalyst 20.03.2 documentation</title>
   
 
   
@@ -177,13 +177,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../info/examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../info/contributing.html">Contribution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../info/license.html">Apache License</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/rl.html">RL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data.html">Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utils</a></li>
@@ -256,48 +254,11 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.misc</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">tee</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
-
-
-<div class="viewcode-block" id="pairwise"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.pairwise">[docs]</a><span class="k">def</span> <span class="nf">pairwise</span><span class="p">(</span><span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Iterate sequences by pairs</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        iterable: Any iterable sequence</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        pairwise iterator</span>
-
-<span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; for i in pairwise([1, 2, 5, -3]):</span>
-<span class="sd">        &gt;&gt;&gt;     print(i)</span>
-<span class="sd">        (1, 2)</span>
-<span class="sd">        (2, 5)</span>
-<span class="sd">        (5, -3)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">tee</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
-    <span class="nb">next</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="make_tuple"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.make_tuple">[docs]</a><span class="k">def</span> <span class="nf">make_tuple</span><span class="p">(</span><span class="n">tuple_like</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates a tuple if given ``tuple_like`` value isn&#39;t list or tuple</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        tuple or list</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">tuple_like</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">tuple_like</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tuple_like</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="k">else</span>
-        <span class="p">(</span><span class="n">tuple_like</span><span class="p">,</span> <span class="n">tuple_like</span><span class="p">)</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="n">tuple_like</span></div>
 
 
 <div class="viewcode-block" id="maybe_recursive_call"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.maybe_recursive_call">[docs]</a><span class="k">def</span> <span class="nf">maybe_recursive_call</span><span class="p">(</span>
@@ -393,24 +354,6 @@
     <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mf">1e-4</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">1.3e</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span></div>
-
-
-<div class="viewcode-block" id="args_are_not_none"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.args_are_not_none">[docs]</a><span class="k">def</span> <span class="nf">args_are_not_none</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Check that all arguments are not None</span>
-<span class="sd">    Args:</span>
-<span class="sd">        *args (Any): values</span>
-<span class="sd">    Returns:</span>
-<span class="sd">         bool: True if all value were not None, False otherwise</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span>
-
-    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
-
-    <span class="k">return</span> <span class="kc">True</span></div>
 
 
 <div class="viewcode-block" id="get_fn_default_params"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_fn_default_params">[docs]</a><span class="k">def</span> <span class="nf">get_fn_default_params</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">exclude</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>

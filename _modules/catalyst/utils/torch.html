@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.torch &mdash; Catalyst 20.03.1 documentation</title>
+  <title>catalyst.utils.torch &mdash; Catalyst 20.03.2 documentation</title>
   
 
   
@@ -177,13 +177,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../info/examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../info/contributing.html">Contribution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../info/license.html">Apache License</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/rl.html">RL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data.html">Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utils</a></li>
@@ -269,48 +267,6 @@
 
 <span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.tools.typing</span> <span class="kn">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span>
-
-
-<div class="viewcode-block" id="ce_with_logits"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.ce_with_logits">[docs]</a><span class="k">def</span> <span class="nf">ce_with_logits</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns cross entropy for giving logits&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="n">target</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="log1p_exp"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.log1p_exp">[docs]</a><span class="k">def</span> <span class="nf">log1p_exp</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Computationally stable function for computing log(1+exp(x)).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">x_</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">ge</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="n">x_</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
-    <span class="k">return</span> <span class="n">res</span></div>
-
-
-<div class="viewcode-block" id="normal_sample"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.normal_sample">[docs]</a><span class="k">def</span> <span class="nf">normal_sample</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Sample from multivariate Gaussian distribution z ~ N(z|mu,sigma)</span>
-<span class="sd">    while supporting backpropagation through its mean and variance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">mu</span> <span class="o">+</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="normal_logprob"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.normal_logprob">[docs]</a><span class="k">def</span> <span class="nf">normal_logprob</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Probability density function of multivariate Gaussian distribution</span>
-<span class="sd">    N(z|mu,sigma).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">normalization_constant</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">sigma</span><span class="o">.</span><span class="n">log</span><span class="p">()</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
-    <span class="n">square_term</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">((</span><span class="n">z</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-    <span class="n">logprob_vec</span> <span class="o">=</span> <span class="n">normalization_constant</span> <span class="o">+</span> <span class="n">square_term</span>
-    <span class="n">logprob</span> <span class="o">=</span> <span class="n">logprob_vec</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">logprob</span></div>
-
-
-<div class="viewcode-block" id="soft_update"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.soft_update">[docs]</a><span class="k">def</span> <span class="nf">soft_update</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Updates the target data with smoothing by ``tau``&quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">target_param</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">source</span><span class="o">.</span><span class="n">parameters</span><span class="p">()):</span>
-        <span class="n">target_param</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span>
-            <span class="n">target_param</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">tau</span><span class="p">)</span> <span class="o">+</span> <span class="n">param</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="n">tau</span>
-        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_optimizable_params"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_optimizable_params">[docs]</a><span class="k">def</span> <span class="nf">get_optimizable_params</span><span class="p">(</span><span class="n">model_or_params</span><span class="p">):</span>
@@ -541,40 +497,17 @@
         <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="n">requires_grad</span></div>
 
 
-<div class="viewcode-block" id="get_network_output"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_network_output">[docs]</a><span class="k">def</span> <span class="nf">get_network_output</span><span class="p">(</span><span class="n">net</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="o">*</span><span class="n">input_shapes</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    For each input shape returns an output tensor</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        net (Model): the model</span>
-<span class="sd">        *args: variable length argument list of shapes</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">input_shape</span> <span class="ow">in</span> <span class="n">input_shapes</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_shape</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="n">input_t</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">input_shape_</span> <span class="ow">in</span> <span class="n">input_shape</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">input_t</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="n">input_shape_</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">input_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="n">input_shape</span><span class="p">))</span>
-        <span class="n">inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_t</span><span class="p">)</span>
-    <span class="n">output_t</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="o">*</span><span class="n">inputs</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">output_t</span></div>
-
-
-<div class="viewcode-block" id="detach"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.detach">[docs]</a><span class="k">def</span> <span class="nf">detach</span><span class="p">(</span><span class="n">tensor</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Detaches the input tensor to a numpy array</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">tensor</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span></div>
-
-
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;ce_with_logits&quot;</span><span class="p">,</span> <span class="s2">&quot;log1p_exp&quot;</span><span class="p">,</span> <span class="s2">&quot;normal_sample&quot;</span><span class="p">,</span> <span class="s2">&quot;normal_logprob&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;soft_update&quot;</span><span class="p">,</span> <span class="s2">&quot;get_optimizable_params&quot;</span><span class="p">,</span> <span class="s2">&quot;get_optimizer_momentum&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;set_optimizer_momentum&quot;</span><span class="p">,</span> <span class="s2">&quot;get_device&quot;</span><span class="p">,</span> <span class="s2">&quot;get_available_gpus&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;get_activation_fn&quot;</span><span class="p">,</span> <span class="s2">&quot;any2device&quot;</span><span class="p">,</span> <span class="s2">&quot;prepare_cudnn&quot;</span><span class="p">,</span> <span class="s2">&quot;process_model_params&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;set_requires_grad&quot;</span><span class="p">,</span> <span class="s2">&quot;get_network_output&quot;</span><span class="p">,</span> <span class="s2">&quot;detach&quot;</span>
+    <span class="s2">&quot;get_optimizable_params&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_optimizer_momentum&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;set_optimizer_momentum&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_device&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_available_gpus&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_activation_fn&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;any2device&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;prepare_cudnn&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;process_model_params&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;set_requires_grad&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

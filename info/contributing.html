@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contribution &mdash; Catalyst 20.03.1 documentation</title>
+  <title>Contribution &mdash; Catalyst 20.03.2 documentation</title>
   
 
   
@@ -29,7 +29,7 @@
   <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Apache License" href="license.html" />
+    <link rel="next" title="Core" href="../api/core.html" />
     <link rel="prev" title="Examples" href="examples.html" /> 
 
   
@@ -179,13 +179,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Contribution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="license.html">Apache License</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/core.html">Core</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/rl.html">RL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contrib</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data.html">Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Utils</a></li>
@@ -296,12 +294,17 @@ guides:</p>
 </div>
 <div class="section" id="contribution-best-practices">
 <h4>Contribution best practices<a class="headerlink" href="#contribution-best-practices" title="Permalink to this headline">¶</a></h4>
-<ol class="arabic simple">
-<li><p>Break your work into small, single-purpose updates if possible. It’s
-much harder to merge in a large change with a lot of disjoint
-features.</p></li>
-<li><p>Submit the update as a GitHub pull request against the <code class="docutils literal notranslate"><span class="pre">dev</span></code>
-branch.</p></li>
+<ol class="arabic" start="0">
+<li><dl>
+<dt>Install pre-commit hook:</dt><dd><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install pre-commit
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+<li><p>Break your work into small, single-purpose updates if possible. It’s much harder to merge in a large change with a lot of disjoint features.</p></li>
+<li><p>Submit the update as a GitHub pull request against the <cite>master</cite> branch.</p></li>
+<li><p>Make sure that you provide docstrings for all your new methods and classes</p></li>
 <li><p>Make sure that your code passes the unit tests.</p></li>
 <li><p>Add new unit tests for your code.</p></li>
 </ol>
@@ -360,7 +363,7 @@ docker run <span class="se">\\</span>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="license.html" class="btn btn-neutral float-right" title="Apache License" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../api/core.html" class="btn btn-neutral float-right" title="Core" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
         <a href="examples.html" class="btn btn-neutral" title="Examples" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>

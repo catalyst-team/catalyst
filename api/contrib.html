@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contrib &mdash; Catalyst 20.03.1 documentation</title>
+  <title>Contrib &mdash; Catalyst 20.03.2 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data" href="data.html" />
-    <link rel="prev" title="RL" href="rl.html" /> 
+    <link rel="prev" title="DL" href="dl.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
@@ -179,13 +179,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../info/examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../info/contributing.html">Contribution</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../info/license.html">Apache License</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="rl.html">RL</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Contrib</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utils</a></li>
@@ -893,35 +891,6 @@ with shape [batch_size, embedding_size]</p></li>
 
 </dd></dl>
 
-<span class="target" id="module-catalyst.contrib.nn.modules.noisy"></span><dl class="class">
-<dt id="catalyst.contrib.nn.modules.noisy.NoisyFactorizedLinear">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.noisy.</code><code class="sig-name descname">NoisyFactorizedLinear</code><span class="sig-paren">(</span><em class="sig-param">in_features</em>, <em class="sig-param">out_features</em>, <em class="sig-param">sigma_zero=0.4</em>, <em class="sig-param">bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/noisy.html#NoisyFactorizedLinear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.noisy.NoisyFactorizedLinear" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.linear.Linear</span></code></p>
-<p>NoisyNet layer with factorized gaussian noise</p>
-<p>N.B. torch.Linear already initializes weight and bias to</p>
-<dl class="method">
-<dt id="catalyst.contrib.nn.modules.noisy.NoisyFactorizedLinear.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/noisy.html#NoisyFactorizedLinear.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.noisy.NoisyFactorizedLinear.forward" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="catalyst.contrib.nn.modules.noisy.NoisyLinear">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.noisy.</code><code class="sig-name descname">NoisyLinear</code><span class="sig-paren">(</span><em class="sig-param">in_features</em>, <em class="sig-param">out_features</em>, <em class="sig-param">sigma_init=0.017</em>, <em class="sig-param">bias=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/noisy.html#NoisyLinear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.noisy.NoisyLinear" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.linear.Linear</span></code></p>
-<dl class="method">
-<dt id="catalyst.contrib.nn.modules.noisy.NoisyLinear.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/noisy.html#NoisyLinear.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.noisy.NoisyLinear.forward" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.contrib.nn.modules.noisy.NoisyLinear.reset_parameters">
-<code class="sig-name descname">reset_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/noisy.html#NoisyLinear.reset_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.noisy.NoisyLinear.reset_parameters" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
 <span class="target" id="module-catalyst.contrib.nn.modules.pooling"></span><dl class="class">
 <dt id="catalyst.contrib.nn.modules.pooling.GlobalAttnPool2d">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.pooling.</code><code class="sig-name descname">GlobalAttnPool2d</code><span class="sig-paren">(</span><em class="sig-param">in_features</em>, <em class="sig-param">activation_fn='Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/pooling.html#GlobalAttnPool2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.pooling.GlobalAttnPool2d" title="Permalink to this definition">¶</a></dt>
@@ -1030,49 +999,6 @@ with shape [batch_size, embedding_size]</p></li>
 <dl class="method">
 <dt id="catalyst.contrib.nn.modules.pooling.GlobalMaxPool2d.out_features">
 <em class="property">static </em><code class="sig-name descname">out_features</code><span class="sig-paren">(</span><em class="sig-param">in_features</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/pooling.html#GlobalMaxPool2d.out_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.pooling.GlobalMaxPool2d.out_features" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<span class="target" id="module-catalyst.contrib.nn.modules.real_nvp"></span><dl class="class">
-<dt id="catalyst.contrib.nn.modules.real_nvp.SquashingLayer">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.real_nvp.</code><code class="sig-name descname">SquashingLayer</code><span class="sig-paren">(</span><em class="sig-param">squashing_fn=&lt;class 'torch.nn.modules.activation.Tanh'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/real_nvp.html#SquashingLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.real_nvp.SquashingLayer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<dl class="method">
-<dt id="catalyst.contrib.nn.modules.real_nvp.SquashingLayer.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">squashing_fn=&lt;class 'torch.nn.modules.activation.Tanh'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/real_nvp.html#SquashingLayer.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.real_nvp.SquashingLayer.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Layer that squashes samples from some distribution to be bounded.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.contrib.nn.modules.real_nvp.SquashingLayer.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">action</em>, <em class="sig-param">action_logprob</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/real_nvp.html#SquashingLayer.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.real_nvp.SquashingLayer.forward" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="catalyst.contrib.nn.modules.real_nvp.CouplingLayer">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.real_nvp.</code><code class="sig-name descname">CouplingLayer</code><span class="sig-paren">(</span><em class="sig-param">action_size</em>, <em class="sig-param">layer_fn</em>, <em class="sig-param">activation_fn=&lt;class 'torch.nn.modules.activation.ReLU'&gt;</em>, <em class="sig-param">bias=True</em>, <em class="sig-param">parity='odd'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/real_nvp.html#CouplingLayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.real_nvp.CouplingLayer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<dl class="method">
-<dt id="catalyst.contrib.nn.modules.real_nvp.CouplingLayer.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">action_size</em>, <em class="sig-param">layer_fn</em>, <em class="sig-param">activation_fn=&lt;class 'torch.nn.modules.activation.ReLU'&gt;</em>, <em class="sig-param">bias=True</em>, <em class="sig-param">parity='odd'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/real_nvp.html#CouplingLayer.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.real_nvp.CouplingLayer.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Conditional affine coupling layer used in Real NVP Bijector.
-Original paper: <a class="reference external" href="https://arxiv.org/abs/1605.08803">https://arxiv.org/abs/1605.08803</a>
-Adaptation to RL: <a class="reference external" href="https://arxiv.org/abs/1804.02808">https://arxiv.org/abs/1804.02808</a>
-Important notes
-—————
-1. State embeddings are supposed to have size (action_size * 2).
-2. Scale and translation networks used in the Real NVP Bijector
-both have one hidden layer of (action_size) (activation_fn) units.
-3. Parity (“odd” or “even”) determines which part of the input
-is being copied and which is being transformed.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.contrib.nn.modules.real_nvp.CouplingLayer.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">action</em>, <em class="sig-param">state_embedding</em>, <em class="sig-param">action_logprob</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/real_nvp.html#CouplingLayer.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.real_nvp.CouplingLayer.forward" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1775,7 +1701,7 @@ single instance.</p></li>
         <a href="data.html" class="btn btn-neutral float-right" title="Data" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="rl.html" class="btn btn-neutral" title="RL" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="dl.html" class="btn btn-neutral" title="DL" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
