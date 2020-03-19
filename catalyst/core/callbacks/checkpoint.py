@@ -4,10 +4,10 @@ import os
 from pathlib import Path
 
 from catalyst import utils
-from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
+from catalyst.core import State, Callback, CallbackNode, CallbackOrder
 
 
-def _pack_state(state: _State):
+def _pack_state(state: State):
     checkpoint = utils.pack_checkpoint(
         model=state.model,
         criterion=state.criterion,
@@ -28,7 +28,7 @@ def _pack_state(state: _State):
     return checkpoint
 
 
-def _load_checkpoint(*, filename, state: _State):
+def _load_checkpoint(*, filename, state: State):
     if os.path.isfile(filename):
         print(f"=> loading checkpoint {filename}")
         checkpoint = utils.load_checkpoint(filename)
@@ -83,7 +83,7 @@ class BaseCheckpointCallback(Callback):
             metrics, f"{logdir}/checkpoints/{self.metrics_filename}"
         )
 
-    def on_exception(self, state: _State):
+    def on_exception(self, state: State):
         exception = state.exception
         if not utils.is_exception(exception):
             return
@@ -213,7 +213,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         metrics = self.process_metrics(valid_metrics)
         self.save_metric(logdir, metrics)
 
-    def on_stage_start(self, state: _State):
+    def on_stage_start(self, state: State):
         for key in self._keys_from_state:
             value = getattr(state, key, None)
             if value is not None:
@@ -226,7 +226,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             _load_checkpoint(filename=self.resume, state=state)
             self.resume = None
 
-    def on_epoch_end(self, state: _State):
+    def on_epoch_end(self, state: State):
         if state.stage_name.startswith("infer"):
             return
 
@@ -239,7 +239,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             minimize_metric=state.minimize_metric
         )
 
-    def on_stage_end(self, state: _State):
+    def on_stage_end(self, state: State):
         if state.stage_name.startswith("infer"):
             return
 
@@ -331,11 +331,11 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         self.save_metric(logdir, metrics)
         print(f"\nSaved checkpoint at {filepath}")
 
-    def on_stage_start(self, state: _State):
+    def on_stage_start(self, state: State):
         if self.stage_restart:
             self._iteration_counter = 0
 
-    def on_batch_end(self, state: _State):
+    def on_batch_end(self, state: State):
         self._iteration_counter += 1
         if self._iteration_counter % self.period == 0:
             checkpoint = _pack_state(state)

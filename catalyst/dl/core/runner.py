@@ -1,9 +1,8 @@
 from typing import Callable  # isort:skip
 
-from catalyst.core import _Runner
+from catalyst.core import _Runner, State
 from catalyst.dl import utils
 from .experiment import Experiment
-from .state import State
 
 
 class Runner(_Runner):

@@ -5,7 +5,7 @@ from urllib.parse import quote_plus
 from urllib.request import Request, urlopen
 
 from catalyst import utils
-from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
+from catalyst.core import State, Callback, CallbackNode, CallbackOrder
 
 
 class TelegramLogger(Callback):
@@ -69,14 +69,14 @@ class TelegramLogger(Callback):
         except Exception as e:
             logging.getLogger(__name__).warning(f"telegram.send.error:{e}")
 
-    def on_stage_start(self, state: _State):
+    def on_stage_start(self, state: State):
         """Notify about starting a new stage"""
         if self.log_on_stage_start:
             text = f"{state.stage_name} stage was started"
 
             self._send_text(text)
 
-    def on_loader_start(self, state: _State):
+    def on_loader_start(self, state: State):
         """Notify about starting running the new loader"""
         if self.log_on_loader_start:
             text = (
@@ -85,7 +85,7 @@ class TelegramLogger(Callback):
 
             self._send_text(text)
 
-    def on_loader_end(self, state: _State):
+    def on_loader_end(self, state: State):
         """Translate ``state.metric_manager`` to telegram channel"""
         if self.log_on_loader_end:
             metrics = state.loader_metrics
@@ -107,14 +107,14 @@ class TelegramLogger(Callback):
 
             self._send_text(text)
 
-    def on_stage_end(self, state: _State):
+    def on_stage_end(self, state: State):
         """Notify about finishing a stage"""
         if self.log_on_stage_end:
             text = f"{state.stage_name} stage was finished"
 
             self._send_text(text)
 
-    def on_exception(self, state: _State):
+    def on_exception(self, state: State):
         """Notify about raised Exception"""
         if self.log_on_exception:
             exception = state.exception

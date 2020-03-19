@@ -7,7 +7,7 @@
 # experiment
 # runner
 
-from .state import _State
+from .state import State
 from .callback import Callback, CallbackOrder, CallbackNode, CallbackType
 from .callbacks import *
 from .experiment import _Experiment

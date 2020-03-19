@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from catalyst.core import _State, Callback, CallbackNode, CallbackOrder
+from catalyst.core import State, Callback, CallbackNode, CallbackOrder
 
 
 class ValidationManagerCallback(Callback):
@@ -13,11 +13,11 @@ class ValidationManagerCallback(Callback):
             node=CallbackNode.Master,
         )
 
-    def on_epoch_start(self, state: _State):
+    def on_epoch_start(self, state: State):
         state.valid_metrics = defaultdict(None)
         state.is_best_valid = False
 
-    def on_epoch_end(self, state: _State):
+    def on_epoch_end(self, state: State):
         if state.stage_name.startswith("infer"):
             return
 

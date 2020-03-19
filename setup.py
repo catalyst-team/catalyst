@@ -130,14 +130,12 @@ setup(
     entry_points={
         "console_scripts": [
             "catalyst-dl=catalyst.dl.__main__:main",
-            "catalyst-rl=catalyst.rl.__main__:main",
             "catalyst-contrib=catalyst.contrib.__main__:main",
             "catalyst-data=catalyst.data.__main__:main",
         ],
     },
     scripts=[
         "bin/scripts/catalyst-parallel-run",
-        "bin/scripts/catalyst-rl-run",
         "bin/scripts/download-gdrive",
         "bin/scripts/extract-archive",
     ],

@@ -4,7 +4,7 @@ from alchemy import Logger
 
 from catalyst import utils
 from catalyst.core import (
-    _State, Callback, CallbackNode, CallbackOrder, CallbackType
+    State, Callback, CallbackNode, CallbackOrder, CallbackType
 )
 
 
@@ -93,7 +93,7 @@ class AlchemyLogger(Callback):
                 metric_value = metrics[name]
                 self.logger.log_scalar(metric_name, metric_value)
 
-    def on_batch_end(self, state: _State):
+    def on_batch_end(self, state: State):
         """Translate batch metrics to Alchemy"""
         if state.logdir is None:
             return
@@ -108,7 +108,7 @@ class AlchemyLogger(Callback):
                 suffix=self.batch_log_suffix,
             )
 
-    def on_loader_end(self, state: _State):
+    def on_loader_end(self, state: State):
         """Translate loader metrics to Alchemy"""
         if state.logdir is None:
             return
@@ -123,7 +123,7 @@ class AlchemyLogger(Callback):
                 suffix=self.epoch_log_suffix,
             )
 
-    def on_epoch_end(self, state: _State):
+    def on_epoch_end(self, state: State):
         """Translate epoch metrics to Alchemy"""
         if state.logdir is None:
             return

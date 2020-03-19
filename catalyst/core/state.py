@@ -1,3 +1,4 @@
+# flake8: noqa
 from typing import Dict, Optional, Union, TYPE_CHECKING  # isort:skip
 from collections import defaultdict, OrderedDict
 from pathlib import Path
@@ -21,101 +22,131 @@ StateOptimizer = Union[Optimizer, Dict[str, Optimizer]]
 StateScheduler = Union[Scheduler, Dict[str, Scheduler]]
 
 
-class _State(FrozenClass):
-    """
+class State(FrozenClass):
+    r"""
     Object containing all information about current state of the experiment.
 
     state.loaders - ordered dictionary with torch.DataLoaders
-        "train" prefix is used for training loaders
-        (metrics computations, backward pass, optimization)
-        "valid" prefix is used for validation loaders - metrics only
-        "infer" prefix is used for inference loaders - dataset prediction
-    example: {"train": MnistTrainLoader(), "valid": MnistValidLoader()}
+        - "train" prefix is used for training loaders \
+          (metrics computations, backward pass, optimization)
+        - "valid" prefix is used for validation loaders - metrics only
+        - "infer" prefix is used for inference loaders - dataset prediction
+
+        ::
+
+            state.loaders = {
+                "train": MnistTrainLoader(),
+                "valid": MnistValidLoader()
+            }
 
     state.model - an instance of torch.nn.Module class
         should implement ``forward`` method
-    example: torch.nn.Linear(10, 10)
+        ::
 
-    state.criterion - an instance of torch.nn.Module class
-        or torch.nn.modules.loss._Loss
+            state.model = torch.nn.Linear(10, 10)
+
+    state.criterion - an instance of torch.nn.Module class or torch.nn.modules.loss._Loss
         should implement ``forward`` method
-    example: torch.nn.CrossEntropyLoss()
+        ::
+
+            state.criterion = torch.nn.CrossEntropyLoss()
 
     state.optimizer - an instance of torch.optim.optimizer.Optimizer
         should implement ``step`` method
-    example: torch.optim.Adam()
+        ::
+
+            state.optimizer = torch.optim.Adam()
 
     state.scheduler - an instance of torch.optim.lr_scheduler._LRScheduler
-            should implement ``step`` method
-    example: torch.optim.lr_scheduler.ReduceLROnPlateau()
+        should implement ``step`` method
+        ::
+
+            state.scheduler = htorch.optim.lr_scheduler.ReduceLROnPlateau()
 
     state.device - an instance of torch.device (CPU, GPU, TPU)
-    example: torch.device("cpu")
+        ::
+
+            state.device = torch.device("cpu")
 
     state.callbacks - ordered dictionary with Catalyst.Callback instances
-    example: {
-        "accuracy": AccuracyCallback(),
-        "criterion": CriterionCallback(),
-        "optim": OptimizerCallback(),
-        "saver": CheckpointCallback()
-    }
+        ::
 
-    state.batch_in - dictionary, containing
-        current batch of data from DataLoader
-    example: {
-        "images": np.ndarray(batch_size, c, h, w),
-        "targets": np.ndarray(batch_size, 1),
-    }
+            state.callbacks = {
+                "accuracy": AccuracyCallback(),
+                "criterion": CriterionCallback(),
+                "optim": OptimizerCallback(),
+                "saver": CheckpointCallback()
+            }
 
-    state.batch_out - dictionary, containing
-        model output based on current batch
-    example: {"logits": torch.Tensor(batch_size, num_classes)}
+    state.batch_in - dictionary, containing current batch of data from DataLoader
+        ::
+
+            state.batch_in = {
+                "images": np.ndarray(batch_size, c, h, w),
+                "targets": np.ndarray(batch_size, 1),
+            }
+
+    state.batch_out - dictionary, containing model output based on current batch
+        ::
+
+            state.batch_out = {"logits": torch.Tensor(batch_size, num_classes)}
 
     state.batch_metrics - dictionary, flatten storage for batch metrics
-    example: {"loss": ..., "accuracy": ..., "iou": ...}
+        ::
 
-    state.loader_metrics - dictionary
-        with aggregated batch statistics for loader (mean over all batches)
-        and global loader metrics, like AUC
-    example: {"loss": ..., "accuracy": ..., "auc": ...}
+            state.batch_metrics = {"loss": ..., "accuracy": ..., "iou": ...}
 
-    state.epoch_metrics - dictionary
-        with summarized metrics for different loaders
-        and global epoch metrics, like lr, momentum
-    example: {
-        "train_loss": ..., "train_auc": ..., "valid_loss": ...,
-        "lr": ..., "momentum": ...,
-    }
+    state.loader_metrics - dictionary with aggregated batch statistics for loader (mean over all batches) and global loader metrics, like AUC
+        ::
+
+            state.loader_metrics = {"loss": ..., "accuracy": ..., "auc": ...}
+
+    state.epoch_metrics - dictionary with summarized metrics for different loaders and global epoch metrics, like lr, momentum
+        ::
+
+            state.epoch_metrics = {
+                "train_loss": ..., "train_auc": ..., "valid_loss": ...,
+                "lr": ..., "momentum": ...,
+            }
 
     state.is_best_valid - bool, indicator flag
-        True if this training epoch is best over all epochs
-        False if not
+        - ``True`` if this training epoch is best over all epochs
+        - ``False`` if not
 
     state.valid_metrics - dictionary with validation metrics for currect epoch
-        (just a subdictionary of epoch_metrics)
-    example: {"loss": ..., "accuracy": ..., "auc": ...}
+        just a subdictionary of epoch_metrics
+        ::
 
-    state.best_valid_metrics - dictionary with best validation metrics
-        during whole training process
+            state.valid_metrics = {"loss": ..., "accuracy": ..., "auc": ...}
+
+    state.best_valid_metrics - dictionary with best validation metrics during whole training process
 
     state.distributed_rank
+
     state.is_distributed_worker
 
     state.stage_name
+
     state.epoch
+
     state.num_epochs
 
     state.loader_name
+
     state.loader_step
+
     state.loader_len
 
     state.batch_size
 
     state.global_step
+
     state.global_epoch
 
     state.main_metric
+
     state.minimize_metric
+
     state.valid_loader
 
     state.logdir - path to logging directory to save
@@ -125,25 +156,25 @@ class _State(FrozenClass):
         with all extra data for experiment tracking
 
     state.is_check_run - bool, indicator flag
-        True if you want to check you pipeline and run only
-            2 batches per loader and 2 epochs per stage
-        False (default) if you want to just the pipeline
+        - ``True`` if you want to check you pipeline and run only 2 batches per loader and 2 epochs per stage
+        - ``False`` (default) if you want to just the pipeline
 
     state.need_backward_pass - bool, indicator flag
-        True for training loaders
-        False otherwise
+        - ``True`` for training loaders
+        - ``False`` otherwise
 
     state.need_early_stop - bool, indicator flag
-        True if we need to stop the training
-        False (default) otherwise
-    used for EarlyStopping and CheckRun Callbacks
+        used for EarlyStopping and CheckRun Callbacks
+
+        - ``True`` if we need to stop the training
+        - ``False`` (default) otherwise
 
     state.need_exception_reraise - bool, indicator flag
-        True (default) if you want to show exception during pipeline
-            and stop the training process
-        False otherwise
+        - ``True`` (default) if you want to show exception during pipeline and stop the training process
+        - ``False`` otherwise
 
-    state.exception - python Exception instance to raise (or not ;) )
+    state.exception - python Exception instance to raise
+        (or not ;) )
     """
     def __init__(
         self,
