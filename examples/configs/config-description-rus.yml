@@ -148,7 +148,7 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
       scheduler:
         callback: SchedulerCallback
         # для любого коллбека на этом уровне лежат его параметры
-        reduce_metric: *main_metric
+        reduced_metric: *main_metric
       saver:
         callback: CheckpointCallback
         save_n_best: 3

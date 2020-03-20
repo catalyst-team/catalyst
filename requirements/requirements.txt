@@ -11,10 +11,10 @@ PyYAML
 tensorboard>=1.14.0
 tensorboardX
 plotly>=4.1.0
-safitty>=1.2.3
 crc32c>=1.7
 ipython
 packaging
+deprecation
 
 # Used in scripts
 matplotlib

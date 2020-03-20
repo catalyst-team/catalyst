@@ -1,10 +1,15 @@
 from typing import Dict  # isort:skip
 
+import warnings
+
 from alchemy import Logger
+from deprecation import DeprecatedWarning
 
 from catalyst.dl import utils
 from catalyst.dl.core import Experiment, Runner
 from catalyst.dl.runner import SupervisedRunner
+
+warnings.simplefilter("always")
 
 
 class AlchemyRunner(Runner):
@@ -42,9 +47,16 @@ class AlchemyRunner(Runner):
         log_on_batch_end: bool = False,
         log_on_epoch_end: bool = True,
     ):
+        super()._init()
+        the_warning = DeprecatedWarning(
+            self.__class__.__name__,
+            deprecated_in="20.03",
+            removed_in="20.04",
+            details="Use AlchemyLogger instead."
+        )
+        warnings.warn(the_warning, category=DeprecationWarning, stacklevel=2)
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
-        self.is_distributed_worker = utils.get_rank() > 0
 
         if (self.log_on_batch_end and not self.log_on_epoch_end) \
                 or (not self.log_on_batch_end and self.log_on_epoch_end):
@@ -78,31 +90,34 @@ class AlchemyRunner(Runner):
 
     def _run_batch(self, batch):
         super()._run_batch(batch=batch)
-        if self.log_on_batch_end and not self.is_distributed_worker:
+        if self.log_on_batch_end and not self.state.is_distributed_worker:
             mode = self.state.loader_name
-            metrics = self.state.metric_manager.batch_values
+            metrics = self.state.batch_metrics
             self._log_metrics(
                 metrics=metrics, mode=mode, suffix=self.batch_log_suffix
             )
 
     def _run_epoch(self, stage: str, epoch: int):
         super()._run_epoch(stage=stage, epoch=epoch)
-        if self.log_on_epoch_end and not self.is_distributed_worker:
-            for mode, metrics in \
-                    self.state.metric_manager.epoch_values.items():
+        if self.log_on_epoch_end and not self.state.is_distributed_worker:
+            mode_metrics = utils.split_dict_to_subdicts(
+                dct=self.state.epoch_metrics,
+                prefixes=list(self.state.loaders.keys()),
+                extra_key="_base",
+            )
+            for mode, metrics in mode_metrics.items():
                 self._log_metrics(
                     metrics=metrics, mode=mode, suffix=self.epoch_log_suffix
                 )
 
-    def run_experiment(self, experiment: Experiment, check: bool = False):
+    def run_experiment(self, experiment: Experiment):
         """Starts experiment
 
         Args:
             experiment (Experiment): experiment class
-            check (bool): if ``True`` takes only 3 steps
         """
         self._pre_experiment_hook(experiment=experiment)
-        super().run_experiment(experiment=experiment, check=check)
+        super().run_experiment(experiment=experiment)
         self._post_experiment_hook(experiment=experiment)
 
 

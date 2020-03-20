@@ -3,9 +3,8 @@ from collections import defaultdict
 
 import numpy as np
 
-from catalyst.core import Callback, CallbackOrder
+from catalyst.core import Callback, CallbackOrder, State
 from catalyst.utils import get_activation_fn
-from .state import State
 
 
 class MeterMetricsCallback(Callback):
@@ -59,8 +58,8 @@ class MeterMetricsCallback(Callback):
         self._reset_stats()
 
     def on_batch_end(self, state: State):
-        logits = state.output[self.output_key].detach().float()
-        targets = state.input[self.input_key].detach().float()
+        logits = state.batch_out[self.output_key].detach().float()
+        targets = state.batch_in[self.input_key].detach().float()
         probabilities = self.activation_fn(logits)
 
         for i in range(self.num_classes):
@@ -68,7 +67,7 @@ class MeterMetricsCallback(Callback):
 
     def on_loader_end(self, state: State):
         metrics_tracker = defaultdict(list)
-        loader_values = state.metric_manager.epoch_values[state.loader_name]
+        loader_values = state.loader_metrics
         # Computing metrics for each class
         for i, meter in enumerate(self.meters):
             metrics = meter.value()

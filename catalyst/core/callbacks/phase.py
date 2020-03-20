@@ -1,7 +1,7 @@
 from typing import List  # isort:skip
 from collections import OrderedDict
 
-from catalyst.core import Callback, CallbackOrder
+from catalyst.core import Callback, CallbackNode, CallbackOrder, State
 
 
 class Phase:
@@ -33,8 +33,8 @@ class PhaseManager:
         self.train_index = 0
         self.valid_index = 0
 
-    def step(self, state, step_size=1):
-        if state.need_backward:
+    def step(self, state: State, step_size: int = 1):
+        if state.need_backward_pass:
             if len(self.train_phases) > 1:
                 phase = self.train_phases[self.train_index]
                 phase.curr_step += step_size
@@ -51,8 +51,8 @@ class PhaseManager:
                     self.valid_index = \
                         (self.valid_index + 1) % len(self.valid_phases)
 
-    def get_phase_name(self, state):
-        if state.need_backward:
+    def get_phase_name(self, state: State):
+        if state.need_backward_pass:
             return self.train_phases[self.train_index].name
         return self.valid_phases[self.valid_index].name
 
@@ -72,7 +72,7 @@ class PhaseManagerCallback(Callback):
         valid_phases: "OrderedDict[str, int]" = None,
         valid_mode: str = None
     ):
-        super().__init__(CallbackOrder.Internal)
+        super().__init__(order=CallbackOrder.Internal, node=CallbackNode.All)
         self.phase_manager = self._get_phase_manager(
             train_phases=train_phases,
             valid_phases=valid_phases,
@@ -113,10 +113,10 @@ class PhaseManagerCallback(Callback):
             train_phases=train_phases, valid_phases=valid_phases
         )
 
-    def on_batch_start(self, state):
+    def on_batch_start(self, state: State):
         state.phase = self.phase_manager.get_phase_name(state)
 
-    def on_batch_end(self, state):
+    def on_batch_end(self, state: State):
         self.phase_manager.step(state)
 
 

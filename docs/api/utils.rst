@@ -11,11 +11,6 @@ Utils
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.callbacks
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 .. automodule:: catalyst.utils.checkpoint
     :members:
     :undoc-members:
@@ -41,11 +36,6 @@ Utils
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.ddp
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 .. automodule:: catalyst.utils.dict
     :members:
     :undoc-members:
@@ -67,11 +57,6 @@ Utils
     :show-inheritance:
 
 .. automodule:: catalyst.utils.misc
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.notebook
     :members:
     :undoc-members:
     :show-inheritance:
@@ -125,27 +110,12 @@ Utils
 Tools
 --------------------
 
-.. automodule:: catalyst.utils.tools.metric_manager
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.tools.dynamic_array
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 .. automodule:: catalyst.utils.tools.frozen_class
     :members:
     :undoc-members:
     :show-inheritance:
 
 .. automodule:: catalyst.utils.tools.registry
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.tools.seeder
     :members:
     :undoc-members:
     :show-inheritance:

@@ -29,10 +29,10 @@ fi
 cat $LOGFILE
 echo 'pipeline 01'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
-assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
-assert metrics.get('stage1.2', 'loss') < 2.1
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
+assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
+assert metrics['stage1.2']['loss'] < 2.1
 """
 
 echo 'pipeline 01 - trace'
@@ -40,7 +40,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/trace.py \
   ${LOGDIR}
 
-rm -rf $LOGDIR
+rm -rf ${LOGDIR}
 
 
 ################################  pipeline 02  ################################
@@ -64,13 +64,13 @@ fi
 cat $LOGFILE
 echo 'pipeline 02'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
-assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
-assert metrics.get('stage1.2', 'loss') < 2.1
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
+assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
+assert metrics['stage1.2']['loss'] < 2.1
 """
 
-if [[ "$USE_DDP" == "0" ]]; then
+if [[ "$USE_DDP" != "1" ]]; then
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
       python catalyst/dl/scripts/run.py \
       --expdir=${EXPDIR} \
@@ -88,7 +88,7 @@ print(data.shape)
 assert data.shape == (10000, 10)
 """
 
-    rm -rf $LOGDIR
+    rm -rf ${LOGDIR}
 fi
 
 
@@ -113,10 +113,10 @@ fi
 cat $LOGFILE
 echo 'pipeline 03'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
-assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
-assert metrics.get('stage1.2', 'loss') < 2.15
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
+assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
+assert metrics['stage1.2']['loss'] < 2.22
 """
 
 rm -rf ${LOGDIR}
@@ -143,10 +143,10 @@ fi
 cat $LOGFILE
 echo 'pipeline 04'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
-assert metrics.get('stage2.2', 'loss') < metrics.get('stage2.1', 'loss')
-assert metrics.get('stage2.2', 'loss') < 2.1
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
+assert metrics['stage2.2']['loss'] < metrics['stage2.1']['loss']
+assert metrics['stage2.2']['loss'] < 2.1
 """
 
 rm -rf ${LOGDIR}
@@ -173,17 +173,17 @@ fi
 cat $LOGFILE
 echo 'pipeline 05'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
-# assert metrics.get('stage2.2', 'loss') < metrics.get('stage2.1', 'loss')
-assert metrics.get('stage2.2', 'loss') < 32.0
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
+# assert metrics['stage2.2']['loss'] < metrics['stage2.1']['loss']
+assert metrics['stage2.2']['loss'] < 32.0
 """
 
 rm -rf ${LOGDIR}
 
 
 ################################  pipeline 06  ################################
-if [[ "$USE_DDP" == "0" ]]; then
+if [[ "$USE_DDP" != "1" ]]; then
     echo 'pipeline 06 - LrFinder'
     EXPDIR=./examples/_tests_cv_classification
     LOGDIR=./examples/logs/_tests_cv_classification
@@ -228,10 +228,10 @@ fi
 cat $LOGFILE
 echo 'pipeline 11'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
-# assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
-assert metrics.get('best', 'loss') < 2.35
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
+# assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
+assert metrics['best']['loss'] < 2.35
 """
 
 rm -rf ${LOGDIR}
@@ -258,10 +258,10 @@ fi
 cat $LOGFILE
 echo 'pipeline 12'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
-# assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
-assert metrics.get('stage1.2', 'loss') < 2.35
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
+# assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
+assert metrics['stage1.2']['loss'] < 2.35
 """
 
 rm -rf ${LOGDIR}
@@ -288,17 +288,17 @@ fi
 cat $LOGFILE
 echo 'pipeline 13'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
-# assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
-assert metrics.get('stage1.2', 'loss') < 2.33
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
+# assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
+assert metrics['stage1.2']['loss'] < 2.33
 """
 
 rm -rf ${LOGDIR}
 
 
 ################################  pipeline 14  ################################
-if [[ "$USE_DDP" == "0" ]]; then
+if [[ "$USE_DDP" != "1" ]]; then
     echo 'pipeline 14'
     EXPDIR=./examples/_tests_cv_classification_transforms
     LOGDIR=./examples/logs/_tests_cv_classification_transforms
@@ -343,56 +343,56 @@ fi
 cat $LOGFILE
 echo 'pipeline 15'
 python -c """
-from safitty import Safict
-metrics = Safict.load('$LOGFILE')
-# assert metrics.get('stage1.2', 'loss') < metrics.get('stage1.1', 'loss')
-assert metrics.get('stage1.2', 'loss') < 2.33
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
+# assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
+assert metrics['stage1.2']['loss'] < 2.33
 """
 
 rm -rf ${LOGDIR}
 
 
 #################################  pipeline 21  ################################
-## SEGMENTATION
-#echo 'pipeline 21 - SEGMENTATION'
-#EXPDIR=./examples/_tests_cv_segmentation
-#LOGDIR=./examples/logs/_tests_cv_segmentation
-#LOGFILE=${LOGDIR}/checkpoints/_metrics.json
-#
-### train
-#PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-#  python catalyst/dl/scripts/run.py \
-#  --expdir=${EXPDIR} \
-#  --configs ${EXPDIR}/config.yml ${EXPDIR}/transforms.yml \
-#  --logdir=${LOGDIR} \
-#  --stages/data_params/image_path=./data/segmentation_data/train:str \
-#  --stages/data_params/mask_path=./data/segmentation_data/train_masks:str \
-#  --check
-#
-### check metrics
-#if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-#    echo "File $LOGFILE does not exist"
-#    exit 1
-#fi
-#
-#cat $LOGFILE
-#echo 'pipeline 21 - SEGMENTATION'
-#python -c """
-#from safitty import Safict
-#metrics = Safict.load('$LOGFILE')
-#
-#iou = metrics.get('last', 'iou')
-#loss = metrics.get('last', 'loss')
-#
-#print('iou', iou)
-#print('loss', loss)
-#
-#assert iou > 0.8, f'iou must be > 0.8, got {iou}'
-#assert loss < 0.32, f'loss must be < 0.32, got {loss}'
-#"""
-#
-### remove logs
-#rm -rf ./examples/logs/_tests_cv_segmentation
+# SEGMENTATION
+echo 'pipeline 21 - SEGMENTATION'
+EXPDIR=./examples/_tests_cv_segmentation
+LOGDIR=./examples/logs/_tests_cv_segmentation
+LOGFILE=${LOGDIR}/checkpoints/_metrics.json
+
+## train
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --configs ${EXPDIR}/config.yml ${EXPDIR}/transforms.yml \
+  --logdir=${LOGDIR} \
+  --stages/data_params/image_path=./data/segmentation_data/train:str \
+  --stages/data_params/mask_path=./data/segmentation_data/train_masks:str \
+  --check
+
+## check metrics
+if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
+    echo "File $LOGFILE does not exist"
+    exit 1
+fi
+
+cat $LOGFILE
+echo 'pipeline 21 - SEGMENTATION'
+python -c """
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
+
+iou = metrics['last']['iou']
+loss = metrics['last']['loss']
+
+print('iou', iou)
+print('loss', loss)
+
+assert iou > 0.5, f'iou must be > 0.5, got {iou}'
+assert loss < 1.4, f'loss must be < 1.4, got {loss}'
+"""
+
+## remove logs
+rm -rf ./examples/logs/_tests_cv_segmentation
 
 
 ################################  pipeline 99  ################################

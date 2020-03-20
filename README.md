@@ -2,7 +2,7 @@
 
 [![Catalyst logo](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png)](https://github.com/catalyst-team/catalyst)
 
-**Accelerated DL & RL**
+**Accelerated DL R&D**
 
 [![Build Status](http://66.248.205.49:8111/app/rest/builds/buildType:id:Catalyst_Deploy/statusIcon.svg)](http://66.248.205.49:8111/project.html?projectId=Catalyst&tab=projectOverview&guest=1)
 [![CodeFactor](https://www.codefactor.io/repository/github/catalyst-team/catalyst/badge)](https://www.codefactor.io/repository/github/catalyst-team/catalyst)
@@ -17,7 +17,7 @@
 
 </div>
 
-PyTorch framework for DL & RL research and development.
+PyTorch framework for DL research and development.
 It was developed with a focus on reproducibility,
 fast experimentation and code/ideas reusing.
 Being able to research/develop something new,
@@ -41,10 +41,9 @@ pip install -U catalyst
 
 ```bash
 pip install catalyst[ml]         # installs DL+ML based catalyst
-pip install catalyst[rl]         # installs DL+RL based catalyst
 pip install catalyst[cv]         # installs DL+CV based catalyst
 pip install catalyst[nlp]        # installs DL+NLP based catalyst
-pip install catalyst[ecosystem]  # installs Catalyst.Ecosystem for DL/RL R&D
+pip install catalyst[ecosystem]  # installs Catalyst.Ecosystem for DL R&D
 pip install catalyst[contrib]    # installs DL+contrib based catalyst
 pip install catalyst[all]        # installs everything. Very convenient to deploy on a new server
 ```
@@ -89,7 +88,7 @@ runner.train(
 )
 ```
 
-For Catalyst.RL introduction, please follow [OpenAI Gym example](https://github.com/catalyst-team/catalyst/tree/master/examples/rl_gym).
+For Catalyst.RL introduction, please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
 
 
 #### Docs and examples
@@ -121,7 +120,7 @@ Current version: [![Pipi version](https://img.shields.io/pypi/v/catalyst.svg)](h
 ## Overview
 
 Catalyst helps you write compact
-but full-featured DL & RL pipelines in a few lines of code.
+but full-featured DL pipelines in a few lines of code.
 You get a training loop with metrics, early-stopping, model checkpointing
 and other features without the boilerplate.
 
@@ -133,18 +132,17 @@ and other features without the boilerplate.
 - Callbacks – reusable train/inference pipeline parts.
 - Training stages support.
 - Easy customization.
-- PyTorch best practices (SWA, AdamW, Ranger optimizer, OneCycle, FP16 and more).
+- PyTorch best practices (SWA, AdamW, Ranger optimizer, OneCycle, and more).
+- Developments best practices - fp16 support, distributed training, slurm.
 
 
 #### Structure
 
+- **core** - framework core with main abstractions - Experiment, Runner, State, Callback.
 - **DL** – runner for training and inference,
    all of the classic ML and CV/NLP metrics
    and a variety of callbacks for training, validation
    and inference of neural networks.
-- **RL** – scalable Reinforcement Learning,
-   all popular model-free algorithms implementations and their improvements
-   with distributed training support.
 - **contrib** - additional modules contributed by Catalyst users.
 - **data** - useful tools and scripts for data processing.
 
@@ -182,7 +180,7 @@ Please use this bibtex if you want to cite this repository in your publications:
 
     @misc{catalyst,
         author = {Kolesnikov, Sergey},
-        title = {Accelerated DL & RL.},
+        title = {Accelerated DL R&D},
         year = {2018},
         publisher = {GitHub},
         journal = {GitHub repository},

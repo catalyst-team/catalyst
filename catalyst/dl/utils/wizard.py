@@ -4,6 +4,7 @@ import pathlib
 from prompt_toolkit import prompt
 import yaml
 
+from catalyst.contrib.utils.pipelines import URLS
 from catalyst.dl import registry, utils
 
 yaml.add_representer(
@@ -378,7 +379,7 @@ class Wizard:
         Then pipeline will be copied in requested directory
         """
         self.__sep("Pipeline templates")
-        opts = list(utils.pipelines.URL.keys()) + ["empty"]
+        opts = list(URLS.keys()) + ["empty"]
         opts = [opt.capitalize() for opt in opts]
         msg = "0: Skip this step\n"
         msg += "\n".join([f"{n + 1}: {v}" for n, v in enumerate(opts)])

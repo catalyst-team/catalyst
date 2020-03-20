@@ -1,10 +1,10 @@
+from typing import Dict  # isort:skip
+
 from abc import ABC, abstractmethod
-from datetime import datetime
-import json
 import logging
 
 from catalyst import utils
-from catalyst.core import _State
+from catalyst.core import State
 
 
 class MetricsFormatter(ABC, logging.Formatter):
@@ -20,7 +20,7 @@ class MetricsFormatter(ABC, logging.Formatter):
         super().__init__(f"{message_prefix}{{message}}", style="{")
 
     @abstractmethod
-    def _format_message(self, state: _State):
+    def _format_message(self, state: State):
         pass
 
     def format(self, record: logging.LogRecord):
@@ -52,8 +52,7 @@ class TxtMetricsFormatter(MetricsFormatter):
         """
         super().__init__("[{asctime}] ")
 
-    def _format_metrics(self, metrics):
-        # metrics : dict[str: dict[str: float]]
+    def _format_metrics(self, metrics: Dict[str, Dict[str, float]]):
         metrics_formatted = {}
         for key, value in metrics.items():
             metrics_formatted_ = [
@@ -65,42 +64,21 @@ class TxtMetricsFormatter(MetricsFormatter):
 
         return metrics_formatted
 
-    def _format_message(self, state: _State):
+    def _format_message(self, state: State):
         message = [""]
-        metrics = self._format_metrics(state.metric_manager.epoch_values)
+        mode_metrics = utils.split_dict_to_subdicts(
+            dct=state.epoch_metrics,
+            prefixes=list(state.loaders.keys()),
+            extra_key="_base",
+        )
+        metrics = self._format_metrics(mode_metrics)
         for key, value in metrics.items():
             message.append(
-                f"{state.stage_epoch_log}/{state.num_epochs} "
-                f"* Epoch {state.epoch_log} ({key}): {value}"
+                f"{state.epoch}/{state.num_epochs} "
+                f"* Epoch {state.global_epoch} ({key}): {value}"
             )
         message = "\n".join(message)
         return message
 
 
-class JsonMetricsFormatter(MetricsFormatter):
-    """
-    Translate batch metrics in json format.
-
-    This class is used by ``logging.Logger`` to make a string from record.
-    For details refer to official docs for 'logging' module.
-
-    Note:
-        This is inner class used by Logger callback,
-        no need to use it directly!
-    """
-    def __init__(self):
-        """
-        Initializes the ``JsonMetricsFormatter``
-        """
-        super().__init__("")
-
-    def _format_message(self, state: _State):
-        res = dict(
-            metirics=state.metric_manager.epoch_values.copy(),
-            epoch=state.epoch,
-            time=datetime.now().isoformat()
-        )
-        return json.dumps(res, indent=True, ensure_ascii=False)
-
-
-__all__ = ["MetricsFormatter", "TxtMetricsFormatter", "JsonMetricsFormatter"]
+__all__ = ["MetricsFormatter", "TxtMetricsFormatter"]

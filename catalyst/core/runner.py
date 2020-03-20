@@ -1,6 +1,4 @@
-from typing import (  # isort:skip
-    Any, Callable, Dict, Mapping, Optional, Tuple, Union  # isort:skip
-)  # isort:skip
+from typing import Any, Callable, Dict, Mapping, Tuple, Union  # isort:skip
 
 from abc import ABC, abstractmethod
 from collections import OrderedDict
@@ -9,24 +7,22 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, DistributedSampler
 
-from catalyst import utils
+from catalyst.core import utils
 from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
-from .callback import (
-    Callback, LoggerCallback, MasterOnlyCallback, RaiseExceptionCallback
-)
+from .callback import Callback, CallbackNode, CallbackType
+from .callbacks import ExceptionCallback
 from .experiment import _Experiment
-from .state import _State
+from .state import State
 
 
 class _Runner(ABC):
     """
     Abstract class for all runners inherited from
     """
-
-    experiment_fn: Callable = _Experiment
-    state_fn: callable = _State
+    _experiment_fn: Callable = _Experiment
+    _state_fn: Callable = State
 
     def __init__(
         self,
@@ -38,19 +34,9 @@ class _Runner(ABC):
             model (Model): Torch model object
             device (Device): Torch device
         """
-        # main
         self._model: Model = model
         self._device: Device = device
-
-        self.experiment: _Experiment = None
-        self.state: _State = None
-
-        self.callbacks: OrderedDict[str, Callback] = None
-        self.loggers: OrderedDict[str, LoggerCallback] = None
-        self.loaders: OrderedDict[str, DataLoader] = None
-
-        # additional
-        self._check_run = False
+        self._init()
 
     @property
     def model(self) -> Model:
@@ -117,6 +103,10 @@ class _Runner(ABC):
                 self._model, "to", device=self._device
             )
 
+    def _init(self):
+        self.experiment: _Experiment = None
+        self.state: State = None
+
     @abstractmethod
     def forward(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
         """
@@ -161,26 +151,37 @@ class _Runner(ABC):
         optimizer: Optimizer,
         scheduler: Scheduler,
         device: Device,
+        callbacks: Dict[str, Callback],
     ):
         migrating_params = dict(**self.experiment.get_state_params(stage))
         migrate_from_previous_stage = \
             migrating_params.get("migrate_from_previous_stage", True)
+
+        if migrate_from_previous_stage \
+                and self.state is not None \
+                and self.state.callbacks is not None:
+            for key, value in self.state.callbacks.items():
+                if value.type == CallbackType.Experiment:
+                    callbacks[key] = value
+            callbacks = utils.process_callbacks(callbacks)
+
         if self.state is not None and migrate_from_previous_stage:
             migrating_params.update(
                 {
-                    "step": self.state.step,
-                    "epoch": self.state.epoch,
+                    "global_step": self.state.global_step,
+                    "global_epoch": self.state.global_epoch,
                     "resume": getattr(self.state, "resume", None),
                 }
             )
 
-        state = self.state_fn(
+        state = self._state_fn(
             stage=stage,
             model=model,
             device=device,
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
+            callbacks=callbacks,
             **migrating_params
         )
 
@@ -189,40 +190,38 @@ class _Runner(ABC):
     def _get_callbacks(self, stage: str):
         callbacks = self.experiment.get_callbacks(stage)
 
-        # Remove master-only callbacks on worker nodes
-        if utils.get_rank() > 0:
+        # distributed run setting
+        rank = utils.get_rank()
+        if rank == 0:  # master node
+            # remove worker-only callbacks on master node
             for k in list(
                 filter(
-                    lambda c:
-                    issubclass(callbacks[c].__class__, MasterOnlyCallback),
+                    lambda c: callbacks[c].node == CallbackNode.Worker,
+                    callbacks
+                )
+            ):
+                del callbacks[k]
+        elif rank > 0:  # worker node
+            # remove master-only callbacks on worker nodes
+            for k in list(
+                filter(
+                    lambda c: callbacks[c].node == CallbackNode.Master,
                     callbacks
                 )
             ):
                 del callbacks[k]
 
-        loggers = utils.process_callbacks(
-            OrderedDict(
-                [
-                    (k, v) for k, v in callbacks.items()
-                    if issubclass(v.__class__, LoggerCallback)
-                ]
-            )
-        )
-        callbacks = utils.process_callbacks(
-            OrderedDict(
-                [
-                    (k, v) for k, v in callbacks.items()
-                    if not issubclass(v.__class__, LoggerCallback)
-                ]
-            )
-        )
+        callbacks = utils.process_callbacks(callbacks)
 
-        return callbacks, loggers
+        return callbacks
 
     def _prepare_for_stage(self, stage: str):
         utils.set_global_seed(self.experiment.initial_seed)
         self.model, criterion, optimizer, scheduler, self.device = \
             self._get_experiment_components(stage=stage)
+
+        utils.set_global_seed(self.experiment.initial_seed)
+        callbacks = self._get_callbacks(stage)
 
         utils.set_global_seed(self.experiment.initial_seed)
         self.state = self._get_state(
@@ -232,51 +231,22 @@ class _Runner(ABC):
             optimizer=optimizer,
             scheduler=scheduler,
             device=self.device,
+            callbacks=callbacks,
         )
-
-        utils.set_global_seed(self.experiment.initial_seed)
-        callbacks, loggers = self._get_callbacks(stage)
-        self.callbacks = callbacks
-        self.loggers = loggers
-        self.state.loggers = loggers
 
     def _prepare_for_epoch(self, stage: str, epoch: int):
         pass
 
-    # @TODO: too complicated -> rewrite
-    def _run_event(self, event: str, moment: Optional[str]):
-        fn_name = f"on_{event}"
-        if moment is not None:
-            fn_name = f"{fn_name}_{moment}"
-
-        # before callbacks
-        if self.state is not None:
-            getattr(self.state, f"{fn_name}_pre")()
-
-        if self.loggers is not None and moment == "start":
-            for logger in self.loggers.values():
-                getattr(logger, fn_name)(self.state)
-
-        # running callbacks
-        if self.callbacks is not None:
-            for callback in self.callbacks.values():
-                getattr(callback, fn_name)(self.state)
-
-        # after callbacks
-        if self.loggers is not None and \
-                (moment == "end" or moment is None):  # for on_exception case
-            for logger in self.loggers.values():
-                getattr(logger, fn_name)(self.state)
-
-        if self.state is not None:
-            getattr(self.state, f"{fn_name}_post")()
+    def _run_event(self, event: str):
+        for callback in self.state.callbacks.values():
+            getattr(callback, event)(self.state)
 
     def _batch2device(self, batch: Mapping[str, Any], device: Device):
         output = utils.any2device(batch, device)
         return output
 
     def _run_batch_train_step(self, batch: Mapping[str, Any]):
-        self.state.output = self.forward(batch)
+        self.state.batch_out = self.forward(batch)
 
     @torch.no_grad()
     def predict_batch(
@@ -298,111 +268,94 @@ class _Runner(ABC):
         return output
 
     def _run_batch(self, batch: Mapping[str, Any]):
-        self.state.step += self.state.batch_size
+        self.state.global_step += self.state.batch_size
         batch = self._batch2device(batch, self.device)
-        self.state.input = batch
-        self.state.timer.stop("_timers/data_time")
+        self.state.batch_in = batch
 
-        self._run_event("batch", moment="start")
-
-        self.state.timer.start("_timers/model_time")
+        self._run_event("on_batch_start")
         self._run_batch_train_step(batch=batch)
-        self.state.timer.stop("_timers/model_time")
-
-        self.state.timer.stop("_timers/batch_time")
-        self._run_event("batch", moment="end")
+        self._run_event("on_batch_end")
 
     def _run_loader(self, loader: DataLoader):
         self.state.batch_size = (
             loader.batch_sampler.batch_size
             if loader.batch_sampler is not None else loader.batch_size
         )
-        self.state.step = (
-            self.state.step
-            or self.state.epoch * len(loader) * self.state.batch_size
+        self.state.global_step = (
+            self.state.global_step
+            or self.state.global_epoch * len(loader) * self.state.batch_size
         )
-        # @TODO: remove time usage, use it under the hood
-        self.state.timer.reset()
-
-        self.state.timer.start("_timers/batch_time")
-        self.state.timer.start("_timers/data_time")
 
         for i, batch in enumerate(loader):
+            self.state.loader_step = i + 1
             self._run_batch(batch)
-
-            self.state.timer.reset()
-            if self._check_run and i >= 1:
+            if self.state.need_early_stop:
+                self.state.need_early_stop = False
                 break
-
-            self.state.timer.start("_timers/batch_time")
-            self.state.timer.start("_timers/data_time")
 
     def _run_epoch(self, stage: str, epoch: int):
         self._prepare_for_epoch(stage=stage, epoch=epoch)
+        state: State = self.state
 
-        assert self.loaders is not None
-        loaders = self.loaders
+        assert state.loaders is not None
+        loaders = state.loaders
 
         # @TODO: better solution with train/inference handling ?
-        if not self.state.stage.startswith("infer"):
-            assert self.state.valid_loader in loaders.keys(), \
-                f"'{self.state.valid_loader}' " \
+        is_infer_stage = state.stage_name.startswith("infer")
+        if not is_infer_stage:
+            assert state.valid_loader in loaders.keys(), \
+                f"'{state.valid_loader}' " \
                 f"should be in provided loaders: {list(loaders.keys())}"
         else:
             # @TODO: add check for non distributed run for inference
             assert not any(x.startswith("train") for x in loaders.keys()), \
                 "for inference no train loader should be passed"
 
-        self.state.loaders = loaders
-
         for loader_name, loader in loaders.items():
-            self.state.loader = loader
-            self.state.loader_name = loader_name
-            self.state.loader_len = len(loader)
-            self.state.need_backward = loader_name.startswith("train")
-            self.model.train(self.state.need_backward)
+            is_train_loader = loader_name.startswith("train")
+
+            state.loader_name = loader_name
+            state.loader_len = len(loader)
+            state.need_backward_pass = is_train_loader
+            self.model.train(state.need_backward_pass)
 
             if isinstance(loader.sampler, DistributedSampler) \
-                    and loader_name.startswith("train"):
-                loader.sampler.set_epoch(self.state.stage_epoch)
+                    and not is_infer_stage:
+                loader.sampler.set_epoch(state.epoch)
 
             utils.set_global_seed(
-                self.experiment.initial_seed + self.state.epoch + 1
+                self.experiment.initial_seed + state.global_epoch + 1
             )
-            self._run_event("loader", moment="start")
-            with torch.set_grad_enabled(self.state.need_backward):
+            self._run_event("on_loader_start")
+            with torch.set_grad_enabled(state.need_backward_pass):
                 self._run_loader(loader)
-            self._run_event("loader", moment="end")
+            self._run_event("on_loader_end")
 
     def _run_stage(self, stage: str):
         self._prepare_for_stage(stage)
+        state: State = self.state
 
-        # checkpoint loading
-        self._run_event("stage", moment="start")
-
-        while self.state.stage_epoch < self.state.num_epochs:
-            self._run_event("epoch", moment="start")
+        self._run_event("on_stage_start")
+        while state.epoch < state.num_epochs + 1:
             utils.set_global_seed(
-                self.experiment.initial_seed + self.state.epoch + 1
+                self.experiment.initial_seed + state.global_epoch + 1
             )
-            self._run_epoch(stage=stage, epoch=self.state.stage_epoch)
-            self._run_event("epoch", moment="end")
+            self._run_event("on_epoch_start")
+            self._run_epoch(stage=stage, epoch=state.epoch)
+            self._run_event("on_epoch_end")
 
-            if self._check_run and self.state.stage_epoch >= 1:
+            if state.need_early_stop:
+                state.need_early_stop = False
                 break
-            if self.state.early_stop:
-                self.state.early_stop = False
-                break
 
-            self.state.epoch += 1
-            self.state.stage_epoch += 1
-        self._run_event("stage", moment="end")
+            state.global_epoch += 1
+            state.epoch += 1
+        self._run_event("on_stage_end")
 
-    def run_experiment(self, experiment: _Experiment, check: bool = False):
+    def run_experiment(self, experiment: _Experiment):
         """
         Starts the experiment
         """
-        self._check_run = check
         self.experiment = experiment
 
         try:
@@ -413,14 +366,14 @@ class _Runner(ABC):
             def _exception_handler_check(callbacks: OrderedDict):
                 return (
                     callbacks is not None and any(
-                        issubclass(x.__class__, RaiseExceptionCallback)
+                        issubclass(x.__class__, ExceptionCallback)
                         for x in callbacks.values()
                     )
                 )
-            if _exception_handler_check(self.loggers) \
-                    or _exception_handler_check(self.callbacks):
+            if self.state is not None and \
+                    _exception_handler_check(self.state.callbacks):
                 self.state.exception = ex
-                self._run_event("exception", moment=None)
+                self._run_event("on_exception")
             else:
                 raise ex
 

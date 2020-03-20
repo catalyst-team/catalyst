@@ -1,45 +1,8 @@
-from typing import Any, Callable, Iterable, List, Optional  # isort:skip
+from typing import Any, Callable, List  # isort:skip
 from datetime import datetime
 import inspect
-from itertools import tee
 from pathlib import Path
 import shutil
-
-
-def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:
-    """
-    Iterate sequences by pairs
-
-    Args:
-        iterable: Any iterable sequence
-
-    Returns:
-        pairwise iterator
-
-    Examples:
-        >>> for i in pairwise([1, 2, 5, -3]):
-        >>>     print(i)
-        (1, 2)
-        (2, 5)
-        (5, -3)
-    """
-    a, b = tee(iterable)
-    next(b, None)
-    return zip(a, b)
-
-
-def make_tuple(tuple_like):
-    """
-    Creates a tuple if given ``tuple_like`` value isn't list or tuple
-
-    Returns:
-        tuple or list
-    """
-    tuple_like = (
-        tuple_like if isinstance(tuple_like, (list, tuple)) else
-        (tuple_like, tuple_like)
-    )
-    return tuple_like
 
 
 def maybe_recursive_call(
@@ -53,7 +16,7 @@ def maybe_recursive_call(
     Calls the ``method`` recursively for the object_or_dict
 
     Args:
-        object_or_dict (Any): some object or a dictinary of objects
+        object_or_dict (Any): some object or a dictionary of objects
         method (str): method name to call
         recursive_args: list of arguments to pass to the ``method``
         recursive_kwargs: list of key-arguments to pass to the ``method``
@@ -137,24 +100,6 @@ def format_metric(name: str, value: float) -> str:
     return f"{name}={value:.4f}"
 
 
-def args_are_not_none(*args: Optional[Any]) -> bool:
-    """
-    Check that all arguments are not None
-    Args:
-        *args (Any): values
-    Returns:
-         bool: True if all value were not None, False otherwise
-    """
-    if args is None:
-        return False
-
-    for arg in args:
-        if arg is None:
-            return False
-
-    return True
-
-
 def get_fn_default_params(fn: Callable[..., Any], exclude: List[str] = None):
     """
     Return default parameters of Callable.
@@ -188,3 +133,20 @@ def get_fn_argsnames(fn: Callable[..., Any], exclude: List[str] = None):
     if exclude is not None:
         params = list(filter(lambda x: x not in exclude, params))
     return params
+
+
+def fn_ends_with_pass(fn: Callable[..., Any]):
+    """
+    Check that function end with pass statement
+    (probably does nothing in any way).
+    Mainly used to filter callbacks with empty on_{event} methods.
+    Args:
+        fn (Callable[..., Any]): target Callable
+    Returns:
+        bool: True if there is pass in the first indentation level of fn
+            and nothing happens before it, False in any other case.
+    """
+    source_lines = inspect.getsourcelines(fn)[0]
+    if source_lines[-1].strip() == "pass":
+        return True
+    return False

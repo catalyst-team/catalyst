@@ -79,8 +79,8 @@ class GanRunner(MultiPhaseRunner):
     experiment: GanExperiment
     state: GanState
 
-    experiment_fn: Callable = GanExperiment
-    state_fn: callable = GanState
+    _experiment_fn: Callable = GanExperiment
+    _state_fn: callable = GanState
 
     def __init__(
         self,
@@ -202,19 +202,19 @@ class GanRunner(MultiPhaseRunner):
 
     def _get_noise_and_conditions(self):
         """Returns generator inputs"""
-        z = self.state.input[self.noise_input_key]
+        z = self.state.batch_in[self.noise_input_key]
         conditions = [
-            self.state.input[key] for key in self.fake_condition_keys
+            self.state.batch_in[key] for key in self.fake_condition_keys
         ]
         return z, conditions
 
     def _get_real_data_conditions(self):
         """Returns discriminator conditions (for real data)"""
-        return [self.state.input[key] for key in self.real_condition_keys]
+        return [self.state.batch_in[key] for key in self.real_condition_keys]
 
     def _get_fake_data_conditions(self):
         """Returns discriminator conditions (for fake data)"""
-        return [self.state.input[key] for key in self.fake_condition_keys]
+        return [self.state.batch_in[key] for key in self.fake_condition_keys]
 
     # concrete phase methods
 
@@ -241,7 +241,7 @@ class GanRunner(MultiPhaseRunner):
             fake_data.detach(), *d_fake_conditions
         )
         real_logits = self.discriminator(
-            self.state.input[self.data_input_key], *d_real_conditions
+            self.state.batch_in[self.data_input_key], *d_real_conditions
         )
         return {
             self.fake_data_output_key: fake_data,

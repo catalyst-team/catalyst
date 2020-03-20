@@ -4,7 +4,6 @@ import os
 import re
 
 import numpy as np
-import safitty
 
 import torch
 from torch import nn
@@ -12,48 +11,6 @@ import torch.backends.cudnn as cudnn
 
 from catalyst import utils
 from catalyst.utils.tools.typing import Device, Model, Optimizer
-
-
-def ce_with_logits(logits, target):
-    """Returns cross entropy for giving logits"""
-    return torch.sum(-target * torch.log_softmax(logits, -1), -1)
-
-
-def log1p_exp(x):
-    """
-    Computationally stable function for computing log(1+exp(x)).
-    """
-    x_ = x * x.ge(0).to(torch.float32)
-    res = x_ + torch.log1p(torch.exp(-torch.abs(x)))
-    return res
-
-
-def normal_sample(mu, sigma):
-    """
-    Sample from multivariate Gaussian distribution z ~ N(z|mu,sigma)
-    while supporting backpropagation through its mean and variance.
-    """
-    return mu + sigma * torch.randn_like(sigma)
-
-
-def normal_logprob(mu, sigma, z):
-    """
-    Probability density function of multivariate Gaussian distribution
-    N(z|mu,sigma).
-    """
-    normalization_constant = (-sigma.log() - 0.5 * np.log(2 * np.pi))
-    square_term = -0.5 * ((z - mu) / sigma)**2
-    logprob_vec = normalization_constant + square_term
-    logprob = logprob_vec.sum(1)
-    return logprob
-
-
-def soft_update(target, source, tau):
-    """Updates the target data with smoothing by ``tau``"""
-    for target_param, param in zip(target.parameters(), source.parameters()):
-        target_param.data.copy_(
-            target_param.data * (1.0 - tau) + param.data * tau
-        )
 
 
 def get_optimizable_params(model_or_params):
@@ -78,9 +35,9 @@ def get_optimizer_momentum(optimizer: Optimizer) -> float:
     Returns:
         float: momentum at first param group
     """
-    beta = safitty.get(optimizer.param_groups, 0, "betas", 0)
-    momentum = safitty.get(optimizer.param_groups, 0, "momentum")
-    return beta if beta is not None else momentum
+    betas = optimizer.param_groups[0].get("betas", None)
+    momentum = optimizer.param_groups[0].get("momentum", None)
+    return betas[0] if betas is not None else momentum
 
 
 def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
@@ -93,15 +50,13 @@ def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
         index (int, optional): integer index of optimizer's param groups,
             default is 0
     """
-    betas = safitty.get(optimizer.param_groups, index, "betas")
-    momentum = safitty.get(optimizer.param_groups, index, "momentum")
+    betas = optimizer.param_groups[0].get("betas", None)
+    momentum = optimizer.param_groups[0].get("momentum", None)
     if betas is not None:
         _, beta = betas
-        safitty.set(
-            optimizer.param_groups, index, "betas", value=(value, beta)
-        )
+        optimizer.param_groups[index]["betas"] = (value, beta)
     elif momentum is not None:
-        safitty.set(optimizer.param_groups, index, "momentum", value=value)
+        optimizer.param_groups[index]["momentum"] = value
 
 
 def get_device() -> torch.device:
@@ -286,38 +241,15 @@ def set_requires_grad(model: Model, requires_grad: bool):
         param.requires_grad = requires_grad
 
 
-def get_network_output(net: Model, *input_shapes):
-    """
-    For each input shape returns an output tensor
-
-    Args:
-        net (Model): the model
-        *args: variable length argument list of shapes
-    """
-    inputs = []
-    for input_shape in input_shapes:
-        if isinstance(input_shape, dict):
-            input_t = {}
-            for key, input_shape_ in input_shape.items():
-                input_t[key] = torch.Tensor(torch.randn((1, ) + input_shape_))
-        else:
-            input_t = torch.Tensor(torch.randn((1, ) + input_shape))
-        inputs.append(input_t)
-    output_t = net(*inputs)
-    return output_t
-
-
-def detach(tensor: torch.Tensor) -> np.ndarray:
-    """
-    Detaches the input tensor to a numpy array
-    """
-    return tensor.detach().cpu().numpy()
-
-
 __all__ = [
-    "ce_with_logits", "log1p_exp", "normal_sample", "normal_logprob",
-    "soft_update", "get_optimizable_params", "get_optimizer_momentum",
-    "set_optimizer_momentum", "get_device", "get_available_gpus",
-    "get_activation_fn", "any2device", "prepare_cudnn", "process_model_params",
-    "set_requires_grad", "get_network_output", "detach"
+    "get_optimizable_params",
+    "get_optimizer_momentum",
+    "set_optimizer_momentum",
+    "get_device",
+    "get_available_gpus",
+    "get_activation_fn",
+    "any2device",
+    "prepare_cudnn",
+    "process_model_params",
+    "set_requires_grad",
 ]

@@ -1,6 +1,0 @@
-redis
-pymongo
-pyarrow==0.15.1
-lz4
-gym>=0.13.0
-reaction

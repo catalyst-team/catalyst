@@ -5,7 +5,6 @@ import shutil
 import sys
 
 from .misc import get_utcnow_time
-from .notebook import save_notebook
 
 
 def import_module(expdir: pathlib.Path):
@@ -49,10 +48,8 @@ def dump_code(expdir, logdir):
 def dump_python_files(src, dst):
     py_files = list(src.glob("*.py"))
     ipynb_files = list(src.glob("*.ipynb"))
-    for filepath in ipynb_files:
-        save_notebook(filepath)
-    py_files += ipynb_files
 
+    py_files += ipynb_files
     py_files = list(set(py_files))
     for py_file in py_files:
         shutil.copy2(f"{str(py_file.absolute())}", f"{dst}/{py_file.name}")

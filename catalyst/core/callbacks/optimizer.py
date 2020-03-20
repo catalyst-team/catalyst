@@ -1,30 +1,13 @@
 from typing import Callable, Dict, List, Union  # isort:skip
 import logging
-from numbers import Number
-
-import safitty
-
-import torch
 
 from catalyst import utils
-from catalyst.core import _State, Callback, CallbackOrder, registry
+from catalyst.core import (
+    Callback, CallbackNode, CallbackOrder, registry, State
+)
 from catalyst.utils.tools.typing import Optimizer
 
 logger = logging.getLogger(__name__)
-
-
-def _add_model_grads_to_state(
-    grads_key: str,
-    grads_key_inner: str,
-    state: _State,
-    grads: Union[Number, torch.Tensor]
-):
-    if state.model_grads is not None:
-        assert isinstance(state.model_grads, dict)
-        assert isinstance(state.model_grads[grads_key], dict)
-        state.model_grads[grads_key][grads_key_inner] = grads
-    else:
-        state.model_grads = {grads_key: {grads_key_inner: grads}}
 
 
 class OptimizerCallback(Callback):
@@ -33,13 +16,13 @@ class OptimizerCallback(Callback):
     """
     def __init__(
         self,
-        grad_clip_params: Dict = None,
-        accumulation_steps: int = 1,
-        optimizer_key: str = None,
         loss_key: str = "loss",
+        optimizer_key: str = None,
+        accumulation_steps: int = 1,
+        grad_clip_params: Dict = None,
         decouple_weight_decay: bool = True,
         save_model_grads: bool = False,
-        model_grad_norm_prefix: str = "grad_norm"
+        model_grad_norm_prefix: str = "_grad_norm",
     ):
         """
         Args:
@@ -57,22 +40,25 @@ class OptimizerCallback(Callback):
             model_grad_norm_prefix (str): prefix for metrics and output key
                 for gradient norms in State.model_grads dictionary
         """
-        super().__init__(CallbackOrder.Optimizer)
+        super().__init__(order=CallbackOrder.Optimizer, node=CallbackNode.All)
+        self.loss_key: str = loss_key
+        self.optimizer_key: str = optimizer_key
+
+        self.accumulation_steps: int = accumulation_steps
+        self._accumulation_counter: int = 0
+
         grad_clip_params: dict = grad_clip_params or {}
         self.grad_clip_fn = (
             registry.GRAD_CLIPPERS.get_from_params(**grad_clip_params)
         )
         self.norm_type = grad_clip_params.get("norm_type", 2)
 
-        self.accumulation_steps: int = accumulation_steps
-        self.optimizer_key: str = optimizer_key
-        self.loss_key: str = loss_key
         self.decouple_weight_decay = decouple_weight_decay
+
         self.save_model_grads = save_model_grads
         self.model_grad_norm_prefix = model_grad_norm_prefix
 
         self._optimizer_wd: List[float] = [0.0]
-        self._accumulation_counter: int = 0
 
     @staticmethod
     def grad_step(
@@ -98,37 +84,38 @@ class OptimizerCallback(Callback):
                 grad_clip_fn(group["params"])
         optimizer.step()
 
-    def on_stage_start(self, state: _State):
-        """On stage start event"""
-        optimizer = state.get_key(
+    def on_stage_start(self, state: State):
+        """
+        Checks that the current stage has correct optimizer
+        """
+        optimizer = state.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
         assert optimizer is not None
-        lr = optimizer.defaults["lr"]
-        momentum = utils.get_optimizer_momentum(optimizer)
-        state.set_key(lr, "lr", inner_key=self.optimizer_key)
-        state.set_key(momentum, "momentum", inner_key=self.optimizer_key)
+        self._optimizer = optimizer
 
-    def on_epoch_start(self, state: _State):
+    def on_epoch_start(self, state: State):
         """On epoch start event"""
-        optimizer = state.get_key(
-            key="optimizer", inner_key=self.optimizer_key
-        )
+        optimizer = self._optimizer
+
         if self.decouple_weight_decay:
             self._optimizer_wd = [
                 group.get("weight_decay", 0.0)
                 for group in optimizer.param_groups
             ]
             for i in range(len(optimizer.param_groups)):
-                safitty.set(
-                    optimizer.param_groups, i, "weight_decay", value=0.0
-                )
+                optimizer.param_groups[i]["weight_decay"] = 0.0
         else:
             self._optimizer_wd = [0.0] * len(optimizer.param_groups)
 
-    def _get_loss(self, state: _State) -> torch.Tensor:
-        loss = state.get_key(key="loss", inner_key=self.loss_key)
+    def on_epoch_end(self, state: State):
+        """On epoch end event"""
+        if self.decouple_weight_decay:
+            optimizer = self._optimizer
+            for i, wd in enumerate(self._optimizer_wd):
+                optimizer.param_groups[i]["weight_decay"] = wd
 
+        loss = state.epoch_metrics[self.loss_key]
         if isinstance(loss, list):
             raise ValueError(
                 f"Loss is a list. "
@@ -146,7 +133,7 @@ class OptimizerCallback(Callback):
             raise ValueError(error)
         return loss
 
-    def _store_grad_norm(self, state: _State):
+    def _store_grad_norm(self, state: State):
         model = state.model
         total_norm = 0.
 
@@ -156,47 +143,22 @@ class OptimizerCallback(Callback):
             param_norm = value.grad.data.norm(self.norm_type).item()
             total_norm += param_norm ** self.norm_type
 
-            state.metric_manager.add_batch_value(
-                metrics_dict={
-                    metrics_tag: param_norm
-                }
-            )
-
-            _add_model_grads_to_state(
-                self.model_grad_norm_prefix, tag, state, param_norm
-            )
+            state.batch_metrics[metrics_tag] = param_norm
 
         total_norm = total_norm ** (1. / self.norm_type)
         tag = "total"
         metrics_tag = f"{self.model_grad_norm_prefix}/{tag}"
-        state.metric_manager.add_batch_value(
-            metrics_dict={
-                metrics_tag: total_norm
-            }
-        )
+        state.batch_metrics[metrics_tag] = total_norm
 
-        _add_model_grads_to_state(
-            self.model_grad_norm_prefix, tag, state, total_norm
-        )
-
-    def on_batch_start(self, state: _State):
-        """On batch start event"""
-        state.loss = None
-        state.model_grads = None
-
-    def on_batch_end(self, state: _State):
+    def on_batch_end(self, state: State):
         """On batch end event"""
-        if not state.need_backward:
+        if not state.need_backward_pass:
             return
 
-        loss = self._get_loss(state)
+        loss = state.batch_metrics[self.loss_key]
+        optimizer = self._optimizer
 
         self._accumulation_counter += 1
-        model = state.model
-        optimizer = state.get_key(
-            key="optimizer", inner_key=self.optimizer_key
-        )
-
         need_gradient_step = \
             (self._accumulation_counter + 1) % self.accumulation_steps == 0
 
@@ -227,20 +189,9 @@ class OptimizerCallback(Callback):
             if self.save_model_grads:
                 self._store_grad_norm(state)
 
-            utils.maybe_recursive_call(model, "zero_grad")
+            utils.maybe_recursive_call(optimizer, "zero_grad")
 
             self._accumulation_counter = 0
-
-    def on_epoch_end(self, state: _State):
-        """On epoch end event"""
-        if self.decouple_weight_decay:
-            optimizer = state.get_key(
-                key="optimizer", inner_key=self.optimizer_key
-            )
-            for i, wd in enumerate(self._optimizer_wd):
-                safitty.set(
-                    optimizer.param_groups, i, "weight_decay", value=wd
-                )
 
 
 __all__ = ["OptimizerCallback"]
