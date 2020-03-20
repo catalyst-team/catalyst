@@ -1,5 +1,7 @@
-from typing import Callable, Dict, List, Union  # isort:skip
+from typing import Callable, Dict, List  # isort:skip
 import logging
+
+from torch.nn.parallel import DataParallel, DistributedDataParallel
 
 from catalyst import utils
 from catalyst.core import (
@@ -22,7 +24,6 @@ class OptimizerCallback(Callback):
         grad_clip_params: Dict = None,
         decouple_weight_decay: bool = True,
         save_model_grads: bool = False,
-        model_grad_norm_prefix: str = "_grad_norm",
     ):
         """
         Args:
@@ -37,8 +38,6 @@ class OptimizerCallback(Callback):
             save_model_grads (bool): If True - State.model_grads will
                 contain gradients calculated on backward propagation
                 on current batch
-            model_grad_norm_prefix (str): prefix for metrics and output key
-                for gradient norms in State.model_grads dictionary
         """
         super().__init__(order=CallbackOrder.Optimizer, node=CallbackNode.All)
         self.loss_key: str = loss_key
@@ -56,7 +55,7 @@ class OptimizerCallback(Callback):
         self.decouple_weight_decay = decouple_weight_decay
 
         self.save_model_grads = save_model_grads
-        self.model_grad_norm_prefix = model_grad_norm_prefix
+        self.model_grad_norm_prefix = "_grad_norm"
 
         self._optimizer_wd: List[float] = [0.0]
 
@@ -135,17 +134,21 @@ class OptimizerCallback(Callback):
 
     def _store_grad_norm(self, state: State):
         model = state.model
+
+        if isinstance(model, (DataParallel, DistributedDataParallel)):
+            model = model.module
+
         total_norm = 0.
 
         for tag, value in model.named_parameters():
             tag = tag.replace(".", "/")
             metrics_tag = f"{self.model_grad_norm_prefix}/{tag}"
             param_norm = value.grad.data.norm(self.norm_type).item()
-            total_norm += param_norm ** self.norm_type
+            total_norm += param_norm**self.norm_type
 
             state.batch_metrics[metrics_tag] = param_norm
 
-        total_norm = total_norm ** (1. / self.norm_type)
+        total_norm = total_norm**(1. / self.norm_type)
         tag = "total"
         metrics_tag = f"{self.model_grad_norm_prefix}/{tag}"
         state.batch_metrics[metrics_tag] = total_norm
