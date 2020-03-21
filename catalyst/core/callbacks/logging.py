@@ -110,14 +110,9 @@ class ConsoleLogger(Callback):
 
         ch = logging.StreamHandler(sys.stdout)
         ch.setLevel(logging.INFO)
-        # @TODO: fix json logger
-        # jh = logging.FileHandler(f"{logdir}/metrics.json")
-        # jh.setLevel(logging.INFO)
 
         txt_formatter = formatters.TxtMetricsFormatter()
-        # json_formatter = JsonMetricsFormatter()
         ch.setFormatter(txt_formatter)
-        # jh.setFormatter(json_formatter)
 
         # add the handlers to the logger
         logger.addHandler(ch)
@@ -137,13 +132,13 @@ class ConsoleLogger(Callback):
             state.logdir.mkdir(parents=True, exist_ok=True)
         self.logger = self._get_logger(state.logdir)
 
-    def on_stage_end(self, state):
+    def on_stage_end(self, state: State):
         """Called at the end of each stage"""
         for handler in self.logger.handlers:
             handler.close()
         self.logger.handlers = []
 
-    def on_epoch_end(self, state):
+    def on_epoch_end(self, state: State):
         """
         Translate ``state.metric_manager`` to console and text file
         at the end of an epoch
@@ -192,15 +187,19 @@ class TensorboardLogger(Callback):
                     f"{name}{suffix}", metrics[name], step
                 )
 
-    def on_loader_start(self, state):
-        """Prepare tensorboard writers for the current stage"""
-        if state.logdir is None:
-            return
+    def on_stage_start(self, state: State):
+        assert state.logdir is not None
 
-        lm = state.loader_name
-        if lm not in self.loggers:
-            log_dir = os.path.join(state.logdir, f"{lm}_log")
-            self.loggers[lm] = SummaryWriter(log_dir)
+        extra_mode = "_base"
+        log_dir = os.path.join(state.logdir, f"{extra_mode}_log")
+        self.loggers[extra_mode] = SummaryWriter(log_dir)
+
+    def on_loader_start(self, state: State):
+        """Prepare tensorboard writers for the current stage"""
+
+        if state.loader_name not in self.loggers:
+            log_dir = os.path.join(state.logdir, f"{state.loader_name}_log")
+            self.loggers[state.loader_name] = SummaryWriter(log_dir)
 
     def on_batch_end(self, state: State):
         """Translate batch metrics to tensorboard"""
@@ -223,19 +222,19 @@ class TensorboardLogger(Callback):
             return
 
         if self.log_on_epoch_end:
-            mode_metrics = utils.split_dict_to_subdicts(
+            per_mode_metrics = utils.split_dict_to_subdicts(
                 dct=state.epoch_metrics,
                 prefixes=list(state.loaders.keys()),
                 extra_key="_base",
             )
 
-            for key, metrics in mode_metrics.items():
-                suffix = "" if key == "_base" else "/epoch"
+            for mode, metrics in per_mode_metrics.items():
+                # suffix = "" if mode == "_base" else "/epoch"
                 self._log_metrics(
                     metrics=metrics,
                     step=state.global_epoch,
-                    mode=key,
-                    suffix=suffix,
+                    mode=mode,
+                    suffix="/epoch",
                 )
 
         for logger in self.loggers.values():

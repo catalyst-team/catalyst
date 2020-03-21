@@ -2,6 +2,7 @@
 from typing import Dict, Optional, Union, TYPE_CHECKING  # isort:skip
 from collections import defaultdict, OrderedDict
 from pathlib import Path
+import warnings
 
 import numpy as np
 
@@ -261,7 +262,8 @@ class State(FrozenClass):
 
         # other
         self.is_check_run: bool = is_check_run
-        self.need_backward_pass: bool = False
+        self.is_train_loader: bool = False
+        self.is_infer_stage: bool = self.stage_name.startswith("infer")
         self.need_early_stop: bool = False
         self.need_exception_reraise: bool = True
         self.exception: Optional[Exception] = None
@@ -281,6 +283,14 @@ class State(FrozenClass):
     def output(self):
         # backward compatibility
         return self.batch_out
+
+    @property
+    def need_backward_pass(self):
+        warnings.warn(
+            "`need_backward_pass` was deprecated, "
+            "please use `is_train_loader` instead", DeprecationWarning
+        )
+        return self.is_train_loader
 
     def get_attr(self, key, inner_key=None):
         if inner_key is None:

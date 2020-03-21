@@ -15,6 +15,8 @@ from .metrics import (
     PrecisionRecallF1ScoreCallback
 )
 from .mixup import MixupCallback
+from .phase import PhaseManagerCallback
 from .scheduler import LRFinder
+from .wrappers import PhaseBatchWrapperCallback, PhaseWrapperCallback
 
 from catalyst.contrib.dl.callbacks import *  # isort:skip
