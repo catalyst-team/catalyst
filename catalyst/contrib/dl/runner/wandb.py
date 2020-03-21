@@ -20,7 +20,9 @@ class WandbRunner(Runner):
     Runner wrapper with wandb integration hooks.
     """
     @staticmethod
-    def _log_metrics(metrics: Dict, mode: str, suffix: str = ""):
+    def _log_metrics(
+        metrics: Dict, mode: str, suffix: str = "", commit: bool = True
+    ):
         def key_locate(key: str):
             """
             Wandb uses first symbol _ for it service purposes
@@ -39,7 +41,7 @@ class WandbRunner(Runner):
             f"{key_locate(key)}/{mode}{suffix}": value
             for key, value in metrics.items()
         }
-        wandb.log(metrics)
+        wandb.log(metrics, commit=commit)
 
     def _init(
         self,
@@ -135,7 +137,10 @@ class WandbRunner(Runner):
             mode = self.state.loader_name
             metrics = self.state.batch_metrics
             self._log_metrics(
-                metrics=metrics, mode=mode, suffix=self.batch_log_suffix
+                metrics=metrics,
+                mode=mode,
+                suffix=self.batch_log_suffix,
+                commit=True
             )
 
     def _run_epoch(self, stage: str, epoch: int):
@@ -148,17 +153,26 @@ class WandbRunner(Runner):
             )
             for mode, metrics in mode_metrics.items():
                 self._log_metrics(
-                    metrics=metrics, mode=mode, suffix=self.epoch_log_suffix
+                    metrics=metrics,
+                    mode=mode,
+                    suffix=self.epoch_log_suffix,
+                    commit=False
                 )
+            wandb.log(commit=True)
 
     def run_experiment(self, experiment: Experiment):
+        """Starts experiment
+
+        Args:
+            experiment (Experiment): experiment class
+        """
         self._pre_experiment_hook(experiment=experiment)
         super().run_experiment(experiment=experiment)
         self._post_experiment_hook(experiment=experiment)
 
 
 class SupervisedWandbRunner(WandbRunner, SupervisedRunner):
-    pass
+    """SupervisedRunner with WandB"""
 
 
 __all__ = ["WandbRunner", "SupervisedWandbRunner"]
