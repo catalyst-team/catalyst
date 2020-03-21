@@ -11,8 +11,8 @@ class CallbackOrder(IntFlag):
     MetricAggregation = 40  # pytorch
     Optimizer = 60  # pytorch
     Validation = 80  # numpy
-    Logging = 100  # numpy
-    Scheduler = 120  # numpy
+    Scheduler = 100  # numpy
+    Logging = 120  # numpy
     External = 200  # numpy
 
 

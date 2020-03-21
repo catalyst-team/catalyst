@@ -150,7 +150,7 @@ class WeightClampingOptimizerCallback(OptimizerCallback):
     def on_batch_end(self, state: State):
         """On batch end event"""
         super().on_batch_end(state)
-        if not state.need_backward_pass:
+        if not state.is_train_loader:
             return
 
         optimizer = state.get_attr(

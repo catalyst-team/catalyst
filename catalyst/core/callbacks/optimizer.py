@@ -106,13 +106,25 @@ class OptimizerCallback(Callback):
     def on_epoch_end(self, state: State):
         """On epoch end event"""
         if self.decouple_weight_decay:
-            optimizer = self._optimizer
             for i, wd in enumerate(self._optimizer_wd):
-                optimizer.param_groups[i]["weight_decay"] = wd
+                self._optimizer.param_groups[i]["weight_decay"] = wd
+
+        lr = self._optimizer.param_groups[0]["lr"]
+        lr_name = f"lr/{self.optimizer_key}" \
+            if self.optimizer_key is not None \
+            else "lr"
+        state.epoch_metrics[lr_name] = lr
+
+        momentum = utils.get_optimizer_momentum(self._optimizer)
+        if momentum is not None:
+            momentum_name = f"momentum/{self.optimizer_key}" \
+                if self.optimizer_key is not None \
+                else "momentum"
+            state.epoch_metrics[momentum_name] = momentum
 
     def on_batch_end(self, state: State):
         """On batch end event"""
-        if not state.need_backward_pass:
+        if not state.is_train_loader:
             return
 
         loss = state.batch_metrics[self.loss_key]
