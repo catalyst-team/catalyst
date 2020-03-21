@@ -3,6 +3,8 @@ from typing import Dict, List  # isort:skip
 import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 
+import torch
+
 from catalyst.dl import Callback, CallbackNode, CallbackOrder, State, utils
 from catalyst.utils import meters
 
@@ -19,7 +21,7 @@ class ConfusionMatrixCallback(Callback):
         plot_params: Dict = None,
         tensorboard_callback_name: str = "_tensorboard",
     ):
-        super().__init__(CallbackOrder.Metric, CallbackNode.Master)
+        super().__init__(CallbackOrder.Metric, CallbackNode.All)
         self.prefix = prefix
         self.output_key = output_key
         self.input_key = input_key
@@ -94,13 +96,21 @@ class ConfusionMatrixCallback(Callback):
             self.class_names or \
             [str(i) for i in range(self.num_classes)]
         confusion_matrix = self._compute_confusion_matrix()
-        tb_callback = state.callbacks[self.tensorboard_callback_name]
-        self._plot_confusion_matrix(
-            logger=tb_callback.loggers[state.loader_name],
-            epoch=state.global_epoch,
-            confusion_matrix=confusion_matrix,
-            class_names=class_names,
-        )
+
+        if utils.get_rank() >= 0:
+            confusion_matrix = torch.from_numpy(confusion_matrix)
+            confusion_matrix = confusion_matrix.to(utils.get_device())
+            torch.distributed.reduce(confusion_matrix, 0)
+            confusion_matrix = confusion_matrix.cpu().numpy()
+
+        if utils.get_rank() <= 0:
+            tb_callback = state.callbacks[self.tensorboard_callback_name]
+            self._plot_confusion_matrix(
+                logger=tb_callback.loggers[state.loader_name],
+                epoch=state.global_epoch,
+                confusion_matrix=confusion_matrix,
+                class_names=class_names,
+            )
 
 
 __all__ = ["ConfusionMatrixCallback"]
