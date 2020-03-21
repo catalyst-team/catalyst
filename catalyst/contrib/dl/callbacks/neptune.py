@@ -3,7 +3,7 @@ from typing import Dict, List  # isort:skip
 import neptune
 
 from catalyst.core import (
-    Callback, CallbackNode, CallbackOrder, CallbackType, State
+    Callback, CallbackNode, CallbackOrder, CallbackScope, State
 )
 
 
@@ -79,7 +79,7 @@ class NeptuneLogger(Callback):
         super().__init__(
             order=CallbackOrder.Logging,
             node=CallbackNode.Master,
-            type=CallbackType.Experiment,
+            scope=CallbackScope.Experiment,
         )
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
