@@ -117,6 +117,11 @@ autodoc_mock_imports = [
     "alchemy", "neptune", "wandb", "gym", "gridfs", "pymongo", "redis"
 ]
 
+# autodoc_default_flags = [
+#     "members", "undoc-members", "private-members",
+#     "special-members", "inherited-members", "show-inheritance"
+# ]
+
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
 
