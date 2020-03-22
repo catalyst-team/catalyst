@@ -97,13 +97,13 @@ class ConfusionMatrixCallback(Callback):
             [str(i) for i in range(self.num_classes)]
         confusion_matrix = self._compute_confusion_matrix()
 
-        if utils.get_rank() >= 0:
+        if state.distributed_rank >= 0:
             confusion_matrix = torch.from_numpy(confusion_matrix)
             confusion_matrix = confusion_matrix.to(utils.get_device())
             torch.distributed.reduce(confusion_matrix, 0)
             confusion_matrix = confusion_matrix.cpu().numpy()
 
-        if utils.get_rank() <= 0:
+        if state.distributed_rank <= 0:
             tb_callback = state.callbacks[self.tensorboard_callback_name]
             self._plot_confusion_matrix(
                 logger=tb_callback.loggers[state.loader_name],
