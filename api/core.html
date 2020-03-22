@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Core &mdash; Catalyst 20.03.2 documentation</title>
+  <title>Core &mdash; Catalyst 20.03.3 documentation</title>
   
 
   
@@ -404,6 +404,11 @@
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="catalyst.core.state.State.need_backward_pass">
+<em class="property">property </em><code class="sig-name descname">need_backward_pass</code><a class="headerlink" href="#catalyst.core.state.State.need_backward_pass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="catalyst.core.state.State.output">
 <em class="property">property </em><code class="sig-name descname">output</code><a class="headerlink" href="#catalyst.core.state.State.output" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -417,7 +422,7 @@
 
 <span class="target" id="module-catalyst.core.callback"></span><dl class="class">
 <dt id="catalyst.core.callback.Callback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callback.</code><code class="sig-name descname">Callback</code><span class="sig-paren">(</span><em class="sig-param">order: int</em>, <em class="sig-param">node: int = &lt;CallbackNode.All: 0&gt;</em>, <em class="sig-param">type: int = &lt;CallbackType.Stage: 0&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.Callback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callback.</code><code class="sig-name descname">Callback</code><span class="sig-paren">(</span><em class="sig-param">order: int</em>, <em class="sig-param">node: int = &lt;CallbackNode.All: 0&gt;</em>, <em class="sig-param">scope: int = &lt;CallbackScope.Stage: 0&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.Callback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Abstract class that all callback (e.g., Logger) classes extends from.
 Must be extended before usage.</p>
@@ -439,7 +444,7 @@ exception – <span class="k">if</span> an Exception was raised
 and <code class="docutils literal notranslate"><span class="pre">node</span></code> value from <code class="docutils literal notranslate"><span class="pre">CallbackNode</span></code></p>
 <dl class="method">
 <dt id="catalyst.core.callback.Callback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">order: int</em>, <em class="sig-param">node: int = &lt;CallbackNode.All: 0&gt;</em>, <em class="sig-param">type: int = &lt;CallbackType.Stage: 0&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.Callback.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">order: int</em>, <em class="sig-param">node: int = &lt;CallbackNode.All: 0&gt;</em>, <em class="sig-param">scope: int = &lt;CallbackScope.Stage: 0&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.Callback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>For order see <code class="docutils literal notranslate"><span class="pre">CallbackOrder</span></code> class</p>
 </dd></dl>
 
@@ -491,6 +496,28 @@ and <code class="docutils literal notranslate"><span class="pre">node</span></co
 </dd></dl>
 
 <dl class="class">
+<dt id="catalyst.core.callback.CallbackNode">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callback.</code><code class="sig-name descname">CallbackNode</code><a class="reference internal" href="../_modules/catalyst/core/callback.html#CallbackNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.CallbackNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.IntFlag</span></code></p>
+<p>An enumeration.</p>
+<dl class="attribute">
+<dt id="catalyst.core.callback.CallbackNode.All">
+<code class="sig-name descname">All</code><em class="property"> = 0</em><a class="headerlink" href="#catalyst.core.callback.CallbackNode.All" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.core.callback.CallbackNode.Master">
+<code class="sig-name descname">Master</code><em class="property"> = 1</em><a class="headerlink" href="#catalyst.core.callback.CallbackNode.Master" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.core.callback.CallbackNode.Worker">
+<code class="sig-name descname">Worker</code><em class="property"> = 2</em><a class="headerlink" href="#catalyst.core.callback.CallbackNode.Worker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="catalyst.core.callback.CallbackOrder">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callback.</code><code class="sig-name descname">CallbackOrder</code><a class="reference internal" href="../_modules/catalyst/core/callback.html#CallbackOrder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.CallbackOrder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.IntFlag</span></code></p>
@@ -507,7 +534,7 @@ and <code class="docutils literal notranslate"><span class="pre">node</span></co
 
 <dl class="attribute">
 <dt id="catalyst.core.callback.CallbackOrder.Logging">
-<code class="sig-name descname">Logging</code><em class="property"> = 100</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.Logging" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">Logging</code><em class="property"> = 120</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.Logging" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -527,7 +554,7 @@ and <code class="docutils literal notranslate"><span class="pre">node</span></co
 
 <dl class="attribute">
 <dt id="catalyst.core.callback.CallbackOrder.Scheduler">
-<code class="sig-name descname">Scheduler</code><em class="property"> = 120</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.Scheduler" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">Scheduler</code><em class="property"> = 100</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.Scheduler" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -538,23 +565,18 @@ and <code class="docutils literal notranslate"><span class="pre">node</span></co
 </dd></dl>
 
 <dl class="class">
-<dt id="catalyst.core.callback.CallbackNode">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callback.</code><code class="sig-name descname">CallbackNode</code><a class="reference internal" href="../_modules/catalyst/core/callback.html#CallbackNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.CallbackNode" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.callback.CallbackScope">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callback.</code><code class="sig-name descname">CallbackScope</code><a class="reference internal" href="../_modules/catalyst/core/callback.html#CallbackScope"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.CallbackScope" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.IntFlag</span></code></p>
 <p>An enumeration.</p>
 <dl class="attribute">
-<dt id="catalyst.core.callback.CallbackNode.All">
-<code class="sig-name descname">All</code><em class="property"> = 0</em><a class="headerlink" href="#catalyst.core.callback.CallbackNode.All" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.callback.CallbackScope.Experiment">
+<code class="sig-name descname">Experiment</code><em class="property"> = 1</em><a class="headerlink" href="#catalyst.core.callback.CallbackScope.Experiment" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="catalyst.core.callback.CallbackNode.Master">
-<code class="sig-name descname">Master</code><em class="property"> = 1</em><a class="headerlink" href="#catalyst.core.callback.CallbackNode.Master" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="catalyst.core.callback.CallbackNode.Worker">
-<code class="sig-name descname">Worker</code><em class="property"> = 2</em><a class="headerlink" href="#catalyst.core.callback.CallbackNode.Worker" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.callback.CallbackScope.Stage">
+<code class="sig-name descname">Stage</code><em class="property"> = 0</em><a class="headerlink" href="#catalyst.core.callback.CallbackScope.Stage" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -766,14 +788,14 @@ translates <code class="docutils literal notranslate"><span class="pre">state.*_
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.logging.ConsoleLogger.on_epoch_end">
-<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/logging.html#ConsoleLogger.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.logging.ConsoleLogger.on_epoch_end" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.core.state.State</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/logging.html#ConsoleLogger.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.logging.ConsoleLogger.on_epoch_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Translate <code class="docutils literal notranslate"><span class="pre">state.metric_manager</span></code> to console and text file
 at the end of an epoch</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.logging.ConsoleLogger.on_stage_end">
-<code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param">state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/logging.html#ConsoleLogger.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.logging.ConsoleLogger.on_stage_end" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.core.state.State</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/logging.html#ConsoleLogger.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.logging.ConsoleLogger.on_stage_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called at the end of each stage</p>
 </dd></dl>
 
@@ -819,7 +841,7 @@ if none - logs everything</p></li>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.logging.TensorboardLogger.on_loader_start">
-<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">state</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/logging.html#TensorboardLogger.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.logging.TensorboardLogger.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.core.state.State</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/logging.html#TensorboardLogger.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.logging.TensorboardLogger.on_loader_start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prepare tensorboard writers for the current stage</p>
 </dd></dl>
 
@@ -828,6 +850,11 @@ if none - logs everything</p></li>
 <code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.core.state.State</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/logging.html#TensorboardLogger.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.logging.TensorboardLogger.on_stage_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Close opened tensorboard writers</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.logging.TensorboardLogger.on_stage_start">
+<code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.core.state.State</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/logging.html#TensorboardLogger.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.logging.TensorboardLogger.on_stage_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1034,41 +1061,9 @@ for each param group</p></li>
 
 </dd></dl>
 
-<span class="target" id="module-catalyst.core.callbacks.phase"></span><dl class="class">
-<dt id="catalyst.core.callbacks.phase.PhaseManagerCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.phase.</code><code class="sig-name descname">PhaseManagerCallback</code><span class="sig-paren">(</span><em class="sig-param">train_phases: OrderedDict[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">valid_phases: OrderedDict[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">valid_mode: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/phase.html#PhaseManagerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.phase.PhaseManagerCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
-<p>PhaseManagerCallback updates state.phase</p>
-<dl class="attribute">
-<dt id="catalyst.core.callbacks.phase.PhaseManagerCallback.VALIDATION_MODE_ALL">
-<code class="sig-name descname">VALIDATION_MODE_ALL</code><em class="property"> = 'all'</em><a class="headerlink" href="#catalyst.core.callbacks.phase.PhaseManagerCallback.VALIDATION_MODE_ALL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="catalyst.core.callbacks.phase.PhaseManagerCallback.VALIDATION_MODE_SAME">
-<code class="sig-name descname">VALIDATION_MODE_SAME</code><em class="property"> = 'same'</em><a class="headerlink" href="#catalyst.core.callbacks.phase.PhaseManagerCallback.VALIDATION_MODE_SAME" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="catalyst.core.callbacks.phase.PhaseManagerCallback.allowed_valid_modes">
-<code class="sig-name descname">allowed_valid_modes</code><em class="property"> = ['same', 'all']</em><a class="headerlink" href="#catalyst.core.callbacks.phase.PhaseManagerCallback.allowed_valid_modes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callbacks.phase.PhaseManagerCallback.on_batch_end">
-<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.core.state.State</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/phase.html#PhaseManagerCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.phase.PhaseManagerCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callbacks.phase.PhaseManagerCallback.on_batch_start">
-<code class="sig-name descname">on_batch_start</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.core.state.State</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/phase.html#PhaseManagerCallback.on_batch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.phase.PhaseManagerCallback.on_batch_start" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
 <span class="target" id="module-catalyst.core.callbacks.scheduler"></span><dl class="class">
 <dt id="catalyst.core.callbacks.scheduler.SchedulerCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.scheduler.</code><code class="sig-name descname">SchedulerCallback</code><span class="sig-paren">(</span><em class="sig-param">scheduler_key: str = None</em>, <em class="sig-param">mode: str = None</em>, <em class="sig-param">reduced_metric: str = 'loss'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/scheduler.html#SchedulerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.scheduler.SchedulerCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.scheduler.</code><code class="sig-name descname">SchedulerCallback</code><span class="sig-paren">(</span><em class="sig-param">scheduler_key: str = None</em>, <em class="sig-param">mode: str = None</em>, <em class="sig-param">reduced_metric: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/scheduler.html#SchedulerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.scheduler.SchedulerCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
 <dl class="method">
 <dt id="catalyst.core.callbacks.scheduler.SchedulerCallback.on_batch_end">
@@ -1190,106 +1185,6 @@ for learning rate scheduling</p>
 <dl class="method">
 <dt id="catalyst.core.callbacks.validation.ValidationManagerCallback.on_epoch_start">
 <code class="sig-name descname">on_epoch_start</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.core.state.State</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/validation.html#ValidationManagerCallback.on_epoch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.validation.ValidationManagerCallback.on_epoch_start" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<span class="target" id="module-catalyst.core.callbacks.wrappers"></span><dl class="class">
-<dt id="catalyst.core.callbacks.wrappers.PhaseWrapperCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.wrappers.</code><code class="sig-name descname">PhaseWrapperCallback</code><span class="sig-paren">(</span><em class="sig-param">base_callback: catalyst.core.callback.Callback</em>, <em class="sig-param">active_phases: List[str] = None</em>, <em class="sig-param">inactive_phases: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/wrappers.html#PhaseWrapperCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseWrapperCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
-<p>CallbackWrapper which disables/enables handlers
-dependant on current phase and event type</p>
-<p>May be useful i.e. to disable/enable optimizers &amp; losses</p>
-<dl class="attribute">
-<dt id="catalyst.core.callbacks.wrappers.PhaseWrapperCallback.LEVEL_BATCH">
-<code class="sig-name descname">LEVEL_BATCH</code><em class="property"> = 'batch'</em><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseWrapperCallback.LEVEL_BATCH" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="catalyst.core.callbacks.wrappers.PhaseWrapperCallback.LEVEL_EPOCH">
-<code class="sig-name descname">LEVEL_EPOCH</code><em class="property"> = 'epoch'</em><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseWrapperCallback.LEVEL_EPOCH" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="catalyst.core.callbacks.wrappers.PhaseWrapperCallback.LEVEL_LOADER">
-<code class="sig-name descname">LEVEL_LOADER</code><em class="property"> = 'loader'</em><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseWrapperCallback.LEVEL_LOADER" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="catalyst.core.callbacks.wrappers.PhaseWrapperCallback.LEVEL_STAGE">
-<code class="sig-name descname">LEVEL_STAGE</code><em class="property"> = 'stage'</em><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseWrapperCallback.LEVEL_STAGE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="catalyst.core.callbacks.wrappers.PhaseWrapperCallback.TIME_END">
-<code class="sig-name descname">TIME_END</code><em class="property"> = 'end'</em><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseWrapperCallback.TIME_END" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="catalyst.core.callbacks.wrappers.PhaseWrapperCallback.TIME_START">
-<code class="sig-name descname">TIME_START</code><em class="property"> = 'start'</em><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseWrapperCallback.TIME_START" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callbacks.wrappers.PhaseWrapperCallback.is_active_on_phase">
-<code class="sig-name descname">is_active_on_phase</code><span class="sig-paren">(</span><em class="sig-param">phase</em>, <em class="sig-param">level</em>, <em class="sig-param">time</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/wrappers.html#PhaseWrapperCallback.is_active_on_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseWrapperCallback.is_active_on_phase" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callbacks.wrappers.PhaseWrapperCallback.on_batch_end">
-<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.core.state.State</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/wrappers.html#PhaseWrapperCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseWrapperCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callbacks.wrappers.PhaseWrapperCallback.on_batch_start">
-<code class="sig-name descname">on_batch_start</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.core.state.State</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/wrappers.html#PhaseWrapperCallback.on_batch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseWrapperCallback.on_batch_start" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callbacks.wrappers.PhaseWrapperCallback.on_epoch_end">
-<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.core.state.State</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/wrappers.html#PhaseWrapperCallback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseWrapperCallback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callbacks.wrappers.PhaseWrapperCallback.on_epoch_start">
-<code class="sig-name descname">on_epoch_start</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.core.state.State</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/wrappers.html#PhaseWrapperCallback.on_epoch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseWrapperCallback.on_epoch_start" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callbacks.wrappers.PhaseWrapperCallback.on_exception">
-<code class="sig-name descname">on_exception</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.core.state.State</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/wrappers.html#PhaseWrapperCallback.on_exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseWrapperCallback.on_exception" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callbacks.wrappers.PhaseWrapperCallback.on_loader_end">
-<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.core.state.State</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/wrappers.html#PhaseWrapperCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseWrapperCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callbacks.wrappers.PhaseWrapperCallback.on_loader_start">
-<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.core.state.State</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/wrappers.html#PhaseWrapperCallback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseWrapperCallback.on_loader_start" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callbacks.wrappers.PhaseWrapperCallback.on_stage_end">
-<code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.core.state.State</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/wrappers.html#PhaseWrapperCallback.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseWrapperCallback.on_stage_end" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callbacks.wrappers.PhaseWrapperCallback.on_stage_start">
-<code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param">state: catalyst.core.state.State</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/wrappers.html#PhaseWrapperCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseWrapperCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="catalyst.core.callbacks.wrappers.PhaseBatchWrapperCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.wrappers.</code><code class="sig-name descname">PhaseBatchWrapperCallback</code><span class="sig-paren">(</span><em class="sig-param">base_callback: catalyst.core.callback.Callback</em>, <em class="sig-param">active_phases: List[str] = None</em>, <em class="sig-param">inactive_phases: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/wrappers.html#PhaseBatchWrapperCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseBatchWrapperCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callbacks.wrappers.PhaseWrapperCallback" title="catalyst.core.callbacks.wrappers.PhaseWrapperCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.wrappers.PhaseWrapperCallback</span></code></a></p>
-<dl class="method">
-<dt id="catalyst.core.callbacks.wrappers.PhaseBatchWrapperCallback.is_active_on_phase">
-<code class="sig-name descname">is_active_on_phase</code><span class="sig-paren">(</span><em class="sig-param">phase</em>, <em class="sig-param">level</em>, <em class="sig-param">time</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/wrappers.html#PhaseBatchWrapperCallback.is_active_on_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.wrappers.PhaseBatchWrapperCallback.is_active_on_phase" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

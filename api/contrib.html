@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contrib &mdash; Catalyst 20.03.2 documentation</title>
+  <title>Contrib &mdash; Catalyst 20.03.3 documentation</title>
   
 
   
@@ -1504,7 +1504,13 @@ Just use “ANONYMOUS” token:</p>
 <dl class="method">
 <dt id="catalyst.contrib.dl.runner.wandb.WandbRunner.run_experiment">
 <code class="sig-name descname">run_experiment</code><span class="sig-paren">(</span><em class="sig-param">experiment: catalyst.dl.core.experiment.Experiment</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/runner/wandb.html#WandbRunner.run_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.runner.wandb.WandbRunner.run_experiment" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Starts experiment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>experiment</strong> (<a class="reference internal" href="dl.html#catalyst.dl.core.experiment.Experiment" title="catalyst.dl.core.experiment.Experiment"><em>Experiment</em></a>) – experiment class</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -1512,6 +1518,7 @@ Just use “ANONYMOUS” token:</p>
 <dt id="catalyst.contrib.dl.runner.wandb.SupervisedWandbRunner">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.runner.wandb.</code><code class="sig-name descname">SupervisedWandbRunner</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">input_key: Any = 'features'</em>, <em class="sig-param">output_key: Any = 'logits'</em>, <em class="sig-param">input_target_key: str = 'targets'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/runner/wandb.html#SupervisedWandbRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.runner.wandb.SupervisedWandbRunner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.dl.runner.wandb.WandbRunner" title="catalyst.contrib.dl.runner.wandb.WandbRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.dl.runner.wandb.WandbRunner</span></code></a>, <a class="reference internal" href="dl.html#catalyst.dl.runner.supervised.SupervisedRunner" title="catalyst.dl.runner.supervised.SupervisedRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.runner.supervised.SupervisedRunner</span></code></a></p>
+<p>SupervisedRunner with WandB</p>
 </dd></dl>
 
 </div>

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Data &mdash; Catalyst 20.03.2 documentation</title>
+  <title>Data &mdash; Catalyst 20.03.3 documentation</title>
   
 
   
@@ -333,11 +333,9 @@ or image directory with specified neural net architecture</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="augmentor">
-<h2>Augmentor<a class="headerlink" href="#augmentor" title="Permalink to this headline">¶</a></h2>
-<p>Legacy classes for augmentations.
-For modern Catalyst use <a class="reference external" href="https://github.com/albu/albumentations">albumentations</a>.</p>
-<span class="target" id="module-catalyst.data.augmentor"></span><dl class="class">
+<div class="section" id="module-catalyst.data.augmentor">
+<span id="augmentor"></span><h2>Augmentor<a class="headerlink" href="#module-catalyst.data.augmentor" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
 <dt id="catalyst.data.augmentor.Augmentor">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.augmentor.</code><code class="sig-name descname">Augmentor</code><span class="sig-paren">(</span><em class="sig-param">dict_key: str</em>, <em class="sig-param">augment_fn: Callable</em>, <em class="sig-param">input_key: str = None</em>, <em class="sig-param">output_key: str = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/augmentor.html#Augmentor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.augmentor.Augmentor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Augmentation abstraction to use with data dictionaries.</p>
@@ -645,7 +643,7 @@ a part of file path)</p>
 <h2>Reader<a class="headerlink" href="#reader" title="Permalink to this headline">¶</a></h2>
 <p>Readers are the abstraction for your dataset. They can open an elem from the dataset and transform it to data, needed by your network.
 For example open image by path, or read string and tokenize it.</p>
-<dl class="class">
+<span class="target" id="module-catalyst.data.reader"></span><dl class="class">
 <dt id="catalyst.data.reader.ReaderSpec">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.reader.</code><code class="sig-name descname">ReaderSpec</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ReaderSpec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ReaderSpec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reader abstraction for all Readers. Applies a function
@@ -684,36 +682,39 @@ for example open image by path, or read string and tokenize it.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="catalyst.data.reader.LambdaReader">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.reader.</code><code class="sig-name descname">LambdaReader</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: str</em>, <em class="sig-param">lambda_fn: Callable = &lt;function LambdaReader.&lt;lambda&gt;&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#LambdaReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.LambdaReader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reader abstraction with an lambda encoders.
-Can read an elem from dataset and apply <cite>encode_fn</cite> function to it</p>
+<dt id="catalyst.data.reader.ImageReader">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.reader.</code><code class="sig-name descname">ImageReader</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: str</em>, <em class="sig-param">rootpath: str = None</em>, <em class="sig-param">grayscale: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ImageReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ImageReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Image reader abstraction. Reads images from a <cite>csv</cite> dataset.</p>
 <dl class="method">
-<dt id="catalyst.data.reader.LambdaReader.__call__">
-<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">element</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#LambdaReader.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.LambdaReader.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reads a row from your annotations dict
-and applies <cite>encode_fn</cite> function</p>
+<dt id="catalyst.data.reader.ImageReader.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">element</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ImageReader.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ImageReader.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a row from your annotations dict with filename and
+transfer it to an image</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>element</strong> – elem in your dataset.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Value after applying <cite>lambda_fn</cite> function</p>
+<dd class="field-even"><p>Image</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.data.reader.LambdaReader.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: str</em>, <em class="sig-param">lambda_fn: Callable = &lt;function LambdaReader.&lt;lambda&gt;&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#LambdaReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.LambdaReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.data.reader.ImageReader.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: str</em>, <em class="sig-param">rootpath: str = None</em>, <em class="sig-param">grayscale: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ImageReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ImageReader.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – input key to use from annotation dict</p></li>
-<li><p><strong>output_key</strong> (<em>str</em>) – output key to use to store the result</p></li>
-<li><p><strong>lambda_fn</strong> (<em>callable</em>) – encode function to use to prepare your data
-(for example convert chars/words/tokens to indices, etc)</p></li>
-<li><p><strong>kwargs</strong> – kwargs for encode function</p></li>
+<li><p><strong>input_key</strong> (<em>str</em>) – key to use from annotation dict</p></li>
+<li><p><strong>output_key</strong> (<em>str</em>) – key to use to store the result</p></li>
+<li><p><strong>rootpath</strong> (<em>str</em>) – path to images dataset root directory
+(so your can use relative paths in annotations)</p></li>
+<li><p><strong>grayscale</strong> (<em>bool</em>) – flag if you need to work only
+with grayscale images</p></li>
 </ul>
 </dd>
 </dl>
@@ -765,39 +766,36 @@ to one_hot classes</p></li>
 </dd></dl>
 
 <dl class="class">
-<dt id="catalyst.data.reader.ImageReader">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.reader.</code><code class="sig-name descname">ImageReader</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: str</em>, <em class="sig-param">rootpath: str = None</em>, <em class="sig-param">grayscale: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ImageReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ImageReader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Image reader abstraction. Reads images from a <cite>csv</cite> dataset.</p>
+<dt id="catalyst.data.reader.LambdaReader">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.reader.</code><code class="sig-name descname">LambdaReader</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: str</em>, <em class="sig-param">lambda_fn: Callable = &lt;function LambdaReader.&lt;lambda&gt;&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#LambdaReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.LambdaReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reader abstraction with an lambda encoders.
+Can read an elem from dataset and apply <cite>encode_fn</cite> function to it</p>
 <dl class="method">
-<dt id="catalyst.data.reader.ImageReader.__call__">
-<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">element</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ImageReader.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ImageReader.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reads a row from your annotations dict with filename and
-transfer it to an image</p>
+<dt id="catalyst.data.reader.LambdaReader.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">element</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#LambdaReader.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.LambdaReader.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a row from your annotations dict
+and applies <cite>encode_fn</cite> function</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>element</strong> – elem in your dataset.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Image</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>np.ndarray</p>
+<dd class="field-even"><p>Value after applying <cite>lambda_fn</cite> function</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.data.reader.ImageReader.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: str</em>, <em class="sig-param">rootpath: str = None</em>, <em class="sig-param">grayscale: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ImageReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ImageReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.data.reader.LambdaReader.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: str</em>, <em class="sig-param">lambda_fn: Callable = &lt;function LambdaReader.&lt;lambda&gt;&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#LambdaReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.LambdaReader.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – key to use from annotation dict</p></li>
-<li><p><strong>output_key</strong> (<em>str</em>) – key to use to store the result</p></li>
-<li><p><strong>rootpath</strong> (<em>str</em>) – path to images dataset root directory
-(so your can use relative paths in annotations)</p></li>
-<li><p><strong>grayscale</strong> (<em>bool</em>) – flag if you need to work only
-with grayscale images</p></li>
+<li><p><strong>input_key</strong> (<em>str</em>) – input key to use from annotation dict</p></li>
+<li><p><strong>output_key</strong> (<em>str</em>) – output key to use to store the result</p></li>
+<li><p><strong>lambda_fn</strong> (<em>callable</em>) – encode function to use to prepare your data
+(for example convert chars/words/tokens to indices, etc)</p></li>
+<li><p><strong>kwargs</strong> – kwargs for encode function</p></li>
 </ul>
 </dd>
 </dl>
@@ -1006,7 +1004,7 @@ distributed training.</p></li>
               <ul>
 <li><a class="reference internal" href="#">Data</a><ul>
 <li><a class="reference internal" href="#scripts">Scripts</a></li>
-<li><a class="reference internal" href="#augmentor">Augmentor</a></li>
+<li><a class="reference internal" href="#module-catalyst.data.augmentor">Augmentor</a></li>
 <li><a class="reference internal" href="#module-catalyst.data.collate_fn">Collate Functions</a></li>
 <li><a class="reference internal" href="#module-catalyst.data.dataset">Dataset</a></li>
 <li><a class="reference internal" href="#reader">Reader</a></li>

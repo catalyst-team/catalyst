@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.callbacks.mixup &mdash; Catalyst 20.03.2 documentation</title>
+  <title>catalyst.dl.callbacks.mixup &mdash; Catalyst 20.03.3 documentation</title>
   
 
   
@@ -324,7 +324,7 @@
 
 <div class="viewcode-block" id="MixupCallback.on_loader_start"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.mixup.MixupCallback.on_loader_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_needed</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_train_only</span> <span class="ow">or</span> \
-            <span class="n">state</span><span class="o">.</span><span class="n">loader_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;train&quot;</span><span class="p">)</span></div>
+            <span class="n">state</span><span class="o">.</span><span class="n">is_train_loader</span></div>
 
 <div class="viewcode-block" id="MixupCallback.on_batch_start"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.mixup.MixupCallback.on_batch_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_needed</span><span class="p">:</span>

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.state &mdash; Catalyst 20.03.2 documentation</title>
+  <title>catalyst.core.state &mdash; Catalyst 20.03.3 documentation</title>
   
 
   
@@ -258,6 +258,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>  <span class="c1"># isort:skip</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -517,7 +518,8 @@
 
         <span class="c1"># other</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_check_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">is_check_run</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">need_backward_pass</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_infer_stage</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">need_early_stop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">need_exception_reraise</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exception</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -537,6 +539,14 @@
     <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># backward compatibility</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_out</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">need_backward_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`need_backward_pass` was deprecated, &quot;</span>
+            <span class="s2">&quot;please use `is_train_loader` instead&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span>
 
 <div class="viewcode-block" id="State.get_attr"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.state.State.get_attr">[docs]</a>    <span class="k">def</span> <span class="nf">get_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">inner_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">inner_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
