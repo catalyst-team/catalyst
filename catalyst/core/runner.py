@@ -11,7 +11,7 @@ from catalyst.core import utils
 from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
-from .callback import Callback, CallbackNode, CallbackType
+from .callback import Callback, CallbackNode, CallbackScope
 from .callbacks import ExceptionCallback
 from .experiment import _Experiment
 from .state import State
@@ -161,7 +161,7 @@ class _Runner(ABC):
                 and self.state is not None \
                 and self.state.callbacks is not None:
             for key, value in self.state.callbacks.items():
-                if value.type == CallbackType.Experiment:
+                if value.scope == CallbackScope.Experiment:
                     callbacks[key] = value
             callbacks = utils.process_callbacks(callbacks)
 

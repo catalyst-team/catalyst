@@ -9,11 +9,6 @@ DL
 Core
 --------------------
 
-.. automodule:: catalyst.dl.core.callback
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 .. automodule:: catalyst.dl.core.experiment
     :members:
     :undoc-members:
@@ -24,14 +19,19 @@ Core
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.dl.core.state
+.. automodule:: catalyst.dl.core.callback
     :members:
     :undoc-members:
     :show-inheritance:
 
-
 Callbacks
 --------------------
+
+
+.. automodule:: catalyst.dl.callbacks.confusion_matrix
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 .. automodule:: catalyst.dl.callbacks.gan
     :members:
@@ -48,7 +48,17 @@ Callbacks
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: catalyst.dl.callbacks.phase
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 .. automodule:: catalyst.dl.callbacks.scheduler
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.dl.callbacks.wrappers
     :members:
     :undoc-members:
     :show-inheritance:
@@ -105,6 +115,11 @@ Experiment
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: catalyst.dl.experiment.gan
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Runner
 --------------------
@@ -121,13 +136,17 @@ Runner
     :show-inheritance:
 
 
-Utils
+State
 --------------------
 
-.. automodule:: catalyst.dl.utils.pipelines
+.. automodule:: catalyst.dl.state.gan
     :members:
     :undoc-members:
     :show-inheritance:
+
+
+Utils
+--------------------
 
 .. automodule:: catalyst.dl.utils.torch
     :members:
@@ -135,11 +154,6 @@ Utils
     :show-inheritance:
 
 .. automodule:: catalyst.dl.utils.trace
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.utils.visualization
     :members:
     :undoc-members:
     :show-inheritance:
