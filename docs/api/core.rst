@@ -64,11 +64,6 @@ Callbacks
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.core.callbacks.phase
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 .. automodule:: catalyst.core.callbacks.scheduler
     :members:
     :undoc-members:
@@ -80,11 +75,6 @@ Callbacks
     :show-inheritance:
 
 .. automodule:: catalyst.core.callbacks.validation
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.core.callbacks.wrappers
     :members:
     :undoc-members:
     :show-inheritance:
