@@ -125,7 +125,7 @@ def get_slurm_params():
     current_node = os.environ["SLURMD_NODENAME"]
     master_node = socket.gethostbyname(nodes[0])
     cur_node_idx = nodes.index(current_node)
-    job_id = os.getenv("SLURM_JOB_ID")
+    job_id = os.environ["SLURM_JOB_ID"]
     master_port = str(5*10**4 + int(job_id) % 10**4)
     return cur_node_idx, num_nodes, master_node, master_port
 
