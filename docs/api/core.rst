@@ -6,7 +6,17 @@ Core
     :undoc-members:
     :show-inheritance:
 
+.. autoclass:: catalyst.core.experiment._Experiment
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 .. automodule:: catalyst.core.experiment
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. autoclass:: catalyst.core.runner._Runner
     :members:
     :undoc-members:
     :show-inheritance:
@@ -50,6 +60,11 @@ Callbacks
     :show-inheritance:
 
 .. automodule:: catalyst.core.callbacks.logging
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. autoclass:: catalyst.core.callbacks.metrics._MetricCallback
     :members:
     :undoc-members:
     :show-inheritance:
