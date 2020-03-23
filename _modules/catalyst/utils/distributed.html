@@ -257,6 +257,7 @@
 <span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">socket</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -380,17 +381,20 @@
     <span class="n">current_node</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SLURMD_NODENAME&quot;</span><span class="p">]</span>
     <span class="n">master_node</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostbyname</span><span class="p">(</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">cur_node_idx</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">current_node</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">cur_node_idx</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">master_node</span></div>
+    <span class="n">job_id</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SLURM_JOB_ID&quot;</span><span class="p">]</span>
+    <span class="n">master_port</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">5</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cur_node_idx</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">master_node</span><span class="p">,</span> <span class="n">master_port</span></div>
 
 
 <div class="viewcode-block" id="get_distributed_params"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.get_distributed_params">[docs]</a><span class="k">def</span> <span class="nf">get_distributed_params</span><span class="p">():</span>
+    <span class="n">master_port</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">5</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">))</span>
     <span class="n">master_addr</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span>
     <span class="n">cur_node</span><span class="p">,</span> <span class="n">num_nodes</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="n">is_slurm_available</span><span class="p">():</span>
-        <span class="n">cur_node</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">master_addr</span> <span class="o">=</span> <span class="n">get_slurm_params</span><span class="p">()</span>
+        <span class="n">cur_node</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">master_addr</span><span class="p">,</span> <span class="n">master_port</span> <span class="o">=</span> <span class="n">get_slurm_params</span><span class="p">()</span>
 
     <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MASTER_ADDR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MASTER_ADDR&quot;</span><span class="p">,</span> <span class="n">master_addr</span><span class="p">)</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MASTER_PORT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MASTER_PORT&quot;</span><span class="p">,</span> <span class="s2">&quot;424242&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MASTER_PORT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MASTER_PORT&quot;</span><span class="p">,</span> <span class="n">master_port</span><span class="p">)</span>
 
     <span class="n">workers_per_node</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span>
     <span class="n">start_rank</span> <span class="o">=</span> <span class="n">cur_node</span> <span class="o">*</span> <span class="n">workers_per_node</span>
