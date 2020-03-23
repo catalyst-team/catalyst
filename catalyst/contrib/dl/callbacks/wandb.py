@@ -125,14 +125,17 @@ class WandbLogger(Callback):
 
         metrics = {
             f"{key_locate(key)}/{mode}{suffix}": value
-            for key, value in metrics.items()
-            if key in metrics_to_log
+            for key, value in metrics.items() if key in metrics_to_log
         }
         wandb.log(metrics, step=step, commit=commit)
 
     def on_stage_start(self, state: State):
         """Initialize Weights & Biases"""
-        wandb.init(**self.logging_params, reinit=True, dir=os.path.abspath(state.logdir))
+        wandb.init(
+            **self.logging_params,
+            reinit=True,
+            dir=os.path.abspath(state.logdir)
+        )
 
     def on_stage_end(self, state: State):
         """Finish logging to Weights & Biases"""
