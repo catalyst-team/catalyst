@@ -1,5 +1,7 @@
 from typing import Dict, List  # isort:skip
 
+import os
+
 import wandb
 
 from catalyst import utils
@@ -17,26 +19,42 @@ class WandbLogger(Callback):
 
         .. code-block:: python
 
-            from catalyst.dl import SupervisedRunner, AlchemyLogger
+            from catalyst import dl
+            import torch
+            import torch.nn as nn
+            import torch.optim as optim
+            from torch.utils.data import DataLoader, TensorDataset
 
-            runner = SupervisedRunner()
+            class Projector(nn.Module):
+                def __init__(self, input_size):
+                    super().__init__()
+                    self.linear = nn.Linear(input_size, 1)
+
+                def forward(self, X):
+                    return self.linear(X).squeeze(-1)
+
+            X = torch.rand(16, 10)
+            y = torch.rand(X.shape[0])
+            model = Projector(X.shape[1])
+            dataset = TensorDataset(X, y)
+            loader = DataLoader(dataset, batch_size=8)
+            runner = dl.SupervisedRunner()
 
             runner.train(
                 model=model,
-                criterion=criterion,
-                optimizer=optimizer,
-                loaders=loaders,
-                logdir=logdir,
-                num_epochs=num_epochs,
-                verbose=True,
-                callbacks={
-                    "logger": WandbLogger(
-                        "token": "...", # your Alchemy token
-                        "project": "your_project_name",
-                        "experiment": "your_experiment_name",
-                        "group": "your_experiment_group_name",
+                loaders={
+                    "train": loader,
+                    "valid": loader
+                },
+                criterion=nn.MSELoss(),
+                optimizer=optim.Adam(model.parameters()),
+                logdir="log_example",
+                callbacks=[
+                    dl.callbacks.WandbLogger(
+                        project="wandb_logger_example"
                     )
-                }
+                ],
+                num_epochs=10
             )
     """
     def __init__(
@@ -49,9 +67,12 @@ class WandbLogger(Callback):
         """
         Args:
             metric_names (List[str]): list of metric names to log,
-                if none - logs everything
+                if None - logs everything
             log_on_batch_end (bool): logs per-batch metrics if set True
             log_on_epoch_end (bool): logs per-epoch metrics if set True
+            **logging_params: any parameters of function `wandb.init`
+                except `reinit` which is automatically set to `True`
+                and `dir` which is set to `<logdir>`
         """
         super().__init__(
             order=CallbackOrder.Logging,
@@ -76,7 +97,12 @@ class WandbLogger(Callback):
         self.logging_params = logging_params
 
     def _log_metrics(
-        self, metrics: Dict[str, float], step: int, mode: str, suffix=""
+        self,
+        metrics: Dict[str, float],
+        step: int,
+        mode: str,
+        suffix="",
+        commit=True
     ):
         if self.metrics_to_log is None:
             metrics_to_log = sorted(list(metrics.keys()))
@@ -102,15 +128,15 @@ class WandbLogger(Callback):
             for key, value in metrics.items()
             if key in metrics_to_log
         }
-        wandb.log(metrics, step=step)
+        wandb.log(metrics, step=step, commit=commit)
 
     def on_stage_start(self, state: State):
         """Initialize Weights & Biases"""
-        wandb.init(**self.logging_params)
+        wandb.init(**self.logging_params, reinit=True, dir=os.path.abspath(state.logdir))
 
     def on_stage_end(self, state: State):
-        """Flush metrics to Weights & Biases"""
-        wandb.log(commit=True)
+        """Finish logging to Weights & Biases"""
+        wandb.join()
 
     def on_batch_end(self, state: State):
         """Translate batch metrics to Weights & Biases"""
@@ -122,6 +148,7 @@ class WandbLogger(Callback):
                 step=state.global_step,
                 mode=mode,
                 suffix=self.batch_log_suffix,
+                commit=True
             )
 
     def on_loader_end(self, state: State):
@@ -134,6 +161,7 @@ class WandbLogger(Callback):
                 step=state.global_epoch,
                 mode=mode,
                 suffix=self.epoch_log_suffix,
+                commit=False
             )
 
     def on_epoch_end(self, state: State):
@@ -151,4 +179,5 @@ class WandbLogger(Callback):
                 step=state.global_epoch,
                 mode=extra_mode,
                 suffix=self.epoch_log_suffix,
+                commit=True
             )
