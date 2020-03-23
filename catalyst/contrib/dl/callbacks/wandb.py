@@ -1,7 +1,5 @@
 from typing import Dict, List  # isort:skip
 
-import os
-
 import wandb
 
 from catalyst import utils
@@ -134,7 +132,7 @@ class WandbLogger(Callback):
         wandb.init(
             **self.logging_params,
             reinit=True,
-            dir=os.path.abspath(state.logdir)
+            dir=str(state.logdir)
         )
 
     def on_stage_end(self, state: State):
