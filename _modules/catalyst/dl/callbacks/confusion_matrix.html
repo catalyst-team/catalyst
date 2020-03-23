@@ -259,6 +259,8 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">confusion_matrix</span> <span class="k">as</span> <span class="n">confusion_matrix_fn</span>
 
+<span class="kn">import</span> <span class="nn">torch</span>
+
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="n">meters</span>
 
@@ -275,7 +277,7 @@
         <span class="n">plot_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">tensorboard_callback_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_tensorboard&quot;</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Metric</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="o">.</span><span class="n">Master</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Metric</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="o">.</span><span class="n">All</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="o">=</span> <span class="n">output_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span> <span class="o">=</span> <span class="n">input_key</span>
@@ -350,13 +352,21 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">class_names</span> <span class="ow">or</span> \
             <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span><span class="p">)]</span>
         <span class="n">confusion_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_confusion_matrix</span><span class="p">()</span>
-        <span class="n">tb_callback</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">callbacks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">tensorboard_callback_name</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_plot_confusion_matrix</span><span class="p">(</span>
-            <span class="n">logger</span><span class="o">=</span><span class="n">tb_callback</span><span class="o">.</span><span class="n">loggers</span><span class="p">[</span><span class="n">state</span><span class="o">.</span><span class="n">loader_name</span><span class="p">],</span>
-            <span class="n">epoch</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">global_epoch</span><span class="p">,</span>
-            <span class="n">confusion_matrix</span><span class="o">=</span><span class="n">confusion_matrix</span><span class="p">,</span>
-            <span class="n">class_names</span><span class="o">=</span><span class="n">class_names</span><span class="p">,</span>
-        <span class="p">)</span></div></div>
+
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">distributed_rank</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">confusion_matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">)</span>
+            <span class="n">confusion_matrix</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">get_device</span><span class="p">())</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">confusion_matrix</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">distributed_rank</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">tb_callback</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">callbacks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">tensorboard_callback_name</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_plot_confusion_matrix</span><span class="p">(</span>
+                <span class="n">logger</span><span class="o">=</span><span class="n">tb_callback</span><span class="o">.</span><span class="n">loggers</span><span class="p">[</span><span class="n">state</span><span class="o">.</span><span class="n">loader_name</span><span class="p">],</span>
+                <span class="n">epoch</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">global_epoch</span><span class="p">,</span>
+                <span class="n">confusion_matrix</span><span class="o">=</span><span class="n">confusion_matrix</span><span class="p">,</span>
+                <span class="n">class_names</span><span class="o">=</span><span class="n">class_names</span><span class="p">,</span>
+            <span class="p">)</span></div></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ConfusionMatrixCallback&quot;</span><span class="p">]</span>
