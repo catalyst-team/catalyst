@@ -102,9 +102,10 @@ class WandbLogger(Callback):
             for key, value in metrics.items()
             if key in metrics_to_log
         }
-        wandb.log(metrics, step=step)
+        wandb.log(metrics, step=step, commit=True)
 
     def on_stage_start(self, state: State):
+        """Initialize Weights & Biases"""
         wandb.init(**self.logging_params)
 
     def on_batch_end(self, state: State):
