@@ -1,5 +1,7 @@
 from collections import OrderedDict
 
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+
 from catalyst.dl import (
     Callback, CheckpointCallback, CheckRunCallback, ConsoleLogger,
     CriterionCallback, ExceptionCallback, MetricManagerCallback,
@@ -64,7 +66,8 @@ class SupervisedExperiment(BaseExperiment):
                     and isinstance(self._optimizer, Optimizer):
                 default_callbacks.append(("_optimizer", OptimizerCallback))
             if self._scheduler is not None \
-                    and isinstance(self._scheduler, Scheduler):
+                    and isinstance(
+                    self._scheduler, (Scheduler, ReduceLROnPlateau)):
                 default_callbacks.append(("_scheduler", SchedulerCallback))
 
             default_callbacks.append(("_timer", TimerCallback))

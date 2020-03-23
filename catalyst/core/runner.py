@@ -11,7 +11,7 @@ from catalyst.core import utils
 from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
-from .callback import Callback, CallbackNode, CallbackType
+from .callback import Callback, CallbackNode, CallbackScope
 from .callbacks import ExceptionCallback
 from .experiment import _Experiment
 from .state import State
@@ -161,7 +161,7 @@ class _Runner(ABC):
                 and self.state is not None \
                 and self.state.callbacks is not None:
             for key, value in self.state.callbacks.items():
-                if value.type == CallbackType.Experiment:
+                if value.scope == CallbackScope.Experiment:
                     callbacks[key] = value
             callbacks = utils.process_callbacks(callbacks)
 
@@ -301,8 +301,8 @@ class _Runner(ABC):
         loaders = state.loaders
 
         # @TODO: better solution with train/inference handling ?
-        is_infer_stage = state.stage_name.startswith("infer")
-        if not is_infer_stage:
+        state.is_infer_stage = state.stage_name.startswith("infer")
+        if not state.is_infer_stage:
             assert state.valid_loader in loaders.keys(), \
                 f"'{state.valid_loader}' " \
                 f"should be in provided loaders: {list(loaders.keys())}"
@@ -312,22 +312,20 @@ class _Runner(ABC):
                 "for inference no train loader should be passed"
 
         for loader_name, loader in loaders.items():
-            is_train_loader = loader_name.startswith("train")
-
             state.loader_name = loader_name
             state.loader_len = len(loader)
-            state.need_backward_pass = is_train_loader
-            self.model.train(state.need_backward_pass)
+            state.is_train_loader = loader_name.startswith("train")
+            self.model.train(state.is_train_loader)
 
             if isinstance(loader.sampler, DistributedSampler) \
-                    and not is_infer_stage:
+                    and not state.is_infer_stage:
                 loader.sampler.set_epoch(state.epoch)
 
             utils.set_global_seed(
                 self.experiment.initial_seed + state.global_epoch + 1
             )
             self._run_event("on_loader_start")
-            with torch.set_grad_enabled(state.need_backward_pass):
+            with torch.set_grad_enabled(state.is_train_loader):
                 self._run_loader(loader)
             self._run_event("on_loader_end")
 

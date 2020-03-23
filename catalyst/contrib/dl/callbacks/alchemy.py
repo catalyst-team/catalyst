@@ -4,7 +4,7 @@ from alchemy import Logger
 
 from catalyst import utils
 from catalyst.core import (
-    Callback, CallbackNode, CallbackOrder, CallbackType, State
+    Callback, CallbackNode, CallbackOrder, CallbackScope, State
 )
 
 
@@ -57,7 +57,7 @@ class AlchemyLogger(Callback):
         super().__init__(
             order=CallbackOrder.Logging,
             node=CallbackNode.Master,
-            type=CallbackType.Experiment,
+            scope=CallbackScope.Experiment,
         )
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
@@ -91,13 +91,14 @@ class AlchemyLogger(Callback):
             if name in metrics:
                 metric_name = f"{name}/{mode}{suffix}"
                 metric_value = metrics[name]
-                self.logger.log_scalar(metric_name, metric_value)
+                self.logger.log_scalar(
+                    name=metric_name,
+                    value=metric_value,
+                    step=step,
+                )
 
     def on_batch_end(self, state: State):
         """Translate batch metrics to Alchemy"""
-        if state.logdir is None:
-            return
-
         if self.log_on_batch_end:
             mode = state.loader_name
             metrics_ = state.batch_metrics
@@ -110,9 +111,6 @@ class AlchemyLogger(Callback):
 
     def on_loader_end(self, state: State):
         """Translate loader metrics to Alchemy"""
-        if state.logdir is None:
-            return
-
         if self.log_on_epoch_end:
             mode = state.loader_name
             metrics_ = state.loader_metrics
@@ -125,9 +123,6 @@ class AlchemyLogger(Callback):
 
     def on_epoch_end(self, state: State):
         """Translate epoch metrics to Alchemy"""
-        if state.logdir is None:
-            return
-
         extra_mode = "_base"
         splitted_epoch_metrics = utils.split_dict_to_subdicts(
             dct=state.epoch_metrics,

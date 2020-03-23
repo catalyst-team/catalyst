@@ -1,2 +1,2 @@
-alchemy-catalyst
+alchemy-catalyst>=20.03
 reaction

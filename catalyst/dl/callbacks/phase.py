@@ -34,7 +34,7 @@ class PhaseManager:
         self.valid_index = 0
 
     def step(self, state: State, step_size: int = 1):
-        if state.need_backward_pass:
+        if state.is_train_loader:
             if len(self.train_phases) > 1:
                 phase = self.train_phases[self.train_index]
                 phase.curr_step += step_size
@@ -52,7 +52,7 @@ class PhaseManager:
                         (self.valid_index + 1) % len(self.valid_phases)
 
     def get_phase_name(self, state: State):
-        if state.need_backward_pass:
+        if state.is_train_loader:
             return self.train_phases[self.train_index].name
         return self.valid_phases[self.valid_index].name
 

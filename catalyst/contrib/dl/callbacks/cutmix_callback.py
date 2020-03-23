@@ -98,7 +98,7 @@ class CutmixCallback(CriterionCallback):
         :return: void
         """
         self.is_needed = not self.on_train_only or \
-            state.loader_name.startswith("train")
+            state.is_train_loader
 
     def on_batch_start(self, state: State):
         """

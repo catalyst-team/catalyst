@@ -5,24 +5,24 @@ if TYPE_CHECKING:
     from .state import State
 
 
-class CallbackOrder(IntFlag):
-    Internal = 0  # pytorch
-    Metric = 20  # pytorch
-    MetricAggregation = 40  # pytorch
-    Optimizer = 60  # pytorch
-    Validation = 80  # numpy
-    Logging = 100  # numpy
-    Scheduler = 120  # numpy
-    External = 200  # numpy
-
-
 class CallbackNode(IntFlag):
     All = 0
     Master = 1
     Worker = 2
 
 
-class CallbackType(IntFlag):
+class CallbackOrder(IntFlag):
+    Internal = 0  # pytorch
+    Metric = 20  # pytorch
+    MetricAggregation = 40  # pytorch
+    Optimizer = 60  # pytorch
+    Validation = 80  # numpy
+    Scheduler = 100  # numpy
+    Logging = 120  # numpy
+    External = 200  # numpy
+
+
+class CallbackScope(IntFlag):
     Stage = 0
     Experiment = 1
 
@@ -55,14 +55,14 @@ class Callback:
         self,
         order: int,
         node: int = CallbackNode.All,
-        type: int = CallbackType.Stage,
+        scope: int = CallbackScope.Stage,
     ):
         """
         For order see ``CallbackOrder`` class
         """
-        self.order = order
         self.node = node
-        self.type = type
+        self.order = order
+        self.scope = scope
 
     def on_stage_start(self, state: "State"):
         pass
@@ -94,6 +94,7 @@ class Callback:
 
 __all__ = [
     "Callback",
-    "CallbackOrder",
     "CallbackNode",
+    "CallbackOrder",
+    "CallbackScope",
 ]

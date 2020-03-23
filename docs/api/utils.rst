@@ -5,18 +5,7 @@ Utils
     :members:
     :show-inheritance:
 
-
-.. automodule:: catalyst.utils.argparse
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 .. automodule:: catalyst.utils.checkpoint
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.compression
     :members:
     :undoc-members:
     :show-inheritance:
@@ -26,27 +15,12 @@ Utils
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.confusion_matrix
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.dataset
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.dict
+.. automodule:: catalyst.utils.distributed
     :members:
     :undoc-members:
     :show-inheritance:
 
 .. automodule:: catalyst.utils.hash
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.image
     :members:
     :undoc-members:
     :show-inheritance:
@@ -66,17 +40,7 @@ Utils
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.pandas
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.parallel
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.plotly
+.. automodule:: catalyst.utils.parser
     :members:
     :undoc-members:
     :show-inheritance:
@@ -91,17 +55,12 @@ Utils
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.serialization
+.. automodule:: catalyst.utils.sys
     :members:
     :undoc-members:
     :show-inheritance:
 
 .. automodule:: catalyst.utils.torch
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.visualization
     :members:
     :undoc-members:
     :show-inheritance:
@@ -125,35 +84,42 @@ Tools
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: catalyst.utils.tools.time_manager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 .. automodule:: catalyst.utils.tools.typing
     :members:
     :undoc-members:
     :show-inheritance:
 
-Criterion
+
+
+Metrics
 --------------------
 
-.. automodule:: catalyst.utils.criterion.accuracy
+.. automodule:: catalyst.utils.metrics.accuracy
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.criterion.dice
+.. automodule:: catalyst.utils.metrics.dice
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.criterion.f1_score
+.. automodule:: catalyst.utils.metrics.f1_score
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.criterion.focal
+.. automodule:: catalyst.utils.metrics.focal
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.criterion.iou
+.. automodule:: catalyst.utils.metrics.iou
     :members:
     :undoc-members:
     :show-inheritance:
@@ -205,6 +171,11 @@ The meters from torchnet.meters
     :show-inheritance:
 
 .. automodule:: catalyst.utils.meters.msemeter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.utils.meters.ppv_tpr_f1_meter
     :members:
     :undoc-members:
     :show-inheritance:
