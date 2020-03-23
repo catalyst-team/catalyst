@@ -13,11 +13,11 @@ try:
     import alchemy
     from .alchemy import AlchemyLogger
 except ImportError as ex:
-    logger.warning(
-        "alchemy not available, to install alchemy, "
-        "run `pip install alchemy-catalyst`."
-    )
     if os.environ.get("USE_ALCHEMY", "0") == "1":
+        logger.warning(
+            "alchemy not available, to install alchemy, "
+            "run `pip install alchemy-catalyst`."
+        )
         raise ex
 
 try:
