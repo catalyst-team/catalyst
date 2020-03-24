@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Union, TYPE_CHECKING  # isort:skip
+from typing import Any, Dict, Optional, Union, TYPE_CHECKING  # isort:skip
 from collections import defaultdict, OrderedDict
 from pathlib import Path
 import warnings
@@ -24,170 +24,228 @@ StateScheduler = Union[Scheduler, Dict[str, Scheduler]]
 
 class State(FrozenClass):
     """
-    Object containing all information about current state of the experiment.
+    Object containing all information about current state of the experiment.\
+    Used to connect Runner with different Callbacks.\
+    Everything is stored into State.
 
-    state.loaders - ordered dictionary with torch.DataLoaders
-        - "train" prefix is used for training loaders \
-          (metrics computations, backward pass, optimization)
-        - "valid" prefix is used for validation loaders - metrics only
-        - "infer" prefix is used for inference loaders - dataset prediction
+    **state.loaders** - ordered dictionary with torch.DataLoaders; \
+    for example,
+    ::
 
-        ::
+        state.loaders = {
+            "train": MnistTrainLoader(),
+            "valid": MnistValidLoader()
+        }
 
-            state.loaders = {
-                "train": MnistTrainLoader(),
-                "valid": MnistValidLoader()
-            }
+    .. note::
+        - "*train*" prefix is used for training loaders - \
+          metrics computations, backward pass, optimization
+        - "*valid*" prefix is used for validation loaders - \
+          metrics computations only
+        - "*infer*" prefix is used for inference loaders - \
+          dataset prediction
 
-    state.model - an instance of torch.nn.Module class
-        should implement ``forward`` method
-        ::
 
-            state.model = torch.nn.Linear(10, 10)
+    **state.model** - an instance of torch.nn.Module class, \
+    (should implement ``forward`` method); \
+    for example,
+    ::
 
-    state.criterion - an instance of torch.nn.Module class\
-    or torch.nn.modules.loss._Loss\
+        state.model = torch.nn.Linear(10, 10)
 
-        should implement ``forward`` method
-        ::
+    **state.criterion** - an instance of torch.nn.Module class\
+    or torch.nn.modules.loss._Loss (should implement ``forward`` method); \
+    for example,
+    ::
 
-            state.criterion = torch.nn.CrossEntropyLoss()
+        state.criterion = torch.nn.CrossEntropyLoss()
 
-    state.optimizer - an instance of torch.optim.optimizer.Optimizer
-        should implement ``step`` method
-        ::
+    **state.optimizer** - an instance of torch.optim.optimizer.Optimizer\
+    (should implement ``step`` method); \
+    for example,
+    ::
 
-            state.optimizer = torch.optim.Adam()
+        state.optimizer = torch.optim.Adam()
 
-    state.scheduler - an instance of torch.optim.lr_scheduler._LRScheduler
-        should implement ``step`` method
-        ::
+    **state.scheduler** - an instance of torch.optim.lr_scheduler._LRScheduler\
+    (should implement ``step`` method); \
+    for example,
+    ::
 
-            state.scheduler = htorch.optim.lr_scheduler.ReduceLROnPlateau()
+        state.scheduler = htorch.optim.lr_scheduler.ReduceLROnPlateau()
 
-    state.device - an instance of torch.device (CPU, GPU, TPU)
-        ::
+    **state.device** - an instance of torch.device (CPU, GPU, TPU); \
+    for example,
+    ::
 
-            state.device = torch.device("cpu")
+        state.device = torch.device("cpu")
 
-    state.callbacks - ordered dictionary with Catalyst.Callback instances
-        ::
+    **state.callbacks** - ordered dictionary with Catalyst.Callback instances;\
+    for example,
+    ::
 
-            state.callbacks = {
-                "accuracy": AccuracyCallback(),
-                "criterion": CriterionCallback(),
-                "optim": OptimizerCallback(),
-                "saver": CheckpointCallback()
-            }
+        state.callbacks = {
+            "accuracy": AccuracyCallback(),
+            "criterion": CriterionCallback(),
+            "optim": OptimizerCallback(),
+            "saver": CheckpointCallback()
+        }
 
-    state.batch_in - dictionary, \
-    containing current batch of data from DataLoader\
 
-        ::
+    **state.batch_in** - dictionary, \
+    containing batch of data from currents DataLoader; \
+    for example,
+    ::
 
-            state.batch_in = {
-                "images": np.ndarray(batch_size, c, h, w),
-                "targets": np.ndarray(batch_size, 1),
-            }
+        state.batch_in = {
+            "images": np.ndarray(batch_size, c, h, w),
+            "targets": np.ndarray(batch_size, 1),
+        }
 
-    state.batch_out - dictionary, \
-    containing model output based on current batch\
+    **state.batch_out** - dictionary, \
+    containing model output for current batch; \
+    for example,
+    ::
 
-        ::
+        state.batch_out = {"logits": torch.Tensor(batch_size, num_classes)}
 
-            state.batch_out = {"logits": torch.Tensor(batch_size, num_classes)}
+    **state.batch_metrics** - dictionary, flatten storage for batch metrics; \
+    for example,
+    ::
 
-    state.batch_metrics - dictionary, flatten storage for batch metrics
-        ::
+        state.batch_metrics = {"loss": ..., "accuracy": ..., "iou": ...}
 
-            state.batch_metrics = {"loss": ..., "accuracy": ..., "iou": ...}
+    **state.loader_metrics** - dictionary with aggregated batch statistics \
+    for loader (mean over all batches) and global loader metrics, like AUC; \
+    for example,
+    ::
 
-    state.loader_metrics - dictionary with aggregated batch statistics \
-    for loader (mean over all batches) and global loader metrics, like AUC\
+        state.loader_metrics = {"loss": ..., "accuracy": ..., "auc": ...}
 
-        ::
+    **state.epoch_metrics** - dictionary with summarized metrics \
+    for different loaders and global epoch metrics, like lr, momentum; \
+    for example,
+    ::
 
-            state.loader_metrics = {"loss": ..., "accuracy": ..., "auc": ...}
+        state.epoch_metrics = {
+            "train_loss": ..., "train_auc": ..., "valid_loss": ...,
+            "lr": ..., "momentum": ...,
+        }
 
-    state.epoch_metrics - dictionary with summarized metrics \
-    for different loaders and global epoch metrics, like lr, momentum\
 
-        ::
+    **state.is_best_valid** - bool, indicator flag
 
-            state.epoch_metrics = {
-                "train_loss": ..., "train_auc": ..., "valid_loss": ...,
-                "lr": ..., "momentum": ...,
-            }
-
-    state.is_best_valid - bool, indicator flag
         - ``True`` if this training epoch is best over all epochs
         - ``False`` if not
 
-    state.valid_metrics - dictionary with validation metrics for currect epoch
-        just a subdictionary of epoch_metrics
-        ::
+    **state.valid_metrics** - dictionary with validation metrics\
+    for currect epoch; \
+    for example,
+    ::
 
-            state.valid_metrics = {"loss": ..., "accuracy": ..., "auc": ...}
+        state.valid_metrics = {"loss": ..., "accuracy": ..., "auc": ...}
 
-    state.best_valid_metrics - dictionary with best validation metrics \
+    .. note::
+        subdictionary of epoch_metrics
+
+    **state.best_valid_metrics** - dictionary with best validation metrics \
     during whole training process
 
-    state.distributed_rank
 
-    state.is_distributed_worker
+    **state.distributed_rank** - distributed rank of current worker
 
-    state.stage_name
+    **state.is_distributed_worker** - bool, indicator flag
 
-    state.epoch
+        - ``True`` if is worker node (state.distributed_rank > 0)
+        - ``False`` if is master node (state.distributed_rank == 0)
 
-    state.num_epochs
 
-    state.loader_name
+    **state.stage_name** - string, current stage name,\
+    for example,
+    ::
 
-    state.loader_step
+        state.stage_name = "pretraining" / "finetuning" / etc
 
-    state.loader_len
+    **state.epoch** - int, numerical indicator for current stage epoch
 
-    state.batch_size
+    **state.num_epochs** - int, maximum number of epochs, \
+    required for this stage
 
-    state.global_step
 
-    state.global_epoch
+    **state.loader_name** - string, current loader name\
+    for example,
+    ::
 
-    state.main_metric
+        state.loader_name = "train_dataset1" / "valid_data2" / "infer_golden"
 
-    state.minimize_metric
+    **state.loader_step** - int, numerical indicator \
+    for batch index in current loader
 
-    state.valid_loader
+    **state.loader_len** - int, maximum number of batches in current loaders
 
-    state.logdir - path to logging directory to save
-        all logs, metrics, checkpoints and artifacts
 
-    state.checkpoint_data - dictionary
-        with all extra data for experiment tracking
+    **state.batch_size** - int, typical Deep Learning batch size parameter
 
-    state.is_check_run - bool, indicator flag
+
+    **state.global_step** - int, numerical indicator, counter for all batches,\
+    that passes through our model during training, validation and\
+    inference stages
+
+    **state.global_epoch** - int, numerical indicator, counter for all epochs,\
+    that have passed during model training, validation and\
+    inference stages
+
+
+    **state.main_metric** - string, containing name of metric of interest \
+    for optimization, validation and checkpointing during training
+
+    **state.minimize_metric** - bool, indicator flag
+
+        - ``True`` if we need to minimize metric during training,\
+          like `Cross Entropy loss`
+        - ``False`` if we need to maximize metric during training, \
+          like `Accuracy` or `Intersection over Union`
+
+    **state.valid_loader** - string, name of validation loader \
+    for metric selection, validation and model checkpoining
+
+
+    **state.logdir** - string, path to logging directory to save\
+    all logs, metrics, checkpoints and artifacts
+
+    **state.checkpoint_data** - dictionary\
+    with all extra data for experiment tracking
+
+
+    **state.is_check_run** - bool, indicator flag
+
         - ``True`` if you want to check you pipeline and \
           run only 2 batches per loader and 2 epochs per stage
         - ``False`` (default) if you want to just the pipeline
 
-    state.need_backward_pass - bool, indicator flag
+    **state.is_train_loader** - bool, indicator flag
+
         - ``True`` for training loaders
         - ``False`` otherwise
 
-    state.need_early_stop - bool, indicator flag
-        used for EarlyStopping and CheckRun Callbacks
+    **state.is_infer_stage** - bool, indicator flag
+
+        - ``True`` for inference stages
+        - ``False`` otherwise
+
+    **state.need_early_stop** - bool, indicator flag \
+    used for EarlyStopping and CheckRun Callbacks
 
         - ``True`` if we need to stop the training
         - ``False`` (default) otherwise
 
-    state.need_exception_reraise - bool, indicator flag
+    **state.need_exception_reraise** - bool, indicator flag
+
         - ``True`` (default) if you want to show exception \
           during pipeline and stop the training process
         - ``False`` otherwise
 
-    state.exception - python Exception instance to raise
-        (or not ;) )
+    **state.exception** - python Exception instance to raise (or not ;) )
     """
     def __init__(
         self,
@@ -288,30 +346,55 @@ class State(FrozenClass):
 
     @property
     def input(self):
-        # backward compatibility
+        """
+        Alias for `state.batch_in`, saved for backward compatibility
+        """
         return self.batch_in
 
     @property
     def output(self):
-        # backward compatibility
+        """
+        Alias for `state.batch_out`, saved for backward compatibility
+        """
         return self.batch_out
 
     @property
     def need_backward_pass(self):
+        """
+        Alias for `state.is_train_loader`, saved for backward compatibility
+        """
         warnings.warn(
             "`need_backward_pass` was deprecated, "
             "please use `is_train_loader` instead", DeprecationWarning
         )
         return self.is_train_loader
 
-    def get_attr(self, key, inner_key=None):
+    def get_attr(self, key: str, inner_key: str = None) -> Any:
+        """
+        Alias for python `getattr` method. Useful for Callbacks preparation.
+
+        Used to get a named attribute from a `State` by `key` keyword;
+        for example\
+        ::
+
+            state.get_attr("optimizer")
+            # is equivalent to
+            state.optimizer
+
+        With `inner_key` usage, it suppose to find a dictionary under `key`\
+        and would get `inner_key` from this dict; for example,
+        ::
+
+            state.get_attr("optimizer", "first")
+            # is equivalent to
+            state.optimizer["first"]
+
+        Args:
+            key (str): name for attribute of interest,
+                like `criterion`, `optimizer`, `scheduler`
+            inner_key (str): name of inner dictionary key
+        """
         if inner_key is None:
             return getattr(self, key)
         else:
             return getattr(self, key)[inner_key]
-
-    def set_attr(self, value, key, inner_key=None):
-        if inner_key is None:
-            setattr(self, key, value)
-        else:
-            getattr(self, key)[inner_key] = value
