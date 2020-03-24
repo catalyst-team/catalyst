@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.distributed &mdash; Catalyst 20.03.3 documentation</title>
+  <title>catalyst.utils.distributed &mdash; Catalyst 20.03.4 documentation</title>
   
 
   
@@ -382,12 +382,12 @@
     <span class="n">master_node</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostbyname</span><span class="p">(</span><span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">cur_node_idx</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">current_node</span><span class="p">)</span>
     <span class="n">job_id</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SLURM_JOB_ID&quot;</span><span class="p">]</span>
-    <span class="n">master_port</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">5</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">master_port</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">4</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span> <span class="o">%</span> <span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">cur_node_idx</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">master_node</span><span class="p">,</span> <span class="n">master_port</span></div>
 
 
 <div class="viewcode-block" id="get_distributed_params"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.get_distributed_params">[docs]</a><span class="k">def</span> <span class="nf">get_distributed_params</span><span class="p">():</span>
-    <span class="n">master_port</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">5</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">master_port</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">,</span> <span class="mi">6</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">))</span>
     <span class="n">master_addr</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span>
     <span class="n">cur_node</span><span class="p">,</span> <span class="n">num_nodes</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="n">is_slurm_available</span><span class="p">():</span>
