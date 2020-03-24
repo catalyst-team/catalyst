@@ -30,3 +30,14 @@ except ImportError as ex:
             "run `pip install neptune-client`."
         )
         raise ex
+
+try:
+    import wandb
+    from .wandb import WandbLogger
+except ImportError as ex:
+    if os.environ.get("USE_WANDB", "0") == "1":
+        logger.warning(
+            "wandb not available, to install wandb, "
+            "run `pip install wandb`."
+        )
+        raise ex

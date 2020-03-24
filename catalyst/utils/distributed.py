@@ -126,12 +126,12 @@ def get_slurm_params():
     master_node = socket.gethostbyname(nodes[0])
     cur_node_idx = nodes.index(current_node)
     job_id = os.environ["SLURM_JOB_ID"]
-    master_port = str(5*10**4 + int(job_id) % 10**4)
+    master_port = str(5 * 10**4 + int(job_id) % 10**4)
     return cur_node_idx, num_nodes, master_node, master_port
 
 
 def get_distributed_params():
-    master_port = str(random.randint(5*10**4, 6*10**4))
+    master_port = str(random.randint(5 * 10**4, 6 * 10**4))
     master_addr = "127.0.0.1"
     cur_node, num_nodes = 0, 1
     if is_slurm_available():
