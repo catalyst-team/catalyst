@@ -64,6 +64,22 @@ release = get_version("full")
 
 # -- General configuration ---------------------------------------------------
 
+# Warning on undocumented members
+MODULES_TO_WATCH = [
+    'catalyst',
+]
+
+def warn_undocumented_members(app, what, name, obj, options, lines):
+    if len(lines) == 0:
+        for module in MODULES_TO_WATCH:
+            if name.startswith(module):
+                # Warn to terminal during build
+                print(f"Warning: {what} is undocumented: {name}")
+                lines.append(".. Warning:: %s '%s' undocumented" % (what, name))
+
+def setup(app):
+    app.connect('autodoc-process-docstring', warn_undocumented_members)
+
 # If your documentation needs a minimal Sphinx version, state it here.
 #
 # needs_sphinx = "1.0"

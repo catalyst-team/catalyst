@@ -1,3 +1,11 @@
+"""
+The AUCMeter measures the area under the receiver-operating characteristic
+(ROC) curve for binary classification problems. The area under the curve
+(AUC) can be interpreted as the probability that, given a randomly selected
+positive     example and a randomly selected negative example, the positive
+example is assigned a higher score by the classification model than the
+negative example.
+"""
 import numbers
 
 import numpy as np
@@ -9,13 +17,6 @@ from . import meter
 
 class AUCMeter(meter.Meter):
     """
-    The AUCMeter measures the area under the receiver-operating characteristic
-    (ROC) curve for binary classification problems. The area under the curve
-    (AUC) can be interpreted as the probability that, given a randomly selected
-    positive     example and a randomly selected negative example, the positive
-    example is assigned a higher score by the classification model than the
-    negative example.
-
     The AUCMeter is designed to operate on one-dimensional Tensors `output`
     and `target`, where (1) the `output` contains model output scores that
     ought to be higher when the model is more convinced that the example

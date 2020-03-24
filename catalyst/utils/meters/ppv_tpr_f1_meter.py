@@ -1,3 +1,9 @@
+"""
+In this module **precision**, **recall** and **F1 score**
+calculations are defined in separate functions.
+
+:py:class:`PrecisionRecallF1ScoreMeter` can keep track for all three of these.
+"""
 from collections import defaultdict
 
 import torch
@@ -99,8 +105,7 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
         """
         Calculates precision/recall/f1 based on the current stored
         tp/fp/fn counts.
-        Args:
-            None
+
         Returns:
             tuple of floats: (precision, recall, f1)
         """
