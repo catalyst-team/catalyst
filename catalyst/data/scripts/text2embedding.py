@@ -142,8 +142,8 @@ def main(args, _=None):
                 else None
             features_ = utils.process_bert_output(
                 bert_output=bert_output,
-                hidden_size=model.config.hidden_size,
-                output_hidden_states=model.config.output_hidden_states,
+                hidden_size=model.module.config.hidden_size,
+                output_hidden_states=model.module.config.output_hidden_states,
                 pooling_groups=pooling_groups,
                 mask=mask,
             )
