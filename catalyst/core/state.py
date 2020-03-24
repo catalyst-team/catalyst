@@ -1,4 +1,3 @@
-# flake8: noqa
 from typing import Dict, Optional, Union, TYPE_CHECKING  # isort:skip
 from collections import defaultdict, OrderedDict
 from pathlib import Path
@@ -24,7 +23,7 @@ StateScheduler = Union[Scheduler, Dict[str, Scheduler]]
 
 
 class State(FrozenClass):
-    r"""
+    """
     Object containing all information about current state of the experiment.
 
     state.loaders - ordered dictionary with torch.DataLoaders
@@ -46,7 +45,9 @@ class State(FrozenClass):
 
             state.model = torch.nn.Linear(10, 10)
 
-    state.criterion - an instance of torch.nn.Module class or torch.nn.modules.loss._Loss
+    state.criterion - an instance of torch.nn.Module class\
+    or torch.nn.modules.loss._Loss\
+
         should implement ``forward`` method
         ::
 
@@ -79,7 +80,9 @@ class State(FrozenClass):
                 "saver": CheckpointCallback()
             }
 
-    state.batch_in - dictionary, containing current batch of data from DataLoader
+    state.batch_in - dictionary, \
+    containing current batch of data from DataLoader\
+
         ::
 
             state.batch_in = {
@@ -87,7 +90,9 @@ class State(FrozenClass):
                 "targets": np.ndarray(batch_size, 1),
             }
 
-    state.batch_out - dictionary, containing model output based on current batch
+    state.batch_out - dictionary, \
+    containing model output based on current batch\
+
         ::
 
             state.batch_out = {"logits": torch.Tensor(batch_size, num_classes)}
@@ -97,12 +102,16 @@ class State(FrozenClass):
 
             state.batch_metrics = {"loss": ..., "accuracy": ..., "iou": ...}
 
-    state.loader_metrics - dictionary with aggregated batch statistics for loader (mean over all batches) and global loader metrics, like AUC
+    state.loader_metrics - dictionary with aggregated batch statistics \
+    for loader (mean over all batches) and global loader metrics, like AUC\
+
         ::
 
             state.loader_metrics = {"loss": ..., "accuracy": ..., "auc": ...}
 
-    state.epoch_metrics - dictionary with summarized metrics for different loaders and global epoch metrics, like lr, momentum
+    state.epoch_metrics - dictionary with summarized metrics \
+    for different loaders and global epoch metrics, like lr, momentum\
+
         ::
 
             state.epoch_metrics = {
@@ -120,7 +129,8 @@ class State(FrozenClass):
 
             state.valid_metrics = {"loss": ..., "accuracy": ..., "auc": ...}
 
-    state.best_valid_metrics - dictionary with best validation metrics during whole training process
+    state.best_valid_metrics - dictionary with best validation metrics \
+    during whole training process
 
     state.distributed_rank
 
@@ -157,7 +167,8 @@ class State(FrozenClass):
         with all extra data for experiment tracking
 
     state.is_check_run - bool, indicator flag
-        - ``True`` if you want to check you pipeline and run only 2 batches per loader and 2 epochs per stage
+        - ``True`` if you want to check you pipeline and \
+          run only 2 batches per loader and 2 epochs per stage
         - ``False`` (default) if you want to just the pipeline
 
     state.need_backward_pass - bool, indicator flag
@@ -171,7 +182,8 @@ class State(FrozenClass):
         - ``False`` (default) otherwise
 
     state.need_exception_reraise - bool, indicator flag
-        - ``True`` (default) if you want to show exception during pipeline and stop the training process
+        - ``True`` (default) if you want to show exception \
+          during pipeline and stop the training process
         - ``False`` otherwise
 
     state.exception - python Exception instance to raise
