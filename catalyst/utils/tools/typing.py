@@ -1,3 +1,6 @@
+"""
+All Catalyst custom types are defined in this module.
+"""
 from typing import Union  # isort:skip
 
 import torch

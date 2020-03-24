@@ -1,4 +1,9 @@
 # isort:skip_file
+"""
+Tensorboard readers:
+    * :py:class:`EventsFileReader`
+    * :py:class:`SummaryReader`
+"""
 from typing import BinaryIO, Optional, Union  # isort:skip
 from collections import namedtuple
 from collections.abc import Iterable
