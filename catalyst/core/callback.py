@@ -6,12 +6,22 @@ if TYPE_CHECKING:
 
 
 class CallbackNode(IntFlag):
+    """
+    Callback node usage flag during distributed training.
+
+    - All (0) - use on all nodes, botch master and worker.
+    - Master (1) - use only on master node.
+    - Worker (2) - use only in worker nodes.
+    """
     All = 0
     Master = 1
     Worker = 2
 
 
 class CallbackOrder(IntFlag):
+    """
+    Callback usage order flag during training.
+    """
     Internal = 0  # pytorch
     Metric = 20  # pytorch
     MetricAggregation = 40  # pytorch
@@ -23,14 +33,20 @@ class CallbackOrder(IntFlag):
 
 
 class CallbackScope(IntFlag):
+    """
+    Callback scope usage flag during training.
+
+    - Stage (0) - use Callback only during one experiment stage.
+    - Experiment (1) - use Callback during whole experiment run.
+    """
     Stage = 0
     Experiment = 1
 
 
 class Callback:
     """
-    Abstract class that all callback (e.g., Logger) classes extends from.
-    Must be extended before usage.
+    Abstract class that all callback (e.g., Metrics, Logger)
+    classes extends from. Must be extended before usage.
 
     usage example:
 
@@ -48,8 +64,10 @@ class Callback:
 
         exception – if an Exception was raised
 
-    All callbacks has ``order`` value from ``CallbackOrder``
-    and ``node`` value from ``CallbackNode``
+    All callbacks have
+        - ``order`` value from ``CallbackOrder``
+        - ``node`` value from ``CallbackNode``
+        - ``scope`` value from ``CallbackScope``
     """
     def __init__(
         self,
@@ -58,37 +76,96 @@ class Callback:
         scope: int = CallbackScope.Stage,
     ):
         """
-        For order see ``CallbackOrder`` class
+        Callback initializer.
+
+        Args:
+            order: flag from  ``CallbackOrder``
+            node: flag from  ``CallbackNode``
+            scope: flag from  ``CallbackScope``
         """
         self.node = node
         self.order = order
         self.scope = scope
 
     def on_stage_start(self, state: "State"):
+        """
+        Event handler for stage start.
+
+        Args:
+            state ("State"): State instance.
+        """
         pass
 
     def on_stage_end(self, state: "State"):
+        """
+         Event handler for stage end.
+
+        Args:
+            state ("State"): State instance.
+        """
         pass
 
     def on_epoch_start(self, state: "State"):
+        """
+        Event handler for epoch start.
+
+        Args:
+            state ("State"): State instance.
+        """
         pass
 
     def on_epoch_end(self, state: "State"):
+        """
+         Event handler for epoch end.
+
+        Args:
+            state ("State"): State instance.
+        """
         pass
 
     def on_loader_start(self, state: "State"):
+        """
+        Event handler for loader start.
+
+        Args:
+            state ("State"): State instance.
+        """
         pass
 
     def on_loader_end(self, state: "State"):
+        """
+         Event handler for loader end.
+
+        Args:
+            state ("State"): State instance.
+        """
         pass
 
     def on_batch_start(self, state: "State"):
+        """
+        Event handler for batch start.
+
+        Args:
+            state ("State"): State instance.
+        """
         pass
 
     def on_batch_end(self, state: "State"):
+        """
+        Event handler for batch end.
+
+       Args:
+           state ("State"): State instance.
+       """
         pass
 
     def on_exception(self, state: "State"):
+        """
+        Event handler for exception case.
+
+       Args:
+           state ("State"): State instance.
+       """
         pass
 
 

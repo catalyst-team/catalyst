@@ -27,9 +27,17 @@ StateScheduler = Union[Scheduler, Dict[str, Scheduler]]
 
 class State(FrozenClass):
     """
-    Object containing all information about current state of the experiment.\
-    Used to connect Runner with different Callbacks.\
-    Everything is stored into State.
+    Some intermediate storage between Experiment and Runner
+    that saves the current state of the Experiments –
+    model, criterion, optimizer, schedulers, metrics, loggers, loaders, etc
+
+    .. note::
+        To learn more about Catalyst Core concepts, please check out
+
+            - :py:mod:`catalyst.core.experiment._Experiment`
+            - :py:mod:`catalyst.core.runner._Runner`
+            - :py:mod:`catalyst.core.state.State`
+            - :py:mod:`catalyst.core.callback.Callback`
 
     **state.loaders** - ordered dictionary with torch.DataLoaders; \
     for example,

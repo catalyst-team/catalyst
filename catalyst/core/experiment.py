@@ -11,7 +11,18 @@ from .callback import Callback
 
 class _Experiment(ABC):
     """
-    Object containing all information required to run the experiment.
+    An abstraction that contains information about the experiment –
+    a model, a criterion, an optimizer, a scheduler, and their hyperparameters.
+    It also contains information about the data and transformations used.
+    In general, the Experiment knows **what** you would like to run.
+
+    .. note::
+        To learn more about Catalyst Core concepts, please check out
+
+            - :py:mod:`catalyst.core.experiment._Experiment`
+            - :py:mod:`catalyst.core.runner._Runner`
+            - :py:mod:`catalyst.core.state.State`
+            - :py:mod:`catalyst.core.callback.Callback`
 
     Abstraction, please check out the implementations:
 
@@ -354,10 +365,11 @@ class _Experiment(ABC):
     @abstractmethod
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """
-        Returns the callbacks for a given stage.
+        Returns callbacks for a given stage.
 
-        To learn more about Catalyst Callbacks mechanism, please follow
-        :py:mod:`catalyst.core.callback.Callback` documentation.
+        .. note::
+            To learn more about Catalyst Callbacks mechanism, please follow
+            :py:mod:`catalyst.core.callback.Callback` documentation.
 
         .. note::
             We need ordered dictionary to guarantee the correct dataflow
@@ -365,13 +377,21 @@ class _Experiment(ABC):
             For example, to compute loss before optimization,
             or to compute all the metrics before logging :)
 
-         Args:
-            stage (str): stage name of interest,
+        Args:
+            stage (str): stage name of interest
                 like "pretraining" / "training" / "finetuning" / etc
 
         Returns:
             OrderedDict[str, Callback]: Ordered dictionary
-                with callbacks for current stage.
+            with callbacks for current stage.
+
+        .. note::
+            To learn more about Catalyst Core concepts, please check out
+
+                - :py:mod:`catalyst.core.experiment._Experiment`
+                - :py:mod:`catalyst.core.runner._Runner`
+                - :py:mod:`catalyst.core.state.State`
+                - :py:mod:`catalyst.core.callback.Callback`
         """
         pass
 
