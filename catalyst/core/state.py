@@ -9,11 +9,11 @@ from torch.utils.data import DataLoader
 
 from catalyst import utils
 from catalyst.utils.tools.frozen_class import FrozenClass
+from catalyst.utils.tools.settings import (
+    LOADER_VALID_PREFIX, STAGE_INFER_PREFIX, STATE_MAIN_METRIC
+)
 from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
-)
-from catalyst.utils.tools.settings import (
-    STAGE_INFER_PREFIX, LOADER_VALID_PREFIX, STATE_MAIN_METRIC
 )
 
 if TYPE_CHECKING:

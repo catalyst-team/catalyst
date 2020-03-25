@@ -79,7 +79,8 @@ class _Experiment(ABC):
         to setup `Nvidia Apex`_ or `PyTorch distributed`_.
 
         .. _`Nvidia Apex`: https://github.com/NVIDIA/apex
-        .. _`PyTorch distributed`: https://pytorch.org/docs/stable/distributed.html
+        .. _`PyTorch distributed`:
+            https://pytorch.org/docs/stable/distributed.html
 
         Example::
 
