@@ -12,6 +12,9 @@ from catalyst.utils.tools.frozen_class import FrozenClass
 from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
+from catalyst.utils.tools.settings import (
+    STAGE_INFER_PREFIX, LOADER_VALID_PREFIX, STATE_MAIN_METRIC
+)
 
 if TYPE_CHECKING:
     from .callback import Callback  # noqa: F401
@@ -164,7 +167,7 @@ class State(FrozenClass):
     for example,
     ::
 
-        state.stage_name = "pretraining" / "finetuning" / etc
+        state.stage_name = "pretraining" / "training" / "finetuning" / etc
 
     **state.epoch** - int, numerical indicator for current stage epoch
 
@@ -257,11 +260,11 @@ class State(FrozenClass):
         scheduler: StateScheduler = None,
         callbacks: Dict[str, "Callback"] = None,
         logdir: str = None,
-        stage: str = "infer",
+        stage: str = STAGE_INFER_PREFIX,
         num_epochs: int = None,
-        main_metric: str = "loss",
+        main_metric: str = STATE_MAIN_METRIC,
         minimize_metric: bool = True,
-        valid_loader: str = "valid",
+        valid_loader: str = LOADER_VALID_PREFIX,
         checkpoint_data: Dict = None,
         is_check_run: bool = False,
         **kwargs,
@@ -333,7 +336,8 @@ class State(FrozenClass):
         # other
         self.is_check_run: bool = is_check_run
         self.is_train_loader: bool = False
-        self.is_infer_stage: bool = self.stage_name.startswith("infer")
+        self.is_infer_stage: bool = \
+            self.stage_name.startswith(STAGE_INFER_PREFIX)
         self.need_early_stop: bool = False
         self.need_exception_reraise: bool = True
         self.exception: Optional[Exception] = None
@@ -347,21 +351,41 @@ class State(FrozenClass):
     @property
     def input(self):
         """
-        Alias for `state.batch_in`, saved for backward compatibility
+        Alias for `state.batch_in`.
+
+        .. warning::
+            Deprecated, saved for backward compatibility.
+            Please use `state.batch_in` instead.
         """
+        warnings.warn(
+            "`input` was deprecated, "
+            "please use `batch_in` instead", DeprecationWarning
+        )
         return self.batch_in
 
     @property
     def output(self):
         """
-        Alias for `state.batch_out`, saved for backward compatibility
+        Alias for `state.batch_out`.
+
+        .. warning::
+            Deprecated, saved for backward compatibility.
+            Please use `state.batch_out` instead.
         """
+        warnings.warn(
+            "`output` was deprecated, "
+            "please use `batch_out` instead", DeprecationWarning
+        )
         return self.batch_out
 
     @property
     def need_backward_pass(self):
         """
-        Alias for `state.is_train_loader`, saved for backward compatibility
+        Alias for `state.is_train_loader`.
+
+        .. warning::
+            Deprecated, saved for backward compatibility.
+            Please use `state.is_train_loader` instead.
         """
         warnings.warn(
             "`need_backward_pass` was deprecated, "
@@ -371,23 +395,47 @@ class State(FrozenClass):
 
     def get_attr(self, key: str, inner_key: str = None) -> Any:
         """
-        Alias for python `getattr` method. Useful for Callbacks preparation.
+        Alias for python `getattr` method. Useful for Callbacks preparation
+        and cases with multi-criterion, multi-optimizer setup.
+        For example, when you would like to train multi-task classification.
 
         Used to get a named attribute from a `State` by `key` keyword;
         for example\
         ::
 
+            # example 1
+            state.get_attr("criterion")
+            # is equivalent to
+            state.criterion
+
+            # example 2
             state.get_attr("optimizer")
             # is equivalent to
             state.optimizer
+
+            # example 3
+            state.get_attr("scheduler")
+            # is equivalent to
+            state.scheduler
 
         With `inner_key` usage, it suppose to find a dictionary under `key`\
         and would get `inner_key` from this dict; for example,
         ::
 
-            state.get_attr("optimizer", "first")
+            # example 1
+            state.get_attr("criterion", "bce")
             # is equivalent to
-            state.optimizer["first"]
+            state.criterion["bce"]
+
+            # example 2
+            state.get_attr("optimizer", "adam")
+            # is equivalent to
+            state.optimizer["adam"]
+
+            # example 3
+            state.get_attr("scheduler", "adam")
+            # is equivalent to
+            state.scheduler["adam"]
 
         Args:
             key (str): name for attribute of interest,
