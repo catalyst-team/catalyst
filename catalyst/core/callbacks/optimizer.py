@@ -83,25 +83,23 @@ class OptimizerCallback(Callback):
         """
         Checks that the current stage has correct optimizer
         """
-        optimizer = state.get_attr(
+        self._optimizer = state.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
-        assert optimizer is not None
-        self._optimizer = optimizer
+        assert self._optimizer is not None
 
     def on_epoch_start(self, state: State):
         """On epoch start event"""
-        optimizer = self._optimizer
 
         if self.decouple_weight_decay:
             self._optimizer_wd = [
                 group.get("weight_decay", 0.0)
-                for group in optimizer.param_groups
+                for group in self._optimizer.param_groups
             ]
-            for i in range(len(optimizer.param_groups)):
-                optimizer.param_groups[i]["weight_decay"] = 0.0
+            for i in range(len(self._optimizer.param_groups)):
+                self._optimizer.param_groups[i]["weight_decay"] = 0.0
         else:
-            self._optimizer_wd = [0.0] * len(optimizer.param_groups)
+            self._optimizer_wd = [0.0] * len(self._optimizer.param_groups)
 
     def on_epoch_end(self, state: State):
         """On epoch end event"""
@@ -128,7 +126,6 @@ class OptimizerCallback(Callback):
             return
 
         loss = state.batch_metrics[self.loss_key]
-        optimizer = self._optimizer
 
         self._accumulation_counter += 1
         need_gradient_step = \
@@ -138,14 +135,14 @@ class OptimizerCallback(Callback):
         # change in future.
         # But alternative solution is to have AmpOptimizerCallback.
         # or expose another c'tor argument.
-        if hasattr(optimizer, "_amp_stash"):
+        if hasattr(self._optimizer, "_amp_stash"):
             from apex import amp
             # Need to set ``delay_unscale``
             # according to
             # https://nvidia.github.io/apex/advanced.html#gradient-accumulation-across-iterations
             delay_unscale = not need_gradient_step
             with amp.scale_loss(
-                loss, optimizer, delay_unscale=delay_unscale
+                loss, self._optimizer, delay_unscale=delay_unscale
             ) as scaled_loss:
                 scaled_loss.backward()
         else:
@@ -153,7 +150,7 @@ class OptimizerCallback(Callback):
 
         if need_gradient_step:
             self.grad_step(
-                optimizer=optimizer,
+                optimizer=self._optimizer,
                 optimizer_wds=self._optimizer_wd,
                 grad_clip_fn=self.grad_clip_fn
             )
@@ -163,7 +160,7 @@ class OptimizerCallback(Callback):
             #         tag = tag.replace(".", "/")
             #         state.model_grads[tag] = value.grad.cpu().numpy()
 
-            utils.maybe_recursive_call(optimizer, "zero_grad")
+            utils.maybe_recursive_call(self._optimizer, "zero_grad")
 
             self._accumulation_counter = 0
 
