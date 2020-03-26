@@ -20,7 +20,42 @@ class CallbackNode(IntFlag):
 
 class CallbackOrder(IntFlag):
     """
-    Callback usage order flag during training.
+    Callback usage order during training.
+
+    Catalyst executes Callbacks with low `CallbackOrder`
+    **before** Callbacks with high `CallbackOrder`.
+
+    Predefined orders:
+
+    - **Internal** (0) - some Catalyst Extras,
+      like PhaseCallbacks (used in GANs).
+    - **Metric** (20) - Callbacks with metrics and losses computation.
+    - **MetricAggregation** (40) - metrics aggregation callbacks,
+      like sum different losses into one.
+    - **Optimizer** (60) - optimizer step,
+      requires computed metrics for optimization.
+    - **Validation** (80) - validation step,
+      computes validation metrics subset based on all metrics.
+    - **Scheduler** (100) - scheduler step,
+      in `ReduceLROnPlateau` case
+      requires computed validation metrics for optimizer schedule.
+    - **Logging** (120) - logging step,
+      logs metrics to Console/Tensorboard/Alchemy_,
+      requires computed metrics.
+    - **External** (200) - additional callbacks with custom logic,
+      like InferenceCallbacks
+
+    Nevertheless, you always can create CustomCallback with any order,
+    for example::
+
+        >>> class MyCustomCallback(Callback):
+        >>>     def __init__(self):
+        >>>         super().__init__(order=42)
+        >>>     ...
+        # MyCustomCallback will be executed after all `Metric`-Callbacks
+        # but before all `MetricAggregation`-Callbacks.
+
+    .. _Alchemy: https://alchemy.host
     """
     Internal = 0  # pytorch
     Metric = 20  # pytorch
@@ -45,18 +80,17 @@ class CallbackScope(IntFlag):
 
 class Callback:
     """
-    Abstract class that all callback (e.g., Metrics, Logger)
-    classes extends from. Must be extended before usage.
-
-    usage example:
+    An abstraction that lets you customize your experiment run logic.
+    To give users maximum flexibility and extensibility Catalyst supports
+    callback execution anywhere in the training loop:
 
     .. code:: bash
 
         -- stage start
-        ---- epoch start (one epoch - one run of every loader)
+        ---- epoch start
         ------ loader start
         -------- batch start
-        -------- batch handler
+        ---------- batch handler (Runner logic)
         -------- batch end
         ------ loader end
         ---- epoch end
@@ -65,9 +99,25 @@ class Callback:
         exception – if an Exception was raised
 
     All callbacks have
-        - ``order`` value from ``CallbackOrder``
-        - ``node`` value from ``CallbackNode``
-        - ``scope`` value from ``CallbackScope``
+        - ``order`` from ``CallbackOrder``
+        - ``node`` from ``CallbackNode``
+        - ``scope`` from ``CallbackScope``
+
+    .. note::
+        To learn more about Catalyst Core concepts, please check out
+
+            - :py:mod:`catalyst.core.experiment._Experiment`
+            - :py:mod:`catalyst.core.runner._Runner`
+            - :py:mod:`catalyst.core.state.State`
+            - :py:mod:`catalyst.core.callback.Callback`
+
+    Abstraction, please check out the implementations:
+
+        - :py:mod:`catalyst.core.callbacks.criterion.CriterionCallback`
+        - :py:mod:`catalyst.core.callbacks.optimizer.OptimizerCallback`
+        - :py:mod:`catalyst.core.callbacks.scheduler.SchedulerCallback`
+        - :py:mod:`catalyst.core.callbacks.logging.TensorboardLogger`
+        - :py:mod:`catalyst.core.callbacks.checkpoint.CheckpointCallback`
     """
     def __init__(
         self,
@@ -79,9 +129,9 @@ class Callback:
         Callback initializer.
 
         Args:
-            order: flag from  ``CallbackOrder``
-            node: flag from  ``CallbackNode``
-            scope: flag from  ``CallbackScope``
+            order: flag from ``CallbackOrder``
+            node: flag from ``CallbackNode``
+            scope: flag from ``CallbackScope``
         """
         self.node = node
         self.order = order
@@ -98,7 +148,7 @@ class Callback:
 
     def on_stage_end(self, state: "State"):
         """
-         Event handler for stage end.
+        Event handler for stage end.
 
         Args:
             state ("State"): State instance.
@@ -116,7 +166,7 @@ class Callback:
 
     def on_epoch_end(self, state: "State"):
         """
-         Event handler for epoch end.
+        Event handler for epoch end.
 
         Args:
             state ("State"): State instance.
@@ -134,7 +184,7 @@ class Callback:
 
     def on_loader_end(self, state: "State"):
         """
-         Event handler for loader end.
+        Event handler for loader end.
 
         Args:
             state ("State"): State instance.
@@ -154,18 +204,18 @@ class Callback:
         """
         Event handler for batch end.
 
-       Args:
-           state ("State"): State instance.
-       """
+        Args:
+            state ("State"): State instance.
+        """
         pass
 
     def on_exception(self, state: "State"):
         """
         Event handler for exception case.
 
-       Args:
-           state ("State"): State instance.
-       """
+        Args:
+            state ("State"): State instance.
+        """
         pass
 
 

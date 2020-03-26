@@ -248,9 +248,10 @@ class _Experiment(ABC):
         giving model and stage.
 
         Aggregation method, based on,
-            - :py:mod:`catalyst.core.experiment._Experiment.get_criterion`
-            - :py:mod:`catalyst.core.experiment._Experiment.get_optimizer`
-            - :py:mod:`catalyst.core.experiment._Experiment.get_scheduler`
+
+        - :py:mod:`catalyst.core.experiment._Experiment.get_criterion`
+        - :py:mod:`catalyst.core.experiment._Experiment.get_optimizer`
+        - :py:mod:`catalyst.core.experiment._Experiment.get_scheduler`
 
         Args:
             model (Model): model to optimize with stage optimizer
