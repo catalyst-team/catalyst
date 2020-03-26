@@ -1,3 +1,7 @@
+"""
+IoU metric. Jaccard metric refers to IoU here, same functionality.
+"""
+
 from typing import List, Union  # isort:skip
 from functools import partial
 

@@ -1,3 +1,6 @@
+"""
+F1 score.
+"""
 import torch
 
 from catalyst.utils import get_activation_fn
