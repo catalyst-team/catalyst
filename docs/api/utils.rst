@@ -231,7 +231,7 @@ Map Meter
     :show-inheritance:
 
 Moving Average Value Meter
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.meters.movingaveragevaluemeter
     :members:
     :undoc-members:
@@ -245,7 +245,7 @@ MSE Meter
     :show-inheritance:
 
 Precision-Recall-F1 Meter
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.meters.ppv_tpr_f1_meter
     :members:
     :undoc-members:

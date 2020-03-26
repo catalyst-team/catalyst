@@ -1,5 +1,6 @@
 """
-Frozen class. Example of usage can be found in :py:class:`catalyst.core.state.State`.
+Frozen class.
+Example of usage can be found in :py:class:`catalyst.core.state.State`.
 """
 
 

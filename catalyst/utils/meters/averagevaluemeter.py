@@ -8,7 +8,8 @@ from . import meter
 
 class AverageValueMeter(meter.Meter):
     """
-    Average value meter stores mean and standard deviation for population of input values.
+    Average value meter stores mean and standard deviation
+    for population of input values.
     Meter updates are applied online, one value for each update.
     Values are not cached, only the last added.
     """
@@ -27,10 +28,12 @@ class AverageValueMeter(meter.Meter):
         Updates of mean and std are going online, with
         `Welford's online algorithm
         <https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance>`_.
-        Because of algorithm design, you can update meter values with only one value a time.
+        Because of algorithm design,
+        you can update meter values with only one value a time.
 
         Args:
-            value (float): value for update, can be scalar number or PyTorch tensor
+            value (float): value for update,
+            can be scalar number or PyTorch tensor
         """
         self.val = value
         self.n += 1

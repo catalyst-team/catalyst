@@ -6,7 +6,8 @@ from . import APMeter, meter
 
 class mAPMeter(meter.Meter):
     """
-    This meter is a wrapper for :py:class:`catalyst.utils.meters.apmeter.APMeter`.
+    This meter is a wrapper for
+    :py:class:`catalyst.utils.meters.apmeter.APMeter`.
     The mAPMeter is designed to operate on `NxK` Tensors `output` and
     `target`, and optionally a `Nx1` Tensor weight where:
 
