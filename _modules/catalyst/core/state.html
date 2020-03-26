@@ -254,8 +254,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.core.state</h1><div class="highlight"><pre>
-<span></span><span class="c1"># flake8: noqa</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>  <span class="c1"># isort:skip</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
@@ -266,6 +265,9 @@
 
 <span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.tools.frozen_class</span> <span class="kn">import</span> <span class="n">FrozenClass</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.tools.settings</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">LOADER_VALID_PREFIX</span><span class="p">,</span> <span class="n">STAGE_INFER_PREFIX</span><span class="p">,</span> <span class="n">STATE_MAIN_METRIC</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.tools.typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Criterion</span><span class="p">,</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
 <span class="p">)</span>
@@ -280,158 +282,237 @@
 
 
 <div class="viewcode-block" id="State"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.state.State">[docs]</a><span class="k">class</span> <span class="nc">State</span><span class="p">(</span><span class="n">FrozenClass</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Object containing all information about current state of the experiment.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Some intermediate storage between Experiment and Runner</span>
+<span class="sd">    that saves the current state of the Experiments –</span>
+<span class="sd">    model, criterion, optimizer, schedulers, metrics, loggers, loaders, etc</span>
 
-<span class="sd">    state.loaders - ordered dictionary with torch.DataLoaders</span>
-<span class="sd">        - &quot;train&quot; prefix is used for training loaders \</span>
-<span class="sd">          (metrics computations, backward pass, optimization)</span>
-<span class="sd">        - &quot;valid&quot; prefix is used for validation loaders - metrics only</span>
-<span class="sd">        - &quot;infer&quot; prefix is used for inference loaders - dataset prediction</span>
+<span class="sd">    .. note::</span>
+<span class="sd">        To learn more about Catalyst Core concepts, please check out</span>
 
-<span class="sd">        ::</span>
+<span class="sd">            - :py:mod:`catalyst.core.experiment._Experiment`</span>
+<span class="sd">            - :py:mod:`catalyst.core.runner._Runner`</span>
+<span class="sd">            - :py:mod:`catalyst.core.state.State`</span>
+<span class="sd">            - :py:mod:`catalyst.core.callback.Callback`</span>
 
-<span class="sd">            state.loaders = {</span>
-<span class="sd">                &quot;train&quot;: MnistTrainLoader(),</span>
-<span class="sd">                &quot;valid&quot;: MnistValidLoader()</span>
-<span class="sd">            }</span>
+<span class="sd">    **state.loaders** - ordered dictionary with torch.DataLoaders; \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
 
-<span class="sd">    state.model - an instance of torch.nn.Module class</span>
-<span class="sd">        should implement ``forward`` method</span>
-<span class="sd">        ::</span>
+<span class="sd">        state.loaders = {</span>
+<span class="sd">            &quot;train&quot;: MnistTrainLoader(),</span>
+<span class="sd">            &quot;valid&quot;: MnistValidLoader()</span>
+<span class="sd">        }</span>
 
-<span class="sd">            state.model = torch.nn.Linear(10, 10)</span>
+<span class="sd">    .. note::</span>
+<span class="sd">        - &quot;*train*&quot; prefix is used for training loaders - \</span>
+<span class="sd">          metrics computations, backward pass, optimization</span>
+<span class="sd">        - &quot;*valid*&quot; prefix is used for validation loaders - \</span>
+<span class="sd">          metrics computations only</span>
+<span class="sd">        - &quot;*infer*&quot; prefix is used for inference loaders - \</span>
+<span class="sd">          dataset prediction</span>
 
-<span class="sd">    state.criterion - an instance of torch.nn.Module class or torch.nn.modules.loss._Loss</span>
-<span class="sd">        should implement ``forward`` method</span>
-<span class="sd">        ::</span>
 
-<span class="sd">            state.criterion = torch.nn.CrossEntropyLoss()</span>
+<span class="sd">    **state.model** - an instance of torch.nn.Module class, \</span>
+<span class="sd">    (should implement ``forward`` method); \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
 
-<span class="sd">    state.optimizer - an instance of torch.optim.optimizer.Optimizer</span>
-<span class="sd">        should implement ``step`` method</span>
-<span class="sd">        ::</span>
+<span class="sd">        state.model = torch.nn.Linear(10, 10)</span>
 
-<span class="sd">            state.optimizer = torch.optim.Adam()</span>
+<span class="sd">    **state.criterion** - an instance of torch.nn.Module class\</span>
+<span class="sd">    or torch.nn.modules.loss._Loss (should implement ``forward`` method); \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
 
-<span class="sd">    state.scheduler - an instance of torch.optim.lr_scheduler._LRScheduler</span>
-<span class="sd">        should implement ``step`` method</span>
-<span class="sd">        ::</span>
+<span class="sd">        state.criterion = torch.nn.CrossEntropyLoss()</span>
 
-<span class="sd">            state.scheduler = htorch.optim.lr_scheduler.ReduceLROnPlateau()</span>
+<span class="sd">    **state.optimizer** - an instance of torch.optim.optimizer.Optimizer\</span>
+<span class="sd">    (should implement ``step`` method); \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
 
-<span class="sd">    state.device - an instance of torch.device (CPU, GPU, TPU)</span>
-<span class="sd">        ::</span>
+<span class="sd">        state.optimizer = torch.optim.Adam()</span>
 
-<span class="sd">            state.device = torch.device(&quot;cpu&quot;)</span>
+<span class="sd">    **state.scheduler** - an instance of torch.optim.lr_scheduler._LRScheduler\</span>
+<span class="sd">    (should implement ``step`` method); \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
 
-<span class="sd">    state.callbacks - ordered dictionary with Catalyst.Callback instances</span>
-<span class="sd">        ::</span>
+<span class="sd">        state.scheduler = htorch.optim.lr_scheduler.ReduceLROnPlateau()</span>
 
-<span class="sd">            state.callbacks = {</span>
-<span class="sd">                &quot;accuracy&quot;: AccuracyCallback(),</span>
-<span class="sd">                &quot;criterion&quot;: CriterionCallback(),</span>
-<span class="sd">                &quot;optim&quot;: OptimizerCallback(),</span>
-<span class="sd">                &quot;saver&quot;: CheckpointCallback()</span>
-<span class="sd">            }</span>
+<span class="sd">    **state.device** - an instance of torch.device (CPU, GPU, TPU); \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
 
-<span class="sd">    state.batch_in - dictionary, containing current batch of data from DataLoader</span>
-<span class="sd">        ::</span>
+<span class="sd">        state.device = torch.device(&quot;cpu&quot;)</span>
 
-<span class="sd">            state.batch_in = {</span>
-<span class="sd">                &quot;images&quot;: np.ndarray(batch_size, c, h, w),</span>
-<span class="sd">                &quot;targets&quot;: np.ndarray(batch_size, 1),</span>
-<span class="sd">            }</span>
+<span class="sd">    **state.callbacks** - ordered dictionary with Catalyst.Callback instances;\</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
 
-<span class="sd">    state.batch_out - dictionary, containing model output based on current batch</span>
-<span class="sd">        ::</span>
+<span class="sd">        state.callbacks = {</span>
+<span class="sd">            &quot;accuracy&quot;: AccuracyCallback(),</span>
+<span class="sd">            &quot;criterion&quot;: CriterionCallback(),</span>
+<span class="sd">            &quot;optim&quot;: OptimizerCallback(),</span>
+<span class="sd">            &quot;saver&quot;: CheckpointCallback()</span>
+<span class="sd">        }</span>
 
-<span class="sd">            state.batch_out = {&quot;logits&quot;: torch.Tensor(batch_size, num_classes)}</span>
 
-<span class="sd">    state.batch_metrics - dictionary, flatten storage for batch metrics</span>
-<span class="sd">        ::</span>
+<span class="sd">    **state.batch_in** - dictionary, \</span>
+<span class="sd">    containing batch of data from currents DataLoader; \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
 
-<span class="sd">            state.batch_metrics = {&quot;loss&quot;: ..., &quot;accuracy&quot;: ..., &quot;iou&quot;: ...}</span>
+<span class="sd">        state.batch_in = {</span>
+<span class="sd">            &quot;images&quot;: np.ndarray(batch_size, c, h, w),</span>
+<span class="sd">            &quot;targets&quot;: np.ndarray(batch_size, 1),</span>
+<span class="sd">        }</span>
 
-<span class="sd">    state.loader_metrics - dictionary with aggregated batch statistics for loader (mean over all batches) and global loader metrics, like AUC</span>
-<span class="sd">        ::</span>
+<span class="sd">    **state.batch_out** - dictionary, \</span>
+<span class="sd">    containing model output for current batch; \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
 
-<span class="sd">            state.loader_metrics = {&quot;loss&quot;: ..., &quot;accuracy&quot;: ..., &quot;auc&quot;: ...}</span>
+<span class="sd">        state.batch_out = {&quot;logits&quot;: torch.Tensor(batch_size, num_classes)}</span>
 
-<span class="sd">    state.epoch_metrics - dictionary with summarized metrics for different loaders and global epoch metrics, like lr, momentum</span>
-<span class="sd">        ::</span>
+<span class="sd">    **state.batch_metrics** - dictionary, flatten storage for batch metrics; \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
 
-<span class="sd">            state.epoch_metrics = {</span>
-<span class="sd">                &quot;train_loss&quot;: ..., &quot;train_auc&quot;: ..., &quot;valid_loss&quot;: ...,</span>
-<span class="sd">                &quot;lr&quot;: ..., &quot;momentum&quot;: ...,</span>
-<span class="sd">            }</span>
+<span class="sd">        state.batch_metrics = {&quot;loss&quot;: ..., &quot;accuracy&quot;: ..., &quot;iou&quot;: ...}</span>
 
-<span class="sd">    state.is_best_valid - bool, indicator flag</span>
+<span class="sd">    **state.loader_metrics** - dictionary with aggregated batch statistics \</span>
+<span class="sd">    for loader (mean over all batches) and global loader metrics, like AUC; \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        state.loader_metrics = {&quot;loss&quot;: ..., &quot;accuracy&quot;: ..., &quot;auc&quot;: ...}</span>
+
+<span class="sd">    **state.epoch_metrics** - dictionary with summarized metrics \</span>
+<span class="sd">    for different loaders and global epoch metrics, like lr, momentum; \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        state.epoch_metrics = {</span>
+<span class="sd">            &quot;train_loss&quot;: ..., &quot;train_auc&quot;: ..., &quot;valid_loss&quot;: ...,</span>
+<span class="sd">            &quot;lr&quot;: ..., &quot;momentum&quot;: ...,</span>
+<span class="sd">        }</span>
+
+
+<span class="sd">    **state.is_best_valid** - bool, indicator flag</span>
+
 <span class="sd">        - ``True`` if this training epoch is best over all epochs</span>
 <span class="sd">        - ``False`` if not</span>
 
-<span class="sd">    state.valid_metrics - dictionary with validation metrics for currect epoch</span>
-<span class="sd">        just a subdictionary of epoch_metrics</span>
-<span class="sd">        ::</span>
+<span class="sd">    **state.valid_metrics** - dictionary with validation metrics\</span>
+<span class="sd">    for currect epoch; \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
 
-<span class="sd">            state.valid_metrics = {&quot;loss&quot;: ..., &quot;accuracy&quot;: ..., &quot;auc&quot;: ...}</span>
+<span class="sd">        state.valid_metrics = {&quot;loss&quot;: ..., &quot;accuracy&quot;: ..., &quot;auc&quot;: ...}</span>
 
-<span class="sd">    state.best_valid_metrics - dictionary with best validation metrics during whole training process</span>
+<span class="sd">    .. note::</span>
+<span class="sd">        subdictionary of epoch_metrics</span>
 
-<span class="sd">    state.distributed_rank</span>
+<span class="sd">    **state.best_valid_metrics** - dictionary with best validation metrics \</span>
+<span class="sd">    during whole training process</span>
 
-<span class="sd">    state.is_distributed_worker</span>
 
-<span class="sd">    state.stage_name</span>
+<span class="sd">    **state.distributed_rank** - distributed rank of current worker</span>
 
-<span class="sd">    state.epoch</span>
+<span class="sd">    **state.is_distributed_worker** - bool, indicator flag</span>
 
-<span class="sd">    state.num_epochs</span>
+<span class="sd">        - ``True`` if is worker node (state.distributed_rank &gt; 0)</span>
+<span class="sd">        - ``False`` if is master node (state.distributed_rank == 0)</span>
 
-<span class="sd">    state.loader_name</span>
 
-<span class="sd">    state.loader_step</span>
+<span class="sd">    **state.stage_name** - string, current stage name,\</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
 
-<span class="sd">    state.loader_len</span>
+<span class="sd">        state.stage_name = &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
 
-<span class="sd">    state.batch_size</span>
+<span class="sd">    **state.epoch** - int, numerical indicator for current stage epoch</span>
 
-<span class="sd">    state.global_step</span>
+<span class="sd">    **state.num_epochs** - int, maximum number of epochs, \</span>
+<span class="sd">    required for this stage</span>
 
-<span class="sd">    state.global_epoch</span>
 
-<span class="sd">    state.main_metric</span>
+<span class="sd">    **state.loader_name** - string, current loader name\</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
 
-<span class="sd">    state.minimize_metric</span>
+<span class="sd">        state.loader_name = &quot;train_dataset1&quot; / &quot;valid_data2&quot; / &quot;infer_golden&quot;</span>
 
-<span class="sd">    state.valid_loader</span>
+<span class="sd">    **state.loader_step** - int, numerical indicator \</span>
+<span class="sd">    for batch index in current loader</span>
 
-<span class="sd">    state.logdir - path to logging directory to save</span>
-<span class="sd">        all logs, metrics, checkpoints and artifacts</span>
+<span class="sd">    **state.loader_len** - int, maximum number of batches in current loaders</span>
 
-<span class="sd">    state.checkpoint_data - dictionary</span>
-<span class="sd">        with all extra data for experiment tracking</span>
 
-<span class="sd">    state.is_check_run - bool, indicator flag</span>
-<span class="sd">        - ``True`` if you want to check you pipeline and run only 2 batches per loader and 2 epochs per stage</span>
+<span class="sd">    **state.batch_size** - int, typical Deep Learning batch size parameter</span>
+
+
+<span class="sd">    **state.global_step** - int, numerical indicator, counter for all batches,\</span>
+<span class="sd">    that passes through our model during training, validation and\</span>
+<span class="sd">    inference stages</span>
+
+<span class="sd">    **state.global_epoch** - int, numerical indicator, counter for all epochs,\</span>
+<span class="sd">    that have passed during model training, validation and\</span>
+<span class="sd">    inference stages</span>
+
+
+<span class="sd">    **state.main_metric** - string, containing name of metric of interest \</span>
+<span class="sd">    for optimization, validation and checkpointing during training</span>
+
+<span class="sd">    **state.minimize_metric** - bool, indicator flag</span>
+
+<span class="sd">        - ``True`` if we need to minimize metric during training,\</span>
+<span class="sd">          like `Cross Entropy loss`</span>
+<span class="sd">        - ``False`` if we need to maximize metric during training, \</span>
+<span class="sd">          like `Accuracy` or `Intersection over Union`</span>
+
+<span class="sd">    **state.valid_loader** - string, name of validation loader \</span>
+<span class="sd">    for metric selection, validation and model checkpoining</span>
+
+
+<span class="sd">    **state.logdir** - string, path to logging directory to save\</span>
+<span class="sd">    all logs, metrics, checkpoints and artifacts</span>
+
+<span class="sd">    **state.checkpoint_data** - dictionary\</span>
+<span class="sd">    with all extra data for experiment tracking</span>
+
+
+<span class="sd">    **state.is_check_run** - bool, indicator flag</span>
+
+<span class="sd">        - ``True`` if you want to check you pipeline and \</span>
+<span class="sd">          run only 2 batches per loader and 2 epochs per stage</span>
 <span class="sd">        - ``False`` (default) if you want to just the pipeline</span>
 
-<span class="sd">    state.need_backward_pass - bool, indicator flag</span>
+<span class="sd">    **state.is_train_loader** - bool, indicator flag</span>
+
 <span class="sd">        - ``True`` for training loaders</span>
 <span class="sd">        - ``False`` otherwise</span>
 
-<span class="sd">    state.need_early_stop - bool, indicator flag</span>
-<span class="sd">        used for EarlyStopping and CheckRun Callbacks</span>
+<span class="sd">    **state.is_infer_stage** - bool, indicator flag</span>
+
+<span class="sd">        - ``True`` for inference stages</span>
+<span class="sd">        - ``False`` otherwise</span>
+
+<span class="sd">    **state.need_early_stop** - bool, indicator flag \</span>
+<span class="sd">    used for EarlyStopping and CheckRun Callbacks</span>
 
 <span class="sd">        - ``True`` if we need to stop the training</span>
 <span class="sd">        - ``False`` (default) otherwise</span>
 
-<span class="sd">    state.need_exception_reraise - bool, indicator flag</span>
-<span class="sd">        - ``True`` (default) if you want to show exception during pipeline and stop the training process</span>
+<span class="sd">    **state.need_exception_reraise** - bool, indicator flag</span>
+
+<span class="sd">        - ``True`` (default) if you want to show exception \</span>
+<span class="sd">          during pipeline and stop the training process</span>
 <span class="sd">        - ``False`` otherwise</span>
 
-<span class="sd">    state.exception - python Exception instance to raise</span>
-<span class="sd">        (or not ;) )</span>
+<span class="sd">    **state.exception** - python Exception instance to raise (or not ;) )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -443,11 +524,11 @@
         <span class="n">scheduler</span><span class="p">:</span> <span class="n">StateScheduler</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">callbacks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Callback&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;infer&quot;</span><span class="p">,</span>
+        <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">STAGE_INFER_PREFIX</span><span class="p">,</span>
         <span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">main_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+        <span class="n">main_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">STATE_MAIN_METRIC</span><span class="p">,</span>
         <span class="n">minimize_metric</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">valid_loader</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;valid&quot;</span><span class="p">,</span>
+        <span class="n">valid_loader</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">LOADER_VALID_PREFIX</span><span class="p">,</span>
         <span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">is_check_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
@@ -519,7 +600,8 @@
         <span class="c1"># other</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_check_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">is_check_run</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_infer_stage</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_infer_stage</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">stage_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">STAGE_INFER_PREFIX</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">need_early_stop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">need_exception_reraise</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exception</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -532,33 +614,102 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># backward compatibility</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Alias for `state.batch_in`.</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            Deprecated, saved for backward compatibility.</span>
+<span class="sd">            Please use `state.batch_in` instead.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`input` was deprecated, &quot;</span>
+            <span class="s2">&quot;please use `batch_in` instead&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_in</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># backward compatibility</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Alias for `state.batch_out`.</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            Deprecated, saved for backward compatibility.</span>
+<span class="sd">            Please use `state.batch_out` instead.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`output` was deprecated, &quot;</span>
+            <span class="s2">&quot;please use `batch_out` instead&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_out</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">need_backward_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Alias for `state.is_train_loader`.</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            Deprecated, saved for backward compatibility.</span>
+<span class="sd">            Please use `state.is_train_loader` instead.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;`need_backward_pass` was deprecated, &quot;</span>
             <span class="s2">&quot;please use `is_train_loader` instead&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span>
 
-<div class="viewcode-block" id="State.get_attr"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.state.State.get_attr">[docs]</a>    <span class="k">def</span> <span class="nf">get_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">inner_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="State.get_attr"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.state.State.get_attr">[docs]</a>    <span class="k">def</span> <span class="nf">get_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inner_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Alias for python `getattr` method. Useful for Callbacks preparation</span>
+<span class="sd">        and cases with multi-criterion, multi-optimizer setup.</span>
+<span class="sd">        For example, when you would like to train multi-task classification.</span>
+
+<span class="sd">        Used to get a named attribute from a `State` by `key` keyword;</span>
+<span class="sd">        for example\</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            # example 1</span>
+<span class="sd">            state.get_attr(&quot;criterion&quot;)</span>
+<span class="sd">            # is equivalent to</span>
+<span class="sd">            state.criterion</span>
+
+<span class="sd">            # example 2</span>
+<span class="sd">            state.get_attr(&quot;optimizer&quot;)</span>
+<span class="sd">            # is equivalent to</span>
+<span class="sd">            state.optimizer</span>
+
+<span class="sd">            # example 3</span>
+<span class="sd">            state.get_attr(&quot;scheduler&quot;)</span>
+<span class="sd">            # is equivalent to</span>
+<span class="sd">            state.scheduler</span>
+
+<span class="sd">        With `inner_key` usage, it suppose to find a dictionary under `key`\</span>
+<span class="sd">        and would get `inner_key` from this dict; for example,</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            # example 1</span>
+<span class="sd">            state.get_attr(&quot;criterion&quot;, &quot;bce&quot;)</span>
+<span class="sd">            # is equivalent to</span>
+<span class="sd">            state.criterion[&quot;bce&quot;]</span>
+
+<span class="sd">            # example 2</span>
+<span class="sd">            state.get_attr(&quot;optimizer&quot;, &quot;adam&quot;)</span>
+<span class="sd">            # is equivalent to</span>
+<span class="sd">            state.optimizer[&quot;adam&quot;]</span>
+
+<span class="sd">            # example 3</span>
+<span class="sd">            state.get_attr(&quot;scheduler&quot;, &quot;adam&quot;)</span>
+<span class="sd">            # is equivalent to</span>
+<span class="sd">            state.scheduler[&quot;adam&quot;]</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key (str): name for attribute of interest,</span>
+<span class="sd">                like `criterion`, `optimizer`, `scheduler`</span>
+<span class="sd">            inner_key (str): name of inner dictionary key</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">inner_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)[</span><span class="n">inner_key</span><span class="p">]</span></div>
-
-<div class="viewcode-block" id="State.set_attr"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.state.State.set_attr">[docs]</a>    <span class="k">def</span> <span class="nf">set_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">inner_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">inner_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)[</span><span class="n">inner_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div></div>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)[</span><span class="n">inner_key</span><span class="p">]</span></div></div>
 </pre></div>
 
              </article>
