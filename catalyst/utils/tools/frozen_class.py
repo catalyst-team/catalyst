@@ -1,3 +1,9 @@
+"""
+Frozen class.
+Example of usage can be found in :py:class:`catalyst.core.state.State`.
+"""
+
+
 class FrozenClass:
     """
     Class which prohibit ``__setattr__`` on existing attributes

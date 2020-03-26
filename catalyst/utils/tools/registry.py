@@ -1,3 +1,7 @@
+"""
+Registry.
+.. todo:: Representative docstring for this module
+"""
 from typing import (  # isort:skip
     Any, Callable, Dict, Iterator, List, Mapping, Optional, Tuple, Type, Union
 )

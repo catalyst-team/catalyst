@@ -1,3 +1,6 @@
+"""
+The APMeter measures the average precision per class.
+"""
 import math
 
 import torch
@@ -7,18 +10,20 @@ from . import meter
 
 class APMeter(meter.Meter):
     """
-    The APMeter measures the average precision per class.
-
     The APMeter is designed to operate on `NxK` Tensors `output` and
-    `target`, and optionally a `Nx1` Tensor weight where (1) the `output`
-    contains model output scores for `N` examples and `K` classes that ought to
-    be higher when the model is more convinced that the example should be
-    positively labeled, and smaller when the model believes the example should
-    be negatively labeled (for instance, the output of a sigmoid function); (2)
-    the `target` contains only values 0 (for negative examples) and 1
-    (for positive examples); and (3) the `weight` ( > 0) represents weight for
-    each sample.
+    `target`, and optionally a `Nx1` Tensor weight where:
 
+    1. The `output` contains model output scores for `N` examples and
+    `K` classes that ought to be higher when the model is more convinced
+    that the example should be positively labeled, and smaller when the
+    model believes the example should be negatively labeled
+    (for instance, the output of a sigmoid function).
+
+    2. The `target` contains only values 0 (for negative examples)
+    and 1 (for positive examples).
+
+    3. The `weight` ( > 0) represents weight
+    for each sample.
     """
     def __init__(self):
         super(APMeter, self).__init__()
@@ -106,7 +111,7 @@ class APMeter(meter.Meter):
         """Returns the model"s average precision for each class
 
         Return:
-            ap (FloatTensor): 1xK tensor, with avg precision for each class k
+            FloatTensor: 1xK tensor, with avg precision for each class k
 
         """
 

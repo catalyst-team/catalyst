@@ -1,7 +1,10 @@
+"""
+Simple timer.
+"""
 from time import time
 
 
-class TimeManager:
+class TimeManager(object):
     def __init__(self):
         self._starts = {}
         self.elapsed = {}

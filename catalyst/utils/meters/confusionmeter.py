@@ -1,12 +1,14 @@
+"""
+Maintains a confusion matrix for a given classification problem.
+"""
 import numpy as np
 
 from . import meter
 
 
 class ConfusionMeter(meter.Meter):
-    """Maintains a confusion matrix for a given calssification problem.
-
-    The ConfusionMeter constructs a confusion matrix for a multi-class
+    """
+    ConfusionMeter constructs a confusion matrix for a multi-class
     classification problems. It does not support multi-label, multi-class
     problems: for such problems, please use MultiLabelConfusionMeter.
 
@@ -24,17 +26,19 @@ class ConfusionMeter(meter.Meter):
         self.reset()
 
     def reset(self):
+        """Reset confusion matrix, filling it with zeros"""
         self.conf.fill(0)
 
     def add(self, predicted, target):
         """Computes the confusion matrix of K x K size where K is no of classes
 
-        Args: predicted (tensor): Can be an N x K tensor of predicted scores
-        obtained from the model for N examples and K classes or an N-tensor
-        of integer values between 0 and K-1. target (tensor): Can be a
-        N-tensor of integer values assumed to be integer values between 0 and
-        K-1 or N x K tensor, where targets are assumed to be provided as
-        one-hot vectors
+        Args:
+            predicted (tensor): Can be an N x K tensor of predicted scores
+            obtained from the model for N examples and K classes or an N-tensor
+            of integer values between 0 and K-1.
+            target (tensor): Can be a N-tensor of integer values assumed
+            to be integer values between 0 and K-1 or N x K tensor, where
+            targets are assumed to be provided as one-hot vectors
 
         """
         predicted = predicted.cpu().numpy()
@@ -75,7 +79,7 @@ class ConfusionMeter(meter.Meter):
     def value(self):
         """
         Returns:
-            Confustion matrix of K rows and K columns, where rows corresponds
+            Confusion matrix of K rows and K columns, where rows corresponds
             to ground-truth targets and columns corresponds to predicted
             targets.
         """
