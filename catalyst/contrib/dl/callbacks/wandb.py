@@ -129,11 +129,7 @@ class WandbLogger(Callback):
 
     def on_stage_start(self, state: State):
         """Initialize Weights & Biases"""
-        wandb.init(
-            **self.logging_params,
-            reinit=True,
-            dir=str(state.logdir)
-        )
+        wandb.init(**self.logging_params, reinit=True, dir=str(state.logdir))
 
     def on_stage_end(self, state: State):
         """Finish logging to Weights & Biases"""
