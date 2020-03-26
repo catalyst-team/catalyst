@@ -184,7 +184,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/dl.html">DL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utilities</a></li>
 </ul>
 
             
@@ -254,7 +254,10 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.meters.movingaveragevaluemeter</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Moving average meter calculates average for moving window of values.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">math</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
@@ -262,6 +265,17 @@
 
 
 <div class="viewcode-block" id="MovingAverageValueMeter"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.movingaveragevaluemeter.MovingAverageValueMeter">[docs]</a><span class="k">class</span> <span class="nc">MovingAverageValueMeter</span><span class="p">(</span><span class="n">meter</span><span class="o">.</span><span class="n">Meter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    MovingAverageValueMeter stores mean and standard deviation</span>
+<span class="sd">    for population of array that is handled like a queue during updates.</span>
+<span class="sd">    Queue(window) is filled with zeros from the start by default.</span>
+<span class="sd">    Meter updates are applied online, one value for each update.</span>
+<span class="sd">    Meter values are moving average and moving standard deviation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        windowsize (int): size of window of values, which is continuous</span>
+<span class="sd">        and ends on last updated element.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">windowsize</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">MovingAverageValueMeter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">windowsize</span> <span class="o">=</span> <span class="n">windowsize</span>
@@ -269,12 +283,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
 <div class="viewcode-block" id="MovingAverageValueMeter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.movingaveragevaluemeter.MovingAverageValueMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset sum, number of elements, moving variance and zero out window</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sum</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">valuequeue</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MovingAverageValueMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.movingaveragevaluemeter.MovingAverageValueMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds observation sample.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            value (float): scalar</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">queueid</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowsize</span><span class="p">)</span>
         <span class="n">oldvalue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valuequeue</span><span class="p">[</span><span class="n">queueid</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sum</span> <span class="o">+=</span> <span class="n">value</span> <span class="o">-</span> <span class="n">oldvalue</span>
@@ -283,6 +305,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span></div>
 
 <div class="viewcode-block" id="MovingAverageValueMeter.value"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.movingaveragevaluemeter.MovingAverageValueMeter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return mean and standard deviation of window</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple of floats: (window mean, window std)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowsize</span><span class="p">)</span>
         <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
         <span class="n">std</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">max</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">var</span> <span class="o">-</span> <span class="n">n</span> <span class="o">*</span> <span class="n">mean</span> <span class="o">*</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">))</span>

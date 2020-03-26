@@ -184,7 +184,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/dl.html">DL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utilities</a></li>
 </ul>
 
             
@@ -254,10 +254,13 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.tools.time_manager</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Simple timer.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
 
 
-<div class="viewcode-block" id="TimeManager"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.tools.time_manager.TimeManager">[docs]</a><span class="k">class</span> <span class="nc">TimeManager</span><span class="p">:</span>
+<div class="viewcode-block" id="TimeManager"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.tools.time_manager.TimeManager">[docs]</a><span class="k">class</span> <span class="nc">TimeManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">elapsed</span> <span class="o">=</span> <span class="p">{}</span>

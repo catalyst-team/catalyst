@@ -184,7 +184,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/dl.html">DL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utilities</a></li>
 </ul>
 
             
@@ -254,13 +254,15 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.meters.meter</h1><div class="highlight"><pre>
-<div class="viewcode-block" id="Meter"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.meter.Meter">[docs]</a><span></span><span class="k">class</span> <span class="nc">Meter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Meters provide a way to keep track of important statistics in an online</span>
-<span class="sd">    manner.</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Meters provide a way to keep track of important statistics in an online manner.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
+
+<div class="viewcode-block" id="Meter"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.meter.Meter">[docs]</a><span class="k">class</span> <span class="nc">Meter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This class is abstract, but provides a standard interface for all meters to</span>
 <span class="sd">    follow.</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="Meter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.meter.Meter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Resets the meter to default settings.&quot;&quot;&quot;</span>
@@ -270,7 +272,7 @@
         <span class="sd">&quot;&quot;&quot;Log a new value to the meter</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            value: Next restult to include.</span>
+<span class="sd">            value: Next result to include.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>

@@ -184,7 +184,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/dl.html">DL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utilities</a></li>
 </ul>
 
             
@@ -254,7 +254,13 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.meters.ppv_tpr_f1_meter</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">In this module **precision**, **recall** and **F1 score**</span>
+<span class="sd">calculations are defined in separate functions.</span>
+
+<span class="sd">:py:class:`PrecisionRecallF1ScoreMeter` can keep track for all three of these.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
@@ -355,8 +361,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates precision/recall/f1 based on the current stored</span>
 <span class="sd">        tp/fp/fn counts.</span>
-<span class="sd">        Args:</span>
-<span class="sd">            None</span>
+
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple of floats: (precision, recall, f1)</span>
 <span class="sd">        &quot;&quot;&quot;</span>

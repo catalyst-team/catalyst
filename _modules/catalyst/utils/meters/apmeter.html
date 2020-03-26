@@ -184,7 +184,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/dl.html">DL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utilities</a></li>
 </ul>
 
             
@@ -254,7 +254,10 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.meters.apmeter</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The APMeter measures the average precision per class.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">math</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
@@ -263,18 +266,20 @@
 
 <div class="viewcode-block" id="APMeter"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.apmeter.APMeter">[docs]</a><span class="k">class</span> <span class="nc">APMeter</span><span class="p">(</span><span class="n">meter</span><span class="o">.</span><span class="n">Meter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The APMeter measures the average precision per class.</span>
-
 <span class="sd">    The APMeter is designed to operate on `NxK` Tensors `output` and</span>
-<span class="sd">    `target`, and optionally a `Nx1` Tensor weight where (1) the `output`</span>
-<span class="sd">    contains model output scores for `N` examples and `K` classes that ought to</span>
-<span class="sd">    be higher when the model is more convinced that the example should be</span>
-<span class="sd">    positively labeled, and smaller when the model believes the example should</span>
-<span class="sd">    be negatively labeled (for instance, the output of a sigmoid function); (2)</span>
-<span class="sd">    the `target` contains only values 0 (for negative examples) and 1</span>
-<span class="sd">    (for positive examples); and (3) the `weight` ( &gt; 0) represents weight for</span>
-<span class="sd">    each sample.</span>
+<span class="sd">    `target`, and optionally a `Nx1` Tensor weight where:</span>
 
+<span class="sd">    1. The `output` contains model output scores for `N` examples and</span>
+<span class="sd">    `K` classes that ought to be higher when the model is more convinced</span>
+<span class="sd">    that the example should be positively labeled, and smaller when the</span>
+<span class="sd">    model believes the example should be negatively labeled</span>
+<span class="sd">    (for instance, the output of a sigmoid function).</span>
+
+<span class="sd">    2. The `target` contains only values 0 (for negative examples)</span>
+<span class="sd">    and 1 (for positive examples).</span>
+
+<span class="sd">    3. The `weight` ( &gt; 0) represents weight</span>
+<span class="sd">    for each sample.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">APMeter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -362,7 +367,7 @@
         <span class="sd">&quot;&quot;&quot;Returns the model&quot;s average precision for each class</span>
 
 <span class="sd">        Return:</span>
-<span class="sd">            ap (FloatTensor): 1xK tensor, with avg precision for each class k</span>
+<span class="sd">            FloatTensor: 1xK tensor, with avg precision for each class k</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 

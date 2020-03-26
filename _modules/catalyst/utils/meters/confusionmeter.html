@@ -184,7 +184,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/dl.html">DL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utilities</a></li>
 </ul>
 
             
@@ -254,15 +254,17 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.meters.confusionmeter</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Maintains a confusion matrix for a given classification problem.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">meter</span>
 
 
 <div class="viewcode-block" id="ConfusionMeter"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.confusionmeter.ConfusionMeter">[docs]</a><span class="k">class</span> <span class="nc">ConfusionMeter</span><span class="p">(</span><span class="n">meter</span><span class="o">.</span><span class="n">Meter</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Maintains a confusion matrix for a given calssification problem.</span>
-
-<span class="sd">    The ConfusionMeter constructs a confusion matrix for a multi-class</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ConfusionMeter constructs a confusion matrix for a multi-class</span>
 <span class="sd">    classification problems. It does not support multi-label, multi-class</span>
 <span class="sd">    problems: for such problems, please use MultiLabelConfusionMeter.</span>
 
@@ -280,17 +282,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ConfusionMeter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.confusionmeter.ConfusionMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reset confusion matrix, filling it with zeros&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ConfusionMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.confusionmeter.ConfusionMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicted</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Computes the confusion matrix of K x K size where K is no of classes</span>
 
-<span class="sd">        Args: predicted (tensor): Can be an N x K tensor of predicted scores</span>
-<span class="sd">        obtained from the model for N examples and K classes or an N-tensor</span>
-<span class="sd">        of integer values between 0 and K-1. target (tensor): Can be a</span>
-<span class="sd">        N-tensor of integer values assumed to be integer values between 0 and</span>
-<span class="sd">        K-1 or N x K tensor, where targets are assumed to be provided as</span>
-<span class="sd">        one-hot vectors</span>
+<span class="sd">        Args:</span>
+<span class="sd">            predicted (tensor): Can be an N x K tensor of predicted scores</span>
+<span class="sd">            obtained from the model for N examples and K classes or an N-tensor</span>
+<span class="sd">            of integer values between 0 and K-1.</span>
+<span class="sd">            target (tensor): Can be a N-tensor of integer values assumed</span>
+<span class="sd">            to be integer values between 0 and K-1 or N x K tensor, where</span>
+<span class="sd">            targets are assumed to be provided as one-hot vectors</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">predicted</span> <span class="o">=</span> <span class="n">predicted</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
@@ -331,7 +335,7 @@
 <div class="viewcode-block" id="ConfusionMeter.value"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.confusionmeter.ConfusionMeter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns:</span>
-<span class="sd">            Confustion matrix of K rows and K columns, where rows corresponds</span>
+<span class="sd">            Confusion matrix of K rows and K columns, where rows corresponds</span>
 <span class="sd">            to ground-truth targets and columns corresponds to predicted</span>
 <span class="sd">            targets.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
