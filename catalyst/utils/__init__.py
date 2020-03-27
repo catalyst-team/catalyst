@@ -1,6 +1,11 @@
 # flake8: noqa
 # isort:skip_file
+"""
+All utils are gathered in :py:mod:`catalyst.utils` for easier access.
 
+.. note::
+    Everything from :py:mod:`catalyst.contrib.utils` is included in :py:mod:`catalyst.utils`
+"""
 from catalyst.contrib.utils import *
 from .checkpoint import (
     load_checkpoint, pack_checkpoint, save_checkpoint, unpack_checkpoint

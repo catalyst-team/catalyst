@@ -1,3 +1,9 @@
+"""
+Various accuracy metrics:
+    * :func:`accuracy`
+    * :func:`average_accuracy`
+    * :func:`mean_average_accuracy`
+"""
 import numpy as np
 
 from catalyst.utils import get_activation_fn

@@ -8,6 +8,7 @@ from torch import nn
 from torch.utils.data import DataLoader, DistributedSampler
 
 from catalyst.core import utils
+from catalyst.utils.tools.settings import LOADER_TRAIN_PREFIX
 from catalyst.utils.tools.typing import (
     Criterion, Device, Model, Optimizer, Scheduler
 )
@@ -19,7 +20,24 @@ from .state import State
 
 class _Runner(ABC):
     """
-    Abstract class for all runners inherited from
+    An abstraction that knows how to run an experiment.
+    It contains all the logic of **how** to run the experiment,
+    stages, epoch and batches.
+
+    .. note::
+        To learn more about Catalyst Core concepts, please check out
+
+            - :py:mod:`catalyst.core.experiment._Experiment`
+            - :py:mod:`catalyst.core.runner._Runner`
+            - :py:mod:`catalyst.core.state.State`
+            - :py:mod:`catalyst.core.callback.Callback`
+
+    Abstraction, please check out the implementations:
+
+        - :py:mod:`catalyst.dl.runner.gan.MultiPhaseRunner`
+        - :py:mod:`catalyst.dl.runner.gan.GanRunner`
+        - :py:mod:`catalyst.dl.experiment.supervised.SupervisedRunner`
+
     """
     _experiment_fn: Callable = _Experiment
     _state_fn: Callable = State
@@ -48,7 +66,10 @@ class _Runner(ABC):
     @model.setter
     def model(self, value: Union[Model, Dict[str, Model]]):
         """
-        Setter for the runner's model'
+        Setter for the runner's model, useful for experiment tracing.
+
+        Args:
+            value (Union[Model, Dict[str, Model]]): new model.
         """
         if isinstance(value, nn.Module):
             model = value
@@ -87,7 +108,10 @@ class _Runner(ABC):
     @device.setter
     def device(self, value: Device):
         """
-        Setter for the runner's device'
+        Setter for the runner's device
+
+        Args:
+            value (Device): new torch device.
         """
         if isinstance(value, (str, torch.device)):
             self._device = value
@@ -104,17 +128,22 @@ class _Runner(ABC):
             )
 
     def _init(self):
+        """
+        Inner method for children's classes
+        to specify types for Runners' Experiment and State.
+        """
         self.experiment: _Experiment = None
         self.state: State = None
 
     @abstractmethod
     def forward(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
         """
-        Forward method for your Runner
+        Forward method for your Runner.
 
         Args:
-            batch: Key-value batch items
-            **kwargs: kwargs to pass to the model
+            batch (Mapping[str, Any]): dictionary with data batches
+                from DataLoaders.
+            **kwargs: additional parameters to pass to the model
         """
         pass
 
@@ -122,9 +151,18 @@ class _Runner(ABC):
         self, stage: str = None
     ) -> Tuple[Model, Criterion, Optimizer, Scheduler, Device]:
         """
-        Inner method for children's classes for model specific initialization.
-        As baseline, checks device support and puts model on it.
-        :return:
+        Inner method for `Experiment` components preparation.
+
+        Check available torch device, takes model from the experiment
+        and creates stage-specified criterion, optimizer, scheduler for it.
+
+        Args:
+            stage (str): experiment stage name of interest
+                like "pretraining" / "training" / "finetuning" / etc
+
+        Returns:
+            tuple: model, criterion, optimizer,
+                scheduler and device for a given stage and model
         """
         utils.set_global_seed(self.experiment.initial_seed)
         model = self.experiment.get_model(stage)
@@ -152,7 +190,34 @@ class _Runner(ABC):
         scheduler: Scheduler,
         device: Device,
         callbacks: Dict[str, Callback],
-    ):
+    ) -> State:
+        """
+        Inner method for `State` preparation.
+
+        Migrates State parameters from previous stage if possible,
+        create new State for current stage.
+
+        Args:
+            stage (str): stage name of interest,
+                like "pretraining" / "training" / "finetuning" / etc
+            model (Model): stage model
+            criterion (Criterion): stage criterion
+            optimizer (Optimizer): stage optimizer
+            scheduler (Scheduler): stage scheduler
+            device (Device): torch device
+            callbacks (dict): dictionary with stage callbacks
+
+        Returns:
+            State: State instance for specified stage
+
+        .. note::
+            To learn more about Catalyst Core concepts, please check out
+
+                - :py:mod:`catalyst.core.experiment._Experiment`
+                - :py:mod:`catalyst.core.runner._Runner`
+                - :py:mod:`catalyst.core.state.State`
+                - :py:mod:`catalyst.core.callback.Callback`
+        """
         migrating_params = dict(**self.experiment.get_state_params(stage))
         migrate_from_previous_stage = \
             migrating_params.get("migrate_from_previous_stage", True)
@@ -187,7 +252,21 @@ class _Runner(ABC):
 
         return state
 
-    def _get_callbacks(self, stage: str):
+    def _get_callbacks(self, stage: str) -> Dict[str, Callback]:
+        """
+        Inner method for `Callbacks` preparation.
+
+        Takes callbacks from the Experiment
+        and filters them for distributed master/worker cases.
+
+        Args:
+            stage (str): stage name of interest,
+                like "pretraining" / "training" / "finetuning" / etc
+
+        Returns:
+            OrderedDict[str, Callback]: Ordered dictionary
+                with callbacks for current experiment stage.
+        """
         callbacks = self.experiment.get_callbacks(stage)
 
         # distributed run setting
@@ -216,6 +295,18 @@ class _Runner(ABC):
         return callbacks
 
     def _prepare_for_stage(self, stage: str):
+        """
+        Inner method to prepare `Runner` for the specified stage.
+
+        Sets `Experiment` initial seed.
+        Prepares experiment components with `self._get_experiment_components`.
+        Prepares callbacks with `self._get_callbacks`.
+        Prepares `State` with `self._get_state`.
+
+        Args:
+            stage (str): stage name of interest,
+                like "pretraining" / "training" / "finetuning" / etc
+        """
         utils.set_global_seed(self.experiment.initial_seed)
         self.model, criterion, optimizer, scheduler, self.device = \
             self._get_experiment_components(stage=stage)
@@ -235,17 +326,59 @@ class _Runner(ABC):
         )
 
     def _prepare_for_epoch(self, stage: str, epoch: int):
+        """
+        Inner method to prepare `Runner` for the specified stage and epoch.
+
+        Args:
+            stage (str): stage name of interest,
+                like "pretraining" / "training" / "finetuning" / etc
+            epoch (int): epoch index
+        """
         pass
 
     def _run_event(self, event: str):
+        """
+        Inner method to run specified event on Runners' callbacks.
+
+        Args:
+            event(str): event name to run on callbacks.
+
+        .. note::
+            To learn more about Catalyst Callbacks mechanism, please follow
+            :py:mod:`catalyst.core.callback.Callback` documentation.
+
+        """
         for callback in self.state.callbacks.values():
             getattr(callback, event)(self.state)
 
-    def _batch2device(self, batch: Mapping[str, Any], device: Device):
+    def _batch2device(
+        self,
+        batch: Mapping[str, Any],
+        device: Device,
+    ) -> Mapping[str, Any]:
+        """
+        Inner method to transfer incoming data batches to Runners' device.
+
+        Args:
+            batch (Mapping[str, Any]): dictionary with data batches
+                from DataLoader.
+            device (Device): torch device
+
+        Returns:
+
+        """
         output = utils.any2device(batch, device)
         return output
 
-    def _run_batch_train_step(self, batch: Mapping[str, Any]):
+    def _run_train_step(self, batch: Mapping[str, Any]):
+        """
+        Inner method to run train step on specified data batch.
+
+        Args:
+            batch (Mapping[str, Any]): dictionary with data batches
+                from DataLoader.
+
+        """
         self.state.batch_out = self.forward(batch)
 
     @torch.no_grad()
@@ -253,30 +386,49 @@ class _Runner(ABC):
         self, batch: Mapping[str, Any], **kwargs
     ) -> Mapping[str, Any]:
         """
-        Run model for a batch of elements
-        WARN: You should not override this method. If you need specific model
-        call, override forward() method
+        Run model inference on specified data batch.
+
+        .. warning::
+            You should not override this method. If you need specific model
+            call, override forward() method
+
         Args:
-            batch: Key-value batch items
-            **kwargs: kwargs to pass to the model
+            batch (Mapping[str, Any]): dictionary with data batches
+                from DataLoader.
+            **kwargs: additional kwargs to pass to the model
 
         Returns:
-            model output key-value
+            Mapping[str, Any]: model output dictionary
         """
         batch = self._batch2device(batch, self.device)
         output = self.forward(batch, **kwargs)
         return output
 
     def _run_batch(self, batch: Mapping[str, Any]):
+        """
+        Inner method to run train step on specified data batch,
+        with batch callbacks events.
+
+        Args:
+            batch (Mapping[str, Any]): dictionary with data batches
+                from DataLoader.
+        """
         self.state.global_step += self.state.batch_size
         batch = self._batch2device(batch, self.device)
         self.state.batch_in = batch
 
         self._run_event("on_batch_start")
-        self._run_batch_train_step(batch=batch)
+        self._run_train_step(batch=batch)
         self._run_event("on_batch_end")
 
     def _run_loader(self, loader: DataLoader):
+        """
+        Inner method to pass whole DataLoader through Runner,
+        with loader callbacks events.
+
+        Args:
+            loader (DataLoader): dataloader to iterate
+        """
         self.state.batch_size = (
             loader.batch_sampler.batch_size
             if loader.batch_sampler is not None else loader.batch_size
@@ -294,6 +446,15 @@ class _Runner(ABC):
                 break
 
     def _run_epoch(self, stage: str, epoch: int):
+        """
+        Inner method to run epoch on Runner,
+        with epoch callbacks events.
+
+        Args:
+            stage (str): stage name of interest,
+                like "pretraining" / "training" / "finetuning" / etc
+            epoch (int): epoch index
+        """
         self._prepare_for_epoch(stage=stage, epoch=epoch)
         state: State = self.state
 
@@ -308,13 +469,14 @@ class _Runner(ABC):
                 f"should be in provided loaders: {list(loaders.keys())}"
         else:
             # @TODO: add check for non distributed run for inference
-            assert not any(x.startswith("train") for x in loaders.keys()), \
-                "for inference no train loader should be passed"
+            assert not any(
+                x.startswith(LOADER_TRAIN_PREFIX) for x in loaders.keys()
+            ), "for inference no train loader should be passed"
 
         for loader_name, loader in loaders.items():
             state.loader_name = loader_name
             state.loader_len = len(loader)
-            state.is_train_loader = loader_name.startswith("train")
+            state.is_train_loader = loader_name.startswith(LOADER_TRAIN_PREFIX)
             self.model.train(state.is_train_loader)
 
             if isinstance(loader.sampler, DistributedSampler) \
@@ -330,7 +492,17 @@ class _Runner(ABC):
             self._run_event("on_loader_end")
 
     def _run_stage(self, stage: str):
+        """
+        Inner method to run stage on Runner,
+        with stage callbacks events.
+
+        Args:
+            stage (str): stage name of interest,
+                like "pretraining" / "training" / "finetuning" / etc
+
+        """
         self._prepare_for_stage(stage)
+
         state: State = self.state
 
         self._run_event("on_stage_start")
@@ -352,7 +524,11 @@ class _Runner(ABC):
 
     def run_experiment(self, experiment: _Experiment):
         """
-        Starts the experiment
+        Starts the experiment.
+
+        Args:
+            experiment (_Experiment): Experiment instance to use for Runner.
+
         """
         self.experiment = experiment
 
@@ -361,7 +537,7 @@ class _Runner(ABC):
                 self._run_stage(stage)
         except (Exception, KeyboardInterrupt) as ex:
 
-            def _exception_handler_check(callbacks: OrderedDict):
+            def _exception_handler_check(callbacks: Union[OrderedDict, Dict]):
                 return (
                     callbacks is not None and any(
                         issubclass(x.__class__, ExceptionCallback)

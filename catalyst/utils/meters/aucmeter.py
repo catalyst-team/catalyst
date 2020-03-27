@@ -1,3 +1,11 @@
+"""
+The AUCMeter measures the area under the receiver-operating characteristic
+(ROC) curve for binary classification problems. The area under the curve
+(AUC) can be interpreted as the probability that, given a randomly selected
+positive     example and a randomly selected negative example, the positive
+example is assigned a higher score by the classification model than the
+negative example.
+"""
 import numbers
 
 import numpy as np
@@ -9,19 +17,15 @@ from . import meter
 
 class AUCMeter(meter.Meter):
     """
-    The AUCMeter measures the area under the receiver-operating characteristic
-    (ROC) curve for binary classification problems. The area under the curve
-    (AUC) can be interpreted as the probability that, given a randomly selected
-    positive     example and a randomly selected negative example, the positive
-    example is assigned a higher score by the classification model than the
-    negative example.
-
     The AUCMeter is designed to operate on one-dimensional Tensors `output`
-    and `target`, where (1) the `output` contains model output scores that
-    ought to be higher when the model is more convinced that the example
-    should be positively labeled, and smaller when the model believes the
-    example should be negatively labeled (for instance, the output of a
-    signoid function); and (2) the `target` contains only values 0 (for
+    and `target`, where:
+
+    1. The `output` contains model output scores that ought to be higher
+    when the model is more convinced that the example should be positively
+    labeled, and smaller when the model believes the example should be
+    negatively labeled (for instance, the output of a sigmoid function)
+
+    2. The `target` contains only values 0 (for
     negative examples) and 1 (for positive examples).
     """
     def __init__(self):
@@ -29,10 +33,17 @@ class AUCMeter(meter.Meter):
         self.reset()
 
     def reset(self):
+        """Reset stored scores and targets."""
         self.scores = torch.DoubleTensor(torch.DoubleStorage()).numpy()
         self.targets = torch.LongTensor(torch.LongStorage()).numpy()
 
     def add(self, output, target):
+        """
+        Update stored scores and targets.
+        Args:
+            output (Tensor): one-dimensional tensor `output`
+            target (Tensor): one-dimensional tensor `target`
+        """
         if torch.is_tensor(output):
             output = output.cpu().squeeze().numpy()
         if torch.is_tensor(target):
@@ -52,6 +63,11 @@ class AUCMeter(meter.Meter):
         self.targets = np.append(self.targets, target)
 
     def value(self):
+        """
+        Return metric values of AUC, TPR and FPR.
+        Returns:
+             tuple of floats: (AUC, TPR, FPR)
+        """
         # case when number of elements added are 0
         if self.scores.shape[0] == 0:
             return 0.5

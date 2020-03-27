@@ -228,8 +228,6 @@ Indices and tables
 
 .. toctree::
     :caption: API
-    :maxdepth: 2
-    :hidden:
 
     api/core
     api/dl
