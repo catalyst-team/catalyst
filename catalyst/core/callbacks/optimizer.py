@@ -124,24 +124,6 @@ class OptimizerCallback(Callback):
                 else "momentum"
             state.epoch_metrics[momentum_name] = momentum
 
-        loss = state.epoch_metrics[self.loss_key]
-        if isinstance(loss, list):
-            raise ValueError(
-                f"Loss is a list. "
-                f"Only the last value will be used for `backward`."
-                f"To aggregate losses into "
-                "one value use `CriterionAggregatorCallback`"
-            )
-        if isinstance(loss, dict):
-            error = f"Loss is a dict: {list(loss.keys())}, " \
-                    f"to aggregate losses into " \
-                    "one value use `CriterionAggregatorCallback`."
-            if self.loss_key is None:
-                error = error + " Or try to pass `loss_key` " \
-                                "in the OptimizerCallback init"
-            raise ValueError(error)
-        return loss
-
     def _store_grad_norm(self, state: State):
         model = state.model
 
