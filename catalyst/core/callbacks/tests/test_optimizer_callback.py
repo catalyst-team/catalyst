@@ -9,9 +9,7 @@ from torchvision.datasets import CIFAR10
 import torchvision.transforms as transforms
 
 from catalyst.contrib import registry
-from catalyst.core import (
-    Callback, CallbackOrder, CriterionCallback, OptimizerCallback, State
-)
+from catalyst.core import CriterionCallback, OptimizerCallback
 from catalyst.dl import SupervisedRunner
 
 
@@ -32,14 +30,6 @@ class _SimpleNet(nn.Module):
         return x
 
 
-class _BatchEndInterruptCallback(Callback):
-    def __init__(self):
-        super().__init__(CallbackOrder.External)
-
-    def on_batch_end(self, state: State):
-        raise KeyboardInterrupt()
-
-
 def _get_loaders(batch_size=1, num_workers=1):
     data_transform = transforms.Compose(
         [
@@ -48,24 +38,15 @@ def _get_loaders(batch_size=1, num_workers=1):
         ]
     )
 
-    loaders = collections.OrderedDict()
-
     trainset = CIFAR10(
         root="./dataset", train=True, download=True, transform=data_transform
     )
+    trainset.data = trainset.data[:batch_size]
     trainloader = DataLoader(
         trainset, batch_size=batch_size, shuffle=True, num_workers=num_workers
     )
 
-    testset = CIFAR10(
-        root="./dataset", train=False, download=True, transform=data_transform
-    )
-    testloader = DataLoader(
-        testset, batch_size=batch_size, shuffle=False, num_workers=num_workers
-    )
-
-    loaders["train"] = trainloader
-    loaders["valid"] = testloader
+    loaders = collections.OrderedDict(train=trainloader)
 
     return loaders
 
@@ -81,16 +62,12 @@ def test_save_model_grads():
     loaders = _get_loaders(batch_size=4, num_workers=1)
     callbacks = collections.OrderedDict(
         loss=CriterionCallback(),
-        optimizer=OptimizerCallback(save_model_grads=True),
-        interrupt=_BatchEndInterruptCallback()
+        optimizer=OptimizerCallback(save_model_grads=True)
     )
     runner = SupervisedRunner()
-    try:
-        runner.train(
-            model, criterion, optimizer, loaders, logdir, callbacks=callbacks
-        )
-    except KeyboardInterrupt:
-        pass
+    runner.train(
+        model, criterion, optimizer, loaders, logdir, callbacks=callbacks
+    )
 
     prefix = callbacks["optimizer"].model_grad_norm_prefix
 
