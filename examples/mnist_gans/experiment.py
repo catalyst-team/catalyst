@@ -9,6 +9,7 @@ class MNIST(torchvision.datasets.MNIST):
     """
     MNIST Dataset with key_value __get_item__ output
     """
+
     def __init__(
         self,
         root,
@@ -17,7 +18,7 @@ class MNIST(torchvision.datasets.MNIST):
         target_transform=None,
         download=False,
         image_key="image",
-        target_key="target"
+        target_key="target",
     ):
         """
 
@@ -52,6 +53,7 @@ class MnistGanExperiment(ConfigExperiment):
     """
     Simple MNIST experiment
     """
+
     def get_datasets(
         self, stage: str, image_key: str = "image", target_key: str = "target"
     ):
@@ -73,7 +75,7 @@ class MnistGanExperiment(ConfigExperiment):
                 target_key=target_key,
                 transform=self.get_transforms(
                     stage=stage, dataset=dataset_name
-                )
+                ),
             )
 
         return datasets

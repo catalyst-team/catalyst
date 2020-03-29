@@ -1,10 +1,11 @@
-from typing import List  # isort:skip
+from typing import List
 
 import numpy as np
 
 from torch.optim import Optimizer
 
 from catalyst.utils import get_optimizer_momentum
+
 from .base import BatchScheduler
 
 
@@ -20,6 +21,7 @@ class OneCycleLRWithWarmup(BatchScheduler):
 
     Third, optional, lr decay.
     """
+
     def __init__(
         self,
         optimizer: Optimizer,
@@ -85,8 +87,12 @@ class OneCycleLRWithWarmup(BatchScheduler):
         self.num_steps = warmup_steps + lr_annealing_steps + decay_steps
 
         self.lr_range = init_lr, max_lr, min_lr, final_lr
-        self.momentum_range = \
-            init_momentum, min_momentum, max_momentum, final_momentum
+        self.momentum_range = (
+            init_momentum,
+            min_momentum,
+            max_momentum,
+            final_momentum,
+        )
 
         self._calculate_lr_momentum(
             warmup_steps, lr_annealing_steps, decay_steps
@@ -99,9 +105,10 @@ class OneCycleLRWithWarmup(BatchScheduler):
         self, num_steps: int, warmup_steps: int, warmup_fraction: float
     ):
         if warmup_fraction is not None:
-            assert 0.0 <= warmup_fraction < 1.0 and warmup_steps == 0, \
-                "You should pass either warmup_steps or " \
+            assert 0.0 <= warmup_fraction < 1.0 and warmup_steps == 0, (
+                "You should pass either warmup_steps or "
                 "warmup_fraction in range [0; 1) "
+            )
             warmup_steps = int(num_steps * warmup_fraction)
 
         self.warmup_steps = warmup_steps
@@ -112,9 +119,10 @@ class OneCycleLRWithWarmup(BatchScheduler):
         self, num_steps: int, decay_steps: int, decay_fraction: float
     ):
         if decay_fraction is not None:
-            assert 0.0 <= decay_fraction < 1.0 and decay_steps == 0, \
-                "You should pass either decay_steps or " \
+            assert 0.0 <= decay_fraction < 1.0 and decay_steps == 0, (
+                "You should pass either decay_steps or "
                 "decay_fraction in range [0; 1) "
+            )
             decay_steps = int(num_steps * decay_fraction)
 
         self.decay_steps = decay_steps
@@ -125,8 +133,12 @@ class OneCycleLRWithWarmup(BatchScheduler):
         self, warmup_steps: int, lr_annealing_steps: int, decay_steps: int
     ):
         init_lr, max_lr, min_lr, final_lr = self.lr_range
-        init_momentum, min_momentum, max_momentum, final_momentum = \
-            self.momentum_range
+        (
+            init_momentum,
+            min_momentum,
+            max_momentum,
+            final_momentum,
+        ) = self.momentum_range
 
         lr_warmup = np.linspace(init_lr, max_lr, warmup_steps)
         lr_annealing = np.linspace(max_lr, min_lr, lr_annealing_steps)
@@ -140,9 +152,7 @@ class OneCycleLRWithWarmup(BatchScheduler):
         momentum_annealing = np.linspace(
             min_momentum, max_momentum, lr_annealing_steps
         )
-        momentum_warmup = np.linspace(
-            max_momentum, final_momentum, decay_steps
-        )
+        momentum_warmup = np.linspace(max_momentum, final_momentum, decay_steps)
 
         self.momentums = np.concatenate(
             (momentum_decay, momentum_annealing, momentum_warmup)
@@ -187,11 +197,7 @@ class OneCycleLRWithWarmup(BatchScheduler):
         )
         self.last_epoch = 0
 
-    def recalculate(
-        self,
-        loader_len: int,
-        current_step: int,
-    ) -> None:
+    def recalculate(self, loader_len: int, current_step: int,) -> None:
         """
         Recalculates total num_steps for ``batch`` mode
 

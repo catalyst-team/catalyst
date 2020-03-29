@@ -46,7 +46,7 @@ def test_tensor_to_ndimage():
             normalize(to_tensor(im), _IMAGENET_MEAN, _IMAGENET_STD)
             for im in orig_images
         ],
-        dim=0
+        dim=0,
     )
 
     byte_images = utils.tensor_to_ndimage(torch_images, dtype=np.uint8)
@@ -59,5 +59,5 @@ def test_tensor_to_ndimage():
         utils.tensor_to_ndimage(torch_images[0]),
         orig_images[0] / 255,
         atol=1e-3,
-        rtol=1e-3
+        rtol=1e-3,
     )

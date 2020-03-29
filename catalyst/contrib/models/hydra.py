@@ -1,12 +1,13 @@
-from typing import Dict, Union  # isort:skip
+from typing import Dict, Union
 from collections import OrderedDict
 from copy import deepcopy
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 from catalyst import utils
 from catalyst.contrib.nn.modules import Normalize
+
 from .sequential import SequentialNet
 
 
@@ -16,6 +17,7 @@ class Hydra(nn.Module):
 
     Author: Sergey Kolesnikov, scitator@gmail.com
     """
+
     _parent_keyword = "_"
     _hidden_keyword = "_hidden"
     _normalize_keyword = "normalize_output"
@@ -33,9 +35,7 @@ class Hydra(nn.Module):
 
     @staticmethod
     def parse_head_params(
-        head_params: Dict,
-        in_features: int,
-        is_leaf: bool = False,
+        head_params: Dict, in_features: int, is_leaf: bool = False,
     ) -> Union[nn.Module, nn.ModuleDict]:
         if is_leaf:
             if isinstance(head_params, int):
@@ -54,9 +54,11 @@ class Hydra(nn.Module):
 
             hidden_params = head_params.pop(Hydra._hidden_keyword, None)
             if hidden_params is not None:
-                in_features = hidden_params \
-                    if isinstance(hidden_params, int) \
+                in_features = (
+                    hidden_params
+                    if isinstance(hidden_params, int)
                     else hidden_params["hiddens"][-1]
+                )
                 output[Hydra._hidden_keyword] = Hydra.parse_head_params(
                     head_params=hidden_params,
                     in_features=in_features,
@@ -93,9 +95,7 @@ class Hydra(nn.Module):
         return output
 
     def forward(
-        self,
-        features: torch.Tensor,
-        **targets_kwargs,
+        self, features: torch.Tensor, **targets_kwargs,
     ):
         embeddings = self.encoder(features)
 
@@ -120,7 +120,8 @@ class Hydra(nn.Module):
         # let's remove all hidden parts from prediction
         output.extend(
             [
-                value for key, value in output_kv.items()
+                value
+                for key, value in output_kv.items()
                 if not key.endswith("/")
                 and key not in ["features", "embeddings"]
             ]
@@ -142,13 +143,16 @@ class Hydra(nn.Module):
         embedders_params_ = deepcopy(embedders_params)
 
         def _get_normalization_keyword(dct: Dict):
-            return dct.pop(Hydra._normalize_keyword, False) \
-                if dct is not None \
+            return (
+                dct.pop(Hydra._normalize_keyword, False)
+                if dct is not None
                 else False
+            )
 
         if encoder_params_ is not None:
-            normalize_embeddings: bool = \
-                _get_normalization_keyword(encoder_params_)
+            normalize_embeddings: bool = _get_normalization_keyword(
+                encoder_params_
+            )
 
             encoder = SequentialNet(**encoder_params_)
             in_features = encoder_params_["hiddens"][-1]
@@ -173,10 +177,7 @@ class Hydra(nn.Module):
                 block = [
                     (
                         "embedding",
-                        nn.Embedding(
-                            embedding_dim=in_features,
-                            **head_params,
-                        )
+                        nn.Embedding(embedding_dim=in_features, **head_params,),
                     )
                 ]
                 if normalize_:
@@ -187,10 +188,6 @@ class Hydra(nn.Module):
                 embedders[key] = block
             embedders = nn.ModuleDict(embedders)
 
-        net = cls(
-            heads=heads,
-            encoder=encoder,
-            embedders=embedders,
-        )
+        net = cls(heads=heads, encoder=encoder, embedders=embedders,)
 
         return net

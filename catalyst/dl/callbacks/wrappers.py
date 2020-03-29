@@ -1,4 +1,4 @@
-from typing import List  # isort:skip
+from typing import List
 
 from catalyst.core import Callback, State
 
@@ -10,6 +10,7 @@ class PhaseWrapperCallback(Callback):
 
     May be useful i.e. to disable/enable optimizers & losses
     """
+
     LEVEL_STAGE = "stage"
     LEVEL_EPOCH = "epoch"
     LEVEL_LOADER = "loader"
@@ -22,16 +23,18 @@ class PhaseWrapperCallback(Callback):
         self,
         base_callback: Callback,
         active_phases: List[str] = None,
-        inactive_phases: List[str] = None
+        inactive_phases: List[str] = None,
     ):
         super().__init__(base_callback.order)
-        assert (active_phases is None) ^ (inactive_phases is None), \
-            "Exactly one of active/inactive phases must be specified"
+        assert (active_phases is None) ^ (
+            inactive_phases is None
+        ), "Exactly one of active/inactive phases must be specified"
         self.callback = base_callback
         self.active_phases = active_phases or []
         self.inactive_phases = inactive_phases or []
-        assert len(self.active_phases) + len(self.inactive_phases) > 0, \
-            "Wrapper has no sense if callback is always active/inactive"
+        assert (
+            len(self.active_phases) + len(self.inactive_phases) > 0
+        ), "Wrapper has no sense if callback is always active/inactive"
 
     def is_active_on_phase(self, phase, level, time):
         return self._is_active_on_phase(phase=phase)

@@ -1,6 +1,6 @@
-from typing import List, Union  # isort:skip
+from typing import List, Union
 
-import torch.nn as nn
+from torch import nn
 
 from .sequential import _process_additional_params, SequentialNet
 
@@ -34,16 +34,21 @@ def get_convolution_net(
             "kernel_size": kernel_size,
             "stride": stride,
             "groups": group,
-        } for bias, kernel_size, stride, group in
-        zip(use_bias, kernel_sizes, strides, groups)
+        }
+        for bias, kernel_size, stride, group in zip(
+            use_bias, kernel_sizes, strides, groups
+        )
     ]
 
     if dropout_rate is not None:
-        dropout_fn = {"module": nn.Dropout2d, "p": dropout_rate} \
-            if isinstance(dropout_rate, float) \
+        dropout_fn = (
+            {"module": nn.Dropout2d, "p": dropout_rate}
+            if isinstance(dropout_rate, float)
             else [
-            {"module": nn.Dropout2d, "p": p} if p is not None else None
-            for p in dropout_rate]
+                {"module": nn.Dropout2d, "p": p} if p is not None else None
+                for p in dropout_rate
+            ]
+        )
     else:
         dropout_fn = None
 
@@ -74,15 +79,20 @@ def get_linear_net(
 
     features = features or [64, 128, 64]
 
-    layer_fn = {"module": nn.Linear, "bias": use_bias} \
-        if isinstance(use_bias, bool) \
+    layer_fn = (
+        {"module": nn.Linear, "bias": use_bias}
+        if isinstance(use_bias, bool)
         else [{"module": nn.Linear, "bias": bias} for bias in use_bias]
+    )
     if dropout_rate is not None:
-        dropout_fn = {"module": nn.Dropout, "p": dropout_rate} \
-            if isinstance(dropout_rate, float) \
+        dropout_fn = (
+            {"module": nn.Dropout, "p": dropout_rate}
+            if isinstance(dropout_rate, float)
             else [
-            {"module": nn.Dropout, "p": p} if p is not None else None
-            for p in dropout_rate]
+                {"module": nn.Dropout, "p": p} if p is not None else None
+                for p in dropout_rate
+            ]
+        )
     else:
         dropout_fn = None
 

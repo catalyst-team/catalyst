@@ -1,4 +1,4 @@
-from typing import Dict, Iterable, List, Union  # isort:skip
+from typing import Dict, Iterable, List, Union
 import collections
 import os
 import re
@@ -7,7 +7,8 @@ import numpy as np
 
 import torch
 from torch import nn
-import torch.backends.cudnn as cudnn
+import torch.backends
+from torch.backends import cudnn
 
 from catalyst import utils
 from catalyst.utils.tools.typing import Device, Model, Optimizer
@@ -127,17 +128,18 @@ def any2device(value, device: Device):
         Same structure as value, but all tensors and np.arrays moved to device
     """
     if isinstance(value, dict):
-        return dict((k, any2device(v, device)) for k, v in value.items())
+        return {k: any2device(v, device) for k, v in value.items()}
     elif isinstance(value, (tuple, list)):
-        return list(any2device(v, device) for v in value)
+        return [any2device(v, device) for v in value]
     elif torch.is_tensor(value):
         return value.to(device, non_blocking=True)
-    elif isinstance(value, (np.ndarray, np.void)) \
-            and value.dtype.fields is not None:
-        return dict(
-            (k, any2device(value[k], device))
-            for k in value.dtype.fields.keys()
-        )
+    elif (
+        isinstance(value, (np.ndarray, np.void))
+        and value.dtype.fields is not None
+    ):
+        return {
+            k: any2device(value[k], device) for k in value.dtype.fields.keys()
+        }
     elif isinstance(value, np.ndarray):
         return torch.Tensor(value).to(device)
     return value
@@ -159,8 +161,9 @@ def prepare_cudnn(deterministic: bool = None, benchmark: bool = None) -> None:
         # CuDNN reproducibility
         # https://pytorch.org/docs/stable/notes/randomness.html#cudnn
         if deterministic is None:
-            deterministic = \
+            deterministic = (
                 os.environ.get("CUDNN_DETERMINISTIC", "True") == "True"
+            )
         cudnn.deterministic = deterministic
 
         # https://discuss.pytorch.org/t/how-should-i-disable-using-cudnn-in-my-code/38053/4
@@ -173,7 +176,7 @@ def process_model_params(
     model: Model,
     layerwise_params: Dict[str, dict] = None,
     no_bias_weight_decay: bool = True,
-    lr_scaling: float = 1.0
+    lr_scaling: float = 1.0,
 ) -> List[Union[torch.nn.Parameter, dict]]:
     """
     Gains model parameters for ``torch.optim.Optimizer``

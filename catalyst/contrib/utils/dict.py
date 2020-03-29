@@ -1,15 +1,11 @@
-from typing import Any, Callable, Dict, List, Optional, Union  # isort:skip
-
+from typing import Any, Callable, Dict, List, Optional, Union
 import collections
 import copy
 
 import numpy as np
 
 
-def get_key_str(
-    dictionary: dict,
-    key: Optional[Union[str, List[str]]],
-) -> Any:
+def get_key_str(dictionary: dict, key: Optional[Union[str, List[str]]],) -> Any:
     """
     Returns value from dict by key.
 
@@ -24,8 +20,7 @@ def get_key_str(
 
 
 def get_key_list(
-    dictionary: dict,
-    key: Optional[Union[str, List[str]]],
+    dictionary: dict, key: Optional[Union[str, List[str]]],
 ) -> Dict:
     """
     Returns sub-dict from dict by list of keys.
@@ -42,8 +37,7 @@ def get_key_list(
 
 
 def get_key_dict(
-    dictionary: dict,
-    key: Optional[Union[str, List[str]]],
+    dictionary: dict, key: Optional[Union[str, List[str]]],
 ) -> Dict:
     """
     Returns sub-dict from dict by dict-mapping of keys.
@@ -60,8 +54,7 @@ def get_key_dict(
 
 
 def get_key_none(
-    dictionary: dict,
-    key: Optional[Union[str, List[str]]],
+    dictionary: dict, key: Optional[Union[str, List[str]]],
 ) -> Dict:
     """
     Returns empty dict.
@@ -76,8 +69,7 @@ def get_key_none(
 
 
 def get_key_all(
-    dictionary: dict,
-    key: Optional[Union[str, List[str]]],
+    dictionary: dict, key: Optional[Union[str, List[str]]],
 ) -> Dict:
     """
     Returns whole dict.
@@ -136,9 +128,10 @@ def merge_dicts(*dicts: dict) -> dict:
 
     for merge_dict in dicts[1:]:
         merge_dict = merge_dict or {}
-        for k, v in merge_dict.items():
+        for k in merge_dict:
             if (
-                k in dict_ and isinstance(dict_[k], dict)
+                k in dict_
+                and isinstance(dict_[k], dict)
                 and isinstance(merge_dict[k], collections.Mapping)
             ):
                 dict_[k] = merge_dicts(dict_[k], merge_dict[k])
@@ -197,6 +190,7 @@ def split_dict_to_subdicts(dct: Dict, prefixes: List, extra_key: str):
     for prefix in prefixes:
         subdicts[prefix] = {
             k.replace(f"{prefix}_", ""): v
-            for k, v in dct.items() if k.startswith(prefix)
+            for k, v in dct.items()
+            if k.startswith(prefix)
         }
     return subdicts

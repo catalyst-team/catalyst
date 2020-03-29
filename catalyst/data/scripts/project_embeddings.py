@@ -16,7 +16,7 @@ def build_args(parser):
         "--in-npy",
         type=str,
         help="path to npy with project embeddings",
-        required=True
+        required=True,
     )
     parser.add_argument(
         "--in-csv", type=str, help="path to csv with photos", required=True
@@ -26,19 +26,19 @@ def build_args(parser):
         type=str,
         default=None,
         help="directory to output files",
-        required=True
+        required=True,
     )
     parser.add_argument(
         "--out-prefix",
         type=str,
         default=None,
-        help="additional prefix to saved files"
+        help="additional prefix to saved files",
     )
     parser.add_argument(
         "--img-col",
         type=str,
         default=None,
-        help="column in the table that contains image paths"
+        help="column in the table that contains image paths",
     )
     parser.add_argument(
         "--img-rootpath", type=str, help="path to photos directory"
@@ -48,20 +48,20 @@ def build_args(parser):
         type=int,
         default=16,
         help="if --img-col is defined, "
-        "then images will be resized to (img-size, img-size, 3)"
+        "then images will be resized to (img-size, img-size, 3)",
     )
     parser.add_argument(
         "--num-rows",
         type=int,
         default=None,
         help="count of rows to use in csv "
-        "(if not defined then it will use whole data)"
+        "(if not defined then it will use whole data)",
     )
     parser.add_argument(
         "--meta-cols",
         type=str,
         default=None,
-        help="columns in the table to save, separated by commas"
+        help="columns in the table to save, separated by commas",
     )
 
     return parser
@@ -102,9 +102,7 @@ def main(args, _=None):
         img_data = np.stack(
             [load_image(name, args.img_size) for name in image_names], axis=0
         )
-        img_data = (img_data.transpose((0, 3, 1, 2)) / 255.0).astype(
-            np.float32
-        )
+        img_data = (img_data.transpose((0, 3, 1, 2)) / 255.0).astype(np.float32)
         img_data = torch.from_numpy(img_data)
     else:
         img_data = None
@@ -114,7 +112,7 @@ def main(args, _=None):
         features,
         metadata=df[meta_header].astype(str).values,
         label_img=img_data,
-        metadata_header=meta_header
+        metadata_header=meta_header,
     )
     summary_writer.close()
 

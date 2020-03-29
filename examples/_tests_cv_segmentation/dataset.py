@@ -1,5 +1,5 @@
-from pathlib import Path
 from typing import List
+from pathlib import Path
 
 from skimage.io import imread as gif_imread
 
@@ -12,6 +12,7 @@ class SegmentationDataset(Dataset):
     """Dataset for segmentation tasks
     Returns a dict with ``image``, ``mask`` and ``filename`` keys
     """
+
     def __init__(
         self, images: List[Path], masks: List[Path] = None, transforms=None
     ) -> None:

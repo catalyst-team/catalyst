@@ -1,4 +1,4 @@
-from typing import List  # isort:skip
+from typing import List
 from collections import OrderedDict
 
 from catalyst.core import Callback, CallbackNode, CallbackOrder, State
@@ -11,6 +11,7 @@ class Phase:
     - number of steps (batches) in phase before next phase is chosen
     - how many steps (batches) are done already
     """
+
     def __init__(self, name: str = None, steps: int = None):
         self.steps = int(steps) if steps is not None else None
         self.curr_step = 0
@@ -26,6 +27,7 @@ class PhaseManager:
     By calling `.step(...)` method current phase is updated by step-size
     and if current phase is finished, the next phase becomes current
     """
+
     def __init__(self, train_phases: List[Phase], valid_phases: List[Phase]):
         self.train_phases = train_phases
         self.valid_phases = valid_phases
@@ -40,16 +42,18 @@ class PhaseManager:
                 phase.curr_step += step_size
                 if phase.curr_step >= phase.steps:
                     phase.curr_step = 0
-                    self.train_index = \
-                        (self.train_index + 1) % len(self.train_phases)
+                    self.train_index = (self.train_index + 1) % len(
+                        self.train_phases
+                    )
         else:
             if len(self.valid_phases) > 1:
                 phase = self.valid_phases[self.valid_index]
                 phase.curr_step += step_size
                 if phase.curr_step >= phase.steps:
                     phase.curr_step = 0
-                    self.valid_index = \
-                        (self.valid_index + 1) % len(self.valid_phases)
+                    self.valid_index = (self.valid_index + 1) % len(
+                        self.valid_phases
+                    )
 
     def get_phase_name(self, state: State):
         if state.is_train_loader:
@@ -70,23 +74,24 @@ class PhaseManagerCallback(Callback):
         self,
         train_phases: "OrderedDict[str, int]" = None,
         valid_phases: "OrderedDict[str, int]" = None,
-        valid_mode: str = None
+        valid_mode: str = None,
     ):
         super().__init__(order=CallbackOrder.Internal, node=CallbackNode.All)
         self.phase_manager = self._get_phase_manager(
             train_phases=train_phases,
             valid_phases=valid_phases,
-            valid_mode=valid_mode
+            valid_mode=valid_mode,
         )
 
     def _get_phase_manager(
         self,
         train_phases: "OrderedDict[str, int]" = None,
         valid_phases: "OrderedDict[str, int]" = None,
-        valid_mode: str = None
+        valid_mode: str = None,
     ):
-        assert (valid_phases is None) ^ (valid_mode is None), \
-            "Exactly one of them must be specified"
+        assert (valid_phases is None) ^ (
+            valid_mode is None
+        ), "Exactly one of them must be specified"
 
         if train_phases is None:
             train_phases = [Phase(name=None, steps=None)]

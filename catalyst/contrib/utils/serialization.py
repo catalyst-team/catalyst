@@ -6,6 +6,7 @@ logger = logging.getLogger(__name__)
 
 try:
     import pyarrow
+
     PYARROW_ENABLED = True
 except ImportError as ex:
     if os.environ.get("USE_PYARROW", "0") == "1":

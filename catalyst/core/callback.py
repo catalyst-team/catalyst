@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING  # isort:skip
+from typing import TYPE_CHECKING
 from enum import IntFlag
 
 if TYPE_CHECKING:
@@ -13,6 +13,7 @@ class CallbackNode(IntFlag):
     - Master (1) - use only on master node.
     - Worker (2) - use only in worker nodes.
     """
+
     All = 0
     Master = 1
     Worker = 2
@@ -57,6 +58,7 @@ class CallbackOrder(IntFlag):
 
     .. _Alchemy: https://alchemy.host
     """
+
     Internal = 0  # pytorch
     Metric = 20  # pytorch
     MetricAggregation = 40  # pytorch
@@ -74,6 +76,7 @@ class CallbackScope(IntFlag):
     - Stage (0) - use Callback only during one experiment stage.
     - Experiment (1) - use Callback during whole experiment run.
     """
+
     Stage = 0
     Experiment = 1
 
@@ -119,6 +122,7 @@ class Callback:
         - :py:mod:`catalyst.core.callbacks.logging.TensorboardLogger`
         - :py:mod:`catalyst.core.callbacks.checkpoint.CheckpointCallback`
     """
+
     def __init__(
         self,
         order: int,

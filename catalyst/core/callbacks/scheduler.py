@@ -10,7 +10,7 @@ class SchedulerCallback(Callback):
         self,
         scheduler_key: str = None,
         mode: str = None,
-        reduced_metric: str = None
+        reduced_metric: str = None,
     ):
         super().__init__(order=CallbackOrder.Scheduler, node=CallbackNode.All)
         self.scheduler_key = scheduler_key
@@ -19,8 +19,7 @@ class SchedulerCallback(Callback):
 
     @staticmethod
     def _scheduler_step(
-        scheduler,
-        reduced_metric=None,
+        scheduler, reduced_metric=None,
     ):
         if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
             scheduler.step(reduced_metric)
@@ -39,8 +38,7 @@ class SchedulerCallback(Callback):
         if self.scheduler_key is not None:
             state.batch_metrics[f"lr/{self.scheduler_key}"] = lr
             if momentum is not None:
-                state.batch_metrics[f"momentum/{self.scheduler_key}"] = \
-                    momentum
+                state.batch_metrics[f"momentum/{self.scheduler_key}"] = momentum
         else:
             state.batch_metrics["lr"] = lr
             if momentum is not None:
@@ -55,8 +53,7 @@ class SchedulerCallback(Callback):
         if self.scheduler_key is not None:
             state.epoch_metrics[f"lr/{self.scheduler_key}"] = lr
             if momentum is not None:
-                state.epoch_metrics[f"momentum/{self.scheduler_key}"] = \
-                    momentum
+                state.epoch_metrics[f"momentum/{self.scheduler_key}"] = momentum
         else:
             state.epoch_metrics["lr"] = lr
             if momentum is not None:
@@ -77,15 +74,16 @@ class SchedulerCallback(Callback):
             else:
                 self.mode = "epoch"
 
-        if isinstance(scheduler, OneCycleLRWithWarmup) and \
-                self.mode == "batch":
+        if isinstance(scheduler, OneCycleLRWithWarmup) and self.mode == "batch":
             scheduler.reset()
         assert self.mode is not None
 
     def on_loader_start(self, state: State):
-        if state.is_train_loader and \
-                isinstance(self._scheduler, OneCycleLRWithWarmup) and \
-                self.mode == "batch":
+        if (
+            state.is_train_loader
+            and isinstance(self._scheduler, OneCycleLRWithWarmup)
+            and self.mode == "batch"
+        ):
             self._scheduler.recalculate(
                 loader_len=state.loader_len, current_step=state.epoch
             )
@@ -101,6 +99,7 @@ class SchedulerCallback(Callback):
 
 class LRUpdater(Callback):
     """Basic class that all Lr updaters inherit from"""
+
     def __init__(self, optimizer_key: str = None):
         """
         Args:

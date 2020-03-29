@@ -1,5 +1,5 @@
 import torch
-import torch.nn as nn
+from torch import nn
 
 from .functional import triplet_loss
 
@@ -13,6 +13,7 @@ class TripletLoss(nn.Module):
     Args:
         margin (float): margin for triplet.
     """
+
     def __init__(self, margin=0.3):
         """
         Constructor method for the TripletLoss class.
@@ -107,11 +108,7 @@ class TripletLoss(nn.Module):
         return ~(labels.unsqueeze(0) == labels.unsqueeze(1))
 
     def _batch_hard_triplet_loss(
-        self,
-        embeddings,
-        labels,
-        margin,
-        squared=True,
+        self, embeddings, labels, margin, squared=True,
     ):
         """
         Build the triplet loss over a batch of embeddings.
@@ -135,8 +132,9 @@ class TripletLoss(nn.Module):
         # For each anchor, get the hardest positive
         # First, we need to get a mask for every valid
         # positive (they should have same label)
-        mask_anchor_positive = self._get_anchor_positive_triplet_mask(labels
-                                                                      ).float()
+        mask_anchor_positive = self._get_anchor_positive_triplet_mask(
+            labels
+        ).float()
 
         # We put to 0 any element where (a, p) is not valid
         # (valid if a != p and label(a) == label(p))
@@ -148,14 +146,16 @@ class TripletLoss(nn.Module):
         # For each anchor, get the hardest negative
         # First, we need to get a mask for every valid negative
         # (they should have different labels)
-        mask_anchor_negative = \
-            self._get_anchor_negative_triplet_mask(labels).float()
+        mask_anchor_negative = self._get_anchor_negative_triplet_mask(
+            labels
+        ).float()
 
         # We add the maximum value in each row
         # to the invalid negatives (label(a) == label(n))
         max_anchor_negative_dist, _ = pairwise_dist.max(1, keepdim=True)
-        anchor_negative_dist = pairwise_dist + max_anchor_negative_dist * \
-            (1.0 - mask_anchor_negative)
+        anchor_negative_dist = pairwise_dist + max_anchor_negative_dist * (
+            1.0 - mask_anchor_negative
+        )
 
         # shape (batch_size,)
         hardest_negative_dist, _ = anchor_negative_dist.min(1, keepdim=True)
@@ -186,6 +186,7 @@ class TripletLossV2(nn.Module):
     Args:
         margin (float): margin for triplet.
     """
+
     def __init__(self, margin=0.3):
         """
         Constructor method for the TripletLoss class.
@@ -197,11 +198,7 @@ class TripletLossV2(nn.Module):
         self.margin = margin
 
     def forward(self, embeddings, targets):
-        return triplet_loss(
-            embeddings,
-            targets,
-            margin=self.margin,
-        )
+        return triplet_loss(embeddings, targets, margin=self.margin,)
 
 
 class TripletPairwiseEmbeddingLoss(nn.Module):
@@ -209,6 +206,7 @@ class TripletPairwiseEmbeddingLoss(nn.Module):
     TripletPairwiseEmbeddingLoss – proof of concept criterion.
     Still work in progress.
     """
+
     def __init__(self, margin=0.3, reduction="mean"):
         """
         Constructor method for the TripletPairwiseEmbeddingLoss class.
@@ -245,15 +243,15 @@ class TripletPairwiseEmbeddingLoss(nn.Module):
         )
         bs = embeddings_pred.shape[0]
         batch_idx = torch.arange(bs, device=device)
-        negative_similarity = (
-            pairwise_similarity +
-            torch.diag(torch.full([bs], -10**9, device=device))
+        negative_similarity = pairwise_similarity + torch.diag(
+            torch.full([bs], -(10 ** 9), device=device)
         )
         # TODO argsort, take k worst
         hard_negative_ids = negative_similarity.argmax(dim=-1)
 
-        negative_similarities = \
-            pairwise_similarity[batch_idx, hard_negative_ids]
+        negative_similarities = pairwise_similarity[
+            batch_idx, hard_negative_ids
+        ]
         positive_similarities = pairwise_similarity[batch_idx, batch_idx]
         loss = torch.relu(
             self.margin - positive_similarities + negative_similarities

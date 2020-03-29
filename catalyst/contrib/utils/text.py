@@ -1,4 +1,4 @@
-from typing import Dict, List, Union  # isort:skip
+from typing import Dict, List, Union
 import string
 
 import numpy as np
@@ -58,13 +58,15 @@ def process_bert_output(
     output_hidden_states: bool = False,
     pooling_groups: List[str] = None,
     mask: torch.Tensor = None,
-    level: Union[int, str] = None
+    level: Union[int, str] = None,
 ):
     """Processed the output"""
     # @TODO: make this functional
-    pooling = LamaPooling(
-        groups=pooling_groups, in_features=hidden_size
-    ) if pooling_groups is not None else None
+    pooling = (
+        LamaPooling(groups=pooling_groups, in_features=hidden_size)
+        if pooling_groups is not None
+        else None
+    )
 
     def _process_features(features):
         if pooling is not None:

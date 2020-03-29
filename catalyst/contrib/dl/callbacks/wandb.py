@@ -1,10 +1,14 @@
-from typing import Dict, List  # isort:skip
+from typing import Dict, List
 
 import wandb
 
 from catalyst import utils
 from catalyst.core import (
-    Callback, CallbackNode, CallbackOrder, CallbackScope, State
+    Callback,
+    CallbackNode,
+    CallbackOrder,
+    CallbackScope,
+    State,
 )
 
 
@@ -55,6 +59,7 @@ class WandbLogger(Callback):
                 num_epochs=10
             )
     """
+
     def __init__(
         self,
         metric_names: List[str] = None,
@@ -84,8 +89,9 @@ class WandbLogger(Callback):
         if not (self.log_on_batch_end or self.log_on_epoch_end):
             raise ValueError("You have to log something!")
 
-        if (self.log_on_batch_end and not self.log_on_epoch_end) \
-                or (not self.log_on_batch_end and self.log_on_epoch_end):
+        if (self.log_on_batch_end and not self.log_on_epoch_end) or (
+            not self.log_on_batch_end and self.log_on_epoch_end
+        ):
             self.batch_log_suffix = ""
             self.epoch_log_suffix = ""
         else:
@@ -100,10 +106,10 @@ class WandbLogger(Callback):
         step: int,
         mode: str,
         suffix="",
-        commit=True
+        commit=True,
     ):
         if self.metrics_to_log is None:
-            metrics_to_log = sorted(list(metrics.keys()))
+            metrics_to_log = sorted(metrics.keys())
         else:
             metrics_to_log = self.metrics_to_log
 
@@ -123,7 +129,8 @@ class WandbLogger(Callback):
 
         metrics = {
             f"{key_locate(key)}/{mode}{suffix}": value
-            for key, value in metrics.items() if key in metrics_to_log
+            for key, value in metrics.items()
+            if key in metrics_to_log
         }
         wandb.log(metrics, step=step, commit=commit)
 
@@ -145,7 +152,7 @@ class WandbLogger(Callback):
                 step=state.global_step,
                 mode=mode,
                 suffix=self.batch_log_suffix,
-                commit=True
+                commit=True,
             )
 
     def on_loader_end(self, state: State):
@@ -158,7 +165,7 @@ class WandbLogger(Callback):
                 step=state.global_epoch,
                 mode=mode,
                 suffix=self.epoch_log_suffix,
-                commit=False
+                commit=False,
             )
 
     def on_epoch_end(self, state: State):
@@ -176,5 +183,5 @@ class WandbLogger(Callback):
                 step=state.global_epoch,
                 mode=extra_mode,
                 suffix=self.epoch_log_suffix,
-                commit=True
+                commit=True,
             )

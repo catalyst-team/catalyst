@@ -1,7 +1,8 @@
-from typing import Callable  # isort:skip
+from typing import Callable
 
 from catalyst.core import _Runner, State
 from catalyst.dl import utils
+
 from .experiment import Experiment
 
 
@@ -9,6 +10,7 @@ class Runner(_Runner):
     """
     Deep Learning Runner for different supervised, unsupervised, gan, etc runs
     """
+
     _experiment_fn: Callable = Experiment
     _state_fn: Callable = State
 

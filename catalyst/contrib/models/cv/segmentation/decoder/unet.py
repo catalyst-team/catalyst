@@ -1,7 +1,7 @@
-from typing import List  # isort:skip
+from typing import List
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 from ..blocks.core import DecoderBlock
 from ..blocks.unet import DecoderConcatBlock
@@ -56,8 +56,9 @@ class UNetDecoder(DecoderSpec):
         # features from encoders blocks
         reversed_features = list(reversed(x[:-1]))
 
-        for i, (decoder_block, encoder_output) \
-                in enumerate(zip(self.blocks, reversed_features)):
+        for _i, (decoder_block, encoder_output) in enumerate(
+            zip(self.blocks, reversed_features)
+        ):
             decoder_outputs.append(
                 decoder_block(decoder_outputs[-1], encoder_output)
             )

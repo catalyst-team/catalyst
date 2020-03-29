@@ -1,26 +1,42 @@
-from typing import Any, Callable, Dict, List, Mapping, Union  # isort:skip
+from typing import Any, Callable, Dict, List, Mapping, Union
 from collections import OrderedDict
 from copy import deepcopy
 
 import torch
 from torch import nn
 from torch.utils.data import (  # noqa F401
-    DataLoader, Dataset, DistributedSampler
+    DataLoader,
+    Dataset,
+    DistributedSampler,
 )
 
-from catalyst.data import (
-    Augmentor, AugmentorCompose, DistributedSamplerWrapper
-)
+from catalyst.data import Augmentor, AugmentorCompose, DistributedSamplerWrapper
 from catalyst.dl import (
-    Callback, CheckpointCallback, CheckRunCallback, ConsoleLogger,
-    CriterionCallback, ExceptionCallback, Experiment, MetricManagerCallback,
-    OptimizerCallback, PhaseWrapperCallback, SchedulerCallback,
-    TensorboardLogger, TimerCallback, utils, ValidationManagerCallback,
-    VerboseLogger
+    Callback,
+    CheckpointCallback,
+    CheckRunCallback,
+    ConsoleLogger,
+    CriterionCallback,
+    ExceptionCallback,
+    Experiment,
+    MetricManagerCallback,
+    OptimizerCallback,
+    PhaseWrapperCallback,
+    SchedulerCallback,
+    TensorboardLogger,
+    TimerCallback,
+    utils,
+    ValidationManagerCallback,
+    VerboseLogger,
 )
 from catalyst.dl.registry import (
-    CALLBACKS, CRITERIONS, MODELS, OPTIMIZERS, SAMPLERS, SCHEDULERS,
-    TRANSFORMS
+    CALLBACKS,
+    CRITERIONS,
+    MODELS,
+    OPTIMIZERS,
+    SAMPLERS,
+    SCHEDULERS,
+    TRANSFORMS,
 )
 from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
@@ -29,6 +45,7 @@ class ConfigExperiment(Experiment):
     """
     Experiment created from a configuration file
     """
+
     STAGE_KEYWORDS = [
         "criterion_params",
         "optimizer_params",
@@ -52,7 +69,8 @@ class ConfigExperiment(Experiment):
 
         self._config["stages"]["state_params"] = utils.merge_dicts(
             deepcopy(self._config["stages"].get("state_params", {})),
-            deepcopy(self._config.get("args", {})), {"logdir": self._logdir}
+            deepcopy(self._config.get("args", {})),
+            {"logdir": self._logdir},
         )
         self.stages_config = self._get_stages_config(self._config["stages"])
 
@@ -76,8 +94,7 @@ class ConfigExperiment(Experiment):
         for key in self.STAGE_KEYWORDS:
             stages_defaults[key] = deepcopy(stages_config.get(key, {}))
         for stage in stages_config:
-            if stage in self.STAGE_KEYWORDS \
-                    or stages_config.get(stage) is None:
+            if stage in self.STAGE_KEYWORDS or stages_config.get(stage) is None:
                 continue
             stages_config_out[stage] = {}
             for key in self.STAGE_KEYWORDS:
@@ -147,8 +164,7 @@ class ConfigExperiment(Experiment):
     def _preprocess_model_for_stage(self, stage: str, model: Model):
         stage_index = self.stages.index(stage)
         if stage_index > 0:
-            checkpoint_path = \
-                f"{self.logdir}/checkpoints/best.pth"
+            checkpoint_path = f"{self.logdir}/checkpoints/best.pth"
             checkpoint = utils.load_checkpoint(checkpoint_path)
             utils.unpack_checkpoint(checkpoint, model=model)
         return model
@@ -194,8 +210,7 @@ class ConfigExperiment(Experiment):
 
     def get_criterion(self, stage: str) -> Criterion:
         """Returns the criterion for a given stage"""
-        criterion_params = \
-            self.stages_config[stage].get("criterion_params", {})
+        criterion_params = self.stages_config[stage].get("criterion_params", {})
         criterion = self._get_criterion(**criterion_params)
         return criterion
 
@@ -204,10 +219,8 @@ class ConfigExperiment(Experiment):
     ) -> Optimizer:
         # @TODO 1: refactoring; this method is too long
         # @TODO 2: load state dicts for schedulers & criterion
-        layerwise_params = \
-            params.pop("layerwise_params", OrderedDict())
-        no_bias_weight_decay = \
-            params.pop("no_bias_weight_decay", True)
+        layerwise_params = params.pop("layerwise_params", OrderedDict())
+        no_bias_weight_decay = params.pop("no_bias_weight_decay", True)
 
         # linear scaling rule from https://arxiv.org/pdf/1706.02677.pdf
         lr_scaling_params = params.pop("lr_linear_scaling", None)
@@ -231,29 +244,33 @@ class ConfigExperiment(Experiment):
         # getting model parameters
         model_key = params.pop("_model", None)
         if model_key is None:
-            assert isinstance(model, nn.Module), \
-                "model is keyvalue, but optimizer has no specified model"
+            assert isinstance(
+                model, nn.Module
+            ), "model is keyvalue, but optimizer has no specified model"
             model_params = utils.process_model_params(
                 model, layerwise_params, no_bias_weight_decay, lr_scaling
             )
         elif isinstance(model_key, str):
             model_params = utils.process_model_params(
-                model[model_key], layerwise_params, no_bias_weight_decay,
-                lr_scaling
+                model[model_key],
+                layerwise_params,
+                no_bias_weight_decay,
+                lr_scaling,
             )
         elif isinstance(model_key, (list, tuple)):
             model_params = []
             for model_key_ in model_key:
                 model_params_ = utils.process_model_params(
-                    model[model_key_], layerwise_params, no_bias_weight_decay,
-                    lr_scaling
+                    model[model_key_],
+                    layerwise_params,
+                    no_bias_weight_decay,
+                    lr_scaling,
                 )
                 model_params.extend(model_params_)
         else:
             raise ValueError("unknown type of model_params")
 
-        load_from_previous_stage = \
-            params.pop("load_from_previous_stage", False)
+        load_from_previous_stage = params.pop("load_from_previous_stage", False)
         optimizer_key = params.pop("optimizer_key", None)
         optimizer = OPTIMIZERS.get_from_params(**params, params=model_params)
 
@@ -291,8 +308,7 @@ class ConfigExperiment(Experiment):
             stage (str): stage name
             model (Union[Model, Dict[str, Model]]): model or a dict of models
         """
-        optimizer_params = \
-            self.stages_config[stage].get("optimizer_params", {})
+        optimizer_params = self.stages_config[stage].get("optimizer_params", {})
         key_value_flag = optimizer_params.pop("_key_value", False)
 
         if key_value_flag:
@@ -327,11 +343,8 @@ class ConfigExperiment(Experiment):
 
     def get_scheduler(self, stage: str, optimizer: Optimizer) -> Scheduler:
         """Returns the scheduler for a given stage"""
-        scheduler_params = \
-            self.stages_config[stage].get("scheduler_params", {})
-        scheduler = self._get_scheduler(
-            optimizer=optimizer, **scheduler_params
-        )
+        scheduler_params = self.stages_config[stage].get("scheduler_params", {})
+        scheduler = self._get_scheduler(optimizer=optimizer, **scheduler_params)
         return scheduler
 
     @staticmethod
@@ -391,6 +404,7 @@ class ConfigExperiment(Experiment):
 
             def transform(dict_):
                 return dict_
+
         elif not isinstance(transform, AugmentorCompose):
             transform_ = transform
 
@@ -400,9 +414,7 @@ class ConfigExperiment(Experiment):
         return transform
 
     def get_loaders(
-        self,
-        stage: str,
-        epoch: int = None,
+        self, stage: str, epoch: int = None,
     ) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage"""
         data_params = dict(self.stages_config[stage]["data_params"])
@@ -423,17 +435,20 @@ class ConfigExperiment(Experiment):
         )
 
         samplers_params = data_params.pop("samplers_params", {})
-        assert isinstance(samplers_params, dict), \
-            f"`samplers_params` should be a Dict. Got: {samplers_params}"
+        assert isinstance(
+            samplers_params, dict
+        ), f"`samplers_params` should be a Dict. Got: {samplers_params}"
 
         loaders = OrderedDict()
         for name, ds_ in datasets.items():
-            assert isinstance(ds_, (Dataset, dict)), \
-                f"{ds_} should be Dataset or Dict"
+            assert isinstance(
+                ds_, (Dataset, dict)
+            ), f"{ds_} should be Dataset or Dict"
 
             overridden_loader_params = overridden_loaders_params.pop(name, {})
-            assert isinstance(overridden_loader_params, dict), \
-                f"{overridden_loader_params} should be Dict"
+            assert isinstance(
+                overridden_loader_params, dict
+            ), f"{overridden_loader_params} should be Dict"
 
             sampler_params = samplers_params.pop(name, None)
             if sampler_params is None:
@@ -446,10 +461,12 @@ class ConfigExperiment(Experiment):
                 if isinstance(ds_, dict) and "sampler" in ds_:
                     ds_.pop("sampler", None)
 
-            batch_size = overridden_loader_params.\
-                pop("batch_size", default_batch_size)
-            num_workers = overridden_loader_params.\
-                pop("num_workers", default_num_workers)
+            batch_size = overridden_loader_params.pop(
+                "batch_size", default_batch_size
+            )
+            num_workers = overridden_loader_params.pop(
+                "num_workers", default_num_workers
+            )
 
             if per_gpu_scaling and not distributed:
                 num_gpus = max(1, torch.cuda.device_count())
@@ -461,14 +478,15 @@ class ConfigExperiment(Experiment):
                 "num_workers": num_workers,
                 "pin_memory": torch.cuda.is_available(),
                 "drop_last": drop_last,
-                **overridden_loader_params
+                **overridden_loader_params,
             }
 
             if isinstance(ds_, Dataset):
                 loader_params["dataset"] = ds_
             elif isinstance(ds_, dict):
-                assert "dataset" in ds_, \
-                    "You need to specify dataset for dataloader"
+                assert (
+                    "dataset" in ds_
+                ), "You need to specify dataset for dataloader"
                 loader_params = utils.merge_dicts(ds_, loader_params)
             else:
                 raise NotImplementedError
@@ -499,8 +517,9 @@ class ConfigExperiment(Experiment):
                     loader_params.pop(k, None)
 
             if "worker_init_fn" not in loader_params:
-                loader_params["worker_init_fn"] = \
-                    lambda x: utils.set_global_seed(self.initial_seed + x)
+                loader_params[
+                    "worker_init_fn"
+                ] = lambda x: utils.set_global_seed(self.initial_seed + x)
 
             loaders[name] = DataLoader(**loader_params)
 
@@ -517,9 +536,7 @@ class ConfigExperiment(Experiment):
 
     def get_callbacks(self, stage: str) -> "OrderedDict[Callback]":
         """Returns the callbacks for a given stage"""
-        callbacks_params = (
-            self.stages_config[stage].get("callbacks_params", {})
-        )
+        callbacks_params = self.stages_config[stage].get("callbacks_params", {})
 
         callbacks = OrderedDict()
         for key, callback_params in callbacks_params.items():
@@ -542,9 +559,7 @@ class ConfigExperiment(Experiment):
 
             default_callbacks.append(("_timer", TimerCallback))
             default_callbacks.append(("_metrics", MetricManagerCallback))
-            default_callbacks.append(
-                ("_validation", ValidationManagerCallback)
-            )
+            default_callbacks.append(("_validation", ValidationManagerCallback))
             default_callbacks.append(("_saver", CheckpointCallback))
             default_callbacks.append(("_console", ConsoleLogger))
             default_callbacks.append(("_tensorboard", TensorboardLogger))

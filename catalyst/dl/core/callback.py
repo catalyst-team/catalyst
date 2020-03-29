@@ -1,4 +1,4 @@
-from typing import List  # isort:skip
+from typing import List
 from collections import defaultdict
 
 import numpy as np
@@ -13,6 +13,7 @@ class MeterMetricsCallback(Callback):
     each class on `state.on_loader_end`.
     This callback works for both single metric and multi-metric meters.
     """
+
     def __init__(
         self,
         metric_names: List[str],
@@ -71,9 +72,9 @@ class MeterMetricsCallback(Callback):
         # Computing metrics for each class
         for i, meter in enumerate(self.meters):
             metrics = meter.value()
-            postfix = self.class_names[i] \
-                if self.class_names is not None \
-                else str(i)
+            postfix = (
+                self.class_names[i] if self.class_names is not None else str(i)
+            )
             for prefix, metric_ in zip(self.metric_names, metrics):
                 # appending the per-class values
                 metrics_tracker[prefix].append(metric_)

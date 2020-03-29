@@ -4,7 +4,7 @@ Tensorboard readers:
     * :py:class:`EventsFileReader`
     * :py:class:`SummaryReader`
 """
-from typing import BinaryIO, Optional, Union  # isort:skip
+from typing import BinaryIO, Optional, Union
 from collections import namedtuple
 from collections.abc import Iterable
 import os
@@ -21,11 +21,14 @@ import numpy as np  # noqa: E402
 # Native tensorboard support from 1.2.0 version of PyTorch
 from torch import __version__ as torch_version  # noqa: E402
 from packaging import version  # noqa: E402
+
 if version.parse(torch_version) < version.parse("1.2.0"):
     from tensorboardX import SummaryWriter as tensorboardX_SummaryWriter
+
     SummaryWriter = tensorboardX_SummaryWriter
 else:
     from torch.utils.tensorboard import SummaryWriter as torch_SummaryWriter
+
     SummaryWriter = torch_SummaryWriter
 if version.parse(torch_version) < version.parse("1.2.0"):
     from tensorboardX.proto.event_pb2 import Event
@@ -34,12 +37,12 @@ else:
 
 
 def _u32(x):
-    return x & 0xffffffff
+    return x & 0xFFFFFFFF
 
 
 def _masked_crc32c(data):
     x = _u32(crc32c(data))
-    return _u32(((x >> 15) | _u32(x << 17)) + 0xa282ead8)
+    return _u32(((x >> 15) | _u32(x << 17)) + 0xA282EAD8)
 
 
 class EventReadingException(Exception):
@@ -52,6 +55,7 @@ class EventsFileReader(Iterable):
     """
     An iterator over a Tensorboard events file
     """
+
     def __init__(self, events_file: BinaryIO):
         """
         Initialize an iterator over an events file
@@ -183,7 +187,7 @@ class SummaryReader(Iterable):
         self,
         logdir: Union[str, Path],
         tag_filter: Optional[Iterable] = None,
-        types: Iterable = ("scalar", )
+        types: Iterable = ("scalar",),
     ):
         """
         Initalize new summary reader
@@ -235,7 +239,7 @@ class SummaryReader(Iterable):
                             step=step,
                             wall_time=wall_time,
                             value=data,
-                            type=value_type
+                            type=value_type,
                         )
                 else:
                     yield None
@@ -264,7 +268,9 @@ class SummaryReader(Iterable):
             with open(file_path, "rb") as f:
                 reader = EventsFileReader(f)
                 yield from (
-                    item for item in self._decode_events(reader)
-                    if item is not None and self._check_tag(item.tag)
+                    item
+                    for item in self._decode_events(reader)
+                    if item is not None
+                    and self._check_tag(item.tag)
                     and item.type in self._types
                 )

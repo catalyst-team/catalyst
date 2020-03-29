@@ -1,7 +1,7 @@
-from typing import List  # isort:skip
+from typing import List
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 from ..blocks.fpn import DecoderFPNBlock
 from .core import DecoderSpec
@@ -55,8 +55,9 @@ class FPNDecoder(DecoderSpec):
         # features from encoders blocks
         reversed_features = list(reversed(x[:-1]))
 
-        for i, (fpn_block, encoder_output) \
-                in enumerate(zip(self.blocks, reversed_features)):
+        for _i, (fpn_block, encoder_output) in enumerate(
+            zip(self.blocks, reversed_features)
+        ):
             fpn_features.append(fpn_block(fpn_features[-1], encoder_output))
 
         return fpn_features

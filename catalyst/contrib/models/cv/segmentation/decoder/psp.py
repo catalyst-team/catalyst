@@ -1,4 +1,4 @@
-from typing import List  # isort:skip
+from typing import List
 from functools import partial
 
 import torch
@@ -16,7 +16,7 @@ class PSPDecoder(DecoderSpec):
         in_strides: List[int],
         downsample_factor: int = 8,
         use_batchnorm: bool = True,
-        out_channels: int = 512
+        out_channels: int = 512,
     ):
         super().__init__(in_channels, in_strides)
         self.block_offset = self._get_block_offset(downsample_factor)

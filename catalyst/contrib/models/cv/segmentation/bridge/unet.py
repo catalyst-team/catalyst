@@ -1,4 +1,5 @@
-from typing import List  # isort:skip
+from typing import List
+
 import torch
 
 from ..blocks import EncoderBlock, EncoderDownsampleBlock

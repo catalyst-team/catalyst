@@ -19,9 +19,10 @@ class CutmixCallback(CriterionCallback):
 
         You may not use them together.
     """
+
     def __init__(
         self,
-        fields: List[str] = ("features", ),
+        fields: List[str] = ("features",),
         alpha=1.0,
         on_train_only=True,
         **kwargs
@@ -34,8 +35,9 @@ class CutmixCallback(CriterionCallback):
                 So, if on_train_only is True, use a standard output/metric
                 for validation.
         """
-        assert len(fields) > 0, \
-            "At least one field for CutmixCallback is required"
+        assert (
+            len(fields) > 0
+        ), "At least one field for CutmixCallback is required"
         assert alpha >= 0, "alpha must be >=0"
 
         super().__init__(**kwargs)
@@ -63,8 +65,9 @@ class CutmixCallback(CriterionCallback):
         pred = state.batch_out[self.output_key]
         y_a = state.batch_in[self.input_key]
         y_b = state.batch_in[self.input_key][self.index]
-        loss = self.lam * criterion(pred, y_a) + \
-            (1 - self.lam) * criterion(pred, y_b)
+        loss = self.lam * criterion(pred, y_a) + (1 - self.lam) * criterion(
+            pred, y_b
+        )
         return loss
 
     def _rand_bbox(self, size, lam):
@@ -77,7 +80,7 @@ class CutmixCallback(CriterionCallback):
         """
         w = size[2]
         h = size[3]
-        cut_rat = np.sqrt(1. - lam)
+        cut_rat = np.sqrt(1.0 - lam)
         cut_w = np.int(w * cut_rat)
         cut_h = np.int(h * cut_rat)
 
@@ -97,8 +100,7 @@ class CutmixCallback(CriterionCallback):
         :param state: current state
         :return: void
         """
-        self.is_needed = not self.on_train_only or \
-            state.is_train_loader
+        self.is_needed = not self.on_train_only or state.is_train_loader
 
     def on_batch_start(self, state: State):
         """
@@ -117,16 +119,20 @@ class CutmixCallback(CriterionCallback):
         self.index = torch.randperm(state.batch_in[self.fields[0]].shape[0])
         self.index.to(state.device)
 
-        bbx1, bby1, bbx2, bby2 = \
-            self._rand_bbox(state.batch_in[self.fields[0]].shape, self.lam)
+        bbx1, bby1, bbx2, bby2 = self._rand_bbox(
+            state.batch_in[self.fields[0]].shape, self.lam
+        )
 
         for f in self.fields:
-            state.batch_in[f][:, :, bbx1:bbx2, bby1:bby2] = \
-                state.batch_in[f][self.index, :, bbx1:bbx2, bby1:bby2]
+            state.batch_in[f][:, :, bbx1:bbx2, bby1:bby2] = state.batch_in[f][
+                self.index, :, bbx1:bbx2, bby1:bby2
+            ]
 
         self.lam = 1 - (
-            (bbx2 - bbx1) * (bby2 - bby1) / (
-                state.batch_in[self.fields[0]].shape[-1] *
-                state.batch_in[self.fields[0]].shape[-2]
+            (bbx2 - bbx1)
+            * (bby2 - bby1)
+            / (
+                state.batch_in[self.fields[0]].shape[-1]
+                * state.batch_in[self.fields[0]].shape[-2]
             )
         )

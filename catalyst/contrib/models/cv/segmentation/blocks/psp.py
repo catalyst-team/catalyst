@@ -1,9 +1,9 @@
-from typing import Tuple  # isort:skip
+from typing import Tuple
 from functools import partial
 
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
+from torch import nn
+from torch.nn import functional as F
 
 from ..abn import ABN
 from .core import _get_block
@@ -18,7 +18,7 @@ class PyramidBlock(nn.Module):
         use_batchnorm: bool = True,
         interpolation_mode: str = "bilinear",
         align_corners: bool = True,
-        complexity: int = 0
+        complexity: int = 0,
     ):
         super().__init__()
         self.interpolation_mode = interpolation_mode
@@ -33,8 +33,8 @@ class PyramidBlock(nn.Module):
                 in_channels,
                 out_channels,
                 abn_block=partial(ABN, use_batchnorm=use_batchnorm),
-                complexity=complexity
-            )
+                complexity=complexity,
+            ),
         )
 
     def forward(self, x: torch.Tensor):
@@ -44,7 +44,7 @@ class PyramidBlock(nn.Module):
             x,
             size=(h, w),
             mode=self.interpolation_mode,
-            align_corners=self.align_corners
+            align_corners=self.align_corners,
         )
         return x
 
@@ -54,7 +54,7 @@ class PSPBlock(nn.Module):
         self,
         in_channels: int,
         pool_sizes: Tuple[int] = (1, 2, 3, 6),
-        use_batchnorm: bool = True
+        use_batchnorm: bool = True,
     ):
         super().__init__()
 
@@ -64,8 +64,9 @@ class PSPBlock(nn.Module):
                     in_channels,
                     in_channels // len(pool_sizes),
                     pool_size,
-                    use_batchnorm=use_batchnorm
-                ) for pool_size in pool_sizes
+                    use_batchnorm=use_batchnorm,
+                )
+                for pool_size in pool_sizes
             ]
         )
 

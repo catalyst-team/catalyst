@@ -18,6 +18,7 @@ class ConfusionMeter(meter.Meter):
             is normalized or not
 
     """
+
     def __init__(self, k, normalized=False):
         super(ConfusionMeter, self).__init__()
         self.conf = np.ndarray((k, k), dtype=np.int32)
@@ -44,34 +45,41 @@ class ConfusionMeter(meter.Meter):
         predicted = predicted.cpu().numpy()
         target = target.cpu().numpy()
 
-        assert predicted.shape[0] == target.shape[0], \
-            "number of targets and predicted outputs do not match"
+        assert (
+            predicted.shape[0] == target.shape[0]
+        ), "number of targets and predicted outputs do not match"
 
         if np.ndim(predicted) != 1:
-            assert predicted.shape[1] == self.k, \
-                "number of predictions does not match size of confusion matrix"
+            assert (
+                predicted.shape[1] == self.k
+            ), "number of predictions does not match size of confusion matrix"
             predicted = np.argmax(predicted, 1)
         else:
-            assert (predicted.max() < self.k) and (predicted.min() >= 0), \
-                "predicted values are not between 1 and k"
+            assert (predicted.max() < self.k) and (
+                predicted.min() >= 0
+            ), "predicted values are not between 1 and k"
 
         onehot_target = np.ndim(target) != 1
         if onehot_target:
-            assert target.shape[1] == self.k, \
-                "Onehot target does not match size of confusion matrix"
-            assert (target >= 0).all() and (target <= 1).all(), \
-                "in one-hot encoding, target values should be 0 or 1"
-            assert (target.sum(1) == 1).all(), \
-                "multi-label setting is not supported"
+            assert (
+                target.shape[1] == self.k
+            ), "Onehot target does not match size of confusion matrix"
+            assert (target >= 0).all() and (
+                target <= 1
+            ).all(), "in one-hot encoding, target values should be 0 or 1"
+            assert (
+                target.sum(1) == 1
+            ).all(), "multi-label setting is not supported"
             target = np.argmax(target, 1)
         else:
-            assert (predicted.max() < self.k) and (predicted.min() >= 0), \
-                "predicted values are not between 0 and k-1"
+            assert (predicted.max() < self.k) and (
+                predicted.min() >= 0
+            ), "predicted values are not between 0 and k-1"
 
         # hack for bincounting 2 arrays together
         x = predicted + self.k * target
-        bincount_2d = np.bincount(x.astype(np.int32), minlength=self.k**2)
-        assert bincount_2d.size == self.k**2
+        bincount_2d = np.bincount(x.astype(np.int32), minlength=self.k ** 2)
+        assert bincount_2d.size == self.k ** 2
         conf = bincount_2d.reshape((self.k, self.k))
 
         self.conf += conf

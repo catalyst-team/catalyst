@@ -1,4 +1,4 @@
-from typing import Dict, List  # isort:skip
+from typing import Dict, List
 from pathlib import Path
 import shutil
 import warnings
@@ -19,6 +19,7 @@ class WandbRunner(Runner):
     """
     Runner wrapper with wandb integration hooks.
     """
+
     @staticmethod
     def _log_metrics(
         metrics: Dict, mode: str, suffix: str = "", commit: bool = True
@@ -54,15 +55,16 @@ class WandbRunner(Runner):
             self.__class__.__name__,
             deprecated_in="20.03",
             removed_in="20.04",
-            details="Use WandbLogger instead."
+            details="Use WandbLogger instead.",
         )
         warnings.warn(the_warning, category=DeprecationWarning, stacklevel=2)
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
         self.checkpoints_glob = checkpoints_glob
 
-        if (self.log_on_batch_end and not self.log_on_epoch_end) \
-                or (not self.log_on_batch_end and self.log_on_epoch_end):
+        if (self.log_on_batch_end and not self.log_on_epoch_end) or (
+            not self.log_on_batch_end and self.log_on_epoch_end
+        ):
             self.batch_log_suffix = ""
             self.epoch_log_suffix = ""
         else:
@@ -73,12 +75,13 @@ class WandbRunner(Runner):
         monitoring_params = experiment.monitoring_params
         monitoring_params["dir"] = str(Path(experiment.logdir).absolute())
 
-        log_on_batch_end: bool = \
-            monitoring_params.pop("log_on_batch_end", False)
-        log_on_epoch_end: bool = \
-            monitoring_params.pop("log_on_epoch_end", True)
-        checkpoints_glob: List[str] = \
-            monitoring_params.pop("checkpoints_glob", [])
+        log_on_batch_end: bool = monitoring_params.pop(
+            "log_on_batch_end", False
+        )
+        log_on_epoch_end: bool = monitoring_params.pop("log_on_epoch_end", True)
+        checkpoints_glob: List[str] = monitoring_params.pop(
+            "checkpoints_glob", []
+        )
         self._init(
             log_on_batch_end=log_on_batch_end,
             log_on_epoch_end=log_on_epoch_end,
@@ -128,7 +131,7 @@ class WandbRunner(Runner):
         for checkpoint_path in checkpoint_paths:
             shutil.copy2(
                 f"{str(checkpoint_path.absolute())}",
-                f"{checkpoints_dst}/{checkpoint_path.name}"
+                f"{checkpoints_dst}/{checkpoint_path.name}",
             )
 
     def _run_batch(self, batch):
@@ -140,7 +143,7 @@ class WandbRunner(Runner):
                 metrics=metrics,
                 mode=mode,
                 suffix=self.batch_log_suffix,
-                commit=True
+                commit=True,
             )
 
     def _run_epoch(self, stage: str, epoch: int):
@@ -156,7 +159,7 @@ class WandbRunner(Runner):
                     metrics=metrics,
                     mode=mode,
                     suffix=self.epoch_log_suffix,
-                    commit=False
+                    commit=False,
                 )
             wandb.log(commit=True)
 

@@ -2,8 +2,17 @@
 Registry.
 .. todo:: Representative docstring for this module
 """
-from typing import (  # isort:skip
-    Any, Callable, Dict, Iterator, List, Mapping, Optional, Tuple, Type, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterator,
+    List,
+    Mapping,
+    Optional,
+    Tuple,
+    Type,
+    Union,
 )
 import collections
 import inspect
@@ -20,6 +29,7 @@ def _default_meta_factory(factory: Factory, args: Tuple, kwargs: Mapping):
 
 class RegistryException(Exception):
     """Exception class for all registry errors"""
+
     def __init__(self, message):
         """Init"""
         super().__init__(message)
@@ -29,10 +39,11 @@ class Registry(collections.MutableMapping):
     """
     Universal class allowing to add and access various factories by name
     """
+
     def __init__(
         self,
         default_name_key: str,
-        default_meta_factory: MetaFactory = _default_meta_factory
+        default_meta_factory: MetaFactory = _default_meta_factory,
     ):
         """
         Args:
@@ -52,8 +63,7 @@ class Registry(collections.MutableMapping):
             provided_name = getattr(f, "__name__", None)
             if not provided_name:
                 raise RegistryException(
-                    f"Factory {f} has no __name__ and no "
-                    f"name was provided"
+                    f"Factory {f} has no __name__ and no " f"name was provided"
                 )
             if provided_name == "<lambda>":
                 raise RegistryException(
@@ -72,7 +82,7 @@ class Registry(collections.MutableMapping):
         factory: Factory = None,
         *factories: Factory,
         name: str = None,
-        **named_factories: Factory
+        **named_factories: Factory,
     ) -> Factory:
         """
         Adds factory to registry with it's ``__name__`` attribute or provided
@@ -155,7 +165,7 @@ class Registry(collections.MutableMapping):
         elif isinstance(prefix, str):
             prefix = [prefix]
         elif isinstance(prefix, list):
-            if any([(not isinstance(p, str)) for p in prefix]):
+            if any((not isinstance(p, str)) for p in prefix):
                 raise TypeError(f"All prefix in list must be strings.")
         else:
             raise TypeError(
@@ -164,7 +174,8 @@ class Registry(collections.MutableMapping):
 
         to_add = {
             f"{p}{name}": factories[name]
-            for p in prefix for name in names_to_add
+            for p in prefix
+            for name in names_to_add
         }
         self.add(**to_add)
 

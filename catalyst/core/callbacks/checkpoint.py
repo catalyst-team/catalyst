@@ -1,4 +1,4 @@
-from typing import Dict, Union  # isort:skip
+from typing import Dict, Union
 from collections import OrderedDict
 import os
 from pathlib import Path
@@ -46,7 +46,7 @@ def _load_checkpoint(*, filename, state: State):
             model=state.model,
             criterion=state.criterion,
             optimizer=state.optimizer,
-            scheduler=state.scheduler
+            scheduler=state.scheduler,
         )
 
         print(
@@ -63,15 +63,14 @@ class BaseCheckpointCallback(Callback):
     """
     Base class for all checkpoint callbacks
     """
+
     def __init__(self, metrics_filename: str = "_metrics.json"):
         """
         Args:
             metrics_filename (str): filename to save metrics
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
         """
-        super().__init__(
-            order=CallbackOrder.External, node=CallbackNode.Master
-        )
+        super().__init__(order=CallbackOrder.External, node=CallbackNode.Master)
         self.metrics_filename = metrics_filename
         self.metrics: dict = {}
 
@@ -97,7 +96,7 @@ class BaseCheckpointCallback(Callback):
                 checkpoint=checkpoint,
                 suffix=suffix,
                 is_best=False,
-                is_last=False
+                is_last=False,
             )
             metrics = self.metrics
             metrics[suffix] = state.valid_metrics
@@ -110,12 +109,13 @@ class CheckpointCallback(BaseCheckpointCallback):
     """
     Checkpoint callback to save/restore your model/criterion/optimizer/metrics.
     """
+
     def __init__(
         self,
         save_n_best: int = 1,
         resume: str = None,
         resume_dir: str = None,
-        metrics_filename: str = "_metrics.json"
+        metrics_filename: str = "_metrics.json",
     ):
         """
         Args:
@@ -150,8 +150,10 @@ class CheckpointCallback(BaseCheckpointCallback):
         ]
         best_valid_metrics = top_best_checkpoints[0][1]
         metrics = OrderedDict(
-            [("best", best_valid_metrics)] + [("last", last_valid_metrics)] +
-            top_best_checkpoints + all_epochs_metrics
+            [("best", best_valid_metrics)]
+            + [("last", last_valid_metrics)]
+            + top_best_checkpoints
+            + all_epochs_metrics
         )
 
         self.metrics = metrics
@@ -161,7 +163,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         self.top_best_metrics = sorted(
             self.top_best_metrics,
             key=lambda x: x[1],
-            reverse=not minimize_metric
+            reverse=not minimize_metric,
         )
         if len(self.top_best_metrics) > self.save_n_best:
             last_item = self.top_best_metrics.pop(-1)
@@ -178,7 +180,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         checkpoint: Dict,
         is_best: bool,
         main_metric: str = "loss",
-        minimize_metric: bool = True
+        minimize_metric: bool = True,
     ):
         suffix = self.get_checkpoint_suffix(checkpoint)
         utils.save_checkpoint(
@@ -187,7 +189,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             suffix=f"{suffix}_full",
             is_best=is_best,
             is_last=True,
-            special_suffix="_full"
+            special_suffix="_full",
         )
 
         exclude = ["criterion", "optimizer", "scheduler"]
@@ -201,7 +203,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             logdir=Path(f"{logdir}/checkpoints/"),
             suffix=suffix,
             is_best=is_best,
-            is_last=True
+            is_last=True,
         )
 
         valid_metrics = checkpoint["valid_metrics"]
@@ -236,7 +238,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             checkpoint=checkpoint,
             is_best=state.is_best_valid,
             main_metric=state.main_metric,
-            minimize_metric=state.minimize_metric
+            minimize_metric=state.minimize_metric,
         )
 
     def on_stage_end(self, state: State):
@@ -248,7 +250,8 @@ class CheckpointCallback(BaseCheckpointCallback):
             [
                 "{filepath}\t{metric:3.4f}".format(
                     filepath=filepath, metric=checkpoint_metric
-                ) for filepath, checkpoint_metric, _ in self.top_best_metrics
+                )
+                for filepath, checkpoint_metric, _ in self.top_best_metrics
             ]
         )
         print(top_best_metrics_str)
@@ -258,12 +261,13 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
     """
     Iteration checkpoint callback to save your model/criterion/optimizer
     """
+
     def __init__(
         self,
         save_n_last: int = 1,
         period: int = 100,
         stage_restart: bool = True,
-        metrics_filename: str = "_metrics_iter.json"
+        metrics_filename: str = "_metrics_iter.json",
     ):
         """
         Args:
@@ -282,9 +286,11 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         self.metrics_history = []
 
     def get_checkpoint_suffix(self, checkpoint: dict) -> str:
-        result = f"{checkpoint['stage_name']}." \
-                 f"epoch.{checkpoint['epoch']}." \
-                 f"iter.{self._iteration_counter}"
+        result = (
+            f"{checkpoint['stage_name']}."
+            f"epoch.{checkpoint['epoch']}."
+            f"iter.{self._iteration_counter}"
+        )
 
         return result
 
@@ -319,7 +325,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
             checkpoint=checkpoint,
             suffix=self.get_checkpoint_suffix(checkpoint),
             is_best=False,
-            is_last=False
+            is_last=False,
         )
 
         self.last_checkpoints.append((filepath, batch_metrics))
@@ -342,7 +348,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
             self.process_checkpoint(
                 logdir=state.logdir,
                 checkpoint=checkpoint,
-                batch_metrics=state.batch_metrics
+                batch_metrics=state.batch_metrics,
             )
 
 

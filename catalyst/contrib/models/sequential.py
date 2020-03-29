@@ -1,9 +1,9 @@
-from typing import Dict, List, Union  # isort:skip
+from typing import Dict, List, Union
 from collections import OrderedDict
 from copy import deepcopy
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 from catalyst import utils
 from catalyst.contrib.registry import MODULES
@@ -63,24 +63,25 @@ class SequentialNet(nn.Module):
 
         def _normalization_fn(normalization_fn, f_in, f_out, **kwargs):
             normalization_fn = MODULES.get_if_str(normalization_fn)
-            normalization_fn = \
-                normalization_fn(f_out, **kwargs) \
-                if normalization_fn is not None \
+            normalization_fn = (
+                normalization_fn(f_out, **kwargs)
+                if normalization_fn is not None
                 else None
+            )
             return normalization_fn
 
         def _dropout_fn(dropout_fn, f_in, f_out, **kwargs):
             dropout_fn = MODULES.get_if_str(dropout_fn)
-            dropout_fn = dropout_fn(**kwargs) \
-                if dropout_fn is not None \
-                else None
+            dropout_fn = (
+                dropout_fn(**kwargs) if dropout_fn is not None else None
+            )
             return dropout_fn
 
         def _activation_fn(activation_fn, f_in, f_out, **kwargs):
             activation_fn = MODULES.get_if_str(activation_fn)
-            activation_fn = activation_fn(**kwargs) \
-                if activation_fn is not None \
-                else None
+            activation_fn = (
+                activation_fn(**kwargs) if activation_fn is not None else None
+            )
             return activation_fn
 
         name2fn = {
@@ -118,8 +119,9 @@ class SequentialNet(nn.Module):
 
             if block_.get("act", None) is not None:
                 activation = block_["act"]
-                activation_init = \
-                    utils.get_optimal_inner_init(nonlinearity=activation)
+                activation_init = utils.get_optimal_inner_init(
+                    nonlinearity=activation
+                )
                 block.apply(activation_init)
 
             if residual == "hard" or (residual == "soft" and f_in == f_out):

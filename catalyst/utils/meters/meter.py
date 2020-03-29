@@ -8,6 +8,7 @@ class Meter(object):
     This class is abstract, but provides a standard interface for all meters to
     follow.
     """
+
     def reset(self):
         """Resets the meter to default settings."""
         pass

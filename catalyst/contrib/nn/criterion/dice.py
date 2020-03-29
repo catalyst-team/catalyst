@@ -1,6 +1,6 @@
 from functools import partial
 
-import torch.nn as nn
+from torch import nn
 
 from catalyst.utils import metrics
 
@@ -10,7 +10,7 @@ class DiceLoss(nn.Module):
         self,
         eps: float = 1e-7,
         threshold: float = None,
-        activation: str = "Sigmoid"
+        activation: str = "Sigmoid",
     ):
         super().__init__()
 

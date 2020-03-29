@@ -31,7 +31,7 @@ def mean(values, ignore_nan=False, empty=0):
         if empty == "raise":
             raise ValueError("Empty mean")
         return empty
-    for n, v in enumerate(values, 2):
+    for n, v in enumerate(values, 2):  # noqa: B007
         acc += v
     if n == 1:
         return acc
@@ -47,7 +47,7 @@ def _lovasz_grad(gt_sorted):
     gts = gt_sorted.sum()
     intersection = gts - gt_sorted.float().cumsum(0)
     union = gts + (1 - gt_sorted).float().cumsum(0)
-    jaccard = 1. - intersection / union
+    jaccard = 1.0 - intersection / union
     if p > 1:  # cover 1-pixel case
         jaccard[1:p] = jaccard[1:p] - jaccard[0:-1]
     return jaccard
@@ -65,7 +65,7 @@ def _flatten_binary_scores(logits, targets, ignore=None):
     targets = targets.reshape(-1)
     if ignore is None:
         return logits, targets
-    valid = (targets != ignore)
+    valid = targets != ignore
     logits_ = logits[valid]
     targets_ = targets[valid]
     return logits_, targets_
@@ -83,9 +83,9 @@ def _lovasz_hinge_flat(logits, targets):
     """
     if len(targets) == 0:
         # only void pixels, the gradients should be 0
-        return logits.sum() * 0.
-    signs = 2. * targets.float() - 1.
-    errors = (1. - logits * signs)
+        return logits.sum() * 0.0
+    signs = 2.0 * targets.float() - 1.0
+    errors = 1.0 - logits * signs
     errors_sorted, perm = torch.sort(errors, dim=0, descending=True)
     perm = perm.data
     gt_sorted = targets[perm]
@@ -111,7 +111,8 @@ def _lovasz_hinge(logits, targets, per_image=True, ignore=None):
                 *_flatten_binary_scores(
                     logit.unsqueeze(0), target.unsqueeze(0), ignore
                 )
-            ) for logit, target in zip(logits, targets)
+            )
+            for logit, target in zip(logits, targets)
         )
     else:
         loss = _lovasz_hinge_flat(
@@ -137,7 +138,7 @@ def _flatten_probabilities(probabilities, targets, ignore=None):
     targets = targets.view(-1)
     if ignore is None:
         return probabilities, targets
-    valid = (targets != ignore)
+    valid = targets != ignore
     probabilities_ = probabilities[valid.nonzero().squeeze()]
     targets_ = targets[valid]
     return probabilities_, targets_
@@ -157,7 +158,7 @@ def _lovasz_softmax_flat(probabilities, targets, classes="present"):
     """
     if probabilities.numel() == 0:
         # only void pixels, the gradients should be 0
-        return probabilities * 0.
+        return probabilities * 0.0
     C = probabilities.size(1)
     losses = []
     class_to_sum = list(range(C)) if classes in ["all", "present"] else classes
@@ -204,7 +205,8 @@ def _lovasz_softmax(
                     prob.unsqueeze(0), lab.unsqueeze(0), ignore
                 ),
                 classes=classes
-            ) for prob, lab in zip(probabilities, targets)
+            )
+            for prob, lab in zip(probabilities, targets)
         )
     else:
         loss = _lovasz_softmax_flat(
@@ -270,8 +272,9 @@ class LovaszLossMultiLabel(_Loss):
                 logits[:, i, ...],
                 targets[:, i, ...],
                 per_image=self.per_image,
-                ignore=self.ignore
-            ) for i in range(logits.shape[1])
+                ignore=self.ignore,
+            )
+            for i in range(logits.shape[1])
         ]
         loss = torch.mean(torch.stack(losses))
         return loss

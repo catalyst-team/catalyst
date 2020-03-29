@@ -9,7 +9,9 @@ import numpy as np
 import pytest
 
 from catalyst.utils.tools.tensorboard import (
-    EventReadingException, EventsFileReader, SummaryReader
+    EventReadingException,
+    EventsFileReader,
+    SummaryReader,
 )
 
 
@@ -33,24 +35,9 @@ def _get_test_data():
 
     data_raw = [
         None,
-        {
-            "tag": "x",
-            "value": 1.0,
-            "step": 1,
-            "type": "scalar"
-        },
-        {
-            "tag": "y",
-            "value": -1.0,
-            "step": 1,
-            "type": "scalar"
-        },
-        {
-            "tag": "x",
-            "value": 2.0,
-            "step": 2,
-            "type": "scalar"
-        },
+        {"tag": "x", "value": 1.0, "step": 1, "type": "scalar"},
+        {"tag": "y", "value": -1.0, "step": 1, "type": "scalar"},
+        {"tag": "x", "value": 2.0, "step": 2, "type": "scalar"},
         {
             "tag": "z",
             "value": np.zeros((2, 2, 3)),
@@ -58,23 +45,25 @@ def _get_test_data():
             "width": 2,
             "channels": 3,
             "step": 1,
-            "type": "image"
+            "type": "image",
         },
     ]
     # noqa: Q000
-    data = b'\t\x00\x00\x00\x00\x00\x00\x007\xf9q9\t\xc9\xebE\x18`5' \
-           b'\xd7A\x04A\xf4n\x17\x00\x00\x00\x00\x00\x00\x00\xe7\xce' \
-           b'\xf8\x1e\t=\x82{\x19`5\xd7A\x10\x01*\n\n\x08\n\x01x\x15' \
-           b'\x00\x00\x80?c\xf1\xd84\x17\x00\x00\x00\x00\x00\x00\x00' \
-           b'\xe7\xce\xf8\x1e\tT\xe4g\x1a`5\xd7A\x10\x01*\n\n\x08\n' \
-           b'\x01y\x15\x00\x00\x80\xbf{;wp\x17\x00\x00\x00\x00\x00\x00' \
-           b'\x00\xe7\xce\xf8\x1e\t"S\xbc\x1b`5\xd7A\x10\x02*\n\n\x08' \
-           b'\n\x01x\x15\x00\x00\x00@\x1d\xb9\xdc\x83`\x00\x00\x00\x00' \
-           b'\x00\x00\x00(!\xc6\xda\t.\x03H"`5\xd7A\x10\x01*S\nQ\n\x01' \
-           b'z"L\x08\x02\x10\x02\x18\x03"D\x89PNG\r\n\x1a\n\x00\x00\x00' \
-           b'\rIHDR\x00\x00\x00\x02\x00\x00\x00\x02\x08\x02\x00\x00\x00' \
-           b'\xfd\xd4\x9as\x00\x00\x00\x0bIDATx\x9cc`@\x06\x00\x00\x0e' \
-           b'\x00\x01\xa9\x91s\xb1\x00\x00\x00\x00IEND\xaeB`\x82\x96x9j'
+    data = (
+        b"\t\x00\x00\x00\x00\x00\x00\x007\xf9q9\t\xc9\xebE\x18`5"
+        b"\xd7A\x04A\xf4n\x17\x00\x00\x00\x00\x00\x00\x00\xe7\xce"
+        b"\xf8\x1e\t=\x82{\x19`5\xd7A\x10\x01*\n\n\x08\n\x01x\x15"
+        b"\x00\x00\x80?c\xf1\xd84\x17\x00\x00\x00\x00\x00\x00\x00"
+        b"\xe7\xce\xf8\x1e\tT\xe4g\x1a`5\xd7A\x10\x01*\n\n\x08\n"
+        b"\x01y\x15\x00\x00\x80\xbf{;wp\x17\x00\x00\x00\x00\x00\x00"
+        b'\x00\xe7\xce\xf8\x1e\t"S\xbc\x1b`5\xd7A\x10\x02*\n\n\x08'
+        b"\n\x01x\x15\x00\x00\x00@\x1d\xb9\xdc\x83`\x00\x00\x00\x00"
+        b'\x00\x00\x00(!\xc6\xda\t.\x03H"`5\xd7A\x10\x01*S\nQ\n\x01'
+        b'z"L\x08\x02\x10\x02\x18\x03"D\x89PNG\r\n\x1a\n\x00\x00\x00'
+        b"\rIHDR\x00\x00\x00\x02\x00\x00\x00\x02\x08\x02\x00\x00\x00"
+        b"\xfd\xd4\x9as\x00\x00\x00\x0bIDATx\x9cc`@\x06\x00\x00\x0e"
+        b"\x00\x01\xa9\x91s\xb1\x00\x00\x00\x00IEND\xaeB`\x82\x96x9j"
+    )
     return data, data_raw
 
 
@@ -95,8 +84,7 @@ def test_events_reader_successful():
             if event_raw["type"] == "scalar":
                 assert event.summary.value[0].HasField("simple_value")
                 assert event.summary.value[0].tag == event_raw["tag"]
-                assert event.summary.value[0].simple_value == event_raw["value"
-                                                                        ]
+                assert event.summary.value[0].simple_value == event_raw["value"]
             elif event_raw["type"] == "image":
                 assert event.summary.value[0].HasField("image")
                 assert event.summary.value[0].image.height == 2
@@ -104,7 +92,7 @@ def test_events_reader_successful():
                 assert event.summary.value[0].image.colorspace == 3
                 _compare_image_data(
                     event.summary.value[0].image.encoded_image_string,
-                    event_raw["value"]
+                    event_raw["value"],
                 )
 
 

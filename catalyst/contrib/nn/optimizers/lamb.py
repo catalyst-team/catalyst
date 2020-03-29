@@ -20,6 +20,7 @@ def log_lamb_rs(optimizer: Optimizer, event_writer, token_count: int):
 
 class Lamb(Optimizer):
     """Lamb optimizer"""
+
     def __init__(
         self,
         params,
@@ -27,7 +28,7 @@ class Lamb(Optimizer):
         betas=(0.9, 0.999),
         eps=1e-6,
         weight_decay=0,
-        adam=False
+        adam=False,
     ):
         """Implements Lamb algorithm from `Training BERT in 76 minutes`_.
 
@@ -56,7 +57,12 @@ class Lamb(Optimizer):
             raise ValueError(f"Invalid beta parameter at index 0: {betas[0]}")
         if not 0.0 <= betas[1] < 1.0:
             raise ValueError(f"Invalid beta parameter at index 1: {betas[1]}")
-        defaults = dict(lr=lr, betas=betas, eps=eps, weight_decay=weight_decay)
+        defaults = {
+            "lr": lr,
+            "betas": betas,
+            "eps": eps,
+            "weight_decay": weight_decay,
+        }
         self.adam = adam
         super(Lamb, self).__init__(params, defaults)
 
