@@ -24,7 +24,7 @@ except ImportError as ex:
 
 
 def is_compressed(data):
-    return isinstance(data, bytes) or isinstance(data, string_types)
+    return isinstance(data, (bytes, string_types))
 
 
 def compress(data):
