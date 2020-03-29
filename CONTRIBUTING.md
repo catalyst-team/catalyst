@@ -29,10 +29,6 @@ If you are not familiar with creating a Pull Request, here are some guides:
 
 ##### Contribution best practices
 
-0. Install pre-commit hook:
-```
-pip install pre-commit
-```
 1. Break your work into small, single-purpose updates if possible.
 It's much harder to merge in a large change with a lot of disjoint features.
 2. Submit the update as a GitHub pull request against the `master` branch.
@@ -45,9 +41,8 @@ It's much harder to merge in a large change with a lot of disjoint features.
 Do not forget to check the codestyle for your PR with
 
 ```bash
-make codestyle
+catalyst-make-codestyle && catalyst-check-codestyle
 ```
-and add new requirements in the `[isort]` section of a `setup.cfg` file.
 
 Make sure to have your python packages complied with `requirements/requirements.txt` and `requirements/requirements-dev.txt` to get codestyle run clean.
 
