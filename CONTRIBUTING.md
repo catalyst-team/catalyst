@@ -29,6 +29,10 @@ If you are not familiar with creating a Pull Request, here are some guides:
 
 ##### Contribution best practices
 
+1. Install `catalyst-codestyle`
+    ```
+    pip install -U catalyst-codestyle
+    ```
 1. Break your work into small, single-purpose updates if possible.
 It's much harder to merge in a large change with a lot of disjoint features.
 2. Submit the update as a GitHub pull request against the `master` branch.
@@ -44,7 +48,7 @@ Do not forget to check the codestyle for your PR with
 catalyst-make-codestyle && catalyst-check-codestyle
 ```
 
-Make sure to have your python packages complied with `requirements/requirements.txt` and `requirements/requirements-dev.txt` to get codestyle run clean.
+Make sure to have `catalyst-codestyle` python package to get codestyle run clean.
 
 ## Documentation
 
