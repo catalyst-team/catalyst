@@ -244,6 +244,27 @@ def set_requires_grad(model: Model, requires_grad: bool):
         param.requires_grad = requires_grad
 
 
+def get_network_output(net: Model, *input_shapes):
+    """
+    For each input shape returns an output tensor
+
+    Args:
+        net (Model): the model
+        *args: variable length argument list of shapes
+    """
+    inputs = []
+    for input_shape in input_shapes:
+        if isinstance(input_shape, dict):
+            input_t = {}
+            for key, input_shape_ in input_shape.items():
+                input_t[key] = torch.Tensor(torch.randn((1,) + input_shape_))
+        else:
+            input_t = torch.Tensor(torch.randn((1,) + input_shape))
+        inputs.append(input_t)
+    output_t = net(*inputs)
+    return output_t
+
+
 __all__ = [
     "get_optimizable_params",
     "get_optimizer_momentum",
@@ -255,4 +276,5 @@ __all__ = [
     "prepare_cudnn",
     "process_model_params",
     "set_requires_grad",
+    "get_network_output",
 ]
