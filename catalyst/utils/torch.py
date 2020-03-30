@@ -251,6 +251,11 @@ def get_network_output(net: Model, *input_shapes):
     Args:
         net (Model): the model
         *args: variable length argument list of shapes
+
+    Examples:
+        >>> net = nn.Linear(10, 5)
+        >>> utils.get_network_output(net, (1, 10))
+        tensor([[[-0.2665,  0.5792,  0.9757, -0.5782,  0.1530]]])
     """
     inputs = []
     for input_shape in input_shapes:
